@@ -17,11 +17,11 @@
 
 pimcore.registerNS("pimcore.object.importcolumn.operator.iterator");
 
-pimcore.object.importcolumn.operator.iterator = Class.create(pimcore.object.gridcolumn.operator.Abstract, {
+pimcore.object.importcolumn.operator.iterator = Class.create(pimcore.object.gridcolumn.Abstract, {
     type: "operator",
     class: "Iterator",
     iconCls: "pimcore_icon_operator_iterator",
-    defaultText: "operator_iterator",
+    defaultText: "Iterator",
 
     getConfigTreeNode: function (configAttributes) {
         if (configAttributes) {
@@ -45,7 +45,7 @@ pimcore.object.importcolumn.operator.iterator = Class.create(pimcore.object.grid
             var node = {
                 draggable: true,
                 iconCls: this.iconCls,
-                text: t(this.defaultText),
+                text: this.getDefaultText(),
                 configAttributes: configAttributes,
                 isTarget: true,
                 leaf: true,
@@ -104,7 +104,7 @@ pimcore.object.importcolumn.operator.iterator = Class.create(pimcore.object.grid
             width: 400,
             height: 200,
             modal: true,
-            title: t('iterator_operator_settings'),
+            title: t('settings'),
             layout: "fit",
             items: [this.configPanel]
         });

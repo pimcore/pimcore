@@ -15,6 +15,7 @@
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
+use Pimcore\Bundle\AdminBundle\DependencyInjection\PimcoreAdminExtension;
 use Pimcore\Db;
 use Pimcore\Logger;
 use Pimcore\Model;
@@ -24,15 +25,17 @@ use Pimcore\Model\Document;
 use Pimcore\Model\Element;
 use Pimcore\Model\Version;
 use Pimcore\Tool;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
 
 class ElementController extends AdminController
 {
     /**
      * @Route("/element/lock-element")
+     * @Method({"PUT"})
      *
      * @param Request $request
      *
@@ -47,6 +50,7 @@ class ElementController extends AdminController
 
     /**
      * @Route("/element/unlock-element")
+     * @Method({"PUT"})
      *
      * @param Request $request
      *
@@ -60,30 +64,10 @@ class ElementController extends AdminController
     }
 
     /**
-     * @Route("/element/get-id-path")
-     *
-     * @param Request $request
-     *
-     * @return JsonResponse
-     */
-    public function getIdPathAction(Request $request)
-    {
-        $id = (int) $request->get('id');
-        $type = $request->get('type');
-
-        $response = ['success' => true];
-
-        if ($element = Element\Service::getElementById($type, $id)) {
-            $response['idPath'] = Element\Service::getIdPath($element);
-        }
-
-        return $this->adminJson($response);
-    }
-
-    /**
      * Returns the element data denoted by the given type and ID or path.
      *
      * @Route("/element/get-subtype")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -126,7 +110,49 @@ class ElementController extends AdminController
     }
 
     /**
+     * @param string $parameterName
+     *
+     * @return \Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse
+     */
+    protected function processNoteTypesFromParameters(string $parameterName)
+    {
+        $config = $this->container->getParameter($parameterName);
+        $result = [];
+        foreach ($config as $configEntry) {
+            $result[] = [
+                'name' => $configEntry
+            ];
+        }
+
+        return $this->adminJson(['noteTypes' => $result]);
+    }
+
+    /**
+     * @Route("/element/note-types")
+     * @Method({"GET"})
+     *
+     * @param Request $request
+     *
+     * @return JsonResponse
+     */
+    public function noteTypes(Request $request)
+    {
+        switch ($request->get('ctype')) {
+            case 'document':
+                return $this->processNoteTypesFromParameters(PimcoreAdminExtension::PARAM_DOCUMENTS_NOTES_EVENTS_TYPES);
+            case 'asset':
+                return $this->processNoteTypesFromParameters(PimcoreAdminExtension::PARAM_ASSETS_NOTES_EVENTS_TYPES);
+            case 'object':
+                return $this->processNoteTypesFromParameters(PimcoreAdminExtension::PARAM_DATAOBJECTS_NOTES_EVENTS_TYPES);
+            default:
+                return $this->adminJson(['noteTypes' => []]);
+
+        }
+    }
+
+    /**
      * @Route("/element/note-list")
+     * @Method({"POST"})
      *
      * @param Request $request
      *
@@ -246,6 +272,7 @@ class ElementController extends AdminController
 
     /**
      * @Route("/element/note-add")
+     * @Method({"POST"})
      *
      * @param Request $request
      *
@@ -271,6 +298,7 @@ class ElementController extends AdminController
 
     /**
      * @Route("/element/find-usages")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -313,6 +341,7 @@ class ElementController extends AdminController
 
     /**
      * @Route("/element/replace-assignments")
+     * @Method({"POST"})
      *
      * @param Request $request
      *
@@ -360,6 +389,7 @@ class ElementController extends AdminController
 
     /**
      * @Route("/element/unlock-propagate")
+     * @Method({"PUT"})
      *
      * @param Request $request
      *
@@ -382,6 +412,7 @@ class ElementController extends AdminController
 
     /**
      * @Route("/element/type-path")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -400,6 +431,7 @@ class ElementController extends AdminController
             $data['index'] = $element->getIndex();
         } else {
             $element = DataObject::getById($id);
+            $data['index'] = $element->getIndex();
         }
         $typePath = Element\Service::getTypePath($element);
 
@@ -413,6 +445,7 @@ class ElementController extends AdminController
 
     /**
      * @Route("/element/version-update")
+     * @Method({"PUT"})
      *
      * @param Request $request
      *
@@ -432,6 +465,7 @@ class ElementController extends AdminController
 
     /**
      * @Route("/element/get-nice-path")
+     * @Method({"POST"})
      *
      * @param Request $request
      *
@@ -503,6 +537,7 @@ class ElementController extends AdminController
 
     /**
      * @Route("/element/get-versions")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -549,6 +584,7 @@ class ElementController extends AdminController
 
     /**
      * @Route("/element/delete-version")
+     * @Method({"DELETE"})
      *
      * @param Request $request
      *
@@ -563,7 +599,31 @@ class ElementController extends AdminController
     }
 
     /**
+     * @Route("/element/delete-all-versions")
+     * @Method({"DELETE"})
+     *
+     * @param Request $request
+     *
+     * @return JsonResponse
+     */
+    public function deleteAllVersionAction(Request $request)
+    {
+        $elementId = $request->get('id');
+        $elementModificationdate = $request->get('date');
+
+        $versions = new Model\Version\Listing();
+        $versions->setCondition('cid = ' . $versions->quote($elementId) . ' AND date <> ' . $versions->quote($elementModificationdate));
+
+        foreach ($versions->load() as $vkey => $version) {
+            $version->delete();
+        }
+
+        return $this->adminJson(['success' => true]);
+    }
+
+    /**
      * @Route("/element/get-requires-dependencies")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -574,13 +634,21 @@ class ElementController extends AdminController
         $id = $request->get('id');
         $type = $request->get('elementType');
         $allowedTypes = ['asset', 'document', 'object'];
+        $offset = $request->get('start');
+        $limit = $request->get('limit');
 
         if ($id && in_array($type, $allowedTypes)) {
             $element = Model\Element\Service::getElementById($type, $id);
-            if ($element instanceof Model\Element\ElementInterface) {
-                $dependencies = Model\Element\Service::getRequiresDependenciesForFrontend($element->getDependencies());
+            $dependencies = $element->getDependencies();
 
-                return $this->adminJson($dependencies);
+            if ($element instanceof Model\Element\ElementInterface) {
+                $dependenciesResult = Model\Element\Service::getRequiresDependenciesForFrontend($dependencies, $offset, $limit);
+
+                $dependenciesResult['start'] = $offset;
+                $dependenciesResult['limit'] = $limit;
+                $dependenciesResult['total'] = $dependencies->getRequiresTotalCount();
+
+                return $this->adminJson($dependenciesResult);
             }
         }
 
@@ -589,6 +657,7 @@ class ElementController extends AdminController
 
     /**
      * @Route("/element/get-required-by-dependencies")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -599,13 +668,21 @@ class ElementController extends AdminController
         $id = $request->get('id');
         $type = $request->get('elementType');
         $allowedTypes = ['asset', 'document', 'object'];
+        $offset = $request->get('start');
+        $limit = $request->get('limit');
 
         if ($id && in_array($type, $allowedTypes)) {
             $element = Model\Element\Service::getElementById($type, $id);
-            if ($element instanceof Model\Element\ElementInterface) {
-                $dependencies = Model\Element\Service::getRequiredByDependenciesForFrontend($element->getDependencies());
+            $dependencies = $element->getDependencies();
 
-                return $this->adminJson($dependencies);
+            if ($element instanceof Model\Element\ElementInterface) {
+                $dependenciesResult = Model\Element\Service::getRequiredByDependenciesForFrontend($dependencies, $offset, $limit);
+
+                $dependenciesResult['start'] = $offset;
+                $dependenciesResult['limit'] = $limit;
+                $dependenciesResult['total'] = $dependencies->getRequiredByTotalCount();
+
+                return $this->adminJson($dependenciesResult);
             }
         }
 
@@ -614,6 +691,7 @@ class ElementController extends AdminController
 
     /**
      * @Route("/element/get-predefined-properties")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -628,7 +706,10 @@ class ElementController extends AdminController
         if (in_array($type, $allowedTypes)) {
             $list = new Model\Property\Predefined\Listing();
             $list->setFilter(function ($row) use ($type) {
-                if ($row['ctype'] == $type) {
+                if (is_array($row['ctype'])) {
+                    $row['ctype'] = implode(',', $row['ctype']);
+                }
+                if (strpos($row['ctype'], $type) !== false) {
                     return true;
                 }
 
@@ -647,6 +728,7 @@ class ElementController extends AdminController
 
     /**
      * @Route("/element/analyze-permissions")
+     * @Method({"POST"})
      *
      * @param Request $request
      *

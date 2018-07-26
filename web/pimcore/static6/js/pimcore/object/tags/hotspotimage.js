@@ -100,8 +100,6 @@ pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
             items.push(
                 {
                     xtype: "button",
-                    tooltip: t("to_left"),
-                    overflowText: t('to_left'),
                     iconCls: "pimcore_icon_left",
                     handler: function (image) {
                         this.move(-1, image.container);
@@ -112,8 +110,6 @@ pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
             items.push(
                 {
                     xtype: "button",
-                    tooltip: t("to_right"),
-                    overflowText: t('to_right'),
                     iconCls: "pimcore_icon_right",
                     handler: function (image) {
                         this.move(+1, image.container);
@@ -207,12 +203,10 @@ pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
         var toolbarCfg = {
             region: "north",
             border: false,
-            items: items
+            items: items,
+            overflowHandler: 'menu'
         };
 
-        if (this.additionalConfig.condensed) {
-            toolbarCfg.overflowHandler = 'menu';
-        }
         var toolbar = new Ext.Toolbar(toolbarCfg);
 
 
@@ -416,7 +410,6 @@ pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
         if (replacement && this.hasData()) {
 
             Ext.MessageBox.show({
-                title: t('clear_hotspots_title'),
                 msg: t('clear_hotspots_msg'),
                 buttons: Ext.Msg.YESNO,
                 icon: Ext.MessageBox.INFO,

@@ -19,9 +19,7 @@ use Pimcore\Bundle\AdminBundle\Security\User\TokenStorageUserResolver;
 use Pimcore\Bundle\AdminBundle\Security\User\User as UserProxy;
 use Pimcore\Controller\Controller;
 use Pimcore\Model\User;
-use Pimcore\Tool\Session;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\Serializer\Encoder\DecoderInterface;
@@ -180,31 +178,6 @@ abstract class AdminController extends Controller implements AdminControllerInte
     }
 
     /**
-     * Check CSRF token
-     *
-     * @param Request $request
-     *
-     * @throws AccessDeniedHttpException
-     *      if CSRF token does not match
-     */
-    protected function protectCsrf(Request $request)
-    {
-        // TODO use isCsrfTokenValid() and the native CSRF token storage?
-
-        $csrfToken = Session::useSession(function (AttributeBagInterface $adminSession) {
-            return $adminSession->get('csrfToken');
-        });
-
-        if (!$csrfToken || $csrfToken !== $request->headers->get('x_pimcore_csrf_token')) {
-            $this->get('monolog.logger.security')->error('Detected CSRF attack on {request}', [
-                'request' => $request->getPathInfo()
-            ]);
-
-            throw new AccessDeniedHttpException('Detected CSRF Attack! Do not do evil things with pimcore ... ;-)');
-        }
-    }
-
-    /**
      * Translates the given message.
      *
      * @param string $id The message id (may also be an object that can be cast to string)
@@ -221,5 +194,14 @@ abstract class AdminController extends Controller implements AdminControllerInte
         $translator = $this->get('translator');
 
         return $translator->trans($id, $parameters, $domain, $locale);
+    }
+
+    /**
+     * @param Request $request
+     */
+    public function checkCsrfToken(Request $request)
+    {
+        $csrfCheck = $this->container->get('Pimcore\Bundle\AdminBundle\EventListener\CsrfProtectionListener');
+        $csrfCheck->checkCsrfToken($request);
     }
 }

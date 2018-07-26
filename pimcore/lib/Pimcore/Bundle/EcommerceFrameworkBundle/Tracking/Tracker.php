@@ -39,10 +39,31 @@ abstract class Tracker implements ITracker
      */
     protected $templateExtension;
 
+    /**
+     * @var array
+     */
+    protected $assortmentTenants;
+
+    /**
+     * @var array
+     */
+    protected $checkoutTenants;
+
+    /**
+     * Tracker constructor.
+     *
+     * @param ITrackingItemBuilder $trackingItemBuilder
+     * @param EngineInterface $templatingEngine
+     * @param array $options
+     * @param array $assortmentTenants
+     * @param array $checkoutTenants
+     */
     public function __construct(
         ITrackingItemBuilder $trackingItemBuilder,
         EngineInterface $templatingEngine,
-        array $options = []
+        array $options = [],
+        $assortmentTenants = [],
+        $checkoutTenants = []
     ) {
         $this->trackingItemBuilder = $trackingItemBuilder;
         $this->templatingEngine    = $templatingEngine;
@@ -50,6 +71,9 @@ abstract class Tracker implements ITracker
         $resolver = new OptionsResolver();
         $this->configureOptions($resolver);
         $this->processOptions($resolver->resolve($options));
+
+        $this->assortmentTenants = $assortmentTenants;
+        $this->checkoutTenants = $checkoutTenants;
     }
 
     protected function processOptions(array $options)
@@ -106,5 +130,21 @@ abstract class Tracker implements ITracker
         }
 
         return $result;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getAssortmentTenants(): array
+    {
+        return $this->assortmentTenants;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getCheckoutTenants(): array
+    {
+        return $this->checkoutTenants;
     }
 }

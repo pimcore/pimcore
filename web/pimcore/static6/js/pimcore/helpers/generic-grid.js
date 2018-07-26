@@ -13,15 +13,16 @@
 
 pimcore.helpers.grid = {};
 
-pimcore.helpers.grid.buildDefaultStore = function(url, fields, itemsPerPage, customConfig) {
+pimcore.helpers.grid.buildDefaultStore = function (url, fields, itemsPerPage, customConfig) {
 
-    if(url.indexOf('?') === -1) {
+    if (url.indexOf('?') === -1) {
         url = url + "?";
     } else {
         url = url + "&";
     }
 
     var proxy = new Ext.data.proxy.Ajax({
+        batchActions: false,
         type: 'ajax',
         reader: {
             type: 'json',
@@ -34,15 +35,15 @@ pimcore.helpers.grid.buildDefaultStore = function(url, fields, itemsPerPage, cus
             encode: 'true'
         },
         api: {
-            create  : url + "xaction=create",
-            read    : url + "xaction=read",
-            update  : url + "xaction=update",
-            destroy : url + "xaction=destroy"
+            create: url + "xaction=create",
+            read: url + "xaction=read",
+            update: url + "xaction=update",
+            destroy: url + "xaction=destroy"
         },
         actionMethods: {
-            create : 'POST',
-            read   : 'POST',
-            update : 'POST',
+            create: 'POST',
+            read: 'POST',
+            update: 'POST',
             destroy: 'POST'
         }/*,
         listeners: {
@@ -57,7 +58,7 @@ pimcore.helpers.grid.buildDefaultStore = function(url, fields, itemsPerPage, cus
         }*/
     });
 
-    var config =  {
+    var config = {
         proxy: proxy,
         autoLoad: true,
         autoSync: true,
@@ -67,7 +68,7 @@ pimcore.helpers.grid.buildDefaultStore = function(url, fields, itemsPerPage, cus
         remoteFilter: true
     };
 
-    if(customConfig) {
+    if (customConfig) {
         Ext.apply(config, customConfig);
     }
 
@@ -77,14 +78,14 @@ pimcore.helpers.grid.buildDefaultStore = function(url, fields, itemsPerPage, cus
 };
 
 
-pimcore.helpers.grid.getDefaultPageSize = function(scale) {
+pimcore.helpers.grid.getDefaultPageSize = function (scale) {
     if (scale < 0) {
         return 25;
     }
     return 50;
 };
 
-pimcore.helpers.grid.buildDefaultPagingToolbar = function(store, options) {
+pimcore.helpers.grid.buildDefaultPagingToolbar = function (store, options) {
     var config = {
         pageSize: pimcore.helpers.grid.getDefaultPageSize(),
         store: store,

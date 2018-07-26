@@ -15,6 +15,7 @@
 namespace Pimcore\Log;
 
 use Pimcore\Config;
+use Pimcore\Model\Tool\TmpStore;
 
 class Maintenance
 {
@@ -29,37 +30,48 @@ class Maintenance
         $db->deleteWhere('http_error_log', 'date < ' . $limit);
     }
 
-    public function usageStatistics()
-    {
-        if (Config::getSystemConfig()->general->disableusagestatistics) {
-            return;
-        }
-
-        $logFile = PIMCORE_LOG_DIRECTORY . '/usagelog.log';
-        if (is_file($logFile) && filesize($logFile) > 200000) {
-            gzencode(file_get_contents($logFile));
-            rename($logFile, $logFile . '-archive-' . date('m-d-Y-H-i'));
-        }
-    }
-
     public function cleanupLogFiles()
     {
         // we don't use the RotatingFileHandler of Monolog, since rotating asynchronously is recommended + compression
         $logFiles = glob(PIMCORE_LOG_DIRECTORY . '/*.log');
 
         foreach ($logFiles as $log) {
-            if (file_exists($log) && date('Y-m-d', filectime($log)) != date('Y-m-d')) {
+            $tmpStoreTimeId = 'log-' . basename($log);
+            $lastTimeItem = TmpStore::get($tmpStoreTimeId);
+            if ($lastTimeItem) {
+                $lastTime = $lastTimeItem->getData();
+            } else {
+                $lastTime = time() - 86400;
+            }
+
+            if (file_exists($log) && date('Y-m-d', $lastTime) != date('Y-m-d')) {
                 // archive log (will be cleaned up by maintenance)
-                $archiveFilename = preg_replace('/\.log$/', '', $log) . '-archive-' . date('Y-m-d', filectime($log)) . '.log';
+                $archiveFilename = preg_replace('/\.log$/', '', $log) . '-archive-' . date('Y-m-d', $lastTime) . '.log';
                 rename($log, $archiveFilename);
+
+                if ($lastTimeItem) {
+                    $lastTimeItem->setData(time());
+                    $lastTimeItem->update(86400 * 7);
+                } else {
+                    TmpStore::add($tmpStoreTimeId, time(), null, 86400 * 7);
+                }
             }
         }
 
         // archive and cleanup logs
-        $files = glob(PIMCORE_LOG_DIRECTORY . '/*-archive-*.log');
+        $files = [];
+        $logFiles = glob(PIMCORE_LOG_DIRECTORY . '/*-archive-*.log');
+        if (is_array($logFiles)) {
+            $files = array_merge($files, $logFiles);
+        }
+        $archivedLogFiles = glob(PIMCORE_LOG_DIRECTORY . '/*-archive-*.log.gz');
+        if (is_array($archivedLogFiles)) {
+            $files = array_merge($files, $archivedLogFiles);
+        }
+
         if (is_array($files)) {
             foreach ($files as $file) {
-                if (filemtime($file) < (time() - (86400 * 30))) { // we keep the logs for 30 days
+                if (filemtime($file) < (time() - (86400 * 7))) { // we keep the logs for 7 days
                     unlink($file);
                 } elseif (!preg_match("/\.gz$/", $file)) {
                     gzcompressfile($file);

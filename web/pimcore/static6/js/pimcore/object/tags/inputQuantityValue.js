@@ -59,19 +59,21 @@ pimcore.object.tags.inputQuantityValue = Class.create(pimcore.object.tags.abstra
             input.value = this.data.value;
         }
 
-        input.width = 200;
         if (this.fieldConfig.width) {
             input.width = this.fieldConfig.width;
         }
 
-        var labelWidth = 200;
+        if (this.fieldConfig["decimalPrecision"] !== null) {
+            input.decimalPrecision = this.fieldConfig["decimalPrecision"];
+        }
+
+        var labelWidth = 100;
         if (this.fieldConfig.labelWidth) {
             labelWidth = this.fieldConfig.labelWidth;
         }
 
         var options = {
-            width: 125,
-            margin: {left: 10},
+            width: 100,
             triggerAction: "all",
             autoSelect: true,
             editable: true,

@@ -93,6 +93,7 @@ abstract class AbstractData extends Model\AbstractModel
      */
     public function setDoDelete($doDelete)
     {
+        $this->flushContainer();
         $this->doDelete = $doDelete;
 
         return $this;
@@ -121,6 +122,23 @@ abstract class AbstractData extends Model\AbstractModel
     {
         $this->doDelete = true;
         $this->getDao()->delete($object);
+        $this->flushContainer();
+    }
+
+    /**
+     * Flushes the already collected items of the container object
+     */
+    protected function flushContainer()
+    {
+        $object = $this->getObject();
+        if ($object) {
+            $containerGetter = 'get' . ucfirst($this->fieldname);
+
+            $container = $object->$containerGetter();
+            if ($container instanceof DataObject\Objectbrick) {
+                $container->setItems([]);
+            }
+        }
     }
 
     /**
@@ -177,5 +195,26 @@ abstract class AbstractData extends Model\AbstractModel
         }
 
         return false;
+    }
+
+    /**
+     * @param string $fieldName
+     *
+     * @return mixed
+     */
+    public function get($fieldName)
+    {
+        return $this->{'get'.ucfirst($fieldName)}();
+    }
+
+    /**
+     * @param string $fieldName
+     * @param $value
+     *
+     * @return mixed
+     */
+    public function set($fieldName, $value)
+    {
+        return $this->{'set'.ucfirst($fieldName)}($value);
     }
 }

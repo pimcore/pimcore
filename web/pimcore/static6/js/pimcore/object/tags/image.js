@@ -62,33 +62,42 @@ pimcore.object.tags.image = Class.create(pimcore.object.tags.abstract, {
             height: this.fieldConfig.height,
             border: true,
             style: "padding-bottom: 10px",
-            tbar: [{
-                xtype: "tbspacer",
-                width: 20,
-                height: 16,
-                cls: "pimcore_icon_droptarget"
+            tbar: {
+                overflowHandler: 'menu',
+                items:
+                    [{
+                        xtype: "tbspacer",
+                        width: 20,
+                        height: 16,
+                        cls: "pimcore_icon_droptarget"
+
+                    },
+                        {
+                            xtype: "tbtext",
+                            text: "<b>" + this.fieldConfig.title + "</b>"
+                        }, "->", {
+                        xtype: "button",
+                        iconCls: "pimcore_icon_upload",
+                        overflowText: t("upload"),
+                        cls: "pimcore_inline_upload",
+                        handler: this.uploadDialog.bind(this)
+                    }, {
+                        xtype: "button",
+                        iconCls: "pimcore_icon_open",
+                        overflowText: t("open"),
+                        handler: this.openImage.bind(this)
+                    }, {
+                        xtype: "button",
+                        iconCls: "pimcore_icon_delete",
+                        overflowText: t("delete"),
+                        handler: this.empty.bind(this)
+                    }, {
+                        xtype: "button",
+                        iconCls: "pimcore_icon_search",
+                        overflowText: t("search"),
+                        handler: this.openSearchEditor.bind(this)
+                    }]
             },
-                {
-                    xtype: "tbtext",
-                    text: "<b>" + this.fieldConfig.title + "</b>"
-                }, "->", {
-                    xtype: "button",
-                    iconCls: "pimcore_icon_upload",
-                    cls: "pimcore_inline_upload",
-                    handler: this.uploadDialog.bind(this)
-                }, {
-                    xtype: "button",
-                    iconCls: "pimcore_icon_open",
-                    handler: this.openImage.bind(this)
-                }, {
-                    xtype: "button",
-                    iconCls: "pimcore_icon_delete",
-                    handler: this.empty.bind(this)
-                }, {
-                    xtype: "button",
-                    iconCls: "pimcore_icon_search",
-                    handler: this.openSearchEditor.bind(this)
-                }],
             componentCls: "object_field",
             bodyCls: "pimcore_droptarget_image pimcore_image_container"
         };
@@ -121,9 +130,7 @@ pimcore.object.tags.image = Class.create(pimcore.object.tags.abstract, {
 
             el.getEl().on("contextmenu", this.onContextMenu.bind(this));
 
-            if (this.data) {
-                this.updateImage();
-            }
+            this.updateImage();
 
         }.bind(this));
 
@@ -152,9 +159,7 @@ pimcore.object.tags.image = Class.create(pimcore.object.tags.abstract, {
         this.component = new Ext.Panel(conf);
 
         this.component.on("afterrender", function (el) {
-            if (this.data) {
-                this.updateImage();
-            }
+            this.updateImage();
         }.bind(this));
 
         return this.component;
@@ -230,23 +235,23 @@ pimcore.object.tags.image = Class.create(pimcore.object.tags.abstract, {
     },
 
     updateImage: function () {
+        if(this.data && this.data["id"]) {
+            // 5px padding (-10)
+            var body = this.getBody();
+            var width = body.getWidth() - 10;
+            var height = this.fieldConfig.height - 60; // strage body.getHeight() returns 2? so we use the config instead
 
+            var path = "/admin/asset/get-image-thumbnail?id=" + this.data.id + "&width=" + width + "&height=" + height
+                + "&contain=true";
 
-        // 5px padding (-10)
-        var body = this.getBody();
-        var width = body.getWidth() - 10;
-        var height = this.fieldConfig.height - 60; // strage body.getHeight() returns 2? so we use the config instead
-
-        var path = "/admin/asset/get-image-thumbnail?id=" + this.data.id + "&width=" + width + "&height=" + height
-            + "&contain=true";
-
-        body = body.down('.x-autocontainer-innerCt');
-        body.setStyle({
-            backgroundImage: "url(" + path + ")",
-            backgroundPosition: "center center",
-            backgroundRepeat: "no-repeat"
-        });
-        body.repaint();
+            body = body.down('.x-autocontainer-innerCt');
+            body.setStyle({
+                backgroundImage: "url(" + path + ")",
+                backgroundPosition: "center center",
+                backgroundRepeat: "no-repeat"
+            });
+            body.repaint();
+        }
     },
 
     getBody: function () {

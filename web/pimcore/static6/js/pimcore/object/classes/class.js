@@ -427,7 +427,7 @@ pimcore.object.classes.klass = Class.create({
             if (changeTypeAllowed) {
                 var changeDataMenu = getDataMenu(allowedTypes, record.parentNode.data.editor.type, true);
                 menu.add(new Ext.menu.Item({
-                    text: t('change_type'),
+                    text: t('convert_to'),
                     iconCls: "pimcore_icon_convert",
                     hideOnClick: false,
                     menu: changeDataMenu
@@ -437,7 +437,7 @@ pimcore.object.classes.klass = Class.create({
             if (record.data.type == "data") {
                 var dataComps = Object.keys(pimcore.object.classes.data);
                 menu.add(new Ext.menu.Item({
-                    text: t('duplicate'),
+                    text: t('clone'),
                     iconCls: "pimcore_icon_clone",
                     hideOnClick: true,
                     handler: this.changeDataType.bind(this, tree, record, record.data.editor.type, false, this.context)
@@ -686,6 +686,20 @@ pimcore.object.classes.klass = Class.create({
                     }
                 },
                 {
+                    xtype: "textarea",
+                    fieldLabel: t("description"),
+                    name: "description",
+                    width: 500,
+                    value: this.data.description
+                },
+                {
+                    xtype: "textfield",
+                    fieldLabel: t("class_identifier"),
+                    disabled: true,
+                    value: this.data.id,
+                    width: 500
+                },
+                {
                     xtype: "textfield",
                     fieldLabel: t("PHP Class Name"),
                     name: "phpClassName",
@@ -695,18 +709,8 @@ pimcore.object.classes.klass = Class.create({
                     value: getPhpClassName(this.data.name)
                 },
                 {
-                    xtype: "textarea",
-                    fieldLabel: t("description"),
-                    name: "description",
-                    width: 500,
-                    value: this.data.description
-                },
-                this.allowInheritance,
-                this.allowVariants,
-                this.showVariants,
-                {
                     xtype: "textfield",
-                    fieldLabel: t("parent_class"),
+                    fieldLabel: t("parent_php_class"),
                     name: "parentClass",
                     width: 600,
                     value: this.data.parentClass
@@ -724,7 +728,15 @@ pimcore.object.classes.klass = Class.create({
                     name: "linkGeneratorReference",
                     width: 600,
                     value: this.data.linkGeneratorReference
-                }, {
+                },
+                {
+                    xtype: "textfield",
+                    fieldLabel: t("preview_url"),
+                    name: "previewUrl",
+                    width: 600,
+                    value: this.data.previewUrl
+                },
+                {
                     xtype: "fieldcontainer",
                     layout: "hbox",
                     defaults: {
@@ -744,18 +756,14 @@ pimcore.object.classes.klass = Class.create({
                 },
                 {
                     xtype: "textfield",
-                    fieldLabel: t("preview_url"),
-                    name: "previewUrl",
-                    width: 600,
-                    value: this.data.previewUrl
-                },
-                {
-                    xtype: "textfield",
                     fieldLabel: t("group"),
                     name: "group",
                     width: 600,
                     value: this.data.group
                 },
+                this.allowInheritance,
+                this.allowVariants,
+                this.showVariants,
                 {
                     xtype: "checkbox",
                     fieldLabel: t("show_applogger_tab"),
@@ -771,61 +779,73 @@ pimcore.object.classes.klass = Class.create({
                 },
                 {
                     xtype: "checkbox",
-                    fieldLabel: "ID (" + t("gridview") + ")",
+                    boxLabel: "ID (" + t("gridview") + ")",
                     name: "propertyVisibility.grid.id",
                     checked: this.data.propertyVisibility.grid.id
                 },
                 {
                     xtype: "checkbox",
-                    fieldLabel: "ID (" + t("search") + ")",
+                    boxLabel: "ID (" + t("search") + ")",
                     name: "propertyVisibility.search.id",
                     checked: this.data.propertyVisibility.search.id
                 },
                 {
                     xtype: "checkbox",
-                    fieldLabel: t("path") + " (" + t("gridview") + ")",
+                    boxLabel: t("key") + " (" + t("gridview") + ")",
+                    name: "propertyVisibility.grid.key",
+                    checked: this.data.propertyVisibility.grid.key
+                },
+                {
+                    xtype: "checkbox",
+                    boxLabel: t("key") + " (" + t("search") + ")",
+                    name: "propertyVisibility.search.key",
+                    checked: this.data.propertyVisibility.search.key
+                },
+                {
+                    xtype: "checkbox",
+                    boxLabel: t("path") + " (" + t("gridview") + ")",
                     name: "propertyVisibility.grid.path",
                     checked: this.data.propertyVisibility.grid.path
                 },
                 {
                     xtype: "checkbox",
-                    fieldLabel: t("path") + " (" + t("search") + ")",
+                    boxLabel: t("path") + " (" + t("search") + ")",
                     name: "propertyVisibility.search.path",
                     checked: this.data.propertyVisibility.search.path
                 },
                 {
                     xtype: "checkbox",
-                    fieldLabel: t("published") + " (" + t("gridview") + ")",
+                    boxLabel: t("published") + " (" + t("gridview") + ")",
                     name: "propertyVisibility.grid.published",
                     checked: this.data.propertyVisibility.grid.published
                 },
                 {
                     xtype: "checkbox",
-                    fieldLabel: t("published") + " (" + t("search") + ")",
+                    boxLabel: t("published") + " (" + t("search") + ")",
                     name: "propertyVisibility.search.published",
                     checked: this.data.propertyVisibility.search.published
                 },
                 {
                     xtype: "checkbox",
-                    fieldLabel: t("modificationDate") + " (" + t("gridview") + ")",
+                    boxLabel: t("modificationDate") + " (" + t("gridview") + ")",
                     name: "propertyVisibility.grid.modificationDate",
                     checked: this.data.propertyVisibility.grid.modificationDate
                 },
                 {
                     xtype: "checkbox",
-                    fieldLabel: t("modificationDate") + " (" + t("search") + ")",
+                    boxLabel: t("modificationDate") + " (" + t("search") + ")",
                     name: "propertyVisibility.search.modificationDate",
                     checked: this.data.propertyVisibility.search.modificationDate
                 },
                 {
                     xtype: "checkbox",
-                    fieldLabel: t("creationDate") + " (" + t("gridview") + ")",
+                    boxLabel: t("creationDate") + " (" + t("gridview") + ")",
                     name: "propertyVisibility.grid.creationDate",
                     checked: this.data.propertyVisibility.grid.creationDate
                 },
                 {
                     xtype: "checkbox",
-                    fieldLabel: t("creationDate") + " (" + t("search") + ")",
+                    boxLabel: t("creationDate") + " (" + t("search") + ")",
                     name: "propertyVisibility.search.creationDate",
                     checked: this.data.propertyVisibility.search.creationDate
                 },
@@ -939,7 +959,7 @@ pimcore.object.classes.klass = Class.create({
             iconCls: "pimcore_icon_" + type
         };
 
-        if (type == "localizedfields") {
+        if (type == "localizedfields" || type == "block") {
             newNode.leaf = false;
             newNode.expanded = true;
             newNode.expandable = false;
@@ -1167,7 +1187,7 @@ pimcore.object.classes.klass = Class.create({
             if (this.getDataSuccess) {
                 Ext.Ajax.request({
                     url: "/admin/class/save",
-                    method: "post",
+                    method: "PUT",
                     params: {
                         configuration: m,
                         values: n,
@@ -1178,7 +1198,7 @@ pimcore.object.classes.klass = Class.create({
                 });
             }
         } else {
-            Ext.Msg.alert(t('add_class'), t('invalid_class_name'));
+            Ext.Msg.alert(' ', t('invalid_class_name'));
         }
     },
 
@@ -1195,7 +1215,7 @@ pimcore.object.classes.klass = Class.create({
                 // set the current modification date, to detect modifcations on the class which are not made here
                 this.data.modificationDate = res['class'].modificationDate;
 
-                pimcore.helpers.showNotification(t("success"), t("class_saved_successfully"), "success");
+                pimcore.helpers.showNotification(t("success"), t("saved_successfully"), "success");
             } else {
                 throw "save was not successful, see log files in /var/logs";
             }
@@ -1206,7 +1226,7 @@ pimcore.object.classes.klass = Class.create({
     },
 
     saveOnError: function () {
-        pimcore.helpers.showNotification(t("error"), t("class_save_error"), "error");
+        pimcore.helpers.showNotification(t("error"), t("saving_failed"), "error");
     },
 
     onRefresh: function() {

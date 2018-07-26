@@ -32,7 +32,7 @@ trait Dao
 
         $prefixes = [
             'p_index_' => ['enabled' => $field->getIndex() && ! $field->getUnique(), 'unique' => false],
-            'u_index_' => ['enabled' => $field->getUnique(), 'unique' => true]
+            'u_index_' => ['enabled' => $considerUniqueIndex && $field->getUnique(), 'unique' => true]
 
         ];
 
@@ -56,7 +56,6 @@ trait Dao
                         }
                         $this->db->queryIgnoreError(
                             'ALTER TABLE `'.$table.'` ADD ' . $uniqueStr . 'INDEX `' . $prefix . $indexName.'` ('.$columnName.');',
-                            [],
                             [UniqueConstraintViolationException::class]
                         );
                     }
@@ -73,7 +72,6 @@ trait Dao
                     }
                     $this->db->queryIgnoreError(
                         'ALTER TABLE `'.$table.'` ADD ' . $uniqueStr . 'INDEX `' . $prefix . $indexName.'` ('.$columnName.');',
-                        [],
                         [UniqueConstraintViolationException::class]
                     );
                 }

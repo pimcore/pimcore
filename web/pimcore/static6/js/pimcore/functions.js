@@ -10,7 +10,7 @@
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
-function t(key) {
+function t(key, defaultValue) {
     if(!key) {
         return "";
     }
@@ -18,6 +18,7 @@ function t(key) {
     var alreadyTranslated = pimcore.globalmanager.get("translations_admin_translated_values");
     if(!alreadyTranslated) {
         alreadyTranslated = [];
+        pimcore.globalmanager.add("translations_admin_translated_values", []);
     }
 
     // remove plus at the start and the end to avoid double translations
@@ -26,32 +27,22 @@ function t(key) {
     });
 
     if (pimcore && pimcore.system_i18n && pimcore.system_i18n[key]) {
-        // add here a "zero width joiner" to detect if a key is already translated
-
-        alreadyTranslated.push(pimcore.system_i18n[key]);
-
-        if(pimcore.globalmanager.exists("translations_admin_translated_values")) {
-            pimcore.globalmanager.add("translations_admin_translated_values", alreadyTranslated);
-        }
-
+        pimcore.globalmanager.get("translations_admin_translated_values").push(pimcore.system_i18n[key]);
         return pimcore.system_i18n[key];
     } else {
-
-        // if the key contains a "zero width joiner" it is already translated
-        if(in_array(key, alreadyTranslated)) {
-            return key;
-        }
-
-        if(pimcore.globalmanager.exists("translations_admin_missing")) {
-            if (!in_array(key, pimcore.globalmanager.get("translations_admin_added"))) {
-                var missingTranslations = pimcore.globalmanager.get("translations_admin_missing");
-                missingTranslations.push(key);
-                pimcore.globalmanager.add("translations_admin_missing", missingTranslations);
+        if(!defaultValue && !in_array(key, alreadyTranslated)) {
+            if(pimcore.globalmanager.exists("translations_admin_missing")) {
+                if (!in_array(key, pimcore.globalmanager.get("translations_admin_added"))) {
+                    pimcore.globalmanager.get("translations_admin_missing").push(key);
+                }
             }
         }
     }
+
     if(parent.pimcore.settings.debug_admin_translations){ // use parent here, because it's also used in the editmode iframe
         return "+" + key + "+";
+    }  else if (defaultValue) {
+        return defaultValue;
     } else {
         return key;
     }
@@ -103,7 +94,7 @@ function FormatJSON(oData, sIndent) {
         var sHTML = "[";
     } else {
         var iCount = 0;
-        $.each(oData, function() {
+        jQuery.each(oData, function() {
             iCount++;
             return;
         });
@@ -115,7 +106,7 @@ function FormatJSON(oData, sIndent) {
 
     // loop through items
     var iCount = 0;
-    $.each(oData, function(sKey, vValue) {
+    jQuery.each(oData, function(sKey, vValue) {
         if (iCount > 0) {
             sHTML += ",";
         }
@@ -1761,3 +1752,75 @@ function array_merge_recursive (arr1, arr2){
 }
 
 
+function htmlspecialchars (string, quoteStyle, charset, doubleEncode) {
+    //       discuss at: http://locutus.io/php/htmlspecialchars/
+    //      original by: Mirek Slugen
+    //      improved by: Kevin van Zonneveld (http://kvz.io)
+    //      bugfixed by: Nathan
+    //      bugfixed by: Arno
+    //      bugfixed by: Brett Zamir (http://brett-zamir.me)
+    //      bugfixed by: Brett Zamir (http://brett-zamir.me)
+    //       revised by: Kevin van Zonneveld (http://kvz.io)
+    //         input by: Ratheous
+    //         input by: Mailfaker (http://www.weedem.fr/)
+    //         input by: felix
+    // reimplemented by: Brett Zamir (http://brett-zamir.me)
+    //           note 1: charset argument not supported
+    //        example 1: htmlspecialchars("<a href='test'>Test</a>", 'ENT_QUOTES')
+    //        returns 1: '&lt;a href=&#039;test&#039;&gt;Test&lt;/a&gt;'
+    //        example 2: htmlspecialchars("ab\"c'd", ['ENT_NOQUOTES', 'ENT_QUOTES'])
+    //        returns 2: 'ab"c&#039;d'
+    //        example 3: htmlspecialchars('my "&entity;" is still here', null, null, false)
+    //        returns 3: 'my &quot;&entity;&quot; is still here'
+
+    var optTemp = 0
+    var i = 0
+    var noquotes = false
+    if (typeof quoteStyle === 'undefined' || quoteStyle === null) {
+        quoteStyle = 2
+    }
+    string = string || ''
+    string = string.toString()
+
+    if (doubleEncode !== false) {
+        // Put this first to avoid double-encoding
+        string = string.replace(/&/g, '&amp;')
+    }
+
+    string = string
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+
+    var OPTS = {
+        'ENT_NOQUOTES': 0,
+        'ENT_HTML_QUOTE_SINGLE': 1,
+        'ENT_HTML_QUOTE_DOUBLE': 2,
+        'ENT_COMPAT': 2,
+        'ENT_QUOTES': 3,
+        'ENT_IGNORE': 4
+    }
+    if (quoteStyle === 0) {
+        noquotes = true
+    }
+    if (typeof quoteStyle !== 'number') {
+        // Allow for a single string or an array of string flags
+        quoteStyle = [].concat(quoteStyle)
+        for (i = 0; i < quoteStyle.length; i++) {
+            // Resolve string input to bitwise e.g. 'ENT_IGNORE' becomes 4
+            if (OPTS[quoteStyle[i]] === 0) {
+                noquotes = true
+            } else if (OPTS[quoteStyle[i]]) {
+                optTemp = optTemp | OPTS[quoteStyle[i]]
+            }
+        }
+        quoteStyle = optTemp
+    }
+    if (quoteStyle & OPTS.ENT_HTML_QUOTE_SINGLE) {
+        string = string.replace(/'/g, '&#039;')
+    }
+    if (!noquotes) {
+        string = string.replace(/"/g, '&quot;')
+    }
+
+    return string
+}

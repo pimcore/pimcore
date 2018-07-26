@@ -1,75 +1,75 @@
-# Piwik
+# Matomo (formerly known as Piwik)
 
-Similar to Google Analytics, a Piwik tracking code can be automatically injected into each response. For a basic tracking
+Similar to Google Analytics, a Matomo tracking code can be automatically injected into each response. For a basic tracking
 integration you need to know the following:
 
-* The URL to the Piwik installation you want to use
-* The Piwik Site ID where you want to track your site
+* The URL to the Matomo installation you want to use
+* The Matomo Site ID where you want to track your site
 
-The Piwik URL needs to be the full URL to your piwik installation including protocol and an optional path on the
-server if Piwik is not installed into the document root. Valid examples: 
+The Matomo URL needs to be the full URL to your piwik installation including protocol and an optional path on the
+server if Matomo is not installed into the document root. Valid examples: 
 
-* `https://piwik.example.com`
-* `https://analytics.example.com/piwik`
+* `https://matomo.example.com`
+* `https://analytics.example.com/matomo`
 
 Wrong:
 
-* `piwik.example.com`
-* `//piwik.example.com`
+* `matomo.example.com`
+* `//matomo.example.com`
 
 Similar to Google Analytics, you can configure the Site ID and optional code snippets which should be added to the tracking
-code on a per-site level. All settings can be configured in the Piwik tab of the Marketing Settings panel.
+code on a per-site level. All settings can be configured in the Matomo tab of the Marketing Settings panel.
 
-![Piwik Site Settings](../../img/piwik_site_settings.png)
+![Matomo Site Settings](../../img/piwik_site_settings.png)
 
 
-## Integrating Piwik into the Admin UI
+## Integrating Matomo into the Admin UI
 
-Piwik reports can be integrated into the Admin UI at several places like the dashboard, the reports panel or as full iframe
-integration of the whole Piwik app. To make those features available, you need to configure a **Report Token** in the
+Matomo reports can be integrated into the Admin UI at several places like the dashboard, the reports panel or as full iframe
+integration of the whole Matomo app. To make those features available, you need to configure a **Report Token** in the
 *Authentication Tokens* Section of the settings tab. This report token will be used for authentication when integrating
 report iframes.
 
-The API token for a user can be found in Piwik's API settings panel (please see the [Piwik FAQ](https://piwik.org/faq/general/faq_114/)
+The API token for a user can be found in Matomo's API settings panel (please see the [Matomo FAQ](https://matomo.org/faq/general/faq_114/)
 for details).
 
-As soon as this token is configured, you can use Piwik's wigets in the Dashboard and the Reports panel:
+As soon as this token is configured, you can use Matomo's wigets in the Dashboard and the Reports panel:
 
-![Piwik Dashboard](../../img/piwik_dashboard.png)
-![Piwik Reports Panel](../../img/piwik_reports.png)
+![Matomo Dashboard](../../img/piwik_dashboard.png)
+![Matomo Reports Panel](../../img/piwik_reports.png)
 
 **Important:** It is recommended to create a dedicated reporting user with **view only** permissions and to use this token
 as report token. As the token acts like a password and can be extracted from the iframe URL, users could potentially use 
-this token to change Piwik settings.
+this token to change Matomo settings.
 
 
 ### Iframe Integration
 
-Additionally you can integrate the whole Piwik app as iframe by using Piwik's [logme()](https://piwik.org/faq/how-to/#faq_30)
-functionality. To use this integration, you need to configure the Piwik username to access to iframe and the **MD5 hash**
+Additionally you can integrate the whole Matomo app as iframe by using Matomo's [logme()](https://piwik.org/faq/how-to/#faq_30)
+functionality. To use this integration, you need to configure the Matomo username to access to iframe and the **MD5 hash**
 of its password (not the plain text password itself!). Similar to the report token, you should use a user with **view only**
 permissions here. 
 
 After the iframe integration is configured, you'll find a new menu entry in the marketing menu:
 
-![Piwik Iframe integration](../../img/piwik_iframe_integration.png)
+![Matomo Iframe integration](../../img/piwik_iframe_integration.png)
 
 
 ### Updating site settings from the Pimcore Admin
 
-Certain site settings (currently only the list of valid domains) can be automatically exported from Pimcore to the Piwik
+Certain site settings (currently only the list of valid domains) can be automatically exported from Pimcore to the Matomo
 site configuration. To activate this feature, you need to configure an API token which will be used for API requests.
 
-> As you'll use this token to update Piwik's settings, this token (its user) needs to be configured with write access.
+> As you'll use this token to update Matomo's settings, this token (its user) needs to be configured with write access.
 
 With a configured API token, each site will show a button to either create a site or update a site's settings:
 
-![Piwik API Update Buttons](../../img/piwik_api_update_buttons.png)
+![Matomo API Update Buttons](../../img/piwik_api_update_buttons.png)
 
-If you need to pass custom options to the Piwik API client, you can configure a list of Guzzle Request Options as JSON 
+If you need to pass custom options to the Matomo API client, you can configure a list of Guzzle Request Options as JSON 
 string in the *API Integration* section:
 
-![Piwik API Client Options](../../img/piwik_api_client_options.png)
+![Matomo API Client Options](../../img/piwik_api_client_options.png)
 
 
 ## Customizing the tracking code
@@ -83,7 +83,7 @@ into multiple code blocks which can be expanded and altered individually. As ref
 
 ### Adding code to a block
 
-The central part of the Piwik tracking is the `Pimcore\Analytics\Piwik\Tracker` class which is defined as service and which
+The central part of the Matomo tracking is the `Pimcore\Analytics\Piwik\Tracker` class which is defined as service and which
 provides a `addCodePart()` method which allows you to add custom code snippets to a specific block:
 
 ```php

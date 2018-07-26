@@ -126,8 +126,12 @@
 }
 
 
-.pimcore_icon_home, .pimcore_icon_site {
+.pimcore_icon_site {
     background: url(/pimcore/static6/img/flat-color-icons/home.svg) center center no-repeat !important;
+}
+
+.pimcore_icon_home {
+    background: url(/pimcore/static6/img/flat-color-icons/home-gray.svg) center center no-repeat !important;
 }
 
 .pimcore_icon_page {
@@ -136,6 +140,14 @@
 
 .pimcore_icon_folder, .pimcore_icon_load_import_config {
     background: url(/pimcore/static6/img/flat-color-icons/opened_folder.svg) center center no-repeat !important;
+}
+
+.pimcore_icon_alphabetical_sorting_az {
+    background: url(/pimcore/static6/img/flat-color-icons/alphabetical_sorting_az.svg) center center no-repeat !important;
+}
+
+.pimcore_icon_alphabetical_sorting_za {
+    background: url(/pimcore/static6/img/flat-color-icons/alphabetical_sorting_za.svg) center center no-repeat !important;
 }
 
 .pimcore_icon_link, .pimcore_icon_operator_requiredby {
@@ -231,6 +243,10 @@
 }
 
 .pimcore_icon_open {
+    background: url(/pimcore/static6/img/flat-color-icons/open_file.svg) center center no-repeat !important;
+}
+
+.pimcore_icon_cursor {
     background: url(/pimcore/static6/img/flat-color-icons/cursor.svg) center center no-repeat !important;
 }
 
@@ -244,7 +260,13 @@
     background: url(/pimcore/static6/img/flat-color-icons/package.svg) center center no-repeat !important;
 }
 
-.pimcore_icon_jpeg, .pimcore_icon_jpg, .pimcore_icon_png, .pimcore_icon_gif, .pimcore_icon_tif, .pimcore_icon_psd, .pimcore_icon_psb, .pimcore_icon_eps, .pimcore_icon_ai, .pimcore_icon_svg, .pimcore_icon_svgz, .pimcore_icon_bmp, .pimcore_icon_pcx, .pimcore_icon_iff, .pimcore_icon_pct, .pimcore_icon_wmf, .pimcore_icon_svg {
+.pimcore_icon_jpeg, .pimcore_icon_jpg, .pimcore_icon_png, .pimcore_icon_gif, .pimcore_icon_tif, .pimcore_icon_psd,
+.pimcore_icon_psb, .pimcore_icon_eps, .pimcore_icon_ai, .pimcore_icon_svg, .pimcore_icon_svgz, .pimcore_icon_bmp,
+.pimcore_icon_jp2, .pimcore_icon_jpx, .pimcore_icon_j2k, .pimcore_icon_j2c, .pimcore_icon_jif, .pimcore_icon_jfif,
+.pimcore_icon_pcd, .pimcore_icon_kdc, .pimcore_icon_mac, .pimcore_icon_miff, .pimcore_icon_pbm, .pimcore_icon_pgm,
+.pimmore_icon_pnm, .pimcore_icon_ppm, .pimcore_icon_ras, .pimcore_icon_raw, .pimcore_icon_rgb, .pimcore_icon_rle,
+.pimcore_icon_tga, .pimcore_icon_webp, .pimcore_icon_xbm, .pimcore_icon_xcf, .pimcore_icon_xpm,
+.pimcore_icon_pcx, .pimcore_icon_iff, .pimcore_icon_pct, .pimcore_icon_wmf, .pimcore_icon_svg, .pimcore_icon_dng {
     background: url(/pimcore/static6/img/flat-color-icons/image.svg) center center no-repeat !important;
 }
 
@@ -256,6 +278,10 @@
     background-image: url(/pimcore/static6/img/flat-color-icons/unknown.svg);
     background-position: center center;
     background-repeat: no-repeat;
+}
+
+.pimcore_icon_vr {
+    background: url(/pimcore/static6/img/flat-color-icons/vr.svg) center center no-repeat !important;
 }
 
 .pimcore_icon_pdf {
@@ -577,6 +603,14 @@
 
 .pimcore_icon_minus {
     background: url(/pimcore/static6/img/flat-color-icons/delete.svg) center center no-repeat !important;
+}
+
+.pimcore_icon_plus_down {
+    background: url(/pimcore/static6/img/flat-color-icons/plus-down.svg) center center no-repeat !important;
+}
+
+.pimcore_icon_plus_up {
+    background: url(/pimcore/static6/img/flat-color-icons/plus-up.svg) center center no-repeat !important;
 }
 
 .pimcore_icon_up {
@@ -1212,6 +1246,10 @@
     background: url(/pimcore/static6/img/flat-color-icons/rgbacolor.svg) center center no-repeat !important;
 }
 
+.pimcore_icon_iframe {
+    background: url(/pimcore/static6/img/flat-color-icons/frame.svg) center center no-repeat !important;
+}
+
 .pimcore_icon_encryptedField {
     background: url(/pimcore/static6/img/flat-color-icons/data_encryption.svg) center center no-repeat !important;
 }
@@ -1221,3 +1259,32 @@
 }
 
 
+.pimcore_icon_consent {
+    background: url(/pimcore/static6/img/flat-color-icons/assistant.svg) center center no-repeat !important;
+}
+
+.pimcore_icon_consent:before {
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    bottom: 0;
+    right: 0;
+    content: "";
+    background: url(/pimcore/static6/img/flat-color-icons/approval.svg) center center no-repeat !important;
+}
+
+.x-tree-icon-leaf.pimcore_icon_consent {
+    position: relative;
+}
+.x-tree-icon-leaf.pimcore_icon_consent:before {
+    bottom: 4px;
+    right: -4px;
+}
+
+.pimcore_icon_focal_point {
+    background: url(/pimcore/static6/img/flat-color-icons/focal_point.svg) center center no-repeat !important;
+}
+
+.pimcore_icon_image_features {
+    background: url(/pimcore/static6/img/flat-color-icons/butting_in.svg) center center no-repeat !important;
+}

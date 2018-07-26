@@ -67,7 +67,7 @@ trait Relation
 
         // add objects
         if ($this->getObjectsAllowed()) {
-            $classes = $this->getClasses();
+            $classes = $this->getClasses() ? $this->getClasses() : [];
             if (count($classes) == 0) {
                 $class[] = '\Pimcore\Model\DataObject\AbstractObject' . $strArray;
             } elseif (is_array($classes)) {

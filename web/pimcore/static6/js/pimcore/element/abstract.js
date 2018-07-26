@@ -118,12 +118,24 @@ pimcore.element.abstract = Class.create({
     resetChanges: function () {
         this.changeDetectorInitData = {};
 
-        this.tab.setTitle(this.tab.initialConfig.title);
-        this.startChangeDetector();
-        this.dirty = false;
+        try {
+            this.tab.setTitle(this.tab.initialConfig.title);
+            this.startChangeDetector();
+            this.dirty = false;
+        } catch(exception) {
+            // tab was closed to fast
+            console.error(exception);
+        }
     },
 
     checkForChanges: function () {
+        // tab was closed before first cycle
+        // stop change detector again
+        if(this.tab.destroyed) {
+            this.stopChangeDetector();
+            return;
+        }
+
         if (!this.changeDetectorInitData) {
             this.setupChangeDetector();
         }

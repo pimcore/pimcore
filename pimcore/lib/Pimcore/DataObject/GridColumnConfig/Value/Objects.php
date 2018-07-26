@@ -17,22 +17,39 @@
 
 namespace Pimcore\DataObject\GridColumnConfig\Value;
 
-use Pimcore\DataObject\GridColumnConfig\AbstractConfigElement;
+use Pimcore\Model\DataObject\Concrete;
+use Pimcore\Model\DataObject\Service;
 
-class Objects extends AbstractConfigElement implements ValueInterface
+class Objects extends AbstractValue
 {
+    private function getValue($element)
+    {
+        $getter = 'get' . ucfirst($this->attribute);
+
+        if (method_exists($element, $getter)) {
+            $value = $element->$getter();
+
+            if (
+                $element instanceof Concrete &&
+                !$value &&
+                ($parent = Service::hasInheritableParentObject($element))
+            ) {
+                $value = $this->getValue($parent);
+            }
+
+            return $value;
+        }
+
+        return null;
+    }
+
     public function getLabeledValue($element)
     {
         $result = new \stdClass();
         $result->label = $this->label;
         $result->isArrayType = true;
 
-        $getter = 'get' . ucfirst($this->attribute);
-        if (method_exists($element, $getter)) {
-            $result->value = $element->$getter();
-
-            return $result;
-        }
+        $result->value = $this->getValue($element);
 
         return $result;
     }

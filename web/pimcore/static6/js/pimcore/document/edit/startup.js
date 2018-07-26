@@ -59,8 +59,17 @@ if (pimcore_document_id) {
 Ext.supports.Touch = false;
 
 // overwrite default z-index of windows, this ensures that CKEditor is above ExtJS Windows
-Ext.WindowManager.zseed = 200;
+Ext.WindowManager.zseed = 10020;
 
+
+Ext.Ajax.setDisableCaching(true);
+Ext.Ajax.setTimeout(900000);
+Ext.Ajax.setMethod("GET");
+Ext.Ajax.setDefaultHeaders({
+    'X-pimcore-csrf-token': parent.pimcore.settings["csrfToken"],
+    'X-pimcore-extjs-version-major': Ext.getVersion().getMajor(),
+    'X-pimcore-extjs-version-minor': Ext.getVersion().getMinor()
+});
 
 Ext.Loader.setConfig({
     enabled: true
@@ -101,6 +110,7 @@ Ext.onReady(function () {
 
     body.on("click", function () {
        parent.Ext.menu.MenuMgr.hideAll();
+        editWindow.toggleTagHighlighting(false);
     });
 
     Ext.QuickTips.init();
@@ -135,7 +145,10 @@ Ext.onReady(function () {
             try {
                 editables.push(getEditable(editableConfigurations[i]));
             } catch (e) {
-                console.log(e);
+                console.error(e);
+                if(e.stack) {
+                    console.error(e.stack);
+                }
             }
         }
 

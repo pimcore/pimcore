@@ -48,6 +48,8 @@ class Id extends AbstractResolver
             throw new \Exception('no permission to overwrite object with id ' . $id);
         }
 
+        $this->setObjectType($config, $object, $rowData);
+
         return $object;
     }
 }

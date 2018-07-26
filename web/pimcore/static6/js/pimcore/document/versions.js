@@ -115,7 +115,6 @@ pimcore.document.versions = Class.create({
                 trackMouseOver: true,
                 stripeRows: true,
                 width:620,
-                title: t('available_versions'),
                 region: "west",
                 split: true,
                 viewConfig: {
@@ -130,12 +129,14 @@ pimcore.document.versions = Class.create({
             }.bind(this));
             this.grid.reference = this;
 
+            this.frameId = 'document_version_iframe_' + this.document.id;
+
             var preview = new Ext.Panel({
                 title: t("preview"),
                 region: "center",
                 bodyCls: "pimcore_overflow_scrolling",
-                html: '<iframe src="about:blank" frameborder="0" style="width:100%;" id="document_version_iframe_'
-                    + this.document.id + '"></iframe>'
+                html: '<iframe src="about:blank" frameborder="0" style="width:100%;" id="'
+                    + this.frameId + '"></iframe>'
             });
 
             this.layout = new Ext.Panel({
@@ -153,7 +154,7 @@ pimcore.document.versions = Class.create({
     },
 
     setLayoutFrameDimensions: function (el, width, height, rWidth, rHeight) {
-        Ext.get("document_version_iframe_" + this.document.id).setStyle({
+        Ext.get(this.frameId).setStyle({
             height: (height - 38) + "px"
         });
     },
@@ -179,13 +180,15 @@ pimcore.document.versions = Class.create({
     },
 
     compareVersions: function (id1, id2) {
-        var path = "/admin/document/diff-versions/from/" + id1 + "/to/" + id2;
-        Ext.get("document_version_iframe_" + this.document.id).dom.src = path;
+        var url = "/admin/document/diff-versions/from/" + id1 + "/to/" + id2;
+        url = pimcore.helpers.addCsrfTokenToUrl(url);
+        Ext.get(this.frameId).dom.src = url;
     },
 
     showVersionPreview: function (id) {
-        var path = this.document.data.path + this.document.data.key + "?pimcore_version=" + id;
-        Ext.get("document_version_iframe_" + this.document.id).dom.src = path;
+        var url = this.document.data.path + this.document.data.key + "?pimcore_version=" + id;
+        url = pimcore.helpers.addCsrfTokenToUrl(url);
+        Ext.get(this.frameId).dom.src = url;
     },
 
     onRowContextmenu: function (grid, record, tr, rowIndex, e, eOpts ) {
@@ -218,6 +221,12 @@ pimcore.document.versions = Class.create({
             handler: this.removeVersion.bind(this, rowIndex, grid)
         }));
 
+        menu.add(new Ext.menu.Item({
+            text: t('clear_all'),
+            iconCls: "pimcore_icon_delete",
+            handler: this.removeAllVersion.bind(this, rowIndex, grid)
+        }));
+
         e.stopEvent();
         menu.showAt(e.pageX, e.pageY);
     },
@@ -229,17 +238,44 @@ pimcore.document.versions = Class.create({
 
         Ext.Ajax.request({
             url: "/admin/element/delete-version",
+            method: 'DELETE',
             params: {id: versionId}
         });
 
         grid.getStore().removeAt(index);
     },
 
+    removeAllVersion: function (index, grid) {
+        var data = grid.getStore().getAt(index).data;
+        var elememntId = data.cid;
+
+        if (elememntId > 0) {
+            Ext.Msg.confirm(t('clear_all'), t('clear_version_message'), function(btn){
+                if (btn == 'yes'){
+                    var modificationDate = this.document.data.modificationDate;
+                    
+                    Ext.Ajax.request({
+                        url: "/admin/element/delete-all-versions",
+                        method: 'DELETE',
+                        params: {id: elememntId, date: modificationDate}
+                    });
+                    
+                    //get sub collection of versions for removel. Keep current version
+                    var removeCollection = grid.getStore().getData().createFiltered(function(item){
+                        return item.get('date') != modificationDate;
+                    });
+
+                    grid.getStore().remove(removeCollection.getRange());
+                }
+            }.bind(this));
+        }
+    },
+
     openVersion: function (index, grid) {
         var data = grid.getStore().getAt(index).data;
         var versionId = data.id;
 
-        window.open(this.document.data.path + this.document.data.key + '?v=' + versionId,'_blank');
+        window.open(this.document.data.path + this.document.data.key + '?pimcore_version=' + versionId,'_blank');
     },
 
     editVersion: function (index, grid) {
@@ -248,6 +284,7 @@ pimcore.document.versions = Class.create({
 
         Ext.Ajax.request({
             url: "/admin/document/version-to-session",
+            method: 'POST',
             params: {id: versionId},
             success: this.reloadEdit.bind(this)
         });
@@ -259,6 +296,7 @@ pimcore.document.versions = Class.create({
 
         Ext.Ajax.request({
             url: "/admin/document/publish-version",
+            method: "POST",
             params: {id: versionId},
             success: function () {
                 // reload document
@@ -273,6 +311,7 @@ pimcore.document.versions = Class.create({
             Ext.Ajax.request({
                 method: "post",
                 url: "/admin/element/version-update",
+                method: 'PUT',
                 params: {
                     data: Ext.encode(record.data)
                 }

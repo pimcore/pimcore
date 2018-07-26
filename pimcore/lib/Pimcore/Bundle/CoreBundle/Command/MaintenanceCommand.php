@@ -28,7 +28,7 @@ class MaintenanceCommand extends AbstractCommand
 {
     protected $systemTasks = [
         'scheduledtasks', 'cleanupcache', 'logmaintenance', 'sanitycheck', 'cleanuplogfiles', 'versioncleanup',
-        'versioncompress', 'redirectcleanup', 'cleanupbrokenviews', 'usagestatistics', 'downloadmaxminddb',
+        'versioncompress', 'redirectcleanup', 'cleanupbrokenviews', 'downloadmaxminddb',
         'tmpstorecleanup', 'imageoptimize'
     ];
 
@@ -87,7 +87,6 @@ class MaintenanceCommand extends AbstractCommand
         $manager->registerJob(Job::fromMethodCall('logmaintenance', new \Pimcore\Log\Maintenance(), 'mail'));
         $manager->registerJob(Job::fromMethodCall('cleanuplogfiles', new \Pimcore\Log\Maintenance(), 'cleanupLogFiles'));
         $manager->registerJob(Job::fromMethodCall('httperrorlog', new \Pimcore\Log\Maintenance(), 'httpErrorLogCleanup'));
-        $manager->registerJob(Job::fromMethodCall('usagestatistics', new \Pimcore\Log\Maintenance(), 'usageStatistics'));
         $manager->registerJob(Job::fromMethodCall('checkErrorLogsDb', new \Pimcore\Log\Maintenance(), 'checkErrorLogsDb'));
         $manager->registerJob(Job::fromMethodCall('archiveLogEntries', new \Pimcore\Log\Maintenance(), 'archiveLogEntries'));
         $manager->registerJob(Job::fromMethodCall('sanitycheck', '\\Pimcore\\Model\\Element\\Service', 'runSanityCheck'));

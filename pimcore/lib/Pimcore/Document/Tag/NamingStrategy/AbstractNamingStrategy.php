@@ -25,7 +25,7 @@ abstract class AbstractNamingStrategy implements NamingStrategyInterface
     /**
      * @inheritDoc
      */
-    public function buildTagName(string $name, string $type, BlockState $blockState): string
+    public function buildTagName(string $name, string $type, BlockState $blockState, string $targetGroupElementName = null): string
     {
         if (!$blockState->hasBlocks()) {
             return $name;
@@ -36,7 +36,7 @@ abstract class AbstractNamingStrategy implements NamingStrategyInterface
 
         // check if the previous block is the name we're about to build
         // TODO: can this be avoided at the block level?
-        if ($type === 'block') {
+        if ($type === 'block' || $type == 'scheduledblock') {
             $tmpBlocks  = $blocks;
             $tmpIndexes = $indexes;
 
@@ -49,7 +49,7 @@ abstract class AbstractNamingStrategy implements NamingStrategyInterface
             }
 
             $previousBlockName = $blocks[count($blocks) - 1]->getName();
-            if ($previousBlockName === $tmpName) {
+            if ($previousBlockName === $tmpName || ($targetGroupElementName && $previousBlockName === $targetGroupElementName)) {
                 array_pop($blocks);
                 array_pop($indexes);
             }

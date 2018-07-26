@@ -106,10 +106,12 @@ class Text extends Model\DataObject\ClassDefinition\Layout
         if (Tool::classExists($renderingClass)) {
             if (method_exists($renderingClass, 'renderLayoutText')) {
                 $context['fieldname'] = $this->getName();
-
+                $context['layout'] = $this;
                 $result = call_user_func($renderingClass . '::renderLayoutText', $this->renderingData, $object, $context);
                 $this->html = $result;
             }
         }
+
+        return $this;
     }
 }

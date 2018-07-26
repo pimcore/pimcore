@@ -121,4 +121,27 @@ abstract class AbstractData extends Model\AbstractModel
     {
         return $this->object;
     }
+
+    /**
+     * @param string $fieldName
+     * @param null $language
+     *
+     * @return mixed
+     */
+    public function get($fieldName, $language = null)
+    {
+        return $this->{'get'.ucfirst($fieldName)}($language);
+    }
+
+    /**
+     * @param string $fieldName
+     * @param $value
+     * @param null $language
+     *
+     * @return mixed
+     */
+    public function set($fieldName, $value, $language = null)
+    {
+        return $this->{'set'.ucfirst($fieldName)}($value, $language);
+    }
 }

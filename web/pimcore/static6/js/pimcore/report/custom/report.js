@@ -73,6 +73,16 @@ pimcore.report.custom.report = Class.create(pimcore.report.abstract, {
                 this.gridfilters[colConfig["name"]] = colConfig["filter"];
             }
 
+            if (colConfig["displayType"] == "text") {
+                gridColConfig["renderer"] = function (key, value, metaData, record) {
+                    if (value && Ext.String.hasHtmlCharacters(value)) {
+                        return Ext.util.Format.htmlEncode(value);
+                    } else {
+                        return value;
+                    }
+                }.bind(this, colConfig["name"]);
+            }
+
             if (colConfig["displayType"] == "date") {
                 gridColConfig["renderer"] = function (key, value, metaData, record) {
                     if (value) {
@@ -103,7 +113,7 @@ pimcore.report.custom.report = Class.create(pimcore.report.abstract, {
                     items: [
                         {
                             tooltip: t("open") + " " + (colConfig["label"] ? ts(colConfig["label"]) : ts(colConfig["name"])),
-                            icon: "/pimcore/static6/img/flat-color-icons/cursor.svg",
+                            icon: "/pimcore/static6/img/flat-color-icons/open_file.svg",
                             handler: function (colConfig, grid, rowIndex) {
                                 var data = grid.getStore().getAt(rowIndex).getData();
                                 var columnName = colConfig["name"];

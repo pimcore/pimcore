@@ -244,6 +244,9 @@ class Localizedfield extends Model\AbstractModel
         if ($context && $context['containerType'] == 'fieldcollection') {
             $containerKey = $context['containerKey'];
             $container = Model\DataObject\Fieldcollection\Definition::getByKey($containerKey);
+        } elseif ($context && $context['containerType'] == 'objectbrick') {
+            $containerKey = $context['containerKey'];
+            $container = Model\DataObject\Objectbrick\Definition::getByKey($containerKey);
         } elseif ($context && $context['containerType'] == 'block') {
             $containerKey = $context['containerKey'];
             $object = $this->getObject();
@@ -272,8 +275,8 @@ class Localizedfield extends Model\AbstractModel
         // check for inherited value
         $doGetInheritedValues = AbstractObject::doGetInheritedValues();
 
-        $allowInheritance = true;
-        if ($context && $context['containerType'] == 'block') {
+        $allowInheritance = $fieldDefinition->supportsInheritance();
+        if ($context && ($context['containerType'] == 'block' || $context['containerType'] == 'fieldcollection')) {
             $allowInheritance = false;
         }
 
@@ -292,10 +295,21 @@ class Localizedfield extends Model\AbstractModel
                     if ($parent && ($parent->getType() == 'object' || $parent->getType() == 'variant')) {
                         if ($parent->getClassId() == $object->getClassId()) {
                             $method = 'getLocalizedfields';
-                            if (method_exists($parent, $method)) {
-                                $localizedFields = $parent->getLocalizedFields();
+
+                            $parentContainer = $parent;
+
+                            if ($context && $context['containerType'] == 'objectbrick') {
+                                $brickContainerGetter = 'get' . ucfirst($context['fieldname']);
+                                $brickContainer = $parent->$brickContainerGetter();
+                                $brickGetter = 'get' . $context['containerKey'];
+                                $brickData = $brickContainer->$brickGetter();
+                                $parentContainer = $brickData;
+                            }
+
+                            if (method_exists($parentContainer, $method)) {
+                                $localizedFields = $parentContainer->getLocalizedFields();
                                 if ($localizedFields instanceof Localizedfield) {
-                                    if ($localizedFields->object->getId() != $this->object->getId()) {
+                                    if ($localizedFields->getObject()->getId() != $this->getObject()->getId()) {
                                         $data = $localizedFields->getLocalizedValue($name, $language, true);
                                     }
                                 }
@@ -366,6 +380,9 @@ class Localizedfield extends Model\AbstractModel
             if ($contextInfo && $contextInfo['containerType'] == 'fieldcollection') {
                 $containerKey = $contextInfo['containerKey'];
                 $containerDefinition = Fieldcollection\Definition::getByKey($containerKey);
+            } elseif ($contextInfo && $contextInfo['containerType'] == 'objectbrick') {
+                $containerKey = $contextInfo['containerKey'];
+                $containerDefinition = Model\DataObject\Objectbrick\Definition::getByKey($containerKey);
             } else {
                 $containerDefinition = $this->getObject()->getClass();
             }

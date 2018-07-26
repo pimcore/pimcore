@@ -24,14 +24,8 @@ Advanced usage with allowed areas, below:
         "First Group" => ["iframe", "spacer"],
         "Second Group" => ["rssreader"]
     ],
-    "areablock_toolbar" => [
-        "title" => "",
-        "width" => 230,
-        "x" => 20,
-        "y" => 50,
-        "xAlign" => "right",
-        "buttonWidth" => 218,
-        "buttonMaxCharacters" => 35
+    "globalParams" => [ //global params are passed to all areablocks
+        "myGlobalParam" => "Global param value"
     ],
     "params" => [
         "iframe" => [ // some additional parameters / configuration for the brick type "iframe"
@@ -51,7 +45,7 @@ Advanced usage with allowed areas, below:
 echo $this->param1;
 ```
 
-##### Sorting Items in the Toolbar
+##### Sorting Items in the menu
 ```php
 echo  $this->areablock("content", [
     'allowed' => ['image', 'video', 'wysiwyg'],
@@ -68,15 +62,16 @@ And you can see the effect, below:
 | Name                | Type   | Description                                                                                                                                                                                  |
 |---------------------|--------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | `allowed`           | array  | An array of area-ID's which are allowed for this tag. The order of items in the array is also used as the default sorting, but of course you can combine this configuration with **sorting** |
-| `sorting`           | array  | An array of area-ID's in the order you want to display them in the toolbar.                                                                                                                  |
+| `sorting`           | array  | An array of area-ID's in the order you want to display them in the menu.                                                                                                                  |
 | `params`            | array  | Optional parameter, this can also contain additional brick-specific configurations, see **brick-specific configuration**                                                                     |
+| `globalParams`      | array  | Same as `params` but passed to all bricks independent from the type                                                                                                                          |
 | `group`             | array  | Array with group configuration (see example above).                                                                                                                                          |
 | `manual`            | bool   | Forces the manual mode, which enables a complete free implementation for areablocks, for example using real `<table>` elements... example see below                                          |
 | `reload`            | bool   | Set to `true`, to force a reload in editmode after reordering items (default: `false`)                                                                                                       |
-| `toolbar`           | bool   | Set to `false` to not display the extra toolbar for areablocks (default: `true`)                                                                                                             |
 | `dontCheckEnabled`  | bool   | Set to `true` to display all installed area bricks, regardless if they are enabled in the extension manager                                                                                  |
 | `limit`             | int    | Limit the amount of elements                                                                                                                                                                 |
-| `areablock_toolbar` | array  | Array with option that allows you to change the position of the toolbar.                                                                                                                     |
+| `areablock_toolbar` | array  | Array with option that allows you to configure the toolbar. Possible options are `width`, `buttonWidth` and `buttonMaxCharacters`                                                            |
+| `controlsAlign`     | string | The position of the control button bar. Options are: `top`, `right` and `left`.                                                                                                              |
 | `class`             | string | A CSS class that is added to the surrounding container of this element in editmode                                                                                                           |
 
 ## Brick-specific Configuration
@@ -95,8 +90,8 @@ Brick-specific configurations are passed using the params configuration (see abo
     "params" => [
         "my_brick" => [
             "forceEditInView" => true,
-            "editWidth" => "800",
-            "editHeight" => "500"
+            "editWidth" => "800px",
+            "editHeight" => "500px"
         ]
     ]
 ]); ?>

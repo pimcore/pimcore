@@ -14,12 +14,15 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment;
 
+use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\Currency;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\IStatus;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Status;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPrice;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\Price;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
+use Pimcore\Logger;
+use Pimcore\Model\DataObject\Listing\Concrete;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -27,7 +30,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class QPay implements IPayment
+class QPay extends AbstractPayment
 {
     // supported hashing algorithms
     const HASH_ALGO_MD5 = 'md5';
@@ -83,6 +86,24 @@ class QPay implements IPayment
         'shopId' // value=mobile for mobile checkout page
     ];
 
+    /**
+     * Data properties to set from response to payment provider brick.
+     *
+     * @var array
+     */
+    protected $authorizedDataProperties = [
+        'orderNumber',
+        'language',
+        'amount',
+        'currency',
+        'paymentType',
+        'bankAccountIBAN',
+        'bankAccountOwner',
+        'anonymousPan',
+        'maskedPan',
+        'expiry'
+    ];
+
     public function __construct(array $options, FormFactoryInterface $formFactory)
     {
         $this->formFactory = $formFactory;
@@ -94,8 +115,10 @@ class QPay implements IPayment
 
     protected function processOptions(array $options)
     {
+        parent::processOptions($options);
+
         $this->customer = $options['customer'];
-        $this->secret   = $options['secret'];
+        $this->secret = $options['secret'];
 
         if (isset($options['toolkit_password'])) {
             $this->toolkitPassword = $options['toolkit_password'];
@@ -119,6 +142,8 @@ class QPay implements IPayment
 
     protected function configureOptions(OptionsResolver $resolver): OptionsResolver
     {
+        parent::configureOptions($resolver);
+
         $resolver->setRequired([
             'customer',
             'secret'
@@ -235,7 +260,7 @@ class QPay implements IPayment
             'attr' => $formAttributes
         ]);
 
-        $form->setAction('https://www.qenta.com/qpay/init.php');
+        $form->setAction('https://checkout.wirecard.com/page/init.php');
         $form->setMethod('post');
         $form->setAttribute('data-currency', 'EUR');
 
@@ -281,12 +306,12 @@ class QPay implements IPayment
             'orderIdent' => null
         ];
 
-        $authorizedData = [
-            'orderNumber' => null,
-            'language'    => null,
-            'amount'      => null,
-            'currency'    => null
-        ];
+        /* Initialize authorized data with null values */
+        $authorizedDataProperties = $this->getAuthorizedDataProperties();
+        $authorizedData = [];
+        foreach ($authorizedDataProperties as $property) {
+            $authorizedData[$property] = null;
+        }
 
         // check fields
         $check = array_intersect_key($response, $required);
@@ -332,10 +357,10 @@ class QPay implements IPayment
                 ? IStatus::STATUS_AUTHORIZED
                 : IStatus::STATUS_CANCELLED,
             [
-                'qpay_amount'       => (string)$price,
-                'qpay_paymentType'  => $response['paymentType'],
+                'qpay_amount' => (string)$price,
+                'qpay_paymentType' => $response['paymentType'],
                 'qpay_paymentState' => $response['paymentState'],
-                'qpay_response'     => $response
+                'qpay_response' => $response
             ]
         );
     }
@@ -346,14 +371,19 @@ class QPay implements IPayment
     protected function getRequiredRequestFields(): array
     {
         return [
-            'successURL'       => null,
-            'cancelURL'        => null,
-            'failureURL'       => null,
-            'serviceURL'       => null,
+            'successURL' => null,
+            'cancelURL' => null,
+            'failureURL' => null,
+            'serviceURL' => null,
             'orderDescription' => null,
-            'orderIdent'       => null,
-            'language'         => null,
+            'orderIdent' => null,
+            'language' => null,
         ];
+    }
+
+    public function getAuthorizedDataProperties()
+    {
+        return $this->authorizedDataProperties;
     }
 
     /**
@@ -375,8 +405,14 @@ class QPay implements IPayment
     /**
      * Executes payment
      *
-     *  if price is given, recurPayment command is executed
-     *  if no price is given, amount from authorized Data is used and deposit command is executed
+     * If price is given, recurPayment command is executed
+     * If no price is given, amount from authorized Data is used and deposit command is executed
+     *
+     * Transaction-based operations by payment method: https://guides.wirecard.at/back-end_operations:transaction-based:table
+     *
+     * Recurring payment how to:                https://guides.wirecard.at/how_to:recurpayment
+     * Recurring payment backend operation:     https://guides.wirecard.at/back-end_operations:transaction-based:recurpayment
+     *
      *
      * @param IPrice $price
      * @param string $reference
@@ -387,10 +423,6 @@ class QPay implements IPayment
      */
     public function executeDebit(IPrice $price = null, $reference = null)
     {
-        // https://integration.wirecard.at/doku.php/wcp:toolkit_light:start
-        // https://integration.wirecard.at/doku.php/wcs:backend_operations?s[]=deposit
-        // https://integration.wirecard.at/doku.php/backend:deposit
-
         if ($price) {
             // recurPayment
 
@@ -449,6 +481,12 @@ class QPay implements IPayment
         // execute request
         $response = $this->serverToServerRequest('https://checkout.wirecard.com/page/toolkit.php', $request);
 
+        // handle
+        $properties = $this->getAuthorizedDataProperties();
+
+        $authorizedData = array_intersect_key($response, array_flip($properties));
+        $this->setAuthorizedData($authorizedData);
+
         // check response
         if ($response['status'] === '0') {
             // Operation successfully done.
@@ -459,8 +497,8 @@ class QPay implements IPayment
                 '',
                 IStatus::STATUS_CLEARED,
                 [
-                    'qpay_amount'   => (string)$price,
-                    'qpay_command'  => $request['command'],
+                    'qpay_amount' => (string)$price,
+                    'qpay_command' => $request['command'],
                     'qpay_response' => $response
                 ]
             );
@@ -478,8 +516,8 @@ class QPay implements IPayment
                 implode("\n", $error),
                 IStatus::STATUS_CANCELLED,
                 [
-                    'qpay_amount'   => (string)$price,
-                    'qpay_command'  => $request['command'],
+                    'qpay_amount' => (string)$price,
+                    'qpay_command' => $request['command'],
                     'qpay_response' => $response
                 ]
             );
@@ -540,8 +578,8 @@ class QPay implements IPayment
                 'executeCredit',
                 IStatus::STATUS_CLEARED,
                 [
-                    'qpay_amount'   => (string)$price,
-                    'qpay_command'  => $request['command'],
+                    'qpay_amount' => (string)$price,
+                    'qpay_command' => $request['command'],
                     'qpay_response' => $response
                 ]
             );
@@ -554,8 +592,8 @@ class QPay implements IPayment
                 $response['message'],
                 IStatus::STATUS_CANCELLED,
                 [
-                    'qpay_amount'   => (string)$price,
-                    'qpay_command'  => $request['command'],
+                    'qpay_amount' => (string)$price,
+                    'qpay_command' => $request['command'],
                     'qpay_response' => $response
                 ]
             );
@@ -573,7 +611,7 @@ class QPay implements IPayment
      */
     protected function computeFingerprint(array $params)
     {
-        $data   = implode('', $params);
+        $data = implode('', $params);
         $result = null;
 
         switch ($this->hashAlgorithm) {
@@ -652,5 +690,65 @@ class QPay implements IPayment
     public function getPaymentType()
     {
         return $this->paymenttype;
+    }
+
+    public function applyRecurringPaymentCondition(Concrete $orders, $additionalParameters = [])
+    {
+        $providerBrickName = "PaymentProvider{$this->getName()}";
+        $orders->addObjectbrick($providerBrickName);
+
+        $orders->addConditionParam("{$providerBrickName}.auth_orderNumber IS NOT NULL");
+        /* recurring payment possible for 400 days */
+        $orders->addConditionParam("FROM_UNIXTIME({$providerBrickName}.paymentFinished) > (NOW() - INTERVAL 400 DAY)");
+        /* consider credit card expiry if available */
+        $orders->addConditionParam("({$providerBrickName}.auth_expiry IS NULL OR LAST_DAY(STR_TO_DATE({$providerBrickName}.auth_expiry, '%m/%Y')) >= CURDATE())");
+
+        if ($paymentMethod = $additionalParameters['paymentMethod']) {
+            $orders->addConditionParam("{$providerBrickName}.auth_paymentType = ?", $paymentMethod);
+        }
+
+        $orders->setOrderKey("`{$providerBrickName}`.`paymentFinished`", false);
+        $orders->setOrder('DESC');
+
+        return $orders;
+    }
+
+    /**
+     * The response of a recurring payment may not contain all the data contained in the source order (like paymentmethod, ccard-number, etc)
+     * so it is important to set at least the source order to the current payment brick.
+     *
+     * @param AbstractOrder $sourceOrder
+     * @param mixed $paymentBrick
+     *
+     * @return mixed
+     */
+    public function setRecurringPaymentSourceOrderData(AbstractOrder $sourceOrder, $paymentBrick)
+    {
+        if (method_exists($paymentBrick, 'setSourceOrder')) {
+            $paymentBrick->setSourceOrder($sourceOrder);
+        } else {
+            Logger::err('Could not set source order for performed recurring payment.');
+        }
+
+        $providerDataGetter = 'getPaymentProvider' . $this->getName();
+        $recurringPaymentProperties = $this->getAuthorizedDataProperties();
+
+        $sourceOrderPaymentBrick = $sourceOrder->getPaymentProvider()->{$providerDataGetter}();
+
+        // if no data is provided in current payment brick, set it from the source order
+        foreach ($recurringPaymentProperties as $field) {
+            $setter = 'setAuth_' . $field;
+            $getter = 'getAuth_' . $field;
+
+            if (method_exists($sourceOrderPaymentBrick, $getter)
+                && method_exists($paymentBrick, $setter)
+                && method_exists($paymentBrick, $getter)
+                && empty($paymentBrick->$getter())
+            ) {
+                $paymentBrick->{$setter}($sourceOrderPaymentBrick->{$getter});
+            }
+        }
+
+        return $paymentBrick;
     }
 }

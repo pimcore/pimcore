@@ -21,6 +21,7 @@ use Pimcore\Model;
 
 /**
  * @method \Pimcore\Model\DataObject\Classificationstore\CollectionGroupRelation\Listing\Dao getDao()
+ * @method Model\DataObject\Classificationstore\CollectionGroupRelation[] load()
  */
 class Listing extends Model\Listing\AbstractListing
 {

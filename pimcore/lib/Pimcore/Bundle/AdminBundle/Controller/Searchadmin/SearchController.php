@@ -21,11 +21,12 @@ use Pimcore\Model\DataObject;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
 use Pimcore\Model\Search\Backend\Data;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * @Route("/search")
@@ -34,12 +35,12 @@ class SearchController extends AdminController
 {
     /**
      * @Route("/find")
+     * @Method({"GET", "POST"})
      *
      * @param Request $request
      *
      * @return JsonResponse
      *
-     * @todo: $forbiddenConditions could be undefined
      * @todo: $conditionTypeParts could be undefined
      * @todo: $conditionSubtypeParts could be undefined
      * @todo: $conditionClassnameParts could be undefined
@@ -55,16 +56,8 @@ class SearchController extends AdminController
         $eventDispatcher->dispatch(AdminEvents::SEARCH_LIST_BEFORE_FILTER_PREPARE, $filterPrepareEvent);
 
         $allParams = $filterPrepareEvent->getArgument('requestParams');
-        $user = $this->getAdminUser();
 
-        $query = $allParams['query'];
-        if ($query == '*') {
-            $query = '';
-        }
-
-        $query = str_replace('%', '*', $query);
-        $query = str_replace('@', '#', $query);
-        $query = preg_replace("@([^ ])\-@", '$1 ', $query);
+        $query = $this->filterQueryParam($allParams['query']);
 
         $types = explode(',', $allParams['type']);
         $subtypes = explode(',', $allParams['subtype']);
@@ -84,50 +77,7 @@ class SearchController extends AdminController
         $conditionParts = [];
         $db = \Pimcore\Db::get();
 
-        //exclude forbidden assets
-        if (in_array('asset', $types)) {
-            if (!$user->isAllowed('assets')) {
-                $forbiddenConditions[] = " `type` != 'asset' ";
-            } else {
-                $forbiddenAssetPaths = Element\Service::findForbiddenPaths('asset', $user);
-                if (count($forbiddenAssetPaths) > 0) {
-                    for ($i = 0; $i < count($forbiddenAssetPaths); $i++) {
-                        $forbiddenAssetPaths[$i] = " (maintype = 'asset' AND fullpath not like " . $db->quote($forbiddenAssetPaths[$i] . '%') . ')';
-                    }
-                    $forbiddenConditions[] = implode(' AND ', $forbiddenAssetPaths) ;
-                }
-            }
-        }
-
-        //exclude forbidden documents
-        if (in_array('document', $types)) {
-            if (!$user->isAllowed('documents')) {
-                $forbiddenConditions[] = " `type` != 'document' ";
-            } else {
-                $forbiddenDocumentPaths = Element\Service::findForbiddenPaths('document', $user);
-                if (count($forbiddenDocumentPaths) > 0) {
-                    for ($i = 0; $i < count($forbiddenDocumentPaths); $i++) {
-                        $forbiddenDocumentPaths[$i] = " (maintype = 'document' AND fullpath not like " . $db->quote($forbiddenDocumentPaths[$i] . '%') . ')';
-                    }
-                    $forbiddenConditions[] =  implode(' AND ', $forbiddenDocumentPaths) ;
-                }
-            }
-        }
-
-        //exclude forbidden objects
-        if (in_array('object', $types)) {
-            if (!$user->isAllowed('objects')) {
-                $forbiddenConditions[] = " `type` != 'object' ";
-            } else {
-                $forbiddenObjectPaths = Element\Service::findForbiddenPaths('object', $user);
-                if (count($forbiddenObjectPaths) > 0) {
-                    for ($i = 0; $i < count($forbiddenObjectPaths); $i++) {
-                        $forbiddenObjectPaths[$i] = " (maintype = 'object' AND fullpath not like " . $db->quote($forbiddenObjectPaths[$i] . '%') . ')';
-                    }
-                    $forbiddenConditions[] = implode(' AND ', $forbiddenObjectPaths);
-                }
-            }
-        }
+        $forbiddenConditions = $this->getForbiddenCondition($types);
 
         if ($forbiddenConditions) {
             $conditionParts[] = '(' . implode(' AND ', $forbiddenConditions) . ')';
@@ -365,5 +315,194 @@ class SearchController extends AdminController
         $result = $afterListLoadEvent->getArgument('list');
 
         return $this->adminJson($result);
+    }
+
+    /**
+     * @param array $types
+     *
+     * @return array
+     */
+    protected function getForbiddenCondition($types = ['assets', 'documents', 'objects'])
+    {
+        $user = $this->getAdminUser();
+        $db = \Pimcore\Db::get();
+
+        $forbiddenConditions = [];
+
+        //exclude forbidden assets
+        if (in_array('asset', $types)) {
+            if (!$user->isAllowed('assets')) {
+                $forbiddenConditions[] = " `type` != 'asset' ";
+            } else {
+                $forbiddenAssetPaths = Element\Service::findForbiddenPaths('asset', $user);
+                if (count($forbiddenAssetPaths) > 0) {
+                    for ($i = 0; $i < count($forbiddenAssetPaths); $i++) {
+                        $forbiddenAssetPaths[$i] = " (maintype = 'asset' AND fullpath not like " . $db->quote($forbiddenAssetPaths[$i] . '%') . ')';
+                    }
+                    $forbiddenConditions[] = implode(' AND ', $forbiddenAssetPaths) ;
+                }
+            }
+        }
+
+        //exclude forbidden documents
+        if (in_array('document', $types)) {
+            if (!$user->isAllowed('documents')) {
+                $forbiddenConditions[] = " `type` != 'document' ";
+            } else {
+                $forbiddenDocumentPaths = Element\Service::findForbiddenPaths('document', $user);
+                if (count($forbiddenDocumentPaths) > 0) {
+                    for ($i = 0; $i < count($forbiddenDocumentPaths); $i++) {
+                        $forbiddenDocumentPaths[$i] = " (maintype = 'document' AND fullpath not like " . $db->quote($forbiddenDocumentPaths[$i] . '%') . ')';
+                    }
+                    $forbiddenConditions[] =  implode(' AND ', $forbiddenDocumentPaths) ;
+                }
+            }
+        }
+
+        //exclude forbidden objects
+        if (in_array('object', $types)) {
+            if (!$user->isAllowed('objects')) {
+                $forbiddenConditions[] = " `type` != 'object' ";
+            } else {
+                $forbiddenObjectPaths = Element\Service::findForbiddenPaths('object', $user);
+                if (count($forbiddenObjectPaths) > 0) {
+                    for ($i = 0; $i < count($forbiddenObjectPaths); $i++) {
+                        $forbiddenObjectPaths[$i] = " (maintype = 'object' AND fullpath not like " . $db->quote($forbiddenObjectPaths[$i] . '%') . ')';
+                    }
+                    $forbiddenConditions[] = implode(' AND ', $forbiddenObjectPaths);
+                }
+            }
+        }
+
+        return $forbiddenConditions;
+    }
+
+    /**
+     * @param string $query
+     *
+     * @return string
+     */
+    protected function filterQueryParam(string $query)
+    {
+        if ($query == '*') {
+            $query = '';
+        }
+
+        $query = str_replace('%', '*', $query);
+        $query = str_replace('@', '#', $query);
+        $query = preg_replace("@([^ ])\-@", '$1 ', $query);
+
+        $query = str_replace(['<', '>', '(', ')', '~'], ' ', $query);
+
+        // it is not allowed to have * behind another *
+        $query = preg_replace('#[*]+#', '*', $query);
+
+        return $query;
+    }
+
+    /**
+     * @Route("/quicksearch")
+     * @Method({"GET"})
+     *
+     * @param Request $request
+     *
+     * @return JsonResponse
+     */
+    public function quicksearchAction(Request $request, EventDispatcherInterface $eventDispatcher)
+    {
+        $query = $this->filterQueryParam($request->get('query'));
+        if (strpos($query, '*') === false) {
+            $query = $query . '*';
+        }
+        $db = \Pimcore\Db::get();
+        $searcherList = new Data\Listing();
+
+        $conditionParts = [];
+
+        $forbiddenConditions = $this->getForbiddenCondition();
+        if ($forbiddenConditions) {
+            $conditionParts[] = '(' . implode(' AND ', $forbiddenConditions) . ')';
+        }
+
+        $conditionParts[] = '( MATCH (`data`,`properties`) AGAINST (' . $db->quote($query) . " IN BOOLEAN MODE) AND type != 'folder') ";
+
+        $queryCondition = implode(' AND ', $conditionParts);
+
+        $searcherList->setCondition($queryCondition);
+        $searcherList->setLimit(50);
+
+        $beforeListLoadEvent = new GenericEvent($this, [
+            'list' => $searcherList,
+            'query' => $query
+        ]);
+        $eventDispatcher->dispatch(AdminEvents::QUICKSEARCH_LIST_BEFORE_LIST_LOAD, $beforeListLoadEvent);
+        $searcherList = $beforeListLoadEvent->getArgument('list');
+
+        $hits = $searcherList->load();
+
+        $elements = [];
+        foreach ($hits as $hit) {
+            $element = Element\Service::getElementById($hit->getId()->getType(), $hit->getId()->getId());
+            if ($element->isAllowed('list')) {
+                $data = [
+                    'id' => $element->getId(),
+                    'type' => $hit->getId()->getType(),
+                    'subtype' => $element->getType(),
+                    'className' => ($element instanceof DataObject\Concrete) ? $element->getClassName() : '',
+                    'fullpath' => htmlspecialchars($element->getFullPath()),
+                    'fullpathList' => htmlspecialchars($this->shortenPath($element->getFullPath())),
+                    'iconCls' => 'pimcore_icon_asset_default'
+                ];
+
+                if ($element instanceof Asset) {
+                    $data['iconCls'] .= ' pimcore_icon_' . \Pimcore\File::getFileExtension($element->getFilename());
+                } else {
+                    $data['iconCls'] .= ' pimcore_icon_' . $element->getType();
+                }
+
+                $data['preview'] = $this->renderView('PimcoreAdminBundle:SearchAdmin/Search/Quicksearch:' . $hit->getId()->getType() . '.html.php', [
+                    'element' => $element,
+                    'iconCls' => $data['iconCls']
+                ]);
+
+                $elements[] = $data;
+            }
+        }
+
+        $afterListLoadEvent = new GenericEvent($this, [
+            'list' => $elements,
+            'context' => $query
+        ]);
+        $eventDispatcher->dispatch(AdminEvents::QUICKSEARCH_LIST_AFTER_LIST_LOAD, $afterListLoadEvent);
+        $elements = $afterListLoadEvent->getArgument('list');
+
+        $result = ['data' => $elements, 'success' => true];
+
+        return $this->adminJson($result);
+    }
+
+    /**
+     * @param $path
+     *
+     * @return string
+     */
+    protected function shortenPath($path)
+    {
+        $parts = explode('/', trim($path, '/'));
+        $count = count($parts) - 1;
+
+        for ($i=$count; $i >= 0; $i--) {
+            $shortPath = '/' . implode('/', array_unique($parts));
+            if (strlen($shortPath) <= 50 || $i === 0) {
+                break;
+            }
+            array_splice($parts, $i - 1, 1, '...');
+        }
+
+        if (strlen($shortPath) > 50) {
+            $shortPath = substr($shortPath, 0, 47) . '...';
+        }
+
+        return $shortPath;
     }
 }

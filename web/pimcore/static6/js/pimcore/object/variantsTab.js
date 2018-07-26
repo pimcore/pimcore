@@ -116,7 +116,7 @@ pimcore.object.variantsTab = Class.create(pimcore.object.helpers.gridTabAbstract
             items: [
                 {
                     tooltip: t('open'),
-                    icon: "/pimcore/static6/img/flat-color-icons/cursor.svg",
+                    icon: "/pimcore/static6/img/flat-color-icons/open_file.svg",
                     handler: function (grid, rowIndex) {
                         var data = grid.getStore().getAt(rowIndex);
                         pimcore.helpers.openObject(data.id, "variant");
@@ -135,7 +135,7 @@ pimcore.object.variantsTab = Class.create(pimcore.object.helpers.gridTabAbstract
                     icon: "/pimcore/static6/img/flat-color-icons/delete.svg",
                     handler: function (grid, rowIndex) {
                         var data = grid.getStore().getAt(rowIndex);
-                        Ext.MessageBox.confirm(t('remove_variant'), t('remove_variant_text'),
+                        Ext.MessageBox.confirm(' ', t('delete_message'),
                                                     this.doDeleteVariant.bind(this, data.id), this);
                     }.bind(this)
                 }
@@ -185,7 +185,7 @@ pimcore.object.variantsTab = Class.create(pimcore.object.helpers.gridTabAbstract
         var hideSaveColumnConfig = !fromConfig;
 
         this.saveColumnConfigButton = new Ext.Button({
-            tooltip: t('save_column_configuration'),
+            tooltip: t('save_grid_options'),
             iconCls: "pimcore_icon_publish",
             hidden: hideSaveColumnConfig,
             handler: function () {
@@ -194,7 +194,7 @@ pimcore.object.variantsTab = Class.create(pimcore.object.helpers.gridTabAbstract
         });
 
         this.columnConfigButton = new Ext.SplitButton({
-            text: t('grid_column_config'),
+            text: t('grid_options'),
             iconCls: "pimcore_icon_table_col pimcore_icon_overlay_edit",
             handler: function () {
                 this.openColumnConfig();
@@ -308,12 +308,13 @@ pimcore.object.variantsTab = Class.create(pimcore.object.helpers.gridTabAbstract
         if (button == "ok") {
             Ext.Ajax.request({
                 url: "/admin/variants/update-key",
+                method: 'PUT',
                 params: {id: id, key: value},
                 success: function (response) {
                     this.store.reload();
                     var responseJson = Ext.decode(response.responseText);
                     if (!responseJson.success) {
-                        pimcore.helpers.showNotification(t("error"), t("error_renaming_variant"), "error",
+                        pimcore.helpers.showNotification(t("error"), t("error_renaming_item"), "error",
                             t(responseJson.message));
                     }
                 }.bind(this)
@@ -323,13 +324,14 @@ pimcore.object.variantsTab = Class.create(pimcore.object.helpers.gridTabAbstract
 
 
     onAdd: function (btn, ev) {
-        Ext.MessageBox.prompt(t('add_variant'), t('please_enter_the_name_of_the_new_variant'), this.doAdd.bind(this));
+        Ext.MessageBox.prompt(t('add_variant'), t('enter_the_name_of_the_new_item'), this.doAdd.bind(this));
     },
 
     doAdd: function (button, value) {
         if (button == "ok") {
             Ext.Ajax.request({
                 url: "/admin/object/add",
+                method: 'POST',
                 params: {
                     className: this.element.data.general.o_className,
                     classId: this.element.data.general.o_classId,
@@ -345,7 +347,7 @@ pimcore.object.variantsTab = Class.create(pimcore.object.helpers.gridTabAbstract
 
                         pimcore.elementservice.refreshNodeAllTrees("object", this.element.id);
                     } else {
-                        pimcore.helpers.showNotification(t("error"), t("error_creating_variant"), "error",
+                        pimcore.helpers.showNotification(t("error"), t("failed_to_create_new_item"), "error",
                             t(responseJson.message));
                     }
                 }.bind(this)
@@ -363,6 +365,7 @@ pimcore.object.variantsTab = Class.create(pimcore.object.helpers.gridTabAbstract
 
             Ext.Ajax.request({
                 url: "/admin/object/delete",
+                method: 'DELETE',
                 params: {
                     id: id
                 },
@@ -371,11 +374,11 @@ pimcore.object.variantsTab = Class.create(pimcore.object.helpers.gridTabAbstract
                         //Ext.get(this.getUI().getIconEl()).dom.setAttribute("class", this.originalClass);
                         var rdata = Ext.decode(response.responseText);
                         if (rdata && !rdata.success) {
-                            pimcore.helpers.showNotification(t("error"), t("error_deleting_variant"), "error",
+                            pimcore.helpers.showNotification(t("error"), t("error_deleting_item"), "error",
                                 t(rdata.message));
                         }
                     } catch (e) {
-                        pimcore.helpers.showNotification(t("error"), t("error_deleting_variant"), "error");
+                        pimcore.helpers.showNotification(t("error"), t("error_deleting_item"), "error");
                     }
                     this.store.reload();
                     pimcore.elementservice.refreshNodeAllTrees("object", this.element.id);

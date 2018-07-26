@@ -14,7 +14,7 @@
 pimcore.registerNS("pimcore.object.klass");
 pimcore.object.klass = Class.create({
 
-    forbiddennames: ["abstract","class","data","folder","list","permissions","resource","concrete","interface",
+    forbiddennames: ["abstract", "class", "data", "folder", "list", "permissions", "resource", "concrete", "interface",
         "service", "fieldcollection", "localizedfield", "objectbrick"],
 
 
@@ -32,7 +32,7 @@ pimcore.object.klass = Class.create({
                 iconCls: "pimcore_icon_class",
                 border: false,
                 layout: "border",
-                closable:true,
+                closable: true,
                 items: [this.getClassTree(), this.getEditPanel()]
             });
 
@@ -64,7 +64,8 @@ pimcore.object.klass = Class.create({
 
                     },
                     extraParams: {
-                        grouped: 1
+                        grouped: 1,
+                        withId: 1
                     }
                 }
             });
@@ -74,10 +75,10 @@ pimcore.object.klass = Class.create({
                 id: "pimcore_panel_classes_tree",
                 store: this.store,
                 region: "west",
-                autoScroll:true,
-                animate:false,
+                autoScroll: true,
+                animate: false,
                 containerScroll: true,
-                width: 200,
+                width: 250,
                 split: true,
                 root: {
                     id: '0'
@@ -87,9 +88,9 @@ pimcore.object.klass = Class.create({
                 tbar: {
                     items: [
                         {
-                            text: t("add_class"),
+                            text: t("add"),
                             iconCls: "pimcore_icon_class pimcore_icon_overlay_add",
-                            handler: this.addClass.bind(this)
+                            handler: this.suggestIdentifier.bind(this)
                         }
                     ]
                 }
@@ -101,6 +102,20 @@ pimcore.object.klass = Class.create({
         }
 
         return this.tree;
+    },
+
+    suggestIdentifier: function() {
+        Ext.Ajax.request({
+            url: "/admin/class/suggest-class-identifier",
+            params: {
+            },
+            success: function (response) {
+
+                var classes = Ext.decode(response.responseText);
+                this.addClass(classes);
+            }.bind(this)
+        });
+
     },
 
     getEditPanel: function () {
@@ -123,29 +138,15 @@ pimcore.object.klass = Class.create({
 
     getTreeNodeListeners: function () {
         var treeNodeListeners = {
-            'itemclick' : this.onTreeNodeClick.bind(this),
-            "itemcontextmenu": this.onTreeNodeContextmenu.bind(this),
-            'beforeitemappend': function (thisNode, newChildNode, index, eOpts) {
-                //TODO temporary, until changed on server side
-                if (newChildNode.data.qtipCfg) {
-                    if (newChildNode.data.qtipCfg.title) {
-                        newChildNode.data.qtitle = newChildNode.data.qtipCfg.title;
-                    }
-                    if (newChildNode.data.qtipCfg.text) {
-                        newChildNode.data.qtip = newChildNode.data.qtipCfg.text;
-                    } else {
-                        newChildNode.data.qtip = ts(newChildNode.data.text);
-                    }
-                }
-            }
-
+            'itemclick': this.onTreeNodeClick.bind(this),
+            "itemcontextmenu": this.onTreeNodeContextmenu.bind(this)
         };
 
         return treeNodeListeners;
     },
 
-    onTreeNodeClick: function (tree, record, item, index, e, eOpts ) {
-        if(!record.isLeaf()) {
+    onTreeNodeClick: function (tree, record, item, index, e, eOpts) {
+        if (!record.isLeaf()) {
             return;
         }
 
@@ -153,12 +154,12 @@ pimcore.object.klass = Class.create({
     },
 
     openClass: function (id) {
-        if(Ext.getCmp("pimcore_class_editor_panel_" + id)) {
+        if (Ext.getCmp("pimcore_class_editor_panel_" + id)) {
             this.getEditPanel().setActiveTab(Ext.getCmp("pimcore_class_editor_panel_" + id));
             return;
         }
 
-        if (id > 0) {
+        if (id && id.length > 0) {
             Ext.Ajax.request({
                 url: "/admin/class/get",
                 params: {
@@ -182,11 +183,11 @@ pimcore.object.klass = Class.create({
         pimcore.layout.refresh();
     },
 
-    onTreeNodeContextmenu: function (tree, record, item, index, e, eOpts ) {
+    onTreeNodeContextmenu: function (tree, record, item, index, e, eOpts) {
         e.stopEvent();
         tree.select();
 
-        if(!record.isLeaf()) {
+        if (!record.isLeaf()) {
             return;
         }
 
@@ -202,51 +203,121 @@ pimcore.object.klass = Class.create({
         menu.showAt(e.pageX, e.pageY);
     },
 
-    addClass: function () {
-        Ext.MessageBox.prompt(t('add_class'), t('enter_the_name_of_the_new_class'), this.addClassComplete.bind(this),
-            null, null, "");
+    addClass: function (classes) {
+
+        var suggestedIdentifier = classes["suggestedIdentifier"];
+        var nameField = new Ext.form.field.Text(
+            {
+                fieldLabel: 'Class name',
+                labelWidth: 200
+            }
+        );
+
+        var identifierField = new Ext.form.field.Text({
+            fieldLabel: t('class_identifier'),
+            labelWidth: 200,
+            maxLength: 20,
+            value: suggestedIdentifier
+        });
+
+        this.win = new Ext.Window({
+            title: t('enter_the_name_of_the_new_item'),
+            width: 400,
+            height: 250,
+            draggable: false,
+            border: false,
+            modal: true,
+            bodyStyle: "padding: 10px;",
+            resizable: true,
+            buttonAlign: 'center',
+            items: [
+                nameField,
+                identifierField, {
+                    xtype: 'panel',
+                    html: t('class_identifier_warning')
+                }
+            ],
+            buttons: [
+                {
+                    xtype: 'button',
+                    text: t('cancel'),
+                    iconCls: 'pimcore_icon_cancel',
+                    handler: function () {
+                        this.win.close();
+
+                    }.bind(this)
+                },
+                {
+                    xtype: 'button',
+                    text: t('OK'),
+                    iconCls: 'pimcore_icon_save',
+                    handler: function ( nameField, identifierField, classes, button) {
+                        if (this.addClassComplete(nameField.getValue(), identifierField.getValue(), classes)) {
+                            this.win.close();
+                        }
+                    }.bind(this, nameField, identifierField, classes)
+                }
+            ]
+        })
+        this.win.show();
+        nameField.focus();
+
     },
 
-    addClassComplete: function (button, value, object) {
+    addClassComplete: function (className, classIdentifier, classes) {
 
-        var regresult = value.match(/[a-zA-Z][a-zA-Z0-9]+/);
+        var classNameRegresult = className.match(/[a-zA-Z][a-zA-Z0-9]+/);
 
-        if (button == "ok" && value.length > 2 && regresult == value
-            && !in_array(value.toLowerCase(), this.forbiddennames)) {
-            Ext.Ajax.request({
-                url: "/admin/class/add",
-                params: {
-                    name: value
-                },
-                success: function (response) {
-
-                    this.tree.getStore().load();
-
-                    // update object type store
-                    pimcore.globalmanager.get("object_types_store").reload();
-                    pimcore.globalmanager.get("object_types_store_create").reload();
-
-                    var data = Ext.decode(response.responseText);
-                    if(data && data.success) {
-                        this.openClass(data.id);
-                    }
-                }.bind(this)
-            });
+        if (className.length <= 2 || classNameRegresult != className
+            || in_array(className.toLowerCase(), this.forbiddennames)) {
+            Ext.Msg.alert(' ', t('invalid_class_name'));
+            return false;
         }
-        else if (button == "cancel") {
-            return;
+
+        var classIdentifierRegresult = classIdentifier.match(/[a-zA-Z0-9]+/);
+        if (classIdentifier.length < 1 || classIdentifierRegresult != classIdentifier) {
+            Ext.Msg.alert(' ', t('invalid_class_identifier'));
+            return false;
         }
-        else {
-            Ext.Msg.alert(t('add_class'), t('invalid_class_name'));
+
+        if (in_array(classIdentifier.toLowerCase(), classes["existingIds"])) {
+            Ext.Msg.alert(' ', t('class_identifier_already_exists'));
+            return false;
         }
+
+        Ext.Ajax.request({
+            url: "/admin/class/add",
+            method: "POST",
+            params: {
+                className: className,
+                classIdentifier: classIdentifier
+            },
+            success: function (response) {
+
+                this.tree.getStore().load();
+
+                // update object type store
+                pimcore.globalmanager.get("object_types_store").reload();
+                pimcore.globalmanager.get("object_types_store_create").reload();
+
+                var data = Ext.decode(response.responseText);
+                if (data && data.success) {
+                    this.openClass(data.id);
+                }
+            }.bind(this)
+        });
+
+        return true;
+
     },
 
     deleteClass: function (tree, record) {
 
-        Ext.Msg.confirm(t('delete'), t('delete_message'), function(btn){
-            if (btn == 'yes'){
+        Ext.Msg.confirm(t('delete'), t('delete_message'), function (btn) {
+            if (btn == 'yes') {
                 Ext.Ajax.request({
                     url: "/admin/class/delete",
+                    method: 'DELETE',
                     params: {
                         id: record.data.id
                     },

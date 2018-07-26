@@ -133,6 +133,7 @@ services:
         - '@pimcore.custom_report.adapter.factories'
 
     pimcore.newsletter.address_source_adapter.factories:
+        public: true
         class: Symfony\Component\DependencyInjection\ServiceLocator
         tags: ['container.service_locator']
 
@@ -152,3 +153,8 @@ services:
         class: Symfony\Component\DependencyInjection\ServiceLocator
         public: true
         tags: ['container.service_locator']
+
+
+    # DataObject Consent Service
+    Pimcore\DataObject\Consent\Service:
+        public: true

@@ -23,17 +23,17 @@ pimcore.object.helpers.layout = {
     getAllowedTypes : function (source) {
         // specify which childs a layout can have
         var allowedTypes = {
-            accordion: ["panel","region","tabpanel","text"],
-            fieldset: ["data","text"],
-            fieldcontainer: ["data","text"],
-            panel: ["data","region","tabpanel","button","accordion","fieldset", "fieldcontainer","panel","text","html"],
-            region: ["panel","accordion","tabpanel","text","localizedfields"],
-            tabpanel: ["panel", "region", "accordion","text","localizedfields"],
+            accordion: ["panel","region","tabpanel","text","iframe"],
+            fieldset: ["data","text","iframe"],
+            fieldcontainer: ["data","text","iframe"],
+            panel: ["data","region","tabpanel","button","accordion","fieldset", "fieldcontainer","panel","text","html", "iframe"],
+            region: ["panel","accordion","tabpanel","text","localizedfields","iframe"],
+            tabpanel: ["panel", "region", "accordion","text","localizedfields","iframe"],
             button: [],
             text: [],
-            root: ["panel","region","tabpanel","accordion","text"],
-            localizedfields: ["panel","tabpanel","accordion","fieldset", "fieldcontainer", "text","region","button"],
-            block: ["panel","tabpanel","accordion","fieldset", "fieldcontainer", "text","region","button"]
+            root: ["panel","region","tabpanel","accordion","text","iframe"],
+            localizedfields: ["panel","tabpanel","accordion","fieldset", "fieldcontainer", "text","region","button","iframe"],
+            block: ["panel","tabpanel","accordion","fieldset", "fieldcontainer", "text","region","button","iframe"]
         };
 
         pimcore.plugin.broker.fireEvent("prepareClassLayoutContextMenu", allowedTypes, source);

@@ -25,9 +25,15 @@ pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, 
         this.fieldConfig = fieldConfig;
 
         var classStore = pimcore.globalmanager.get("object_types_store");
-        var className = classStore.getById(fieldConfig.allowedClassId);
+        var classIdx = classStore.findExact("text", fieldConfig.allowedClassId);
+        var classNameText;
+        if (classIdx >= 0) {
+            var classRecord = classStore.getAt(classIdx);
+            classNameText = classRecord.data.text;
+        } else {
+            classNameText = "";
+        }
 
-        var classNameText = className ? className.data.text : '';
         this.fieldConfig.classes = [{classes: classNameText, id: fieldConfig.allowedClassId}];
 
         if (data) {
@@ -121,16 +127,18 @@ pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, 
                 width = this.fieldConfig.columns[i].width;
             }
 
-            var editor = null;
             var cellEditor = null;
             var renderer = null;
             var listeners = null;
 
             if (this.fieldConfig.columns[i].type == "number" && !readOnly) {
-                editor = new Ext.form.NumberField({});
-
+                cellEditor = function() {
+                    return new Ext.form.NumberField({});
+                }.bind();
             } else if (this.fieldConfig.columns[i].type == "text" && !readOnly) {
-                editor = new Ext.form.TextField({});
+                cellEditor = function() {
+                    return new Ext.form.TextField({});
+                };
             } else if (this.fieldConfig.columns[i].type == "select" && !readOnly) {
                var selectData = [];
 
@@ -142,23 +150,27 @@ pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, 
                     }
                 }
 
-                editor = new Ext.form.ComboBox({
-                    typeAhead: true,
-                    forceSelection: true,
-                    triggerAction: 'all',
-                    lazyRender: true,
-                    mode: 'local',
+                cellEditor = function(selectData) {
+                    return new Ext.form.ComboBox({
+                        typeAhead: true,
+                        queryDelay: 0,
+                        queryMode: "local",
+                        forceSelection: true,
+                        triggerAction: 'all',
+                        lazyRender: false,
+                        mode: 'local',
 
-                    store: new Ext.data.ArrayStore({
-                        fields: [
-                            'value',
-                            'label'
-                        ],
-                        data: selectData
-                    }),
-                    valueField: 'value',
-                    displayField: 'label'
-                });
+                        store: new Ext.data.ArrayStore({
+                            fields: [
+                                'value',
+                                'label'
+                            ],
+                            data: selectData
+                        }),
+                        valueField: 'value',
+                        displayField: 'label'
+                    });
+                }.bind(this, selectData);
             } else if(this.fieldConfig.columns[i].type == "multiselect" && !readOnly) {
                 cellEditor =  function(fieldInfo) {
                     return new pimcore.object.helpers.metadataMultiselectEditor({
@@ -198,9 +210,7 @@ pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, 
                 sortable: true,
                 width: width
             };
-            if (editor) {
-                columnConfig.editor = editor;
-            }
+
             if (cellEditor) {
                 columnConfig.getEditor = cellEditor;
             }
@@ -255,7 +265,7 @@ pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, 
             items: [
                 {
                     tooltip: t('open'),
-                    icon: "/pimcore/static6/img/flat-color-icons/cursor.svg",
+                    icon: "/pimcore/static6/img/flat-color-icons/open_file.svg",
                     handler: function (grid, rowIndex) {
                         var data = grid.getStore().getAt(rowIndex);
                         pimcore.helpers.openObject(data.data.id, "object");
@@ -285,7 +295,23 @@ pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, 
 
 
         this.cellEditing = Ext.create('Ext.grid.plugin.CellEditing', {
-            clicksToEdit: 1
+            clicksToEdit: 1,
+            listeners: {
+                beforeedit: function (editor, context, eOpts) {
+                    editor.editors.each(function (e) {
+                        try {
+                            // complete edit, so the value is stored when hopping around with TAB
+                            e.completeEdit();
+                            Ext.destroy(e);
+                        } catch (exception) {
+                            // garbage collector was faster
+                            // already destroyed
+                        }
+                    });
+
+                    editor.editors.clear();
+                }
+            }
         });
 
 
@@ -473,11 +499,11 @@ pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, 
         var classname = data.className;
 
         var classStore = pimcore.globalmanager.get("object_types_store");
-        var classId = classStore.getAt(classStore.findExact("text", classname));
+        var classRecord = classStore.getAt(classStore.findExact("text", classname));
         var isAllowedClass = false;
 
-        if (classId) {
-            if (this.fieldConfig.allowedClassId == classId.id) {
+        if (classRecord) {
+            if (this.fieldConfig.allowedClassId == classRecord.data.text) {
                 isAllowedClass = true;
             }
         }

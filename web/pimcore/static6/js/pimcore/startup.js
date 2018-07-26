@@ -264,6 +264,9 @@ Ext.onReady(function () {
         }
     });
 
+    var user = new pimcore.user(pimcore.currentuser);
+    pimcore.globalmanager.add("user", user);
+
     var docTypesUrl = '/admin/document/doc-types?';
     // document types
     Ext.define('pimcore.model.doctypes', {
@@ -304,15 +307,17 @@ Ext.onReady(function () {
         }
     });
 
-    var store = new Ext.data.Store({
-        id: 'doctypes',
-        model: 'pimcore.model.doctypes',
-        remoteSort: false,
-        autoSync: true,
-        autoLoad: true
-    });
+    if (user.isAllowed("documents")) {
+        var store = new Ext.data.Store({
+            id: 'doctypes',
+            model: 'pimcore.model.doctypes',
+            remoteSort: false,
+            autoSync: true,
+            autoLoad: true
+        });
 
-    pimcore.globalmanager.add("document_types_store", store);
+        pimcore.globalmanager.add("document_types_store", store);
+    }
 
     //translation admin keys
     pimcore.globalmanager.add("translations_admin_missing", new Array());
@@ -377,8 +382,6 @@ Ext.onReady(function () {
 
     pimcore.globalmanager.add("perspective", new pimcore.perspective(pimcore.settings.perspective));
 
-    // current user
-    pimcore.globalmanager.add("user", new pimcore.user(pimcore.currentuser));
 
     //pimcore languages
     Ext.define('pimcore.model.languages', {
@@ -481,8 +484,6 @@ Ext.onReady(function () {
 
     // init general layout
     try {
-        var user = pimcore.globalmanager.get("user");
-
         pimcore.viewport = Ext.create('Ext.container.Viewport', {
             id: "pimcore_viewport",
             layout: 'fit',
@@ -498,16 +499,19 @@ Ext.onReady(function () {
                             {
                                 region: 'west',
                                 id: 'pimcore_panel_tree_left',
+                                cls: 'pimcore_main_accordion',
                                 split: true,
                                 width: 300,
                                 minSize: 175,
                                 collapsible: true,
                                 collapseMode: 'header',
+                                hideCollapseTool: true,
                                 animCollapse: false,
-                                layout: 'accordion',
-                                layoutConfig: {
-                                    animate: false
+                                layout: {
+                                    type: 'accordion',
+                                    hideCollapseTool: true
                                 },
+                                header: false,
                                 hidden: true,
                                 forceLayout: true,
                                 hideMode: "offsets",
@@ -538,16 +542,18 @@ Ext.onReady(function () {
                         {
                             region: 'east',
                             id: 'pimcore_panel_tree_right',
-                            cls: "pimcore_panel_tree",
+                            cls: "pimcore_main_accordion",
                             split: true,
                             width: 300,
                             minSize: 175,
                             collapsible: true,
                             collapseMode: 'header',
                             collapsed: false,
+                            hideCollapseTool: true,
                             animCollapse: false,
                             layout: 'accordion',
                             hidden: true,
+                            header: false,
                             layoutConfig: {
                                 animate: false
                             },
@@ -583,6 +589,16 @@ Ext.onReady(function () {
 
                     el.getEl().dom.addEventListener("dragenter", fn, true);
                     el.getEl().dom.addEventListener("dragover", fn, true);
+
+                    // open "My Profile" when clicking on avatar
+                    Ext.get("pimcore_avatar").on("click", function (ev) {
+                        try {
+                            pimcore.globalmanager.get("profile").activate();
+                        }
+                        catch (e) {
+                            pimcore.globalmanager.add("profile", new pimcore.settings.profile.panel());
+                        }
+                    });
                 }
             }
         });
@@ -602,6 +618,12 @@ Ext.onReady(function () {
         var perspective = pimcore.globalmanager.get("perspective");
         var elementTree = perspective.getElementTree();
 
+        var locateConfigs = {
+            document: [],
+            asset: [],
+            object: []
+        }
+
         for (var i = 0; i < elementTree.length; i++) {
 
             var treeConfig = elementTree[i];
@@ -610,12 +632,14 @@ Ext.onReady(function () {
             var expanded = treeConfig["expanded"];
             var treepanel = null;
             var tree = null;
+            var treetype = null;
 
             var locateKey = "layout_" + type + "_locateintree_tree";
 
             switch (type) {
                 case "documents":
                     if (user.isAllowed("documents") && !treeConfig.hidden) {
+                        treetype = "document";
                         tree = new pimcore.document.tree(null, treeConfig);
                         pimcore.globalmanager.add("layout_document_tree", tree);
                         treepanel = Ext.getCmp("pimcore_panel_tree_" + side);
@@ -624,6 +648,7 @@ Ext.onReady(function () {
                     break;
                 case "assets":
                     if (user.isAllowed("assets") && !treeConfig.hidden) {
+                        treetype = "asset";
                         tree = new pimcore.asset.tree(null, treeConfig);
                         pimcore.globalmanager.add("layout_asset_tree", tree);
                         treepanel = Ext.getCmp("pimcore_panel_tree_" + side);
@@ -632,6 +657,7 @@ Ext.onReady(function () {
                     break;
                 case "objects":
                     if (user.isAllowed("objects")) {
+                        treetype = "object";
                         if (!treeConfig.hidden) {
                             treepanel = Ext.getCmp("pimcore_panel_tree_" + side);
                             tree = new pimcore.object.tree(null, treeConfig);
@@ -642,7 +668,7 @@ Ext.onReady(function () {
                     break;
                 case "customview":
                     if (!treeConfig.hidden) {
-                        var treetype = treeConfig.treetype ? treeConfig.treetype : "object";
+                        treetype = treeConfig.treetype ? treeConfig.treetype : "object";
                         locateKey = "layout_" + treetype + "s_locateintree_tree";
 
                         if (user.isAllowed(treetype + "s")) {
@@ -672,10 +698,20 @@ Ext.onReady(function () {
                     break;
             }
 
-            if (!pimcore.globalmanager.get(locateKey)) {
-                pimcore.globalmanager.add(locateKey, tree);
+
+            if (tree && treetype) {
+                locateConfigs[treetype].push({
+                    key: locateKey,
+                    side: side,
+                    tree: tree
+                }
+                );
+
             }
+            
         }
+        pimcore.globalmanager.add("tree_locate_configs", locateConfigs);
+
     }
     catch (e) {
         console.log(e);
@@ -704,6 +740,127 @@ Ext.onReady(function () {
     pimcore.layout.treepanelmanager.startup();
 
     pimcore.helpers.registerKeyBindings(document);
+
+
+    if(pimcore.settings.twoFactorSetupRequired) {
+        Ext.Msg.show({
+            title: t('setup_two_factor'),
+            message: t('2fa_setup_message'),
+            buttons: Ext.Msg.OK,
+            icon: Ext.Msg.INFO,
+            fn: function(btn) {
+                pimcore.settings.profile.twoFactorSettings.prototype.openSetupWindow();
+            }
+        });
+    }
+
+    // Quick Search
+    var quicksearchMap = new Ext.util.KeyMap({
+        target: document,
+        binding: [{
+            key:  Ext.event.Event.ESC,
+            fn: function () {
+                pimcore.helpers.hideQuickSearch();
+            }
+        }, {
+            key: Ext.event.Event.SPACE,
+            ctrl: true,
+            fn: function () {
+                pimcore.helpers.showQuickSearch();
+            }
+        }]
+    });
+
+    var quicksearchStore = new Ext.data.Store({
+        proxy: {
+            type: 'ajax',
+            url: '/admin/search/search/quicksearch',
+            reader: {
+                type: 'json',
+                rootProperty: 'data'
+            }
+        },
+        listeners: {
+            "beforeload": function () {
+                var previewEl = Ext.get('pimcore_quicksearch_preview');
+                if(previewEl) {
+                    previewEl.setHtml('');
+                }
+            }
+        },
+        fields: ["id", 'type', "subtype", "className", "fullpath"]
+    });
+
+    var quickSearchTpl = new Ext.XTemplate(
+        '<tpl for=".">',
+            '<li role="option" unselectable="on" class="x-boundlist-item">' +
+                '<div class="list-icon {iconCls}"></div>' +
+                '<div class="list-path" title="{fullpath}">{fullpathList}</div>' +
+            '</li>',
+        '</tpl>'
+    );
+
+    var quicksearchContainer = Ext.get('pimcore_quicksearch');
+    var quickSearchCombo = Ext.create('Ext.form.ComboBox', {
+        width: 900,
+        hideTrigger: true,
+        border: false,
+        shadow: false,
+        tpl: quickSearchTpl,
+        listConfig: {
+            shadow: false,
+            border: false,
+            cls: 'pimcore_quicksearch_picker',
+            navigationModel: 'quicksearch.boundlist',
+            listeners: {
+                "highlightitem": function (view, node, opts) {
+                    var record = quicksearchStore.getAt(node.dataset.recordindex);
+                    var previewHtml = record.get('preview');
+                    if(!previewHtml) {
+                        previewHtml = '<div class="no_preview">' + t('preview_not_available') + '</div>';
+                    }
+
+                    Ext.get('pimcore_quicksearch_preview').setHtml(previewHtml);
+                }
+            }
+        },
+        id: 'quickSearchCombo',
+        store: quicksearchStore,
+        loadingText: t('searching'),
+        queryDelay: 100,
+        minChars: 4,
+        renderTo: quicksearchContainer,
+        enableKeyEvents: true,
+        displayField: 'fullpath',
+        valueField: "id",
+        typeAhead: true,
+        listeners: {
+            "expand": function (combo) {
+                if(!document.getElementById('pimcore_quicksearch_preview')) {
+                    combo.getPicker().getEl().insertHtml('beforeEnd', '<div id="pimcore_quicksearch_preview"></div>');
+                }
+            },
+            "keyup": function (field) {
+                if(field.getValue()) {
+                    quicksearchContainer.addCls('filled');
+                }
+            },
+            "select": function (combo, record, index) {
+                pimcore.helpers.openElement(record.get('id'), record.get('type'), record.get('subtype'));
+                pimcore.helpers.hideQuickSearch();
+            }
+        }
+    });
+
+    Ext.getBody().on('click', function (event) {
+        // hide on click outside
+        if(!quicksearchContainer.isAncestor(event.target)) {
+            var pickerEl = quickSearchCombo.getPicker().getEl();
+            if(!pickerEl || !pickerEl.isAncestor(event.target)) {
+                pimcore.helpers.hideQuickSearch();
+            }
+        }
+    });
 });
 
 
@@ -720,7 +877,7 @@ pimcore["intervals"]["translations_admin_missing"] = window.setInterval(function
         }
         pimcore.globalmanager.add("translations_admin_missing", new Array());
         Ext.Ajax.request({
-            method: "post",
+            method: "POST",
             url: "/admin/translation/add-admin-translation-keys",
             params: {keys: params}
         });

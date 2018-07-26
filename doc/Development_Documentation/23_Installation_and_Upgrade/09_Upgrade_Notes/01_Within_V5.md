@@ -1,12 +1,88 @@
 # Upgrade Notes for Upgrades within Pimcore 5
 
-## Build 206 (2018-02-19)
+
+## Version 5.3.0
+
+#### Build 289 (2018-07-20)
+The context of the button layout component in objects changed to the edit tab. 
+See [Layout Components](../../05_Objects/01_Object_Classes/03_Layout_Elements/README.md).
+
+#### Build 286 (2018-07-19)
+To the interface `Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\ITracker` the two methods `getAssortmentTenants` and
+`getCheckoutTenants` where added. No action is required, except you have have implemented your own trackers and did not 
+extend them from the abstract `Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\Tracker` class.
+
+#### Build 285 (2018-07-18)
+Asset filenames: introduced new policy, the following disallowed characters were added: `#?*:\<>|"` 
+
+#### Build 281 (2018-07-13)
+The admin UI translations are now split into 2 parts, 
+[Essentials](https://poeditor.com/join/project/VWmZyvFVMH) and [Extended](https://poeditor.com/join/project/XliCYYgILb). 
+Essentials contains all translations which are needed for the most common tasks for editors, while the extended
+collection contains mostly admin related translations.   
+This separation should make it a lot easier to start with the localization of the Pimcore UI. 
+
+#### Build 280 (2018-07-12)
+Extensions: removed support for `xmlEditorFile` for legacy plugins (compatibility mode).  
+
+#### Build 277 (2018-07-09)
+Admin Localization: Only languages with a [translation progress](https://poeditor.com/projects/view?order=trans_desc&id=38068) over 70% are included in the standard distribution. 
+For the current status this means that the following languages are no longer provided: CA, PL, ZH_Hans, ZH_Hant, SV, JA, PT, PT_BR, RU, FA, TR, UK. 
+Languages with a lower progress need to be installed manually. 
+
+#### Build 276 (2018-07-06)
+Image Thumbnails: SVGs are no longer automatically rasterized when using only one of the following transformations: Resize, Scale By Width, Scale By Height.
+To restore the previous behavior, set the "Rasterize SVGs (Imagick)" option on the relevant thumbnail configuration.
+
+#### Build 273 (2018-07-06)
+Webservices API: Support for SQL condition parameters has been removed. Use [Query Filters](../../24_Web_Services/01_Query_Filters.md) instead.
+If you still want to support such conditions, implement your own event listener as described on the same page in the `Legacy Mode`section.. 
+
+#### Build 270 (2018-06-29)
+Data Object Class ID's can now be manually specified (alphanumeric) and are therefore no longer auto-generated (numeric/auto-increment). 
+This can have unexpected side-effects under certain circumstances, see also: https://github.com/pimcore/pimcore/issues/2916 
+
+#### Build 251 (2018-06-05)
+- **PHP 7.1 is required** 
+- CKEditor update from 4.6.2 to 4.9.2, for details see: https://ckeditor.com/cke4/release-notes 
+
+#### Build 247 (2018-06-04) 
+The dependency `google/apiclient` was updated from `~1` to `^2.0`. The format of the private key file has changed from P12 format to JSON.
+You can generate a new key in the JSON format in the credentials section of your Google Developer Console. 
+
+If you have used this library in your custom code, please update it accordingly. 
+
+#### Build 242 (2018-05-29)
+The look & feel of the areablock toolbar and inline controls have changed.
+The config option `areablock_toolbar` on areablocks has now [less flags](https://github.com/pimcore/pimcore/blob/0e5d8de0c3ac0829d4e85b6360b9dc409b45d108/pimcore/models/Document/Tag/Areablock.php#L264) to customize the toolbar and 
+a the new option `controlsAlign` was introduced. 
+
+#### Build 267 (2018-06-22)
+To the PaymentProvider* object bricks the (optional) input field `configurationKey` was added. Since it is optional, this is 
+not added to existing object bricks. If issue [#2908](https://github.com/pimcore/pimcore/issues/2908) is a problem for you,
+you need to add `configurationKey` manually to your PaymentProvider object bricks. 
+
+
+
+
+## Version 5.2.3
+#### Build 236 (2018-05-22)
+
+Method signature of [ICart](https://github.com/pimcore/pimcore/commit/d84d3cf94223a8cf55861a0d68956df126e1b6c5#diff-3ef1dc16016857cdc833662102181630) changed: 
+Added `modified()` as a public method. If you have implemented your own cart and not extended `AbstractCart` or have
+overwritten the `modified()` method, please check your implementation. 
+
+In Cart Items the method `setCount()` now also fires the `modified()` method of the cart. If you have custom implementations
+please check if this has any effect on them. 
+
+## Version 5.2.0
+#### Build 206 (2018-02-19)
 
 The pricing manager in the Ecommerce Framework is now tenant aware, using the checkout tenant if set. To make this possible,
 BC breaking changes were necessary which probably affect you if you either consume the pricing manager service directly
 or define a custom price system.
 
-### `@pimcore_ecommerce.pricing_manager` service (`PimcoreEcommerceFrameworkExtension::SERVICE_ID_PRICING_MANAGER`)
+##### `@pimcore_ecommerce.pricing_manager` service (`PimcoreEcommerceFrameworkExtension::SERVICE_ID_PRICING_MANAGER`)
 
 The `PimcoreEcommerceFrameworkExtension::SERVICE_ID_PRICING_MANAGER`constant does not exist anymore, nor the pricing
 manager service `@pimcore_ecommerce.pricing_manager` it referenced. If you need a pricing manager as dependency in one of
@@ -41,7 +117,7 @@ services:
             - { attribute_name: price, price_class: Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\Price }
 ```
 
-### Configuration tree
+##### Configuration tree
 
 The configuration is now tenant aware, following the same structure as other components (e.g. the order manager). Conditions
 and actions are still global, but `enabled`, `pricing_manager_id` and `pricing_manager_options` now need to be configured
@@ -78,13 +154,15 @@ pimcore_ecommerce_framework:
 it was before for backwards compatibility reasons. If a value is set globally it will be merged into every tenant and
 **overwrite** the tenant value. This behaviour triggers a deprecation warning and will be removed with Pimcore 6.
 
-## Build 205 (2018-02-19)
+#### Build 205 (2018-02-19)
 
 The debug mode was changed from being a boolean setting to a more granular feature flag setting. If you query the debug 
 mode in your code, you might update the call to specify which kind of debug setting you want to query. See
 [Feature Flags and Debug Mode](../../19_Development_Tools_and_Details/03_Feature_Flags_And_Debug_Mode.md) for details.
 
-## Build 195 (2018-02-01)
+
+## Version < 5.2.0
+#### Build 195 (2018-02-01)
 
 New MySQL/MariaDB requirements are introduced, ensure the following system variables are set accordingly.
 ```
@@ -92,27 +170,27 @@ innodb_file_format = Barracuda
 innodb_large_prefix = 1
 ```
 
-## Build 188 (2018-01-26)
+#### Build 188 (2018-01-26)
 
 In a highly concurrent setup, the [**Redis Cache**](../../19_Development_Tools_and_Details/09_Cache/README.md)
 adapter can lead to inconsistencies resulting in items losing cache tags and not being cleared anymore on save. This was
 fixed in the Lua version of the cache adapter and the `use_lua` option now defaults to true. Please note that Lua scripting
 is not available in Redis versions prior to 2.6.0.
 
-## Build 183 (2018-01-23)
+#### Build 183 (2018-01-23)
 
 The `pimcore:cache:clear` command semantics for the `-o` and `-a` option changed to follow option semantics as in other
 commands. Instead of `-a=1`, `-o=1`, now just pass `-a` and `-o`. The tags option now accepts multiple options, so you can
 use `-t foo -t bar` instead of `-t foo,bar` (old syntax still works).
 
-## Build 181 (2018-01-22)
+#### Build 181 (2018-01-22)
 
 The signature of `Pimcore\Model\DataObject\AbstractObject` changed. It received an `$params = []` parameter to make saving notes for supported objects easier. This may lead to problems if you extend/overwrite this function though. Note that the issue of saving notes for supported objects is solved by a different approach (using func_get_arg(0) instead of changing the signature) on build >= 185. Due to that the parameter `$params = []` is removed in build 185
 
-## Build 173 (2018-01-09)
+#### Build 173 (2018-01-09)
 
 The Google Analytics and Google Tag Manager code generation was refactored to use the same extendable block logic as the 
-Piwik integration. If you have any custom code logic involving the `Pimcore\Google\Analytics` class or use a custom tracker
+Matomo integration. If you have any custom code logic involving the `Pimcore\Google\Analytics` class or use a custom tracker
 with the Ecommerce Framework tracking implementation, please note the following:
 
 * The static calls to `Pimcore\Google\Analytics` still work, but are discouraged. Please use `Pimcore\Analytics\Google\Tracker`
@@ -123,7 +201,7 @@ with the Ecommerce Framework tracking implementation, please note the following:
   please update your service definitions to add a call to `setTracker()`.
 
 
-## Build 169 (2018-01-05)
+#### Build 169 (2018-01-05)
 
 The install SQL dump shipped with the Pimcore 5.1 release was missing one column change in the `documents_page` table. The
 update script changes this as expected, but if you did a fresh install of Pimcore 5.1, please run the following SQL query:
@@ -208,29 +286,29 @@ Make sure to delete any old rules <strong>BEFORE</strong> running the update as 
 </div>
 
 
-## Build 156 (2017-12-13)
+#### Build 156 (2017-12-13)
 
 The experimental `GridColumnConfig` feature was revamped to register and build its operators via DI instead of predefined
 namespaces (see [PR#2333](https://github.com/pimcore/pimcore/pull/2333)). If you already implemented custom operators
 please make sure you update them to the new structure.
 
-## Build 149 (2017-11-14)
+#### Build 149 (2017-11-14)
 
-The Piwik integration which was recently added was refactored to always use a full URI including the protocol for the Piwik
-URL configuration setting. Please update your settings to include the protocol as otherwise the Piwik tracking will be 
+The Matomo integration which was recently added was refactored to always use a full URI including the protocol for the Matomo
+URL configuration setting. Please update your settings to include the protocol as otherwise the Matomo tracking will be 
 disabled.
 
 Before:
 
-* `piwik.example.com`
-* `analytics.example.com/piwik`
+* `matomo.example.com`
+* `analytics.example.com/matomo`
 
 Now:
 
-* `https://piwik.example.com`
-* `https://analytics.example.com/piwik`
+* `https://matomo.example.com`
+* `https://analytics.example.com/matomo`
 
-## Build 148 (2017-11-13)
+#### Build 148 (2017-11-13)
 
 The ecommerce order manager now has a dependency on the `Pimcore\Model\Factory`. To make the class backwards compatible,
 the dependency is injected via a dedicated setter which is marked as `@required` to support autowiring. If you don't extend
@@ -262,7 +340,7 @@ services:
             - [setModelFactory, ['@Pimcore\Model\Factory']]
 ```
 
-## Build 134 (2017-10-03)
+#### Build 134 (2017-10-03)
 
 This build changes the default setting for the legacy name mapping in the ecommerce framework (see [LegacyClassMappingTool](https://github.com/pimcore/pimcore/blob/master/pimcore/lib/Pimcore/Bundle/EcommerceFrameworkBundle/Legacy/LegacyClassMappingTool.php))
 to false, disabling legacy class mapping for new projects. When you're updating from a previous version and the ecommerce 
@@ -274,9 +352,9 @@ pimcore_ecommerce_framework:
     use_legacy_class_mapping: true
 ```
 
-## Build 100 (2017-08-30)
+#### Build 100 (2017-08-30)
 
-### Objects were renamed to Data Objects
+##### Objects were renamed to Data Objects
 The introduction of object type hints in PHP 7.2 forced us to rename several namespaces to be compliant with the
 [PHP 7 reserved words](http://php.net/manual/de/reserved.other-reserved-words.php).  
 - Namespace `Pimcore\Model\Object` was renamed to `Pimcore\Model\DataObject`
@@ -298,19 +376,19 @@ The introduction of object type hints in PHP 7.2 forced us to rename several nam
     - run the [migration script](https://gist.github.com/brusch/03521a225cffee4baa8f3565342252d4) manually on cli
   
 
-## Build 97 (2017-08-24)
+#### Build 97 (2017-08-24)
 
 This build re-adds support to access website config settings from controllers and views, but in a slightly different way
 than in Pimcore 4. See [Website Settings](../../18_Tools_and_Features/27_Website_Settings.md) for details.
 
-## Build 96 (2017-08-22)
+#### Build 96 (2017-08-22)
 
 This build adds support for migrations in bundle installers (see [Installers](../../20_Extending_Pimcore/13_Bundle_Developers_Guide/05_Pimcore_Bundles/01_Installers.md)).
 With this change, extension manager commands can now also be executed as CLI commands and installers use an `OutputWriter`
 object to return information to the extension manager or to CLI scripts. As this `OutputWriter` is initialized in `AbstractInstaller`s 
 constructor, please update your custom installers to call the parent constructor. 
 
-### Upgrade errors
+##### Upgrade errors
 
 If you get an error like the following while upgrading to build 96, please run `composer update` manually on the command
 line and continue to upgrade:
@@ -325,13 +403,13 @@ You can avoid this problem by installing the `doctrine/doctrine-migrations-bundl
 $ composer require doctrine/doctrine-migrations-bundle "^1.2"
 ```
 
-## Build 86 (2017-08-02)
+#### Build 86 (2017-08-02)
 
 E-Commerce Framework configuration was moved to a Symfony Config. For details see 
 [Config Signature changes](./03_Ecommerce_Framework/02_Ecommerce_Framework_Config_Signature_Changes.md)
 
 
-## Build 85 (2017-08-01)
+#### Build 85 (2017-08-01)
 
 This build changed how the admin session is handled and introduced a regression breaking the maintenance page checking. The
 result of this regression is that subsequent updates can't be installed as the updater activates the maintenance mode and
@@ -347,13 +425,13 @@ If you updated up to build 85 and experience this issue, you can solve it with t
 
     PIMCORE_ENVIRONMENT=dev bin/console pimcore:update --ignore-maintenance-mode -u 86
     
-### Session related BC breaks
+##### Session related BC breaks
 
 The admin session ID can't be injected via GET parameter anymore. This was possbile in previous Pimcore versions to support
 Flash based file uploaders but was obsolete.
 
 
-## Build 60 (2017-05-31)
+#### Build 60 (2017-05-31)
 
 The navigation view helper signature has changed and now uses a different syntax to render navigations. In short,
 building the navigation container and rendering the navigation is now split up into 2 distinct calls and needs to be adapted
@@ -371,7 +449,7 @@ echo $this->navigation()->menu()->renderMenu($nav, ['maxDepth' => 1]);
 
 See the [navigation documentation](./../../03_Documents/03_Navigation.md) for details.
 
-## Build 54 (2017-05-16)
+#### Build 54 (2017-05-16)
 
 Added new `nested` naming scheme for document editables, which allows reliable copy/paste in nested block elements. Pimcore
 defaults to the new naming scheme for fresh installations, but configures updated installations to use the `legacy` scheme.

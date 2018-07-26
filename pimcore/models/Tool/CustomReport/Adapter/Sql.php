@@ -176,10 +176,14 @@ class Sql extends AbstractAdapter
                 foreach ($filters as $filter) {
                     $value = $filter['value'] ;
                     $type = $filter['type'];
+                    $operator = $filter['operator'];
                     if ($type == 'date') {
+                        if ($operator == 'eq') {
+                            $maxValue = strtotime($value . '+23 hours 59 minutes');
+                        }
                         $value = strtotime($value);
                     }
-                    $operator = $filter['operator'];
+
                     switch ($operator) {
                         case 'like':
                             $condition[] = $db->quoteIdentifier($filter['property']) . ' LIKE ' . $db->quote('%' . $value. '%');
@@ -187,6 +191,10 @@ class Sql extends AbstractAdapter
                         case 'lt':
                         case 'gt':
                         case 'eq':
+                            if ($type == 'date') {
+                                $condition[] = $db->quoteIdentifier($filter['property']) . ' BETWEEN ' . $db->quote($value) . ' AND ' . $db->quote($maxValue);
+                                break;
+                            }
 
                             $compMapping = [
                                 'lt' => '<',

@@ -99,9 +99,11 @@ class EncryptedField extends Model\DataObject\ClassDefinition\Data
             if ($fd) {
                 $data = $data instanceof Model\DataObject\Data\EncryptedField ? $data->getPlain() : $data;
                 $result = $fd->getDataForResource($data, $object, $params);
-                $result = $this->encrypt($result, $object, $params);
-
-                return $result;
+                if (isset($params['skipEncryption']) && $params['skipEncryption']) {
+                    return $result;
+                } else {
+                    return $this->encrypt($result, $object, $params);
+                }
             }
         }
     }
@@ -130,7 +132,10 @@ class EncryptedField extends Model\DataObject\ClassDefinition\Data
             if (method_exists($this->delegate, 'marshalBeforeEncryption')) {
                 $data = $this->delegate->marshalBeforeEncryption($data, $object, $params);
             }
-            $data = Crypto::encrypt($data, $key, true);
+
+            $rawBinary = (isset($params['asString']) && $params['asString']) ? false : true;
+
+            $data = Crypto::encrypt($data, $key, $rawBinary);
         }
 
         return $data;
@@ -158,9 +163,14 @@ class EncryptedField extends Model\DataObject\ClassDefinition\Data
 
                         return;
                     }
-                    throw new \Exception('could not laod key');
+                    throw new \Exception('could not load key');
                 }
-                $data = Crypto::decrypt($data, $key, true);
+
+                $rawBinary = (isset($params['asString']) && $params['asString']) ? false : true;
+
+                if (!(isset($params['skipDecryption']) && $params['skipDecryption'])) {
+                    $data = Crypto::decrypt($data, $key, $rawBinary);
+                }
 
                 if (method_exists($this->delegate, 'unmarshalAfterDecryption')) {
                     $data = $this->delegate->unmarshalAfterDecryption($data, $object, $params);
@@ -419,6 +429,15 @@ class EncryptedField extends Model\DataObject\ClassDefinition\Data
         if ($fd) {
             $value = $value instanceof Model\DataObject\Data\EncryptedField ? $value->getPlain() : null;
             $result = $fd->marshal($value, $object, $params);
+            if ($result) {
+                $params['asString'] = true;
+                if ($params['raw']) {
+                    $result = $this->encrypt($result, $object, $params);
+                } else {
+                    $result['value'] = $this->encrypt($result['value'], $object, $params);
+                    $result['value2'] = $this->encrypt($result['value2'], $object, $params);
+                }
+            }
 
             return $result;
         }
@@ -434,8 +453,15 @@ class EncryptedField extends Model\DataObject\ClassDefinition\Data
     public function unmarshal($value, $object = null, $params = [])
     {
         $fd = $this->getDelegateDatatypeDefinition();
-        if ($fd) {
-            $value = $value instanceof Model\DataObject\Data\EncryptedField ? $value->getPlain() : null;
+        if ($fd && $value) {
+            $params['asString'] = true;
+            if ($params['raw']) {
+                $value = $this->decrypt($value, $object, $params);
+            } else {
+                $value['value'] = $this->decrypt($value['value'], $object, $params);
+                $value['value2'] = $this->decrypt($value['value2'], $object, $params);
+            }
+
             $result = $fd->unmarshal($value, $object, $params);
 
             return $result;
@@ -620,9 +646,12 @@ class EncryptedField extends Model\DataObject\ClassDefinition\Data
     public function enrichLayoutDefinition($object, $context = [])
     {
         $delegate = $this->getDelegate();
+
         if (method_exists($delegate, enrichLayoutDefinition)) {
             $delegate->enrichLayoutDefinition($object, $context);
         }
+
+        return $this;
     }
 
     /**

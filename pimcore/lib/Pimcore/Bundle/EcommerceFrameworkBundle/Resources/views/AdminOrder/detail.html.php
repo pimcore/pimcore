@@ -21,6 +21,14 @@
 
 $this->extend('PimcoreEcommerceFrameworkBundle::back-office.html.php');
 
+/* Leaflet CSS
+====================== */
+$this->headLink()->appendStylesheet('/pimcore/static6/js/lib/leaflet/leaflet.css');
+
+/* Leaflet Javascript
+====================== */
+$this->headScript()->appendFile('/pimcore/static6/js/lib/leaflet/leaflet.js');
+
 $orderAgent = $this->orderAgent;
 $order = $orderAgent->getOrder();
 $currency = $orderAgent->getCurrency();
@@ -244,6 +252,7 @@ $regionArray = $locale->getDisplayRegions();
                                     $provider[] = 'datatrans';
                                     $provider[] = 'paypal';
                                     $provider[] = 'ogone';
+                                    $provider[] = 'mpay24';
 
                                     $amount = null;
                                     foreach($provider as $p)
@@ -296,28 +305,6 @@ $regionArray = $locale->getDisplayRegions();
 
             <!-- Tab panes -->
             <div class="tab-content">
-                <?php
-                /**
-                 * print google static map
-                 * @param stdClass $geoPoint
-                 */
-                $printMap = function (stdClass $geoPoint) {
-                    $urlLink = sprintf('http://maps.google.de/maps?q=loc:%1$s,%2$s'
-                        , $geoPoint->lat
-                        , $geoPoint->lng
-                    );
-                    $urlImage = sprintf('http://maps.googleapis.com/maps/api/staticmap?center=%1$s,%2$s&zoom=11&size=200x200&sensor=false'
-                        , $geoPoint->lat
-                        , $geoPoint->lng
-                    );
-                    ?>
-                    <a href="<?= $urlLink ?>" target="_blank" class="pull-right address-map">
-                        <img src="<?= $urlImage ?>" alt=""/>
-                    </a>
-                    <?php
-                };
-                ?>
-
                 <div role="tabpanel" class="tab-pane active" id="addressInvoice">
                     <div class="row">
                         <div class="col-md-6">
@@ -341,8 +328,11 @@ $regionArray = $locale->getDisplayRegions();
                                 <?php endif; ?>
                             </address>
                         </div>
-
-                        <?= $this->geoAddressInvoice ? $printMap($this->geoAddressInvoice) : '' ?>
+                        <?php if ($this->geoAddressInvoice) { ?>
+                            <div class="col-md-6">
+                                <div id="leafletmap-invoice" style="width: 200px; height:200px"></div>
+                            </div>
+                        <?php } ?>
                     </div>
                 </div>
 
@@ -367,8 +357,11 @@ $regionArray = $locale->getDisplayRegions();
                                 <?= strtoupper($regionArray[$order->getDeliveryCountry()]) ?><br/>
                             </address>
                         </div>
-
-                        <?= $this->geoAddressDelivery ? $printMap($this->geoAddressDelivery) : '' ?>
+                        <?php if ($this->geoAddressDelivery) { ?>
+                            <div class="col-md-6">
+                                <div id="leafletmap-delivery" style="width: 200px; height:200px"></div>
+                            </div>
+                        <?php } ?>
                     </div>
                 </div>
                 <?php endif; ?>
@@ -480,7 +473,7 @@ $regionArray = $locale->getDisplayRegions();
     </div>
 </div>
 
-<script type="text/javascript">
+<script>
     <?php $this->headScript()->captureStart(); ?>
     $(function () {
 
@@ -495,12 +488,28 @@ $regionArray = $locale->getDisplayRegions();
         // enable popover
         $('[data-toggle="popover"]').popover({html: true});
 
-
         // remove modal on close
         $('body').on('hidden.bs.modal', '.modal', function () {
             $(this).removeData('bs.modal');
             $(this).find('.modal-content').html("");
         });
+
+        var tileLayerUrl = "<?=$this->pimcoreSymfonyConfig['maps']['tile_layer_url_template'];?>";
+        <?php if($this->geoAddressInvoice) { ?>
+            var leafletMapInvoice =  L.map("leafletmap-invoice").setView([<?= $this->geoAddressInvoice->lat ?>, <?= $this->geoAddressInvoice->lon ?>], 10);
+            L.tileLayer(tileLayerUrl).addTo(leafletMapInvoice);
+            L.marker([<?= $this->geoAddressInvoice->lat ?>, <?= $this->geoAddressInvoice->lon ?>]).addTo(leafletMapInvoice);
+        <?php } ?>
+
+        <?php if($this->geoAddressDelivery) { ?>
+            var leafletMapDelivery =  L.map("leafletmap-delivery").setView([<?= $this->geoAddressDelivery->lat ?>, <?= $this->geoAddressDelivery->lon ?>], 10);
+            L.tileLayer(tileLayerUrl).addTo(leafletMapDelivery);
+            L.marker([<?= $this->geoAddressDelivery->lat ?>, <?= $this->geoAddressDelivery->lon ?>]).addTo(leafletMapDelivery);
+
+            $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+                leafletMapDelivery.invalidateSize();
+            });
+        <?php } ?>
 
     });
     <?php $this->headScript()->captureEnd(); ?>

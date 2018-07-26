@@ -46,8 +46,14 @@ class DocumentUrlGenerator implements DocumentUrlGeneratorInterface
 
     public function generateDocumentUrl(Document $document, Site $site = null, array $options = []): string
     {
-        $path = $document->getRealFullPath();
-        if (null !== $site) {
+        if ($document instanceof Document\Page && $document->getPrettyUrl()) {
+            $prettyUrlSet = true;
+            $path         = $document->getPrettyUrl();
+        } else {
+            $prettyUrlSet = false;
+            $path         = $document->getRealFullPath();
+        }
+        if (null !== $site && !$prettyUrlSet) {
             // strip site prefix from path
             $path = substr($path, strlen($site->getRootDocument()->getRealFullPath()));
         }

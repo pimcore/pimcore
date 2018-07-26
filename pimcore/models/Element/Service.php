@@ -138,13 +138,13 @@ class Service extends Model\AbstractModel
      *
      * @return array
      */
-    public static function getRequiredByDependenciesForFrontend(Dependency $d)
+    public static function getRequiredByDependenciesForFrontend(Dependency $d, $offset, $limit)
     {
         $dependencies['hasHidden'] = false;
         $dependencies['requiredBy'] = [];
 
         // requiredBy
-        foreach ($d->getRequiredBy() as $r) {
+        foreach ($d->getRequiredBy($offset, $limit) as $r) {
             if ($e = self::getDependedElement($r)) {
                 if ($e->isAllowed('list')) {
                     $dependencies['requiredBy'][] = self::getDependencyForFrontend($e);
@@ -162,13 +162,13 @@ class Service extends Model\AbstractModel
      *
      * @return array
      */
-    public static function getRequiresDependenciesForFrontend(Dependency $d)
+    public static function getRequiresDependenciesForFrontend(Dependency $d, $offset, $limit)
     {
         $dependencies['hasHidden'] = false;
         $dependencies['requires'] = [];
 
         // requires
-        foreach ($d->getRequires() as $r) {
+        foreach ($d->getRequires($offset, $limit) as $r) {
             if ($e = self::getDependedElement($r)) {
                 if ($e->isAllowed('list')) {
                     $dependencies['requires'][] = self::getDependencyForFrontend($e);
@@ -753,14 +753,17 @@ class Service extends Model\AbstractModel
         $parts = array_filter($parts, '\\Pimcore\\Model\\Element\\Service::filterNullValues');
 
         $sanitizedPath = '/';
+
+        $itemType = self::getElementType(new $type);
+
         foreach ($parts as $part) {
-            $sanitizedPath = $sanitizedPath . self::getValidKey($part, $type) . '/';
+            $sanitizedPath = $sanitizedPath . self::getValidKey($part, $itemType) . '/';
         }
 
         if (!($foundElement = $type::getByPath($sanitizedPath))) {
             foreach ($parts as $part) {
                 $pathPart = $pathsArray[count($pathsArray) - 1] ?? '';
-                $pathsArray[] = $pathPart . '/' . self::getValidKey($part, $type);
+                $pathsArray[] = $pathPart . '/' . self::getValidKey($part, $itemType);
             }
 
             for ($i = 0; $i < count($pathsArray); $i++) {
@@ -859,7 +862,7 @@ class Service extends Model\AbstractModel
     }
 
     /**
-     * @param $key
+     * @param string $key
      * @param null $type
      *
      * @return mixed|string
@@ -875,6 +878,8 @@ class Service extends Model\AbstractModel
 
         // replace all 4 byte unicode characters
         $key = preg_replace('/[\x{10000}-\x{10FFFF}]/u', '-', $key);
+        // replace slashes with a hyphen
+        $key = str_replace('/', '-', $key);
 
         if ($type == 'document') {
             // no spaces & utf8 for documents / clean URLs
@@ -886,6 +891,9 @@ class Service extends Model\AbstractModel
             // keys shouldn't start with a "." (=hidden file) *nix operating systems
             // keys shouldn't end with a "." - Windows issue: filesystem API trims automatically . at the end of a folder name (no warning ... et al)
             $key = trim($key, '. ');
+
+            // windows forbidden filenames + URL reserved characters (at least the once which are problematic)
+            $key = preg_replace('/[#\?\*\:\\\\<\>\|"]/', '-', $key);
         } else {
             $key = trim($key);
             $key = ltrim($key, '.');
@@ -895,14 +903,32 @@ class Service extends Model\AbstractModel
     }
 
     /**
-     * @param $key
-     * @param $type
+     * @param string $key
+     * @param string $type
      *
      * @return bool
      */
     public static function isValidKey($key, $type)
     {
         return self::getValidKey($key, $type) == $key;
+    }
+
+    /**
+     * @param string $path
+     * @param string $type
+     *
+     * @return bool
+     */
+    public static function isValidPath($path, $type)
+    {
+        $parts = explode('/', $path);
+        foreach ($parts as $part) {
+            if (!self::isValidKey($part, $type)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     /**
@@ -932,7 +958,7 @@ class Service extends Model\AbstractModel
     public static function fixAllowedTypes($data, $type)
     {
         // this is the new method with Ext.form.MultiSelect
-        if ((is_string($data) && !empty($data)) || (is_array($data) && count($data))) {
+        if (is_array($data) && count($data)) {
             $first = reset($data);
             if (!is_array($first)) {
                 $parts = $data;

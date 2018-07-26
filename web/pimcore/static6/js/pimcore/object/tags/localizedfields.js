@@ -439,9 +439,9 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
     isInvalidMandatory: function () {
 
         // also check the referenced localized fields
-        if(this.referencedFields.length > 0) {
-            for(var r=0; r<this.referencedFields.length; r++) {
-                if(this.referencedFields[r].isInvalidMandatory()) {
+        if (this.referencedFields.length > 0) {
+            for (var r = 0; r < this.referencedFields.length; r++) {
+                if (this.referencedFields[r].isInvalidMandatory()) {
                     return true;
                 }
             }
@@ -451,13 +451,13 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
         var isInvalid = false;
         var invalidMandatoryFields = [];
 
-        for (var i=0; i < this.frontendLanguages.length; i++) {
+        for (var i = 0; i < this.frontendLanguages.length; i++) {
 
             currentLanguage = this.frontendLanguages[i];
 
-            for (var s=0; s<this.languageElements[currentLanguage].length; s++) {
-                if(this.languageElements[currentLanguage][s].isMandatory()) {
-                    if(this.languageElements[currentLanguage][s].isInvalidMandatory()) {
+            for (var s = 0; s < this.languageElements[currentLanguage].length; s++) {
+                if (this.languageElements[currentLanguage][s].isMandatory()) {
+                    if (this.languageElements[currentLanguage][s].isInvalidMandatory()) {
                         invalidMandatoryFields.push(this.languageElements[currentLanguage][s].getTitle() + " - "
                             + currentLanguage.toUpperCase() + " ("
                             + this.languageElements[currentLanguage][s].getName() + ")");
@@ -468,14 +468,19 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
         }
 
         // return the error messages not bool, this is handled in object/edit.js
-        if(isInvalid) {
+        if (isInvalid) {
             return invalidMandatoryFields;
         }
-
-        return isInvalid;
     },
 
-    dataIsNotInherited: function() {
+
+
+    removeInheritanceSourceButton:function () {
+        //nothing to do
+
+    },
+
+    dataIsNotInherited: function(fromObjectbrick) {
 
         // also check the referenced localized fields
         if(this.referencedFields.length > 0) {
@@ -484,7 +489,7 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
             }
         }
 
-        if (!this.inherited) {
+        if (!fromObjectbrick && !this.inherited) {
             return true;
         }
 
@@ -512,8 +517,10 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
             }
         }
 
-        if (!foundUnmodifiedInheritedField) {
-            this.inherited = false;
+        if (!fromObjectbrick) {
+            if (!foundUnmodifiedInheritedField) {
+                this.inherited = false;
+            }
         }
         return !this.inherited;
     },

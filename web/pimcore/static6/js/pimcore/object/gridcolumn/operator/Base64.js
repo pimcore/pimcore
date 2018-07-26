@@ -17,11 +17,11 @@
 
 pimcore.registerNS("pimcore.object.gridcolumn.operator.base64");
 
-pimcore.object.gridcolumn.operator.base64 = Class.create(pimcore.object.gridcolumn.operator.Abstract, {
+pimcore.object.gridcolumn.operator.base64 = Class.create(pimcore.object.gridcolumn.Abstract, {
     type: "operator",
     class: "Base64",
     iconCls: "pimcore_icon_operator_base64",
-    defaultText: "operator_base64",
+    defaultText: "Base64",
 
 
     getConfigTreeNode: function (configAttributes) {
@@ -47,7 +47,7 @@ pimcore.object.gridcolumn.operator.base64 = Class.create(pimcore.object.gridcolu
             var node = {
                 draggable: true,
                 iconCls: this.iconCls,
-                text: t(this.defaultText),
+                text: this.getDefaultText(),
                 configAttributes: configAttributes,
                 isTarget: true,
                 leaf: true,
@@ -125,7 +125,7 @@ pimcore.object.gridcolumn.operator.base64 = Class.create(pimcore.object.gridcolu
             width: 400,
             height: 300,
             modal: true,
-            title: t('operator_base64_settings'),
+            title: t('settings'),
             layout: "fit",
             items: [this.configPanel]
         });
@@ -150,7 +150,7 @@ pimcore.object.gridcolumn.operator.base64 = Class.create(pimcore.object.gridcolu
     },
 
     getNodeLabel: function (configAttributes) {
-        var nodeLabel = configAttributes.label ? configAttributes.label : t(this.defaultText);
+        var nodeLabel = configAttributes.label ? configAttributes.label : this.getDefaultText();
         if (configAttributes.mode == "e" || configAttributes.mode == "d") {
             var mode = configAttributes.mode == "e" ? t("encode") : t("decode");
 

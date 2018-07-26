@@ -72,7 +72,14 @@ pimcore.settings.document.doctypes = Class.create({
                 editor: new Ext.form.TextField({})
             },
             {
-                text: t("bundle_optional"),
+                text: t("group"),
+                flex: 100,
+                sortable: true,
+                dataIndex: 'group',
+                editor: new Ext.form.TextField({})
+            },
+            {
+                text: t('bundle') + "(" + t('optional') + ")",
                 flex: 50,
                 sortable: true,
                 dataIndex: 'module',
@@ -115,6 +122,10 @@ pimcore.settings.document.doctypes = Class.create({
                     triggerAction: "all",
                     displayField: 'name',
                     valueField: 'name',
+                    matchFieldWidth: false,
+                    listConfig: {
+                        maxWidth: 400
+                    },
                     listeners: {
                         "focus": function (el) {
                             var currentRecord = this.grid.getSelection();
@@ -152,6 +163,10 @@ pimcore.settings.document.doctypes = Class.create({
                     triggerAction: "all",
                     displayField: 'name',
                     valueField: 'name',
+                    matchFieldWidth: false,
+                    listConfig: {
+                        maxWidth: 400
+                    },
                     listeners: {
                         "focus": function (el) {
                             var currentRecord = this.grid.getSelection();
@@ -163,7 +178,7 @@ pimcore.settings.document.doctypes = Class.create({
                                     el.expand();
                                 }
                             });
-                        }.bind(this),
+                        }.bind(this)
                     }
                 })
             },
@@ -189,6 +204,10 @@ pimcore.settings.document.doctypes = Class.create({
                     triggerAction: "all",
                     displayField: 'path',
                     valueField: 'path',
+                    matchFieldWidth: false,
+                    listConfig: {
+                        maxWidth: 400
+                    },
                     listeners: {
                         "focus": function (el) {
                             el.getStore().reload({
@@ -196,7 +215,7 @@ pimcore.settings.document.doctypes = Class.create({
                                     el.expand();
                                 }
                             });
-                        }.bind(this),
+                        }.bind(this)
                     }
                 })
             },

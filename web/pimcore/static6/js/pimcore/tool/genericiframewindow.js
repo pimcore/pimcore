@@ -16,6 +16,8 @@ pimcore.tool.genericiframewindow = Class.create({
 
     initialize: function (id, src, iconCls, title) {
 
+        src = pimcore.helpers.addCsrfTokenToUrl(src);
+
         this.id = id;
         this.src = src;
         this.iconCls = iconCls;

@@ -67,12 +67,18 @@ class Imagick extends Adapter
             $imagePath = $tmpFilePath;
         }
 
-        if (!stream_is_local($imagePath)) {
+        if (!stream_is_local($imagePath) && isset($options['asset'])) {
             // imagick is only able to deal with local files
             // if your're using custom stream wrappers this wouldn't work, so we create a temp. local copy
-            $tmpFilePath = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/imagick-tmp-' . uniqid() . '.' . File::getFileExtension($imagePath);
-            copy($imagePath, $tmpFilePath);
-            $imagePath = $tmpFilePath;
+            $imagePath = $options['asset']->getTemporaryFile();
+            $this->tmpFiles[] = $imagePath;
+        }
+
+        if (isset($options['asset']) && preg_match('@\.svgz?$@', $imagePath) && preg_match('@[^a-zA-Z0-9\-\.~_/]+@', $imagePath)) {
+            // Imagick/Inkscape delegate has problems with special characters in the file path, eg. "ß" causes
+            // Inkscape to completely go crazy -> Debian 8.10, Inkscape 0.48.5 r10040, Imagick 6.8.9-9 Q16, Imagick 3.4.3
+            // we create a local temp file, to workaround this problem
+            $imagePath = $options['asset']->getTemporaryFile();
             $this->tmpFiles[] = $imagePath;
         }
 
@@ -103,20 +109,25 @@ class Imagick extends Adapter
             }
 
             $imagePathLoad = $imagePath;
-            if (!defined('HHVM_VERSION')) {
-                $imagePathLoad .= '[0]'; // not supported by HHVM implementation - selects the first layer/page in layered/pages file formats
+
+            if (strpos($imagePathLoad, ':') !== false) {
+                $imagePathLoad = ':' . $imagePathLoad . '[0]';
             }
 
             if (!$i->readImage($imagePathLoad) || !filesize($imagePath)) {
                 return false;
             }
 
-            $this->resource = $i; // this is because of HHVM which has problems with $this->resource->readImage();
+            $this->resource = $i;
 
             // set dimensions
             $dimensions = $this->getDimensions();
             $this->setWidth($dimensions['width']);
             $this->setHeight($dimensions['height']);
+
+            if (!$this->sourceImageFormat) {
+                $this->sourceImageFormat = $i->getImageFormat();
+            }
 
             // check if image can have alpha channel
             if (!$this->reinitializing) {
@@ -155,15 +166,17 @@ class Imagick extends Adapter
         if (!$format) {
             $format = 'png32';
         }
+
+        if ($format == 'original') {
+            $format = $this->sourceImageFormat;
+        }
+
         $format = strtolower($format);
 
         if ($format == 'png') {
             // we need to force imagick to create png32 images, otherwise this can cause some strange effects
             // when used with gray-scale images
             $format = 'png32';
-        }
-        if ($format == 'original') {
-            $format = strtolower($this->resource->getImageFormat());
         }
 
         $originalFilename = null;
@@ -235,8 +248,8 @@ class Imagick extends Adapter
             $path = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/imagick-tmp-' . uniqid() . '.' . File::getFileExtension($path);
         }
 
-        if (defined('HHVM_VERSION')) {
-            $success = $i->writeImage($path);
+        if (!stream_is_local($path)) {
+            $success = File::put($path, $i->getImageBlob());
         } else {
             $success = $i->writeImage($format . ':' . $path);
         }
@@ -333,7 +346,11 @@ class Imagick extends Adapter
         // thumbnails in PDF's because they do not support "real" grayscale JPEGs or PNGs
         // problem is described here: http://imagemagick.org/Usage/basics/#type
         // and here: http://www.imagemagick.org/discourse-server/viewtopic.php?f=2&t=6888#p31891
-        $currentLocale = setlocale(LC_ALL, '0'); // this locale hack thing is also a hack for imagick
+
+        // 20.7.2018: this seems to cause new issues with newer Imagick/PHP versions, so we take it out for now ...
+        //  not sure if this workaround is actually still necessary (wouldn't assume so).
+
+        /*$currentLocale = setlocale(LC_ALL, '0'); // this locale hack thing is also a hack for imagick
         setlocale(LC_ALL, 'en'); // Set locale to "en" for ImagickDraw::point() to ensure the involved tostring() methods keep the decimal point
 
         $draw = new \ImagickDraw();
@@ -343,6 +360,7 @@ class Imagick extends Adapter
         $this->resource->drawImage($draw);
 
         setlocale(LC_ALL, $currentLocale); // see setlocale() above, for details ;-)
+        */
 
         return $this;
     }

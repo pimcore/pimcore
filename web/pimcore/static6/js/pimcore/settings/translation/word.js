@@ -29,8 +29,8 @@ pimcore.settings.translation.word = Class.create({
         if (!this.panel) {
             this.panel = new Ext.Panel({
                 id: "pimcore_word",
-                title: "MS Word " + t("export"),
-                iconCls: "pimcore_icon_translations",
+                title: "Microsoft® Word " + t("export"),
+                iconCls: "pimcore_icon_docx",
                 border: false,
                 layout: "fit",
                 closable:true,
@@ -197,9 +197,9 @@ pimcore.settings.translation.word = Class.create({
             bodyStyle: "padding: 10px",
             items: [{
                 title: t("important_notice"),
-                html: '<div style="font: 12px tahoma,arial,helvetica; padding: 10px;">' + t("word_export_notice") + '</div>',
+                html: '<div style="font-weight: bold">' + t("microsoft_word_export_notice") + '</div>',
                 style: "margin-bottom: 10px",
-                iconCls: "pimcore_icon_document"
+                iconCls: "pimcore_icon_warning"
             }, this.component, {
                 xtype: "form",
                 title: t("language"),
@@ -235,6 +235,7 @@ pimcore.settings.translation.word = Class.create({
 
         Ext.Ajax.request({
             url: "/admin/translation/content-export-jobs",
+            method: 'POST',
             params: {
                 source: this.exportSourceLanguageSelector.getValue(),
                 data: Ext.encode(tmData),

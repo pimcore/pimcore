@@ -10,7 +10,6 @@ Particular useful can be following methods:
 * `getValidLanguages()`
 * `getHostname()`
 * `getHostUrl()`
-* `getHttpClient()`
 * `classExists()`
 * `exitWithError()`
 * `getMail()`

@@ -32,7 +32,7 @@ pimcore.object.tags.select = Class.create(pimcore.object.tags.abstract, {
     getGridColumnConfigDynamic: function(field) {
         var renderer = function (key, data, metaData, record) {
             var value = data;
-            var options = record.data[key + "%options"]
+            var options = record.data[key + "%options"];
 
             this.applyPermissionStyle(key, value, metaData, record);
 
@@ -55,7 +55,11 @@ pimcore.object.tags.select = Class.create(pimcore.object.tags.abstract, {
             return value;
         }.bind(this, field.key);
 
-        return {text:ts(field.label), sortable:true, dataIndex:field.key, renderer:renderer,
+        return {
+            text:ts(field.label),
+            sortable:true,
+            dataIndex:field.key,
+            renderer: renderer,
             getEditor:this.getCellEditor.bind(this, field)
         };
     },
@@ -83,7 +87,10 @@ pimcore.object.tags.select = Class.create(pimcore.object.tags.abstract, {
         }.bind(this, field.key);
 
         return {
-            text: ts(field.label), sortable: true, dataIndex: field.key, renderer: renderer,
+            text: ts(field.label),
+            sortable: true,
+            dataIndex: field.key,
+            renderer: renderer,
             editor: this.getGridColumnEditor(field)
         };
     },
@@ -128,10 +135,15 @@ pimcore.object.tags.select = Class.create(pimcore.object.tags.abstract, {
             mode: "local",
             valueField: 'value',
             displayField: 'key',
-            value: value
+            value: value,
+            displayTpl: Ext.create('Ext.XTemplate',
+                '<tpl for=".">',
+                '{[Ext.util.Format.stripTags(values.key)]}',
+                '</tpl>'
+            )
         });
 
-        var combo = new Ext.form.ComboBox(editorConfig);;
+        var combo = new Ext.form.ComboBox(editorConfig);
         var currentValue = combo.getValue();
         return combo;
     },
@@ -171,7 +183,12 @@ pimcore.object.tags.select = Class.create(pimcore.object.tags.abstract, {
             editable: false,
             mode: "local",
             valueField: 'value',
-            displayField: 'key'
+            displayField: 'key',
+            displayTpl: Ext.create('Ext.XTemplate',
+                '<tpl for=".">',
+                '{[Ext.util.Format.stripTags(values.key)]}',
+                '</tpl>'
+            )
         });
 
         return new Ext.form.ComboBox(editorConfig);
@@ -198,11 +215,12 @@ pimcore.object.tags.select = Class.create(pimcore.object.tags.abstract, {
 
     getLayoutEdit: function () {
         // generate store
-        var store = [];
         var validValues = [];
+        var storeData = [];
+        var hasHTMLContent = false;
 
         if(!this.fieldConfig.mandatory) {
-            store.push(["","(" + t("empty") + ")"]);
+            storeData.push({'value': '', 'key': "(" + t("empty") + ")"});
         }
 
         var restrictTo = null;
@@ -218,10 +236,20 @@ pimcore.object.tags.select = Class.create(pimcore.object.tags.abstract, {
                         continue;
                     }
                 }
-                store.push([value, ts(this.fieldConfig.options[i].key)]);
+                storeData.push({'value': value, 'key': ts(this.fieldConfig.options[i].key)});
+                if(ts(this.fieldConfig.options[i].key).indexOf('<') >= 0) {
+                    hasHTMLContent = true;
+                }
+
                 validValues.push(value);
             }
         }
+
+        var store = Ext.create('Ext.data.Store', {
+            fields: ['value', 'key'],
+            data : storeData
+        });
+
 
         var options = {
             name: this.fieldConfig.name,
@@ -234,8 +262,18 @@ pimcore.object.tags.select = Class.create(pimcore.object.tags.abstract, {
             store: store,
             componentCls: "object_field",
             width: 250,
+            displayField: 'key',
+            valueField: 'value',
             labelWidth: 100
         };
+
+        if(hasHTMLContent) {
+            options.displayTpl = Ext.create('Ext.XTemplate',
+                '<tpl for=".">',
+                '{[Ext.util.Format.stripTags(values.key)]}',
+                '</tpl>'
+            );
+        }
 
         if (this.fieldConfig.labelWidth) {
             options.labelWidth = this.fieldConfig.labelWidth;

@@ -33,7 +33,7 @@ class DocumentTest extends RestTestCase
         $this->assertGreaterThanOrEqual($time, $creationDate, 'wrong creation date');
 
         // as the object key is unique there must be exactly one document with that key
-        $list = $this->restClient->getDocumentList("`key` = '" . $unsavedObject->getKey() . "'");
+        $list = $this->restClient->getDocumentList('{"key": "' . $unsavedObject->getKey() . '"}');
 
         $this->assertEquals(1, count($list));
     }

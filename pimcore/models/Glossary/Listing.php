@@ -21,6 +21,7 @@ use Pimcore\Model;
 
 /**
  * @method \Pimcore\Model\Glossary\Listing\Dao getDao()
+ * @method Model\Glossary[] load()
  */
 class Listing extends Model\Listing\AbstractListing
 {

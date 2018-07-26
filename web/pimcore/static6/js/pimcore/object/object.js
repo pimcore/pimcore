@@ -15,12 +15,12 @@ pimcore.registerNS("pimcore.object.object");
 pimcore.object.object = Class.create(pimcore.object.abstract, {
 
     initialize: function (id, options) {
+        this.id = intval(id);
+        this.options = options;
+
         pimcore.plugin.broker.fireEvent("preOpenObject", this, "object");
 
-        this.id = intval(id);
         this.addLoadingPanel();
-
-        this.options = options;
 
         var user = pimcore.globalmanager.get("user");
 
@@ -167,7 +167,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
         var tabId = "object_" + this.id;
         this.tab = new Ext.Panel({
             id: tabId,
-            title: this.data.general.o_key,
+            title: htmlspecialchars(this.data.general.o_key),
             closable: true,
             layout: "border",
             items: [this.getLayoutToolbar(), this.getTabPanel()],
@@ -184,6 +184,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
         this.tab.on("beforedestroy", function () {
             Ext.Ajax.request({
                 url: "/admin/element/unlock-element",
+                method: 'PUT',
                 params: {
                     id: this.id,
                     type: "object"
@@ -231,7 +232,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
         //    console.log(e);
         //}
 
-        if (!empty(this.data.previewUrl)) {
+        if (this.data.hasPreview) {
             try {
                 items.push(this.preview.getLayout());
             } catch (e) {
@@ -311,8 +312,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
 
         if (user.isAllowed("application_logging") && this.data.general.showAppLoggerTab) {
             try {
-                var appLoggerTab = this.appLogger.getTabPanel();
-                items.push(appLoggerTab);
+                items.push(this.appLogger);
             } catch (e) {
                 console.log(e);
             }
@@ -395,15 +395,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
                 tooltip: t('rename'),
                 iconCls: "pimcore_icon_key pimcore_icon_overlay_go",
                 scale: "medium",
-                handler: function () {
-                    var options = {
-                        elementType: "object",
-                        elementSubType: this.data.general.o_type,
-                        id: this.id,
-                        default: this.data.general.o_key
-                    };
-                    pimcore.elementservice.editElementKey(options);
-                }.bind(this)
+                handler: this.rename.bind(this)
             });
 
             if (this.isAllowed("save")) {
@@ -473,27 +465,18 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
             });
 
 
-            if (this.data.general.linkGeneratorReference) {
+            if (this.data.hasPreview) {
                 buttons.push("-");
                 buttons.push({
                     tooltip: t("open"),
-                    iconCls: "pimcore_icon_open",
+                    iconCls: "pimcore_icon_cursor",
                     scale: "medium",
                     handler: function () {
-                        Ext.Ajax.request({
-                            url: "/admin/object-helper/generate-link",
-                            params: {
-                                id: this.id
-                            },
-                            success: function (response) {
-                                var res = Ext.decode(response.responseText);
-                                if (res["success"]) {
-                                    window.open(res["link"]);
-                                }
-
-                            }.bind(this)
+                        var date = new Date();
+                        var path = "/admin/object/preview?id=" + this.data.general.o_id + "&time=" + date.getTime();
+                        this.saveToSession(function () {
+                            window.open(path);
                         });
-
                     }.bind(this)
                 });
             }
@@ -711,7 +694,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
             } catch (e) {
                 if (e instanceof pimcore.error.ValidationException) {
                     this.tab.unmask();
-                    pimcore.helpers.showPrettyError('object', t("error"), t("error_saving_object"), e.message);
+                    pimcore.helpers.showPrettyError('object', t("error"), t("saving_failed"), e.message);
                     return false;
                 }
 
@@ -724,7 +707,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
 
             Ext.Ajax.request({
                 url: '/admin/object/save?task=' + task,
-                method: "post",
+                method: "PUT",
                 params: saveData,
                 success: function (response) {
                     if (task != "session") {
@@ -735,7 +718,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
                                 successCallback(rdata);
                             }
                             if (rdata && rdata.success) {
-                                pimcore.helpers.showNotification(t("success"), t("your_object_has_been_saved"),
+                                pimcore.helpers.showNotification(t("success"), t("saved_successfully"),
                                     "success");
                                 this.resetChanges();
                                 Ext.apply(this.data.general, rdata.general);
@@ -747,11 +730,11 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
                                 pimcore.eventDispatcher.fireEvent("postSaveObject", this, task);
                             }
                             else {
-                                pimcore.helpers.showPrettyError(rdata.type, t("error"), t("error_saving_object"),
+                                pimcore.helpers.showPrettyError(rdata.type, t("error"), t("saving_failed"),
                                     rdata.message, rdata.stack, rdata.code);
                             }
                         } catch (e) {
-                            pimcore.helpers.showNotification(t("error"), t("error_saving_object"), "error");
+                            pimcore.helpers.showNotification(t("error"), t("saving_failed"), "error");
                         }
                         // reload versions
                         if (this.isAllowed("versions")) {
@@ -854,5 +837,17 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
                 value: pimcore.helpers.getDeeplink("object", this.data.general.o_id, "object")
             }
         ], "object");
+    },
+
+    rename: function () {
+        if (this.isAllowed("rename") && !this.data.general.o_locked) {
+            var options = {
+                elementType: "object",
+                elementSubType: this.data.general.o_type,
+                id: this.id,
+                default: this.data.general.o_key
+            };
+            pimcore.elementservice.editElementKey(options);
+        }
     }
 });

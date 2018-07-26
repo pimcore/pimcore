@@ -6,13 +6,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <base href="/pimcore/static6/js/lib/minipaint/" />
     <script src="/pimcore/static6/js/lib/minipaint/dist/bundle.js"></script>
-    <script type="text/javascript" src="/pimcore/static6/js/lib/jquery-3.3.1.min.js"></script>
+    <script src="/pimcore/static6/js/lib/jquery-3.3.1.min.js"></script>
 </head>
 <body>
 <div class="wrapper">
 
     <div class="submenu">
-        <a class="logo" href="">miniPaint</a>
         <div class="block attributes" id="action_attributes"></div>
         <div class="clear"></div>
     </div>
@@ -74,7 +73,7 @@
 
 <img style="visibility: hidden" id='image' src='/admin/asset/get-image-thumbnail?id=<?= $this->asset->getId() ?>&width=1000&height=1000&contain=true'/>
 <script>
-    window.setTimeout(function () {
+    window.addEventListener('load', function (e) {
         var image = document.getElementById('image');
         window.Layers.insert({
             name: "<?= $this->asset->getFilename() ?>",
@@ -96,18 +95,17 @@
             Layers.convert_layers_to_canvas(tempCtx);
             var dataUri = tempCanvas.toDataURL('image/"<?= (\Pimcore\File::getFileExtension($this->asset->getFilename()) == "png") ? "png" : "jpg" ?>"');
 
-            $.ajax({
+            parent.Ext.Ajax.request({
                 url: "/admin/asset/image-editor-save?id=<?= $this->asset->getId() ?>",
-                method: "POST",
-                data: { dataUri : dataUri },
-                dataType: "json"
+                method: 'PUT',
+                params: {
+                    dataUri: dataUri
+                }
             });
 
             return false;
         });
-    }, 2000);
-
-
+    }, false);
 </script>
 
 </body>

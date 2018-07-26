@@ -10,10 +10,14 @@ The webservices also support session authentication, this means that it's not ne
 add the `apikey` to the request if you have a valid user session from the admin interface (eg. when testing in the browser). 
   
   
-> **Important!**  
+> **Important: Import/export topics**  
 > The webservice API is not always the preferred way for importing/syncing data out of or into Pimcore. Often it's much more efficient to use the PHP API in custom scripts (CLI) or in a custom service endpoint. 
 > Please have a look at the following topics before your're seriously considering using the REST API: [External System Interaction](../05_Objects/05_External_System_Interaction.md), [Console CLI](../19_Development_Tools_and_Details/11_Console_CLI.md), [Working with the PHP API](../05_Objects/03_Working_with_PHP_API.md).
   
+  
+> **Important: Frontend Applications**  
+> The Pimcore REST API is not intended to be used as a data provider for frontend applications (Vue.js, React, Angular, ...), 
+> please build your own actions for that purpose or use any existing bundles. 
   
 [TOC]
 
@@ -219,10 +223,10 @@ condense parameter is set to true then only non-existing object ids are returned
 
 ### Search Assets
 * **Method**: GET
-* **URL**: `http://YOUR-DOMAIN/webservice/rest/asset-list?apikey=[API-KEY]&order=DESC&offset=3&orderKey=id&limit=2&condition=type%3D%27folder%27`
+* **URL**: `http://YOUR-DOMAIN/webservice/rest/asset-list?apikey=[API-KEY]&order=DESC&offset=3&orderKey=id&limit=2&q={"type":%20"folder"}
 * **Returns**: A list of asset id/type pairs matching the given criteria.
 * **Parameters**:
-    * **condition**: where clause
+    * **q**: ["Query Filter](./01_Query_Filters.md)
     * **order**: sort order (if supplied then also the key must be provided)
     * **orderKey**: sort order key
     * **offset**: search offset
@@ -232,10 +236,10 @@ condense parameter is set to true then only non-existing object ids are returned
 
 ### Search Documents
 * **Method**: GET
-* **URL**: `http://YOUR-DOMAIN/webservice/rest/document-list?apikey=[API-KEY]&order=DESC&offset=3&orderKey=id&limit=2&condition=type%3D%27folder%27`
+* **URL**: `http://YOUR-DOMAIN/webservice/rest/document-list?apikey=[API-KEY]&order=DESC&offset=3&orderKey=id&limit=2&q={"type":%20"folder"}
 * **Returns**: A list of document id/type pairs matching the given criteria.
 * **Parameters**:
-    * **condition**: where clause
+    * **q**: ["Query Filter](./01_Query_Filters.md)
     * **order**: sort order (if supplied then also the key must be provided)
     * **orderKey**: sort order key
     * **offset**: search offset
@@ -245,10 +249,10 @@ condense parameter is set to true then only non-existing object ids are returned
 
 ### Search  Objects
 * **Method**: GET
-* **URL**: `http://YOUR-DOMAIN/webservice/rest/object-list?apikey=[API-KEY]&order=DESC&offset=3&orderKey=id&limit=2&objectClass=myClassname&condition=o_type%3D%27folder%27`
+* **URL**: `http://YOUR-DOMAIN/webservice/rest/object-list?apikey=[API-KEY]&order=DESC&offset=3&orderKey=id&limit=2&objectClass=myClassname&q={"type":%20"folder"}
 * **Returns**: A list of object id/type pairs matching the given criteria.
 * **Parameters**:
-    * **condition**: where clause
+    * **q**: ["Query Filter](./01_Query_Filters.md)
     * **order**: sort order (if supplied then also the key must be provided)
     * **orderKey**: sort order key
     * **offset**: search offset
@@ -259,28 +263,28 @@ condense parameter is set to true then only non-existing object ids are returned
 
 ### Get Asset Count
 * **Method**: GET
-* **URL**: `http://YOUR-DOMAIN/webservice/rest/asset-count?apikey=[API-KEY]&condition=type%3D%27folder%27`
+* **URL**: `http://YOUR-DOMAIN/webservice/rest/asset-count?apikey=[API-KEY]&q={"type":%20"folder"}
 * **Returns**: The total number of assets matching the given criteria.
 * **Parameters**:
-    * **condition**: where clause
+    * **q**: ["Query Filter](./01_Query_Filters.md)
     * **groupBy**: group by key
 
 
 ### Get Document Count
 * **Method**: GET
-* **URL**: `http://YOUR-DOMAIN/webservice/rest/document-count?apikey=[API-KEY]&condition=type%3D%27folder%27`
+* **URL**: `http://YOUR-DOMAIN/webservice/rest/document-count?apikey=[API-KEY]&q={"type":%20"folder"}
 * **Returns**: The total number of documents matching the given criteria.
 * **Parameters**:
-    * **condition**: where clause
+    * **q**: ["Query Filter](./01_Query_Filters.md)
     * **groupBy**: group by key
 
 
 ### Get Object Count
 * **Method**: GET
-* **URL**: `http://YOUR-DOMAIN/webservice/rest/object-count?apikey=[API-KEY]&condition=type%3D%27folder%27`
+* **URL**: `http://YOUR-DOMAIN/webservice/rest/object-count?apikey=[API-KEY]&q={"type":%20"folder"}
 * **Returns**: The total number of objects matching the given criteria.
 * **Parameters**:
-    * **condition**: where clause
+    * **q**: ["Query Filter](./01_Query_Filters.md)
     * **groupBy**: group by key
     * **objectClass**: the name of the object class (without "DataObject\"). Note: If the class does not exist the filter criteria will be ignored!
 
@@ -342,7 +346,7 @@ condense parameter is set to true then only non-existing object ids are returned
 * **URL**: `http://YOUR-DOMAIN/webservice/rest/classificationstore-definition?apikey=[API-KEY]`
 * **Returns**: The JSON-encoded classification store definition
 * **Parameters**:
-    * **condition**: where clause
+    * **q**: ["Query Filter](./01_Query_Filters.md)
 
 
 ### Get QuantityValue unit Definition
@@ -350,7 +354,7 @@ condense parameter is set to true then only non-existing object ids are returned
 * **URL**: `http://YOUR-DOMAIN/webservice/rest/quantity-value-unit-definition?apikey=[API-KEY]`
 * **Returns**: The JSON-encoded list of QuantityValue unit definitions
 * **Parameters**:
-    * **condition**: where clause
+    * **q**: ["Query Filter](./01_Query_Filters.md)
 
 
 ## Override HTTP Method

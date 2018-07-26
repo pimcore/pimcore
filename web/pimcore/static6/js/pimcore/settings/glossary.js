@@ -15,29 +15,10 @@ pimcore.registerNS("pimcore.settings.glossary");
 pimcore.settings.glossary = Class.create({
 
     initialize: function () {
-        this.getAvailableLanguages();
+        this.languages = pimcore.settings.websiteLanguages;
+        this.languages.splice(0,0,"");
+        this.getTabPanel();
     },
-
-
-    getAvailableLanguages: function () {
-        Ext.Ajax.request({
-            url: "/admin/settings/get-available-languages",
-            success: function (response) {
-                try {
-                    this.languages = Ext.decode(response.responseText);
-                    this.languages.splice(0,0,"");
-                    this.getTabPanel();
-                }
-                catch (e) {
-                    console.log(e);
-                    Ext.MessageBox.alert(t('error'), t('translations_are_not_configured')
-                                + '<br /><br /><a href="http://www.pimcore.org/documentation/" target="_blank">'
-                                + t("read_more_here") + '</a>');
-                }
-            }.bind(this)
-        });
-    },
-
 
     activate: function () {
         var tabPanel = Ext.getCmp("pimcore_panel_tabs");

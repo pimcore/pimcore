@@ -93,6 +93,7 @@ pimcore.object.tags.multihrefMetadata = Class.create(pimcore.object.tags.abstrac
         columns.push({text: 'ID', dataIndex: 'id', width: 50});
         columns.push({text: t('reference'), dataIndex: 'path', flex: 1});
 
+        var visibleFieldsCount = columns.length;
 
         for (i = 0; i < this.fieldConfig.columns.length; i++) {
             var width = 100;
@@ -100,16 +101,18 @@ pimcore.object.tags.multihrefMetadata = Class.create(pimcore.object.tags.abstrac
                 width = this.fieldConfig.columns[i].width;
             }
 
-            var editor = null;
             var cellEditor = null;
             var renderer = null;
             var listeners = null;
 
             if(this.fieldConfig.columns[i].type == "number" && !readOnly) {
-                editor = new Ext.form.NumberField({});
-
+                cellEditor = function() {
+                    return new Ext.form.NumberField({});
+                };
             } else if(this.fieldConfig.columns[i].type == "text" && !readOnly) {
-                editor = new Ext.form.TextField({});
+                cellEditor = function() {
+                    return new Ext.form.TextField({});
+                };
             } else if(this.fieldConfig.columns[i].type == "select" && !readOnly) {
                 var selectData = [];
                 if (this.fieldConfig.columns[i].value) {
@@ -119,23 +122,27 @@ pimcore.object.tags.multihrefMetadata = Class.create(pimcore.object.tags.abstrac
                     }
                 }
 
-                editor = new Ext.form.ComboBox({
-                    typeAhead: true,
-                    forceSelection: true,
-                    triggerAction: 'all',
-                    lazyRender:true,
-                    mode: 'local',
+                cellEditor = function(selectData) {
+                    return new Ext.form.ComboBox({
+                        typeAhead: true,
+                        queryDelay: 0,
+                        queryMode: "local",
+                        forceSelection: true,
+                        triggerAction: 'all',
+                        lazyRender: false,
+                        mode: 'local',
 
-                    store: new Ext.data.ArrayStore({
-                        fields: [
-                            'value',
-                            'label'
-                        ],
-                        data: selectData
-                    }),
-                    valueField: 'value',
-                    displayField: 'label'
-                });
+                        store: new Ext.data.ArrayStore({
+                            fields: [
+                                'value',
+                                'label'
+                            ],
+                            data: selectData
+                        }),
+                        valueField: 'value',
+                        displayField: 'label'
+                    });
+                }.bind(this, selectData);
             } else if(this.fieldConfig.columns[i].type == "multiselect" && !readOnly) {
                 cellEditor =  function(fieldInfo) {
                     return new pimcore.object.helpers.metadataMultiselectEditor({
@@ -150,8 +157,6 @@ pimcore.object.tags.multihrefMetadata = Class.create(pimcore.object.tags.abstrac
                         return '<div style="text-align: center"><div role="button" class="x-grid-checkcolumn" style=""></div></div>';
                     }
                 };
-                editor = Ext.create('Ext.form.field.Checkbox', {style: 'margin-top: 2px;'});
-
 
                 if(readOnly) {
                     columns.push(Ext.create('Ext.grid.column.Check'), {
@@ -163,24 +168,29 @@ pimcore.object.tags.multihrefMetadata = Class.create(pimcore.object.tags.abstrac
                     continue;
                 }
 
-                if (!readOnly && this.fieldConfig.columns[i].type === "columnbool") {
-                    editor.addListener('change', function (el, newValue) {
-                        window.gridPanel = el.up('gridpanel');
-                        window.el = el;
-                        var gridPanel = el.up('gridpanel');
-                        var columnKey = el.up().column.dataIndex;
-                        if (newValue) {
-                            gridPanel.getStore().each(function (record) {
-                                if (!!record.get(columnKey)) {
-                                    // note, we don't need to check for the row here as the editor fires another change
-                                    // on blur, which updates the underlying record without a subsequent event being fired.
-                                    record.set(columnKey, false);
-                                }
-                            });
-                        }
-                    });
-                }
+                cellEditor = function(type, readOnly) {
+                    var editor = Ext.create('Ext.form.field.Checkbox', {style: 'margin-top: 2px;'});
 
+                    if (!readOnly && type === "columnbool") {
+                        editor.addListener('change', function (el, newValue) {
+                            window.gridPanel = el.up('gridpanel');
+                            window.el = el;
+                            var gridPanel = el.up('gridpanel');
+                            var columnKey = el.up().column.dataIndex;
+                            if (newValue) {
+                                gridPanel.getStore().each(function (record) {
+                                    if (!!record.get(columnKey)) {
+                                        // note, we don't need to check for the row here as the editor fires another change
+                                        // on blur, which updates the underlying record without a subsequent event being fired.
+                                        record.set(columnKey, false);
+                                    }
+                                });
+                            }
+                        });
+                    }
+
+                    return editor;
+                }.bind(this, this.fieldConfig.columns[i].type, readOnly);
             }
 
             var columnConfig = {
@@ -191,9 +201,7 @@ pimcore.object.tags.multihrefMetadata = Class.create(pimcore.object.tags.abstrac
                 sortable: true,
                 width: width
             };
-            if (editor) {
-                columnConfig.editor = editor;
-            }
+
             if (cellEditor) {
                 columnConfig.getEditor = cellEditor;
             }
@@ -252,7 +260,7 @@ pimcore.object.tags.multihrefMetadata = Class.create(pimcore.object.tags.abstrac
             items: [
                 {
                     tooltip: t('open'),
-                    icon: "/pimcore/static6/img/flat-color-icons/cursor.svg",
+                    icon: "/pimcore/static6/img/flat-color-icons/open_file.svg",
                     handler: function (grid, rowIndex) {
                         var data = grid.getStore().getAt(rowIndex);
                         var subtype = data.data.subtype;
@@ -287,7 +295,23 @@ pimcore.object.tags.multihrefMetadata = Class.create(pimcore.object.tags.abstrac
 
 
         this.cellEditing = Ext.create('Ext.grid.plugin.CellEditing', {
-            clicksToEdit: 1
+            clicksToEdit: 1,
+            listeners: {
+                beforeedit: function (editor, context, eOpts) {
+                    editor.editors.each(function (e) {
+                        try {
+                            // complete edit, so the value is stored when hopping around with TAB
+                            e.completeEdit();
+                            Ext.destroy(e);
+                        } catch (exception) {
+                            // garbage collector was faster
+                            // already destroyed
+                        }
+                    });
+
+                    editor.editors.clear();
+                }
+            }
         });
 
 
@@ -325,7 +349,7 @@ pimcore.object.tags.multihrefMetadata = Class.create(pimcore.object.tags.abstrac
                     // probably a ExtJS 6.0 bug. withou this, dropdowns not working anymore if plugin is enabled
                     // TODO: investigate if there this is already fixed 6.2
                     cellmousedown: function (element, td, cellIndex, record, tr, rowIndex, e, eOpts) {
-                        if (cellIndex >= visibleFields.length) {
+                        if (cellIndex >= visibleFieldsCount) {
                             return false;
                         } else {
                             return true;
@@ -621,10 +645,10 @@ pimcore.object.tags.multihrefMetadata = Class.create(pimcore.object.tags.abstrac
         }
 
         pimcore.helpers.itemselector(true, this.addDataFromSelector.bind(this), {
-            type: allowedTypes,
-            subtype: allowedSubtypes,
-            specific: allowedSpecific
-        },
+                type: allowedTypes,
+                subtype: allowedSubtypes,
+                specific: allowedSpecific
+            },
             {
                 context: this.getContext()
             });
@@ -635,11 +659,14 @@ pimcore.object.tags.multihrefMetadata = Class.create(pimcore.object.tags.abstrac
         var menu = new Ext.menu.Menu();
         var data = record;
 
-        menu.add(new Ext.menu.Item({
-            text: t('remove'),
-            iconCls: "pimcore_icon_delete",
-            handler: this.removeElement.bind(this, rowIndex)
-        }));
+         // check if field noteditable property is false
+        if(this.fieldConfig.noteditable == false) {
+            menu.add(new Ext.menu.Item({
+                text: t('remove'),
+                iconCls: "pimcore_icon_delete",
+                handler: this.removeElement.bind(this, rowIndex)
+            }));
+        }
 
         menu.add(new Ext.menu.Item({
             text: t('open'),
@@ -817,10 +844,10 @@ pimcore.object.tags.multihrefMetadata = Class.create(pimcore.object.tags.abstrac
         }
 
         pimcore.helpers.itemselector(true, this.addDataFromSelector.bind(this), {
-            type: allowedTypes,
-            subtype: allowedSubtypes,
-            specific: allowedSpecific
-        },
+                type: allowedTypes,
+                subtype: allowedSubtypes,
+                specific: allowedSpecific
+            },
             {
                 context: Ext.apply({scope: "objectEditor"}, this.getContext())
             });

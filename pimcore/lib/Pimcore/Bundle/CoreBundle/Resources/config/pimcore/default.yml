@@ -54,6 +54,7 @@ doctrine:
                     collate: utf8mb4_unicode_ci
                 mapping_types:
                     enum: string
+                    bit: boolean
 
 # Monolog Configuration
 monolog:
@@ -95,6 +96,7 @@ pimcore:
                     calculatedValue: \Pimcore\Model\DataObject\ClassDefinition\Data\CalculatedValue
                     checkbox: \Pimcore\Model\DataObject\ClassDefinition\Data\Checkbox
                     classificationstore: \Pimcore\Model\DataObject\ClassDefinition\Data\Classificationstore
+                    consent: \Pimcore\Model\DataObject\ClassDefinition\Data\Consent
                     country: \Pimcore\Model\DataObject\ClassDefinition\Data\Country
                     countrymultiselect: \Pimcore\Model\DataObject\ClassDefinition\Data\Countrymultiselect
                     date: \Pimcore\Model\DataObject\ClassDefinition\Data\Date
@@ -225,7 +227,6 @@ pimcore:
                 - pimcore_copy
                 - pimcore_gridconfig
                 - pimcore_importconfig
-                - pimcore_backup
 
         # the following routes won't be double checked for authentication
         # this usually applies to login routes

@@ -74,7 +74,7 @@ pimcore.object.helpers.classTree = Class.create({
         });
 
         var headerConfig = {
-            title: t('class_definitions'),
+            title: t('fields'),
             items: [
                 filterField,
                 filterButton
@@ -87,6 +87,7 @@ pimcore.object.helpers.classTree = Class.create({
             region: "center",
             autoScroll: true,
             rootVisible: false,
+            bufferedRenderer: false,
             root: {
                 id: "0",
                 root: true,
@@ -127,15 +128,20 @@ pimcore.object.helpers.classTree = Class.create({
         for (var i = 0; i < keys.length; i++) {
             if (data[keys[i]]) {
                 if (data[keys[i]].childs) {
-                    var attributePrefix = "";
+
                     var text = t(data[keys[i]].nodeLabel);
 
-                    var brickField = null;
+                    var brickDescriptor = {};
 
                     if (data[keys[i]].nodeType == "objectbricks") {
-                        brickField = data[keys[i]].brickField;
+                        brickDescriptor = {
+                            insideBrick: true,
+                            brickType: data[keys[i]].nodeLabel,
+                            brickField: data[keys[i]].brickField
+                        };
+
                         text = ts(data[keys[i]].nodeLabel) + " " + t("columns");
-                        attributePrefix = data[keys[i]].nodeLabel;
+
                     }
                     var baseNode = {
                         type: "layout",
@@ -146,7 +152,7 @@ pimcore.object.helpers.classTree = Class.create({
 
                     baseNode = tree.getRootNode().appendChild(baseNode);
                     for (var j = 0; j < data[keys[i]].childs.length; j++) {
-                        baseNode.appendChild(this.recursiveAddNode(data[keys[i]].childs[j], baseNode, attributePrefix, brickField));
+                        baseNode.appendChild(this.recursiveAddNode(data[keys[i]].childs[j], baseNode, brickDescriptor));
                     }
                     if (data[keys[i]].nodeType == "object") {
                         baseNode.expand();
@@ -158,7 +164,7 @@ pimcore.object.helpers.classTree = Class.create({
         }
     },
 
-    recursiveAddNode: function (con, scope, attributePrefix, brickField) {
+    recursiveAddNode: function (con, scope, brickDescriptor) {
 
         var fn = null;
         var newNode = null;
@@ -167,14 +173,14 @@ pimcore.object.helpers.classTree = Class.create({
             fn = this.addLayoutChild.bind(scope, con.fieldtype, con);
         }
         else if (con.datatype == "data") {
-            fn = this.addDataChild.bind(scope, con.fieldtype, con, attributePrefix, this.showFieldName, brickField);
+            fn = this.addDataChild.bind(scope, con.fieldtype, con, this.showFieldName, brickDescriptor);
         }
 
         newNode = fn();
 
         if (con.childs) {
             for (var i = 0; i < con.childs.length; i++) {
-                this.recursiveAddNode(con.childs[i], newNode, attributePrefix, brickField);
+                this.recursiveAddNode(con.childs[i], newNode, brickDescriptor);
             }
         }
 
@@ -209,7 +215,7 @@ pimcore.object.helpers.classTree = Class.create({
         return newNode;
     },
 
-    addDataChild: function (type, initData, attributePrefix, showFieldname, brickField) {
+    addDataChild: function (type, initData, showFieldname, brickDescriptor) {
 
         if (type != "objectbricks" && !initData.invisible) {
             var isLeaf = true;
@@ -217,18 +223,38 @@ pimcore.object.helpers.classTree = Class.create({
 
             // localizedfields can be a drop target
             if (type == "localizedfields") {
+
                 isLeaf = false;
                 draggable = false;
+
+                Ext.apply(brickDescriptor, {
+                    insideLocalizedFields: true
+                });
+
             }
 
             var key = initData.name;
-            if (attributePrefix) {
-                key = attributePrefix + "~" + key;
+
+            if (brickDescriptor && brickDescriptor.insideBrick) {
+                if (brickDescriptor.insideLocalizedFields) {
+                    var parts = {
+                        containerKey: brickDescriptor.brickType,
+                        fieldname: brickDescriptor.brickField,
+                        brickfield: key
+                    }
+                    key = "?" + Ext.encode(parts) + "~" + key;
+                } else {
+                    key = brickDescriptor.brickType + "~" + key;
+                }
             }
 
             var text = ts(initData.title);
             if (showFieldname) {
-                text = text + " (" + key.replace("~", ".") + ")";
+                if (brickDescriptor && brickDescriptor.insideBrick && brickDescriptor.insideLocalizedFields) {
+                    text = text + "(" + brickDescriptor.brickType + "." + initData.name + ")";
+                } else {
+                    text = text + " (" + key.replace("~", ".") + ")";
+                }
             }
             var newNode = {
                 text: text,
@@ -240,7 +266,7 @@ pimcore.object.helpers.classTree = Class.create({
                 dataType: type,
                 iconCls: "pimcore_icon_" + type,
                 expanded: true,
-                brickField: brickField
+                brickDescriptor: brickDescriptor
             };
 
             newNode = this.appendChild(newNode);

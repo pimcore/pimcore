@@ -56,7 +56,7 @@ pimcore.settings.redirects = Class.create({
         var that = this;
 
         var itemsPerPage = pimcore.helpers.grid.getDefaultPageSize();
-        var url = '/admin/settings/redirects?';
+        var url = '/admin/redirects/list?';
 
         this.store = pimcore.helpers.grid.buildDefaultStore(
             url,
@@ -125,27 +125,42 @@ pimcore.settings.redirects = Class.create({
             width: 70
         });
 
+        var redirectTypesStore = Ext.create('Ext.data.ArrayStore', {
+            fields: ['type', 'name'],
+            data : [
+                ["entire_uri", t('redirects_type_entire_uri') + ': https://host.com/test?key=value'],
+                ["path_query", t('redirects_type_path_query') + ': /test?key=value'],
+                ["path", t('redirects_type_path') + ': /test']
+            ]
+        });
+
         var typesColumns = [
             {
                 text: t("type"),
-                width: 70,
+                width: 200,
                 sortable: true,
                 dataIndex: 'type',
                 editor: new Ext.form.ComboBox({
-                    store: [
-                        ["entire_uri", t('redirects_type_entire_uri') + ': https://example.com/test?key=value'],
-                        ["path_query", t('redirects_type_path_query') + ': /test?key=value'],
-                        ["path", t('redirects_type_path') + ': /test']
-                    ],
+                    store: redirectTypesStore,
                     mode: "local",
+                    queryMode: "local",
                     typeAhead: false,
                     editable: false,
+                    displayField: 'name',
+                    valueField: 'type',
                     listConfig: {
                         minWidth: 350
                     },
                     forceSelection: true,
                     triggerAction: "all"
-                })
+                }),
+                renderer: function (redirectType) {
+                    var pos = redirectTypesStore.findExact("type", redirectType);
+                    if(pos >= 0) {
+                        return redirectTypesStore.getAt(pos).get("name");
+                    }
+                    return redirectType;
+                }
             },
             {text: t("source"), flex: 200, sortable: true, dataIndex: 'source', editor: new Ext.form.TextField({})},
             {text: t("source_site"), flex: 200, sortable:true, dataIndex: "sourceSite",

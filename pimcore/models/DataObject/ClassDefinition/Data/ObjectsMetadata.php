@@ -108,7 +108,7 @@ class ObjectsMetadata extends Model\DataObject\ClassDefinition\Data\Objects
                 $source = DataObject::getById($object['src_id']);
                 $destination = DataObject::getById($object['dest_id']);
 
-                if ($source instanceof DataObject\Concrete && $destination instanceof DataObject\Concrete && $destination->getClassId() == $this->getAllowedClassId()) {
+                if ($source instanceof DataObject\Concrete && $destination instanceof DataObject\Concrete && $destination->getClassName() == $this->getAllowedClassId()) {
                     $metaData = \Pimcore::getContainer()->get('pimcore.model.factory')
                         ->build('Pimcore\Model\DataObject\Data\ObjectMetadata', [
                             'fieldname' => $this->getName(),
@@ -217,7 +217,7 @@ class ObjectsMetadata extends Model\DataObject\ClassDefinition\Data\Objects
         if (is_array($data) && count($data) > 0) {
             foreach ($data as $object) {
                 $o = DataObject::getById($object['id']);
-                if ($o && $o->getClassId() == $this->getAllowedClassId()) {
+                if ($o && $o->getClassName() == $this->getAllowedClassId()) {
                     $metaData = \Pimcore::getContainer()->get('pimcore.model.factory')
                         ->build('Pimcore\Model\DataObject\Data\ObjectMetadata', [
                             'fieldname' => $this->getName(),
@@ -307,7 +307,7 @@ class ObjectsMetadata extends Model\DataObject\ClassDefinition\Data\Objects
     public function checkValidity($data, $omitMandatoryCheck = false)
     {
         if (!$omitMandatoryCheck and $this->getMandatory() and empty($data)) {
-            throw new Element\ValidationException('Empty mandatory field [ '.$this->getName().' ]');
+            throw new Element\ValidationException('Empty mandatory field [ ' . $this->getName() . ' ]');
         }
 
         if (is_array($data)) {
@@ -317,13 +317,13 @@ class ObjectsMetadata extends Model\DataObject\ClassDefinition\Data\Objects
                 }
 
                 $o = $objectMetadata->getObject();
-                if ($o->getClassId() != $this->getAllowedClassId() || !($o instanceof DataObject\Concrete)) {
+                if ($o->getClassName() != $this->getAllowedClassId() || !($o instanceof DataObject\Concrete)) {
                     if ($o instanceof DataObject\Concrete) {
                         $id = $o->getId();
                     } else {
                         $id = '??';
                     }
-                    throw new Element\ValidationException('Invalid object relation to object ['.$id.'] in field ' . $this->getName(), null, null);
+                    throw new Element\ValidationException('Invalid object relation to object [' . $id . '] in field ' . $this->getName(), null, null);
                 }
             }
         }
@@ -486,7 +486,7 @@ class ObjectsMetadata extends Model\DataObject\ClassDefinition\Data\Objects
             return null;
         } elseif (is_array($value)) {
             foreach ($value as $key => $item) {
-                $item = (array) $item;
+                $item = (array)$item;
                 $id = $item['id'];
 
                 if ($idMapper) {
@@ -514,7 +514,7 @@ class ObjectsMetadata extends Model\DataObject\ClassDefinition\Data\Objects
                     $objects[] = $metaObject;
                 } else {
                     if (!$idMapper || !$idMapper->ignoreMappingFailures()) {
-                        throw new \Exception('cannot get values from web service import - references unknown object with id [ '.$item['id'].' ]');
+                        throw new \Exception('cannot get values from web service import - references unknown object with id [ ' . $item['id'] . ' ]');
                     } else {
                         $idMapper->recordMappingFailure('object', $object->getId(), 'object', $item['id']);
                     }
@@ -563,13 +563,19 @@ class ObjectsMetadata extends Model\DataObject\ClassDefinition\Data\Objects
 
         $position = (isset($relation['position']) && $relation['position']) ? $relation['position'] : '0';
 
-        if ($params && $params['context'] && $params['context']['containerType'] == 'fieldcollection' && $params['context']['subContainerType'] == 'localizedfield') {
+        if ($params && $params['context'] && ($params['context']['containerType'] == 'fieldcollection' || $params['context']['containerType'] == 'objectbrick') && $params['context']['subContainerType'] == 'localizedfield') {
             $context = $params['context'];
             $index = $context['index'];
             $containerName = $context['fieldname'];
 
+            if ($params['context']['containerType'] == 'fieldcollection') {
+                $ownerName = '/' . $params['context']['containerType'] . '~' . $containerName . '/' . $index . '/%';
+            } else {
+                $ownerName = '/' . $params['context']['containerType'] . '~' . $containerName . '/%';
+            }
+
             $sql = $db->quoteInto('o_id = ?', $objectId) . " AND ownertype = 'localizedfield' AND "
-                . $db->quoteInto('ownername LIKE ?', '/fieldcollection~' . $containerName . '/' . $index . '/%')
+                . $db->quoteInto('ownername LIKE ?', $ownerName)
                 . ' AND ' . $db->quoteInto('fieldname = ?', $this->getName())
                 . ' AND ' . $db->quoteInto('position = ?', $position);
         } else {
@@ -647,17 +653,37 @@ class ObjectsMetadata extends Model\DataObject\ClassDefinition\Data\Objects
     {
         $db = Db::get();
 
-        if ($params && $params['context'] && $params['context']['containerType'] == 'fieldcollection' && $params['context']['subContainerType'] == 'localizedfield') {
+        if ($params && $params['context'] && ($params['context']['containerType'] == 'fieldcollection' || $params['context']['containerType'] == 'objectbrick') && $params['context']['subContainerType'] == 'localizedfield') {
+            if ($params['context']['containerType'] == 'objectbrick') {
+                throw new \Exception('deletemeta not implemented');
+            }
             $context = $params['context'];
-            $index = $context['index'];
             $containerName = $context['fieldname'];
 
-            $db->deleteWhere(
-                'object_metadata_' . $object->getClassId(),
-                $db->quoteInto('o_id = ?', $object->getId()) . " AND ownertype = 'localizedfield' AND "
-                . $db->quoteInto('ownername LIKE ?', '/fieldcollection~' . $containerName . '/' . "$index . /%")
-                . ' AND ' . $db->quoteInto('fieldname = ?', $this->getName())
-            );
+            if ($params['context']['containerType'] == 'fieldcollection') {
+                $index = $context['index'];
+                $db->deleteWhere(
+                    'object_metadata_' . $object->getClassId(),
+                    $db->quoteInto('o_id = ?', $object->getId()) . " AND ownertype = 'localizedfield' AND "
+                    . $db->quoteInto('ownername LIKE ?', '/' . $params['context']['containerType'] . '~' . $containerName . '/' . "$index . /%")
+                    . ' AND ' . $db->quoteInto('fieldname = ?', $this->getName())
+                );
+            } elseif ($params['context']['containerType'] == 'objectbrick') {
+                $index = $context['index'];
+                $db->deleteWhere(
+                    'object_metadata_' . $object->getClassId(),
+                    $db->quoteInto('o_id = ?', $object->getId()) . " AND ownertype = 'localizedfield' AND "
+                    . $db->quoteInto('ownername LIKE ?', '/' . $params['context']['containerType'] . '~' . $containerName . '/%')
+                    . ' AND ' . $db->quoteInto('fieldname = ?', $this->getName())
+                );
+            } else {
+                $db->deleteWhere(
+                    'object_metadata_' . $object->getClassId(),
+                    $db->quoteInto('o_id = ?', $object->getId()) . " AND ownertype = 'localizedfield' AND "
+                    . $db->quoteInto('ownername LIKE ?', '/' . $params['context']['containerType'] . '~' . $containerName . '/%')
+                    . ' AND ' . $db->quoteInto('fieldname = ?', $this->getName())
+                );
+            }
         } else {
             $db->delete('object_metadata_' . $object->getClassId(), [
                 'o_id' => $object->getId(),
@@ -847,7 +873,7 @@ class ObjectsMetadata extends Model\DataObject\ClassDefinition\Data\Objects
             return;
         }
 
-        $class = DataObject\ClassDefinition::getById($classId);
+        $class = DataObject\ClassDefinition::getByName($classId);
 
         if (!$this->visibleFields) {
             return;
@@ -912,7 +938,7 @@ class ObjectsMetadata extends Model\DataObject\ClassDefinition\Data\Objects
 
                 $type = Element\Service::getType($element);
                 $id = $element->getId();
-                $result[] =  [
+                $result[] = [
                     'element' => [
                         'type' => $type,
                         'id' => $id
@@ -985,29 +1011,29 @@ class ObjectsMetadata extends Model\DataObject\ClassDefinition\Data\Objects
                     $raw = $itemId;
 
                     $newItems[] = [
-                    'itemId' => $itemId,
-                    'title' => $item['fullpath'],
-                    'raw' => $raw,
-                    'gridrow' => $item,
-                    'unique' => $unique
-                ];
+                        'itemId' => $itemId,
+                        'title' => $item['fullpath'],
+                        'raw' => $raw,
+                        'gridrow' => $item,
+                        'unique' => $unique
+                    ];
                 }
                 $data['data'] = $newItems;
             }
 
             $data['value'] = [
-            'type' => 'grid',
-            'columnConfig' => [
-                'id' => [
-                    'width' => 60
-                ],
-                'fullpath' => [
-                    'flex' => 2
-                ]
+                'type' => 'grid',
+                'columnConfig' => [
+                    'id' => [
+                        'width' => 60
+                    ],
+                    'fullpath' => [
+                        'flex' => 2
+                    ]
 
-            ],
-            'html' => $this->getVersionPreview($originalData, $data, $object, $params)
-        ];
+                ],
+                'html' => $this->getVersionPreview($originalData, $data, $object, $params)
+            ];
 
             $newData = [];
             $newData[] = $data;

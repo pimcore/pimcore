@@ -21,13 +21,14 @@ use Pimcore\Model\Document;
 use Pimcore\Model\Document\Targeting\TargetingDocumentInterface;
 use Pimcore\Model\Element;
 use Pimcore\Model\Redirect;
-use Pimcore\Tool;
 use Pimcore\Tool\Session;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\EventDispatcher\GenericEvent;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
-use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * @Route("/page")
@@ -36,6 +37,7 @@ class PageController extends DocumentControllerBase
 {
     /**
      * @Route("/get-data-by-id")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -98,6 +100,7 @@ class PageController extends DocumentControllerBase
 
     /**
      * @Route("/save")
+     * @Method({"PUT", "POST"})
      *
      * @param Request $request
      *
@@ -248,6 +251,7 @@ class PageController extends DocumentControllerBase
 
     /**
      * @Route("/get-list")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -266,32 +270,8 @@ class PageController extends DocumentControllerBase
     }
 
     /**
-     * @Route("/upload-screenshot")
-     *
-     * @param Request $request
-     *
-     * @return JsonResponse
-     */
-    public function uploadScreenshotAction(Request $request)
-    {
-        if ($request->get('data') && $request->get('id')) {
-            $data = substr($request->get('data'), strpos($request->get('data'), ',') + 1);
-            $data = base64_decode($data);
-
-            $file = PIMCORE_TEMPORARY_DIRECTORY . '/document-page-previews/document-page-screenshot-' . $request->get('id') . '.jpg';
-            $dir = dirname($file);
-            if (!is_dir($dir)) {
-                File::mkdir($dir);
-            }
-
-            File::put($file, $data);
-        }
-
-        return $this->adminJson(['success' => true]);
-    }
-
-    /**
      * @Route("/generate-screenshot")
+     * @Method({"POST"})
      *
      * @param Request $request
      *
@@ -301,39 +281,10 @@ class PageController extends DocumentControllerBase
     {
         $success = false;
         if ($request->get('id')) {
-            $doc = Document::getById($request->get('id'));
-            $url = Tool::getHostUrl() . $doc->getRealFullPath();
-
-            $config = \Pimcore\Config::getSystemConfig();
-            if ($config->general->http_auth) {
-                $username = $config->general->http_auth->username;
-                $password = $config->general->http_auth->password;
-                if ($username && $password) {
-                    $url = str_replace('://', '://' . $username .':'. $password . '@', $url);
-                }
-            }
-
-            $tmpFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/screenshot_tmp_' . $doc->getId() . '.png';
-            $file = PIMCORE_TEMPORARY_DIRECTORY . '/document-page-previews/document-page-screenshot-' . $doc->getId() . '.jpg';
-
-            $dir = dirname($file);
-            if (!is_dir($dir)) {
-                File::mkdir($dir);
-            }
-
             try {
-                if (\Pimcore\Image\HtmlToImage::convert($url, $tmpFile)) {
-                    $im = \Pimcore\Image::getInstance();
-                    $im->load($tmpFile);
-                    $im->scaleByWidth(400);
-                    $im->save($file, 'jpeg', 85);
-
-                    unlink($tmpFile);
-
-                    $success = true;
-                }
+                $success = Document\Service::generatePagePreview($request->get('id'), $request);
             } catch (\Exception $e) {
-                Logger::error($e);
+                Logger::err($e);
             }
         }
 
@@ -341,7 +292,24 @@ class PageController extends DocumentControllerBase
     }
 
     /**
+     * @Route("/display-preview-image", name="pimcore_admin_page_display_preview_image")
+     * @Method({"GET"})
+     *
+     * @param Request $request
+     *
+     * @return BinaryFileResponse
+     */
+    public function displayPreviewImageAction(Request $request)
+    {
+        $document = Document::getById($request->get('id'));
+        if ($document instanceof Document\Page) {
+            return new BinaryFileResponse($document->getPreviewImageFilesystemPath((bool) $request->get('hdpi')), 200, ['Content-Type' => 'image/jpg']);
+        }
+    }
+
+    /**
      * @Route("/check-pretty-url")
+     * @Method({"POST"})
      *
      * @param Request $request
      *
@@ -364,7 +332,7 @@ class PageController extends DocumentControllerBase
             $success = false;
         }
 
-        if (!Tool::isValidPath($path)) {
+        if (!Element\Service::isValidKey($path, 'document')) {
             $success = false;
         }
 
@@ -385,6 +353,7 @@ class PageController extends DocumentControllerBase
 
     /**
      * @Route("/clear-editable-data")
+     * @Method({"PUT"})
      *
      * @param Request $request
      *

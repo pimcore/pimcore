@@ -17,6 +17,8 @@
 
 namespace Pimcore\Model\Translation;
 
+use Pimcore\Event\Model\TranslationEvent;
+use Pimcore\Event\TranslationEvents;
 use Pimcore\File;
 use Pimcore\Model;
 use Pimcore\Tool;
@@ -288,6 +290,8 @@ abstract class AbstractTranslation extends Model\AbstractModel implements Transl
 
     public function save()
     {
+        \Pimcore::getEventDispatcher()->dispatch(TranslationEvents::PRE_SAVE, new TranslationEvent($this));
+
         if (!$this->getCreationDate()) {
             $this->setCreationDate(time());
         }
@@ -298,13 +302,19 @@ abstract class AbstractTranslation extends Model\AbstractModel implements Transl
 
         $this->getDao()->save();
 
+        \Pimcore::getEventDispatcher()->dispatch(TranslationEvents::POST_SAVE, new TranslationEvent($this));
+
         self::clearDependentCache();
     }
 
     public function delete()
     {
+        \Pimcore::getEventDispatcher()->dispatch(TranslationEvents::PRE_DELETE, new TranslationEvent($this));
+
         $this->getDao()->delete();
         self::clearDependentCache();
+
+        \Pimcore::getEventDispatcher()->dispatch(TranslationEvents::POST_DELETE, new TranslationEvent($this));
     }
 
     /**

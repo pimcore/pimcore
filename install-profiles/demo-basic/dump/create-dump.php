@@ -8,7 +8,15 @@ preg_match_all('/CREATE TABLE `(.*)`/', $installSql, $matches);
 $existingTables = $matches[1];
 
 $db = \Pimcore\Db::get();
-$databaseName = $db->getDatabase();
+
+if (isset($_SERVER['argv'][1])) {
+    $config = new \Doctrine\DBAL\Configuration();
+    $connectionParams = [
+        'url' => $_SERVER['argv'][1],
+        'wrapperClass' => '\Pimcore\Db\Connection'
+    ];
+    $db = \Doctrine\DBAL\DriverManager::getConnection($connectionParams, $config);
+}
 
 $tablesRaw = $db->fetchAll('SHOW FULL TABLES');
 
@@ -50,6 +58,12 @@ foreach ($tables as $name) {
         continue;
     }
 
+    $tableColumns = [];
+    $data = $db->fetchAll('SHOW COLUMNS FROM ' . $name);
+    foreach ($data as $dataRow) {
+        $tableColumns[] = $db->quoteIdentifier($dataRow['Field']);
+    }
+
     $tableData = $db->fetchAll('SELECT * FROM ' . $name);
 
     foreach ($tableData as $row) {
@@ -64,8 +78,12 @@ foreach ($tables as $name) {
             $cells[] = $cell;
         }
 
-        $dumpData .= 'INSERT INTO `' . $name . '` VALUES (' . implode(',', $cells) . ');';
-        $dumpData .= "\n";
+        $dumpData .= sprintf(
+            "INSERT INTO %s (%s) VALUES (%s);\n",
+            $name,
+            implode(',', $tableColumns),
+            implode(',', $cells)
+        );
     }
 }
 

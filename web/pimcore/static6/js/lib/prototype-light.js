@@ -330,10 +330,6 @@ function $w(string) {
     return string ? string.split(/\s+/) : [];
 }
 
-Array.from = $A;
-
-Array.from = $A;
-
 (function() {
     var arrayProto = Array.prototype, slice = arrayProto.slice, _each = arrayProto.forEach; // use
                                                                                             // native

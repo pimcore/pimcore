@@ -27,7 +27,7 @@ pimcore.settings.translations = Class.create({
             enableKeyEvents: true,
             value: this.preconfiguredFilter,
             listeners: {
-                "keydown" : function (field, key) {
+                "keydown": function (field, key) {
                     if (key.getKey() == key.ENTER) {
                         var input = field;
                         var proxy = this.store.getProxy();
@@ -81,6 +81,7 @@ pimcore.settings.translations = Class.create({
 
         var readerFields = [
             {name: 'id', persist: false},
+            {name: 'editor', persist: false},
             {name: 'key', allowBlank: false},
             {name: 'creationDate', allowBlank: true, type: 'date', convert: dateConverter, persist: false},
             {name: 'modificationDate', allowBlank: true, type: 'date', convert: dateConverter, persist: false}
@@ -92,15 +93,16 @@ pimcore.settings.translations = Class.create({
 
         for (var i = 0; i < languages.length; i++) {
             readerFields.push({name: languages[i]});
-            //TODO do we really need the id attribute?
+
             var columnConfig = {
                 cls: "x-column-header_" + languages[i].toLowerCase(),
                 text: pimcore.available_languages[languages[i]],
                 sortable: true,
                 dataIndex: languages[i],
                 filter: 'string',
-                editor: this.editableLanguages.indexOf(languages[i]) >= 0 ? new Ext.form.TextField({}) : null,
-                id: "translation_column_" + this.translationType + "_" + languages[i].toLowerCase()};
+                getEditor: this.getCellEditor.bind(this, languages[i]),
+                id: "translation_column_" + this.translationType + "_" + languages[i].toLowerCase()
+            };
             if (applyInitialSettings) {
                 var hidden = i >= maxLanguages;
                 columnConfig.hidden = hidden;
@@ -113,15 +115,17 @@ pimcore.settings.translations = Class.create({
             pimcore.helpers.showNotification(t("info"), t("there_are_more_columns"), null, null, 2000);
         }
 
-        var dateRenderer = function(d) {
+        var dateRenderer = function (d) {
             var date = new Date(d * 1000);
             return Ext.Date.format(date, "Y-m-d H:i:s");
         };
-        typesColumns.push({text: t("creationDate"), sortable: true, dataIndex: 'creationDate', editable: false
-            ,renderer: dateRenderer, filter: 'date'
+        typesColumns.push({
+            text: t("creationDate"), sortable: true, dataIndex: 'creationDate', editable: false
+            , renderer: dateRenderer, filter: 'date'
         });
-        typesColumns.push({text: t("modificationDate"), sortable: true, dataIndex: 'modificationDate', editable: false
-            ,renderer: dateRenderer, filter: 'date'
+        typesColumns.push({
+            text: t("modificationDate"), sortable: true, dataIndex: 'modificationDate', editable: false
+            , renderer: dateRenderer, filter: 'date'
         })
         ;
 
@@ -148,14 +152,30 @@ pimcore.settings.translations = Class.create({
             }
         );
 
-        if(this.preconfiguredFilter) {
+        if (this.preconfiguredFilter) {
             this.store.getProxy().extraParams.searchString = this.preconfiguredFilter;
         }
 
         this.pagingtoolbar = pimcore.helpers.grid.buildDefaultPagingToolbar(this.store, {pageSize: itemsPerPage});
 
         this.cellEditing = Ext.create('Ext.grid.plugin.CellEditing', {
-            clicksToEdit: 1
+            clicksToEdit: 1,
+            listeners: {
+                beforeedit: function(editor, context, eOpts) {
+                    editor.editors.each(function (e) {
+                        try {
+                            // complete edit, so the value is stored when hopping around with TAB
+                            e.completeEdit();
+                            Ext.destroy(e);
+                        } catch (exception) {
+                            // garbage collector was faster
+                            // already destroyed
+                        }
+                    });
+
+                    editor.editors.clear();
+                }
+            }
         });
 
         var toolbar = Ext.create('Ext.Toolbar', {
@@ -166,7 +186,7 @@ pimcore.settings.translations = Class.create({
                     handler: this.onAdd.bind(this),
                     iconCls: "pimcore_icon_add"
                 },
-                '-',{
+                '-', {
                     text: this.getHint(),
                     xtype: "tbtext",
                     style: "margin: 0 10px 0 0;"
@@ -188,11 +208,11 @@ pimcore.settings.translations = Class.create({
                     text: t('export_csv'),
                     handler: this.doExport.bind(this),
                     iconCls: "pimcore_icon_export"
-                },'-',{
+                }, '-', {
                     text: t("filter") + "/" + t("search"),
                     xtype: "tbtext",
                     style: "margin: 0 10px 0 0;"
-                },this.filterField
+                }, this.filterField
             ]
         });
 
@@ -203,7 +223,7 @@ pimcore.settings.translations = Class.create({
             store: this.store,
             columnLines: true,
             stripeRows: true,
-            columns : {
+            columns: {
                 items: typesColumns,
                 defaults: {
                     flex: 1
@@ -222,8 +242,32 @@ pimcore.settings.translations = Class.create({
             tbar: toolbar,
             viewConfig: {
                 forceFit: true,
-                loadingText: t('loading_texts'),
+                loadingText: t('please_wait'),
                 enableTextSelection: true
+            },
+            listeners: {
+                cellcontextmenu: this.createCellContextMenu.bind(this),
+                cellClick: function( grid, cell, cellIndex, record, row, recordIndex, e ) {
+                    var cm = grid.headerCt.getGridColumns()
+                    var dataIndex = cm[cellIndex].dataIndex;
+                    if (!in_array(dataIndex, this.languages)) {
+                        return;
+                    }
+
+                    var data = record.get(dataIndex);
+
+
+                    var htmlRegex = /<([A-Za-z][A-Za-z0-9]*)\b[^>]*>(.*?)<\/\1>/;
+                    if (htmlRegex.test(data)) {
+                        record.set("editor", "html");
+                    } else if (data && data.match(/\n/gm))  {
+                        record.set("editor", "plain");
+                    } else {
+                        record.set("editor", null);
+                    }
+                    return true;
+
+                }.bind(this)
             }
         });
 
@@ -232,16 +276,50 @@ pimcore.settings.translations = Class.create({
         return this.grid;
     },
 
-    doImport:function(){
-        pimcore.helpers.uploadDialog(this.importUrl, "Filedata", function() {
+    createCellContextMenu: function (grid, td, cellIndex, record, tr, rowIndex, e, eOpts ) {
+        var cm = grid.headerCt.getGridColumns()
+        var dataIndex = cm[cellIndex].dataIndex;
+        if (!in_array(dataIndex, this.languages)) {
+            return;
+        }
+
+        e.stopEvent();
+
+        var handler = function(rowIndex, cellIndex, mode) {
+            record.set("editor", mode);
+            this.cellEditing.startEditByPosition({
+                row : rowIndex,
+                column: cellIndex
+            });
+        };
+
+        var menu = new Ext.menu.Menu();
+        menu.add(new Ext.menu.Item({
+            text: t('edit_as_plain_text'),
+            iconCls: "pimcore_icon_edit",
+            handler: handler.bind(this, rowIndex, cellIndex, "plain")
+        }));
+
+
+        menu.add(new Ext.menu.Item({
+            text: t('edit_as_html'),
+            iconCls: "pimcore_icon_edit",
+            handler: handler.bind(this, rowIndex, cellIndex, "html")
+        }));
+
+        menu.showAt(e.pageX, e.pageY);
+    },
+
+    doImport: function () {
+        pimcore.helpers.uploadDialog(this.importUrl, "Filedata", function () {
             this.store.reload();
         }.bind(this), function () {
             Ext.MessageBox.alert(t("error"), t("error"));
         });
     },
 
-    doMerge:function(){
-        pimcore.helpers.uploadDialog(this.mergeUrl, "Filedata", function(result) {
+    doMerge: function () {
+        pimcore.helpers.uploadDialog(this.mergeUrl, "Filedata", function (result) {
             var data = result.response.responseText;
             data = Ext.decode(data);
 
@@ -252,19 +330,18 @@ pimcore.settings.translations = Class.create({
         });
     },
 
-    refresh: function() {
+    refresh: function () {
         this.store.reload();
     },
 
 
-    doExport:function(){
-
+    doExport: function () {
         var store = this.grid.store;
         var storeFilters = store.getFilters().items;
         var proxy = store.getProxy();
 
         var filtersActive = this.filterField.getValue() || storeFilters.length > 0;
-        if(filtersActive) {
+        if (filtersActive) {
             Ext.MessageBox.confirm("", t("filter_active_message"), function (buttonValue) {
                 if (buttonValue == "yes") {
                     var queryString = "searchString=" + this.filterField.getValue();
@@ -283,7 +360,7 @@ pimcore.settings.translations = Class.create({
     onAdd: function (btn, ev) {
 
         Ext.MessageBox.prompt("", t("please_enter_the_new_name"), function (button, value) {
-            if(button == "ok") {
+            if (button == "ok") {
                 this.cellEditing.cancelEdit();
 
                 this.grid.store.insert(0, {
@@ -301,9 +378,29 @@ pimcore.settings.translations = Class.create({
     cleanup: function () {
         Ext.Ajax.request({
             url: this.cleanupUrl,
+            method: 'DELETE',
             success: function (response) {
                 this.store.reload();
             }.bind(this)
         });
+    },
+
+    getCellEditor: function(language, record) {
+
+        var editor;
+
+        if (!record.data.editor) {
+            editor = this.editableLanguages.indexOf(language) >= 0 ? new Ext.form.TextField({}) : null;
+        } else {
+            editor = new pimcore.settings.translationEditor({
+                __editorType: record.data.editor,
+                __outerTitle: record.data.editor == "plain" ? t("edit_as_plain_text") : t("edit_as_html"),
+                __innerTitle: record.data.key
+            });
+
+        }
+
+        return editor;
     }
+
 });

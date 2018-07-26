@@ -383,7 +383,7 @@ class HeadLink extends CacheBusterAware
             $source         = (string)($item->href ?? '');
             $itemAttributes = isset($item->extras) ? $item->extras : [];
 
-            if (is_array($item->extras) && isset($item->extras['webLink'])) {
+            if (isset($item->extras) && is_array($item->extras) && isset($item->extras['webLink'])) {
                 unset($item->extras['webLink']);
             }
 

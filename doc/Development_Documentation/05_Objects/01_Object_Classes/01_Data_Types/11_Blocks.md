@@ -66,5 +66,31 @@ Create a Block:
  $blockElement->setBlockElement1([$data]);
 ```
 
+Create a Block with localized fields:
+```php
+/** 
+ * @var  $localizedfield DataObject\Localizedfield
+ * 
+ * Localizedfield( items )
+ */
+ $object = DataObject::getById(4);
+ 
+ $data = [
+    "input1" => new BlockElement('input1', 'input', 'NewValue1'),
+    "input2" => new BlockElement('input2', 'input', 'NewValue2'),
+    "myhref" => new BlockElement('myhref', 'multihref', [$object]),
+    "localizedfields" => new BlockElement('localizedfields', 'localizedfields', new Localizedfield([
+        "de" => [
+            "localizedInput" => "Mein deutscher Text"
+        ],
+        "en" => [
+            "localizedInput" => "My English text"
+        ]
+    ]));
+    ];
+ 
+ 
+```
+
 
 

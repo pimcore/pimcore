@@ -129,6 +129,7 @@ pimcore.object.helpers.grid = Class.create({
                 update  : this.url + glue  + "xaction=update",
                 destroy : this.url + glue  + "xaction=destroy"
             },
+            batchActions: false,
             actionMethods: {
                 create : 'POST',
                 read   : 'POST',
@@ -251,7 +252,7 @@ pimcore.object.helpers.grid = Class.create({
                     }/*, hidden: !propertyVisibility.modificationDate*/});
             } else {
                 if (fields[i].isOperator) {
-                    var operatorColumnConfig = {text: field.attributes.label ? field.attributes.label : field.attributes.key, width: 200, sortable: false,
+                    var operatorColumnConfig = {text: field.attributes.label ? field.attributes.label : field.attributes.key, width: field.width ? field.width : 200, sortable: false,
                         dataIndex: fields[i].key, editable: false};
 
                     if (field.attributes.renderer && pimcore.object.tags[field.attributes.renderer]) {

@@ -96,7 +96,6 @@ pimcore.asset.versions = Class.create({
                 ],
                 stripeRows: true,
                 width: 450,
-                title: t('available_versions'),
                 region: "west",
                 split: true,
                 viewConfig: {
@@ -112,12 +111,13 @@ pimcore.asset.versions = Class.create({
 
             grid.reference = this;
 
+            this.frameId = 'asset_version_iframe_' + this.asset.id;
+
             var preview = new Ext.Panel({
                 title: t("preview"),
                 region: "center",
                 bodyCls: "pimcore_overflow_scrolling",
-                html: '<iframe src="about:blank" frameborder="0" style="width:100%;" id="asset_version_iframe_'
-                                                                    + this.asset.id + '"></iframe>'
+                html: '<iframe src="about:blank" frameborder="0" style="width:100%;" id="' + this.frameId + '"></iframe>'
             });
 
             this.layout = new Ext.Panel({
@@ -136,7 +136,7 @@ pimcore.asset.versions = Class.create({
     },
 
     setLayoutFrameDimensions: function (el, width, height, rWidth, rHeight) {
-        Ext.get("asset_version_iframe_" + this.asset.id).setStyle({
+        Ext.get(this.frameId).setStyle({
             height: (height - 38) + "px"
         });
     },
@@ -145,8 +145,9 @@ pimcore.asset.versions = Class.create({
         var data = grid.getStore().getAt(rowIndex).data;
 
         var versionId = data.id;
-        var path = "/admin/asset/show-version?id=" + versionId;
-        Ext.get("asset_version_iframe_" + this.asset.id).dom.src = path;
+        var url = "/admin/asset/show-version?id=" + versionId;
+        url = pimcore.helpers.addCsrfTokenToUrl(url);
+        Ext.get(this.frameId).dom.src = url;
     },
 
     onRowContextmenu: function (grid, record, tr, rowIndex, e, eOpts ) {
@@ -167,6 +168,12 @@ pimcore.asset.versions = Class.create({
             handler: this.removeVersion.bind(this, rowIndex, grid)
         }));
 
+        menu.add(new Ext.menu.Item({
+            text: t('clear_all'),
+            iconCls: "pimcore_icon_delete",
+            handler: this.removeAllVersion.bind(this, rowIndex, grid)
+        }));
+
         e.stopEvent();
         menu.showAt(e.pageX, e.pageY);
     },
@@ -178,10 +185,37 @@ pimcore.asset.versions = Class.create({
 
         Ext.Ajax.request({
             url: "/admin/element/delete-version",
+            method: 'DELETE',
             params: {id: versionId}
         });
 
         grid.getStore().removeAt(index);
+    },
+
+    removeAllVersion: function (index, grid) {
+        var data = grid.getStore().getAt(index).data;
+        var elememntId = data.cid;
+
+        if (elememntId > 0) {
+            Ext.Msg.confirm(t('clear_all'), t('clear_version_message'), function(btn){
+                if (btn == 'yes'){
+                    var modificationDate = this.asset.data.modificationDate;
+                    
+                    Ext.Ajax.request({
+                        url: "/admin/element/delete-all-versions",
+                        method: 'DELETE',
+                        params: {id: elememntId, date: modificationDate}
+                    });
+                    
+                    //get sub collection of versions for removel. Keep current version
+                    var removeCollection = grid.getStore().getData().createFiltered(function(item){
+                        return item.get('date') != modificationDate;
+                    });
+
+                    grid.getStore().remove(removeCollection.getRange());
+                }
+            }.bind(this));
+        }
     },
 
     publishVersion: function (index, grid) {
@@ -190,6 +224,7 @@ pimcore.asset.versions = Class.create({
 
         Ext.Ajax.request({
             url: "/admin/asset/publish-version",
+            method: 'post',
             params: {id: versionId},
             success: this.asset.reload.bind(this.asset)
         });
@@ -204,6 +239,7 @@ pimcore.asset.versions = Class.create({
         if (operation == "edit") {
             Ext.Ajax.request({
                 url: "/admin/element/version-update",
+                method: 'PUT',
                 params: {
                     data: Ext.encode(record.data)
                 }

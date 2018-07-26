@@ -95,7 +95,7 @@ pimcore.object.folder = Class.create(pimcore.object.abstract, {
 
         this.tab = new Ext.Panel({
             id: tabId,
-            title: tabTitle,
+            title: htmlspecialchars(tabTitle),
             closable:true,
             layout: "border",
             items: [
@@ -109,6 +109,7 @@ pimcore.object.folder = Class.create(pimcore.object.abstract, {
         this.tab.on("beforedestroy", function () {
             Ext.Ajax.request({
                 url: "/admin/element/unlock-element",
+                method: 'PUT',
                 params: {
                     id: this.id,
                     type: "object"
@@ -182,15 +183,7 @@ pimcore.object.folder = Class.create(pimcore.object.abstract, {
                 tooltip: t('rename'),
                 iconCls: "pimcore_icon_key pimcore_icon_overlay_go",
                 scale: "medium",
-                handler: function () {
-                    var options = {
-                        elementType: "object",
-                        elementSubType: this.data.general.o_type,
-                        id: this.id,
-                        default: this.data.general.o_key
-                    }
-                    pimcore.elementservice.editElementKey(options);
-                }.bind(this)
+                handler: this.rename.bind(this)
             });
 
             var buttons = [];
@@ -234,7 +227,7 @@ pimcore.object.folder = Class.create(pimcore.object.abstract, {
             buttons.push("-");
             buttons.push({
                 xtype: 'tbtext',
-                text: this.data.general.o_id,
+                text: t("id") + " " + this.data.general.o_id,
                 scale: "medium"
             });
 
@@ -326,21 +319,21 @@ pimcore.object.folder = Class.create(pimcore.object.abstract, {
 
         Ext.Ajax.request({
             url: '/admin/object/save-folder?task=' + task,
-            method: "post",
+            method: "PUT",
             params: this.getSaveData(),
             success: function (response) {
                 try{
                     var rdata = Ext.decode(response.responseText);
                     if (rdata && rdata.success) {
-                        pimcore.helpers.showNotification(t("success"), t("your_object_has_been_saved"), "success");
+                        pimcore.helpers.showNotification(t("success"), t("saved_successfully"), "success");
                         this.resetChanges();
                     }
                     else {
-                        pimcore.helpers.showNotification(t("error"), t("error_saving_object"),
+                        pimcore.helpers.showNotification(t("error"), t("saving_failed"),
                             "error",t(rdata.message));
                     }
                 } catch(e){
-                    pimcore.helpers.showNotification(t("error"), t("error_saving_object"), "error");
+                    pimcore.helpers.showNotification(t("error"), t("saving_failed"), "error");
                 }
 
                 this.tab.unmask();
@@ -405,6 +398,18 @@ pimcore.object.folder = Class.create(pimcore.object.abstract, {
             value: pimcore.helpers.getDeeplink("object", this.data.general.o_id, "folder")
         }
         ], "folder");
+    },
+
+    rename: function () {
+        if(this.isAllowed("rename") && !this.data.general.o_locked && this.data.general.o_id != 1) {
+            var options = {
+                elementType: "object",
+                elementSubType: this.data.general.o_type,
+                id: this.id,
+                default: this.data.general.o_key
+            }
+            pimcore.elementservice.editElementKey(options);
+        }
     }
 
 });

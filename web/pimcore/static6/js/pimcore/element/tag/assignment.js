@@ -55,6 +55,7 @@ pimcore.element.tag.assignment = Class.create({
 
                     Ext.Ajax.request({
                         url: "/admin/tags/add-tag-to-element",
+                        method: 'PUT',
                         params: {
                             assignmentElementId: this.element.id,
                             assignmentElementType: this.elementType,
@@ -109,7 +110,6 @@ pimcore.element.tag.assignment = Class.create({
             });
 
             var treePanel = Ext.create("Ext.Panel", {
-                title: t('element_tag_tree'),
                 items: [tree.getLayout()],
                 layout: "border",
                 region: 'center'
@@ -154,6 +154,7 @@ pimcore.element.tag.assignment = Class.create({
     removeTagFromElement: function(tagId) {
         Ext.Ajax.request({
             url: "/admin/tags/remove-tag-from-element",
+            method: 'DELETE',
             params: {
                 assignmentElementId: this.element.id,
                 assignmentElementType: this.elementType,
@@ -194,6 +195,7 @@ pimcore.element.tag.assignment = Class.create({
                     for (var i=0; i<responseJson.idLists.length; i++) {
                         jobs.push({
                             url: "/admin/tags/do-batch-assignment",
+                            method: 'PUT',
                             params: array_merge(params, {
                                 childrenIds: Ext.encode(responseJson.idLists[i])
                             })

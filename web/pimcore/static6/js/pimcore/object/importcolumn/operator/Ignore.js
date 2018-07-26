@@ -17,11 +17,11 @@
 
 pimcore.registerNS("pimcore.object.importcolumn.operator.ignore");
 
-pimcore.object.importcolumn.operator.ignore = Class.create(pimcore.object.importcolumn.operator.Abstract, {
+pimcore.object.importcolumn.operator.ignore = Class.create(pimcore.object.gridcolumn.Abstract, {
     type: "operator",
     class: "Ignore",
     iconCls: "pimcore_icon_operator_ignore",
-    defaultText: "operator_ignore",
+    defaultText: "Ignore",
 
     getConfigTreeNode: function (configAttributes) {
         if (configAttributes) {
@@ -47,7 +47,7 @@ pimcore.object.importcolumn.operator.ignore = Class.create(pimcore.object.import
             var node = {
                 draggable: true,
                 iconCls: this.iconCls,
-                text: t(this.defaultText),
+                text: this.getDefaultText(),
                 configAttributes: configAttributes,
                 isTarget: true,
                 leaf: true,
@@ -110,7 +110,7 @@ pimcore.object.importcolumn.operator.ignore = Class.create(pimcore.object.import
             width: 400,
             height: 300,
             modal: true,
-            title: t('operator_ignore_settings'),
+            title: t('settings'),
             layout: "fit",
             items: [this.configPanel]
         });
@@ -129,7 +129,7 @@ pimcore.object.importcolumn.operator.ignore = Class.create(pimcore.object.import
     },
 
     getNodeLabel: function (configAttributes) {
-        var nodeLabel = configAttributes.label ? configAttributes.label : t(this.defaultText);
+        var nodeLabel = configAttributes.label ? configAttributes.label : this.getDefaultText();
 
         return nodeLabel;
     },

@@ -637,9 +637,28 @@ function to_php_data_file_format($contents)
  */
 function generateRandomSymfonySecret()
 {
-    if (function_exists('openssl_random_pseudo_bytes')) {
-        return hash('sha1', openssl_random_pseudo_bytes(23));
+    return base64_encode(random_bytes(24));
+}
+
+/**
+ * @param array $array
+ * @param string $glue
+ *
+ * @return string
+ */
+function implode_recursive($array, $glue)
+{
+    $ret = '';
+
+    foreach ($array as $item) {
+        if (is_array($item)) {
+            $ret .= implode_recursive($item, $glue) . $glue;
+        } else {
+            $ret .= $item . $glue;
+        }
     }
 
-    return hash('sha1', uniqid(mt_rand(), true));
+    $ret = substr($ret, 0, 0 - strlen($glue));
+
+    return $ret;
 }

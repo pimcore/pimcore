@@ -25,6 +25,7 @@ pimcore.log.admin = Class.create({
         Ext.apply(this.config, config);
         this.searchParams = this.config.searchParams;
         this.refreshInterval = this.config.refreshInterval;
+        this.getTabPanel();
     },
 
     activate: function () {
@@ -199,7 +200,9 @@ pimcore.log.admin = Class.create({
                     flex: 70,
                     renderer: function(value, p, record){
                         if (value) {
-                            return Ext.String.format('<a href="/admin/log/show-file-object?filePath={0}" target="_blank">{1}</a>', record.data.fileobject, t("open"));
+                            var url = '/admin/log/show-file-object?filePath=' + record.data.fileobject;
+                            url = pimcore.helpers.addCsrfTokenToUrl(url);
+                            return Ext.String.format('<a href="{0}" target="_blank">{1}</a>', url,  t("open"));
                         }
 
                         return '';
@@ -277,12 +280,12 @@ pimcore.log.admin = Class.create({
                 referenceHolder: true,
                 defaultButton: 'log_search_button',
                 buttons: [{
-                    text: t("log_reset_search"),
+                    text: t("reset"),
                     handler: this.clearValues.bind(this),
                     iconCls: "pimcore_icon_stop"
                 },{
                     reference: 'log_search_button',
-                    text: t("log_search"),
+                    text: t("search"),
                     handler: this.find.bind(this),
                     iconCls: "pimcore_icon_search"
                 }],

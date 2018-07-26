@@ -46,6 +46,8 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
     use LoggerAwareTrait;
     use PimcoreContextAwareTrait;
 
+    const FORCE_ALLOW_PROCESSING_UNPUBLISHED_ELEMENTS = '_force_allow_processing_unpublished_elements';
+
     /**
      * @var DocumentResolver
      */
@@ -116,7 +118,7 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
             $user = $this->userLoader->getUser();
         }
 
-        if (!$document->isPublished() && !$user) {
+        if (!$document->isPublished() && !$user && !$request->attributes->get(self::FORCE_ALLOW_PROCESSING_UNPUBLISHED_ELEMENTS)) {
             $this->logger->warning('Denying access to document {document} as it is unpublished and there is no user in the session.', [
                 $document->getFullPath()
             ]);

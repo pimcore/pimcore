@@ -111,7 +111,7 @@ class Processor
         if ($format == 'print') {
             $format = self::getAllowedFormat($fileExt, ['svg', 'jpeg', 'png', 'tiff'], 'png');
 
-            if (($format == 'tiff' || $format == 'svg') && \Pimcore\Tool::isFrontentRequestByAdmin()) {
+            if (($format == 'tiff') && \Pimcore\Tool::isFrontentRequestByAdmin()) {
                 // return a webformat in admin -> tiff cannot be displayed in browser
                 $format = 'png';
                 $deferred = false; // deferred is default, but it's not possible when using isFrontentRequestByAdmin()
@@ -127,7 +127,7 @@ class Processor
                     }
                 }
             } elseif ($format == 'svg') {
-                return self::returnPath($fileSystemPath, $returnAbsolutePath);
+                return $asset->getFullPath();
             }
         } elseif ($format == 'tiff') {
             if (\Pimcore\Tool::isFrontentRequestByAdmin()) {
@@ -190,7 +190,7 @@ class Processor
         $image = Asset\Image::getImageTransformInstance();
         $image->setPreserveColor($config->isPreserveColor());
         $image->setPreserveMetaData($config->isPreserveMetaData());
-        if (!$image->load($fileSystemPath)) {
+        if (!$image->load($fileSystemPath, ['asset' => $asset])) {
             return self::returnPath($errorImage, $returnAbsolutePath);
         }
 
@@ -311,6 +311,14 @@ class Processor
                                             }
                                         }
                                     }
+                                }
+
+                                // inject the focal point
+                                if ($transformation['method'] == 'cover' && $key == 'positioning' && $asset->getCustomSetting('focalPointX')) {
+                                    $value = [
+                                        'x' => $asset->getCustomSetting('focalPointX'),
+                                        'y' => $asset->getCustomSetting('focalPointY')
+                                    ];
                                 }
 
                                 $arguments[$position] = $value;

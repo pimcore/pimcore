@@ -17,12 +17,13 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Reports;
 use Pimcore\Controller\EventedControllerInterface;
 use Pimcore\Model\Document;
 use Pimcore\Model\Tool\Qrcode;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
-use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * @Route("/qrcode")
@@ -31,6 +32,7 @@ class QrcodeController extends ReportsControllerBase implements EventedControlle
 {
     /**
      * @Route("/tree")
+     * @Method({"GET", "POST"})
      *
      * @param Request $request
      *
@@ -55,6 +57,7 @@ class QrcodeController extends ReportsControllerBase implements EventedControlle
 
     /**
      * @Route("/add")
+     * @Method({"POST"})
      *
      * @param Request $request
      *
@@ -79,6 +82,7 @@ class QrcodeController extends ReportsControllerBase implements EventedControlle
 
     /**
      * @Route("/delete")
+     * @Method({"DELETE"})
      *
      * @param Request $request
      *
@@ -94,6 +98,7 @@ class QrcodeController extends ReportsControllerBase implements EventedControlle
 
     /**
      * @Route("/get")
+     * @Method({"GET"})
      *
      * @param Request $request
      *
@@ -108,6 +113,7 @@ class QrcodeController extends ReportsControllerBase implements EventedControlle
 
     /**
      * @Route("/update")
+     * @Method({"PUT"})
      *
      * @param Request $request
      *
@@ -132,6 +138,7 @@ class QrcodeController extends ReportsControllerBase implements EventedControlle
 
     /**
      * @Route("/code")
+     * @Method({"GET"})
      *
      * @param Request $request
      *

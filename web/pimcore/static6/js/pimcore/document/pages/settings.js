@@ -136,7 +136,7 @@ pimcore.document.pages.settings = Class.create(pimcore.document.settings_abstrac
             }.bind(this);
 
             this.metaDataPanel = new Ext.form.FieldSet({
-                title: t("meta_data"),
+                title: t("html_tags") + " (&lt;meta ...\\/&gt; &lt;link ...\\/&gt; ...)",
                 collapsible: false,
                 autoHeight:true,
                 width: 700,
@@ -203,8 +203,25 @@ pimcore.document.pages.settings = Class.create(pimcore.document.settings_abstrac
                 return true;
             }.bind(this);
 
-            var serpAbsoluteUrl = window.location.protocol + '//' + window.location.hostname + this.document.data.path + this.document.data.key;
+            var urlPath = this.document.data.path + this.document.data.key;
+            var serpAbsoluteUrl = window.location.protocol + '//' + window.location.hostname + urlPath;
 
+            var subSites = pimcore.globalmanager.get('sites').data.items;
+            if (typeof subSites === 'object' && subSites.length) {
+                var idPath = this.document.data.idPath.replace(/^\/+/g, '');
+                var splitPath = idPath.split('/');
+
+                if (typeof splitPath[1] !== 'undefined') {
+                    var subSiteId = parseInt(splitPath[1], 10);
+
+                    subSites.forEach(function(item) {
+                        if (item.data.rootId === subSiteId) {
+                            urlPath = urlPath.replace(item.data.rootPath, '');
+                            serpAbsoluteUrl = item.data.domain + urlPath;
+                        }
+                    });
+                }
+            }
             // create layout
             this.layout = new Ext.FormPanel({
                 title: t('settings'),
@@ -215,7 +232,7 @@ pimcore.document.pages.settings = Class.create(pimcore.document.settings_abstrac
                 items: [
                     {
                         xtype:'fieldset',
-                        title: t('title_description_meta_data'),
+                        title: t('title') + ", " + t("description") + " & " + t('metadata'),
                         itemId: "metaDataPanel",
                         collapsible: true,
                         autoHeight:true,
@@ -242,7 +259,7 @@ pimcore.document.pages.settings = Class.create(pimcore.document.settings_abstrac
                             },
                             {
                                 fieldLabel: t('description') + " (" + this.document.data.description.length + ")",
-                                maxLength: 255,
+                                maxLength: 350,
                                 height: 51,
                                 width: 700,
                                 name: 'description',
@@ -305,6 +322,7 @@ pimcore.document.pages.settings = Class.create(pimcore.document.settings_abstrac
                                     "keyup": function (el) {
                                         Ext.Ajax.request({
                                             url: "/admin/page/check-pretty-url",
+                                            method: "POST",
                                             params: {
                                                 id: this.document.id,
                                                 path: el.getValue()

@@ -20,253 +20,159 @@ pimcore.object.tags.geobounds = Class.create(pimcore.object.tags.geo.abstract, {
 
     getLayoutEdit: function () {
 
-        if(!this.isMapsAvailable()) {
-            return this.getErrorLayout();
-        }
-
         this.mapImageID = uniqid();
+        this.divImageID = uniqid();
+        this.mapId = "boundmap" + this.divImageID;
 
-        if (this.data) {
-            this.data.ne = new google.maps.LatLng(this.data.NElatitude,this.data.NElongitude);
-            this.data.sw = new google.maps.LatLng(this.data.SWlatitude,this.data.SWlongitude);
-        }
+        this.searchfield = new Ext.form.TextField({
+            width: 200,
+            name: 'mapSearch',
+            style: 'float:left;margin-top:0px;'
+        });
 
         this.component = new Ext.Panel({
-            title: this.fieldConfig.title,
             border: true,
             style: "margin-bottom: 10px",
             height: 370,
             width: 650,
             componentCls: 'object_field object_geo_field',
-            html: '<div id="google_maps_container_' + this.mapImageID + '" align="center"></div>',
+            html: '<div id="leaflet_maps_container_' + this.mapImageID + '"></div>',
             bbar: [{
-                xtype: 'button',
-                text: t('empty'),
-                iconCls: "pimcore_icon_empty",
-                handler: function () {
-                    this.data = null;
-                    this.updatePreviewImage();
-                    this.dirty = true;
-                }.bind(this)
-            },"->",{
-                xtype: "button",
-                text: t("open_select_editor"),
-                iconCls: "pimcore_icon_search",
-                handler: this.openPicker.bind(this)
-            }]
+                    xtype: 'button',
+                    text: t('empty'),
+                    iconCls: "pimcore_icon_empty",
+                    handler: function () {
+                        this.data = null;
+                        this.updateMap();
+                        this.dirty = true;
+                    }.bind(this)
+                }],
+            tbar: [
+                 this.fieldConfig.title,
+                "->",
+                this.searchfield,
+                {
+                    xtype: 'button',
+                    iconCls: "pimcore_icon_search",
+                    handler: this.geocode.bind(this)
+                }
+            ]
         });
 
         this.component.on('afterrender', function () {
-            this.updatePreviewImage();
+            this.updateMap();
         }.bind(this));
 
         return this.component;
     },
 
-    getMapUrl: function (fieldConfig, data, width, height) {
-        if(data && !data.ne) {
-            data.ne = new google.maps.LatLng(data.NElatitude,data.NElongitude);
-            data.sw = new google.maps.LatLng(data.SWlatitude,data.SWlongitude);
-        }
+    getMap: function (fieldConfig, data) {
+        this.rectangle = null;
 
-        // static maps api image url
-        var mapZoom = fieldConfig.zoom;
-        var mapUrl;
+        this.editableLayers = new L.FeatureGroup();
 
-        if (!width) {
-            width = 300;
-        }
-        if(!height) {
-            height = 300;
-        }
-
-        var py = height;
-        var px = width;
 
         try {
+            var leafletMap = null;
             if (data) {
+                var bounds = L.latLngBounds(L.latLng(data.NElatitude, data.NElongitude), L.latLng(data.SWlatitude, data.SWlongitude));
 
-                var bounds = new google.maps.LatLngBounds(data.sw, data.ne);
-                var center = bounds.getCenter();
+                leafletMap = this.getLeafletMap(
+                    bounds.getCenter().lat,
+                    bounds.getCenter().lng,
+                    fieldConfig.zoom
+                );
 
-                mapZoom = this.getBoundsZoomLevel(bounds, {width: px, height: py});
+                this.rectangle = L.rectangle(bounds, {stroke: true, color: "#3388ff", opacity: 0.5, fillOpacity: 0.2, weight: 4});
+                leafletMap.addLayer(this.rectangle);
+                leafletMap.fitBounds(bounds);
+                this.editableLayers.addLayer(this.rectangle);
 
-                var path = 'weight:0|fillcolor:0x00000073|' + data.ne.lat() + ',' + data.ne.lng()
-                    + '|' + data.sw.lat() + ',' + data.ne.lng() + '|'
-                    + data.sw.lat() + ',' + data.sw.lng() + '|' + data.ne.lat()
-                    + ',' + data.sw.lng() + '|' + data.ne.lat() + ','
-                    + data.ne.lng();
-                mapUrl = 'https://maps.googleapis.com/maps/api/staticmap?center=' + center.y + ','
-                    + center.x + '&zoom=' + mapZoom + '&size=' + px + 'x' + py
-                    + '&path=' + path + '&maptype=' + fieldConfig.mapType;
+            } else {
+                leafletMap = this.getLeafletMap(
+                    fieldConfig.lat,
+                    fieldConfig.lng,
+                    fieldConfig.zoom
+                );
             }
-            else {
-                mapUrl = 'https://maps.googleapis.com/maps/api/staticmap?center='
-                    + fieldConfig.lat + ',' + fieldConfig.lng
-                    + '&zoom=' + mapZoom + '&size='
-                    + px + 'x' + py + '&maptype=' + fieldConfig.mapType;
-            }
-
-            if (pimcore.settings.google_maps_api_key) {
-                mapUrl += '&key=' + pimcore.settings.google_maps_api_key;
-            }
-        }
-        catch (e) {
+            this.getLeafletToolbar(leafletMap);
+        } catch (e) {
             console.log(e);
         }
-        return mapUrl;
     },
 
-    openPicker: function () {
+    getLeafletToolbar: function (leafletMap) {
+        leafletMap.addLayer(this.editableLayers);
 
-        this.searchfield = new Ext.form.TextField({
-            width: 300,
-            name: 'mapSearch',
-            style: 'float: left;',
-            fieldLabel: t('search')
+        var drawControlFull = new L.Control.Draw({
+            position: 'topright',
+            draw: {
+                polyline: false,
+                polygon: false,
+                circle: false,
+                marker: false,
+                circlemarker: false
+            },
+            edit: {
+                featureGroup: this.editableLayers,
+                remove: false
+            }
         });
+        leafletMap.addControl(drawControlFull);
 
-        this.mapPanel = new Ext.Panel({
-            plain: true
-        });
+        leafletMap.on(L.Draw.Event.CREATED, function (e) {
+            this.dirty = true;
 
-        this.searchWindow = new Ext.Window({
-            modal: true,
-            width: 600,
-            height: 500,
-            resizable: false,
-            tbar: [{
-                xtype: 'button',
-                text: t('empty'),
-                iconCls: "pimcore_icon_empty",
-                handler: this.removeOverlay.bind(this)
-            }],
-            bbar: [this.searchfield, {
-                xtype: 'button',
-                text: t('search'),
-                iconCls: "pimcore_icon_search",
-                handler: this.geocode.bind(this)
-            },"->",{
-                xtype: 'button',
-                text: t('cancel'),
-                iconCls: "pimcore_icon_cancel",
-                handler: function () {
-                    this.searchWindow.close();
-                }.bind(this)
-            },{
-                xtype: 'button',
-                text: 'OK',
-                iconCls: "pimcore_icon_save",
-                handler: function () {
-
-                    this.data = null;
-
-                    if (this.overlay) {
-                        this.data = {
-                            ne: this.overlay.getBounds().getNorthEast(),
-                            sw: this.overlay.getBounds().getSouthWest()
-                        };
-                    }
-
-                    this.updatePreviewImage();
-                    this.dirty = true;
-                    this.searchWindow.close();
-
-                }.bind(this)
-            }],
-            plain: true
-        });
-
-        this.alreadyIntitialized = false;
-
-        this.searchWindow.on('afterlayout', function () {
-            if (this.alreadyIntitialized) {
-                return;
+            this.editableLayers.clearLayers();
+            if (this.rectangle !== null) {
+                this.rectangle.remove();
             }
 
-            this.alreadyIntitialized = true;
-
-            var center = new google.maps.LatLng(this.fieldConfig.lat, this.fieldConfig.lng);
-            var mapZoom = this.fieldConfig.zoom;
-
-            this.gmap = new google.maps.Map(this.searchWindow.body.dom, {
-                zoom: mapZoom,
-                center: center,
-                streetViewControl: false,
-                mapTypeControl: true,
-                mapTypeControlOptions: {
-                    style: google.maps.MapTypeControlStyle.DROPDOWN_MENU
-                },
-                mapTypeId: this.fieldConfig.mapType
-            });
-
-            this.drawingManager = new google.maps.drawing.DrawingManager({
-                drawingControl: false,
-                rectangleOptions: {
-                    strokeWeight: 0,
-                    fillOpacity: 0.45,
-                    editable: true,
-                    draggable: true
-                },
-                map: this.gmap
-            });
-
-            google.maps.event.addListener(this.drawingManager, 'overlaycomplete', function (e) {
-                // Switch back to non-drawing mode after drawing a shape.
-                this.drawingManager.setDrawingMode(null);
-
-                this.overlay = e.overlay;
-            }.bind(this));
-
-            if (this.data) {
-                this.renderOverlay();
-                this.gmap.fitBounds(this.overlay.getBounds());
-            } else {
-                this.drawingManager.setDrawingMode(google.maps.drawing.OverlayType.RECTANGLE);
+            var layer = e.layer;
+            this.editableLayers.addLayer(layer);
+            if (this.editableLayers.getLayers().length === 1) {
+                this.data = {
+                    ne: layer.getBounds().getNorthEast(),
+                    sw: layer.getBounds().getSouthWest()
+                };
             }
-
-            this.geocoder = new google.maps.Geocoder();
-
         }.bind(this));
 
-        this.searchWindow.on('beforeclose', function () {
-            delete this.overlay;
-            delete this.gmap;
-            delete this.geocoder;
+        leafletMap.on("draw:deleted", function (e) {
+            this.data = null;
+            this.dirty = true;
+            this.updateMap();
         }.bind(this));
 
-        this.searchWindow.show();
+        leafletMap.on("draw:editresize draw:editmove", function (e) {
+            this.dirty = true;
+            this.data = {
+                ne: e.layer.getBounds().getNorthEast(),
+                sw: e.layer.getBounds().getSouthWest()
+            };
+        }.bind(this));
     },
-
-    renderOverlay: function () {
-        this.overlay = new google.maps.Rectangle({
-            bounds: new google.maps.LatLngBounds(this.data.sw, this.data.ne),
-            strokeWeight: 0,
-            fillOpacity: 0.45,
-            editable: true,
-            draggable: true,
-            map: this.gmap
-        });
-    },
-
-    removeOverlay: function() {
-        if (this.overlay) {
-            this.overlay.setMap(null);
-            delete this.overlay;
-        }
-        this.drawingManager.setDrawingMode(google.maps.drawing.OverlayType.RECTANGLE);
+    
+    geocode: function () {
+        var address = this.searchfield.getValue();
+        jQuery.getJSON(this.getSearchUrl(address), function(json) {
+          if( json[0].lat !== null && json[0].lon !== null) {
+                var map = this.getLeafletMap(json[0].lat, json[0].lon, 15);
+                this.getLeafletToolbar(map);
+            }
+        }.bind(this));
+       
     },
 
     getValue: function () {
         if (this.data) {
             return {
-                NElatitude: this.data.ne.lat(),
-                NElongitude: this.data.ne.lng(),
-                SWlatitude: this.data.sw.lat(),
-                SWlongitude: this.data.sw.lng()
+                NElatitude: this.data.ne.lat,
+                NElongitude: this.data.ne.lng,
+                SWlatitude: this.data.sw.lat,
+                SWlongitude: this.data.sw.lng
             };
         }
-
         return null;
     },
 
@@ -279,14 +185,14 @@ pimcore.object.tags.geobounds = Class.create(pimcore.object.tags.geo.abstract, {
 
         // @TODO
         /*if (value.longitude && value.latitude) {
-            return false;
-        }*/
+         return false;
+         }*/
 
         return true;
     },
 
-    isDirty: function() {
-        if(!this.isRendered()) {
+    isDirty: function () {
+        if (!this.isRendered()) {
             return false;
         }
 
@@ -294,3 +200,4 @@ pimcore.object.tags.geobounds = Class.create(pimcore.object.tags.geo.abstract, {
     }
 
 });
+

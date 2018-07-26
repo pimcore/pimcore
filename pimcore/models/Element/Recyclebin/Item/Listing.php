@@ -21,6 +21,7 @@ use Pimcore\Model;
 
 /**
  * @method \Pimcore\Model\Element\Recyclebin\Item\Listing\Dao getDao()
+ * @method Model\Element\Recyclebin\Item[] load()
  */
 class Listing extends Model\Listing\AbstractListing
 {

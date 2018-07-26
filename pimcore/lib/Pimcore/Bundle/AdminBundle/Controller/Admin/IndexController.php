@@ -30,6 +30,7 @@ use Pimcore\Tool;
 use Pimcore\Tool\Admin;
 use Pimcore\Tool\Session;
 use Pimcore\Version;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -53,6 +54,7 @@ class IndexController extends AdminController
 
     /**
      * @Route("/", name="pimcore_admin_index")
+     * @Method({"GET"})
      * @TemplatePhp()
      *
      * @param Request $request
@@ -80,6 +82,20 @@ class IndexController extends AdminController
 
         $settings = $this->buildPimcoreSettings($request, $view, $user, $kernel);
         $this->buildGoogleAnalyticsSettings($view, $settings, $siteConfigProvider);
+
+        if ($user->getTwoFactorAuthentication('required') && !$user->getTwoFactorAuthentication('enabled')) {
+            // only one login is allowed to setup 2FA by the user himself
+            $user->setTwoFactorAuthentication('enabled', true);
+            // disable the 2FA prompt for the current session
+            Tool\Session::useSession(function (AttributeBagInterface $adminSession) {
+                $adminSession->set('2fa_required', false);
+            });
+
+            $user->save();
+            $settings->getParameters()->add([
+                'twoFactorSetupRequired' => true
+            ]);
+        }
 
         // allow to alter settings via an event
         $this->eventDispatcher->dispatch(AdminEvents::INDEX_SETTINGS, new IndexSettingsEvent($settings));
@@ -171,6 +187,9 @@ class IndexController extends AdminController
         // flags
         $namingStrategy = $this->get('pimcore.document.tag.naming.strategy');
 
+        // config
+        $pimcoreSymfonyConfig = $this->getParameter('pimcore.config');
+
         $settings->getParameters()->add([
             'showCloseConfirmation' => true,
             'debug_admin_translations' => (bool)$config->general->debug_admin_translations,
@@ -180,6 +199,9 @@ class IndexController extends AdminController
             'htmltoimage' => \Pimcore\Image\HtmlToImage::isSupported(),
             'videoconverter' => \Pimcore\Video::isAvailable(),
             'asset_hide_edit' => (bool)$config->assets->hide_edit_image,
+            'tile_layer_url_template' => $pimcoreSymfonyConfig['maps']['tile_layer_url_template'],
+            'geocoding_url_template' => $pimcoreSymfonyConfig['maps']['geocoding_url_template'],
+            'reverse_geocoding_url_template' => $pimcoreSymfonyConfig['maps']['reverse_geocoding_url_template'],
         ]);
 
         $dashboardHelper = new \Pimcore\Helper\Dashboard($user);

@@ -516,7 +516,7 @@ pimcore.object.helpers.import.columnConfigurationTab = Class.create({
         }
 
         var changeTypeItem =  new Ext.menu.Item({
-            text: t('change_type'),
+            text: t('convert_to'),
             iconCls: "pimcore_icon_convert",
             hideOnClick: false,
             menu: menu

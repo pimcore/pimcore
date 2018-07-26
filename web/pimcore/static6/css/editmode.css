@@ -15,6 +15,12 @@
 @import 'ext-modifications.css';
 @import 'icons.css';
 
+
+.cke {
+    /* needs to go over the ExtJS panels */
+    z-index: 100200 !important;
+}
+
 .cke * {
     box-sizing: content-box !important;
     -moz-box-sizing: content-box !important;
@@ -46,23 +52,103 @@
 
 .pimcore_block_buttons {
 	padding: 10px 0 5px 0;
+    opacity: .3;
 }
 
-.pimcore_block_buttons .x-form-trigger-default {
+.pimcore_block_entry_over .pimcore_block_buttons, .pimcore_block_entry_over {
+    opacity: 1;
+}
+
+.pimcore_area_buttons {
+    position: absolute;
+    left: -40px;
+    top:-8px;
+    width: 25px;
+    z-index: 10;
+    display: none;
+}
+
+.pimcore_area_buttons.right {
+    right: 10px;
+    left: auto;
+}
+
+.pimcore_area_buttons.top {
+    width: 100%;
+    left: 0;
+    top: -40px;
+    padding-bottom: 15px;
+}
+
+.pimcore_area_buttons_inner{
+    background: #3c3f41;
+    border-left: 1px solid #000;
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+}
+
+.pimcore_area_buttons:after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 100%;
+    width: 0;
+    height: 0;
+    border-right: 8px solid #000000;
+    border-top: 8px solid transparent;
+    border-bottom: 8px solid transparent;
+
+    left: 100%;
+    border-left: 8px solid #000000;
+    border-right: 0px solid #000000;
+}
+
+.pimcore_area_buttons.right:after {
+    left: -8px;
+    border-left: 0px solid #000000;
+    border-right: 8px solid #000000;
+}
+
+.pimcore_area_buttons.top:after {
+    left: 0px;
+    top: 25px;
+    border-left: 8px solid transparent;
+    border-right: 8px solid transparent;
+
+    border-bottom: 0px solid #000000;
+    border-top: 8px solid #000000;
+}
+
+.pimcore_block_buttons .x-form-trigger-default,
+.pimcore_area_buttons .x-form-trigger-default{
     line-height: 24px;
     width:22px;
 }
 
-.pimcore_block_buttons .x-form-field {
+.pimcore_block_buttons .x-form-field,
+.pimcore_area_buttons .x-form-field {
     padding: 1px 4px;
     min-height: 24px;
 }
 
 .pimcore_block_buttons .x-btn {
     padding: 4px;
+    background: #f6f6f6;
+    border-color: #e4e4e4;
+    border-left: 0;
+}
+
+.pimcore_block_buttons .x-btn-over {
+    background-color: #ececec;
+}
+
+.pimcore_area_buttons .x-btn {
+    padding: 4px;
+    border-left: 0;
 }
 
 .pimcore_block_plus,
+.pimcore_block_plus_up,
 .pimcore_block_minus,
 .pimcore_block_up,
 .pimcore_block_down,
@@ -70,11 +156,47 @@
 .pimcore_block_type,
 .pimcore_block_options {
     float: left;
-    padding: 0 2px 0 0;
+}
+
+.pimcore_area_buttons .pimcore_block_plus,
+.pimcore_area_buttons .pimcore_block_plus_up,
+.pimcore_area_buttons .pimcore_block_minus,
+.pimcore_area_buttons .pimcore_block_up,
+.pimcore_area_buttons .pimcore_block_down,
+.pimcore_area_buttons .pimcore_block_amount,
+.pimcore_area_buttons .pimcore_block_type,
+.pimcore_area_buttons .pimcore_block_options,
+.pimcore_area_buttons .pimcore_block_visibility {
+    float: none;
+}
+
+.pimcore_area_buttons.top .pimcore_block_plus,
+.pimcore_area_buttons.top .pimcore_block_plus_up,
+.pimcore_area_buttons.top .pimcore_block_minus,
+.pimcore_area_buttons.top .pimcore_block_up,
+.pimcore_area_buttons.top .pimcore_block_down,
+.pimcore_area_buttons.top .pimcore_block_amount,
+.pimcore_area_buttons.top .pimcore_block_type,
+.pimcore_area_buttons.top .pimcore_block_options,
+.pimcore_area_buttons.top .pimcore_block_visibility {
+    float: left;
 }
 
 .pimcore_block_clear {
 	clear: both;
+}
+
+.pimcore_block_label {
+    display: none;
+}
+
+.pimcore_area_buttons.top .pimcore_block_label {
+    display: inline-block;
+    float: left;
+    color: #ccc;
+    line-height: 25px;
+    font-size: 10px;
+    padding-left: 10px;
 }
 
 .pimcore_block_button_plus,
@@ -83,7 +205,6 @@
 .pimcore_block_button_down,
 .pimcore_block_button_type {
 	display: inline-block !important;
-	margin: 0 3px 0 0;
 }
 
 .pimcore_block_button_plus button,
@@ -95,6 +216,10 @@
 
 .pimcore_block_entry {
 	clear:both;
+}
+
+.pimcore_area_entry {
+    position: relative;
 }
 
 .pimcore_block_amount {
@@ -264,29 +389,24 @@
 }
 
 .pimcore_areablock_toolbar {
-    opacity: .3;
+    opacity: .9;
+    border-color: #000;
 }
 
 .pimcore_areablock_toolbar.x-layer {
     position: fixed !important;
-}
-
-.pimcore_areablock_toolbar:hover {
-    opacity: .9;
-    transition: all .2s ease-in 0; /* explorer 10 */
-    -webkit-transition: all .2s ease-in 0; /* chrome & safari */
-    -moz-transition: all .2s ease-in 0; /* firefox */
-    -o-transition: all .2s ease-in 0; /* opera */
-}
-
-.pimcore_areablock_toolbar .x-window-header-default-top {
-    padding-top: 0;
-    padding-bottom: 0;
+    z-index: 10000 !important;
 }
 
 .pimcore_areablock_toolbar .x-btn-default-small {
     padding-top: 3px;
     padding-bottom: 3px;
+    background: #000;
+    border-bottom: 1px solid #ccc;
+}
+
+.pimcore_areablock_toolbar .x-btn-default-small:last-child {
+    border:0;
 }
 
 .pimcore_areablock_toolbar .x-btn-button-center {
@@ -385,7 +505,6 @@
     width: 100%;
 }
 
-
 .pimcore_tag_date input {
     min-width: 80px;
     line-height: 24px;
@@ -396,10 +515,20 @@
     opacity: 0.5;
 }
 
+.pimcore_tag_scheduledblock .x-slider-thumb.selected {
+    background-color: #ffefbb;
+}
+
+.pimcore_tag_scheduledblock .x-slider-thumb {
+    cursor: pointer;
+}
+
+.pimcore_tag_scheduledblock .x-slider-thumb.selected:before {
+    color: #e9d097;
+}
+
 /* ExtJS specific overrides */
 
 .x-btn {
     text-decoration: none !important;
 }
-
-

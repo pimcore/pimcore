@@ -427,4 +427,39 @@ class Text
 
         return $encoding;
     }
+
+    /**
+     * @param $string
+     *
+     * @return string
+     */
+    public static function getStringAsOneLine($string)
+    {
+        $string = str_replace("\r\n", ' ', $string);
+        $string = str_replace("\n", ' ', $string);
+        $string = str_replace("\r", ' ', $string);
+        $string = str_replace("\t", '', $string);
+        $string = preg_replace('#[ ]+#', ' ', $string);
+
+        return $string;
+    }
+
+    /**
+     * @param $string
+     * @param $length
+     *
+     * @return string
+     */
+    public static function cutStringRespectingWhitespace($string, $length)
+    {
+        if ($length < strlen($string)) {
+            $text = substr($string, 0, $length);
+            if (false !== ($length = strrpos($text, ' '))) {
+                $text = substr($text, 0, $length);
+            }
+            $string = $text.'...';
+        }
+
+        return $string;
+    }
 }

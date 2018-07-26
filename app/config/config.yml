@@ -50,6 +50,16 @@ pimcore:
 #                map:
 #                  myDataType: \AppBundle\Model\DataObject\Data\MyDataType
 
+
+#### ASSET CUSTOM SETTINGS
+#    assets:
+#        versions:
+#            use_hardlinks: false
+#        image:
+#            low_quality_image_preview:
+#                enabled: false
+#                generator: imagick
+
 #### SYMFONY OVERRIDES
 framework:
 

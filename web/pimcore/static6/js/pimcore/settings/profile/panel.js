@@ -23,8 +23,9 @@ pimcore.settings.profile.panel = Class.create({
 
         if (!this.panel) {
             this.panel = new Ext.Panel({
-                id: "profile",
-                title: t("profile"),
+                id: "my_profile",
+                title: t("my_profile"),
+                iconCls: "pimcore_icon_user",
                 border: false,
                 closable: true,
                 layout: "fit",
@@ -34,7 +35,7 @@ pimcore.settings.profile.panel = Class.create({
 
             var tabPanel = Ext.getCmp("pimcore_panel_tabs");
             tabPanel.add(this.panel);
-            tabPanel.setActiveItem("profile");
+            tabPanel.setActiveItem("my_profile");
 
             this.panel.on("destroy", function () {
                 pimcore.globalmanager.remove("profile");
@@ -115,14 +116,14 @@ pimcore.settings.profile.panel = Class.create({
 
         generalItems.push({
             xtype: "checkbox",
-            fieldLabel: t("show_welcome_screen"),
+            boxLabel: t("show_welcome_screen"),
             name: "welcomescreen",
             checked: this.currentUser.welcomescreen
         });
 
         generalItems.push({
             xtype: "checkbox",
-            fieldLabel: t("memorize_tabs"),
+            boxLabel: t("memorize_tabs"),
             name: "memorizeTabs",
             checked: this.currentUser.memorizeTabs
         });
@@ -159,7 +160,8 @@ pimcore.settings.profile.panel = Class.create({
                 fieldLabel: t("old_password"),
                 name: "old_password",
                 inputType: "password",
-                width: 400
+                width: 400,
+                hidden: this.currentUser.isPasswordReset
             }, {
                 xtype: "fieldcontainer",
                 layout: 'hbox',
@@ -186,7 +188,7 @@ pimcore.settings.profile.panel = Class.create({
 
                             passwordField.setValue(pass);
                             retypePasswordField.setValue(pass);
-                            
+
                             passwordCheck(passwordField);
                             passwordCheck(retypePasswordField);
                         }.bind(this)
@@ -195,7 +197,12 @@ pimcore.settings.profile.panel = Class.create({
             }, retypePasswordField]
         });
 
+        var twoFactorSettings = new pimcore.settings.profile.twoFactorSettings(this.currentUser.twoFactorAuthentication);
+        generalItems.push(twoFactorSettings.getPanel());
+
+
         var date = new Date();
+
         var image = "/admin/user/get-image?id=" + this.currentUser.id + "&_dc=" + date.getTime();
         generalItems.push({
             xtype: "fieldset",
@@ -203,7 +210,7 @@ pimcore.settings.profile.panel = Class.create({
             width: '100%',
             items: [{
                 xtype: "container",
-                id: "pimcore_user_image_" + this.currentUser.id,
+                id: "pimcore_profile_image_" + this.currentUser.id,
                 html: '<img src="' + image + '" />',
                 width: 45,
                 height: 45,
@@ -214,7 +221,7 @@ pimcore.settings.profile.panel = Class.create({
                 handler: function () {
                     pimcore.helpers.uploadDialog("/admin/user/upload-current-user-image?id="
                         + this.currentUser.id, null, function () {
-                        var cont = Ext.getCmp("pimcore_user_image_" + this.currentUser.id);
+                        var cont = Ext.getCmp("pimcore_profile_image_" + this.currentUser.id);
                         var date = new Date();
                         cont.update('<img src="/admin/user/get-image?id=' + this.currentUser.id + '&_dc='
                             + date.getTime() + '" />');
@@ -225,25 +232,38 @@ pimcore.settings.profile.panel = Class.create({
 
         this.editorSettings = new pimcore.settings.user.editorSettings(this, this.currentUser.contentLanguages);
 
-        this.userPanel = new Ext.form.FormPanel({
+        this.basicPanel = new Ext.form.FormPanel({
             border: false,
             items: [{items: generalItems}, this.editorSettings.getPanel()],
-            labelWidth: 130,
+            labelWidth: 130
+        });
+
+
+        this.keyBindings = new pimcore.settings.user.user.keyBindings(this, true);
+
+        this.userPanel = new Ext.Panel({
+            autoScroll: true,
+            items: [this.basicPanel, {
+                xtype: "fieldset",
+                collapsible: true,
+                title: t("key_bindings"),
+                items: [this.keyBindings.getPanel()]
+            }],
             buttons: [
                 {
                     text: t("save"),
                     iconCls: "pimcore_icon_apply",
                     handler: this.saveCurrentUser.bind(this)
                 }
-            ],
-            autoScroll: true
+            ]
         });
+
 
         return this.userPanel;
     },
 
     saveCurrentUser: function () {
-        var values = this.userPanel.getForm().getFieldValues();
+        var values = this.basicPanel.getForm().getFieldValues();
         var contentLanguages = this.editorSettings.getContentLanguages();
         values.contentLanguages = contentLanguages;
 
@@ -255,12 +275,21 @@ pimcore.settings.profile.panel = Class.create({
             }
         }
 
+        try {
+            var keyBindings = Ext.encode(this.keyBindings.getValues());
+        } catch (e3) {
+            console.log(e3);
+        }
+
+
+
         Ext.Ajax.request({
             url: "/admin/user/update-current-user",
-            method: "post",
+            method: "PUT",
             params: {
                 id: this.currentUser.id,
-                data: Ext.encode(values)
+                data: Ext.encode(values),
+                keyBindings: keyBindings
             },
             success: function (response) {
                 try {
@@ -277,24 +306,22 @@ pimcore.settings.profile.panel = Class.create({
                             }.bind(this));
                         }
 
-                        pimcore.helpers.showNotification(t("success"), t("user_save_success"), "success");
+                        pimcore.helpers.showNotification(t("success"), t("saved_successfully"), "success");
                         if (contentLanguages) {
                             pimcore.settings.websiteLanguages = contentLanguages;
                             pimcore.currentuser.contentLanguages = contentLanguages.join(',');
                         }
                     } else {
-                        pimcore.helpers.showNotification(t("error"), t("user_save_error"), "error", t(res.message));
+                        pimcore.helpers.showNotification(t("error"), t("saving_failed"), "error", t(res.message));
                     }
                 } catch (e) {
-                    pimcore.helpers.showNotification(t("error"), t("user_save_error"), "error");
+                    pimcore.helpers.showNotification(t("error"), t("saving_failed"), "error");
                 }
             }.bind(this)
         });
     },
 
-
     activate: function () {
-        Ext.getCmp("pimcore_panel_tabs").setActiveItem("users");
+        Ext.getCmp("pimcore_panel_tabs").setActiveItem("my_profile");
     }
-
 });

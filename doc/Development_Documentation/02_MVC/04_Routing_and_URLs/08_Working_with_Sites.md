@@ -56,5 +56,5 @@ The functionality should be pretty self-explanatory:
 ```php 
 \Pimcore\Tool\Frontend::getSiteForDocument($document);
 \Pimcore\Tool\Frontend::isDocumentInCurrentSite($document);
-\Pimcore\Tool\Frontend::isDocumentInSite($document);
+\Pimcore\Tool\Frontend::isDocumentInSite($site, $document);
 ```

@@ -13,24 +13,14 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-use Pimcore\Config;
-use Symfony\Component\Console\Input\ArgvInput;
-
 ob_get_clean();
 
-if (!defined('PIMCORE_PROJECT_ROOT')) {
-    define(
-        'PIMCORE_PROJECT_ROOT',
-        getenv('PIMCORE_PROJECT_ROOT')
-            ?: getenv('REDIRECT_PIMCORE_PROJECT_ROOT')
-            ?: realpath(__DIR__ . '/..')
-    );
-}
+include __DIR__ . "/../vendor/autoload.php";
+\Pimcore\Bootstrap::setProjectRoot();
 
 define('PIMCORE_CONSOLE', true);
 
 /** @var \Pimcore\Kernel $kernel */
-$kernel = require_once __DIR__ . '/../pimcore/config/startup_cli.php';
-
+$kernel = \Pimcore\Bootstrap::startupCli();
 $application = new Pimcore\Console\Application($kernel);
 $application->run();

@@ -73,7 +73,7 @@ class Configuration implements ConfigurationInterface
                         ->arrayNode('debugging')
                             ->info('If debugging is enabled, the translator will return the plain translation key instead of the translated message.')
                             ->addDefaultsIfNotSet()
-                            ->canBeEnabled()
+                            ->canBeDisabled()
                             ->children()
                                 ->scalarNode('parameter')
                                     ->defaultValue('pimcore_debug_translations')
@@ -82,9 +82,24 @@ class Configuration implements ConfigurationInterface
                         ->end()
                     ->end()
                 ->end()
+                ->arrayNode('maps')
+                    ->addDefaultsIfNotSet()
+                    ->children()
+                        ->scalarNode('tile_layer_url_template')
+                            ->defaultValue('https://a.tile.openstreetmap.org/{z}/{x}/{y}.png')
+                        ->end()
+                        ->scalarNode('geocoding_url_template')
+                            ->defaultValue('https://nominatim.openstreetmap.org/search?q={q}&addressdetails=1&format=json&limit=1')
+                        ->end()
+                        ->scalarNode('reverse_geocoding_url_template')
+                            ->defaultValue('https://nominatim.openstreetmap.org/reverse?format=json&lat={lat}&lon={lon}&addressdetails=1')
+                        ->end()
+                    ->end()
+                ->end()
             ->end();
 
         $this->addObjectsNode($rootNode);
+        $this->addAssetNode($rootNode);
         $this->addDocumentsNode($rootNode);
         $this->addEncryptionNode($rootNode);
         $this->addModelsNode($rootNode);
@@ -116,6 +131,46 @@ class Configuration implements ConfigurationInterface
                         ->arrayNode('class_overrides')
                             ->useAttributeAsKey('name')
                             ->prototype('scalar');
+    }
+
+    /**
+     * Add asset specific extension config
+     *
+     * @param ArrayNodeDefinition $rootNode
+     */
+    private function addAssetNode(ArrayNodeDefinition $rootNode)
+    {
+        $rootNode
+            ->children()
+            ->arrayNode('assets')
+            ->addDefaultsIfNotSet()
+                ->children()
+                    ->arrayNode('image')
+                        ->addDefaultsIfNotSet()
+                        ->children()
+                            ->arrayNode('low_quality_image_preview')
+                                ->addDefaultsIfNotSet()
+                                ->canBeDisabled()
+                                ->children()
+                                    ->scalarNode('generator')
+                                    ->defaultNull()
+                                    ->end()
+                                ->end()
+                            ->end()
+                            ->arrayNode('focal_point_detection')
+                                ->addDefaultsIfNotSet()
+                                ->canBeDisabled()
+                                ->end()
+                            ->end()
+                        ->end()
+                        ->end()
+                    ->end()
+                    ->arrayNode('versions')
+                        ->addDefaultsIfNotSet()
+                        ->children()
+                            ->booleanNode('use_hardlinks')
+                            ->defaultTrue()
+                            ->end();
     }
 
     /**

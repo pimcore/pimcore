@@ -38,7 +38,7 @@ class RunUpdateScriptCommand extends AbstractCommand
     {
         $build = intval($input->getArgument('buildNumber'));
 
-        $downloadUrl = 'https://' . Update::getUpdateHost() . '/v2/getUpdateFiles.php?for=' . $build;
+        $downloadUrl = 'https://' . Update::getUpdateHost() . '/download-update-scripts?for=' . $build;
 
         Update::downloadData($build, $downloadUrl);
         Update::executeScript($build, 'preupdate');

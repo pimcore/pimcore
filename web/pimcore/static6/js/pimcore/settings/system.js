@@ -255,7 +255,7 @@ pimcore.settings.system = Class.create({
                                 handler: function () {
                                     Ext.Ajax.request({
                                         url: "/admin/settings/delete-custom-logo",
-                                        method: "get",
+                                        method: "DELETE",
                                         success: function (response) {
                                             var cont = Ext.getCmp("pimcore_custom_branding_logo");
                                             var date = new Date();
@@ -629,7 +629,7 @@ pimcore.settings.system = Class.create({
                                 checked: this.getValue("general.redirect_to_maindomain")
                             },
                             {
-                                fieldLabel: t("default_error_page"),
+                                fieldLabel: t("error_page") + " (" + t("default") + ")",
                                 name: "documents.error_pages.default",
                                 fieldCls: "input_drop_target",
                                 value: this.getValue("documents.error_pages.default"),
@@ -710,7 +710,7 @@ pimcore.settings.system = Class.create({
                                 value: this.getValue("database.params.dbname")
                             },
                             {
-                                fieldLabel: t('database_port'),
+                                fieldLabel: t('port'),
                                 disabled: true,
                                 name: 'database.params.port',
                                 value: this.getValue("database.params.port")
@@ -873,12 +873,12 @@ pimcore.settings.system = Class.create({
                                 minValue: 0
                             },
                             {
-                                fieldLabel: t('absolute_path_to_icc_rgb_profile') + " (imagick)",
+                                fieldLabel: t('absolute_path_to_icc_rgb_profile') + " (Imagick)",
                                 name: 'assets.icc_rgb_profile',
                                 value: this.getValue("assets.icc_rgb_profile")
                             },
                             {
-                                fieldLabel: t('absolute_path_to_icc_cmyk_profile') + " (imagick)",
+                                fieldLabel: t('absolute_path_to_icc_cmyk_profile') + " (Imagick)",
                                 name: 'assets.icc_cmyk_profile',
                                 value: this.getValue("assets.icc_cmyk_profile")
                             },
@@ -1305,7 +1305,7 @@ pimcore.settings.system = Class.create({
 
         Ext.Ajax.request({
             url: "/admin/settings/set-system",
-            method: "post",
+            method: "PUT",
             params: {
                 data: Ext.encode(values)
             },
@@ -1313,7 +1313,7 @@ pimcore.settings.system = Class.create({
                 try {
                     var res = Ext.decode(response.responseText);
                     if (res.success) {
-                        pimcore.helpers.showNotification(t("success"), t("system_settings_save_success"), "success");
+                        pimcore.helpers.showNotification(t("success"), t("saved_successfully"), "success");
 
                         Ext.MessageBox.confirm(t("info"), t("reload_pimcore_changes"), function (buttonValue) {
                             if (buttonValue == "yes") {
@@ -1321,11 +1321,11 @@ pimcore.settings.system = Class.create({
                             }
                         }.bind(this));
                     } else {
-                        pimcore.helpers.showNotification(t("error"), t("system_settings_save_error"),
+                        pimcore.helpers.showNotification(t("error"), t("saving_failed"),
                             "error", t(res.message));
                     }
                 } catch (e) {
-                    pimcore.helpers.showNotification(t("error"), t("system_settings_save_error"), "error");
+                    pimcore.helpers.showNotification(t("error"), t("saving_failed"), "error");
                 }
             }
         });

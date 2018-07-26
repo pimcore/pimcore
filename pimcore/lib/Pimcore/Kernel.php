@@ -27,6 +27,7 @@ use Pimcore\HttpKernel\BundleCollection\ItemInterface;
 use Pimcore\HttpKernel\BundleCollection\LazyLoadedItem;
 use Pimcore\HttpKernel\Config\SystemConfigParamResource;
 use Presta\SitemapBundle\PrestaSitemapBundle;
+use Scheb\TwoFactorBundle\SchebTwoFactorBundle;
 use Sensio\Bundle\DistributionBundle\SensioDistributionBundle;
 use Sensio\Bundle\FrameworkExtraBundle\SensioFrameworkExtraBundle;
 use Sensio\Bundle\GeneratorBundle\SensioGeneratorBundle;
@@ -78,7 +79,7 @@ abstract class Kernel extends SymfonyKernel
      */
     public function getCacheDir()
     {
-        return PIMCORE_PRIVATE_VAR . '/cache/' . $this->getEnvironment();
+        return PIMCORE_SYMFONY_CACHE_DIRECTORY . '/' . $this->getEnvironment();
     }
 
     /**
@@ -250,12 +251,9 @@ abstract class Kernel extends SymfonyKernel
             new SwiftmailerBundle(),
             new DoctrineBundle(),
             new SensioFrameworkExtraBundle(),
-
-            // CMF bundles
             new CmfRoutingBundle(),
-
-            // Sitemaps
-            new PrestaSitemapBundle()
+            new PrestaSitemapBundle(),
+            new SchebTwoFactorBundle()
         ], 100);
 
         // pimcore bundles
@@ -380,7 +378,7 @@ abstract class Kernel extends SymfonyKernel
         }
 
         // check some system variables
-        $requiredVersion = '7.0';
+        $requiredVersion = '7.1';
         if (version_compare(PHP_VERSION, $requiredVersion, '<')) {
             $m = "pimcore requires at least PHP version $requiredVersion your PHP version is: " . PHP_VERSION;
             Tool::exitWithError($m);

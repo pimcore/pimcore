@@ -93,7 +93,7 @@ pimcore.object.versions = Class.create({
                 ],
                 stripeRows: true,
                 width: 450,
-                title: t('available_versions') + " (" + t("press_crtl_and_select_to_compare") + ")",
+                title: t("press_crtl_and_select_to_compare"),
                 region: "west",
                 split: true,
                 selModel: new Ext.selection.RowModel({
@@ -112,12 +112,13 @@ pimcore.object.versions = Class.create({
 
             grid.reference = this;
 
+            this.iframeId = 'object_version_iframe_' + this.object.id;
+
             var preview = new Ext.Panel({
                 title: t("preview"),
                 region: "center",
                 bodyCls: "pimcore_overflow_scrolling",
-                html: '<iframe src="about:blank" frameborder="0" style="width:100%;" id="object_version_iframe_' + this.object.id
-                                                                + '"></iframe>'
+                html: '<iframe src="about:blank" frameborder="0" style="width:100%;" id="' + this.iframeId + '"></iframe>'
             });
 
             this.layout = new Ext.Panel({
@@ -136,7 +137,7 @@ pimcore.object.versions = Class.create({
     },
 
     setLayoutFrameDimensions: function (el, width, height, rWidth, rHeight) {
-        Ext.get("object_version_iframe_" + this.object.id).setStyle({
+        Ext.get(this.iframeId).setStyle({
             height: (height - 38) + "px"
         });
     },
@@ -160,8 +161,9 @@ pimcore.object.versions = Class.create({
 
             var selections = grid.getSelectionModel().getSelection();
 
-            var path = "/admin/object/diff-versions/from/" + selections[0].data.id + "/to/" + selections[1].data.id;
-            Ext.get("object_version_iframe_" + this.object.id).dom.src = path;
+            var url = "/admin/object/diff-versions/from/" + selections[0].data.id + "/to/" + selections[1].data.id;
+            url = pimcore.helpers.addCsrfTokenToUrl(url);
+            Ext.get(this.iframeId).dom.src = url;
         }
     },
 
@@ -171,8 +173,9 @@ pimcore.object.versions = Class.create({
         var data = store.getAt(rowIndex).data;
         var versionId = data.id;
 
-        var path = "/admin/object/preview-version?id=" + versionId;
-        Ext.get("object_version_iframe_" + this.object.id).dom.src = path;
+        var url = "/admin/object/preview-version?id=" + versionId;
+        url = pimcore.helpers.addCsrfTokenToUrl(url);
+        Ext.get(this.iframeId).dom.src = url;
     },
 
     onRowContextmenu: function (grid, record, tr, rowIndex, e, eOpts ) {
@@ -193,6 +196,12 @@ pimcore.object.versions = Class.create({
             handler: this.removeVersion.bind(this, rowIndex, grid)
         }));
 
+        menu.add(new Ext.menu.Item({
+            text: t('clear_all'),
+            iconCls: "pimcore_icon_delete",
+            handler: this.removeAllVersion.bind(this, rowIndex, grid)
+        }));
+
         e.stopEvent();
         menu.showAt(e.pageX, e.pageY);
     },
@@ -204,10 +213,37 @@ pimcore.object.versions = Class.create({
 
         Ext.Ajax.request({
             url: "/admin/element/delete-version",
+            method: 'DELETE',
             params: {id: versionId}
         });
 
         grid.getStore().removeAt(index);
+    },
+
+    removeAllVersion: function (index, grid) {
+        var data = grid.getStore().getAt(index).data;
+        var elememntId = data.cid;
+
+        if (elememntId > 0) {
+            Ext.Msg.confirm(t('clear_all'), t('clear_version_message'), function(btn){
+                if (btn == 'yes'){
+                    var modificationDate = this.object.data.general.o_modificationDate;
+                    
+                    Ext.Ajax.request({
+                        url: "/admin/element/delete-all-versions",
+                        method: 'DELETE',
+                        params: {id: elememntId, date: modificationDate}
+                    });
+                    
+                    //get sub collection of versions for removel. Keep current version
+                    var removeCollection = grid.getStore().getData().createFiltered(function(item){
+                        return item.get('date') != modificationDate;
+                    });
+
+                    grid.getStore().remove(removeCollection.getRange());
+                }
+            }.bind(this));
+        }
     },
 
     editVersion: function (index, grid) {
@@ -221,6 +257,7 @@ pimcore.object.versions = Class.create({
 
         Ext.Ajax.request({
             url: "/admin/object/publish-version",
+            method: "POST",
             params: {id: versionId},
             success: function(response) {
                 this.object.reload();
@@ -243,6 +280,7 @@ pimcore.object.versions = Class.create({
         if (operation == "edit") {
             Ext.Ajax.request({
                 url: "/admin/element/version-update",
+                method: 'PUT',
                 params: {
                     data: Ext.encode(record.data)
                 }

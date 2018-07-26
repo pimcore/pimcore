@@ -65,7 +65,8 @@ pimcore.report.analytics.elementoverview = Class.create(pimcore.report.abstract,
     },
     
     getContentPanel: function () {
-  
+        var self = this;
+
         var summary = new Ext.grid.GridPanel({
             store: this.summaryStore,
             flex: 1,
@@ -177,7 +178,10 @@ pimcore.report.analytics.elementoverview = Class.create(pimcore.report.abstract,
                             tooltip: {
                                 trackMouse: true,
                                 renderer: function(tooltip, storeItem, item) {
-                                    tooltip.setHtml(storeItem.get('source') + ' ' + storeItem.get('pageviews') + '%');
+                                    var views = storeItem.get('pageviews');
+                                    var total = self.sourceStore.sum('pageviews');
+                                    var percent = Math.round(views / total * 1000) / 10;
+                                    tooltip.setHtml(storeItem.get('source') + ' ' + views + ' (' + percent + '%)');
                                 }
                             }
                         }],
@@ -333,7 +337,7 @@ pimcore.report.analytics.elementoverview = Class.create(pimcore.report.abstract,
                     path: path
                 }
             },
-            fields: ['source','pageviews'],
+            fields: ['source',{name:'pageviews',type:'integer'}],
             listeners: {
                 load: this.storeFinished.bind(this),
                 beforeload: this.storeStart.bind(this)

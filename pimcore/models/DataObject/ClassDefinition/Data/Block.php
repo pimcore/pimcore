@@ -60,6 +60,11 @@ class Block extends Model\DataObject\ClassDefinition\Data
     public $collapsed;
 
     /**
+     * @var int
+     */
+    public $maxItems;
+
+    /**
      * Type for the column to query
      *
      * @var string
@@ -83,7 +88,7 @@ class Block extends Model\DataObject\ClassDefinition\Data
      *
      * @var string
      */
-    public $phpdocType = '\\Pimcore\\Model\\DataObject\\Data\\Block';
+    public $phpdocType = '\\Pimcore\\Model\\DataObject\\Data\\BlockElement[][]';
 
     /**
      * @var array
@@ -924,7 +929,7 @@ class Block extends Model\DataObject\ClassDefinition\Data
             $object = $context['object'];
 
             if ($context && $context['containerType'] == 'fieldcollection') {
-                $query = 'select ' . $db->quoteIdentifier($field) . ' from object_collection_' . $context['containerKey'] . '_localized_' . $object->getClassId() . ' where language = ' . $db->quote($params['language']) . ' and  ooo_id  = ' . $object->getId()  . ' and fieldname = ' . $db->quote($context['fieldname']) . ' and `index` =  ' . $context['index'];
+                $query = 'select ' . $db->quoteIdentifier($field) . ' from object_collection_' . $context['containerKey'] . '_localized_' . $object->getClassId() . ' where language = ' . $db->quote($params['language']) . ' and  ooo_id  = ' . $object->getId() . ' and fieldname = ' . $db->quote($context['fieldname']) . ' and `index` =  ' . $context['index'];
             } else {
                 $query = 'select ' . $db->quoteIdentifier($field) . ' from object_localized_data_' . $object->getClassId() . ' where language = ' . $db->quote($params['language']) . ' and  ooo_id  = ' . $object->getId();
             }
@@ -994,5 +999,53 @@ class Block extends Model\DataObject\ClassDefinition\Data
     public function isRemoteOwner()
     {
         return false;
+    }
+
+    /**
+     * @return int
+     */
+    public function getMaxItems()
+    {
+        return $this->maxItems;
+    }
+
+    /**
+     * @param int $maxItems
+     */
+    public function setMaxItems($maxItems)
+    {
+        $this->maxItems = $maxItems;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isDisallowAddRemove()
+    {
+        return $this->disallowAddRemove;
+    }
+
+    /**
+     * @param bool $disallowAddRemove
+     */
+    public function setDisallowAddRemove($disallowAddRemove)
+    {
+        $this->disallowAddRemove = $disallowAddRemove;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isDisallowReorder()
+    {
+        return $this->disallowReorder;
+    }
+
+    /**
+     * @param bool $disallowReorder
+     */
+    public function setDisallowReorder($disallowReorder)
+    {
+        $this->disallowReorder = $disallowReorder;
     }
 }

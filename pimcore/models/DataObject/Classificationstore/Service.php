@@ -64,6 +64,13 @@ class Service
             $dataDefinition = $className::__set_state($dataDefinition);
         }
 
+        if (method_exists($dataDefinition, 'getDelegate')) {
+            $delegateDefinitionRaw = $dataDefinition->getDelegate();
+            $delegateDataType = $dataDefinition->getDelegateDatatype();
+            $delegateDefinition = self::getFieldDefinitionFromJson($delegateDefinitionRaw, $delegateDataType);
+            $dataDefinition->setDelegate($delegateDefinition);
+        }
+
         return $dataDefinition;
     }
 }

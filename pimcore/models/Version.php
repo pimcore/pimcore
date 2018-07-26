@@ -194,7 +194,8 @@ class Version extends AbstractModel
                 // we always try to create a hardlink onto the original file, the asset ensures that not the actual
                 // inodes get overwritten but creates new inodes if the content changes. This is done by deleting the
                 // old file first before opening a new stream -> see Asset::update()
-                if (stream_is_local($this->getBinaryFilePath()) && stream_is_local($data->getFileSystemPath())) {
+                $useHardlinks = \Pimcore::getContainer()->getParameter('pimcore.config')['assets']['versions']['use_hardlinks'];
+                if ($useHardlinks && stream_is_local($this->getBinaryFilePath()) && stream_is_local($data->getFileSystemPath())) {
                     $linked = @link($data->getFileSystemPath(), $this->getBinaryFilePath());
                 }
 

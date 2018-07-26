@@ -212,9 +212,7 @@ abstract class Dao extends Model\Listing\Dao\AbstractDao implements Dao\DaoInter
         if (is_array($keysToDelete) && !empty($keysToDelete)) {
             $preparedKeys = [];
             foreach ($keysToDelete as $value) {
-                if (strpos($value, ':') === false) { // colon causes problems due to a ZF bug, so we exclude them
-                    $preparedKeys[] = $this->db->quote($value);
-                }
+                $preparedKeys[] = $this->db->quote($value);
             }
 
             if (!empty($preparedKeys)) {

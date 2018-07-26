@@ -64,9 +64,9 @@ class Image extends Model\Asset
             $this->setCustomSetting('imageDimensionsCalculated', true);
         }
 
-        parent::update($params);
-
         $this->clearThumbnails();
+
+        parent::update($params);
 
         // now directly create "system" thumbnails (eg. for the tree, ...)
         if ($this->getDataChanged()) {
@@ -86,6 +86,67 @@ class Image extends Model\Asset
         }
     }
 
+    protected function postPersistData()
+    {
+        $this->detectFocalPoint();
+    }
+
+    public function detectFocalPoint()
+    {
+        $config = \Pimcore::getContainer()->getParameter('pimcore.config')['assets']['image']['focal_point_detection'];
+
+        if (!$config['enabled']) {
+            return false;
+        }
+
+        $facedetectBin = \Pimcore\Tool\Console::getExecutable('facedetect');
+        if ($facedetectBin) {
+            $faceCoordinates = [];
+            $thumbnail = $this->getThumbnail(Image\Thumbnail\Config::getPreviewConfig());
+            $image = $thumbnail->getFileSystemPath();
+            $imageWidth = $thumbnail->getWidth();
+            $imageHeight = $thumbnail->getHeight();
+
+            $result = \Pimcore\Tool\Console::exec($facedetectBin . ' ' . escapeshellarg($image));
+            if (strpos($result, "\n")) {
+                $faces = explode("\n", trim($result));
+                $xPoints = [];
+                $yPoints = [];
+
+                foreach ($faces as $coordinates) {
+                    list($x, $y, $width, $height) = explode(' ', $coordinates);
+
+                    // percentages
+                    $Px = $x / $imageWidth * 100;
+                    $Py = $y / $imageHeight * 100;
+                    $Pw = $width / $imageWidth * 100;
+                    $Ph = $height / $imageHeight * 100;
+
+                    $faceCoordinates[] = [
+                        'x' => $Px,
+                        'y' => $Py,
+                        'width' => $Pw,
+                        'height' => $Ph
+                    ];
+
+                    // focal point calculation
+                    $xPoints[] = ($Px + $Px + $Pw) / 2;
+                    $yPoints[] = ($Py + + $Py + $Ph) / 2;
+                }
+
+                $this->setCustomSetting('faceCoordinates', $faceCoordinates);
+
+                if (!$this->getCustomSetting('focalPointX')) {
+                    $focalPointX = array_sum($xPoints) / count($xPoints);
+                    $focalPointY = array_sum($yPoints) / count($yPoints);
+
+                    $this->setCustomSetting('focalPointX', $focalPointX);
+                    $this->setCustomSetting('focalPointY', $focalPointY);
+                }
+            }
+        }
+    }
+
     /**
      * @param null|string $generator
      *
@@ -95,15 +156,31 @@ class Image extends Model\Asset
      */
     public function generateLowQualityPreview($generator = null)
     {
-        $sqipBin = \Pimcore\Tool\Console::getExecutable('sqip');
-        if ($sqipBin) {
+        $config = \Pimcore::getContainer()->getParameter('pimcore.config')['assets']['image']['low_quality_image_preview'];
+
+        if (!$config['enabled']) {
+            return false;
+        }
+
+        if (!$generator) {
+            $generator = $config['generator'];
+        }
+
+        if (!$generator) {
+            $sqipBin = \Pimcore\Tool\Console::getExecutable('sqip');
+            if ($sqipBin) {
+                $generator = 'qip';
+            }
+        }
+
+        if ($generator == 'sqip') {
             // SQIP is preferred, produced smaller files & mostly better quality
             // primitive isn't able to process PJPEG so we have to generate a PNG
             $sqipConfig = Image\Thumbnail\Config::getPreviewConfig();
             $sqipConfig->setFormat('png');
             $pngPath = $this->getThumbnail($sqipConfig)->getFileSystemPath();
             $svgPath = $this->getLowQualityPreviewFileSystemPath();
-            \Pimcore\Tool\Console::exec($sqipBin . ' -o ' . $svgPath . ' '. $pngPath);
+            \Pimcore\Tool\Console::exec($sqipBin . ' -o ' . escapeshellarg($svgPath) . ' '. escapeshellarg($pngPath));
             unlink($pngPath);
 
             if (file_exists($svgPath)) {
@@ -115,6 +192,7 @@ class Image extends Model\Asset
             }
         }
 
+        // fallback
         if (class_exists('Imagick')) {
             // Imagick fallback
             $path = $this->getThumbnail(Image\Thumbnail\Config::getPreviewConfig())->getFileSystemPath();
@@ -123,8 +201,14 @@ class Image extends Model\Asset
             $imagick->setOption('jpeg:extent', '1kb');
             $width = $imagick->getImageWidth();
             $height = $imagick->getImageHeight();
-            $imageBase64 = base64_encode($imagick->getImageBlob());
+
+            // we can't use getImageBlob() here, because of a bug in combination with jpeg:extent
+            // http://www.imagemagick.org/discourse-server/viewtopic.php?f=3&t=24366
+            $tmpFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/image-optimize-' . uniqid() . '.jpg';
+            $imagick->writeImage($tmpFile);
+            $imageBase64 = base64_encode(file_get_contents($tmpFile));
             $imagick->destroy();
+            unlink($tmpFile);
 
             $svg = <<<EOT
 <?xml version="1.0" encoding="utf-8"?>
@@ -322,7 +406,7 @@ EOT;
         if (!$dimensions) {
             $image = self::getImageTransformInstance();
 
-            $status = $image->load($path, ['preserveColor' => true]);
+            $status = $image->load($path, ['preserveColor' => true, 'asset' => $this]);
             if ($status === false) {
                 return;
             }
@@ -371,6 +455,24 @@ EOT;
         $dimensions = $this->getDimensions();
 
         return $dimensions['height'];
+    }
+
+    /**
+     * @param string $key
+     * @param mixed $value
+     *
+     * @return Model\Asset
+     */
+    public function setCustomSetting($key, $value)
+    {
+        if (in_array($key, ['focalPointX', 'focalPointY'])) {
+            // if the focal point changes we need to clean all thumbnails on save
+            if ($this->getCustomSetting($key) != $value) {
+                $this->setDataChanged();
+            }
+        }
+
+        return parent::setCustomSetting($key, $value);
     }
 
     /**
@@ -483,6 +585,96 @@ EOT;
         }
 
         return $data;
+    }
+
+    public function getXMPData()
+    {
+        $data = [];
+
+        if (in_array(File::getFileExtension($this->getFilename()), ['jpg', 'jpeg', 'jp2', 'png', 'gif', 'webp', 'j2k', 'jpf', 'jpx', 'jpm'])) {
+            $chunkSize = 1024;
+            if (!is_int($chunkSize)) {
+                throw new \RuntimeException('Expected integer value for argument #2 (chunkSize)');
+            }
+
+            if ($chunkSize < 12) {
+                throw new \RuntimeException('Chunk size cannot be less than 12 argument #2 (chunkSize)');
+            }
+
+            if (($file_pointer = fopen($this->getFileSystemPath(), 'rb')) === false) {
+                throw new \RuntimeException('Could not open file for reading');
+            }
+
+            $tag = '<x:xmpmeta';
+            $tagLength = strlen($tag);
+            $buffer = false;
+
+            // find open tag
+            while ($buffer === false && ($chunk = fread($file_pointer, $chunkSize)) !== false) {
+                if (strlen($chunk) <= $tagLength) {
+                    break;
+                }
+                if (($position = strpos($chunk, $tag)) === false) {
+                    // if open tag not found, back up just in case the open tag is on the split.
+                    fseek($file_pointer, $tagLength * -1, SEEK_CUR);
+                } else {
+                    $buffer = substr($chunk, $position);
+                }
+            }
+
+            if ($buffer !== false) {
+                $tag = '</x:xmpmeta>';
+                $tagLength = strlen($tag);
+                $offset = 0;
+                while (($position = strpos($buffer, $tag, $offset)) === false && ($chunk = fread($file_pointer,
+                        $chunkSize)) !== false && !empty($chunk)) {
+                    $offset = strlen($buffer) - $tagLength; // subtract the tag size just in case it's split between chunks.
+                    $buffer .= $chunk;
+                }
+
+                if ($position === false) {
+                    // this would mean the open tag was found, but the close tag was not.  Maybe file corruption?
+                    throw new \RuntimeException('No close tag found.  Possibly corrupted file.');
+                } else {
+                    $buffer = substr($buffer, 0, $position + $tagLength);
+                }
+
+                $buffer = preg_replace('/xmlns[^=]*="[^"]*"/i', '', $buffer);
+                $buffer = preg_replace('@<(/)?([a-zA-Z]+):([a-zA-Z]+)@', '<$1$2____$3', $buffer);
+
+                $xml = @simplexml_load_string($buffer);
+                if ($xml) {
+                    if ($xml->rdf____RDF->rdf____Description) {
+                        foreach ($xml->rdf____RDF->rdf____Description as $description) {
+                            $data = array_merge($data, object2array($description));
+                        }
+                    }
+                }
+
+                if (isset($data['@attributes'])) {
+                    unset($data['@attributes']);
+                }
+            }
+
+            fclose($file_pointer);
+        }
+
+        // remove namespace prefixes if possible
+        $resultData = [];
+        array_walk($data, function ($value, $key) use (&$resultData) {
+            $parts = explode('____', $key);
+            $length = count($parts);
+            if ($length > 1) {
+                $name = $parts[$length - 1];
+                if (!isset($resultData[$name])) {
+                    $key = $name;
+                }
+            }
+
+            $resultData[$key] = $value;
+        });
+
+        return $resultData;
     }
 
     /**

@@ -193,7 +193,7 @@ class Service extends Model\Element\Service
         try {
             $asset = new Asset();
 
-            if (\Pimcore\Tool::isValidPath($path)) {
+            if (self::isValidPath($path, 'asset')) {
                 $asset->getDao()->getByPath($path);
 
                 return true;

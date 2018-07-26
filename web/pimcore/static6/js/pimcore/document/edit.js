@@ -48,6 +48,7 @@ pimcore.document.edit = Class.create({
             var cleanupFunction = function () {
                 Ext.Ajax.request({
                     url: "/admin/page/clear-editable-data",
+                    method: "PUT",
                     params: {
                         targetGroup: this["targetGroup"] ? this.targetGroup.getValue() : "",
                         id: this.document.id
@@ -58,34 +59,38 @@ pimcore.document.edit = Class.create({
                 });
             };
 
-            var lbar = [{
-                iconCls: "pimcore_icon_reload",
-                tooltip: t("refresh"),
-                handler: this.reload.bind(this)
-            },"-",{
+            this.areaToolbarTrigger = new Ext.button.Button({
+                iconCls: "pimcore_icon_plus",
+                tooltipType: 'title',
+                cls: "pimcore_button_black",
+                enableToggle: true,
+                hidden: true,
+                toggleHandler: function () {
+                    var el = this.areaToolbarTrigger.areaToolbarElement;
+                    if(el.getLocalX() < 0) {
+                        el.setLocalX(0);
+                        this.layout.addCls('pimcore_document_edit_panel_areatoolbar_button_pressed');
+                    } else {
+                        el.setLocalX(-1000);
+                        this.layout.removeCls('pimcore_document_edit_panel_areatoolbar_button_pressed');
+                    }
+                }.bind(this)
+            });
+
+            this.highlightTagButton = new Ext.Button({
                 tooltip: t("highlight_editable_elements"),
                 iconCls: "pimcore_icon_highlight",
                 enableToggle: true,
-                handler: function (el) {
-                    var editables = this.frame.Ext.getBody().query(".pimcore_editable");
-                    var ed;
-                    for(var i=0; i<editables.length; i++) {
-                        var ed = this.frame.Ext.get(editables[i]);
+                handler: this.toggleTagHighlighting.bind(this)
+            });
 
-                        if(!ed.hasCls("pimcore_tag_inc") && !ed.hasCls("pimcore_tag_areablock")
-                            && !ed.hasCls("pimcore_tag_block") && !ed.hasCls("pimcore_tag_area")) {
-                            if(el.pressed) {
-                                var mask = ed.mask();
-                                mask.setStyle("background-color","#f5d833");
-                                mask.setStyle("opacity","0.5");
-                                mask.setStyle("pointer-events","none");
-                            } else {
-                                ed.unmask();
-                            }
-                        }
-                    }
-                }.bind(this)
-            }, "-", {
+            var lbar = [this.areaToolbarTrigger, {
+                iconCls: "pimcore_icon_reload",
+                tooltip: t("refresh"),
+                handler: this.reload.bind(this)
+            },
+            this.highlightTagButton,
+            {
                 tooltip: t("clear_content_of_current_view"),
                 iconCls: "pimcore_icon_cleanup",
                 handler: cleanupFunction.bind(this)
@@ -137,6 +142,40 @@ pimcore.document.edit = Class.create({
 
     },
 
+    toggleTagHighlighting: function (force) {
+
+        if(!this['tagHighlightingActive']) {
+            this.tagHighlightingActive = false;
+        }
+
+        if(this.tagHighlightingActive === force) {
+            // noting to do in this case
+            return;
+        }
+
+        var editables = this.frame.Ext.getBody().query(".pimcore_editable");
+        var ed;
+        for(var i=0; i<editables.length; i++) {
+            ed = this.frame.Ext.get(editables[i]);
+
+            if(!ed.hasCls("pimcore_tag_inc") && !ed.hasCls("pimcore_tag_areablock")
+                && !ed.hasCls("pimcore_tag_block") && !ed.hasCls("pimcore_tag_area")) {
+                if(!this.tagHighlightingActive) {
+                    var mask = ed.mask();
+                    mask.setStyle("background-color","#f5d833");
+                    mask.setStyle("opacity","0.5");
+                    mask.setStyle("pointer-events","none");
+                } else {
+                    ed.unmask();
+                }
+            }
+        }
+
+        this.tagHighlightingActive = !this.tagHighlightingActive;
+
+        this.highlightTagButton.toggle(this.tagHighlightingActive);
+    },
+
     addTargetingPanel: function(lbar, cleanupFunction) {
         if (!Ext.Array.contains(['page', 'snippet'], this.document.getType())) {
             return;
@@ -146,18 +185,29 @@ pimcore.document.edit = Class.create({
             return;
         }
 
+        this.targetGroupText = Ext.create('Ext.toolbar.TextItem', {
+            scale: "medium",
+            style: "-webkit-transform: rotate(270deg); -moz-transform: rotate(270deg); -o-transform: rotate(270deg); writing-mode: lr-tb;"
+        });
+
+        this.targetGroupStore = Ext.create('Ext.data.JsonStore', {
+            proxy: {
+                type: 'ajax',
+                url: "/admin/targeting/target-group/list?add-default=true"
+            },
+            fields: ["id", "text"],
+            listeners: {
+                load: function() {
+                    this.updateTargetGroupText(this.targetGroup.getValue());
+                }.bind(this)
+            }
+        });
+
         // add target group selection to toolbar
         this.targetGroup = new Ext.form.ComboBox({
             displayField:'text',
             valueField: "id",
-            store: {
-                xtype: "jsonstore",
-                proxy: {
-                    type: 'ajax',
-                    url: "/admin/targeting/target-group/list?add-default=true"
-                },
-                fields: ["id", "text"]
-            },
+            store: this.targetGroupStore,
             editable: false,
             triggerAction: 'all',
             width: 240,
@@ -169,27 +219,46 @@ pimcore.document.edit = Class.create({
                             function(btn){
                                 if (btn === 'yes'){
                                     this.reload(true);
+                                    this.updateTargetGroupText(this.targetGroup.getValue());
                                 }
                             }.bind(this)
                         );
                     } else {
                         this.reload(true);
+                        this.updateTargetGroupText(this.targetGroup.getValue());
                     }
                 }.bind(this)
             }
         });
 
-        lbar.push("->", {
-            tooltip: t("edit_content_for_target_group"),
-            iconCls: "pimcore_icon_target_groups",
-            arrowVisible: false,
-            menuAlign: "tl",
-            menu: [this.targetGroup]
-        }, {
-            tooltip: t("clear_content_of_selected_target_group"),
-            iconCls: "pimcore_icon_cleanup",
-            handler: cleanupFunction.bind(this)
-        });
+        this.targetGroupStore.load();
+
+        lbar.push("->",
+            this.targetGroupText,
+            {
+                tooltip: t("edit_content_for_target_group"),
+                iconCls: "pimcore_icon_target_groups",
+                arrowVisible: false,
+                menuAlign: "tl",
+                menu: [this.targetGroup]
+            },
+            {
+                tooltip: t("clear_content_of_selected_target_group"),
+                iconCls: "pimcore_icon_cleanup",
+                handler: cleanupFunction.bind(this)
+            }
+        );
+    },
+
+    updateTargetGroupText: function(targetgroup) {
+        var record = this.targetGroupStore.getById(targetgroup);
+
+        if(record) {
+            this.targetGroupText.update('&nbsp;&nbsp;<img src="/pimcore/static6/img/flat-color-icons/manager.svg" style="height: 16px;" align="absbottom" />&nbsp;&nbsp;'
+                + record.data.text);
+        } else {
+            this.targetGroupText.update('');
+        }
     },
 
     setLayoutFrameDimensions: function (el, width, height, rWidth, rHeight) {
@@ -223,6 +292,8 @@ pimcore.document.edit = Class.create({
     },
 
     reload: function (disableSaveToSession) {
+
+        this.areaToolbarTrigger.toggle(false);
 
         if (this.reloadInProgress) {
             disableSaveToSession = true;

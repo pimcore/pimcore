@@ -64,7 +64,7 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
     updateGridHeaderContextMenu: function(grid) {
 
         var columnConfig = new Ext.menu.Item({
-            text: t("grid_column_config"),
+            text: t("grid_options"),
             iconCls: "pimcore_icon_table_col pimcore_icon_overlay_edit",
             handler: this.openColumnConfig.bind(this)
         });
@@ -245,6 +245,7 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
         });
         var title = append ? t("batch_append_to") + " " + fieldInfo.text : t("batch_edit_field") + " " + fieldInfo.text;
         this.batchWin = new Ext.Window({
+            autoScroll: true,
             modal: false,
             title: title,
             items: [formPanel],
@@ -282,7 +283,7 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
             this.batchWin.close();
 
             this.batchProgressBar = new Ext.ProgressBar({
-                text: t('Initializing'),
+                text: t('initializing'),
                 style: "margin: 10px;",
                 width: 500
             });
@@ -332,6 +333,7 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
 
         Ext.Ajax.request({
             url: "/admin/object-helper/batch",
+            method: 'PUT',
             params: this.batchParameters,
             success: function (jobs, currentJob, response) {
 
@@ -394,12 +396,14 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
 
         var columnConfig = {
             language: this.gridLanguage,
+            pageSize: this.gridPageSize,
             classid: this.classId,
             objectId: objectId,
             selectedGridColumns: visibleColumns
         };
         var dialog = new pimcore.object.helpers.gridConfigDialog(columnConfig, function(data, settings, save) {
                 this.gridLanguage = data.language;
+                this.gridPageSize = data.pageSize;
                 this.createGrid(true, data.columns, settings, save);
             }.bind(this),
             function() {
@@ -442,6 +446,7 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
     getGridConfig : function () {
         var config = {
             language: this.gridLanguage,
+            pageSize: this.gridPageSize,
             sortinfo: this.sortinfo,
             classId: this.classId,
             columns: {}
@@ -536,7 +541,7 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
                 settings: settings
             };
             this.exportProgressBar = new Ext.ProgressBar({
-                text: t('Initializing'),
+                text: t('initializing'),
                 style: "margin: 10px;",
                 width: 500
             });
@@ -579,6 +584,7 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
 
         Ext.Ajax.request({
             url: "/admin/object-helper/do-export",
+            method: 'POST',
             params: this.exportParameters,
             success: function (jobs, currentJob, response) {
 
@@ -630,10 +636,13 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
             }
         });
 
+
+
         this.sqlButton = new Ext.Button({
             iconCls: "pimcore_icon_sql",
             enableToggle: true,
             tooltip: t("direct_sql_query"),
+            hidden: !pimcore.currentuser.admin,
             handler: function (button) {
 
                 this.sqlEditor.setValue("");

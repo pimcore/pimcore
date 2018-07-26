@@ -75,16 +75,16 @@ CREATE TABLE `cache_tags` (
 
 DROP TABLE IF EXISTS `classes` ;
 CREATE TABLE `classes` (
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `name` varchar(190) NOT NULL DEFAULT '',
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `name` (`name`)
+	`id` VARCHAR(50) NOT NULL,
+	`name` VARCHAR(190) NOT NULL DEFAULT '',
+	PRIMARY KEY (`id`),
+	UNIQUE INDEX `name` (`name`)
 ) DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `custom_layouts` ;
 CREATE TABLE `custom_layouts` (
 	`id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
-	`classId` INT(11) UNSIGNED NOT NULL,
+	`classId` VARCHAR(50) NOT NULL,
 	`name` VARCHAR(190) NULL DEFAULT NULL,
 	`description` TEXT NULL,
 	`creationDate` INT(11) UNSIGNED NULL DEFAULT NULL,
@@ -203,7 +203,7 @@ CREATE TABLE `documents_page` (
   `action` varchar(255) DEFAULT NULL,
   `template` varchar(255) DEFAULT NULL,
   `title` varchar(255) DEFAULT NULL,
-  `description` varchar(255) DEFAULT NULL,
+  `description` varchar(383) DEFAULT NULL,
   `metaData` text,
   `prettyUrl` varchar(190) DEFAULT NULL,
   `contentMasterDocumentId` int(11) DEFAULT NULL,
@@ -289,7 +289,8 @@ CREATE TABLE `email_log` (
   `sentDate` int(11) UNSIGNED DEFAULT NULL,
   `subject` varchar(500) DEFAULT NULL,
   PRIMARY KEY (`id`),
-  KEY `sentDate` (`sentDate`, `id`)
+  KEY `sentDate` (`sentDate`, `id`),
+  FULLTEXT KEY `fulltext` (`from`,`to`,`cc`,`bcc`,`subject`,`params`)
 ) DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `glossary`;
@@ -371,12 +372,14 @@ CREATE TABLE `objects` (
   `o_modificationDate` int(11) unsigned DEFAULT NULL,
   `o_userOwner` int(11) unsigned DEFAULT NULL,
   `o_userModification` int(11) unsigned DEFAULT NULL,
-  `o_classId` int(11) unsigned DEFAULT NULL,
+  `o_classId` VARCHAR(50) NULL DEFAULT NULL,
   `o_className` varchar(255) DEFAULT NULL,
+  `o_childrenSortBy` ENUM('key','index') NULL DEFAULT NULL,
   PRIMARY KEY (`o_id`),
   UNIQUE KEY `fullpath` (`o_path`,`o_key`),
   KEY `key` (`o_key`),
   KEY `path` (`o_path`),
+  KEY `index` (`o_index`),
   KEY `published` (`o_published`),
   KEY `parentId` (`o_parentId`),
   KEY `type` (`o_type`),
@@ -658,10 +661,13 @@ CREATE TABLE `users` (
   `docTypes` varchar(255) DEFAULT NULL,
   `classes` varchar(255) DEFAULT NULL,
   `apiKey` varchar(255) DEFAULT NULL,
+  `twoFactorAuthentication` varchar(255) DEFAULT NULL,
 	`activePerspective` VARCHAR(255) NULL DEFAULT NULL,
 	`perspectives` LONGTEXT NULL DEFAULT NULL,
 	`websiteTranslationLanguagesEdit` LONGTEXT NULL DEFAULT NULL,
   `websiteTranslationLanguagesView` LONGTEXT NULL DEFAULT NULL,
+  `lastLogin` int(11) unsigned DEFAULT NULL,
+  `keyBindings` TEXT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `type_name` (`type`,`name`),
   KEY `parentId` (`parentId`),
@@ -872,7 +878,7 @@ DROP TABLE IF EXISTS `gridconfigs`;
 CREATE TABLE `gridconfigs` (
 	`id` INT(11) NOT NULL AUTO_INCREMENT,
 	`ownerId` INT(11) NULL,
-	`classId` INT(11) NULL,
+	`classId` VARCHAR(50) NULL DEFAULT NULL,
 	`name` VARCHAR(50) NULL,
 	`searchType` VARCHAR(50) NULL,
 	`config` LONGTEXT NULL,
@@ -892,8 +898,8 @@ DEFAULT CHARSET=utf8mb4;
 DROP TABLE IF EXISTS `gridconfig_favourites`;
 CREATE TABLE `gridconfig_favourites` (
 	`ownerId` INT(11) NOT NULL,
-	`classId` INT(11) NOT NULL,
-  `objectId` INT(11) NOT NULL DEFAULT '0',
+	`classId` VARCHAR(50) NOT NULL,
+    `objectId` INT(11) NOT NULL DEFAULT '0',
 	`gridConfigId` INT(11) NULL,
 	`searchType` VARCHAR(50) NOT NULL DEFAULT '',
   PRIMARY KEY (`ownerId`, `classId`, `searchType`, `objectId`),
@@ -919,7 +925,7 @@ DROP TABLE IF EXISTS `importconfigs`;
 CREATE TABLE `importconfigs` (
 	`id` INT(11) NOT NULL AUTO_INCREMENT,
 	`ownerId` INT(11) NULL,
-	`classId` INT(11) NULL,
+	`classId` VARCHAR(50) NULL DEFAULT NULL,
 	`name` VARCHAR(50) NULL,
 	`config` LONGTEXT NULL,
   `description` LONGTEXT NULL,

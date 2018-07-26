@@ -23,7 +23,6 @@ use Pimcore\Event\FrontendEvents;
 use Pimcore\Event\Model\AssetEvent;
 use Pimcore\File;
 use Pimcore\Logger;
-use Pimcore\Tool;
 use Pimcore\Tool\Mime;
 use Symfony\Component\EventDispatcher\GenericEvent;
 
@@ -234,7 +233,7 @@ class Asset extends Element\AbstractElement
         try {
             $asset = new Asset();
 
-            if (Tool::isValidPath($path)) {
+            if (Element\Service::isValidPath($path, 'asset')) {
                 $asset->getDao()->getByPath($path);
 
                 return self::getById($asset->getId(), $force);
@@ -544,6 +543,11 @@ class Asset extends Element\AbstractElement
 
                     usleep($waitTime); // wait specified time until we restart the transaction
                 } else {
+                    if ($isUpdate) {
+                        \Pimcore::getEventDispatcher()->dispatch(AssetEvents::POST_UPDATE_FAILURE, new AssetEvent($this));
+                    } else {
+                        \Pimcore::getEventDispatcher()->dispatch(AssetEvents::POST_ADD_FAILURE, new AssetEvent($this));
+                    }
                     // if the transaction still fail after $maxRetries retries, we throw out the exception
                     throw $e;
                 }
@@ -595,7 +599,7 @@ class Asset extends Element\AbstractElement
             $parent = Asset::getById($this->getParentId());
             if ($parent) {
                 // use the parent's path from the database here (getCurrentFullPath), to ensure the path really exists and does not rely on the path
-                // that is currently in the parent object (in memory), because this might have changed but wasn't not saved
+                // that is currently in the parent asset (in memory), because this might have changed but wasn't not saved
                 $this->setPath(str_replace('//', '/', $parent->getCurrentFullPath() . '/'));
             } else {
                 // parent document doesn't exist anymore, set the parent to to root
@@ -722,6 +726,8 @@ class Asset extends Element\AbstractElement
             }
         }
 
+        $this->postPersistData();
+
         // save properties
         $this->getProperties();
         $this->getDao()->deleteAllProperties();
@@ -753,7 +759,7 @@ class Asset extends Element\AbstractElement
 
         $this->getDao()->update();
 
-        //set object to registry
+        //set asset to registry
         \Pimcore\Cache\Runtime::set('asset_' . $this->getId(), $this);
         if (get_class($this) == 'Asset' || $typeChanged) {
             // get concrete type of asset
@@ -765,6 +771,11 @@ class Asset extends Element\AbstractElement
         }
 
         $this->closeStream();
+    }
+
+    protected function postPersistData()
+    {
+        // hook for the save process, can be overwritten in implementations, such as Image
     }
 
     /**
@@ -798,7 +809,7 @@ class Asset extends Element\AbstractElement
         $version = null;
 
         // only create a new version if there is at least 1 allowed
-        // or if saveVersion() was called directly (it's a newer version of the object)
+        // or if saveVersion() was called directly (it's a newer version of the asset)
         if (Config::getSystemConfig()->assets->versions->steps
             || Config::getSystemConfig()->assets->versions->days
             || $setModificationDate) {
@@ -988,50 +999,56 @@ class Asset extends Element\AbstractElement
 
         \Pimcore::getEventDispatcher()->dispatch(AssetEvents::PRE_DELETE, new AssetEvent($this));
 
-        $this->closeStream();
+        try {
+            $this->closeStream();
 
-        // remove childs
-        if ($this->hasChildren()) {
-            foreach ($this->getChildren() as $child) {
-                $child->delete();
+            // remove childs
+            if ($this->hasChildren()) {
+                foreach ($this->getChildren() as $child) {
+                    $child->delete();
+                }
             }
+
+            // remove file on filesystem
+            $fullPath = $this->getRealFullPath();
+            if ($fullPath != '/..' && !strpos($fullPath, '/../') && $this->getKey() !== '.' && $this->getKey() !== '..') {
+                $this->deletePhysicalFile();
+            }
+
+            $versions = $this->getVersions();
+            foreach ($versions as $version) {
+                $version->delete();
+            }
+
+            // remove permissions
+            $this->getDao()->deleteAllPermissions();
+
+            // remove all properties
+            $this->getDao()->deleteAllProperties();
+
+            // remove all metadata
+            $this->getDao()->deleteAllMetadata();
+
+            // remove all tasks
+            $this->getDao()->deleteAllTasks();
+
+            // remove dependencies
+            $d = $this->getDependencies();
+            $d->cleanAllForElement($this);
+
+            // remove from resource
+            $this->getDao()->delete();
+
+            // empty asset cache
+            $this->clearDependentCache();
+
+            // clear asset from registry
+            \Pimcore\Cache\Runtime::set('asset_' . $this->getId(), null);
+        } catch (\Exception $e) {
+            \Pimcore::getEventDispatcher()->dispatch(AssetEvents::POST_DELETE_FAILURE, new AssetEvent($this));
+            Logger::crit($e);
+            throw $e;
         }
-
-        // remove file on filesystem
-        $fullPath = $this->getRealFullPath();
-        if ($fullPath != '/..' && !strpos($fullPath, '/../') && $this->getKey() !== '.' && $this->getKey() !== '..') {
-            $this->deletePhysicalFile();
-        }
-
-        $versions = $this->getVersions();
-        foreach ($versions as $version) {
-            $version->delete();
-        }
-
-        // remove permissions
-        $this->getDao()->deleteAllPermissions();
-
-        // remove all properties
-        $this->getDao()->deleteAllProperties();
-
-        // remove all metadata
-        $this->getDao()->deleteAllMetadata();
-
-        // remove all tasks
-        $this->getDao()->deleteAllTasks();
-
-        // remove dependencies
-        $d = $this->getDependencies();
-        $d->cleanAllForElement($this);
-
-        // remove from resource
-        $this->getDao()->delete();
-
-        // empty object cache
-        $this->clearDependentCache();
-
-        //set object to registry
-        \Pimcore\Cache\Runtime::set('asset_' . $this->getId(), null);
 
         \Pimcore::getEventDispatcher()->dispatch(AssetEvents::POST_DELETE, new AssetEvent($this));
     }
@@ -1823,12 +1840,12 @@ class Asset extends Element\AbstractElement
         $parentVars = parent::__sleep();
 
         if (isset($this->_fulldump)) {
-            // this is if we want to make a full dump of the object (eg. for a new version), including childs for recyclebin
+            // this is if we want to make a full dump of the asset (eg. for a new version), including childs for recyclebin
             $blockedVars = ['scheduledTasks', 'dependencies', 'userPermissions', 'hasChilds', 'versions', 'parent', 'stream'];
             $finalVars[] = '_fulldump';
             $this->removeInheritedProperties();
         } else {
-            // this is if we want to cache the object
+            // this is if we want to cache the asset
             $blockedVars = ['scheduledTasks', 'dependencies', 'userPermissions', 'hasChilds', 'versions', 'childs', 'properties', 'stream', 'parent'];
         }
 

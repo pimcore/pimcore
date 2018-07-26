@@ -36,7 +36,7 @@ use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Templating\EngineInterface;
 
-class WirecardSeamless implements IPayment
+class WirecardSeamless extends AbstractPayment
 {
     const HASH_ALGO_HMAC_SHA512 = 'hmac_sha512';
 
@@ -148,6 +148,8 @@ class WirecardSeamless implements IPayment
 
     protected function processOptions(array $options)
     {
+        parent::processOptions($options);
+
         $this->customerId = $options['customer_id'];
         $this->shopId     = $options['shop_id'];
         $this->password   = $options['password'];
@@ -187,6 +189,8 @@ class WirecardSeamless implements IPayment
 
     protected function configureOptions(OptionsResolver $resolver): OptionsResolver
     {
+        parent::configureOptions($resolver);
+
         $resolver->setRequired([
             'customer_id',
             'shop_id',
@@ -532,8 +536,8 @@ class WirecardSeamless implements IPayment
                 $orderIdent,
                 $response['orderNumber'],
                 $response['avsResponseMessage'],
-                $response['orderNumber'] !== null && $response['paymentState'] == 'SUCCESS'
-                    ? IStatus::STATUS_CANCELLED
+                $response['orderNumber'] !== null && $response['paymentState'] == 'PENDING'
+                    ? IStatus::STATUS_PENDING
                     : IStatus::STATUS_CANCELLED,
                 [
                     'seamless_amount'       => '',

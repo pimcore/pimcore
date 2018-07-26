@@ -17,11 +17,11 @@
 
 pimcore.registerNS("pimcore.object.gridcolumn.operator.php");
 
-pimcore.object.gridcolumn.operator.php = Class.create(pimcore.object.gridcolumn.operator.Text, {
+pimcore.object.gridcolumn.operator.php = Class.create(pimcore.object.gridcolumn.operator.text, {
     type: "operator",
     class: "PHP",
     iconCls: "pimcore_icon_operator_php",
-    defaultText: "operator_php",
+    defaultText: "PHP Serialize",
     group: "other",
 
     getConfigTreeNode: function (configAttributes) {
@@ -47,7 +47,7 @@ pimcore.object.gridcolumn.operator.php = Class.create(pimcore.object.gridcolumn.
             var node = {
                 draggable: true,
                 iconCls: this.iconCls,
-                text: t(this.defaultText),
+                text: this.getDefaultText(),
                 configAttributes: configAttributes,
                 isTarget: true,
                 leaf: true,
@@ -122,7 +122,7 @@ pimcore.object.gridcolumn.operator.php = Class.create(pimcore.object.gridcolumn.
             width: 400,
             height: 300,
             modal: true,
-            title: t('operator_php_settings'),
+            title: t('settings'),
             layout: "fit",
             items: [this.configPanel]
         });
@@ -143,7 +143,7 @@ pimcore.object.gridcolumn.operator.php = Class.create(pimcore.object.gridcolumn.
     },
 
     getNodeLabel: function (configAttributes) {
-        var nodeLabel = configAttributes.label ? configAttributes.label : t(this.defaultText);
+        var nodeLabel = configAttributes.label ? configAttributes.label : this.getDefaultText();
         if (configAttributes.mode == "u" || configAttributes.mode == "s") {
             var mode = configAttributes.mode == "u" ? t("unserialize") : t("serialize");
 

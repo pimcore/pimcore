@@ -374,6 +374,7 @@ class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
             if (!empty($profileConfig)) {
                 $provider->setArgument('$options', $profileConfig);
             }
+            $provider->addMethodCall('setConfigurationKey', [$name]);
 
             $serviceId = sprintf('pimcore_ecommerce.payment_manager.provider.%s', $name);
             $container->setDefinition($serviceId, $provider);
@@ -557,6 +558,13 @@ class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
 
             if (null !== $trackerConfig['item_builder_id']) {
                 $tracker->setArgument('$trackingItemBuilder', new Reference($trackerConfig['item_builder_id']));
+            }
+
+            if (!empty($trackerConfig['tenants']['assortment'])) {
+                $tracker->setArgument('$assortmentTenants', $trackerConfig['tenants']['assortment']);
+            }
+            if (!empty($trackerConfig['tenants']['checkout'])) {
+                $tracker->setArgument('$checkoutTenants', $trackerConfig['tenants']['checkout']);
             }
 
             if (!empty($trackerConfig['options'])) {

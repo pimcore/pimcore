@@ -60,6 +60,7 @@ pimcore.document.printpages.pdfpreview = Class.create({
                     handler: function() {
                         Ext.Ajax.request({
                             url: "/admin/printpage/cancel-generation",
+                            method: 'DELETE',
                             params: {id: this.page.id},
                             success: function(response) {
                                 var result = Ext.decode(response.responseText);
@@ -214,9 +215,17 @@ pimcore.document.printpages.pdfpreview = Class.create({
                     clicksToEdit: 1,
                     listeners: {
                         beforeedit: function(editor, context, eOpts) {
-                            //need to clear cached editors of cell-editing editor in order to
-                            //enable different editors per row
-                            editor.editors.each(Ext.destroy, Ext);
+                            editor.editors.each(function (e) {
+                                try {
+                                    // complete edit, so the value is stored when hopping around with TAB
+                                    e.completeEdit();
+                                    Ext.destroy(e);
+                                } catch (exception) {
+                                    // garbage collector was faster
+                                    // already destroyed
+                                }
+                            });
+
                             editor.editors.clear();
                         }
                     }
@@ -231,7 +240,7 @@ pimcore.document.printpages.pdfpreview = Class.create({
                     editable: false,
                     width: 120,
                     renderer: function(value) {
-                        return t("web2print_" + value);
+                        return t("web2print_" + value, value);
                     },
                     sortable: true
                 },
@@ -265,7 +274,7 @@ pimcore.document.printpages.pdfpreview = Class.create({
         }
 
         if (type == "select") {
-            return t("web2print_" + value);
+            return t("web2print_" + value, value);
         }
 
         return value;
@@ -301,7 +310,7 @@ pimcore.document.printpages.pdfpreview = Class.create({
             var values = data.values;
             var storeValues = [];
             for(var i=0; i < values.length; i++) {
-                storeValues.push([values[i], t("web2print_" + values[i])]);
+                storeValues.push([values[i], t("web2print_" + values[i], values[i])]);
             }
 
             property = new Ext.form.ComboBox({
@@ -334,6 +343,7 @@ pimcore.document.printpages.pdfpreview = Class.create({
 
         Ext.Ajax.request({
             url: "/admin/printpage/start-pdf-generation",
+            method: 'POST',
             params: params,
             success: function(response) {
                 result = Ext.decode(response.responseText);
@@ -363,11 +373,11 @@ pimcore.document.printpages.pdfpreview = Class.create({
 
     loadCurrentPreview: function () {
         var date = new Date();
-        var path;
-        path = "/admin/printpage/pdf-download?id=" + this.page.id + "&time=" + date.getTime();
+        var url = "/admin/printpage/pdf-download?id=" + this.page.id + "&time=" + date.getTime();
+        url = pimcore.helpers.addCsrfTokenToUrl(url);
 
         try {
-            Ext.get(this.iframeName).dom.src = path;
+            Ext.get(this.iframeName).dom.src = url;
         }
         catch (e) {
             console.log(e);
@@ -385,6 +395,7 @@ pimcore.document.printpages.pdfpreview = Class.create({
     checkForActiveGenerateProcess: function() {
         Ext.Ajax.request({
             url: "/admin/printpage/active-generate-process",
+            method: 'POST',
             params: {id: this.page.id},
             success: function(response) {
                 var result = Ext.decode(response.responseText);
@@ -393,7 +404,7 @@ pimcore.document.printpages.pdfpreview = Class.create({
                     this.statusUpdateBox.show();
 
                     if(result.statusUpdate) {
-                        var text = result.statusUpdate.status + "% (" + t("web2print_" + result.statusUpdate.statusUpdate) + ")";
+                        var text = result.statusUpdate.status + "% (" + t("web2print_" + result.statusUpdate.statusUpdate, result.statusUpdate.statusUpdate) + ")";
                         this.progressBar.updateProgress(result.statusUpdate.status / 100, text);
                     }
 

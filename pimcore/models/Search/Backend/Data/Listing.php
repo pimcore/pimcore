@@ -14,8 +14,11 @@
 
 namespace Pimcore\Model\Search\Backend\Data;
 
+use Pimcore\Model\Search\Backend\Data;
+
 /**
  * @method \Pimcore\Model\Search\Backend\Data\Listing\Dao getDao()
+ * @method Data[] load()
  */
 class Listing extends \Pimcore\Model\Listing\AbstractListing
 {

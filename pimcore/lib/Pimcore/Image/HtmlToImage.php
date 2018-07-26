@@ -15,6 +15,7 @@
 namespace Pimcore\Image;
 
 use Pimcore\Tool\Console;
+use Pimcore\Tool\Session;
 
 class HtmlToImage
 {
@@ -42,7 +43,11 @@ class HtmlToImage
     }
 
     /**
-     * @return bool
+     * @deprecated
+     *
+     * @return bool|mixed|string
+     *
+     * @throws \Exception
      */
     public static function getXvfbBinary()
     {
@@ -63,7 +68,16 @@ class HtmlToImage
         // add parameter pimcore_preview to prevent inclusion of google analytics code, cache, etc.
         $url .= (strpos($url, '?') ? '&' : '?') . 'pimcore_preview=true';
 
-        $arguments = ' --width ' . $screenWidth . ' --format ' . $format . ' "' . $url . '" ' . $outputFile;
+        $options = [
+            '--width ' . $screenWidth,
+            '--format ' . $format
+        ];
+
+        if (php_sapi_name() != 'cli') {
+            $options[] = '--cookie ' .  Session::getSessionName() . ' ' . Session::getSessionId();
+        }
+
+        $arguments = ' ' . implode(' ', $options) . ' "' . $url . '" ' . $outputFile;
 
         // use xvfb if possible
         if ($xvfb = self::getXvfbBinary()) {

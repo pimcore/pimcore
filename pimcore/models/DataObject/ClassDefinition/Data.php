@@ -135,8 +135,8 @@ abstract class Data
      * @param mixed $data
      *
      * @return mixed
-
-     abstract public function getDataForResource($data);
+     *
+     * abstract public function getDataForResource($data);
      */
 
     /**
@@ -145,8 +145,8 @@ abstract class Data
      * @param mixed $data
      *
      * @return mixed
-
-     abstract public function getDataFromResource($data);
+     *
+     * abstract public function getDataFromResource($data);
      */
 
     /**
@@ -155,8 +155,8 @@ abstract class Data
      * @param mixed $data
      *
      * @return mixed
-
-     abstract public function getDataForQueryResource($data);
+     *
+     * abstract public function getDataForQueryResource($data);
      */
 
     /**
@@ -668,7 +668,7 @@ abstract class Data
      */
     public function getFilterCondition($value, $operator, $params = [])
     {
-        $params['name']= $this->name;
+        $params['name'] = $this->name;
 
         return $this->getFilterConditionExt(
             $value,
@@ -744,14 +744,14 @@ abstract class Data
         }
 
         // insert this line if inheritance from parent objects is allowed
-        if ($class instanceof DataObject\ClassDefinition && $class->getAllowInherit()) {
+        if ($class instanceof DataObject\ClassDefinition && $class->getAllowInherit() && $this->supportsInheritance()) {
             $code .= "\t" . 'if(\Pimcore\Model\DataObject::doGetInheritedValues() && $this->getClass()->getFieldDefinition("' . $key . '")->isEmpty($data)) {' . "\n";
             $code .= "\t\t" . 'return $this->getValueFromParent("' . $key . '");' . "\n";
             $code .= "\t" . '}' . "\n";
         }
 
         $code .= "\t" . 'if ($data instanceof \\Pimcore\\Model\\DataObject\\Data\\EncryptedField) {' . "\n";
-        $code .= "\t\t" .'    return $data->getPlain();' . "\n";
+        $code .= "\t\t" . '    return $data->getPlain();' . "\n";
         $code .= "\t" . '}' . "\n";
 
         $code .= "\treturn " . '$data' . ";\n";
@@ -770,7 +770,7 @@ abstract class Data
     public function getSetterCode($class)
     {
         $returnType = $class instanceof DataObject\Fieldcollection\Definition ? '\\Pimcore\\Model\\DataObject\\FieldCollection\\Data\\' . ucfirst($class->getKey()) :
-                    '\\Pimcore\\Model\\DataObject\\' . ucfirst($class->getName());
+            '\\Pimcore\\Model\\DataObject\\' . ucfirst($class->getName());
 
         $key = $this->getName();
         $code = '';
@@ -786,9 +786,9 @@ abstract class Data
             if ($this->getDelegate()) {
                 $code .= "\t" . '$encryptedFd = $this->getClass()->getFieldDefinition("' . $key . '");' . "\n";
                 $code .= "\t" . '$delegate = $encryptedFd->getDelegate();' . "\n";
-                $code .= "\t" . 'if ($delegate && !($' . $key . ' instanceof \\Pimcore\\Model\\DataObject\\Data\\EncryptedField)) {'. "\n";
+                $code .= "\t" . 'if ($delegate && !($' . $key . ' instanceof \\Pimcore\\Model\\DataObject\\Data\\EncryptedField)) {' . "\n";
                 $code .= "\t\t" . '$' . $key . ' = new \\Pimcore\\Model\\DataObject\\Data\\EncryptedField($delegate, $' . $key . ');' . "\n";
-                $code .= "\t" . '}'. "\n";
+                $code .= "\t" . '}' . "\n";
             }
         }
 
@@ -816,7 +816,7 @@ abstract class Data
         $key = $this->getName();
         $code = '';
         $code .= '/**' . "\n";
-        $code .= '* Set ' . str_replace(['/**', '*/', '//'], '', $this->getName()) . ' - ' . str_replace(['/**', '*/', '//'], '', $this->getTitle()) . "\n";
+        $code .= '* Get ' . str_replace(['/**', '*/', '//'], '', $this->getName()) . ' - ' . str_replace(['/**', '*/', '//'], '', $this->getTitle()) . "\n";
         $code .= '* @return ' . $this->getPhpdocType() . "\n";
         $code .= '*/' . "\n";
         $code .= 'public function get' . ucfirst($key) . " () {\n";
@@ -827,12 +827,14 @@ abstract class Data
             $code .= "\t" . '$data = $this->' . $key . ";\n";
         }
 
-        $code .= "\t" . 'if(\Pimcore\Model\DataObject::doGetInheritedValues($this->getObject()) && $this->getDefinition()->getFieldDefinition("' . $key . '")->isEmpty($data)) {' . "\n";
-        $code .= "\t\t" . 'return $this->getValueFromParent("' . $key . '");' . "\n";
-        $code .= "\t" . '}' . "\n";
+        if ($this->supportsInheritance()) {
+            $code .= "\t" . 'if(\Pimcore\Model\DataObject::doGetInheritedValues($this->getObject()) && $this->getDefinition()->getFieldDefinition("' . $key . '")->isEmpty($data)) {' . "\n";
+            $code .= "\t\t" . 'return $this->getValueFromParent("' . $key . '");' . "\n";
+            $code .= "\t" . '}' . "\n";
+        }
 
         $code .= "\t" . 'if ($data instanceof \\Pimcore\\Model\\DataObject\\Data\\EncryptedField) {' . "\n";
-        $code .= "\t\t" .'    return $data->getPlain();' . "\n";
+        $code .= "\t\t" . 'return $data->getPlain();' . "\n";
         $code .= "\t" . '}' . "\n";
 
         $code .= "\t return " . '$data' . ";\n";
@@ -856,7 +858,7 @@ abstract class Data
         $code .= '/**' . "\n";
         $code .= '* Set ' . str_replace(['/**', '*/', '//'], '', $this->getName()) . ' - ' . str_replace(['/**', '*/', '//'], '', $this->getTitle()) . "\n";
         $code .= '* @param ' . $this->getPhpdocType() . ' $' . $key . "\n";
-        $code .= '* @return \\Pimcore\\Model\\DataObject\\' . ucfirst($brickClass->getKey()) . "\n";
+        $code .= '* @return \\Pimcore\\Model\\DataObject\\Objectbrick\\Data\\' . ucfirst($brickClass->getKey()) . "\n";
         $code .= '*/' . "\n";
         $code .= 'public function set' . ucfirst($key) . ' (' . '$' . $key . ") {\n";
 
@@ -864,9 +866,9 @@ abstract class Data
             if ($this->getDelegate()) {
                 $code .= "\t" . '$encryptedFd = $this->getDefinition()->getFieldDefinition("' . $key . '");' . "\n";
                 $code .= "\t" . '$delegate = $encryptedFd->getDelegate();' . "\n";
-                $code .= "\t" . 'if ($delegate && !($' . $key . ' instanceof \\Pimcore\\Model\\DataObject\\Data\\EncryptedField)) {'. "\n";
+                $code .= "\t" . 'if ($delegate && !($' . $key . ' instanceof \\Pimcore\\Model\\DataObject\\Data\\EncryptedField)) {' . "\n";
                 $code .= "\t\t" . '$' . $key . ' = new \\Pimcore\\Model\\DataObject\\Data\\EncryptedField($delegate, $' . $key . ');' . "\n";
-                $code .= "\t" . '}'. "\n";
+                $code .= "\t" . '}' . "\n";
             }
         }
 
@@ -909,7 +911,7 @@ abstract class Data
         }
 
         $code .= "\t" . 'if ($data instanceof \\Pimcore\\Model\\DataObject\\Data\\EncryptedField) {' . "\n";
-        $code .= "\t\t" .'    return $data->getPlain();' . "\n";
+        $code .= "\t\t" . '    return $data->getPlain();' . "\n";
         $code .= "\t" . '}' . "\n";
 
         $code .= "\t return " . '$data' . ";\n";
@@ -941,9 +943,9 @@ abstract class Data
             if ($this->getDelegate()) {
                 $code .= "\t" . '$encryptedFd = $this->getDefinition()->getFieldDefinition("' . $key . '");' . "\n";
                 $code .= "\t" . '$delegate = $encryptedFd->getDelegate();' . "\n";
-                $code .= "\t" . 'if ($delegate && !($' . $key . ' instanceof \\Pimcore\\Model\\DataObject\\Data\\EncryptedField)) {'. "\n";
+                $code .= "\t" . 'if ($delegate && !($' . $key . ' instanceof \\Pimcore\\Model\\DataObject\\Data\\EncryptedField)) {' . "\n";
                 $code .= "\t\t" . '$' . $key . ' = new \\Pimcore\\Model\\DataObject\\Data\\EncryptedField($delegate, $' . $key . ');' . "\n";
-                $code .= "\t" . '}'. "\n";
+                $code .= "\t" . '}' . "\n";
             }
         }
 
@@ -969,7 +971,7 @@ abstract class Data
     public function getGetterCodeLocalizedfields($class)
     {
         $key = $this->getName();
-        $code  = '/**' . "\n";
+        $code = '/**' . "\n";
         $code .= '* Get ' . str_replace(['/**', '*/', '//'], '', $this->getName()) . ' - ' . str_replace(['/**', '*/', '//'], '', $this->getTitle()) . "\n";
         $code .= '* @return ' . $this->getPhpdocType() . "\n";
         $code .= '*/' . "\n";
@@ -977,7 +979,7 @@ abstract class Data
 
         $code .= "\t" . '$data = $this->getLocalizedfields()->getLocalizedValue("' . $key . '", $language);' . "\n";
 
-        if (!$class instanceof  DataObject\Fieldcollection\Definition) {
+        if (!$class instanceof DataObject\Fieldcollection\Definition) {
             // adds a hook preGetValue which can be defined in an extended class
             $code .= "\t" . '$preValue = $this->preGetValue("' . $key . '");' . " \n";
             $code .= "\t" . 'if($preValue !== null && !\Pimcore::inAdmin()) { ' . "\n";
@@ -986,7 +988,7 @@ abstract class Data
         }
 
         $code .= "\t" . 'if ($data instanceof \\Pimcore\\Model\\DataObject\\Data\\EncryptedField) {' . "\n";
-        $code .= "\t\t" .'    return $data->getPlain();' . "\n";
+        $code .= "\t\t" . '    return $data->getPlain();' . "\n";
         $code .= "\t" . '}' . "\n";
 
         // we don't need to consider preGetData, because this is already managed directly by the localized fields within getLocalizedValue()
@@ -1007,13 +1009,13 @@ abstract class Data
     public function getSetterCodeLocalizedfields($class)
     {
         $key = $this->getName();
-        if ($class instanceof  DataObject\Fieldcollection\Definition) {
+        if ($class instanceof DataObject\Fieldcollection\Definition) {
             $classname = 'FieldCollection\\Data\\' . ucfirst($class->getKey());
         } else {
             $classname = $class->getName();
         }
 
-        $code  = '/**' . "\n";
+        $code = '/**' . "\n";
         $code .= '* Set ' . str_replace(['/**', '*/', '//'], '', $this->getName()) . ' - ' . str_replace(['/**', '*/', '//'], '', $this->getTitle()) . "\n";
         $code .= '* @param ' . $this->getPhpdocType() . ' $' . $key . "\n";
         $code .= '* @return \\Pimcore\\Model\\DataObject\\' . ucfirst($classname) . "\n";
@@ -1024,9 +1026,9 @@ abstract class Data
             if ($this->getDelegate()) {
                 $code .= "\t" . '$encryptedFd = $this->getClass()->getFieldDefinition("' . $key . '");' . "\n";
                 $code .= "\t" . '$delegate = $encryptedFd->getDelegate();' . "\n";
-                $code .= "\t" . 'if ($delegate && !($' . $key . ' instanceof \\Pimcore\\Model\\DataObject\\Data\\EncryptedField)) {'. "\n";
+                $code .= "\t" . 'if ($delegate && !($' . $key . ' instanceof \\Pimcore\\Model\\DataObject\\Data\\EncryptedField)) {' . "\n";
                 $code .= "\t\t" . '$' . $key . ' = new \\Pimcore\\Model\\DataObject\\Data\\EncryptedField($delegate, $' . $key . ');' . "\n";
-                $code .= "\t" . '}'. "\n";
+                $code .= "\t" . '}' . "\n";
             }
         }
 
@@ -1224,7 +1226,7 @@ abstract class Data
 
                                     if ($context['containerType'] == 'block') {
                                         $data = $item[$this->getName()];
-                                        if ($data instanceof  DataObject\Data\BlockElement) {
+                                        if ($data instanceof DataObject\Data\BlockElement) {
                                             $data = $data->getData();
 
                                             return $data;
@@ -1253,6 +1255,33 @@ abstract class Data
 
                         return $data;
                     }
+                }
+            }
+            if ($context['containerType'] == 'objectbrick' && ($this instanceof DataObject\ClassDefinition\Data\Localizedfields || $object instanceof DataObject\Localizedfield)) {
+                $fieldname = $context['fieldname'];
+
+                if ($object instanceof DataObject\Concrete) {
+                    $containerGetter = 'get' . ucfirst($fieldname);
+                    $container = $object->$containerGetter();
+                    if ($container) {
+                        $brickGetter = 'get' . ucfirst($context['containerKey']);
+                        /** @var $brickData DataObject\Objectbrick\Data\AbstractData */
+                        $brickData = $container->$brickGetter();
+
+                        if ($brickData) {
+                            /** @var $localizedFields DataObject\Localizedfield */
+                            $data = $brickData->getLocalizedFields();
+                            // $data = $localizedFields->getLocalizedValue($this->getName(), $params['language'], true);
+
+                            return $data;
+                        }
+                    }
+
+                    return null;
+                } elseif ($object instanceof DataObject\Localizedfield) {
+                    $data = $object->getLocalizedValue($this->getName(), $params['language'], true);
+
+                    return $data;
                 }
             } elseif ($context['containerType'] == 'classificationstore') {
                 $fieldname = $context['fieldname'];
@@ -1355,5 +1384,15 @@ abstract class Data
     public function appendData($existingData, $additionalData)
     {
         return $existingData;
+    }
+
+    /**
+     * Returns if datatype supports data inheritance
+     *
+     * @return bool
+     */
+    public function supportsInheritance()
+    {
+        return true;
     }
 }

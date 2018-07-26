@@ -95,7 +95,12 @@ pimcore.settings.user.editorSettings = Class.create({
                     ]
                 }
             ],
-            autoHeight: true
+            autoHeight: true,
+            viewConfig: {
+                plugins: {
+                    ptype: 'gridviewdragdrop'
+                }
+            }
         });
 
 

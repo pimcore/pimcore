@@ -20,6 +20,14 @@ pimcore.object.tags.geopoint = Class.create(pimcore.object.tags.geo.abstract, {
     getLayoutEdit: function () {
 
         this.mapImageID = uniqid();
+        this.divImageID = uniqid();
+        this.mapId = "map" + this.divImageID;
+
+        this.searchfield = new Ext.form.TextField({
+            width: 200,
+            name: 'mapSearch',
+            style: 'float:left;margin-top:0px;'
+        });
 
         var coordConf = {
             decimalPrecision: 15,
@@ -38,69 +46,55 @@ pimcore.object.tags.geopoint = Class.create(pimcore.object.tags.geo.abstract, {
             this.latitude.resetOriginalValue();
         }
 
+        this.longitude.on('keyup', this.updateMap.bind(this));
+        this.latitude.on('keyup', this.updateMap.bind(this));
 
-        if(this.isMapsAvailable()) {
-            this.longitude.on('keyup', this.updatePreviewImage.bind(this));
-            this.latitude.on('keyup', this.updatePreviewImage.bind(this));
+        this.component = new Ext.Panel({
+            border: true,
+            style: "margin-bottom: 10px",
+            height: 370,
+            width: 650,
+            componentCls: "object_field object_geo_field",
+            html: '<div id="leaflet_maps_container_' + this.mapImageID + '"></div>',
+            bbar: [
+                t('latitude'),
+                this.latitude,
+                '-',
+                t('longitude'),
+                this.longitude,
+                '-', {
+                    xtype: 'button',
+                    text: t('empty'),
+                    iconCls: "pimcore_icon_empty",
+                    handler: function () {
+                        this.latitude.setValue(null);
+                        this.longitude.setValue(null);
+                        this.updateMap();
+                    }.bind(this)
+                },
+            ],
+            tbar: [
+                this.fieldConfig.title,
+                "->",
+                this.searchfield,
+                {
+                    xtype: 'button',
+                    iconCls: "pimcore_icon_search",
+                    handler: this.geocode.bind(this)
+                }
+            ]
 
-            this.component = new Ext.Panel({
-                title: this.fieldConfig.title,
-                border: true,
-                style: "margin-bottom: 10px",
-                height: 370,
-                width: 650,
-                componentCls: "object_field object_geo_field",
-                html: '<div id="google_maps_container_' + this.mapImageID + '" align="center"></div>',
-                bbar: [
-                    t('latitude'),
-                    this.latitude,
-                    '-',
-                    t('longitude'),
-                    this.longitude,
-                    '-', {
-                        xtype: 'button',
-                        text: t('empty'),
-                        iconCls: "pimcore_icon_empty",
-                        handler: function () {
-                            this.latitude.setValue(null);
-                            this.longitude.setValue(null);
-                            this.updatePreviewImage();
-                        }.bind(this)
-                    }, '->', {
-                        xtype: 'button',
-                        text: t('open_search_editor'),
-                        iconCls: "pimcore_icon_search",
-                        handler: this.openPicker.bind(this)
-                    }
-                ]
-            });
+        });
 
-            this.component.on('afterrender', function () {
-                this.updatePreviewImage();
-            }.bind(this));
-        } else {
 
-            this.longitude.setFieldLabel(t("longitude"));
-            this.latitude.setFieldLabel(t("latitude"));
-            this.longitude.setWidth(350);
-            this.latitude.setWidth(350);
-
-            this.component = new Ext.Panel({
-                title: this.fieldConfig.title,
-                border: true,
-                style: "margin-bottom: 10px",
-                bodyStyle: "padding: 10px;",
-                height: 370,
-                width: 650,
-                componentCls: "object_field object_geo_field",
-                items: [this.latitude, this.longitude]
-            });
-        }
+        this.component.on('afterrender', function () {
+            this.updateMap();
+        }.bind(this));
 
         return this.component;
     },
 
-    updatePreviewImage: function ($super) {
+    updateMap: function ($super) {
         var data = this.getValue();
         if (data.latitude && data.longitude) {
             this.data = data;
@@ -110,204 +104,107 @@ pimcore.object.tags.geopoint = Class.create(pimcore.object.tags.geo.abstract, {
         $super();
     },
 
-    getMapUrl: function (fieldConfig, data, width, height) {
+    getMap: function (fieldConfig, data) {
+        this.marker = null;
 
-        // static maps api image url
-        var mapZoom = fieldConfig.zoom;
-        var mapUrl;
+        this.editableLayers = new L.FeatureGroup();
 
-        if (!width) {
-            width = 300;
-        }
-
-        if(!height) {
-            height = 300;
-        }
-
-        var py = height;
-        var px = width;
-
-        // static maps api image url
-        var lat = fieldConfig.lat;
-        var lng = fieldConfig.lng;
+        var leafletMap = null;
         if (data) {
-            lat = data.latitude;
-            lng = data.longitude;
-            mapZoom = 15;
-
-            mapUrl = 'https://maps.googleapis.com/maps/api/staticmap?center='
-                + lat + "," + lng + "&zoom=" + mapZoom +
-                '&size=' + px + 'x' + py
-                + '&markers=color:red|' + lat + ',' + lng
-                + '&maptype=' + fieldConfig.mapType;
+            leafletMap = this.getLeafletMap(
+                data.latitude,
+                data.longitude,
+                15
+            );
+            this.marker = L.marker([data.latitude, data.longitude], {});
+            leafletMap.addLayer(this.marker);
+            this.editableLayers.addLayer(this.marker);
+            this.reverseGeocode(this.marker);
         } else {
-            mapUrl = 'https://maps.googleapis.com/maps/api/staticmap?center='
-                + lat + "," + lng + "&zoom=" + mapZoom +
-                '&size=' + px + 'x' + py
-                + '&maptype=' + fieldConfig.mapType;
+            leafletMap = this.getLeafletMap(
+                fieldConfig.lat,
+                fieldConfig.lng,
+                fieldConfig.zoom
+            );
         }
+        this.getLeafletToolbar(leafletMap);
 
-        if (pimcore.settings.google_maps_api_key) {
-            mapUrl += '&key=' + pimcore.settings.google_maps_api_key;
-        }
-
-        return mapUrl;
     },
 
-    openPicker: function () {
+    getLeafletToolbar: function (leafletMap) {
+        leafletMap.addLayer(this.editableLayers);
 
-        this.searchfield = new Ext.form.TextField({
-            width: 300,
-            name: 'mapSearch',
-            style: 'float: left;',
-            fieldLabel: t('search')
+        var drawControlFull = new L.Control.Draw({
+            position: 'topright',
+            draw: {
+                polyline: false,
+                polygon: false,
+                circle: false,
+                rectangle: false,
+                circlemarker: false
+            },
+            edit: {
+                featureGroup: this.editableLayers,
+                remove: false
+            }
         });
+        leafletMap.addControl(drawControlFull);
 
-        this.currentLocationTextNode = new Ext.Toolbar.TextItem({
-            text: '&nbsp;'
-        });
+        leafletMap.on(L.Draw.Event.CREATED, function (e) {
+            this.dirty = true;
 
-        this.searchWindow = new Ext.Window({
-            modal: true,
-            width: 600,
-            height: 500,
-            resizable: false,
-            tbar: [this.currentLocationTextNode],
-            bbar: [this.searchfield,{
-                xtype: 'button',
-                text: t('search'),
-                iconCls: "pimcore_icon_search",
-                handler: this.geocode.bind(this)
-            }, '->', {
-                xtype: 'button',
-                text: t('cancel'),
-                iconCls: "pimcore_icon_cancel",
-                handler: function () {
-                    this.searchWindow.close();
-                }.bind(this)
-            },{
-                xtype: 'button',
-                text: 'OK',
-                iconCls: "pimcore_icon_save",
-                handler: function () {
-                    if (this.overlay) {
-                        var point = this.overlay.getPosition();
-                        this.latitude.setValue(point.lat());
-                        this.longitude.setValue(point.lng());
-                    }
-                    this.updatePreviewImage();
-                    this.searchWindow.close();
-                }.bind(this)
-            }],
-            plain: true
-        });
-
-        this.alreadyIntitialized = false;
-
-        this.searchWindow.on('afterlayout', function () {
-            if (this.alreadyIntitialized) {
-                return;
+            this.editableLayers.clearLayers();
+            if (this.marker !== null) {
+                this.marker.remove();
             }
 
-            this.alreadyIntitialized = true;
+            var layer = e.layer;
+            this.editableLayers.addLayer(layer);
 
-            var center = new google.maps.LatLng(this.fieldConfig.lat, this.fieldConfig.lng);
-            var mapZoom = this.fieldConfig.zoom;
-
-            if (this.data) {
-                center = new google.maps.LatLng(this.data.latitude, this.data.longitude);
-                mapZoom = 15;
+            if (this.editableLayers.getLayers().length === 1) {
+                this.latitude.setValue(layer.getLatLng().lat);
+                this.longitude.setValue(layer.getLatLng().lng);
+                this.reverseGeocode(layer);
             }
-
-            this.gmap = new google.maps.Map(this.searchWindow.body.dom, {
-                zoom: mapZoom,
-                center: center,
-                streetViewControl: false,
-                mapTypeControl: true,
-                mapTypeControlOptions: {
-                    style: google.maps.MapTypeControlStyle.DROPDOWN_MENU
-                },
-                mapTypeId: this.fieldConfig.mapType
-            });
-
-            this.drawingManager = new google.maps.drawing.DrawingManager({
-                drawingControl: false,
-                markerOptions: {
-                    draggable: true
-                },
-                map: this.gmap
-            });
-
-            google.maps.event.addListener(this.drawingManager, 'overlaycomplete', function (e) {
-                // Switch back to non-drawing mode after drawing a shape.
-                this.drawingManager.setDrawingMode(null);
-
-                this.overlay = e.overlay;
-            }.bind(this));
-
-            if (this.data) {
-                this.renderOverlay();
-            } else {
-                this.drawingManager.setDrawingMode(google.maps.drawing.OverlayType.MARKER);
-            }
-
-            this.geocoder = new google.maps.Geocoder();
-            this.reverseGeocodeInterval = window.setInterval(this.reverseGeocode.bind(this), 500);
-
         }.bind(this));
 
-        this.searchWindow.on('beforeclose', function () {
-            clearInterval(this.reverseGeocodeInterval);
+        leafletMap.on("draw:deleted", function (e) {
+            this.dirty = true;
+            this.latitude.setValue(null);
+            this.longitude.setValue(null);
+            if (this.marker !== null) {
+                this.marker = null;
+            }
         }.bind(this));
 
-        this.searchWindow.show();
-    },
+        leafletMap.on("draw:editmove", function (e) {
+            this.dirty = true;
+            this.latitude.setValue(e.layer.getLatLng().lat);
+            this.longitude.setValue(e.layer.getLatLng().lng);
+            this.reverseGeocode(e.layer);
+        }.bind(this));
 
-    renderOverlay: function() {
-        if (this.data) {
-            this.overlay =  new google.maps.Marker({
-                position: new google.maps.LatLng(this.data.latitude, this.data.longitude),
-                map: this.gmap,
-                draggable: true
-            });
-        }
     },
 
     geocode: function () {
-        if (!this.geocoder) {
-            return;
-        }
-
         var address = this.searchfield.getValue();
-        this.geocoder.geocode( { 'address': address}, function(results, status) {
-            if (status === google.maps.GeocoderStatus.OK) {
-                var point = results[0].geometry.location;
-                this.gmap.setCenter(point, 16);
-                this.gmap.setZoom(15);
-                this.drawingManager.setDrawingMode(null);
-                this.data = {
-                    latitude: point.lat(),
-                    longitude: point.lng()
-                };
-                this.renderOverlay();
-            }
+        jQuery.getJSON(this.getSearchUrl(address), function (json) {
+            this.latitude.setValue(json[0].lat);
+            this.longitude.setValue(json[0].lon);
+            this.updateMap();
         }.bind(this));
+
     },
 
-    reverseGeocode: function () {
-        if (this.overlay) {
-
-            var latlng = this.overlay.getPosition();
-            if (latlng && latlng !== this.lastPosition) {
-                this.lastPosition = latlng;
-                this.geocoder.geocode({'latLng': latlng}, function(results, status) {
-                    if (status === google.maps.GeocoderStatus.OK) {
-                        if (results[0]) {
-                            this.currentLocationTextNode.setText(results[0].formatted_address);
-                        }
-                    }
-                }.bind(this));
-            }
+    reverseGeocode: function (layerObj) {
+        console.log("ble");
+        if (this.latitude.getValue() !== null && this.longitude.getValue() !== null) {
+            var url = pimcore.settings.reverse_geocoding_url_template.replace('{lat}', this.latitude.getValue()).replace('{lon}', this.longitude.getValue());
+            jQuery.getJSON(url, function (json) {
+                this.currentLocationText = json.display_name;
+                layerObj.bindTooltip(this.currentLocationText);
+                layerObj.openTooltip();
+            }.bind(this));
         }
     },
 
@@ -333,38 +230,34 @@ pimcore.object.tags.geopoint = Class.create(pimcore.object.tags.geo.abstract, {
         return true;
     },
 
-    isDirty: function() {
-        if(!this.isRendered()) {
+    isDirty: function () {
+        if (!this.isRendered()) {
             return false;
         }
 
-        if(this.longitude && this.latitude) {
+        if (this.longitude && this.latitude) {
             return this.longitude.isDirty() || this.latitude.isDirty();
         }
 
         return false;
     },
 
-    getGridColumnConfig: function(field) {
+    getGridColumnConfig: function (field) {
         return {
             text: ts(field.label),
             width: 150,
             sortable: false,
             dataIndex: field.key,
-            getEditor:this.getWindowCellEditor.bind(this, field),
+            getEditor: this.getWindowCellEditor.bind(this, field),
             renderer: function (key, value, metaData, record) {
+
                 this.applyPermissionStyle(key, value, metaData, record);
 
-                if(record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited == true) {
+                if (record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited == true) {
                     metaData.tdCls += ' grid_value_inherited';
                 }
-
                 if (value) {
-                    var width = 200;
-
-                    var mapUrl = this.getMapUrl(field, value, width, 100);
-
-                    return '<img src="' + mapUrl + '" />';
+                    return value.latitude + "," + value.longitude;
                 }
             }.bind(this, field.key)
         };
@@ -372,5 +265,6 @@ pimcore.object.tags.geopoint = Class.create(pimcore.object.tags.geo.abstract, {
 
     getCellEditValue: function () {
         return this.getValue();
-    }
+    },
+
 });

@@ -371,6 +371,7 @@ pimcore.settings.update = Class.create({
 
                 Ext.Ajax.request({
                     url: "/admin/update/index/job-parallel",
+                    method: 'POST',
                     success: function (response) {
 
                         try {
@@ -457,6 +458,7 @@ pimcore.settings.update = Class.create({
 
                 Ext.Ajax.request({
                     url: "/admin/update/index/job-procedural",
+                    method: 'POST',
                     success: function (response) {
 
                         try {

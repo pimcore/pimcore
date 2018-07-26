@@ -21,7 +21,8 @@
 <div id="cleanUp" class="modal fade">
     <div class="modal-dialog">
         <form class="form-horizontal js-cleanup-modal-form"
-              action="<?=$this->path('pimcore_ecommerce_backend_voucher_cleanup')?>" method="get">
+              action="<?=$this->path('pimcore_ecommerce_backend_voucher_cleanup')?>" method="post">
+            <input type="hidden" name="csrfToken" value="<?= $this->csrfToken ?>">
         <div class="modal-content">
 
             <input type="hidden" name="id" value="<?= $this->id ?>">

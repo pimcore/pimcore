@@ -204,6 +204,11 @@ pimcore.settings.web2print = Class.create({
                 },
                 buttons: [
                     {
+                        text: t("test"),
+                        handler: this.test.bind(this),
+                        icon: "/pimcore/static6/img/flat-color-icons/approval.svg"
+                    },
+                    {
                         text: t("save"),
                         handler: this.save.bind(this),
                         iconCls: "pimcore_icon_apply"
@@ -213,8 +218,7 @@ pimcore.settings.web2print = Class.create({
                     {
                         xtype: 'fieldset',
                         title: t('general'),
-                        collapsible: true,
-                        collapsed: false,
+                        collapsible: false,
                         autoHeight: true,
                         defaultType: 'textfield',
                         defaults: {width: 450},
@@ -304,7 +308,7 @@ pimcore.settings.web2print = Class.create({
 
         Ext.Ajax.request({
             url: "/admin/settings/set-web2print",
-            method: "post",
+            method: "PUT",
             params: {
                 data: Ext.encode(values)
             },
@@ -312,7 +316,7 @@ pimcore.settings.web2print = Class.create({
                 try {
                     var res = Ext.decode(response.responseText);
                     if (res.success) {
-                        pimcore.helpers.showNotification(t("success"), t("settings_save_success"), "success");
+                        pimcore.helpers.showNotification(t("success"), t("saved_successfully"), "success");
 
                         Ext.MessageBox.confirm(t("info"), t("reload_pimcore_changes"), function (buttonValue) {
                             if (buttonValue == "yes") {
@@ -320,14 +324,18 @@ pimcore.settings.web2print = Class.create({
                             }
                         }.bind(this));
                     } else {
-                        pimcore.helpers.showNotification(t("error"), t("web2print_settings_save_error"),
+                        pimcore.helpers.showNotification(t("error"), t("saving_failed"),
                             "error", t(res.message));
                     }
                 } catch (e) {
-                    pimcore.helpers.showNotification(t("error"), t("web2print_settings_save_error"), "error");
+                    pimcore.helpers.showNotification(t("error"), t("saving_failed"), "error");
                 }
             }
         });
+    },
+
+    test: function () {
+        window.open("/admin/settings/test-web2print", "_blank");
     }
 
 

@@ -14,6 +14,13 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartCheckoutData;
 
+use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartCheckoutData;
+
+/**
+ * @method CartCheckoutData[] load()
+ * @method int getTotalCount()
+ * @method \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartCheckoutData\Listing\Dao getDao()
+ */
 class Listing extends \Pimcore\Model\Listing\AbstractListing
 {
     /**
