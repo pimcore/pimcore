@@ -35,7 +35,7 @@ Remove the `name` and `type` property out of your `composer.json`:
 
 Replace the `scripts` and `autoload` sections in your `composer.json` with the following: 
 ```json
-"autoload": {
+  "autoload": {
     "psr-4": {
       "": ["src/"],
       "Pimcore\\Model\\DataObject\\": "var/classes/DataObject",
