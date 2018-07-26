@@ -61,6 +61,11 @@ return [
                 'document' => [
                     'items' => [
                         'add' => 0,                                             // hide all the "Add *" stuff
+                        'addSnippet' => 0,                                      // hide "Add Snippet"
+                        'addLink' => 0,                                         // hide "Add Link"
+                        'addEmail' => 0,                                        // hide "Add Email"
+                        'addNewsletter' => 0,                                   // hide "Add Newsletter"
+                        'addHardlink' => 0,                                     // hide "Add Hardlink"
                         'addFolder' => 0,                                       // hide "Add Folder"
                         'paste' => 0,                                           // hide all the "Paste" options
                         'pasteCut' => 0,                                        // hide "Paste Cut element"
