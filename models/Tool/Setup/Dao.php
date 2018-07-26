@@ -51,14 +51,30 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function insertDump($file)
     {
-        $sql = file_get_contents($file);
+        $dumpFile = file_get_contents($file);
 
-        //replace document root placeholder with current document root
-        $docRoot = str_replace('\\', '/', PIMCORE_PROJECT_ROOT); // Windows fix
-        $sql = str_replace('~~DOCUMENTROOT~~', $docRoot, $sql);
+        // remove comments in SQL script
+        $dumpFile = preg_replace("/\s*(?!<\")\/\*[^\*]+\*\/(?!\")\s*/", '', $dumpFile);
 
-        // install is now PDO only, because Mysqli needs a different handling otherwise (doesn't support batch loading with exec())
-        $this->db->exec($sql);
+        // get every command as single part - ; at end of line
+        $singleQueries = explode(";\n", $dumpFile);
+
+        // execute queries in bulk mode to prevent max_packet_size errors
+        $batchQueries = [];
+        foreach ($singleQueries as $m) {
+            $sql = trim($m);
+            if (strlen($sql) > 0) {
+                $batchQueries[] = $sql . ";";
+            }
+
+            if(count($batchQueries) > 500) {
+                $this->db->exec(implode("\n", $batchQueries));
+                $batchQueries = [];
+            }
+
+        }
+
+        $this->db->exec(implode("\n", $batchQueries));
 
         // set the id of the system user to 0
         $this->db->update('users', ['id' => 0], ['name' => 'system']);
