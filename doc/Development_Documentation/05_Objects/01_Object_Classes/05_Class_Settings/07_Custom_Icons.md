@@ -35,20 +35,23 @@ In order to do so, overwrite the method `getElementAdminStyle` of `AbstractObjec
 ```php
 public function getElementAdminStyle() {
    if (!$this->o_elementAdminStyle) {
-      $this->o_elementAdminStyle = new Website_OnlineShop_AdminStyle($this);
+      $this->o_elementAdminStyle = new AppBundle\Admin\AdminStyle($this);
    }
 return $this->o_elementAdminStyle;
 }
 ```
 
-##### Custom Implementation of `Element_AdminStyle`
+##### Custom Implementation of `AppBundle\Admin\AdminStyle`
 ```php
-class Website_OnlineShop_AdminStyle extends Element_AdminStyle {
+
+namespace AppBundle\Admin;
+
+class AdminStyle extends \Pimcore\Model\Element\AdminStyle {
  
     public function __construct($element) {
         parent::__construct($element);
  
-        if($element instanceof Website_OnlineShop_Product) {
+        if($element instanceof \Pimcore\Model\DataObject\Product) {
             if($element->getProductType() == "concrete") {
                 $this->elementIcon = '/pimcore/static/img/icon/tag_green.png';
                 $this->elementIconClass = null;
