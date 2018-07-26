@@ -216,10 +216,8 @@ class Bootstrap
         $resolveConstant('PIMCORE_PHP_ERROR_REPORTING', E_ALL & ~E_NOTICE & ~E_STRICT);
         $resolveConstant('PIMCORE_PHP_ERROR_LOG', PIMCORE_LOG_DIRECTORY . '/php.log');
 
-        // default bundle
+        // default bundle, controller and action
         $resolveConstant('PIMCORE_SYMFONY_DEFAULT_BUNDLE', 'AppBundle');
-
-        // default document controller and action
         $config = Config::getSystemConfig();
         $resolveConstant('PIMCORE_SYMFONY_DEFAULT_CONTROLLER', $config ? $config->documents->default_controller : 'default');
         $resolveConstant('PIMCORE_SYMFONY_DEFAULT_ACTION', $config ? $config->documents->default_action : 'default');
