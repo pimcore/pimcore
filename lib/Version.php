@@ -14,29 +14,25 @@
 
 namespace Pimcore;
 
+use PackageVersions\Versions;
+
 class Version
 {
-    /**
-     * @var string
-     */
-    public static $version = 'dev-master';
-
-    /**
-     * @var int
-     */
-    public static $revision = 296;
-
-    /**
-     * @var string
-     */
-    public static $buildDate = '2018-07-26T11:03:57+02:00';
+    const PART_NUMBER = 0;
+    const PART_HASH = 1;
 
     /**
      * @return string
      */
     public static function getVersion()
     {
-        return self::$version;
+        $version = self::getVersionPart(self::PART_NUMBER);
+        return $version;
+    }
+
+    protected static function getVersionPart($part = self::PART_NUMBER) {
+        $parts = explode("@", Versions::getVersion('pimcore/pimcore'));
+        return $parts[$part];
     }
 
     /**
@@ -44,14 +40,16 @@ class Version
      */
     public static function getRevision()
     {
-        return self::$revision;
+        $hash = self::getVersionPart(self::PART_HASH);
+        return $hash;
     }
 
     /**
+     * @deprecated
      * @return string
      */
     public static function getBuildDate(): string
     {
-        return self::$buildDate;
+        return '';
     }
 }

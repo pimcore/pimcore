@@ -204,7 +204,7 @@ class EditmodeListener implements EventSubscriberInterface
                 $startupJavascript = '/bundles/pimcoreadmin/js/pimcore/document/edit/startup.js';
 
                 $headHtml = $this->buildHeadHtml($document, $user->getLanguage());
-                $bodyHtml = "\n\n" . '<script src="' . $startupJavascript . '?_dc=' . Version::$revision . '"></script>' . "\n\n";
+                $bodyHtml = "\n\n" . '<script src="' . $startupJavascript . '?_dc=' . Version::getRevision() . '"></script>' . "\n\n";
 
                 $html = preg_replace('@</head>@i', $headHtml . "\n\n</head>", $html, 1);
                 $html = preg_replace('@</body>@i', $bodyHtml . "\n\n</body>", $html, 1);
@@ -236,7 +236,7 @@ class EditmodeListener implements EventSubscriberInterface
 
         // include stylesheets
         foreach ($stylesheets as $stylesheet) {
-            $headHtml .= '<link rel="stylesheet" type="text/css" href="' . $stylesheet . '?_dc=' . Version::$revision . '" />';
+            $headHtml .= '<link rel="stylesheet" type="text/css" href="' . $stylesheet . '?_dc=' . Version::getRevision() . '" />';
             $headHtml .= "\n";
         }
 
@@ -245,14 +245,14 @@ class EditmodeListener implements EventSubscriberInterface
 
         // include script libraries
         foreach ($libraries as $script) {
-            $headHtml .= '<script src="' . $script . '?_dc=' . Version::$revision . '"></script>';
+            $headHtml .= '<script src="' . $script . '?_dc=' . Version::getRevision() . '"></script>';
             $headHtml .= "\n";
         }
 
         // combine the pimcore scripts in non-devmode
         if (\Pimcore::disableMinifyJs()) {
             foreach ($scripts as $script) {
-                $headHtml .= '<script src="' . $script . '?_dc=' . Version::$revision . '"></script>';
+                $headHtml .= '<script src="' . $script . '?_dc=' . Version::getRevision() . '"></script>';
                 $headHtml .= "\n";
             }
         } else {
@@ -264,7 +264,7 @@ class EditmodeListener implements EventSubscriberInterface
             $headHtml .= '<script src="' . \Pimcore\Tool\Admin::getMinimizedScriptPath($scriptContents) . '"></script>' . "\n";
         }
 
-        $headHtml .= '<script src="/admin/misc/json-translations-system?language=' . $language . '&_dc=' . Version::$revision . '"></script>' . "\n";
+        $headHtml .= '<script src="/admin/misc/json-translations-system?language=' . $language . '&_dc=' . Version::getRevision() . '"></script>' . "\n";
         $headHtml .= "\n\n";
 
         // set var for editable configurations which is filled by Document\Tag::admin()

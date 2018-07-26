@@ -200,7 +200,7 @@ $styles = array(
     // see also: http://blogs.telerik.com/blogs/posts/10-05-03/internet-explorer-css-limits.aspx
     // @import bypasses this problem in an elegant way
     foreach ($styles as $style) { ?>
-    @import url(<?= $style ?>?_dc=<?= \Pimcore\Version::$revision ?>);
+    @import url(<?= $style ?>?_dc=<?= \Pimcore\Version::getRevision() ?>);
     <?php } ?>
 </style>
 
@@ -708,21 +708,21 @@ $googleMapsApiKey = $this->config->services->google->browserapikey;
     <?php } ?>
 </script>
 
-<script src="/admin/misc/json-translations-system?language=<?= $language ?>&_dc=<?= \Pimcore\Version::$revision ?>"></script>
-<script src="<?= $view->router()->path('pimcore_admin_user_getcurrentuser') ?>?_dc=<?= \Pimcore\Version::$revision ?>"></script>
-<script src="/admin/misc/available-languages?_dc=<?= \Pimcore\Version::$revision ?>"></script>
+<script src="/admin/misc/json-translations-system?language=<?= $language ?>&_dc=<?= \Pimcore\Version::getRevision() ?>"></script>
+<script src="<?= $view->router()->path('pimcore_admin_user_getcurrentuser') ?>?_dc=<?= \Pimcore\Version::getRevision() ?>"></script>
+<script src="/admin/misc/available-languages?_dc=<?= \Pimcore\Version::getRevision() ?>"></script>
 
 
 <!-- library scripts -->
 <?php foreach ($scriptLibs as $scriptUrl) { ?>
-    <script src="/bundles/pimcoreadmin/js/<?= $scriptUrl ?>?_dc=<?= \Pimcore\Version::$revision ?>"></script>
+    <script src="/bundles/pimcoreadmin/js/<?= $scriptUrl ?>?_dc=<?= \Pimcore\Version::getRevision() ?>"></script>
 <?php } ?>
 
 
 <!-- internal scripts -->
 <?php if ($disableMinifyJs) { ?>
     <?php foreach ($scripts as $scriptUrl) { ?>
-    <script src="/bundles/pimcoreadmin/js/<?= $scriptUrl ?>?_dc=<?= \Pimcore\Version::$revision ?>"></script>
+    <script src="/bundles/pimcoreadmin/js/<?= $scriptUrl ?>?_dc=<?= \Pimcore\Version::getRevision() ?>"></script>
 <?php } ?>
 <?php } else { ?>
 <?php
@@ -760,6 +760,6 @@ if ($disableMinifyJs) {
 <?php endforeach; ?>
 
 <?php // MUST BE THE LAST LINE ?>
-<script src="/bundles/pimcoreadmin/js/pimcore/startup.js?_dc=<?= \Pimcore\Version::$revision ?>"></script>
+<script src="/bundles/pimcoreadmin/js/pimcore/startup.js?_dc=<?= \Pimcore\Version::getRevision() ?>"></script>
 </body>
 </html>

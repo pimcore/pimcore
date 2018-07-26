@@ -2843,7 +2843,7 @@ pimcore.helpers.showAbout = function () {
     var html = '<div class="pimcore_about_window">';
     html += '<br><img src="/bundles/pimcoreadmin/img/logo-gray.svg" style="width: 300px;"><br>';
     html += '<br><b>Version: ' + pimcore.settings.version + '</b>';
-    html += '<br><b>Build: ' + pimcore.settings.build + '</b> (' + pimcore.settings.buildDate + ')';
+    html += '<br><b>Git Hash: ' + pimcore.settings.build + '</b>';
     html += '<br><br>&copy; by pimcore GmbH, Salzburg, Austria (<a href="https://pimcore.com/" target="_blank">pimcore.com</a>)';
     html += '<br>a proud member of the <a href="http://elements.at" target="_blank">elements group</a>';
     html += '<br><br><a href="https://github.com/pimcore/pimcore/blob/master/LICENSE.md" target="_blank">License</a> | ';

@@ -165,7 +165,6 @@ class IndexController extends AdminController
         $settings = new ViewModel([
             'version'               => Version::getVersion(),
             'build'                 => Version::getRevision(),
-            'buildDate'             => Version::getBuildDate(),
             'debug'                 => \Pimcore::inDebugMode(),
             'devmode'               => \Pimcore::inDevMode(DevMode::ADMIN),
             'disableMinifyJs'       => \Pimcore::disableMinifyJs(),
