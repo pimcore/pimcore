@@ -258,7 +258,7 @@ abstract class Kernel extends SymfonyKernel
             new SensioFrameworkExtraBundle(),
             new CmfRoutingBundle(),
             new PrestaSitemapBundle(),
-            //new SchebTwoFactorBundle()
+            new SchebTwoFactorBundle()
         ], 100);
 
         // pimcore bundles
