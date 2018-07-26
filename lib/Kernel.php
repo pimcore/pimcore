@@ -39,6 +39,7 @@ use Symfony\Bundle\SwiftmailerBundle\SwiftmailerBundle;
 use Symfony\Bundle\TwigBundle\TwigBundle;
 use Symfony\Bundle\WebProfilerBundle\WebProfilerBundle;
 use Symfony\Cmf\Bundle\RoutingBundle\CmfRoutingBundle;
+use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\Config\Loader\LoaderInterface;
 use Symfony\Component\Config\Resource\FileExistenceResource;
 use Symfony\Component\Config\Resource\FileResource;
@@ -109,7 +110,11 @@ abstract class Kernel extends SymfonyKernel
             $loader->load($bundleConfig);
         }
 
-        $loader->load(realpath($this->getRootDir() . '/config/config_' . $this->getEnvironment() . '.yml'));
+        $configRealPath = realpath($this->getRootDir() . '/config/config_' . $this->getEnvironment() . '.yml');
+        if($configRealPath === false) {
+            throw new InvalidConfigurationException('File ' . $this->getRootDir() . '/config/config_' . $this->getEnvironment() . '.yml  cannot be found.');
+        }
+        $loader->load($configRealPath);
     }
 
     private function registerExtensionConfigFileResources(ContainerBuilder $container)
