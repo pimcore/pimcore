@@ -1770,7 +1770,8 @@ class SettingsController extends AdminController
                 if ($cleanKeyParts[2] == 'date') {
                     $date = $value;
                     $value = null;
-                    if(!empty($data[$cleanKeyParts[0].".".$cleanKeyParts[1].".time"])) {
+
+                    if(!empty($date) && !empty($data[$cleanKeyParts[0].".".$cleanKeyParts[1].".time"])) {
                         $time = $data[$cleanKeyParts[0].".".$cleanKeyParts[1].".time"];
                         $time = explode("T", $time);
                         $date = explode("T", $date);

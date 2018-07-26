@@ -155,7 +155,8 @@ class TagManagerListener
                         }
 
                         $currentTime = new \Carbon\Carbon();
-                        if ($currentTime->getTimestamp() > $item['date']) {
+
+                        if (!empty($item['date']) && $currentTime->getTimestamp() > $item['date']) {
                             //disable tag item if expired
                             $tag->items[$itemKey]['disabled'] = true;
                             $tag->save();
