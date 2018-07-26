@@ -114,7 +114,7 @@ class Processor
             $thumbDir = $asset->getVideoThumbnailSavePath() . '/video-thumb__' . $asset->getId() . '__' . $config->getName();
             $filename = preg_replace("/\." . preg_quote(File::getFileExtension($asset->getFilename())) . '/', '', $asset->getFilename()) . '.' . $format;
             $fsPath = $thumbDir . '/' . $filename;
-            $tmpPath = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/video-converter-' . $filename;
+            $tmpPath = escapeshellarg(PIMCORE_SYSTEM_TEMP_DIRECTORY . '/video-converter-' . $filename);
 
             if (!is_dir(dirname($fsPath))) {
                 File::mkdir(dirname($fsPath));
@@ -204,6 +204,7 @@ class Processor
                 $success = $converter->save();
                 Logger::info('finished video ' . $converter->getFormat() . ' to ' . $converter->getDestinationFile());
 
+                File::mkdir(dirname($converter->getStorageFile()));
                 File::rename($converter->getDestinationFile(), $converter->getStorageFile());
 
                 // set proper permissions
