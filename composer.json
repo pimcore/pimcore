@@ -1,6 +1,6 @@
 {
   "name": "pimcore/pimcore",
-  "type": "project",
+  "type": "library",
   "description": "Content & Product Management Framework (CMS/PIM/E-Commerce)",
   "keywords": [
     "CMS",
@@ -26,10 +26,6 @@
     "source": "https://github.com/pimcore/pimcore",
     "forum": "https://groups.google.com/forum/#!forum/pimcore",
     "docs": "https://pimcore.com/docs/5.0.x/index.html"
-  },
-  "config": {
-    "optimize-autoloader": true,
-    "sort-packages": true
   },
   "require": {
     "php": ">=7.1",
@@ -81,7 +77,6 @@
     "oyejorge/less.php": "~1.7",
     "pear/net_url2": "~2.2",
     "phive/twig-extensions-deferred": "^2.0",
-    "pimcore/core-version": "v5.3.1",
     "piwik/device-detector": "^3.9",
     "presta/sitemap-bundle": "^1.5",
     "ramsey/uuid": "~3",
@@ -102,7 +97,6 @@
     "vrana/adminer": "~4.6",
     "vrana/jush": "~2.0.2",
     "wa72/htmlpagedom": "^1.3",
-    "wikimedia/composer-merge-plugin": "^1.4",
     "zendframework/zend-code": "~3.1.0",
     "zendframework/zend-paginator": "^2.7",
     "zendframework/zend-servicemanager": "^3.2",
@@ -121,59 +115,17 @@
   },
   "autoload": {
     "psr-4": {
-      "": [
-        "src/"
-      ],
-      "Pimcore\\Model\\DataObject\\": "var/classes/DataObject",
-      "Pimcore\\Model\\Object\\": "var/classes/Object",
-      "Pimcore\\Model\\": "pimcore/models",
-      "Pimcore\\": "pimcore/lib/Pimcore",
-      "Website\\": "legacy/website/lib"
+      "Pimcore\\Model\\": "models",
+      "Pimcore\\": "lib",
+      "Pimcore\\Bundle\\": "bundles"
     },
     "classmap": [
-      "app/AppKernel.php",
-      "pimcore/lib/Pimcore.php"
+      "lib/Pimcore.php"
     ],
     "exclude-from-classmap": [
-      "install-profiles/",
-      "pimcore/lib/compatibility-stubs.php",
-      "pimcore/lib/Pimcore/Bundle/EcommerceFrameworkBundle/config/namespace_compatibility.php"
+      "lib/compatibility-stubs.php",
+      "lib/Pimcore/Bundle/EcommerceFrameworkBundle/config/namespace_compatibility.php"
     ]
   },
-  "scripts": {
-    "post-create-project-cmd": "Pimcore\\Composer::postCreateProject",
-    "post-install-cmd": [
-      "Pimcore\\Composer::postInstall",
-      "@symfony-scripts"
-    ],
-    "post-update-cmd": [
-      "Pimcore\\Composer::postUpdate",
-      "@symfony-scripts"
-    ],
-    "symfony-scripts": [
-      "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::clearCache",
-      "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::installAssets",
-      "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::installRequirementsFile",
-      "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::prepareDeploymentTarget"
-    ]
-  },
-  "extra": {
-    "symfony-app-dir": "app",
-    "symfony-bin-dir": "bin",
-    "symfony-var-dir": "var",
-    "symfony-web-dir": "web",
-    "symfony-tests-dir": "tests",
-    "symfony-assets-install": "relative",
-    "merge-plugin": {
-      "include": [
-        "composer.local.json"
-      ],
-      "recurse": true,
-      "replace": false,
-      "merge-dev": true,
-      "merge-extra": false,
-      "merge-extra-deep": false,
-      "merge-scripts": false
-    }
-  }
+  "bin": ["bin/pimcore-install"]
 }

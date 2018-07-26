@@ -1,34 +1,156 @@
 # Upgrade Notes for Upgrades within Pimcore 5
 
 
+## Version 5.4.0
+
+#### Composer based updates
+Pimcore 5.4 introduces a new update experience based on Composer. 
+Therefore there are some manual steps required when updating to 5.4.0 which are described in detail below:  
+
+##### 1. Update to 5.4.0 with the existing updater 
+The existing updater (web or cli) offers the option to update to version 5.4.0, run the updater until, 
+the following message is shown: 
+> Part 1 of the update process to 5.4.0 is done, please proceed now with the manual steps as described here ...  
+
+##### 2. Cleanup your `composer.json`
+
+Remove all Pimcore composer dependencies from your project's `composer.json`: 
+```
+composer remove --no-update symfony/symfony amnuts/opcache-gui cache/tag-interop colinmollenhour/credis composer/ca-bundle debril/rss-atom-bundle \
+defuse/php-encryption doctrine/annotations doctrine/cache doctrine/collections doctrine/common doctrine/dbal doctrine/doctrine-bundle \
+doctrine/doctrine-migrations-bundle doctrine/instantiator egulias/email-validator endroid/qr-code geoip2/geoip2 google/apiclient \
+guzzlehttp/guzzle hybridauth/hybridauth lcobucci/jwt league/csv linfo/linfo mjaschen/phpgeo monolog/monolog mpratt/embera myclabs/deep-copy \
+myclabs/php-enum neitanod/forceutf8 nesbot/carbon ocramius/package-versions ocramius/proxy-manager oyejorge/less.php pear/net_url2 \
+phive/twig-extensions-deferred pimcore/core-version piwik/device-detector presta/sitemap-bundle ramsey/uuid sabre/dav sensio/distribution-bundle \
+sensio/framework-extra-bundle sensio/generator-bundle sensiolabs/ansi-to-html symfony-cmf/routing-bundle symfony/monolog-bundle symfony/polyfill-apcu\
+symfony/swiftmailer-bundle tijsverkoyen/css-to-inline-styles twig/extensions twig/twig umpirsky/country-list vrana/adminer vrana/jush \
+wa72/htmlpagedom zendframework/zend-code zendframework/zend-paginator zendframework/zend-servicemanager scheb/two-factor-bundle 
+```
+
+Remove the `name` and `type` property out of your `composer.json`: 
+```json
+"name": "pimcore/pimcore",
+"type": "project",
+```
+
+Replace the `scripts` and `autoload` sections in your `composer.json` with the following: 
+```json
+  "autoload": {
+    "psr-4": {
+      "": ["src/"],
+      "Pimcore\\Model\\DataObject\\": "var/classes/DataObject",
+      "Pimcore\\Model\\Object\\": "var/classes/Object",
+      "Website\\": "legacy/website/lib"
+    },
+    "classmap": [
+      "app/AppKernel.php"
+    ]
+  },
+  "scripts": {
+    "post-create-project-cmd": "Pimcore\\Composer::postCreateProject",
+    "post-install-cmd": [
+      "Pimcore\\Composer::postInstall",
+      "@symfony-scripts"
+    ],
+    "post-update-cmd": [
+      "Pimcore\\Composer::postUpdate",
+      "@symfony-scripts",
+      "Pimcore\\Composer::executeMigrationsUp"
+    ],
+    "pre-package-update": [
+      "Pimcore\\Composer::prePackageUpdate"
+    ],
+    "symfony-scripts": [
+      "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::clearCache",
+      "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::installAssets",
+      "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::installRequirementsFile",
+      "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::prepareDeploymentTarget"
+    ]
+  },
+```
+
+##### Install Pimcore as Composer dependency 
+```
+rm composer.lock
+rm -rf vendor
+composer require pimcore/pimcore:5.4.*
+```
+
+##### Cleanup project files
+```
+rm -r pimcore/
+```
+
+If you have scripts that rely (include or require) on Pimcore's startup scripts (`startup.php` and `startup_cli.php`) 
+which used to be located under `/pimcore/config/`, you can keep that folder in your project for compatibility reasons. 
+This won't have any side-effects, since they are just calling functions from within the Pimcore library, so you can keep
+them as long as it is necessary.  
+
+
+#### Removed PrototypeJS (light) library from the Admin UI
+Quite a lot of functions have a native Javascript equivalent or are covered by vanilla JS anyway.
+However, there are some functions which need to be adapted or replaced when used in Bundles.
+The following list should help you to locate and replace them, if available you can find the replacement in brackets:
+- `Prototype.*` functions and properties
+- `Enumerable.*` functions and properties
+- `$A()` ( `Array.from()` )
+- `$w()`
+- `Object.extend()` ( `Object.assign()` )
+- `Object.toQueryString()` ( `Ext.Object.toQueryString` )
+- `Object.clone()` ( `Object.assign({}, object)` )
+- `Object.isElement()` ( `Ext.isElement()` )
+- `Object.isArray()` ( `Ext.isArray()` )
+- `Object.isFunction()` ( `Ext.isFunction()` )
+- `Object.isString()` ( `Ext.isString()` )
+- `Object.isNumber()` ( `Ext.isNumber()` )
+- `Object.isUndefined()` ( `!Ext.isDefined()` )
+- `Object.toHTML()`
+- `Object.isHash()`
+- `Array.prototype.clear` ( `array.filter(() => false)` )
+- `Array.prototype.first` ( `array[0]` )
+- `Array.prototype.last` ( `array[array.length-1]` )
+- `Array.prototype.compact`
+- `Array.prototype.flatten` ( `array.flat()` )
+- `Array.prototype.without`
+- `Array.prototype.reverse` ( `array.reverse()` )
+- `Array.prototype.uniq` ( `array.filter((d, i, a) => a.indexOf(d) === i)` )
+- `Array.prototype.intersect`
+- `Array.prototype.clone` ( `[...array]` )
+- `Array.prototype.toArray`
+- `Array.prototype.size` ( `array.length` )
+- `Array.prototype.inspect`
+- `Function.prototype.[update|merge|bindAsEventListener|curry|delay|defer|wrap|methodize]`
+
+
+
 ## Version 5.3.0
 
 #### Build 289 (2018-07-20)
-The context of the button layout component in objects changed to the edit tab. 
+The context of the button layout component in objects changed to the edit tab.
 See [Layout Components](../../05_Objects/01_Object_Classes/03_Layout_Elements/README.md).
 
 #### Build 286 (2018-07-19)
 To the interface `Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\ITracker` the two methods `getAssortmentTenants` and
-`getCheckoutTenants` where added. No action is required, except you have have implemented your own trackers and did not 
+`getCheckoutTenants` where added. No action is required, except you have have implemented your own trackers and did not
 extend them from the abstract `Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\Tracker` class.
 
 #### Build 285 (2018-07-18)
-Asset filenames: introduced new policy, the following disallowed characters were added: `#?*:\<>|"` 
+Asset filenames: introduced new policy, the following disallowed characters were added: `#?*:\<>|"`
 
 #### Build 281 (2018-07-13)
-The admin UI translations are now split into 2 parts, 
-[Essentials](https://poeditor.com/join/project/VWmZyvFVMH) and [Extended](https://poeditor.com/join/project/XliCYYgILb). 
+The admin UI translations are now split into 2 parts,
+[Essentials](https://poeditor.com/join/project/VWmZyvFVMH) and [Extended](https://poeditor.com/join/project/XliCYYgILb).
 Essentials contains all translations which are needed for the most common tasks for editors, while the extended
-collection contains mostly admin related translations.   
-This separation should make it a lot easier to start with the localization of the Pimcore UI. 
+collection contains mostly admin related translations.
+This separation should make it a lot easier to start with the localization of the Pimcore UI.
 
 #### Build 280 (2018-07-12)
-Extensions: removed support for `xmlEditorFile` for legacy plugins (compatibility mode).  
+Extensions: removed support for `xmlEditorFile` for legacy plugins (compatibility mode).
 
 #### Build 277 (2018-07-09)
-Admin Localization: Only languages with a [translation progress](https://poeditor.com/projects/view?order=trans_desc&id=38068) over 70% are included in the standard distribution. 
-For the current status this means that the following languages are no longer provided: CA, PL, ZH_Hans, ZH_Hant, SV, JA, PT, PT_BR, RU, FA, TR, UK. 
-Languages with a lower progress need to be installed manually. 
+Admin Localization: Only languages with a [translation progress](https://poeditor.com/projects/view?order=trans_desc&id=38068) over 70% are included in the standard distribution.
+For the current status this means that the following languages are no longer provided: CA, PL, ZH_Hans, ZH_Hant, SV, JA, PT, PT_BR, RU, FA, TR, UK.
+Languages with a lower progress need to be installed manually.
 
 #### Build 276 (2018-07-06)
 Image Thumbnails: SVGs are no longer automatically rasterized when using only one of the following transformations: Resize, Scale By Width, Scale By Height.
@@ -36,31 +158,31 @@ To restore the previous behavior, set the "Rasterize SVGs (Imagick)" option on t
 
 #### Build 273 (2018-07-06)
 Webservices API: Support for SQL condition parameters has been removed. Use [Query Filters](../../24_Web_Services/01_Query_Filters.md) instead.
-If you still want to support such conditions, implement your own event listener as described on the same page in the `Legacy Mode`section.. 
+If you still want to support such conditions, implement your own event listener as described on the same page in the `Legacy Mode`section..
 
 #### Build 270 (2018-06-29)
-Data Object Class ID's can now be manually specified (alphanumeric) and are therefore no longer auto-generated (numeric/auto-increment). 
-This can have unexpected side-effects under certain circumstances, see also: https://github.com/pimcore/pimcore/issues/2916 
+Data Object Class ID's can now be manually specified (alphanumeric) and are therefore no longer auto-generated (numeric/auto-increment).
+This can have unexpected side-effects under certain circumstances, see also: https://github.com/pimcore/pimcore/issues/2916
 
 #### Build 251 (2018-06-05)
-- **PHP 7.1 is required** 
-- CKEditor update from 4.6.2 to 4.9.2, for details see: https://ckeditor.com/cke4/release-notes 
+- **PHP 7.1 is required**
+- CKEditor update from 4.6.2 to 4.9.2, for details see: https://ckeditor.com/cke4/release-notes
 
-#### Build 247 (2018-06-04) 
+#### Build 247 (2018-06-04)
 The dependency `google/apiclient` was updated from `~1` to `^2.0`. The format of the private key file has changed from P12 format to JSON.
-You can generate a new key in the JSON format in the credentials section of your Google Developer Console. 
+You can generate a new key in the JSON format in the credentials section of your Google Developer Console.
 
-If you have used this library in your custom code, please update it accordingly. 
+If you have used this library in your custom code, please update it accordingly.
 
 #### Build 242 (2018-05-29)
 The look & feel of the areablock toolbar and inline controls have changed.
-The config option `areablock_toolbar` on areablocks has now [less flags](https://github.com/pimcore/pimcore/blob/0e5d8de0c3ac0829d4e85b6360b9dc409b45d108/pimcore/models/Document/Tag/Areablock.php#L264) to customize the toolbar and 
-a the new option `controlsAlign` was introduced. 
+The config option `areablock_toolbar` on areablocks has now [less flags](https://github.com/pimcore/pimcore/blob/0e5d8de0c3ac0829d4e85b6360b9dc409b45d108/pimcore/models/Document/Tag/Areablock.php#L264) to customize the toolbar and
+a the new option `controlsAlign` was introduced.
 
 #### Build 267 (2018-06-22)
-To the PaymentProvider* object bricks the (optional) input field `configurationKey` was added. Since it is optional, this is 
+To the PaymentProvider* object bricks the (optional) input field `configurationKey` was added. Since it is optional, this is
 not added to existing object bricks. If issue [#2908](https://github.com/pimcore/pimcore/issues/2908) is a problem for you,
-you need to add `configurationKey` manually to your PaymentProvider object bricks. 
+you need to add `configurationKey` manually to your PaymentProvider object bricks.
 
 
 
@@ -68,12 +190,12 @@ you need to add `configurationKey` manually to your PaymentProvider object brick
 ## Version 5.2.3
 #### Build 236 (2018-05-22)
 
-Method signature of [ICart](https://github.com/pimcore/pimcore/commit/d84d3cf94223a8cf55861a0d68956df126e1b6c5#diff-3ef1dc16016857cdc833662102181630) changed: 
+Method signature of [ICart](https://github.com/pimcore/pimcore/commit/d84d3cf94223a8cf55861a0d68956df126e1b6c5#diff-3ef1dc16016857cdc833662102181630) changed:
 Added `modified()` as a public method. If you have implemented your own cart and not extended `AbstractCart` or have
-overwritten the `modified()` method, please check your implementation. 
+overwritten the `modified()` method, please check your implementation.
 
 In Cart Items the method `setCount()` now also fires the `modified()` method of the cart. If you have custom implementations
-please check if this has any effect on them. 
+please check if this has any effect on them.
 
 ## Version 5.2.0
 #### Build 206 (2018-02-19)
@@ -156,7 +278,7 @@ it was before for backwards compatibility reasons. If a value is set globally it
 
 #### Build 205 (2018-02-19)
 
-The debug mode was changed from being a boolean setting to a more granular feature flag setting. If you query the debug 
+The debug mode was changed from being a boolean setting to a more granular feature flag setting. If you query the debug
 mode in your code, you might update the call to specify which kind of debug setting you want to query. See
 [Feature Flags and Debug Mode](../../19_Development_Tools_and_Details/03_Feature_Flags_And_Debug_Mode.md) for details.
 
@@ -189,7 +311,7 @@ The signature of `Pimcore\Model\DataObject\AbstractObject` changed. It received 
 
 #### Build 173 (2018-01-09)
 
-The Google Analytics and Google Tag Manager code generation was refactored to use the same extendable block logic as the 
+The Google Analytics and Google Tag Manager code generation was refactored to use the same extendable block logic as the
 Matomo integration. If you have any custom code logic involving the `Pimcore\Google\Analytics` class or use a custom tracker
 with the Ecommerce Framework tracking implementation, please note the following:
 
@@ -275,7 +397,7 @@ instead of the frontend targeting which was used in earlier versions. The new ta
 with the previous one and will break existing targeting setups. **NOTE**: the targeting feature is **experimental**
 and may be subject to change in later versions.
 
-If you are already using targeting, be aware that you'll need to re-create all of your targeting rules from scratch based 
+If you are already using targeting, be aware that you'll need to re-create all of your targeting rules from scratch based
 on the new engine.
 
 You can find updated documentation in [Targeting and Personalization](../../18_Tools_and_Features/37_Targeting_and_Personalization)
@@ -295,7 +417,7 @@ please make sure you update them to the new structure.
 #### Build 149 (2017-11-14)
 
 The Matomo integration which was recently added was refactored to always use a full URI including the protocol for the Matomo
-URL configuration setting. Please update your settings to include the protocol as otherwise the Matomo tracking will be 
+URL configuration setting. Please update your settings to include the protocol as otherwise the Matomo tracking will be
 disabled.
 
 Before:
@@ -343,7 +465,7 @@ services:
 #### Build 134 (2017-10-03)
 
 This build changes the default setting for the legacy name mapping in the ecommerce framework (see [LegacyClassMappingTool](https://github.com/pimcore/pimcore/blob/master/pimcore/lib/Pimcore/Bundle/EcommerceFrameworkBundle/Legacy/LegacyClassMappingTool.php))
-to false, disabling legacy class mapping for new projects. When you're updating from a previous version and the ecommerce 
+to false, disabling legacy class mapping for new projects. When you're updating from a previous version and the ecommerce
 framework is enabled, the updater will automatically enable the class mapping for you by creating a config file in `app/config/local`.
 If you're starting fresh, you'll need to enable the mapping manually if needed by setting the following config value:
 
@@ -356,7 +478,7 @@ pimcore_ecommerce_framework:
 
 ##### Objects were renamed to Data Objects
 The introduction of object type hints in PHP 7.2 forced us to rename several namespaces to be compliant with the
-[PHP 7 reserved words](http://php.net/manual/de/reserved.other-reserved-words.php).  
+[PHP 7 reserved words](http://php.net/manual/de/reserved.other-reserved-words.php).
 - Namespace `Pimcore\Model\Object` was renamed to `Pimcore\Model\DataObject`
     - PHP classes of Data Objects are now also in the format eg. `Pimcore\Model\DataObject\News`
 - Several other internal classes were renamed or moved as well
@@ -364,17 +486,17 @@ The introduction of object type hints in PHP 7.2 forced us to rename several nam
     - `Pimcore\Model\User\Workspace\Object` to `Pimcore\Model\User\Workspace\DataObject`
 - [Object Placeholders](../../19_Development_Tools_and_Details/23_Placeholders/01_Object_Placeholder.md) syntax changed to `%DataObject()`
 - There's a compatibility autoloader which enables you to still use the former namespace (< PHP 7.2), but you should migrate asap. to the new namespaces.
-- After the update please consider the following: 
+- After the update please consider the following:
     - If you're using custom [class overrides](../../20_Extending_Pimcore/03_Overriding_Models.md) in your `app/config/config.yml`, please adapt them using the new namespace.
     - If you're using event listeners on object events, please rename them as well to `pimcore.dataobject.*`
     - Your code should continue to work as before, due to the compatibility autoloader, which is creating class aliases on the fly
     - Update your `.gitignore` to exclude `/var/classes/DataObject` instead of `/var/classes/Object`
-- If the update fails, please try the following: 
+- If the update fails, please try the following:
     - fix the above configuration changes, mainly the class overrides and potentially other relevant configurations
     - `composer dump-autoload`
     - `./bin/console cache:clear --no-warmup`
     - run the [migration script](https://gist.github.com/brusch/03521a225cffee4baa8f3565342252d4) manually on cli
-  
+
 
 #### Build 97 (2017-08-24)
 
@@ -385,8 +507,8 @@ than in Pimcore 4. See [Website Settings](../../18_Tools_and_Features/27_Website
 
 This build adds support for migrations in bundle installers (see [Installers](../../20_Extending_Pimcore/13_Bundle_Developers_Guide/05_Pimcore_Bundles/01_Installers.md)).
 With this change, extension manager commands can now also be executed as CLI commands and installers use an `OutputWriter`
-object to return information to the extension manager or to CLI scripts. As this `OutputWriter` is initialized in `AbstractInstaller`s 
-constructor, please update your custom installers to call the parent constructor. 
+object to return information to the extension manager or to CLI scripts. As this `OutputWriter` is initialized in `AbstractInstaller`s
+constructor, please update your custom installers to call the parent constructor.
 
 ##### Upgrade errors
 
@@ -405,7 +527,7 @@ $ composer require doctrine/doctrine-migrations-bundle "^1.2"
 
 #### Build 86 (2017-08-02)
 
-E-Commerce Framework configuration was moved to a Symfony Config. For details see 
+E-Commerce Framework configuration was moved to a Symfony Config. For details see
 [Config Signature changes](./03_Ecommerce_Framework/02_Ecommerce_Framework_Config_Signature_Changes.md)
 
 
@@ -424,7 +546,7 @@ If you updated up to build 85 and experience this issue, you can solve it with t
 * alternatively you can use the CLI updater to circumvent the maintenance page. the following command would update to build 86:
 
     PIMCORE_ENVIRONMENT=dev bin/console pimcore:update --ignore-maintenance-mode -u 86
-    
+
 ##### Session related BC breaks
 
 The admin session ID can't be injected via GET parameter anymore. This was possbile in previous Pimcore versions to support

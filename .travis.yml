@@ -50,7 +50,7 @@ matrix:
 
 cache:
   directories:
-    - vendor
+    - $HOME/.cache/composer
 
 env:
   global:

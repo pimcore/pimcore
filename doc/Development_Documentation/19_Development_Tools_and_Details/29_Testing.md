@@ -150,14 +150,11 @@ with the following content (customize as needed):
 
 // tests/bootstrap.php
 
-// use the env var set from the XML config, but transform it into an absolute path
-define(
-    'PIMCORE_PROJECT_ROOT',
-    realpath(getenv('PIMCORE_PROJECT_ROOT'))
-);
+include "../../vendor/autoload.php";
 
-// bootstrap Pimcore
-require_once PIMCORE_PROJECT_ROOT . '/pimcore/config/bootstrap.php';
+\Pimcore\Bootstrap::setProjectRoot();
+\Pimcore\Bootstrap::boostrap();
+
 ```
 
 Now we're ready to write tests which depend on a bootstrapped environment. Symfony already provides `KernelTestCase` and
@@ -321,13 +318,18 @@ define('PIMCORE_PROJECT_ROOT', realpath(__DIR__ . '/..'));
 // set the used pimcore/symfony environment
 putenv('PIMCORE_ENVIRONMENT=test');
 
-// add the core pimcore test library to the autoloader - this could also be done in composer.json's autoload-dev section
-// but is done here for demonstration purpose
-require_once PIMCORE_PROJECT_ROOT . '/pimcore/tests/_support/Util/Autoloader.php';
-
-Autoloader::addNamespace('Pimcore\Tests', PIMCORE_PROJECT_ROOT . '/pimcore/tests/_support');
 
 require_once PIMCORE_PROJECT_ROOT . '/vendor/autoload.php';
+
+\Pimcore\Bootstrap::setProjectRoot();
+\Pimcore\Bootstrap::boostrap();
+
+
+// add the core pimcore test library to the autoloader - this could also be done in composer.json's autoload-dev section
+// but is done here for demonstration purpose
+require_once PIMCORE_PROJECT_ROOT . '/vendor/pimcore/pimcore/tests/_support/Util/Autoloader.php';
+
+Autoloader::addNamespace('Pimcore\Tests', PIMCORE_PROJECT_ROOT . '/vendor/pimcore/pimcore/tests/_support');
 ```
 
 The `tests/unit.suite.yml` should be fine for a standard unit testing setup without dependencies, but we need to alter the
@@ -457,7 +459,7 @@ class IndexPageCest
         $I->amOnRoute('document_1');
 
         $I->seeElement('#site #logo a', ['href' => 'http://www.pimcore.com/']);
-        $I->seeElement('#site #logo img', ['src' => '/pimcore/static6/img/logo-claim-gray.svg']);
+        $I->seeElement('#site #logo img', ['src' => '/bundles/pimcoreadmin/img/logo-claim-gray.svg']);
     }
 }
 ```

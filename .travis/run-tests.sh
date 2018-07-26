@@ -2,7 +2,7 @@
 
 set -e
 
-CMD="vendor/bin/codecept run -c pimcore -vvv"
+CMD="/tmp/www/vendor/bin/codecept run -c pimcore -vvv"
 
 # add suite if configured
 if [[ -n "$PIMCORE_TEST_SUITE" ]]; then
