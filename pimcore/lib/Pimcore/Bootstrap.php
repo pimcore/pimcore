@@ -14,6 +14,8 @@
 
 namespace Pimcore;
 
+include_once __DIR__ . '../Pimcore.php';
+
 use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\Common\Annotations\AnnotationRegistry;
 use Pimcore\Model\DataObject;
