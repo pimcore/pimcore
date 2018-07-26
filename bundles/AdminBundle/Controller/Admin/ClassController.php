@@ -847,7 +847,9 @@ class ClassController extends AdminController implements EventedControllerInterf
                     ];
                 }
                 if ($forObjectEditor) {
-                    $layoutDefinitions[$item->getKey()] = $item->getLayoutDefinitions();
+                    $itemLayoutDefinitions = $item->getLayoutDefinitions();
+                    DataObject\Service::enrichLayoutDefinition($itemLayoutDefinitions, null);
+                    $layoutDefinitions[$item->getKey()] = $itemLayoutDefinitions;
                 }
                 $groups[$item->getGroup()]['children'][] =
                     [
@@ -860,7 +862,9 @@ class ClassController extends AdminController implements EventedControllerInterf
                     ];
             } else {
                 if ($forObjectEditor) {
-                    $layoutDefinitions[$item->getKey()] = $item->getLayoutDefinitions();
+                    $itemLayoutDefinitions = $item->getLayoutDefinitions();
+                    DataObject\Service::enrichLayoutDefinition($itemLayoutDefinitions, null);
+                    $layoutDefinitions[$item->getKey()] = $itemLayoutDefinitions;
                 }
                 $definitions[] = [
                     'id' => $item->getKey(),
