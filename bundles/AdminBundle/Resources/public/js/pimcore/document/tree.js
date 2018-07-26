@@ -282,7 +282,7 @@ pimcore.document.tree = Class.create({
                     }
                     pimcore.elementservice.nodeMoved("document", oldParent, newParent);
                     this.updateOpenDocumentPaths(node);
-                    
+
                 }
                 else {
                     tree.loadMask.hide();
@@ -354,6 +354,12 @@ pimcore.document.tree = Class.create({
 
             var addDocuments = perspectiveCfg.inTreeContextMenu("document.add");
             var addPrintDocuments = perspectiveCfg.inTreeContextMenu("document.addPrintPage");
+            var addEmail = perspectiveCfg.inTreeContextMenu("document.addEmail");
+            var addSnippet = perspectiveCfg.inTreeContextMenu("document.addSnippet");
+            var addLink = perspectiveCfg.inTreeContextMenu("document.addLink");
+            var addNewsletter = perspectiveCfg.inTreeContextMenu("document.addNewsletter");
+            var addHardlink = perspectiveCfg.inTreeContextMenu("document.addHardlink");
+
             if (addDocuments || addPrintDocuments) {
 
                 var documentMenu = {
@@ -374,28 +380,32 @@ pimcore.document.tree = Class.create({
                     handler: this.addDocument.bind(this, tree, record, "page")
                 });
 
-                // empty snippet
-                documentMenu.snippet.push({
-                    text: "&gt; " + t("blank"),
-                    iconCls: "pimcore_icon_snippet pimcore_icon_overlay_add",
-                    handler: this.addDocument.bind(this, tree, record, "snippet")
-                });
+                if(addSnippet) {
+                    // empty snippet
+                    documentMenu.snippet.push({
+                        text: "&gt; " + t("blank"),
+                        iconCls: "pimcore_icon_snippet pimcore_icon_overlay_add",
+                        handler: this.addDocument.bind(this, tree, record, "snippet")
+                    });
+                }
 
-                // empty email
-                documentMenu.email.push({
-                    text: "&gt; " + t("blank"),
-                    iconCls: "pimcore_icon_email pimcore_icon_overlay_add",
-                    handler: this.addDocument.bind(this, tree, record, "email")
-                });
+                if(addEmail) {
+                    // empty email
+                    documentMenu.email.push({
+                        text: "&gt; " + t("blank"),
+                        iconCls: "pimcore_icon_email pimcore_icon_overlay_add",
+                        handler: this.addDocument.bind(this, tree, record, "email")
+                    });
+                }
 
-                // empty newsletter
-                documentMenu.newsletter.push({
-                    text: "&gt; " + t("blank"),
-                    iconCls: "pimcore_icon_newsletter pimcore_icon_overlay_add",
-                    handler: this.addDocument.bind(this, tree, record, "newsletter")
-                });
-
-
+                if(addNewsletter) {
+                    // empty newsletter
+                    documentMenu.newsletter.push({
+                        text: "&gt; " + t("blank"),
+                        iconCls: "pimcore_icon_newsletter pimcore_icon_overlay_add",
+                        handler: this.addDocument.bind(this, tree, record, "newsletter")
+                    });
+                }
 
                 //don't add pages below print containers - makes no sense
                 if(addDocuments && record.data.type != "printcontainer") {
@@ -429,41 +439,51 @@ pimcore.document.tree = Class.create({
 
                 }
 
-                menu.add(new Ext.menu.Item({
-                    text: t('add_snippet'),
-                    iconCls: "pimcore_icon_snippet pimcore_icon_overlay_add",
-                    menu: documentMenu.snippet,
-                    hideOnClick: false
-                }));
-
-                //don't add emails, newsletters and links below print containers - makes no sense
-                if(addDocuments && record.data.type != "printcontainer") {
+                if(addSnippet) {
                     menu.add(new Ext.menu.Item({
-                        text: t('add_link'),
-                        iconCls: "pimcore_icon_link pimcore_icon_overlay_add",
-                        handler: this.addDocument.bind(this, tree, record, "link")
-                    }));
-
-                    menu.add(new Ext.menu.Item({
-                        text: t('add_email'),
-                        iconCls: "pimcore_icon_email pimcore_icon_overlay_add",
-                        menu: documentMenu.email,
-                        hideOnClick: false
-                    }));
-
-                    menu.add(new Ext.menu.Item({
-                        text: t('add_newsletter'),
-                        iconCls: "pimcore_icon_newsletter pimcore_icon_overlay_add",
-                        menu: documentMenu.newsletter,
+                        text: t('add_snippet'),
+                        iconCls: "pimcore_icon_snippet pimcore_icon_overlay_add",
+                        menu: documentMenu.snippet,
                         hideOnClick: false
                     }));
                 }
 
-                menu.add(new Ext.menu.Item({
-                    text: t('add_hardlink'),
-                    iconCls: "pimcore_icon_hardlink pimcore_icon_overlay_add",
-                    handler: this.addDocument.bind(this, tree, record, "hardlink")
-                }));
+                //don't add emails, newsletters and links below print containers - makes no sense
+                if(addDocuments && record.data.type != "printcontainer") {
+                    if(addLink) {
+                        menu.add(new Ext.menu.Item({
+                            text: t('add_link'),
+                            iconCls: "pimcore_icon_link pimcore_icon_overlay_add",
+                            handler: this.addDocument.bind(this, tree, record, "link")
+                        }));
+                    }
+
+                    if(addEmail) {
+                        menu.add(new Ext.menu.Item({
+                            text: t('add_email'),
+                            iconCls: "pimcore_icon_email pimcore_icon_overlay_add",
+                            menu: documentMenu.email,
+                            hideOnClick: false
+                        }));
+                    }
+
+                    if(addNewsletter) {
+                        menu.add(new Ext.menu.Item({
+                            text: t('add_newsletter'),
+                            iconCls: "pimcore_icon_newsletter pimcore_icon_overlay_add",
+                            menu: documentMenu.newsletter,
+                            hideOnClick: false
+                        }));
+                    }
+                }
+
+                if(addHardlink) {
+                    menu.add(new Ext.menu.Item({
+                        text: t('add_hardlink'),
+                        iconCls: "pimcore_icon_hardlink pimcore_icon_overlay_add",
+                        handler: this.addDocument.bind(this, tree, record, "hardlink")
+                    }));
+                }
             }
 
             if (perspectiveCfg.inTreeContextMenu("document.addFolder")) {
@@ -636,27 +656,27 @@ pimcore.document.tree = Class.create({
                     text: t("snippet"),
                     iconCls: "pimcore_icon_snippet",
                     handler: this.convert.bind(this, tree, record, "snippet"),
-                    hidden: record.data.type == "snippet"
+                    hidden: record.data.type == "snippet" || !addSnippet
                 }, {
                     text: t("email"),
                     iconCls: "pimcore_icon_email",
                     handler: this.convert.bind(this, tree, record, "email"),
-                    hidden: record.data.type == "email"
+                    hidden: record.data.type == "email" || !addEmail
                 }, {
                     text: t("newsletter"),
                     iconCls: "pimcore_icon_newsletter",
                     handler: this.convert.bind(this, tree, record, "newsletter"),
-                    hidden: record.data.type == "newsletter"
+                    hidden: record.data.type == "newsletter" || !addNewsletter
                 },{
                     text: t("link"),
                     iconCls: "pimcore_icon_link",
                     handler: this.convert.bind(this, tree, record, "link"),
-                    hidden: record.data.type == "link"
+                    hidden: record.data.type == "link" || !addLink
                 }, {
                     text: t("hardlink"),
                     iconCls: "pimcore_icon_hardlink",
                     handler: this.convert.bind(this, tree, record, "hardlink"),
-                    hidden: record.data.type == "hardlink"
+                    hidden: record.data.type == "hardlink" || !addHardlink
                 }]
             }));
         }
@@ -1399,7 +1419,7 @@ pimcore.document.tree = Class.create({
                         documentElement.resetPath();
                     }
                 }
-            }    
+            }
         } catch (e) {
             console.log(e);
         }
