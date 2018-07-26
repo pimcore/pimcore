@@ -73,7 +73,8 @@ pimcore.document.tags.wysiwyg = Class.create(pimcore.document.tag, {
         
         try {
             CKEDITOR.config.language = pimcore.globalmanager.get("user").language;
-            var eConfig = Object.clone(this.options);
+            var eConfig = {};
+            var specificConfig = Object.assign({}, this.options);
 
             // if there is no toolbar defined use Full which is defined in CKEDITOR.config.toolbar_Full, possible
             // is also Basic
@@ -92,7 +93,7 @@ pimcore.document.tags.wysiwyg = Class.create(pimcore.document.tag, {
                 ];
             }
 
-            delete eConfig.width;
+            delete specificConfig.width;
 
             eConfig.language = pimcore.settings["language"];
             eConfig.entities = false;
@@ -101,8 +102,11 @@ pimcore.document.tags.wysiwyg = Class.create(pimcore.document.tag, {
             eConfig.extraAllowedContent = "*[pimcore_type,pimcore_id]";
 
             if(typeof(pimcore.document.tags.wysiwyg.defaultEditorConfig) == 'object'){
-                eConfig = mergeObject(eConfig, pimcore.document.tags.wysiwyg.defaultEditorConfig);
+                eConfig = mergeObject(eConfig, pimcore.document.tags.wysiwyg.defaultEditorConfig, specificConfig);
             }
+
+            eConfig = mergeObject(eConfig, specificConfig);
+
 
             this.ckeditor = CKEDITOR.inline(this.textarea, eConfig);
 
