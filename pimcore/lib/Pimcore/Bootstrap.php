@@ -215,6 +215,11 @@ class Bootstrap
         // configure PHP's error logging
         $resolveConstant('PIMCORE_PHP_ERROR_REPORTING', E_ALL & ~E_NOTICE & ~E_STRICT);
         $resolveConstant('PIMCORE_PHP_ERROR_LOG', PIMCORE_LOG_DIRECTORY . '/php.log');
+
+        // app bundle defaults
+        $resolveConstant('PIMCORE_SYMFONY_DEFAULT_BUNDLE', 'AppBundle');
+        $resolveConstant('PIMCORE_SYMFONY_DEFAULT_CONTROLLER', 'Content');
+        $resolveConstant('PIMCORE_SYMFONY_DEFAULT_ACTION', 'default');
     }
 
     public static function autoload()

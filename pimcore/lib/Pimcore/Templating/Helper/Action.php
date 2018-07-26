@@ -68,7 +68,7 @@ class Action extends Helper
         }
 
         if (!$module) {
-            $module = 'AppBundle';
+            $module = PIMCORE_SYMFONY_DEFAULT_BUNDLE;
         }
 
         $uri = $this->actionRenderer->createControllerReference(
