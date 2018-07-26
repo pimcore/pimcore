@@ -204,6 +204,7 @@ class Processor
                 $success = $converter->save();
                 Logger::info('finished video ' . $converter->getFormat() . ' to ' . $converter->getDestinationFile());
 
+                File::mkdir(dirname($converter->getStorageFile()));
                 File::rename($converter->getDestinationFile(), $converter->getStorageFile());
 
                 // set proper permissions
