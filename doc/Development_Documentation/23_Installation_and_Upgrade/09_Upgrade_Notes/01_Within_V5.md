@@ -16,7 +16,7 @@ the following message is shown:
 
 Remove all Pimcore composer dependencies from your project's `composer.json`: 
 ```
-composer remove symfony/symfony amnuts/opcache-gui cache/tag-interop colinmollenhour/credis composer/ca-bundle debril/rss-atom-bundle \
+composer remove --no-update symfony/symfony amnuts/opcache-gui cache/tag-interop colinmollenhour/credis composer/ca-bundle debril/rss-atom-bundle \
 defuse/php-encryption doctrine/annotations doctrine/cache doctrine/collections doctrine/common doctrine/dbal doctrine/doctrine-bundle \
 doctrine/doctrine-migrations-bundle doctrine/instantiator egulias/email-validator endroid/qr-code geoip2/geoip2 google/apiclient \
 guzzlehttp/guzzle hybridauth/hybridauth lcobucci/jwt league/csv linfo/linfo mjaschen/phpgeo monolog/monolog mpratt/embera myclabs/deep-copy \
