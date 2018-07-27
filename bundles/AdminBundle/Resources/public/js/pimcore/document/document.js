@@ -518,7 +518,12 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
                         pimcore.helpers.openElement(documentId, "document");
                     }
                 });
+            });
+        }
 
+        if(this.data["unlinkTranslations"]) {
+            var me = this;
+            Ext.iterate(this.data["unlinkTranslations"], function (language, documentId, myself) {
                 unlinkTranslationsMenu.push({
                     text: pimcore.available_languages[language] + " [" + language + "]",
                     handler: function () {
@@ -535,7 +540,6 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
                         });
                     }.bind(this),
                     iconCls: "pimcore_icon_language_" + language
-                   
                 });
             });
         }

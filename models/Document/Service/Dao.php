@@ -75,10 +75,21 @@ class Dao extends Model\Dao\AbstractDao
      *
      * @return array
      */
-    public function getTranslations(Document $document)
+    public function getTranslations(Document $document, $task = "open")
     {
         $sourceId = $this->getTranslationSourceId($document);
-        $data = $this->db->fetchAll('SELECT id,language FROM documents_translations WHERE sourceId IN(?, ?) UNION SELECT sourceId as id,"source" FROM documents_translations WHERE id IN(?, ?)', [$sourceId, $document->getId(), $sourceId, $document->getId()]);
+        $data = $this->db->fetchAll('SELECT id,language FROM documents_translations WHERE sourceId IN(?, ?) UNION SELECT sourceId as id,"source" FROM documents_translations WHERE id = ?', [$sourceId, $document->getId(), $document->getId()]);
+
+        if ($task == "open") {
+            $linkedData = [];
+            foreach ($data as $key => $value) {
+                $linkedData = $this->db->fetchAll('SELECT id,language FROM documents_translations WHERE sourceId = ? UNION SELECT sourceId as id,"source" FROM documents_translations WHERE id = ?', [$value['id'],$value['id']]);
+            }
+
+            if(count($linkedData) > 0 ) {
+                $data = array_merge($data,$linkedData);
+            }
+        }
 
         $translations = [];
         foreach ($data as $translation) {
