@@ -104,6 +104,7 @@ services:
         public: true
 
     pimcore.http_client:
+        public: true
         class: \GuzzleHttp\Client
         factory: ['@Pimcore\Http\ClientFactory', createClient]
 
