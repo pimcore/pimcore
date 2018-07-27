@@ -12,8 +12,8 @@ tasks like
 To give bundles full control over their install routines, Pimcore only defines a basic installer interface which must be 
 implemented by your installer. The methods implemented by your installer drive the extension manager UI and are called when
 an action is triggered from the extension manager or from commands like `pimcore:bundle:install`. The basic installer
-interface can be found in [InstallerInterface](https://github.com/pimcore/pimcore/blob/master/pimcore/lib/Pimcore/Extension/Bundle/Installer/InstallerInterface.php) which
-is implemented in [AbstractInstaller](https://github.com/pimcore/pimcore/blob/master/pimcore/lib/Pimcore/Extension/Bundle/Installer/AbstractInstaller.php)
+interface can be found in [InstallerInterface](https://github.com/pimcore/pimcore/blob/master/lib/Extension/Bundle/Installer/InstallerInterface.php) which
+is implemented in [AbstractInstaller](https://github.com/pimcore/pimcore/blob/master/lib/Extension/Bundle/Installer/AbstractInstaller.php)
 which you can use as starting point.
 
 A pimcore bundle is expected to return an installer instance in `getInstaller()`. This method can also return `null` if you
@@ -62,7 +62,7 @@ provides a powerful migration framework. Building on Doctrine Migrations, Pimcor
 There is a [dedicated documentation page](../../../19_Development_Tools_and_Details/37_Migrations.md) regarding migrations 
 which you should read before continuing on this page. 
   
-To use the migrations for your bundle, you can extend the [MigrationInstaller](https://github.com/pimcore/pimcore/blob/master/pimcore/lib/Pimcore/Extension/Bundle/Installer/MigrationInstaller.php)
+To use the migrations for your bundle, you can extend the [MigrationInstaller](https://github.com/pimcore/pimcore/blob/master/lib/Extension/Bundle/Installer/MigrationInstaller.php)
 in your own installer class to make your bundle installer handle migrations. This installer implements the [MigrationInstallerInterface](https://github.com/pimcore/pimcore/blob/898f53756004b2d0e0fdd4079e420b71fd2f2481/pimcore/lib/Pimcore/Extension/Bundle/Installer/MigrationInstallerInterface.php)
 which adds support for migrations to your installer.
 

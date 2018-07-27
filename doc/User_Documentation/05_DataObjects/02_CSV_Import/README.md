@@ -56,7 +56,7 @@ Lists all errors.
 ## Events
 
 You can use the events described in the 
-[Events](https://github.com/pimcore/pimcore/blob/master/pimcore/lib/Pimcore/Event/DataObjectImportEvents.php)
+[Events](https://github.com/pimcore/pimcore/blob/master/lib/Event/DataObjectImportEvents.php)
 section to hook into the import process.
 
 If you want to open the import window programmatically, use the following code:

@@ -71,7 +71,7 @@ is enabled as well.
 
 If you want to use a custom cache pool, ignore the `pools` section (or disable both predefined pools) and set the `pool_service_id`
 entry to the service ID of your custom pool (needs to be defined as service on the service container). There are a couple
-of cache pools predefined in [cache.yml](https://github.com/pimcore/pimcore/blob/master/pimcore/lib/Pimcore/Bundle/CoreBundle/Resources/config/cache.yml)
+of cache pools predefined in [cache.yml](https://github.com/pimcore/pimcore/blob/master/bundles/CoreBundle/Resources/config/cache.yml)
 but those (array, filesystem) are mainly used for testing. 
 
 > If all of the predefined cache pools are disabled, the cache will fall back to a filesystem cache which is rather slow.

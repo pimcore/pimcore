@@ -1,11 +1,11 @@
 # Action Handlers
 
 After a targeting rule matched it executes one or more actions as configured in the admin UI. These actions are actually
-executed by action handlers, which are services implementing the [`ActionHandlerInterface`](https://github.com/pimcore/pimcore/blob/master/pimcore/lib/Pimcore/Targeting/ActionHandler/ActionHandlerInterface.php).
+executed by action handlers, which are services implementing the [`ActionHandlerInterface`](https://github.com/pimcore/pimcore/blob/master/lib/Targeting/ActionHandler/ActionHandlerInterface.php).
 
 As with conditions, an action handler consists of 2 parts:
 
-* A PHP class implementing the [`ActionHandlerInterface`](https://github.com/pimcore/pimcore/blob/master/pimcore/lib/Pimcore/Targeting/ActionHandler/ActionHandlerInterface.php).
+* A PHP class implementing the [`ActionHandlerInterface`](https://github.com/pimcore/pimcore/blob/master/lib/Targeting/ActionHandler/ActionHandlerInterface.php).
   Have a look at [existing implementations](https://github.com/pimcore/pimcore/tree/master/pimcore/lib/Pimcore/Targeting/ActionHandler)
   to get an idea how to implement your own action handlers.
 * A frontend JS class defining the admin UI for your action handler as shown on the actions tab of a targeting rule. You
@@ -95,7 +95,7 @@ If your action handler needs to apply data in a later stage of the request/respo
 the `VisitorInfo` which can be consumed later. Currently only the `response` action scope is defined which is executed
 in the `onKernelResponse` event, but more action scopes might be added in the future. 
 
-Have a look at the [CodeSnippet](https://github.com/pimcore/pimcore/blob/master/pimcore/lib/Pimcore/Targeting/ActionHandler/CodeSnippet.php)
+Have a look at the [CodeSnippet](https://github.com/pimcore/pimcore/blob/master/lib/Targeting/ActionHandler/CodeSnippet.php)
 action handler as example. It registers an action via `$visitorInfo->addAction()` and implements the `ResponseTransformingActionHandlerInterface::transformResponse()`
 which is called by the targeting engine for every action registered with the `response` scope.
 

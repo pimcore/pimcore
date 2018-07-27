@@ -464,7 +464,7 @@ services:
 
 #### Build 134 (2017-10-03)
 
-This build changes the default setting for the legacy name mapping in the ecommerce framework (see [LegacyClassMappingTool](https://github.com/pimcore/pimcore/blob/master/pimcore/lib/Pimcore/Bundle/EcommerceFrameworkBundle/Legacy/LegacyClassMappingTool.php))
+This build changes the default setting for the legacy name mapping in the ecommerce framework (see [LegacyClassMappingTool](https://github.com/pimcore/pimcore/blob/master/bundles/EcommerceFrameworkBundle/Legacy/LegacyClassMappingTool.php))
 to false, disabling legacy class mapping for new projects. When you're updating from a previous version and the ecommerce
 framework is enabled, the updater will automatically enable the class mapping for you by creating a config file in `app/config/local`.
 If you're starting fresh, you'll need to enable the mapping manually if needed by setting the following config value:
