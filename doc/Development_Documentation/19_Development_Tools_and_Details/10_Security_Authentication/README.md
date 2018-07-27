@@ -2,7 +2,7 @@
 
 You can make full use of the [Symfony Security Component](http://symfony.com/doc/3.4/security.html) to handle complex
 authentication/authorization scenarios. However, as the Pimcore administration interface and the REST API already
-use the security component for its puropses, a couple of prerequisites and differences to a standard Symfony application need to be considered. As starting point, please have a look at the [security.yml](https://github.com/pimcore/pimcore/blob/master/pimcore/lib/Pimcore/Bundle/CoreBundle/Resources/config/pimcore/security.yml)
+use the security component for its puropses, a couple of prerequisites and differences to a standard Symfony application need to be considered. As starting point, please have a look at the [security.yml](https://github.com/pimcore/pimcore/blob/master/bundles/CoreBundle/Resources/config/pimcore/security.yml)
 defined in the `CoreBundle` to get an idea what Pimcore already defines.
 
 ## Merged security configurations

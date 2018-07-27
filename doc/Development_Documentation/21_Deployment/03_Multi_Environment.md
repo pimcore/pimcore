@@ -50,7 +50,7 @@ imports:
 
 By default, dev-bundles as the profiler are restricted to the `dev` environment. If you want to load those bundles in your
 environment, you need to modify the kernel in `app\AppKernel.php` to include those bundles in your environment. Have a look
-at the [Pimcore Kernel](https://github.com/pimcore/pimcore/blob/master/pimcore/lib/Pimcore/Kernel.php#L189) to see what
+at the [Pimcore Kernel](https://github.com/pimcore/pimcore/blob/master/lib/Kernel.php#L189) to see what
 is loaded in the default `dev` environment.
 
 For instance for an new environment called `staging` using web profiler, you can add something like the following:

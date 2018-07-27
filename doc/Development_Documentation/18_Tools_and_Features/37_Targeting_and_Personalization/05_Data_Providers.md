@@ -1,14 +1,14 @@
 # Data Providers
 
-A data provider is a service implementing the [`DataProviderInterface`](https://github.com/pimcore/pimcore/blob/master/pimcore/lib/Pimcore/Targeting/DataProvider/DataProviderInterface.php).
-Components (e.g. conditions) which implement the [`DataProviderDependentInterface`](https://github.com/pimcore/pimcore/blob/master/pimcore/lib/Pimcore/Targeting/DataProviderDependentInterface.php)
+A data provider is a service implementing the [`DataProviderInterface`](https://github.com/pimcore/pimcore/blob/master/lib/Targeting/DataProvider/DataProviderInterface.php).
+Components (e.g. conditions) which implement the [`DataProviderDependentInterface`](https://github.com/pimcore/pimcore/blob/master/lib/Targeting/DataProviderDependentInterface.php)
 can define a set of data providers they depend on, triggering the data provider to load its data before the component
 is used.
 
 A data provider does not directly return its value, but is expected to set it on the `VisitorInfo` instance instead. As
 best practice, the core data providers expose their storage key as constant. This constant is used to store and retrieve
-the data from the `VisitorInfo` storage. As example: the [GeoIP](https://github.com/pimcore/pimcore/blob/master/pimcore/lib/Pimcore/Targeting/DataProvider/GeoIp.php)
-data provider defines the [GeoIP::PROVIDER_KEY](https://github.com/pimcore/pimcore/blob/master/pimcore/lib/Pimcore/Targeting/DataProvider/GeoIp.php#L28)
+the data from the `VisitorInfo` storage. As example: the [GeoIP](https://github.com/pimcore/pimcore/blob/master/lib/Targeting/DataProvider/GeoIp.php)
+data provider defines the [GeoIP::PROVIDER_KEY](https://github.com/pimcore/pimcore/blob/master/lib/Targeting/DataProvider/GeoIp.php#L28)
 constant which is used when storing and retrieving the data.
 
 ## Implementing a Data Provider
