@@ -31,17 +31,17 @@ We're offering 4 different installation packages, 3 demo packages and one skelet
 COMPOSER_MEMORY_LIMIT=3G composer create-project pimcore/skeleton:dev-master my-project
 ```
 
-##### 2. Basic Demo (PHP Templates)
+##### 2. Basic Demo Package (PHP Templates)
 ```bash
 COMPOSER_MEMORY_LIMIT=3G composer create-project pimcore/demo-basic:dev-master my-project
 ```
 
-##### 3. Basic Demo (Twig Templates)
+##### 3. Basic Demo Package (Twig Templates)
 ```bash
 COMPOSER_MEMORY_LIMIT=3G composer create-project pimcore/demo-basic-twig:dev-master my-project
 ```
 
-##### 4. Advanced Demo (E-Commerce, PIM, MDM, DAM, ...)
+##### 4. Advanced Demo Package (E-Commerce, PIM, MDM, DAM, ...)
 ```bash
 COMPOSER_MEMORY_LIMIT=3G composer create-project pimcore/demo-ecommerce:dev-master my-project
 ```
