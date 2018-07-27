@@ -73,7 +73,7 @@ Replace the `scripts` and `autoload` sections in your `composer.json` with the f
 ```
 rm composer.lock
 rm -rf vendor
-composer require pimcore/pimcore:5.4.*
+COMPOSER_MEMORY_LIMIT=3G composer require pimcore/pimcore:5.4.*
 ```
 
 ##### Cleanup project files
