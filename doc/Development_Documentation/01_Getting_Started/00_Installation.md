@@ -28,22 +28,22 @@ We're offering 4 different installation packages, 3 demo packages and one skelet
 
 ##### 1. Skeleton Package (only for experienced Pimcore developers)
 ```bash
-COMPOSER_MEMORY_LIMIT=3G composer create-project pimcore/skeleton my-project
+COMPOSER_MEMORY_LIMIT=3G composer create-project pimcore/skeleton:dev-master my-project
 ```
 
 ##### 2. Basic Demo (PHP Templates)
 ```bash
-COMPOSER_MEMORY_LIMIT=3G composer create-project pimcore/demo-basic my-project
+COMPOSER_MEMORY_LIMIT=3G composer create-project pimcore/demo-basic:dev-master my-project
 ```
 
 ##### 3. Basic Demo (Twig Templates)
 ```bash
-COMPOSER_MEMORY_LIMIT=3G composer create-project pimcore/demo-basic-twig my-project
+COMPOSER_MEMORY_LIMIT=3G composer create-project pimcore/demo-basic-twig:dev-master my-project
 ```
 
 ##### 4. Advanced Demo (E-Commerce, PIM, MDM, DAM, ...)
 ```bash
-COMPOSER_MEMORY_LIMIT=3G composer create-project pimcore/demo-ecommerce my-project
+COMPOSER_MEMORY_LIMIT=3G composer create-project pimcore/demo-ecommerce:dev-master my-project
 ```
 
 Point the document root of your vhost to the newly created `/web` folder (eg. `/your/project/web`).
