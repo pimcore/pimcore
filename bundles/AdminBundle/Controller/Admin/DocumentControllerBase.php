@@ -149,9 +149,12 @@ abstract class DocumentControllerBase extends AdminController implements Evented
     {
         $service = new Model\Document\Service;
         $translations = $service->getTranslations($document);
+        $unlinkTranslations = $service->getTranslations($document,"unlink");
         $language = $document->getProperty('language');
         unset($translations[$language]);
+        unset($unlinkTranslations[$language]);
         $document->translations = $translations;
+        $document->unlinkTranslations = $unlinkTranslations;
     }
 
     /**
