@@ -2,7 +2,7 @@
 
 <div class="alert alert-warning">
 <strong>IMPORTANT:</strong> 
-This is the installtion guide for the BETA version of Pimcore 5.4.
+This is the installation guide for the BETA version of Pimcore 5.4.
 Looking for the current stable [5.3 installation guide, click here](https://github.com/pimcore/pimcore/blob/pimcore-5.3.x/doc/Development_Documentation/01_Getting_Started/00_Installation.md). 
 </div>    
 
