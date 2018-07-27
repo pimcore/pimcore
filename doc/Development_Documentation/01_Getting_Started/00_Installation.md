@@ -1,6 +1,13 @@
 # Pimcore Installation
 
-The following guide assumes your're using a typical LAMP environment, if you're using a different setup (eg. Nginx) or facing a problem, please visit the [Installation Guide](../23_Installation_and_Upgrade/README.md) section.
+<div class="alert alert-warning">
+<strong>IMPORTANT:</strong> 
+This is the installtion guide for the BETA version of Pimcore 5.4.
+Looking for the current stable [5.3 installation guide, click here](https://github.com/pimcore/pimcore/blob/pimcore-5.3.x/doc/Development_Documentation/01_Getting_Started/00_Installation.md). 
+</div>    
+
+The following guide assumes your're using a typical LAMP environment, if you're using a different setup (eg. Nginx) 
+or facing a problem, please visit the [Installation Guide](../23_Installation_and_Upgrade/README.md) section.
 
 ## 1. System Requirements
 
@@ -36,7 +43,7 @@ COMPOSER_MEMORY_LIMIT=3G composer create-project pimcore/demo-basic-twig my-proj
 
 ##### 4. Advanced Demo (E-Commerce, PIM, MDM, DAM, ...)
 ```bash
-COMPOSER_MEMORY_LIMIT=3G composer create-project pimcore/demo-advanced my-project
+COMPOSER_MEMORY_LIMIT=3G composer create-project pimcore/demo-ecommerce my-project
 ```
 
 Point the document root of your vhost to the newly created `/web` folder (eg. `/your/project/web`).
