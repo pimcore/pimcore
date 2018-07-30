@@ -1,0 +1,293 @@
+parameters:
+    locale: en
+    swiftmailer.plugin.redirecting.class: 'Pimcore\Mail\Plugins\RedirectingPlugin'
+
+framework:
+    translator:
+      fallbacks: ["%locale%"]
+    secret: "%secret%"
+    serializer:
+        enabled: true
+    router:
+        resource: "%kernel.root_dir%/config/routing.yml"
+        strict_requirements: ~
+    form: ~
+    csrf_protection: ~
+    validation: { enable_annotations: true }
+    templating:
+        engines: ['php', 'twig']
+    web_link:
+        enabled: true
+    default_locale:  "%locale%"
+    session:
+        # http://symfony.com/doc/current/reference/configuration/framework.html#handler-id
+        handler_id:  session.handler.native_file
+        save_path:   "%kernel.root_dir%/../var/sessions"
+    php_errors:
+        log: true
+
+# Twig Configuration
+twig:
+    debug:            "%kernel.debug%"
+    strict_variables: "%kernel.debug%"
+    globals:
+        # avoid fetching and using services from templates if possible
+        # this is only here for compatibility/dev reasons and may be removed later
+        container: '@service_container'
+
+# Doctrine Configuration
+doctrine:
+    dbal:
+        default_connection: default
+        connections:
+            default:
+                wrapper_class: '\Pimcore\Db\Connection'
+                driver: pdo_mysql
+                host: '%pimcore_system_config.database.params.host%'
+                port: '%pimcore_system_config.database.params.port%'
+                dbname: '%pimcore_system_config.database.params.dbname%'
+                user: '%pimcore_system_config.database.params.username%'
+                password: '%pimcore_system_config.database.params.password%'
+                charset: UTF8MB4
+                default_table_options:
+                    charset: UTF8MB4
+                    collate: utf8mb4_unicode_ci
+                mapping_types:
+                    enum: string
+                    bit: boolean
+
+# Monolog Configuration
+monolog:
+    channels: ['pimcore', 'pimcore_api', 'session']
+
+# CMF routing
+cmf_routing:
+    chain:
+        routers_by_id:
+            router.default:             300
+            cmf_routing.dynamic_router: 200
+    dynamic:
+        route_provider_service_id: Pimcore\Routing\DynamicRouteProvider
+
+# Pimcore
+pimcore:
+    web_profiler:
+        toolbar:
+            excluded_routes:
+                - {path: '^/admin/asset/image-editor'}
+
+    security:
+        encoder_factories:
+            Pimcore\Bundle\AdminBundle\Security\User\User: pimcore_admin.security.password_encoder_factory
+
+    error_handling:
+        render_error_document: true
+
+    bundles:
+        search_paths:
+            - src
+            - vendor/pimcore/pimcore/bundles
+
+    objects:
+        class_definitions:
+            data:
+                map:
+                    block: \Pimcore\Model\DataObject\ClassDefinition\Data\Block
+                    calculatedValue: \Pimcore\Model\DataObject\ClassDefinition\Data\CalculatedValue
+                    checkbox: \Pimcore\Model\DataObject\ClassDefinition\Data\Checkbox
+                    classificationstore: \Pimcore\Model\DataObject\ClassDefinition\Data\Classificationstore
+                    consent: \Pimcore\Model\DataObject\ClassDefinition\Data\Consent
+                    country: \Pimcore\Model\DataObject\ClassDefinition\Data\Country
+                    countrymultiselect: \Pimcore\Model\DataObject\ClassDefinition\Data\Countrymultiselect
+                    date: \Pimcore\Model\DataObject\ClassDefinition\Data\Date
+                    datetime: \Pimcore\Model\DataObject\ClassDefinition\Data\Datetime
+                    email: \Pimcore\Model\DataObject\ClassDefinition\Data\Email
+                    encryptedField: \Pimcore\Model\DataObject\ClassDefinition\Data\EncryptedField
+                    externalImage: \Pimcore\Model\DataObject\ClassDefinition\Data\ExternalImage
+                    fieldcollections: \Pimcore\Model\DataObject\ClassDefinition\Data\Fieldcollections
+                    firstname: \Pimcore\Model\DataObject\ClassDefinition\Data\Firstname
+                    gender: \Pimcore\Model\DataObject\ClassDefinition\Data\Gender
+                    geobounds: \Pimcore\Model\DataObject\ClassDefinition\Data\Geobounds
+                    geopoint: \Pimcore\Model\DataObject\ClassDefinition\Data\Geopoint
+                    geopolygon: \Pimcore\Model\DataObject\ClassDefinition\Data\Geopolygon
+                    hotspotimage: \Pimcore\Model\DataObject\ClassDefinition\Data\Hotspotimage
+                    href: \Pimcore\Model\DataObject\ClassDefinition\Data\Href
+                    image: \Pimcore\Model\DataObject\ClassDefinition\Data\Image
+                    imageGallery: \Pimcore\Model\DataObject\ClassDefinition\Data\ImageGallery
+                    input: \Pimcore\Model\DataObject\ClassDefinition\Data\Input
+                    language: \Pimcore\Model\DataObject\ClassDefinition\Data\Language
+                    languagemultiselect: \Pimcore\Model\DataObject\ClassDefinition\Data\Languagemultiselect
+                    lastname: \Pimcore\Model\DataObject\ClassDefinition\Data\Lastname
+                    link: \Pimcore\Model\DataObject\ClassDefinition\Data\Link
+                    localizedfields: \Pimcore\Model\DataObject\ClassDefinition\Data\Localizedfields
+                    multihref: \Pimcore\Model\DataObject\ClassDefinition\Data\Multihref
+                    multihrefMetadata: \Pimcore\Model\DataObject\ClassDefinition\Data\MultihrefMetadata
+                    multiselect: \Pimcore\Model\DataObject\ClassDefinition\Data\Multiselect
+                    newsletterActive: \Pimcore\Model\DataObject\ClassDefinition\Data\NewsletterActive
+                    nonownerobjects: \Pimcore\Model\DataObject\ClassDefinition\Data\Nonownerobjects
+                    numeric: \Pimcore\Model\DataObject\ClassDefinition\Data\Numeric
+                    objectbricks: \Pimcore\Model\DataObject\ClassDefinition\Data\Objectbricks
+                    objects: \Pimcore\Model\DataObject\ClassDefinition\Data\Objects
+                    objectsMetadata: \Pimcore\Model\DataObject\ClassDefinition\Data\ObjectsMetadata
+                    password: \Pimcore\Model\DataObject\ClassDefinition\Data\Password
+                    rgbaColor: \Pimcore\Model\DataObject\ClassDefinition\Data\RgbaColor
+                    targetGroup: \Pimcore\Model\DataObject\ClassDefinition\Data\TargetGroup
+                    targetGroupMultiselect: \Pimcore\Model\DataObject\ClassDefinition\Data\TargetGroupMultiselect
+                    persona: \Pimcore\Model\DataObject\ClassDefinition\Data\Persona
+                    personamultiselect: \Pimcore\Model\DataObject\ClassDefinition\Data\Personamultiselect
+                    quantityValue: \Pimcore\Model\DataObject\ClassDefinition\Data\QuantityValue
+                    inputQuantityValue: \Pimcore\Model\DataObject\ClassDefinition\Data\InputQuantityValue
+                    select: \Pimcore\Model\DataObject\ClassDefinition\Data\Select
+                    slider: \Pimcore\Model\DataObject\ClassDefinition\Data\Slider
+                    structuredTable: \Pimcore\Model\DataObject\ClassDefinition\Data\StructuredTable
+                    table: \Pimcore\Model\DataObject\ClassDefinition\Data\Table
+                    textarea: \Pimcore\Model\DataObject\ClassDefinition\Data\Textarea
+                    time: \Pimcore\Model\DataObject\ClassDefinition\Data\Time
+                    user: \Pimcore\Model\DataObject\ClassDefinition\Data\User
+                    video: \Pimcore\Model\DataObject\ClassDefinition\Data\Video
+                    wysiwyg: \Pimcore\Model\DataObject\ClassDefinition\Data\Wysiwyg
+
+                prefixes:
+                    - \Pimcore\Model\DataObject\ClassDefinition\Data\
+                    - \Object_Class_Data_
+
+            layout:
+                prefixes:
+                    - \Pimcore\Model\DataObject\ClassDefinition\Layout\
+                    - \Object_Class_Layout_
+
+    documents:
+        tags:
+            prefixes:
+                - \Pimcore\Model\Document\Tag\
+                - \Document_Tag_
+    newsletter:
+        source_adapters:
+            defaultAdapter: pimcore.document.newsletter.factory.default
+            csvList: pimcore.document.newsletter.factory.csv
+            reportAdapter: pimcore.document.newsletter.factory.report
+
+    custom_report:
+        adapters:
+            sql: pimcore.custom_report.adapter.factory.sql
+            analytics: pimcore.custom_report.adapter.factory.analytics
+
+    targeting:
+        data_providers:
+            device: Pimcore\Targeting\DataProvider\Device
+            geoip: Pimcore\Targeting\DataProvider\GeoIp
+            geolocation: Pimcore\Targeting\DataProvider\GeoLocation
+            piwik: Pimcore\Targeting\DataProvider\Piwik
+            targeting_storage: Pimcore\Targeting\DataProvider\TargetingStorage
+            visited_pages_counter: Pimcore\Targeting\DataProvider\VisitedPagesCounter
+        conditions:
+            browser: Pimcore\Targeting\Condition\Browser
+            country: Pimcore\Targeting\Condition\Country
+            geopoint: Pimcore\Targeting\Condition\GeoPoint
+            hardwareplatform: Pimcore\Targeting\Condition\HardwarePlatform
+            language: Pimcore\Targeting\Condition\Language
+            operatingsystem: Pimcore\Targeting\Condition\OperatingSystem
+            referringsite: Pimcore\Targeting\Condition\ReferringSite
+            searchengine: Pimcore\Targeting\Condition\SearchEngine
+            target_group: Pimcore\Targeting\Condition\TargetGroup
+            timeonsite: Pimcore\Targeting\Condition\TimeOnSite
+            url: Pimcore\Targeting\Condition\Url
+            visitedpagebefore: Pimcore\Targeting\Condition\Piwik\VisitedPageBefore
+            visitedpagesbefore: Pimcore\Targeting\Condition\VisitedPagesBefore
+        action_handlers:
+            assign_target_group: Pimcore\Targeting\ActionHandler\AssignTargetGroup
+            codesnippet: Pimcore\Targeting\ActionHandler\CodeSnippet
+            redirect: Pimcore\Targeting\ActionHandler\Redirect
+
+    # the routes below are used to determine the request context in PimcoreContextGuesser
+    context:
+        profiler:
+            routes:
+                - { path: ^/_(profiler|wdt) }
+        admin:
+            routes:
+                - { path: ^/admin }
+                - { route: ^pimcore_admin_ }
+        webservice:
+            routes:
+                - { path: ^/webservice }
+                - { route: ^pimcore_webservice }
+        plugin:
+            routes:
+                - { path: ^/plugin }
+        install:
+            routes:
+                - { path: ^/install }
+    admin:
+        session:
+            attribute_bags:
+                - pimcore_admin
+                - pimcore_documents
+                - pimcore_objects
+                - pimcore_copy
+                - pimcore_gridconfig
+                - pimcore_importconfig
+
+        # the following routes won't be double checked for authentication
+        # this usually applies to login routes
+        unauthenticated_routes:
+            - { route: pimcore_settings_display_custom_logo }
+            - { route: pimcore_admin_login }
+            - { route: pimcore_admin_webdav }
+
+        translations:
+            path: "@PimcoreCoreBundle/Resources/translations"
+
+    # Pimcore migration sets
+    # Bundles can define their own migration sets - the sets defined here act as global sets
+    # available to the whole application
+    migrations:
+        sets:
+            # this is the default migration set which will be used if the
+            # migration commands do not specify --set or --bundle
+            app:
+                name: Migrations
+                namespace: App\Migrations
+                directory: "%kernel.root_dir%/Resources/migrations"
+
+            # this is the core migration set used for Composer post-package-update event
+            pimcore_core:
+                name: Pimcore Core Migrations
+                namespace: Pimcore\Bundle\CoreBundle\Migrations
+                directory: "%kernel.root_dir%/../vendor/pimcore/pimcore/bundles/CoreBundle/Resources/migrations"
+
+    sitemaps:
+        generators:
+            pimcore_documents:
+                enabled: true
+                priority: 100
+                generator_id: Pimcore\Sitemap\Document\DocumentTreeGenerator
+
+swiftmailer:
+    default_mailer: pimcore_mailer
+    mailers:
+        pimcore_mailer:
+            transport: '%pimcore_system_config.email.method%'
+            delivery_addresses: ['%pimcore_system_config.email.debug.emailaddresses%']
+            host:      '%pimcore_system_config.email.smtp.host%'
+            username:  '%pimcore_system_config.email.smtp.auth.username%'
+            password:  '%pimcore_system_config.email.smtp.auth.password%'
+            port: '%pimcore_system_config.email.smtp.port%'
+            encryption: '%pimcore_system_config.email.smtp.ssl%'
+            auth_mode: '%pimcore_system_config.email.smtp.auth.method%'
+        newsletter_mailer:
+            transport: '%pimcore_system_config.newsletter.method%'
+            delivery_addresses: ['%pimcore_system_config.email.debug.emailaddresses%']
+            host:      '%pimcore_system_config.newsletter.smtp.host%'
+            username:  '%pimcore_system_config.newsletter.smtp.auth.username%'
+            password:  '%pimcore_system_config.newsletter.smtp.auth.password%'
+            port: '%pimcore_system_config.newsletter.smtp.port%'
+            encryption: '%pimcore_system_config.newsletter.smtp.ssl%'
+            auth_mode: '%pimcore_system_config.newsletter.smtp.auth.method%'
+
+presta_sitemap:
+    # do not add properties by default
+    defaults:
+        lastmod: ~
+        priority: ~
+        changefreq: ~

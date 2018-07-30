@@ -14,7 +14,7 @@ immediately which objects are of the type "football".
 
 ![Class Icons](../../../img/classes-icons1.png)
 
-Icons that come along with Pimcore by default can be found in `http://your-domain/pimcore/static6/html/icons.php`.
+Icons that come along with Pimcore by default can be found in `http://your-domain/bundles/pimcoreadmin/html/icons.php`.
 
 #### Icon Sizes
 As icons SVG graphics are recommended. If you use pixel graphics, maximum size is 18x20 pixels. 
@@ -35,20 +35,23 @@ In order to do so, overwrite the method `getElementAdminStyle` of `AbstractObjec
 ```php
 public function getElementAdminStyle() {
    if (!$this->o_elementAdminStyle) {
-      $this->o_elementAdminStyle = new Website_OnlineShop_AdminStyle($this);
+      $this->o_elementAdminStyle = new AppBundle\Admin\AdminStyle($this);
    }
 return $this->o_elementAdminStyle;
 }
 ```
 
-##### Custom Implementation of `Element_AdminStyle`
+##### Custom Implementation of `AppBundle\Admin\AdminStyle`
 ```php
-class Website_OnlineShop_AdminStyle extends Element_AdminStyle {
+
+namespace AppBundle\Admin;
+
+class AdminStyle extends \Pimcore\Model\Element\AdminStyle {
  
     public function __construct($element) {
         parent::__construct($element);
  
-        if($element instanceof Website_OnlineShop_Product) {
+        if($element instanceof \Pimcore\Model\DataObject\Product) {
             if($element->getProductType() == "concrete") {
                 $this->elementIcon = '/pimcore/static/img/icon/tag_green.png';
                 $this->elementIconClass = null;
