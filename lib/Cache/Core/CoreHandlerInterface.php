@@ -55,6 +55,13 @@ interface CoreHandlerInterface
      * @return $this
      */
     public function setHandleCli($handleCli);
+    
+    /**
+     * @param int $maxWriteToCacheItems
+     
+     * @return $this
+     */
+    public function setMaxWriteToCacheItems($maxWriteToCacheItems)
 
     /**
      * @return bool
