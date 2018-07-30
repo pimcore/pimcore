@@ -458,8 +458,31 @@ class Video extends Model\DataObject\ClassDefinition\Data
      */
     public function getFromWebserviceImport($value, $relatedObject = null, $params = [], $idMapper = null)
     {
-
-        // @TODO
+        if (is_string( $value)) {
+            if (! strlen( $value)) {
+                return null;
+            }
+            $data = unserialize( $value);
+            if ($data == FALSE) {
+                throw new \Exception('cannot get object video data from web service import - value cannot be decoded');
+            }
+            if (is_array($data)) {
+                if (isset( $data['type']) && isset( $data['data'])) {
+                    if (in_array( $data['type'], array('youtube','vimeo','dailymotion'))) {
+                        return $this->getDataFromEditmode($data, $relatedObject, $params);
+                    } else {
+                        // @TODO
+                        throw new \Exception('cannot get object video data from web service import - type [ '.$data['type'].' ] is not implemented');
+                    }
+                } else {
+                    return null;
+                }
+            } else {
+                throw new \Exception('cannot get object video data from web service import - value decoded into invalid type');
+            }
+        } else if( $value){
+            throw new \Exception('cannot get object video data from web service import - unexpected value');
+        }
         return null;
     }
 
