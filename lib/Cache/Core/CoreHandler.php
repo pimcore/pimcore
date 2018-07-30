@@ -239,6 +239,14 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
 
         return $this;
     }
+    
+    /**
+     * @param int $maxWriteToCacheItems
+     */
+    public function setMaxWriteToCacheItems($maxWriteToCacheItems)
+    {
+        $this->maxWriteToCacheItems = (int)$maxWriteToCacheItems;
+    }
 
     /**
      * Load data from cache (retrieves data from cache item)
