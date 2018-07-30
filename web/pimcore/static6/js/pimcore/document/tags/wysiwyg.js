@@ -21,6 +21,7 @@ pimcore.document.tags.wysiwyg = Class.create(pimcore.document.tag, {
 
         this.id = id;
         this.name = name;
+        this.inherited = inherited;
         this.setupWrapper();
         options = this.parseOptions(options);
 
@@ -134,7 +135,7 @@ pimcore.document.tags.wysiwyg = Class.create(pimcore.document.tag, {
         var record = data.records[0];
         data = record.data;
 
-        if (!this.ckeditor ||!this.dndAllowed(data)) {
+        if (!this.ckeditor ||!this.dndAllowed(data) || this.inherited) {
             return;
         }
 
@@ -249,7 +250,7 @@ pimcore.document.tags.wysiwyg = Class.create(pimcore.document.tag, {
     onNodeOver: function(target, dd, e, data) {
         var record = data.records[0];
         data = record.data;
-        if (this.dndAllowed(data)) {
+        if (this.dndAllowed(data) && !this.inherited) {
             return Ext.dd.DropZone.prototype.dropAllowed;
         }
         else {

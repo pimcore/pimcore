@@ -18,8 +18,8 @@ pimcore.document.tags.image = Class.create(pimcore.document.tag, {
         this.id = id;
         this.name = name;
         this.datax = {};
+        this.inherited = inherited;
         this.options = this.parseOptions(options);
-
         this.originalDimensions = {
             width: this.options.width,
             height: this.options.height
@@ -224,8 +224,7 @@ pimcore.document.tags.image = Class.create(pimcore.document.tag, {
     onNodeOver: function(target, dd, e, data) {
         var record = data.records[0];
         data = record.data;
-
-        if (this.dndAllowed(data)) {
+        if (this.dndAllowed(data) && !this.inherited) {
             return Ext.dd.DropZone.prototype.dropAllowed;
         }
         else {
@@ -237,7 +236,7 @@ pimcore.document.tags.image = Class.create(pimcore.document.tag, {
         var record = data.records[0];
         data = record.data;
 
-        if (data.type == "image") {
+        if (data.type == "image" && this.dndAllowed(data) && !this.inherited) {
             this.resetData();
             this.datax.id = data.id;
 
@@ -245,7 +244,7 @@ pimcore.document.tags.image = Class.create(pimcore.document.tag, {
             this.reload();
 
             return true;
-        }
+        } else return false;
     },
 
     dndAllowed: function(data) {
