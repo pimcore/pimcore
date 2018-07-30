@@ -470,10 +470,38 @@ Ext.onReady(function () {
 
     // check for updates
     window.setTimeout(function () {
-        var script = document.createElement("script");
-        script.src = "https://liveupdate.pimcore.org/update-check?revision=" + pimcore.settings.build;
-        script.type = "text/javascript";
-        Ext.query("body")[0].appendChild(script);
+
+        var domains = '';
+        pimcore.globalmanager.get("sites").each(function (rec) {
+            if(rec.get('rootId') !== 1) {
+                console.log(rec.data);
+                if(!empty(rec.get('domain'))) {
+                    domains += rec.get('domain') + ",";
+                }
+                if(!empty(rec.get('domains'))) {
+                    domains += rec.get('domains') + ",";
+                }
+            }
+        });
+
+        Ext.Ajax.request({
+            method: "POST",
+            url: "https://liveupdate.pimcore.org/update-check",
+            params: {
+                id: pimcore.settings.instanceId,
+                revision: pimcore.settings.build,
+                version: pimcore.settings.version,
+                debug: pimcore.settings.debug,
+                devmode: pimcore.settings.devmode,
+                language: pimcore.settings.language,
+                main_domain: pimcore.settings.main_domain,
+                domains: domains,
+                timezone: pimcore.settings.timezone,
+                classesAmount: pimcore.globalmanager.get("object_types_store").getCount(),
+                documentTypesAmount: pimcore.globalmanager.get("document_types_store").getCount(),
+                websiteLanguages: pimcore.settings.websiteLanguages.join(',')
+            }
+        });
     }, 5000);
 
 

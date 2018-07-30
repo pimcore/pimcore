@@ -299,7 +299,6 @@ $scripts = array(
     "pimcore/settings/web2print.js",
     "pimcore/settings/website.js",
     "pimcore/settings/staticroutes.js",
-    "pimcore/settings/update.js",
     "pimcore/settings/redirects.js",
     "pimcore/settings/glossary.js",
     "pimcore/settings/recyclebin.js",

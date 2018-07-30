@@ -14,6 +14,7 @@
 
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 
+use Defuse\Crypto\Crypto;
 use Pimcore\Analytics\Google\Config\SiteConfigProvider;
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Config;
@@ -162,7 +163,19 @@ class IndexController extends AdminController
     {
         $config = $view->config;
 
+        try {
+            try {
+                $instanceId = $this->getParameter('instanceId');
+            } catch (\Exception $e) {
+                $instanceId = $this->getParameter('secret');
+                $instanceId = sha1(Crypto::encryptWithPassword($instanceId, $instanceId));
+            }
+        } catch (\Exception $e) {
+            $instanceId = 'not-set';
+        }
+
         $settings = new ViewModel([
+            'instanceId'            => $instanceId,
             'version'               => Version::getVersion(),
             'build'                 => Version::getRevision(),
             'debug'                 => \Pimcore::inDebugMode(),
@@ -198,6 +211,8 @@ class IndexController extends AdminController
             'htmltoimage' => \Pimcore\Image\HtmlToImage::isSupported(),
             'videoconverter' => \Pimcore\Video::isAvailable(),
             'asset_hide_edit' => (bool)$config->assets->hide_edit_image,
+            'main_domain' => $config->general->domain,
+            'timezone' => $config->general->timezone,
             'tile_layer_url_template' => $pimcoreSymfonyConfig['maps']['tile_layer_url_template'],
             'geocoding_url_template' => $pimcoreSymfonyConfig['maps']['geocoding_url_template'],
             'reverse_geocoding_url_template' => $pimcoreSymfonyConfig['maps']['reverse_geocoding_url_template'],

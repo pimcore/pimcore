@@ -195,6 +195,7 @@ class ConfigWriter
 
         $parameters = file_get_contents(PIMCORE_APP_ROOT . '/config/parameters.example.yml');
         $parameters = str_replace('ThisTokenIsNotSoSecretChangeIt', $secret, $parameters);
+        $parameters = str_replace('ThisInstanceIdNeedsToBeUnique', generateRandomSymfonySecret(), $parameters);
 
         File::put($parametersFilePath, $parameters);
     }
