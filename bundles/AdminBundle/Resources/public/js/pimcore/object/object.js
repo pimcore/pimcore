@@ -312,7 +312,8 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
 
         if (user.isAllowed("application_logging") && this.data.general.showAppLoggerTab) {
             try {
-                items.push(this.appLogger);
+                var appLoggerTab = this.appLogger.getTabPanel();
+                items.push(appLoggerTab);
             } catch (e) {
                 console.log(e);
             }
