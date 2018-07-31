@@ -110,7 +110,9 @@ class Service
         $class->setAllowVariants($importData['allowVariants']);
         $class->setShowVariants($importData['showVariants']);
         $class->setParentClass($importData['parentClass']);
+        $class->setListingParentClass(isset($importData['listingParentClass']) ? $importData['listingParentClass'] : null);
         $class->setUseTraits($importData['useTraits']);
+        $class->setListingUseTraits(isset($importData['listingUseTraits']) ? $importData['listingUseTraits'] : null);
         $class->setPreviewUrl($importData['previewUrl']);
         $class->setPropertyVisibility($importData['propertyVisibility']);
         $class->setLinkGeneratorReference(isset($importData['linkGeneratorReference']) ? $importData['linkGeneratorReference'] : null);

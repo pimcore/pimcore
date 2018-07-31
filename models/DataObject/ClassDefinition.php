@@ -76,9 +76,21 @@ class ClassDefinition extends Model\AbstractModel
     public $parentClass;
 
     /**
+     * Name of the listing parent class if set
+     *
+     * @var string
+     */
+    public $listingParentClass;
+
+    /**
      * @var bool
      */
     public $useTraits;
+
+    /**
+     * @var bool
+     */
+    public $listingUseTraits;
 
     /**
      * @var bool
@@ -437,6 +449,13 @@ class ClassDefinition extends Model\AbstractModel
         }
         File::put($classFile, $cd);
 
+        // create class for object list
+        $extendListingClass = 'DataObject\\Listing\\Concrete';
+        if ($this->getListingParentClass()) {
+            $extendListingClass = $this->getListingParentClass();
+            $extendListingClass = '\\'.ltrim($extendListingClass, '\\');
+        }
+
         // create list class
         $cd = '<?php ';
 
@@ -450,8 +469,13 @@ class ClassDefinition extends Model\AbstractModel
         $cd .= ' * @method DataObject\\'.ucfirst($this->getName())."[] load()\n";
         $cd .= ' */';
         $cd .= "\n\n";
-        $cd .= 'class Listing extends DataObject\\Listing\\Concrete {';
+        $cd .= 'class Listing extends '.$extendListingClass.' {';
         $cd .= "\n\n";
+
+        if ($this->getListingUseTraits()) {
+            $cd .= 'use '.$this->getListingUseTraits().";\n";
+            $cd .= "\n";
+        }
 
         $cd .= 'public $classId = "'. $this->getId()."\";\n";
         $cd .= 'public $className = "'.$this->getName().'"'.";\n";
@@ -922,6 +946,14 @@ class ClassDefinition extends Model\AbstractModel
     /**
      * @return string
      */
+    public function getListingParentClass()
+    {
+        return $this->listingParentClass;
+    }
+
+    /**
+     * @return string
+     */
     public function getUseTraits()
     {
         return $this->useTraits;
@@ -935,6 +967,26 @@ class ClassDefinition extends Model\AbstractModel
     public function setUseTraits($useTraits)
     {
         $this->useTraits = $useTraits;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getListingUseTraits()
+    {
+        return $this->listingUseTraits;
+    }
+
+    /**
+     * @param string $listingUseTraits
+     *
+     * @return ClassDefinition
+     */
+    public function setListingUseTraits($listingUseTraits)
+    {
+        $this->listingUseTraits = $listingUseTraits;
 
         return $this;
     }
@@ -963,6 +1015,18 @@ class ClassDefinition extends Model\AbstractModel
     public function setParentClass($parentClass)
     {
         $this->parentClass = $parentClass;
+
+        return $this;
+    }
+
+    /**
+     * @param string $listingParentClass
+     *
+     * @return $this
+     */
+    public function setListingParentClass($listingParentClass)
+    {
+        $this->listingParentClass = $listingParentClass;
 
         return $this;
     }

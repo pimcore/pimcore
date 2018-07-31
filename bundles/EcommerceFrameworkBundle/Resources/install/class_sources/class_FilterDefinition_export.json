@@ -1,7 +1,9 @@
 {
 	"description":null,
 	"parentClass":"\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\Model\\AbstractFilterDefinition",
+	"listingParentClass":null,
 	"useTraits":null,
+	"listingUseTraits":null,
 	"allowInherit":true,
 	"allowVariants":false,
 	"showVariants":false,

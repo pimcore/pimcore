@@ -1,7 +1,9 @@
 {
   "description": null,
   "parentClass": "\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\Model\\AbstractOrder",
-  "useTraits": null,
+  "listingParentClass":null,
+  "useTraits":null,
+  "listingUseTraits":null,
   "allowInherit": false,
   "allowVariants": false,
   "showVariants": false,

@@ -724,6 +724,20 @@ pimcore.object.classes.klass = Class.create({
                 },
                 {
                     xtype: "textfield",
+                    fieldLabel: t("listing_parent_php_class"),
+                    name: "listingParentClass",
+                    width: 600,
+                    value: this.data.listingParentClass
+                },
+                {
+                    xtype: "textfield",
+                    fieldLabel: t("listing_use_traits"),
+                    name: "listingUseTraits",
+                    width: 600,
+                    value: this.data.listingUseTraits
+                },
+                {
+                    xtype: "textfield",
                     fieldLabel: t("link_generator_reference"),
                     name: "linkGeneratorReference",
                     width: 600,
