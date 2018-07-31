@@ -504,6 +504,16 @@ Ext.onReady(function () {
                 websiteLanguages: pimcore.settings.websiteLanguages.join(',')
             }
         }).done(function(data) {
+            if (data['latestVersion']) {
+                if(pimcore.currentuser.admin) {
+                    Ext.get("pimcore_status_update").show();
+                    jQuery("#pimcore_status_update").trigger("mouseenter");
+                    window.setTimeout(function () {
+                        jQuery("#pimcore_status_update").trigger("mouseleave");
+                    }, 5000);
+                }
+            }
+
             if (data['pushStatistics']) {
                 jQuery.ajax({
                     method: "GET",
