@@ -163,15 +163,14 @@ class IndexController extends AdminController
     {
         $config = $view->config;
 
-        try {
+        $instanceId = 'not-set';
+        if($this->container->hasParameter('secret')) {
+            $instanceId = $this->getParameter('secret');
             try {
-                $instanceId = $this->getParameter('instanceId');
-            } catch (\Exception $e) {
-                $instanceId = $this->getParameter('secret');
                 $instanceId = sha1(Crypto::encryptWithPassword($instanceId, $instanceId));
+            } catch (\Exception $e) {
+                // noting to do
             }
-        } catch (\Exception $e) {
-            $instanceId = 'not-set';
         }
 
         $settings = new ViewModel([
