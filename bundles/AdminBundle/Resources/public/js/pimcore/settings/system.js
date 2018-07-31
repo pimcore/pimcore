@@ -175,7 +175,7 @@ pimcore.settings.system = Class.create({
                                 cls: "pimcore_extra_label_bottom"
                             },
                             {
-                                fieldLabel: t("instance_identifier"),
+                                fieldLabel: 'UUID ' + t("instance_identifier"),
                                 xtype: "textfield",
                                 name: "general.instanceIdentifier",
                                 value: this.getValue("general.instanceIdentifier"),
