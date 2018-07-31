@@ -104,7 +104,7 @@ class LinfoController extends AdminController implements EventedControllerInterf
         // only for admins
         $this->checkPermission('linfo');
 
-        $this->linfoHome = PIMCORE_PROJECT_ROOT . '/vendor/linfo/linfo/';
+        $this->linfoHome = PIMCORE_COMPOSER_PATH . '/linfo/linfo/';
     }
 
     /**

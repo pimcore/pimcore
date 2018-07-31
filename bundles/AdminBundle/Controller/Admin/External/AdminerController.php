@@ -133,7 +133,7 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin\External {
             // call this to keep the session 'open' so that Adminer can write to it
             $session = Session::get();
 
-            $this->adminerHome = PIMCORE_PROJECT_ROOT . '/vendor/vrana/adminer/';
+            $this->adminerHome = PIMCORE_COMPOSER_PATH . '/vrana/adminer/';
         }
 
         /**
@@ -186,7 +186,7 @@ namespace {
          */
         function adminer_object()
         {
-            $pluginDir = PIMCORE_PROJECT_ROOT . '/vendor/vrana/adminer/plugins';
+            $pluginDir = PIMCORE_COMPOSER_PATH . '/vrana/adminer/plugins';
 
             // required to run any plugin
             include_once $pluginDir . '/plugin.php';

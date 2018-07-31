@@ -33,7 +33,7 @@ class OpcacheController extends AdminController implements EventedControllerInte
      */
     public function indexAction(Request $request)
     {
-        $path = PIMCORE_PROJECT_ROOT . '/vendor/amnuts/opcache-gui';
+        $path = PIMCORE_COMPOSER_PATH . '/amnuts/opcache-gui';
 
         ob_start();
         include($path . '/index.php');
