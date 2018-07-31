@@ -493,6 +493,7 @@ Ext.onReady(function () {
                 version: pimcore.settings.version,
                 debug: pimcore.settings.debug,
                 devmode: pimcore.settings.devmode,
+                environment: pimcore.settings.environment,
                 language: pimcore.settings.language,
                 main_domain: pimcore.settings.main_domain,
                 domains: domains,
