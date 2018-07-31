@@ -1,61 +1,10 @@
 # CLI and Pimcore Console
 
 Pimcore can be executed headless and has a very powerful PHP API. As a consequence of these two aspects, 
-it is possible to do automate pretty everything within Pimcore. 
+it is possible to automate pretty every task within Pimcore. 
 
-There are two ways to getting up and running - simple CLI scripts and Pimcore Console. 
-
-## Simple CLI Scripts
-It is pretty simple to create CLI scripts that can interact with Pimcore. 
-Just include `pimcore/config/startup_cli.php`. So Pimcore gets started headless and you can use the whole 
-Pimcore API in your script. 
-
-The following script is a very basic cli script, which imports Pimcore objects.
-Although this method is working and very simple, we recommend using `Pimcore\Console` instead. 
-
-It can be executed from the directory where it is located like this: `php bin/import.php`
-
-Source Code for `import.php`:
-
-```php
-<?php
- 
-include(__DIR__ . "/../pimcore/config/startup_cli.php");
- 
-use Pimcore\Model\DataObject;
-
-// create some random objects ;-)
-for ($i = 0; $i < 60; $i++) {
-    $o = new DataObject\News();
-    $o->setKey(uniqid() . "-" . $i);
-    $o->setParentId(1);
-    $o->setPublished(true);
-    $o->save();
-    echo("Created object " . $o->getFullPath() . "\n");
-}
-```
-
-
-## Pimcore Console
-
-Pimcore integrates the `Symfony\Console` component and provides `bin/console` as single 
-entry point to console commands registered to the `Symfony\Console` application. You can add custom
-commands either by hooking into an event or by placing your commands in predefined locations.
-
-### Usage
-Call `bin/console list` script from the command line to get a list of available commands. To call 
-a command, use `bin/console <subcommand>`.
-
-> Be sure to run the console with the PHP user to prevent writing permissions issues later, either by calling `php bin/console` or by switching to the appropriate user, for instance on Debian system `su -l www-data -s /bin/bash`.
-
-##### Examples:
-```php 
-# get a list of all registered commands
-$ ./bin/console list
- 
-# call the foo:bar command
-$ ./bin/console foo:bar
-```
+Pimcore implements the `Symfony\Console` component and provides `bin/console` as single 
+entry point to console commands registered to the `Symfony\Console` application. 
 
 
 ### Implementing own Commands
@@ -71,7 +20,7 @@ and their names must end with the Command suffix.
 
 To have your command autoloaded, it must match a couple of prerequisites:
 
-* It must be placed in the namespace `Command`. 
+* It must be placed in the namespace `Vendor\Command`. 
 (e.g. `AppBundle\Command\AwesomeCommand` in `/src/AppBundle/Command/AwesomeCommand.php`)
 * The class name must end with `Command`, e.g. `AwesomeCommand`
 * The class must inherit `Symfony\Component\Console\Command\Command`, ideally you achieve this by 
@@ -89,7 +38,7 @@ mode and the option is not set.
 ##### `dump()` and `dumpVerbose()`
 Better `var_dump` through [`VarDumper`](http://symfony.com/doc/3.4/components/var_dumper/introduction.html). 
 
-Usage:
+## Example
 ```php
 <?php
 
@@ -119,17 +68,24 @@ class AwesomeCommand extends AbstractCommand
 
         // only dump in verbose mode
         $this->dumpVerbose("Dump verbose", Dumper::NEWLINE_BEFORE);
+        
+        // Output as white text on red background.
+        $this->writeError('oh noes!');
     }
 }
 ```
 
-##### writeError()
-Shortcut to write an error. 
+### Usage
+Call `bin/console list` script from the command line to get a list of available commands. To call 
+a command, use `bin/console <subcommand>`.
 
-Usage:
-```php
-<?php
-$this->writeError('oh noes!');
+> Be sure to run the console with the PHP user to prevent writing permissions issues later, either by calling `php bin/console` or by switching to the appropriate user, for instance on Debian system `su -l www-data -s /bin/bash`.
+
+##### Examples:
+```php 
+# get a list of all registered commands
+$ ./bin/console list
+ 
+# call the foo:bar command
+$ ./bin/console foo:bar
 ```
-
-The call above will output `ERROR: oh noes!` as white text on red background.
