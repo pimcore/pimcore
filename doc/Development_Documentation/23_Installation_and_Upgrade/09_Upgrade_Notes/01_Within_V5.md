@@ -82,9 +82,9 @@ rm -r pimcore/
 ```
 
 If you have scripts that rely (include or require) on Pimcore's startup scripts (`startup.php` and `startup_cli.php`) 
-which used to be located under `/pimcore/config/`, you can keep that folder in your project for compatibility reasons. 
-This won't have any side-effects, since they are just calling functions from within the Pimcore library, so you can keep
-them as long as it is necessary.  
+which used to be located under `/pimcore/config/`, you can keep them in place and update them manually to the following status: 
+https://github.com/pimcore/pimcore/tree/pimcore-5.3.x/pimcore/config 
+The rest of the contents in `/pimcore/` can be deleted. 
 
 
 #### Removed PrototypeJS (light) library from the Admin UI
