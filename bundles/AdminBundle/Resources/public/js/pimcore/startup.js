@@ -484,10 +484,11 @@ Ext.onReady(function () {
             }
         });
 
-        Ext.Ajax.request({
+        // use jQuery instead of ExtJS to bypass default error handling
+        jQuery.ajax({
             method: "POST",
             url: "https://liveupdate.pimcore.org/update-check",
-            params: {
+            data: {
                 id: pimcore.settings.instanceId,
                 revision: pimcore.settings.build,
                 version: pimcore.settings.version,
@@ -502,7 +503,24 @@ Ext.onReady(function () {
                 documentTypesAmount: pimcore.globalmanager.get("document_types_store").getCount(),
                 websiteLanguages: pimcore.settings.websiteLanguages.join(',')
             }
+        }).done(function(data) {
+            if (data['pushStatistics']) {
+                jQuery.ajax({
+                    method: "GET",
+                    dataType: 'text',
+                    url: "/admin/index/statistics",
+                }).done(function (data) {
+                    jQuery.ajax({
+                        method: "POST",
+                        url: "https://liveupdate.pimcore.org/statistics",
+                        data: {
+                            data: data
+                        }
+                    });
+                });
+            }
         });
+
     }, 5000);
 
 

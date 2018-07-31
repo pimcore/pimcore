@@ -14,11 +14,13 @@
 
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 
-use Defuse\Crypto\Crypto;
+use Linfo;
 use Pimcore\Analytics\Google\Config\SiteConfigProvider;
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
+use Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse;
 use Pimcore\Config;
 use Pimcore\Controller\Configuration\TemplatePhp;
+use Pimcore\Db\Connection;
 use Pimcore\Event\Admin\IndexSettingsEvent;
 use Pimcore\Event\AdminEvents;
 use Pimcore\FeatureToggles\Features\DevMode;
@@ -107,6 +109,75 @@ class IndexController extends AdminController
     }
 
     /**
+     * @Route("/index/statistics", name="pimcore_admin_index_statistics")
+     * @Method({"GET"})
+     *
+     * @param Request $request
+     * @param Connection $db
+     * @param KernelInterface $db
+     *
+     * @return JsonResponse
+     *
+     * @throws \Exception
+     */
+    public function statisticsAction(Request $request, Connection $db, KernelInterface $kernel) {
+
+        // DB
+        try {
+            $tables = $db->fetchAll('SELECT TABLE_NAME as name,TABLE_ROWS as rows from information_schema.TABLES 
+                WHERE TABLE_ROWS IS NOT NULL AND TABLE_SCHEMA = ?', [$db->getDatabase()]);
+
+            $mysqlVersion = $db->fetchOne('SELECT VERSION()');
+        } catch (\Exception $e) {
+            $tables = [];
+        }
+
+        // System
+        try {
+            $linfo = new Linfo\Linfo([
+                'show' => [
+                    'os' => true,
+                    'ram' => true,
+                    'cpu' => true,
+                    'virtualization' => true,
+                    'distro' => true,
+                ]
+            ]);
+            $linfo->scan();
+            $systemData = $linfo->getInfo();
+            $system = [
+                'OS' => $systemData['OS'],
+                'Distro' => $systemData['Distro'],
+                'RAMTotal' => $systemData['RAM']['total'],
+                'CPUCount' => count($systemData['CPU']),
+                'CPUModel' => $systemData['CPU'][0]['Model'],
+                'CPUClock' => $systemData['CPU'][0]['MHz'],
+                'virtualization' => $systemData['virtualization'],
+            ];
+
+        } catch (\Exception $e) {
+            $system = [];
+        }
+
+        try {
+            $data = [
+                'instanceId' => $this->getInstanceId(),
+                'pimcore_version' => Version::getVersion(),
+                'pimcore_hash' => Version::getRevision(),
+                'php_version' => PHP_VERSION,
+                'mysql_version' => $mysqlVersion,
+                'bundles' => array_keys($kernel->getBundles()),
+                'system' => $system,
+                'tables' => $tables,
+            ];
+        } catch (\Exception $e) {
+            $data = [];
+        }
+
+        return $this->adminJson($data);
+    }
+
+    /**
      * @param ViewModel $view
      * @param User $user
      *
@@ -162,19 +233,8 @@ class IndexController extends AdminController
     protected function buildPimcoreSettings(Request $request, ViewModel $view, User $user, KernelInterface $kernel)
     {
         $config = $view->config;
-
-        $instanceId = 'not-set';
-        if($this->container->hasParameter('secret')) {
-            $instanceId = $this->getParameter('secret');
-            try {
-                $instanceId = sha1(Crypto::encryptWithPassword($instanceId, $instanceId));
-            } catch (\Exception $e) {
-                // noting to do
-            }
-        }
-
         $settings = new ViewModel([
-            'instanceId'            => $instanceId,
+            'instanceId'            => $this->getInstanceId(),
             'version'               => Version::getVersion(),
             'build'                 => Version::getRevision(),
             'debug'                 => \Pimcore::inDebugMode(),
@@ -234,6 +294,23 @@ class IndexController extends AdminController
             ->addCustomViewSettings($settings);
 
         return $settings;
+    }
+
+    /**
+     * @return string
+     */
+    private function getInstanceId() {
+        $instanceId = 'not-set';
+        if($this->container->hasParameter('secret')) {
+            $instanceId = $this->getParameter('secret');
+            try {
+                $instanceId = sha1(substr($instanceId, 3, -3));
+            } catch (\Exception $e) {
+                // noting to do
+            }
+        }
+
+        return $instanceId;
     }
 
     private function buildGoogleAnalyticsSettings(
