@@ -504,6 +504,10 @@ class Update
      */
     public static function invalidateComposerAutoloadClassmap()
     {
+        // we don't invalidate anymore here, this would break the final update to Pimcore 5.4.0
+        // this doesn't matter anymore since this class is gone anyway in 5.4.0
+        return;
+
 
         // unfortunately \Composer\Autoload\ClassLoader has no method setClassMap()
         // so we need to invalidate the existing classmap by replacing all mappings beginning with 'Pimcore'
