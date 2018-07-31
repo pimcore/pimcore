@@ -108,7 +108,10 @@ class Composer
         $parametersYml = $rootPath . '/app/config/parameters.yml';
         $parametersYmlExample = $rootPath . '/app/config/parameters.example.yml';
         if (!file_exists($parametersYml) && file_exists($parametersYmlExample)) {
-            copy($parametersYmlExample, $parametersYml);
+            $secret = base64_encode(random_bytes(24));
+            $parameters = file_get_contents($parametersYmlExample);
+            $parameters = str_replace('ThisTokenIsNotSoSecretChangeIt', $secret, $parameters);
+            file_put_contents($parametersYml, $parameters);
         }
     }
 
