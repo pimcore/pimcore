@@ -287,7 +287,8 @@ class InstallCommand extends Command
 
             $value = $input->getOption($name);
 
-            if ($value) {
+            // Empty MySQL password allowed
+            if ($value || $name === 'mysql-password') {
                 $param          = str_replace('-', '_', $name);
                 $params[$param] = $value;
             } else {
