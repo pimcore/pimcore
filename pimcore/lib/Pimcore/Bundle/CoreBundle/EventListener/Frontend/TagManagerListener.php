@@ -149,7 +149,6 @@ class TagManagerListener
 
                 if (is_array($tag->getItems()) && $paramsValid) {
                     foreach ($tag->getItems() as $itemKey => $item) {
-
                         if ($item['disabled']) {
                             continue;
                         }

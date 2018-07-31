@@ -508,7 +508,6 @@ class Update
         // this doesn't matter anymore since this class is gone anyway in 5.4.0
         return;
 
-
         // unfortunately \Composer\Autoload\ClassLoader has no method setClassMap()
         // so we need to invalidate the existing classmap by replacing all mappings beginning with 'Pimcore'
 
