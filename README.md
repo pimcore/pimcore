@@ -58,14 +58,14 @@ experience for editors.
 ![Pimcore Admin Interface Screenshot](./doc/Development_Documentation/img/pimcore-screenshot-1.png)
 
 #### Basic Demo (CMS)
-💻 Admin-URL: [https://demo-basic.pimcore.org/admin](https://demo-basic.pimcore.org/admin)  
-👧 Username: `admin`  
-*️⃣ Password: `demo`
+_Admin-URL_: [https://demo-basic.pimcore.org/admin](https://demo-basic.pimcore.org/admin)  
+_Username_: `admin`  
+_Password_: `demo`
 
 #### Advanced Demo (MDM/PIM, E-Commerce, DAM, CMS, ...)
-💻 Admin-URL: [https://demo-advanced.pimcore.org/admin](https://demo-advanced.pimcore.org/admin)  
-👦 Username: `admin`  
-*️⃣ Password: `demo`
+_Admin-URL_: [https://demo-advanced.pimcore.org/admin](https://demo-advanced.pimcore.org/admin)  
+_Username_: `admin`  
+_Password_: `demo`
 
 ## Getting Started
 _**Only 3 commands to start!**_ 😎
