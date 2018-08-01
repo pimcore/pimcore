@@ -76,6 +76,16 @@ rm -rf vendor
 COMPOSER_MEMORY_LIMIT=3G composer require pimcore/pimcore:5.4.*
 ```
 
+If composer complains about dependency issues, try the following: 
+```
+rm -rf vendor/
+rm composer.lock
+COMPOSER_MEMORY_LIMIT=3G composer require pimcore/pimcore:5.4.*
+```
+
+If this doesn't help, try to remove the remaining dependencies until you've found the package that causes the issue. 
+Don't fully trust the error message of Composer, that can be completely misleading! 
+
 ##### Cleanup project files
 ```
 rm -r pimcore/
