@@ -1,3 +1,6 @@
+![Pimcore - Own the digital World](./doc/Development_Documentation/img/logo-readme.svg)
+  
+  
 # Pimcore 5
 THE OPEN-SOURCE ENTERPRISE CMS/CMF, PIM, DAM, ECOMMERCE-SUITE  
 
@@ -5,14 +8,15 @@ THE OPEN-SOURCE ENTERPRISE CMS/CMF, PIM, DAM, ECOMMERCE-SUITE
 [![Build Status](https://travis-ci.org/pimcore/pimcore.svg)](https://travis-ci.org/pimcore/pimcore)
 [![Gitter](https://img.shields.io/badge/gitter-join%20chat-brightgreen.svg?style=flat)](https://gitter.im/pimcore/pimcore)
 
+* Website: [http://pimcore.com/](https://pimcore.com/) - Learn more about Pimcore
 * [Documentation](https://pimcore.com/docs/)
 * [API Documentation](https://pimcore.com/docs/api/)
 * **Help translating Pimcore!** Start with [Essentials](https://poeditor.com/join/project/VWmZyvFVMH), continue with [Extended](https://poeditor.com/join/project/XliCYYgILb).
-* Homepage: [http://pimcore.com/](https://pimcore.com/) - Learn more about Pimcore
 * Like us on [Facebook](https://www.facebook.com/pimcore)
 * Twitter: [@pimcore](https://twitter.com/pimcore) - Get the latest news
 * Issue Tracker: - [Issues](https://github.com/pimcore/pimcore/issues) - Report bugs here
 * [Forums](https://talk.pimcore.org/) - Discussions 
+* [Community Chat](https://gitter.im/pimcore/pimcore) - Gitter 
    
    
 **Looking for the previous stable (version 4)?  
@@ -25,7 +29,35 @@ See https://github.com/pimcore/pimcore/tree/pimcore4**
   
 For details, please have a look at our [contributing guide](CONTRIBUTING.md).
 
-## Copyright and license 
+## Overview
+![Technology and Architecture](./doc/Development_Documentation/img/pimcore-technology-architecture.svg)
+
+## Key Benefits and Advantages
+### ⚒ Data Modelling an UI Design at the same time 
+No matter if your're dealing with unstructured web documents or structured data for MDM/PIM, you define the 
+UI design (web documents by a template and structured data with a intuitive graphical editor), Pimcore knows 
+how to persist the data efficiently and optimized for fast access.
+
+### 🎛 Agnostic and Universal Framework for your Data
+Due to the framework approach, Pimcore is very flexible and adapts perfectly to your needs. Built on top of 
+the well-known Symfony Framework you have a solid and modern foundation for your project. 
+
+### 🚀 Extensible and huge Symfony Community
+Benefit from all existing Symfony Components and Bundles provided by the community or create your own 
+Bundles to extend your Projects with reusable components. 
+
+### 🏍 Your Digital World consolidated in one Platform
+No more API, import/export and synchronization hell between MDM/PIM, E-Commerce, DAM, CRM and your Web-CMS. 
+All is working seamlessly together, natively ... this is what Pimcore is built for. 
+
+### 🙋‍♀️ Modern and Intuitive UI
+We love good looking user interfaces, designed to be efficient for the daily use and optimized for a great
+experience for editors. 
+
+## Preview
+![Pimcore Admin Interface Screenshot](./doc/Development_Documentation/img/pimcore-screenshot-1.png)
+
+## Copyright and License 
 Copyright: [Pimcore](http://www.pimcore.org) GmbH  
 For licensing details please visit [LICENSE.md](LICENSE.md) 
   
