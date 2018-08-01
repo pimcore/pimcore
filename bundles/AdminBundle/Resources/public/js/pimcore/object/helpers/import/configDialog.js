@@ -209,6 +209,7 @@ pimcore.object.helpers.import.configDialog = Class.create({
         this.csvPreviewPanel.rebuildPanel();
         this.columnConfigPanel.rebuildPanel();
         this.resolverSettingsPanel.rebuildPanel();
+        this.csvSettingsPanel.rebuildPanel();
         this.saveAndSharePanel.rebuildPanel();
         this.containerPanel.setTitle(this.getWindowTitle());
         this.deleteButton.setDisabled(!this.importConfigId || this.config.isShared);
@@ -250,6 +251,7 @@ pimcore.object.helpers.import.configDialog = Class.create({
         this.columnConfigPanel.commitData();
         this.resolverSettingsPanel.commitData();
         this.saveAndSharePanel.commitData();
+        this.csvSettingsPanel.commitData();
     },
 
     saveConfig: function (asCopy) {
