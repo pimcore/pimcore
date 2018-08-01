@@ -8,15 +8,15 @@ THE OPEN-SOURCE ENTERPRISE CMS/CMF, PIM, DAM, ECOMMERCE-SUITE
 [![Build Status](https://travis-ci.org/pimcore/pimcore.svg)](https://travis-ci.org/pimcore/pimcore)
 [![Gitter](https://img.shields.io/badge/gitter-join%20chat-brightgreen.svg?style=flat)](https://gitter.im/pimcore/pimcore)
 
-* Website: [http://pimcore.com/](https://pimcore.com/) - Learn more about Pimcore
-* [Documentation](https://pimcore.com/docs/)
-* [API Documentation](https://pimcore.com/docs/api/)
-* **Help translating Pimcore!** Start with [Essentials](https://poeditor.com/join/project/VWmZyvFVMH), continue with [Extended](https://poeditor.com/join/project/XliCYYgILb).
-* Like us on [Facebook](https://www.facebook.com/pimcore)
-* Twitter: [@pimcore](https://twitter.com/pimcore) - Get the latest news
-* Issue Tracker: - [Issues](https://github.com/pimcore/pimcore/issues) - Report bugs here
-* [Forums](https://talk.pimcore.org/) - Discussions 
-* [Community Chat](https://gitter.im/pimcore/pimcore) - Gitter 
+* 🌍 Website: [http://pimcore.com/](https://pimcore.com/) - Learn more about Pimcore
+* 📖 [Documentation](https://pimcore.com/docs/)
+* 📚 [API Documentation](https://pimcore.com/docs/api/)
+* 🉐 **Help translating Pimcore!** Start with [Essentials](https://poeditor.com/join/project/VWmZyvFVMH), continue with [Extended](https://poeditor.com/join/project/XliCYYgILb).
+* 👍 Like us on [Facebook](https://www.facebook.com/pimcore)
+* 🕊 Twitter: [@pimcore](https://twitter.com/pimcore) - Get the latest news
+* 🐞  Issue Tracker: - [Issues](https://github.com/pimcore/pimcore/issues) - Report bugs here
+* 🗨  [Forums](https://talk.pimcore.org/) - Discussions 
+* 🤹‍♀️ [Community Chat](https://gitter.im/pimcore/pimcore) - Gitter 
    
    
 **Looking for the previous stable (version 4)?  
