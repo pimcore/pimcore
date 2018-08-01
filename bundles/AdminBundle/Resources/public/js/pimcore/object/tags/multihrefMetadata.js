@@ -91,7 +91,14 @@ pimcore.object.tags.multihrefMetadata = Class.create(pimcore.object.tags.abstrac
 
         var columns = [];
         columns.push({text: 'ID', dataIndex: 'id', width: 50});
-        columns.push({text: t('reference'), dataIndex: 'path', flex: 1});
+        columns.push({text: t('reference'), dataIndex: 'path', flex: 1, renderer: function (value, metaData) {
+                        publishVal = this.checkIfPublished(value);
+                        if(publishVal === false) {
+                                metaData.tdStyle = 'text-decoration: line-through;color: #777;';
+                            }
+                            return value;
+                        }.bind(this)
+        });
 
         var visibleFieldsCount = columns.length;
 
@@ -401,6 +408,7 @@ pimcore.object.tags.multihrefMetadata = Class.create(pimcore.object.tags.abstrac
                         try {
                             var record = data.records[0];
                             var data = record.data;
+                            this.nodeElement = data;
                             var fromTree = this.isFromTree(dd);
 
                             var toBeRequested = new Ext.util.Collection();
@@ -706,7 +714,7 @@ pimcore.object.tags.multihrefMetadata = Class.create(pimcore.object.tags.abstrac
 
     addDataFromSelector: function (items) {
         if (items.length > 0) {
-
+            this.itemsArr = items;
             var toBeRequested = new Ext.util.Collection();
 
             for (var i = 0; i < items.length; i++) {

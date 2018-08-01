@@ -1865,3 +1865,8 @@ ul.leaflet-draw-actions.leaflet-draw-actions-top.leaflet-draw-actions-bottom li:
     margin-left: -12px !important;
     margin-top: -41px !important;
 }
+
+.strikeThrough {
+    text-decoration: line-through;
+    color: #777;
+}

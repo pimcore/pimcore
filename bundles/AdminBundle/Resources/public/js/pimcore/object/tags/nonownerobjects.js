@@ -112,7 +112,14 @@ pimcore.object.tags.nonownerobjects = Class.create(pimcore.object.tags.objects, 
                 },
                 items: [
                     {text: 'ID', dataIndex: 'id', flex: 50},
-                    {text: t("reference"), dataIndex: 'path', flex: 200},
+                    {text: t("reference"), dataIndex: 'path', flex: 200, renderer:function (value, metaData) {
+                        publishVal = this.checkIfPublished(value);
+                            if(publishVal === false) {
+                                metaData.tdStyle = 'text-decoration: line-through;color: #777;';
+                            }
+                            return value;
+                        }.bind(this)
+                    },
                     {text: t("type"), dataIndex: 'type', flex: 100},
                     {
                         xtype: 'actioncolumn',
@@ -228,6 +235,7 @@ pimcore.object.tags.nonownerobjects = Class.create(pimcore.object.tags.objects, 
                     try {
                         var record = data.records[0];
                         var data = record.data;
+                        this.nodeElement = data;
                         var fromTree = this.isFromTree(dd);
 
                         if (data.elementType != "object") {
@@ -380,7 +388,7 @@ pimcore.object.tags.nonownerobjects = Class.create(pimcore.object.tags.objects, 
 
     addDataFromSelector: function (items) {
         if (items.length > 0) {
-
+            this.itemsArr = items;
             for (var i = 0; i < items.length; i++) {
                 var item = items[i];
 

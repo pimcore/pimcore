@@ -537,9 +537,9 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                 } else {
                     foreach ($relations as $rel) {
                         if ($fielddefinition instanceof DataObject\ClassDefinition\Data\Objects) {
-                            $data[] = [$rel['id'], $rel['path'], $rel['subtype']];
+                            $data[] = [$rel['id'], $rel['path'], $rel['subtype'], $rel['published']];
                         } else {
-                            $data[] = [$rel['id'], $rel['path'], $rel['type'], $rel['subtype']];
+                            $data[] = [$rel['id'], $rel['path'], $rel['type'], $rel['subtype'], $rel['published']];
                         }
                     }
                 }
