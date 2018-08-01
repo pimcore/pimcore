@@ -16,7 +16,7 @@ THE OPEN-SOURCE ENTERPRISE CMS/CMF, PIM, DAM, ECOMMERCE-SUITE
 * 🕊 Twitter: [@pimcore](https://twitter.com/pimcore) - Get the latest news
 * 🐞  Issue Tracker: - [Issues](https://github.com/pimcore/pimcore/issues) - Report bugs here
 * 🗨  [Forums](https://talk.pimcore.org/) - Discussions 
-* 🤹‍♀️ [Community Chat](https://gitter.im/pimcore/pimcore) - Gitter 
+* 👪 [Community Chat](https://gitter.im/pimcore/pimcore) - Gitter 
    
    
 **Looking for the previous stable (version 4)?  
@@ -54,8 +54,30 @@ All is working seamlessly together, natively ... this is what Pimcore is built f
 We love good looking user interfaces, designed to be efficient for the daily use and optimized for a great
 experience for editors. 
 
-## Preview
+## Preview and Demo
 ![Pimcore Admin Interface Screenshot](./doc/Development_Documentation/img/pimcore-screenshot-1.png)
+
+#### Basic Demo (CMS)
+💻 Admin-URL: [https://demo-basic.pimcore.org/admin](https://demo-basic.pimcore.org/admin)  
+👧 Username: `admin`  
+*️⃣ Password: `demo`
+
+#### Advanced Demo (MDM/PIM, E-Commerce, DAM, CMS, ...)
+💻 Admin-URL: [https://demo-advanced.pimcore.org/admin](https://demo-advanced.pimcore.org/admin)  
+👦 Username: `admin`  
+*️⃣ Password: `demo`
+
+## Getting Started
+_**Only 3 commands to start!**_ 😎
+```bash
+COMPOSER_MEMORY_LIMIT=3G composer create-project pimcore/skeleton:dev-master ./my-project
+cd ./my-project
+./vendor/bin/pimcore-install
+```
+
+This will install an empty skeleton application, 
+but we're also offering 3 different demo packages your your convenience - of course also with 3 commands 💪
+[Click here for more installation options and a detailed guide](https://pimcore.com/docs/5.x/Development_Documentation/Getting_Started/Installation.html)
 
 ## Copyright and License 
 Copyright: [Pimcore](http://www.pimcore.org) GmbH  
