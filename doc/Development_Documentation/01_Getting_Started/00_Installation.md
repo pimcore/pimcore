@@ -1,11 +1,5 @@
 # Pimcore Installation
 
-<div class="alert alert-warning">
-<strong>IMPORTANT:</strong> 
-This is the installation guide for the BETA version of Pimcore 5.4.
-Looking for the current stable [5.3 installation guide, click here](https://github.com/pimcore/pimcore/blob/pimcore-5.3.x/doc/Development_Documentation/01_Getting_Started/00_Installation.md). 
-</div>    
-
 The following guide assumes your're using a typical LAMP environment, if you're using a different setup (eg. Nginx) 
 or facing a problem, please visit the [Installation Guide](../23_Installation_and_Upgrade/README.md) section.
 
