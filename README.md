@@ -8,7 +8,7 @@ Pimcore - CMS/CMF, MDM, PIM, DAM and E-Commerce
 [![Build Status](https://travis-ci.org/pimcore/pimcore.svg)](https://travis-ci.org/pimcore/pimcore)
 [![Gitter](https://img.shields.io/badge/gitter-join%20chat-brightgreen.svg?style=flat)](https://gitter.im/pimcore/pimcore)
 
-* 🌍 Website: [http://pimcore.com/](https://pimcore.com/) - Learn more about Pimcore
+* 🌍 [http://pimcore.com/](https://pimcore.com/) - Learn more about Pimcore
 * 📖 [Documentation](https://pimcore.com/docs/)
 * 📚 [API Documentation](https://pimcore.com/docs/api/)
 * 🉐 **Help translating Pimcore!** Start with [Essentials](https://poeditor.com/join/project/VWmZyvFVMH), continue with [Extended](https://poeditor.com/join/project/XliCYYgILb).
