@@ -1,8 +1,7 @@
 ![Pimcore - Own the digital World](./doc/Development_Documentation/img/logo-readme.svg)
   
   
-# Pimcore - Digital Platform for CMS/CMF, MDM, PIM, DAM and E-Commerce
-
+Pimcore - CMS/CMF, MDM, PIM, DAM and E-Commerce
 
 [![Packagist](https://img.shields.io/packagist/v/pimcore/pimcore.svg)](https://packagist.org/packages/pimcore/pimcore)
 [![Software License](https://img.shields.io/badge/license-GPLv3-brightgreen.svg?style=flat)](LICENSE.md)
