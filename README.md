@@ -30,7 +30,7 @@ See https://github.com/pimcore/pimcore/tree/pimcore4**
 For details, please have a look at our [contributing guide](CONTRIBUTING.md).
 
 ## Overview
-![Technology and Architecture](./doc/Development_Documentation/img/pimcore-technology-architecture.svgz)
+![Technology and Architecture](./doc/Development_Documentation/img/pimcore-technology-architecture.svg)
 
 ## Key Benefits and Advantages
 ### ⚒ Data Modelling and UI Design at the same Time 
