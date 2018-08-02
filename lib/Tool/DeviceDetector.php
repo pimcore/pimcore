@@ -206,7 +206,8 @@ class DeviceDetector
             if (in_array($typeForced, $this->validDeviceTypes)) {
                 $type = $typeForced;
 
-                if (!isset($_COOKIE['forceDeviceType'])) {
+                // we don't set a cookie if we're in preview mode, or if a cookie is set already
+                if (!isset($_COOKIE['forceDeviceType']) && !isset($_REQUEST['pimcore_preview'])) {
                     setcookie('forceDeviceType', $type);
                 }
             }
