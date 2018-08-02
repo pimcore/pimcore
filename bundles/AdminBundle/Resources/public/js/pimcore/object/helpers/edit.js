@@ -323,6 +323,29 @@ pimcore.object.helpers.edit = {
                     console.log(e3);
                 }
 
+                if(pimcore.currentuser.admin) {
+                    // add real field name as title attribute on element
+                    try {
+                        dLayout.on("render", function (l) {
+                            if(Ext.isFunction(this['getEl'])) {
+                                var el = this.getEl();
+                                if (!el.hasCls("object_field")) {
+                                    el = el.parent(".object_field");
+                                }
+                                if (el) {
+                                    var label = el.down('label span');
+                                    if(label) {
+                                        label.dom.setAttribute('title', l.name);
+                                    }
+                                }
+                            }
+                        }.bind(dLayout, l));
+                    } catch (e) {
+                        console.log(e);
+                        // noting to do
+                    }
+                }
+
                 // set styling
                 if (l.style || l.tooltip) {
                     try {
