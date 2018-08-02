@@ -22,7 +22,7 @@ doctrine/doctrine-migrations-bundle doctrine/instantiator egulias/email-validato
 guzzlehttp/guzzle hybridauth/hybridauth lcobucci/jwt league/csv linfo/linfo mjaschen/phpgeo monolog/monolog mpratt/embera myclabs/deep-copy \
 myclabs/php-enum neitanod/forceutf8 nesbot/carbon ocramius/package-versions ocramius/proxy-manager oyejorge/less.php pear/net_url2 \
 phive/twig-extensions-deferred pimcore/core-version piwik/device-detector presta/sitemap-bundle ramsey/uuid sabre/dav sensio/distribution-bundle \
-sensio/framework-extra-bundle sensio/generator-bundle sensiolabs/ansi-to-html symfony-cmf/routing-bundle symfony/monolog-bundle symfony/polyfill-apcu\
+sensio/framework-extra-bundle sensio/generator-bundle sensiolabs/ansi-to-html symfony-cmf/routing-bundle symfony/monolog-bundle symfony/polyfill-apcu \
 symfony/swiftmailer-bundle tijsverkoyen/css-to-inline-styles twig/extensions twig/twig umpirsky/country-list vrana/adminer vrana/jush \
 wa72/htmlpagedom zendframework/zend-code zendframework/zend-paginator zendframework/zend-servicemanager scheb/two-factor-bundle 
 ```
@@ -76,19 +76,13 @@ rm -rf vendor
 COMPOSER_MEMORY_LIMIT=3G composer require pimcore/pimcore:5.4.*
 ```
 
-If composer complains about dependency issues, try the following: 
-```
-rm -rf vendor/
-rm composer.lock
-COMPOSER_MEMORY_LIMIT=3G composer require pimcore/pimcore:5.4.*
-```
-
 If this doesn't help, try to remove the remaining dependencies until you've found the package that causes the issue. 
 Don't fully trust the error message of Composer, that can be completely misleading! 
 
 ##### Cleanup project files
 ```
 rm -r pimcore/
+rm -r web/pimcore/
 ```
 
 If you have scripts that rely (include or require) on Pimcore's startup scripts (`startup.php` and `startup_cli.php`) 
