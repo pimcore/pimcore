@@ -1,9 +1,10 @@
 ![Pimcore - Own the digital World](./doc/Development_Documentation/img/logo-readme.svg)
   
   
-# Pimcore 5
-THE OPEN-SOURCE ENTERPRISE CMS/CMF, PIM, DAM, ECOMMERCE-SUITE  
+# Pimcore - Digital Platform for CMS/CMF, MDM, PIM, DAM and E-Commerce
 
+
+[![Packagist](https://img.shields.io/packagist/v/pimcore/pimcore.svg)](https://packagist.org/packages/pimcore/pimcore)
 [![Software License](https://img.shields.io/badge/license-GPLv3-brightgreen.svg?style=flat)](LICENSE.md)
 [![Build Status](https://travis-ci.org/pimcore/pimcore.svg)](https://travis-ci.org/pimcore/pimcore)
 [![Gitter](https://img.shields.io/badge/gitter-join%20chat-brightgreen.svg?style=flat)](https://gitter.im/pimcore/pimcore)
@@ -46,11 +47,11 @@ the well-known Symfony Framework you have a solid and modern foundation for your
 Benefit from all existing Symfony Components and Bundles provided by the community or create your own 
 Bundles to extend your Projects with reusable components. 
 
-### 🏍 Your Digital World consolidated in one Platform
+### 💎 Your Digital World consolidated in one Platform
 No more API, import/export and synchronization hell between MDM/PIM, E-Commerce, DAM, CRM and your Web-CMS. 
 All is working seamlessly together, natively ... this is what Pimcore is built for. 
 
-### 🙋‍♀️ Modern and Intuitive UI
+### ✨️ Modern and Intuitive UI
 We love good looking user interfaces, designed to be efficient for the daily use and optimized for a great
 experience for editors. 
 
