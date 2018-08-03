@@ -463,7 +463,7 @@ class Video extends Model\DataObject\ClassDefinition\Data
                 return null;
             }
             $data = unserialize( $value);
-            if ($data == FALSE) {
+            if ($data === FALSE) {
                 throw new \Exception('cannot get object video data from web service import - value cannot be decoded');
             }
             if (is_array($data)) {
