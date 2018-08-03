@@ -281,7 +281,7 @@ class Localizedfields extends Model\DataObject\ClassDefinition\Data
         foreach ($this->getFieldDefinitions() as $fd) {
             $key = $fd->getName();
             $context = $params['context'];
-            if ($context && $context['containerType'] = 'objectbrick') {
+            if ($context && $context['containerType'] == 'objectbrick') {
                 $result->$key = 'NOT SUPPORTED';
             } else {
                 $result->$key = $object->{'get' . ucfirst($fd->getName())}();
