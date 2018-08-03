@@ -40,9 +40,9 @@ services:
 
 If you want to start with a completely custom implementation, please see the following files as reference:
 
-* [PimcoreCacheItemPoolInterface](https://github.com/pimcore/pimcore/blob/master/pimcore/lib/Pimcore/Cache/Pool/PimcoreCacheItemPoolInterface.php))
-* [PimcoreCacheItemInterface](https://github.com/pimcore/pimcore/blob/master/pimcore/lib/Pimcore/Cache/Pool/PimcoreCacheItemInterface.php)
-* [AbstractCacheItemPool](https://github.com/pimcore/pimcore/blob/master/pimcore/lib/Pimcore/Cache/Pool/AbstractCacheItemPool.php)
+* [PimcoreCacheItemPoolInterface](https://github.com/pimcore/pimcore/blob/master/lib/Cache/Pool/PimcoreCacheItemPoolInterface.php))
+* [PimcoreCacheItemInterface](https://github.com/pimcore/pimcore/blob/master/lib/Cache/Pool/PimcoreCacheItemInterface.php)
+* [AbstractCacheItemPool](https://github.com/pimcore/pimcore/blob/master/lib/Cache/Pool/AbstractCacheItemPool.php)
 
 To use your custom pool, register it as service and update the configuration to use the custom pool:
 

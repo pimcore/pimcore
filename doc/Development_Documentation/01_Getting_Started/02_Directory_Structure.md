@@ -1,6 +1,6 @@
 # Directory Structure
 
-After extracting the installation package of Pimcore you should see the folder structure described below.  
+After installing a Pimcore package you should see the folder structure described below.  
 The following tables should give you a quick overview about the purpose of this folders.  
 In general the directory structure follows the [best practice for Symfony projects](https://github.com/symfony/symfony-demo). 
 
@@ -9,7 +9,6 @@ In general the directory structure follows the [best practice for Symfony projec
 | `/app/`     | The application configuration, templates and translations.                         |
 | `/bin/`     | Executable files (e.g. bin/console).                                               |
 | `/doc/`     | Core files of Pimcore, do not change anything here.                                |
-| `/pimcore/` | Core files of Pimcore, do not change anything here.                                |
 | `/src/`     | The project's PHP code (Services, Controllers, EventListeners, ...)                |
 | `/var/`     | Private generated files - not accessible via the web (cache, logs, etc.).          |
 | `/vendor/`  | All third-party libraries are there. It's the default location for packages installed by [Composer](https://getcomposer.org/) / [Packagist](https://packagist.org/). |
@@ -20,7 +19,7 @@ In general the directory structure follows the [best practice for Symfony projec
 
 The web root directory is the home of all public and static files like images, stylesheets and 
 JavaScript files. It is also the place where each front controller (the file that handles all requests 
-to your application) lives, such as the [production controller](https://github.com/pimcore/pimcore/blob/master/web/app.php)
+to your application) lives, such as the [production controller](https://github.com/pimcore/skeleton/blob/master/web/app.php)
 
 
 ### The `app/` Directory

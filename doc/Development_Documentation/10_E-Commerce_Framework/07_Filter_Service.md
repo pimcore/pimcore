@@ -26,7 +26,7 @@ Therefore `\Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\Abs
 `getFilterFrontend()` and `addCondition()` to be implemented. 
 
 Each Filter Type needs to be defined as service and registered on the `pimcore_ecommerce_framework.filter_service` configuration.
-The framework already defines a number of core filter types in [filter_service_filter_types.yml](https://github.com/pimcore/pimcore/blob/master/pimcore/lib/Pimcore/Bundle/EcommerceFrameworkBundle/Resources/config/filter_service_filter_types.yml).
+The framework already defines a number of core filter types in [filter_service_filter_types.yml](https://github.com/pimcore/pimcore/blob/master/bundles/EcommerceFrameworkBundle/Resources/config/filter_service_filter_types.yml).
  
 ```yaml
 pimcore_ecommerce_framework:

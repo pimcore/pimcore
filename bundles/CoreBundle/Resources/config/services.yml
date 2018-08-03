@@ -1,0 +1,161 @@
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+
+    #
+    # SESSION
+    #
+
+    # Sessions need to be configured (e.g. adding custom attribute bags) before they are started. The configurator handles
+    # a collection of configurator instances which can be added via addConfigurator or by using the pimcore.session.configurator
+    # DI tag. See the SessionConfiguratorPass for details.
+    Pimcore\Session\SessionConfigurator:
+        public: false
+
+    #
+    # SECURITY
+    #
+
+    # Decorate the symfony encoder factory with our own. Encoders operating on pimcore admin users and pimcore objects using
+    # the password field definition need access to the user instance while encoding the password. Our factory allows delegating
+    # encoder building to sub-factories which are able to build and cache an encoder per user object.
+    #
+    # See UserAwareEncoderFactory which is used from the admin bundle and from CMS demo profile.
+    #
+    # The second argument (factory mapping) is read from config (pimcore.security.encoder_factories) and set by the extension.
+    pimcore.security.encoder_factory:
+        class: Pimcore\Security\Encoder\EncoderFactory
+        decorates: security.encoder_factory
+        arguments: ['@pimcore.security.encoder_factory.inner', '@?']
+        public: false
+
+    #
+    # INFRASTRUCTURE
+    #
+
+    Pimcore\Model\Schedule\Manager\Procedural:
+        public: true
+        arguments:
+            $pidFileName: 'maintenance.pid'
+        tags:
+            - { name: monolog.logger, channel: pimcore.maintenance }
+
+    # creates needed pimcore directories
+    Pimcore\HttpKernel\CacheWarmer\MkdirCacheWarmer:
+        public: false
+        tags:
+            - { name: kernel.cache_warmer }
+
+    Pimcore\Cache\Symfony\CacheClearer:
+        public: true
+
+    Pimcore\Composer\Config\ConfigMerger:
+        public: true
+
+    Pimcore\Composer\Config\Normalizer\:
+        resource: '../../../../lib/Composer/Config/Normalizer'
+        tags: ['pimcore.composer.config_normalizer']
+
+    #
+    # CONFIG
+    #
+
+    Pimcore\Config\ReportConfigWriter: ~
+
+    Pimcore\FeatureToggles\FeatureManagerInterface:
+        public: true
+        shared: false
+        factory: ['Pimcore', getFeatureManager]
+
+    #
+    # CONTROLLERS
+    #
+
+    # auto-register all controllers as services
+    Pimcore\Bundle\CoreBundle\Controller\:
+        resource: '../../Controller'
+        public: true
+        tags: ['controller.service_arguments']
+
+    Pimcore\Controller\Config\ConfigNormalizer: ~
+
+    Pimcore\Controller\Config\ControllerDataProvider:
+        public : true
+        arguments:
+            $serviceControllers: '%pimcore.service_controllers%'
+
+
+    #
+    # COMMANDS
+    #
+
+    # auto-register all commands as services
+    Pimcore\Bundle\CoreBundle\Command\:
+        resource: '../../Command'
+        exclude: '../../Command/Bundle/Helper'
+
+    #
+    # HTTP/REST clients
+    #
+
+    Pimcore\Http\ClientFactory:
+        # keep this public until static method was removed
+        public: true
+
+    pimcore.http_client:
+        public: true
+        class: \GuzzleHttp\Client
+        factory: ['@Pimcore\Http\ClientFactory', createClient]
+
+    pimcore.rest_client:
+        alias: Pimcore\Tool\RestClient
+        public: true
+
+    Pimcore\Tool\RestClient:
+        public: true
+        arguments:
+            - '@pimcore.http_client'
+
+    # Newsletter Adapter
+    pimcore.document.newsletter.factory.default:
+      class: Pimcore\Document\Newsletter\DefaultAddressSourceAdapterFactory
+      arguments:
+        - 'Pimcore\Document\Newsletter\AddressSourceAdapter\DefaultAdapter'
+
+    pimcore.document.newsletter.factory.csv:
+      class: Pimcore\Document\Newsletter\DefaultAddressSourceAdapterFactory
+      arguments:
+        - 'Pimcore\Document\Newsletter\AddressSourceAdapter\CsvList'
+
+    pimcore.document.newsletter.factory.report:
+      class: Pimcore\Document\Newsletter\ReportAddressSourceAdapterFactory
+      arguments:
+        - '@pimcore.custom_report.adapter.factories'
+
+    pimcore.newsletter.address_source_adapter.factories:
+        public: true
+        class: Symfony\Component\DependencyInjection\ServiceLocator
+        tags: ['container.service_locator']
+
+
+    # CustomReport Adapter
+    pimcore.custom_report.adapter.factory.sql:
+      class: Pimcore\Model\Tool\CustomReport\Adapter\DefaultCustomReportAdapterFactory
+      arguments:
+        - 'Pimcore\Model\Tool\CustomReport\Adapter\Sql'
+
+    pimcore.custom_report.adapter.factory.analytics:
+      class: Pimcore\Model\Tool\CustomReport\Adapter\DefaultCustomReportAdapterFactory
+      arguments:
+        - 'Pimcore\Model\Tool\CustomReport\Adapter\Analytics'
+
+    pimcore.custom_report.adapter.factories:
+        class: Symfony\Component\DependencyInjection\ServiceLocator
+        public: true
+        tags: ['container.service_locator']
+
+
+    # DataObject Consent Service
+    Pimcore\DataObject\Consent\Service:
+        public: true

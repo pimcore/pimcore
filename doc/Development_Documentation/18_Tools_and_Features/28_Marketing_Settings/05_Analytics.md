@@ -29,8 +29,8 @@ Of course you can also inject the listener into a custom service.
 If you want to influence the generated tracking code, you have multiple possibilities to do so. The tracker code is divided
 into multiple code blocks which can be expanded and altered individually. As reference, please see:
 
-* the definition of available blocks in the [Tracker implementation](https://github.com/pimcore/pimcore/blob/master/pimcore/lib/Pimcore/Analytics/Google/Tracker.php#L66)
-* the [templates](https://github.com/pimcore/pimcore/blob/master/pimcore/lib/Pimcore/Bundle/CoreBundle/Resources/views/Analytics/Tracking/Google/Analytics)
+* the definition of available blocks in the [Tracker implementation](https://github.com/pimcore/pimcore/blob/master/lib/Analytics/Google/Tracker.php#L66)
+* the [templates](https://github.com/pimcore/pimcore/blob/master/bundles/CoreBundle/Resources/views/Analytics/Tracking/Google/Analytics)
   which are rendered when generating the tracking code and which define where the content of each blocks is rendered
   
 

@@ -2,23 +2,20 @@
 
 $finder = PhpCsFixer\Finder::create()
     ->in([
-        __DIR__ . '/app',
-        __DIR__ . '/install-profiles',
-        __DIR__ . '/pimcore',
-        __DIR__ . '/update-scripts'
+        __DIR__ . '/bundles',
+        __DIR__ . '/config',
+        __DIR__ . '/lib',
+        __DIR__ . '/models',
+        __DIR__ . '/tests'
     ])
 
     ->exclude([
-        __DIR__ . '/pimcore/tests/_output',
-        __DIR__ . '/pimcore/tests/_support/_generated',
+        __DIR__ . '/tests/_output',
+        __DIR__ . '/tests/_support/_generated',
     ])
 
     // do not fix views
     ->notName('*.html.php')
-
-    // using notPath instead of exclude here as they can be nested (install-profiles)
-    ->notPath('/var\/config/')
-    ->notPath('/var\/classes/')
 ;
 
 // do not enable self_accessor as it breaks pimcore models relying on get_called_class()

@@ -2,7 +2,7 @@
 
 In Pimcore E-Commerce Framework, price systems are responsible for price calculations. The easiest use case is getting
 the price from an attribute in the product object. The shipped 
-[AttributePriceSystem](https://github.com/pimcore/pimcore/blob/master/pimcore/lib/Pimcore/Bundle/EcommerceFrameworkBundle/PriceSystem/AttributePriceSystem.php) 
+[AttributePriceSystem](https://github.com/pimcore/pimcore/blob/master/bundles/EcommerceFrameworkBundle/PriceSystem/AttributePriceSystem.php) 
 implementation does exactly that. 
 
 But there might be more complex use cases where price calculation is some custom logic that needs to be implemented. 
@@ -14,9 +14,9 @@ To accomplish that, you need to create your own price system implementation.
 ##### Implementation of Custom Price Systems
 
 To implement custom price systems, you need to implement the interface 
-[`IPriceSystem`](https://github.com/pimcore/pimcore/blob/master/pimcore/lib/Pimcore/Bundle/EcommerceFrameworkBundle/PriceSystem/IPriceSystem.php) 
+[`IPriceSystem`](https://github.com/pimcore/pimcore/blob/master/bundles/EcommerceFrameworkBundle/PriceSystem/IPriceSystem.php) 
 or extend any shipped implementation from the framework like for example the 
-[`AttributePriceSystem`](https://github.com/pimcore/pimcore/blob/master/pimcore/lib/Pimcore/Bundle/EcommerceFrameworkBundle/PriceSystem/AttributePriceSystem.php). 
+[`AttributePriceSystem`](https://github.com/pimcore/pimcore/blob/master/bundles/EcommerceFrameworkBundle/PriceSystem/AttributePriceSystem.php). 
 
 
 Following example implements a price system that retrieves prices from an extra price table. 

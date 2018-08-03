@@ -28,7 +28,7 @@ pimcore:
 
 ## Implement a Custom Targeting Storage
 
-Basically, a targeting storage is a class implementing the [`TargetingStorageInterface`](https://github.com/pimcore/pimcore/blob/master/pimcore/lib/Pimcore/Targeting/Storage/TargetingStorageInterface.php)
+Basically, a targeting storage is a class implementing the [`TargetingStorageInterface`](https://github.com/pimcore/pimcore/blob/master/lib/Targeting/Storage/TargetingStorageInterface.php)
 which is registered as service. Details how to handle data varies heavily on the underlying storage, but you can take the
 [core storages](https://github.com/pimcore/pimcore/tree/master/pimcore/lib/Pimcore/Targeting/Storage) as starting point.
 
@@ -53,7 +53,7 @@ sure the cookie data isn't being tampered with. The cookie storage delegates the
 | `JWT` (default) | Stores cookie data as JWT signed JSON using the `kernel.secret` parameter to sign and verify the data. This is done to make sure the data can't be altered on the client side to inject malicious data into the targeting engine. |                       |
 | `JSON`          | Stores cookie data as JSON string.                                                                                                                                                                                                | Use only for testing! |
 
-To change the save handler, override the [service definition](https://github.com/pimcore/pimcore/blob/master/pimcore/lib/Pimcore/Bundle/CoreBundle/Resources/config/targeting.yml#L24)
+To change the save handler, override the [service definition](https://github.com/pimcore/pimcore/blob/master/bundles/CoreBundle/Resources/config/targeting.yml#L24)
 and set your own handler.
 
 <div class="alert alert-danger">
@@ -96,7 +96,7 @@ Cons
 ### Redis
 
 Stores data in a redis DB. To use this storage, define a service using the storage implementation as class and add connection
-details to the service definition. An example is shipped with the [core service definitions](https://github.com/pimcore/pimcore/blob/master/pimcore/lib/Pimcore/Bundle/CoreBundle/Resources/config/targeting.yml#L35).
+details to the service definition. An example is shipped with the [core service definitions](https://github.com/pimcore/pimcore/blob/master/bundles/CoreBundle/Resources/config/targeting.yml#L35).
 
 Default session scope timeout: 30 minutes
 

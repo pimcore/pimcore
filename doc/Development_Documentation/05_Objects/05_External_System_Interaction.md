@@ -14,35 +14,49 @@ To keep things simple, we're using simple CLI scripts in the following example, 
 The following example indicates the creation of a new object of the class `myclass`. 
 Put the following script into the file `/bin/example.php` (or any other PHP file).
 ```php
-<?php 
+<?php
 
-include_once(__DIR__ . "/../pimcore/config/startup_cli.php");
+namespace AppBundle\Command;
 
+use Pimcore\Console\AbstractCommand;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Output\OutputInterface;
 use Pimcore\Model\DataObject;
 
-//create single object 
+class AwesomeCommand extends AbstractCommand
+{
+    protected function configure()
+    {
+        $this
+            ->setName('app:awesome')
+            ->setDescription('Awesome command');
+    }
 
-$object = new DataObject\Myclass();
-$object->setKey(1);
-$object->setParentId(1);
-$object->setPublished(true);
+    protected function execute(InputInterface $input, OutputInterface $output)
+    {
+        //create single object
+        $object = new DataObject\Myclass();
+        $object->setKey(1);
+        $object->setParentId(1);
+        $object->setPublished(true);
+        $object->setMyattribute("This is a test");
+        $object->save();
 
-$object->setMyattribute("This is a test");
 
-$object->save();
+        // or create multiple objects
+        for ($i = 0; $i < 60; $i++) {
+            $o = new DataObject\News();
+            $o->setKey(uniqid() . "-" . $i);
+            $o->setParentId(1);
+            $o->setPublished(true);
+            $o->save();
 
-
-// or create multiple objects
-for ($i = 0; $i < 60; $i++) {
-    $o = new DataObject\News();
-    $o->setKey(uniqid() . "-" . $i);
-    $o->setParentId(1);
-    $o->setPublished(true);
-    $o->save();
-    echo("Created object " . $o->getFullPath() . "\n");
+            $output->writeln("Created object " . $o->getFullPath() . "\n");
+        }
+    }
 }
-
 ```
+
 Thus, with very few lines of codes importer scripts can be implemented to populate data objects. Please have a look at 
 Pimcore\Console how to integrate your custom CLI scripts to the [Pimcore console](../19_Development_Tools_and_Details/11_Console_CLI.md).
 

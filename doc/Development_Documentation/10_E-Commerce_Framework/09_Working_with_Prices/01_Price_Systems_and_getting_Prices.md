@@ -81,9 +81,9 @@ pimcore_ecommerce_framework:
 
 ```
 
-> The simplest price system is [`Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\AttributePriceSystem`](https://github.com/pimcore/pimcore/blob/master/pimcore/lib/Pimcore/Bundle/EcommerceFrameworkBundle/PriceSystem/AttributePriceSystem.php) 
+> The simplest price system is [`Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\AttributePriceSystem`](https://github.com/pimcore/pimcore/blob/master/bundles/EcommerceFrameworkBundle/PriceSystem/AttributePriceSystem.php) 
 > which reads the price from an attribute of the product object. For implementing custom price systems have a look at method comments 
-> of [`\Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPriceSystem`](https://github.com/pimcore/pimcore/blob/master/pimcore/lib/Pimcore/Bundle/EcommerceFrameworkBundle/PriceSystem/IPriceSystem.php) 
+> of [`\Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPriceSystem`](https://github.com/pimcore/pimcore/blob/master/bundles/EcommerceFrameworkBundle/PriceSystem/IPriceSystem.php) 
 > and the implementations of the existing price systems. 
 
 
