@@ -37,6 +37,13 @@ class Configuration implements ConfigurationInterface
         $rootNode->append($this->buildDocumentsNode());
 
         $rootNode->children()
+            ->arrayNode('admin_languages')
+                ->prototype('scalar')->end()
+            ->end()
+            ->end()
+        ;
+
+        $rootNode->children()
             ->arrayNode('csrf_protection')
             ->addDefaultsIfNotSet()
             ->children()
