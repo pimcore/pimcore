@@ -344,8 +344,9 @@ class QPay extends AbstractPayment
 
         // restore price object for payment status
         $decimal = Decimal::zero();
-        if ($authorizedData['amount']) {
-            $decimal = Decimal::create($authorizedData['amount']);
+        if ($amount = $authorizedData['amount']) {
+            $amount = str_replace(",", ".", $amount);
+            $decimal = Decimal::create($amount);
         }
         $price = new Price($decimal, new Currency($authorizedData['currency']));
 
