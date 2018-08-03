@@ -284,7 +284,6 @@ class Bootstrap
             @ini_set('display_errors', 'On');
         }
 
-        $debug = true;
         $kernel = new \AppKernel($environment, $debug);
         \Pimcore::setKernel($kernel);
         $kernel->boot();
