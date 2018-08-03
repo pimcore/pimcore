@@ -195,7 +195,7 @@ class Datetime extends Model\DataObject\ClassDefinition\Data
      */
     public function getDataForGrid($data, $object = null, $params = [])
     {
-        if ($data) {
+        if ($data && is_object($data)) {
             return $data->getTimestamp();
         } else {
             return null;
