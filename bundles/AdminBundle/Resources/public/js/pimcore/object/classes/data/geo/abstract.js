@@ -68,11 +68,5 @@ pimcore.object.classes.data.geo.abstract = Class.create(pimcore.object.classes.d
                 incrementValue: 1
             }
         ];
-    },
-
-    checkGoogleMapsAPI: function () {
-        if (!pimcore.settings.google_maps_api_key) {
-            Ext.MessageBox.alert(t("geo_error_title"), t("geo_error_message"));
-        }
     }
 });

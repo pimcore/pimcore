@@ -365,9 +365,7 @@ pimcore.settings.targeting.conditions = (function () {
                     radius
                 ];
 
-                if ('undefined' !== typeof google && pimcore.settings.google_maps_api_key) {
-                    items.push(createSearchButton());
-                }
+                items.push(createSearchButton());
 
                 items.push({
                     xtype: "displayfield",

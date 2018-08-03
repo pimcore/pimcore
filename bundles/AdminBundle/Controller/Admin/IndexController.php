@@ -322,8 +322,7 @@ class IndexController extends AdminController
 
         $settings->getParameters()->add([
             'google_analytics_enabled'      => (bool)$siteConfigProvider->isSiteReportingConfigured(),
-            'google_webmastertools_enabled' => (bool)Google\Webmastertools::isConfigured(),
-            'google_maps_api_key'           => $config->services->google->browserapikey ?: ''
+            'google_webmastertools_enabled' => (bool)Google\Webmastertools::isConfigured()
         ]);
     }
 

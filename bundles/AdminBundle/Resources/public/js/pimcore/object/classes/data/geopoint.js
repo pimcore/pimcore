@@ -22,8 +22,6 @@ pimcore.object.classes.data.geopoint = Class.create(pimcore.object.classes.data.
         this.initData(initData);
 
         this.treeNode = treeNode;
-
-        this.checkGoogleMapsAPI();
     },
 
     getTypeName: function () {
