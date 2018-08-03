@@ -8,6 +8,13 @@ web_profiler:
     toolbar: true
     intercept_redirects: false
 
+doctrine:
+    dbal:
+        connections:
+            default:
+                logging: true
+                profiling: true
+
 monolog:
     handlers:
         main:

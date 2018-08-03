@@ -49,6 +49,8 @@ doctrine:
                 user: '%pimcore_system_config.database.params.username%'
                 password: '%pimcore_system_config.database.params.password%'
                 charset: UTF8MB4
+                logging: false
+                profiling: false
                 default_table_options:
                     charset: UTF8MB4
                     collate: utf8mb4_unicode_ci
