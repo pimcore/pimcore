@@ -142,8 +142,8 @@ class Configuration implements ConfigurationInterface
     {
         $rootNode
             ->children()
-            ->arrayNode('assets')
-            ->addDefaultsIfNotSet()
+                ->arrayNode('assets')
+                ->addDefaultsIfNotSet()
                 ->children()
                     ->arrayNode('image')
                         ->addDefaultsIfNotSet()
@@ -160,17 +160,19 @@ class Configuration implements ConfigurationInterface
                             ->arrayNode('focal_point_detection')
                                 ->addDefaultsIfNotSet()
                                 ->canBeDisabled()
-                                ->end()
                             ->end()
-                        ->end()
                         ->end()
                     ->end()
                     ->arrayNode('versions')
                         ->addDefaultsIfNotSet()
                         ->children()
                             ->booleanNode('use_hardlinks')
-                            ->defaultTrue()
-                            ->end();
+                                ->defaultTrue()
+                            ->end()
+                        ->end()
+                    ->end()
+                ->end()
+            ->end();
     }
 
     /**
