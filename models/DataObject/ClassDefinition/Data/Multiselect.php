@@ -302,16 +302,16 @@ class Multiselect extends Model\DataObject\ClassDefinition\Data
      * @param mixed $data
      * @param bool $omitMandatoryCheck
      *
-     * @throws \Exception
+     * @throws Model\Element\ValidationException
      */
     public function checkValidity($data, $omitMandatoryCheck = false)
     {
         if (!$omitMandatoryCheck and $this->getMandatory() and empty($data)) {
-            throw new \Exception('Empty mandatory field [ '.$this->getName().' ]');
+            throw new Model\Element\ValidationException('Empty mandatory field [ '.$this->getName().' ]');
         }
 
         if (!is_array($data) and !empty($data)) {
-            throw new \Exception('Invalid multiselect data');
+            throw new Model\Element\ValidationException('Invalid multiselect data');
         }
     }
 
