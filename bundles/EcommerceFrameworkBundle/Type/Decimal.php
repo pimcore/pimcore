@@ -26,7 +26,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\Type;
 class Decimal
 {
     const INTEGER_NUMBER_REGEXP = '/^([+\-]?)\d+$/';
-    const DECIMAL_NUMBER_REGEXP = '/^([+\-]?)(\d+)\.(\d+)$/';
+
 
     /**
      * @var int
@@ -189,13 +189,31 @@ class Decimal
             // no decimals -> add zeroes until we have the expected amount
             // e.g. 1234, scale 4 = 12340000
             $result = (int)($amount . str_repeat('0', $scale));
-        } elseif (1 === preg_match(self::DECIMAL_NUMBER_REGEXP, $amount, $captures)) {
-            // decimal part is lower/equals than scale - add zeroes as needed and concat it with the integer part
-            // e.g. 123.45 at scale 4 -> 123 (integer) . 4500 (zero padded decimal part) => 1234500
-            if (strlen($captures[3]) <= $scale) {
-                $fractionalPart = str_pad($captures[3], $scale, '0', STR_PAD_RIGHT);
-                $result         = (int)($captures[1] . $captures[2] . $fractionalPart);
+        } else {
+            $dotPos = strrpos($amount, '.');
+            $commaPos = strrpos($amount, ',');
+            $sep = (($dotPos > $commaPos) && $dotPos) ? $dotPos :
+                ((($commaPos > $dotPos) && $commaPos) ? $commaPos : false);
+
+            if($sep) {
+                $sign = $amount < 0 ? "-" : "+";
+                $part = preg_replace("/[^0-9]/", "", substr($amount, 0, $sep));
+                $fractionalPart = preg_replace("/[^0-9]/", "", substr($amount, $sep+1, strlen($amount)));
+
+
+                if (strlen($fractionalPart) <= $scale) {
+                    // decimal part is lower/equals than scale - add zeroes as needed and concat it with the integer part
+                    // e.g. 123.45 at scale 4 -> 123 (integer) . 4500 (zero padded decimal part) => 1234500
+                    $fractionalPart = str_pad($fractionalPart, $scale, '0', STR_PAD_RIGHT);
+                    $result = (int)($sign . $part . $fractionalPart);
+                } else {
+                    // if scale is smaller than decimal part, apply rounding
+                    $result = (float)($sign . $part . "." . $fractionalPart) * pow(10, $scale);
+                    $result = static::toIntValue($result, $roundingMode);
+                }
+
             }
+
         }
 
         if (null !== $result) {
