@@ -737,6 +737,10 @@
     background: url(/bundles/pimcoreadmin/img/flat-color-icons/globe.svg) center center no-repeat !important;
 }
 
+.pimcore_icon_open_window {
+    background: url(/bundles/pimcoreadmin/img/flat-color-icons/open_window.svg) center center no-repeat !important;
+}
+
 .pimcore_icon_overwrite {
     background: url(/bundles/pimcoreadmin/img/flat-color-icons/low_priority.svg) center center no-repeat !important;
 }

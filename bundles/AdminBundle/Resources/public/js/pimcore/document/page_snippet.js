@@ -215,39 +215,18 @@ pimcore.document.page_snippet = Class.create(pimcore.document.document, {
 
             buttons.push(this.getTranslationButtons());
 
-            buttons.push("-");
-            buttons.push({
-                tooltip: t("open"),
-                iconCls: "pimcore_icon_cursor",
-                scale: "medium",
-                handler: function () {
-                    var date = new Date();
-                    var link = this.data.path + this.data.key;
-                    var linkParams = [];
+            if(this.data.type == "page") {
+                buttons.push("-");
+                buttons.push({
+                    tooltip: t("open_in_new_window"),
+                    iconCls: "pimcore_icon_open_window",
+                    scale: "medium",
+                    handler: function () {
+                        window.open(this.data.url);
+                    }.bind(this)
+                });
+            }
 
-                    linkParams.push("pimcore_preview=true");
-                    linkParams.push("_dc=" + date.getTime());
-
-                    // add target group parameter if available
-                    if(this["edit"] && this.edit["targetGroup"]) {
-                        if(this.edit.targetGroup && this.edit.targetGroup.getValue()) {
-                            linkParams.push("_ptg=" + this.edit.targetGroup.getValue());
-                        }
-                    }
-
-                    if(linkParams.length) {
-                        link += "?" + linkParams.join("&");
-                    }
-
-                    if(this.isDirty()) {
-                        this.saveToSession(function () {
-                            window.open(link);
-                        });
-                    } else {
-                        window.open(link);
-                    }
-                }.bind(this)
-            });
             buttons.push("-");
             buttons.push({
                 xtype: 'tbtext',
