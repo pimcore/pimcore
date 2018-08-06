@@ -1,4 +1,4 @@
-# pimcore, licenses used by included 3rd party libraries
+# License overview of included 3rd party libraries
 
 The Pimcore project is licensed under the terms of the [GPLv3](LICENSE.md).
 
