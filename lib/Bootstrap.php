@@ -215,6 +215,7 @@ class Bootstrap
         // configure PHP's error logging
         $resolveConstant('PIMCORE_PHP_ERROR_REPORTING', E_ALL & ~E_NOTICE & ~E_STRICT);
         $resolveConstant('PIMCORE_PHP_ERROR_LOG', PIMCORE_LOG_DIRECTORY . '/php.log');
+        $resolveConstant('PIMCORE_KERNEL_CLASS', '\AppKernel');
     }
 
     public static function autoload()
@@ -284,7 +285,23 @@ class Bootstrap
             @ini_set('display_errors', 'On');
         }
 
-        $kernel = new \AppKernel($environment, $debug);
+        if (defined('PIMCORE_KERNEL_CLASS')) {
+            $kernelClass = PIMCORE_KERNEL_CLASS;
+        }
+        else {
+            $kernelClass = '\AppKernel';
+        }
+
+        if (!class_exists($kernelClass)) {
+            throw new \InvalidArgumentException(sprintf('Defined Kernel Class %s not found', $kernelClass));
+        }
+
+        if (!is_subclass_of($kernelClass, Kernel::class)) {
+            throw new \InvalidArgumentException(sprintf('Defined Kernel Class %s needs to extend the \Pimcore\Kernel Class', $kernelClass));
+        }
+
+
+        $kernel = new $kernelClass($environment, $debug);
         \Pimcore::setKernel($kernel);
         $kernel->boot();
 
