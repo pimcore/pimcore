@@ -15,6 +15,7 @@
 namespace Pimcore\Bundle\CoreBundle\EventListener\Frontend;
 
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\PimcoreContextAwareTrait;
+use Pimcore\Bundle\CoreBundle\EventListener\Traits\PreviewRequestTrait;
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\ResponseInjectionTrait;
 use Pimcore\Http\Request\Resolver\EditmodeResolver;
 use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
@@ -26,6 +27,7 @@ class TagManagerListener
 {
     use PimcoreContextAwareTrait;
     use ResponseInjectionTrait;
+    use PreviewRequestTrait;
 
     /**
      * @var EditmodeResolver
@@ -84,9 +86,7 @@ class TagManagerListener
             return;
         }
 
-        // It's standard industry practice to exclude tracking if the request includes the header 'X-Purpose:preview'
-        $serverVars = $event->getRequest()->server;
-        if ($serverVars->get('HTTP_X_PURPOSE') == 'preview') {
+        if($this->isPreviewRequest($request)) {
             return;
         }
 
