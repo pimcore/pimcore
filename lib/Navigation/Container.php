@@ -283,6 +283,24 @@ class Container implements \RecursiveIterator, \Countable
     }
 
     /**
+     * Returns true if container contains any visible page
+     *
+     * @return bool whether cintainer has any visible page
+     */
+    public function hasVisiblePages()
+    {
+        if ($this->hasPages()) {
+            foreach ($this->getPages() as $page) {
+                if ($page->isVisible()) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    /**
      * Returns a child page matching $property == $value or
      * preg_match($value, $property), or null if not found
      *
