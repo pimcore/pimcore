@@ -84,15 +84,17 @@ class Link extends Model\Document\Tag
             $prefix = '';
             $suffix = '';
             $hideText = false;
-            if( array_key_exists('textPrefix', $this->options) || array_key_exists('textSuffix', $this->options) ){
+            if(array_key_exists('textPrefix', $this->options)){
                 $prefix = $this->options['textPrefix'];
                 unset($this->options['textPrefix']);
-
+            }
+            
+            if(array_key_exists('textSuffix', $this->options)){
                 $suffix = $this->options['textSuffix'];
                 unset($this->options['textSuffix']);
             }
 
-            if( $this->options['hideText'] == true ){
+            if( isset($this->options['noText']) && $this->options['noText'] == true ){
                 $hideText = true;
             }
 
