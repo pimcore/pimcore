@@ -499,8 +499,6 @@ Ext.onReady(function () {
                 main_domain: pimcore.settings.main_domain,
                 domains: domains,
                 timezone: pimcore.settings.timezone,
-                classesAmount: pimcore.globalmanager.get("object_types_store").getCount(),
-                documentTypesAmount: pimcore.globalmanager.get("document_types_store").getCount(),
                 websiteLanguages: pimcore.settings.websiteLanguages.join(',')
             }
         }).done(function(data) {

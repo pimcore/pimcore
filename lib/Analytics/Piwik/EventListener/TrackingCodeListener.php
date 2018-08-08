@@ -19,6 +19,7 @@ namespace Pimcore\Analytics\Piwik\EventListener;
 
 use Pimcore\Analytics\Piwik\Tracker;
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\PimcoreContextAwareTrait;
+use Pimcore\Bundle\CoreBundle\EventListener\Traits\PreviewRequestTrait;
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\ResponseInjectionTrait;
 use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
 use Pimcore\Tool;
@@ -30,6 +31,7 @@ class TrackingCodeListener implements EventSubscriberInterface
 {
     use ResponseInjectionTrait;
     use PimcoreContextAwareTrait;
+    use PreviewRequestTrait;
 
     /**
      * @var Tracker
@@ -84,9 +86,7 @@ class TrackingCodeListener implements EventSubscriberInterface
             return;
         }
 
-        // it's standard industry practice to exclude tracking if the request includes
-        // the header 'X-Purpose:preview'
-        if ($request->server->get('HTTP_X_PURPOSE') === 'preview') {
+        if($this->isPreviewRequest($request)) {
             return;
         }
 
