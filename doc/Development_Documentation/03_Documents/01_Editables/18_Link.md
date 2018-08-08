@@ -14,7 +14,7 @@ such as: `class`, `target`, `id`, `style`, `accesskey`, `name`, `title` and addi
 | `reload` | boolean  | Set to true to reload the page in editmode after changing the state.    |
 | `textPrefix` | string  | Add an icon or something else before Text    |
 | `textSuffix` | string  | Add an icon or something else after Text    |
-| `hideText` | boolean  | If you need only the <a> tag without text (or only with an textSuffix/TextPrefix)    |
+| `noText` | boolean  | If you need only the <a> tag without text (or only with an textSuffix/TextPrefix)    |
 
 ## Methods
 
