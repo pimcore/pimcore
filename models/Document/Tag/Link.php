@@ -80,6 +80,25 @@ class Link extends Model\Document\Tag
         $url = $this->getHref();
 
         if (strlen($url) > 0) {
+
+            $prefix = '';
+            $suffix = '';
+            $noText = false;
+            
+            if(array_key_exists('textPrefix', $this->options)){
+                $prefix = $this->options['textPrefix'];
+                unset($this->options['textPrefix']);
+            }
+            
+            if(array_key_exists('textSuffix', $this->options)){
+                $suffix = $this->options['textSuffix'];
+                unset($this->options['textSuffix']);
+            }
+
+            if( isset($this->options['noText']) && $this->options['noText'] == true ){
+                $noText = true;
+            }
+
             // add attributes to link
             $attribs = [];
             if (is_array($this->options)) {
@@ -146,7 +165,8 @@ class Link extends Model\Document\Tag
                 $attribs[] = $this->data['attributes'];
             }
 
-            return '<a href="'.$url.'" '.implode(' ', $attribs).'>'.htmlspecialchars($this->data['text']).'</a>';
+
+            return '<a href="'.$url.'" '.implode(' ', $attribs).'>' . $prefix . ($noText ? '' : htmlspecialchars($this->data['text']) ) . $suffix . '</a>';
         }
 
         return '';
