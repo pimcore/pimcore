@@ -127,6 +127,34 @@ The manual mode offers you the possibility to deal with block the way you like, 
 <?php $block->end(); ?>
 ```
 
+### Using Manual Mode with custom button position
+
+If you want to wrap buttons in a div or change the Position.
+
+```php
+<?php $block = $this->block("gridblock", ["manual" => true])->start(); ?>
+<table>
+    <tr>
+        <?php while ($block->loop()) { ?>
+            <?php $block->blockConstruct(); ?>
+                <td customAttribute="<?= $this->input("myInput")->getData() ?>">
+                    <?php $block->blockStart('false'); ?>
+                        <div style="background-color: #fc0; margin-bottom: 10px; padding: 5px; border: 1px solid black;">
+                            <?php $block->blockControls(); ?>
+                        </div>
+                        <div style="width:200px; height:200px;border:1px solid black;">
+                            <?= $this->input("myInput"); ?>
+                        </div>
+                    <?php $block->blockEnd(); ?>
+                </td>
+            <?php $block->blockDestruct(); ?>
+        <?php } ?>
+    </tr>
+</table>
+<?php $block->end(); ?>
+```
+
+
 ### Accessing Data Within a Block Element
 
 Bricks and structure refer to the CMS demo (content/default template).

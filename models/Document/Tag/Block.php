@@ -247,23 +247,33 @@ class Block extends Model\Document\Tag implements BlockInterface
 
     /**
      * Is called evertime a new iteration starts (new entry of the block while looping)
+     * @param bool $showControls
      */
-    public function blockStart()
+    public function blockStart( $showControls = true )
     {
-        $attributes = [
-            'data-name'      => $this->getName(),
-            'data-real-name' => $this->getRealName(),
-        ];
+
+        $attr = $this->getBlockAttributes();
 
         $outerAttributes = [
             'key' => $this->indices[$this->current]
         ];
-
-        $attr  = HtmlUtils::assembleAttributeString($attributes);
         $oAttr = HtmlUtils::assembleAttributeString($outerAttributes);
 
         // outer element
         $this->outputEditmode('<div class="pimcore_block_entry" ' . $oAttr . ' ' . $attr . '>');
+
+        if( $showControls ){
+            $this->blockControls();
+        }
+
+    }
+
+    /**
+     * Custom position of button controls between blockStart -> blockEnd
+     */
+    public function blockControls(){
+
+        $attr = $this->getBlockAttributes();
 
         $this->outputEditmode('<div class="pimcore_block_buttons" ' . $attr . '>');
 
@@ -389,5 +399,18 @@ class Block extends Model\Document\Tag implements BlockInterface
         }
 
         return $list;
+    }
+
+    /**
+     * @return string
+     */
+    private function getBlockAttributes(): string
+    {
+        $attributes = [
+            'data-name' => $this->getName(),
+            'data-real-name' => $this->getRealName(),
+        ];
+
+        return HtmlUtils::assembleAttributeString($attributes);
     }
 }
