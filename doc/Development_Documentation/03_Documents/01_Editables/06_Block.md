@@ -140,7 +140,7 @@ If you want to wrap buttons in a div or change the Position.
                 <td customAttribute="<?= $this->input("myInput")->getData() ?>">
                     <?php $block->blockStart('false'); ?>
                         <div style="background-color: #fc0; margin-bottom: 10px; padding: 5px; border: 1px solid black;">
-                            <?php $block->showControls(); ?>
+                            <?php $block->blockControls(); ?>
                         </div>
                         <div style="width:200px; height:200px;border:1px solid black;">
                             <?= $this->input("myInput"); ?>
