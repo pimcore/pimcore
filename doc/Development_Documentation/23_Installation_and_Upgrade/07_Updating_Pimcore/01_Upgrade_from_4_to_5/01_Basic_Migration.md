@@ -5,13 +5,7 @@ to the Pimcore 4 compatibility bridge or the Symfony Stack.
 
 - **Backup your system!**
 
-- Download the [Pimcore 5.0.1 build zip file](https://pimcore.com/download-5/pimcore-5.0.1.zip).
-
-    > **IMPORTANT**: make sure you use the 5.0.1 zip file and not the latest release build as you may miss important update
-      scripts if directly updating to the latest build. After migrating the installation to this zip file, you can use the 
-      web updater to update to the latest version.
-      If you want to migrate directly to the latest build you can do so, but you must take care of running any migration
-      scripts which were added after build 131.
+- Replace your `composer.json` with [this one](https://github.com/pimcore/skeleton/blob/master/composer.json) and re-add your custom dependencies. 
 
 - The [Pimcore CLI](https://github.com/pimcore/pimcore-cli) provides a set of commands to ease the migration. It is able
   to do the following:
@@ -56,16 +50,20 @@ to the Pimcore 4 compatibility bridge or the Symfony Stack.
 
 - At this point, the basic application should work again. Please try to run `bin/console` to see if the console works
 
-- The [pimcore-4-to-5.php](https://github.com/pimcore/pimcore/blob/master/update-scripts/pimcore-4-to-5.php) script contains
-  all update scripts which were introduced during Pimcore 5 development and are needed when migrating from Pimcore 4. When
-  using the Pimcore CLI, you should find the script in a `update-scripts` directory, otherwise please take the one provided 
-  in the ZIP file. To execute the script, use the following command (making a backup at this stage is strongly recommended):
+- The [pimcore-migrations-40-to-54.php](https://gist.github.com/brusch/c3e572947a7a7e8523e18e9787cf88c3) script contains
+  all migrations which were introduced from Pimcore 5.0 to 5.4 and are needed when migrating from Pimcore 4. 
+  To execute the script, use the following command (making a backup at this stage is strongly recommended):
   
   ```bash
-  $ bin/console pimcore:run-script -c update-scripts/pimcore-4-to-5.php
+  $ php pimcore-migrations-40-to-54.php
   ```
   
-- Run `composer update` once again to update the autoloaded and class maps
+- Execute all core migrations from 5.4.x to the latest version, by running the following command: 
+
+  ```bash
+  $ ./bin/console pimcore:migrations:migrate -s pimcore_core 
+  ```
+  
+- Run `composer update` once again to update the autoloader and class maps
 - The admin interface of your system should now work again and you can proceed to [migrate your application code](./README.md). 
-- Use the web updater to update to the latest stable build
 - Update your [.gitignore](https://github.com/pimcore/pimcore/blob/master/.gitignore)
