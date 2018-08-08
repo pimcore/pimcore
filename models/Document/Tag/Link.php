@@ -83,7 +83,8 @@ class Link extends Model\Document\Tag
 
             $prefix = '';
             $suffix = '';
-            $hideText = false;
+            $noText = false;
+            
             if(array_key_exists('textPrefix', $this->options)){
                 $prefix = $this->options['textPrefix'];
                 unset($this->options['textPrefix']);
@@ -95,7 +96,7 @@ class Link extends Model\Document\Tag
             }
 
             if( isset($this->options['noText']) && $this->options['noText'] == true ){
-                $hideText = true;
+                $noText = true;
             }
 
             // add attributes to link
@@ -165,7 +166,7 @@ class Link extends Model\Document\Tag
             }
 
 
-            return '<a href="'.$url.'" '.implode(' ', $attribs).'>' . $prefix . ($hideText ? '' : htmlspecialchars($this->data['text']) ) . $suffix . '</a>';
+            return '<a href="'.$url.'" '.implode(' ', $attribs).'>' . $prefix . ($noText ? '' : htmlspecialchars($this->data['text']) ) . $suffix . '</a>';
         }
 
         return '';
