@@ -77,8 +77,8 @@ string in the *API Integration* section:
 If you want to influence the generated tracking code, you have multiple possibilities to do so. The tracker code is divided
 into multiple code blocks which can be expanded and altered individually. As reference, please see:
 
-* the definition of available blocks in the [Tracker implementation](https://github.com/pimcore/pimcore/blob/master/pimcore/lib/Pimcore/Analytics/Piwik/Tracker.php#L63)
-* the [template](https://github.com/pimcore/pimcore/blob/master/pimcore/lib/Pimcore/Bundle/CoreBundle/Resources/views/Analytics/Tracking/Piwik/trackingCode.html.twig)
+* the definition of available blocks in the [Tracker implementation](https://github.com/pimcore/pimcore/blob/master/lib/Analytics/Piwik/Tracker.php#L63)
+* the [template](https://github.com/pimcore/pimcore/blob/master/bundles/CoreBundle/Resources/views/Analytics/Tracking/Piwik/trackingCode.html.twig)
   which defines where the content of each blocks is rendered
 
 ### Adding code to a block

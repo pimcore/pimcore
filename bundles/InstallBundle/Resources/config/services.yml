@@ -1,0 +1,14 @@
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: false
+
+    Pimcore\Bundle\InstallBundle\Command\:
+        resource: '../../Command'
+        public: true
+        tags: ['console.command']
+
+    Pimcore\Composer\PackageInfo: ~
+
+    Pimcore\Bundle\InstallBundle\Installer: ~
