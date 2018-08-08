@@ -263,7 +263,7 @@ class Block extends Model\Document\Tag implements BlockInterface
         $this->outputEditmode('<div class="pimcore_block_entry" ' . $oAttr . ' ' . $attr . '>');
 
         if( $showControls ){
-            $this->showControls();
+            $this->blockControls();
         }
 
     }
@@ -271,7 +271,7 @@ class Block extends Model\Document\Tag implements BlockInterface
     /**
      * Custom position of button controls between blockStart -> blockEnd
      */
-    public function showControls(){
+    public function blockControls(){
 
         $attr = $this->getBlockAttributes();
 
