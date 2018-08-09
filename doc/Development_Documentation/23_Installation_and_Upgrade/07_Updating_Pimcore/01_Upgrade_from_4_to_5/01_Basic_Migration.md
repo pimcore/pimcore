@@ -63,4 +63,4 @@ You can use `--no-scripts` to install dependencies and then iterate through erro
   
 - Run `composer update` once again to update the autoloader and class maps
 - The admin interface of your system should now work again and you can proceed to [migrate your application code](./README.md). 
-- Update your [.gitignore](https://github.com/pimcore/pimcore/blob/master/.gitignore)
+- Update your [.gitignore](https://github.com/pimcore/skeleton/blob/master/.gitignore)
