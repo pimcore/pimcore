@@ -214,6 +214,7 @@
   "languagemultiselect": "Languages (Multiselect)",
   "yes": "Yes",
   "no": "No",
+  "force": "Force",
   "allow_trailing_slash_for_documents": "Allow trailing Slash in URL",
   "localizedfields": "Localized Fields",
   "new_folder": "New Folder",
