@@ -215,6 +215,7 @@
     "languagemultiselect": "Sprachen (Mehrfachauswahl)",
     "yes": "Ja",
     "no": "Nein",
+    "force": "Erzwingen",
     "allow_trailing_slash_for_documents": "Erlaube abschließenden Slash bei Dokumenten im Browser",
     "localizedfields": "Lokalisierte Felder",
     "new_folder": "Neuen Ordner",

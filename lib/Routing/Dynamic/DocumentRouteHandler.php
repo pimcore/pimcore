@@ -303,13 +303,14 @@ class DocumentRouteHandler implements DynamicRouteHandlerInterface
                     if ($redirectTargetUrl !== '/' && substr($redirectTargetUrl, -1) === '/') {
                         $redirectTargetUrl = rtrim($redirectTargetUrl, '/');
                     }
+                }elseif ($config->documents->allowtrailingslash === 'force'){
+                    $end = substr($redirectTargetUrl, -1);
+                    if ($redirectTargetUrl !== '/' && substr($redirectTargetUrl, -1) !== '/') {
+                        $redirectTargetUrl = $redirectTargetUrl . '/';
+                    }
                 }
             }
 
-            // only allow the original key of a document to be the URL (lowercase/uppercase)
-            if ($redirectTargetUrl !== rawurldecode($document->getFullPath())) {
-                $redirectTargetUrl = $document->getFullPath();
-            }
         }
 
         if (null !== $redirectTargetUrl && $redirectTargetUrl !== $context->getOriginalPath()) {

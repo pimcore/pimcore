@@ -781,7 +781,8 @@ pimcore.settings.system = Class.create({
                                 value: this.getValue("documents.allowtrailingslash"),
                                 store: [
                                     ["", t("yes")],
-                                    ["no", t("no")]
+                                    ["no", t("no")],
+                                    ["force", t("force")]
                                 ],
                                 mode: "local",
                                 editable: false,
