@@ -6,6 +6,10 @@ to the Pimcore 4 compatibility bridge or the Symfony Stack.
 - **Backup your system!**
 
 - Replace your `composer.json` with [this one](https://github.com/pimcore/skeleton/blob/master/composer.json) and re-add your custom dependencies. 
+  
+- Run `COMPOSER_MEMORY_LIMIT=3G composer update`
+If you encounter errors, please fix them until the command works properly.
+You can use `--no-scripts` to install dependencies and then iterate through errors in subsequent calls to save some time.
 
 - The [Pimcore CLI](https://github.com/pimcore/pimcore-cli) provides a set of commands to ease the migration. It is able
   to do the following:
@@ -22,7 +26,9 @@ to the Pimcore 4 compatibility bridge or the Symfony Stack.
   - move plugins folder to /legacy/plugins
   - update `system.php` to be ready for Pimcore 5
   
-- A simpler [migration.sh](./migration.sh) script handles basic file moving and can be adapted to your needs
+  Just follow [these instructions](https://github.com/pimcore/pimcore-cli/blob/master/doc/pimcore_5_migration.md).
+  
+- Optionally (if you can't use pimcore-cli from above) a simpler [migration.sh](./migration.sh) script can handle basic file moving for you and can be adapted to your needs
 - Refactor `constants.php` and move it to `app/constants.php`
 - Refactor `startup.php` and move content either to `AppKernel::boot()` or `AppBundle::boot()`
 
@@ -38,16 +44,6 @@ to the Pimcore 4 compatibility bridge or the Symfony Stack.
 
 - Change document root of your webserver to `/web` directory - document root must not be project root anymore
 
-- Update your `composer.json` to include all dependencies and settings from Pimcore's `composer.json`. The Pimcore CLI will
-  use Pimcore's `composer.json` and back up your existing one. If you have any custom dependencies or settings please make
-  sure to re-add them to the `composer.json`.
-  Alternatively, you can add a file named `composer.local.json` only including your custom dependencies. It will be merged
-  with `composer.json` dynamically during composer operations thanks to the `wikimedia/composer-merge-plugin` composer plugin.
-  If you do so, please make sure you remove `composer.local.json` from the `.gitignore` file.
-
-- Run `composer update` to install new dependencies. If you encounter errors, please fix them until the command works properly.
-  You can use `--no-scripts` to install dependencies and then iterate through errors in subsequent calls to save some time.
-
 - At this point, the basic application should work again. Please try to run `bin/console` to see if the console works
 
 - The [pimcore-migrations-40-to-54.php](https://gist.github.com/brusch/c3e572947a7a7e8523e18e9787cf88c3) script contains
@@ -55,6 +51,7 @@ to the Pimcore 4 compatibility bridge or the Symfony Stack.
   To execute the script, use the following command (making a backup at this stage is strongly recommended):
   
   ```bash
+  $ wget https://gist.githubusercontent.com/brusch/c3e572947a7a7e8523e18e9787cf88c3/raw/da97304ab59a7220ef41e1c09346a5370dda898c/pimcore-migrations-40-to-54.php -O  pimcore-migrations-40-to-54.php 
   $ php pimcore-migrations-40-to-54.php
   ```
   
@@ -66,4 +63,4 @@ to the Pimcore 4 compatibility bridge or the Symfony Stack.
   
 - Run `composer update` once again to update the autoloader and class maps
 - The admin interface of your system should now work again and you can proceed to [migrate your application code](./README.md). 
-- Update your [.gitignore](https://github.com/pimcore/pimcore/blob/master/.gitignore)
+- Update your [.gitignore](https://github.com/pimcore/skeleton/blob/master/.gitignore)

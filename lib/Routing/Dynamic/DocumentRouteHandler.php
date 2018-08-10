@@ -307,7 +307,7 @@ class DocumentRouteHandler implements DynamicRouteHandlerInterface
             }
 
             // only allow the original key of a document to be the URL (lowercase/uppercase)
-            if ($redirectTargetUrl !== rawurldecode($document->getFullPath())) {
+            if ($redirectTargetUrl !== '/' && rtrim($redirectTargetUrl, '/') !== rawurldecode($document->getFullPath())) {
                 $redirectTargetUrl = $document->getFullPath();
             }
         }

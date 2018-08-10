@@ -45,6 +45,15 @@ http://opensource.org/licenses/mit-license.php
 License: Creative Commons Attribution 2.5 License 
 http://www.famfamfam.com/lab/icons/silk/
 
+### Flat Color Icons by Icons8
+License: MIT & Good Boy License
+https://github.com/icons8/flat-color-icons/blob/master/LICENSE.md
+
+### Twitter Emoji (Twemoji)
+License: MIT & CC-BY 4.0
+https://twemoji.twitter.com/
+
+
 ## Libraries dynamically referenced via Composer
 
 Run `composer license` in your project to get the latest licensing info about all dependencies. 

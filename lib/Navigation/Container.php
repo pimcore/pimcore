@@ -285,7 +285,7 @@ class Container implements \RecursiveIterator, \Countable
     /**
      * Returns true if container contains any visible page
      *
-     * @return bool whether cintainer has any visible page
+     * @return bool whether container has any visible page
      */
     public function hasVisiblePages()
     {
