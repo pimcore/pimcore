@@ -3,7 +3,7 @@
 Sometimes it is necessary to add additional configuration options to the PDF processing configuration in the Pimcore backend UI - 
 for example when creating PDF/X conform PDFs with PDF Reactor.
 
-![Config Options](img/configs.jpg)
+![Config Options](../img/configs.jpg)
 
 But also for other use cases, it might be necessary to hook into the PDF creation process and modify the configuration before
 creating the file.  

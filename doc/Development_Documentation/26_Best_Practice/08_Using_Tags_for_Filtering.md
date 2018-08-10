@@ -1,10 +1,10 @@
 # Using Pimcore Tags for Filtering in Frontend
 
-The [Pimcore Tags](./18_Tools_and_Features/09_Tags.md) functionality is primarily designed
+The [Pimcore Tags](../18_Tools_and_Features/09_Tags.md) functionality is primarily designed
  as Pimcore Backend UI functionality for tagging and filtering elements. Nevertheless sometimes it can be quite useful to implement custom frontend filtering functionality based on the Pimcore
  Tags. 
  
- ![Tags Assignment](img/tags_assignment.png)
+ ![Tags Assignment](../img/tags_assignment.png)
  
  
 
@@ -17,7 +17,7 @@ Preparation of data for your template strongly depends on our template and how y
  
 For example you can build a tag tree based on [bootstrap treeview](https://github.com/jonmiles/bootstrap-treeview/). 
 
-![Tags Filter in Frontend](img/frontend-tags-filter.jpg)
+![Tags Filter in Frontend](../img/frontend-tags-filter.jpg)
  
  
 To do so you can use something similar to following snippets: 
