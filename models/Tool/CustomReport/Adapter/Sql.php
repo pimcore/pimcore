@@ -198,10 +198,10 @@ class Sql extends AbstractAdapter
                             ];
                             
                             if ($type == 'date') {
-                                    if ($operator == 'eq') {
-                                        $condition[] = $db->quoteIdentifier($filter['property']) . ' BETWEEN FROM_UNIXTIME(' . $db->quote($value) . ') AND FROM_UNIXTIME(' . $db->quote($maxValue) . ')';
-                                        break;
-                                    }
+                                if ($operator == 'eq') {
+                                    $condition[] = $db->quoteIdentifier($filter['property']) . ' BETWEEN FROM_UNIXTIME(' . $db->quote($value) . ') AND FROM_UNIXTIME(' . $db->quote($maxValue) . ')';
+                                    break;
+                                }
                                 $condition[] = $db->quoteIdentifier($filter['property']) . ' ' . $compMapping[$operator] . ' FROM_UNIXTIME(' . $db->quote($value) . ')';
                                 break;
                             }
