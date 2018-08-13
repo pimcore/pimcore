@@ -42,6 +42,7 @@
     "ext-pdo_mysql": "*",
     "ext-zip": "*",
     "ext-zlib": "*",
+    "pimcore/core-version": "5.4.2",
     "amnuts/opcache-gui": "~2",
     "cache/tag-interop": "^1",
     "colinmollenhour/credis": "1.8.*",
