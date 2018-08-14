@@ -191,16 +191,20 @@ class Sql extends AbstractAdapter
                         case 'lt':
                         case 'gt':
                         case 'eq':
-                            if ($type == 'date') {
-                                $condition[] = $db->quoteIdentifier($filter['property']) . ' BETWEEN ' . $db->quote($value) . ' AND ' . $db->quote($maxValue);
-                                break;
-                            }
-
                             $compMapping = [
                                 'lt' => '<',
                                 'gt' => '>',
                                 'eq' => '='
                             ];
+                            
+                            if ($type == 'date') {
+                                if ($operator == 'eq') {
+                                    $condition[] = $db->quoteIdentifier($filter['property']) . ' BETWEEN FROM_UNIXTIME(' . $db->quote($value) . ') AND FROM_UNIXTIME(' . $db->quote($maxValue) . ')';
+                                    break;
+                                }
+                                $condition[] = $db->quoteIdentifier($filter['property']) . ' ' . $compMapping[$operator] . ' FROM_UNIXTIME(' . $db->quote($value) . ')';
+                                break;
+                            }
 
                             $condition[] = $db->quoteIdentifier($filter['property']) . ' ' . $compMapping[$operator] . ' ' . $db->quote($value);
                             break;
