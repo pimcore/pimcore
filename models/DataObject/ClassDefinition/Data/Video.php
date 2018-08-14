@@ -477,8 +477,6 @@ class Video extends Model\DataObject\ClassDefinition\Data
                         $video->setDescription($data['description']);
                         if (is_int($id = $data['data'])) {
                             if ($idMapper) {
-                                // @TODO check implementation of id mapping
-                                throw new \Exception('cannot get object video data from web service import - id mapping is not implemented');
                                 $id = $idMapper->getMappedId( 'asset', $id);
                             }
                             if( $asset = Asset::getById($id)) {
@@ -493,8 +491,6 @@ class Video extends Model\DataObject\ClassDefinition\Data
                         }
                         if (is_int($id = $data['poster'])) {
                             if ($idMapper) {
-                                // @TODO check implementation of id mapping
-                                throw new \Exception('cannot get object video data from web service import - id mapping is not implemented');
                                 $id = $idMapper->getMappedId( 'asset', $id);
                             }
                             if( $poster = Asset::getById($id)) {
