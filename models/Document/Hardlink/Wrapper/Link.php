@@ -26,4 +26,32 @@ use Pimcore\Model\Element;
 class Link extends Model\Document\Link implements Model\Document\Hardlink\Wrapper\WrapperInterface
 {
     use Model\Document\Hardlink\Wrapper, Element\ChildsCompatibilityTrait;
+
+    public function getHref()
+    {
+        if($this->getLinktype() ==  'internal' && $this->getInternalType() == 'document') {
+            if(strpos($this->getObject()->getRealFullPath(), $this->getHardLinkSource()->getSourceDocument()->getRealFullPath() . '/') === 0
+                || $this->getHardLinkSource()->getSourceDocument()->getRealFullPath() === $this->getObject()->getRealFullPath()
+            ) {
+                // link target is child of hardlink source
+                $c = Model\Document\Hardlink\Service::wrap($this->getObject());
+                if ($c) {
+                    $hardLink = $this->getHardLinkSource();
+                    $c->setHardLinkSource($hardLink);
+                    $c->setSourceDocument($this->getObject());
+
+                    if($hardLink->getSourceDocument()->getRealFullpath() == $c->getRealFullPath()) {
+                        $c->setPath($hardLink->getPath());
+                        $c->setKey($hardLink->getKey());
+                    } else {
+                        $c->setPath(preg_replace('@^' . preg_quote($hardLink->getSourceDocument()->getRealFullpath()) . '@', $hardLink->getRealFullpath(), $c->getRealPath()));
+                    }
+
+                    $this->setObject($c);
+                }
+            }
+        }
+
+        return parent::getHref();
+    }
 }
