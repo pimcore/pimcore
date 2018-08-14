@@ -553,6 +553,23 @@ class ImageGallery extends Model\DataObject\ClassDefinition\Data
     public function marshal($value, $object = null, $params = [])
     {
         if ($value) {
+            if ($params['blockmode'] && $value instanceof Model\DataObject\Data\ImageGallery) {
+
+                $list = [];
+                $items = $value->getItems();
+                $def = new Hotspotimage();
+                if ($items) {
+                    foreach ($items as $item) {
+                        if ($item instanceof DataObject\Data\Hotspotimage) {
+                            $list[] = $def->marshal($item, $object, $params);
+                        }
+
+                    }
+                }
+                return $list;
+
+            }
+
             return [
                     'value' =>  $value[$this->getName() . '__images'],
                     'value2' => $value[$this->getName() . '__hotspots']
@@ -571,6 +588,17 @@ class ImageGallery extends Model\DataObject\ClassDefinition\Data
      */
     public function unmarshal($value, $object = null, $params = [])
     {
+        if ($params['blockmode'] && is_array($value)) {
+            $items = [];
+            $def = new Hotspotimage();
+            foreach ($value as $rawValue) {
+                $items[] = $def->unmarshal($rawValue, $object, $params);
+            }
+
+            $gal = new DataObject\Data\ImageGallery($items);
+            return $gal;
+        }
+
         if ($value) {
             $result = [];
             $result[$this->getName() . '__images'] = $value['value'];
