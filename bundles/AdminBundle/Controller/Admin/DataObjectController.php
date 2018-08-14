@@ -57,6 +57,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
     {
         $allParams = array_merge($request->request->all(), $request->query->all());
 
+        $filter = $request->get("filter");
         $object = DataObject\AbstractObject::getById($request->get('node'));
         $objectTypes = null;
         $objects = [];
@@ -76,9 +77,10 @@ class DataObjectController extends ElementControllerBase implements EventedContr
 
         if ($object->hasChildren($objectTypes)) {
             $limit = intval($request->get('limit'));
-            if (!$request->get('limit')) {
+            if ($filter || !$request->get('limit')) {
                 $limit = 100000000;
             }
+
             $offset = intval($request->get('start'));
 
             $childsList = new DataObject\Listing();
@@ -112,6 +114,11 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                                                     OR
                                                     (select list from users_workspaces_object where userId in (' . implode(',', $userIds) . ') and LOCATE(cpath,CONCAT(o_path,o_key))=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
                                                  )';
+            }
+
+            if ($filter) {
+                $db = Db::get();
+                $condition .= ' AND o_key LIKE ' . $db->quote("%" . $filter . "%");
             }
 
             $childsList->setCondition($condition);
@@ -161,7 +168,9 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                 'limit' => $limit,
                 'total' => $total,
                 'nodes' => $objects,
-                'fromPaging' => intval($request->get('fromPaging'))
+                'fromPaging' => intval($request->get('fromPaging')),
+                'filter' => $request->get('filter') ? $request->get('filter') : "" ,
+                'inSearch' => intval($request->get('inSearch'))
             ]);
         } else {
             return $this->adminJson($objects);

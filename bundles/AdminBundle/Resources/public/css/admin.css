@@ -1262,7 +1262,6 @@ span.warning {
     height: 18px;
     text-align: center;
     padding: 0;
-    width: 38px;
 }
 
 .pimcore_pagingtoolbar_container .x-toolbar-text-default {
@@ -1864,4 +1863,23 @@ ul.leaflet-draw-actions.leaflet-draw-actions-top.leaflet-draw-actions-bottom li:
     border: 2px dashed rgba(51, 136, 255, .5);
     margin-left: -12px !important;
     margin-top: -41px !important;
+}
+
+
+.x-btn-icon-el.x-tbar-page-filter:before {
+    content: "\f002";
+    font: 24px/16px FontAwesome;
+    font-size: 19px;
+    color: #919191;
+}
+
+.x-btn-icon-el.x-tbar-page-cancel-filter:before {
+    content: "\f00d";
+    font: 24px/16px FontAwesome;
+    font-size: 19px;
+    color: #919191;
+}
+
+.pimcore_pagingtoolbar_container_filter .x-form-text-default {
+    text-align: left; !important
 }

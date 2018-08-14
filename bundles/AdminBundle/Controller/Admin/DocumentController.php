@@ -16,6 +16,7 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 
 use Pimcore\Config;
 use Pimcore\Controller\EventedControllerInterface;
+use Pimcore\Db;
 use Pimcore\Event\AdminEvents;
 use Pimcore\Image\HtmlToImage;
 use Pimcore\Logger;
@@ -89,8 +90,9 @@ class DocumentController extends ElementControllerBase implements EventedControl
     {
         $allParams = array_merge($request->request->all(), $request->query->all());
 
-        $limit  = intval($allParams['limit'] ?? 100000000);
-        $offset = intval($allParams['start'] ?? 0);
+        $filter = $request->get("filter");
+        $limit  = intval(!$filter && $allParams['limit'] ?? 100000000);
+        $offset = intval(!$filter && $allParams['start'] ?? 0);
 
         $document = Document::getById($allParams['node']);
         if (!$document) {
@@ -104,19 +106,31 @@ class DocumentController extends ElementControllerBase implements EventedControl
                 $cv = \Pimcore\Model\Element\Service::getCustomViewById($allParams['view']);
             }
 
+            $db = Db::get();
+
+
             $list = new Document\Listing();
             if ($this->getAdminUser()->isAdmin()) {
-                $list->setCondition('parentId = ? ', $document->getId());
+                $condition = 'parentId =  ' . $db->quote($document->getId());
             } else {
                 $userIds = $this->getAdminUser()->getRoles();
                 $userIds[] = $this->getAdminUser()->getId();
-                $list->setCondition('parentId = ? and
+                $condition = 'parentId = ' . $db->quote($document->getId()) . ' and
                                         (
                                         (select list from users_workspaces_document where userId in (' . implode(',', $userIds) . ') and LOCATE(CONCAT(path,`key`),cpath)=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
                                         or
                                         (select list from users_workspaces_document where userId in (' . implode(',', $userIds) . ') and LOCATE(cpath,CONCAT(path,`key`))=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
-                                        )', $document->getId());
+                                        )';
             }
+
+            if ($filter) {
+                $db = Db::get();
+
+                $condition = '(' . $condition . ')' . ' AND key LIKE ' . $db->quote("%" . $filter . "%");
+
+            }
+
+            $list->setCondition($condition);
 
             $list->setOrderKey(['index', 'id']);
             $list->setOrder(['asc', 'asc']);
@@ -156,7 +170,9 @@ class DocumentController extends ElementControllerBase implements EventedControl
                 'offset' => $offset,
                 'limit' => $limit,
                 'total' => $document->getChildAmount($this->getAdminUser()),
-                'nodes' => $documents
+                'nodes' => $documents,
+                "filter" => $filter ? $filter : "",
+                'inSearch' => intval($request->get('inSearch'))
             ]);
         } else {
             return $this->adminJson($documents);
