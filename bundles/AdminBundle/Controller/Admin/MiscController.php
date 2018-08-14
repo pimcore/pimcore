@@ -51,6 +51,8 @@ class MiscController extends AdminController
             ];
         }, $bundles);
 
+        sort($result);
+
         return $this->adminJson([
             'data' => $result
         ]);
@@ -75,6 +77,8 @@ class MiscController extends AdminController
                 'name' => $controller
             ];
         }, $controllers);
+
+        sort($result);
 
         return $this->adminJson([
             'data' => $result
@@ -106,6 +110,8 @@ class MiscController extends AdminController
             ];
         }, $actions);
 
+        sort($result);
+
         return $this->adminJson([
             'data' => $result
         ]);
@@ -128,6 +134,8 @@ class MiscController extends AdminController
                 'path' => $template
             ];
         }, $templates);
+
+        sort($result);
 
         return $this->adminJson([
             'data' => $result
