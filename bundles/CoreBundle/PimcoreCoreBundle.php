@@ -30,6 +30,7 @@ use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\TargetingOverrideHand
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\TemplateVarsProviderPass;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\TemplatingEngineAwareHelperPass;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\WebDebugToolbarListenerPass;
+use Pimcore\Tool\Mime;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Extension\ExtensionInterface;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
@@ -54,6 +55,18 @@ class PimcoreCoreBundle extends Bundle
 
         if ($this->extension) {
             return $this->extension;
+        }
+    }
+
+    public function boot()
+    {
+        parent::boot();
+
+        /**
+         * BC: Remove with Pimcore 6.0.0
+         */
+        if ($this->container->hasParameter('pimcore.mime.extensions')) {
+            Mime::$extensionMapping = $this->container->getParameter('pimcore.mime.extensions');
         }
     }
 

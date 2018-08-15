@@ -114,6 +114,7 @@ class Configuration implements ConfigurationInterface
         $this->addMigrationsNode($rootNode);
         $this->addTargetingNode($rootNode);
         $this->addSitemapsNode($rootNode);
+        $this->addMimeNode($rootNode);
 
         return $treeBuilder;
     }
@@ -784,6 +785,23 @@ class Configuration implements ConfigurationInterface
                                     ->end()
                                 ->end()
                             ->end()
+                        ->end()
+                    ->end()
+                ->end()
+            ->end()
+        ->end();
+    }
+
+    private function addMimeNode(ArrayNodeDefinition $rootNode)
+    {
+        $rootNode
+            ->children()
+                ->arrayNode('mime')
+                    ->addDefaultsIfNotSet()
+                    ->children()
+                        ->arrayNode('extensions')
+                            ->useAttributeAsKey('name')
+                            ->prototype('scalar')
                         ->end()
                     ->end()
                 ->end()
