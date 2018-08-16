@@ -17,13 +17,6 @@ namespace Pimcore\Tool;
 class Mime
 {
     /**
-     * @var array
-     *
-     * @deprecated Use the Container Parameter 'pimcore.mime.extensions' instead
-     */
-    public static $extensionMapping = [];
-
-    /**
      * @param $file
      * @param null $filename
      *

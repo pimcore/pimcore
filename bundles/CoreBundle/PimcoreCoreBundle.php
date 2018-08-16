@@ -58,18 +58,6 @@ class PimcoreCoreBundle extends Bundle
         }
     }
 
-    public function boot()
-    {
-        parent::boot();
-
-        /**
-         * BC: Remove with Pimcore 6.0.0
-         */
-        if ($this->container->hasParameter('pimcore.mime.extensions')) {
-            Mime::$extensionMapping = $this->container->getParameter('pimcore.mime.extensions');
-        }
-    }
-
     /**
      * {@inheritdoc}
      */
