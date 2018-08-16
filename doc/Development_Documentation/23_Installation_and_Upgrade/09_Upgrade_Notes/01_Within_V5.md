@@ -1,5 +1,15 @@
 # Upgrade Notes for Upgrades within Pimcore 5
 
+## Version 5.5.0
+Mime types for Assets are now configured using Symfony Configurations, that means that `Pimcore\Tool\Mime::$extensionMapping` has been removed.
+In order for you to still add custom mappings, create new configuration like this:
+
+```yml
+pimcore:
+    mime:
+        extensions:
+            dwg: 'application/acad'
+```
 
 ## Version 5.4.0
 
