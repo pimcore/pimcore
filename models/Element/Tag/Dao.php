@@ -264,11 +264,17 @@ class Dao extends Model\Dao\AbstractDao
         );
 
         if (! empty($subtypes)) {
-            $select->where($map[$type][2] . ' IN (?)', $subtypes);
+            foreach ($subtypes as $subType) {
+                $quotedSubTypes[] = $this->db->quote($subType);
+            }
+            $select->where($map[$type][2] . ' IN (' . implode(",", $quotedSubTypes) . ')');
         }
 
         if ('object' === $type && ! empty($classNames)) {
-            $select->where('o_className IN (?)', $classNames);
+            foreach ($classNames as $cName) {
+                $quotedClassNames[] = $this->db->quote($cName);
+            }
+            $select->where('o_className IN ( ' .  implode(",", $quotedClassNames) . ' )');
         }
 
         $res = $this->db->query($select);
