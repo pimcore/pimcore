@@ -564,7 +564,7 @@ class Configuration implements ConfigurationInterface
                                             ->integerNode('port')
                                                 ->defaultValue($defaultOptions['port'])
                                             ->end()
-                                            ->integerNode('database')
+                                            ->scalarNode('database')
                                                 ->defaultValue($defaultOptions['database'])
                                             ->end()
                                             ->scalarNode('password')
