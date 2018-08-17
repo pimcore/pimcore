@@ -304,6 +304,30 @@ class Areablock extends Model\Document\Tag implements BlockInterface
     }
 
     /**
+     * @inheritdoc
+     */
+    protected function outputEditmodeOptions(array $options, $return = false)
+    {
+        // clean up invalid brick editmode options
+        if (array_key_exists('options', $options)) {
+            foreach(['params', 'globalParams'] as $paramKey) {
+                if (array_key_exists($paramKey, $options['options'])) {
+                    $validOptions = ['forceEditInView', 'editWidth', 'editHeight'];
+                    foreach ($options['options'][$paramKey] as $brickName => $params) {
+                        foreach ($params as $key => $val) {
+                            if (!in_array($key, $validOptions)) {
+                                unset($options['options'][$paramKey][$brickName][$key]);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        parent::outputEditmodeOptions($options, $return);
+    }
+
+    /**
      * Is executed at the beginning of the loop and setup some general settings
      *
      * @return $this
