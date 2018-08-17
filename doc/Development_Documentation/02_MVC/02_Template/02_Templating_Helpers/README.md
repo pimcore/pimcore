@@ -208,10 +208,11 @@ For details please see [Glossary Documentation](../../../18_Tools_and_Features/2
 ```php
 <section class="area-wysiwyg">
 
-    <?php // start filtering content with Glossary feature ?>
+    <?php // start capturing content with Glossary feature ?>
     <?php $this->glossary()->start(); ?>
         <?= $this->wysiwyg("content"); ?>
-    <?php $this->glossary()->stop(); ?>
+    <?php // call the processor with optional parameters ?>
+    <?php $this->glossary()->stop(['limit' => 1]); ?>
 
 </section>
 ```

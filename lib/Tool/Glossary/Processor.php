@@ -67,15 +67,20 @@ class Processor
      * Process glossary entries in content string
      *
      * @param string $content
+     * @param array $options
      *
      * @return string
      */
-    public function process(string $content): string
+    public function process(string $content, array $options): string
     {
         $data = $this->getData();
         if (empty($data)) {
             return $content;
         }
+
+        $options = array_merge([
+            'limit' => -1
+        ], $options);
 
         if ($this->editmodeResolver->isEditmode()) {
             return $content;
@@ -135,7 +140,7 @@ class Processor
 
         foreach ($es as $e) {
             if (!in_array((string)$e->parent()->tag, $this->blockedTags)) {
-                $e->innertext = preg_replace($data['search'], $data['placeholder'], $e->innertext);
+                $e->innertext = preg_replace($data['search'], $data['placeholder'], $e->innertext, $options['limit']);
                 $e->innertext = str_replace($data['placeholder'], $data['replace'], $e->innertext);
             }
         }
