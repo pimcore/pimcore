@@ -91,8 +91,13 @@ class DocumentController extends ElementControllerBase implements EventedControl
         $allParams = array_merge($request->request->all(), $request->query->all());
 
         $filter = $request->get("filter");
-        $limit  = intval(!$filter && $allParams['limit'] ?? 100000000);
-        $offset = intval(!$filter && $allParams['start'] ?? 0);
+        $limit  = intval($allParams['limit'] ?? 100000000);
+        $offset = intval($allParams['start'] ?? 0);
+
+        if($filter) {
+            $limit = 100000000;
+            $offset = 0;
+        }
 
         $document = Document::getById($allParams['node']);
         if (!$document) {

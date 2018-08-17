@@ -198,11 +198,13 @@ class AssetController extends ElementControllerBase implements EventedController
         $asset = Asset::getById($allParams['node']);
 
         $filter = $request->get("filter");
-        $limit = intval($allParams['limit']);
-        if ($filter  || !$allParams['limit']) {
+        $limit  = intval($allParams['limit'] ?? 100000000);
+        $offset = intval($allParams['start'] ?? 0);
+
+        if($filter) {
             $limit = 100000000;
+            $offset = 0;
         }
-        $offset = intval($allParams['start']);
 
         if ($asset->hasChildren()) {
             if ($allParams['view']) {
