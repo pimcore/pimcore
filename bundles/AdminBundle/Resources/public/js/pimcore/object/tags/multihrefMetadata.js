@@ -193,7 +193,7 @@ pimcore.object.tags.multihrefMetadata = Class.create(pimcore.object.tags.abstrac
                 }.bind(this, this.fieldConfig.columns[i].type, readOnly);
             }
             
-            if(this.fieldConfig.columns[i].type == "multiselect" || this.fieldConfig.columns[i].type == "select") {
+            if(this.fieldConfig.columns[i].type == "select") {
                 renderer = function (value, metaData, record, rowIndex, colIndex, store) {
                     return ts(value);
                 }
