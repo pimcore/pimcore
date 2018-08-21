@@ -53,13 +53,13 @@ class AdminStyle extends \Pimcore\Model\Element\AdminStyle {
  
         if($element instanceof \Pimcore\Model\DataObject\Product) {
             if($element->getProductType() == "concrete") {
-                $this->elementIcon = '/pimcore/static/img/icon/tag_green.png';
+                $this->elementIcon = '/bundles/pimcoreadmin/img/icon/tag_green.png';
                 $this->elementIconClass = null;
             } else if($element->getProductType() == "family") {
-                $this->elementIcon = '/pimcore/static/img/icon/tag_yellow.png';
+                $this->elementIcon = '/bundles/pimcoreadmin/img/icon/tag_yellow.png';
                 $this->elementIconClass = null;
             } else if($element->getProductType() == "virtual") {
-                $this->elementIcon = '/pimcore/static/img/icon/tag_blue.png';
+                $this->elementIcon = '/bundles/pimcoreadmin/img/icon/tag_blue.png';
                 $this->elementIconClass = null;
             }
  
