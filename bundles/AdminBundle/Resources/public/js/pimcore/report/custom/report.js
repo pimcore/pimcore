@@ -268,6 +268,9 @@ pimcore.report.custom.report = Class.create(pimcore.report.abstract, {
 
             drillDownFilterComboboxes.push({
                 xtype: 'combo',
+                typeAhead: true,
+                queryMode: 'local',
+                editable: true,
                 forceSelection: true,
                 triggerAction: 'all',
                 store: drillDownStore,
