@@ -100,6 +100,13 @@ which used to be located under `/pimcore/config/`, you can keep that folder in y
 This won't have any side-effects, since they are just calling functions from within the Pimcore library, so you can keep
 them as long as it is necessary.  
 
+##### Pimcore Static Resources Path Change
+Since the Pimcore admin user interface is now also a Symfony bundle, the path to static resources has changed from 
+`/pimcore/static6/` to `/bundles/pimcoreadmin/`. If you're using Pimcore static resources somewhere in your application 
+you'd have to change the path accordingly or you can use the following RewriteRule in your `.htaccess`: 
+```
+RewriteRule ^pimcore/static6/(.*) /bundles/pimcoreadmin/$1 [PT,L]
+```
 
 #### Removed PrototypeJS (light) library from the Admin UI
 Quite a lot of functions have a native Javascript equivalent or are covered by vanilla JS anyway.
