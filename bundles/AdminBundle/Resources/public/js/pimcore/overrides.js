@@ -348,6 +348,7 @@ Ext.define('pimcore.data.PagingTreeStore', {
             node.fromPaging = data.fromPaging;
             node.filter = data.filter;
             node.inSearch = data.inSearch;
+            node.overflow = data.overflow;
 
             proxy.setExtraParam("fromPaging", 0);
 
@@ -449,7 +450,6 @@ Ext.define('pimcore.toolbar.Paging', {
         store.load({
                 node: node,
                 params: {
-                    "filter": "",
                     "inSearch": 0
                 }
             }
@@ -477,7 +477,6 @@ Ext.define('pimcore.toolbar.Paging', {
 
         var currPage = pagingData.offset / pagingData.limit + 1;
 
-        var minLength = 3;
         this.inSearch = node.inSearch;
         var hidden = this.inSearch
         pimcore.isTreeFiltering = false;
@@ -501,21 +500,21 @@ Ext.define('pimcore.toolbar.Paging', {
                         var proxy = store.getProxy();
                         this.currentFilter = this.filterField.getValue();
 
-                        if (this.filterField.getValue() && this.filterField.getValue().length >= minLength) {
-                            try {
-                                store.load({
-                                        node: node,
-                                        params: {
-                                            "filter": this.filterField.getValue(),
-                                            "inSearch": this.inSearch
-                                        }
-                                    }
-                                );
-                            } catch (e) {
 
-                            }
+                        try {
+                            store.load({
+                                    node: node,
+                                    params: {
+                                        "filter": this.filterField.getValue(),
+                                        "inSearch": this.inSearch
+                                    }
+                                }
+                            );
+                        } catch (e) {
 
                         }
+
+
                     }
                 }.bind(this, node)
             }
@@ -524,6 +523,18 @@ Ext.define('pimcore.toolbar.Paging', {
         ;
 
         var result = [this.filterField];
+
+        this.overflow = new Ext.button.Button(
+            {
+                tooltip: t("there_are_more_items"),
+                overflowText: t("there_are_more_items"),
+                iconCls: "pimcore_icon_warning",
+                disabled: false,
+                scope: me,
+                border: false,
+                hidden: !node.overflow
+            });
+
 
         this.filterButton = new Ext.button.Button(
             {
@@ -664,6 +675,7 @@ Ext.define('pimcore.toolbar.Paging', {
         });
 
 
+        result.push(this.overflow);
         result.push(this.filterButton);
         result.push(this.cancelFilterButton);
 

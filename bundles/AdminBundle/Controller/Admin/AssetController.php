@@ -198,13 +198,17 @@ class AssetController extends ElementControllerBase implements EventedController
         $asset = Asset::getById($allParams['node']);
 
         $filter = $request->get("filter");
-        $limit  = intval($allParams['limit'] ?? 100000000);
-        $offset = intval($allParams['start'] ?? 0);
-
-        if($filter) {
-            $limit = 100000000;
+        $limit = intval($allParams['limit']);
+        if (!is_null($filter)) {
+            $limit = 100;
             $offset = 0;
+        } else if (!$allParams['limit']) {
+            $limit = 100000000;
         }
+
+        $offset = intval($allParams['start']);
+
+        $filteredTotalCount = 0;
 
         if ($asset->hasChildren()) {
             if ($allParams['view']) {
@@ -233,7 +237,7 @@ class AssetController extends ElementControllerBase implements EventedController
             }
 
 
-            if ($filter) {
+            if (! is_null($filter)) {
                 $db = Db::get();
 
                 $condition = '(' . $condition . ')' . ' AND filename LIKE ' . $db->quote("%" . $filter . "%");
@@ -258,6 +262,8 @@ class AssetController extends ElementControllerBase implements EventedController
 
             $childs = $childsList->load();
 
+            $filteredTotalCount = $childsList->getTotalCount();
+
             foreach ($childs as $childAsset) {
                 if ($childAsset->isAllowed('list')) {
                     $assets[] = $this->getTreeNodeConfig($childAsset);
@@ -277,6 +283,7 @@ class AssetController extends ElementControllerBase implements EventedController
                 'offset' => $offset,
                 'limit' => $limit,
                 'total' => $asset->getChildAmount($this->getAdminUser()),
+                'overflow' => !is_null($filter) && ($filteredTotalCount > $limit),
                 'nodes' => $assets,
                 "filter" => $filter ? $filter : "",
                 'inSearch' => intval($request->get('inSearch'))

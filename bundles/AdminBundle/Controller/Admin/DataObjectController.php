@@ -75,14 +75,17 @@ class DataObjectController extends ElementControllerBase implements EventedContr
             $objectTypes = [DataObject\AbstractObject::OBJECT_TYPE_OBJECT, DataObject\AbstractObject::OBJECT_TYPE_FOLDER];
         }
 
-        if ($object->hasChildren($objectTypes)) {
-            $limit = intval($request->get('limit', 100000000));
-            $offset = intval($request->get('start', 0));
+        $filteredTotalCount = 0;
 
-            if($filter) {
+        if ($object->hasChildren($objectTypes)) {
+            $limit = intval($request->get('limit'));
+            if (!is_null($filter)) {
+                $limit = 100;
+            } else if (!$request->get('limit')) {
                 $limit = 100000000;
-                $offset = 0;
             }
+
+            $offset = intval($request->get('start'));
 
             $childsList = new DataObject\Listing();
             $condition = "objects.o_parentId = '" . $object->getId() . "'";
@@ -117,7 +120,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                                                  )';
             }
 
-            if ($filter) {
+            if (!is_null($filter)) {
                 $db = Db::get();
                 $condition .= ' AND o_key LIKE ' . $db->quote("%" . $filter . "%");
             }
@@ -141,6 +144,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
             $childsList = $beforeListLoadEvent->getArgument('list');
 
             $childs = $childsList->load();
+            $filteredTotalCount = $childsList->getTotalCount();
 
             foreach ($childs as $child) {
                 $tmpObject = $this->getTreeNodeConfig($child);
@@ -168,6 +172,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                 'offset' => $offset,
                 'limit' => $limit,
                 'total' => $total,
+                'overflow' => !is_null($filter) && ($filteredTotalCount > $limit),
                 'nodes' => $objects,
                 'fromPaging' => intval($request->get('fromPaging')),
                 'filter' => $request->get('filter') ? $request->get('filter') : "" ,
