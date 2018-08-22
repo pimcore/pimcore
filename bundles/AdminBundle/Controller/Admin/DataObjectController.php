@@ -1212,10 +1212,16 @@ class DataObjectController extends ElementControllerBase implements EventedContr
             if (method_exists($sibling, 'setOmitMandatoryCheck')) {
                 $sibling->setOmitMandatoryCheck(true);
             }
-            $sibling
-                ->setIndex($index)
-                ->save();
-            $index++;
+            if($sibling instanceof DataObject\Concrete && $latestVersion = $sibling->getLatestVersion()) {
+                $sibling = $latestVersion->loadData();
+                $sibling->setIndex($index)
+                    ->saveVersion();
+            } else {
+                $sibling
+                    ->setIndex($index)
+                    ->save();
+                $index++;
+            }
         }
     }
 
