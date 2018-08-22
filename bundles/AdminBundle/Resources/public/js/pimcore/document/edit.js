@@ -153,11 +153,10 @@ pimcore.document.edit = Class.create({
             return;
         }
 
-        var editables = this.frame.Ext.getBody().query(".pimcore_editable");
         var ed;
-        for(var i=0; i<editables.length; i++) {
-            ed = this.frame.Ext.get(editables[i]);
-
+        var editables = this.frame.editables;
+        for (var i=0; i<editables.length; i++) {
+            ed = this.frame.Ext.get(editables[i].getId());
             if(!ed.hasCls("pimcore_tag_inc") && !ed.hasCls("pimcore_tag_areablock")
                 && !ed.hasCls("pimcore_tag_block") && !ed.hasCls("pimcore_tag_area")) {
                 if(!this.tagHighlightingActive) {
@@ -166,7 +165,7 @@ pimcore.document.edit = Class.create({
                     mask.setStyle("opacity","0.5");
                     mask.setStyle("pointer-events","none");
                 } else {
-                    ed.unmask();
+                    editables[i].setInherited(editables[i].getInherited());
                 }
             }
         }
