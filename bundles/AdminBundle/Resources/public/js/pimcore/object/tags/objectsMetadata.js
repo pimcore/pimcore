@@ -202,6 +202,12 @@ pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, 
 
             }
 
+            if(this.fieldConfig.columns[i].type == "select") {
+                renderer = function (value, metaData, record, rowIndex, colIndex, store) {
+                    return ts(value);
+                }
+            }
+
             var columnConfig = {
                 text: ts(this.fieldConfig.columns[i].label),
                 dataIndex: this.fieldConfig.columns[i].key,
