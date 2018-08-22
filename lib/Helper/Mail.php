@@ -240,7 +240,7 @@ CSS;
                 if (strpos($path, '//') === 0) {
                     $absolutePath = 'http:' . $path;
                 } elseif (strpos($path, '/') === 0) {
-                    $absolutePath = preg_replace('@^' . $replacePrefix . '/@', '/', $path);
+                    $absolutePath = preg_replace('@^' . $replacePrefix . '(/(.*))?$@', '/$2', $path);
                     $absolutePath = $hostUrl . $absolutePath;
                 } else {
                     $absolutePath = $hostUrl . "/$path";

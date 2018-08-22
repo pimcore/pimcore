@@ -88,6 +88,30 @@ pimcore.document.pages.preview = Class.create({
                         qrWindow.show();
 
                     }.bind(this)
+                }, "-", {
+                    text: t("open_in_new_window"),
+                    iconCls: "pimcore_icon_open_window",
+                    handler: function () {
+                        var date = new Date();
+                        var link = this.page.data.path + this.page.data.key;
+                        var linkParams = [];
+
+                        linkParams.push("pimcore_preview=true");
+                        linkParams.push("_dc=" + date.getTime());
+
+                        // add target group parameter if available
+                        if(this["edit"] && this.page.edit["targetGroup"]) {
+                            if(this.page.edit.targetGroup && this.page.edit.targetGroup.getValue()) {
+                                linkParams.push("_ptg=" + this.page.edit.targetGroup.getValue());
+                            }
+                        }
+
+                        if(linkParams.length) {
+                            link += "?" + linkParams.join("&");
+                        }
+
+                        window.open(link);
+                    }.bind(this)
                 }];
             }
 

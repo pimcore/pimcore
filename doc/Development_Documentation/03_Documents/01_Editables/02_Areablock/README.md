@@ -75,7 +75,7 @@ And you can see the effect, below:
 | `class`             | string | A CSS class that is added to the surrounding container of this element in editmode                                                                                                           |
 
 ## Brick-specific Configuration
-Brick-specific configurations are passed using the params configuration (see above). 
+Brick-specific configurations are passed using the `params` or `globalParams` configuration (see above). 
 
 | Name              | Type | Description                                                                                                                                                     |
 |-------------------|------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------|

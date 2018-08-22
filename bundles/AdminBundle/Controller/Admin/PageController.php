@@ -21,6 +21,7 @@ use Pimcore\Model\Document;
 use Pimcore\Model\Document\Targeting\TargetingDocumentInterface;
 use Pimcore\Model\Element;
 use Pimcore\Model\Redirect;
+use Pimcore\Model\Site;
 use Pimcore\Tool\Session;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -73,6 +74,12 @@ class PageController extends DocumentControllerBase
         $redirectList = new Redirect\Listing();
         $redirectList->setCondition('target = ?', $page->getId());
         $page->redirects = $redirectList->load();
+
+        $page->url = $page->getFullPath();
+        $site = \Pimcore\Tool\Frontend::getSiteForDocument($page);
+        if ($site instanceof Site) {
+            $page->url = 'http://' . $site->getMainDomain() . preg_replace('@^' . $site->getRootPath() . '/?@', '/', $page->getRealFullPath());
+        }
 
         // unset useless data
         $page->setElements(null);

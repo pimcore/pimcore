@@ -73,6 +73,8 @@ class PimcoreCoreExtension extends ConfigurableExtension implements PrependExten
 
         $container->setParameter('pimcore.response_exception_listener.render_error_document', $config['error_handling']['render_error_document']);
 
+        $container->setParameter('pimcore.mime.extensions', $config['mime']['extensions']);
+
         // register pimcore config on container
         // TODO is this bad practice?
         // TODO only extract what we need as parameter?

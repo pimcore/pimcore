@@ -1575,6 +1575,9 @@ class DataObjectHelperController extends AdminController
             $importConfig = ImportConfig::getById($importConfigId);
         } catch (\Exception $e) {
         }
+
+        $dialect->lineterminator = bin2hex($dialect->lineterminator);
+
         $selectedGridColumns = [];
         if ($importConfig) {
             $configData = $importConfig->getConfig();
@@ -1582,11 +1585,11 @@ class DataObjectHelperController extends AdminController
             $selectedGridColumns = $configData['selectedGridColumns'];
             $resolverSettings = $configData['resolverSettings'];
             $shareSettings = $configData['shareSettings'];
+            $dialect = json_decode(json_encode($configData['csvSettings']), FALSE);
+
         }
 
         $availableConfigs = $this->getImportConfigs($importService, $this->getAdminUser(), $classId);
-
-        $dialect->lineterminator = bin2hex($dialect->lineterminator);
 
         return $this->adminJson([
             'success' => $success,
@@ -1655,8 +1658,7 @@ class DataObjectHelperController extends AdminController
         }
 
         // currently only csv supported
-        // determine type
-        $dialect = Tool\Admin::determineCsvDialect(PIMCORE_SYSTEM_TEMP_DIRECTORY . '/import_' . $importId . '_original');
+        $dialect = $configData->csvSettings;
 
         $rowData = [];
         if (($handle = fopen($file, 'r')) !== false) {

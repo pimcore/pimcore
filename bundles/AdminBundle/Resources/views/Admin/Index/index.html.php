@@ -682,29 +682,12 @@ $scripts = array(
     "pimcore/colorpicker-overrides.js",
 );
 
-// google maps API key
-$googleMapsApiKey = $this->config->services->google->browserapikey;
-
 ?>
 
 <!-- some javascript -->
 <?php // pimcore constants ?>
 <script>
     pimcore.settings = <?= json_encode($this->settings, JSON_PRETTY_PRINT) ?>;
-</script>
-
-<?php // 3rd party libraries ?>
-<script>
-    <?php if(isset($googleMapsApiKey) && strlen($googleMapsApiKey) > 0){ ?>
-    var gmapInitialize = function () {
-    }; // dummy callback
-    (function () {
-        var script = document.createElement("script");
-        script.type = "text/javascript";
-        script.src = 'https://maps.googleapis.com/maps/api/js?libraries=drawing&callback=gmapInitialize&key=<?= $googleMapsApiKey ?>';
-        document.body.appendChild(script);
-    })();
-    <?php } ?>
 </script>
 
 <script src="/admin/misc/json-translations-system?language=<?= $language ?>&_dc=<?= \Pimcore\Version::getRevision() ?>"></script>

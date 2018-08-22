@@ -15,10 +15,6 @@
 namespace Pimcore;
 
 use Pimcore\Cache\Symfony\CacheClearer;
-use Pimcore\Composer\Config\ConfigMerger;
-use Pimcore\FeatureToggles\Features\DevMode;
-use Symfony\Component\HttpKernel\KernelEvents;
-use Symfony\Component\Process\Process;
 
 class Update
 {

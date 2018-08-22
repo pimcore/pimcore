@@ -25,6 +25,7 @@ use Pimcore\Model;
 
 /**
  * @method \Pimcore\Model\DataObject\Concrete\Dao getDao()
+ * @method \Pimcore\Model\Version getLatestVersion()
  */
 class Concrete extends AbstractObject
 {

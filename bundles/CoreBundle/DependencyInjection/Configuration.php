@@ -114,6 +114,7 @@ class Configuration implements ConfigurationInterface
         $this->addMigrationsNode($rootNode);
         $this->addTargetingNode($rootNode);
         $this->addSitemapsNode($rootNode);
+        $this->addMimeNode($rootNode);
 
         return $treeBuilder;
     }
@@ -142,8 +143,8 @@ class Configuration implements ConfigurationInterface
     {
         $rootNode
             ->children()
-            ->arrayNode('assets')
-            ->addDefaultsIfNotSet()
+                ->arrayNode('assets')
+                ->addDefaultsIfNotSet()
                 ->children()
                     ->arrayNode('image')
                         ->addDefaultsIfNotSet()
@@ -160,17 +161,19 @@ class Configuration implements ConfigurationInterface
                             ->arrayNode('focal_point_detection')
                                 ->addDefaultsIfNotSet()
                                 ->canBeDisabled()
-                                ->end()
                             ->end()
-                        ->end()
                         ->end()
                     ->end()
                     ->arrayNode('versions')
                         ->addDefaultsIfNotSet()
                         ->children()
                             ->booleanNode('use_hardlinks')
-                            ->defaultTrue()
-                            ->end();
+                                ->defaultTrue()
+                            ->end()
+                        ->end()
+                    ->end()
+                ->end()
+            ->end();
     }
 
     /**
@@ -562,7 +565,7 @@ class Configuration implements ConfigurationInterface
                                             ->integerNode('port')
                                                 ->defaultValue($defaultOptions['port'])
                                             ->end()
-                                            ->integerNode('database')
+                                            ->scalarNode('database')
                                                 ->defaultValue($defaultOptions['database'])
                                             ->end()
                                             ->scalarNode('password')
@@ -782,6 +785,23 @@ class Configuration implements ConfigurationInterface
                                     ->end()
                                 ->end()
                             ->end()
+                        ->end()
+                    ->end()
+                ->end()
+            ->end()
+        ->end();
+    }
+
+    private function addMimeNode(ArrayNodeDefinition $rootNode)
+    {
+        $rootNode
+            ->children()
+                ->arrayNode('mime')
+                    ->addDefaultsIfNotSet()
+                    ->children()
+                        ->arrayNode('extensions')
+                            ->useAttributeAsKey('name')
+                            ->prototype('scalar')
                         ->end()
                     ->end()
                 ->end()

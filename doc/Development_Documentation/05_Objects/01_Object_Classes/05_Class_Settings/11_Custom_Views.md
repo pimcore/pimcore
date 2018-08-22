@@ -1,4 +1,4 @@
-# Custom Views (ExtJS 6 only)
+# Custom Views
 A custom view is an additional custom tree representing a subset of elements of the corresponding original tree.
 Custom views can be configured for Documents, Assets and Objects. 
 

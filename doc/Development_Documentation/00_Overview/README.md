@@ -14,7 +14,7 @@ is NOT an ‘out-of-the-box’ software product like Wordpress, Magento, Akeneo,
 ![Pimcore](../img/pimcore_basis.png)
   
   
-![Pimcore](../img/architecture.png)
+![Pimcore](../img/pimcore-technology-architecture.svg)
 
 
 # Pimcore in a Nutshell

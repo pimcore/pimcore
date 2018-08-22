@@ -1,11 +1,5 @@
 # Pimcore Installation
 
-<div class="alert alert-warning">
-<strong>IMPORTANT:</strong> 
-This is the installation guide for the BETA version of Pimcore 5.4.
-Looking for the current stable [5.3 installation guide, click here](https://github.com/pimcore/pimcore/blob/pimcore-5.3.x/doc/Development_Documentation/01_Getting_Started/00_Installation.md). 
-</div>    
-
 The following guide assumes your're using a typical LAMP environment, if you're using a different setup (eg. Nginx) 
 or facing a problem, please visit the [Installation Guide](../23_Installation_and_Upgrade/README.md) section.
 
@@ -27,22 +21,22 @@ We're offering 4 different installation packages, 3 demo packages and one skelet
 
 ##### 1. Skeleton Package (only for experienced Pimcore developers)
 ```bash
-COMPOSER_MEMORY_LIMIT=3G composer create-project pimcore/skeleton:dev-master my-project
+COMPOSER_MEMORY_LIMIT=3G composer create-project pimcore/skeleton my-project
 ```
 
 ##### 2. Basic Demo Package (PHP Templates)
 ```bash
-COMPOSER_MEMORY_LIMIT=3G composer create-project pimcore/demo-basic:dev-master my-project
+COMPOSER_MEMORY_LIMIT=3G composer create-project pimcore/demo-basic my-project
 ```
 
 ##### 3. Basic Demo Package (Twig Templates)
 ```bash
-COMPOSER_MEMORY_LIMIT=3G composer create-project pimcore/demo-basic-twig:dev-master my-project
+COMPOSER_MEMORY_LIMIT=3G composer create-project pimcore/demo-basic-twig my-project
 ```
 
 ##### 4. Advanced Demo Package (E-Commerce, PIM, MDM, DAM, ...)
 ```bash
-COMPOSER_MEMORY_LIMIT=3G composer create-project pimcore/demo-ecommerce:dev-master my-project
+COMPOSER_MEMORY_LIMIT=3G composer create-project pimcore/demo-ecommerce my-project
 ```
 
 Point the document root of your vhost to the newly created `/web` folder (eg. `/your/project/web`).

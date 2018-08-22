@@ -56,5 +56,6 @@ class PimcoreAdminExtension extends Extension
         $container->setParameter(self::PARAM_ASSETS_NOTES_EVENTS_TYPES, $config['assets']['notes_events']['types']);
         $container->setParameter(self::PARAM_DOCUMENTS_NOTES_EVENTS_TYPES, $config['documents']['notes_events']['types']);
         $container->setParameter('pimcore_admin.csrf_protection.excluded_routes', $config['csrf_protection']['excluded_routes']);
+        $container->setParameter('pimcore_admin.admin_languages', $config['admin_languages']);
     }
 }

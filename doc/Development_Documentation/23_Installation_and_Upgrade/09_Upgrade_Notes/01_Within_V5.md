@@ -1,5 +1,15 @@
 # Upgrade Notes for Upgrades within Pimcore 5
 
+## Version 5.5.0
+Mime types for Assets are now configured using Symfony Configurations, that means that `Pimcore\Tool\Mime::$extensionMapping` has been removed.
+In order for you to still add custom mappings, create new configuration like this:
+
+```yml
+pimcore:
+    mime:
+        extensions:
+            dwg: 'application/acad'
+```
 
 ## Version 5.4.0
 
@@ -22,7 +32,7 @@ doctrine/doctrine-migrations-bundle doctrine/instantiator egulias/email-validato
 guzzlehttp/guzzle hybridauth/hybridauth lcobucci/jwt league/csv linfo/linfo mjaschen/phpgeo monolog/monolog mpratt/embera myclabs/deep-copy \
 myclabs/php-enum neitanod/forceutf8 nesbot/carbon ocramius/package-versions ocramius/proxy-manager oyejorge/less.php pear/net_url2 \
 phive/twig-extensions-deferred pimcore/core-version piwik/device-detector presta/sitemap-bundle ramsey/uuid sabre/dav sensio/distribution-bundle \
-sensio/framework-extra-bundle sensio/generator-bundle sensiolabs/ansi-to-html symfony-cmf/routing-bundle symfony/monolog-bundle symfony/polyfill-apcu\
+sensio/framework-extra-bundle sensio/generator-bundle sensiolabs/ansi-to-html symfony-cmf/routing-bundle symfony/monolog-bundle symfony/polyfill-apcu \
 symfony/swiftmailer-bundle tijsverkoyen/css-to-inline-styles twig/extensions twig/twig umpirsky/country-list vrana/adminer vrana/jush \
 wa72/htmlpagedom zendframework/zend-code zendframework/zend-paginator zendframework/zend-servicemanager scheb/two-factor-bundle 
 ```
@@ -76,9 +86,13 @@ rm -rf vendor
 COMPOSER_MEMORY_LIMIT=3G composer require pimcore/pimcore:5.4.*
 ```
 
+If this doesn't help, try to remove the remaining dependencies until you've found the package that causes the issue. 
+Don't fully trust the error message of Composer, that can be completely misleading! 
+
 ##### Cleanup project files
 ```
 rm -r pimcore/
+rm -r web/pimcore/
 ```
 
 If you have scripts that rely (include or require) on Pimcore's startup scripts (`startup.php` and `startup_cli.php`) 
@@ -86,6 +100,13 @@ which used to be located under `/pimcore/config/`, you can keep that folder in y
 This won't have any side-effects, since they are just calling functions from within the Pimcore library, so you can keep
 them as long as it is necessary.  
 
+##### Pimcore Static Resources Path Change
+Since the Pimcore admin user interface is now also a Symfony bundle, the path to static resources has changed from 
+`/pimcore/static6/` to `/bundles/pimcoreadmin/`. If you're using Pimcore static resources somewhere in your application 
+you'd have to change the path accordingly or you can use the following RewriteRule in your `.htaccess`: 
+```
+RewriteRule ^pimcore/static6/(.*) /bundles/pimcoreadmin/$1 [PT,L]
+```
 
 #### Removed PrototypeJS (light) library from the Admin UI
 Quite a lot of functions have a native Javascript equivalent or are covered by vanilla JS anyway.

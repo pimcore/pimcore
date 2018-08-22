@@ -21,6 +21,7 @@ use Pimcore\Analytics\Code\CodeBlock;
 use Pimcore\Analytics\SiteId\SiteIdProvider;
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\EnabledTrait;
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\PimcoreContextAwareTrait;
+use Pimcore\Bundle\CoreBundle\EventListener\Traits\PreviewRequestTrait;
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\ResponseInjectionTrait;
 use Pimcore\Config;
 use Pimcore\Event\Analytics\Google\TagManager\CodeEvent;
@@ -42,6 +43,7 @@ class GoogleTagManagerListener
     use EnabledTrait;
     use ResponseInjectionTrait;
     use PimcoreContextAwareTrait;
+    use PreviewRequestTrait;
 
     /**
      * @var SiteIdProvider
@@ -104,9 +106,7 @@ class GoogleTagManagerListener
             return;
         }
 
-        // It's standard industry practice to exclude tracking if the request includes the header 'X-Purpose:preview'
-        $serverVars = $event->getRequest()->server;
-        if ($serverVars->get('HTTP_X_PURPOSE') === 'preview') {
+        if($this->isPreviewRequest($request)) {
             return;
         }
 

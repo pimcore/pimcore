@@ -29,9 +29,9 @@ $fields = $element->getClass()->getFieldDefinitions();
                         <td>
                             <div class="limit-height">
                                 <?php
-                                    if ($element->getValueForFieldName($fieldName)) {
-                                        echo $lfd->getVersionPreview($element->getValueForFieldName($fieldName)->getLocalizedValue($lfd->getName(), $language));
-                                    }
+                                if ($element->getValueForFieldName($fieldName)) {
+                                    echo $lfd->getVersionPreview($element->getValueForFieldName($fieldName)->getLocalizedValue($lfd->getName(), $language));
+                                }
                                 ?>
                             </div>
                         </td>
@@ -39,8 +39,78 @@ $fields = $element->getClass()->getFieldDefinitions();
                     <?php
                     $c++;
                 } ?>
-            <?php break; } ?>
-        <?php } else if ($definition instanceof DataObject\ClassDefinition\Data\Objectbricks) { ?>
+                <?php break; } ?>
+        <?php } else if($definition instanceof DataObject\ClassDefinition\Data\Classificationstore) {
+
+            /** @var $storedata DataObject\Classificationstore */
+            $storedata = $definition->getVersionPreview($element->getValueForFieldName($fieldName));
+
+            $existingGroups = array();
+
+
+            if ($storedata) {
+                $activeGroups = $storedata->getActiveGroups();
+            } else {
+                $activeGroups = array();
+            }
+
+
+            foreach ($activeGroups as $activeGroupId => $enabled) {
+                $existingGroups[$activeGroupId] = $activeGroupId;
+            }
+
+            if (!$existingGroups) {
+                continue;
+            }
+
+            $languages = array("default");
+
+            if ($definition->isLocalized()) {
+                $languages = array_merge($languages, \Pimcore\Tool::getValidLanguages());
+            }
+
+            foreach ($existingGroups as $activeGroupId => $enabled) {
+                if (!$activeGroups[$activeGroupId]) {
+                    continue;
+                }
+                /** @var $groupDefinition DataObject\Classificationstore\GroupConfig */
+                $groupDefinition = Pimcore\Model\DataObject\Classificationstore\GroupConfig::getById($activeGroupId);
+                if (!$groupDefinition) {
+                    continue;
+                }
+
+                /** @var $keyGroupRelation DataObject\Classificationstore\KeyGroupRelation */
+                $keyGroupRelations = $groupDefinition->getRelations();
+
+                foreach ($keyGroupRelations as $keyGroupRelation) {
+
+                    $keyDef = DataObject\Classificationstore\Service::getFieldDefinitionFromJson(json_decode($keyGroupRelation->getDefinition()),
+                        $keyGroupRelation->getType());
+                    if (!$keyDef) {
+                        continue;
+                    }
+
+                    foreach ($languages as $language) {
+                        $keyData = $storedata ? $storedata->getLocalizedKeyValue($activeGroupId,
+                            $keyGroupRelation->getKeyId(), $language, true, true) : null;
+                        $preview = $keyDef->getVersionPreview($keyData);
+
+                        ?>
+
+                        <tr class="<?php if ($c % 2) { ?>odd<?php } ?>">
+                            <td><?= $definition->getTitle() ?></td>
+                            <td><?= $groupDefinition->getName() ?>
+                                - <?= $keyGroupRelation->getName() ?> <?= $definition->isLocalized() ? "/ " . $language : "" ?></td>
+                            <?php if (!$this->isImportPreview || !$this->isNew) { ?>
+                                <td><?= $preview ?></td>
+                            <?php } ?>
+                        </tr>
+                        <?php
+                        $c++;
+                    }
+                }
+            }
+        } else if ($definition instanceof DataObject\ClassDefinition\Data\Objectbricks) { ?>
             <?php foreach ($definition->getAllowedTypes() as $asAllowedType) { ?>
                 <?php
                 $collectionDef = DataObject\Objectbrick\Definition::getByKey($asAllowedType);
@@ -79,7 +149,7 @@ $fields = $element->getClass()->getFieldDefinitions();
                                 <?php
                                 $c++;
                             } ?>
-                        <?php
+                            <?php
                             break;
                         }
                     } else {

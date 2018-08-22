@@ -30,18 +30,18 @@
   "require": {
     "php": ">=7.1",
     "ext-SimpleXML": "*",
-    "ext-bz2": "*",
     "ext-dom": "*",
     "ext-exif": "*",
     "ext-fileinfo": "*",
     "ext-gd": "*",
+    "ext-intl": "*",
     "ext-iconv": "*",
     "ext-mbstring": "*",
     "ext-mysqli": "*",
-    "ext-openssl": "*",
     "ext-pdo_mysql": "*",
     "ext-zip": "*",
     "ext-zlib": "*",
+    "pimcore/core-version": "5.4.2",
     "amnuts/opcache-gui": "~2",
     "cache/tag-interop": "^1",
     "colinmollenhour/credis": "1.8.*",
@@ -100,7 +100,7 @@
     "zendframework/zend-code": "~3.1.0",
     "zendframework/zend-paginator": "^2.7",
     "zendframework/zend-servicemanager": "^3.2",
-    "scheb/two-factor-bundle": "~3.0"
+    "scheb/two-factor-bundle": "^3.8"
   },
   "require-dev": {
     "cache/integration-tests": "^0.15.0",

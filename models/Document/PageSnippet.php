@@ -26,6 +26,7 @@ use Pimcore\Model\Document;
 
 /**
  * @method \Pimcore\Model\Document\PageSnippet\Dao getDao()
+ * @method \Pimcore\Model\Version getLatestVersion()
  */
 abstract class PageSnippet extends Model\Document
 {

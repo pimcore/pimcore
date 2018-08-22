@@ -1,6 +1,7 @@
 <?php
 
-include("../../../../pimcore/config/startup_cli.php");
+include("../../../../../../../../vendor/autoload.php");
+\Pimcore\Bootstrap::startupCli();
 
 $iconPath = '/bundles/pimcoreadmin/img/flags/';
 

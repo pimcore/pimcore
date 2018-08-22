@@ -566,6 +566,18 @@ class Dao extends Model\Element\Dao
     }
 
     /**
+     * @param $index
+     */
+    public function saveIndex($index)
+    {
+        $this->db->update('objects', [
+            'o_index' => $index
+        ], [
+            'o_id' => $this->model->getId()
+        ]);
+    }
+
+    /**
      * @return bool
      */
     public function __isBasedOnLatestData()

@@ -45,7 +45,10 @@ class Glossary extends Helper
         ob_start();
     }
 
-    public function stop()
+    /**
+     * @param array $options
+     */
+    public function stop(array $options = [])
     {
         $contents = ob_get_clean();
 
@@ -53,7 +56,7 @@ class Glossary extends Helper
         if (empty($contents) || !is_string($contents)) {
             $result = $contents;
         } else {
-            $result = $this->glossaryProcessor->process($contents);
+            $result = $this->glossaryProcessor->process($contents, $options);
         }
 
         echo $result;

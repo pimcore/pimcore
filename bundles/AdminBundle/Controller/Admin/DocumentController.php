@@ -16,6 +16,7 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 
 use Pimcore\Config;
 use Pimcore\Controller\EventedControllerInterface;
+use Pimcore\Db;
 use Pimcore\Event\AdminEvents;
 use Pimcore\Image\HtmlToImage;
 use Pimcore\Logger;
@@ -89,8 +90,14 @@ class DocumentController extends ElementControllerBase implements EventedControl
     {
         $allParams = array_merge($request->request->all(), $request->query->all());
 
+        $filter = $request->get("filter");
         $limit  = intval($allParams['limit'] ?? 100000000);
         $offset = intval($allParams['start'] ?? 0);
+
+        if($filter) {
+            $limit = 100000000;
+            $offset = 0;
+        }
 
         $document = Document::getById($allParams['node']);
         if (!$document) {
@@ -104,19 +111,31 @@ class DocumentController extends ElementControllerBase implements EventedControl
                 $cv = \Pimcore\Model\Element\Service::getCustomViewById($allParams['view']);
             }
 
+            $db = Db::get();
+
+
             $list = new Document\Listing();
             if ($this->getAdminUser()->isAdmin()) {
-                $list->setCondition('parentId = ? ', $document->getId());
+                $condition = 'parentId =  ' . $db->quote($document->getId());
             } else {
                 $userIds = $this->getAdminUser()->getRoles();
                 $userIds[] = $this->getAdminUser()->getId();
-                $list->setCondition('parentId = ? and
+                $condition = 'parentId = ' . $db->quote($document->getId()) . ' and
                                         (
                                         (select list from users_workspaces_document where userId in (' . implode(',', $userIds) . ') and LOCATE(CONCAT(path,`key`),cpath)=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
                                         or
                                         (select list from users_workspaces_document where userId in (' . implode(',', $userIds) . ') and LOCATE(cpath,CONCAT(path,`key`))=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
-                                        )', $document->getId());
+                                        )';
             }
+
+            if ($filter) {
+                $db = Db::get();
+
+                $condition = '(' . $condition . ')' . ' AND key LIKE ' . $db->quote("%" . $filter . "%");
+
+            }
+
+            $list->setCondition($condition);
 
             $list->setOrderKey(['index', 'id']);
             $list->setOrder(['asc', 'asc']);
@@ -156,7 +175,9 @@ class DocumentController extends ElementControllerBase implements EventedControl
                 'offset' => $offset,
                 'limit' => $limit,
                 'total' => $document->getChildAmount($this->getAdminUser()),
-                'nodes' => $documents
+                'nodes' => $documents,
+                "filter" => $filter ? $filter : "",
+                'inSearch' => intval($request->get('inSearch'))
             ]);
         } else {
             return $this->adminJson($documents);
@@ -465,7 +486,38 @@ class DocumentController extends ElementControllerBase implements EventedControl
             }
         }
 
-        if ($document->isAllowed('settings')) {
+        if ($document->isAllowed('settings') && $request->get('index') !== null) {
+            $updateLatestVersionIndex = function ($document, $newIndex) {
+                if($document instanceof Document\PageSnippet && $latestVersion = $document->getLatestVersion()) {
+                    $document = $latestVersion->loadData();
+                    $document->setIndex($newIndex);
+                    $latestVersion->save();
+                }
+            };
+
+            // if changed the index change also all documents on the same level
+            $newIndex = intval($request->get('index'));
+            $document->saveIndex($newIndex);
+            $updateLatestVersionIndex($document, $newIndex);
+
+            $list = new Document\Listing();
+            $list->setCondition('parentId = ? AND id != ?', [$request->get('parentId'), $document->getId()]);
+            $list->setOrderKey('index');
+            $list->setOrder('asc');
+            $childsList = $list->load();
+
+            $count = 0;
+            foreach ($childsList as $child) {
+                if ($count == $newIndex) {
+                    $count++;
+                }
+                $child->saveIndex($count);
+                $updateLatestVersionIndex($child, $count);
+                $count++;
+            }
+
+            $success = true;
+        } elseif ($document->isAllowed('settings')) {
 
             // if the position is changed the path must be changed || also from the childs
             if ($request->get('parentId')) {
@@ -508,24 +560,6 @@ class DocumentController extends ElementControllerBase implements EventedControl
                 foreach ($updateData as $key => $value) {
                     if (!in_array($key, $blockedVars)) {
                         $document->setValue($key, $value);
-                    }
-                }
-
-                // if changed the index change also all documents on the same level
-                if ($request->get('index') !== null) {
-                    $list = new Document\Listing();
-                    $list->setCondition('parentId = ? AND id != ?', [$request->get('parentId'), $document->getId()]);
-                    $list->setOrderKey('index');
-                    $list->setOrder('asc');
-                    $childsList = $list->load();
-
-                    $count = 0;
-                    foreach ($childsList as $child) {
-                        if ($count == intval($request->get('index'))) {
-                            $count++;
-                        }
-                        $child->saveIndex($count);
-                        $count++;
                     }
                 }
 

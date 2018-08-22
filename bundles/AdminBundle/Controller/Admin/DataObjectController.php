@@ -57,6 +57,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
     {
         $allParams = array_merge($request->request->all(), $request->query->all());
 
+        $filter = $request->get("filter");
         $object = DataObject\AbstractObject::getById($request->get('node'));
         $objectTypes = null;
         $objects = [];
@@ -74,11 +75,16 @@ class DataObjectController extends ElementControllerBase implements EventedContr
             $objectTypes = [DataObject\AbstractObject::OBJECT_TYPE_OBJECT, DataObject\AbstractObject::OBJECT_TYPE_FOLDER];
         }
 
+        $filteredTotalCount = 0;
+
         if ($object->hasChildren($objectTypes)) {
             $limit = intval($request->get('limit'));
-            if (!$request->get('limit')) {
+            if (!is_null($filter)) {
+                $limit = 100;
+            } else if (!$request->get('limit')) {
                 $limit = 100000000;
             }
+
             $offset = intval($request->get('start'));
 
             $childsList = new DataObject\Listing();
@@ -114,6 +120,11 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                                                  )';
             }
 
+            if (!is_null($filter)) {
+                $db = Db::get();
+                $condition .= ' AND o_key LIKE ' . $db->quote("%" . $filter . "%");
+            }
+
             $childsList->setCondition($condition);
             $childsList->setLimit($limit);
             $childsList->setOffset($offset);
@@ -133,6 +144,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
             $childsList = $beforeListLoadEvent->getArgument('list');
 
             $childs = $childsList->load();
+            $filteredTotalCount = $childsList->getTotalCount();
 
             foreach ($childs as $child) {
                 $tmpObject = $this->getTreeNodeConfig($child);
@@ -160,8 +172,11 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                 'offset' => $offset,
                 'limit' => $limit,
                 'total' => $total,
+                'overflow' => !is_null($filter) && ($filteredTotalCount > $limit),
                 'nodes' => $objects,
-                'fromPaging' => intval($request->get('fromPaging'))
+                'fromPaging' => intval($request->get('fromPaging')),
+                'filter' => $request->get('filter') ? $request->get('filter') : "" ,
+                'inSearch' => intval($request->get('inSearch'))
             ]);
         } else {
             return $this->adminJson($objects);
@@ -1099,7 +1114,10 @@ class DataObjectController extends ElementControllerBase implements EventedContr
 
         $values = $this->decodeJson($request->get('values'));
 
-        if ($object->isAllowed('settings')) {
+        if ($object->isAllowed('settings') && isset($values['index']) && is_int($values['index'])) {
+            $this->updateIndexesOfObjectSiblings($object, $values['index']);
+            $success = true;
+        } elseif ($object->isAllowed('settings')) {
             if ($values['key'] && $object->isAllowed('rename')) {
                 $object->setKey($values['key']);
             } elseif ($values['key'] != $object->getKey()) {
@@ -1136,12 +1154,6 @@ class DataObjectController extends ElementControllerBase implements EventedContr
             }
 
             if ($allowUpdate) {
-                $newIndex = $values['index'] ?? null;
-                if (is_int($newIndex)) {
-                    $object->setIndex($newIndex);
-                    $this->updateIndexesOfObjectSiblings($object);
-                }
-
                 $object->setModificationDate(time());
                 $object->setUserModification($this->getAdminUser()->getId());
 
@@ -1177,8 +1189,19 @@ class DataObjectController extends ElementControllerBase implements EventedContr
     /**
      * @param DataObject\AbstractObject $updatedObject
      */
-    protected function updateIndexesOfObjectSiblings(DataObject\AbstractObject $updatedObject)
+    protected function updateIndexesOfObjectSiblings(DataObject\AbstractObject $updatedObject, $newIndex)
     {
+        $updateLatestVersionIndex = function ($object, $newIndex) {
+            if($object instanceof DataObject\Concrete && $latestVersion = $object->getLatestVersion()) {
+                $object = $latestVersion->loadData();
+                $object->setIndex($newIndex);
+                $latestVersion->save();
+            }
+        };
+
+        $updatedObject->saveIndex($newIndex);
+        $updateLatestVersionIndex($updatedObject, $newIndex);
+
         $list = new DataObject\Listing();
         $list->setCondition(
             'o_parentId = ? AND o_id != ?',
@@ -1191,15 +1214,12 @@ class DataObjectController extends ElementControllerBase implements EventedContr
         $index = 0;
         /** @var DataObject\AbstractObject $child */
         foreach ($siblings as $sibling) {
-            if ($index == intval($updatedObject->getIndex())) {
+            if ($index == $newIndex) {
                 $index++;
             }
-            if (method_exists($sibling, 'setOmitMandatoryCheck')) {
-                $sibling->setOmitMandatoryCheck(true);
-            }
-            $sibling
-                ->setIndex($index)
-                ->save();
+
+            $sibling->saveIndex($index);
+            $updateLatestVersionIndex($sibling, $index);
             $index++;
         }
     }

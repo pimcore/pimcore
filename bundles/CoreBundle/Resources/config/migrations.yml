@@ -11,4 +11,5 @@ services:
         public: true
 
     Pimcore\Migrations\MigrationManager:
+        lazy: true
         public: true

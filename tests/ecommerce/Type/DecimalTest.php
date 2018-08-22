@@ -584,6 +584,7 @@ class DecimalTest extends TestCase
         return [
             [15.99, '16.0000'],
             ['15.99', '16.0000'],
+            ['15,99', '16.0000'],
             [Decimal::fromRawValue(159900, 4), '16.0000'],
         ];
     }

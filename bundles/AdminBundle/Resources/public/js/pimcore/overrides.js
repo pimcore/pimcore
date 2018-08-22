@@ -265,11 +265,13 @@ Ext.define('pimcore.tree.View', {
 
             node.ptb = ptb = Ext.create('pimcore.toolbar.Paging', {
                     node: node,
-                    width: 160
+                    width: 260
                 }
             );
 
             node.ptb.node = node;
+            node.ptb.store = this.store;
+
 
             var tree = node.getOwnerTree();
             var view = tree.getView();
@@ -301,7 +303,9 @@ Ext.define('pimcore.tree.View', {
             ptb.render(el);
             tree.updateLayout();
 
-            if (node.fromPaging) {
+            if (node.filter) {
+                node.ptb.filterField.focus([node.filter.length, node.filter.length]);
+            } else if (node.fromPaging) {
                 node.ptb.numberItem.focus();
             }
         }
@@ -342,6 +346,10 @@ Ext.define('pimcore.data.PagingTreeStore', {
             var data = Ext.decode(response.responseText);
 
             node.fromPaging = data.fromPaging;
+            node.filter = data.filter;
+            node.inSearch = data.inSearch;
+            node.overflow = data.overflow;
+
             proxy.setExtraParam("fromPaging", 0);
 
             var total = data.total;
@@ -379,13 +387,13 @@ Ext.define('pimcore.data.PagingTreeStore', {
             }
 
             me.superclass.onProxyLoad.call(this, operation);
-                var proxy = this.getProxy();
-                proxy.setExtraParam("start", 0);
-            } catch (e) {
-                console.log(e);
-            }
+            var proxy = this.getProxy();
+            proxy.setExtraParam("start", 0);
+        } catch (e) {
+            console.log(e);
         }
-    });
+    }
+});
 
 
 Ext.define('pimcore.toolbar.Paging', {
@@ -417,7 +425,7 @@ Ext.define('pimcore.toolbar.Paging', {
 
     refreshText: t('refresh'),
 
-    width: 180,
+    width: 280,
 
     height: 20,
 
@@ -431,16 +439,145 @@ Ext.define('pimcore.toolbar.Paging', {
         fromRecord: 0
     },
 
-    getPagingItems: function() {
+    doCancelSearch: function (node) {
+        this.inSearch = 0;
+        this.cancelFilterButton.hide();
+        this.filterButton.show();
+        this.filterField.setValue("");
+        this.filterField.hide();
+
+        var store = this.store;
+        store.load({
+                node: node,
+                params: {
+                    "inSearch": 0
+                }
+            }
+        );
+
+
+        this.first.show();
+        this.prev.show();
+        this.numberItem.show();
+        this.spacer.show();
+        this.afterItem.show();
+        this.next.show();
+        this.last.show();
+    },
+
+    getPagingItems: function () {
         var me = this,
             inputListeners = {
                 scope: me,
                 blur: me.onPagingBlur
             };
+
+        var node = me.node;
         var pagingData = me.node.pagingData;
 
         var currPage = pagingData.offset / pagingData.limit + 1;
-        //
+
+        this.inSearch = node.inSearch;
+        var hidden = this.inSearch
+        pimcore.isTreeFiltering = false;
+
+        inputListeners[Ext.supports.SpecialKeyDownRepeat ? 'keydown' : 'keypress'] = me.onPagingKeyDown;
+
+        this.filterField = new Ext.form.field.Text({
+            name: 'filter',
+            width: 160,
+            border: true,
+            cls: "pimcore_pagingtoolbar_container_filter",
+            fieldStyle: "padding: 10px;",
+            height: 18,
+            value: node.filter ? node.filter : "",
+            enableKeyEvents: true,
+            hidden: !hidden,
+            listeners: {
+                "keydown": function (node, inputField, event) {
+                    if (event.keyCode == 13) {
+                        var store = this.store;
+                        var proxy = store.getProxy();
+                        this.currentFilter = this.filterField.getValue();
+
+
+                        try {
+                            store.load({
+                                    node: node,
+                                    params: {
+                                        "filter": this.filterField.getValue(),
+                                        "inSearch": this.inSearch
+                                    }
+                                }
+                            );
+                        } catch (e) {
+
+                        }
+
+
+                    }
+                }.bind(this, node)
+            }
+
+        })
+        ;
+
+        var result = [this.filterField];
+
+        this.overflow = new Ext.button.Button(
+            {
+                tooltip: t("there_are_more_items"),
+                overflowText: t("there_are_more_items"),
+                iconCls: "pimcore_icon_warning",
+                disabled: false,
+                scope: me,
+                border: false,
+                hidden: !node.overflow
+            });
+
+
+        this.filterButton = new Ext.button.Button(
+            {
+                itemId: 'filterButton',
+                tooltip: t("filter"),
+                overflowText: t("filter"),
+                iconCls: Ext.baseCSSPrefix + 'tbar-page-filter',
+                margin: '-1 2 3 2',
+                handler: function () {
+                    this.inSearch = 1;
+                    this.cancelFilterButton.show();
+                    this.filterButton.hide();
+                    this.filterField.setValue("");
+                    this.filterField.show();
+
+                    this.filterField.focus();
+
+                    this.first.hide();
+                    this.prev.hide();
+                    this.numberItem.hide();
+                    this.spacer.hide();
+                    this.afterItem.hide();
+                    this.next.hide();
+                    this.last.hide();
+                }.bind(this),
+                scope: me,
+                hidden: this.inSearch
+            });
+
+        this.cancelFilterButton = new Ext.button.Button(
+            {
+                itemId: 'cancelFlterButton',
+                tooltip: t("clear"),
+                overflowText: t("clear"),
+                margin: '-1 2 3 2',
+                iconCls: Ext.baseCSSPrefix + 'tbar-page-cancel-filter',
+                handler: function () {
+                    this.doCancelSearch(node);
+
+                }.bind(this),
+                scope: me,
+                hidden: !this.inSearch
+            });
 
         this.afterItem = Ext.create('Ext.form.NumberField', {
 
@@ -449,12 +586,12 @@ Ext.define('pimcore.toolbar.Paging', {
             hideTrigger: true,
             heightLabel: true,
             height: 18,
-            width: 40,
+            width: 38,
             disabled: true,
-            margin: '-1 2 3 2'
+            margin: '-1 2 3 2',
+            hidden: hidden
         });
 
-        inputListeners[Ext.supports.SpecialKeyDownRepeat ? 'keydown' : 'keypress'] = me.onPagingKeyDown;
 
         this.numberItem = new Ext.form.field.Number({
             xtype: 'numberfield',
@@ -475,10 +612,12 @@ Ext.define('pimcore.toolbar.Paging', {
             width: 40,
             isFormField: false,
             margin: '-1 2 3 2',
-            listeners: inputListeners
+            listeners: inputListeners,
+            hidden: hidden
         });
 
-        return [
+
+        this.first = new Ext.button.Button(
             {
                 itemId: 'first',
                 tooltip: me.firstText,
@@ -487,46 +626,70 @@ Ext.define('pimcore.toolbar.Paging', {
                 disabled: me.node.pagingData.offset == 0,
                 handler: me.moveFirst,
                 scope: me,
-                border: false
+                border: false,
+                hidden: hidden
 
-            },
-            {
-                itemId: 'prev',
-                tooltip: me.prevText,
-                overflowText: me.prevText,
-                iconCls: Ext.baseCSSPrefix + 'tbar-page-prev',
-                disabled: me.node.pagingData.offset == 0,
-                handler: me.movePrevious,
-                scope: me,
-                border: false
-            }
-            ,
-            this.numberItem,
-            {
-                xtype: "tbspacer"
-            }
-            ,
-            this.afterItem,
-            ,
-            {
-                itemId: 'next',
-                tooltip: me.nextText,
-                overflowText: me.nextText,
-                iconCls: Ext.baseCSSPrefix + 'tbar-page-next',
-                disabled: (Math.ceil(me.node.pagingData.total / me.node.pagingData.limit) - 1) * me.node.pagingData.limit == me.node.pagingData.offset,
-                handler: me.moveNext,
-                scope: me
-            },
-            {
-                itemId: 'last',
-                tooltip: me.lastText,
-                overflowText: me.lastText,
-                iconCls: Ext.baseCSSPrefix + 'tbar-page-last',
-                disabled: (Math.ceil(me.node.pagingData.total / me.node.pagingData.limit) - 1) * me.node.pagingData.limit == me.node.pagingData.offset,
-                handler: me.moveLast,
-                scope: me
-            }
-        ];
+            });
+
+
+        this.prev = new Ext.button.Button({
+            itemId: 'prev',
+            tooltip: me.prevText,
+            overflowText: me.prevText,
+            iconCls: Ext.baseCSSPrefix + 'tbar-page-prev',
+            disabled: me.node.pagingData.offset == 0,
+            handler: me.movePrevious,
+            scope: me,
+            border: false,
+            hidden: hidden
+        });
+
+
+        this.spacer = new Ext.toolbar.Spacer({
+            xtype: "tbspacer",
+            hidden: hidden
+        });
+
+
+        this.next = new Ext.button.Button({
+            itemId: 'next',
+            tooltip: me.nextText,
+            overflowText: me.nextText,
+            iconCls: Ext.baseCSSPrefix + 'tbar-page-next',
+            disabled: (Math.ceil(me.node.pagingData.total / me.node.pagingData.limit) - 1) * me.node.pagingData.limit == me.node.pagingData.offset,
+            handler: me.moveNext,
+            scope: me,
+            hidden: hidden
+        });
+
+
+        this.last = new Ext.button.Button({
+            itemId: 'last',
+            tooltip: me.lastText,
+            overflowText: me.lastText,
+            iconCls: Ext.baseCSSPrefix + 'tbar-page-last',
+            disabled: (Math.ceil(me.node.pagingData.total / me.node.pagingData.limit) - 1) * me.node.pagingData.limit == me.node.pagingData.offset,
+            handler: me.moveLast,
+            scope: me,
+            hidden: hidden
+        });
+
+
+        result.push(this.overflow);
+        result.push(this.filterButton);
+        result.push(this.cancelFilterButton);
+
+        result.push(this.filterField);
+        result.push(this.first);
+        result.push(this.prev);
+        result.push(this.numberItem);
+        result.push(this.spacer);
+        result.push(this.afterItem);
+        result.push(this.next);
+        result.push(this.last);
+
+
+        return result;
     },
 
     getMaxPageNum: function() {

@@ -16,6 +16,7 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 
 use Pimcore\Controller\Configuration\TemplatePhp;
 use Pimcore\Controller\EventedControllerInterface;
+use Pimcore\Db;
 use Pimcore\Event\AdminEvents;
 use Pimcore\File;
 use Pimcore\Logger;
@@ -196,11 +197,18 @@ class AssetController extends ElementControllerBase implements EventedController
         $cv = false;
         $asset = Asset::getById($allParams['node']);
 
+        $filter = $request->get("filter");
         $limit = intval($allParams['limit']);
-        if (!$allParams['limit']) {
+        if (!is_null($filter)) {
+            $limit = 100;
+            $offset = 0;
+        } else if (!$allParams['limit']) {
             $limit = 100000000;
         }
+
         $offset = intval($allParams['start']);
+
+        $filteredTotalCount = 0;
 
         if ($asset->hasChildren()) {
             if ($allParams['view']) {
@@ -209,18 +217,36 @@ class AssetController extends ElementControllerBase implements EventedController
 
             // get assets
             $childsList = new Asset\Listing();
+            $db = Db::get();
+
             if ($this->getAdminUser()->isAdmin()) {
-                $childsList->setCondition('parentId = ? ', $asset->getId());
+                $condition = 'parentId =  ' . $db->quote( $asset->getId());
+
             } else {
                 $userIds = $this->getAdminUser()->getRoles();
                 $userIds[] = $this->getAdminUser()->getId();
-                $childsList->setCondition('parentId = ? and
-                    (
-                    (select list from users_workspaces_asset where userId in (' . implode(',', $userIds) . ') and LOCATE(CONCAT(path,filename),cpath)=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
-                    or
-                    (select list from users_workspaces_asset where userId in (' . implode(',', $userIds) . ') and LOCATE(cpath,CONCAT(path,filename))=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
-                    )', $asset->getId());
+
+                $condition = 'parentId = ' . $db->quote($asset->getId()) . ' and
+                (
+                (select list from users_workspaces_asset where userId in (' . implode(',', $userIds) . ') and LOCATE(CONCAT(path,filename),cpath)=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
+                or
+                (select list from users_workspaces_asset where userId in (' . implode(',', $userIds) . ') and LOCATE(cpath,CONCAT(path,filename))=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
+                    )';
+
+
             }
+
+
+            if (! is_null($filter)) {
+                $db = Db::get();
+
+                $condition = '(' . $condition . ')' . ' AND filename LIKE ' . $db->quote("%" . $filter . "%");
+
+            }
+
+            $childsList->setCondition($condition );
+
+
             $childsList->setLimit($limit);
             $childsList->setOffset($offset);
             $childsList->setOrderKey("FIELD(assets.type, 'folder') DESC, assets.filename ASC", false);
@@ -235,6 +261,8 @@ class AssetController extends ElementControllerBase implements EventedController
             $childsList = $beforeListLoadEvent->getArgument('list');
 
             $childs = $childsList->load();
+
+            $filteredTotalCount = $childsList->getTotalCount();
 
             foreach ($childs as $childAsset) {
                 if ($childAsset->isAllowed('list')) {
@@ -255,7 +283,10 @@ class AssetController extends ElementControllerBase implements EventedController
                 'offset' => $offset,
                 'limit' => $limit,
                 'total' => $asset->getChildAmount($this->getAdminUser()),
-                'nodes' => $assets
+                'overflow' => !is_null($filter) && ($filteredTotalCount > $limit),
+                'nodes' => $assets,
+                "filter" => $filter ? $filter : "",
+                'inSearch' => intval($request->get('inSearch'))
             ]);
         } else {
             return $this->adminJson($assets);
