@@ -809,6 +809,15 @@ class AbstractObject extends Model\Element\AbstractElement
     }
 
     /**
+     * @param int $index
+     */
+    public function saveIndex($index)
+    {
+        $this->getDao()->saveIndex($index);
+        $this->clearDependentCache();
+    }
+
+    /**
      * @return Model\Dependency
      */
     public function getDependencies()

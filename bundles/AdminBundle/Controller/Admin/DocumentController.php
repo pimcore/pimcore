@@ -486,7 +486,38 @@ class DocumentController extends ElementControllerBase implements EventedControl
             }
         }
 
-        if ($document->isAllowed('settings')) {
+        if ($document->isAllowed('settings') && $request->get('index') !== null) {
+            $updateLatestVersionIndex = function ($document, $newIndex) {
+                if($document instanceof Document\PageSnippet && $latestVersion = $document->getLatestVersion()) {
+                    $document = $latestVersion->loadData();
+                    $document->setIndex($newIndex);
+                    $latestVersion->save();
+                }
+            };
+
+            // if changed the index change also all documents on the same level
+            $newIndex = intval($request->get('index'));
+            $document->saveIndex($newIndex);
+            $updateLatestVersionIndex($document, $newIndex);
+
+            $list = new Document\Listing();
+            $list->setCondition('parentId = ? AND id != ?', [$request->get('parentId'), $document->getId()]);
+            $list->setOrderKey('index');
+            $list->setOrder('asc');
+            $childsList = $list->load();
+
+            $count = 0;
+            foreach ($childsList as $child) {
+                if ($count == $newIndex) {
+                    $count++;
+                }
+                $child->saveIndex($count);
+                $updateLatestVersionIndex($child, $count);
+                $count++;
+            }
+
+            $success = true;
+        } elseif ($document->isAllowed('settings')) {
 
             // if the position is changed the path must be changed || also from the childs
             if ($request->get('parentId')) {
@@ -529,24 +560,6 @@ class DocumentController extends ElementControllerBase implements EventedControl
                 foreach ($updateData as $key => $value) {
                     if (!in_array($key, $blockedVars)) {
                         $document->setValue($key, $value);
-                    }
-                }
-
-                // if changed the index change also all documents on the same level
-                if ($request->get('index') !== null) {
-                    $list = new Document\Listing();
-                    $list->setCondition('parentId = ? AND id != ?', [$request->get('parentId'), $document->getId()]);
-                    $list->setOrderKey('index');
-                    $list->setOrder('asc');
-                    $childsList = $list->load();
-
-                    $count = 0;
-                    foreach ($childsList as $child) {
-                        if ($count == intval($request->get('index'))) {
-                            $count++;
-                        }
-                        $child->saveIndex($count);
-                        $count++;
                     }
                 }
 

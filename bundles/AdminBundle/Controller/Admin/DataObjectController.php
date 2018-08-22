@@ -1114,7 +1114,10 @@ class DataObjectController extends ElementControllerBase implements EventedContr
 
         $values = $this->decodeJson($request->get('values'));
 
-        if ($object->isAllowed('settings')) {
+        if ($object->isAllowed('settings') && isset($values['index']) && is_int($values['index'])) {
+            $this->updateIndexesOfObjectSiblings($object, $values['index']);
+            $success = true;
+        } elseif ($object->isAllowed('settings')) {
             if ($values['key'] && $object->isAllowed('rename')) {
                 $object->setKey($values['key']);
             } elseif ($values['key'] != $object->getKey()) {
@@ -1151,12 +1154,6 @@ class DataObjectController extends ElementControllerBase implements EventedContr
             }
 
             if ($allowUpdate) {
-                $newIndex = $values['index'] ?? null;
-                if (is_int($newIndex)) {
-                    $object->setIndex($newIndex);
-                    $this->updateIndexesOfObjectSiblings($object);
-                }
-
                 $object->setModificationDate(time());
                 $object->setUserModification($this->getAdminUser()->getId());
 
@@ -1192,8 +1189,19 @@ class DataObjectController extends ElementControllerBase implements EventedContr
     /**
      * @param DataObject\AbstractObject $updatedObject
      */
-    protected function updateIndexesOfObjectSiblings(DataObject\AbstractObject $updatedObject)
+    protected function updateIndexesOfObjectSiblings(DataObject\AbstractObject $updatedObject, $newIndex)
     {
+        $updateLatestVersionIndex = function ($object, $newIndex) {
+            if($object instanceof DataObject\Concrete && $latestVersion = $object->getLatestVersion()) {
+                $object = $latestVersion->loadData();
+                $object->setIndex($newIndex);
+                $latestVersion->save();
+            }
+        };
+
+        $updatedObject->saveIndex($newIndex);
+        $updateLatestVersionIndex($updatedObject, $newIndex);
+
         $list = new DataObject\Listing();
         $list->setCondition(
             'o_parentId = ? AND o_id != ?',
@@ -1206,15 +1214,12 @@ class DataObjectController extends ElementControllerBase implements EventedContr
         $index = 0;
         /** @var DataObject\AbstractObject $child */
         foreach ($siblings as $sibling) {
-            if ($index == intval($updatedObject->getIndex())) {
+            if ($index == $newIndex) {
                 $index++;
             }
-            if (method_exists($sibling, 'setOmitMandatoryCheck')) {
-                $sibling->setOmitMandatoryCheck(true);
-            }
-            $sibling
-                ->setIndex($index)
-                ->save();
+
+            $sibling->saveIndex($index);
+            $updateLatestVersionIndex($sibling, $index);
             $index++;
         }
     }
