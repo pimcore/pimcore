@@ -486,39 +486,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
             }
         }
 
-        if ($document->isAllowed('settings') && $request->get('index') !== null) {
-            $updateLatestVersionIndex = function ($document, $newIndex) {
-                if($document instanceof Document\PageSnippet && $latestVersion = $document->getLatestVersion()) {
-                    $document = $latestVersion->loadData();
-                    $document->setIndex($newIndex);
-                    $latestVersion->save();
-                }
-            };
-
-            // if changed the index change also all documents on the same level
-            $newIndex = intval($request->get('index'));
-            $document->saveIndex($newIndex);
-            $updateLatestVersionIndex($document, $newIndex);
-
-            $list = new Document\Listing();
-            $list->setCondition('parentId = ? AND id != ?', [$request->get('parentId'), $document->getId()]);
-            $list->setOrderKey('index');
-            $list->setOrder('asc');
-            $childsList = $list->load();
-
-            $count = 0;
-            foreach ($childsList as $child) {
-                if ($count == $newIndex) {
-                    $count++;
-                }
-                $child->saveIndex($count);
-                $updateLatestVersionIndex($child, $count);
-                $count++;
-            }
-
-            $success = true;
-        } elseif ($document->isAllowed('settings')) {
-
+        if ($document->isAllowed('settings')) {
             // if the position is changed the path must be changed || also from the childs
             if ($request->get('parentId')) {
                 $parentDocument = Document::getById($request->get('parentId'));
@@ -566,6 +534,11 @@ class DocumentController extends ElementControllerBase implements EventedControl
                 $document->setUserModification($this->getAdminUser()->getId());
                 try {
                     $document->save();
+
+                    if($request->get('index') !== null) {
+                        $this->updateIndexesOfDocumentSiblings($document, $request->get('index'));
+                    }
+
                     $success = true;
                 } catch (\Exception $e) {
                     return $this->adminJson(['success' => false, 'message' => $e->getMessage()]);
@@ -591,6 +564,40 @@ class DocumentController extends ElementControllerBase implements EventedControl
         }
 
         return $this->adminJson(['success' => $success]);
+    }
+
+    /**
+     * @param Document $updatedObject
+     * @param $newIndex
+     */
+    protected function updateIndexesOfDocumentSiblings(Document $document, $newIndex) {
+        $updateLatestVersionIndex = function ($document, $newIndex) {
+            if ($document instanceof Document\PageSnippet && $latestVersion = $document->getLatestVersion()) {
+                $document = $latestVersion->loadData();
+                $document->setIndex($newIndex);
+                $latestVersion->save();
+            }
+        };
+
+        // if changed the index change also all documents on the same level
+        $newIndex = intval($newIndex);
+        $document->saveIndex($newIndex);
+
+        $list = new Document\Listing();
+        $list->setCondition('parentId = ? AND id != ?', [$document->getParentId(), $document->getId()]);
+        $list->setOrderKey('index');
+        $list->setOrder('asc');
+        $childsList = $list->load();
+
+        $count = 0;
+        foreach ($childsList as $child) {
+            if ($count == $newIndex) {
+                $count++;
+            }
+            $child->saveIndex($count);
+            $updateLatestVersionIndex($child, $count);
+            $count++;
+        }
     }
 
     /**

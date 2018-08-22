@@ -1114,10 +1114,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
 
         $values = $this->decodeJson($request->get('values'));
 
-        if ($object->isAllowed('settings') && isset($values['index']) && is_int($values['index'])) {
-            $this->updateIndexesOfObjectSiblings($object, $values['index']);
-            $success = true;
-        } elseif ($object->isAllowed('settings')) {
+        if ($object->isAllowed('settings')) {
             if ($values['key'] && $object->isAllowed('rename')) {
                 $object->setKey($values['key']);
             } elseif ($values['key'] != $object->getKey()) {
@@ -1159,6 +1156,11 @@ class DataObjectController extends ElementControllerBase implements EventedContr
 
                 try {
                     $object->save();
+
+                    if(isset($values['index']) && is_int($values['index'])) {
+                        $this->updateIndexesOfObjectSiblings($object, $values['index']);
+                    }
+
                     $success = true;
                 } catch (\Exception $e) {
                     Logger::error($e);
@@ -1200,7 +1202,6 @@ class DataObjectController extends ElementControllerBase implements EventedContr
         };
 
         $updatedObject->saveIndex($newIndex);
-        $updateLatestVersionIndex($updatedObject, $newIndex);
 
         $list = new DataObject\Listing();
         $list->setCondition(
