@@ -91,13 +91,7 @@ pimcore.object.tags.multihrefMetadata = Class.create(pimcore.object.tags.abstrac
 
         var columns = [];
         columns.push({text: 'ID', dataIndex: 'id', width: 50});
-        columns.push({text: t('reference'), dataIndex: 'path', flex: 1, renderer: function (value, metaData) {
-                        publishVal = this.checkIfPublished(value);
-                        if(publishVal === false) {
-                                metaData.tdStyle = 'text-decoration: line-through;color: #777;';
-                            }
-                            return value;
-                        }.bind(this)
+        columns.push({text: t('reference'), dataIndex: 'path', flex: 1, renderer:this.fullPathRenderCheck.bind(this)
         });
 
         var visibleFieldsCount = columns.length;

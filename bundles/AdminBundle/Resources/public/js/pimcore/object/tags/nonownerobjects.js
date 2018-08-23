@@ -112,13 +112,7 @@ pimcore.object.tags.nonownerobjects = Class.create(pimcore.object.tags.objects, 
                 },
                 items: [
                     {text: 'ID', dataIndex: 'id', flex: 50},
-                    {text: t("reference"), dataIndex: 'path', flex: 200, renderer:function (value, metaData) {
-                        publishVal = this.checkIfPublished(value);
-                            if(publishVal === false) {
-                                metaData.tdStyle = 'text-decoration: line-through;color: #777;';
-                            }
-                            return value;
-                        }.bind(this)
+                    {text: t("reference"), dataIndex: 'path', flex: 200, renderer:this.fullPathRenderCheck.bind(this)
                     },
                     {text: t("type"), dataIndex: 'type', flex: 100},
                     {

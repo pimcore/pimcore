@@ -121,13 +121,7 @@ pimcore.object.tags.multihref = Class.create(pimcore.object.tags.abstract, {
                 },
                 items: [
                     {text: 'ID', dataIndex: 'id', width: 50},
-                    {text: t("reference"), dataIndex: 'path', flex: 200, renderer:function (value, metaData) {
-                        publishVal = this.checkIfPublished(value);
-                        if(publishVal === false) {
-                                metaData.tdStyle = 'text-decoration: line-through;color: #777;';
-                            }
-                            return value;
-                        }.bind(this)
+                    {text: t("reference"), dataIndex: 'path', flex: 200, renderer:this.fullPathRenderCheck.bind(this)
                     },
                     {text: t("type"), dataIndex: 'type', width: 100},
                     {text: t("subtype"), dataIndex: 'subtype', width: 100},

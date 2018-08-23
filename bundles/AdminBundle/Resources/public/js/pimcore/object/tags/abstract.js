@@ -283,9 +283,9 @@ pimcore.object.tags.abstract = Class.create({
                         return el.published;
                     }
                 } else if (this.fieldConfig.fieldtype === "objects") {
-                    return (el[1] === value && (el[3] === "1" || el[3] === true));
+                    return (el[1] === value && el[3] === true);
                 } else if (this.fieldConfig.fieldtype === "multihref") {
-                    return ((el[1] === value && (el[4] === "1" || el[4] === true) ) || (el[1] === value && (el[2] === "asset")));
+                    return ((el[1] === value && el[4] === true) || (el[1] === value && (el[2] === "asset")));
                 } else if (this.fieldConfig.fieldtype === "multihrefMetadata") {
                     if (el.path === value && el.type !== "asset") {
                         return el.published;
@@ -296,6 +296,14 @@ pimcore.object.tags.abstract = Class.create({
             }.bind(this));
         }
         return publishStatus;
+    },
+
+    fullPathRenderCheck :function (value, metaData) {
+        publishVal = this.checkIfPublished(value);
+        if(publishVal === false) {
+            metaData.tdStyle = 'text-decoration: line-through;color: #777;';
+        }
+        return value;
     }
 
 });

@@ -117,14 +117,7 @@ pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, 
                 fc.editor = null;
                 fc.sortable = false;
                 if(fc.layout.key === "fullpath") {
-                    fc.renderer = function(value, metaData) {
-                         publishVal = this.checkIfPublished(value);
-                            if(publishVal === false) {
-                                metaData.tdStyle = 'text-decoration: line-through;color: #777;';
-                            }
-                            return value;
-
-                    }.bind(this);
+                    fc.renderer = this.fullPathRenderCheck.bind(this);
                 }
                 columns.push(fc);
             }
