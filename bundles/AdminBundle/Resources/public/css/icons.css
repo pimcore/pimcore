@@ -265,7 +265,7 @@
 .pimcore_icon_jp2, .pimcore_icon_jpx, .pimcore_icon_j2k, .pimcore_icon_j2c, .pimcore_icon_jif, .pimcore_icon_jfif,
 .pimcore_icon_pcd, .pimcore_icon_kdc, .pimcore_icon_mac, .pimcore_icon_miff, .pimcore_icon_pbm, .pimcore_icon_pgm,
 .pimmore_icon_pnm, .pimcore_icon_ppm, .pimcore_icon_ras, .pimcore_icon_raw, .pimcore_icon_rgb, .pimcore_icon_rle,
-.pimcore_icon_tga, .pimcore_icon_webp, .pimcore_icon_xbm, .pimcore_icon_xcf, .pimcore_icon_xpm,
+.pimcore_icon_tga, .pimcore_icon_webp, .pimcore_icon_xbm, .pimcore_icon_xcf, .pimcore_icon_xpm,.pimcore_icon_cr2,
 .pimcore_icon_pcx, .pimcore_icon_iff, .pimcore_icon_pct, .pimcore_icon_wmf, .pimcore_icon_svg, .pimcore_icon_dng {
     background: url(/bundles/pimcoreadmin/img/flat-color-icons/image.svg) center center no-repeat !important;
 }
