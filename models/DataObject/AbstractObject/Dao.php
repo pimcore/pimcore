@@ -175,7 +175,8 @@ class Dao extends Model\Element\Dao
             }
 
             //update object child paths
-            $this->db->query('update objects set o_path = replace(o_path,' . $this->db->quote($oldPath . '/') . ',' . $this->db->quote($this->model->getRealFullPath() . '/') . "), o_modificationDate = '" . time() . "', o_userModification = '" . $userId . "' where o_path like " . $this->db->quote($oldPath . '/%') . ';');
+            // we don't update the modification date here, as this can have side-effects when there's an unpublished version for an element
+            $this->db->query('update objects set o_path = replace(o_path,' . $this->db->quote($oldPath . '/') . ',' . $this->db->quote($this->model->getRealFullPath() . '/') . "), o_userModification = '" . $userId . "' where o_path like " . $this->db->quote($oldPath . '/%') . ';');
 
             //update object child permission paths
             $this->db->query('update users_workspaces_object set cpath = replace(cpath,' . $this->db->quote($oldPath . '/') . ',' . $this->db->quote($this->model->getRealFullPath() . '/') . ') where cpath like ' . $this->db->quote($oldPath . '/%') . ';');
