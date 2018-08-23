@@ -110,7 +110,6 @@ pimcore.object.klass = Class.create({
             params: {
             },
             success: function (response) {
-
                 var classes = Ext.decode(response.responseText);
                 this.addClass(classes);
             }.bind(this)
@@ -129,7 +128,18 @@ pimcore.object.klass = Class.create({
                             showCloseOthers: true
                         }),
                         Ext.create('Ext.ux.TabReorderer', {})
-                    ]
+                    ],
+                listeners: {
+                    'tabchange': function (tabpanel, tab) {
+                        var classId = tab.id.substr("pimcore_class_editor_panel_".length);
+                        var tree = this.tree;
+                        this.tree.getRootNode().cascade(function () {
+                            if (this.id.toString() === classId) {
+                                tree.setSelection(this);
+                            }
+                        });
+                    }.bind(this)
+                }
             });
         }
 
