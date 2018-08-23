@@ -255,11 +255,7 @@ class Document extends Element\AbstractElement
 
         try {
             $helperDoc = new Document();
-            // validate path
-            if (Element\Service::isValidPath($path, 'document')) {
-                $helperDoc->getDao()->getByPath($path);
-            }
-
+            $helperDoc->getDao()->getByPath($path);
             $doc = self::getById($helperDoc->getId(), $force);
             \Pimcore\Cache\Runtime::set($cacheKey, $doc);
         } catch (\Exception $e) {

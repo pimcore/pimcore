@@ -232,12 +232,8 @@ class Asset extends Element\AbstractElement
 
         try {
             $asset = new Asset();
-
-            if (Element\Service::isValidPath($path, 'asset')) {
-                $asset->getDao()->getByPath($path);
-
-                return self::getById($asset->getId(), $force);
-            }
+            $asset->getDao()->getByPath($path);
+            return self::getById($asset->getId(), $force);
         } catch (\Exception $e) {
             Logger::warning($e->getMessage());
         }

@@ -51,4 +51,23 @@ abstract class Dao extends Model\Dao\AbstractDao
 
         return $parentIds;
     }
+
+    /**
+     * @param $fullpath
+     * @return array
+     */
+    protected function extractKeyAndPath($fullpath) {
+        $key = '';
+        $path = $fullpath;
+        if($fullpath !== '/') {
+            $lastPart = strrpos($fullpath, '/') + 1;
+            $key = substr($fullpath, $lastPart);
+            $path = substr($fullpath, 0, $lastPart);
+        }
+
+        return [
+            'key' => $key,
+            'path' => $path
+        ];
+    }
 }

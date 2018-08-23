@@ -328,12 +328,8 @@ class AbstractObject extends Model\Element\AbstractElement
 
         try {
             $object = new self();
-
-            if (Element\Service::isValidPath($path, 'object')) {
-                $object->getDao()->getByPath($path);
-
-                return self::getById($object->getId(), $force);
-            }
+            $object->getDao()->getByPath($path);
+            return self::getById($object->getId(), $force);
         } catch (\Exception $e) {
             Logger::warning($e->getMessage());
         }

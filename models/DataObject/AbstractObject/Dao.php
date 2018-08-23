@@ -55,14 +55,8 @@ class Dao extends Model\Element\Dao
      */
     public function getByPath($path)
     {
-
-        // check for root node
-        $_path = $path != '/' ? dirname($path) : $path;
-        $_path = str_replace('\\', '/', $_path); // windows patch
-        $_key = basename($path);
-        $_path .= $_path != '/' ? '/' : '';
-
-        $data = $this->db->fetchRow('SELECT o_id FROM objects WHERE o_path = ' . $this->db->quote($_path) . ' and `o_key` = ' . $this->db->quote($_key));
+        $params = $this->extractKeyAndPath($path);
+        $data = $this->db->fetchRow('SELECT o_id FROM objects WHERE o_path = :path AND `o_key` = :key', $params);
 
         if ($data['o_id']) {
             $this->assignVariablesToModel($data);
