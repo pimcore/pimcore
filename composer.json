@@ -88,7 +88,7 @@
     "symfony/polyfill-apcu": "^1.0",
     "symfony/swiftmailer-bundle": "^2.6.4",
     "symfony/symfony": "3.4.*",
-    "tijsverkoyen/css-to-inline-styles": "~1.5",
+    "tijsverkoyen/css-to-inline-styles": "^2.2.1",
     "twig/extensions": "^1.5",
     "twig/twig": "^2.0",
     "umpirsky/country-list": "2.0.4",
