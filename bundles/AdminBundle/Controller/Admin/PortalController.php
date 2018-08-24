@@ -14,8 +14,6 @@
 
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 
-use FeedIo\Adapter\Guzzle\Client;
-use FeedIo\FeedIo;
 use Pimcore\Analytics\Google\Config\SiteConfigProvider;
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Controller\EventedControllerInterface;
@@ -251,77 +249,6 @@ class PortalController extends AdminController implements EventedControllerInter
         $this->dashboardHelper->saveDashboard($key, $dashboard);
 
         return $this->adminJson(['success' => true]);
-    }
-
-    /**
-     * @Route("/portlet-feed")
-     * @Method({"GET"})
-     *
-     * @param Request $request
-     *
-     * @return JsonResponse
-     */
-    public function portletFeedAction(Request $request)
-    {
-        $dashboard = $this->getCurrentConfiguration($request);
-        $id = $request->get('id');
-
-        $portlet = [];
-        foreach ($dashboard['positions'] as $col) {
-            foreach ($col as $row) {
-                if ($row['id'] == $id) {
-                    $portlet = $row;
-                }
-            }
-        }
-
-        $feedUrl = $portlet['config'];
-
-        // get feedio
-        $feedIoClient = new Client(new \GuzzleHttp\Client());
-        $feedIo = new FeedIo($feedIoClient, $this->container->get('logger'));
-
-        $feed = null;
-        if (!empty($feedUrl)) {
-            try {
-                $feed = $feedIo->read($feedUrl)->getFeed();
-            } catch (\Exception $e) {
-                Logger::error($e);
-            }
-        }
-
-        $count = 0;
-        $entries = [];
-
-        if ($feed) {
-            foreach ($feed as $entry) {
-
-                // display only the latest 11 entries
-                $count++;
-                if ($count > 10) {
-                    break;
-                }
-
-                $entry = [
-                    'title' => $entry->getTitle(),
-                    'description' => $entry->getDescription(),
-                    'authors' => $entry->getValue('author'),
-                    'link' => $entry->getLink(),
-                    'content' => $entry->getDescription()
-                ];
-
-                foreach ($entry as &$content) {
-                    $content = strip_tags($content, '<h1><h2><h3><h4><h5><p><br><a><img><div><b><strong><i>');
-                    $content = preg_replace('/on([a-z]+)([ ]+)?=/i', 'data-on$1=', $content);
-                }
-
-                $entries[] = $entry;
-            }
-        }
-
-        return $this->adminJson([
-            'entries' => $entries
-        ]);
     }
 
     /**

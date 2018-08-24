@@ -46,7 +46,6 @@
     "cache/tag-interop": "^1",
     "colinmollenhour/credis": "1.8.*",
     "composer/ca-bundle": "^1",
-    "debril/rss-atom-bundle": "^3.0",
     "defuse/php-encryption": "~2",
     "doctrine/annotations": "~1.4.0",
     "doctrine/cache": "~1.6.2",

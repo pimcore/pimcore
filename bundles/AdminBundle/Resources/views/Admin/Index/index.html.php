@@ -649,7 +649,6 @@ $scripts = array(
     "pimcore/layout/portlets/modifiedObjects.js",
     "pimcore/layout/portlets/modifiedAssets.js",
     "pimcore/layout/portlets/modificationStatistic.js",
-    "pimcore/layout/portlets/feed.js",
     "pimcore/layout/portlets/analytics.js",
     "pimcore/layout/portlets/piwik.js",
     "pimcore/layout/portlets/customreports.js",
