@@ -15,6 +15,7 @@
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
+use Pimcore\Document\Tag\TagUsageResolver;
 use Pimcore\File;
 use Pimcore\Logger;
 use Pimcore\Model\DataObject;
@@ -664,10 +665,11 @@ class TranslationController extends AdminController
      * @Method({"POST"})
      *
      * @param Request $request
+     * @param TagUsageResolver $tagUsageResolver
      *
      * @return JsonResponse
      */
-    public function xliffExportAction(Request $request)
+    public function xliffExportAction(Request $request, TagUsageResolver $tagUsageResolver)
     {
         $id = $request->get('id');
         $data = $this->decodeJson($request->get('data'));
@@ -698,26 +700,13 @@ class TranslationController extends AdminController
             $addedElements = false;
 
             // elements
-            if ($element instanceof Document) {
-                $elements = [];
+            if ($element instanceof Document\PageSnippet) {
+                $tagNames = $tagUsageResolver->getUsedTagnames($element);
 
-                $doc = $element;
+                foreach ($tagNames as $tagName) {
+                    $tag = $element->getElement($tagName);
 
-                // get also content of inherited document elements
-                while ($doc) {
-                    if (method_exists($doc, 'getElements')) {
-                        $elements = array_merge($doc->getElements(), $elements);
-                    }
-
-                    if (method_exists($doc, 'getContentMasterDocument')) {
-                        $doc = $doc->getContentMasterDocument();
-                    } else {
-                        $doc = null;
-                    }
-                }
-
-                foreach ($elements as $tag) {
-                    if (in_array($tag->getType(), ['wysiwyg', 'input', 'textarea', 'image', 'link'])) {
+                    if ($tag && in_array($tag->getType(), ['wysiwyg', 'input', 'textarea', 'image', 'link'])) {
                         if (in_array($tag->getType(), ['image', 'link'])) {
                             $content = $tag->getText();
                         } else {
@@ -735,12 +724,12 @@ class TranslationController extends AdminController
                 }
 
                 if ($element instanceof Document\Page) {
-                    $data = [
+                    $metaData = [
                         'title' => $element->getTitle(),
                         'description' => $element->getDescription()
                     ];
 
-                    foreach ($data as $key => $content) {
+                    foreach ($metaData as $key => $content) {
                         if (!empty($content)) {
                             $this->addTransUnitNode($body, 'settings~-~' . $key, $content, $source);
                             $addedElements = true;
