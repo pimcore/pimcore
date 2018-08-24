@@ -207,7 +207,7 @@ class Scheduledblock extends Block implements BlockInterface
     /**
      * Is called everytime a new iteration starts (new entry of the block while looping)
      */
-    public function blockStart()
+    public function blockStart( $showControls = true )
     {
         $attributes = [
             'data-name'      => $this->getName(),
