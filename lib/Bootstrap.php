@@ -216,6 +216,7 @@ class Bootstrap
         $resolveConstant('PIMCORE_PHP_ERROR_REPORTING', E_ALL & ~E_NOTICE & ~E_STRICT);
         $resolveConstant('PIMCORE_PHP_ERROR_LOG', PIMCORE_LOG_DIRECTORY . '/php.log');
         $resolveConstant('PIMCORE_KERNEL_CLASS', '\AppKernel');
+        $resolveConstant('PIMCORE_SYMFONY_DEFAULT_BUNDLE', 'AppBundle');
     }
 
     public static function autoload()

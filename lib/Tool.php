@@ -296,7 +296,7 @@ class Tool
             $routingDefaults = [
                 'controller' => 'Default',
                 'action'     => 'default',
-                'module'     => defined('PIMCORE_SYMFONY_DEFAULT_BUNDLE') ? PIMCORE_SYMFONY_DEFAULT_BUNDLE : 'AppBundle'
+                'module'     => PIMCORE_SYMFONY_DEFAULT_BUNDLE
             ];
 
             // get configured settings for defaults

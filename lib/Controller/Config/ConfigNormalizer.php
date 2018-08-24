@@ -92,7 +92,7 @@ class ConfigNormalizer
     public function normalizeBundleName(string $bundle = null): string
     {
         if (empty($bundle)) {
-            return defined('PIMCORE_SYMFONY_DEFAULT_BUNDLE') ? PIMCORE_SYMFONY_DEFAULT_BUNDLE : 'AppBundle';
+            return PIMCORE_SYMFONY_DEFAULT_BUNDLE;
         }
 
         $originalBundle = $bundle;
@@ -129,7 +129,7 @@ class ConfigNormalizer
     public function normalizeControllerName(string $controller = null): string
     {
         if (empty($controller)) {
-            return defined('PIMCORE_SYMFONY_DEFAULT_BUNDLE') ? PIMCORE_SYMFONY_DEFAULT_BUNDLE : 'Content';
+            return PIMCORE_SYMFONY_DEFAULT_BUNDLE;
         }
 
         // split submodules with _ and uppercase first character
