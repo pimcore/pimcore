@@ -104,7 +104,7 @@ class Version extends \Doctrine\DBAL\Migrations\Version
             $this->schemaProvider = $schemaProvider;
         } else {
             $schemaProvider = new SchemaDiffProvider($this->connection->getSchemaManager(), $this->connection->getDatabasePlatform());
-            $this->schemaProvider = LazySchemaDiffProvider::fromDefaultProxyFacyoryConfiguration($schemaProvider);
+            $this->schemaProvider = LazySchemaDiffProvider::fromDefaultProxyFactoryConfiguration($schemaProvider);
         }
     }
 
