@@ -80,6 +80,12 @@ class DataObjectController extends ElementControllerBase implements EventedContr
         if ($object->hasChildren($objectTypes)) {
             $limit = intval($request->get('limit'));
             if (!is_null($filter)) {
+
+                if (substr($filter, -1) != '*') {
+                    $filter .= "*";
+                }
+                $filter = str_replace("*", "%", $filter);
+
                 $limit = 100;
             } else if (!$request->get('limit')) {
                 $limit = 100000000;
@@ -122,7 +128,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
 
             if (!is_null($filter)) {
                 $db = Db::get();
-                $condition .= ' AND o_key LIKE ' . $db->quote("%" . $filter . "%");
+                $condition .= ' AND o_key LIKE ' . $db->quote($filter );
             }
 
             $childsList->setCondition($condition);

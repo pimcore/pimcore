@@ -94,8 +94,13 @@ class DocumentController extends ElementControllerBase implements EventedControl
         $limit  = intval($allParams['limit'] ?? 100000000);
         $offset = intval($allParams['start'] ?? 0);
 
-        if($filter) {
-            $limit = 100000000;
+        if (!is_null($filter)) {
+
+            if (substr($filter, -1) != '*') {
+                $filter .= "*";
+            }
+            $filter = str_replace("*", "%", $filter);
+            $limit = 100;
             $offset = 0;
         }
 
@@ -131,7 +136,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
             if ($filter) {
                 $db = Db::get();
 
-                $condition = '(' . $condition . ')' . ' AND key LIKE ' . $db->quote("%" . $filter . "%");
+                $condition = '(' . $condition . ')' . ' AND ' . $db->quoteIdentifier('key') . ' LIKE ' . $db->quote($filter );
 
             }
 
@@ -176,7 +181,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
                 'limit' => $limit,
                 'total' => $document->getChildAmount($this->getAdminUser()),
                 'nodes' => $documents,
-                "filter" => $filter ? $filter : "",
+                'filter' => $request->get('filter') ? $request->get('filter') : "" ,
                 'inSearch' => intval($request->get('inSearch'))
             ]);
         } else {

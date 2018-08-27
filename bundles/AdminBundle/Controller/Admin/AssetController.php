@@ -200,6 +200,11 @@ class AssetController extends ElementControllerBase implements EventedController
         $filter = $request->get("filter");
         $limit = intval($allParams['limit']);
         if (!is_null($filter)) {
+            if (substr($filter, -1) != '*') {
+                $filter .= "*";
+            }
+            $filter = str_replace("*", "%", $filter);
+
             $limit = 100;
             $offset = 0;
         } else if (!$allParams['limit']) {
@@ -240,7 +245,7 @@ class AssetController extends ElementControllerBase implements EventedController
             if (! is_null($filter)) {
                 $db = Db::get();
 
-                $condition = '(' . $condition . ')' . ' AND filename LIKE ' . $db->quote("%" . $filter . "%");
+                $condition = '(' . $condition . ')' . ' AND filename LIKE ' . $db->quote($filter);
 
             }
 
@@ -285,7 +290,7 @@ class AssetController extends ElementControllerBase implements EventedController
                 'total' => $asset->getChildAmount($this->getAdminUser()),
                 'overflow' => !is_null($filter) && ($filteredTotalCount > $limit),
                 'nodes' => $assets,
-                "filter" => $filter ? $filter : "",
+                'filter' => $request->get('filter') ? $request->get('filter') : "" ,
                 'inSearch' => intval($request->get('inSearch'))
             ]);
         } else {
