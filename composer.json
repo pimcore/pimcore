@@ -76,7 +76,7 @@
     "piwik/device-detector": "^3.9",
     "presta/sitemap-bundle": "^1.5",
     "ramsey/uuid": "~3",
-    "sabre/dav": "~3.1",
+    "sabre/dav": "~3.2",
     "sensio/distribution-bundle": "^5.0.19",
     "sensio/framework-extra-bundle": "^3.0.2",
     "sensio/generator-bundle": "^3.0",
