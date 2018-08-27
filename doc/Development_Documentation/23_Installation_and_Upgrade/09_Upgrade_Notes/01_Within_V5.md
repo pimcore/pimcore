@@ -108,6 +108,22 @@ you'd have to change the path accordingly or you can use the following RewriteRu
 RewriteRule ^pimcore/static6/(.*) /bundles/pimcoreadmin/$1 [PT,L]
 ```
 
+##### FAQ regarding Pimcore as a Composer Dependency
+###### Is there still the concept of build numbers? 
+No. 
+
+###### How can I install a non-tagged/unstable version of Pimcore? 
+For updating always to the latest sourcecode state of the master branch, use the following in your `composer.json`:  
+```json
+"pimcore/pimcore": "dev-master"
+```
+
+For referencing a specific state of the master branch, you can append the Git commit hash to the branch, eg.: 
+```json
+"pimcore/pimcore": "dev-master#2734529c7f287a88fa2961fa7af8e5473da0a2a1"
+```
+
+
 #### Removed PrototypeJS (light) library from the Admin UI
 Quite a lot of functions have a native Javascript equivalent or are covered by vanilla JS anyway.
 However, there are some functions which need to be adapted or replaced when used in Bundles.
