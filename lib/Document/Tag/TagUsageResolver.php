@@ -17,6 +17,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Document\Tag;
 
+use Pimcore\Bundle\CoreBundle\EventListener\Frontend\ElementListener;
 use Pimcore\Document\Renderer\DocumentRenderer;
 use Pimcore\Http\Request\Resolver\EditmodeResolver;
 use Pimcore\Model\Document;
@@ -43,7 +44,7 @@ class TagUsageResolver
 
         // we render in editmode, so that we can ensure all elements that can be edited are present in the export
         // this is especially necessary when lazy loading certain elements on a page (eg. using ajax-include and similar solutions)
-        $this->renderer->render($document, [EditmodeResolver::ATTRIBUTE_EDITMODE => true]);
+        $this->renderer->render($document, [EditmodeResolver::ATTRIBUTE_EDITMODE => true, ElementListener::FORCE_ALLOW_PROCESSING_UNPUBLISHED_ELEMENTS => true]);
         $names = $this->subscriber->getRecordedTagNames();
         $this->unregisterEventSubscriber();
 
