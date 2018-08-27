@@ -646,7 +646,6 @@ class DataObjectHelperController extends AdminController
         return [
             'sortinfo' => isset($gridConfig['sortinfo']) ? $gridConfig['sortinfo'] : false,
             'language' => $language,
-            'pageSize' => $pageSize,
             'availableFields' => $availableFields,
             'settings' => $settings,
             'onlyDirectChildren' => isset($gridConfig['onlyDirectChildren']) ? $gridConfig['onlyDirectChildren'] : false,
