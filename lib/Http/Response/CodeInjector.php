@@ -19,7 +19,6 @@ namespace Pimcore\Http\Response;
 
 use Pimcore\Http\ResponseHelper;
 use Symfony\Component\HttpFoundation\Response;
-use Wa72\HtmlPageDom\HtmlPageCrawler;
 
 class CodeInjector
 {
@@ -124,64 +123,26 @@ class CodeInjector
 
     private function injectIntoDomSelector(string $html, string $code, string $selector, string $position, string $charset): string
     {
-        try {
-            $dom = $this->createDomDocument($html, $charset);
-        } catch (\Throwable $e) {
-            return $html;
+        include_once(PIMCORE_PATH . '/lib/simple_html_dom.php');
+        $dom = str_get_html($html);
+        if ($dom) {
+            $element = $dom->find($selector, 0);
+            if($element) {
+                if (self::REPLACE === $position) {
+                    $element->innertext = $code;
+                } elseif (self::POSITION_BEGINNING === $position) {
+                    $element->innertext = $code . $element->innertext;
+                } elseif (self::POSITION_END === $position) {
+                    $element->innertext = $element->innertext . $code;
+                }
+            }
+
+            $html = $dom->save();
+            $dom->clear();
+            unset($dom);
+            return trim($html);
         }
 
-        $crawler = new HtmlPageCrawler($dom);
-
-        /** @var HtmlPageCrawler $element */
-        $element = $crawler->filter($selector)->first();
-        if (0 === $element->count()) {
-            return $html;
-        }
-
-        if (self::REPLACE === $position) {
-            $element->setInnerHtml($code);
-        } elseif (self::POSITION_BEGINNING === $position) {
-            $element->prepend($code);
-        } elseif (self::POSITION_END === $position) {
-            $element->append($code);
-        }
-
-        return trim($crawler->saveHTML());
-    }
-
-    /**
-     * Extracted from Symfony\Component\DomCrawler\Crawler::addContent(). This is the same logic,
-     * but it passes additional libxml options to loadHTML to avoid changing the HTML content.
-     *
-     * @param string $content
-     * @param string $charset
-     *
-     * @return \DOMDocument
-     */
-    private function createDomDocument(string $content, string $charset): \DOMDocument
-    {
-        $internalErrors  = libxml_use_internal_errors(true);
-        $disableEntities = libxml_disable_entity_loader(true);
-
-        $dom = new \DOMDocument('1.0', $charset);
-        $dom->validateOnParse = true;
-
-        set_error_handler(function () {
-            throw new \Exception();
-        });
-
-        // Convert charset to HTML-entities to work around bugs in DOMDocument::loadHTML()
-        $content = mb_convert_encoding($content, 'HTML-ENTITIES', $charset);
-
-        restore_error_handler();
-
-        if ('' !== trim($content)) {
-            @$dom->loadHTML($content, LIBXML_HTML_NODEFDTD | LIBXML_HTML_NOIMPLIED);
-        }
-
-        libxml_use_internal_errors($internalErrors);
-        libxml_disable_entity_loader($disableEntities);
-
-        return $dom;
+        return $html;
     }
 }
