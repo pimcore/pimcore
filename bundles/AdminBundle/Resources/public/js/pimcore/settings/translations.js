@@ -129,18 +129,20 @@ pimcore.settings.translations = Class.create({
         })
         ;
 
-        typesColumns.push({
-            xtype: 'actioncolumn',
-            menuText: t('delete'),
-            width: 30,
-            items: [{
-                tooltip: t('delete'),
-                icon: "/bundles/pimcoreadmin/img/flat-color-icons/delete.svg",
-                handler: function (grid, rowIndex) {
-                    grid.getStore().removeAt(rowIndex);
-                }.bind(this)
-            }]
-        });
+        if (pimcore.settings.websiteLanguages.length == this.editableLanguages.length) {
+            typesColumns.push({
+                xtype: 'actioncolumn',
+                menuText: t('delete'),
+                width: 30,
+                items: [{
+                    tooltip: t('delete'),
+                    icon: "/bundles/pimcoreadmin/img/flat-color-icons/delete.svg",
+                    handler: function (grid, rowIndex) {
+                        grid.getStore().removeAt(rowIndex);
+                    }.bind(this)
+                }]
+            });
+        }
 
         var itemsPerPage = pimcore.helpers.grid.getDefaultPageSize(-1);
 
