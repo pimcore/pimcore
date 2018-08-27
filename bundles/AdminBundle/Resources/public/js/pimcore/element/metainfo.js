@@ -42,7 +42,7 @@ pimcore.element.metainfo = Class.create({
                 buttons: [
                     {
                         text: t('close'),
-                        iconCls: "pimcore_icon_empty",
+                        iconCls: "pimcore_icon_cancel",
                         handler: function(){
                             this.detailWindow.hide();
                             this.detailWindow.destroy();
