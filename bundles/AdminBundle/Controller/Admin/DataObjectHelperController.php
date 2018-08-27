@@ -618,7 +618,7 @@ class DataObjectHelperController extends AdminController
         if ($frontendLanguages) {
             $language = explode(',', $frontendLanguages)[0];
         } else {
-            $language = $this->getLanguage();
+            $language = $request->getLocale();
         }
 
         if (!Tool::isValidLanguage($language)) {
