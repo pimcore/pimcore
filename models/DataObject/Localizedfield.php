@@ -280,7 +280,7 @@ class Localizedfield extends Model\AbstractModel
             $allowInheritance = false;
         }
 
-        if ($fieldDefinition->isEmpty($data) && $doGetInheritedValues && $allowInheritance) {
+        if ($fieldDefinition->isEmpty($data) && $doGetInheritedValues && $allowInheritance && $this->getObject() instanceof Concrete) {
             $object = $this->getObject();
             $class = $object->getClass();
             $allowInherit = $class->getAllowInherit();
