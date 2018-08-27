@@ -95,8 +95,8 @@
     "scheb/two-factor-bundle": "^3.8"
   },
   "require-dev": {
-    "cache/integration-tests": "^0.15.0",
-    "codeception/codeception": "~2.3.8"
+    "cache/integration-tests": "^0.16.0",
+    "codeception/codeception": "~2.4.5"
   },
   "suggest": {
     "ext-curl": "*",
