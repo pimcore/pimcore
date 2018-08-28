@@ -503,7 +503,7 @@ pimcore.object.tags.multihrefMetadata = Class.create(pimcore.object.tags.abstrac
             ]);
         }
 
-        if (this.fieldConfig.assetsAllowed) {
+        if (this.fieldConfig.assetsAllowed && this.fieldConfig.noteditable == false) {
             toolbarItems.push({
                 xtype: "button",
                 cls: "pimcore_inline_upload",
