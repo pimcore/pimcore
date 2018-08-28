@@ -264,20 +264,25 @@ class PortalController extends AdminController implements EventedControllerInter
         $list = Document::getList([
             'limit' => 10,
             'order' => 'DESC',
-            'orderKey' => 'modificationDate'
+            'orderKey' => 'modificationDate',
+            'condition' => "userModification = '".$this->getAdminUser()->getId()."'"
         ]);
 
         $response = [];
         $response['documents'] = [];
 
         foreach ($list as $doc) {
-            $response['documents'][] = [
-                'id' => $doc->getId(),
-                'type' => $doc->getType(),
-                'path' => $doc->getRealFullPath(),
-                'date' => $doc->getModificationDate(),
-                'condition' => "userModification = '".$this->getAdminUser()->getId()."'"
-            ];
+            /**
+             * @var Document $doc
+             */
+            if($doc->isAllowed('view')) {
+                $response['documents'][] = [
+                    'id' => $doc->getId(),
+                    'type' => $doc->getType(),
+                    'path' => $doc->getRealFullPath(),
+                    'date' => $doc->getModificationDate()
+                ];
+            }
         }
 
         return $this->adminJson($response);
@@ -296,20 +301,25 @@ class PortalController extends AdminController implements EventedControllerInter
         $list = Asset::getList([
             'limit' => 10,
             'order' => 'DESC',
-            'orderKey' => 'modificationDate'
+            'orderKey' => 'modificationDate',
+            'condition' => "userModification = '".$this->getAdminUser()->getId()."'"
         ]);
 
         $response = [];
         $response['assets'] = [];
 
         foreach ($list as $doc) {
-            $response['assets'][] = [
-                'id' => $doc->getId(),
-                'type' => $doc->getType(),
-                'path' => $doc->getRealFullPath(),
-                'date' => $doc->getModificationDate(),
-                'condition' => "userModification = '".$this->getAdminUser()->getId()."'"
-            ];
+            /**
+             * @var Asset $doc
+             */
+            if($doc->isAllowed('view')) {
+                $response['assets'][] = [
+                    'id' => $doc->getId(),
+                    'type' => $doc->getType(),
+                    'path' => $doc->getRealFullPath(),
+                    'date' => $doc->getModificationDate()
+                ];
+            }
         }
 
         return $this->adminJson($response);
@@ -336,12 +346,17 @@ class PortalController extends AdminController implements EventedControllerInter
         $response['objects'] = [];
 
         foreach ($list as $object) {
-            $response['objects'][] = [
-                'id' => $object->getId(),
-                'type' => $object->getType(),
-                'path' => $object->getRealFullPath(),
-                'date' => $object->getModificationDate()
-            ];
+            /**
+             * @var DataObject $object
+             */
+            if($object->isAllowed('view')) {
+                $response['objects'][] = [
+                    'id' => $object->getId(),
+                    'type' => $object->getType(),
+                    'path' => $object->getRealFullPath(),
+                    'date' => $object->getModificationDate()
+                ];
+            }
         }
 
         return $this->adminJson($response);
