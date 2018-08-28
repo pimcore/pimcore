@@ -22,6 +22,7 @@ use Pimcore\Logger;
 use Pimcore\Model\Document\Targeting\TargetingDocumentInterface;
 use Pimcore\Model\Redirect;
 use Pimcore\Model\Tool\Targeting\TargetGroup;
+use Pimcore\Tool\Frontend;
 
 /**
  * @method \Pimcore\Model\Document\Page\Dao getDao()
@@ -110,18 +111,6 @@ class Page extends TargetingDocument
 
         $config = \Pimcore\Config::getSystemConfig();
         if ($oldPath && $config->documents->createredirectwhenmoved && $oldPath != $this->getRealFullPath()) {
-
-            // check if the current page is in a site
-            $siteCheckQuery = "
-                SELECT documentsites.id FROM documents dd 
-                INNER JOIN (
-                    SELECT s.id, mainDomain, concat(d.path, d.key, '%') fullPath FROM `sites` s INNER JOIN documents d ON s.rootId = d.id
-                  ) documentsites
-                  ON dd.path LIKE documentsites.fullPath
-                WHERE dd.id = ?";
-
-            $siteId = Db::get()->fetchOne($siteCheckQuery, [$this->getId()]);
-
             // create redirect for old path
             $redirect = new Redirect();
             $redirect->setType(Redirect::TYPE_PATH);
@@ -131,8 +120,11 @@ class Page extends TargetingDocument
             $redirect->setStatusCode(301);
             $redirect->setExpiry(time() + 86400 * 60); // this entry is removed automatically after 60 days
 
-            if ($siteId) {
-                $redirect->setSourceSite($siteId);
+            $site = Frontend::getSiteForDocument($this);
+            if ($site) {
+                $redirect->setSourceSite($site->getId());
+                $oldPath = preg_replace('@^' . preg_quote($site->getRootPath()) . '@', '', $oldPath);
+                $redirect->setSource('@' . $oldPath . '/?@');
             }
 
             $redirect->save();
