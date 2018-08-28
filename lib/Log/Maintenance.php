@@ -15,6 +15,7 @@
 namespace Pimcore\Log;
 
 use Pimcore\Config;
+use Pimcore\Log\Handler\ApplicationLoggerDb;
 use Pimcore\Model\Tool\TmpStore;
 
 class Maintenance
@@ -96,7 +97,7 @@ class Maintenance
 
             $logLevel = (int)$config->mail_notification->filter_priority;
 
-            $query = 'SELECT * FROM '. \Pimcore\Log\Handler\ApplicationLoggerDb::TABLE_NAME . " WHERE maintenanceChecked IS NULL AND priority <= $logLevel order by id desc";
+            $query = 'SELECT * FROM '. ApplicationLoggerDb::TABLE_NAME . " WHERE maintenanceChecked IS NULL AND priority <= $logLevel order by id desc";
 
             $rows = $db->fetchAll($query);
             $limit = 100;
@@ -132,7 +133,7 @@ class Maintenance
         // flag them as checked, regardless if email notifications are enabled or not
         // otherwise, when activating email notifications, you'll receive all log-messages from the past and not
         // since the point when you enabled the notifications
-        $db->query('UPDATE ' . \Pimcore\Log\Handler\ApplicationLoggerDb::TABLE_NAME . ' set maintenanceChecked = 1');
+        $db->query('UPDATE ' . ApplicationLoggerDb::TABLE_NAME . ' set maintenanceChecked = 1');
     }
 
     public function archiveLogEntries()
@@ -143,15 +144,19 @@ class Maintenance
         $db = \Pimcore\Db::get();
 
         $date = new \DateTime('now');
-        $tablename =  \Pimcore\Log\Handler\ApplicationLoggerDb::TABLE_ARCHIVE_PREFIX . '_' . $date->format('m') . '_' . $date->format('Y');
+        $tablename =  ApplicationLoggerDb::TABLE_ARCHIVE_PREFIX . '_' . $date->format('m') . '_' . $date->format('Y');
 
         if ($config->archive_alternative_database) {
-            $tablename = $config->archive_alternative_database . '.' . $tablename;
+            $tablename = $db->quoteIdentifier($config->archive_alternative_database) . '.' . $tablename;
         }
 
         $archive_treshold = intval($config->archive_treshold) ?: 30;
 
-        $db->query('CREATE TABLE IF NOT EXISTS ' . $tablename . " (
+        $timestamp = time();
+        $sql = ' SELECT %s FROM ' .  ApplicationLoggerDb::TABLE_NAME . ' WHERE `timestamp` < DATE_SUB(FROM_UNIXTIME(' . $timestamp . '), INTERVAL ' . $archive_treshold . ' DAY)';
+
+        if($db->fetchOne(sprintf($sql, 'COUNT(*)')) > 1 || true) {
+            $db->query('CREATE TABLE IF NOT EXISTS ' . $tablename . " (
                        id BIGINT(20) NOT NULL,
                        `pid` INT(11) NULL DEFAULT NULL,
                        `timestamp` DATETIME NOT NULL,
@@ -166,9 +171,8 @@ class Maintenance
                        maintenanceChecked TINYINT(4)
                     ) ENGINE = ARCHIVE ROW_FORMAT = DEFAULT;");
 
-        $timestamp = time();
-
-        $db->query('INSERT INTO ' . $tablename . ' SELECT * FROM ' .  \Pimcore\Log\Handler\ApplicationLoggerDb::TABLE_NAME . ' WHERE `timestamp` < DATE_SUB(FROM_UNIXTIME(' . $timestamp . '), INTERVAL ' . $archive_treshold . ' DAY);');
-        $db->query('DELETE FROM ' .  \Pimcore\Log\Handler\ApplicationLoggerDb::TABLE_NAME . ' WHERE `timestamp` < DATE_SUB(FROM_UNIXTIME(' . $timestamp . '), INTERVAL ' . $archive_treshold . ' DAY);');
+            $db->query('INSERT INTO ' . $tablename . ' ' . sprintf($sql, '*'));
+            $db->query('DELETE FROM ' . ApplicationLoggerDb::TABLE_NAME . ' WHERE `timestamp` < DATE_SUB(FROM_UNIXTIME(' . $timestamp . '), INTERVAL ' . $archive_treshold . ' DAY);');
+        }
     }
 }
