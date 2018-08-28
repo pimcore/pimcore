@@ -247,7 +247,8 @@ class Admin_PortalController extends \Pimcore\Controller\Action\Admin
         $list = Document::getList([
             "limit" => 10,
             "order" => "DESC",
-            "orderKey" => "modificationDate"
+            "orderKey" => "modificationDate",
+            "condition" => "userModification = '".$this->getUser()->getId()."'"
         ]);
 
 
@@ -260,7 +261,6 @@ class Admin_PortalController extends \Pimcore\Controller\Action\Admin
                 "type" => $doc->getType(),
                 "path" => $doc->getRealFullPath(),
                 "date" => $doc->getModificationDate(),
-                "condition" => "userModification = '".$this->getUser()->getId()."'"
             ];
         }
 
@@ -272,7 +272,8 @@ class Admin_PortalController extends \Pimcore\Controller\Action\Admin
         $list = Asset::getList([
             "limit" => 10,
             "order" => "DESC",
-            "orderKey" => "modificationDate"
+            "orderKey" => "modificationDate",
+            "condition" => "userModification = '".$this->getUser()->getId()."'"
         ]);
 
 
@@ -285,7 +286,6 @@ class Admin_PortalController extends \Pimcore\Controller\Action\Admin
                 "type" => $doc->getType(),
                 "path" => $doc->getRealFullPath(),
                 "date" => $doc->getModificationDate(),
-                "condition" => "userModification = '".$this->getUser()->getId()."'"
             ];
         }
 
