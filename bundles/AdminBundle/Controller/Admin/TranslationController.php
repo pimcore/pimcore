@@ -181,8 +181,8 @@ class TranslationController extends AdminController
 
         foreach ($translationObjects as $t) {
             $translations[] = array_merge(
-                ['key'              => $t->getKey(),
-                 'creationDate'     => $t->getCreationDate(),
+                ['key' => $t->getKey(),
+                 'creationDate' => $t->getCreationDate(),
                  'modificationDate' => $t->getModificationDate(),
                 ],
                 $t->getTranslations()
@@ -341,8 +341,8 @@ class TranslationController extends AdminController
                 $t->save();
 
                 $return = array_merge(
-                    ['key'              => $t->getKey(),
-                     'creationDate'     => $t->getCreationDate(),
+                    ['key' => $t->getKey(),
+                     'creationDate' => $t->getCreationDate(),
                      'modificationDate' => $t->getModificationDate()],
                     $t->getTranslations()
                 );
@@ -366,8 +366,8 @@ class TranslationController extends AdminController
 
                 $return = array_merge(
                     [
-                        'key'              => $t->getKey(),
-                        'creationDate'     => $t->getCreationDate(),
+                        'key' => $t->getKey(),
+                        'creationDate' => $t->getCreationDate(),
                         'modificationDate' => $t->getModificationDate(),
                     ],
                     $t->getTranslations()
@@ -430,8 +430,8 @@ class TranslationController extends AdminController
             foreach ($list->getTranslations() as $t) {
                 $translations[] = array_merge(
                     $t->getTranslations(),
-                    ['key'              => $t->getKey(),
-                     'creationDate'     => $t->getCreationDate(),
+                    ['key' => $t->getKey(),
+                     'creationDate' => $t->getCreationDate(),
                      'modificationDate' => $t->getModificationDate()]
                 );
             }
@@ -570,7 +570,7 @@ class TranslationController extends AdminController
 
         if ($languageMode) {
             $result = [
-                'joins'      => $joins,
+                'joins' => $joins,
                 'conditions' => $conditions,
             ];
 
@@ -638,7 +638,7 @@ class TranslationController extends AdminController
         if ($data && is_array($data)) {
             foreach ($data as $element) {
                 $elements[$element['type'].'_'.$element['id']] = [
-                    'id'   => $element['id'],
+                    'id' => $element['id'],
                     'type' => $element['type'],
                 ];
 
@@ -664,7 +664,7 @@ class TranslationController extends AdminController
 
                     foreach ($idList as $id) {
                         $elements[$element['type'].'_'.$id] = [
-                            'id'   => $id,
+                            'id' => $id,
                             'type' => $element['type'],
                         ];
                     }
@@ -687,13 +687,13 @@ class TranslationController extends AdminController
         $elements = array_chunk($elements, $elementsPerJob);
         foreach ($elements as $chunk) {
             $jobs[] = [[
-                'url'    => '/admin/translation/'.$type.'-export',
+                'url' => '/admin/translation/'.$type.'-export',
                 'method' => 'POST',
                 'params' => [
-                    'id'     => $exportId,
+                    'id' => $exportId,
                     'source' => $source,
                     'target' => $target,
-                    'data'   => $this->encodeJson($chunk),
+                    'data' => $this->encodeJson($chunk),
                 ],
             ]];
         }
@@ -701,8 +701,8 @@ class TranslationController extends AdminController
         return $this->adminJson(
             [
                 'success' => true,
-                'jobs'    => $jobs,
-                'id'      => $exportId,
+                'jobs' => $jobs,
+                'id' => $exportId,
             ]
         );
     }
@@ -772,7 +772,7 @@ class TranslationController extends AdminController
 
                 if ($element instanceof Document\Page) {
                     $metaData = [
-                        'title'       => $element->getTitle(),
+                        'title' => $element->getTitle(),
                         'description' => $element->getDescription(),
                     ];
 
@@ -837,11 +837,11 @@ class TranslationController extends AdminController
         );
     }
 
-
     /**
      * @param DataObject\Concrete $element
      * @param $source
      * @param $body \SimpleXMLElement
+     *
      * @return bool
      */
     public function doXliffExportObject(DataObject\Concrete $element, $source, $body)
@@ -875,29 +875,28 @@ class TranslationController extends AdminController
         foreach ($fieldDefinitions as $fd) {
             if ($fd instanceof DataObject\ClassDefinition\Data\Block) {
 
-                /** @var  $blockLocalizedFieldDefinition DataObject\ClassDefinition\Data\Localizedfields */
+                /** @var $blockLocalizedFieldDefinition DataObject\ClassDefinition\Data\Localizedfields */
                 $blockLocalizedFieldDefinition = $fd->getFielddefinition('localizedfields');
                 if ($blockLocalizedFieldDefinition) {
                     $blockLocalizedFieldsDefinitions = $blockLocalizedFieldDefinition->getFieldDefinitions();
 
-                    /** @var  $blockItems array */
+                    /** @var $blockItems array */
                     $blocks = $element->{'get'.ucfirst($fd->getName())}();
 
                     if ($blocks) {
-                        /** @var  $blockItem DataObject\Data\BlockElement */
-
+                        /** @var $blockItem DataObject\Data\BlockElement */
                         $blockIdx = -1;
                         foreach ($blocks as $blockItems) {
                             $blockIdx++;
                             if ($blockItems) {
-                                /** @var  $blockItem DataObject\Data\BlockElement */
+                                /** @var $blockItem DataObject\Data\BlockElement */
                                 foreach ($blockItems as $blockItem) {
                                     if ($blockItem->getType() == 'localizedfields') {
 
                                         /** @var DataObject\Localizedfield $blockItemData */
                                         $blockItemData = $blockItem->getData();
 
-                                        /** @var  $blockLocalizedFieldDefinition DataObject\ClassDefinition\Data */
+                                        /** @var $blockLocalizedFieldDefinition DataObject\ClassDefinition\Data */
                                         foreach ($blockLocalizedFieldsDefinitions as $blockLocalizedFieldDefinition) {
                                             // check allowed datatypes
                                             if (!in_array(
@@ -912,7 +911,7 @@ class TranslationController extends AdminController
                                             if (!empty($content)) {
                                                 $this->addTransUnitNode(
                                                     $body,
-                                                    'block~-~' . $fd->getName() . "-" . $blockIdx . "-localizedfield-" . $blockLocalizedFieldDefinition->getName(),
+                                                    'block~-~' . $fd->getName() . '-' . $blockIdx . '-localizedfield-' . $blockLocalizedFieldDefinition->getName(),
                                                     $content,
                                                     $source
                                                 );
@@ -972,10 +971,10 @@ class TranslationController extends AdminController
 
         for ($i = 0; $i < $steps; $i++) {
             $jobs[] = [[
-                'url'    => '/admin/translation/xliff-import-element',
+                'url' => '/admin/translation/xliff-import-element',
                 'method' => 'POST',
                 'params' => [
-                    'id'   => $id,
+                    'id' => $id,
                     'step' => $i,
                 ],
             ]];
@@ -984,8 +983,8 @@ class TranslationController extends AdminController
         $response = $this->adminJson(
             [
                 'success' => true,
-                'jobs'    => $jobs,
-                'id'      => $id,
+                'jobs' => $jobs,
+                'id' => $id,
             ]
         );
         // set content-type to text/html, otherwise (when application/json is sent) chrome will complain in
@@ -1067,9 +1066,9 @@ class TranslationController extends AdminController
                         if (method_exists($element, $setter)) {
                             $element->$setter($content, $target);
                         }
-                    } else if ($fieldType == 'block') {
+                    } elseif ($fieldType == 'block') {
                         list($blockName, $blockIndex, $dummy, $fieldname) = explode('-', $name);
-                        /** @var  $blockData array */
+                        /** @var $blockData array */
                         $blockData = $element->{'get' . $blockName}();
                         $blockItem = $blockData[$blockIndex];
                         $blockItemData = $blockItem['localizedfields'];
@@ -1077,7 +1076,7 @@ class TranslationController extends AdminController
                             $blockItemData = new DataObject\Data\BlockElement('localizedfields', 'localizedfields', new DataObject\Localizedfield());
                         }
 
-                        /** @var  $localizedFieldData DataObject\Localizedfield */
+                        /** @var $localizedFieldData DataObject\Localizedfield */
                         $localizedFieldData = $blockItemData->getData();
                         $localizedFieldData->setLocalizedValue($fieldname, $content, $target);
                     }

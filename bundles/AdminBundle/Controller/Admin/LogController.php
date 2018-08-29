@@ -126,7 +126,7 @@ class LogController extends AdminController implements EventedControllerInterfac
         $total = $totalQb->execute()->fetch();
         $total = (int) $total['count'];
 
-        $stmt   = $qb->execute();
+        $stmt = $qb->execute();
         $result = $stmt->fetchAll();
 
         $logEntries = [];
@@ -137,16 +137,16 @@ class LogController extends AdminController implements EventedControllerInterfac
             }
 
             $logEntry = [
-                'id'                => $row['id'],
-                'pid'               => $row['pid'],
-                'message'           => $row['message'],
-                'timestamp'         => $row['timestamp'],
-                'priority'          => $this->getPriorityName($row['priority']),
-                'fileobject'        => $fileobject,
-                'relatedobject'     => $row['relatedobject'],
+                'id' => $row['id'],
+                'pid' => $row['pid'],
+                'message' => $row['message'],
+                'timestamp' => $row['timestamp'],
+                'priority' => $this->getPriorityName($row['priority']),
+                'fileobject' => $fileobject,
+                'relatedobject' => $row['relatedobject'],
                 'relatedobjecttype' => $row['relatedobjecttype'],
-                'component'         => $row['component'],
-                'source'            => $row['source']
+                'component' => $row['component'],
+                'source' => $row['source']
             ];
 
             $logEntries[] = $logEntry;
@@ -154,7 +154,7 @@ class LogController extends AdminController implements EventedControllerInterfac
 
         return $this->adminJson([
             'p_totalCount' => $total,
-            'p_results'    => $logEntries
+            'p_results' => $logEntries
         ]);
     }
 

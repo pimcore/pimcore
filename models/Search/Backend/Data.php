@@ -364,8 +364,8 @@ class Data extends \Pimcore\Model\AbstractModel
 
         $this->id = new Data\Id($element);
         $this->fullPath = $element->getRealFullPath();
-        $this->creationDate=$element->getCreationDate();
-        $this->modificationDate=$element->getModificationDate();
+        $this->creationDate = $element->getCreationDate();
+        $this->modificationDate = $element->getModificationDate();
         $this->userModification = $element->getUserModification();
         $this->userOwner = $element->getUserOwner();
 
@@ -485,7 +485,7 @@ class Data extends \Pimcore\Model\AbstractModel
         // replace all occurrences of @ to # because when using InnoDB @ is reserved for the @distance operator
         $this->data = str_replace('@', '#', $this->data);
 
-        $pathWords =  str_replace([ '-', '_', '/', '.', '(', ')'], ' ', $this->getFullPath());
+        $pathWords = str_replace([ '-', '_', '/', '.', '(', ')'], ' ', $this->getFullPath());
         $this->data .= ' ' . $pathWords;
         $this->data = 'ID: ' . $element->getId() . "  \nPath: " . $this->getFullPath() . "  \n"  . $this->cleanupData($this->data);
 

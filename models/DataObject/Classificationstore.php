@@ -170,7 +170,7 @@ class Classificationstore extends Model\AbstractModel
             throw new \Exception('keyId not valid');
         }
 
-        $language  = $this->getLanguage($language);
+        $language = $this->getLanguage($language);
 
         // treat value "0" nonempty
         $nonEmpty = (is_string($value) || is_numeric($value)) && strlen($value) > 0;
@@ -305,7 +305,7 @@ class Classificationstore extends Model\AbstractModel
             return $data;
         }
 
-        $fieldDefinition =  Model\DataObject\Classificationstore\Service::getFieldDefinitionFromKeyConfig($keyConfig);
+        $fieldDefinition = Model\DataObject\Classificationstore\Service::getFieldDefinitionFromKeyConfig($keyConfig);
 
         $language = $this->getLanguage($language);
         $data = null;
@@ -355,7 +355,7 @@ class Classificationstore extends Model\AbstractModel
         }
 
         if ($fieldDefinition && method_exists($fieldDefinition, 'preGetData')) {
-            $data =  $fieldDefinition->preGetData($this, [
+            $data = $fieldDefinition->preGetData($this, [
                 'data' => $data,
                 'language' => $language,
                 'name' => $groupId . '-' . $keyId

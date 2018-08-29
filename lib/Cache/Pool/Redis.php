@@ -199,7 +199,7 @@ class Redis extends AbstractCacheItemPool implements PurgeableCacheItemPoolInter
             $value = $this->decodeData($entry[static::FIELD_DATA]);
             $value = $this->unserializeData($value);
 
-            $tags    = [];
+            $tags = [];
             $tagData = $entry[static::FIELD_TAGS];
 
             if (!empty($tagData)) {
@@ -208,7 +208,7 @@ class Redis extends AbstractCacheItemPool implements PurgeableCacheItemPoolInter
 
             yield $ids[$idx] => [
                 'value' => $value,
-                'tags'  => $tags
+                'tags' => $tags
             ];
         }
     }
@@ -317,7 +317,7 @@ return true
 LUA;
 
             $sha1 = sha1($script);
-            $res  = $this->redis->evalSha($sha1, $keys, $args);
+            $res = $this->redis->evalSha($sha1, $keys, $args);
 
             if (null === $res) {
                 $res = $this->redis->eval($script, $keys, $args);
@@ -347,7 +347,7 @@ LUA;
                 $this->redis->sRem(static::PREFIX_TAG_IDS . $tag, $id);
             }
 
-            $result      = $this->redis->exec();
+            $result = $this->redis->exec();
             $totalResult = $totalResult && count($result) > 0 && $result[0] !== false;
         }
 
@@ -381,7 +381,7 @@ LUA;
                     $this->logger,
                     'Failed to commit key "{key}"',
                     [
-                        'key'       => $item->getKey(),
+                        'key' => $item->getKey(),
                         'exception' => $e
                     ]
                 );
@@ -402,23 +402,23 @@ LUA;
      */
     protected function commitItem(PimcoreCacheItemInterface $item)
     {
-        $id  = $item->getKey();
+        $id = $item->getKey();
         $now = time();
 
         $lifetime = null;
-        $expiry   = $item->getExpiry();
-        $data     = $this->serializeData($item->get());
-        $tags     = $item->getTags();
+        $expiry = $item->getExpiry();
+        $data = $this->serializeData($item->get());
+        $tags = $item->getTags();
 
         if ($expiry) {
             $lifetime = $expiry - $now;
         }
 
         $values = [
-            static::FIELD_DATA  => $this->encodeData($data, $this->compressData),
-            static::FIELD_TAGS  => implode(',', $tags),
+            static::FIELD_DATA => $this->encodeData($data, $this->compressData),
+            static::FIELD_TAGS => implode(',', $tags),
             static::FIELD_MTIME => $now,
-            static::FIELD_INF   => $lifetime ? 0 : 1,
+            static::FIELD_INF => $lifetime ? 0 : 1,
         ];
 
         if ($this->useLua) {
@@ -527,7 +527,7 @@ return true
 LUA;
 
             $sha1 = sha1($script);
-            $res  = $this->redis->evalSha($sha1, $keys, $args);
+            $res = $this->redis->evalSha($sha1, $keys, $args);
 
             if (null === $res) {
                 $res = $this->redis->eval($script, $keys, $args);
@@ -654,7 +654,7 @@ return true
 LUA;
 
             $sha1 = sha1($script);
-            $res  = $this->redis->evalSha($sha1, $keys, $args);
+            $res = $this->redis->evalSha($sha1, $keys, $args);
 
             if (null === $res) {
                 $res = $this->redis->eval($script, $keys, $args);
@@ -778,11 +778,11 @@ LUA;
 
             $sha1 = $this->redis->script('load', $script);
 
-            $allTags   = (array)$this->redis->sMembers(static::SET_TAGS);
+            $allTags = (array)$this->redis->sMembers(static::SET_TAGS);
             $tagsCount = count($allTags);
-            $counter   = 0;
+            $counter = 0;
             $tagsBatch = [];
-            $result    = true;
+            $result = true;
 
             foreach ($allTags as $tag) {
                 $tagsBatch[] = $tag;
@@ -792,7 +792,7 @@ LUA;
                     $keys = $this->preprocessTagIds($tagsBatch);
                     $keys = array_merge($staticKeys, $keys);
 
-                    $res    = $this->redis->evalSha($sha1, $keys, $args);
+                    $res = $this->redis->evalSha($sha1, $keys, $args);
                     $result = $result && (bool)$res;
 
                     $tagsBatch = [];
@@ -806,15 +806,15 @@ LUA;
         }
 
         $exists = [];
-        $tags   = (array)$this->redis->sMembers(static::SET_TAGS);
+        $tags = (array)$this->redis->sMembers(static::SET_TAGS);
 
         foreach ($tags as $tag) {
             // Get list of expired ids for each tag
-            $tagMembers    = $this->redis->sMembers(static::PREFIX_TAG_IDS . $tag);
+            $tagMembers = $this->redis->sMembers(static::PREFIX_TAG_IDS . $tag);
             $numTagMembers = count($tagMembers);
-            $expired       = [];
+            $expired = [];
 
-            $numExpired    = 0;
+            $numExpired = 0;
             $numNotExpired = 0;
 
             if ($numTagMembers) {

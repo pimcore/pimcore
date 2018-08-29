@@ -31,8 +31,8 @@ use Pimcore\FeatureToggles\Initializers\ClosureInitializer;
  */
 final class DevMode extends Feature
 {
-    const ADMIN         = 1;
-    const UPDATES       = 2;
+    const ADMIN = 1;
+    const UPDATES = 2;
     const UNMINIFIED_JS = 4;
 
     public static function getType(): string

@@ -51,9 +51,9 @@ abstract class AbstractFilterType
         string $template,
         array $options = []
     ) {
-        $this->translator       = $translator;
+        $this->translator = $translator;
         $this->templatingEngine = $templatingEngine;
-        $this->template         = $template;
+        $this->template = $template;
 
         $this->processOptions($options);
     }

@@ -46,7 +46,7 @@ class Mime
 
         // check with fileinfo, if there's no extension mapping
         $finfo = finfo_open(FILEINFO_MIME);
-        $type  = finfo_file($finfo, $file);
+        $type = finfo_file($finfo, $file);
         finfo_close($finfo);
 
         if ($type !== false && !empty($type)) {

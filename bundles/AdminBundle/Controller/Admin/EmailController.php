@@ -569,7 +569,7 @@ class EmailController extends DocumentControllerBase
                 $orderKey = $sortingSettings['orderKey'];
             }
             if ($sortingSettings['order']) {
-                $order  = $sortingSettings['order'];
+                $order = $sortingSettings['order'];
             }
 
             if ($request->get('filter')) {

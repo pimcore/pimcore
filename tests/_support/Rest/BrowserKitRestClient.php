@@ -50,9 +50,9 @@ class BrowserKitRestClient extends AbstractRestClient
      */
     public function getResponse($method, $uri, array $parameters = [], array $files = [], array $server = [], $content = null)
     {
-        $uri        = $this->prepareUri($uri);
+        $uri = $this->prepareUri($uri);
         $parameters = $this->prepareParameters($parameters);
-        $server     = $this->prepareHeaders($server);
+        $server = $this->prepareHeaders($server);
 
         if (count($parameters) > 0) {
             $query = http_build_query($parameters);
@@ -87,7 +87,7 @@ class BrowserKitRestClient extends AbstractRestClient
             $browserKitResponse->getContent()
         );
 
-        $this->lastRequest  = $request;
+        $this->lastRequest = $request;
         $this->lastResponse = $response;
 
         return $response;

@@ -80,8 +80,8 @@ class Tracker extends AbstractTracker
     ) {
         parent::__construct($siteIdProvider);
 
-        $this->configProvider   = $configProvider;
-        $this->eventDispatcher  = $eventDispatcher;
+        $this->configProvider = $configProvider;
+        $this->eventDispatcher = $eventDispatcher;
         $this->templatingEngine = $templatingEngine;
     }
 
@@ -103,10 +103,10 @@ class Tracker extends AbstractTracker
         }
 
         $data = [
-            'siteId'      => $siteId,
-            'config'      => $config,
+            'siteId' => $siteId,
+            'config' => $config,
             'piwikSiteId' => $config->getPiwikSiteId($siteId->getConfigKey()),
-            'piwikUrl'    => $config->getPiwikUrl()
+            'piwikUrl' => $config->getPiwikUrl()
         ];
 
         $blocks = $this->buildCodeBlocks($config, $siteId);
@@ -121,7 +121,7 @@ class Tracker extends AbstractTracker
 
     private function renderTemplate(TrackingDataEvent $event): string
     {
-        $data           = $event->getData();
+        $data = $event->getData();
         $data['blocks'] = $event->getBlocks();
 
         $code = $this->templatingEngine->render(
@@ -136,9 +136,9 @@ class Tracker extends AbstractTracker
 
     private function buildCodeBlocks(Config $config, SiteId $siteId): array
     {
-        $configKey     = $siteId->getConfigKey();
+        $configKey = $siteId->getConfigKey();
         $trackerConfig = $config->getConfigForSite($configKey);
-        $blockData     = $this->buildBlockData($trackerConfig, $config, $siteId);
+        $blockData = $this->buildBlockData($trackerConfig, $config, $siteId);
 
         $blocks = [];
         foreach ($this->blocks as $block) {

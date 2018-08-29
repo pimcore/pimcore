@@ -33,7 +33,7 @@ class LoginCredentialsEvent extends Event
      */
     public function __construct(Request $request, array $credentials)
     {
-        $this->request     = $request;
+        $this->request = $request;
         $this->credentials = $credentials;
     }
 

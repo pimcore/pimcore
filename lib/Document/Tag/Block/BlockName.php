@@ -41,7 +41,7 @@ final class BlockName implements \JsonSerializable
      */
     public function __construct(string $name, string $realName)
     {
-        $this->name     = $name;
+        $this->name = $name;
         $this->realName = $realName;
     }
 
@@ -92,7 +92,7 @@ final class BlockName implements \JsonSerializable
     public function jsonSerialize()
     {
         return [
-            'name'     => $this->name,
+            'name' => $this->name,
             'realName' => $this->realName
         ];
     }

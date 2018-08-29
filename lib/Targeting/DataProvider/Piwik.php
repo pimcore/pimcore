@@ -56,10 +56,10 @@ class Piwik implements DataProviderInterface
         VisitorClient $visitorClient,
         LoggerInterface $logger
     ) {
-        $this->config         = $config;
+        $this->config = $config;
         $this->siteIdProvider = $siteIdProvider;
-        $this->visitorClient  = $visitorClient;
-        $this->logger         = $logger;
+        $this->visitorClient = $visitorClient;
+        $this->logger = $logger;
     }
 
     /**
@@ -101,7 +101,7 @@ class Piwik implements DataProviderInterface
             return null;
         }
 
-        $siteId      = $this->siteIdProvider->getForRequest($visitorInfo->getRequest());
+        $siteId = $this->siteIdProvider->getForRequest($visitorInfo->getRequest());
         $piwikSiteId = $this->config->getPiwikSiteId($siteId->getConfigKey());
 
         // piwik site is not configured -> we can't fetch data

@@ -26,36 +26,36 @@ class DeviceType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->add('hardwarePlatform', ChoiceType::class, [
-            'label'       => 'Hardware Platform',
-            'required'    => false,
-            'choices'     => [
+            'label' => 'Hardware Platform',
+            'required' => false,
+            'choices' => [
                 'Desktop' => 'desktop',
-                'Tablet'  => 'tablet',
-                'Mobile'  => 'mobile'
+                'Tablet' => 'tablet',
+                'Mobile' => 'mobile'
             ]
         ]);
 
         $builder->add('operatingSystem', ChoiceType::class, [
-            'label'       => 'Operating System',
-            'required'    => false,
-            'choices'     => [
+            'label' => 'Operating System',
+            'required' => false,
+            'choices' => [
                 'Windows' => 'windows',
-                'Mac OS'  => 'macos',
-                'Linux'   => 'linux',
+                'Mac OS' => 'macos',
+                'Linux' => 'linux',
                 'Android' => 'android',
-                'iOS'     => 'ios',
+                'iOS' => 'ios',
             ]
         ]);
 
         $builder->add('browser', ChoiceType::class, [
-            'label'       => 'Browser',
-            'required'    => false,
-            'choices'     => [
+            'label' => 'Browser',
+            'required' => false,
+            'choices' => [
                 'Internet Explorer' => 'ie',
-                'Firefox'           => 'firefox',
-                'Google Chrome'     => 'chrome',
-                'Safari'            => 'safari',
-                'Opera'             => 'opera',
+                'Firefox' => 'firefox',
+                'Google Chrome' => 'chrome',
+                'Safari' => 'safari',
+                'Opera' => 'opera',
             ]
         ]);
     }

@@ -32,7 +32,7 @@ class DataTypeInTest extends AbstractDataTypeRestTestCase
         $this->assertNotNull($localObject);
         $this->assertInstanceOf(Unittest::class, $localObject);
 
-        $this->testObject       = $localObject;
+        $this->testObject = $localObject;
         $this->comparisonObject = $object;
 
         return $this->testObject;

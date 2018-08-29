@@ -70,11 +70,11 @@ class TagNameEvent extends Event
         string $tagName,
         Document $document
     ) {
-        $this->type       = $type;
-        $this->inputName  = $inputName;
+        $this->type = $type;
+        $this->inputName = $inputName;
         $this->blockState = $blockState;
-        $this->tagName    = $tagName;
-        $this->document   = $document;
+        $this->tagName = $tagName;
+        $this->document = $document;
     }
 
     /**

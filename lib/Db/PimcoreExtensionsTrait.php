@@ -141,12 +141,12 @@ trait PimcoreExtensionsTrait
     {
         // stringify query builder
         if ($query instanceof QueryBuilder) {
-            $qb     = $query;
-            $query  = $qb->getSQL();
+            $qb = $query;
+            $query = $qb->getSQL();
             $params = array_merge($qb->getParameters(), $params);
 
             Db::getLogger()->debug('QueryBuilder instance was normalized to string.', [
-                'query'  => $query,
+                'query' => $query,
                 'params' => $params
             ]);
         }
@@ -233,7 +233,7 @@ trait PimcoreExtensionsTrait
             $paramValues[] = $value;
         }
 
-        $sql  = 'UPDATE ' . $table . ' SET ' . implode(', ', $set);
+        $sql = 'UPDATE ' . $table . ' SET ' . implode(', ', $set);
 
         if ($where) {
             $sql .= ' WHERE ' . $where;
@@ -492,7 +492,7 @@ trait PimcoreExtensionsTrait
      *
      * @return string        The quoted identifier and alias.
      */
-    protected function _quoteIdentifier($value, $auto=false)
+    protected function _quoteIdentifier($value, $auto = false)
     {
         if ($auto === false) {
             $q = '`';

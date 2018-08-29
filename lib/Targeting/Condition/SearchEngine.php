@@ -73,7 +73,7 @@ class SearchEngine extends AbstractVariableCondition implements ConditionInterfa
      */
     public function match(VisitorInfo $visitorInfo): bool
     {
-        $request  = $visitorInfo->getRequest();
+        $request = $visitorInfo->getRequest();
         $referrer = $request->headers->get('Referrer');
 
         if (empty($referrer)) {

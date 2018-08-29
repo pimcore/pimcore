@@ -120,7 +120,8 @@ class IndexController extends AdminController
      *
      * @throws \Exception
      */
-    public function statisticsAction(Request $request, Connection $db, KernelInterface $kernel) {
+    public function statisticsAction(Request $request, Connection $db, KernelInterface $kernel)
+    {
 
         // DB
         try {
@@ -154,7 +155,6 @@ class IndexController extends AdminController
                 'CPUClock' => $systemData['CPU'][0]['MHz'],
                 'virtualization' => $systemData['virtualization'],
             ];
-
         } catch (\Exception $e) {
             $system = [];
         }
@@ -214,7 +214,7 @@ class IndexController extends AdminController
     {
         $bundleManager = $this->get('pimcore.extension.bundle_manager');
 
-        $view->pluginJsPaths  = $bundleManager->getJsPaths();
+        $view->pluginJsPaths = $bundleManager->getJsPaths();
         $view->pluginCssPaths = $bundleManager->getCssPaths();
 
         return $this;
@@ -234,20 +234,20 @@ class IndexController extends AdminController
     {
         $config = $view->config;
         $settings = new ViewModel([
-            'instanceId'            => $this->getInstanceId(),
-            'version'               => Version::getVersion(),
-            'build'                 => Version::getRevision(),
-            'debug'                 => \Pimcore::inDebugMode(),
-            'devmode'               => \Pimcore::inDevMode(DevMode::ADMIN),
-            'disableMinifyJs'       => \Pimcore::disableMinifyJs(),
-            'environment'           => $kernel->getEnvironment(),
-            'sessionId'             => htmlentities(Session::getSessionId(), ENT_QUOTES, 'UTF-8'),
+            'instanceId' => $this->getInstanceId(),
+            'version' => Version::getVersion(),
+            'build' => Version::getRevision(),
+            'debug' => \Pimcore::inDebugMode(),
+            'devmode' => \Pimcore::inDevMode(DevMode::ADMIN),
+            'disableMinifyJs' => \Pimcore::disableMinifyJs(),
+            'environment' => $kernel->getEnvironment(),
+            'sessionId' => htmlentities(Session::getSessionId(), ENT_QUOTES, 'UTF-8'),
             'isLegacyModeAvailable' => \Pimcore::isLegacyModeAvailable()
         ]);
 
         // languages
         $settings->getParameters()->add([
-            'language'         => $request->getLocale(),
+            'language' => $request->getLocale(),
             'websiteLanguages' => Admin::reorderWebsiteLanguages(
                 $this->getAdminUser(),
                 $config->general->validLanguages,
@@ -281,9 +281,9 @@ class IndexController extends AdminController
 
         // perspective and portlets
         $settings->getParameters()->add([
-            'perspective'           => $view->runtimePerspective,
+            'perspective' => $view->runtimePerspective,
             'availablePerspectives' => Config::getAvailablePerspectives($user),
-            'disabledPortlets'      => $dashboardHelper->getDisabledPortlets(),
+            'disabledPortlets' => $dashboardHelper->getDisabledPortlets(),
         ]);
 
         $this
@@ -299,9 +299,10 @@ class IndexController extends AdminController
     /**
      * @return string
      */
-    private function getInstanceId() {
+    private function getInstanceId()
+    {
         $instanceId = 'not-set';
-        if($this->container->hasParameter('secret')) {
+        if ($this->container->hasParameter('secret')) {
             $instanceId = $this->getParameter('secret');
             try {
                 $instanceId = sha1(substr($instanceId, 3, -3));
@@ -321,7 +322,7 @@ class IndexController extends AdminController
         $config = $view->config;
 
         $settings->getParameters()->add([
-            'google_analytics_enabled'      => (bool)$siteConfigProvider->isSiteReportingConfigured(),
+            'google_analytics_enabled' => (bool)$siteConfigProvider->isSiteReportingConfigured(),
             'google_webmastertools_enabled' => (bool)Google\Webmastertools::isConfigured()
         ]);
     }
@@ -335,8 +336,8 @@ class IndexController extends AdminController
     {
         // upload limit
         $max_upload = filesize2bytes(ini_get('upload_max_filesize') . 'B');
-        $max_post   = filesize2bytes(ini_get('post_max_size') . 'B');
-        $upload_mb  = min($max_upload, $max_post);
+        $max_post = filesize2bytes(ini_get('post_max_size') . 'B');
+        $upload_mb = min($max_upload, $max_post);
 
         $settings->upload_max_filesize = (int)$upload_mb;
 
@@ -392,7 +393,7 @@ class IndexController extends AdminController
         }
 
         $settings->maintenance_active = $maintenance_active;
-        $settings->maintenance_mode    = Admin::isInMaintenanceMode();
+        $settings->maintenance_mode = Admin::isInMaintenanceMode();
 
         return $this;
     }
@@ -444,9 +445,9 @@ class IndexController extends AdminController
                 $rootNode = Service::getElementByPath($treeType, $tmpData['rootfolder']);
 
                 if ($rootNode) {
-                    $tmpData['rootId']         = $rootNode->getId();
+                    $tmpData['rootId'] = $rootNode->getId();
                     $tmpData['allowedClasses'] = $tmpData['classes'] ? explode(',', $tmpData['classes']) : null;
-                    $tmpData['showroot']       = (bool)$tmpData['showroot'];
+                    $tmpData['showroot'] = (bool)$tmpData['showroot'];
 
                     // Check if a user has privileges to that node
                     if ($rootNode->isAllowed('list')) {

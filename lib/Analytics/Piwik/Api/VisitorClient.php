@@ -34,14 +34,14 @@ class VisitorClient
     public function __construct(ApiClient $apiClient, Config $config)
     {
         $this->apiClient = $apiClient;
-        $this->config    = $config;
+        $this->config = $config;
     }
 
     public function getVisitorProfile(int $piwikSiteId, string $visitorId): array
     {
         $result = $this->apiClient->get($this->buildParameters([
-            'method'    => 'Live.getVisitorProfile',
-            'idSite'    => $piwikSiteId,
+            'method' => 'Live.getVisitorProfile',
+            'idSite' => $piwikSiteId,
             'visitorId' => $visitorId
         ]));
 
@@ -56,8 +56,8 @@ class VisitorClient
         }
 
         return array_merge([
-            'module'     => 'API',
-            'format'     => 'JSON',
+            'module' => 'API',
+            'format' => 'JSON',
             'token_auth' => $token,
         ], $parameters);
     }

@@ -44,7 +44,7 @@ class TemplateControllerListener implements EventSubscriberInterface
      */
     public function __construct(ContainerInterface $container, $defaultEngine = 'twig')
     {
-        $this->container     = $container;
+        $this->container = $container;
         $this->defaultEngine = $defaultEngine;
     }
 
@@ -57,13 +57,13 @@ class TemplateControllerListener implements EventSubscriberInterface
         // handles the Template annotation
         return [
             KernelEvents::CONTROLLER => 'onKernelController',
-            KernelEvents::VIEW       => ['onKernelView', 32]
+            KernelEvents::VIEW => ['onKernelView', 32]
         ];
     }
 
     public function onKernelController(FilterControllerEvent $event)
     {
-        $request  = $event->getRequest();
+        $request = $event->getRequest();
         $callable = $event->getController();
 
         // if controller implements TemplateControllerInterface, register it as attribute as we need it later in onKernelView

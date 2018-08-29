@@ -48,7 +48,7 @@ class GeoLocation implements DataProviderInterface
         LoggerInterface $logger
     ) {
         $this->geoIpDataProvider = $geoIpProvider;
-        $this->logger            = $logger;
+        $this->logger = $logger;
     }
 
     public function load(VisitorInfo $visitorInfo)
@@ -74,9 +74,9 @@ class GeoLocation implements DataProviderInterface
         }, ARRAY_FILTER_USE_KEY);
 
         $data = array_merge([
-            'latitude'  => $location ? $location->getLatitude() : null,
+            'latitude' => $location ? $location->getLatitude() : null,
             'longitude' => $location ? $location->getLongitude() : null,
-            'altitude'  => $location ? $location->getAltitude() : null,
+            'altitude' => $location ? $location->getAltitude() : null,
         ], $overrides);
 
         if (null !== $data['latitude'] && null !== $data['longitude']) {
@@ -132,9 +132,9 @@ class GeoLocation implements DataProviderInterface
             return (float)$json[$property];
         };
 
-        $latitude  = $floatFromJson('lat');
+        $latitude = $floatFromJson('lat');
         $longitude = $floatFromJson('long');
-        $altitude  = $floatFromJson('alt');
+        $altitude = $floatFromJson('alt');
 
         if (null !== $latitude && null !== $longitude) {
             try {

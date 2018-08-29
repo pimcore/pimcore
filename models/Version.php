@@ -611,7 +611,7 @@ class Version extends AbstractModel
         $total = $list->getTotalCount();
         $iterations = ceil($total / $perIteration);
 
-        for ($i=0; $i < $iterations; $i++) {
+        for ($i = 0; $i < $iterations; $i++) {
             Logger::debug('iteration ' . ($i + 1) . ' of ' . $iterations);
 
             $list->setOffset($i * $perIteration);

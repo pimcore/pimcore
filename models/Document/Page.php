@@ -17,7 +17,6 @@
 
 namespace Pimcore\Model\Document;
 
-use Pimcore\Db;
 use Pimcore\Logger;
 use Pimcore\Model\Document\Targeting\TargetingDocumentInterface;
 use Pimcore\Model\Redirect;

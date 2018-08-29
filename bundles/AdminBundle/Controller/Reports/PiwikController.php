@@ -92,7 +92,7 @@ class PiwikController extends ReportsControllerBase
         if ($config->isIframeIntegrationConfigured()) {
             $data = [
                 'configured' => true,
-                'url'        => $config->generateIframeUrl()
+                'url' => $config->generateIframeUrl()
             ];
         }
 
@@ -117,7 +117,7 @@ class PiwikController extends ReportsControllerBase
         $this->checkPermission('piwik_reports');
 
         $siteConfigs = $siteConfigProvider->getSiteIds();
-        $config      = $configProvider->getConfig();
+        $config = $configProvider->getConfig();
 
         $sites = [];
         foreach ($siteConfigs as $siteConfig) {
@@ -126,7 +126,7 @@ class PiwikController extends ReportsControllerBase
             }
 
             $sites[] = [
-                'id'    => $siteConfig->getConfigKey(),
+                'id' => $siteConfig->getConfigKey(),
                 'title' => $siteConfig->getTitle($translator)
             ];
         }
@@ -204,7 +204,7 @@ class PiwikController extends ReportsControllerBase
         $this->checkPermission('piwik_settings');
 
         $siteConfig = $siteConfigProvider->getSiteId($configKey);
-        $siteId     = $sitesManager->addSite($siteConfig);
+        $siteId = $sitesManager->addSite($siteConfig);
 
         return $this->json([
             'site_id' => $siteId
@@ -229,7 +229,7 @@ class PiwikController extends ReportsControllerBase
         $this->checkPermission('piwik_settings');
 
         $siteConfig = $siteConfigProvider->getSiteId($configKey);
-        $siteId     = $sitesManager->updateSite($siteConfig);
+        $siteId = $sitesManager->updateSite($siteConfig);
 
         return $this->json([
             'site_id' => $siteId

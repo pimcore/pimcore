@@ -86,20 +86,20 @@ class ToolbarListener implements EventSubscriberInterface
         EngineInterface $templatingEngine,
         CodeInjector $codeInjector
     ) {
-        $this->visitorInfoStorage     = $visitorInfoStorage;
-        $this->documentResolver       = $documentResolver;
+        $this->visitorInfoStorage = $visitorInfoStorage;
+        $this->documentResolver = $documentResolver;
         $this->targetingDataCollector = $targetingDataCollector;
-        $this->overrideHandler        = $overrideHandler;
-        $this->eventDispatcher        = $eventDispatcher;
-        $this->templatingEngine       = $templatingEngine;
-        $this->codeInjector           = $codeInjector;
+        $this->overrideHandler = $overrideHandler;
+        $this->eventDispatcher = $eventDispatcher;
+        $this->templatingEngine = $templatingEngine;
+        $this->codeInjector = $codeInjector;
     }
 
     public static function getSubscribedEvents()
     {
         return [
             TargetingEvents::PRE_RESOLVE => ['onPreResolve', -10],
-            KernelEvents::RESPONSE       => ['onKernelResponse', -127],
+            KernelEvents::RESPONSE => ['onKernelResponse', -127],
         ];
     }
 
@@ -130,9 +130,9 @@ class ToolbarListener implements EventSubscriberInterface
             return;
         }
 
-        $document    = $this->documentResolver->getDocument($request);
+        $document = $this->documentResolver->getDocument($request);
         $visitorInfo = $this->visitorInfoStorage->getVisitorInfo();
-        $data        = $this->collectTemplateData($visitorInfo, $document);
+        $data = $this->collectTemplateData($visitorInfo, $document);
 
         $overrideForm = $this->overrideHandler->getForm($request);
         $data['overrideForm'] = $overrideForm->createView();
@@ -176,13 +176,13 @@ class ToolbarListener implements EventSubscriberInterface
         $tdc = $this->targetingDataCollector;
 
         $data = [
-            'token'                => $token,
-            'visitorInfo'          => $tdc->collectVisitorInfo($visitorInfo),
-            'targetGroups'         => $tdc->collectTargetGroups($visitorInfo),
-            'rules'                => $tdc->collectMatchedRules($visitorInfo),
-            'documentTargetGroup'  => $tdc->collectDocumentTargetGroup($document),
+            'token' => $token,
+            'visitorInfo' => $tdc->collectVisitorInfo($visitorInfo),
+            'targetGroups' => $tdc->collectTargetGroups($visitorInfo),
+            'rules' => $tdc->collectMatchedRules($visitorInfo),
+            'documentTargetGroup' => $tdc->collectDocumentTargetGroup($document),
             'documentTargetGroups' => $tdc->collectDocumentTargetGroupMapping(),
-            'storage'              => $tdc->collectStorage($visitorInfo),
+            'storage' => $tdc->collectStorage($visitorInfo),
         ];
 
         return $data;

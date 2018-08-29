@@ -57,7 +57,7 @@ class ExpressionBuilder
         $valueKey = $config['type'] . '_' . $this->valueIndex++;
 
         $this->values[$valueKey] = $result;
-        $this->parts[]           = $valueKey;
+        $this->parts[] = $valueKey;
 
         if ($config['bracketRight']) {
             $this->parts[] = ') ';

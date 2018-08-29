@@ -43,8 +43,8 @@ abstract class AbstractCookieSaveHandler implements CookieSaveHandlerInterface
     protected function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'domain'   => null,
-            'secure'   => false,
+            'domain' => null,
+            'secure' => false,
             'httpOnly' => true
         ]);
 
@@ -58,7 +58,7 @@ abstract class AbstractCookieSaveHandler implements CookieSaveHandlerInterface
      */
     public function load(Request $request, string $scope, string $name): array
     {
-        $data   = $request->cookies->get($name, null);
+        $data = $request->cookies->get($name, null);
         $result = $this->parseData($scope, $name, $data);
 
         return $result;

@@ -52,7 +52,7 @@ class GeoIp implements DataProviderInterface
         LoggerInterface $logger
     ) {
         $this->geoIpProvider = $geoIpProvider;
-        $this->logger        = $logger;
+        $this->logger = $logger;
     }
 
     public function setCache(CoreHandlerInterface $cache)
@@ -79,7 +79,7 @@ class GeoIp implements DataProviderInterface
 
     public function loadData(VisitorInfo $visitorInfo)
     {
-        $result  = null;
+        $result = null;
         $request = $visitorInfo->getRequest();
 
         $ip = $request->getClientIp();

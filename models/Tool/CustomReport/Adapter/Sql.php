@@ -196,7 +196,7 @@ class Sql extends AbstractAdapter
                                 'gt' => '>',
                                 'eq' => '='
                             ];
-                            
+
                             if ($type == 'date') {
                                 if ($operator == 'eq') {
                                     $condition[] = $db->quoteIdentifier($filter['property']) . ' BETWEEN FROM_UNIXTIME(' . $db->quote($value) . ') AND FROM_UNIXTIME(' . $db->quote($maxValue) . ')';

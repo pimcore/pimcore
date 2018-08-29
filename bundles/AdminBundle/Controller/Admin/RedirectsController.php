@@ -215,7 +215,7 @@ class RedirectsController extends AdminController
 
         return $this->adminJson([
             'success' => true,
-            'data'    => $result
+            'data' => $result
         ]);
     }
 }

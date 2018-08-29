@@ -64,10 +64,10 @@ class Service
         ContainerInterface $operatorFactories,
         ContainerInterface $valueFactories
     ) {
-        $this->db                = $db;
-        $this->resolvers         = $resolvers;
+        $this->db = $db;
+        $this->resolvers = $resolvers;
         $this->operatorFactories = $operatorFactories;
-        $this->valueFactories    = $valueFactories;
+        $this->valueFactories = $valueFactories;
     }
 
     public function getResolver(string $name): ResolverInterface

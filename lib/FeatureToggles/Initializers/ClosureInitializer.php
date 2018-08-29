@@ -35,7 +35,7 @@ class ClosureInitializer implements FeatureStateInitializerInterface
 
     public function __construct(string $type, \Closure $closure)
     {
-        $this->type    = $type;
+        $this->type = $type;
         $this->closure = $closure;
     }
 

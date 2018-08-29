@@ -38,7 +38,7 @@ class Dao extends Model\Dao\AbstractDao
         $params = [$ownerId, $classId, $searchType];
         if (!is_null($objectId)) {
             $query .= ' AND objectId = ?';
-            $params[]= $objectId;
+            $params[] = $objectId;
         }
 
         $data = $this->db->fetchRow($query, $params);

@@ -464,8 +464,8 @@ class Menu extends AbstractRenderer
 
         // get attribs for element
         $attribs = [
-            'id'     => $page->getId(),
-            'title'  => $title,
+            'id' => $page->getId(),
+            'title' => $title,
         ];
 
         if (false === $this->getAddPageClassToLi()) {
@@ -474,9 +474,9 @@ class Menu extends AbstractRenderer
 
         // does page have a href?
         if ($href = $page->getHref()) {
-            $element              = 'a';
-            $attribs['href']      = $href;
-            $attribs['target']    = $page->getTarget();
+            $element = 'a';
+            $attribs['href'] = $href;
+            $attribs['target'] = $page->getTarget();
             $attribs['accesskey'] = $page->getAccessKey();
         } else {
             $element = 'span';
@@ -649,7 +649,7 @@ class Menu extends AbstractRenderer
 
         $attribs = [
             'class' => $ulClass,
-            'id'    => $ulId,
+            'id' => $ulId,
         ];
 
         // We don't need a prefix for the menu ID (backup)
@@ -808,7 +808,7 @@ class Menu extends AbstractRenderer
                 if (0 == $depth) {
                     $attribs = [
                         'class' => $ulClass,
-                        'id'    => $ulId,
+                        'id' => $ulId,
                     ];
                 }
 
@@ -826,7 +826,7 @@ class Menu extends AbstractRenderer
             } elseif ($prevDepth > $depth) {
                 // close li/ul tags until we're at current depth
                 for ($i = $prevDepth; $i > $depth; $i--) {
-                    $ind   = $indent . str_repeat($innerIndent, $i * 2);
+                    $ind = $indent . str_repeat($innerIndent, $i * 2);
                     $html .= $ind . $innerIndent . '</li>' . $this->getEOL();
                     $html .= $ind . '</ul>' . $this->getEOL();
                 }
@@ -974,19 +974,19 @@ class Menu extends AbstractRenderer
         Container $container,
         $ulClass = null,
         $indent = null,
-        $ulId   = null,
+        $ulId = null,
         $addPageClassToLi = false,
         $innerIndent = null
     ) {
         return $this->renderMenu($container, [
-            'indent'           => $indent,
-            'innerIndent'      => $innerIndent,
-            'ulClass'          => $ulClass,
-            'minDepth'         => null,
-            'maxDepth'         => null,
+            'indent' => $indent,
+            'innerIndent' => $innerIndent,
+            'ulClass' => $ulClass,
+            'minDepth' => null,
+            'maxDepth' => null,
             'onlyActiveBranch' => true,
-            'renderParents'    => false,
-            'ulId'             => $ulId,
+            'renderParents' => false,
+            'ulId' => $ulId,
             'addPageClassToLi' => $addPageClassToLi,
         ]);
     }

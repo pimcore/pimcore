@@ -39,7 +39,7 @@ class ClosureInitializerTest extends TestCase
     public function testClosureIsCalled()
     {
         // TODO find a more concise way of testing if a closure was called
-        $state         = new \stdClass();
+        $state = new \stdClass();
         $state->called = false;
 
         $initializer = new ClosureInitializer('foo', function () use ($state) {
@@ -55,7 +55,7 @@ class ClosureInitializerTest extends TestCase
 
     public function testContextIsPassed()
     {
-        $state         = new \stdClass();
+        $state = new \stdClass();
         $state->called = false;
 
         $context = new FeatureContext();
@@ -75,7 +75,7 @@ class ClosureInitializerTest extends TestCase
 
     public function testPreviousStateCanBeNull()
     {
-        $state         = new \stdClass();
+        $state = new \stdClass();
         $state->called = false;
 
         $initializer = new ClosureInitializer('foo', function (FeatureContext $givenContext, FeatureStateInterface $givenPreviousState = null) use ($state) {
@@ -93,7 +93,7 @@ class ClosureInitializerTest extends TestCase
 
     public function testPreviousStateIsPassed()
     {
-        $state         = new \stdClass();
+        $state = new \stdClass();
         $state->called = false;
 
         $previousState = new FeatureState('foo', 0);

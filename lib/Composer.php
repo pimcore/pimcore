@@ -18,18 +18,17 @@ namespace Pimcore;
 use Composer\DependencyResolver\Operation\UpdateOperation;
 use Composer\Installer\PackageEvent;
 use Composer\Script\Event;
-use Composer\Util\Filesystem;
 use Symfony\Component\Process\PhpExecutableFinder;
 use Symfony\Component\Process\Process;
 
 class Composer
 {
-    protected static $options = array(
+    protected static $options = [
         'symfony-app-dir' => 'app',
         'symfony-web-dir' => 'web',
         'symfony-assets-install' => 'hard',
         'symfony-cache-warmup' => false,
-    );
+    ];
 
     /**
      * @param Event $event
@@ -76,7 +75,8 @@ class Composer
     /**
      * @param Event $event
      */
-    public static function executeMigrationsUp(Event $event) {
+    public static function executeMigrationsUp(Event $event)
+    {
         $consoleDir = static::getConsoleDir($event, 'pimcore migrations');
 
         if (null === $consoleDir) {
@@ -92,7 +92,7 @@ class Composer
             $event->getIO()->write('<comment>Unable to retrieve current migration version</comment>');
         }
 
-        if(!empty($currentVersion)) {
+        if (!empty($currentVersion)) {
             static::executeCommand($event, $consoleDir, 'pimcore:migrations:migrate -s pimcore_core -n');
         } else {
             $event->getIO()->write('<comment>Skipping migrations, because current version is `0` -> run installer first or mark migrations as done manually!</comment>', true);
@@ -157,13 +157,14 @@ class Composer
         }
     }
 
-    public static function prePackageUpdate(PackageEvent $event) {
+    public static function prePackageUpdate(PackageEvent $event)
+    {
 
         /**
          * @var $operation UpdateOperation
          */
         $operation = $event->getOperation();
-        if($operation->getInitialPackage()->getName() == 'pimcore/pimcore') {
+        if ($operation->getInitialPackage()->getName() == 'pimcore/pimcore') {
             $operation->getInitialPackage()->getSourceReference();
             $operation->getInitialPackage()->getDistReference();
 
@@ -185,7 +186,7 @@ class Composer
 
         $process = new Process($php.($phpArgs ? ' '.$phpArgs : '').' '.$console.' '.$cmd, null, null, null, $timeout);
         $process->run(function ($type, $buffer) use ($event, $writeBuffer) {
-            if($writeBuffer) {
+            if ($writeBuffer) {
                 $event->getIO()->write($buffer, false);
             }
         });
@@ -209,7 +210,7 @@ class Composer
     protected static function getPhpArguments()
     {
         $ini = null;
-        $arguments = array();
+        $arguments = [];
 
         $phpFinder = new PhpExecutableFinder();
         if (method_exists($phpFinder, 'findArguments')) {

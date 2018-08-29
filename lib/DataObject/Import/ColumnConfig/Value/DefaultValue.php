@@ -44,8 +44,8 @@ class DefaultValue extends AbstractConfigElement implements ValueInterface
     {
         parent::__construct($config, $context);
 
-        $this->mode            = $config->mode;
-        $this->doNotOverwrite  = (bool)$config->doNotOverwrite;
+        $this->mode = $config->mode;
+        $this->doNotOverwrite = (bool)$config->doNotOverwrite;
         $this->skipEmptyValues = (bool)$config->skipEmptyValues;
     }
 

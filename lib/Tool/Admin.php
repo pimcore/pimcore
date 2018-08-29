@@ -90,7 +90,7 @@ class Admin
         }
 
         $params = [
-            'scripts' =>  basename($scriptPath),
+            'scripts' => basename($scriptPath),
             '_dc' => \Pimcore\Version::getRevision()
         ];
 
@@ -107,7 +107,7 @@ class Admin
 
         // minimum 10 lines, to be sure take more
         $sample = '';
-        for ($i=0; $i < 10; $i++) {
+        for ($i = 0; $i < 10; $i++) {
             $sample .= implode('', array_slice(file($file), 0, 11)); // grab 20 lines
         }
 

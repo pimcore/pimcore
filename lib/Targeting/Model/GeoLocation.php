@@ -44,9 +44,9 @@ class GeoLocation
             throw new \InvalidArgumentException('Longitude is invalid');
         }
 
-        $this->latitude  = $latitude;
+        $this->latitude = $latitude;
         $this->longitude = $longitude;
-        $this->altitude  = $altitude;
+        $this->altitude = $altitude;
     }
 
     public static function build($latitude, $longitude, $altitude = null): self

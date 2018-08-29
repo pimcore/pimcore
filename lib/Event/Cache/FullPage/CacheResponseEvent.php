@@ -38,7 +38,7 @@ class CacheResponseEvent extends Event
     public function __construct(Response $response, bool $cache)
     {
         $this->response = $response;
-        $this->cache    = $cache;
+        $this->cache = $cache;
     }
 
     public function getResponse(): Response

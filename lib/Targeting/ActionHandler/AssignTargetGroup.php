@@ -42,7 +42,7 @@ class AssignTargetGroup implements ActionHandlerInterface
         TargetingStorageInterface $storage
     ) {
         $this->conditionMatcher = $conditionMatcher;
-        $this->storage          = $storage;
+        $this->storage = $storage;
     }
 
     public function apply(VisitorInfo $visitorInfo, array $action, Rule $rule = null)

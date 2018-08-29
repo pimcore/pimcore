@@ -85,7 +85,7 @@ class GeneralTest extends AbstractClassificationStoreTest
             foreach ($keyNames as $keyName) {
                 $keyConfig = \Pimcore\Model\DataObject\Classificationstore\KeyConfig::getByName($keyName, $store->getId());
                 $idx++;
-                $value =  $csField->getLocalizedKeyValue($groupConfig->getId(), $keyConfig->getId(), $validLanguage);
+                $value = $csField->getLocalizedKeyValue($groupConfig->getId(), $keyConfig->getId(), $validLanguage);
                 $this->assertEquals($idx, $value);
             }
         }
@@ -105,7 +105,7 @@ class GeneralTest extends AbstractClassificationStoreTest
 
         $o = \Pimcore\Model\DataObject\Csstoreclass::getById($o->getId());
         $csField = $o->getCsstore();
-        $value =  $csField->getLocalizedKeyValue($groupConfig->getId(), $keyConfig->getId(), 'en');
+        $value = $csField->getLocalizedKeyValue($groupConfig->getId(), $keyConfig->getId(), 'en');
         $this->assertEquals('defaultValue', $value);
 
         Cache::enable();

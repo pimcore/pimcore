@@ -79,13 +79,13 @@ class DbStorage implements TargetingStorageInterface, MaintenanceStorageInterfac
 
         $qb->setParameters([
             'visitorId' => $visitorInfo->getVisitorId(),
-            'scope'     => $scope,
-            'metaKey'   => self::STORAGE_KEY_META_ENTRY,
+            'scope' => $scope,
+            'metaKey' => self::STORAGE_KEY_META_ENTRY,
         ]);
 
         $this->addExpiryParam($qb, $scope);
 
-        $stmt   = $qb->execute();
+        $stmt = $qb->execute();
         $result = $stmt->fetchAll();
 
         $data = [];
@@ -112,13 +112,13 @@ class DbStorage implements TargetingStorageInterface, MaintenanceStorageInterfac
 
         $qb->setParameters([
             'visitorId' => $visitorInfo->getVisitorId(),
-            'scope'     => $scope,
-            'name'      => $name,
+            'scope' => $scope,
+            'name' => $name,
         ]);
 
         $this->addExpiryParam($qb, $scope);
 
-        $stmt   = $qb->execute();
+        $stmt = $qb->execute();
         $result = (int)$stmt->fetchColumn();
 
         return 1 === $result;
@@ -145,9 +145,9 @@ EOF;
             $query,
             [
                 'visitorId' => $visitorInfo->getVisitorId(),
-                'scope'     => $scope,
-                'name'      => $name,
-                'value'     => $json,
+                'scope' => $scope,
+                'name' => $name,
+                'value' => $json,
             ]
         );
 
@@ -170,13 +170,13 @@ EOF;
 
         $qb->setParameters([
             'visitorId' => $visitorInfo->getVisitorId(),
-            'scope'     => $scope,
-            'name'      => $name,
+            'scope' => $scope,
+            'name' => $name,
         ]);
 
         $this->addExpiryParam($qb, $scope);
 
-        $stmt   = $qb->execute();
+        $stmt = $qb->execute();
         $result = $stmt->fetchColumn();
 
         if (!$result) {
@@ -209,7 +209,7 @@ EOF;
                 'DELETE FROM ' . $this->tableName . ' WHERE visitorId = :visitorId AND scope = :scope',
                 [
                     'visitorId' => $visitorInfo->getVisitorId(),
-                    'scope'     => $scope
+                    'scope' => $scope
                 ]
             );
         }
@@ -286,7 +286,7 @@ EOF;
 
         $qb->setParameters([
             'visitorId' => $visitorInfo->getVisitorId(),
-            'scope'     => $scope,
+            'scope' => $scope,
         ]);
 
         $this->addExpiryParam($qb, $scope);
@@ -328,14 +328,14 @@ EOF;
         $this->db->executeQuery(
             $query,
             [
-                'visitorId'        => $visitorInfo->getVisitorId(),
-                'scope'            => $scope,
-                'name'             => self::STORAGE_KEY_META_ENTRY,
-                'value'            => 1,
-                'creationDate'     => $timestamps['createdAt'],
+                'visitorId' => $visitorInfo->getVisitorId(),
+                'scope' => $scope,
+                'name' => self::STORAGE_KEY_META_ENTRY,
+                'value' => 1,
+                'creationDate' => $timestamps['createdAt'],
                 'modificationDate' => $timestamps['updatedAt'],
             ], [
-                'creationDate'     => Type::DATETIME,
+                'creationDate' => Type::DATETIME,
                 'modificationDate' => Type::DATETIME,
             ]
         );
@@ -372,7 +372,7 @@ EOF;
         $this->db->executeQuery(
             'DELETE FROM ' . $this->tableName . ' WHERE scope = :scope AND modificationDate < (NOW() - INTERVAL :expiry SECOND)',
             [
-                'scope'  => $scope,
+                'scope' => $scope,
                 'expiry' => $expiry
             ]
         );

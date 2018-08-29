@@ -46,11 +46,11 @@ final class WidgetConfig
 
     public function __construct(string $id, string $name, string $title, string $url, array $data)
     {
-        $this->id    = $id;
-        $this->name  = $name;
+        $this->id = $id;
+        $this->name = $name;
         $this->title = $title;
-        $this->url   = $url;
-        $this->data  = $data;
+        $this->url = $url;
+        $this->data = $data;
     }
 
     public function getId(): string

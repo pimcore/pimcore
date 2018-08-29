@@ -65,7 +65,7 @@ class LowQualityImagePreviewCommand extends AbstractCommand
         $total = $list->getTotalCount();
         $perLoop = 10;
 
-        for ($i=0; $i < (ceil($total / $perLoop)); $i++) {
+        for ($i = 0; $i < (ceil($total / $perLoop)); $i++) {
             $list->setLimit($perLoop);
             $list->setOffset($i * $perLoop);
 

@@ -153,9 +153,9 @@ abstract class AbstractElement
         // same as the full name
         if (null === $parent) {
             $this->realName = $this->name;
-            $this->index    = null;
-            $this->parent   = null;
-            $this->parents  = [];
+            $this->index = null;
+            $this->parent = null;
+            $this->parents = [];
 
             return;
         }
@@ -170,8 +170,8 @@ abstract class AbstractElement
         // the string between the real name and the index suffix is built
         // from parent block names
 
-        $parentList      = $this->buildParentList($parent);
-        $parentIndexes   = [];
+        $parentList = $this->buildParentList($parent);
+        $parentIndexes = [];
         $parentNameParts = [];
 
         foreach ($parentList as $currentParent) {
@@ -193,8 +193,8 @@ abstract class AbstractElement
         */
 
         $parentNameParts = array_reverse($parentNameParts);
-        $parentNames     = implode('_', array_reverse($parentNameParts));
-        $pattern         = ElementTree::buildNameMatchingPattern($parentNames);
+        $parentNames = implode('_', array_reverse($parentNameParts));
+        $pattern = ElementTree::buildNameMatchingPattern($parentNames);
 
         if (!preg_match_all($pattern, $this->name, $matches, PREG_SET_ORDER)) {
             throw new LogicException(sprintf(
@@ -219,9 +219,9 @@ abstract class AbstractElement
             ));
         }
 
-        $match    = $matches[0];
+        $match = $matches[0];
         $realName = (string)$match['realName'];
-        $index    = null;
+        $index = null;
 
         // get index from index suffix and check if remaining indexes match parent indexes
         if (!empty($match['indexes'])) {
@@ -262,10 +262,10 @@ abstract class AbstractElement
             ));
         }
 
-        $this->parent   = $parent;
-        $this->parents  = $parentList;
+        $this->parent = $parent;
+        $this->parents = $parentList;
         $this->realName = $realName;
-        $this->index    = $index;
+        $this->index = $index;
     }
 
     /**
@@ -278,7 +278,7 @@ abstract class AbstractElement
         $parents = [];
         while (null !== $parent) {
             $parents[] = $parent;
-            $parent    = $parent->getParent();
+            $parent = $parent->getParent();
         }
 
         $parents = array_reverse($parents);

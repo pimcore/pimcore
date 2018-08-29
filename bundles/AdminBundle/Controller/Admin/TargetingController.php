@@ -53,10 +53,10 @@ class TargetingController extends AdminController implements EventedControllerIn
         /** @var Targeting\Rule $target */
         foreach ($list->load() as $target) {
             $targets[] = [
-                'id'     => $target->getId(),
-                'text'   => $target->getName(),
+                'id' => $target->getId(),
+                'text' => $target->getName(),
                 'active' => $target->getActive(),
-                'qtip'   => 'ID: ' . $target->getId()
+                'qtip' => 'ID: ' . $target->getId()
             ];
         }
 
@@ -203,20 +203,20 @@ class TargetingController extends AdminController implements EventedControllerIn
 
         if ($request->get('add-default')) {
             $targetGroups[] = [
-                'id'     => 0,
-                'text'   => 'default',
+                'id' => 0,
+                'text' => 'default',
                 'active' => true,
-                'qtip'   => 0
+                'qtip' => 0
             ];
         }
 
         /** @var TargetGroup $targetGroup */
         foreach ($list->load() as $targetGroup) {
             $targetGroups[] = [
-                'id'     => $targetGroup->getId(),
-                'text'   => $targetGroup->getName(),
+                'id' => $targetGroup->getId(),
+                'text' => $targetGroup->getName(),
                 'active' => $targetGroup->getActive(),
-                'qtip'   => $targetGroup->getId()
+                'qtip' => $targetGroup->getId()
             ];
         }
 

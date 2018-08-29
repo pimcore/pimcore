@@ -108,10 +108,10 @@ class OrderManager implements IOrderManager
         $resolver->setRequired($classProperties);
 
         $resolver->setDefaults([
-            'order_class'         => '\\Pimcore\\Model\\DataObject\\OnlineShopOrder',
-            'order_item_class'    => '\\Pimcore\\Model\\DataObject\\OnlineShopOrderItem',
-            'list_class'          => Listing::class,
-            'list_item_class'     => Listing\Item::class,
+            'order_class' => '\\Pimcore\\Model\\DataObject\\OnlineShopOrder',
+            'order_item_class' => '\\Pimcore\\Model\\DataObject\\OnlineShopOrderItem',
+            'list_class' => Listing::class,
+            'list_item_class' => Listing\Item::class,
             'parent_order_folder' => '/order/%Y/%m/%d'
         ]);
 
@@ -605,11 +605,11 @@ class OrderManager implements IOrderManager
         }
         $orderItem->setComment($item->getComment());
 
-        $price    = Decimal::zero();
+        $price = Decimal::zero();
         $netPrice = Decimal::zero();
 
         if (!$isGiftItem && is_object($item->getTotalPrice())) {
-            $price    = $item->getTotalPrice()->getGrossAmount();
+            $price = $item->getTotalPrice()->getGrossAmount();
             $netPrice = $item->getTotalPrice()->getNetAmount();
         }
 
@@ -737,7 +737,7 @@ class OrderManager implements IOrderManager
     public function buildOrderList()
     {
         $orderListClass = $this->buildOrderListClassName();
-        $orderList      = $this->buildModelClass($orderListClass);
+        $orderList = $this->buildModelClass($orderListClass);
 
         return $orderList;
     }
@@ -752,7 +752,7 @@ class OrderManager implements IOrderManager
     public function buildOrderItemList()
     {
         $orderItemListClass = $this->buildOrderItemListClassName();
-        $orderItemList      = $this->buildModelClass($orderItemListClass);
+        $orderItemList = $this->buildModelClass($orderItemListClass);
 
         return $orderItemList;
     }

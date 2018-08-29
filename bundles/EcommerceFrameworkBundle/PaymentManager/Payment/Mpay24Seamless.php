@@ -140,8 +140,8 @@ class Mpay24Seamless extends AbstractPayment
 
         // Each line is optional so only add the lines that you need
         $tokenizerConfig = [
-            'language'              => $this->getProviderCompatibleLocale($request),
-            'internalPaymentId'     => $paymentInfo->getInternalPaymentId(),
+            'language' => $this->getProviderCompatibleLocale($request),
+            'internalPaymentId' => $paymentInfo->getInternalPaymentId(),
 
         ];
         $tokenizer = $mpay24->token('CC', $tokenizerConfig); //always CC as cc is with iframe?
@@ -268,7 +268,7 @@ class Mpay24Seamless extends AbstractPayment
     private function addOrderItemPositions(OnlineShopOrder $order, string $paymentType, array $additional): array
     {
         $checkSum = 0.0;
-        $checkSumVat= 0.0;
+        $checkSumVat = 0.0;
 
         $pos = 1;
         $additional['order']['shoppingCart'] = [];

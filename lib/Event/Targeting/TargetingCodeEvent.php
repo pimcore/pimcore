@@ -48,8 +48,8 @@ class TargetingCodeEvent extends Event
         array $data
     ) {
         $this->template = $template;
-        $this->blocks   = $blocks;
-        $this->data     = $data;
+        $this->blocks = $blocks;
+        $this->data = $data;
     }
 
     public function getTemplate(): string

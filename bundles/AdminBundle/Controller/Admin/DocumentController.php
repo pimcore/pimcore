@@ -90,16 +90,15 @@ class DocumentController extends ElementControllerBase implements EventedControl
     {
         $allParams = array_merge($request->request->all(), $request->query->all());
 
-        $filter = $request->get("filter");
-        $limit  = intval($allParams['limit'] ?? 100000000);
+        $filter = $request->get('filter');
+        $limit = intval($allParams['limit'] ?? 100000000);
         $offset = intval($allParams['start'] ?? 0);
 
         if (!is_null($filter)) {
-
             if (substr($filter, -1) != '*') {
-                $filter .= "*";
+                $filter .= '*';
             }
-            $filter = str_replace("*", "%", $filter);
+            $filter = str_replace('*', '%', $filter);
             $limit = 100;
             $offset = 0;
         }
@@ -118,7 +117,6 @@ class DocumentController extends ElementControllerBase implements EventedControl
 
             $db = Db::get();
 
-
             $list = new Document\Listing();
             if ($this->getAdminUser()->isAdmin()) {
                 $condition = 'parentId =  ' . $db->quote($document->getId());
@@ -136,8 +134,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
             if ($filter) {
                 $db = Db::get();
 
-                $condition = '(' . $condition . ')' . ' AND ' . $db->quoteIdentifier('key') . ' LIKE ' . $db->quote($filter );
-
+                $condition = '(' . $condition . ')' . ' AND ' . $db->quoteIdentifier('key') . ' LIKE ' . $db->quote($filter);
             }
 
             $list->setCondition($condition);
@@ -181,7 +178,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
                 'limit' => $limit,
                 'total' => $document->getChildAmount($this->getAdminUser()),
                 'nodes' => $documents,
-                'filter' => $request->get('filter') ? $request->get('filter') : "" ,
+                'filter' => $request->get('filter') ? $request->get('filter') : '',
                 'inSearch' => intval($request->get('inSearch'))
             ]);
         } else {
@@ -540,7 +537,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
                 try {
                     $document->save();
 
-                    if($request->get('index') !== null) {
+                    if ($request->get('index') !== null) {
                         $this->updateIndexesOfDocumentSiblings($document, $request->get('index'));
                     }
 
@@ -575,7 +572,8 @@ class DocumentController extends ElementControllerBase implements EventedControl
      * @param Document $updatedObject
      * @param $newIndex
      */
-    protected function updateIndexesOfDocumentSiblings(Document $document, $newIndex) {
+    protected function updateIndexesOfDocumentSiblings(Document $document, $newIndex)
+    {
         $updateLatestVersionIndex = function ($document, $newIndex) {
             if ($document instanceof Document\PageSnippet && $latestVersion = $document->getLatestVersion()) {
                 $document = $latestVersion->loadData();
@@ -1045,7 +1043,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
         $prefix = $request->getSchemeAndHttpHost() . $docFrom->getRealFullPath() . '?pimcore_version=';
 
         $fromUrl = $prefix . $from;
-        $toUrl   = $prefix . $to;
+        $toUrl = $prefix . $to;
 
         $toFileId = uniqid();
         $fromFileId = uniqid();
@@ -1502,7 +1500,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
             $nodeConfig['title'] = $title;
             $nodeConfig['description'] = $description;
 
-            $nodeConfig['title_length']       = mb_strlen($title);
+            $nodeConfig['title_length'] = mb_strlen($title);
             $nodeConfig['description_length'] = mb_strlen($description);
         }
 

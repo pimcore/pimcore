@@ -27,7 +27,6 @@ class Decimal
 {
     const INTEGER_NUMBER_REGEXP = '/^([+\-]?)\d+$/';
 
-
     /**
      * @var int
      */
@@ -55,7 +54,7 @@ class Decimal
     protected function __construct(int $amount, int $scale)
     {
         $this->amount = $amount;
-        $this->scale  = $scale;
+        $this->scale = $scale;
     }
 
     /**
@@ -195,11 +194,10 @@ class Decimal
             $sep = (($dotPos > $commaPos) && $dotPos) ? $dotPos :
                 ((($commaPos > $dotPos) && $commaPos) ? $commaPos : false);
 
-            if($sep) {
-                $sign = $amount < 0 ? "-" : "+";
-                $part = preg_replace("/[^0-9]/", "", substr($amount, 0, $sep));
-                $fractionalPart = preg_replace("/[^0-9]/", "", substr($amount, $sep+1, strlen($amount)));
-
+            if ($sep) {
+                $sign = $amount < 0 ? '-' : '+';
+                $part = preg_replace('/[^0-9]/', '', substr($amount, 0, $sep));
+                $fractionalPart = preg_replace('/[^0-9]/', '', substr($amount, $sep + 1, strlen($amount)));
 
                 if (strlen($fractionalPart) <= $scale) {
                     // decimal part is lower/equals than scale - add zeroes as needed and concat it with the integer part
@@ -208,12 +206,10 @@ class Decimal
                     $result = (int)($sign . $part . $fractionalPart);
                 } else {
                     // if scale is smaller than decimal part, apply rounding
-                    $result = (float)($sign . $part . "." . $fractionalPart) * pow(10, $scale);
+                    $result = (float)($sign . $part . '.' . $fractionalPart) * pow(10, $scale);
                     $result = static::toIntValue($result, $roundingMode);
                 }
-
             }
-
         }
 
         if (null !== $result) {
@@ -346,8 +342,8 @@ class Decimal
             $amount = '0.' . $fractionalPart;
         } else {
             $fractionalOffset = strlen($string) - $this->scale;
-            $integerPart      = substr($string, 0, $fractionalOffset);
-            $fractionalPart   = substr($string, $fractionalOffset);
+            $integerPart = substr($string, 0, $fractionalOffset);
+            $fractionalPart = substr($string, $fractionalOffset);
 
             $amount = $integerPart . '.' . $fractionalPart;
         }
@@ -370,7 +366,7 @@ class Decimal
      */
     private function truncateDecimalString(string $amount, int $digits): string
     {
-        $integerPart    = $amount;
+        $integerPart = $amount;
         $fractionalPart = '0';
 
         if (false !== strpos($amount, '.')) {

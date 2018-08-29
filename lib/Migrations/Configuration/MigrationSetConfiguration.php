@@ -56,9 +56,9 @@ final class MigrationSetConfiguration
     public function __construct(string $identifier, string $name, string $namespace, string $directory, string $connection = null)
     {
         $this->identifier = $identifier;
-        $this->name       = $name;
-        $this->namespace  = $namespace;
-        $this->directory  = $directory;
+        $this->name = $name;
+        $this->namespace = $namespace;
+        $this->directory = $directory;
         $this->connection = $connection;
     }
 

@@ -53,15 +53,17 @@ class TagUsageResolver
         return $names;
     }
 
-    protected function registerEventSubscriber() {
-        if(!$this->subscriber) {
+    protected function registerEventSubscriber()
+    {
+        if (!$this->subscriber) {
             $this->subscriber = new UsageRecorderSubscriber();
             $this->dispatcher->addSubscriber($this->subscriber);
         }
     }
 
-    protected function unregisterEventSubscriber() {
-        if($this->subscriber) {
+    protected function unregisterEventSubscriber()
+    {
+        if ($this->subscriber) {
             $this->dispatcher->removeSubscriber($this->subscriber);
             $this->subscriber = null;
         }

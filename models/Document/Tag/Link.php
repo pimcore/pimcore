@@ -80,7 +80,6 @@ class Link extends Model\Document\Tag
         $url = $this->getHref();
 
         if (strlen($url) > 0) {
-
             if (!is_array($this->options)) {
                 $this->options = [];
             }
@@ -89,17 +88,17 @@ class Link extends Model\Document\Tag
             $suffix = '';
             $noText = false;
 
-            if(array_key_exists('textPrefix', $this->options)){
+            if (array_key_exists('textPrefix', $this->options)) {
                 $prefix = $this->options['textPrefix'];
                 unset($this->options['textPrefix']);
             }
 
-            if(array_key_exists('textSuffix', $this->options)){
+            if (array_key_exists('textSuffix', $this->options)) {
                 $suffix = $this->options['textSuffix'];
                 unset($this->options['textSuffix']);
             }
 
-            if( isset($this->options['noText']) && $this->options['noText'] == true ){
+            if (isset($this->options['noText']) && $this->options['noText'] == true) {
                 $noText = true;
             }
 
@@ -110,7 +109,7 @@ class Link extends Model\Document\Tag
                     $attribs[] = $key.'="'.$value.'"';
                 }
             }
-            
+
             // add attributes to link
             $allowedAttributes = [
                 'charset',
@@ -165,8 +164,7 @@ class Link extends Model\Document\Tag
                 $attribs[] = $this->data['attributes'];
             }
 
-
-            return '<a href="'.$url.'" '.implode(' ', $attribs).'>' . $prefix . ($noText ? '' : htmlspecialchars($this->data['text']) ) . $suffix . '</a>';
+            return '<a href="'.$url.'" '.implode(' ', $attribs).'>' . $prefix . ($noText ? '' : htmlspecialchars($this->data['text'])) . $suffix . '</a>';
         }
 
         return '';

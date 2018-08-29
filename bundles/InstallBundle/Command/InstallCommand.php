@@ -17,11 +17,11 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\InstallBundle\Command;
 
+use Pimcore\Bundle\InstallBundle\Event\InstallerStepEvent;
+use Pimcore\Bundle\InstallBundle\Installer;
 use Pimcore\Config;
 use Pimcore\Console\ConsoleOutputDecorator;
 use Pimcore\Console\Style\PimcoreStyle;
-use Pimcore\Bundle\InstallBundle\Event\InstallerStepEvent;
-use Pimcore\Bundle\InstallBundle\Installer;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\ProgressBar;
@@ -60,7 +60,7 @@ class InstallCommand extends Command
         Installer $installer,
         EventDispatcherInterface $eventDispatcher
     ) {
-        $this->installer       = $installer;
+        $this->installer = $installer;
         $this->eventDispatcher = $eventDispatcher;
 
         parent::__construct();
@@ -74,46 +74,46 @@ class InstallCommand extends Command
 
         $options = [
 
-            'admin-username'    => [
+            'admin-username' => [
                 'description' => 'Admin username',
-                'mode'        => InputOption::VALUE_REQUIRED,
-                'insecure'    => true,
+                'mode' => InputOption::VALUE_REQUIRED,
+                'insecure' => true,
             ],
-            'admin-password'    => [
-                'description'  => 'Admin password',
-                'mode'         => InputOption::VALUE_REQUIRED,
-                'insecure'     => true,
+            'admin-password' => [
+                'description' => 'Admin password',
+                'mode' => InputOption::VALUE_REQUIRED,
+                'insecure' => true,
                 'hidden-input' => true,
             ],
             'mysql-host-socket' => [
                 'description' => 'MySQL Host or Socket',
-                'mode'        => InputOption::VALUE_REQUIRED,
-                'default'     => 'localhost',
-                'group'       => 'db_credentials',
+                'mode' => InputOption::VALUE_REQUIRED,
+                'default' => 'localhost',
+                'group' => 'db_credentials',
             ],
-            'mysql-username'    => [
+            'mysql-username' => [
                 'description' => 'MySQL username',
-                'mode'        => InputOption::VALUE_REQUIRED,
-                'insecure'    => true,
-                'group'       => 'db_credentials',
+                'mode' => InputOption::VALUE_REQUIRED,
+                'insecure' => true,
+                'group' => 'db_credentials',
             ],
-            'mysql-password'    => [
-                'description'  => 'MySQL password',
-                'mode'         => InputOption::VALUE_REQUIRED,
-                'insecure'     => true,
+            'mysql-password' => [
+                'description' => 'MySQL password',
+                'mode' => InputOption::VALUE_REQUIRED,
+                'insecure' => true,
                 'hidden-input' => true,
-                'group'        => 'db_credentials',
+                'group' => 'db_credentials',
             ],
-            'mysql-database'    => [
+            'mysql-database' => [
                 'description' => 'MySQL database',
-                'mode'        => InputOption::VALUE_REQUIRED,
-                'group'       => 'db_credentials',
+                'mode' => InputOption::VALUE_REQUIRED,
+                'group' => 'db_credentials',
             ],
-            'mysql-port'        => [
+            'mysql-port' => [
                 'description' => 'MySQL Port (will be omitted if socket is set)',
-                'mode'        => InputOption::VALUE_REQUIRED,
-                'default'     => 3306,
-                'group'       => 'db_credentials',
+                'mode' => InputOption::VALUE_REQUIRED,
+                'default' => 3306,
+                'group' => 'db_credentials',
             ],
         ];
 
@@ -156,10 +156,10 @@ class InstallCommand extends Command
             );
 
         foreach ($this->getOptions() as $name => $config) {
-            $shortcut    = $config['shortcut'] ?? null;
-            $mode        = $config['mode'] ?? null;
+            $shortcut = $config['shortcut'] ?? null;
+            $mode = $config['mode'] ?? null;
             $description = $config['description'] ?? '';
-            $default     = $config['default'] ?? null;
+            $default = $config['default'] ?? null;
 
             $this->addOption($name, $shortcut, $mode, $description, $default);
         }
@@ -183,7 +183,7 @@ class InstallCommand extends Command
                 continue;
             }
 
-            $value          = $input->getOption($name);
+            $value = $input->getOption($name);
             $isDefaultValue = isset($config['default']) && $value === $config['default'];
 
             // show warning for insecure options
@@ -223,7 +223,7 @@ class InstallCommand extends Command
                 continue;
             }
 
-            $value          = $input->getOption($name);
+            $value = $input->getOption($name);
             $isDefaultValue = isset($config['default']) && $value === $config['default'];
 
             if ($value && !$isDefaultValue) {
@@ -249,7 +249,7 @@ class InstallCommand extends Command
 
                 if ($config['hidden-input'] ?? false) {
                     $question .= ' (input will be hidden)';
-                    $value    = $this->io->askHidden($question, $validator);
+                    $value = $this->io->askHidden($question, $validator);
                 } else {
                     $value = $this->io->ask($question, $value, $validator);
                 }
@@ -277,7 +277,7 @@ class InstallCommand extends Command
             return 0;
         }
 
-        $params  = [];
+        $params = [];
         $missing = [];
 
         foreach ($this->getOptions() as $name => $config) {
@@ -289,7 +289,7 @@ class InstallCommand extends Command
 
             // Empty MySQL password allowed
             if ($value || $name === 'mysql-password') {
-                $param          = str_replace('-', '_', $name);
+                $param = str_replace('-', '_', $name);
                 $params[$param] = $value;
             } else {
                 $missing[] = $name;
@@ -334,7 +334,7 @@ class InstallCommand extends Command
         );
 
         // catch installer output in a buffered output and write results after progress bar is finished
-        $installerOutput      = new BufferedOutput($output->getVerbosity(), $output->isDecorated(), $output->getFormatter());
+        $installerOutput = new BufferedOutput($output->getVerbosity(), $output->isDecorated(), $output->getFormatter());
         $installerErrorOutput = new BufferedOutput($output->getVerbosity(), $output->isDecorated(), $output->getFormatter());
 
         $this->installer->setCommandLineOutput(new PimcoreStyle(

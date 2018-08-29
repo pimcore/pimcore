@@ -209,7 +209,7 @@ class Config
                         continue;
                     }
 
-                    $itemLanguage =  $item->getLanguage();
+                    $itemLanguage = $item->getLanguage();
 
                     if ($itemLanguage && $language != $itemLanguage) {
                         continue;
@@ -576,7 +576,7 @@ class Config
                     $tmpData['allowedClasses'] = $tmpData['classes'] ? explode(',', $tmpData['classes']) : null;
                     $tmpData['showroot'] = (bool)$tmpData['showroot'];
                     $customViewId = $tmpData['id'];
-                    $cfConfigMapping[$customViewId]= $tmpData;
+                    $cfConfigMapping[$customViewId] = $tmpData;
                 }
             }
         }

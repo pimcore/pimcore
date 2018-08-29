@@ -43,7 +43,7 @@ class OverrideHandler
         FormFactoryInterface $formFactory,
         $overrideHandlers
     ) {
-        $this->formFactory      = $formFactory;
+        $this->formFactory = $formFactory;
         $this->overrideHandlers = $overrideHandlers;
     }
 

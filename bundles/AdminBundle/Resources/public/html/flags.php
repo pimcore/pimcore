@@ -1,6 +1,6 @@
 <?php
 
-include("../../../../../../../../vendor/autoload.php");
+include('../../../../../../../../vendor/autoload.php');
 \Pimcore\Bootstrap::startupCli();
 
 $iconPath = '/bundles/pimcoreadmin/img/flags/';
@@ -10,12 +10,11 @@ $languageOptions = [];
 foreach ($locales as $short => $translation) {
     if (!empty($short)) {
         $languageOptions[] = [
-            "language" => $short,
-            "display" => $translation . " ($short)"
+            'language' => $short,
+            'display' => $translation . " ($short)"
         ];
     }
 }
-
 
 ?>
 
@@ -29,11 +28,10 @@ foreach ($locales as $short => $translation) {
     <?php foreach ($languageOptions as $lang) {
     ?>
         <tr>
-            <td><img style="width:16px" src="<?= str_replace(PIMCORE_WEB_ROOT, "", \Pimcore\Tool::getLanguageFlagFile($lang["language"])) ?>"></td>
-            <td><?= $lang["language"] ?></td>
-            <td><?= $lang["display"] ?></td>
+            <td><img style="width:16px" src="<?= str_replace(PIMCORE_WEB_ROOT, '', \Pimcore\Tool::getLanguageFlagFile($lang['language'])) ?>"></td>
+            <td><?= $lang['language'] ?></td>
+            <td><?= $lang['display'] ?></td>
         </tr>
     <?php
-
 } ?>
 </table>

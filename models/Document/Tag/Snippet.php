@@ -107,7 +107,7 @@ class Snippet extends Model\Document\Tag
         // TODO inject services via DI when tags are built through container
         $container = \Pimcore::getContainer();
 
-        $tagHandler            = $container->get('pimcore.document.tag.handler');
+        $tagHandler = $container->get('pimcore.document.tag.handler');
         $targetingConfigurator = $container->get(DocumentTargetingConfigurator::class);
 
         if (!$tagHandler->supports($this->view)) {

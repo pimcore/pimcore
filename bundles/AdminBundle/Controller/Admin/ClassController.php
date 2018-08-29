@@ -279,7 +279,7 @@ class ClassController extends AdminController implements EventedControllerInterf
         $customLayout->save();
 
         return $this->adminJson(['success' => true, 'id' => $customLayout->getId(), 'name' => $customLayout->getName(),
-                                 'data'    => $customLayout]);
+                                 'data' => $customLayout]);
     }
 
     /**
@@ -1164,7 +1164,7 @@ class ClassController extends AdminController implements EventedControllerInterf
 
         $layoutDefinitions = [];
         $groups = [];
-        $definitions= [];
+        $definitions = [];
 
         if ($request->query->has('class_id') && $request->query->has('field_name')) {
             $classId = $request->get('class_id');
@@ -1258,7 +1258,7 @@ class ClassController extends AdminController implements EventedControllerInterf
 
         $event = new GenericEvent($this, [
             'list' => $definitions,
-            'objectId'=>$request->get('object_id')
+            'objectId' => $request->get('object_id')
         ]);
         \Pimcore::getEventDispatcher()->dispatch(AdminEvents::CLASS_OBJECTBRICK_LIST_PRE_SEND_DATA, $event);
         $definitions = $event->getArgument('list');
@@ -1329,7 +1329,7 @@ class ClassController extends AdminController implements EventedControllerInterf
 
         $event = new GenericEvent($this, [
             'list' => $list,
-            'objectId'=>$request->get('object_id')
+            'objectId' => $request->get('object_id')
         ]);
         \Pimcore::getEventDispatcher()->dispatch(AdminEvents::CLASS_OBJECTBRICK_LIST_PRE_SEND_DATA, $event);
         $list = $event->getArgument('list');
@@ -1655,7 +1655,7 @@ class ClassController extends AdminController implements EventedControllerInterf
             foreach ($classes as $class) {
                 if ($myclass->getName() == $class['classname']) {
                     $result[] = [
-                        'objectbrick' =>$brickDefinition->getKey(),
+                        'objectbrick' => $brickDefinition->getKey(),
                         'field' => $class['fieldname']
                     ];
                 }

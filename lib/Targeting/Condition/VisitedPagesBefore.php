@@ -67,7 +67,7 @@ class VisitedPagesBefore extends AbstractVariableCondition implements DataProvid
     {
         /** @var VisitedPagesCounterService $counter */
         $counter = $visitorInfo->get(VisitedPagesCounter::PROVIDER_KEY);
-        $count   = $counter->getCount($visitorInfo);
+        $count = $counter->getCount($visitorInfo);
 
         if ($count >= $this->count) {
             $this->setMatchedVariable('visited_pages_count', $count);

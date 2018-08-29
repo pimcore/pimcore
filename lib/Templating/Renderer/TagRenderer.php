@@ -42,7 +42,7 @@ class TagRenderer implements LoggerAwareInterface
      */
     public function __construct(TagLoaderInterface $tagLoader, EditmodeResolver $editmodeResolver)
     {
-        $this->tagLoader        = $tagLoader;
+        $this->tagLoader = $tagLoader;
         $this->editmodeResolver = $editmodeResolver;
     }
 
@@ -71,7 +71,7 @@ class TagRenderer implements LoggerAwareInterface
     {
         $type = strtolower($type);
 
-        $name     = Tag::buildTagName($type, $inputName, $document);
+        $name = Tag::buildTagName($type, $inputName, $document);
         $realName = Tag::buildTagRealName($inputName, $document);
 
         if (null === $editmode) {
