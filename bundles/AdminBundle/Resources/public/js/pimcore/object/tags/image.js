@@ -130,7 +130,7 @@ pimcore.object.tags.image = Class.create(pimcore.object.tags.abstract, {
 
             el.getEl().on("contextmenu", this.onContextMenu.bind(this));
 
-            pimcore.helpers.registerAssetDnDUpload(el.getEl().dom, this.fieldConfig.uploadPath, 'path', function (e) {
+            pimcore.helpers.registerAssetDnDSingleUpload(el.getEl().dom, this.fieldConfig.uploadPath, 'path', function (e) {
                 if (e['asset']['type'] === "image") {
                     this.empty(true);
                     this.dirty = true;
@@ -208,7 +208,7 @@ pimcore.object.tags.image = Class.create(pimcore.object.tags.abstract, {
     },
 
     uploadDialog: function () {
-        pimcore.helpers.registerAssetDnDSingleUpload(this.fieldConfig.uploadPath, "path", function (res) {
+        pimcore.helpers.assetSingleUploadDialog(this.fieldConfig.uploadPath, "path", function (res) {
             try {
                 this.empty(true);
 
