@@ -325,9 +325,9 @@
 }
 
 .pimcore_tag_droptarget {
-    background: url(/bundles/pimcoreadmin/img/flat-color-icons/target.svg) center center/20px no-repeat;
+    background: url(/bundles/pimcoreadmin/img/flat-color-icons/drop-target-upload.svg) center center/48px no-repeat;
     position:absolute;
-    width:20px;
+    width:50px;
     height:20px;
     right:5px;
     top:5px;

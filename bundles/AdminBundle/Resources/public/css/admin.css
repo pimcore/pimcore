@@ -338,9 +338,16 @@
 }
 
 .pimcore_droptarget_image  {
-    background: url(/bundles/pimcoreadmin/img/flat-color-icons/target.svg) center center/45px no-repeat #fff;
+    background: url(/bundles/pimcoreadmin/img/flat-color-icons/drop-target-upload.svg) center center/90px no-repeat #fff;
 }
 
+.pimcore_icon_droptarget_upload {
+    background: url(/bundles/pimcoreadmin/img/flat-color-icons/drop-target-upload.svg) center center/40px no-repeat;
+}
+
+.pimcore_externalimage_container {
+    background: url(/bundles/pimcoreadmin/img/flat-color-icons/image.svg) center center/90px no-repeat #fff;
+}
 
 .pimcore_property_name .x-grid3-col-name {
     padding-left: 20px !important;
