@@ -72,7 +72,7 @@
     bottom: 0px;
     right: 0px;
     content: "";
-    background: url(/bundles/pimcoreadmin/img/flat-color-icons/download.svg) center center no-repeat !important;
+    background: url(/bundles/pimcoreadmin/img/flat-color-icons/download-cloud.svg) center center no-repeat !important;
 }
 
 .pimcore_icon_overlay_upload:before {
@@ -82,7 +82,7 @@
     bottom: 0px;
     right: 0px;
     content: "";
-    background: url(/bundles/pimcoreadmin/img/flat-color-icons/upload.svg) center center no-repeat !important;
+    background: url(/bundles/pimcoreadmin/img/flat-color-icons/upload-cloud-white.svg) center center no-repeat !important;
 }
 
 .pimcore_icon_overlay_search:before {
@@ -397,11 +397,11 @@
 }
 
 .pimcore_icon_upload {
-    background: url(/bundles/pimcoreadmin/img/flat-color-icons/upload.svg) center center no-repeat !important;
+    background: url(/bundles/pimcoreadmin/img/flat-color-icons/upload-cloud.svg) center center no-repeat !important;
 }
 
 .pimcore_icon_download {
-    background: url(/bundles/pimcoreadmin/img/flat-color-icons/download.svg) center center no-repeat !important;
+    background: url(/bundles/pimcoreadmin/img/flat-color-icons/download-cloud.svg) center center no-repeat !important;
 }
 
 .pimcore_icon_class {
