@@ -354,6 +354,7 @@ class AssetController extends ElementControllerBase implements EventedController
     protected function addAsset(Request $request)
     {
         $success = false;
+        $defaultUploadPath = $this->getParameter('pimcore.config')['assets']['defaultUploadPath'];
 
         if (array_key_exists('Filedata', $_FILES)) {
             $filename = $_FILES['Filedata']['name'];
@@ -401,11 +402,10 @@ class AssetController extends ElementControllerBase implements EventedController
             if ($parent instanceof Asset\Folder) {
                 $parentId = $parent->getId();
             } else {
-                $parentId = 1;
+                $parentId = Asset\Service::createFolderByPath($defaultUploadPath)->getId();
             }
         } elseif (!$request->get('parentId')) {
-            // set the parent to the root folder
-            $parentId = 1;
+            $parentId = Asset\Service::createFolderByPath($defaultUploadPath)->getId();
         }
 
         $filename = Element\Service::getValidKey($filename, 'asset');
