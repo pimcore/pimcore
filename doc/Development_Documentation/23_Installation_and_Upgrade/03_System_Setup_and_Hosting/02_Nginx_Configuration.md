@@ -41,7 +41,7 @@ server {
     # Stay secure
     #
     # a) don't allow PHP in folders allowing file uploads
-    location ~* /var/assets/*\.php(/|$) {
+    location ~* /var/assets/.*\.php(/|$) {
         return 404;
     }
     # b) Prevent clients from accessing hidden files (starting with a dot)
