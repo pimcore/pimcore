@@ -43,7 +43,7 @@ class HttpCacheListener implements EventSubscriberInterface
      */
     public function __construct(RequestHelper $requestHelper, ResponseHelper $responseHelper)
     {
-        $this->requestHelper  = $requestHelper;
+        $this->requestHelper = $requestHelper;
         $this->responseHelper = $responseHelper;
     }
 

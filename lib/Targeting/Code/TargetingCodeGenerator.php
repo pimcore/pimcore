@@ -56,14 +56,14 @@ class TargetingCodeGenerator
         EventDispatcherInterface $eventDispatcher,
         EngineInterface $templatingEngine
     ) {
-        $this->eventDispatcher  = $eventDispatcher;
+        $this->eventDispatcher = $eventDispatcher;
         $this->templatingEngine = $templatingEngine;
     }
 
     public function generateCode(VisitorInfo $visitorInfo): string
     {
         $data = [
-            'inDebugMode'      => \Pimcore::inDebugMode(DebugMode::TARGETING),
+            'inDebugMode' => \Pimcore::inDebugMode(DebugMode::TARGETING),
             'dataProviderKeys' => $visitorInfo->getFrontendDataProviders()
         ];
 
@@ -80,7 +80,7 @@ class TargetingCodeGenerator
 
     private function renderTemplate(TargetingCodeEvent $event): string
     {
-        $data           = $event->getData();
+        $data = $event->getData();
         $data['blocks'] = $event->getBlocks();
 
         $code = $this->templatingEngine->render(

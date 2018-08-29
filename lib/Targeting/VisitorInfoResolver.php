@@ -83,12 +83,12 @@ class VisitorInfoResolver
         Connection $db,
         EventDispatcherInterface $eventDispatcher
     ) {
-        $this->targetingStorage   = $targetingStorage;
+        $this->targetingStorage = $targetingStorage;
         $this->visitorInfoStorage = $visitorInfoStorage;
-        $this->conditionMatcher   = $conditionMatcher;
-        $this->actionHandler      = $actionHandler;
-        $this->eventDispatcher    = $eventDispatcher;
-        $this->db                 = $db;
+        $this->conditionMatcher = $conditionMatcher;
+        $this->actionHandler = $actionHandler;
+        $this->eventDispatcher = $eventDispatcher;
+        $this->db = $db;
     }
 
     public function resolve(Request $request): VisitorInfo

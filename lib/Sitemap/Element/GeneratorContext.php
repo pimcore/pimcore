@@ -39,8 +39,8 @@ class GeneratorContext implements GeneratorContextInterface
     public function __construct(UrlContainerInterface $urlContainer, string $section = null, array $parameters = [])
     {
         $this->urlContainer = $urlContainer;
-        $this->section      = $section;
-        $this->parameters   = $parameters;
+        $this->section = $section;
+        $this->parameters = $parameters;
     }
 
     public function getUrlContainer(): UrlContainerInterface

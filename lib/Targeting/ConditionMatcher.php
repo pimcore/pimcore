@@ -65,11 +65,11 @@ class ConditionMatcher implements ConditionMatcherInterface
         ExpressionLanguage $expressionLanguage,
         LoggerInterface $logger
     ) {
-        $this->conditionFactory   = $conditionFactory;
-        $this->dataLoader         = $dataLoader;
-        $this->eventDispatcher    = $eventDispatcher;
+        $this->conditionFactory = $conditionFactory;
+        $this->dataLoader = $dataLoader;
+        $this->eventDispatcher = $eventDispatcher;
         $this->expressionLanguage = $expressionLanguage;
-        $this->logger             = $logger;
+        $this->logger = $logger;
     }
 
     /**
@@ -98,8 +98,8 @@ class ConditionMatcher implements ConditionMatcherInterface
         }
 
         $expression = $expressionBuilder->getExpression();
-        $values     = $expressionBuilder->getValues();
-        $result     = $this->expressionLanguage->evaluate($expression, $values);
+        $values = $expressionBuilder->getValues();
+        $result = $this->expressionLanguage->evaluate($expression, $values);
 
         return (bool)$result;
     }

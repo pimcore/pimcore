@@ -1584,8 +1584,7 @@ class DataObjectHelperController extends AdminController
             $selectedGridColumns = $configData['selectedGridColumns'];
             $resolverSettings = $configData['resolverSettings'];
             $shareSettings = $configData['shareSettings'];
-            $dialect = json_decode(json_encode($configData['csvSettings']), FALSE);
-
+            $dialect = json_decode(json_encode($configData['csvSettings']), false);
         }
 
         $availableConfigs = $this->getImportConfigs($importService, $this->getAdminUser(), $classId);

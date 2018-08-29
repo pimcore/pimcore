@@ -312,7 +312,7 @@ class Datetime extends Model\DataObject\ClassDefinition\Data
     {
         if ($this->defaultValue !== null) {
             return $this->defaultValue;
-            //return new Date($this->defaultValue);
+        //return new Date($this->defaultValue);
         } else {
             return 0;
         }

@@ -36,9 +36,9 @@ final class ReportConfig
 
     public function __construct(string $id, string $title, string $url)
     {
-        $this->id    = $id;
+        $this->id = $id;
         $this->title = $title;
-        $this->url   = $url;
+        $this->url = $url;
     }
 
     public function getId(): string

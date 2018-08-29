@@ -62,7 +62,7 @@ class CodeCollector
             ));
         }
 
-        $this->validBlocks  = $validBlocks;
+        $this->validBlocks = $validBlocks;
         $this->defaultBlock = $defaultBlock;
     }
 

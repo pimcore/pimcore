@@ -17,7 +17,6 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 use Pimcore\Analytics\Google\Config\SiteConfigProvider;
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Controller\EventedControllerInterface;
-use Pimcore\Logger;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\Document;
@@ -275,7 +274,7 @@ class PortalController extends AdminController implements EventedControllerInter
             /**
              * @var Document $doc
              */
-            if($doc->isAllowed('view')) {
+            if ($doc->isAllowed('view')) {
                 $response['documents'][] = [
                     'id' => $doc->getId(),
                     'type' => $doc->getType(),
@@ -312,7 +311,7 @@ class PortalController extends AdminController implements EventedControllerInter
             /**
              * @var Asset $doc
              */
-            if($doc->isAllowed('view')) {
+            if ($doc->isAllowed('view')) {
                 $response['assets'][] = [
                     'id' => $doc->getId(),
                     'type' => $doc->getType(),
@@ -349,7 +348,7 @@ class PortalController extends AdminController implements EventedControllerInter
             /**
              * @var DataObject $object
              */
-            if($object->isAllowed('view')) {
+            if ($object->isAllowed('view')) {
                 $response['objects'][] = [
                     'id' => $object->getId(),
                     'type' => $object->getType(),
@@ -379,7 +378,7 @@ class PortalController extends AdminController implements EventedControllerInter
 
         $data = [];
 
-        for ($i=0; $i < $days; $i++) {
+        for ($i = 0; $i < $days; $i++) {
             // documents
             $end = $startDate - ($i * 86400);
             $start = $end - 86399;

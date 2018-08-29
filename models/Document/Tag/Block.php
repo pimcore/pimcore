@@ -206,7 +206,7 @@ class Block extends Model\Document\Tag implements BlockInterface
         // set name suffix for the whole block element, this will be added to all child elements of the block
         $this->getBlockState()->pushBlock(BlockName::createFromTag($this));
 
-        $attributes      = $this->getEditmodeElementAttributes($options);
+        $attributes = $this->getEditmodeElementAttributes($options);
         $attributeString = HtmlUtils::assembleAttributeString($attributes);
 
         $this->outputEditmode('<div ' . $attributeString . '>');
@@ -247,11 +247,11 @@ class Block extends Model\Document\Tag implements BlockInterface
 
     /**
      * Is called evertime a new iteration starts (new entry of the block while looping)
+     *
      * @param bool $showControls
      */
-    public function blockStart( $showControls = true )
+    public function blockStart($showControls = true)
     {
-
         $attr = $this->getBlockAttributes();
 
         $outerAttributes = [
@@ -262,17 +262,16 @@ class Block extends Model\Document\Tag implements BlockInterface
         // outer element
         $this->outputEditmode('<div class="pimcore_block_entry" ' . $oAttr . ' ' . $attr . '>');
 
-        if( $showControls ){
+        if ($showControls) {
             $this->blockControls();
         }
-
     }
 
     /**
      * Custom position of button controls between blockStart -> blockEnd
      */
-    public function blockControls(){
-
+    public function blockControls()
+    {
         $attr = $this->getBlockAttributes();
 
         $this->outputEditmode('<div class="pimcore_block_buttons" ' . $attr . '>');
@@ -390,7 +389,7 @@ class Block extends Model\Document\Tag implements BlockInterface
     {
         $document = Model\Document\Page::getById($this->getDocumentId());
 
-        $parentBlockNames   = $this->getParentBlockNames();
+        $parentBlockNames = $this->getParentBlockNames();
         $parentBlockNames[] = $this->getName();
 
         $list = [];

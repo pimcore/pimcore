@@ -20,9 +20,11 @@ trait PreviewRequestTrait
 {
     /**
      * @param Request $request
+     *
      * @return bool
      */
-    protected function isPreviewRequest(Request $request) {
+    protected function isPreviewRequest(Request $request)
+    {
         if ($request->server->get('HTTP_X_PURPOSE') === 'preview') {
             return true;
         }

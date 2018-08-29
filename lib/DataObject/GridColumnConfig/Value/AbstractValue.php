@@ -37,8 +37,8 @@ abstract class AbstractValue implements ValueInterface
     public function __construct($config, $context = null)
     {
         $this->attribute = $config->attribute;
-        $this->label     = $config->label;
-        $this->context   = $context;
+        $this->label = $config->label;
+        $this->context = $context;
     }
 
     public function getLabel()

@@ -51,7 +51,7 @@ class Navigation extends Helper
      */
     public function __construct(Builder $builder, ContainerInterface $rendererLocator)
     {
-        $this->builder         = $builder;
+        $this->builder = $builder;
         $this->rendererLocator = $rendererLocator;
     }
 

@@ -64,9 +64,9 @@ class DocumentTargetingConfigurator
         CoreHandlerInterface $cache
     ) {
         $this->visitorInfoStorage = $visitorInfoStorage;
-        $this->requestHelper      = $requestHelper;
-        $this->userLoader         = $userLoader;
-        $this->cache              = $cache;
+        $this->requestHelper = $requestHelper;
+        $this->userLoader = $userLoader;
+        $this->cache = $cache;
     }
 
     /**

@@ -46,8 +46,8 @@ class PimcoreTargetingDataCollector extends DataCollector
         DocumentResolver $documentResolver,
         TargetingDataCollector $targetingDataCollector
     ) {
-        $this->visitorInfoStorage     = $visitorInfoStorage;
-        $this->documentResolver       = $documentResolver;
+        $this->visitorInfoStorage = $visitorInfoStorage;
+        $this->documentResolver = $documentResolver;
         $this->targetingDataCollector = $targetingDataCollector;
     }
 
@@ -64,16 +64,16 @@ class PimcoreTargetingDataCollector extends DataCollector
             return;
         }
 
-        $document    = $this->documentResolver->getDocument($request);
+        $document = $this->documentResolver->getDocument($request);
         $visitorInfo = $this->visitorInfoStorage->getVisitorInfo();
-        $tdc         = $this->targetingDataCollector;
+        $tdc = $this->targetingDataCollector;
 
         $data = [
-            'visitor_info'           => $tdc->collectVisitorInfo($visitorInfo),
-            'storage'                => $tdc->collectStorage($visitorInfo),
-            'rules'                  => $tdc->collectMatchedRules($visitorInfo),
-            'target_groups'          => $tdc->collectTargetGroups($visitorInfo),
-            'document_target_group'  => $tdc->collectDocumentTargetGroup($document),
+            'visitor_info' => $tdc->collectVisitorInfo($visitorInfo),
+            'storage' => $tdc->collectStorage($visitorInfo),
+            'rules' => $tdc->collectMatchedRules($visitorInfo),
+            'target_groups' => $tdc->collectTargetGroups($visitorInfo),
+            'document_target_group' => $tdc->collectDocumentTargetGroup($document),
             'document_target_groups' => $tdc->collectDocumentTargetGroupMapping(),
         ];
 

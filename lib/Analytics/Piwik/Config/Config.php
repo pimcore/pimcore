@@ -188,9 +188,9 @@ class Config
         }
 
         $parameters = array_merge([
-            'module'   => 'Login',
-            'action'   => 'logme',
-            'login'    => $this->getIframeUsername(),
+            'module' => 'Login',
+            'action' => 'logme',
+            'login' => $this->getIframeUsername(),
             'password' => $this->getIframePassword(),
         ], $parameters);
 

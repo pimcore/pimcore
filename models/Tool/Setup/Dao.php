@@ -64,14 +64,13 @@ class Dao extends Model\Dao\AbstractDao
         foreach ($singleQueries as $m) {
             $sql = trim($m);
             if (strlen($sql) > 0) {
-                $batchQueries[] = $sql . ";";
+                $batchQueries[] = $sql . ';';
             }
 
-            if(count($batchQueries) > 500) {
+            if (count($batchQueries) > 500) {
                 $this->db->exec(implode("\n", $batchQueries));
                 $batchQueries = [];
             }
-
         }
 
         $this->db->exec(implode("\n", $batchQueries));

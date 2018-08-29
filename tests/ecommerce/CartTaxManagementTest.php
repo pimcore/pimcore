@@ -58,7 +58,7 @@ class CartTaxManagementTest extends EcommerceTestCase
         ]);
 
         $priceSystem = Stub::construct(AttributePriceSystem::class, [$pricingManagers, $environment], [
-            'getTaxClassForProduct'           => function () use ($taxClass) {
+            'getTaxClassForProduct' => function () use ($taxClass) {
                 return $taxClass;
             },
             'getTaxClassForPriceModification' => function () use ($taxClass) {
@@ -175,7 +175,7 @@ class CartTaxManagementTest extends EcommerceTestCase
         $this->assertEquals(3, $cart->getItemAmount(), 'item amount');
 
         $calculator = $this->setUpCartCalculator($cart);
-        $subTotal   = $calculator->getSubTotal();
+        $subTotal = $calculator->getSubTotal();
         $grandTotal = $calculator->getGrandTotal();
 
         $this->assertSame('250.0000', $subTotal->getGrossAmount()->asString(), 'subtotal gross');
@@ -221,7 +221,7 @@ class CartTaxManagementTest extends EcommerceTestCase
 
         $calculator = $this->setUpCartCalculator($cart);
 
-        $subTotal   = $calculator->getSubTotal();
+        $subTotal = $calculator->getSubTotal();
         $grandTotal = $calculator->getGrandTotal();
 
         $this->assertSame('250.0000', $subTotal->getGrossAmount()->asString(), 'subtotal gross');

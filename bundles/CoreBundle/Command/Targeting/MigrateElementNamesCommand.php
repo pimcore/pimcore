@@ -109,7 +109,7 @@ class MigrateElementNamesCommand extends AbstractCommand
 
         $this->db = $this->getContainer()->get(Db\Connection::class);
 
-        $qb   = $this->buildQuery();
+        $qb = $this->buildQuery();
         $stmt = $qb->execute();
 
         while ($row = $stmt->fetch()) {
@@ -157,9 +157,9 @@ class MigrateElementNamesCommand extends AbstractCommand
 
             $updateRow = [
                 'documentId' => $row['documentId'],
-                'type'       => $row['type'],
-                'oldName'    => $row['name'],
-                'newName'    => $newName
+                'type' => $row['type'],
+                'oldName' => $row['name'],
+                'newName' => $newName
             ];
 
             $this->output->writeln(sprintf(

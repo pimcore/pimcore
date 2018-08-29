@@ -93,17 +93,17 @@ class Attribute
         array $interpreterOptions = [],
         bool $hideInFieldlistDatatype = false
     ) {
-        $this->name        = $name;
-        $this->fieldName   = $fieldName ?? $name;
-        $this->type        = $type;
-        $this->locale      = $locale;
+        $this->name = $name;
+        $this->fieldName = $fieldName ?? $name;
+        $this->type = $type;
+        $this->locale = $locale;
         $this->filterGroup = $filterGroup;
-        $this->options     = $options;
+        $this->options = $options;
 
-        $this->getter        = $getter;
+        $this->getter = $getter;
         $this->getterOptions = $getterOptions;
 
-        $this->interpreter        = $interpreter;
+        $this->interpreter = $interpreter;
         $this->interpreterOptions = $interpreterOptions;
 
         $this->hideInFieldlistDatatype = $hideInFieldlistDatatype;

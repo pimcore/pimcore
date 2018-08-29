@@ -60,9 +60,9 @@ class LFExpander extends AbstractOperator
 
                     $childValue = $childs[0]->getLabeledValue($element);
                     if ($childValue && $childValue->value) {
-                        $resultValues[]= $childValue;
+                        $resultValues[] = $childValue;
                     } else {
-                        $resultValues[]= null;
+                        $resultValues[] = null;
                     }
                 }
 

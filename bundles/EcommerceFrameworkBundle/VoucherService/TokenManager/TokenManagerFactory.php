@@ -42,7 +42,7 @@ class TokenManagerFactory implements ITokenManagerFactory
 
     public function getTokenManager(AbstractVoucherTokenType $configuration): ITokenManager
     {
-        $id   = $configuration->getObject()->getId();
+        $id = $configuration->getObject()->getId();
         $type = $configuration->getType();
 
         if (isset($this->tokenManagers[$id])) {

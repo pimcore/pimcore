@@ -57,7 +57,7 @@ class Url extends AbstractVariableCondition implements ConditionInterface
     {
         $request = $visitorInfo->getRequest();
 
-        $uri    = $request->getUri();
+        $uri = $request->getUri();
         $result = preg_match($this->pattern, $uri);
 
         if ($result) {

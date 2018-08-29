@@ -41,7 +41,7 @@ class SiteId
     private function __construct(string $configKey, Site $site = null)
     {
         $this->configKey = $configKey;
-        $this->site      = $site;
+        $this->site = $site;
     }
 
     public static function forMainDomain(): SiteId

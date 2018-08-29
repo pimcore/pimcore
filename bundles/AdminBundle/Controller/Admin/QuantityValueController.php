@@ -48,7 +48,7 @@ class QuantityValueController extends AdminController
             $orderKey = $sortingSettings['orderKey'];
         }
         if ($sortingSettings['order']) {
-            $order  = $sortingSettings['order'];
+            $order = $sortingSettings['order'];
         }
 
         $list->setOrder($order);

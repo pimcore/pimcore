@@ -53,9 +53,9 @@ class InstallerStepEvent extends Event
         int $step,
         int $totalSteps
     ) {
-        $this->type       = $type;
-        $this->message    = $message;
-        $this->step       = $step;
+        $this->type = $type;
+        $this->message = $message;
+        $this->step = $step;
         $this->totalSteps = $totalSteps;
     }
 

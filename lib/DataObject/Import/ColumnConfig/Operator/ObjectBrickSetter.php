@@ -48,25 +48,25 @@ class ObjectBrickSetter extends AbstractOperator
 
         $this->modelFactory = $modelFactory;
 
-        $this->attr      = $config->attr;
+        $this->attr = $config->attr;
         $this->brickType = $config->brickType;
-        $this->mode      = $config->mode;
+        $this->mode = $config->mode;
     }
 
     public function process($element, &$target, array &$rowData, $colIndex, array &$context = [])
     {
         $brickContainerGetter = 'get' . ucfirst($this->attr);
-        $brickContainer       = $target->$brickContainerGetter();
+        $brickContainer = $target->$brickContainerGetter();
 
         $brickGetter = 'get' . ucfirst($this->brickType);
-        $brick       = $brickContainer->$brickGetter();
+        $brick = $brickContainer->$brickGetter();
 
         $colData = $rowData[$colIndex];
 
         if (!$brick) {
             if ($this->mode == 'ifNotEmpty' && $colData || $this->mode == 'always') {
                 $brickClass = 'Pimcore\\Model\\DataObject\\Objectbrick\\Data\\' . ucfirst($this->brickType);
-                $brick      = $this->modelFactory->build($brickClass, [$element]);
+                $brick = $this->modelFactory->build($brickClass, [$element]);
             }
         }
 

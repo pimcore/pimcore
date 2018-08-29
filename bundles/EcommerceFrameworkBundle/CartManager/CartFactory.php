@@ -44,7 +44,7 @@ class CartFactory implements ICartFactory
         $resolver->setRequired(['cart_class_name']);
 
         $resolver->setDefaults([
-            'cart_class_name'       => Cart::class,
+            'cart_class_name' => Cart::class,
             'guest_cart_class_name' => null
         ]);
 
@@ -82,7 +82,7 @@ class CartFactory implements ICartFactory
         $class = $this->getCartClassName($environment);
 
         /** @var ICart $cart */
-        $cart  = new $class;
+        $cart = new $class;
 
         $cart->setName($name);
 

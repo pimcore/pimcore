@@ -24,7 +24,7 @@ class OverrideAttributeResolver
 {
     public static function setOverrideValue(Request $request, string $key, $value)
     {
-        $overrides       = $request->attributes->get(OverrideHandlerInterface::REQUEST_ATTRIBUTE, []);
+        $overrides = $request->attributes->get(OverrideHandlerInterface::REQUEST_ATTRIBUTE, []);
         $overrides[$key] = $value;
 
         $request->attributes->set(OverrideHandlerInterface::REQUEST_ATTRIBUTE, $overrides);

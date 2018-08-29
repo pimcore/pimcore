@@ -62,10 +62,10 @@ class ReportBroker
         TranslatorInterface $translator,
         EventDispatcherInterface $eventDispatcher
     ) {
-        $this->configProvider  = $configProvider;
-        $this->siteIdProvider  = $siteIdProvider;
+        $this->configProvider = $configProvider;
+        $this->siteIdProvider = $siteIdProvider;
         $this->eventDispatcher = $eventDispatcher;
-        $this->translator      = $translator;
+        $this->translator = $translator;
     }
 
     /**
@@ -116,7 +116,7 @@ class ReportBroker
             return $reports;
         }
 
-        $siteIds        = $this->siteIdProvider->getSiteIds();
+        $siteIds = $this->siteIdProvider->getSiteIds();
         $firstConfigKey = null;
 
         foreach ($siteIds as $siteId) {
@@ -172,12 +172,12 @@ class ReportBroker
     private function generateDashboardUrl(Config $config, string $configKey, array $parameters)
     {
         $parameters = array_merge([
-            'module'            => 'Widgetize',
-            'action'            => 'iframe',
-            'period'            => 'week',
-            'date'              => 'yesterday',
-            'idSite'            => $config->getPiwikSiteId($configKey),
-            'token_auth'        => $config->getReportToken()
+            'module' => 'Widgetize',
+            'action' => 'iframe',
+            'period' => 'week',
+            'date' => 'yesterday',
+            'idSite' => $config->getPiwikSiteId($configKey),
+            'token_auth' => $config->getReportToken()
         ], $parameters);
 
         return sprintf(

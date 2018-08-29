@@ -83,7 +83,7 @@ class CartPriceCalculator implements ICartPriceCalculator
     public function __construct(IEnvironment $environment, ICart $cart, array $modificatorConfig = [])
     {
         $this->environment = $environment;
-        $this->cart        = $cart;
+        $this->cart = $cart;
 
         $this->setModificatorConfig($modificatorConfig);
         $this->initModificators();
@@ -173,8 +173,8 @@ class CartPriceCalculator implements ICartPriceCalculator
                 ));
             }
 
-            $itemPrice     = $item->getTotalPrice();
-            $subTotalNet   = $subTotalNet->add($itemPrice->getNetAmount());
+            $itemPrice = $item->getTotalPrice();
+            $subTotalNet = $subTotalNet->add($itemPrice->getNetAmount());
             $subTotalGross = $subTotalGross->add($itemPrice->getGrossAmount());
 
             $taxEntries = $item->getTotalPrice()->getTaxEntries();
@@ -243,7 +243,7 @@ class CartPriceCalculator implements ICartPriceCalculator
 
         $currentSubTotal->setTaxEntries($grandTotalTaxes);
 
-        $this->grandTotal   = $currentSubTotal;
+        $this->grandTotal = $currentSubTotal;
         $this->isCalculated = true;
 
         if (!$ignorePricingRules) {

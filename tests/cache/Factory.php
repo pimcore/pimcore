@@ -88,7 +88,7 @@ class Factory
     protected function createSymfonyProxyItemPool(AdapterInterface $adapter)
     {
         $tagAdapter = new TagAwareAdapter($adapter);
-        $itemPool   = new SymfonyAdapterProxy($tagAdapter);
+        $itemPool = new SymfonyAdapterProxy($tagAdapter);
 
         return $itemPool;
     }

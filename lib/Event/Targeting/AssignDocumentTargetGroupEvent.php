@@ -37,7 +37,7 @@ class AssignDocumentTargetGroupEvent extends TargetingEvent
     {
         parent::__construct($visitorInfo);
 
-        $this->document    = $document;
+        $this->document = $document;
         $this->targetGroup = $targetGroup;
     }
 

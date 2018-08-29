@@ -29,8 +29,8 @@ class Link extends Model\Document\Link implements Model\Document\Hardlink\Wrappe
 
     public function getHref()
     {
-        if($this->getLinktype() ==  'internal' && $this->getInternalType() == 'document') {
-            if(strpos($this->getObject()->getRealFullPath(), $this->getHardLinkSource()->getSourceDocument()->getRealFullPath() . '/') === 0
+        if ($this->getLinktype() == 'internal' && $this->getInternalType() == 'document') {
+            if (strpos($this->getObject()->getRealFullPath(), $this->getHardLinkSource()->getSourceDocument()->getRealFullPath() . '/') === 0
                 || $this->getHardLinkSource()->getSourceDocument()->getRealFullPath() === $this->getObject()->getRealFullPath()
             ) {
                 // link target is child of hardlink source
@@ -40,7 +40,7 @@ class Link extends Model\Document\Link implements Model\Document\Hardlink\Wrappe
                     $c->setHardLinkSource($hardLink);
                     $c->setSourceDocument($this->getObject());
 
-                    if($hardLink->getSourceDocument()->getRealFullpath() == $c->getRealFullPath()) {
+                    if ($hardLink->getSourceDocument()->getRealFullpath() == $c->getRealFullPath()) {
                         $c->setPath($hardLink->getPath());
                         $c->setKey($hardLink->getKey());
                     } else {

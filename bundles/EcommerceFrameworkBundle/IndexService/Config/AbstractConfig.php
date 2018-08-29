@@ -89,7 +89,7 @@ abstract class AbstractConfig implements IConfig
     ) {
         $this->tenantName = $tenantName;
 
-        $this->attributeConfig       = $attributes;
+        $this->attributeConfig = $attributes;
         $this->searchAttributeConfig = $searchAttributes;
 
         $this->filterTypes = $filterTypes;

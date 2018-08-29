@@ -11,7 +11,6 @@ use Pimcore\Model\Document;
 use Pimcore\Model\Element\AbstractElement;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Property;
-use Pimcore\Model\User;
 use Pimcore\Tests\Helper\DataType\TestDataHelper;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
@@ -98,13 +97,13 @@ class TestHelper
             }
 
             if (!$ignoreCopyDifferences) {
-                $a['filename']     = $asset->getFilename();
-                $a['id']           = $asset->getId();
+                $a['filename'] = $asset->getFilename();
+                $a['id'] = $asset->getId();
                 $a['modification'] = $asset->getModificationDate();
-                $a['creation']     = $asset->getCreationDate();
+                $a['creation'] = $asset->getCreationDate();
                 $a['userModified'] = $asset->getUserModification();
-                $a['parentId']     = $asset->getParentId();
-                $a['path']         = $asset->getPath();
+                $a['parentId'] = $asset->getParentId();
+                $a['path'] = $asset->getPath();
             }
 
             $a['userOwner'] = $asset->getUserOwner();
@@ -168,9 +167,9 @@ class TestHelper
                 }
 
                 if ($document instanceof Document\Page) {
-                    $d['name']        = $document->getName();
-                    $d['keywords']    = $document->getKeywords();
-                    $d['title']       = $document->getTitle();
+                    $d['name'] = $document->getName();
+                    $d['keywords'] = $document->getKeywords();
+                    $d['title'] = $document->getTitle();
                     $d['description'] = $document->getDescription();
                 }
 
@@ -182,13 +181,13 @@ class TestHelper
             }
 
             if (!$ignoreCopyDifferences) {
-                $d['key']          = $document->getKey();
-                $d['id']           = $document->getId();
+                $d['key'] = $document->getKey();
+                $d['id'] = $document->getId();
                 $d['modification'] = $document->getModificationDate();
-                $d['creation']     = $document->getCreationDate();
+                $d['creation'] = $document->getCreationDate();
                 $d['userModified'] = $document->getUserModification();
-                $d['parentId']     = $document->getParentId();
-                $d['path']         = $document->getPath();
+                $d['parentId'] = $document->getParentId();
+                $d['path'] = $document->getPath();
             }
 
             $d['userOwner'] = $document->getUserOwner();
@@ -240,11 +239,11 @@ class TestHelper
             if ($object->$getter()) {
                 /** @var ObjectModel\Fieldcollection $collection */
                 $collection = $object->$getter();
-                $items      = $collection->getItems();
+                $items = $collection->getItems();
 
                 if (is_array($items)) {
                     $returnValue = [];
-                    $counter     = 0;
+                    $counter = 0;
 
                     /** @var ObjectModel\Fieldcollection\Data\AbstractData $item */
                     foreach ($items as $item) {
@@ -256,7 +255,7 @@ class TestHelper
                          * @var ObjectModel\ClassDefinition\Data $v
                          */
                         foreach ($def->getFieldDefinitions() as $k => $v) {
-                            $getter     = 'get' . ucfirst($v->getName());
+                            $getter = 'get' . ucfirst($v->getName());
                             $fieldValue = $item->$getter();
 
                             if ($v instanceof ObjectModel\ClassDefinition\Data\Link) {
@@ -277,7 +276,7 @@ class TestHelper
                 }
             }
         } elseif (method_exists($object, $getter) and $fd instanceof ObjectModel\ClassDefinition\Data\Localizedfields) {
-            $data  = $object->$getter();
+            $data = $object->$getter();
             $lData = [];
 
             if (!$data instanceof ObjectModel\Localizedfield) {
@@ -324,13 +323,13 @@ class TestHelper
                 $o['published'] = $object->isPublished();
             }
             if (!$ignoreCopyDifferences) {
-                $o['id']           = $object->getId();
-                $o['key']          = $object->getKey();
+                $o['id'] = $object->getId();
+                $o['key'] = $object->getKey();
                 $o['modification'] = $object->getModificationDate();
-                $o['creation']     = $object->getCreationDate();
+                $o['creation'] = $object->getCreationDate();
                 $o['userModified'] = $object->getUserModification();
-                $o['parentId']     = $object->getParentId();
-                $o['path']         = $object->getPath();
+                $o['parentId'] = $object->getParentId();
+                $o['path'] = $object->getPath();
             }
 
             $o['userOwner'] = $object->getUserOwner();
@@ -735,7 +734,7 @@ class TestHelper
      */
     public static function getObjectCount()
     {
-        $list   = new ObjectModel\Listing();
+        $list = new ObjectModel\Listing();
         $childs = $list->load();
 
         return count($childs);
@@ -748,7 +747,7 @@ class TestHelper
      */
     public static function getAssetCount()
     {
-        $list   = new Asset\Listing();
+        $list = new Asset\Listing();
         $childs = $list->load();
 
         return count($childs);
@@ -761,7 +760,7 @@ class TestHelper
      */
     public static function getDocumentCount()
     {
-        $list   = new Document\Listing();
+        $list = new Document\Listing();
         $childs = $list->load();
 
         return count($childs);

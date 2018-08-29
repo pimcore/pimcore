@@ -40,16 +40,16 @@ class ValidFeature extends Feature
 
 class ValidFeatureMaximumFlags extends Feature
 {
-    const FLAG_0  = 1;
-    const FLAG_1  = 2;
-    const FLAG_2  = 4;
-    const FLAG_3  = 8;
-    const FLAG_4  = 16;
-    const FLAG_5  = 32;
-    const FLAG_6  = 64;
-    const FLAG_7  = 128;
-    const FLAG_8  = 256;
-    const FLAG_9  = 512;
+    const FLAG_0 = 1;
+    const FLAG_1 = 2;
+    const FLAG_2 = 4;
+    const FLAG_3 = 8;
+    const FLAG_4 = 16;
+    const FLAG_5 = 32;
+    const FLAG_6 = 64;
+    const FLAG_7 = 128;
+    const FLAG_8 = 256;
+    const FLAG_9 = 512;
     const FLAG_10 = 1024;
     const FLAG_11 = 2048;
     const FLAG_12 = 4096;
@@ -81,8 +81,8 @@ class ValidFeatureMaximumFlags extends Feature
 class InvalidFeatureRedefined0 extends Feature
 {
     const INVALID = 0;
-    const FLAG_0  = 1;
-    const FLAG_1  = 2;
+    const FLAG_0 = 1;
+    const FLAG_1 = 2;
 
     public static function getType(): string
     {
@@ -94,7 +94,7 @@ class InvalidFeatureRedefinedNone extends Feature
 {
     const FLAG_0 = 1;
     const FLAG_1 = 2;
-    const NONE   = 4;
+    const NONE = 4;
 
     public static function getType(): string
     {

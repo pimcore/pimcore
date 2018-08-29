@@ -27,11 +27,14 @@ class Version
     public static function getVersion()
     {
         $version = self::getVersionPart(self::PART_NUMBER);
+
         return $version;
     }
 
-    protected static function getVersionPart($part = self::PART_NUMBER) {
-        $parts = explode("@", Versions::getVersion('pimcore/pimcore'));
+    protected static function getVersionPart($part = self::PART_NUMBER)
+    {
+        $parts = explode('@', Versions::getVersion('pimcore/pimcore'));
+
         return $parts[$part];
     }
 
@@ -41,11 +44,13 @@ class Version
     public static function getRevision()
     {
         $hash = self::getVersionPart(self::PART_HASH);
+
         return $hash;
     }
 
     /**
      * @deprecated
+     *
      * @return string
      */
     public static function getBuildDate(): string

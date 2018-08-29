@@ -351,7 +351,7 @@ class NewsletterController extends DocumentControllerBase
         $testMailAddress = $request->get('testMailAddress');
 
         if (empty($testMailAddress)) {
-            return $this->adminJson(['success' => false, 'message' =>  'Please provide a valid email address to send test newsletter']);
+            return $this->adminJson(['success' => false, 'message' => 'Please provide a valid email address to send test newsletter']);
         }
 
         $serviceLocator = $this->get('pimcore.newsletter.address_source_adapter.factories');

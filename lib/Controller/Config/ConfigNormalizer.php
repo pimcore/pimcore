@@ -70,7 +70,7 @@ class ConfigNormalizer
                 $action
             );
         } else {
-            $bundle     = $this->normalizeBundleName($bundle);
+            $bundle = $this->normalizeBundleName($bundle);
             $controller = $this->normalizeControllerName($controller);
 
             return sprintf(
@@ -196,7 +196,7 @@ class ConfigNormalizer
 
         $path = '';
         if (false !== strpos($template, '/')) {
-            $parts    = explode('/', $template);
+            $parts = explode('/', $template);
             $template = array_pop($parts);
 
             // ucfirst to match views/Content - TODO should we remove this?

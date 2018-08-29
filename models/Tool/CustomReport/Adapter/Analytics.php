@@ -320,9 +320,9 @@ class Analytics extends AbstractAdapter
 
         $return = [];
         foreach ($data as $row) {
-            $return[] = ['value'=>$row[$field]];
+            $return[] = ['value' => $row[$field]];
         }
 
-        return ['data'=> $return];
+        return ['data' => $return];
     }
 }

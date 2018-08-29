@@ -159,12 +159,12 @@ class Version extends \Doctrine\DBAL\Migrations\Version
     {
         $action = $direction === 'up' ? 'insert' : 'delete';
 
-        $setColumn           = $this->configuration->getMigrationSetColumnName();
-        $versionColumn       = $this->configuration->getMigrationsColumnName();
+        $setColumn = $this->configuration->getMigrationSetColumnName();
+        $versionColumn = $this->configuration->getMigrationsColumnName();
         $migrationDateColumn = $this->configuration->getMigrationDateColumnName();
 
         $data = [
-            $setColumn     => $this->configuration->getMigrationSet(),
+            $setColumn => $this->configuration->getMigrationSet(),
             $versionColumn => $this->getVersion()
         ];
 
@@ -245,7 +245,7 @@ class Version extends \Doctrine\DBAL\Migrations\Version
 
         // PIMCORE: use pimcore SqlFileWriter
         $sqlQueries = [$this->getVersion() => $queries];
-        $sqlWriter  = new SqlFileWriter(
+        $sqlWriter = new SqlFileWriter(
             $this->configuration,
             $path,
             $this->outputWriter

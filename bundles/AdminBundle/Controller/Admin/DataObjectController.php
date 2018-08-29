@@ -57,7 +57,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
     {
         $allParams = array_merge($request->request->all(), $request->query->all());
 
-        $filter = $request->get("filter");
+        $filter = $request->get('filter');
         $object = DataObject\AbstractObject::getById($request->get('node'));
         $objectTypes = null;
         $objects = [];
@@ -80,14 +80,13 @@ class DataObjectController extends ElementControllerBase implements EventedContr
         if ($object->hasChildren($objectTypes)) {
             $limit = intval($request->get('limit'));
             if (!is_null($filter)) {
-
                 if (substr($filter, -1) != '*') {
-                    $filter .= "*";
+                    $filter .= '*';
                 }
-                $filter = str_replace("*", "%", $filter);
+                $filter = str_replace('*', '%', $filter);
 
                 $limit = 100;
-            } else if (!$request->get('limit')) {
+            } elseif (!$request->get('limit')) {
                 $limit = 100000000;
             }
 
@@ -128,7 +127,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
 
             if (!is_null($filter)) {
                 $db = Db::get();
-                $condition .= ' AND o_key LIKE ' . $db->quote($filter );
+                $condition .= ' AND o_key LIKE ' . $db->quote($filter);
             }
 
             $childsList->setCondition($condition);
@@ -181,7 +180,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                 'overflow' => !is_null($filter) && ($filteredTotalCount > $limit),
                 'nodes' => $objects,
                 'fromPaging' => intval($request->get('fromPaging')),
-                'filter' => $request->get('filter') ? $request->get('filter') : "" ,
+                'filter' => $request->get('filter') ? $request->get('filter') : '',
                 'inSearch' => intval($request->get('inSearch'))
             ]);
         } else {
@@ -1163,7 +1162,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                 try {
                     $object->save();
 
-                    if(isset($values['index']) && is_int($values['index'])) {
+                    if (isset($values['index']) && is_int($values['index'])) {
                         $this->updateIndexesOfObjectSiblings($object, $values['index']);
                     }
 
@@ -1200,7 +1199,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
     protected function updateIndexesOfObjectSiblings(DataObject\AbstractObject $updatedObject, $newIndex)
     {
         $updateLatestVersionIndex = function ($object, $newIndex) {
-            if($object instanceof DataObject\Concrete && $latestVersion = $object->getLatestVersion()) {
+            if ($object instanceof DataObject\Concrete && $latestVersion = $object->getLatestVersion()) {
                 $object = $latestVersion->loadData();
                 $object->setIndex($newIndex);
                 $latestVersion->save();

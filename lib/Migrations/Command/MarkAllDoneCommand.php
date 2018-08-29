@@ -33,7 +33,7 @@ class MarkAllDoneCommand extends AbstractCommand
         $config = $this->migrationManager->getConfiguration($input->getOption('set'));
         $config->registerMigrationsFromDirectory($config->getMigrationsDirectory());
         $latest = end($config->getMigrations());
-        if($latest) {
+        if ($latest) {
             $this->migrationManager->markVersionAsMigrated($latest);
         } else {
             $output->writeln('Nothing to do ...');

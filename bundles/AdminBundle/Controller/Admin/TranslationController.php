@@ -65,7 +65,7 @@ class TranslationController extends AdminController
             $delta = Translation\Website::importTranslationsFromFile($tmpFile, $overwrite, $this->getAdminUser()->getAllowedLanguagesForEditingWebsiteTranslations());
         }
 
-        $result =[
+        $result = [
             'success' => true
         ];
         if ($merge) {
@@ -74,10 +74,10 @@ class TranslationController extends AdminController
             foreach ($delta as $item) {
                 $lg = $item['lg'];
                 $currentLocale = \Pimcore::getContainer()->get('pimcore.locale')->findLocale();
-                $item['lgname'] =  \Locale::getDisplayLanguage($lg, $currentLocale);
+                $item['lgname'] = \Locale::getDisplayLanguage($lg, $currentLocale);
                 $item['icon'] = '/admin/misc/get-language-flag?language=' . $lg;
                 $item['current'] = $item['text'];
-                $enrichedDelta[]= $item;
+                $enrichedDelta[] = $item;
             }
 
             $result['delta'] = base64_encode(json_encode($enrichedDelta));
@@ -515,7 +515,7 @@ class TranslationController extends AdminController
 
                     if ($languageMode) {
                         $conditions[$filter[$propertyField]] = $condition;
-                        $joins[] =  [
+                        $joins[] = [
                             'language' => $filter[$propertyField]
                         ];
                     } else {
@@ -846,7 +846,7 @@ class TranslationController extends AdminController
         $xliff = simplexml_load_file($importFile, null, LIBXML_NOCDATA);
         $steps = count($xliff->file);
 
-        for ($i=0; $i < $steps; $i++) {
+        for ($i = 0; $i < $steps; $i++) {
             $jobs[] = [[
                 'url' => '/admin/translation/xliff-import-element',
                 'method' => 'POST',
@@ -1096,7 +1096,7 @@ class TranslationController extends AdminController
         error_reporting(0);
         ini_set('display_errors', 'off');
 
-        $id         = $this->sanitzeExportId((string)$request->get('id'));
+        $id = $this->sanitzeExportId((string)$request->get('id'));
         $exportFile = $this->getExportFilePath($id, false);
 
         $data = $this->decodeJson($request->get('data'));
@@ -1309,7 +1309,7 @@ class TranslationController extends AdminController
      */
     public function wordExportDownloadAction(Request $request)
     {
-        $id         = $this->sanitzeExportId((string)$request->get('id'));
+        $id = $this->sanitzeExportId((string)$request->get('id'));
         $exportFile = $this->getExportFilePath($id, true);
 
         // no conversion, output html file, works fine with MS Word and LibreOffice

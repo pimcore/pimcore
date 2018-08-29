@@ -87,7 +87,7 @@ class Objectbricks extends Model\DataObject\ClassDefinition\Data
 
             foreach ($allowedBrickTypes as $allowedBrickType) {
                 $getter = 'get' . ucfirst($allowedBrickType);
-                $params =         [
+                $params = [
                     'context' => [
                         'containerType' => 'objectbrick',
                         'containerKey' => $allowedBrickType],

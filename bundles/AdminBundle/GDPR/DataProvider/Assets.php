@@ -199,7 +199,7 @@ class Assets extends Elements implements DataProviderInterface
 
         $hits = $searcherList->load();
 
-        $elements=[];
+        $elements = [];
         foreach ($hits as $hit) {
             $element = Service::getElementById($hit->getId()->getType(), $hit->getId()->getId());
             if ($element instanceof Asset) {

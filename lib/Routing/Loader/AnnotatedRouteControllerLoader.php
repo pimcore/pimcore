@@ -29,7 +29,7 @@ class AnnotatedRouteControllerLoader extends BaseAnnotatedRouteControllerLoader
         $routeName = parent::getDefaultRouteName($class, $method);
 
         $replacements = [
-            'pimcore_admin_rest_'  => 'pimcore_api_rest_',
+            'pimcore_admin_rest_' => 'pimcore_api_rest_',
             'pimcore_admin_admin_' => 'pimcore_admin_',
         ];
 

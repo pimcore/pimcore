@@ -144,7 +144,7 @@ class Maintenance
         $db = \Pimcore\Db::get();
 
         $date = new \DateTime('now');
-        $tablename =  ApplicationLoggerDb::TABLE_ARCHIVE_PREFIX . '_' . $date->format('m') . '_' . $date->format('Y');
+        $tablename = ApplicationLoggerDb::TABLE_ARCHIVE_PREFIX . '_' . $date->format('m') . '_' . $date->format('Y');
 
         if ($config->archive_alternative_database) {
             $tablename = $db->quoteIdentifier($config->archive_alternative_database) . '.' . $tablename;
@@ -155,7 +155,7 @@ class Maintenance
         $timestamp = time();
         $sql = ' SELECT %s FROM ' .  ApplicationLoggerDb::TABLE_NAME . ' WHERE `timestamp` < DATE_SUB(FROM_UNIXTIME(' . $timestamp . '), INTERVAL ' . $archive_treshold . ' DAY)';
 
-        if($db->fetchOne(sprintf($sql, 'COUNT(*)')) > 1 || true) {
+        if ($db->fetchOne(sprintf($sql, 'COUNT(*)')) > 1 || true) {
             $db->query('CREATE TABLE IF NOT EXISTS ' . $tablename . " (
                        id BIGINT(20) NOT NULL,
                        `pid` INT(11) NULL DEFAULT NULL,

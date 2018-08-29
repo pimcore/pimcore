@@ -80,8 +80,8 @@ class PayPal extends AbstractPayment
         $credentials = new \stdClass();
         $credentials->Credentials = new \stdClass();
 
-        $credentials->Credentials->Username  = $username;
-        $credentials->Credentials->Password  = $password;
+        $credentials->Credentials->Username = $username;
+        $credentials->Credentials->Password = $password;
         $credentials->Credentials->Signature = $signature;
 
         return $credentials;
@@ -89,7 +89,7 @@ class PayPal extends AbstractPayment
 
     protected function createClient(string $endpointUrlPart, \stdClass $credentials): \SoapClient
     {
-        $wsdl     = 'https://www.' . $endpointUrlPart . '.com/wsdl/PayPalSvc.wsdl';
+        $wsdl = 'https://www.' . $endpointUrlPart . '.com/wsdl/PayPalSvc.wsdl';
         $location = 'https://api-3t.' . $endpointUrlPart . '.com/2.0';
 
         $client = new \SoapClient($wsdl, ['location' => $location]);
@@ -150,10 +150,10 @@ class PayPal extends AbstractPayment
     {
         // check params
         $required = [
-            'ReturnURL'        => null,
-            'CancelURL'        => null,
+            'ReturnURL' => null,
+            'CancelURL' => null,
             'OrderDescription' => null,
-            'InvoiceID'        => null
+            'InvoiceID' => null
         ];
 
         $config = array_intersect_key($config, $required);
@@ -215,15 +215,15 @@ class PayPal extends AbstractPayment
     {
         // check required fields
         $required = [
-            'token'     => null,
-            'PayerID'   => null,
+            'token' => null,
+            'PayerID' => null,
             'InvoiceID' => null,
-            'amount'    => null,
-            'currency'  => null
+            'amount' => null,
+            'currency' => null
         ];
 
         $authorizedData = [
-            'token'   => null,
+            'token' => null,
             'PayerID' => null
         ];
 
@@ -293,8 +293,8 @@ class PayPal extends AbstractPayment
                 AbstractOrder::ORDER_STATE_COMMITTED,
                 [
                     'paypal_TransactionType' => $paymentInfo->TransactionType,
-                    'paypal_PaymentType'     => $paymentInfo->PaymentType,
-                    'paypal_amount'          => (string)$price
+                    'paypal_PaymentType' => $paymentInfo->PaymentType,
+                    'paypal_amount' => (string)$price
                 ]
             );
         } else {

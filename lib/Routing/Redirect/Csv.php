@@ -126,15 +126,15 @@ class Csv
         $reader->setDelimiter($dialect->delimiter);
         $reader->setHeaderOffset(0);
 
-        $stmt   = new Statement();
+        $stmt = new Statement();
         $result = $stmt->process($reader);
 
         $stats = [
-            'total'    => $result->count(),
+            'total' => $result->count(),
             'imported' => 0,
-            'created'  => 0,
-            'updated'  => 0,
-            'errored'  => 0
+            'created' => 0,
+            'updated' => 0,
+            'errored' => 0
         ];
 
         $errors = [];

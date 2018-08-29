@@ -949,11 +949,11 @@ class UserController extends AdminController implements EventedControllerInterfa
         }
 
         $token = Tool\Authentication::generateToken($user->getName(), $user->getPassword());
-        $link  = $request->getScheme() . '://' . $request->getHttpHost() . '/admin/login/login?username=' . $user->getName() . '&token=' . $token;
+        $link = $request->getScheme() . '://' . $request->getHttpHost() . '/admin/login/login?username=' . $user->getName() . '&token=' . $token;
 
         return $this->adminJson([
             'success' => true,
-            'link'    => $link
+            'link' => $link
         ]);
     }
 

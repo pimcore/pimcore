@@ -137,7 +137,7 @@ class PrintpageControllerBase extends DocumentControllerBase
                 } catch (\Exception $e) {
                     Logger::err($e);
 
-                    return $this->adminJson(['success' => false, 'message' =>$e->getMessage()]);
+                    return $this->adminJson(['success' => false, 'message' => $e->getMessage()]);
                 }
             } else {
                 if ($page->isAllowed('save')) {
@@ -150,7 +150,7 @@ class PrintpageControllerBase extends DocumentControllerBase
                     } catch (\Exception $e) {
                         Logger::err($e);
 
-                        return $this->adminJson(['success' => false, 'message' =>$e->getMessage()]);
+                        return $this->adminJson(['success' => false, 'message' => $e->getMessage()]);
                     }
                 }
             }

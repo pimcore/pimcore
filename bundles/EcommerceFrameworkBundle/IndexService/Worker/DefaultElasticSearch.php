@@ -149,7 +149,7 @@ class DefaultElasticSearch extends AbstractMockupCacheWorker implements IBatchPr
     public function getElasticSearchClient()
     {
         if (empty($this->elasticSearchClient)) {
-            $builder =  \Elasticsearch\ClientBuilder::create();
+            $builder = \Elasticsearch\ClientBuilder::create();
             if ($this->tenantConfig->getClientConfig('logging')) {
                 $logger = \Pimcore::getContainer()->get('monolog.logger.pimcore_ecommerce_es');
                 $builder->setLogger($logger);
@@ -176,8 +176,8 @@ class DefaultElasticSearch extends AbstractMockupCacheWorker implements IBatchPr
         if ($type == IProductList::PRODUCT_TYPE_OBJECT) {
             $params = [
                 'index' => $this->getIndexNameVersion(),
-                'type'  => IProductList::PRODUCT_TYPE_OBJECT,
-                'body'  => [
+                'type' => IProductList::PRODUCT_TYPE_OBJECT,
+                'body' => [
                     IProductList::PRODUCT_TYPE_OBJECT => [
                         'properties' => $this->createMappingAttributes()
                     ]
@@ -188,10 +188,10 @@ class DefaultElasticSearch extends AbstractMockupCacheWorker implements IBatchPr
         } elseif ($type == IProductList::PRODUCT_TYPE_VARIANT) {
             $params = [
                 'index' => $this->getIndexNameVersion(),
-                'type'  => IProductList::PRODUCT_TYPE_VARIANT,
-                'body'  => [
+                'type' => IProductList::PRODUCT_TYPE_VARIANT,
+                'body' => [
                     IProductList::PRODUCT_TYPE_VARIANT => [
-                        '_parent'    => ['type' => IProductList::PRODUCT_TYPE_OBJECT],
+                        '_parent' => ['type' => IProductList::PRODUCT_TYPE_OBJECT],
                         'properties' => $this->createMappingAttributes()
                     ]
                 ]
@@ -306,7 +306,7 @@ class DefaultElasticSearch extends AbstractMockupCacheWorker implements IBatchPr
                     $mapping = $mapper->getMapping();
                 } else {
                     $mapping = [
-                        'type'  => $type,
+                        'type' => $type,
                         'store' => $this->getStoreCustomAttributes(),
                         'index' => 'not_analyzed'
                     ];

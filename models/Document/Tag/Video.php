@@ -524,7 +524,7 @@ class Video extends Model\Document\Tag
             $height = $options['height'];
         }
 
-        $valid_youtube_prams=[ 'autohide',
+        $valid_youtube_prams = [ 'autohide',
             'autoplay',
             'cc_load_policy',
             'color',
@@ -545,7 +545,7 @@ class Video extends Model\Document\Tag
             'showinfo',
             'start',
             'theme'];
-        $additional_params='';
+        $additional_params = '';
 
         $clipConfig = [];
         if (isset($options['config']['clip']) && is_array($options['config']['clip'])) {
@@ -559,7 +559,7 @@ class Video extends Model\Document\Tag
         }
 
         if (!empty($configurations)) {
-            foreach ($configurations as $key=>$value) {
+            foreach ($configurations as $key => $value) {
                 if (in_array($key, $valid_youtube_prams)) {
                     if (is_bool($value)) {
                         if ($value) {
@@ -613,11 +613,11 @@ class Video extends Model\Document\Tag
                 $height = $options['height'];
             }
 
-            $valid_vimeo_prams=[
+            $valid_vimeo_prams = [
                 'autoplay',
                 'loop'];
 
-            $additional_params='';
+            $additional_params = '';
 
             $clipConfig = [];
             if (is_array($options['config']['clip'])) {
@@ -631,7 +631,7 @@ class Video extends Model\Document\Tag
             }
 
             if (!empty($configurations)) {
-                foreach ($configurations as $key=>$value) {
+                foreach ($configurations as $key => $value) {
                     if (in_array($key, $valid_vimeo_prams)) {
                         if (is_bool($value)) {
                             if ($value) {
@@ -689,11 +689,11 @@ class Video extends Model\Document\Tag
                 $height = $options['height'];
             }
 
-            $valid_dailymotion_prams=[
+            $valid_dailymotion_prams = [
                 'autoplay',
                 'loop'];
 
-            $additional_params='';
+            $additional_params = '';
 
             $clipConfig = [];
             if (is_array($options['config']['clip'])) {
@@ -707,7 +707,7 @@ class Video extends Model\Document\Tag
             }
 
             if (!empty($configurations)) {
-                foreach ($configurations as $key=>$value) {
+                foreach ($configurations as $key => $value) {
                     if (in_array($key, $valid_dailymotion_prams)) {
                         if (is_bool($value)) {
                             if ($value) {

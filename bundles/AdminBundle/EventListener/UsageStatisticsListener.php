@@ -76,7 +76,7 @@ class UsageStatisticsListener implements EventSubscriberInterface
         }
 
         $params = $this->getParams($request);
-        $user   = $this->userResolver->getUser();
+        $user = $this->userResolver->getUser();
 
         $parts = [
             $user ? $user->getId() : '0',

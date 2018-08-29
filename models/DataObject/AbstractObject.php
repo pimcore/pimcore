@@ -329,6 +329,7 @@ class AbstractObject extends Model\Element\AbstractElement
         try {
             $object = new self();
             $object->getDao()->getByPath($path);
+
             return self::getById($object->getId(), $force);
         } catch (\Exception $e) {
             Logger::warning($e->getMessage());
@@ -577,7 +578,7 @@ class AbstractObject extends Model\Element\AbstractElement
         // additional parameters (e.g. "versionNote" for the version note)
         $params = [];
         if (func_num_args() && is_array(func_get_arg(0))) {
-            $params =  func_get_arg(0);
+            $params = func_get_arg(0);
         }
 
         $isUpdate = false;
@@ -598,7 +599,7 @@ class AbstractObject extends Model\Element\AbstractElement
         // if a transaction fails it gets restarted $maxRetries times, then the exception is thrown out
         // this is especially useful to avoid problems with deadlocks in multi-threaded environments (forked workers, ...)
         $maxRetries = 5;
-        for ($retries=0; $retries < $maxRetries; $retries++) {
+        for ($retries = 0; $retries < $maxRetries; $retries++) {
 
             // be sure that unpublished objects in relations are saved also in frontend mode, eg. in importers, ...
             $hideUnpublishedBackup = self::getHideUnpublished();
@@ -1074,9 +1075,9 @@ class AbstractObject extends Model\Element\AbstractElement
     {
         $this->o_childs = $children;
         if (is_array($children) and count($children) > 0) {
-            $this->o_hasChilds=true;
+            $this->o_hasChilds = true;
         } else {
-            $this->o_hasChilds=false;
+            $this->o_hasChilds = false;
         }
 
         return $this;

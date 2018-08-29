@@ -70,8 +70,8 @@ class ProductDiscount implements IProductDiscount
     public function toJSON()
     {
         return json_encode([
-            'type'    => 'ProductDiscount',
-            'amount'  => $this->getAmount(),
+            'type' => 'ProductDiscount',
+            'amount' => $this->getAmount(),
             'percent' => $this->getPercent()
         ]);
     }

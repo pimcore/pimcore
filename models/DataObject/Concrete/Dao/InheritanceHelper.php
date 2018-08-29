@@ -403,7 +403,7 @@ class InheritanceHelper
             return $node;
         }
 
-        $objectRelationsResult =  $this->db->fetchAll('SELECT fieldname, count(*) as COUNT FROM ' . $this->relationtable . " WHERE src_id = ? AND fieldname IN('" . implode("','", array_keys($this->relations)) . "') GROUP BY fieldname;", [$node->id]);
+        $objectRelationsResult = $this->db->fetchAll('SELECT fieldname, count(*) as COUNT FROM ' . $this->relationtable . " WHERE src_id = ? AND fieldname IN('" . implode("','", array_keys($this->relations)) . "') GROUP BY fieldname;", [$node->id]);
 
         $objectRelations = [];
         if (!empty($objectRelationsResult)) {

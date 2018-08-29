@@ -48,7 +48,7 @@ class SitemapGeneratorListener implements EventSubscriberInterface
     public function onPopulateSitemap(SitemapPopulateEvent $event)
     {
         $container = $event->getUrlContainer();
-        $section   = $event->getSection();
+        $section = $event->getSection();
 
         foreach ($this->generators as $generator) {
             $generator->populate($container, $section);

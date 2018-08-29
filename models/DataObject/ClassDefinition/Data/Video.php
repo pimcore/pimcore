@@ -458,29 +458,29 @@ class Video extends Model\DataObject\ClassDefinition\Data
      */
     public function getFromWebserviceImport($value, $relatedObject = null, $params = [], $idMapper = null)
     {
-        if (is_string( $value)) {
-            if (! strlen( $value)) {
+        if (is_string($value)) {
+            if (! strlen($value)) {
                 return null;
             }
-            $data = unserialize( $value);
-            if ($data === FALSE) {
+            $data = unserialize($value);
+            if ($data === false) {
                 throw new \Exception('cannot get object video data from web service import - value cannot be decoded');
             }
             if (is_array($data)) {
-                if (isset( $data['type']) && isset( $data['data'])) {
-                    if (in_array( $data['type'], array('youtube','vimeo','dailymotion'))) {
+                if (isset($data['type']) && isset($data['data'])) {
+                    if (in_array($data['type'], ['youtube', 'vimeo', 'dailymotion'])) {
                         return $this->getDataFromEditmode($data, $relatedObject, $params);
-                    } else if ($data['type'] === 'asset') {
+                    } elseif ($data['type'] === 'asset') {
                         $video = new DataObject\Data\Video();
                         $video->setType($data['type']);
                         $video->setTitle($data['title']);
                         $video->setDescription($data['description']);
                         if (is_int($id = $data['data'])) {
                             if ($idMapper) {
-                                $id = $idMapper->getMappedId( 'asset', $id);
+                                $id = $idMapper->getMappedId('asset', $id);
                             }
-                            if( $asset = Asset::getById($id)) {
-                                $video->setData( $asset);
+                            if ($asset = Asset::getById($id)) {
+                                $video->setData($asset);
                             } else {
                                 if ($idMapper && $idMapper->ignoreMappingFailures()) {
                                     $idMapper->recordMappingFailure('object', $relatedObject->getId(), 'asset', $value['data']);
@@ -491,10 +491,10 @@ class Video extends Model\DataObject\ClassDefinition\Data
                         }
                         if (is_int($id = $data['poster'])) {
                             if ($idMapper) {
-                                $id = $idMapper->getMappedId( 'asset', $id);
+                                $id = $idMapper->getMappedId('asset', $id);
                             }
-                            if( $poster = Asset::getById($id)) {
-                                $video->setPoster( $poster);
+                            if ($poster = Asset::getById($id)) {
+                                $video->setPoster($poster);
                             } else {
                                 if ($idMapper && $idMapper->ignoreMappingFailures()) {
                                     $idMapper->recordMappingFailure('object', $relatedObject->getId(), 'asset', $value['poster']);
@@ -503,6 +503,7 @@ class Video extends Model\DataObject\ClassDefinition\Data
                                 }
                             }
                         }
+
                         return $video;
                     } else {
                         throw new \Exception('cannot get object video data from web service import - type [ '.$data['type'].' ] is not implemented');
@@ -511,9 +512,10 @@ class Video extends Model\DataObject\ClassDefinition\Data
             } else {
                 throw new \Exception('cannot get object video data from web service import - value decoded into invalid type');
             }
-        } else if( $value){
+        } elseif ($value) {
             throw new \Exception('cannot get object video data from web service import - unexpected value');
         }
+
         return null;
     }
 

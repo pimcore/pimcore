@@ -59,11 +59,11 @@ class CacheClearer
     {
         $resolver = new OptionsResolver();
         $resolver->setDefaults([
-            'no-warmup'           => false,
+            'no-warmup' => false,
             'no-optional-warmers' => false,
-            'env'                 => $environment,
-            'ansi'                => false,
-            'no-ansi'             => false,
+            'env' => $environment,
+            'ansi' => false,
+            'no-ansi' => false,
         ]);
 
         foreach (['no-warmup', 'no-optional-warmers', 'ansi', 'no-ansi'] as $option) {
@@ -78,9 +78,9 @@ class CacheClearer
         $resolver = new OptionsResolver();
         $resolver->setDefaults([
             'no-optional-warmers' => false,
-            'env'                 => $environment,
-            'ansi'                => false,
-            'no-ansi'             => false,
+            'env' => $environment,
+            'ansi' => false,
+            'no-ansi' => false,
         ]);
 
         foreach (['no-optional-warmers', 'ansi', 'no-ansi'] as $option) {
@@ -119,7 +119,7 @@ class CacheClearer
         ], $arguments);
 
         $partsBuilder = new PartsBuilder($arguments, $options);
-        $parts        = $partsBuilder->getParts();
+        $parts = $partsBuilder->getParts();
 
         $process = new Process($parts);
         $process

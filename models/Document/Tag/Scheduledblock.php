@@ -182,7 +182,7 @@ class Scheduledblock extends Block implements BlockInterface
         // set name suffix for the whole block element, this will be added to all child elements of the block
         $this->getBlockState()->pushBlock(BlockName::createFromTag($this));
 
-        $attributes      = $this->getEditmodeElementAttributes($options);
+        $attributes = $this->getEditmodeElementAttributes($options);
         $attributeString = HtmlUtils::assembleAttributeString($attributes);
 
         $this->outputEditmode('<div ' . $attributeString . '>');
@@ -207,10 +207,10 @@ class Scheduledblock extends Block implements BlockInterface
     /**
      * Is called everytime a new iteration starts (new entry of the block while looping)
      */
-    public function blockStart( $showControls = true )
+    public function blockStart($showControls = true)
     {
         $attributes = [
-            'data-name'      => $this->getName(),
+            'data-name' => $this->getName(),
             'data-real-name' => $this->getRealName(),
         ];
 
@@ -219,7 +219,7 @@ class Scheduledblock extends Block implements BlockInterface
             'date' => $this->indices[$this->current]['date']
         ];
 
-        $attr  = HtmlUtils::assembleAttributeString($attributes);
+        $attr = HtmlUtils::assembleAttributeString($attributes);
         $oAttr = HtmlUtils::assembleAttributeString($outerAttributes);
 
         // outer element
@@ -245,7 +245,7 @@ class Scheduledblock extends Block implements BlockInterface
     {
         $document = Model\Document\Page::getById($this->getDocumentId());
 
-        $parentBlockNames   = $this->getParentBlockNames();
+        $parentBlockNames = $this->getParentBlockNames();
         $parentBlockNames[] = $this->getName();
 
         $list = [];

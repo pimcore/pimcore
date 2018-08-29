@@ -48,7 +48,7 @@ class PostStateChange
         AssetsInstaller $assetsInstaller,
         EventDispatcherInterface $eventDispatcher
     ) {
-        $this->cacheClearer    = $cacheClearer;
+        $this->cacheClearer = $cacheClearer;
         $this->assetsInstaller = $assetsInstaller;
         $this->eventDispatcher = $eventDispatcher;
     }
@@ -86,7 +86,7 @@ class PostStateChange
         }
 
         $runAssetsInstall = $input->getOption('no-assets-install') ? false : true;
-        $runCacheClear    = $input->getOption('no-cache-clear') ? false : true;
+        $runCacheClear = $input->getOption('no-cache-clear') ? false : true;
 
         if (!$runAssetsInstall && !$runCacheClear) {
             return;
@@ -105,7 +105,7 @@ class PostStateChange
             try {
                 $this->assetsInstaller->setRunCallback($runCallback);
                 $this->assetsInstaller->install([
-                    'env'  => $environment,
+                    'env' => $environment,
                     'ansi' => $io->isDecorated(),
                 ]);
             } catch (ProcessFailedException $e) {

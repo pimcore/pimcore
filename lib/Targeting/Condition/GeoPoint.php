@@ -43,9 +43,9 @@ class GeoPoint extends AbstractVariableCondition implements DataProviderDependen
 
     public function __construct(float $latitude = null, float $longitude = null, int $radius = null)
     {
-        $this->latitude  = $latitude;
+        $this->latitude = $latitude;
         $this->longitude = $longitude;
-        $this->radius    = $radius;
+        $this->radius = $radius;
     }
 
     /**
@@ -95,7 +95,7 @@ class GeoPoint extends AbstractVariableCondition implements DataProviderDependen
 
         if ($distance < ($this->radius * 1000)) {
             $this->setMatchedVariables([
-                'latitude'  => $location->getLatitude(),
+                'latitude' => $location->getLatitude(),
                 'longitude' => $location->getLongitude(),
             ]);
 
@@ -111,7 +111,7 @@ class GeoPoint extends AbstractVariableCondition implements DataProviderDependen
         $coordB = new Coordinate($latB, $longB);
 
         $calculator = new Haversine();
-        $distance   = $calculator->getDistance($coordA, $coordB);
+        $distance = $calculator->getDistance($coordA, $coordB);
 
         return $distance;
     }

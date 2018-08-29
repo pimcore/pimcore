@@ -18,7 +18,6 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\CoreBundle\Command\Document;
 
 use Pimcore\Console\AbstractCommand;
-use Pimcore\File;
 use Pimcore\Model\Document;
 use Pimcore\Tool;
 use Symfony\Component\Console\Input\InputInterface;
