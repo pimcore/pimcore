@@ -108,6 +108,19 @@ pimcore.document.tags.image = Class.create(pimcore.document.tag, {
             }
         }
 
+        pimcore.helpers.registerAssetDnDSingleUpload(this.element.dom, this.options["uploadPath"], 'path', function (e) {
+            if (e['asset']['type'] === "image" && !this.inherited) {
+                this.resetData();
+                this.datax.id = e['asset']['id'];
+
+                this.updateImage();
+                this.reload();
+
+                return true;
+            } else {
+                pimcore.helpers.showNotification(t("error"), t('unsupported_filetype'), "error");
+            }
+        }.bind(this));
 
         // insert image
         if (this.datax) {
