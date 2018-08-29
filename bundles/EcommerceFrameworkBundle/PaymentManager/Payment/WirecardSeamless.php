@@ -131,7 +131,7 @@ class WirecardSeamless extends AbstractPayment
     public function __construct(array $options, EngineInterface $templatingEngine, SessionInterface $session)
     {
         $this->templatingEngine = $templatingEngine;
-        $this->session          = $session;
+        $this->session = $session;
 
         $this->processOptions(
             $this->configureOptions(new OptionsResolver())->resolve($options)
@@ -140,7 +140,7 @@ class WirecardSeamless extends AbstractPayment
         // TODO refactor properties to proper naming and to use request to fetch env data
         $this->URL_DATASTORAGE_INIT = $this->URL_WIRECARD_CHECKOUT . '/seamless/dataStorage/init';
         $this->URL_DATASTORAGE_READ = $this->URL_WIRECARD_CHECKOUT . '/seamless/dataStorage/read';
-        $this->URL_FRONTEND_INIT    = $this->URL_WIRECARD_CHECKOUT . '/seamless/frontend/init';
+        $this->URL_FRONTEND_INIT = $this->URL_WIRECARD_CHECKOUT . '/seamless/frontend/init';
 
         $WEBSITE_URL = rtrim($_SERVER['SERVER_NAME'] . ':' . $_SERVER['SERVER_PORT'] . $_SERVER['REQUEST_URI'], '/') . '/';
         $this->WEBSITE_URL = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on' ? "https://$WEBSITE_URL" : "http://$WEBSITE_URL";
@@ -151,9 +151,9 @@ class WirecardSeamless extends AbstractPayment
         parent::processOptions($options);
 
         $this->customerId = $options['customer_id'];
-        $this->shopId     = $options['shop_id'];
-        $this->password   = $options['password'];
-        $this->secret     = $options['secret'];
+        $this->shopId = $options['shop_id'];
+        $this->password = $options['password'];
+        $this->secret = $options['secret'];
 
         $paymentMethods = $options['payment_methods'];
         foreach ($paymentMethods as $paymentMethod => $paymentMethodOptions) {
@@ -364,8 +364,8 @@ class WirecardSeamless extends AbstractPayment
         list($requestFingerprint, $requestFingerprintOrder) = $this->generateFingerprint($fields, true);
 
         $postFields = array_merge($fields, [
-            'requestFingerprint'        => $requestFingerprint,
-            'requestFingerprintOrder'   => $requestFingerprintOrder,
+            'requestFingerprint' => $requestFingerprint,
+            'requestFingerprintOrder' => $requestFingerprintOrder,
         ]);
 
         $result = $this->serverToServerRequest($this->URL_FRONTEND_INIT, $postFields);
@@ -431,8 +431,8 @@ class WirecardSeamless extends AbstractPayment
 
             $fields = array_merge($fields, [
                 sprintf('basketItem%dArticleNumber', $iCounter) => $item->getProductNumber(),
-                sprintf('basketItem%dName', $iCounter)          => $item->getProductName(),
-                sprintf('basketItem%dDescription', $iCounter) =>  $item->getProductName(),
+                sprintf('basketItem%dName', $iCounter) => $item->getProductName(),
+                sprintf('basketItem%dDescription', $iCounter) => $item->getProductName(),
                 sprintf('basketItem%dQuantity', $iCounter) => $item->getAmount(),
                 sprintf('basketItem%dUnitNetAmount', $iCounter) => $netPrice,
                 sprintf('basketItem%dUnitTaxRate', $iCounter) => $taxRate,
@@ -456,7 +456,7 @@ class WirecardSeamless extends AbstractPayment
 
             $fields = array_merge($fields, [
                 sprintf('basketItem%dArticleNumber', $iCounter) => $name,
-                sprintf('basketItem%dName', $iCounter)          => $name,
+                sprintf('basketItem%dName', $iCounter) => $name,
                 sprintf('basketItem%dDescription', $iCounter) => $name,
                 sprintf('basketItem%dQuantity', $iCounter) => 1,
                 sprintf('basketItem%dUnitNetAmount', $iCounter) => $net,
@@ -485,11 +485,11 @@ class WirecardSeamless extends AbstractPayment
         $orderIdent = $this->decodeOrderIdent($orderIdent);
 
         $authorizedData = [
-            'orderNumber'            => null,
-            'paymentType'            => null,
-            'paymentState'           => null,
-            'amount'                 => null,
-            'currency'               => null,
+            'orderNumber' => null,
+            'paymentType' => null,
+            'paymentState' => null,
+            'amount' => null,
+            'currency' => null,
             'gatewayReferenceNumber' => null
         ];
 
@@ -508,10 +508,10 @@ class WirecardSeamless extends AbstractPayment
                 '',
                 IStatus::STATUS_AUTHORIZED,
                 [
-                    'seamless_amount'       => '',
-                    'seamless_paymentType'  => 'PREPAYMENT',
+                    'seamless_amount' => '',
+                    'seamless_paymentType' => 'PREPAYMENT',
                     'seamless_paymentState' => 'SUCCESS',
-                    'seamless_response'     => ''
+                    'seamless_response' => ''
                 ]
             );
         }
@@ -528,7 +528,7 @@ class WirecardSeamless extends AbstractPayment
         // check required fields
         $required = [
             'responseFingerprintOrder' => null,
-            'responseFingerprint'      => null
+            'responseFingerprint' => null
         ];
 
         if ($response['errors'] || in_array($response['paymentState'], ['PENDING', 'CANCEL'])) {
@@ -540,10 +540,10 @@ class WirecardSeamless extends AbstractPayment
                     ? IStatus::STATUS_PENDING
                     : IStatus::STATUS_CANCELLED,
                 [
-                    'seamless_amount'       => '',
-                    'seamless_paymentType'  => '',
+                    'seamless_amount' => '',
+                    'seamless_paymentType' => '',
                     'seamless_paymentState' => '',
-                    'seamless_response'     => json_encode($response)
+                    'seamless_response' => json_encode($response)
                 ]
             );
 
@@ -609,10 +609,10 @@ class WirecardSeamless extends AbstractPayment
                 ? IStatus::STATUS_AUTHORIZED
                 : IStatus::STATUS_CANCELLED,
             [
-                'seamless_amount'       => (string)$price,
-                'seamless_paymentType'  => $response['paymentType'],
+                'seamless_amount' => (string)$price,
+                'seamless_paymentType' => $response['paymentType'],
                 'seamless_paymentState' => $response['paymentState'],
-                'seamless_response'     => print_r($response, true)
+                'seamless_response' => print_r($response, true)
             ]
         );
 
@@ -857,7 +857,7 @@ class WirecardSeamless extends AbstractPayment
     protected function calculateFingerprint($requestFingerprintSeed)
     {
         if ($this->hashAlgorithm === self::HASH_ALGO_HMAC_SHA512) {
-            $requestFingerprint= hash_hmac('sha512', $requestFingerprintSeed, $this->secret);
+            $requestFingerprint = hash_hmac('sha512', $requestFingerprintSeed, $this->secret);
             Logger::debug('#wirecard generateFingerprint (hmac): ' . $requestFingerprintSeed);
         } else {
             $requestFingerprint = hash('sha512', $requestFingerprintSeed);

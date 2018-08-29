@@ -185,7 +185,7 @@ class SearchController extends AdminController
 
         if (is_array($classnames) and !empty($classnames[0])) {
             if (in_array('folder', $subtypes)) {
-                $classnames[]='folder';
+                $classnames[] = 'folder';
             }
             foreach ($classnames as $classname) {
                 $conditionClassnameParts[] = $db->quote($classname);
@@ -279,7 +279,7 @@ class SearchController extends AdminController
 
         $hits = $searcherList->load();
 
-        $elements=[];
+        $elements = [];
         foreach ($hits as $hit) {
             $element = Element\Service::getElementById($hit->getId()->getType(), $hit->getId()->getId());
             if ($element->isAllowed('list')) {
@@ -354,7 +354,7 @@ class SearchController extends AdminController
                     for ($i = 0; $i < count($forbiddenDocumentPaths); $i++) {
                         $forbiddenDocumentPaths[$i] = " (maintype = 'document' AND fullpath not like " . $db->quote($forbiddenDocumentPaths[$i] . '%') . ')';
                     }
-                    $forbiddenConditions[] =  implode(' AND ', $forbiddenDocumentPaths) ;
+                    $forbiddenConditions[] = implode(' AND ', $forbiddenDocumentPaths) ;
                 }
             }
         }
@@ -491,7 +491,7 @@ class SearchController extends AdminController
         $parts = explode('/', trim($path, '/'));
         $count = count($parts) - 1;
 
-        for ($i=$count; $i >= 0; $i--) {
+        for ($i = $count; $i >= 0; $i--) {
             $shortPath = '/' . implode('/', array_unique($parts));
             if (strlen($shortPath) <= 50 || $i === 0) {
                 break;

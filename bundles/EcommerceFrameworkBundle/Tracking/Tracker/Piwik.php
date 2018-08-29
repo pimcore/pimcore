@@ -72,12 +72,12 @@ class Piwik extends Tracker implements
         parent::configureOptions($resolver);
 
         $resolver->setDefaults([
-            'template_prefix'    => 'PimcoreEcommerceFrameworkBundle:Tracking/piwik',
+            'template_prefix' => 'PimcoreEcommerceFrameworkBundle:Tracking/piwik',
 
             // by default, a cart add/remove delegates to cart update
             // if you manually trigger cart update on every change you can
             // can set this to false to avoid handling of add/remove
-            'handle_cart_add'    => true,
+            'handle_cart_add' => true,
             'handle_cart_remove' => true,
         ]);
 
@@ -89,7 +89,7 @@ class Piwik extends Tracker implements
     {
         parent::processOptions($options);
 
-        $this->handleCartAdd    = $options['handle_cart_add'];
+        $this->handleCartAdd = $options['handle_cart_add'];
         $this->handleCartRemove = $options['handle_cart_remove'];
     }
 
@@ -164,7 +164,7 @@ class Piwik extends Tracker implements
     {
         $items = $this->trackingItemBuilder->buildCheckoutItemsByCart($cart);
 
-        $calls   = $this->buildItemCalls($items);
+        $calls = $this->buildItemCalls($items);
         $calls[] = [
             'trackEcommerceCartUpdate',
             $cart->getPriceCalculator()->getGrandTotal()->getAmount()->asNumeric()
@@ -180,10 +180,10 @@ class Piwik extends Tracker implements
      */
     public function trackCheckoutComplete(AbstractOrder $order)
     {
-        $items       = $this->trackingItemBuilder->buildCheckoutItems($order);
+        $items = $this->trackingItemBuilder->buildCheckoutItems($order);
         $transaction = $this->trackingItemBuilder->buildCheckoutTransaction($order);
 
-        $calls   = $this->buildItemCalls($items);
+        $calls = $this->buildItemCalls($items);
         $calls[] = [
             'trackEcommerceOrder',
             $transaction->getId(),

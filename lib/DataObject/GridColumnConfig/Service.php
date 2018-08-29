@@ -43,7 +43,7 @@ class Service
         ContainerInterface $valueFactories
     ) {
         $this->operatorFactories = $operatorFactories;
-        $this->valueFactories    = $valueFactories;
+        $this->valueFactories = $valueFactories;
     }
 
     /**

@@ -35,7 +35,7 @@ class SessionConfigurator implements SessionConfiguratorInterface, EventSubscrib
     {
         return [
             FullPageCacheEvents::IGNORED_SESSION_KEYS => 'configureIgnoredSessionKeys',
-            FullPageCacheEvents::PREPARE_RESPONSE     => 'prepareFullPageCacheResponse'
+            FullPageCacheEvents::PREPARE_RESPONSE => 'prepareFullPageCacheResponse'
         ];
     }
 
@@ -67,7 +67,7 @@ class SessionConfigurator implements SessionConfiguratorInterface, EventSubscrib
      */
     public function prepareFullPageCacheResponse(PrepareResponseEvent $event)
     {
-        $request  = $event->getRequest();
+        $request = $event->getRequest();
         $response = $event->getResponse();
 
         if (!$request->hasSession()) {

@@ -133,7 +133,7 @@ abstract class TargetingDocument extends PageSnippet implements TargetingDocumen
                 // if there's no dedicated content for this target group, inherit from the "original" content (unprefixed)
                 // and mark it as inherited so it is clear in the ui that the content is not specific to the selected target group
                 // replace all occurrences of the target group prefix, this is needed because of block-prefixes
-                $inheritedName    = str_replace($this->getTargetGroupElementPrefix(), '', $name);
+                $inheritedName = str_replace($this->getTargetGroupElementPrefix(), '', $name);
                 $inheritedElement = parent::getElement($inheritedName);
 
                 if ($inheritedElement) {
@@ -155,7 +155,7 @@ abstract class TargetingDocument extends PageSnippet implements TargetingDocumen
 
     public function __sleep()
     {
-        $finalVars  = [];
+        $finalVars = [];
         $parentVars = parent::__sleep();
 
         $blockedVars = ['useTargetGroup'];

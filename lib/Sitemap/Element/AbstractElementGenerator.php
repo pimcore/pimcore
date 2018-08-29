@@ -43,7 +43,7 @@ abstract class AbstractElementGenerator implements GeneratorInterface
      */
     public function __construct(array $filters = [], array $processors = [])
     {
-        $this->filters    = $filters;
+        $this->filters = $filters;
         $this->processors = $processors;
     }
 

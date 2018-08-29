@@ -72,7 +72,7 @@ class Dao extends Model\Dao\AbstractDao
                         'context' => [
                             'containerType' => 'objectbrick',
                             'containerKey' => $this->model->getType(),
-                            'fieldname' =>  $this->model->getFieldname()
+                            'fieldname' => $this->model->getFieldname()
                         ]
                     ]);
             } elseif ($fd->getColumnType()) {
@@ -249,7 +249,7 @@ class Dao extends Model\Dao\AbstractDao
                     $fakeModel->setContext([
                         'containerType' => 'objectbrick',
                         'containerKey' => $this->model->getType(),
-                        'fieldname' =>  $this->model->getFieldname()
+                        'fieldname' => $this->model->getFieldname()
                     ]);
                     $localizedFieldDao->setModel($fakeModel);
                     $localizedFieldDao->delete();

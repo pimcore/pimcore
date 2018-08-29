@@ -48,10 +48,10 @@ class DocumentUrlGenerator implements DocumentUrlGeneratorInterface
     {
         if ($document instanceof Document\Page && $document->getPrettyUrl()) {
             $prettyUrlSet = true;
-            $path         = $document->getPrettyUrl();
+            $path = $document->getPrettyUrl();
         } else {
             $prettyUrlSet = false;
-            $path         = $document->getRealFullPath();
+            $path = $document->getRealFullPath();
         }
         if (null !== $site && !$prettyUrlSet) {
             // strip site prefix from path

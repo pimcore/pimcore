@@ -163,23 +163,23 @@ class Device implements DataProviderInterface
         if ($dd->isBot()) {
             return [
                 'user_agent' => $dd->getUserAgent(),
-                'bot'        => $dd->getBot(),
-                'is_bot'     => true,
+                'bot' => $dd->getBot(),
+                'is_bot' => true,
             ];
         }
 
-        $osFamily      = OperatingSystem::getOsFamily($dd->getOs('short_name'));
+        $osFamily = OperatingSystem::getOsFamily($dd->getOs('short_name'));
         $browserFamily = Browser::getBrowserFamily($dd->getClient('short_name'));
 
         $processed = [
-            'user_agent'     => $dd->getUserAgent(),
-            'bot'            => $dd->getBot(),
-            'is_bot'         => $dd->isBot(),
-            'os'             => $dd->getOs(),
-            'os_family'      => $osFamily !== false ? $osFamily : 'Unknown',
-            'client'         => $dd->getClient(),
-            'device'         => [
-                'type'  => $dd->getDeviceName(),
+            'user_agent' => $dd->getUserAgent(),
+            'bot' => $dd->getBot(),
+            'is_bot' => $dd->isBot(),
+            'os' => $dd->getOs(),
+            'os_family' => $osFamily !== false ? $osFamily : 'Unknown',
+            'client' => $dd->getClient(),
+            'device' => [
+                'type' => $dd->getDeviceName(),
                 'brand' => $dd->getBrand(),
                 'model' => $dd->getModel(),
             ],

@@ -45,7 +45,7 @@ class AdminSessionHandler extends AbstractAdminSessionHandler implements LoggerA
         $this->openedSessions++;
 
         $this->logger->debug('Admin session {name} was successfully opened. Open admin sessions: {count}', [
-            'name'  => $sessionName,
+            'name' => $sessionName,
             'count' => $this->openedSessions
         ]);
 
@@ -67,7 +67,7 @@ class AdminSessionHandler extends AbstractAdminSessionHandler implements LoggerA
             ]);
         } else {
             $this->logger->debug('Not writing/closing session admin session {name} as there are still {count} open sessions', [
-                'name'  => $this->getSessionName(),
+                'name' => $this->getSessionName(),
                 'count' => $this->openedSessions
             ]);
         }

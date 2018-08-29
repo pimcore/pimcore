@@ -44,12 +44,12 @@ class CodeInjectorTest extends TestCase
         parent::setUp();
 
         $this->responseHelper = $this->getMockBuilder(ResponseHelper::class)->getMock();
-        $this->injector       = new CodeInjector($this->responseHelper);
+        $this->injector = new CodeInjector($this->responseHelper);
     }
 
     public function testNotChangedIfNoMatch()
     {
-        $html   = '<html><body></body></html>';
+        $html = '<html><body></body></html>';
         $result = $this->injector->injectIntoHtml($html, $this->codePart, CodeInjector::SELECTOR_HEAD, CodeInjector::POSITION_BEGINNING);
 
         $this->assertEquals($html, $result);
@@ -61,7 +61,7 @@ class CodeInjectorTest extends TestCase
             ->method('isHtmlResponse')
             ->willReturn(false);
 
-        $content  = '<html><head></head><body>foo</body></html>';
+        $content = '<html><head></head><body>foo</body></html>';
         $response = new Response($content);
 
         $this->injector->inject($response, $this->codePart, CodeInjector::SELECTOR_BODY, CodeInjector::POSITION_BEGINNING);

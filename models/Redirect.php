@@ -495,20 +495,16 @@ class Redirect extends AbstractModel
         return $this->creationDate;
     }
 
-    /**
-     *
-     */
-    public function save() {
+    public function save()
+    {
         \Pimcore::getEventDispatcher()->dispatch(RedirectEvents::PRE_SAVE, new RedirectEvent($this));
         $this->getDao()->save();
         \Pimcore::getEventDispatcher()->dispatch(RedirectEvents::POST_SAVE, new RedirectEvent($this));
         $this->clearDependentCache();
     }
 
-    /**
-     *
-     */
-    public function delete() {
+    public function delete()
+    {
         \Pimcore::getEventDispatcher()->dispatch(RedirectEvents::PRE_DELETE, new RedirectEvent($this));
         $this->getDao()->delete();
         \Pimcore::getEventDispatcher()->dispatch(RedirectEvents::POST_DELETE, new RedirectEvent($this));

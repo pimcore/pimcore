@@ -554,7 +554,6 @@ class ImageGallery extends Model\DataObject\ClassDefinition\Data
     {
         if ($value) {
             if ($params['blockmode'] && $value instanceof Model\DataObject\Data\ImageGallery) {
-
                 $list = [];
                 $items = $value->getItems();
                 $def = new Hotspotimage();
@@ -563,15 +562,14 @@ class ImageGallery extends Model\DataObject\ClassDefinition\Data
                         if ($item instanceof DataObject\Data\Hotspotimage) {
                             $list[] = $def->marshal($item, $object, $params);
                         }
-
                     }
                 }
-                return $list;
 
+                return $list;
             }
 
             return [
-                    'value' =>  $value[$this->getName() . '__images'],
+                    'value' => $value[$this->getName() . '__images'],
                     'value2' => $value[$this->getName() . '__hotspots']
                 ];
         }
@@ -596,6 +594,7 @@ class ImageGallery extends Model\DataObject\ClassDefinition\Data
             }
 
             $gal = new DataObject\Data\ImageGallery($items);
+
             return $gal;
         }
 

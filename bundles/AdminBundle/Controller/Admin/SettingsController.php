@@ -830,7 +830,7 @@ class SettingsController extends AdminController
 
                     $result = array_merge($result, [
                         'success' => false,
-                        'errors'  => $errors
+                        'errors' => $errors
                     ]);
                 }
             }
@@ -1241,7 +1241,7 @@ class SettingsController extends AdminController
                 if (!$groups[$item->getGroup()]) {
                     $groups[$item->getGroup()] = [
                         'id' => 'group_' . $item->getName(),
-                        'text' =>  $item->getGroup(),
+                        'text' => $item->getGroup(),
                         'expandable' => true,
                         'leaf' => false,
                         'allowChildren' => true,
@@ -1295,7 +1295,7 @@ class SettingsController extends AdminController
         /** @var Asset\Image\Thumbnail\Config $item */
         foreach ($items as $item) {
             $thumbnails[] = [
-                'id'   => $item->getName(),
+                'id' => $item->getName(),
                 'text' => $item->getName(),
             ];
         }
@@ -1771,13 +1771,13 @@ class SettingsController extends AdminController
                     $date = $value;
                     $value = null;
 
-                    if(!empty($date) && !empty($data[$cleanKeyParts[0].".".$cleanKeyParts[1].".time"])) {
-                        $time = $data[$cleanKeyParts[0].".".$cleanKeyParts[1].".time"];
-                        $time = explode("T", $time);
-                        $date = explode("T", $date);
-                        $value = strtotime($date[0]."T".$time[1]);
+                    if (!empty($date) && !empty($data[$cleanKeyParts[0].'.'.$cleanKeyParts[1].'.time'])) {
+                        $time = $data[$cleanKeyParts[0].'.'.$cleanKeyParts[1].'.time'];
+                        $time = explode('T', $time);
+                        $date = explode('T', $date);
+                        $value = strtotime($date[0].'T'.$time[1]);
                     }
-                } else if ($cleanKeyParts[2] == 'time') {
+                } elseif ($cleanKeyParts[2] == 'time') {
                     continue;
                 }
 

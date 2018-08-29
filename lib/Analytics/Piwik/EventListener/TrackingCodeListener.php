@@ -86,7 +86,7 @@ class TrackingCodeListener implements EventSubscriberInterface
             return;
         }
 
-        if($this->isPreviewRequest($request)) {
+        if ($this->isPreviewRequest($request)) {
             return;
         }
 

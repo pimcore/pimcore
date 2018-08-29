@@ -67,7 +67,7 @@ class BundleCollectionTest extends TestCase
         $identifiers = [];
 
         foreach ($this->bundles as $bundle) {
-            $className     = get_class($bundle);
+            $className = get_class($bundle);
             $identifiers[] = $className;
 
             $this->collection->addBundle($className);
@@ -88,7 +88,7 @@ class BundleCollectionTest extends TestCase
         $identifiers = [];
 
         foreach ($this->bundles as $bundle) {
-            $className     = get_class($bundle);
+            $className = get_class($bundle);
             $identifiers[] = $className;
         }
 
@@ -168,7 +168,7 @@ class BundleCollectionTest extends TestCase
     public function testBundlesAreOrderedByPriority()
     {
         $collection = $this->collection;
-        $bundles    = $this->bundles;
+        $bundles = $this->bundles;
 
         $collection->addBundle($bundles[0], 10);
         $collection->addBundle($bundles[1], 5);
@@ -187,7 +187,7 @@ class BundleCollectionTest extends TestCase
     {
         $collection = $this->collection;
 
-        $bundles   = $this->bundles;
+        $bundles = $this->bundles;
         $bundles[] = new BundleD;
 
         $collection->addBundle($bundles[0]); // this will always be loaded

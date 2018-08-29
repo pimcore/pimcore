@@ -59,7 +59,7 @@ class Bootstrap
 
         if ($pimcoreConsole) {
             $input = new ArgvInput();
-            $env   = $input->getParameterOption(['--env', '-e'], Config::getEnvironment());
+            $env = $input->getParameterOption(['--env', '-e'], Config::getEnvironment());
             $debug = \Pimcore::inDebugMode() && !$input->hasParameterOption(['--no-debug', '']);
 
             Config::setEnvironment($env);
@@ -279,7 +279,7 @@ class Bootstrap
     public static function kernel()
     {
         $environment = Config::getEnvironment();
-        $debug       = Config::getEnvironmentConfig()->activatesKernelDebugMode($environment);
+        $debug = Config::getEnvironmentConfig()->activatesKernelDebugMode($environment);
 
         if ($debug) {
             Debug::enable();
@@ -288,8 +288,7 @@ class Bootstrap
 
         if (defined('PIMCORE_KERNEL_CLASS')) {
             $kernelClass = PIMCORE_KERNEL_CLASS;
-        }
-        else {
+        } else {
             $kernelClass = '\AppKernel';
         }
 
@@ -300,7 +299,6 @@ class Bootstrap
         if (!is_subclass_of($kernelClass, Kernel::class)) {
             throw new \InvalidArgumentException(sprintf('Defined Kernel Class %s needs to extend the \Pimcore\Kernel Class', $kernelClass));
         }
-
 
         $kernel = new $kernelClass($environment, $debug);
         \Pimcore::setKernel($kernel);

@@ -32,12 +32,12 @@ class PartsBuilderTest extends TestCase
     ];
 
     private $inputOptions = [
-        'foo'  => true,
-        'bar'  => false, // omitted because false
-        'baz'  => 'inga',
+        'foo' => true,
+        'bar' => false, // omitted because false
+        'baz' => 'inga',
         'test' => null,  // omitted because null
-        'o'    => true,
-        'x'    => 'yz'
+        'o' => true,
+        'x' => 'yz'
     ];
 
     private $expected = [
@@ -108,8 +108,8 @@ class PartsBuilderTest extends TestCase
         ], [
             'foo' => 'bar',
             'bar' => true,
-            'x'   => 'yz',
-            'y'   => 'z',
+            'x' => 'yz',
+            'y' => 'z',
         ]);
 
         $builder->addOption('foo', 'baz');

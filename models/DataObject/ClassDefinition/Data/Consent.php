@@ -389,7 +389,7 @@ class Consent extends Model\DataObject\ClassDefinition\Data
      */
     public function getFilterCondition($value, $operator, $params = [])
     {
-        $params['name']= $this->name;
+        $params['name'] = $this->name;
 
         return $this->getFilterConditionExt(
             $value,

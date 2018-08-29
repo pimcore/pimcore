@@ -81,8 +81,8 @@ class GoogleTagManagerListener
         EventDispatcherInterface $eventDispatcher,
         EngineInterface $templatingEngine
     ) {
-        $this->siteIdProvider   = $siteIdProvider;
-        $this->eventDispatcher  = $eventDispatcher;
+        $this->siteIdProvider = $siteIdProvider;
+        $this->eventDispatcher = $eventDispatcher;
         $this->templatingEngine = $templatingEngine;
     }
 
@@ -106,11 +106,11 @@ class GoogleTagManagerListener
             return;
         }
 
-        if($this->isPreviewRequest($request)) {
+        if ($this->isPreviewRequest($request)) {
             return;
         }
 
-        $siteId  = $this->siteIdProvider->getForRequest($event->getRequest());
+        $siteId = $this->siteIdProvider->getForRequest($event->getRequest());
         $siteKey = $siteId->getConfigKey();
 
         $reportConfig = Config::getReportConfig();
@@ -181,7 +181,7 @@ class GoogleTagManagerListener
 
     private function renderTemplate(CodeEvent $event): string
     {
-        $data           = $event->getData();
+        $data = $event->getData();
         $data['blocks'] = $event->getBlocks();
 
         $code = $this->templatingEngine->render(

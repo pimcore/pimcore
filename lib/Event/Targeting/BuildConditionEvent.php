@@ -44,8 +44,8 @@ class BuildConditionEvent extends Event
 
     public function __construct(string $type, string $class, array $config)
     {
-        $this->type   = $type;
-        $this->class  = $class;
+        $this->type = $type;
+        $this->class = $class;
         $this->config = $config;
     }
 

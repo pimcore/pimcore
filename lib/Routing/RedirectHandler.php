@@ -97,7 +97,7 @@ class RedirectHandler implements LoggerAwareInterface
             $sourceSite = $this->siteResolver->getSite($request);
         }
 
-        $config       = Config::getSystemConfig();
+        $config = Config::getSystemConfig();
         $partResolver = new RedirectUrlPartResolver($request);
 
         foreach ($this->getFilteredRedirects($override) as $redirect) {
@@ -119,13 +119,13 @@ class RedirectHandler implements LoggerAwareInterface
         }
 
         $matchPart = $partResolver->getRequestUriPart($redirect->getType());
-        $matches   = [];
+        $matches = [];
 
         $doesMatch = false;
         if ($redirect->isRegex()) {
             $doesMatch = (bool)@preg_match($redirect->getSource(), $matchPart, $matches);
         } else {
-            $source    = str_replace('+', ' ', $redirect->getSource()); // see #2202
+            $source = str_replace('+', ' ', $redirect->getSource()); // see #2202
             $doesMatch = $source === $matchPart;
         }
 
@@ -173,7 +173,7 @@ class RedirectHandler implements LoggerAwareInterface
                 $url = $request->getScheme() . '://' . $targetSite->getMainDomain() . $url;
             } catch (\Exception $e) {
                 $this->logger->error('Site with ID {targetSite} not found', [
-                    'redirect'   => $redirect->getId(),
+                    'redirect' => $redirect->getId(),
                     'targetSite' => $redirect->getTargetSite()
                 ]);
 
@@ -197,7 +197,7 @@ class RedirectHandler implements LoggerAwareInterface
         }
 
         $statusCode = $redirect->getStatusCode() ?: Response::HTTP_MOVED_PERMANENTLY;
-        $response   = new RedirectResponse($url, $statusCode);
+        $response = new RedirectResponse($url, $statusCode);
 
         // log all redirects to the redirect log
         \Pimcore\Log\Simple::log(

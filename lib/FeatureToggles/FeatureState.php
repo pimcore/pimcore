@@ -35,7 +35,7 @@ class FeatureState implements FeatureStateInterface
             throw new \InvalidArgumentException('State must be >= 0');
         }
 
-        $this->type  = $type;
+        $this->type = $type;
         $this->value = $state;
     }
 

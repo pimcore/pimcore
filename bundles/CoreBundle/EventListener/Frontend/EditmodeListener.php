@@ -80,8 +80,8 @@ class EditmodeListener implements EventSubscriberInterface
     ) {
         $this->editmodeResolver = $editmodeResolver;
         $this->documentResolver = $documentResolver;
-        $this->userLoader       = $userLoader;
-        $this->bundleManager    = $bundleManager;
+        $this->userLoader = $userLoader;
+        $this->bundleManager = $bundleManager;
     }
 
     /**
@@ -90,7 +90,7 @@ class EditmodeListener implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            KernelEvents::REQUEST  => 'onKernelRequest',
+            KernelEvents::REQUEST => 'onKernelRequest',
             KernelEvents::RESPONSE => 'onKernelResponse'
         ];
     }
@@ -114,7 +114,7 @@ class EditmodeListener implements EventSubscriberInterface
 
     public function onKernelResponse(FilterResponseEvent $event)
     {
-        $request  = $event->getRequest();
+        $request = $event->getRequest();
         $response = $event->getResponse();
 
         if (!$event->isMasterRequest()) {
@@ -196,7 +196,7 @@ class EditmodeListener implements EventSubscriberInterface
             // if there's no head and no body, create a wrapper including these elements
             // add html headers for snippets in editmode, so there is no problem with javascript
             if (!$headElement && !$bodyElement && !$htmlElement) {
-                $html      = "<!DOCTYPE html>\n<html>\n<head></head><body>" . $html . '</body></html>';
+                $html = "<!DOCTYPE html>\n<html>\n<head></head><body>" . $html . '</body></html>';
                 $skipCheck = true;
             }
 
@@ -225,9 +225,9 @@ class EditmodeListener implements EventSubscriberInterface
      */
     protected function buildHeadHtml(Document $document, $language)
     {
-        $config      = Config::getSystemConfig();
-        $libraries   = $this->getEditmodeLibraries();
-        $scripts     = $this->getEditmodeScripts();
+        $config = Config::getSystemConfig();
+        $libraries = $this->getEditmodeLibraries();
+        $scripts = $this->getEditmodeScripts();
         $stylesheets = $this->getEditmodeStylesheets();
 
         $headHtml = "\n\n\n<!-- pimcore editmode -->\n";

@@ -233,6 +233,7 @@ class Asset extends Element\AbstractElement
         try {
             $asset = new Asset();
             $asset->getDao()->getByPath($path);
+
             return self::getById($asset->getId(), $force);
         } catch (\Exception $e) {
             Logger::warning($e->getMessage());
@@ -461,7 +462,7 @@ class Asset extends Element\AbstractElement
         // additional parameters (e.g. "versionNote" for the version note)
         $params = [];
         if (func_num_args() && is_array(func_get_arg(0))) {
-            $params =  func_get_arg(0);
+            $params = func_get_arg(0);
         }
 
         $isUpdate = false;
@@ -483,7 +484,7 @@ class Asset extends Element\AbstractElement
         // if a transaction fails it gets restarted $maxRetries times, then the exception is thrown out
         // this is especially useful to avoid problems with deadlocks in multi-threaded environments (forked workers, ...)
         $maxRetries = 5;
-        for ($retries=0; $retries < $maxRetries; $retries++) {
+        for ($retries = 0; $retries < $maxRetries; $retries++) {
             $this->beginTransaction();
 
             try {

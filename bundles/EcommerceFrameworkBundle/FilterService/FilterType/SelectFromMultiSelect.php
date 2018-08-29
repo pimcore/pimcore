@@ -68,7 +68,7 @@ class SelectFromMultiSelect extends AbstractFilterType
         $currentFilter[$field] = $value;
 
         if (!empty($value)) {
-            $value =  '%' . IWorker::MULTISELECT_DELIMITER  . $value .  IWorker::MULTISELECT_DELIMITER . '%';
+            $value = '%' . IWorker::MULTISELECT_DELIMITER  . $value .  IWorker::MULTISELECT_DELIMITER . '%';
             if ($isPrecondition) {
                 $productList->addCondition($field . ' LIKE ' . $productList->quote($value), 'PRECONDITION_' . $field);
             } else {

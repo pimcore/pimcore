@@ -52,11 +52,11 @@ abstract class Feature extends Enum
     private static function buildConstants(string $class): array
     {
         $reflection = new \ReflectionClass($class);
-        $constants  = $reflection->getConstants();
+        $constants = $reflection->getConstants();
 
         // add a magic ALL constant
         $allMask = 0;
-        $count   = 0;
+        $count = 0;
         $defined = [];
 
         foreach ($constants as $name => $mask) {

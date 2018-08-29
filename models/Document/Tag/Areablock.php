@@ -310,7 +310,7 @@ class Areablock extends Model\Document\Tag implements BlockInterface
     {
         // clean up invalid brick editmode options
         if (array_key_exists('options', $options)) {
-            foreach(['params', 'globalParams'] as $paramKey) {
+            foreach (['params', 'globalParams'] as $paramKey) {
                 if (array_key_exists($paramKey, $options['options'])) {
                     $validOptions = ['forceEditInView', 'editWidth', 'editHeight'];
                     foreach ($options['options'][$paramKey] as $brickName => $params) {
@@ -342,7 +342,7 @@ class Areablock extends Model\Document\Tag implements BlockInterface
         // set name suffix for the whole block element, this will be added to all child elements of the block
         $this->getBlockState()->pushBlock(BlockName::createFromTag($this));
 
-        $attributes      = $this->getEditmodeElementAttributes($options);
+        $attributes = $this->getEditmodeElementAttributes($options);
         $attributeString = HtmlUtils::assembleAttributeString($attributes);
 
         $this->outputEditmode('<div ' . $attributeString . '>');
@@ -369,7 +369,7 @@ class Areablock extends Model\Document\Tag implements BlockInterface
     public function blockStart()
     {
         $attributes = [
-            'data-name'      => $this->getName(),
+            'data-name' => $this->getName(),
             'data-real-name' => $this->getRealName(),
         ];
 
@@ -379,12 +379,12 @@ class Areablock extends Model\Document\Tag implements BlockInterface
         }
 
         $outerAttributes = [
-            'key'  => $this->indices[$this->current]['key'],
+            'key' => $this->indices[$this->current]['key'],
             'type' => $this->indices[$this->current]['type'],
             'data-hidden' => $hidden
         ];
 
-        $attr  = HtmlUtils::assembleAttributeString($attributes);
+        $attr = HtmlUtils::assembleAttributeString($attributes);
         $oAttr = HtmlUtils::assembleAttributeString($outerAttributes);
 
         // outer element
@@ -503,7 +503,7 @@ class Areablock extends Model\Document\Tag implements BlockInterface
         }
 
         $result = [
-            'name'  => [],
+            'name' => [],
             'index' => []
         ];
 
@@ -727,7 +727,7 @@ class Areablock extends Model\Document\Tag implements BlockInterface
     {
         $document = Model\Document\Page::getById($this->getDocumentId());
 
-        $parentBlockNames   = $this->getParentBlockNames();
+        $parentBlockNames = $this->getParentBlockNames();
         $parentBlockNames[] = $this->getName();
 
         $list = [];

@@ -33,7 +33,7 @@ class AdminController extends \Pimcore\Bundle\AdminBundle\Controller\AdminContro
         $response = [];
         foreach ($manager->getServices() as $service) {
             $response[] = [
-                'name'    => $service->getName(),
+                'name' => $service->getName(),
                 'jsClass' => $service->getJsClassName()
             ];
         }

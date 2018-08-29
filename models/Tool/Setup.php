@@ -17,7 +17,6 @@
 
 namespace Pimcore\Model\Tool;
 
-use Pimcore\File;
 use Pimcore\Install\SystemConfig\ConfigWriter;
 use Pimcore\Model;
 

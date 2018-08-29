@@ -77,7 +77,7 @@ class Blacklist extends Model\AbstractModel
      */
     public function setCreationDate($creationDate)
     {
-        $this->creationDate =  (int) $creationDate;
+        $this->creationDate = (int) $creationDate;
     }
 
     /**

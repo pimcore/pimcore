@@ -34,7 +34,7 @@ class SystemEventsListener implements EventSubscriberInterface
 
     public function __construct(ContainerInterface $container)
     {
-        $this->container  = $container;
+        $this->container = $container;
     }
 
     public static function getSubscribedEvents()

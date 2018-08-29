@@ -56,10 +56,10 @@ class SitesManager
         ReportConfigWriter $configWriter,
         TranslatorInterface $translator
     ) {
-        $this->config       = $configProvider->getConfig();
-        $this->apiClient    = $apiClient;
+        $this->config = $configProvider->getConfig();
+        $this->apiClient = $apiClient;
         $this->configWriter = $configWriter;
-        $this->translator   = $translator;
+        $this->translator = $translator;
     }
 
     public function addSite(SiteId $siteId, array $params = []): int
@@ -73,9 +73,9 @@ class SitesManager
         }
 
         $params = array_merge($this->buildParameters([
-            'method'   => 'SitesManager.addSite',
+            'method' => 'SitesManager.addSite',
             'siteName' => $siteId->getTitle($this->translator),
-            'urls'     => $this->buildSiteUrls($siteId)
+            'urls' => $this->buildSiteUrls($siteId)
         ]), $params);
 
         $response = $this->apiClient->request('POST', [
@@ -114,7 +114,7 @@ class SitesManager
         $params = array_merge($this->buildParameters([
             'method' => 'SitesManager.updateSite',
             'idSite' => $piwikSiteId,
-            'urls'   => $this->buildSiteUrls($siteId, $currentUrls)
+            'urls' => $this->buildSiteUrls($siteId, $currentUrls)
         ]), $params);
 
         $response = $this->apiClient->request('POST', [
@@ -160,8 +160,8 @@ class SitesManager
     private function buildParameters(array $parameters): array
     {
         return array_merge([
-            'module'     => 'API',
-            'format'     => 'JSON',
+            'module' => 'API',
+            'format' => 'JSON',
             'token_auth' => $this->getApiToken(),
         ], $parameters);
     }

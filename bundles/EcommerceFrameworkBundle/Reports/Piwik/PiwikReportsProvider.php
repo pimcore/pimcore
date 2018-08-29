@@ -73,9 +73,9 @@ class PiwikReportsProvider
         TranslatorInterface $translator
     ) {
         $this->siteIdProvider = $siteIdProvider;
-        $this->config         = $config;
-        $this->widgetBroker   = $widgetBroker;
-        $this->translator     = $translator;
+        $this->config = $config;
+        $this->widgetBroker = $widgetBroker;
+        $this->translator = $translator;
     }
 
     public function getReportingWidgets(): array
@@ -118,8 +118,8 @@ class PiwikReportsProvider
             }
 
             $reports[] = [
-                'id'      => $siteConfig->getConfigKey(),
-                'title'   => $siteConfig->getTitle($this->translator),
+                'id' => $siteConfig->getConfigKey(),
+                'title' => $siteConfig->getTitle($this->translator),
                 'entries' => $entries,
             ];
         }
@@ -129,7 +129,7 @@ class PiwikReportsProvider
 
     private function loadAvailableReports(SiteId $siteConfig): array
     {
-        $widgets   = $this->widgetBroker->getWidgetData($siteConfig->getConfigKey());
+        $widgets = $this->widgetBroker->getWidgetData($siteConfig->getConfigKey());
         $canIframe = $this->config->isIframeIntegrationConfigured();
 
         $result = [];
@@ -142,17 +142,17 @@ class PiwikReportsProvider
                 $widgetData = $widgetConfig->getData();
 
                 $entry = [
-                    'id'        => $widgetId,
-                    'title'     => $widgetData['subcategory']['name'],
+                    'id' => $widgetId,
+                    'title' => $widgetData['subcategory']['name'],
                     'fullTitle' => $this->getFullTitle($widgetData),
                 ];
 
                 if ($canIframe) {
                     $entry['type'] = 'iframe';
-                    $entry['url']  = $this->generateIframeUrl($siteConfig, $widgetData);
+                    $entry['url'] = $this->generateIframeUrl($siteConfig, $widgetData);
                 } elseif (in_array($widgetId, $this->widgetFallbackWidgets)) {
                     $entry['type'] = 'widget';
-                    $entry['url']  = $widgetConfig->getUrl();
+                    $entry['url'] = $widgetConfig->getUrl();
                 } else {
                     continue;
                 }
@@ -185,10 +185,10 @@ class PiwikReportsProvider
         ]);
 
         $hashParams = [
-            'idSite'      => $piwikSiteId,
-            'period'      => 'month',
-            'date'        => 'yesterday',
-            'category'    => $widgetData['category']['id'],
+            'idSite' => $piwikSiteId,
+            'period' => 'month',
+            'date' => 'yesterday',
+            'category' => $widgetData['category']['id'],
             'subcategory' => $widgetData['subcategory']['id'],
         ];
 

@@ -155,7 +155,7 @@ class ContainerService
     public function containerExists($key)
     {
         $key = (string) $key;
-        $return =  array_key_exists($key, $this->_items[$this->currentIndex]);
+        $return = array_key_exists($key, $this->_items[$this->currentIndex]);
 
         return $return;
     }

@@ -289,7 +289,7 @@ class MigrateTagNamingStrategyCommand extends AbstractCommand
                 $this->io->writeln($query);
             }
         } else {
-            $fs       = new Filesystem();
+            $fs = new Filesystem();
             $tempfile = $fs->tempnam(sys_get_temp_dir(), 'migrate-sql-');
 
             $this->io->writeln(sprintf('[SQL] Dumping SQL queries to temp file <comment>%s</comment>', $tempfile));
@@ -319,7 +319,7 @@ class MigrateTagNamingStrategyCommand extends AbstractCommand
      */
     private function prepareRenames(array $nameMapping): array
     {
-        $db   = $this->getContainer()->get('database_connection');
+        $db = $this->getContainer()->get('database_connection');
         $stmt = $db->prepare('SELECT documentId, name FROM documents_elements WHERE documentId = :documentId AND name = :name');
 
         // keep a blacklist of all not existing elements (inheritance)
@@ -338,7 +338,7 @@ class MigrateTagNamingStrategyCommand extends AbstractCommand
                 // check the old editable exists in the DB
                 $oldResult = $stmt->execute([
                     'documentId' => $documentId,
-                    'name'       => $oldName
+                    'name' => $oldName
                 ]);
 
                 if (!$oldResult) {
@@ -362,7 +362,7 @@ class MigrateTagNamingStrategyCommand extends AbstractCommand
                 // check if there is no new editable
                 $newResult = $stmt->execute([
                     'documentId' => $documentId,
-                    'name'       => $newName
+                    'name' => $newName
                 ]);
 
                 if (!$newResult) {
@@ -408,7 +408,7 @@ class MigrateTagNamingStrategyCommand extends AbstractCommand
      */
     private function processRenames(array $nameMapping)
     {
-        $db    = $this->getContainer()->get('database_connection');
+        $db = $this->getContainer()->get('database_connection');
         $query = 'UPDATE documents_elements SET name = :newName WHERE documentId = :documentId and name = :oldName';
 
         /** @var Statement $stmt */
@@ -459,8 +459,8 @@ class MigrateTagNamingStrategyCommand extends AbstractCommand
 
                     $result = $stmt->execute([
                         'documentId' => $documentId,
-                        'oldName'    => $oldName,
-                        'newName'    => $newName,
+                        'oldName' => $oldName,
+                        'newName' => $newName,
                     ]);
 
                     if (!$result) {
@@ -494,10 +494,10 @@ class MigrateTagNamingStrategyCommand extends AbstractCommand
 
         /** @var Application $application */
         $application = $this->getApplication();
-        $kernel      = $application->getKernel();
+        $kernel = $application->getKernel();
 
         $identifier = sprintf('editable-migration');
-        $directory  = $kernel->getCacheDir() . '/' . $identifier;
+        $directory = $kernel->getCacheDir() . '/' . $identifier;
 
         if ($this->io->getInput()->getOption('no-cache')) {
             $this->cache = new ArrayCache();
@@ -539,7 +539,7 @@ class MigrateTagNamingStrategyCommand extends AbstractCommand
         $container = $this->getContainer();
 
         $strategyName = $this->input->getOption('strategy');
-        $strategyId   = 'pimcore.document.tag.naming.migration.strategy.' . $strategyName;
+        $strategyId = 'pimcore.document.tag.naming.migration.strategy.' . $strategyName;
 
         if (!$container->has($strategyId)) {
             throw new \InvalidArgumentException(sprintf(
@@ -559,7 +559,7 @@ class MigrateTagNamingStrategyCommand extends AbstractCommand
         $container = $this->getContainer();
 
         /** @var NamingStrategyInterface $strategy */
-        $strategy           = $container->get('pimcore.document.tag.naming.strategy.nested');
+        $strategy = $container->get('pimcore.document.tag.naming.strategy.nested');
         $configuredStrategy = $container->get('pimcore.document.tag.naming.strategy');
 
         if ($strategy === $configuredStrategy) {
@@ -611,7 +611,7 @@ class MigrateTagNamingStrategyCommand extends AbstractCommand
 
         $qb->setParameter('validTypes', $this->validDocumentTypes, Connection::PARAM_STR_ARRAY);
 
-        $stmt   = $qb->execute();
+        $stmt = $qb->execute();
         $result = $stmt->fetchAll();
 
         $documentIds = array_map(function ($id) {

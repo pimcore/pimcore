@@ -31,7 +31,7 @@ final class WidgetReference
 
     public function __construct(string $id, string $title)
     {
-        $this->id    = $id;
+        $this->id = $id;
         $this->title = $title;
     }
 

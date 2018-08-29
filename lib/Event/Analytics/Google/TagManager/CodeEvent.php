@@ -42,8 +42,8 @@ class CodeEvent extends Event
         array $blocks,
         string $template
     ) {
-        $this->data     = $data;
-        $this->blocks   = $blocks;
+        $this->data = $data;
+        $this->blocks = $blocks;
         $this->template = $template;
     }
 

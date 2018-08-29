@@ -245,7 +245,7 @@ class Builder
      */
     protected function buildNextLevel($parentDocument, $isRoot = false, $pageCallback = null, $parents = [])
     {
-        $pages  = [];
+        $pages = [];
         $childs = $this->getChilds($parentDocument);
         $parents[$parentDocument->getId()] = $parentDocument;
 

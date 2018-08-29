@@ -35,7 +35,7 @@ class Action extends Helper
         ActionRenderer $actionRenderer,
         DocumentTargetingConfigurator $targetingConfigurator
     ) {
-        $this->actionRenderer        = $actionRenderer;
+        $this->actionRenderer = $actionRenderer;
         $this->targetingConfigurator = $targetingConfigurator;
     }
 

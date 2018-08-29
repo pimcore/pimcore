@@ -83,9 +83,9 @@ class Analytics
     public static function addAdditionalCode($code, $where = 'beforeEnd')
     {
         $blockMapping = [
-            'beforeInit'     => Tracker::BLOCK_BEFORE_INIT,
+            'beforeInit' => Tracker::BLOCK_BEFORE_INIT,
             'beforePageview' => Tracker::BLOCK_BEFORE_TRACK,
-            'beforeEnd'      => Tracker::BLOCK_AFTER_TRACK,
+            'beforeEnd' => Tracker::BLOCK_AFTER_TRACK,
         ];
 
         if (!isset($blockMapping[$where])) {

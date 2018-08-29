@@ -74,8 +74,8 @@ abstract class MigrationInstaller extends AbstractInstaller implements Migration
     ) {
         parent::__construct();
 
-        $this->bundle           = $bundle;
-        $this->connection       = $connection;
+        $this->bundle = $bundle;
+        $this->connection = $connection;
         $this->migrationManager = $migrationManager;
     }
 
@@ -129,7 +129,7 @@ abstract class MigrationInstaller extends AbstractInstaller implements Migration
         }
 
         /** @var Version $installMigrationVersion */
-        $installMigrationVersion   = null;
+        $installMigrationVersion = null;
         $installMigrationVersionId = $this->getMigrationVersion();
 
         // load the migration to be marked as installed if it's something else than the install version
@@ -232,7 +232,7 @@ abstract class MigrationInstaller extends AbstractInstaller implements Migration
 
         $configuration = $this->getMigrationConfiguration();
 
-        $latestVersion  = $configuration->getLatestVersion();
+        $latestVersion = $configuration->getLatestVersion();
         $currentVersion = $configuration->getCurrentVersion();
 
         // check if there's a latest version > 0
@@ -325,7 +325,7 @@ abstract class MigrationInstaller extends AbstractInstaller implements Migration
     protected function executeMigration(string $versionId, bool $up = true, bool $dryRun = false): array
     {
         $configuration = $this->getMigrationConfiguration();
-        $version       = $configuration->getVersion($versionId);
+        $version = $configuration->getVersion($versionId);
 
         return $this->migrationManager->executeVersion($version, $up, $dryRun);
     }

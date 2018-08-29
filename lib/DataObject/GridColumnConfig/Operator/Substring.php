@@ -32,7 +32,7 @@ class Substring extends AbstractOperator
         $this->label = $config->cssClass;
         $this->start = $config->start;
         $this->length = $config->length;
-        $this->ellipses  = $config->ellipses;
+        $this->ellipses = $config->ellipses;
     }
 
     public function getLabeledValue($element)

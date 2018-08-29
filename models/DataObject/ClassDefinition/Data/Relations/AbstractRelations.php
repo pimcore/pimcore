@@ -162,9 +162,9 @@ abstract class AbstractRelations extends Model\DataObject\ClassDefinition\Data
                         $allowedTypes[] = $t;
                     } elseif (is_array($t) && count($t) > 0) {
                         if (isset($t['assetTypes'])) {
-                            $allowedTypes[]= $t['assetTypes'];
+                            $allowedTypes[] = $t['assetTypes'];
                         } else {
-                            $allowedTypes[]= $t;
+                            $allowedTypes[] = $t;
                         }
                     }
                 }
@@ -434,8 +434,8 @@ abstract class AbstractRelations extends Model\DataObject\ClassDefinition\Data
         /** @var $item Element\ElementInterface */
         foreach ($existingData as $item) {
             $key = $this->buildUniqueKeyForAppending($item);
-            $map[$key]= 1;
-            $newData[]= $item;
+            $map[$key] = 1;
+            $newData[] = $item;
         }
 
         if (is_array($additionalData)) {

@@ -34,7 +34,7 @@ class ServiceCollection implements \IteratorAggregate
     public function __construct(ContainerInterface $container, array $ids)
     {
         $this->container = $container;
-        $this->ids       = $ids;
+        $this->ids = $ids;
     }
 
     public function getIterator()

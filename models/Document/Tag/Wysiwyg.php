@@ -132,7 +132,7 @@ class Wysiwyg extends Model\Document\Tag
     {
         $data = $wsElement->value;
         if (is_array($data)) {
-            $data =  (object) $data;
+            $data = (object) $data;
         }
 
         if ($data->text === null or is_string($data->text)) {

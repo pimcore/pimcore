@@ -92,9 +92,9 @@ class Tracker extends AbstractTracker
     ) {
         parent::__construct($siteIdProvider);
 
-        $this->siteIdProvider   = $siteIdProvider;
-        $this->configProvider   = $configProvider;
-        $this->eventDispatcher  = $eventDispatcher;
+        $this->siteIdProvider = $siteIdProvider;
+        $this->configProvider = $configProvider;
+        $this->eventDispatcher = $eventDispatcher;
         $this->templatingEngine = $templatingEngine;
     }
 
@@ -158,13 +158,13 @@ class Tracker extends AbstractTracker
     private function doBuildCode(SiteId $siteId, Config $config, ConfigObject $siteConfig)
     {
         $data = [
-            'siteId'                 => $siteId,
-            'config'                 => $config,
-            'siteConfig'             => $siteConfig,
-            'trackId'                => $siteConfig->trackid,
-            'defaultPath'            => $this->getDefaultPath(),
+            'siteId' => $siteId,
+            'config' => $config,
+            'siteConfig' => $siteConfig,
+            'trackId' => $siteConfig->trackid,
+            'defaultPath' => $this->getDefaultPath(),
             'universalConfiguration' => $siteConfig->universal_configuration ?? null,
-            'retargeting'            => $siteConfig->retargetingcode ?? false,
+            'retargeting' => $siteConfig->retargetingcode ?? false,
         ];
 
         if ($siteConfig->gtagcode) {
@@ -206,7 +206,7 @@ class Tracker extends AbstractTracker
 
     private function buildCodeBlocks(SiteId $siteId, ConfigObject $siteConfig): array
     {
-        $blockData  = $this->buildBlockData($siteConfig);
+        $blockData = $this->buildBlockData($siteConfig);
 
         $blocks = [];
         foreach ($this->blocks as $block) {
@@ -245,7 +245,7 @@ class Tracker extends AbstractTracker
 
     private function renderTemplate(TrackingDataEvent $event): string
     {
-        $data           = $event->getData();
+        $data = $event->getData();
         $data['blocks'] = $event->getBlocks();
 
         $code = $this->templatingEngine->render(

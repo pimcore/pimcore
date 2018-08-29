@@ -44,7 +44,7 @@ class ConditionFactory implements ConditionFactoryInterface
         array $conditions
     ) {
         $this->eventDispatcher = $eventDispatcher;
-        $this->conditions      = $conditions;
+        $this->conditions = $conditions;
     }
 
     /**

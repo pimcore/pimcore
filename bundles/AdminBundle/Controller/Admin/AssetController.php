@@ -85,7 +85,7 @@ class AssetController extends ElementControllerBase implements EventedController
         if ($asset instanceof Asset\Text) {
             if ($asset->getFileSize() < 2000000) {
                 // it doesn't make sense to show a preview for files bigger than 2MB
-                $asset->data =  \ForceUTF8\Encoding::toUTF8($asset->getData());
+                $asset->data = \ForceUTF8\Encoding::toUTF8($asset->getData());
             } else {
                 $asset->data = false;
             }
@@ -197,17 +197,17 @@ class AssetController extends ElementControllerBase implements EventedController
         $cv = false;
         $asset = Asset::getById($allParams['node']);
 
-        $filter = $request->get("filter");
+        $filter = $request->get('filter');
         $limit = intval($allParams['limit']);
         if (!is_null($filter)) {
             if (substr($filter, -1) != '*') {
-                $filter .= "*";
+                $filter .= '*';
             }
-            $filter = str_replace("*", "%", $filter);
+            $filter = str_replace('*', '%', $filter);
 
             $limit = 100;
             $offset = 0;
-        } else if (!$allParams['limit']) {
+        } elseif (!$allParams['limit']) {
             $limit = 100000000;
         }
 
@@ -225,8 +225,7 @@ class AssetController extends ElementControllerBase implements EventedController
             $db = Db::get();
 
             if ($this->getAdminUser()->isAdmin()) {
-                $condition = 'parentId =  ' . $db->quote( $asset->getId());
-
+                $condition = 'parentId =  ' . $db->quote($asset->getId());
             } else {
                 $userIds = $this->getAdminUser()->getRoles();
                 $userIds[] = $this->getAdminUser()->getId();
@@ -237,20 +236,15 @@ class AssetController extends ElementControllerBase implements EventedController
                 or
                 (select list from users_workspaces_asset where userId in (' . implode(',', $userIds) . ') and LOCATE(cpath,CONCAT(path,filename))=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
                     )';
-
-
             }
-
 
             if (! is_null($filter)) {
                 $db = Db::get();
 
                 $condition = '(' . $condition . ')' . ' AND filename LIKE ' . $db->quote($filter);
-
             }
 
-            $childsList->setCondition($condition );
-
+            $childsList->setCondition($condition);
 
             $childsList->setLimit($limit);
             $childsList->setOffset($offset);
@@ -290,7 +284,7 @@ class AssetController extends ElementControllerBase implements EventedController
                 'total' => $asset->getChildAmount($this->getAdminUser()),
                 'overflow' => !is_null($filter) && ($filteredTotalCount > $limit),
                 'nodes' => $assets,
-                'filter' => $request->get('filter') ? $request->get('filter') : "" ,
+                'filter' => $request->get('filter') ? $request->get('filter') : '',
                 'inSearch' => intval($request->get('inSearch'))
             ]);
         } else {
@@ -375,7 +369,7 @@ class AssetController extends ElementControllerBase implements EventedController
             }
 
             $maxRetries = 5;
-            for ($retries=0; $retries < $maxRetries; $retries++) {
+            for ($retries = 0; $retries < $maxRetries; $retries++) {
                 try {
                     $newParent = Asset\Service::createFolderByPath($newPath);
                     break;
@@ -487,8 +481,8 @@ class AssetController extends ElementControllerBase implements EventedController
             $translator = $this->get('translator');
 
             return $this->adminJson([
-                'success'=>false,
-                'message'=> sprintf($translator->trans('asset_type_change_not_allowed', [], 'admin'), $asset->getType(), $newType)
+                'success' => false,
+                'message' => sprintf($translator->trans('asset_type_change_not_allowed', [], 'admin'), $asset->getType(), $newType)
             ]);
         }
 
@@ -1175,8 +1169,8 @@ class AssetController extends ElementControllerBase implements EventedController
             throw new \Exception('not allowed to view thumbnail');
         }
 
-        $config        = null;
-        $thumbnail     = null;
+        $config = null;
+        $thumbnail = null;
         $thumbnailName = $request->get('thumbnail');
         $thumbnailFile = null;
 
@@ -2394,7 +2388,7 @@ class AssetController extends ElementControllerBase implements EventedController
                         $field = 'CONCAT(path,filename)';
                     }
 
-                    $conditionFilters[] =  $field . $operator . ' ' . $db->quote($value);
+                    $conditionFilters[] = $field . $operator . ' ' . $db->quote($value);
                 }
             }
 

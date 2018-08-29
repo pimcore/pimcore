@@ -59,7 +59,7 @@ class TargetingDataCollector
         TargetingStorageInterface $targetingStorage,
         DocumentTargetingConfigurator $targetingConfigurator
     ) {
-        $this->targetingStorage      = $targetingStorage;
+        $this->targetingStorage = $targetingStorage;
         $this->targetingConfigurator = $targetingConfigurator;
     }
 
@@ -68,8 +68,8 @@ class TargetingDataCollector
         return [
             'visitorId' => $visitorInfo->getVisitorId(),
             'sessionId' => $visitorInfo->getSessionId(),
-            'actions'   => $visitorInfo->getActions(),
-            'data'      => $this->filterVisitorInfoData($visitorInfo->getData()),
+            'actions' => $visitorInfo->getActions(),
+            'data' => $this->filterVisitorInfoData($visitorInfo->getData()),
         ];
     }
 
@@ -123,7 +123,7 @@ class TargetingDataCollector
             $duration = null;
             if (null !== $this->stopwatch) {
                 try {
-                    $event    = $this->stopwatch->getEvent(sprintf('Targeting:match:%s', $rule->getName()));
+                    $event = $this->stopwatch->getEvent(sprintf('Targeting:match:%s', $rule->getName()));
                     $duration = $event->getDuration();
                 } catch (\Throwable $e) {
                     // noop
@@ -131,11 +131,11 @@ class TargetingDataCollector
             }
 
             $rules[] = [
-                'id'         => $rule->getId(),
-                'name'       => $rule->getName(),
-                'duration'   => $duration,
+                'id' => $rule->getId(),
+                'name' => $rule->getName(),
+                'duration' => $duration,
                 'conditions' => $rule->getConditions(),
-                'actions'    => $rule->getActions(),
+                'actions' => $rule->getActions(),
             ];
         }
 
@@ -148,10 +148,10 @@ class TargetingDataCollector
 
         foreach ($visitorInfo->getTargetGroupAssignments() as $assignment) {
             $targetGroups[] = [
-                'id'        => $assignment->getTargetGroup()->getId(),
-                'name'      => $assignment->getTargetGroup()->getName(),
+                'id' => $assignment->getTargetGroup()->getId(),
+                'name' => $assignment->getTargetGroup()->getName(),
                 'threshold' => $assignment->getTargetGroup()->getThreshold(),
-                'count'     => $assignment->getCount(),
+                'count' => $assignment->getCount(),
             ];
         }
 
@@ -177,7 +177,7 @@ class TargetingDataCollector
         $targetGroup = TargetGroup::getById($targetGroupId);
         if ($targetGroup) {
             return [
-                'id'   => $targetGroup->getId(),
+                'id' => $targetGroup->getId(),
                 'name' => $targetGroup->getName()
             ];
         }
@@ -186,19 +186,19 @@ class TargetingDataCollector
     public function collectDocumentTargetGroupMapping(): array
     {
         $resolvedMapping = $this->targetingConfigurator->getResolvedTargetGroupMapping();
-        $mapping         = [];
+        $mapping = [];
 
         /** @var TargetGroup $targetGroup */
         foreach ($resolvedMapping as $documentId => $targetGroup) {
             $document = Document::getById($documentId);
 
             $mapping[] = [
-                'document'    => [
-                    'id'   => $document->getId(),
+                'document' => [
+                    'id' => $document->getId(),
                     'path' => $document->getRealFullPath(),
                 ],
                 'targetGroup' => [
-                    'id'   => $targetGroup->getId(),
+                    'id' => $targetGroup->getId(),
                     'name' => $targetGroup->getName(),
                 ],
             ];

@@ -35,7 +35,7 @@ class ArrayNormalizerTest extends TestCase
     public function testArrayIsUntouchedWithoutNormalizers()
     {
         $normalizer = new ArrayNormalizer();
-        $result     = $normalizer->normalize($this->input);
+        $result = $normalizer->normalize($this->input);
 
         $this->assertEquals($this->input, $result);
     }

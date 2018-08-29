@@ -79,8 +79,8 @@ class CookieStorage implements TargetingStorageInterface
         RequestStack $requestHelper,
         EventDispatcherInterface $eventDispatcher
     ) {
-        $this->saveHandler     = $saveHandler;
-        $this->requestStack    = $requestHelper;
+        $this->saveHandler = $saveHandler;
+        $this->requestStack = $requestHelper;
         $this->eventDispatcher = $eventDispatcher;
     }
 

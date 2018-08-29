@@ -66,7 +66,7 @@ class CodeInjector
         }
 
         $content = $response->getContent();
-        $result  = $this->injectIntoHtml($content, $code, $selector, $position, $response->getCharset());
+        $result = $this->injectIntoHtml($content, $code, $selector, $position, $response->getCharset());
 
         $response->setContent($result);
     }
@@ -90,7 +90,7 @@ class CodeInjector
     private function injectIntoPresetSelector(string $html, string $code, string $selector, string $position): string
     {
         $startTagPattern = '<\s*?' . $selector . '\b[^>]*>';
-        $endTagPattern   = '</' . $selector . '\b[^>]*>';
+        $endTagPattern = '</' . $selector . '\b[^>]*>';
 
         // temporary placeholder to use in preg_replace as we can't be sure the code breaks our replacement
         $injectTpl = sprintf('----%s----', uniqid('INJECT:', true));
@@ -127,7 +127,7 @@ class CodeInjector
         $dom = str_get_html($html);
         if ($dom) {
             $element = $dom->find($selector, 0);
-            if($element) {
+            if ($element) {
                 if (self::REPLACE === $position) {
                     $element->innertext = $code;
                 } elseif (self::POSITION_BEGINNING === $position) {
@@ -140,6 +140,7 @@ class CodeInjector
             $html = $dom->save();
             $dom->clear();
             unset($dom);
+
             return trim($html);
         }
 

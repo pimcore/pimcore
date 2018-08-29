@@ -61,10 +61,10 @@ class DocumentTreeGenerator extends AbstractElementGenerator
     protected function configureOptions(OptionsResolver $options)
     {
         $options->setDefaults([
-            'rootId'                  => 1,
-            'handleMainDomain'        => true,
-            'handleSites'             => true,
-            'urlGeneratorOptions'     => [],
+            'rootId' => 1,
+            'handleMainDomain' => true,
+            'handleSites' => true,
+            'urlGeneratorOptions' => [],
             'garbageCollectThreshold' => 50,
         ]);
 
@@ -99,7 +99,7 @@ class DocumentTreeGenerator extends AbstractElementGenerator
     private function populateCollection(UrlContainerInterface $urlContainer, Document $rootDocument, string $section, Site $site = null)
     {
         $context = new DocumentGeneratorContext($urlContainer, $section, $site);
-        $visit   = $this->visit($rootDocument, $context);
+        $visit = $this->visit($rootDocument, $context);
 
         foreach ($visit as $document) {
             $url = $this->createUrl($document, $context);

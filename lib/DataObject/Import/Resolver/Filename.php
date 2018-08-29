@@ -40,7 +40,7 @@ class Filename extends AbstractResolver
     public function resolve(\stdClass $config, int $parentId, array $rowData)
     {
         $overwrite = (bool)$config->resolverSettings->overwrite;
-        $prefix    = (string)$config->resolverSettings->prefix;
+        $prefix = (string)$config->resolverSettings->prefix;
 
         $parent = AbstractObject::getById($parentId);
         if (!$parent) {
@@ -57,12 +57,12 @@ class Filename extends AbstractResolver
             $objectKey = $prefix;
         }
 
-        $classId         = $config->classId;
+        $classId = $config->classId;
         $classDefinition = ClassDefinition::getById($classId);
-        $className       = 'Pimcore\\Model\\DataObject\\' . ucfirst($classDefinition->getName());
+        $className = 'Pimcore\\Model\\DataObject\\' . ucfirst($classDefinition->getName());
 
         $intendedPath = $parent->getRealFullPath() . '/' . $objectKey;
-        $object       = null;
+        $object = null;
 
         if ($overwrite) {
             $object = DataObject::getByPath($intendedPath);
@@ -101,11 +101,11 @@ class Filename extends AbstractResolver
 
     private function getAlternativeObject(string $prefix, string $intendedPath, ElementInterface $parent, string $className)
     {
-        $counter   = 1;
+        $counter = 1;
         $objectKey = $intendedPath;
 
         while (DataObject::getByPath($intendedPath) != null) {
-            $objectKey    = $prefix . $counter;
+            $objectKey = $prefix . $counter;
             $intendedPath = $parent->getRealFullPath() . '/' . $objectKey;
             $counter++;
         }

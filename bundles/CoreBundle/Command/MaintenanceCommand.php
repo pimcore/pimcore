@@ -74,7 +74,7 @@ class MaintenanceCommand extends AbstractCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $validJobs    = $this->getArrayOptionValue($input, 'job');
+        $validJobs = $this->getArrayOptionValue($input, 'job');
         $excludedJobs = $this->getArrayOptionValue($input, 'excludedJobs');
 
         $manager = $this->getContainer()->get(Schedule\Manager\Procedural::class);
@@ -120,7 +120,7 @@ class MaintenanceCommand extends AbstractCommand
      */
     private function getArrayOptionValue(InputInterface $input, string $name): array
     {
-        $value  = $input->getOption($name);
+        $value = $input->getOption($name);
         $result = [];
 
         if (!empty($value)) {

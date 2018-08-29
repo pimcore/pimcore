@@ -238,8 +238,8 @@ class Dao extends Model\Dao\AbstractDao
 
         $map = [
             'document' => ['documents', 'id', 'type', '\Pimcore\Model\Document'],
-            'asset'    => ['assets', 'id', 'type', '\Pimcore\Model\Asset'],
-            'object'   => ['objects', 'o_id', 'o_type', '\Pimcore\Model\DataObject\AbstractObject'],
+            'asset' => ['assets', 'id', 'type', '\Pimcore\Model\Asset'],
+            'object' => ['objects', 'o_id', 'o_type', '\Pimcore\Model\DataObject\AbstractObject'],
         ];
 
         $select = $this->db->select()
@@ -267,14 +267,14 @@ class Dao extends Model\Dao\AbstractDao
             foreach ($subtypes as $subType) {
                 $quotedSubTypes[] = $this->db->quote($subType);
             }
-            $select->where($map[$type][2] . ' IN (' . implode(",", $quotedSubTypes) . ')');
+            $select->where($map[$type][2] . ' IN (' . implode(',', $quotedSubTypes) . ')');
         }
 
         if ('object' === $type && ! empty($classNames)) {
             foreach ($classNames as $cName) {
                 $quotedClassNames[] = $this->db->quote($cName);
             }
-            $select->where('o_className IN ( ' .  implode(",", $quotedClassNames) . ' )');
+            $select->where('o_className IN ( ' .  implode(',', $quotedClassNames) . ' )');
         }
 
         $res = $this->db->query($select);

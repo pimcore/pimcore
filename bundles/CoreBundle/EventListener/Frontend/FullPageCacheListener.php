@@ -88,8 +88,8 @@ class FullPageCacheListener
         EventDispatcherInterface $eventDispatcher
     ) {
         $this->visitorInfoStorage = $visitorInfoStorage;
-        $this->sessionStatus      = $sessionStatus;
-        $this->eventDispatcher    = $eventDispatcher;
+        $this->sessionStatus = $sessionStatus;
+        $this->eventDispatcher = $eventDispatcher;
     }
 
     /**

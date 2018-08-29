@@ -109,7 +109,7 @@ class Nonownerobjects extends Model\DataObject\ClassDefinition\Data\Objects
         if (empty($this->ownerClassName)) {
             try {
                 $class = DataObject\ClassDefinition::getById($this->ownerClassId);
-                $this->ownerClassName =  $class->getName();
+                $this->ownerClassName = $class->getName();
             } catch (\Exception $e) {
                 Logger::error($e->getMessage());
             }
@@ -126,7 +126,7 @@ class Nonownerobjects extends Model\DataObject\ClassDefinition\Data\Objects
         if (empty($this->ownerClassId)) {
             try {
                 $class = DataObject\ClassDefinition::getByName($this->ownerClassName);
-                $this->ownerClassId =  $class->getId();
+                $this->ownerClassId = $class->getId();
             } catch (\Exception $e) {
                 Logger::error($e->getMessage());
             }

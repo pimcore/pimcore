@@ -76,7 +76,7 @@ class SettingsController extends ReportsControllerBase
         // submitted values
         if (!$this->getAdminUser()->isAllowed('piwik_settings')) {
             $currentConfig = Config::getReportConfig()->toArray();
-            $piwikConfig   = $currentConfig['piwik'] ?? [];
+            $piwikConfig = $currentConfig['piwik'] ?? [];
 
             // override piwik settings with current config
             $values['piwik'] = $piwikConfig;

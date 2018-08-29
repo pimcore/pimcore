@@ -63,12 +63,12 @@ class CacheQueueItem
      */
     public function __construct($key, $data, array $tags = [], $lifetime = null, $priority = 0, $force = false)
     {
-        $this->key      = $key;
-        $this->data     = $data;
-        $this->tags     = $tags;
+        $this->key = $key;
+        $this->data = $data;
+        $this->tags = $tags;
         $this->lifetime = $lifetime;
         $this->priority = (int)$priority;
-        $this->force    = (bool)$force;
+        $this->force = (bool)$force;
     }
 
     /**

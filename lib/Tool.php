@@ -295,8 +295,8 @@ class Tool
             // system default
             $routingDefaults = [
                 'controller' => 'Default',
-                'action'     => 'default',
-                'module'     => PIMCORE_SYMFONY_DEFAULT_BUNDLE
+                'action' => 'default',
+                'module' => PIMCORE_SYMFONY_DEFAULT_BUNDLE
             ];
 
             // get configured settings for defaults
@@ -471,7 +471,7 @@ class Tool
 
         $protocol = 'http';
         $hostname = '';
-        $port     = '';
+        $port = '';
 
         if (null !== $request) {
             $protocol = $request->getScheme();

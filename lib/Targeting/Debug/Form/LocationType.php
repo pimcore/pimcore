@@ -27,17 +27,17 @@ class LocationType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->add('country', CountryType::class, [
-            'label'       => 'Country',
-            'required'    => false,
+            'label' => 'Country',
+            'required' => false,
         ]);
 
         $builder->add('latitude', TextType::class, [
-            'label'    => 'Latitude',
+            'label' => 'Latitude',
             'required' => false
         ]);
 
         $builder->add('longitude', TextType::class, [
-            'label'    => 'Longitude',
+            'label' => 'Longitude',
             'required' => false
         ]);
     }

@@ -37,7 +37,7 @@ class LocaleSwitcher extends AbstractOperator
         parent::__construct($config, $context);
 
         $this->localeService = $localeService;
-        $this->locale        = (string)$config->locale;
+        $this->locale = (string)$config->locale;
     }
 
     public function process($element, &$target, array &$rowData, $colIndex, array &$context = [])

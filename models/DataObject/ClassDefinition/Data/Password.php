@@ -251,7 +251,7 @@ class Password extends Model\DataObject\ClassDefinition\Data
                 }
             }
         } else {
-            $hash   = $this->calculateHash($password);
+            $hash = $this->calculateHash($password);
             $result = $hash === $objectHash;
         }
 

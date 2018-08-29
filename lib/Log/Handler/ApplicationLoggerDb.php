@@ -47,15 +47,15 @@ class ApplicationLoggerDb extends AbstractProcessingHandler
     public function write(array $record)
     {
         $data = [
-            'pid'               => getmypid(),
-            'priority'          => strtolower($record['level_name']),
-            'message'           => $record['message'],
-            'timestamp'         => $record['datetime']->format('Y-m-d H:i:s'),
-            'component'         => $record['context']['component'] ?? $record['channel'],
-            'fileobject'        => $record['context']['fileObject'] ?? null,
-            'relatedobject'     => $record['context']['relatedObject'] ?? null,
+            'pid' => getmypid(),
+            'priority' => strtolower($record['level_name']),
+            'message' => $record['message'],
+            'timestamp' => $record['datetime']->format('Y-m-d H:i:s'),
+            'component' => $record['context']['component'] ?? $record['channel'],
+            'fileobject' => $record['context']['fileObject'] ?? null,
+            'relatedobject' => $record['context']['relatedObject'] ?? null,
             'relatedobjecttype' => $record['context']['relatedObjectType'] ?? null,
-            'source'            => $record['context']['source'] ?? null
+            'source' => $record['context']['source'] ?? null
         ];
 
         $this->db->insert(self::TABLE_NAME, $data);

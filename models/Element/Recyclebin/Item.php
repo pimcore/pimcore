@@ -141,7 +141,7 @@ class Item extends Model\AbstractModel
     /**
      * @param Model\User $user
      */
-    public function save($user=null)
+    public function save($user = null)
     {
         if ($this->getElement() instanceof Element\ElementInterface) {
             $this->setType(Element\Service::getElementType($this->getElement()));

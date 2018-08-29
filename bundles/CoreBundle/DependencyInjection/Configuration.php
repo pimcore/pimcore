@@ -670,14 +670,14 @@ class Configuration implements ConfigurationInterface
                             ->example([
                                 [
                                     'custom_set' => [
-                                        'name'       => 'Custom Migrations',
-                                        'namespace'  => 'App\\Migrations\\Custom',
-                                        'directory'  => 'src/App/Migrations/Custom'
+                                        'name' => 'Custom Migrations',
+                                        'namespace' => 'App\\Migrations\\Custom',
+                                        'directory' => 'src/App/Migrations/Custom'
                                     ],
                                     'custom_set_2' => [
-                                        'name'       => 'Custom Migrations 2',
-                                        'namespace'  => 'App\\Migrations\\Custom2',
-                                        'directory'  => 'src/App/Migrations/Custom2',
+                                        'name' => 'Custom Migrations 2',
+                                        'namespace' => 'App\\Migrations\\Custom2',
+                                        'directory' => 'src/App/Migrations/Custom2',
                                         'connection' => 'custom_connection'
                                     ],
                                 ]
@@ -768,9 +768,9 @@ class Configuration implements ConfigurationInterface
                                     ->ifString()
                                     ->then(function ($v) {
                                         return [
-                                            'enabled'      => true,
+                                            'enabled' => true,
                                             'generator_id' => $v,
-                                            'priority'     => 0
+                                            'priority' => 0
                                         ];
                                     })
                                 ->end()

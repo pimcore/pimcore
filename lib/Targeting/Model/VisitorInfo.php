@@ -96,7 +96,7 @@ class VisitorInfo implements \IteratorAggregate
 
     public function __construct(Request $request, string $visitorId = null, string $sessionId = null)
     {
-        $this->request   = $request;
+        $this->request = $request;
         $this->visitorId = $visitorId;
         $this->sessionId = $sessionId;
     }
