@@ -285,10 +285,14 @@ class MultihrefMetadata extends Model\DataObject\ClassDefinition\Data\Multihref
                         $className = $elementData['className'];
                         $itemData = ['id' => $id, 'path' => $fullpath, 'type' => 'object', 'subtype' => $className];
                     }
+                    $obj = Element\Service::getElementById('object', $id);
+                    $itemData['published'] = $obj->o_published;
                 } elseif ($targetType == 'asset') {
                     $itemData = ['id' => $id, 'path' => $fullpath, 'type' => 'asset', 'subtype' => $type];
                 } elseif ($targetType == 'document') {
                     $itemData = ['id' => $id, 'path' => $fullpath, 'type' => 'document', 'subtype' => $type];
+                    $document = Element\Service::getElementById('document', $id);
+                    $itemData['published'] = $document->published;
                 }
 
                 if (!$itemData) {

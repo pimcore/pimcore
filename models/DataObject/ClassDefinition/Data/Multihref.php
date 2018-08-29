@@ -326,13 +326,13 @@ class Multihref extends Model\DataObject\ClassDefinition\Data\Relations\Abstract
         if (is_array($data) && count($data) > 0) {
             foreach ($data as $element) {
                 if ($element instanceof DataObject\Concrete) {
-                    $return[] = [$element->getId(), $element->getRealFullPath(), 'object', $element->getClassName()];
+                    $return[] = [$element->getId(), $element->getRealFullPath(), 'object', $element->getClassName(), $element->getPublished()];
                 } elseif ($element instanceof DataObject\AbstractObject) {
                     $return[] = [$element->getId(), $element->getRealFullPath(), 'object', 'folder'];
                 } elseif ($element instanceof Asset) {
                     $return[] = [$element->getId(), $element->getRealFullPath(), 'asset', $element->getType()];
                 } elseif ($element instanceof Document) {
-                    $return[] = [$element->getId(), $element->getRealFullPath(), 'document', $element->getType()];
+                    $return[] = [$element->getId(), $element->getRealFullPath(), 'document', $element->getType(), $element->getPublished()];
                 }
             }
             if (empty($return)) {

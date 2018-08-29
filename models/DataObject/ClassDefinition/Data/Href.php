@@ -284,7 +284,8 @@ class Href extends Model\DataObject\ClassDefinition\Data\Relations\AbstractRelat
                 'id' => $data->getId(),
                 'path' => $data->getRealFullPath(),
                 'subtype' => $data->getType(),
-                'type' => Element\Service::getElementType($data)
+                'type' => Element\Service::getElementType($data),
+                'published' => Element\Service::isPublished($data)
             ];
 
             return $r;

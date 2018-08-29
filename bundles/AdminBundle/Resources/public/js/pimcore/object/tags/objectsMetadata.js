@@ -116,7 +116,9 @@ pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, 
                 fc.layout = field;
                 fc.editor = null;
                 fc.sortable = false;
-
+                if(fc.layout.key === "fullpath") {
+                    fc.renderer = this.fullPathRenderCheck.bind(this);
+                }
                 columns.push(fc);
             }
         }
@@ -410,6 +412,7 @@ pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, 
 
                         var record = data.records[0];
                         var data = record.data;
+                        this.nodeElement = data;
                         var fromTree = this.isFromTree(dd);
 
                         if (this.dndAllowed(data, fromTree)) {
@@ -527,7 +530,7 @@ pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, 
                     toBeRequested.add(this.loadObjectData(items[i], fields));
                 }
             }
-
+            this.itemsArr = items;
             this.requestNicePathData(toBeRequested);
         }
     },

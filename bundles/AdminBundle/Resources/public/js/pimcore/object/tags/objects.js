@@ -299,7 +299,8 @@ pimcore.object.tags.objects = Class.create(pimcore.object.tags.abstract, {
             columns: [
                 {text: 'ID', dataIndex: 'id', width: 50}
                 ,
-                {text: t("reference"), dataIndex: 'path', flex: 200},
+                {text: t("reference"), dataIndex: 'path', flex: 200, renderer:this.fullPathRenderCheck.bind(this)
+                },
                 {text: t("type"), dataIndex: 'type', width: 100},
                 {
                     xtype: 'actioncolumn',
@@ -413,6 +414,7 @@ pimcore.object.tags.objects = Class.create(pimcore.object.tags.abstract, {
                     try {
                         var record = data.records[0];
                         var data = record.data;
+                        this.nodeElement = data;
                         var fromTree = this.isFromTree(dd);
 
                         var toBeRequested = new Ext.util.Collection();
@@ -627,7 +629,7 @@ pimcore.object.tags.objects = Class.create(pimcore.object.tags.abstract, {
     addDataFromSelector: function (items) {
 
         if (items.length > 0) {
-
+            this.itemsArr = items;
             var toBeRequested = new Ext.util.Collection();
 
             for (var i = 0; i < items.length; i++) {

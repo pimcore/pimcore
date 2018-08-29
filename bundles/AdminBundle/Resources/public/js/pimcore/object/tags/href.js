@@ -75,7 +75,9 @@ pimcore.object.tags.href = Class.create(pimcore.object.tags.abstract, {
         href.enableKeyEvents = true;
         href.fieldCls = "pimcore_droptarget_input";
         this.component = new Ext.form.TextField(href);
-
+        if (this.data.published === false) {
+            this.component.addCls("strikeThrough");
+        }
         this.component.on("render", function (el) {
 
             // add drop zone
@@ -240,6 +242,11 @@ pimcore.object.tags.href = Class.create(pimcore.object.tags.abstract, {
             this.data.subtype = data.type;
             this.data.path = data.path;
             this.dataChanged = true;
+            this.dataChanged = true;        
+            this.component.removeCls("strikeThrough");
+            if (data.published === false) {
+              this.component.addCls("strikeThrough");
+            }
             this.component.setValue(data.path);
             this.requestNicePathData();
 
@@ -349,6 +356,10 @@ pimcore.object.tags.href = Class.create(pimcore.object.tags.abstract, {
         this.data.type = data.type;
         this.data.subtype = data.subtype;
         this.dataChanged = true;
+        this.component.removeCls("strikeThrough");
+        if (data.published === false) {
+            this.component.addCls("strikeThrough");
+        }
         this.component.setValue(data.fullpath);
         this.requestNicePathData();
     },

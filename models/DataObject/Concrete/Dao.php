@@ -100,7 +100,7 @@ class Dao extends Model\DataObject\AbstractObject\Dao
             $src = 'dest_id';
         }
 
-        $relations = $this->db->fetchAll('SELECT r.' . $dest . ' as dest_id, r.' . $dest . ' as id, r.type, o.o_className as subtype, concat(o.o_path ,o.o_key) as path , r.index
+        $relations = $this->db->fetchAll('SELECT r.' . $dest . ' as dest_id, r.' . $dest . ' as id, r.type, o.o_className as subtype, o.o_published as published, concat(o.o_path ,o.o_key) as path , r.index
             FROM objects o, object_relations_' . $classId . " r
             WHERE r.fieldname= ?
             AND r.ownertype = 'object'
@@ -108,7 +108,7 @@ class Dao extends Model\DataObject\AbstractObject\Dao
             AND o.o_id = r.' . $dest . "
             AND r.type='object'
 
-            UNION SELECT r." . $dest . ' as dest_id, r.' . $dest . ' as id, r.type,  a.type as subtype,  concat(a.path,a.filename) as path, r.index
+            UNION SELECT r." . $dest . ' as dest_id, r.' . $dest . ' as id, r.type,  a.type as subtype, "null" as published, concat(a.path,a.filename) as path, r.index
             FROM assets a, object_relations_' . $classId . " r
             WHERE r.fieldname= ?
             AND r.ownertype = 'object'
@@ -116,7 +116,7 @@ class Dao extends Model\DataObject\AbstractObject\Dao
             AND a.id = r.' . $dest . "
             AND r.type='asset'
 
-            UNION SELECT r." . $dest . ' as dest_id, r.' . $dest . ' as id, r.type, d.type as subtype, concat(d.path,d.key) as path, r.index
+            UNION SELECT r." . $dest . ' as dest_id, r.' . $dest . ' as id, r.type, d.type as subtype, d.published as published, concat(d.path,d.key) as path, r.index
             FROM documents d, object_relations_' . $classId . " r
             WHERE r.fieldname= ?
             AND r.ownertype = 'object'
