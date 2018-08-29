@@ -968,12 +968,12 @@ pimcore.helpers.openMemorizedTabs = function () {
 pimcore.helpers.assetSingleUploadDialog = function (parent, parentType, success, failure) {
 
     if (typeof success != "function") {
-        var success = function () {
+        success = function () {
         };
     }
 
     if (typeof failure != "function") {
-        var failure = function () {
+        failure = function () {
         };
     }
 
@@ -3464,3 +3464,104 @@ pimcore.helpers.keyBindingMapping = {
     "clearDataCache": pimcore.helpers.clearDataCache,
     "quickSearch": pimcore.helpers.showQuickSearch
 };
+
+pimcore.helpers.registerAssetDnDSingleUpload = function (element, parent, parentType, success, failure) {
+
+    if (typeof success != "function") {
+        success = function () {
+        };
+    }
+
+    if (typeof failure != "function") {
+        failure = function () {
+        };
+    }
+
+    var fn = function (e) {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = 'copy';
+        return false;
+    };
+
+    element.addEventListener("dragenter", fn, true);
+    element.addEventListener("dragover", fn, true);
+    element.addEventListener("drop", function (e) {
+
+        e.stopPropagation();
+        e.preventDefault();
+
+        var dataTransfer = e.dataTransfer;
+
+        var win = new Ext.Window({
+            items: [],
+            modal: true,
+            closable: false,
+            bodyStyle: "padding:10px;",
+            width: 500,
+            autoHeight: true,
+            autoScroll: true
+        });
+        win.show();
+
+        if(dataTransfer["files"]) {
+            if(dataTransfer["files"][0]) {
+                var file = dataTransfer["files"][0];
+
+                if (window.FileList && file.name && file.size) { // check for size (folder has size=0)
+                    var pbar = new Ext.ProgressBar({
+                        width:465,
+                        text: file.name,
+                        style: "margin-bottom: 5px"
+                    });
+
+                    win.add(pbar);
+                    win.updateLayout();
+
+                    var uploadUrl = "/admin/asset/add-asset?";
+                    if(parentType === 'path') {
+                        uploadUrl += "parentPath=" + parent;
+                    } else if (parentType === 'id') {
+                        uploadUrl += "parentId=" + parent;
+                    }
+
+                    pimcore.helpers.uploadAssetFromFileObject(file, uploadUrl,
+                        function (evt) {
+                            // success
+                            win.close();
+                            success(evt);
+                        },
+                        function (evt) {
+                            //progress
+                            if (evt.lengthComputable) {
+                                var percentComplete = evt.loaded / evt.total;
+                                var progressText = file.name + " ( " + Math.floor(percentComplete*100) + "% )";
+                                if(percentComplete == 1) {
+                                    progressText = file.name + " " + t("please_wait");
+                                }
+
+                                pbar.updateProgress(percentComplete, progressText);
+                            }
+                        },
+                        function (evt) {
+                            // error
+                            pimcore.helpers.showNotification(t("error"), e["responseText"], "error");
+                            win.close();
+                            failure(evt);
+                        }
+                    );
+
+                } else if (!empty(file.type) && file.size < 1) { //throw error for 0 byte file
+                    Ext.MessageBox.alert(t('error'), t('error_empty_file_upload'));
+                    win.close();
+                } else {
+                    Ext.MessageBox.alert(t('error'), t('unsupported_filetype'));
+                    win.close();
+                }
+            } else {
+                // if no files are uploaded (doesn't match criteria, ...) close the progress win immediately
+                win.close();
+            }
+        }
+    }.bind(this), true);
+};
+

@@ -130,6 +130,19 @@ pimcore.object.tags.image = Class.create(pimcore.object.tags.abstract, {
 
             el.getEl().on("contextmenu", this.onContextMenu.bind(this));
 
+            pimcore.helpers.registerAssetDnDUpload(el.getEl().dom, this.fieldConfig.uploadPath, 'path', function (e) {
+                if (e['asset']['type'] === "image") {
+                    this.empty(true);
+                    this.dirty = true;
+                    this.data.id = e['asset']['id'];
+                    this.updateImage();
+
+                    return true;
+                } else {
+                    pimcore.helpers.showNotification(t("error"), t('unsupported_filetype'), "error");
+                }
+            }.bind(this));
+
             this.updateImage();
 
         }.bind(this));
@@ -195,7 +208,7 @@ pimcore.object.tags.image = Class.create(pimcore.object.tags.abstract, {
     },
 
     uploadDialog: function () {
-        pimcore.helpers.assetSingleUploadDialog(this.fieldConfig.uploadPath, "path", function (res) {
+        pimcore.helpers.registerAssetDnDSingleUpload(this.fieldConfig.uploadPath, "path", function (res) {
             try {
                 this.empty(true);
 

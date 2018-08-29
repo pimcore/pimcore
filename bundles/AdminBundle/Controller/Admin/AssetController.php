@@ -304,7 +304,19 @@ class AssetController extends ElementControllerBase implements EventedController
     {
         $res = $this->addAsset($request);
 
-        return $this->adminJson(['success' => $res['success'], 'msg' => 'Success']);
+        $response = [
+            'success' => $res['success'],
+        ];
+
+        if($res['success']) {
+            $response['asset'] = [
+                'id' => $res['asset']->getId(),
+                'path' => $res['asset']->getFullPath(),
+                'type' => $res['asset']->getType()
+            ];
+        }
+
+        return $this->adminJson($response);
     }
 
     /**
