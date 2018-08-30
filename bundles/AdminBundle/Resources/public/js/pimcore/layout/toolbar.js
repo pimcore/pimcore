@@ -934,7 +934,7 @@ pimcore.layout.toolbar = Class.create({
                 if (perspectiveCfg.inToolbar("settings.cache.clearOutput")) {
                     if (user.isAllowed("clear_fullpage_cache")) {
                         cacheItems.push({
-                            text: t("full_page_cache"),
+                            text: t("clear_full_page_cache"),
                             iconCls: "pimcore_icon_clear_cache",
                             handler: this.clearOutputCache
                         });
