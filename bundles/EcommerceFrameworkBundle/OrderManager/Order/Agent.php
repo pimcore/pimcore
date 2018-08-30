@@ -18,6 +18,7 @@ use Exception;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\UnsupportedException;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IEnvironment;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder as Order;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrderItem as OrderItem;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractPaymentInformation;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\Currency;
@@ -487,6 +488,10 @@ class Agent implements IOrderAgent
         $currentOrderFingerPrint = null;
 
         $paymentInformationCollection = $order->getPaymentInfo();
+
+        /**
+         * @var $currentPaymentInformation PaymentInfo
+         */
         $currentPaymentInformation = null;
         if (empty($paymentInformationCollection)) {
             $paymentInformationCollection = new Fieldcollection();
@@ -500,6 +505,16 @@ class Agent implements IOrderAgent
                 $currentOrderFingerPrint = $this->generateInternalPaymentId($paymentInfoIndex + 1);
                 break;
             }
+        }
+
+        //check if current payment info already aborted - if so create new one to log information and throw exception
+        //because something wired is going on
+        $abortedByResponseReceived = false;
+        if ($currentPaymentInformation && $currentPaymentInformation->getPaymentState() == AbstractOrder::ORDER_STATE_ABORTED) {
+            $abortedByResponseReceived = true;
+
+            //set current payment info to null to create a new one
+            $currentPaymentInformation = null;
         }
 
         if (empty($currentPaymentInformation)) {
@@ -525,12 +540,24 @@ class Agent implements IOrderAgent
                 $currentPaymentInformation->$setter($value);
             }
         }
-
         $this->extractAdditionalPaymentInformation($status, $currentPaymentInformation);
 
-        // check, if order finger print has changed since start payment - if so, throw exception because something wired is going on
-        // but finish update order first in order to have logging information
-        if ($currentOrderFingerPrint != $status->getInternalPaymentId()) {
+        if($abortedByResponseReceived) {
+            // if we got an response even if payment state was already aborted throw exception
+            $paymentStateBackup = $currentPaymentInformation->getPaymentState();
+            $currentPaymentInformation->setPaymentState(AbstractOrder::ORDER_PAYMENT_STATE_ABORTED_BUT_RESPONSE);
+            $currentPaymentInformation->setMessage(
+                $currentPaymentInformation->getMessage() .
+                ' -> got response although payment state was already aborted, new payment state was "' .
+                $paymentStateBackup . '". throwing exception!'
+            );
+            $order->save();
+            throw new UnsupportedException('Got response although payment state was already aborted, new payment state was ' . $paymentStateBackup);
+
+        } else if ($currentOrderFingerPrint != $status->getInternalPaymentId()) {
+            // check, if order finger print has changed since start payment - if so, throw exception because something wired is going on
+            // but finish update order first in order to have logging information
+
             $currentPaymentInformation->setMessage($currentPaymentInformation->getMessage() . ' -> order fingerprint changed since start payment. throwing exception!');
             $order->setOrderState(null);
             $order->save();

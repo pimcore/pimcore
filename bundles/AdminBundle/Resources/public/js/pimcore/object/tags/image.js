@@ -67,9 +67,9 @@ pimcore.object.tags.image = Class.create(pimcore.object.tags.abstract, {
                 items:
                     [{
                         xtype: "tbspacer",
-                        width: 20,
+                        width: 40,
                         height: 16,
-                        cls: "pimcore_icon_droptarget"
+                        cls: "pimcore_icon_droptarget_upload"
 
                     },
                         {
@@ -129,6 +129,19 @@ pimcore.object.tags.image = Class.create(pimcore.object.tags.abstract, {
             });
 
             el.getEl().on("contextmenu", this.onContextMenu.bind(this));
+
+            pimcore.helpers.registerAssetDnDSingleUpload(el.getEl().dom, this.fieldConfig.uploadPath, 'path', function (e) {
+                if (e['asset']['type'] === "image") {
+                    this.empty(true);
+                    this.dirty = true;
+                    this.data.id = e['asset']['id'];
+                    this.updateImage();
+
+                    return true;
+                } else {
+                    pimcore.helpers.showNotification(t("error"), t('unsupported_filetype'), "error");
+                }
+            }.bind(this));
 
             this.updateImage();
 

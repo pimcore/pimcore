@@ -567,7 +567,7 @@
                     "tooltip": "",
                     "mandatory": false,
                     "noteditable": true,
-                    "index": false,
+                    "index": true,
                     "locked": false,
                     "style": "",
                     "permissions": null,

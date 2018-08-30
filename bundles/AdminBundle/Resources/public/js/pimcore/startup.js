@@ -474,7 +474,6 @@ Ext.onReady(function () {
         var domains = '';
         pimcore.globalmanager.get("sites").each(function (rec) {
             if(rec.get('rootId') !== 1) {
-                console.log(rec.data);
                 if(!empty(rec.get('domain'))) {
                     domains += rec.get('domain') + ",";
                 }
