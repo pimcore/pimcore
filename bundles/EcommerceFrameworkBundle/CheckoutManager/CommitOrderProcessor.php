@@ -14,6 +14,7 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager;
 
+use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\UnsupportedException;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\IOrderManagerLocator;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\IStatus;
@@ -175,20 +176,27 @@ class CommitOrderProcessor implements ICommitOrderProcessor
         $order = $orderAgent->updatePayment($paymentStatus)->getOrder();
         $this->applyAdditionalDataToOrder($order, $paymentStatus, $paymentProvider);
 
-        if (in_array($paymentStatus->getStatus(), [AbstractOrder::ORDER_STATE_COMMITTED, AbstractOrder::ORDER_STATE_PAYMENT_AUTHORIZED])) {
-            // only when payment state is committed or authorized -> proceed and commit order
-            $order = $this->commitOrder($order);
-        } elseif ($order->getOrderState() == $order::ORDER_STATE_COMMITTED) {
-
+        if($order->getOrderState() === $order::ORDER_STATE_COMMITTED) {
             // only when we receive an unsuccessful payment request after order is already committed
             // do not overwrite status if order is already committed. normally this shouldn't happen at all.
             $logger = ApplicationLogger::getInstance(self::LOGGER_NAME, true);
-            $logger->critical('Order with ID ' . $order->getId() . ' got payment status after it was already committed.',
+
+            $message = 'Order with ID ' . $order->getId() . ' got payment status after it was already committed.';
+            $logger->critical($message,
                 [
                     'fileObject' => new FileObject(print_r($paymentStatus, true)),
                     'relatedObject' => $order
                 ]
             );
+            Lock::release(self::LOCK_KEY . $paymentStatus->getInternalPaymentId());
+
+            throw new UnsupportedException($message);
+        }
+
+
+        if (in_array($paymentStatus->getStatus(), [AbstractOrder::ORDER_STATE_COMMITTED, AbstractOrder::ORDER_STATE_PAYMENT_AUTHORIZED])) {
+            // only when payment state is committed or authorized -> proceed and commit order
+            $order = $this->commitOrder($order);
         } else {
             $order->setOrderState(null);
             $order->save();
