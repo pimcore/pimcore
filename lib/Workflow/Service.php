@@ -12,7 +12,7 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\WorkflowManagement\Workflow;
+namespace Pimcore\Workflow;
 
 use Pimcore\Logger;
 use Pimcore\Model\Element;
@@ -103,7 +103,7 @@ class Service
      *
      * @return Element\Note $note
      */
-    public static function createActionNote($element, $type, $title, $description, $noteData, $user = null)
+    public static function createActionNote($element, $type, $title, $description, $noteData, $user=null)
     {
         //prepare some vars for creating the note
         if (!$user) {
@@ -116,7 +116,7 @@ class Service
         $note->setType($type);
         $note->setTitle($title);
         $note->setDescription($description);
-        $note->setUser($user->getId());
+        $note->setUser($user ? $user->getId() : 0);
 
         if (is_array($noteData)) {
             foreach ($noteData as $row) {
@@ -135,86 +135,5 @@ class Service
         $note->save();
 
         return $note;
-    }
-
-    /**
-     * Sends an email
-     *
-     * @param array $users
-     * @param Element\Note $note
-     */
-    public static function sendEmailNotification($users, $note)
-    {
-        //try {
-
-        $recipients = self::getNotificationUsers($users);
-        if (!count($recipients)) {
-            return;
-        }
-
-        $mail = new \Pimcore\Mail();
-        foreach ($recipients as $user) {
-            /**
-             * @var $user User
-             */
-            $mail->addTo($user->getEmail(), $user->getName());
-        }
-
-        $element = Element\Service::getElementById($note->getCtype(), $note->getCid());
-
-        $mail->setSubject("[pimcore] {$note->getTitle()}, {$element->getType()} [{$element->getId()}]");
-
-        //TODO decide some body text/html
-
-        $mail->setBodyText($note->getDescription());
-
-        $mail->send();
-
-        //} catch(\Exception $e) {
-        //    //todo application log
-       // }
-    }
-
-    /**
-     * Returns a list of users given an array of ID's
-     * if an ID is a role, all users associated with that role
-     * will also be returned.
-     *
-     * @param $userIds
-     */
-    private static function getNotificationUsers($userIds)
-    {
-        $notifyUsers = [];
-
-        //get roles
-        $roleList = new User\Role\Listing();
-        $roleList->setCondition('id in (' . implode(',', $userIds) . ')');
-
-        foreach ($roleList->load() as $role) {
-            $userList = new User\Listing();
-            $userList->setCondition('FIND_IN_SET(?, roles) > 0', [$role->getId()]);
-
-            foreach ($userList->load() as $user) {
-                if ($user->getEmail()) {
-                    $notifyUsers[] = $user;
-                }
-            }
-        }
-        unset($roleList, $user, $role);
-
-        //get users
-        $roleList = new User\Listing();
-        $roleList->setCondition('id in (' . implode(',', $userIds) . ')');
-
-        foreach ($roleList->load() as $user) {
-            /**
-             * @var User $user
-             */
-            if ($user->getEmail()) {
-                $notifyUsers[] = $user;
-            }
-        }
-
-        return $notifyUsers;
     }
 }

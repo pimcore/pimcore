@@ -12,6 +12,11 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\WorkflowManagement;
+namespace Pimcore\Workflow\MarkingStore;
 
-class_alias('Pimcore\Model\Workflow', 'Pimcore\WorkflowManagement\Workflow');
+use Symfony\Component\Workflow\MarkingStore\MarkingStoreInterface;
+
+interface PimcoreElementPersistentMarkingStoreInterface extends MarkingStoreInterface
+{
+
+}
