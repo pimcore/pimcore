@@ -121,6 +121,10 @@
 							{
 								"key":"Aborted",
 								"value":"aborted"
+							},
+							{
+								"key": "Aborted but Response Received",
+								"value": "abortedButResponseReceived"
 							}
 						],
 						"width":500,
