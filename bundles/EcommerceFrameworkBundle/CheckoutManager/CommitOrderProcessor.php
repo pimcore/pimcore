@@ -136,9 +136,7 @@ class CommitOrderProcessor implements ICommitOrderProcessor
                         if ($paymentInfo->getPaymentState() == $paymentStatus->getStatus()) {
                             return $order;
                         } else {
-                            $message = 'Payment state of order ' . $order->getId() . ' does not match with new request!';
-                            Logger::error($message);
-                            throw new \Exception($message);
+                            Logger::warning('Payment state of order ' . $order->getId() . ' does not match with new request!');
                         }
                     }
                 }
