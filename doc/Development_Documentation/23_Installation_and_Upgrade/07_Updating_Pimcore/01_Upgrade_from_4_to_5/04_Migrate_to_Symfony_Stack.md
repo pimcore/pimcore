@@ -22,7 +22,7 @@ UPDATE documents_printpage SET legacy = NULL;
   to see what you can migrate automatically.
 
 ### Controller
-- Move Controllers to `/src/AppBundle/Controllers/`.
+- Move Controllers to `/src/AppBundle/Controller/`.
 - Add namespace to controllers and extend them from `Pimcore\Controller\FrontendController` 
 - Controllers now live in namespaces. As a consequence everything in default namespace 
 (like Exception, stdClass, ...) need to be prefixed with `\`.
