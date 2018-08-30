@@ -25,10 +25,13 @@ use Pimcore\Model\DataObject\ClassDefinition;
 use Pimcore\Model\DataObject\Concrete as ConcreteObject;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element\AbstractElement;
-use Pimcore\Tool\Admin;
-use Pimcore\WorkflowManagement\Workflow;
+use Pimcore\Workflow\Transition;
+use Pimcore\Workflow\Manager;
+use Pimcore\Workflow\Place;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\EventDispatcher\GenericEvent;
+use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\Workflow\Registry;
 
 class WorkflowManagementListener implements EventSubscriberInterface
 {
@@ -38,14 +41,42 @@ class WorkflowManagementListener implements EventSubscriberInterface
     protected $enabled = true;
 
     /**
+     * @var Manager
+     */
+    private $workflowManager;
+
+    /**
+     * @var Registry
+     */
+    private $workflowRegistry;
+
+    /**
+     * @var Place\StatusInfo
+     */
+    private $placeStatusInfo;
+
+    /**
+     * @var RequestStack
+     */
+    private $requestStack;
+
+    public function __construct(Manager $workflowManager, Registry $workflowRegistry, Place\StatusInfo $placeStatusInfo, RequestStack $requestStack)
+    {
+        $this->workflowManager = $workflowManager;
+        $this->workflowRegistry = $workflowRegistry;
+        $this->placeStatusInfo = $placeStatusInfo;
+        $this->requestStack = $requestStack;
+    }
+
+    /**
      * @inheritDoc
      */
     public static function getSubscribedEvents()
     {
         return [
-            DataObjectEvents::POST_ADD => 'onElementPostAdd',
-            DocumentEvents::POST_ADD => 'onElementPostAdd',
-            AssetEvents::POST_ADD => 'onElementPostAdd',
+            DataObjectEvents::POST_ADD  => 'onElementPostAdd',
+            DocumentEvents::POST_ADD  => 'onElementPostAdd',
+            AssetEvents::POST_ADD  => 'onElementPostAdd',
 
             DataObjectEvents::POST_DELETE => 'onElementPostDelete',
             DocumentEvents::POST_DELETE => 'onElementPostDelete',
@@ -67,13 +98,13 @@ class WorkflowManagementListener implements EventSubscriberInterface
         /**
          * @var Asset|Document|ConcreteObject $element
          */
-        $element = $e->getElement();
+        /*$element = $e->getElement();
 
         if ($this->isEnabled() && Workflow\Manager::elementHasWorkflow($element)) {
             $manager = Workflow\Manager\Factory::getManager($element);
             $manager->setElementState($manager->getWorkflow()->getDefaultState());
             $manager->setElementStatus($manager->getWorkflow()->getDefaultStatus());
-        }
+        }*/
     }
 
     /**
@@ -88,13 +119,13 @@ class WorkflowManagementListener implements EventSubscriberInterface
          */
         $element = $e->getElement();
 
-        if (Workflow\Manager::elementHasWorkflow($element)) {
+        /*if (Workflow\Manager::elementHasWorkflow($element)) {
             $manager = Workflow\Manager\Factory::getManager($element);
             $workflowState = $manager->getWorkflowStateForElement();
             if ($workflowState) {
                 $workflowState->delete();
             }
-        }
+        }*/
     }
 
     /**
@@ -109,53 +140,135 @@ class WorkflowManagementListener implements EventSubscriberInterface
         $element = self::extractElementFromEvent($e);
         $data = $e->getArgument('data');
 
+
         //create a new namespace for WorkflowManagement
         //set some defaults
         $data['workflowManagement'] = [
             'hasWorkflowManagement' => false,
         ];
 
-        if (Workflow\Manager::elementCanAction($element)) {
+        foreach($this->workflowManager->getAllWorkflows() as $workflowName) {
+            $workflow = $this->workflowManager->getWorkflowIfExists($element, $workflowName);
+            $workflowConfig = $this->workflowManager->getWorkflowConfig($workflowName);
+
+            if(empty($workflow)) {
+                continue;
+            }
+
+            $transitions = $workflow->getEnabledTransitions($element);
+
+
             $data['workflowManagement']['hasWorkflowManagement'] = true;
+            $data['workflowManagement']['workflows'] = $data['workflowManagement']['workflows'] ?? [];
 
-            //see if we can change the layout
-            $currentUser = Admin::getCurrentUser();
-            $manager = Workflow\Manager\Factory::getManager($element, $currentUser);
+            $allowedTransitions = [];
 
-            $data['workflowManagement']['workflowName'] = $manager->getWorkflow()->getName();
+            /**
+             * @var Transition $transition
+             */
+            foreach($transitions as $transition) {
 
-            //get the state and status
-            $state = $manager->getElementState();
-            $data['workflowManagement']['state'] = $manager->getWorkflow()->getStateConfig($state);
-            $status = $manager->getElementStatus();
-            $data['workflowManagement']['status'] = $manager->getWorkflow()->getStatusConfig($status);
+                if(($notes = $transition->getNotes()) && $element instanceof DataObject\AbstractObject) {
+                    $notes = $this->enrichNotes($element, $notes);
+                }
+
+                $allowedTransitions[] = [
+                    'name' => $transition->getName(),
+                    'label' => $transition->getLabel(),
+                    'iconCls' => $transition->getIconClass(),
+                    'notes' => $notes
+                ];
+            }
+
+            $globalActions = [];
+            foreach($this->workflowManager->getGlobalActions($workflowName) as $globalAction) {
+                if($globalAction->isGuardValid($workflow, $element)) {
+
+                    if(($notes = $globalAction->getNotes()) && $element instanceof DataObject\AbstractObject) {
+                        $notes = $this->enrichNotes($element, $notes);
+                    }
+
+                    $globalActions[] = [
+                        'name' => $globalAction->getName(),
+                        'label' => $globalAction->getLabel(),
+                        'iconCls' => $globalAction->getIconClass(),
+                        'notes' => $notes
+                    ];
+                }
+            }
+
+            $data['workflowManagement']['workflows'][] = [
+                'name' => $workflow->getName(),
+                'label' => $workflowConfig->getLabel(),
+                'allowedTransitions' => $allowedTransitions,
+                'globalActions' => $globalActions
+            ];
 
             if ($element instanceof ConcreteObject) {
-                $workflowLayoutId = $manager->getObjectLayout();
 
-                //check for !is_null here as we might want to specify 0 in the workflow config
-                if (!is_null($workflowLayoutId) && is_null($data['currentLayoutId'])) {
-                    //load the new layout into the object container
+                $marking = $workflow->getMarking($element);
 
-                    $validLayouts = DataObject\Service::getValidLayouts($element);
+                if(!sizeof($marking->getPlaces())) {
+                    continue;
+                }
 
-                    //check that the layout id is valid before trying to load
-                    if (!empty($validLayouts)) {
+                $permissionsRespected = false;
+                foreach($this->workflowManager->getOrderedPlaceConfigs($workflow, $marking) as $placeConfig) {
 
-                        //todo check user permissions again
-                        if ($validLayouts && $validLayouts[$workflowLayoutId]) {
-                            $customLayout = ClassDefinition\CustomLayout::getById($workflowLayoutId);
-                            $customLayoutDefinition = $customLayout->getLayoutDefinitions();
-                            DataObject\Service::enrichLayoutDefinition($customLayoutDefinition, $e->getArgument('object'));
-                            $data['layout'] = $customLayoutDefinition;
-                            $data['currentLayoutId'] = $workflowLayoutId;
+                    if(!$permissionsRespected && !empty($placeConfig->getPermissions($workflow, $element))) {
+                        $data['userPermissions'] = array_merge((array)$data['userPermissions'], $placeConfig->getUserPermissions($workflow, $element));
+
+
+                        $workflowLayoutId = $placeConfig->getObjectLayout($workflow, $element);
+                        $hasSelectedCustomLayout = $this->requestStack->getMasterRequest() && $this->requestStack->getMasterRequest()->query->has('layoutId') && $this->requestStack->getMasterRequest()->query->get('layoutId') !== '';
+
+                        if (!is_null($workflowLayoutId) && !$hasSelectedCustomLayout) {
+
+                            //load the new layout into the object container
+                            $validLayouts = DataObject\Service::getValidLayouts($element);
+
+                            //check that the layout id is valid before trying to load
+                            if (!empty($validLayouts)) {
+
+                                // check user permissions again
+                                if ($validLayouts && $validLayouts[$workflowLayoutId]) {
+                                    $customLayout = ClassDefinition\CustomLayout::getById($workflowLayoutId);
+                                    $customLayoutDefinition = $customLayout->getLayoutDefinitions();
+                                    DataObject\Service::enrichLayoutDefinition($customLayoutDefinition, $e->getArgument('object'));
+                                    $data['layout'] = $customLayoutDefinition;
+                                    $data['currentLayoutId'] = $workflowLayoutId;
+                                }
+                            }
                         }
+                        $permissionsRespected = true;
                     }
                 }
             }
         }
 
+        if($data['workflowManagement']['hasWorkflowManagement']) {
+            $data['workflowManagement']['statusInfo'] = $this->placeStatusInfo->getToolbarHtml($element);
+        }
+
         $e->setArgument('data', $data);
+    }
+
+    /**
+     * @param DataObject\AbstractObject $object
+     * @param array $notes
+     * @return array
+     */
+    private function enrichNotes(DataObject\AbstractObject $object, array $notes)
+    {
+        if(!empty($notes['commentGetterFn'])) {
+            $commentGetterFn = $notes['commentGetterFn'];
+            $notes['commentPrefill'] = $object->$commentGetterFn();
+        } elseif(!empty($notes)) {
+            $notes['commentPrefill'] = '';
+        }
+
+
+        return $notes;
     }
 
     /**

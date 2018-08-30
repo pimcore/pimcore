@@ -669,7 +669,8 @@ $scripts = array(
     "pimcore/object/classificationstore/columnConfigDialog.js",
 
     //workflow
-    "pimcore/workflowmanagement/actionPanel.js",
+    "pimcore/workflow/transitionPanel.js",
+    "pimcore/workflow/transitions.js",
 
     // Piwik - this needs to be loaded after treepanel manager as
     // it adds panels in pimcore ready
