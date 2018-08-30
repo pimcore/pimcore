@@ -6,9 +6,7 @@ use Doctrine\DBAL\Schema\Schema;
 use Pimcore\Migrations\Migration\AbstractPimcoreMigration;
 use Pimcore\Model\DataObject\Fieldcollection\Definition;
 
-/**
- * Auto-generated Migration: Please modify to your needs!
- */
+
 class Version20180830113528 extends AbstractPimcoreMigration
 {
     /**
@@ -43,6 +41,9 @@ class Version20180830113528 extends AbstractPimcoreMigration
         } else {
             $this->writeMessage(" ... nothing to do because field collection definition does not exist.");
         }
+
+
+
     }
 
     /**
