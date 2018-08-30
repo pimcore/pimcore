@@ -180,11 +180,15 @@ class CommitOrderProcessor implements ICommitOrderProcessor
             $order = $this->commitOrder($order);
         } elseif ($order->getOrderState() == $order::ORDER_STATE_COMMITTED) {
 
+            // only when we receive an unsuccessful payment request after order is already committed
             // do not overwrite status if order is already committed. normally this shouldn't happen at all.
             $logger = ApplicationLogger::getInstance(self::LOGGER_NAME, true);
-            $logger->setRelatedObject($order);
-            $logger->setFileObject(new FileObject(print_r($paymentStatus, true)));
-            $logger->critical('Order with ID ' . $order->getId() . ' got payment status after it was already committed.');
+            $logger->critical('Order with ID ' . $order->getId() . ' got payment status after it was already committed.',
+                [
+                    'fileObject' => new FileObject(print_r($paymentStatus, true)),
+                    'relatedObject' => $order
+                ]
+            );
         } else {
             $order->setOrderState(null);
             $order->save();
