@@ -685,5 +685,9 @@
     "rasterize_svg": "Rasteriser les SVG",
     "rasterize_svg_info_text": "Les SVG sont automatiquement pixelisés lorsqu'une transformation autre que le redimensionnement ou le retaillage par largeur / hauteur est utilisée.",
     "wildcards_are_supported": "Les wildcards sont pris en charge",
-    "classification_store": "Magasin de Classification"
+    "classification_store": "Magasin de Classification",
+    "system_performance_stability_warning": "Veuillez ne pas effectuer cette action, sauf si vous êtes sûr de ce que vous faites. <br /><b style='color: red'>Cette action peut avoir un impact majeur sur la stabilité et les performances de l'ensemble du système, et peut causer une surcharge ou crash complet du serveur !</b><br /><br />Etes-vous sûr ?",
+    "listing_use_traits": "Listing Use (traits)",
+    "listing_parent_php_class": "Listing Classe PHP Parent",
+    "clear_full_page_cache": "Clear Full Page Cache"
 }
