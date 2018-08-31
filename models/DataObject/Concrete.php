@@ -151,51 +151,70 @@ class Concrete extends AbstractObject
     protected function update($isUpdate = null, $params = [])
     {
         $fieldDefintions = $this->getClass()->getFieldDefinitions();
+
+        $validationExceptions = [];
+
         foreach ($fieldDefintions as $fd) {
-            $getter = 'get'.ucfirst($fd->getName());
-            $setter = 'set'.ucfirst($fd->getName());
+            try {
+                $getter = 'get' . ucfirst($fd->getName());
+                $setter = 'set' . ucfirst($fd->getName());
 
-            if (method_exists($this, $getter)) {
+                if (method_exists($this, $getter)) {
 
-                //To make sure, inherited values are not set again
-                $inheritedValues = AbstractObject::doGetInheritedValues();
-                AbstractObject::setGetInheritedValues(false);
+                    //To make sure, inherited values are not set again
+                    $inheritedValues = AbstractObject::doGetInheritedValues();
+                    AbstractObject::setGetInheritedValues(false);
 
-                $value = $this->$getter();
+                    $value = $this->$getter();
 
-                if (is_array($value) and ($fd instanceof ClassDefinition\Data\Multihref or $fd instanceof ClassDefinition\Data\Objects)) {
-                    //don't save relations twice
-                    $this->$setter(array_unique($value));
-                }
-                AbstractObject::setGetInheritedValues($inheritedValues);
+                    if (is_array($value) and ($fd instanceof ClassDefinition\Data\Multihref or $fd instanceof ClassDefinition\Data\Objects)) {
+                        //don't save relations twice
+                        $this->$setter(array_unique($value));
+                    }
+                    AbstractObject::setGetInheritedValues($inheritedValues);
 
-                $value = $this->$getter();
-                $omitMandatoryCheck = $this->getOmitMandatoryCheck();
+                    $value = $this->$getter();
+                    $omitMandatoryCheck = $this->getOmitMandatoryCheck();
 
-                //check throws Exception
-                try {
-                    $fd->checkValidity($value, $omitMandatoryCheck);
-                } catch (\Exception $e) {
-                    if ($this->getClass()->getAllowInherit()) {
-                        //try again with parent data when inheritance in activated
-                        try {
-                            $getInheritedValues = AbstractObject::doGetInheritedValues();
-                            AbstractObject::setGetInheritedValues(true);
+                    //check throws Exception
+                    try {
+                        $fd->checkValidity($value, $omitMandatoryCheck);
+                    } catch (\Exception $e) {
+                        if ($this->getClass()->getAllowInherit()) {
+                            //try again with parent data when inheritance is activated
+                            try {
+                                $getInheritedValues = AbstractObject::doGetInheritedValues();
+                                AbstractObject::setGetInheritedValues(true);
 
-                            $value = $this->$getter();
-                            $fd->checkValidity($value, $omitMandatoryCheck);
+                                $value = $this->$getter();
+                                $fd->checkValidity($value, $omitMandatoryCheck);
 
-                            AbstractObject::setGetInheritedValues($getInheritedValues);
-                        } catch (\Exception $e) {
+                                AbstractObject::setGetInheritedValues($getInheritedValues);
+                            } catch (\Exception $e) {
+                                if ($e instanceof Model\Element\ValidationException) {
+                                    throw $e;
+                                }
+                                $exceptionClass = get_class($e);
+                                throw new $exceptionClass($e->getMessage() . ' fieldname=' . $fd->getName(), $e->getCode(), $e->getPrevious());
+                            }
+                        } else {
                             $exceptionClass = get_class($e);
-                            throw new $exceptionClass($e->getMessage() . ' fieldname=' . $fd->getName());
+                            if ($e instanceof Model\Element\ValidationException) {
+                                throw $e;
+                            }
+                            throw new $exceptionClass($e->getMessage() . ' fieldname=' . $fd->getName(), $e->getCode(), $e);
                         }
-                    } else {
-                        $exceptionClass = get_class($e);
-                        throw new $exceptionClass($e->getMessage() . ' fieldname=' . $fd->getName());
                     }
                 }
+            } catch (Model\Element\ValidationException $ve) {
+                $validationExceptions[]= $ve;
             }
+        }
+
+        if ($validationExceptions) {
+            $aggregatedExceptions = new Model\Element\ValidationException('Validation failed');
+            $aggregatedExceptions->setSubItems($validationExceptions);
+            throw $aggregatedExceptions;
         }
 
         parent::update($isUpdate, $params);

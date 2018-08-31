@@ -470,7 +470,7 @@ pimcore.helpers.showPrettyError = function (type, title, text, errorText, stack,
 
         text = text + '<br /><hr />' +
             '<span style="font-size:12px">'
-            + '<b>' + strip_tags(errorText) + '</b>' +
+            + '<b>' + errorText + '</b>' +
             "</span>";
 
     }

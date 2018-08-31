@@ -1381,20 +1381,89 @@ class DataObjectController extends ElementControllerBase implements EventedContr
         } catch (\Exception $e) {
             Logger::log($e);
             if ($e instanceof Element\ValidationException) {
-                $detailedInfo = '<b>Message:</b><br>';
-                $detailedInfo .= $e->getMessage();
-
-                $detailedInfo .= '<br><br><b>Trace:</b> ' . $e->getTraceAsString();
-                if ($e->getPrevious()) {
-                    $detailedInfo .= '<br><br><b>Previous Message:</b><br>';
-                    $detailedInfo .= $e->getPrevious()->getMessage();
-                    $detailedInfo .= '<br><br><b>Previous Trace:</b><br>' . $e->getPrevious()->getTraceAsString();
-                }
-
-                return $this->adminJson(['success' => false, 'type' => 'ValidationException', 'message' => $e->getMessage(), 'stack' => $detailedInfo, 'code' => $e->getCode()]);
+                return $this->buildValidationExceptionMessage($e);
             }
             throw $e;
         }
+    }
+
+    /**
+     * @param Element\ValidationException $e
+     * @param $message
+     */
+    protected function addContext(Element\ValidationException $e, &$message)
+    {
+        $contextStack = $e->getContextStack();
+        if ($contextStack) {
+            $message = $message . ' (' . implode(',', $contextStack) . ')';
+        }
+    }
+
+    /**
+     * @param $e
+     *
+     * @return mixed
+     */
+    protected function getInnerStack($e)
+    {
+        while ($e->getPrevious()) {
+            $e = $e->getPrevious();
+        }
+
+        return $e;
+    }
+
+    /**
+     * @param $items
+     * @param $message
+     * @param $detailedInfo
+     */
+    protected function recursiveAddValidationExceptionSubItems($items, &$message, &$detailedInfo)
+    {
+        if (!$items) {
+            return;
+        }
+        /** @var $item Element\ValidationException */
+        foreach ($items as $e) {
+            if ($e->getMessage()) {
+                $message .= '<b>' . $e->getMessage() . '</b>';
+                $this->addContext($e, $message);
+                $message .= '<br>';
+
+                $detailedInfo .= '<br><b>Message:</b><br>';
+                $detailedInfo .= $e->getMessage() . '<br>';
+
+                $inner = $this->getInnerStack($e);
+                $detailedInfo .= '<br><b>Trace:</b> ' . $inner->getTraceAsString() . '<br>';
+            }
+            $this->recursiveAddValidationExceptionSubItems($e->getSubItems(), $message, $detailedInfo);
+        }
+    }
+
+    /**
+     * @param Element\ValidationException $e
+     *
+     * @return \Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse
+     */
+    protected function buildValidationExceptionMessage(Element\ValidationException $e)
+    {
+        $detailedInfo = '';
+        if ($e->getMessage()) {
+            $detailedInfo .= '<b>Message:</b><br>';
+            $detailedInfo .= $e->getMessage();
+        }
+
+        $detailedInfo .= '<br><br><b>Trace:</b> ' . $e->getTraceAsString() . '<br>';
+        $inner = $this->getInnerStack($e);
+        $detailedInfo .= '<br><b>Trace:</b> ' . $inner->getTraceAsString() . '<br>';
+
+        $message = $e->getMessage();
+        $this->addContext($e, $message);
+        $message .= '<br>';
+
+        $this->recursiveAddValidationExceptionSubItems($e->getSubItems(), $message, $detailedInfo);
+
+        return $this->adminJson(['success' => false, 'type' => 'ValidationException', 'message' => $message, 'stack' => $detailedInfo, 'code' => $e->getCode()]);
     }
 
     /**
