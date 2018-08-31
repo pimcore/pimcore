@@ -23,6 +23,11 @@ use Pimcore\Model\Document;
 use Pimcore\Model\Element;
 use Pimcore\Model\Translation;
 use Pimcore\Tool;
+use Pimcore\Translation\ExportService\Exporter\ExporterInterface;
+use Pimcore\Translation\ImportDataExtractor\ImportDataExtractorInterface;
+use Pimcore\Translation\ImporterService\ImporterServiceInterface;
+use Pimcore\Translation\ExportService\ExportServiceInterface;
+use Pimcore\Translation\TranslationItemCollection\TranslationItemCollection;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
@@ -709,242 +714,50 @@ class TranslationController extends AdminController
 
     /**
      * @Route("/xliff-export")
-     * @Method({"POST"})
      *
      * @param Request $request
-     * @param TagUsageResolver $tagUsageResolver
+     * @param ExportServiceInterface $exportService
      *
      * @return JsonResponse
+     *
+     * @throws \Exception
      */
-    public function xliffExportAction(Request $request, TagUsageResolver $tagUsageResolver)
+    public function xliffExportAction(Request $request, ExportServiceInterface $exportService)
     {
         $id = $request->get('id');
         $data = $this->decodeJson($request->get('data'));
         $source = $request->get('source');
         $target = $request->get('target');
 
-        $exportFile = PIMCORE_SYSTEM_TEMP_DIRECTORY.'/'.$id.'.xliff';
-        if (!is_file($exportFile)) {
-            // create initial xml file structure
-            File::put($exportFile, '<?xml version="1.0" encoding="UTF-8"?>'."\n".'<xliff version="1.2"></xliff>');
-        }
-
-        $xliff = simplexml_load_file($exportFile, null, LIBXML_NOCDATA);
+        $translationItems = new TranslationItemCollection();
 
         foreach ($data as $el) {
             $element = Element\Service::getElementById($el['type'], $el['id']);
-            $file = $xliff->addChild('file');
-            $file->addAttribute('original', Element\Service::getElementType($element).'-'.$element->getId());
-            $file->addAttribute('source-language', $source);
-            $file->addAttribute('target-language', $target);
-            $file->addAttribute('datatype', 'html');
-            $file->addAttribute('tool', 'pimcore');
-            $file->addAttribute('category', Element\Service::getElementType($element));
-
-            $file->addChild('header');
-
-            $body = $file->addChild('body');
-            $addedElements = false;
-
-            // elements
-            if ($element instanceof Document\PageSnippet) {
-                $tagNames = $tagUsageResolver->getUsedTagnames($element);
-
-                foreach ($tagNames as $tagName) {
-                    $tag = $element->getElement($tagName);
-
-                    if ($tag && in_array($tag->getType(), ['wysiwyg', 'input', 'textarea', 'image', 'link'])) {
-                        if (in_array($tag->getType(), ['image', 'link'])) {
-                            $content = $tag->getText();
-                        } else {
-                            $content = $tag->getData();
-                        }
-
-                        if (is_string($content)) {
-                            $contentCheck = trim(strip_tags($content));
-                            if (!empty($contentCheck)) {
-                                $this->addTransUnitNode($body, 'tag~-~'.$tag->getName(), $content, $source);
-                                $addedElements = true;
-                            }
-                        }
-                    }
-                }
-
-                if ($element instanceof Document\Page) {
-                    $metaData = [
-                        'title' => $element->getTitle(),
-                        'description' => $element->getDescription(),
-                    ];
-
-                    foreach ($metaData as $key => $content) {
-                        if (!empty($content)) {
-                            $this->addTransUnitNode($body, 'settings~-~'.$key, $content, $source);
-                            $addedElements = true;
-                        }
-                    }
-                }
-            } elseif ($element instanceof DataObject\Concrete) {
-                $addedElements = $this->doXliffExportObject($element, $source, $body);
-            }
-
-            // properties
-            $properties = $element->getProperties();
-            if (is_array($properties)) {
-                foreach ($properties as $property) {
-                    if ($property->getType() == 'text' && !$property->isInherited()) {
-
-                        // exclude text properties
-                        if ($element instanceof Document) {
-                            if (in_array(
-                                $property->getName(),
-                                [
-                                    'language',
-                                    'navigation_target',
-                                    'navigation_exclude',
-                                    'navigation_class',
-                                    'navigation_anchor',
-                                    'navigation_parameters',
-                                    'navigation_relation',
-                                    'navigation_accesskey',
-                                    'navigation_tabindex']
-                            )) {
-                                continue;
-                            }
-                        }
-
-                        $content = $property->getData();
-                        if (!empty($content)) {
-                            $this->addTransUnitNode($body, 'property~-~'.$property->getName(), $content, $source);
-                            $addedElements = true;
-                        }
-                    }
-                }
-            }
-
-            // remove file if it is empty
-            if (!$addedElements) {
-                $file = dom_import_simplexml($file);
-                $file->parentNode->removeChild($file);
-            }
+            $translationItems->addPimcoreElement($element);
         }
 
-        $xliff->asXML($exportFile);
+        $exportService->exportTranslationItems($translationItems, $source, [$target], $id);
 
-        return $this->adminJson(
-            [
-                'success' => true,
-            ]
-        );
-    }
-
-    /**
-     * @param DataObject\Concrete $element
-     * @param $source
-     * @param $body \SimpleXMLElement
-     *
-     * @return bool
-     */
-    public function doXliffExportObject(DataObject\Concrete $element, $source, $body)
-    {
-        $allowedFieldTypes = ['input', 'textarea', 'wysiwyg'];
-        $locale = str_replace('-', '_', $source);
-        if (!Tool::isValidLanguage($locale)) {
-            $locale = \Locale::getPrimaryLanguage($locale);
-        }
-
-        if ($fd = $element->getClass()->getFieldDefinition('localizedfields')) {
-            $definitions = $fd->getFielddefinitions();
-
-            foreach ($definitions as $definition) {
-
-                // check allowed datatypes
-                if (!in_array($definition->getFieldtype(), $allowedFieldTypes)) {
-                    continue;
-                }
-
-                $content = $element->{'get'.ucfirst($definition->getName())}($locale);
-
-                if (!empty($content)) {
-                    $this->addTransUnitNode($body, 'localizedfield~-~'.$definition->getName(), $content, $source);
-                    $addedElements = true;
-                }
-            }
-        }
-
-        $fieldDefinitions = $element->getClass()->getFieldDefinitions();
-        foreach ($fieldDefinitions as $fd) {
-            if ($fd instanceof DataObject\ClassDefinition\Data\Block) {
-
-                /** @var $blockLocalizedFieldDefinition DataObject\ClassDefinition\Data\Localizedfields */
-                $blockLocalizedFieldDefinition = $fd->getFielddefinition('localizedfields');
-                if ($blockLocalizedFieldDefinition) {
-                    $blockLocalizedFieldsDefinitions = $blockLocalizedFieldDefinition->getFieldDefinitions();
-
-                    /** @var $blockItems array */
-                    $blocks = $element->{'get'.ucfirst($fd->getName())}();
-
-                    if ($blocks) {
-                        /** @var $blockItem DataObject\Data\BlockElement */
-                        $blockIdx = -1;
-                        foreach ($blocks as $blockItems) {
-                            $blockIdx++;
-                            if ($blockItems) {
-                                /** @var $blockItem DataObject\Data\BlockElement */
-                                foreach ($blockItems as $blockItem) {
-                                    if ($blockItem->getType() == 'localizedfields') {
-
-                                        /** @var DataObject\Localizedfield $blockItemData */
-                                        $blockItemData = $blockItem->getData();
-
-                                        /** @var $blockLocalizedFieldDefinition DataObject\ClassDefinition\Data */
-                                        foreach ($blockLocalizedFieldsDefinitions as $blockLocalizedFieldDefinition) {
-                                            // check allowed datatypes
-                                            if (!in_array(
-                                                $blockLocalizedFieldDefinition->getFieldtype(),
-                                                $allowedFieldTypes
-                                            )) {
-                                                continue;
-                                            }
-
-                                            $content = $blockItemData->getLocalizedValue($blockLocalizedFieldDefinition->getName(), $locale);
-
-                                            if (!empty($content)) {
-                                                $this->addTransUnitNode(
-                                                    $body,
-                                                    'block~-~' . $fd->getName() . '-' . $blockIdx . '-localizedfield-' . $blockLocalizedFieldDefinition->getName(),
-                                                    $content,
-                                                    $source
-                                                );
-                                                $addedElements = true;
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        return $addedElements;
+        return $this->adminJson([
+            'success' => true
+        ]);
     }
 
     /**
      * @Route("/xliff-export-download")
-     * @Method({"GET"})
      *
      * @param Request $request
+     * @param ExporterInterface $translationExporter
      *
      * @return BinaryFileResponse
      */
-    public function xliffExportDownloadAction(Request $request)
+    public function xliffExportDownloadAction(Request $request, ExporterInterface $translationExporter, ExportServiceInterface $exportService)
     {
         $id = $request->get('id');
-        $exportFile = PIMCORE_SYSTEM_TEMP_DIRECTORY.'/'.$id.'.xliff';
+        $exportFile = $exportService->getTranslationExporter()->getExportFilePath($id);
 
         $response = new BinaryFileResponse($exportFile);
-        $response->headers->set('Content-Type', 'application/x-xliff+xml');
+        $response->headers->set('Content-Type', $translationExporter->getContentType());
         $response->setContentDisposition(ResponseHeaderBag::DISPOSITION_ATTACHMENT, basename($exportFile));
         $response->deleteFileAfterSend(true);
 
@@ -953,40 +766,38 @@ class TranslationController extends AdminController
 
     /**
      * @Route("/xliff-import-upload")
-     * @Method({"POST"})
      *
      * @param Request $request
+     * @param ImportDataExtractorInterface $importDataExtractor
      *
      * @return JsonResponse
+     *
+     * @throws \Exception
      */
-    public function xliffImportUploadAction(Request $request)
+    public function xliffImportUploadAction(Request $request, ImportDataExtractorInterface $importDataExtractor)
     {
         $jobs = [];
         $id = uniqid();
-        $importFile = PIMCORE_SYSTEM_TEMP_DIRECTORY.'/'.$id.'.xliff';
+        $importFile = $importDataExtractor->getImportFilePath($id);
         copy($_FILES['file']['tmp_name'], $importFile);
 
-        $xliff = simplexml_load_file($importFile, null, LIBXML_NOCDATA);
-        $steps = count($xliff->file);
+        $steps = $importDataExtractor->countSteps($id);
 
-        for ($i = 0; $i < $steps; $i++) {
+        for ($i=0; $i < $steps; $i++) {
             $jobs[] = [[
                 'url' => '/admin/translation/xliff-import-element',
-                'method' => 'POST',
                 'params' => [
                     'id' => $id,
-                    'step' => $i,
-                ],
+                    'step' => $i
+                ]
             ]];
         }
 
-        $response = $this->adminJson(
-            [
-                'success' => true,
-                'jobs' => $jobs,
-                'id' => $id,
-            ]
-        );
+        $response = $this->adminJson([
+            'success' => true,
+            'jobs' => $jobs,
+            'id' => $id
+        ]);
         // set content-type to text/html, otherwise (when application/json is sent) chrome will complain in
         // Ext.form.Action.Submit and mark the submission as failed
         $response->headers->set('Content-Type', 'text/html');
@@ -996,237 +807,37 @@ class TranslationController extends AdminController
 
     /**
      * @Route("/xliff-import-element")
-     * @Method({"POST"})
      *
      * @param Request $request
+     * @param ImportDataExtractorInterface $importDataExtractor
+     * @param ImporterServiceInterface $importerService
      *
      * @return JsonResponse
      *
      * @throws \Exception
      */
-    public function xliffImportElementAction(Request $request)
+    public function xliffImportElementAction(Request $request, ImportDataExtractorInterface $importDataExtractor, ImporterServiceInterface $importerService)
     {
-        include_once(PIMCORE_PATH.'/lib/simple_html_dom.php');
-
         $id = $request->get('id');
         $step = $request->get('step');
-        $importFile = PIMCORE_SYSTEM_TEMP_DIRECTORY.'/'.$id.'.xliff';
 
-        $xliff = simplexml_load_file($importFile, null, LIBXML_NOCDATA);
-        $file = $xliff->file[(int)$step];
-        $target = $file['target-language'];
+        try {
+            $attributeSet = $importDataExtractor->extractElement($id, $step);
+            $importerService->import($attributeSet);
 
-        // see https://en.wikipedia.org/wiki/IETF_language_tag
-        $target = str_replace('-', '_', $target);
-
-        if (!Tool::isValidLanguage($target)) {
-            $target = \Locale::getPrimaryLanguage($target);
-            if (!Tool::isValidLanguage($target)) {
-                return $this->adminJson(
-                    [
-                        'success' => false,
-                    ]
-                );
-            }
+        } catch(\Exception $e) {
+            Logger::err($e->getMessage());
+            return $this->adminJson([
+                'success' => false
+            ]);
         }
 
-        list($type, $id) = explode('-', $file['original']);
-        $element = Element\Service::getElementById($type, $id);
-
-        if ($element) {
-            foreach ($file->body->{'trans-unit'} as $transUnit) {
-                list($fieldType, $name) = explode('~-~', $transUnit['id']);
-                $content = $transUnit->target->asXml();
-                $content = $this->unescapeXliff($content);
-
-                if ($element instanceof Document) {
-                    if ($fieldType == 'tag' && method_exists($element, 'getElement')) {
-                        $tag = $element->getElement($name);
-                        if ($tag) {
-                            if (in_array($tag->getType(), ['image', 'link'])) {
-                                $tag->setText($content);
-                            } else {
-                                $tag->setDataFromEditmode($content);
-                            }
-
-                            $tag->setInherited(false);
-                            $element->setElement($tag->getName(), $tag);
-                        }
-                    }
-
-                    if ($fieldType == 'settings' && $element instanceof Document\Page) {
-                        $setter = 'set'.ucfirst($name);
-                        if (method_exists($element, $setter)) {
-                            $element->$setter($content);
-                        }
-                    }
-                } elseif ($element instanceof DataObject\Concrete) {
-                    if ($fieldType == 'localizedfield') {
-                        $setter = 'set'.ucfirst($name);
-                        if (method_exists($element, $setter)) {
-                            $element->$setter($content, $target);
-                        }
-                    } elseif ($fieldType == 'block') {
-                        list($blockName, $blockIndex, $dummy, $fieldname) = explode('-', $name);
-                        /** @var $blockData array */
-                        $blockData = $element->{'get' . $blockName}();
-                        $blockItem = $blockData[$blockIndex];
-                        $blockItemData = $blockItem['localizedfields'];
-                        if (!$blockItemData) {
-                            $blockItemData = new DataObject\Data\BlockElement('localizedfields', 'localizedfields', new DataObject\Localizedfield());
-                        }
-
-                        /** @var $localizedFieldData DataObject\Localizedfield */
-                        $localizedFieldData = $blockItemData->getData();
-                        $localizedFieldData->setLocalizedValue($fieldname, $content, $target);
-                    }
-                }
-
-                if ($fieldType == 'property') {
-                    $property = $element->getProperty($name, true);
-                    if ($property) {
-                        $property->setData($content);
-                    } else {
-                        $element->setProperty($name, 'text', $content);
-                    }
-                }
-            }
-
-            try {
-                // allow to save objects although there are mandatory fields
-                if ($element instanceof DataObject\AbstractObject) {
-                    $element->setOmitMandatoryCheck(true);
-                }
-
-                $element->save();
-            } catch (\Exception $e) {
-                throw new \Exception(
-                    'Unable to save '.Element\Service::getElementType($element).' with id '.$element->getId(
-                    ).' because of the following reason: '.$e->getMessage()
-                );
-            }
-        } else {
-            Logger::error('Could not resolve element '.$file['original']);
-        }
-
-        return $this->adminJson(
-            [
-                'success' => true,
-            ]
-        );
+        return $this->adminJson([
+            'success' => true
+        ]);
     }
 
-    /**
-     * @param $xml
-     * @param $name
-     * @param $content
-     * @param $source
-     */
-    protected function addTransUnitNode($xml, $name, $content, $source)
-    {
-        $transUnit = $xml->addChild('trans-unit');
-        $transUnit->addAttribute('id', htmlentities($name));
 
-        $sourceNode = $transUnit->addChild('source');
-        $sourceNode->addAttribute('xmlns:xml:lang', $source);
-
-        $node = dom_import_simplexml($sourceNode);
-        $no = $node->ownerDocument;
-        $f = $no->createDocumentFragment();
-        $f->appendXML($this->escapeXliff($content));
-        @$node->appendChild($f);
-    }
-
-    /**
-     * @param $content
-     *
-     * @return mixed|string
-     */
-    protected function unescapeXliff($content)
-    {
-        $content = preg_replace("/<\/?(target|mrk)([^>.]+)?>/i", '', $content);
-        // we have to do this again but with html entities because of CDATA content
-        $content = preg_replace("/&lt;\/?(target|mrk)((?!&gt;).)*&gt;/i", '', $content);
-
-        if (preg_match("/<\/?(bpt|ept)/", $content)) {
-            $xml = str_get_html($content);
-            if ($xml) {
-                $els = $xml->find('bpt,ept,ph');
-                foreach ($els as $el) {
-                    $content = html_entity_decode($el->innertext, null, 'UTF-8');
-                    $el->outertext = $content;
-                }
-            }
-            $content = $xml->save();
-        }
-
-        return $content;
-    }
-
-    /**
-     * @param $content
-     *
-     * @return mixed|string
-     */
-    protected function escapeXliff($content)
-    {
-        $count = 1;
-        $openTags = [];
-        $final = [];
-
-        // remove nasty device control characters
-        $content = preg_replace('/[\x00-\x09\x0B\x0C\x0E-\x1F\x7F]/', '', $content);
-
-        $replacement = ['%_%_%lt;%_%_%', '%_%_%gt;%_%_%'];
-        $content = str_replace(['&lt;', '&gt;'], $replacement, $content);
-        $content = html_entity_decode($content, null, 'UTF-8');
-
-        if (!preg_match_all('/<([^>]+)>([^<]+)?/', $content, $matches)) {
-            // return original content if it doesn't contain HTML tags
-            return '<![CDATA['.$content.']]>';
-        }
-
-        // Handle text before the first HTML tag
-        $firstTagPosition = strpos($content, '<');
-        $preText = ($firstTagPosition > 0) ? '<![CDATA['.substr($content, 0, $firstTagPosition).']]>' : '';
-
-        foreach ($matches[0] as $match) {
-            $parts = explode('>', $match);
-            $parts[0] .= '>';
-            foreach ($parts as $part) {
-                $part = trim($part);
-                if (!empty($part)) {
-                    if (preg_match("/<([a-z0-9\/]+)/", $part, $tag)) {
-                        $tagName = str_replace('/', '', $tag[1]);
-                        if (in_array($tagName, self::SELFCLOSING_TAGS)) {
-                            $part = '<ph id="'.$count.'"><![CDATA['.$part.']]></ph>';
-
-                            $count++;
-                        } elseif (strpos($tag[1], '/') === false) {
-                            $openTags[$count] = ['tag' => $tagName, 'id' => $count];
-                            $part = '<bpt id="'.$count.'"><![CDATA['.$part.']]></bpt>';
-
-                            $count++;
-                        } else {
-                            $closingTag = array_pop($openTags);
-                            $part = '<ept id="'.$closingTag['id'].'"><![CDATA['.$part.']]></ept>';
-                        }
-                    } else {
-                        $part = str_replace($replacement, ['<', '>'], $part);
-                        $part = '<![CDATA['.$part.']]>';
-                    }
-
-                    if (!empty($part)) {
-                        $final[] = $part;
-                    }
-                }
-            }
-        }
-
-        $content = $preText.implode('', $final);
-
-        return $content;
-    }
 
     /**
      * @Route("/word-export")
