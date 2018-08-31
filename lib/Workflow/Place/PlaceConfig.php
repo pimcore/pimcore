@@ -49,12 +49,12 @@ class PlaceConfig {
 
     public function getTitle(): string
     {
-        return $this->placeConfigArray['title'];
+        return $this->placeConfigArray['title'] ?? '';
     }
 
     public function getColor(): string
     {
-        return $this->placeConfigArray['color'];
+        return $this->placeConfigArray['color'] ?? '#bfdadc';
     }
 
     public function getColorInverted(): bool

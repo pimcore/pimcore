@@ -1,24 +1,22 @@
-{# @var product string #}
+{# @var subjectType string #}
 {# @var subject AbstractElement #}
 {# @var action string #}
 {# @var deeplink string #}
-{# @var subject_img HTML-string #}
-{# @var logo HTML-string #}
 {# @var note_description string #}
 {# @var translator \Symfony\Component\Translation\TranslatorInterface #}
 {# @var lang string #}
 
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="UTF-8">
-    </head>
-    <body>
-        {{ translator.trans('workflow_change_email_notification', [product ~ ' ' ~ subject.getPath(), subject.getId(), translator.trans(action, [], 'admin', lang)], 'admin', lang) }}<br>
-        {% if deeplink|trim is not empty %}
-            <a href="{{ deeplink }}" target="_blank">Deeplink</a><br>
-        {% endif %}
-        <br>
-        {{ note_description }}
-    </body>
+<head>
+    <meta charset="UTF-8">
+</head>
+<body>
+{{ translator.trans('workflow_change_email_notification', [subjectType ~ ' ' ~ subject.getPath(), subject.getId(), translator.trans(action, [], 'admin', lang)], 'admin', lang) }}<br>
+{% if deeplink|trim is not empty %}
+    <a href="{{ deeplink }}" target="_blank">Deeplink</a><br>
+{% endif %}
+<br>
+{{ note_description }}
+</body>
 </html>

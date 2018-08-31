@@ -30,6 +30,11 @@ class NotificationEmailSubscriber implements EventSubscriberInterface
     /**
      * @var TranslatorInterface
      */
+    private $mailService;
+
+    /**
+     * @var TranslatorInterface
+     */
     private $translator;
 
     /**
@@ -37,8 +42,13 @@ class NotificationEmailSubscriber implements EventSubscriberInterface
      */
     private $enabled = true;
 
-    public function __construct(TranslatorInterface $translator)
+    /**
+     * @param NotificationEmailService $mailService
+     * @param TranslatorInterface $translator
+     */
+    public function __construct(NotificationEmailService $mailService, TranslatorInterface $translator)
     {
+        $this->mailService = $mailService;
         $this->translator = $translator;
     }
 
@@ -70,15 +80,9 @@ class NotificationEmailSubscriber implements EventSubscriberInterface
     private function handleNotifyPostWorkflow(Workflow\NotificationEmail\NotificationEmailInterface $notifyEmail, AbstractElement $subject)
     {
         //notify users
-        $parameters = [
-            'product' => (Service::getType($subject) == 'object' ? $subject->getClassName() : Service::getType($subject)),
-            'subject' => $subject,
-            'action' => $notifyEmail->getLabel(),
-            'note_description' => ''
-        ];
+        $subjectType = (Service::getType($subject) == 'object' ? $subject->getClassName() : Service::getType($subject));
 
-        $mailService = \Pimcore::getContainer()->get(NotificationEmailService::class);
-        $mailService->sendWorkflowEmailNotification($notifyEmail->getNotifyUsers(), $notifyEmail->getNotifyRoles(), $parameters);
+        $this->mailService->sendWorkflowEmailNotification($notifyEmail->getNotifyUsers(), $notifyEmail->getNotifyRoles(), $subjectType, $subject, $notifyEmail->getLabel());
     }
 
     /**

@@ -211,6 +211,12 @@ services:
         tags:
             - { name: pimcore.data_object.grid_column_config.operator_factory, id: Trimmer }
 
+    pimcore.data_object.grid_column_config.operator.factory.workflowstate:
+        class: Pimcore\DataObject\GridColumnConfig\Operator\Factory\WorkflowStateFactory
+        tags:
+        - { name: pimcore.data_object.grid_column_config.operator_factory, id: WorkflowState }
+
+
 
     #
     # VALUE FACTORIES

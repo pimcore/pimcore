@@ -575,6 +575,7 @@
   "workflow_notes_optional": "Notes (Optional)",
   "workflow_notes_requred_field_message": "\"%s\" is a required field.",
   "workflow_transition_applied_successfully": "Action applied successfully",
+  "workflow_change_email_notification": "For %s with ID %s the action \"%s\" was triggered.",
   "please_enter_the_id_of_the_asset": "Please enter the ID or Path (e.g. \/images\/logo.jpg) of the asset",
   "please_enter_the_id_of_the_object": "Please enter the ID or Path of the object",
   "please_enter_the_id_of_the_document": "Please enter the ID, Path or URL (also including http:\/\/) of the document",

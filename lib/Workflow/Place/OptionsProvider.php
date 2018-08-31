@@ -14,6 +14,7 @@
 
 namespace Pimcore\Workflow\Place;
 
+use Pimcore\Helper\ContrastColor;
 use Pimcore\Model\DataObject\ClassDefinition\DynamicOptionsProvider\Data;
 use Pimcore\Model\DataObject\ClassDefinition\DynamicOptionsProvider\SelectOptionsProviderInterface;
 use Pimcore\Workflow\Manager;
@@ -81,16 +82,17 @@ class OptionsProvider implements SelectOptionsProviderInterface {
 
     protected function generatePlaceLabel(PlaceConfig $placeConfig): string
     {
-        return $this->translator->trans($placeConfig->getLabel(), [], 'admin');
+        // do not translate or format options when not in admin context
+        if(empty($this->translator->getLocale())) {
+            return $placeConfig->getLabel();
+        }
 
         // disabled for the moment
-       /* return sprintf('<div class="pimcore-workflow-place-indicator" style="background-color: %s; color:%s">
-            %s
-        </div>',
+        return sprintf('<div class="pimcore-workflow-place-indicator" style="background-color: %s; color:%s">%s</div>',
             $placeConfig->getColor(),
-            $this->contrastColor->getContrastColor($placeConfig->getColor()),
+            ContrastColor::getContrastColor($placeConfig->getColor()),
             $this->translator->trans($placeConfig->getLabel(), [], 'admin')
-        ); */
+        );
     }
 
     public function hasStaticOptions($context, $fieldDefinition)

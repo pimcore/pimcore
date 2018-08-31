@@ -1081,6 +1081,7 @@ class Configuration implements ConfigurationInterface
                                                                      ->prototype('variable')->end()
                                                                 ->end()
                                                             ->end()
+
                                                         ->end()
                                                     ->end()
                                                 ->end()

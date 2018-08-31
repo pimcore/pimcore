@@ -14,6 +14,7 @@
 
 namespace Pimcore\Workflow\NotificationEmail;
 
+use Pimcore\Model\Element\AbstractElement;
 use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Tool;
 use Symfony\Component\Templating\EngineInterface;
@@ -32,12 +33,12 @@ class NotificationEmailService
     /**
      * @var RouterInterface
      */
-    protected $router;
+    private $router;
 
     /**
      * @var TranslatorInterface
      */
-    private $translator;
+    protected $translator;
 
     /**
      * @param EngineInterface $templatingEngine
@@ -57,9 +58,11 @@ class NotificationEmailService
      *
      * @param array $users
      * @param array $roles
-     * @param array $parameters
+     * @param string $subjectType
+     * @param AbstractElement $subject
+     * @param string $action
      */
-    public function sendWorkflowEmailNotification($users, $roles, $parameters)
+    public function sendWorkflowEmailNotification($users, $roles, $subjectType, $subject, $action)
     {
         try {
             $recipients = self::getNotificationUsersByName($users, $roles);
@@ -80,7 +83,7 @@ class NotificationEmailService
 
                 $mail->setSubject("Workflow Update");
 
-                $mail->setBodyHtml($this->getHtmlBody($parameters, $lang));
+                $mail->setBodyHtml($this->getHtmlBody($subjectType, $subject, $action, $lang));
 
                 $mail->send();
             }
@@ -104,7 +107,7 @@ class NotificationEmailService
 
         //get roles
         $roleList = new User\Role\Listing();
-        $roleList->setCondition('name in (?)', [implode(',', $roles)]);
+        $roleList->setCondition('name in (?) and email is not null', [implode(',', $roles)]);
 
         foreach ($roleList->load() as $role) {
             $userList = new User\Listing();
@@ -124,7 +127,7 @@ class NotificationEmailService
 
         //get users
         $userList = new User\Listing();
-        $userList->setCondition('FIND_IN_SET(name, ?)', [implode(',', $users)]);
+        $userList->setCondition('FIND_IN_SET(name, ?) and email is not null', [implode(',', $users)]);
 
         foreach ($userList->load() as $user) {
             /**
@@ -151,32 +154,27 @@ class NotificationEmailService
         return $notifyUsers;
     }
 
-
-    private function getHtmlBody($parameters, $lang): string {
-        $hostUrl = Tool::getHostUrl();
-        $deeplink = '';
-
+    /**
+     * @param string $subjectType
+     * @param AbstractElement $subject
+     * @param string $action
+     * @param string $lang
+     *
+     * @return string
+     */
+    protected function getHtmlBody($subjectType, $subject, $action, $lang): string {
         // allow retrieval of inherited values
         $inheritanceBackup = AbstractObject::getGetInheritedValues();
         AbstractObject::setGetInheritedValues(true);
 
+        $deeplink = '';
+        $hostUrl = Tool::getHostUrl();
         if ($hostUrl !== '') {
-            $deeplink = $hostUrl . '/' . $this->router->generate('pimcore_admin_login') . '/deeplink?object_' . $parameters['subject']->getId() . '_object';
+            $deeplink = $hostUrl . '/' . $this->router->generate('pimcore_admin_login') . '/deeplink?object_' . $subject->getId() . '_object';
         }
 
-        $noteDescription = $this->getNoteInfo($parameters['subject']->getId());
-
         $emailTemplate = $this->templatingEngine->render(
-            '@PimcoreCore/Workflow/NotificationEmail/notificationEmail.html.twig',
-            [
-                'product' => $parameters['product'],
-                'subject' => $parameters['subject'],
-                'action' => $parameters['action'],
-                'deeplink' => $deeplink,
-                'note_description' => $noteDescription,
-                'translator' => $this->translator,
-                'lang' => $lang
-            ]
+            '@PimcoreCore/Workflow/NotificationEmail/notificationEmail.html.twig', $this->getNotificationEmailParameters($subjectType, $subject, $action, $deeplink, $lang)
         );
 
         //reset inheritance
@@ -185,7 +183,30 @@ class NotificationEmailService
         return $emailTemplate;
     }
 
-    private function getNoteInfo($id): string {
+    /**
+     * @param string $subjectType
+     * @param AbstractElement $subject
+     * @param string $action
+     * @param string $deeplink
+     * @param string $lang
+     *
+     * @return array
+     */
+    protected function getNotificationEmailParameters($subjectType, $subject, $action, $deeplink, $lang) {
+        $noteDescription = $this->getNoteInfo($subject->getId());
+
+        return [
+            'subjectType' => $subjectType,
+            'subject' => $subject,
+            'action' => $action,
+            'deeplink' => $deeplink,
+            'note_description' => $noteDescription,
+            'translator' => $this->translator,
+            'lang' => $lang
+        ];
+    }
+
+    protected function getNoteInfo($id): string {
         $noteList = new Element\Note\Listing();
         $noteList->addConditionParam("(cid = ?)", [$id]);
         $noteList->setOrderKey("date");
