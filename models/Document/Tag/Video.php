@@ -538,7 +538,7 @@ class Video extends Model\Document\Tag
             'listType',
             'loop',
             'modestbranding',
-			'mute',
+            'mute',
             'origin',
             'playerapiid',
             'playlist',
@@ -546,7 +546,7 @@ class Video extends Model\Document\Tag
             'showinfo',
             'start',
             'theme'
-			];
+            ];
         $additional_params = '';
 
         $clipConfig = [];
@@ -615,12 +615,12 @@ class Video extends Model\Document\Tag
                 $height = $options['height'];
             }
 
-            $valid_vimeo_prams = [         
+            $valid_vimeo_prams = [
                 'autoplay',
-				'background',
+                'background',
                 'loop',
-				'muted'
-				];
+                'muted'
+                ];
 
             $additional_params = '';
 
@@ -697,7 +697,7 @@ class Video extends Model\Document\Tag
             $valid_dailymotion_prams = [
                 'autoplay',
                 'loop',
-				'mute'];
+                'mute'];
 
             $additional_params = '';
 
