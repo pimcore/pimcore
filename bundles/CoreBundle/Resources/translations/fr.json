@@ -818,5 +818,6 @@
     "thumbnail": "Vignette",
     "download_thumbnail": "Télécharger Vignette",
     "no_thumbnail_selected": "Aucune miniature sélectionnée",
-    "list_thumbnail_in_download_section_on_image_detail_view": "Lister en option dans la section de téléchargement sur la vue détaillée de l'image"
+    "list_thumbnail_in_download_section_on_image_detail_view": "Lister en option dans la section de téléchargement sur la vue détaillée de l'image",
+    "there_are_more_items": "Il y a plus d'éléments que ceux affichés"
 }
