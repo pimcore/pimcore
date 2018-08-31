@@ -14,9 +14,8 @@
 
 namespace Pimcore\Translation\ExportDataExtractorService\DataExtractor;
 
-use Pimcore\Model\DataObject\AbstractObject;
+use Pimcore\Document\Tag\TagUsageResolver;
 use Pimcore\Model\Document;
-use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Property;
 use Pimcore\Translation\AttributeSet\Attribute;
 use Pimcore\Translation\AttributeSet\AttributeSet;
@@ -25,6 +24,16 @@ use Pimcore\Translation\TranslationItemCollection\TranslationItem;
 class DocumentDataExtractor extends AbstractElementDataExtractor {
 
     const EXPORTABLE_TAGS = ['wysiwyg', 'input', 'textarea', 'image', 'link'];
+
+    /**
+     * @var TagUsageResolver
+     */
+    private $tagUsageResolver;
+
+    public function __construct(TagUsageResolver $tagUsageResolver)
+    {
+        $this->tagUsageResolver = $tagUsageResolver;
+    }
 
     /**
      * @param Document $document
@@ -59,20 +68,14 @@ class DocumentDataExtractor extends AbstractElementDataExtractor {
      */
     protected function addDoumentTags(Document $document, AttributeSet $result): DocumentDataExtractor
     {
-        $doc = $document;
-
         $elements = [];
 
-        // get also content of inherited document elements
-        while ($doc) {
-            if (method_exists($doc, 'getElements')) {
-                $elements = array_merge($doc->getElements(), $elements);
-            }
-
-            if (method_exists($doc, 'getContentMasterDocument')) {
-                $doc = $doc->getContentMasterDocument();
-            } else {
-                $doc = null;
+        if ($document instanceof Document\PageSnippet) {
+            $tagNames = $this->tagUsageResolver->getUsedTagnames($document);
+            foreach ($tagNames as $tagName) {
+                if ($tag = $document->getElement($tagName)) {
+                    $elements[] = $tag;
+                }
             }
         }
 
