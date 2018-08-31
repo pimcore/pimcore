@@ -823,17 +823,22 @@ class Configuration implements ConfigurationInterface
                             ->children()
                                 ->booleanNode('enabled')
                                     ->defaultTrue()
+                                    ->info('Can be used to enable or disable the workflow.')
                                 ->end()
                                 ->integerNode('priority')
                                     ->defaultValue(0)
+                                    ->info('When multiple custom view or permission settings from different places in different workflows are valid, the workflow with the highest priority will be used.')
                                 ->end()
                                 ->scalarNode('label')
+                                    ->info('Will be used in the backend interface as nice name for the workflow. If not set the technical workflow name will be used as label too.')
                                 ->end()
                                 ->arrayNode('audit_trail')
                                     ->canBeEnabled()
+                                    ->info('Enable default audit trail feature provided by Symfony. Take a look at the Symfony docs for more details.')
                                 ->end()
                                 ->enumNode('type')
                                     ->values(array('workflow', 'state_machine'))
+                                    ->info('A workflow with type "workflow" can handle multiple places at one time whereas a state_machine provides a finite state_machine (only one place at one time). Take a look at the Symfony docs for more details.')
                                 ->end()
                                 ->arrayNode('marking_store')
                                     ->fixXmlConfig('argument')
@@ -854,6 +859,7 @@ class Configuration implements ConfigurationInterface
                                             ->cannotBeEmpty()
                                         ->end()
                                     ->end()
+                                    ->info('Handles the way how the state/place is stored. If not defined "state_table" will be used as default. Take a look at @TODO for a description of the different types.')
                                     ->validate()
                                         ->ifTrue(function ($v) { return isset($v['type']) && isset($v['service']); })
                                         ->thenInvalid('"type" and "service" cannot be used together.')
@@ -875,12 +881,15 @@ class Configuration implements ConfigurationInterface
                                             ->thenInvalid('The supported class %s does not exist.')
                                         ->end()
                                     ->end()
+                                    ->info('List of supported entity classes. Take a look at the Symfony docs for more details.')
+                                    ->example(['\Pimcore\Model\DataObject\Product'])
                                 ->end()
                                 ->arrayNode('support_strategy')
                                     ->fixXmlConfig('argument')
                                     ->children()
                                         ->enumNode('type')
                                             ->values(array('expression'))
+                                            ->info('Type "expression": a symfony expression to define a criteria.')
                                         ->end()
                                         ->arrayNode('arguments')
                                             ->beforeNormalization()
@@ -893,6 +902,7 @@ class Configuration implements ConfigurationInterface
                                         ->end()
                                         ->scalarNode('service')
                                             ->cannotBeEmpty()
+                                            ->info('Define a custom service to handle the logic. Take a look at the Symfony docs for more details.')
                                         ->end()
                                     ->end()
                                     ->validate()
@@ -903,39 +913,66 @@ class Configuration implements ConfigurationInterface
                                         ->ifTrue(function ($v) { return !empty($v['arguments']) && isset($v['service']); })
                                         ->thenInvalid('"arguments" and "service" cannot be used together.')
                                     ->end()
+                                    ->info('Can be used to implement a special logic which subjects are supported by the workflow. For example only products matching certain criteria.')
+                                    ->example([
+                                        'type' => 'expression',
+                                        'arguments' => [
+                                            '\Pimcore\Model\DataObject\Product',
+                                            'subject.getProductType() == "article" and is_fully_authenticated() and "ROLE_PIMCORE_ADMIN" in roles'
+                                        ]
+                                    ])
                                 ->end()
                                 ->scalarNode('initial_place')
                                     ->defaultNull()
+                                    ->info('Will be applied when the current place is empty.')
                                 ->end()
                                 ->arrayNode('places')
                                     ->prototype('array')
                                         ->children()
-                                            ->booleanNode('visibleInHeader')->defaultTrue()->end()
-                                            ->scalarNode('label')->end()
-                                            ->scalarNode('title')->defaultValue('')->end()
-                                            ->scalarNode('color')->defaultValue('#bfdadc')->end()
-                                            ->booleanNode('colorInverted')->defaultFalse()->end()
+                                            ->scalarNode('label')->info('Nice name which will be used in the Pimcore backend.')->end()
+                                            ->scalarNode('title')->info('Title/tooltip for this place when it is displayed in the header of the Pimcore element detail view in the backend.')->defaultValue('')->end()
+                                            ->scalarNode('color')->info('Color of the place which will be used in the Pimcore backend.')->defaultValue('#bfdadc')->end()
+                                            ->booleanNode('colorInverted')->info('If set to true the color will be used as border and font color otherwise as background color.')->defaultFalse()->end()
+                                            ->booleanNode('visibleInHeader')->info('If set to false, the place will be hidden in the header of the Pimcore element detail view in the backend.')->defaultTrue()->end()
 
                                             ->arrayNode('permissions')
                                                 ->prototype('array')
                                                     ->children()
-                                                        ->scalarNode('condition')->end()
-                                                        ->booleanNode('modify')->end() ## modify is a short hand for save, publish, unpublish, delete + rename
-                                                        ->booleanNode('save')->end()
-                                                        ->booleanNode('publish')->end()
-                                                        ->booleanNode('unpublish')->end()
-                                                        ->booleanNode('delete')->end()
-                                                        ->booleanNode('rename')->end()
-                                                        ->booleanNode('view')->end()
-                                                        ->booleanNode('settings')->end()
-                                                        ->booleanNode('versions')->end()
-                                                        ->booleanNode('properties')->end()
-                                                        ->integerNode('objectLayout')->end()
+                                                        ->scalarNode('condition')->info('A symfony expresion can be configured here. The first set of permissions which are matching the condition will be used.')->end()
+                                                        ->booleanNode('save')->info('save permission as it can be configured in pimcore workplaces')->end()
+                                                        ->booleanNode('publish')->info('publish permission as it can be configured in pimcore workplaces')->end()
+                                                        ->booleanNode('unpublish')->info('unpublish permission as it can be configured in pimcore workplaces')->end()
+                                                        ->booleanNode('delete')->info('delete permission as it can be configured in pimcore workplaces')->end()
+                                                        ->booleanNode('rename')->info('rename permission as it can be configured in pimcore workplaces')->end()
+                                                        ->booleanNode('view')->info('view permission as it can be configured in pimcore workplaces')->end()
+                                                        ->booleanNode('settings')->info('settings permission as it can be configured in pimcore workplaces')->end()
+                                                        ->booleanNode('versions')->info('versions permission as it can be configured in pimcore workplaces')->end()
+                                                        ->booleanNode('properties')->info('properties permission as it can be configured in pimcore workplaces')->end()
+                                                        ->booleanNode('modify')->info('a short hand for save, publish, unpublish, delete + rename')->end()
+                                                        ->integerNode('objectLayout')->info('if set, the user will see the configured custom data object layout')->end()
                                                     ->end()
                                                 ->end()
                                             ->end()
                                         ->end()
                                     ->end()
+
+                                    ->example([
+                                        "places" => [
+                                            "closed" => [
+                                                "label" => "close product",
+                                                "permissions" => [
+                                                    [
+                                                        "condition" => "is_fully_authenticated() and 'ROLE_PIMCORE_ADMIN' in roles",
+                                                        "modify" => false
+                                                    ],
+                                                    [
+                                                        "modify" => false,
+                                                        "objectLayout" => 2
+                                                    ]
+                                                ]
+                                            ]
+                                        ]
+                                    ])
                                 ->end()
                                 ->arrayNode('transitions')
                                     ->beforeNormalization()
@@ -992,57 +1029,97 @@ class Configuration implements ConfigurationInterface
                                             ->end()
                                             ->arrayNode('options')
                                                 ->children()
-                                                    ->scalarNode('label')->end()
+                                                    ->scalarNode('label')->info('Nice name for the Pimcore backend.')->end()
                                                     ->arrayNode('notes')
                                                         ->children()
-                                                            ->booleanNode('commentEnabled')->defaultFalse()->end()
-                                                            ->booleanNode('commentRequired')->defaultFalse()->end()
-                                                            ->scalarNode('commentSetterFn')->end()
-                                                            ->scalarNode('commentGetterFn')->end()
-                                                            ->scalarNode('type')->defaultValue('Status update')->end()
-                                                            ->scalarNode('title')->end()
+                                                            ->booleanNode('commentEnabled')->defaultFalse()->info('If enabled a detail window will open when the user executes the transition. In this detail view the user be asked to enter a "comment". This comment then will be used as comment for the notes/events feature.')->end()
+                                                            ->booleanNode('commentRequired')->defaultFalse()->info('Set this to true if the comment should be a required field.')->end()
+                                                            ->scalarNode('commentSetterFn')->info('Can be used for data objects. The comment will be saved to the data object additionally to the notes/events through this setter function.')->end()
+                                                            ->scalarNode('commentGetterFn')->info('Can be used for data objects to prefill the comment field with data from the data object.')->end()
+                                                            ->scalarNode('type')->defaultValue('Status update')->info('Set\'s the type string in the saved note.')->end()
+                                                            ->scalarNode('title')->info('An optional alternative "title" for the note, if blank the actions transition result is used.')->end()
                                                             ->arrayNode('additionalFields')
                                                                 ->prototype('array')
                                                                     ->children()
-                                                                        ->scalarNode('name')->isRequired()->end()
+                                                                        ->scalarNode('name')->isRequired()->info('The technical name used in the input form.')->end()
                                                                         ->enumNode('fieldType')
                                                                             ->isRequired()
                                                                             ->values(['input', 'textarea', 'select', 'datetime', 'date', 'user', 'checkbox'])
+                                                                            ->info('The data component name/field type.')
                                                                         ->end()
-                                                                        ->scalarNode('title')->end()
-                                                                        ->booleanNode('required')->defaultFalse()->end()
-                                                                        ->scalarNode('setterFn')->end()
+                                                                        ->scalarNode('title')->info('The label used by the field')->end()
+                                                                        ->booleanNode('required')->defaultFalse()->info('Whether or not the field is required.')->end()
+                                                                        ->scalarNode('setterFn')->info('Optional setter function (available in the element, for example in the updated object), if not specified, data will be added to notes. The Workflow manager will call the function with the whole field data.')->end()
                                                                         ->arrayNode('fieldTypeSettings')
                                                                              ->prototype('variable')->end()
+                                                                             ->info('Will be passed to the underlying pimcore data object field type. Can be used to configure the options of a select box for example.')
                                                                         ->end()
                                                                     ->end()
                                                                 ->end()
+                                                                ->info('Add additional field to the transition detail window.')
                                                             ->end()
                                                         ->end()
                                                     ->end()
-                                                    ->scalarNode('iconClass')->end()
+                                                    ->scalarNode('iconClass')->info('Css class to define the icon which will be used in the actions button in the backend.')->end()
                                                     ->arrayNode('notifyUsers')
                                                         ->requiresAtLeastOneElement()
                                                         ->prototype('scalar')
                                                             ->cannotBeEmpty()
                                                         ->end()
+                                                        ->info('Send a email notification to a list of users (user names) when the transition get\'s applied')
                                                     ->end()
                                                     ->arrayNode('notifyRoles')
                                                         ->requiresAtLeastOneElement()
                                                         ->prototype('scalar')
                                                             ->cannotBeEmpty()
                                                         ->end()
+                                                        ->info('Send a email notification to a list of user roles (role names) when the transition get\'s applied')
                                                     ->end()
                                                 ->end()
                                             ->end()
                                         ->end()
                                     ->end()
+
+                                    ->example([
+                                        "close_product" => [
+                                            "from" => "open",
+                                            "to" => "closed",
+                                            "options" => [
+                                                "label" => "close product",
+                                                "notes" => [
+                                                    "commentEnabled" => true,
+                                                    "commentRequired" => true,
+                                                    "additionalFields" => [
+                                                        [
+                                                            "name" => "accept",
+                                                            "title" => "accept terms",
+                                                            "required" => true,
+                                                            "fieldType" => "checkbox",
+                                                        ],
+                                                        [
+                                                            "name" => "select",
+                                                            "title" => "please select a type",
+                                                            "setterFn" => "setSpecialWorkflowType",
+                                                            "fieldType" => "select",
+                                                            "fieldTypeSettings" => [
+                                                                "options" => [
+                                                                    ["key" => "Option A", "value" => "a"],
+                                                                    ["key" => "Option B", "value" => "b"],
+                                                                    ["key" => "Option C", "value" => "c"],
+                                                                ]
+                                                            ],
+                                                        ]
+                                                    ],
+                                                ]
+                                            ]
+                                        ]
+                                    ])
                                 ->end()
                                 ->arrayNode('globalActions')
                                     ->prototype('array')
                                         ->children()
-                                            ->scalarNode('label')->end()
-                                            ->scalarNode('iconClass')->end()
+                                            ->scalarNode('label')->info('Nice name for the Pimcore backend.')->end()
+                                            ->scalarNode('iconClass')->info('Css class to define the icon which will be used in the actions button in the backend.')->end()
                                             ->scalarNode('guard')
                                                 ->cannotBeEmpty()
                                                 ->info('An expression to block the action')
@@ -1057,6 +1134,7 @@ class Configuration implements ConfigurationInterface
                                                 ->prototype('scalar')
                                                     ->cannotBeEmpty()
                                                 ->end()
+                                                ->info('Optionally set the current place of the workflow. Can be used for example to reset the workflow to the initial place.')
                                             ->end()
                                             ->arrayNode('notes')
                                                 ->children()
@@ -1085,9 +1163,11 @@ class Configuration implements ConfigurationInterface
                                                         ->end()
                                                     ->end()
                                                 ->end()
+                                                ->info('See notes section of transitions. It works exactly the same way.')
                                             ->end()
                                         ->end()
                                     ->end()
+                                    ->info('Actions which will be added to actions button independently of the current workflow place.')
                                 ->end()
                             ->end()
                             ->validate()
