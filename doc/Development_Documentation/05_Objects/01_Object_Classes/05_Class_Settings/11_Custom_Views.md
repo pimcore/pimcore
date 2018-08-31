@@ -24,7 +24,7 @@ The main idea for this configuration is to
 
 ```php
 <?php
-// https://github.com/pimcore/skeleton/blob/master/app/config/pimcore/customviews.example.php
+// /app/config/pimcore/customviews.example.php
  
 return [
     "views" => [
