@@ -54,7 +54,9 @@ at AWS S3 you have multiple ways to do so:
   component if it exists. Environment variables defined here will have the same effect as "real" environment variables.
 
 
-An example file (`constants.example.php`) is shipped with Pimcore installation and could look like: 
+The [Pimcore Skeleton](https://github.com/pimcore/skeleton) repository contains an example file,
+[`constants.example.php`](https://github.com/pimcore/skeleton/blob/master/app/constants.example.php).
+The following file is an example to overwrite some locations:
 
 ```php
 <?php
