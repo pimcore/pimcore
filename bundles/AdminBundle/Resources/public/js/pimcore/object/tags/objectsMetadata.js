@@ -530,7 +530,6 @@ pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, 
                     toBeRequested.add(this.loadObjectData(items[i], fields));
                 }
             }
-            this.itemsArr = items;
             this.requestNicePathData(toBeRequested);
         }
     },

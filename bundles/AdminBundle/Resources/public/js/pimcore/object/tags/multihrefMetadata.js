@@ -426,7 +426,8 @@ pimcore.object.tags.multihrefMetadata = Class.create(pimcore.object.tags.abstrac
                                     var initData = {
                                         id: data.id,
                                         path: data.path,
-                                        type: data.elementType
+                                        type: data.elementType,
+                                        published: data.published
                                     };
 
                                     if (initData.type == "object") {
@@ -714,7 +715,6 @@ pimcore.object.tags.multihrefMetadata = Class.create(pimcore.object.tags.abstrac
 
     addDataFromSelector: function (items) {
         if (items.length > 0) {
-            this.itemsArr = items;
             var toBeRequested = new Ext.util.Collection();
 
             for (var i = 0; i < items.length; i++) {
@@ -733,7 +733,8 @@ pimcore.object.tags.multihrefMetadata = Class.create(pimcore.object.tags.abstrac
                         id: items[i].id,
                         path: items[i].fullpath,
                         type: items[i].type,
-                        subtype: subtype
+                        subtype: subtype,
+                        published: items[i].published
                     }));
                 }
             }

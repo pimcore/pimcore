@@ -61,12 +61,12 @@ pimcore.object.tags.nonownerobjects = Class.create(pimcore.object.tags.objects, 
             var lockDetails = "<br /><br />" + t("element_implicit_edit_question");
 
             Ext.MessageBox.confirm(' ', t("element_open_message") + lockDetails,
-                    function (lock, buttonValue) {
-                        if (buttonValue == "yes") {
-                            this.getStore().removeAt(index);
-                            item.parentMenu.destroy();
-                        }
-                    }.bind(this, arguments));
+                function (lock, buttonValue) {
+                    if (buttonValue == "yes") {
+                        this.getStore().removeAt(index);
+                    }
+                }.bind(this, arguments)
+            );
         }
 
     },
@@ -240,7 +240,8 @@ pimcore.object.tags.nonownerobjects = Class.create(pimcore.object.tags.objects, 
                             var initData = {
                                 id: data.id,
                                 fullpath: data.path,
-                                className: data.className
+                                className: data.className,
+                                published: data.published
                             };
 
                             if (!this.objectAlreadyExists(initData.id) && initData.id != this.object.id) {
@@ -354,7 +355,8 @@ pimcore.object.tags.nonownerobjects = Class.create(pimcore.object.tags.objects, 
                         toBeRequested.add(this.store.add({
                             id: item.id,
                             path: item.fullpath,
-                            type: item.classname
+                            type: item.classname,
+                            published: item.published
                         }));
                         this.requestNicePathData(toBeRequested);
                     }
@@ -371,7 +373,8 @@ pimcore.object.tags.nonownerobjects = Class.create(pimcore.object.tags.objects, 
                             this.store.add({
                                 id: item.id,
                                 path: item.fullpath,
-                                type: item.classname
+                                type: item.classname,
+                                published: item.published
                             });
 
                         }
@@ -382,7 +385,6 @@ pimcore.object.tags.nonownerobjects = Class.create(pimcore.object.tags.objects, 
 
     addDataFromSelector: function (items) {
         if (items.length > 0) {
-            this.itemsArr = items;
             for (var i = 0; i < items.length; i++) {
                 var item = items[i];
 

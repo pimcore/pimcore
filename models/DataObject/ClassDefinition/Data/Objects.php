@@ -184,7 +184,7 @@ class Objects extends Model\DataObject\ClassDefinition\Data\Relations\AbstractRe
         if (is_array($data) && count($data) > 0) {
             foreach ($data as $object) {
                 if ($object instanceof DataObject\Concrete) {
-                    $return[] = [$object->getId(), $object->getRealFullPath(), $object->getClassName()];
+                    $return[] = [$object->getId(), $object->getRealFullPath(), $object->getClassName(), (bool) $object->isPublished()];
                 }
             }
             if (empty($return)) {
