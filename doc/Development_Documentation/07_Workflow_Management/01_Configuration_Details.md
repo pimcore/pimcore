@@ -3,7 +3,7 @@
 
 ## Available options
 
-´´´yaml
+```yaml
 pimcore:
      workflows:
 
@@ -265,4 +265,4 @@ pimcore:
 
 
 
-´´´
+```
