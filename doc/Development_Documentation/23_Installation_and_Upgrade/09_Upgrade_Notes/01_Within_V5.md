@@ -498,6 +498,11 @@ services:
         calls:
             - [setModelFactory, ['@Pimcore\Model\Factory']]
 ```
+#### Build 143
+The constructor signature of ApplicationLoggerDb changed from 
+`public function __construct($level = 'debug', $bubble = true)` to `public function __construct(Db\Connection $db, $level = 'debug', $bubble = true)`
+
+Adopt all calls of `new ApplicationLoggerDb('INFO')` to `new ApplicationLoggerDb(\Pimcore\Db::get(), 'INFO')` or get the logger directly from the container: `\Pimcore::getContainer()->get('pimcore.app_logger')`
 
 #### Build 134 (2017-10-03)
 
