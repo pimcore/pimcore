@@ -42,23 +42,6 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
  */
 class TranslationController extends AdminController
 {
-    const SELFCLOSING_TAGS = ['area',
-        'base',
-        'br',
-        'col',
-        'command',
-        'embed',
-        'hr',
-        'img',
-        'input',
-        'keygen',
-        'link',
-        'meta',
-        'param',
-        'source',
-        'track',
-        'wbr'];
-
     /**
      * @Route("/import")
      * @Method({"POST"})
@@ -714,6 +697,7 @@ class TranslationController extends AdminController
 
     /**
      * @Route("/xliff-export")
+     * @Method({"POST"})
      *
      * @param Request $request
      * @param ExportServiceInterface $exportService
@@ -745,6 +729,7 @@ class TranslationController extends AdminController
 
     /**
      * @Route("/xliff-export-download")
+     * @Method({"GET"})
      *
      * @param Request $request
      * @param ExporterInterface $translationExporter
@@ -766,6 +751,7 @@ class TranslationController extends AdminController
 
     /**
      * @Route("/xliff-import-upload")
+     * @Method({"POST"})
      *
      * @param Request $request
      * @param ImportDataExtractorInterface $importDataExtractor
@@ -786,6 +772,7 @@ class TranslationController extends AdminController
         for ($i=0; $i < $steps; $i++) {
             $jobs[] = [[
                 'url' => '/admin/translation/xliff-import-element',
+                'method' => 'POST',
                 'params' => [
                     'id' => $id,
                     'step' => $i
@@ -807,6 +794,7 @@ class TranslationController extends AdminController
 
     /**
      * @Route("/xliff-import-element")
+     * @Method({"POST"})
      *
      * @param Request $request
      * @param ImportDataExtractorInterface $importDataExtractor
