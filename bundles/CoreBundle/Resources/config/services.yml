@@ -50,6 +50,13 @@ services:
     Pimcore\Cache\Symfony\CacheClearer:
         public: true
 
+    Pimcore\Helper\LongRunningHelper:
+        public: true
+        calls:
+            - [setLogger, ['@logger']]
+        tags:
+            - { name: monolog.logger, channel: pimcore }
+
     #
     # CONFIG
     #

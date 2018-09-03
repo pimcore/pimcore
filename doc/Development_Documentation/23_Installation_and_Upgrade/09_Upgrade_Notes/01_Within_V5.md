@@ -1,6 +1,13 @@
 # Upgrade Notes for Upgrades within Pimcore 5
 
 ## Version 5.5.0
+
+### Minor compatibility changes
+- `\Pimcore\Db::set()` was removed. 
+- deprecated `\Pimcore::addToGloballyProtectedItems()`
+- deprecated `\Pimcore::removeFromGloballyProtectedItems()`
+
+## Version 5.4.3
 Mime types for Assets are now configured using Symfony Configurations, that means that `Pimcore\Tool\Mime::$extensionMapping` has been removed.
 In order for you to still add custom mappings, create new configuration like this:
 
