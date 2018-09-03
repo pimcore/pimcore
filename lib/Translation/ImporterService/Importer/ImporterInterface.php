@@ -16,11 +16,12 @@ namespace Pimcore\Translation\ImporterService\Importer;
 
 use Pimcore\Translation\AttributeSet\AttributeSet;
 
-interface ImporterInterface {
-
+interface ImporterInterface
+{
     /**
      * @param AttributeSet $attributeSet
      * @param bool $saveElement
+     *
      * @return void
      *
      * @throws \Exception

@@ -14,17 +14,11 @@
 
 namespace Pimcore\Translation\ImporterService;
 
-use Pimcore\Model\DataObject;
-use Pimcore\Model\Document;
-use Pimcore\Model\Element;
-use Pimcore\Translation\AttributeSet\Attribute;
 use Pimcore\Translation\AttributeSet\AttributeSet;
-use Pimcore\Translation\ImporterService\Importer\DataObjectImporter;
-use Pimcore\Translation\ImporterService\Importer\DocumentImporter;
 use Pimcore\Translation\ImporterService\Importer\ImporterInterface;
 
-class ImporterService implements ImporterServiceInterface {
-
+class ImporterService implements ImporterServiceInterface
+{
     /**
      * @var ImporterInterface[]
      */
@@ -50,12 +44,10 @@ class ImporterService implements ImporterServiceInterface {
      */
     public function getImporter(string $type): ImporterInterface
     {
-        if(isset($this->importers[$type])) {
+        if (isset($this->importers[$type])) {
             return $this->importers[$type];
         }
 
         throw new \Exception(sprintf('no importer for type "%s" registered', $type));
     }
-
-
 }

@@ -17,14 +17,13 @@ namespace Pimcore\Translation\ExportDataExtractorService\DataExtractor;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Localizedfields;
-use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Tool;
 use Pimcore\Translation\AttributeSet\Attribute;
 use Pimcore\Translation\AttributeSet\AttributeSet;
 use Pimcore\Translation\TranslationItemCollection\TranslationItem;
 
-class DataObjectDataExtractor extends AbstractElementDataExtractor {
-
+class DataObjectDataExtractor extends AbstractElementDataExtractor
+{
     const EXPORTABLE_TAGS = ['input', 'textarea', 'wysiwyg'];
 
     const BRICK_DELIMITER = '|';
@@ -43,6 +42,7 @@ class DataObjectDataExtractor extends AbstractElementDataExtractor {
      * @param TranslationItem $translationItem
      * @param string $sourceLanguage
      * @param string[] $targetLanguages
+     *
      * @return AttributeSet
      *
      * @throws \Exception
@@ -52,8 +52,8 @@ class DataObjectDataExtractor extends AbstractElementDataExtractor {
         $notInheritedSet = $this->extractRawAttributeSet($translationItem, $sourceLanguage, $targetLanguages, $exportAttributes, false);
         $inheritedSet = $this->extractRawAttributeSet($translationItem, $sourceLanguage, $targetLanguages, $exportAttributes, true);
 
-        foreach($inheritedSet->getAttributes() as $attribute) {
-            if(!$this->isAttributeIncluded($notInheritedSet, $attribute)) {
+        foreach ($inheritedSet->getAttributes() as $attribute) {
+            if (!$this->isAttributeIncluded($notInheritedSet, $attribute)) {
                 $notInheritedSet->addAttribute($attribute->getType(), $attribute->getName(), $attribute->getContent(), true);
             }
         }
@@ -67,6 +67,7 @@ class DataObjectDataExtractor extends AbstractElementDataExtractor {
      * @param TranslationItem $translationItem
      * @param string $sourceLanguage
      * @param string[] $targetLanguages
+     *
      * @return AttributeSet
      *
      * @throws \Exception
@@ -80,7 +81,7 @@ class DataObjectDataExtractor extends AbstractElementDataExtractor {
 
         $object = $translationItem->getElement();
 
-        if(!$object instanceof DataObject\Concrete) {
+        if (!$object instanceof DataObject\Concrete) {
             throw new \Exception('only data objects allowed');
         }
 
@@ -94,8 +95,8 @@ class DataObjectDataExtractor extends AbstractElementDataExtractor {
 
     private function isAttributeIncluded(AttributeSet $attributeSet, Attribute $attribute): bool
     {
-        foreach($attributeSet->getAttributes() as $_attribute) {
-            if($_attribute->getType() === $attribute->getType() && $_attribute->getContent() === $attribute->getContent()) {
+        foreach ($attributeSet->getAttributes() as $_attribute) {
+            if ($_attribute->getType() === $attribute->getType() && $_attribute->getContent() === $attribute->getContent()) {
                 return true;
             }
         }
@@ -106,6 +107,7 @@ class DataObjectDataExtractor extends AbstractElementDataExtractor {
     /**
      * @param (DataObject\Concrete $document
      * @param AttributeSet $result
+     *
      * @return DataObjectDataExtractor
      *
      * @throws \Exception
@@ -127,7 +129,6 @@ class DataObjectDataExtractor extends AbstractElementDataExtractor {
              * @var Data $definition
              */
             foreach ($definitions as $definition) {
-
                 if (!$this->isFieldExportable($object->getClassName(), $definition, $exportAttributes)) {
                     continue;
                 }
@@ -147,6 +148,7 @@ class DataObjectDataExtractor extends AbstractElementDataExtractor {
      * @param DataObject\Concrete $object
      * @param AttributeSet $result
      * @param array|null $exportAttributes
+     *
      * @return DataObjectDataExtractor
      *
      * @throws \Exception
@@ -159,46 +161,44 @@ class DataObjectDataExtractor extends AbstractElementDataExtractor {
         }
 
         if ($fieldDefinitions = $object->getClass()->getFieldDefinitions()) {
-            foreach($fieldDefinitions as $fieldDefinition) {
-                if(!$fieldDefinition instanceof Data\Objectbricks) {
+            foreach ($fieldDefinitions as $fieldDefinition) {
+                if (!$fieldDefinition instanceof Data\Objectbricks) {
                     continue;
                 }
 
                 $brickContainerGetter = 'get' . ucfirst($fieldDefinition->getName());
-                if(!$brickContainer = $object->$brickContainerGetter()) {
+                if (!$brickContainer = $object->$brickContainerGetter()) {
                     continue;
                 }
 
-                foreach($fieldDefinition->getAllowedTypes() ?: [] as $brickType) {
+                foreach ($fieldDefinition->getAllowedTypes() ?: [] as $brickType) {
                     $brickGetter = 'get' . ucfirst($brickType);
 
                     /**
                      * @var DataObject\Objectbrick\Data\AbstractData $brick
                      */
-                    if(!$brick = $brickContainer->$brickGetter()) {
+                    if (!$brick = $brickContainer->$brickGetter()) {
                         continue;
                     }
 
                     $brickDefinition = DataObject\Objectbrick\Definition::getByKey($brickType);
 
-                    if(!$localizedFieldsDefinition = $brickDefinition->getFieldDefinition('localizedfields') ) {
+                    if (!$localizedFieldsDefinition = $brickDefinition->getFieldDefinition('localizedfields')) {
                         continue;
                     }
 
-                    if(!$localizedFields = $brick->getLocalizedfields()) {
+                    if (!$localizedFields = $brick->getLocalizedfields()) {
                         continue;
                     }
 
-                    foreach($localizedFieldsDefinition->getFieldDefinitions() ?: [] as $fd) {
+                    foreach ($localizedFieldsDefinition->getFieldDefinitions() ?: [] as $fd) {
                         $content = $localizedFields->getLocalizedValue($fd->getName(), $locale);
-
 
                         if (!empty($content)) {
                             $name = $fieldDefinition->getName() . self::BRICK_DELIMITER . $brickType . self::BRICK_DELIMITER . $fd->getName();
                             $result->addAttribute(Attribute::TYPE_BRICK_LOCALIZED_FIELD, $name, $content);
                         }
                     }
-
                 }
             }
         }
@@ -210,14 +210,14 @@ class DataObjectDataExtractor extends AbstractElementDataExtractor {
     {
         // check allowed datatypes
         if (!in_array($definition->getFieldtype(), self::EXPORTABLE_TAGS)) {
-           return false;
+            return false;
         }
 
-        if(is_null($exportAttributes) && isset($this->exportAttributes[$className])) {
+        if (is_null($exportAttributes) && isset($this->exportAttributes[$className])) {
             $exportAttributes = $this->exportAttributes[$className];
         }
 
-        if(!empty($exportAttributes) && !in_array($definition->getName(), $exportAttributes)) {
+        if (!empty($exportAttributes) && !in_array($definition->getName(), $exportAttributes)) {
             return false;
         }
 

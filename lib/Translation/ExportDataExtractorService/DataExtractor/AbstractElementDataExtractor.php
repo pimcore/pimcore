@@ -20,8 +20,8 @@ use Pimcore\Translation\AttributeSet\Attribute;
 use Pimcore\Translation\AttributeSet\AttributeSet;
 use Pimcore\Translation\TranslationItemCollection\TranslationItem;
 
-abstract class AbstractElementDataExtractor implements DataExtractorInterface {
-
+abstract class AbstractElementDataExtractor implements DataExtractorInterface
+{
     protected function createResultInstance(TranslationItem $translationItem): AttributeSet
     {
         return new AttributeSet($translationItem);
@@ -31,6 +31,7 @@ abstract class AbstractElementDataExtractor implements DataExtractorInterface {
      * @param TranslationItem $translationItem
      * @param string $sourceLanguage
      * @param string[] $targetLanguages
+     *
      * @return AttributeSet
      *
      * @throws \Exception
@@ -39,7 +40,7 @@ abstract class AbstractElementDataExtractor implements DataExtractorInterface {
     {
         $element = $translationItem->getElement();
 
-        if(!$element instanceof ElementInterface) {
+        if (!$element instanceof ElementInterface) {
             throw new \Exception('only pimcore elements allowed');
         }
 

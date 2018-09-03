@@ -18,8 +18,8 @@ use Pimcore\File;
 use Pimcore\Translation\AttributeSet\AttributeSet;
 use Pimcore\Translation\Escaper\Xliff12Escaper;
 
-class Xliff12Exporter implements ExporterInterface {
-
+class Xliff12Exporter implements ExporterInterface
+{
     const DELIMITER = '~-~';
 
     /**
@@ -41,13 +41,13 @@ class Xliff12Exporter implements ExporterInterface {
 
         $exportFile = $this->getExportFilePath($exportId);
 
-        if($attributeSet->isEmpty()) {
+        if ($attributeSet->isEmpty()) {
             return $exportFile;
         }
 
         $xliff = simplexml_load_file($exportFile, null, LIBXML_NOCDATA);
 
-        foreach($attributeSet->getTargetLanguages() as $targetLanguage) {
+        foreach ($attributeSet->getTargetLanguages() as $targetLanguage) {
             $file = $xliff->addChild('file');
             $file->addAttribute('original', $attributeSet->getTranslationItem()->getType() . '-' . $attributeSet->getTranslationItem()->getId());
             $file->addAttribute('source-language', $attributeSet->getSourceLanguage());
@@ -61,16 +61,13 @@ class Xliff12Exporter implements ExporterInterface {
             $body = $file->addChild('body');
 
             foreach ($attributeSet->getAttributes() as $attribute) {
-
-                if($attribute->isReadonly()) {
+                if ($attribute->isReadonly()) {
                     continue;
                 }
 
                 $this->addTransUnitNode($body, $attribute->getType() . self::DELIMITER . $attribute->getName(), $attribute->getContent(), $attributeSet->getSourceLanguage());
             }
-
         }
-
 
         $xliff->asXML($exportFile);
 
@@ -99,7 +96,6 @@ class Xliff12Exporter implements ExporterInterface {
         return 'application/x-xliff+xml';
     }
 
-
     /**
      * @param $xml
      * @param $name
@@ -120,6 +116,4 @@ class Xliff12Exporter implements ExporterInterface {
         $f->appendXML($this->xliffEscaper->escapeXliff($content));
         @$node->appendChild($f);
     }
-
-
 }

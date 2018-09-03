@@ -17,11 +17,12 @@ namespace Pimcore\Translation\ImporterService;
 use Pimcore\Translation\AttributeSet\AttributeSet;
 use Pimcore\Translation\ImporterService\Importer\ImporterInterface;
 
-interface ImporterServiceInterface {
-
+interface ImporterServiceInterface
+{
     /**
      * @param AttributeSet $attributeSet
      * @param bool $saveElement
+     *
      * @return void
      *
      * @throws \Exception
@@ -31,12 +32,14 @@ interface ImporterServiceInterface {
     /**
      * @param string $type
      * @param ImporterInterface $importer
+     *
      * @return ImporterServiceInterface
      */
     public function registerImporter(string $type, ImporterInterface $importer): ImporterServiceInterface;
 
     /**
      * @param string $type
+     *
      * @return ImporterInterface
      *
      * @throws \Exception

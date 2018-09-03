@@ -24,6 +24,7 @@ interface ExportServiceInterface
      * @param string $sourceLanguage
      * @param array $targetLanguages
      * @param string|null $exportId
+     *
      * @return string
      *
      * @throws \Exception
@@ -34,5 +35,4 @@ interface ExportServiceInterface
      * @return ExporterInterface
      */
     public function getTranslationExporter(): ExporterInterface;
-
 }

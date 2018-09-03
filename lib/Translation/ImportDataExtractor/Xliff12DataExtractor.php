@@ -14,12 +14,10 @@
 
 namespace Pimcore\Translation\ImportDataExtractor;
 
-
-use Pimcore\Model\Element;
 use Pimcore\Tool;
 use Pimcore\Translation\AttributeSet\AttributeSet;
-use Pimcore\Translation\ExportService\Exporter\Xliff12Exporter;
 use Pimcore\Translation\Escaper\Xliff12Escaper;
+use Pimcore\Translation\ExportService\Exporter\Xliff12Exporter;
 use Pimcore\Translation\ImportDataExtractor\TranslationItemResolver\TranslationItemResolverInterface;
 
 class Xliff12DataExtractor implements ImportDataExtractorInterface
@@ -33,7 +31,6 @@ class Xliff12DataExtractor implements ImportDataExtractorInterface
      * @var TranslationItemResolver\
      */
     protected $translationItemResolver;
-
 
     public function __construct(Xliff12Escaper $xliffEscaper, TranslationItemResolverInterface $translationItemResolver)
     {
@@ -61,18 +58,17 @@ class Xliff12DataExtractor implements ImportDataExtractorInterface
             throw new \Exception(sprintf('invalid language %s', $file['target-language']));
         }
 
-
         list($type, $id) = explode('-', $file['original']);
 
         $translationItem = $this->translationItemResolver->resolve($type, $id);
 
-        if(empty($translationItem)) {
+        if (empty($translationItem)) {
             throw new \Exception('Could not resolve element ' . $file['original']);
         }
 
         $attributeSet = new AttributeSet($translationItem);
         $attributeSet->setTargetLanguages([$target]);
-        if(!empty($file['source-language'])) {
+        if (!empty($file['source-language'])) {
             $attributeSet->setSourceLanguage($file['source-language']);
         }
 
@@ -86,7 +82,6 @@ class Xliff12DataExtractor implements ImportDataExtractorInterface
 
         return $attributeSet;
     }
-
 
     /**
      * @inheritdoc
@@ -102,12 +97,15 @@ class Xliff12DataExtractor implements ImportDataExtractorInterface
     public function countSteps(string $importId): int
     {
         $xliff = $this->loadFile($importId);
+
         return count($xliff->file);
     }
 
     /**
      * @param string $importId
+     *
      * @return \SimpleXMLElement
+     *
      * @throws \Exception
      */
     private function loadFile(string $importId): \SimpleXMLElement

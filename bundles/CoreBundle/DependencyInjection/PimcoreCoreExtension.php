@@ -308,7 +308,7 @@ class PimcoreCoreExtension extends ConfigurableExtension implements PrependExten
             $definition->setArgument('$parameterName', $parameter);
         }
 
-        if(!empty($config['data_object']['translation_extractor']['attributes'])) {
+        if (!empty($config['data_object']['translation_extractor']['attributes'])) {
             $definition = $container->getDefinition(DataObjectDataExtractor::class);
             $definition->setArgument('$exportAttributes', $config['data_object']['translation_extractor']['attributes']);
         }

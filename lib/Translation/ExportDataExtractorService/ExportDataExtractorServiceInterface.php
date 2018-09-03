@@ -18,12 +18,13 @@ use Pimcore\Translation\AttributeSet\AttributeSet;
 use Pimcore\Translation\ExportDataExtractorService\DataExtractor\DataExtractorInterface;
 use Pimcore\Translation\TranslationItemCollection\TranslationItem;
 
-interface ExportDataExtractorServiceInterface {
-
+interface ExportDataExtractorServiceInterface
+{
     /**
      * @param TranslationItem $translationItem
      * @param string $sourceLanguage
      * @param string[] $targetLanguages
+     *
      * @return AttributeSet
      *
      * @throws \Exception
@@ -32,12 +33,14 @@ interface ExportDataExtractorServiceInterface {
 
     /**
      * @param DataExtractorInterface $dataExtractor
+     *
      * @return $this
      */
     public function registerDataExtractor(string $type, DataExtractorInterface $dataExtractor): ExportDataExtractorServiceInterface;
 
     /**
      * @param DataExtractorInterface $dataExtractor
+     *
      * @return DataExtractorInterface
      *
      * @throws \Exception

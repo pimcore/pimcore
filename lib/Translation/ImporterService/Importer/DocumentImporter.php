@@ -18,8 +18,8 @@ use Pimcore\Model\Document;
 use Pimcore\Model\Element;
 use Pimcore\Translation\AttributeSet\Attribute;
 
-class DocumentImporter extends AbstractElementImporter {
-
+class DocumentImporter extends AbstractElementImporter
+{
     /**
      * @inheritdoc
      */
@@ -48,5 +48,4 @@ class DocumentImporter extends AbstractElementImporter {
             }
         }
     }
-
 }

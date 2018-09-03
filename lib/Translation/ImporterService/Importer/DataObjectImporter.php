@@ -15,17 +15,17 @@
 namespace Pimcore\Translation\ImporterService\Importer;
 
 use Pimcore\Model\DataObject;
-use Pimcore\Model\Document;
 use Pimcore\Model\Element;
 use Pimcore\Translation\AttributeSet\Attribute;
 use Pimcore\Translation\ExportDataExtractorService\DataExtractor\DataObjectDataExtractor;
 
-class DataObjectImporter extends AbstractElementImporter {
-
+class DataObjectImporter extends AbstractElementImporter
+{
     /**
      * @param Element\ElementInterface $element
      * @param string $targetLanguage
      * @param Attribute $attribute
+     *
      * @throws \Exception
      */
     protected function importAttribute(Element\ElementInterface $element, string $targetLanguage, Attribute $attribute)
@@ -43,25 +43,24 @@ class DataObjectImporter extends AbstractElementImporter {
             list($brickField, $brick, $field) = explode(DataObjectDataExtractor::BRICK_DELIMITER, $attribute->getName());
 
             $brickContainerGetter = 'get' . ucfirst($brickField);
-            if($brickContainer = $element->$brickContainerGetter()) {
+            if ($brickContainer = $element->$brickContainerGetter()) {
                 $brickGetter = 'get' . ucfirst($brick);
             }
 
-            if(method_exists($brickContainer, $brickGetter) && ($brick = $brickContainer->$brickGetter())) {
+            if (method_exists($brickContainer, $brickGetter) && ($brick = $brickContainer->$brickGetter())) {
                 /**
                  * @var DataObject\Localizedfield $localizedFields
                  */
-                if(method_exists($brick, 'getLocalizedfields') && ($localizedFields = $brick->getLocalizedfields())){
-
+                if (method_exists($brick, 'getLocalizedfields') && ($localizedFields = $brick->getLocalizedfields())) {
                     $localizedFields->setLocalizedValue($field, $attribute->getContent(), $targetLanguage);
                 }
             }
         }
     }
 
-
     /**
      * @param DataObject\Concrete $element
+     *
      * @throws \Exception
      */
     protected function saveElement(Element\ElementInterface $element)
@@ -69,6 +68,4 @@ class DataObjectImporter extends AbstractElementImporter {
         $element->setOmitMandatoryCheck(true);
         parent::saveElement($element);
     }
-
-
 }

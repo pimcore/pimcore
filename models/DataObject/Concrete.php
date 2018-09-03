@@ -207,7 +207,7 @@ class Concrete extends AbstractObject
                     }
                 }
             } catch (Model\Element\ValidationException $ve) {
-                $validationExceptions[]= $ve;
+                $validationExceptions[] = $ve;
             }
         }
 

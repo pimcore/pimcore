@@ -14,13 +14,12 @@
 
 namespace Pimcore\Translation\ExportService;
 
-use Pimcore\Translation\ExportService\Exporter\ExporterInterface;
 use Pimcore\Translation\ExportDataExtractorService\ExportDataExtractorServiceInterface;
+use Pimcore\Translation\ExportService\Exporter\ExporterInterface;
 use Pimcore\Translation\TranslationItemCollection\TranslationItemCollection;
 
 class ExportService implements ExportServiceInterface
 {
-
     /**
      * @var ExportDataExtractorServiceInterface
      */
@@ -33,6 +32,7 @@ class ExportService implements ExportServiceInterface
 
     /**
      * ExportService constructor.
+     *
      * @param ExportDataExtractorServiceInterface $exportDataExtractorService
      * @param ExporterInterface $translationExporter
      */
@@ -44,7 +44,6 @@ class ExportService implements ExportServiceInterface
         $this->translationExporter = $translationExporter;
     }
 
-
     /**
      * @inheritdoc
      */
@@ -52,7 +51,7 @@ class ExportService implements ExportServiceInterface
     {
         $exportId = empty($exportId) ? uniqid() : $exportId;
 
-        foreach($translationItems->getItems() as $item) {
+        foreach ($translationItems->getItems() as $item) {
             $attributeSet = $this->getExportDataExtractorService()->extract($item, $sourceLanguage, $targetLanguages);
             $this->getTranslationExporter()->export($attributeSet, $exportId);
         }
@@ -70,9 +69,11 @@ class ExportService implements ExportServiceInterface
 
     /**
      * @param ExportDataExtractorServiceInterface $exportDataExtractorService
+     *
      * @return ExportService
      */
-    public function setExportDataExtractorService(ExportDataExtractorServiceInterface $exportDataExtractorService): ExportService {
+    public function setExportDataExtractorService(ExportDataExtractorServiceInterface $exportDataExtractorService): ExportService
+    {
         $this->exportDataExtractorService = $exportDataExtractorService;
 
         return $this;
@@ -88,6 +89,7 @@ class ExportService implements ExportServiceInterface
 
     /**
      * @param ExporterInterface $translationExporter
+     *
      * @return ExportService
      */
     public function setTranslationExporter(ExporterInterface $translationExporter): ExportService
@@ -96,6 +98,4 @@ class ExportService implements ExportServiceInterface
 
         return $this;
     }
-
-
 }

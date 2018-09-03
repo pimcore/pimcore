@@ -17,7 +17,6 @@ namespace Pimcore\Translation\TranslationItemCollection;
 use Pimcore\Model\Element;
 use Pimcore\Model\Element\ElementInterface;
 
-
 class TranslationItemCollection
 {
     /**
@@ -29,6 +28,7 @@ class TranslationItemCollection
      * @param string $type
      * @param string $id
      * @param object $element
+     *
      * @return TranslationItemCollection
      */
     public function add(string $type, string $id, $element): TranslationItemCollection
@@ -63,8 +63,7 @@ class TranslationItemCollection
     public function toArray(): array
     {
         $elementsArray = [];
-        foreach($this->getItems() as $element) {
-
+        foreach ($this->getItems() as $element) {
             $elementsArray[$element->getType()] = $elementsArray[$element->getType()] ?? [];
             $elementsArray[$element->getType()][] = $element->getId();
         }

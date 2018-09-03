@@ -21,8 +21,8 @@ use Pimcore\Translation\AttributeSet\Attribute;
 use Pimcore\Translation\AttributeSet\AttributeSet;
 use Pimcore\Translation\TranslationItemCollection\TranslationItem;
 
-class DocumentDataExtractor extends AbstractElementDataExtractor {
-
+class DocumentDataExtractor extends AbstractElementDataExtractor
+{
     const EXPORTABLE_TAGS = ['wysiwyg', 'input', 'textarea', 'image', 'link'];
 
     /**
@@ -39,6 +39,7 @@ class DocumentDataExtractor extends AbstractElementDataExtractor {
      * @param Document $document
      * @param string $sourceLanguage
      * @param string[] $targetLanguages
+     *
      * @return AttributeSet
      *
      * @throws \Exception
@@ -49,7 +50,7 @@ class DocumentDataExtractor extends AbstractElementDataExtractor {
 
         $result = parent::extract($translationItem, $sourceLanguage, $targetLanguages);
 
-        if(!$document instanceof Document) {
+        if (!$document instanceof Document) {
             throw new \Exception('only documents allowed');
         }
 
@@ -63,7 +64,9 @@ class DocumentDataExtractor extends AbstractElementDataExtractor {
     /**
      * @param Document $document
      * @param AttributeSet $result
+     *
      * @return DocumentDataExtractor
+     *
      * @throws \Exception
      */
     protected function addDoumentTags(Document $document, AttributeSet $result): DocumentDataExtractor
@@ -80,7 +83,7 @@ class DocumentDataExtractor extends AbstractElementDataExtractor {
         }
 
         foreach ($elements as $tag) {
-            if (in_array($tag->getType(),self::EXPORTABLE_TAGS)) {
+            if (in_array($tag->getType(), self::EXPORTABLE_TAGS)) {
                 if (in_array($tag->getType(), ['image', 'link'])) {
                     $content = $tag->getText();
                 } else {
@@ -102,6 +105,7 @@ class DocumentDataExtractor extends AbstractElementDataExtractor {
     /**
      * @param Document $document
      * @param AttributeSet $result
+     *
      * @return DocumentDataExtractor
      */
     protected function addSettings(Document $document, AttributeSet $result): DocumentDataExtractor

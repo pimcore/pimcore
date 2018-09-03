@@ -15,7 +15,6 @@
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
-use Pimcore\Document\Tag\TagUsageResolver;
 use Pimcore\File;
 use Pimcore\Logger;
 use Pimcore\Model\DataObject;
@@ -24,9 +23,9 @@ use Pimcore\Model\Element;
 use Pimcore\Model\Translation;
 use Pimcore\Tool;
 use Pimcore\Translation\ExportService\Exporter\ExporterInterface;
+use Pimcore\Translation\ExportService\ExportServiceInterface;
 use Pimcore\Translation\ImportDataExtractor\ImportDataExtractorInterface;
 use Pimcore\Translation\ImporterService\ImporterServiceInterface;
-use Pimcore\Translation\ExportService\ExportServiceInterface;
 use Pimcore\Translation\TranslationItemCollection\TranslationItemCollection;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -769,7 +768,7 @@ class TranslationController extends AdminController
 
         $steps = $importDataExtractor->countSteps($id);
 
-        for ($i=0; $i < $steps; $i++) {
+        for ($i = 0; $i < $steps; $i++) {
             $jobs[] = [[
                 'url' => '/admin/translation/xliff-import-element',
                 'method' => 'POST',
@@ -812,9 +811,9 @@ class TranslationController extends AdminController
         try {
             $attributeSet = $importDataExtractor->extractElement($id, $step);
             $importerService->import($attributeSet);
-
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
             Logger::err($e->getMessage());
+
             return $this->adminJson([
                 'success' => false
             ]);
@@ -824,8 +823,6 @@ class TranslationController extends AdminController
             'success' => true
         ]);
     }
-
-
 
     /**
      * @Route("/word-export")

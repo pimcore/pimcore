@@ -31,9 +31,9 @@ class TranslationItem
      */
     private $element;
 
-
     /**
      * TranslationItem constructor.
+     *
      * @param string $type
      * @param string $id
      * @param object $element
@@ -68,6 +68,4 @@ class TranslationItem
     {
         return $this->element;
     }
-
-
 }

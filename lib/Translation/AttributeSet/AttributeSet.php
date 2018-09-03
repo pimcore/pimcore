@@ -14,12 +14,12 @@
 
 namespace Pimcore\Translation\AttributeSet;
 
-use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Element;
+use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Translation\TranslationItemCollection\TranslationItem;
 
-class AttributeSet {
-
+class AttributeSet
+{
     /**
      * @var TranslationItem
      */
@@ -42,6 +42,7 @@ class AttributeSet {
 
     /**
      * DataExtractorResult constructor.
+     *
      * @param TranslationItem $element
      */
     public function __construct(TranslationItem $translationItem)
@@ -59,6 +60,7 @@ class AttributeSet {
 
     /**
      * @param ElementInterface $translationItem
+     *
      * @return AttributeSet
      */
     public function setTranslationItem(ElementInterface $translationItem): AttributeSet
@@ -78,6 +80,7 @@ class AttributeSet {
 
     /**
      * @param string $sourceLanguage
+     *
      * @return AttributeSet
      */
     public function setSourceLanguage(string $sourceLanguage): AttributeSet
@@ -97,6 +100,7 @@ class AttributeSet {
 
     /**
      * @param string[] $targetLanguages
+     *
      * @return AttributeSet
      */
     public function setTargetLanguages(array $targetLanguages): AttributeSet
@@ -116,12 +120,12 @@ class AttributeSet {
 
     public function isEmpty(): bool
     {
-        if(empty($this->attributes)) {
+        if (empty($this->attributes)) {
             return true;
         }
 
         foreach ($this->attributes as $attribute) {
-            if(!$attribute->isReadonly()) {
+            if (!$attribute->isReadonly()) {
                 return false;
             }
         }
@@ -134,6 +138,7 @@ class AttributeSet {
      * @param string $name
      * @param string $content
      * @param bool $isReadonly
+     *
      * @return AttributeSet
      */
     public function addAttribute(string $type, string $name, string $content, bool $isReadonly = false): AttributeSet
@@ -142,5 +147,4 @@ class AttributeSet {
 
         return $this;
     }
-
 }

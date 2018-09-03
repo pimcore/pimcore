@@ -14,16 +14,16 @@
 
 namespace Pimcore\Translation\ExportDataExtractorService\DataExtractor;
 
-use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Translation\AttributeSet\AttributeSet;
 use Pimcore\Translation\TranslationItemCollection\TranslationItem;
 
-interface DataExtractorInterface  {
-
+interface DataExtractorInterface
+{
     /**
      * @param TranslationItem $translationItem
      * @param string $sourceLanguage
      * @param string[] $targetLanguages
+     *
      * @return AttributeSet
      *
      * @throws \Exception

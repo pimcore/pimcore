@@ -14,14 +14,12 @@
 
 namespace Pimcore\Translation\ExportDataExtractorService;
 
-use Pimcore\Model\DataObject;
-use Pimcore\Model\Document;
 use Pimcore\Translation\AttributeSet\AttributeSet;
 use Pimcore\Translation\ExportDataExtractorService\DataExtractor\DataExtractorInterface;
 use Pimcore\Translation\TranslationItemCollection\TranslationItem;
 
-class ExportDataExtractorService implements ExportDataExtractorServiceInterface {
-
+class ExportDataExtractorService implements ExportDataExtractorServiceInterface
+{
     /**
      * @var DataExtractorInterface[]
      */
@@ -34,6 +32,7 @@ class ExportDataExtractorService implements ExportDataExtractorServiceInterface 
 
     /**
      * @param DataExtractorInterface $dataExtractor
+     *
      * @return $this
      */
     public function registerDataExtractor(string $type, DataExtractorInterface $dataExtractor): ExportDataExtractorServiceInterface
@@ -45,13 +44,14 @@ class ExportDataExtractorService implements ExportDataExtractorServiceInterface 
 
     /**
      * @param DataExtractorInterface $dataExtractor
+     *
      * @return DataExtractorInterface
      *
      * @throws \Exception
      */
     public function getDataExtractor(string $type): DataExtractorInterface
     {
-        if(isset($this->dataExtractors[$type])) {
+        if (isset($this->dataExtractors[$type])) {
             return $this->dataExtractors[$type];
         }
 

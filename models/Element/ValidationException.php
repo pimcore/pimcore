@@ -19,7 +19,6 @@ namespace Pimcore\Model\Element;
 
 class ValidationException extends \Exception
 {
-
     /**
      * @var array
      */
@@ -47,14 +46,16 @@ class ValidationException extends \Exception
     /**
      * @param $context
      */
-    public function addContext($context) {
+    public function addContext($context)
+    {
         $this->contextStack[] = $context;
     }
 
     /**
      * @return array
      */
-    public function getContextStack() {
+    public function getContextStack()
+    {
         return $this->contextStack;
     }
 }

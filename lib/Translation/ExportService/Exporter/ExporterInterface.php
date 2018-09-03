@@ -16,17 +16,19 @@ namespace Pimcore\Translation\ExportService\Exporter;
 
 use Pimcore\Translation\AttributeSet\AttributeSet;
 
-interface ExporterInterface {
-
+interface ExporterInterface
+{
     /**
      * @param AttributeSet $attributeSet
      * @param string|null $exportId
+     *
      * @return string
      */
     public function export(AttributeSet $attributeSet, string $exportId = null): string;
 
     /**
      * @param string $exportId
+     *
      * @return string
      */
     public function getExportFilePath(string $exportId): string;

@@ -14,11 +14,8 @@
 
 namespace Pimcore\Translation\AttributeSet;
 
-use Pimcore\Model\Element\ElementInterface;
-use Pimcore\Model\Element;
-
-class Attribute {
-
+class Attribute
+{
     const TYPE_PROPERTY = 'property';
     const TYPE_TAG = 'tag';
     const TYPE_SETTINGS = 'settings';
@@ -47,6 +44,7 @@ class Attribute {
 
     /**
      * DataExtractorResultAttribute constructor.
+     *
      * @param string $type
      * @param string $name
      * @param string $content
@@ -93,5 +91,4 @@ class Attribute {
     {
         return $this->isReadonly;
     }
-
 }

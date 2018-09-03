@@ -14,14 +14,14 @@
 
 namespace Pimcore\Translation\ImportDataExtractor\TranslationItemResolver;
 
-use Pimcore\Translation\TranslationItemCollection\TranslationItem;
 use Pimcore\Model\Element;
+use Pimcore\Translation\TranslationItemCollection\TranslationItem;
 
-class TranslationItemResolver implements  TranslationItemResolverInterface
+class TranslationItemResolver implements TranslationItemResolverInterface
 {
     public function resolve(string $type, string $id): ?TranslationItem
     {
-        if(!$element = Element\Service::getElementById($type, $id)) {
+        if (!$element = Element\Service::getElementById($type, $id)) {
             return null;
         }
 

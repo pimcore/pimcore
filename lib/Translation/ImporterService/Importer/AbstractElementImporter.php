@@ -20,8 +20,8 @@ use Pimcore\Model\Element;
 use Pimcore\Translation\AttributeSet\Attribute;
 use Pimcore\Translation\AttributeSet\AttributeSet;
 
-class AbstractElementImporter implements ImporterInterface {
-
+class AbstractElementImporter implements ImporterInterface
+{
     /**
      * @inheritdoc
      */
@@ -30,19 +30,18 @@ class AbstractElementImporter implements ImporterInterface {
         $translationItem = $attributeSet->getTranslationItem();
         $element = $translationItem->getElement();
 
-        if(!$element instanceof Element\ElementInterface || $attributeSet->isEmpty()) {
+        if (!$element instanceof Element\ElementInterface || $attributeSet->isEmpty()) {
             return;
         }
 
-        foreach($attributeSet->getAttributes() as $attribute) {
+        foreach ($attributeSet->getAttributes() as $attribute) {
             $targetLanguage = $attributeSet->getTargetLanguages()[0];
             $this->importAttribute($element, $targetLanguage, $attribute);
         }
 
-        if($saveElement) {
+        if ($saveElement) {
             $this->saveElement($element);
         }
-
     }
 
     /**
@@ -66,6 +65,7 @@ class AbstractElementImporter implements ImporterInterface {
 
     /**
      * @param Document|DataObject\Concrete $element
+     *
      * @throws \Exception
      */
     protected function saveElement(Element\ElementInterface $element)
@@ -76,5 +76,4 @@ class AbstractElementImporter implements ImporterInterface {
             throw new \Exception('Unable to save ' . Element\Service::getElementType($element) . ' with id ' . $element->getId() . ' because of the following reason: ' . $e->getMessage());
         }
     }
-
 }

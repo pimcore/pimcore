@@ -14,18 +14,14 @@
 
 namespace Pimcore\Translation\ImportDataExtractor;
 
-use Pimcore\Model\DataObject;
-use Pimcore\Model\Document;
-use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Translation\AttributeSet\AttributeSet;
-use Pimcore\Translation\ExportDataExtractorService\DataExtractor\DataObjectDataExtractor;
-use Pimcore\Translation\ExportDataExtractorService\DataExtractor\DocumentDataExtractor;
 
-interface ImportDataExtractorInterface  {
-
+interface ImportDataExtractorInterface
+{
     /**
      * @param string $importId
      * @param int $stepId
+     *
      * @return ?AttributeSet
      *
      * @throws \Exception
@@ -34,13 +30,16 @@ interface ImportDataExtractorInterface  {
 
     /**
      * @param string $importId
+     *
      * @return string
      */
     public function getImportFilePath(string $importId): string;
 
     /**
      * @param string $importId
+     *
      * @return int
+     *
      * @throws \Exception
      */
     public function countSteps(string $importId): int;
