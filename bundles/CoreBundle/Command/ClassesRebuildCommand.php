@@ -72,7 +72,7 @@ class ClassesRebuildCommand extends AbstractCommand
                     $name = $class['name'];
 
                     $cls = new ClassDefinition();
-                    $cls->setId((int)$id);
+                    $cls->setId($id);
                     $definitionFile = $cls->getDefinitionFile($name);
 
                     if (!file_exists($definitionFile)) {
