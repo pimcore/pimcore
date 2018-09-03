@@ -30,6 +30,7 @@ use Pimcore\Sitemap\EventListener\SitemapGeneratorListener;
 use Pimcore\Targeting\ActionHandler\DelegatingActionHandler;
 use Pimcore\Targeting\DataLoaderInterface;
 use Pimcore\Targeting\Storage\TargetingStorageInterface;
+use Pimcore\Translation\ExportDataExtractorService\DataExtractor\DataObjectDataExtractor;
 use Pimcore\Translation\Translator;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\Config\Loader\LoaderInterface;
@@ -305,6 +306,11 @@ class PimcoreCoreExtension extends ConfigurableExtension implements PrependExten
         } else {
             $definition = $container->getDefinition(TranslationDebugListener::class);
             $definition->setArgument('$parameterName', $parameter);
+        }
+
+        if(!empty($config['data_object']['translation_extractor']['attributes'])) {
+            $definition = $container->getDefinition(DataObjectDataExtractor::class);
+            $definition->setArgument('$exportAttributes', $config['data_object']['translation_extractor']['attributes']);
         }
     }
 
