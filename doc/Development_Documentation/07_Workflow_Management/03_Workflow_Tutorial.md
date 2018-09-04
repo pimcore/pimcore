@@ -5,247 +5,176 @@ Let's make a one truly simple example workflow for product objects.
 ## Create a class and custom layouts
 
 I've created the really simple product class (sku, localized name, localized picture and localized description, price and quantity).
-The class has ID = 13.
 
 ![Example product class](../img/workflow_example_product_class.png)
 
 Next, I added four custom layouts which later I will assign to the specific statuses.
 
-* `new_product` layout with ID = 1
+* `new_product` layout with ID = 3
 
 ![The new product custom layout](../img/workflow_example_product_cl_1.png)
 
-* `fill_contents` layout with ID = 2 
+* `fill_contents` layout with ID = 4 
 
 ![The fill contents custom layout](../img/workflow_example_product_cl_2.png)
 
-* `update_picture` layout with ID = 3
+* `update_picture` layout with ID = 5
 
 ![The update picture custom layout](../img/workflow_example_product_cl_3.png)
 
-* `validate_qty_price` layout with ID = 4
+* `validate_qty_price` layout with ID = 6
 
 ![The validate qty and price custom layout](../img/workflow_example_product_cl_4.png)
 
 
 ## The workflow declaration
 
-Now create the base configuration file: `/app/config/pimcore/workflowmanagement.php`
+Now create the base configuration in `/app/config/config.yml`
 
-```php
-<?php
-return [
-    1 => [
-        "name" => "Product workflow",
-        "id" => 1,
-        "workflowSubject" => [
-          "types" => ["object"],
-          "classes" => [13],
-        ],
-        "enabled" => true,
-        "defaultState" => "", //@TODO
-        "defaultStatus" => "", //@TODO
-        "allowUnpublished" => true,
-        "states" => [
-          //@TODO
-        ],
-        "statuses" => [
-          //@TODO
-        ],
-        "actions" => [
-          //@TODO
-        ],
-        "transitionDefinitions" => [
-          //@TODO
-        ]
-    ]
-];
+```yml
+pimcore:
+    workflows:
+        workflow:
+            label: 'Product Workflow'
+            type: 'state_machine'
+            supports:
+            - 'Pimcore\Model\DataObject\SimpleProduct'
+            places:
+                #TODO
+            transitions:
+                #TODO
 ```
 
-As you can see, the workflow is called **Product workflow**, we haven't added any statuses, states, actions and definitions. 
-The workflow is available only for instances of class with id 13 (the `SimpleProduct` class in that case).
+As you can see, the workflow is called **Product workflow**, we haven't added any places and transitions yet. 
+The workflow is available only for instances of `Pimcore\Model\DataObject\SimpleProduct` objects. We use the workflow 
+type `state_machine`, so one transition can start from multiple places.  
 
-### Specify states
+### Specify places
 
-Now it's the best time to define some states for products. 
+Now it's the best time to define some places for products. 
 
 What I want to achieve? Let's suppose that our new products are integrated with an external system and new positions comes 
 to Pimcore as empty objects only with SKU.
 
 I need to have ability to decide which products would be used in Pimcore, the rest of products I want to reject.
-To achieve that requirement, I have to make three states.
-
-* Opened - for new products. Opened in my case would mean only *"new product"*
-* Processing - for unfinished products
-* Done - for published and rejected products. There doesn't exist any required action for that product. 
-
-```php
-...
-
-"states" => [
-    [
-      "name" => "opened",
-      "label" => "Unfinished product",
-      "color" => "#377ea9"
-    ],
-    [
-      "name" => "processing",
-      "label" => "Processing",
-      "color" => "#d9ef36"
-    ],
-    [
-      "name" => "done",
-      "label" => "Finished product",
-      "color" => "#28a013"
-    ]
-],
-
-...
-```
-
-### Specify the first statuses and actions
-
-As an administrator, I can decide which product can be processed and which shouldn't be.
-
-I need three statuses:
+To achieve that requirement, I have to make (at least) three places.
 
 * new - for the newest products
 * rejected - for products which I'm not going to use in the future. Also I would like to add some note with a reason here.
-* update contents - for products I would like to publish
+* update content - for products I would like to publish 
 
+```yml
+(...)
+    places:
+        new:
+            label: 'New product'
+            color: '#377ea9'
+            permissions:
+                - objectLayout: 3
+        rejected:
+            label: 'Rejected product'
+            color: '#28a013'
+        update_content:
+            label: 'Update Content'
+            title: 'Updating content step'
+            color: '#d9ef36'
+            permissions:
+                - objectLayout: 4            
 
-```php
-...
-
-"statuses" => [
-    [
-      "name" => "new",
-      "label" => "New product",
-      "objectLayout" => 1
-    ],
-    [
-      "name" => "rejected",
-      "label" => "Rejected product"
-    ],
-    [
-      "name" => "update_contents",
-      "label" => "Updating contents step",
-    ]
-],
-
-...
+(...)
 ```
 
 As you can see I used `objectLayout` key to define which custom layout would be used with the *new* status.
 
 
-I should also add some actions.
+### Specify the first transitions
+
+As an administrator, I can decide which product can be processed and which shouldn't be.
+
+To do so, I need to add some actions.
 
 * reject product - to change the status for products I don't want to use
 * start processing - to move the product to the processing step
 
-```php
-...
-
-"actions" => [
-    [
-      "name" => "reject",
-      "label" => "Reject the product",
-      "transitionTo" => [
-          "done" => [
-              "rejected"
-          ]
-      ],
-      "notes" => [
-          "required" => false
-      ]
-    ],
-    [
-      "name" => "process",
-      "label" => "Start processing the product",
-      "transitionTo" => [
-          "processing" => [
-              "update_contents"
-          ]
-      ]
-    ]
-],
-
-...
+```yml
+(...)
+    transitions:
+        reject_product:
+            from: new
+            to: rejected
+            options:
+                label: 'Reject the product'
+                notes:
+                    commentEnabled: true
+                    commentRequired: true
+        start_processing:
+            from: new
+            to: update_content
+            options:
+                label: 'Start processing the product'
+(...)
 ```
 
-Example above shows that every action has related only one state and status, you can of course in the array specify as 
-many statuses and states as you need.
- 
  
 ### More statuses actions and definitions
 
-The process state has 4 stages: 
+Let's add 4 more places for updating content
 
-* updating the content (we've already prepared statuses and the action for that)
+* updating the content
 * updating the picture
 * updating the price and stock
-* mark contents as a ready - move product back to the administrator
+* mark content as a ready - move product back to the administrator
 
 
 Let's add few new rows in the configuration file
 
-```php
+```yml
 
-...
-"statuses" => [
-...
-    [
-      "name" => "update_picture",
-      "label" => "Update the product picture",
-      "objectLayout" => 3
-    ],
-    [
-      "name" => "validate_stock_and_price",
-      "label" => "Check the quantity and the price",
-      "objectLayout" => 4
-    ],
-    [
-      "name" => "contents_preapared",
-      "label" => "Contents ready to publish"
-    ]
-],
-...
+(...)
+    places:
+        (...)
+        update_picture:
+            label: 'Update Product Picture'
+            title: 'Update the product picture'
+            color: '#d9ef36'
+            permissions:
+                - objectLayout: 5            
+        validate_stock_and_price:
+            label: 'Validate Stock + Price'
+            title: 'Check the quantity and the price'
+            color: '#d9ef36'
+            permissions:
+                - objectLayout: 6            
+        content_preapared:
+            label: 'Content Prepared'
+            title: 'Content ready to publish'
+            color: '#28a013'
+(...)
 
-"actions" => [
-...
-
-    [
-      "name" => "contents_updated",
-      "label" => "Contents up-to-date",
-      "transitionTo" => [
-          "processing" => [
-              "update_picture"
-          ]
-      ]
-    ],
-    [
-      "name" => "picture_updated",
-      "label" => "Picture up-to-date",
-      "transitionTo" => [
-          "processing" => [
-              "validate_stock_and_price"
-          ]
-      ]
-    ],
-    [
-      "name" => "contents_ready",
-      "label" => "Contents are ready to publish",
-      "transitionTo" => [
-          "processing" => ["contents_preapared"]
-      ],
-      "notes" => [
-          "required" => false
-      ]
-    ]
-],
-
-...
+    transitions:
+        (...)
+        content_updated:
+            from: update_content
+            to: update_picture
+            options:
+                label: 'Content up-to-date'
+                notes:
+                    commentEnabled: true
+                    commentRequired: false
+        picture_updated:
+            from: update_picture
+            to: validate_stock_and_price
+            options:
+                label: 'Picture up-to-date'
+                notes:
+                    commentEnabled: true
+                    commentRequired: false
+        content_ready:
+            from: validate_stock_and_price
+            to: content_preapared
+            options:
+                label: 'Content is ready to publish'
+(...)
 
 ```
 
@@ -257,114 +186,79 @@ At the final stage of the workflow I would like to have three choices
 * Start workflow from the beginning
 * Reject the product (with note)
 
-We've already made the reject and start processing action, the last one we need is publishing (the new status and action).
+We've already made the reject and start processing transition, the only thing here is to add an additional from place. 
+This can be done because we have workflow type `state_machine` activated, here our modified transition definitions.
 
-Let's add the new status which requires publishing privileges from the user.
+```yml 
 
-```php
-[
-    "name" => "accepted",
-    "label" => "Accepted product",
-    "elementPublished" => true
-]
+(...)
+    transitions:
+        reject_product:
+            from: [new, content_preapared]
+            to: rejected
+            options:
+                label: 'Reject the product'
+                notes:
+                    commentEnabled: true
+                    commentRequired: true
+        start_processing:
+            from: [new, content_preapared]
+            to: update_content
+            options:
+                label: 'Start processing the product'
+                notes:
+                    commentEnabled: true
+                    commentRequired: false
+(...)
+```
+ 
+The last one we need is publishing - place and transition - that is only allowed to a certain role.
+
+```yml
+(...)
+    places:
+        (...)
+        accepted:
+            label: 'Accepted product'
+            color: '#28a013'
+(...)            
 ```
 
-And, the action with the *"timeWorked"* field.
+And, the transition with a *"timeWorked"* field.
 
-```php
-[
-    "name" => "publish",
-    "label" => "Publish the product",
-    "transitionTo" => [
-          "done" => [
-             "accepted"
-          ]
-    ],
-    "additionalFields" => [
-        [
-            "name"=> "timeWorked",
-            "fieldType"=> "input",
-            "title"=> "Time spent",
-            "blankText"=> "30m",
-            "required"=> true,
-            "setterFn"=> null
-        ]
-    ]
-]
+```yml
+(...)
+    transitions:
+        (...)
+        publish:
+            from: content_preapared
+            to: accepted
+            guard: "is_fully_authenticated() and has_role('ROLE_PIMCORE_SUPERUSER')"
+            options:
+                label: 'Publish the product'
+                notes:
+                    additionalFields:
+                        - name: 'timeWorked'
+                          fieldType: 'input'
+                          title: 'Time Spent'
+                          required: true
+(...)                          
 ```
 
-### Transition definitions
-
-The last thing you have to do before start using the workflow - transition definitions.
-These definitions specify which actions are available at a specific stage.
-
-```php
-...
-"transitionDefinitions" => [
-  "new" => [ //this is the starting status, at the moment we can only set the product as rejected or move it to the processing stage
-      "validActions" => [
-          "reject" => null,
-          "process" => null
-      ]
-  ],
-  "rejected" => [ //we can only mark rejected project as a new
-      "validActions" => [
-          "new" => null
-      ]
-  ],
-  "update_contents" => [ // the product with update_contents status is able to use the contents_updated action
-      "validActions" => [
-          "contents_updated" => null
-      ]
-  ],
-  "update_picture" => [ // the product with update_picture status is able to use the picture_updated action
-      "validActions" => [
-          "picture_updated" => null
-      ]
-  ],
-  "validate_stock_and_price" => [ //here we can mark cthe product as a ready to the final validation
-      "validActions" => [
-          "contents_ready" => null
-      ]
-  ],
-  "contents_preapared" => [ // accept, reject or rollback
-      "validActions" => [
-          "process" => null,
-          "reject" => null,
-          "publish" => null
-      ]
-  ],
-  "accepted" => [
-      "validActions" => [
-          "reject" => null
-      ]
-  ]
-]
-...
-```
-
-Let's define the default status and state.
-
-```php
-...
-"defaultState" => "opened",
-"defaultStatus" => "new",
-...
-```
 
 ### Workflow in action
 
 Below, you can find showcase of the workflow I've just prepared.
 
-| Status                                                                      | Layout                                                                      | Action                                                                       |
-|-----------------------------------------------------------------------------|-----------------------------------------------------------------------------|------------------------------------------------------------------------------|
-| ![New product status](../img/workflow_editmode_newproduct_status.png)       | ![New product status](../img/workflow_editmode_newproduct_layout.png)       | ![New product status](../img/workflow_editmode_newproduct_actions.png)       |
-| ![New product status](../img/workflow_editmode_updatecontents_status.png)   | ![New product status](../img/workflow_editmode_updatecontents_layout.png)   | ![New product status](../img/workflow_editmode_updatecontents_actions.png)   |
-| ![New product status](../img/workflow_editmode_updatepicture_status.png)    | ![New product status](../img/workflow_editmode_updatepicture_layout.png)    | ![New product status](../img/workflow_editmode_updatepicture_actions.png)    |
-| ![New product status](../img/workflow_editmode_validateqty_status.png)      | ![New product status](../img/workflow_editmode_validateqty_layout.png)      | ![New product status](../img/workflow_editmode_validateqty_actions.png)      |
-| ![New product status](../img/workflow_editmode_ready_status.png)            | ![New product status](../img/workflow_editmode_ready_layout.png)            | ![New product status](../img/workflow_editmode_ready_actions1.png)           |
-| ![New product status](../img/workflow_editmode_ready_status.png)            | ![New product status](../img/workflow_editmode_ready_layout.png)            | ![New product status](../img/workflow_editmode_ready_actions2.png)           |
-| ![New product status](../img/workflow_editmode_published_status.png)        | ![New product status](../img/workflow_editmode_ready_layout.png)            | ![New product status](../img/workflow_editmode_published_actions.png)        |
+| Status                                                  | Screenshot  |
+| ------------------------------------------------------- | ----------- |
+| Initial status when new object comes into the system    | ![Initial Place](../img/workflow_editmode_1.jpg) |
+| Update Content                                          | ![Update Content](../img/workflow_editmode_2.jpg)|
+| Update Picture                                          | ![Update Picture](../img/workflow_editmode_3.jpg)|
+| Validate Price and Stock                                | ![Validate](../img/workflow_editmode_4.jpg)|
+| Content is ready                                        | ![Content Ready](../img/workflow_editmode_5.jpg)|
+| Publish the Product                                     | ![Publish Product](../img/workflow_editmode_6.jpg) |
+
 
 ### Check the history
 
