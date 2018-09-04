@@ -819,6 +819,7 @@ class Configuration implements ConfigurationInterface
         $rootNode
             ->children()
                  ->arrayNode('workflows')
+                        ->useAttributeAsKey('name')
                         ->prototype('array')
                             ->children()
                                 ->booleanNode('enabled')
