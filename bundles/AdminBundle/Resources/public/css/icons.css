@@ -72,7 +72,7 @@
     bottom: 0px;
     right: 0px;
     content: "";
-    background: url(/bundles/pimcoreadmin/img/flat-color-icons/download-cloud.svg) center center no-repeat !important;
+    background: url(/bundles/pimcoreadmin/img/flat-color-icons/download-cloud-white.svg) center center no-repeat !important;
 }
 
 .pimcore_icon_overlay_upload:before {
