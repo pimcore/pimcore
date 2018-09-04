@@ -43,6 +43,14 @@ configuration tree in `pimcore` namespace.
 
 ##### Events
 
+| Event before Pimcore 5.5 | Event in Pimcore 5.5 | 
+|----------------------------------|-----------------------------------------|
+|`pimcore.workflowmanagement.preAction` | Use `workflow.leave` (see [Symfony Workflow Events](https://symfony.com/doc/3.4/workflow/usage.html#using-events) for details) or `pimcore.workflow.preGlobalAction` for global actions. |
+|`pimcore.workflowmanagement.postAction` | Use `workflow.completed` (see [Symfony Workflow Events](https://symfony.com/doc/3.4/workflow/usage.html#using-events) for details) or `pimcore.workflow.postGlobalAction` for global actions. |
+|`pimcore.workflowmanagement.preReturnAvailableActions` | Use `workflow.[workflow name].guard.[transition name]` (see [Symfony Guard Events](https://symfony.com/doc/3.4/workflow/usage.html#guard-events) for details). |
+|`pimcore.workflowmanagement.action.before` | Use `workflow.[workflow name].leave.[place name]` (see [Symfony Workflow Events](https://symfony.com/doc/3.4/workflow/usage.html#using-events) for details). |
+|`pimcore.workflowmanagement.action.success` | Use `workflow.[workflow name].completed.[transition name]` (see [Symfony Workflow Events](https://symfony.com/doc/3.4/workflow/usage.html#using-events) for details). |
+|`pimcore.workflowmanagement.action.failure` | Symfony workflow module has no corresponding event as exceptions are thrown to outside world. |
 
 
 ## Migration of Workflow Status Information
