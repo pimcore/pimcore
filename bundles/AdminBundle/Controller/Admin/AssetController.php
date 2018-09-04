@@ -308,7 +308,7 @@ class AssetController extends ElementControllerBase implements EventedController
             'success' => $res['success'],
         ];
 
-        if($res['success']) {
+        if ($res['success']) {
             $response['asset'] = [
                 'id' => $res['asset']->getId(),
                 'path' => $res['asset']->getFullPath(),

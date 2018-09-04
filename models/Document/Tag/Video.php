@@ -538,13 +538,15 @@ class Video extends Model\Document\Tag
             'listType',
             'loop',
             'modestbranding',
+            'mute',
             'origin',
             'playerapiid',
             'playlist',
             'rel',
             'showinfo',
             'start',
-            'theme'];
+            'theme'
+            ];
         $additional_params = '';
 
         $clipConfig = [];
@@ -615,7 +617,10 @@ class Video extends Model\Document\Tag
 
             $valid_vimeo_prams = [
                 'autoplay',
-                'loop'];
+                'background',
+                'loop',
+                'muted'
+                ];
 
             $additional_params = '';
 
@@ -691,7 +696,8 @@ class Video extends Model\Document\Tag
 
             $valid_dailymotion_prams = [
                 'autoplay',
-                'loop'];
+                'loop',
+                'mute'];
 
             $additional_params = '';
 

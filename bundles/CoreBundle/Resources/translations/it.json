@@ -818,5 +818,6 @@
     "thumbnail": "Miniatura",
     "download_thumbnail": "Scarica miniatura",
     "no_thumbnail_selected": "Nessuna miniatura selezionata",
-    "list_thumbnail_in_download_section_on_image_detail_view": "Mostra come opzione di scaricamento nella sezione di dettaglio dell'immagine"
+    "list_thumbnail_in_download_section_on_image_detail_view": "Mostra come opzione di scaricamento nella sezione di dettaglio dell'immagine",
+    "there_are_more_items": "There are more items than displayed"
 }

@@ -666,7 +666,7 @@
     "debug_override_warning": "<strong>WARNING:</strong> If the debug mode is explicitely set via code, this setting will be ignored. See <a target='_blank' href='https://pimcore.com/docs/5.1.x/Development_Documentation/Development_Tools_and_Details/Feature_Flags_And_Debug_Mode.html'>documentation</a> for details.",
     "last_login": "Letzte Anmeldung",
     "errors_from_the_last_7_days": "Errors from the last 7 days",
-    "microsoft_word_export_notice": "<ul><li>It is not possible to re-import this export</li><li>The export file-format is HTML, which can be perfectly opened with Word</li><li>This export doesn't include the full layout information (just basic text-formatting)</li><li>The language selection is used to set the language for object's localized fields (only localized fields are exported!)</li></ul>",
+    "microsoft_word_export_notice": "<ul><li>Es ist nicht möglich, diesen Export erneut zu importieren</li><li>Das Exportdatei-Format ist HTML, dieses kann mit Word geöffnet werden kann</li><li>Dieser Export enthält nicht die vollständigen Layout-Informationen (nur grundlegende Textformatierung)</li><li>Die Sprachauswahl wird verwendet, um die Sprache für die lokalisierten Felder des Objekts festzulegen (nur lokalisierte Felder werden exportiert!)</li></ul>",
     "multiselect_render_type": "Render Type",
     "please_dont_forget_to_reload_pimcore": "<b>Please don't forget to reload pimcore after your modification!</b>",
     "2fa_required": "Two Factor Authentication required",
@@ -685,5 +685,9 @@
     "rasterize_svg": "Rasterize SVGs",
     "rasterize_svg_info_text": "SVGs get automatically rasterized when a transformation other than resize or scale by width/height is used.",
     "wildcards_are_supported": "Wildcards are supported",
-    "classification_store": "Classification Store"
+    "classification_store": "Classification Store",
+    "system_performance_stability_warning": "Please do not perform this action unless you are sure what you are doing.<br /><b style='color:red'>This action can have a major impact onto the stability and performance of the entire system, and may causes an overload or complete crash of the server!</b><br /><br />Are you sure?",
+    "listing_use_traits": "Listing Use (traits)",
+    "listing_parent_php_class": "Listing Parent PHP Class",
+    "clear_full_page_cache": "Clear Full Page Cache"
 }

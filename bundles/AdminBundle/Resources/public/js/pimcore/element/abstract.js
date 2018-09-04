@@ -140,9 +140,7 @@ pimcore.element.abstract = Class.create({
             this.setupChangeDetector();
         }
 
-        this.ignoreMandatoryFields = true;
         var liveData = this.getSaveData();
-        this.ignoreMandatoryFields = false;
 
         var keys = Object.keys(liveData);
 

@@ -93,7 +93,7 @@ pimcore.document.tags.image = Class.create(pimcore.document.tag, {
             });
         }
 
-        this.element.insertHtml("beforeEnd",'<div class="pimcore_tag_droptarget"></div>');
+        this.element.insertHtml("beforeEnd",'<div class="pimcore_tag_droptarget_upload"></div>');
 
         this.element.addCls("pimcore_tag_image_empty");
 

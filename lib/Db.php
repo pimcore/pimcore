@@ -64,21 +64,12 @@ class Db
     }
 
     /**
-     * @param $connection
-     */
-    public static function set($connection)
-    {
-        //@TODO remove
-    }
-
-    /**
      * @static
      */
     public static function close()
     {
-        //@TODO implement equivalent => needed for long running processes
-        // because closing the connection triggers the GC on the MySQL driver, this is also the only way of getting rid
-        // of all the buffered data/results in the memory
+        $db = \Pimcore::getContainer()->get('database_connection');
+        $db->close();
     }
 
     /**

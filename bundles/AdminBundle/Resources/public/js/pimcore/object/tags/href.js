@@ -190,6 +190,10 @@ pimcore.object.tags.href = Class.create(pimcore.object.tags.abstract, {
 
         this.component = new Ext.form.TextField(href);
 
+        if (this.data.published === false) {
+            this.component.addCls("strikeThrough");
+        }
+
         this.composite = Ext.create('Ext.form.FieldContainer', {
             layout: 'hbox',
             items: [this.component, {

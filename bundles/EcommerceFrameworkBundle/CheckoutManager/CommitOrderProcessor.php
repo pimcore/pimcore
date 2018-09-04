@@ -176,7 +176,7 @@ class CommitOrderProcessor implements ICommitOrderProcessor
         $order = $orderAgent->updatePayment($paymentStatus)->getOrder();
         $this->applyAdditionalDataToOrder($order, $paymentStatus, $paymentProvider);
 
-        if($order->getOrderState() === $order::ORDER_STATE_COMMITTED) {
+        if ($order->getOrderState() === $order::ORDER_STATE_COMMITTED) {
             // only when we receive an unsuccessful payment request after order is already committed
             // do not overwrite status if order is already committed. normally this shouldn't happen at all.
             $logger = ApplicationLogger::getInstance(self::LOGGER_NAME, true);
@@ -192,7 +192,6 @@ class CommitOrderProcessor implements ICommitOrderProcessor
 
             throw new UnsupportedException($message);
         }
-
 
         if (in_array($paymentStatus->getStatus(), [AbstractOrder::ORDER_STATE_COMMITTED, AbstractOrder::ORDER_STATE_PAYMENT_AUTHORIZED])) {
             // only when payment state is committed or authorized -> proceed and commit order

@@ -266,41 +266,8 @@ pimcore.object.tags.abstract = Class.create({
         });
     },
 
-    checkIfPublished: function (value) {
-        var publishStatus = '';
-        if (this.itemsArr && this.itemsArr.length > 0) {
-            publishStatus = this.itemsArr.some(function (el) {
-                if (el.fullpath === value) {
-                    return el.published;
-                }
-            }.bind(this));
-        } else if (this.nodeElement) {
-            publishStatus = this.nodeElement.published;
-        } else {
-            publishStatus = this.data.some(function (el) {
-                if (this.fieldConfig.fieldtype === "objectsMetadata") {
-                    if (el.fullpath === value) {
-                        return el.published;
-                    }
-                } else if (this.fieldConfig.fieldtype === "objects") {
-                    return (el[1] === value && el[3] === true);
-                } else if (this.fieldConfig.fieldtype === "multihref") {
-                    return ((el[1] === value && el[4] === true) || (el[1] === value && (el[2] === "asset")));
-                } else if (this.fieldConfig.fieldtype === "multihrefMetadata") {
-                    if (el.path === value && el.type !== "asset") {
-                        return el.published;
-                    } else if (el.path === value && el.type === "asset") {
-                        return true;
-                    }
-                }
-            }.bind(this));
-        }
-        return publishStatus;
-    },
-
-    fullPathRenderCheck :function (value, metaData) {
-        publishVal = this.checkIfPublished(value);
-        if(publishVal === false) {
+    fullPathRenderCheck :function (value, metaData, record) {
+        if(record.data.published === false) {
             metaData.tdStyle = 'text-decoration: line-through;color: #777;';
         }
         return value;

@@ -6,7 +6,6 @@ use Doctrine\DBAL\Schema\Schema;
 use Pimcore\Migrations\Migration\AbstractPimcoreMigration;
 use Pimcore\Model\DataObject\Fieldcollection\Definition;
 
-
 class Version20180830113528 extends AbstractPimcoreMigration
 {
     /**
@@ -21,10 +20,10 @@ class Version20180830113528 extends AbstractPimcoreMigration
         } catch (\Exception $e) {
         }
 
-        if($definition) {
+        if ($definition) {
             $fieldDefinition = $definition->getFieldDefinition('paymentState');
 
-            if($fieldDefinition) {
+            if ($fieldDefinition) {
                 $options = $fieldDefinition->getOptions();
                 $options[] = [
                     'value' => 'abortedButResponseReceived',
@@ -32,18 +31,14 @@ class Version20180830113528 extends AbstractPimcoreMigration
                 ];
                 $fieldDefinition->setOptions($options);
 
-
                 $this->writeMessage(" ... saving field collection definition 'paymentState'");
-                if(!$this->isDryRun()) {
+                if (!$this->isDryRun()) {
                     $definition->save();
                 }
             }
         } else {
-            $this->writeMessage(" ... nothing to do because field collection definition does not exist.");
+            $this->writeMessage(' ... nothing to do because field collection definition does not exist.');
         }
-
-
-
     }
 
     /**
@@ -58,34 +53,32 @@ class Version20180830113528 extends AbstractPimcoreMigration
         } catch (\Exception $e) {
         }
 
-        if($definition) {
+        if ($definition) {
             $fieldDefinition = $definition->getFieldDefinition('paymentState');
 
-            if($fieldDefinition) {
+            if ($fieldDefinition) {
                 $options = $fieldDefinition->getOptions();
 
                 $indexToDelete = null;
-                foreach($options as $index => $option) {
-                    if($option['value'] == 'abortedButResponseReceived') {
+                foreach ($options as $index => $option) {
+                    if ($option['value'] == 'abortedButResponseReceived') {
                         $indexToDelete = $index;
                     }
                 }
 
-                if($indexToDelete !== null) {
+                if ($indexToDelete !== null) {
                     unset($options[$indexToDelete]);
                 }
 
                 $fieldDefinition->setOptions($options);
 
                 $this->writeMessage(" ... saving field collection definition 'paymentState'");
-                if(!$this->isDryRun()) {
+                if (!$this->isDryRun()) {
                     $definition->save();
                 }
             }
-
         } else {
-            $this->writeMessage(" ... nothing to do because field collection definition does not exist.");
+            $this->writeMessage(' ... nothing to do because field collection definition does not exist.');
         }
-
     }
 }

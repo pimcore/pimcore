@@ -17,21 +17,20 @@ class Version20180830122128 extends AbstractPimcoreMigration
 
         $classDefinition = ClassDefinition::getByName('OnlineShopOrder');
 
-        if($classDefinition) {
+        if ($classDefinition) {
             $fieldDefinition = $classDefinition->getFieldDefinition('cartId');
 
-            if($fieldDefinition) {
+            if ($fieldDefinition) {
                 $fieldDefinition->setIndex(true);
 
                 $this->writeMessage(" ... saving class definition 'OnlineShopOrder'");
-                if(!$this->isDryRun()) {
+                if (!$this->isDryRun()) {
                     $classDefinition->save();
                 }
             }
         } else {
-            $this->writeMessage(" ... nothing to do because class definition does not exist.");
+            $this->writeMessage(' ... nothing to do because class definition does not exist.');
         }
-
     }
 
     /**
@@ -43,20 +42,19 @@ class Version20180830122128 extends AbstractPimcoreMigration
 
         $classDefinition = ClassDefinition::getByName('OnlineShopOrder');
 
-        if($classDefinition) {
+        if ($classDefinition) {
             $fieldDefinition = $classDefinition->getFieldDefinition('cartId');
 
-            if($fieldDefinition) {
+            if ($fieldDefinition) {
                 $fieldDefinition->setIndex(false);
 
                 $this->writeMessage(" ... saving class definition 'OnlineShopOrder'");
-                if(!$this->isDryRun()) {
+                if (!$this->isDryRun()) {
                     $classDefinition->save();
                 }
             }
         } else {
-            $this->writeMessage(" ... nothing to do because class definition does not exist.");
+            $this->writeMessage(' ... nothing to do because class definition does not exist.');
         }
-
     }
 }

@@ -685,5 +685,9 @@
     "rasterize_svg": "Rasterize SVGs",
     "rasterize_svg_info_text": "SVGs get automatically rasterized when a transformation other than resize or scale by width/height is used.",
     "wildcards_are_supported": "Wildcards are supported",
-    "classification_store": "Classification Store"
+    "classification_store": "Classification Store",
+    "system_performance_stability_warning": "Please do not perform this action unless you are sure what you are doing.<br /><b style='color:red'>This action can have a major impact onto the stability and performance of the entire system, and may causes an overload or complete crash of the server!</b><br /><br />Are you sure?",
+    "listing_use_traits": "Listing Use (traits)",
+    "listing_parent_php_class": "Listing Parent PHP Class",
+    "clear_full_page_cache": "Clear Full Page Cache"
 }

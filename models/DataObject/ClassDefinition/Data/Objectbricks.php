@@ -733,6 +733,8 @@ class Objectbricks extends Model\DataObject\ClassDefinition\Data
     {
         if (!$omitMandatoryCheck) {
             if ($data instanceof DataObject\Objectbrick) {
+                $validationExceptions = [];
+
                 $items = $data->getItems();
                 foreach ($items as $item) {
                     if ($item->getDoDelete()) {
@@ -755,10 +757,21 @@ class Objectbricks extends Model\DataObject\ClassDefinition\Data
                     }
 
                     foreach ($collectionDef->getFieldDefinitions() as $fd) {
-                        $key = $fd->getName();
-                        $getter = 'get' . ucfirst($key);
-                        $fd->checkValidity($item->$getter());
+                        try {
+                            $key = $fd->getName();
+                            $getter = 'get' . ucfirst($key);
+                            $fd->checkValidity($item->$getter());
+                        } catch (Model\Element\ValidationException $ve) {
+                            $ve->addContext($this->getName());
+                            $validationExceptions[] = $ve;
+                        }
                     }
+                }
+
+                if ($validationExceptions) {
+                    $aggregatedExceptions = new Model\Element\ValidationException();
+                    $aggregatedExceptions->setSubItems($validationExceptions);
+                    throw $aggregatedExceptions;
                 }
             }
         }

@@ -1,6 +1,13 @@
 # Upgrade Notes for Upgrades within Pimcore 5
 
 ## Version 5.5.0
+
+### Minor compatibility changes
+- `\Pimcore\Db::set()` was removed. 
+- deprecated `\Pimcore::addToGloballyProtectedItems()`
+- deprecated `\Pimcore::removeFromGloballyProtectedItems()`
+
+## Version 5.4.3
 Mime types for Assets are now configured using Symfony Configurations, that means that `Pimcore\Tool\Mime::$extensionMapping` has been removed.
 In order for you to still add custom mappings, create new configuration like this:
 
@@ -498,6 +505,11 @@ services:
         calls:
             - [setModelFactory, ['@Pimcore\Model\Factory']]
 ```
+#### Build 143
+The constructor signature of ApplicationLoggerDb changed from 
+`public function __construct($level = 'debug', $bubble = true)` to `public function __construct(Db\Connection $db, $level = 'debug', $bubble = true)`
+
+Adopt all calls of `new ApplicationLoggerDb('INFO')` to `new ApplicationLoggerDb(\Pimcore\Db::get(), 'INFO')` or get the logger directly from the container: `\Pimcore::getContainer()->get('pimcore.app_logger')`
 
 #### Build 134 (2017-10-03)
 

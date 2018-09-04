@@ -226,7 +226,7 @@ class InstallCommand extends Command
             $value = $input->getOption($name);
             $isDefaultValue = isset($config['default']) && $value === $config['default'];
 
-            if ($value && !$isDefaultValue) {
+            if ($value || $isDefaultValue) {
                 continue;
             }
 

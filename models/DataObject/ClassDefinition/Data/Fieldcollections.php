@@ -570,7 +570,11 @@ class Fieldcollections extends Model\DataObject\ClassDefinition\Data
     {
         if (!$omitMandatoryCheck) {
             if ($data instanceof DataObject\Fieldcollection) {
+                $validationExceptions = [];
+
+                $idx = -1;
                 foreach ($data as $item) {
+                    $idx++;
                     if (!$item instanceof DataObject\Fieldcollection\Data\AbstractData) {
                         continue;
                     }
@@ -582,9 +586,20 @@ class Fieldcollections extends Model\DataObject\ClassDefinition\Data
                     }
 
                     foreach ($collectionDef->getFieldDefinitions() as $fd) {
-                        $getter = 'get' . ucfirst($fd->getName());
-                        $fd->checkValidity($item->$getter());
+                        try {
+                            $getter = 'get' . ucfirst($fd->getName());
+                            $fd->checkValidity($item->$getter());
+                        } catch (Model\Element\ValidationException $ve) {
+                            $ve->addContext($this->getName() . '-' . $idx);
+                            $validationExceptions[] = $ve;
+                        }
                     }
+                }
+
+                if ($validationExceptions) {
+                    $aggregatedExceptions = new Model\Element\ValidationException();
+                    $aggregatedExceptions->setSubItems($validationExceptions);
+                    throw $aggregatedExceptions;
                 }
             }
         }
