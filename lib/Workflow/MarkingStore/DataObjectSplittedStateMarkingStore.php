@@ -117,6 +117,10 @@ class DataObjectSplittedStateMarkingStore implements PimcoreElementPersistentMar
         $subject->save();
     }
 
+    /**
+     * @param string $fieldName
+     * @return string[]
+     */
     public function getMappedPlaces(string $fieldName)
     {
         $places = [];
