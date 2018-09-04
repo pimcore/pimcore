@@ -111,5 +111,7 @@ Pimcore supports always the latest 2 versions of all 4 major browsers at the tim
 
 - **Google Chrome  (Recommended)**
 - Mozilla Firefox 
-- Microsoft Internet Explorer / Edge
+- Microsoft Edge
 - Apple Safari
+- Microsoft Internet Explorer (only version 11)   
+**[Note: support for IE will be removed soon!](https://github.com/pimcore/pimcore/issues/2989)**
