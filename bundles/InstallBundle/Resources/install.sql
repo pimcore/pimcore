@@ -868,10 +868,9 @@ DROP TABLE IF EXISTS `element_workflow_state`;
 CREATE TABLE `element_workflow_state` (
   `cid` int(10) NOT NULL DEFAULT '0',
   `ctype` enum('document','asset','object') NOT NULL,
-  `workflowId` int(11) NOT NULL,
-  `state` varchar(255) DEFAULT NULL,
-  `status` varchar(255) DEFAULT NULL,
-  PRIMARY KEY (`cid`,`ctype`,`workflowId`)
+  `place` varchar(255) DEFAULT NULL,
+  `workflow` varchar(100) DEFAULT NULL,
+  PRIMARY KEY (`cid`,`ctype`,`workflow`)
 ) DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `gridconfigs`;
