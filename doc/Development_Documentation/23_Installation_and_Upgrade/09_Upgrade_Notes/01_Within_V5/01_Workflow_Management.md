@@ -61,7 +61,7 @@ Here is what Pimcore provides and what steps need to be done manually:
 
 - The Pimcore migration adds additional columns to the `element_workflow_state` table
   - `place`: name of the place an element is currently in
-  - `workflow`: name of the workflow (will be prefilled with content of `workflowId` to prevent duplicate key errors)
+  - `workflow`: name of the workflow
 - Following columns of the `element_workflow_state` table are deprecated now, but Pimcore DOES NOT remove them (for data migration purposes)
   - `workflowId`
   - `state`
