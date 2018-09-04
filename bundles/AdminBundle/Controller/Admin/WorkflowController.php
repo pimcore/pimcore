@@ -23,7 +23,6 @@ use Pimcore\Model\Document;
 use Pimcore\Model\Element\ValidationException;
 use Pimcore\Workflow\Manager;
 use Pimcore\Workflow\Transition;
-use Pimcore\WorkflowManagement\Workflow;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
@@ -36,16 +35,6 @@ use Symfony\Component\Workflow\Registry;
  */
 class WorkflowController extends AdminController implements EventedControllerInterface
 {
-    /**
-     * @var Workflow\Manager $manager;
-     */
-    private $manager;
-
-    /**
-     * @var Workflow\Decorator $decorator;
-     */
-    private $decorator;
-
     /**
      * @var Document|Asset|ConcreteObject $element
      */
