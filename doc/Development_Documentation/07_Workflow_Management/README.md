@@ -53,14 +53,9 @@ or [Configuration Details](./01_Configuration_Details.md).
 
 
 ## Events
-Symfony workflow module comes with a bunch of events that can be used for customizing and extending 
-default workflow functionality. See [Symfony docs](https://symfony.com/doc/3.4/workflow/usage.html#using-events)
-for details. 
 
-In addition to the Symfony events, Pimcore provides two additional events for global actions: 
-- `pimcore.workflow.preGlobalAction`
-- `pimcore.workflow.postGlobalAction`
-See [WorkflowEvents](https://github.com/pimcore/pimcore/blob/master/lib/Event/WorkflowEvents.php) for details. 
+The Pimcore workflow management fires several events that can be used to customize and extend functionality. For details
+see [Working with PHP API](./09_Working_with_PHP_API.md).
 
 
 ## User Notifications
