@@ -41,21 +41,6 @@ class WorkflowController extends AdminController implements EventedControllerInt
     private $element;
 
     /**
-     * @var string $selectedAction
-     */
-    private $selectedAction;
-
-    /**
-     * @var string $newState
-     */
-    private $newState;
-
-    /**
-     * @var string $newStatus
-     */
-    private $newStatus;
-
-    /**
      * Returns a JSON of the available workflow actions to the admin panel
      *
      * @Route("/get-workflow-form")
