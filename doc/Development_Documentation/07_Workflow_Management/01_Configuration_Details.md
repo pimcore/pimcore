@@ -95,31 +95,31 @@ pimcore:
                                  # A symfony expresion can be configured here. The first set of permissions which are matching the condition will be used.
                                  condition:            ~
 
-                                 # save permission as it can be configured in pimcore workplaces
+                                 # save permission as it can be configured in Pimcore workplaces
                                  save:                 ~
 
-                                 # publish permission as it can be configured in pimcore workplaces
+                                 # publish permission as it can be configured in Pimcore workplaces
                                  publish:              ~
 
-                                 # unpublish permission as it can be configured in pimcore workplaces
+                                 # unpublish permission as it can be configured in Pimcore workplaces
                                  unpublish:            ~
 
-                                 # delete permission as it can be configured in pimcore workplaces
+                                 # delete permission as it can be configured in Pimcore workplaces
                                  delete:               ~
 
-                                 # rename permission as it can be configured in pimcore workplaces
+                                 # rename permission as it can be configured in Pimcore workplaces
                                  rename:               ~
 
-                                 # view permission as it can be configured in pimcore workplaces
+                                 # view permission as it can be configured in Pimcore workplaces
                                  view:                 ~
 
-                                 # settings permission as it can be configured in pimcore workplaces
+                                 # settings permission as it can be configured in Pimcore workplaces
                                  settings:             ~
 
-                                 # versions permission as it can be configured in pimcore workplaces
+                                 # versions permission as it can be configured in Pimcore workplaces
                                  versions:             ~
 
-                                 # properties permission as it can be configured in pimcore workplaces
+                                 # properties permission as it can be configured in Pimcore workplaces
                                  properties:           ~
 
                                  # a short hand for save, publish, unpublish, delete + rename
@@ -214,7 +214,7 @@ pimcore:
                                          # Optional setter function (available in the element, for example in the updated object), if not specified, data will be added to notes. The Workflow manager will call the function with the whole field data.
                                          setterFn:             ~
 
-                                         # Will be passed to the underlying pimcore data object field type. Can be used to configure the options of a select box for example.
+                                         # Will be passed to the underlying Pimcore data object field type. Can be used to configure the options of a select box for example.
                                          fieldTypeSettings:    []
 
                              # Css class to define the icon which will be used in the actions button in the backend.
