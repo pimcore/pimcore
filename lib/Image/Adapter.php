@@ -69,6 +69,11 @@ abstract class Adapter
     protected $sourceImageFormat;
 
     /**
+     * @var mixed
+     */
+    protected $resource;
+
+    /**
      * @param $height
      *
      * @return $this
@@ -633,5 +638,13 @@ abstract class Adapter
     public function setPreserveMetaData($preserveMetaData)
     {
         $this->preserveMetaData = $preserveMetaData;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getResource()
+    {
+        return $this->resource;
     }
 }
