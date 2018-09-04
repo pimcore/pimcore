@@ -13,7 +13,6 @@
  */
 use Pimcore\Cache;
 use Pimcore\Config;
-use Pimcore\Db;
 use Pimcore\FeatureToggles\Feature;
 use Pimcore\FeatureToggles\FeatureManager;
 use Pimcore\FeatureToggles\FeatureManagerInterface;
@@ -284,6 +283,7 @@ class Pimcore
 
     /** Add $keepItems to the list of items which are protected from garbage collection.
      * @param $keepItems
+     *
      * @deprecated
      */
     public static function addToGloballyProtectedItems($keepItems)
@@ -301,6 +301,7 @@ class Pimcore
 
     /** Items to be deleted.
      * @param $deleteItems
+     *
      * @deprecated
      */
     public static function removeFromGloballyProtectedItems($deleteItems)

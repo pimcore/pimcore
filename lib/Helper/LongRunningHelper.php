@@ -19,8 +19,8 @@ use Doctrine\DBAL\Connection;
 use Monolog\Handler\HandlerInterface;
 use Psr\Log\LoggerAwareTrait;
 
-class LongRunningHelper {
-
+class LongRunningHelper
+{
     use LoggerAwareTrait;
 
     protected $connectionRegistry;
@@ -37,6 +37,7 @@ class LongRunningHelper {
 
     /**
      * LongRunningHelper constructor.
+     *
      * @param ConnectionRegistry $connectionRegistry
      */
     public function __construct(ConnectionRegistry $connectionRegistry)
@@ -47,17 +48,16 @@ class LongRunningHelper {
     /**
      * @param array $options
      */
-    public function cleanUp($options = []) {
+    public function cleanUp($options = [])
+    {
         $this->cleanupDoctrine();
         $this->cleanupMonolog();
         $this->cleanupPimcoreRuntimeCache($options);
         $this->triggerPhpGarbageCollector();
     }
 
-    /**
-     *
-     */
-    protected function cleanupDoctrine() {
+    protected function cleanupDoctrine()
+    {
         foreach ($this->connectionRegistry->getConnections() as $name => $connection) {
             if (!($connection instanceof Connection)) {
                 throw new \LogicException('Expected only instances of Connection');
@@ -67,10 +67,8 @@ class LongRunningHelper {
         }
     }
 
-    /**
-     *
-     */
-    protected function triggerPhpGarbageCollector() {
+    protected function triggerPhpGarbageCollector()
+    {
         gc_enable();
         $collectedCycles = gc_collect_cycles();
 
@@ -80,7 +78,8 @@ class LongRunningHelper {
     /**
      * @param array $options
      */
-    protected function cleanupPimcoreRuntimeCache($options = []) {
+    protected function cleanupPimcoreRuntimeCache($options = [])
+    {
         $options = $this->resolveOptions(__METHOD__, $options);
 
         $protectedItems = $this->pimcoreRuntimeCacheProtectedItems;
@@ -100,7 +99,8 @@ class LongRunningHelper {
     /**
      * @param array $items
      */
-    public function addPimcoreRuntimeCacheProtectedItems(array $items) {
+    public function addPimcoreRuntimeCacheProtectedItems(array $items)
+    {
         $this->pimcoreRuntimeCacheProtectedItems = array_merge($this->pimcoreRuntimeCacheProtectedItems, $items);
         $this->pimcoreRuntimeCacheProtectedItems = array_unique($this->pimcoreRuntimeCacheProtectedItems);
     }
@@ -108,7 +108,8 @@ class LongRunningHelper {
     /**
      * @param array $items
      */
-    public function removePimcoreRuntimeCacheProtectedItems(array $items) {
+    public function removePimcoreRuntimeCacheProtectedItems(array $items)
+    {
         foreach ($this->pimcoreRuntimeCacheProtectedItems as $item) {
             $key = array_search($item, $this->pimcoreRuntimeCacheProtectedItems);
             if ($key !== false) {
@@ -117,10 +118,8 @@ class LongRunningHelper {
         }
     }
 
-    /**
-     *
-     */
-    public function cleanupMonolog() {
+    public function cleanupMonolog()
+    {
         foreach ($this->monologHandlers as $handler) {
             $handler->close();
         }
@@ -129,19 +128,22 @@ class LongRunningHelper {
     /**
      * @param HandlerInterface $handler
      */
-    public function addMonologHandler(HandlerInterface $handler) {
+    public function addMonologHandler(HandlerInterface $handler)
+    {
         $this->monologHandlers[] = $handler;
     }
 
     /**
      * @param string $method
      * @param array $options
+     *
      * @return array
      */
-    protected function resolveOptions(string $method, array $options) {
+    protected function resolveOptions(string $method, array $options)
+    {
         $name = preg_replace('@[^\:]+\:\:cleanup@', '', $method);
         $name = lcfirst($name);
-        if(isset($options[$name])) {
+        if (isset($options[$name])) {
             return $options[$name];
         }
 
