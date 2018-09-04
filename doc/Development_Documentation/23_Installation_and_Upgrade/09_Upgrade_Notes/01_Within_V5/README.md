@@ -7,6 +7,9 @@
 - deprecated `\Pimcore::addToGloballyProtectedItems()`
 - deprecated `\Pimcore::removeFromGloballyProtectedItems()`
 
+### Breaking Changes
+- [Pimcore Workflow Management Reloaded](./01_Workflow_Management.md)
+
 ## Version 5.4.3
 Mime types for Assets are now configured using Symfony Configurations, that means that `Pimcore\Tool\Mime::$extensionMapping` has been removed.
 In order for you to still add custom mappings, create new configuration like this:
@@ -171,7 +174,7 @@ The following list should help you to locate and replace them, if available you 
 
 #### Build 289 (2018-07-20)
 The context of the button layout component in objects changed to the edit tab.
-See [Layout Components](../../05_Objects/01_Object_Classes/03_Layout_Elements/README.md).
+See [Layout Components](../../../05_Objects/01_Object_Classes/03_Layout_Elements/README.md).
 
 #### Build 286 (2018-07-19)
 To the interface `Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\ITracker` the two methods `getAssortmentTenants` and
@@ -201,7 +204,7 @@ Image Thumbnails: SVGs are no longer automatically rasterized when using only on
 To restore the previous behavior, set the "Rasterize SVGs (Imagick)" option on the relevant thumbnail configuration.
 
 #### Build 273 (2018-07-06)
-Webservices API: Support for SQL condition parameters has been removed. Use [Query Filters](../../24_Web_Services/01_Query_Filters.md) instead.
+Webservices API: Support for SQL condition parameters has been removed. Use [Query Filters](../../../24_Web_Services/01_Query_Filters.md) instead.
 If you still want to support such conditions, implement your own event listener as described on the same page in the `Legacy Mode`section..
 
 #### Build 270 (2018-06-29)
@@ -324,7 +327,7 @@ it was before for backwards compatibility reasons. If a value is set globally it
 
 The debug mode was changed from being a boolean setting to a more granular feature flag setting. If you query the debug
 mode in your code, you might update the call to specify which kind of debug setting you want to query. See
-[Feature Flags and Debug Mode](../../19_Development_Tools_and_Details/03_Feature_Flags_And_Debug_Mode.md) for details.
+[Feature Flags and Debug Mode](../../../19_Development_Tools_and_Details/03_Feature_Flags_And_Debug_Mode.md) for details.
 
 
 ## Version < 5.2.0
@@ -338,7 +341,7 @@ innodb_large_prefix = 1
 
 #### Build 188 (2018-01-26)
 
-In a highly concurrent setup, the [**Redis Cache**](../../19_Development_Tools_and_Details/09_Cache/README.md)
+In a highly concurrent setup, the [**Redis Cache**](../../../19_Development_Tools_and_Details/09_Cache/README.md)
 adapter can lead to inconsistencies resulting in items losing cache tags and not being cleared anymore on save. This was
 fixed in the Lua version of the cache adapter and the `use_lua` option now defaults to true. Please note that Lua scripting
 is not available in Redis versions prior to 2.6.0.
@@ -444,8 +447,8 @@ and may be subject to change in later versions.
 If you are already using targeting, be aware that you'll need to re-create all of your targeting rules from scratch based
 on the new engine.
 
-You can find updated documentation in [Targeting and Personalization](../../18_Tools_and_Features/37_Targeting_and_Personalization)
-and in [Migrating from the existing Targeting Engine](../../18_Tools_and_Features/37_Targeting_and_Personalization/30_Migrating_from_the_existing_Targeting_Engine.md).
+You can find updated documentation in [Targeting and Personalization](../../../18_Tools_and_Features/37_Targeting_and_Personalization)
+and in [Migrating from the existing Targeting Engine](../../../18_Tools_and_Features/37_Targeting_and_Personalization/30_Migrating_from_the_existing_Targeting_Engine.md).
 
 <div class="alert alert-danger">
 Make sure to delete any old rules <strong>BEFORE</strong> running the update as otherwise your site may break.
@@ -533,10 +536,10 @@ The introduction of object type hints in PHP 7.2 forced us to rename several nam
 - Several other internal classes were renamed or moved as well
     - `Pimcore\Event\Object*` to `Pimcore\Event\DataObject*`
     - `Pimcore\Model\User\Workspace\Object` to `Pimcore\Model\User\Workspace\DataObject`
-- [Object Placeholders](../../19_Development_Tools_and_Details/23_Placeholders/01_Object_Placeholder.md) syntax changed to `%DataObject()`
+- [Object Placeholders](../../../19_Development_Tools_and_Details/23_Placeholders/01_Object_Placeholder.md) syntax changed to `%DataObject()`
 - There's a compatibility autoloader which enables you to still use the former namespace (< PHP 7.2), but you should migrate asap. to the new namespaces.
 - After the update please consider the following:
-    - If you're using custom [class overrides](../../20_Extending_Pimcore/03_Overriding_Models.md) in your `app/config/config.yml`, please adapt them using the new namespace.
+    - If you're using custom [class overrides](../../../20_Extending_Pimcore/03_Overriding_Models.md) in your `app/config/config.yml`, please adapt them using the new namespace.
     - If you're using event listeners on object events, please rename them as well to `pimcore.dataobject.*`
     - Your code should continue to work as before, due to the compatibility autoloader, which is creating class aliases on the fly
     - Update your `.gitignore` to exclude `/var/classes/DataObject` instead of `/var/classes/Object`
@@ -550,11 +553,11 @@ The introduction of object type hints in PHP 7.2 forced us to rename several nam
 #### Build 97 (2017-08-24)
 
 This build re-adds support to access website config settings from controllers and views, but in a slightly different way
-than in Pimcore 4. See [Website Settings](../../18_Tools_and_Features/27_Website_Settings.md) for details.
+than in Pimcore 4. See [Website Settings](../../../18_Tools_and_Features/27_Website_Settings.md) for details.
 
 #### Build 96 (2017-08-22)
 
-This build adds support for migrations in bundle installers (see [Installers](../../20_Extending_Pimcore/13_Bundle_Developers_Guide/05_Pimcore_Bundles/01_Installers.md)).
+This build adds support for migrations in bundle installers (see [Installers](../../../20_Extending_Pimcore/13_Bundle_Developers_Guide/05_Pimcore_Bundles/01_Installers.md)).
 With this change, extension manager commands can now also be executed as CLI commands and installers use an `OutputWriter`
 object to return information to the extension manager or to CLI scripts. As this `OutputWriter` is initialized in `AbstractInstaller`s
 constructor, please update your custom installers to call the parent constructor.
@@ -577,7 +580,7 @@ $ composer require doctrine/doctrine-migrations-bundle "^1.2"
 #### Build 86 (2017-08-02)
 
 E-Commerce Framework configuration was moved to a Symfony Config. For details see
-[Config Signature changes](./03_Ecommerce_Framework/02_Ecommerce_Framework_Config_Signature_Changes.md)
+[Config Signature changes](../03_Ecommerce_Framework/02_Ecommerce_Framework_Config_Signature_Changes.md)
 
 
 #### Build 85 (2017-08-01)
@@ -618,7 +621,7 @@ $nav = $this->navigation()->buildNavigation($this->document, $navStartNode);
 echo $this->navigation()->menu()->renderMenu($nav, ['maxDepth' => 1]);
 ```
 
-See the [navigation documentation](./../../03_Documents/03_Navigation.md) for details.
+See the [navigation documentation](../../../03_Documents/03_Navigation.md) for details.
 
 #### Build 54 (2017-05-16)
 
@@ -634,5 +637,5 @@ pimcore:
             naming_strategy: legacy
 ```
 
-See [Editable Naming Strategies](../../03_Documents/13_Editable_Naming_Strategies.md) for information how to migrate to
+See [Editable Naming Strategies](../../../03_Documents/13_Editable_Naming_Strategies.md) for information how to migrate to
 the `nested` naming strategy.
