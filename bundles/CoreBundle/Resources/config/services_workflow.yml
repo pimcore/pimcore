@@ -85,6 +85,8 @@ services:
 
     Pimcore\Workflow\EventSubscriber\NotesSubscriber: ~
 
+    Pimcore\Workflow\EventSubscriber\ChangePublishedStateSubscriber: ~
+
     workflow.security.expression_language:
         class: Symfony\Component\Workflow\EventListener\ExpressionLanguage
 

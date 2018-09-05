@@ -55,4 +55,8 @@ class Transition extends \Symfony\Component\Workflow\Transition implements Notes
         return $this->options['iconClass'] ?? 'pimcore_icon_workflow_action';
     }
 
+    public function getChangePublishedState(): string {
+        return $this->options['changePublishedState'];
+    }
+
 }

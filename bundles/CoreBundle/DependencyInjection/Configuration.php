@@ -18,6 +18,7 @@ use Pimcore\Cache\Pool\Redis;
 use Pimcore\Storage\Redis\ConnectionFactory;
 use Pimcore\Targeting\Storage\CookieStorage;
 use Pimcore\Targeting\Storage\TargetingStorageInterface;
+use Pimcore\Workflow\EventSubscriber\ChangePublishedStateSubscriber;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\Config\Definition\Builder\NodeDefinition;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
@@ -1097,6 +1098,11 @@ class Configuration implements ConfigurationInterface
                                                             ->cannotBeEmpty()
                                                         ->end()
                                                         ->info('Send a email notification to a list of user roles (role names) when the transition get\'s applied')
+                                                    ->end()
+                                                    ->enumNode('changePublishedState')
+                                                        ->values([ChangePublishedStateSubscriber::NO_CHANGE, ChangePublishedStateSubscriber::FORCE_UNPUBLISHED, ChangePublishedStateSubscriber::FORCE_PUBLISHED])
+                                                        ->defaultValue(ChangePublishedStateSubscriber::NO_CHANGE)
+                                                        ->info('Change published state of element while transition (only available for documents and data objects).')
                                                     ->end()
                                                 ->end()
                                             ->end()

@@ -28,18 +28,19 @@ configuration tree in `pimcore` namespace.
 | `'defaultStatus' => 'todo'`      | Use `initial_place` in workflow definition. |
 | `'allowUnpublished'=> true,`     | Use `supports_strategy` for more advanced subject criteria. | 
 | `'states' => [ ...`              | No matching concept, use places instead. Color config also moved to places. | 
-| `'statuses' => [ ...`            | Use `places` now.  | 
+| `'statuses' => [ ...`            | Use `places` now.  |
+| `'statuses' => [[ 'elementPublished'` | Use `changePublishedState` option in `transition` definition.  |  
 | `'actions' => [ ...`             | Use `transitions` now. |
-| `'actions' => [ 'name' => 'start_progress' ` | Unique name defined by the key of a `transition`. |
-| `'actions' => [ 'label' => 'Start Progress' ` | Use `label` option in `options` array of `transition` definition. | 
-| `'actions' => [ 'transitionTo' => [ ... ] ` | Use `to` option of `transition` definition. |
-| `'actions' => [ 'notes' => [ ... ] ` | Use `notes` option in `options` array of `transition` definition. |
-| `'actions' => [ 'additionalFields' => [ ... ] ` | Use `notes.additionalFields` option in `options` array of `transition` definition. | 
-| `'actions' => [ 'users' => [ ... ] ` | Use `guard` option in `transition` definition. There advanced definitions of who and when an transition is allowed can be configured. | 
-| `'actions' => [ 'events' => [ ... ] ` | See events section later. | 
-| `'actions' => [ 'notificationUsers' => [ ... ] ` | Use `notifyUsers` and `notifyROles` option in `options` array of `transition` definition. Important: Now names are used instead of IDs. |
+| `'actions' => [[ 'name' => 'start_progress' ` | Unique name defined by the key of a `transition`. |
+| `'actions' => [[ 'label' => 'Start Progress' ` | Use `label` option in `options` array of `transition` definition. | 
+| `'actions' => [[ 'transitionTo' => [ ... ] ` | Use `to` option of `transition` definition. |
+| `'actions' => [[ 'notes' => [ ... ] ` | Use `notes` option in `options` array of `transition` definition. |
+| `'actions' => [[ 'additionalFields' => [ ... ] ` | Use `notes.additionalFields` option in `options` array of `transition` definition. | 
+| `'actions' => [[ 'users' => [ ... ] ` | Use `guard` option in `transition` definition. There advanced definitions of who and when an transition is allowed can be configured. | 
+| `'actions' => [[ 'events' => [ ... ] ` | See events section later. | 
+| `'actions' => [[ 'notificationUsers' => [ ... ] ` | Use `notifyUsers` and `notifyROles` option in `options` array of `transition` definition. Important: Now names are used instead of IDs. |
 | `'transitionDefinitions' => [ ... ` | Use `from` option of `transition` definition. |
-| `'transitionDefinitions' => [ 'globalActions' => [ ... ]  ` | Use `globalActions` in workflow definition. |
+| `'transitionDefinitions' => [[ 'globalActions' => [ ... ]  ` | Use `globalActions` in workflow definition. |
 
 ##### Events
 

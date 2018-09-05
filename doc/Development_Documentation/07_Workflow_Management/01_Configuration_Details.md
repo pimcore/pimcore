@@ -225,6 +225,9 @@ pimcore:
 
                              # Send a email notification to a list of user roles (role names) when the transition get's applied
                              notifyRoles:          []
+                             
+                             # Change published state of element while transition (only available for documents and data objects).
+                             changePublishedState: no_change # One of "no_change"; "force_unpublished"; "force_published"                             
 
                  # Actions which will be added to actions button independently of the current workflow place.
                  globalActions:
