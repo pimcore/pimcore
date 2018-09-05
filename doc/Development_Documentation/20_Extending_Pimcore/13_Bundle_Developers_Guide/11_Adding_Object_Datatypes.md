@@ -8,7 +8,7 @@ Following steps are necessary to do so:
   Pimcore Admin Ui. 
    
    For examples have a look at the Pimcore core datatypes at 
-   [github](https://github.com/pimcore/pimcore/tree/master/pimcore/models/DataObject/ClassDefinition/Data). 
+   [github](https://github.com/pimcore/pimcore/tree/master/models/DataObject/ClassDefinition/Data). 
 
    In Pimcore 4 the PHP class had to be in namespace `Pimcore\Model\DataObject\ClassDefinition\Data` to be loaded. This is 
    still possible, but not necessary any more (see below).
