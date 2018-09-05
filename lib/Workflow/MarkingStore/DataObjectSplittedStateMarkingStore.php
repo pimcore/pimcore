@@ -113,8 +113,6 @@ class DataObjectSplittedStateMarkingStore implements PimcoreElementPersistentMar
         foreach($groupedProperties as $property => $places) {
             $this->setProperty($subject, $property, $places);
         }
-
-        $subject->save();
     }
 
     /**

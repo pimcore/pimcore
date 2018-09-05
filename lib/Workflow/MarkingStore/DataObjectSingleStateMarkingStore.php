@@ -42,8 +42,6 @@ class DataObjectSingleStateMarkingStore extends SingleStateMarkingStore implemen
         $subject = $this->checkIfSubjectIsValid($subject);
 
         parent::setMarking($subject, $marking);
-
-        $subject->save();
     }
 
     /**

@@ -113,7 +113,7 @@ class WorkflowController extends AdminController implements EventedControllerInt
         if ($workflow->can($this->element, $request->get('transition'))) {
 
             try {
-                $workflowManager->applyWithAdditionalData($workflow, $this->element, $request->get('transition'), $workflowOptions);
+                $workflowManager->applyWithAdditionalData($workflow, $this->element, $request->get('transition'), $workflowOptions, true);
 
                 $data = [
                     'success' => true,
@@ -165,7 +165,7 @@ class WorkflowController extends AdminController implements EventedControllerInt
         $workflow = $workflowRegistry->get($this->element, $request->get('workflowName'));
 
         try {
-            $workflowManager->applyGlobalAction($workflow, $this->element, $request->get('transition'), $workflowOptions);
+            $workflowManager->applyGlobalAction($workflow, $this->element, $request->get('transition'), $workflowOptions, true);
 
             $data = [
                 'success' => true,

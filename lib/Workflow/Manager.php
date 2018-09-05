@@ -224,11 +224,12 @@ class Manager {
      * @param $subject
      * @param string $transition
      * @param array $additionalData
+     * @param bool $saveSubject
      * @return Marking
      * @throws ValidationException
      * @throws \Exception
      */
-    public function applyWithAdditionalData(Workflow $workflow, $subject, string $transition, array $additionalData) {
+    public function applyWithAdditionalData(Workflow $workflow, $subject, string $transition, array $additionalData, $saveSubject = false) {
 
         $this->notesSubscriber->setAdditionalData($additionalData);
 
@@ -236,7 +237,7 @@ class Manager {
 
         $this->notesSubscriber->setAdditionalData([]);
 
-        if($subject instanceof AbstractElement && !$workflow->getMarkingStore() instanceof PimcoreElementPersistentMarkingStoreInterface) {
+        if($saveSubject && $subject instanceof AbstractElement && method_exists($subject, "save")) {
             $subject->save();
         }
 
@@ -248,11 +249,12 @@ class Manager {
      * @param $subject
      * @param string $globalAction
      * @param array $additionalData
+     * @param bool $saveSubject
      * @return Marking
      * @throws ValidationException
      * @throws \Exception
      */
-    public function applyGlobalAction(Workflow $workflow, $subject, string $globalAction, array $additionalData) {
+    public function applyGlobalAction(Workflow $workflow, $subject, string $globalAction, array $additionalData, $saveSubject = false) {
 
         $globalActionObj = $this->getGlobalAction($workflow->getName(), $globalAction);
         if(!$globalActionObj) {
@@ -267,7 +269,6 @@ class Manager {
 
         $this->eventDispatcher->dispatch(WorkflowEvents::PRE_GLOBAL_ACTION, $event);
 
-        $isDirty = false;
         $markingStore = $workflow->getMarkingStore();
 
         if(!empty($globalActionObj->getTos())) {
@@ -278,15 +279,14 @@ class Manager {
             }
 
             $markingStore->setMarking($subject, new Marking($places));
-            $isDirty = !$workflow->getMarkingStore() instanceof PimcoreElementPersistentMarkingStoreInterface;
-        }
-
-        if($subject instanceof AbstractElement && $isDirty) {
-            $subject->save();
         }
 
         $this->eventDispatcher->dispatch(WorkflowEvents::POST_GLOBAL_ACTION, $event);
         $this->notesSubscriber->setAdditionalData([]);
+
+        if($saveSubject && $subject instanceof AbstractElement && method_exists($subject, "save")) {
+            $subject->save();
+        }
 
         return $markingStore->getMarking($subject);
     }

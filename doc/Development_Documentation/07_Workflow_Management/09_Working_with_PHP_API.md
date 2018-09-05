@@ -27,6 +27,10 @@ if($workflow->can($object, 'content_ready')) {
 
     //modify workflow via Symfony APi and without saving additional data
     $workflow->apply($object, 'content_ready');
+    
+    //make sure you save the workflow subject afterwards if any data was changed during transition 
+    //e.g. by a marking store
+    $object->save(); 
 
 }
 
@@ -43,8 +47,9 @@ if($workflow->can($object, 'publish')) {
     /**
      * $workflowManager Pimcore\Workflow\Manager from Symfony container
      */
-     
-    $workflowManager->applyWithAdditionalData($workflow, $object, 'publish', $additionalData);
+    
+    //last parameter defines if workflow subject should be saved after transition 
+    $workflowManager->applyWithAdditionalData($workflow, $object, 'publish', $additionalData, true);
 
 }
 ```
