@@ -651,7 +651,7 @@ abstract class AbstractCoreHandlerTest extends TestCase
             $this->handler->clearTagsOnShutdown();
         }
 
-        $this->assertEquals(['foo'], $this->getHandlerPropertyValue('clearedTags'));
+        $this->assertEquals(['foo' => true], $this->getHandlerPropertyValue('clearedTags'));
     }
 
     public function testShutdownTagListIsProcessedOnMethodCall()
