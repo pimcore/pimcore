@@ -753,7 +753,7 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
      * Adds a tag to the shutdown queue, see clearTagsOnShutdown
      *
      * @param string $tag
-     *s
+     *
      * @return $this
      */
     public function addTagClearedOnShutdown($tag)
