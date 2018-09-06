@@ -65,19 +65,39 @@ array of user(s) or role(s) that you would like to be notified in options sectio
 Roles will send an email to every user with that role.
 
 ```yml
-[
+...
     transitions:
         myTransition:
             options:
-                notifyUsers: ['admin']
-                notifyRoles: ['projectmanagers', 'admins']
-]
+                notificationSettings:
+                    - 
+                      # A symfony expression can be configured here. All sets of notification which are matching the condition will be used.
+                      condition: "" # optional some condition that should apply for this notification setting to be executed
+                      
+                      # Send a email notification to a list of users (user names) when the transition get's applied
+                      notifyUsers: ['admin']
+                      
+                      # Send a email notification to a list of user roles (role names) when the transition get's applied
+                      notifyRoles: ['projectmanagers', 'admins']
+                      
+                      # Type of mail source. 
+                      mailType: 'template' # this is the default value, One of "template"; "pimcore_document"
+                      
+                      # Path to mail source - either Symfony path to template or fullpath to Pimcore document. Optional use $$lang$$ as placeholder for language.
+                      mailPath: '@PimcoreCore/Workflow/NotificationEmail/notificationEmail.html.twig' #this is the value
+...
 ```
 
+Multiple notification settings with conditions allow sophisticated notifications to be configured for each transition. 
 To customize the e-mail template, following options are available: 
-- Overwrite the template `@PimcoreCore/Workflow/NotificationEmail/notificationEmail.html.twig`. Default parameters 
-available in the template are `subjectType`, `subject`, `action`, `deeplink`, `note_description`, `translator`, `lang`. 
-- If additional parameters are required, overwrite the service `Pimcore\Workflow\NotificationEmail\NotificationEmailService`.
+- Overwrite the template `@PimcoreCore/Workflow/NotificationEmail/notificationEmail.html.twig` or configure your own 
+  template path in settings. Default parameters available in the template are `subjectType`, `subject`, `action`, `workflow`, 
+  `workflowName`, `deeplink`, `note_description`, `translator`, `lang`. If additional parameters are required, overwrite 
+  the service `Pimcore\Workflow\NotificationEmail\NotificationEmailService`.
+
+- Configure a Pimcore Mail Document and use full power of Pimcore Mail Documents, with Controller, Action, Placeholders, etc. 
+  In the mail document same parameters as above are available.    
+  
 - If more custom notifications are necessary, use custom event listeners. 
 
 ## Workflow History

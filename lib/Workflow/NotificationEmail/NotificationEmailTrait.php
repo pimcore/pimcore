@@ -12,4 +12,9 @@ trait NotificationEmailTrait {
     {
         return $this->options['notifyRoles'] ?? [];
     }
+
+    public function getNotificationSettings(): array
+    {
+        return $this->options['notificationSettings'] ?? [];
+    }
 }

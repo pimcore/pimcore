@@ -27,6 +27,11 @@ use Symfony\Component\Workflow\Event\Event;
 
 class NotificationEmailSubscriber implements EventSubscriberInterface
 {
+    const MAIL_TYPE_TEMPLATE = 'template';
+    const MAIL_TYPE_DOCUMENT = 'pimcore_document';
+
+    const DEFAULT_MAIL_TEMPLATE_PATH = '@PimcoreCore/Workflow/NotificationEmail/notificationEmail.html.twig';
+
     /**
      * @var TranslatorInterface
      */
@@ -43,13 +48,28 @@ class NotificationEmailSubscriber implements EventSubscriberInterface
     private $enabled = true;
 
     /**
+     * @var Workflow\ExpressionService
+     */
+    private $expressionService;
+
+    /**
+     * @var Workflow\Manager
+     */
+    private $workflowManager;
+
+    /**
+     * NotificationEmailSubscriber constructor.
      * @param NotificationEmailService $mailService
      * @param TranslatorInterface $translator
+     * @param Workflow\ExpressionService $expressionService
+     * @param Workflow\Manager $manager
      */
-    public function __construct(NotificationEmailService $mailService, TranslatorInterface $translator)
+    public function __construct(NotificationEmailService $mailService, TranslatorInterface $translator, Workflow\ExpressionService $expressionService, Workflow\Manager $manager)
     {
         $this->mailService = $mailService;
         $this->translator = $translator;
+        $this->expressionService = $expressionService;
+        $this->workflowManager = $manager;
     }
 
     /**
@@ -68,21 +88,47 @@ class NotificationEmailSubscriber implements EventSubscriberInterface
          */
         $subject = $event->getSubject();
         $transition = $event->getTransition();
+        $workflow = $this->workflowManager->getWorkflowByName($event->getWorkflowName());
 
-        $this->handleNotifyPostWorkflow($transition, $subject);
+        $notificationSettings = $transition->getNotificationSettings();
+        foreach($notificationSettings as $notificationSetting) {
+
+            $condition = $notificationSetting['condition'];
+
+            if(empty($condition) || $this->expressionService->evaluateExpression($workflow, $subject, $condition)) {
+
+                $notifyUsers = $notificationSetting['notifyUsers'] ?? [];
+                $notifyRoles = $notificationSetting['notifyRoles'] ?? [];
+
+                $this->handleNotifyPostWorkflow($transition, $workflow, $subject, $notificationSetting['mailType'], $notificationSetting['mailPath'], $notifyUsers, $notifyRoles);
+            }
+
+        }
+
     }
 
     /**
-     * @param Workflow\NotificationEmail\NotificationEmailInterface $notifyEmail
+     * @param Transition $notifyEmail
+     * @param \Pimcore\Model\Workflow $workflow
      * @param AbstractElement $subject
-     * @throws ValidationException
+     * @param string $mailType
+     * @param string $mailPath
      */
-    private function handleNotifyPostWorkflow(Workflow\NotificationEmail\NotificationEmailInterface $notifyEmail, AbstractElement $subject)
+    private function handleNotifyPostWorkflow(Transition $transition, \Symfony\Component\Workflow\Workflow $workflow, AbstractElement $subject, string $mailType, string $mailPath, array $notifyUsers, array $notifyRoles)
     {
         //notify users
         $subjectType = (Service::getType($subject) == 'object' ? $subject->getClassName() : Service::getType($subject));
 
-        $this->mailService->sendWorkflowEmailNotification($notifyEmail->getNotifyUsers(), $notifyEmail->getNotifyRoles(), $subjectType, $subject, $notifyEmail->getLabel());
+        $this->mailService->sendWorkflowEmailNotification(
+            $notifyUsers,
+            $notifyRoles,
+            $workflow,
+            $subjectType,
+            $subject,
+            $transition->getLabel(),
+            $mailType,
+            $mailPath
+        );
     }
 
     /**

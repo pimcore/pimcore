@@ -17,14 +17,18 @@ namespace Pimcore\Workflow\NotificationEmail;
 use Pimcore\Model\Element\AbstractElement;
 use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Tool;
+use Pimcore\Workflow\EventSubscriber\NotificationEmailSubscriber;
 use Symfony\Component\Templating\EngineInterface;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 use Pimcore\Model\User;
 use Pimcore\Model\Element;
+use Symfony\Component\Workflow\Workflow;
 
 class NotificationEmailService
 {
+    const MAIL_PATH_LANGUAGE_PLACEHOLDER = '$$lang$$';
+
     /**
      * @var EngineInterface $templatingEngine
      */
@@ -54,38 +58,67 @@ class NotificationEmailService
 
 
     /**
-     * Sends an email
+     * Sends an Mail
      *
      * @param array $users
      * @param array $roles
+     * @param Workflow $workflow
      * @param string $subjectType
      * @param AbstractElement $subject
      * @param string $action
+     * @param string $mailType
+     * @param string $mailPath
      */
-    public function sendWorkflowEmailNotification($users, $roles, $subjectType, $subject, $action)
+    public function sendWorkflowEmailNotification(array $users, array $roles, Workflow $workflow, string $subjectType, AbstractElement $subject, string $action, string $mailType, string $mailPath)
     {
         try {
-            $recipients = self::getNotificationUsersByName($users, $roles);
+            $recipients = $this->getNotificationUsersByName($users, $roles);
             if (!count($recipients)) {
                 return;
             }
 
-            foreach ($recipients as $lang => $recipientsLanguage) {
+            $deeplink = '';
+            $hostUrl = Tool::getHostUrl();
+            if ($hostUrl !== '') {
+                $deeplink = $hostUrl . '/' . $this->router->generate('pimcore_admin_login') . '/deeplink?object_' . $subject->getId() . '_object';
+            }
 
-                $mail = new \Pimcore\Mail();
+            foreach ($recipients as $language => $recipientsPerLanguage) {
 
-                foreach ($recipientsLanguage as $user) {
-                    /**
-                     * @var $user User
-                     */
-                    $mail->addTo($user->getEmail(), $user->getName());
+                $localizedMailPath = str_replace(self::MAIL_PATH_LANGUAGE_PLACEHOLDER, $language, $mailPath);
+
+                switch ($mailType) {
+                    case NotificationEmailSubscriber::MAIL_TYPE_TEMPLATE:
+
+                        $this->sendTemplateMail(
+                            $recipientsPerLanguage,
+                            $subjectType,
+                            $subject,
+                            $workflow,
+                            $action,
+                            $language,
+                            $localizedMailPath,
+                            $deeplink
+                        );
+
+                        break;
+
+                    case NotificationEmailSubscriber::MAIL_TYPE_DOCUMENT:
+
+                        $this->sendPimcoreDocumentMail(
+                            $recipientsPerLanguage,
+                            $subjectType,
+                            $subject,
+                            $workflow,
+                            $action,
+                            $language,
+                            $localizedMailPath,
+                            $deeplink
+                        );
+
+                        break;
                 }
 
-                $mail->setSubject("Workflow Update");
-
-                $mail->setBodyHtml($this->getHtmlBody($subjectType, $subject, $action, $lang));
-
-                $mail->send();
             }
 
         } catch(\Exception $e) {
@@ -94,14 +127,68 @@ class NotificationEmailService
     }
 
     /**
+     * @param array $recipients
+     * @param string $subjectType
+     * @param AbstractElement $subject
+     * @param Workflow $workflow
+     * @param string $action
+     * @param string $language
+     * @param string $mailPath
+     * @param string $deeplink
+     */
+    protected function sendPimcoreDocumentMail(array $recipients, string $subjectType, AbstractElement $subject, Workflow $workflow, string $action, string $language, string $mailPath, string $deeplink) {
+
+        $mail = new \Pimcore\Mail(['document' => $mailPath, 'params' => $this->getNotificationEmailParameters($subjectType, $subject, $workflow, $action, $deeplink, $language)]);
+
+        foreach ($recipients as $user) {
+            /**
+             * @var $user User
+             */
+            $mail->addTo($user->getEmail(), $user->getName());
+        }
+
+        $mail->send();
+    }
+
+    /**
+     * @param array $recipients
+     * @param string $subjectType
+     * @param AbstractElement $subject
+     * @param Workflow $workflow
+     * @param string $action
+     * @param string $language
+     * @param string $mailPath
+     * @param string $deeplink
+     */
+    protected function sendTemplateMail(array $recipients, string $subjectType, AbstractElement $subject, Workflow $workflow, string $action, string $language, string $mailPath, string $deeplink) {
+
+        $mail = new \Pimcore\Mail();
+
+        foreach ($recipients as $user) {
+            /**
+             * @var $user User
+             */
+            $mail->addTo($user->getEmail(), $user->getName());
+        }
+
+        $mail->setSubject(
+            $this->translator->trans('workflow_change_email_notification_subject', [$subjectType . " " . $subject->getFullPath(), $workflow->getName()], 'admin', $language)
+        );
+
+        $mail->setBodyHtml($this->getHtmlBody($subjectType, $subject, $workflow, $action, $language, $mailPath, $deeplink));
+
+        $mail->send();
+    }
+
+    /**
      * Returns a list of distinct users given an user- and role array containing their respective names
      *
      * @param $users
      * @param $roles
      *
-     * @return User[]
+     * @return User[][]
      */
-    private function getNotificationUsersByName($users, $roles)
+    protected function getNotificationUsersByName($users, $roles): array
     {
         $notifyUsers = [];
 
@@ -115,12 +202,7 @@ class NotificationEmailService
 
             foreach ($userList->load() as $user) {
                 if ($user->getEmail()) {
-                    if ($user->getLanguage() === 'de') {
-                        $notifyUsers['de'][$user->getId()] = $user;
-                    }
-                    else {
-                        $notifyUsers['en'][$user->getId()] = $user;
-                    }
+                    $notifyUsers[$user->getLanguage()][$user->getId()] = $user;
                 }
             }
         }
@@ -134,47 +216,34 @@ class NotificationEmailService
              * @var User $user
              */
             if ($user->getEmail()) {
-                if ($user->getLanguage() === 'de') {
-                    $notifyUsers['de'][$user->getId()] = $user;
-                }
-                else {
-                    $notifyUsers['en'][$user->getId()] = $user;
-                }
+                $notifyUsers[$user->getLanguage()][$user->getId()] = $user;
             }
         }
 
-        if (!empty($notifyUsers['de'])) {
-            $notifyUsers['de'] = array_values($notifyUsers['de']);
-        }
-
-        if (!empty($notifyUsers['en'])) {
-            $notifyUsers['en'] = array_values($notifyUsers['en']);
+        foreach($notifyUsers as $language => $usersPerLanguage) {
+            $notifyUsers[$language] = array_values($notifyUsers[$language]);
         }
 
         return $notifyUsers;
     }
 
-    /**
-     * @param string $subjectType
-     * @param AbstractElement $subject
-     * @param string $action
-     * @param string $lang
-     *
-     * @return string
-     */
-    protected function getHtmlBody($subjectType, $subject, $action, $lang): string {
+        /**
+         * @param string $subjectType
+         * @param AbstractElement $subject
+         * @param Workflow $workflow
+         * @param string $action
+         * @param string $language
+         * @param string $mailPath
+         * @param string $deeplink
+         * @return string
+         */
+    protected function getHtmlBody(string $subjectType, AbstractElement $subject, Workflow $workflow, string $action, string $language, string $mailPath, string $deeplink): string {
         // allow retrieval of inherited values
         $inheritanceBackup = AbstractObject::getGetInheritedValues();
         AbstractObject::setGetInheritedValues(true);
 
-        $deeplink = '';
-        $hostUrl = Tool::getHostUrl();
-        if ($hostUrl !== '') {
-            $deeplink = $hostUrl . '/' . $this->router->generate('pimcore_admin_login') . '/deeplink?object_' . $subject->getId() . '_object';
-        }
-
         $emailTemplate = $this->templatingEngine->render(
-            '@PimcoreCore/Workflow/NotificationEmail/notificationEmail.html.twig', $this->getNotificationEmailParameters($subjectType, $subject, $action, $deeplink, $lang)
+            $mailPath, $this->getNotificationEmailParameters($subjectType, $subject, $workflow, $action, $deeplink, $language)
         );
 
         //reset inheritance
@@ -186,23 +255,25 @@ class NotificationEmailService
     /**
      * @param string $subjectType
      * @param AbstractElement $subject
+     * @param Workflow $workflow
      * @param string $action
      * @param string $deeplink
-     * @param string $lang
-     *
+     * @param string $language
      * @return array
      */
-    protected function getNotificationEmailParameters($subjectType, $subject, $action, $deeplink, $lang) {
+    protected function getNotificationEmailParameters(string $subjectType, AbstractElement $subject, Workflow $workflow, string $action, string $deeplink, string $language): array {
         $noteDescription = $this->getNoteInfo($subject->getId());
 
         return [
             'subjectType' => $subjectType,
             'subject' => $subject,
             'action' => $action,
+            'workflow' => $workflow,
+            'workflowName' => $workflow->getName(),
             'deeplink' => $deeplink,
             'note_description' => $noteDescription,
             'translator' => $this->translator,
-            'lang' => $lang
+            'lang' => $language
         ];
     }
 

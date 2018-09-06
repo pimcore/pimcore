@@ -38,7 +38,7 @@ configuration tree in `pimcore` namespace.
 | `'actions' => [[ 'additionalFields' => [ ... ] ` | Use `notes.additionalFields` option in `options` array of `transition` definition. | 
 | `'actions' => [[ 'users' => [ ... ] ` | Use `guard` option in `transition` definition. There advanced definitions of who and when an transition is allowed can be configured. | 
 | `'actions' => [[ 'events' => [ ... ] ` | See events section later. | 
-| `'actions' => [[ 'notificationUsers' => [ ... ] ` | Use `notifyUsers` and `notifyROles` option in `options` array of `transition` definition. Important: Now names are used instead of IDs. |
+| `'actions' => [[ 'notificationUsers' => [ ... ] ` | Use `notifyUsers` and `notifyRoles` option in `options.notificationSettings` array of `transition` definition. **Important:** Now names are used instead of IDs. |
 | `'transitionDefinitions' => [ ... ` | Use `from` option of `transition` definition. |
 | `'transitionDefinitions' => [[ 'globalActions' => [ ... ]  ` | Use `globalActions` in workflow definition. |
 
