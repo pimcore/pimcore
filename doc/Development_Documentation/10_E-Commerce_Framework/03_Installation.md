@@ -23,7 +23,7 @@ Please see [Configuration](./04_Configuration) for further information on availa
 
 ## Configure Product and Product Category Class
 The E-Commerce Framework installation does not create classes for products and product categories. That is because the 
-framework does limit you on specific classes or class structures. Literally every class can act as a product or product 
+framework does not limit you on specific classes or class structures. Literally every class can act as a product or product 
 category class and it is also possible to have several product classes (if necessary). 
 
 The only requirement is, that the classes have to be 'prepared' for being products or product categories. 
