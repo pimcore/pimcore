@@ -169,7 +169,7 @@ class Image extends Model\Asset
         if (!$generator) {
             $sqipBin = \Pimcore\Tool\Console::getExecutable('sqip');
             if ($sqipBin) {
-                $generator = 'qip';
+                $generator = 'sqip';
             }
         }
 
