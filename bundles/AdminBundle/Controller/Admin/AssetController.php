@@ -89,9 +89,9 @@ class AssetController extends ElementControllerBase implements EventedController
             } else {
                 $asset->data = false;
             }
-        }
-
-        if ($asset instanceof Asset\Video) {
+        } elseif ($asset instanceof Asset\Document) {
+            $asset->pdfPreviewAvailable = (bool) $this->getDocumentPreviewPdf($asset);
+        } elseif ($asset instanceof Asset\Video) {
             $videoInfo = [];
 
             if (\Pimcore\Video::isAvailable()) {
@@ -112,9 +112,7 @@ class AssetController extends ElementControllerBase implements EventedController
             }
 
             $asset->videoInfo = $videoInfo;
-        }
-
-        if ($asset instanceof Asset\Image) {
+        } elseif ($asset instanceof Asset\Image) {
             $imageInfo = [];
 
             if ($asset->getWidth() && $asset->getHeight()) {
@@ -1478,17 +1476,43 @@ class AssetController extends ElementControllerBase implements EventedController
      *
      * @param Request $request
      *
-     * @return array
+     * @return BinaryFileResponse
      */
     public function getPreviewDocumentAction(Request $request)
     {
         $asset = Asset::getById($request->get('id'));
 
-        if (!$asset->isAllowed('view')) {
-            throw new \Exception('not allowed to preview');
+        if ($asset->isAllowed('view')) {
+            $pdfFsPath = $this->getDocumentPreviewPdf($asset);
+            if($pdfFsPath) {
+                $response = new BinaryFileResponse($pdfFsPath);
+                $response->headers->set('Content-Type', 'application/pdf');
+                return $response;
+            } else {
+                throw $this->createNotFoundException('Unable to get preview for asset ' . $asset->getId());
+            }
+        } else {
+            throw $this->createAccessDeniedException('Access to asset ' . $asset->getId() . ' denied');
+        }
+    }
+
+    /**
+     * @param Asset $asset
+     */
+    protected function getDocumentPreviewPdf(Asset $asset) {
+        $pdfFsPath = null;
+        if($asset->getMimetype() == 'application/pdf') {
+            $pdfFsPath = $asset->getFileSystemPath();
+        } elseif(\Pimcore\Document::isAvailable() && \Pimcore\Document::isFileTypeSupported($asset->getFilename())) {
+            try {
+                $document = \Pimcore\Document::getInstance();
+                $pdfFsPath = $document->getPdf($asset->getFileSystemPath());
+            } catch (\Exception $e) {
+                // nothing to do
+            }
         }
 
-        return ['asset' => $asset];
+        return $pdfFsPath;
     }
 
     /**
