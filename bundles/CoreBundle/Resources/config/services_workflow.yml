@@ -46,14 +46,6 @@ services:
         abstract: true
 
 
-    workflow.marking_store.data_object_single_state:
-        class: Pimcore\Workflow\MarkingStore\DataObjectSingleStateMarkingStore
-        abstract: true
-
-    workflow.marking_store.data_object_multiple_state:
-        class: Pimcore\Workflow\MarkingStore\DataObjectSingleStateMarkingStore
-        abstract: true
-
     workflow.marking_store.data_object_splitted_state:
         class: Pimcore\Workflow\MarkingStore\DataObjectSplittedStateMarkingStore
         abstract: true

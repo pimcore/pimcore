@@ -19,9 +19,10 @@ use Pimcore\Workflow\Manager;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
 use Symfony\Component\Workflow\Exception\LogicException;
 use Symfony\Component\Workflow\Marking;
+use Symfony\Component\Workflow\MarkingStore\MarkingStoreInterface;
 
 
-class DataObjectSplittedStateMarkingStore implements PimcoreElementPersistentMarkingStoreInterface
+class DataObjectSplittedStateMarkingStore implements MarkingStoreInterface
 {
 
     const ALLOWED_PLACE_FIELD_TYPES = ['input', 'select', 'multiselect'];

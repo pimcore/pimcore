@@ -19,7 +19,6 @@ use Pimcore\Event\WorkflowEvents;
 use Pimcore\Model\Element\AbstractElement;
 use Pimcore\Model\Element\ValidationException;
 use Pimcore\Workflow\EventSubscriber\NotesSubscriber;
-use Pimcore\Workflow\MarkingStore\PimcoreElementPersistentMarkingStoreInterface;
 use Pimcore\Workflow\Place\PlaceConfig;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\Workflow\Exception\InvalidARgumentException;

@@ -24,9 +24,9 @@ Here is an example of rendered workflow custom report:
 ![Rendered workflow custom report](../img/workflow-report-result.png)
 
 
-## Using `data_object_single_state` and Object Grid
+## Using `single_state`, `multiple_state` and `data_object_splitted_state` together with Object Grid
 
-Since `data_object_single_state` (and others) stores the place information into data object attributes, Pimcore default
+Since `single_state` (and others) stores the place information into data object attributes, Pimcore default
 object grids can be used to do workflow reporting on Pimcore Objects. 
 Just create a corresponding grid configuration and use default filtering and sorting functionality. 
 

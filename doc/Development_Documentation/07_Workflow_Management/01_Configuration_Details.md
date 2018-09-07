@@ -28,7 +28,7 @@ pimcore:
 
             # Handles the way how the state/place is stored. If not defined "state_table" will be used as default. Take a look at @TODO for a description of the different types.
             marking_store:
-                type:                 ~ # One of "multiple_state"; "single_state"; "state_table"; "data_object_single_state"; "data_object_multiple_state"; "data_object_splitted_state"
+                type:                 ~ # One of "multiple_state"; "single_state"; "state_table"; "data_object_splitted_state"
                 arguments:            []
                 service:              ~
 
