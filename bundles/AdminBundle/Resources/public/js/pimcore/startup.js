@@ -504,10 +504,36 @@ Ext.onReady(function () {
             if (data['latestVersion']) {
                 if(pimcore.currentuser.admin) {
                     Ext.get("pimcore_status_update").show();
-                    jQuery("#pimcore_status_update").trigger("mouseenter");
-                    window.setTimeout(function () {
-                        jQuery("#pimcore_status_update").trigger("mouseleave");
-                    }, 5000);
+
+                    var lastOpened = localStorage.getItem("pimcore_version_notice");
+                    var now = new Date().getTime();
+                    if((!lastOpened || (now-(86400*7)) > lastOpened)) {
+                        localStorage.setItem("pimcore_version_notice", now);
+
+                        jQuery("#pimcore_status_update").trigger("mouseenter");
+                        window.setTimeout(function () {
+                            jQuery("#pimcore_status_update").trigger("mouseleave");
+                        }, 5000);
+                    }
+
+                    Ext.get("pimcore_status_update").on('click', function () {
+                        var html = '<div class="pimcore_about_window" xmlns="http://www.w3.org/1999/html">';
+                        html += '<h2 style="text-decoration: underline">New Version Available!</h2>';
+                        html += '<br><b>Your Version: ' + pimcore.settings.version + '</b>';
+                        html += '<br><b style="color: darkgreen;">New Version: ' + data['latestVersion'] + '</b>';
+                        html += '<h3 style="color: darkred">Please update as soon as possible!</h3>';
+                        html += '</div>';
+
+                        var win = new Ext.Window({
+                            title: "New Version Available!",
+                            width:500,
+                            height: 220,
+                            bodyStyle: "padding: 10px;",
+                            modal: true,
+                            html: html
+                        });
+                        win.show();
+                    });
                 }
             }
 
