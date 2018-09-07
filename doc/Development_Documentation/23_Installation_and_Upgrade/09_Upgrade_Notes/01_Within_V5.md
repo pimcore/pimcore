@@ -2,6 +2,9 @@
 
 ## Version 5.5.0
 
+### Major compatibility changes
+- object properties are not public anymore
+
 ### Minor compatibility changes
 - `\Pimcore\Db::set()` was removed. 
 - deprecated `\Pimcore::addToGloballyProtectedItems()`

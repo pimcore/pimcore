@@ -63,7 +63,7 @@ class Dao extends Model\Dao\PhpArrayTable
         $this->model->setModificationDate($ts);
 
         try {
-            $dataRaw = get_object_vars($this->model);
+            $dataRaw = $this->model->getObjectVars();
             $data = [];
             $allowedProperties = ['id', 'name', 'group', 'module', 'controller',
                 'action', 'template', 'type', 'priority', 'creationDate', 'modificationDate', 'legacy'];

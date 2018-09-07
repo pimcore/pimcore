@@ -31,7 +31,7 @@ class Video extends Model\Asset
     /**
      * @var string
      */
-    public $type = 'video';
+    protected $type = 'video';
 
     /**
      * @param array $params additional parameters (e.g. "versionNote" for the version note)

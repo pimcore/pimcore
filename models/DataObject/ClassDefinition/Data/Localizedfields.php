@@ -369,7 +369,7 @@ class Localizedfields extends Model\DataObject\ClassDefinition\Data
      */
     public function getForWebserviceExport($object, $params = [])
     {
-        $data = $object->{$this->getName()};
+        $data = $object->getObjectVar($this->getName());
         $wsData = [];
 
         $items = null;
@@ -704,7 +704,8 @@ class Localizedfields extends Model\DataObject\ClassDefinition\Data
             throw new \Exception('Localized Fields are only valid in Objects, Fieldcollections and Objectbricks');
         }
 
-        if (!$container->localizedfields instanceof DataObject\Localizedfield) {
+        $lf = $container->getObjectVar('localizedfields');
+        if (!$lf instanceof DataObject\Localizedfield) {
             $lf = new DataObject\Localizedfield();
 
             $object = $container;
@@ -727,10 +728,10 @@ class Localizedfields extends Model\DataObject\ClassDefinition\Data
             }
             $lf->setObject($object);
 
-            $container->localizedfields = $lf;
+            $container->setLocalizedfields($lf);
         }
 
-        return $container->localizedfields;
+        return $container->getObjectVar('localizedfields');
     }
 
     /**

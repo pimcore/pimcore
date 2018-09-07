@@ -61,7 +61,7 @@ class PageController extends DocumentControllerBase
         $page->setVersions(array_splice($pageVersions, 0, 1));
         $page->getScheduledTasks();
         $page->idPath = Element\Service::getIdPath($page);
-        $page->userPermissions = $page->getUserPermissions();
+        $page->setUserPermissions($page->getUserPermissions());
         $page->setLocked($page->isLocked());
         $page->setParent(null);
 
@@ -82,14 +82,14 @@ class PageController extends DocumentControllerBase
 
         // unset useless data
         $page->setElements(null);
-        $page->childs = null;
+        $page->setChildren(null);
 
         $this->addTranslationsData($page);
         $this->minimizeProperties($page);
 
         //Hook for modifying return value - e.g. for changing permissions based on object data
         //data need to wrapped into a container in order to pass parameter to event listeners by reference so that they can change the values
-        $data = object2array($page);
+        $data = $page->getObjectVars();
         $event = new GenericEvent($this, [
             'data' => $data,
             'document' => $page

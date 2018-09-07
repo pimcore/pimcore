@@ -31,7 +31,7 @@ class Image extends Model\Asset
     /**
      * @var string
      */
-    public $type = 'image';
+    protected $type = 'image';
 
     /**
      * @param array $params additional parameters (e.g. "versionNote" for the version note)

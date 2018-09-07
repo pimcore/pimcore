@@ -46,106 +46,106 @@ class Asset extends Element\AbstractElement
      *
      * @var int
      */
-    public $id;
+    protected $id;
 
     /**
      * ID of the parent asset
      *
      * @var int
      */
-    public $parentId;
+    protected $parentId;
 
     /**
      * @var Asset
      */
-    public $parent;
+    protected $parent;
 
     /**
      * Type
      *
      * @var string
      */
-    public $type;
+    protected $type;
 
     /**
      * Name of the file
      *
      * @var string
      */
-    public $filename;
+    protected $filename;
 
     /**
      * Path of the file, without the filename, only the full path of the parent asset
      *
      * @var string
      */
-    public $path;
+    protected $path;
 
     /**
      * Mime-Type of the file
      *
      * @var string
      */
-    public $mimetype;
+    protected $mimetype;
 
     /**
      * Timestamp of creation
      *
      * @var int
      */
-    public $creationDate;
+    protected $creationDate;
 
     /**
      * Timestamp of modification
      *
      * @var int
      */
-    public $modificationDate;
+    protected $modificationDate;
 
     /**
      * @var resource
      */
-    public $stream;
+    protected $stream;
 
     /**
      * ID of the owner user
      *
      * @var int
      */
-    public $userOwner;
+    protected $userOwner;
 
     /**
      * ID of the user who make the latest changes
      *
      * @var int
      */
-    public $userModification;
+    protected $userModification;
 
     /**
      * List of properties
      *
      * @var array
      */
-    public $properties = null;
+    protected $properties = null;
 
     /**
      * List of versions
      *
      * @var array
      */
-    public $versions = null;
+    protected $versions = null;
 
     /**
      * @var array
      */
-    public $metadata = [];
+    protected $metadata = [];
 
     /**
      * enum('self','propagate') nullable
      *
      * @var string
      */
-    public $locked;
+    protected $locked;
 
     /**
      * List of some custom settings  [key] => value
@@ -153,54 +153,54 @@ class Asset extends Element\AbstractElement
      *
      * @var array
      */
-    public $customSettings = [];
+    protected $customSettings = [];
 
     /**
      * @var bool
      */
-    public $hasMetaData = false;
+    protected $hasMetaData = false;
 
     /**
      * Dependencies of this asset
      *
      * @var Dependency
      */
-    public $dependencies;
+    protected $dependencies;
 
     /**
      * Contains the child elements
      *
      * @var array
      */
-    public $childs;
+    protected $childs;
 
     /**
      * Indicator if there are childs
      *
      * @var bool
      */
-    public $hasChilds;
+    protected $hasChilds;
 
     /**
      * Contains a list of sibling documents
      *
      * @var array
      */
-    public $siblings;
+    protected $siblings;
 
     /**
      * Indicator if document has siblings or not
      *
      * @var bool
      */
-    public $hasSiblings;
+    protected $hasSiblings;
 
     /**
      * Contains all scheduled tasks
      *
      * @var array
      */
-    public $scheduledTasks = null;
+    protected $scheduledTasks = null;
 
     /**
      * Indicator if data has changed
@@ -1686,7 +1686,7 @@ class Asset extends Element\AbstractElement
             return null;
         }
 
-        $metaData = $this->metadata;
+        $metaData = $this->getObjectVar('metadata');
         if (is_array($metaData)) {
             foreach ($metaData as &$md) {
                 $md = (array)$md;

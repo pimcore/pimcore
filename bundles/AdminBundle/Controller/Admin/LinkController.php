@@ -54,7 +54,7 @@ class LinkController extends DocumentControllerBase
 
         $link->setObject(null);
         $link->idPath = Element\Service::getIdPath($link);
-        $link->userPermissions = $link->getUserPermissions();
+        $link->setUserPermissions($link->getUserPermissions());
         $link->setLocked($link->isLocked());
         $link->setParent(null);
         $this->addTranslationsData($link);

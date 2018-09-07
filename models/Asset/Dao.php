@@ -107,7 +107,7 @@ class Dao extends Model\Element\Dao
         try {
             $this->model->setModificationDate(time());
 
-            $asset = get_object_vars($this->model);
+            $asset = $this->model->getObjectVars();
 
             foreach ($asset as $key => $value) {
                 if (in_array($key, $this->getValidTableColumns('assets'))) {

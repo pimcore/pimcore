@@ -53,7 +53,7 @@ class Dao extends Model\Dao\AbstractDao
             $this->model->setCreationDate(time());
         }
 
-        $version = get_object_vars($this->model);
+        $version = $this->model->getObjectVars();
 
         // save main table
         foreach ($version as $key => $value) {

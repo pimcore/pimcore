@@ -47,7 +47,7 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function save()
     {
-        $importconfigs = get_object_vars($this->model);
+        $importconfigs = $this->model->getObjectVars();
 
         foreach ($importconfigs as $key => $value) {
             if (in_array($key, $this->getValidTableColumns('importconfigs'))) {
