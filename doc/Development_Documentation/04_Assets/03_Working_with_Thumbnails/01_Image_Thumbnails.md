@@ -46,14 +46,6 @@ This path can then be directly used to display the image in a `<img />` or `<pic
 <?php } ?>
 ```
 
-**An Alternative Adapter**
-
-You can use the new adapter: `pimcore/lib/Pimcore/Image/Adapter/ImageMagick.php` instead of the standard `pimcore/lib/Pimcore/Image/Adapter/Imagick.php`.
- 
-The main difference: `ImageMagick` is using `convert` and `composite` CLI tools to manage thumbnails (it gives a better control of the generation process).
-
-@TODO: How to set the new adapter in `config.yml`
-
 ## Explanation of the Transformations
 
 | Transformation | Description | Configuration | Result |
