@@ -36,8 +36,11 @@ class PublicServicesController extends FrameworkController
         $assetId = $request->get('assetId');
         $thumbnailName = $request->get('thumbnailName');
         $filename = $request->get('filename');
+        $asset = Asset::getById($assetId);
 
-        if ($asset = Asset::getById($assetId)) {
+        if ($asset && $asset->getPath() == ('/' . $request->get('prefix'))) {
+            // we need to check the path as well, this is important in the case you have restricted the public access to
+            // assets via rewrite rules
             try {
                 $page = 1; // default
                 $thumbnailFile = null;
@@ -106,12 +109,11 @@ class PublicServicesController extends FrameworkController
                 }
             } catch (\Exception $e) {
                 $message = "Thumbnail with name '" . $thumbnailName . "' doesn't exist";
-
                 Logger::error($message);
                 throw $this->createNotFoundException($message, $e);
             }
         } else {
-            throw $this->createNotFoundException("Asset with ID '" . $assetId . "' doesn't exist");
+            throw $this->createNotFoundException("Asset not found");
         }
     }
 
