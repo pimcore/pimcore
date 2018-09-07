@@ -27,7 +27,7 @@ use Symfony\Component\Workflow\Workflow;
 
 class NotificationEmailService
 {
-    const MAIL_PATH_LANGUAGE_PLACEHOLDER = '$$lang$$';
+    const MAIL_PATH_LANGUAGE_PLACEHOLDER = '%_locale%';
 
     /**
      * @var EngineInterface $templatingEngine
