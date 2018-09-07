@@ -3,7 +3,7 @@
 ## Version 5.5.0
 
 ### Major compatibility changes
-- object properties are not public anymore
+- `Document`, `Asset` and `DataObject` properties are now `protected` instead of `public`
 
 ### Minor compatibility changes
 - `\Pimcore\Db::set()` was removed. 
