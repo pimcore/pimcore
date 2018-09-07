@@ -113,7 +113,7 @@ class PublicServicesController extends FrameworkController
                 throw $this->createNotFoundException($message, $e);
             }
         } else {
-            throw $this->createNotFoundException("Asset not found");
+            throw $this->createNotFoundException('Asset not found');
         }
     }
 
