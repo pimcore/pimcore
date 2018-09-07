@@ -12,7 +12,7 @@ for templating.
 We're stil working on adding Twig references throughout the documentation. In the meantime please:
 
 * Have a look at the dedicated [Twig](./00_Twig.md) documentation page
-* Check the [Twig Demo](https://github.com/pimcore/pimcore/tree/master/install-profiles/demo-basic-twig) as starting point
+* Check the [Twig Demo](https://github.com/pimcore/demo-basic-twig) as starting point
 * Provide PRs with Twig examples :) See [#1699](https://github.com/pimcore/pimcore/issues/1699#issuecomment-328115727) for
   an example how to add a tabbed PHP/Twig code block to the documentation.
 
