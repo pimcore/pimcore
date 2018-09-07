@@ -1533,9 +1533,7 @@ class AssetController extends ElementControllerBase implements EventedController
         }
 
         $previewData = ['asset' => $asset];
-
         $config = Asset\Video\Thumbnail\Config::getPreviewConfig();
-
         $thumbnail = $asset->getThumbnail($config, ['mp4']);
 
         if ($thumbnail) {
@@ -1558,6 +1556,35 @@ class AssetController extends ElementControllerBase implements EventedController
                 'PimcoreAdminBundle:Admin/Asset:getPreviewVideoError.html.php',
                 $previewData
             );
+        }
+    }
+
+    /**
+     * @Route("/serve-video-preview")
+     * @Method({"GET"})
+     *
+     * @param Request $request
+     *
+     * @return BinaryFileResponse
+     */
+    public function serveVideoPreviewAction(Request $request)
+    {
+        $asset = Asset::getById($request->get('id'));
+
+        if (!$asset->isAllowed('view')) {
+            throw $this->createAccessDeniedException('not allowed to preview');
+        }
+
+        $config = Asset\Video\Thumbnail\Config::getPreviewConfig();
+        $thumbnail = $asset->getThumbnail($config, ['mp4']);
+        $fsFile = $asset->getVideoThumbnailSavePath() . '/' . preg_replace('@' . preg_quote($asset->getPath(), '@') . '@', '',$thumbnail["formats"]["mp4"]);
+
+        if(file_exists($fsFile)) {
+            $response = new BinaryFileResponse($fsFile);
+            $response->headers->set('Content-Type', 'video/mp4');
+            return $response;
+        } else {
+            throw $this->createNotFoundException('Video thumbnail not found');
         }
     }
 
