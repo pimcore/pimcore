@@ -205,6 +205,7 @@ final class Runtime extends \ArrayObject
      */
     public static function clear($keepItems = [])
     {
+        self::$instance = null;
         $newInstance = new self();
         $oldInstance = self::getInstance();
 
