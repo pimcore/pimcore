@@ -6,6 +6,7 @@
 - `\Pimcore\Db::set()` was removed. 
 - deprecated `\Pimcore::addToGloballyProtectedItems()`
 - deprecated `\Pimcore::removeFromGloballyProtectedItems()`
+- Image adapter `Pimcore\Image\Adapter\ImageMagick` was removed
 
 ## Version 5.4.3
 Mime types for Assets are now configured using Symfony Configurations, that means that `Pimcore\Tool\Mime::$extensionMapping` has been removed.
