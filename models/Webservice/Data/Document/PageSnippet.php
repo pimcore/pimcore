@@ -66,7 +66,7 @@ class PageSnippet extends Model\Webservice\Data\Document
     }
 
     /**
-     * @param $object
+     * @param $object Model\Document
      * @param bool $disableMappingExceptions
      * @param null $idMapper
      *
@@ -76,7 +76,7 @@ class PageSnippet extends Model\Webservice\Data\Document
     {
         parent::reverseMap($object, $disableMappingExceptions, $idMapper);
 
-        $object->childs = null;
+        $object->setChildren(null);
         $object->elements = [];
 
         if (is_array($this->elements)) {
