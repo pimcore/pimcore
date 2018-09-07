@@ -175,6 +175,8 @@ $this->view->paginator = $paginator;
 
 ```
 
+For a sample of a controller see our demo-ecommerce [here](https://github.com/pimcore/demo-ecommerce/blob/master/src/AppBundle/Controller/ShopController.php#L54). 
+
 ### View
 For putting all filters to the frontend use following sample. It is important that this sample is inside a form in order 
 to get the parameter of changed filters delivered back to the controller. 
