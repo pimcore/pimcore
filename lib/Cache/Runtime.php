@@ -19,6 +19,7 @@ final class Runtime extends \ArrayObject
     const SERVICE_ID = __CLASS__;
 
     protected static $tempInstance;
+    protected static $instance;
 
     /**
      * Array of indexes which are blocked from cache. If a given
@@ -39,7 +40,9 @@ final class Runtime extends \ArrayObject
      */
     public static function getInstance()
     {
-        if (\Pimcore::hasContainer()) {
+        if(self::$instance) {
+            return self::$instance;
+        } elseif (\Pimcore::hasContainer()) {
             $container = \Pimcore::getContainer();
 
             /** @var self $instance */
@@ -50,6 +53,8 @@ final class Runtime extends \ArrayObject
                 $instance = new self;
                 $container->set(self::SERVICE_ID, $instance);
             }
+
+            self::$instance = $instance;
 
             if (self::$tempInstance) {
                 // copy values from static temp. instance to the service instance
