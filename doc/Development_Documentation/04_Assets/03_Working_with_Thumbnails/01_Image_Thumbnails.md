@@ -314,3 +314,28 @@ of the image is on the focal point.
 ![Focal point context menu entry on document image editable](../../img/document_image_editable_focal_point.png)  
   
 ![Image thumbnails cover transformation considering focal point](../../img/image_thumbnails_cover_focal_point.png)
+
+## Adding Custom Callbacks / Transformations / Filters
+
+It is also possible to add some custom code to your thumbnail configurations, 
+this is especially useful for situations when very specific image operations are needed to be applied to the
+resulting thumbnail.
+
+#### Example
+
+```php
+$thumbnailConfig = Asset\Image\Thumbnail\Config::getByName('content');
+$thumbnailConfig->addItemAt(0, function (Imagick $imagick) {
+	/**
+	 * @var \Imagick $i
+	 */
+	$i = $imagick->getResource();
+	$i->sepiaToneImage(80);
+}, []);
+
+
+$asset = Asset::getById(39);
+$asset->clearThumbnails(true);
+$thumb = $asset->getThumbnail($thumbnailConfig);
+$file = $thumb->getFileSystemPath();
+```
