@@ -291,4 +291,13 @@ abstract class AbstractModel
 
         return $result;
     }
+
+    /**
+     * @param $var
+     * @return mixed
+     */
+    public function getObjectVar($var)
+    {
+        return $this->{$var};
+    }
 }

@@ -27,5 +27,5 @@ class Unknown extends Model\Asset
     /**
      * @var string
      */
-    public $type = 'unknown';
+    protected $type = 'unknown';
 }

@@ -96,7 +96,7 @@ class Dao extends Document\PageSnippet\Dao
     {
         try {
             $this->model->setModificationDate(time());
-            $document = get_object_vars($this->model);
+            $document = $this->model->getObjectVars();
 
             foreach ($document as $key => $value) {
                 // check if the getter exists

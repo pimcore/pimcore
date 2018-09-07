@@ -2,6 +2,9 @@
 
 ## Version 5.5.0
 
+### Major compatibility changes
+- `Document`, `Asset` and `DataObject` properties are now `protected` instead of `public`
+
 ### Minor compatibility changes
 - `\Pimcore\Db::set()` was removed. 
 - deprecated `\Pimcore::addToGloballyProtectedItems()`

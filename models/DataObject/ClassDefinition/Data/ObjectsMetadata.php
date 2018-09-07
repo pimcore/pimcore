@@ -613,7 +613,7 @@ class ObjectsMetadata extends Model\DataObject\ClassDefinition\Data\Objects
     {
         $data = null;
         if ($object instanceof DataObject\Concrete) {
-            $data = $object->{$this->getName()};
+            $data = $object->getObjectVar($this->getName());
             if ($this->getLazyLoading() and !in_array($this->getName(), $object->getO__loadedLazyFields())) {
                 //$data = $this->getDataFromResource($object->getRelationData($this->getName(),true,null));
                 $data = $this->load($object, ['force' => true]);
@@ -626,9 +626,9 @@ class ObjectsMetadata extends Model\DataObject\ClassDefinition\Data\Objects
         } elseif ($object instanceof DataObject\Localizedfield) {
             $data = $params['data'];
         } elseif ($object instanceof DataObject\Fieldcollection\Data\AbstractData) {
-            $data = $object->{$this->getName()};
+            $data = $object->getObjectVar($this->getName());
         } elseif ($object instanceof DataObject\Objectbrick\Data\AbstractData) {
-            $data = $object->{$this->getName()};
+            $data = $object->getObjectVar($this->getName());
         }
 
         if (DataObject\AbstractObject::doHideUnpublished() and is_array($data)) {

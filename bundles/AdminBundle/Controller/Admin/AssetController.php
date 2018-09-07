@@ -164,7 +164,7 @@ class AssetController extends ElementControllerBase implements EventedController
 
         //Hook for modifying return value - e.g. for changing permissions based on object data
         //data need to wrapped into a container in order to pass parameter to event listeners by reference so that they can change the values
-        $data = object2array($asset);
+        $data = $asset->getObjectVars();
         $event = new GenericEvent($this, [
             'data' => $data,
             'asset' => $asset
@@ -306,7 +306,7 @@ class AssetController extends ElementControllerBase implements EventedController
             'success' => $res['success'],
         ];
 
-        if ($res['success']) {
+        if($res['success']) {
             $response['asset'] = [
                 'id' => $res['asset']->getId(),
                 'path' => $res['asset']->getFullPath(),

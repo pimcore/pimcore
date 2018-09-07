@@ -43,38 +43,38 @@ class Page extends TargetingDocument
      *
      * @var string
      */
-    public $title = '';
+    protected $title = '';
 
     /**
      * Contains the description of the page (meta-description)
      *
      * @var string
      */
-    public $description = '';
+    protected $description = '';
 
     /**
      * @var array
      */
-    public $metaData = [];
+    protected $metaData = [];
 
     /**
      * Static type of the document
      *
      * @var string
      */
-    public $type = 'page';
+    protected $type = 'page';
 
     /**
      * @var string
      */
-    public $prettyUrl;
+    protected $prettyUrl;
 
     /**
      * Comma separated IDs of target groups
      *
      * @var string
      */
-    public $targetGroupIds = '';
+    protected $targetGroupIds = '';
 
     /**
      * @throws \Exception

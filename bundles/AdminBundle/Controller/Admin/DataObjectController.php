@@ -373,7 +373,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
             $objectData['general'] = [];
             $allowedKeys = ['o_published', 'o_key', 'o_id', 'o_modificationDate', 'o_creationDate', 'o_classId', 'o_className', 'o_locked', 'o_type', 'o_parentId', 'o_userOwner', 'o_userModification'];
 
-            foreach (get_object_vars($object) as $key => $value) {
+            foreach ($object->getObjectVars() as $key => $value) {
                 if (strstr($key, 'o_') && in_array($key, $allowedKeys)) {
                     $objectData['general'][$key] = $value;
                 }
@@ -749,7 +749,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
             $objectData['general'] = [];
             $objectData['idPath'] = Element\Service::getIdPath($object);
             $allowedKeys = ['o_published', 'o_key', 'o_id', 'o_type', 'o_path', 'o_modificationDate', 'o_creationDate', 'o_userOwner', 'o_userModification'];
-            foreach (get_object_vars($object) as $key => $value) {
+            foreach ($object->getObjectVars() as $key => $value) {
                 if (strstr($key, 'o_') && in_array($key, $allowedKeys)) {
                     $objectData['general'][$key] = $value;
                 }
@@ -2323,7 +2323,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
         $url = $object->getClass()->getPreviewUrl();
         if ($url) {
             // replace named variables
-            $vars = get_object_vars($object);
+            $vars = $object->getObjectVars();
             foreach ($vars as $key => $value) {
                 if (!empty($value) && (is_string($value) || is_numeric($value))) {
                     $url = str_replace('%' . $key, urlencode($value), $url);

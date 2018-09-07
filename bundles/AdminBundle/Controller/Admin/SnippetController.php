@@ -55,7 +55,7 @@ class SnippetController extends DocumentControllerBase
         $snippet->setVersions(array_splice($versions, 0, 1));
         $snippet->getScheduledTasks();
         $snippet->idPath = Element\Service::getIdPath($snippet);
-        $snippet->userPermissions = $snippet->getUserPermissions();
+        $snippet->setUserPermissions($snippet->getUserPermissions());
         $snippet->setLocked($snippet->isLocked());
         $snippet->setParent(null);
 
@@ -71,7 +71,7 @@ class SnippetController extends DocumentControllerBase
 
         //Hook for modifying return value - e.g. for changing permissions based on object data
         //data need to wrapped into a container in order to pass parameter to event listeners by reference so that they can change the values
-        $data = object2array($snippet);
+        $data = $snippet->getObjectVars();
         $event = new GenericEvent($this, [
             'data' => $data,
             'document' => $snippet

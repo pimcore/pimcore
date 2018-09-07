@@ -50,7 +50,7 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function save()
     {
-        $version = get_object_vars($this->model);
+        $version = $this->model->getObjectVars();
 
         foreach ($version as $key => $value) {
             if (in_array($key, $this->getValidTableColumns('recyclebin'))) {

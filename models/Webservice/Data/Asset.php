@@ -136,7 +136,7 @@ class Asset extends Model\Webservice\Data
         $metadata = $this->metadata;
         if (is_array($metadata)) {
             $metadata = json_decode(json_encode($metadata), true);
-            $object->metadata = $metadata;
+            $object->setMetadata($metadata);
         }
     }
 }

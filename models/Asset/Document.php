@@ -29,7 +29,7 @@ class Document extends Model\Asset
     /**
      * @var string
      */
-    public $type = 'document';
+    protected $type = 'document';
 
     /**
      * @param array $params additional parameters (e.g. "versionNote" for the version note)

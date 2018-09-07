@@ -31,45 +31,44 @@ use Pimcore\Model\Document;
 abstract class PageSnippet extends Model\Document
 {
     use Document\Traits\ScheduledTasksTrait;
+    /**
+     * @var string
+     */
+    protected $module;
 
     /**
      * @var string
      */
-    public $module;
+    protected $controller = 'default';
 
     /**
      * @var string
      */
-    public $controller = 'default';
+    protected $action = 'default';
 
     /**
      * @var string
      */
-    public $action = 'default';
-
-    /**
-     * @var string
-     */
-    public $template;
+    protected $template;
 
     /**
      * Contains all content-elements of the document
      *
      * @var array
      */
-    public $elements = null;
+    protected $elements = null;
 
     /**
      * Contains all versions of the document
      *
      * @var array
      */
-    public $versions = null;
+    protected $versions = null;
 
     /**
      * @var null|int
      */
-    public $contentMasterDocumentId;
+    protected $contentMasterDocumentId;
 
     /**
      * @var array
@@ -79,7 +78,7 @@ abstract class PageSnippet extends Model\Document
     /**
      * @var bool
      */
-    public $legacy = false;
+    protected $legacy = false;
 
     /**
      * @param array $params additional parameters (e.g. "versionNote" for the version note)

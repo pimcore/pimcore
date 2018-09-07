@@ -601,7 +601,10 @@ class Fieldcollections extends Model\DataObject\ClassDefinition\Data
                     $aggregatedExceptions->setSubItems($validationExceptions);
                     throw $aggregatedExceptions;
                 }
+
             }
+
+
         }
     }
 
@@ -619,7 +622,7 @@ class Fieldcollections extends Model\DataObject\ClassDefinition\Data
             throw new \Exception('Field Collections are only valid in Objects');
         }
 
-        $data = $object->{$this->getName()};
+        $data = $object->getObjectVar($this->getName());
         if ($this->getLazyLoading() and !in_array($this->getName(), $object->getO__loadedLazyFields())) {
             $data = $this->load($object, ['force' => true]);
 
