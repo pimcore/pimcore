@@ -68,7 +68,8 @@ Here is what Pimcore provides and what steps need to be done manually:
   - `state`
   - `status`
 - For migrating status information, 
-  - all data in `workflowId` needs to be migrated to `workflow` - convert from workflow id to a workflow name 
+  - all data in `workflowId` needs to be migrated to `workflow` - convert from workflow id to a workflow name
+  - manually delete `workflowId` column, or set value to `0` for every record. 
   - all data in `status` need to be migrated to `place` - ideally all places in the new configuration are called the same 
     as the status were in the old configuration, then it is just a copy from one to the other column.   
     
