@@ -216,6 +216,7 @@ final class Runtime extends \ArrayObject
         }
 
         \Pimcore::getContainer()->set(self::SERVICE_ID, $newInstance);
+        self::$instance = $newInstance;
     }
 
     /**
