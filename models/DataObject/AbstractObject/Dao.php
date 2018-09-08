@@ -96,7 +96,7 @@ class Dao extends Model\Element\Dao
         $validTableColumns = $this->getValidTableColumns('objects');
 
         foreach ($object as $key => $value) {
-            if (in_array($key, $validTableColumns )) {
+            if (in_array($key, $validTableColumns)) {
                 if (is_bool($value)) {
                     $value = (int)$value;
                 }

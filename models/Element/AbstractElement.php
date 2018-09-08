@@ -259,5 +259,4 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
     {
         return $this->getDao()->__isBasedOnLatestData();
     }
-
 }

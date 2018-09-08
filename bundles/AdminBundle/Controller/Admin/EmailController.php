@@ -64,7 +64,7 @@ class EmailController extends DocumentControllerBase
 
         // unset useless data
         $email->setElements(null);
-        $email->setChildren( null);
+        $email->setChildren(null);
 
         $this->addTranslationsData($email);
         $this->minimizeProperties($email);

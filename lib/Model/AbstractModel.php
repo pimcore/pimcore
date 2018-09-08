@@ -294,6 +294,7 @@ abstract class AbstractModel
 
     /**
      * @param $var
+     *
      * @return mixed
      */
     public function getObjectVar($var)

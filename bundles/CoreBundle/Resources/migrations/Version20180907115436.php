@@ -3,9 +3,7 @@
 namespace Pimcore\Bundle\CoreBundle\Migrations;
 
 use Doctrine\DBAL\Schema\Schema;
-use Pimcore\Db;
 use Pimcore\Migrations\Migration\AbstractPimcoreMigration;
-use Pimcore\Model\DataObject\ClassDefinition;
 use Pimcore\Model\DataObject\Objectbrick\Definition;
 
 /**
@@ -23,8 +21,7 @@ class Version20180907115436 extends AbstractPimcoreMigration
      */
     public function up(Schema $schema)
     {
-
-        $this->writeMessage("Please note that object properties are not public anymore !!");
+        $this->writeMessage('Please note that object properties are not public anymore !!');
 
         $list = new Definition\Listing();
         $list = $list->load();
@@ -44,7 +41,6 @@ class Version20180907115436 extends AbstractPimcoreMigration
      */
     public function down(Schema $schema)
     {
-        $this->writeMessage("Please execute bin/console pimcore:deployment:classes-rebuild afterwards.");
-
+        $this->writeMessage('Please execute bin/console pimcore:deployment:classes-rebuild afterwards.');
     }
 }

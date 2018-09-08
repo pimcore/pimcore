@@ -601,10 +601,7 @@ class Fieldcollections extends Model\DataObject\ClassDefinition\Data
                     $aggregatedExceptions->setSubItems($validationExceptions);
                     throw $aggregatedExceptions;
                 }
-
             }
-
-
         }
     }
 

@@ -306,7 +306,7 @@ class AssetController extends ElementControllerBase implements EventedController
             'success' => $res['success'],
         ];
 
-        if($res['success']) {
+        if ($res['success']) {
             $response['asset'] = [
                 'id' => $res['asset']->getId(),
                 'path' => $res['asset']->getFullPath(),
@@ -1484,9 +1484,10 @@ class AssetController extends ElementControllerBase implements EventedController
 
         if ($asset->isAllowed('view')) {
             $pdfFsPath = $this->getDocumentPreviewPdf($asset);
-            if($pdfFsPath) {
+            if ($pdfFsPath) {
                 $response = new BinaryFileResponse($pdfFsPath);
                 $response->headers->set('Content-Type', 'application/pdf');
+
                 return $response;
             } else {
                 throw $this->createNotFoundException('Unable to get preview for asset ' . $asset->getId());
@@ -1499,11 +1500,12 @@ class AssetController extends ElementControllerBase implements EventedController
     /**
      * @param Asset $asset
      */
-    protected function getDocumentPreviewPdf(Asset $asset) {
+    protected function getDocumentPreviewPdf(Asset $asset)
+    {
         $pdfFsPath = null;
-        if($asset->getMimetype() == 'application/pdf') {
+        if ($asset->getMimetype() == 'application/pdf') {
             $pdfFsPath = $asset->getFileSystemPath();
-        } elseif(\Pimcore\Document::isAvailable() && \Pimcore\Document::isFileTypeSupported($asset->getFilename())) {
+        } elseif (\Pimcore\Document::isAvailable() && \Pimcore\Document::isFileTypeSupported($asset->getFilename())) {
             try {
                 $document = \Pimcore\Document::getInstance();
                 $pdfFsPath = $document->getPdf($asset->getFileSystemPath());
@@ -1577,11 +1579,12 @@ class AssetController extends ElementControllerBase implements EventedController
 
         $config = Asset\Video\Thumbnail\Config::getPreviewConfig();
         $thumbnail = $asset->getThumbnail($config, ['mp4']);
-        $fsFile = $asset->getVideoThumbnailSavePath() . '/' . preg_replace('@' . preg_quote($asset->getPath(), '@') . '@', '',$thumbnail["formats"]["mp4"]);
+        $fsFile = $asset->getVideoThumbnailSavePath() . '/' . preg_replace('@' . preg_quote($asset->getPath(), '@') . '@', '', $thumbnail['formats']['mp4']);
 
-        if(file_exists($fsFile)) {
+        if (file_exists($fsFile)) {
             $response = new BinaryFileResponse($fsFile);
             $response->headers->set('Content-Type', 'video/mp4');
+
             return $response;
         } else {
             throw $this->createNotFoundException('Video thumbnail not found');

@@ -41,7 +41,7 @@ class Document extends Element\AbstractElement
      * @var array
      */
     public static $types = ['folder', 'page', 'snippet', 'link', 'hardlink', 'email', 'newsletter', 'printpage', 'printcontainer'];
-    
+
     /**
      * @var bool
      */
@@ -1446,6 +1446,4 @@ class Document extends Element\AbstractElement
     {
         $this->userPermissions = $userPermissions;
     }
-
-
 }
