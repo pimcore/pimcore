@@ -9,7 +9,7 @@ As with conditions, an action handler consists of 2 parts:
   Have a look at [existing implementations](https://github.com/pimcore/pimcore/tree/master/pimcore/lib/Pimcore/Targeting/ActionHandler)
   to get an idea how to implement your own action handlers.
 * A frontend JS class defining the admin UI for your action handler as shown on the actions tab of a targeting rule. You
-  can have a look at [Pimcore's core actions](https://github.com/pimcore/pimcore/blob/master/web/bundles/pimcoreadmin/js/pimcore/settings/targeting/actions.js)
+  can have a look at [Pimcore's core actions](https://github.com/pimcore/pimcore/blob/master/bundles/AdminBundle/Resources/public/js/pimcore/settings/targeting/actions.js)
   for UI examples and at the [Customer Management Framework](https://github.com/pimcore/customer-data-framework/blob/master/src/Resources/public/js/pimcore/targeting/actions.js)
   as example for a third-party integration.
 
