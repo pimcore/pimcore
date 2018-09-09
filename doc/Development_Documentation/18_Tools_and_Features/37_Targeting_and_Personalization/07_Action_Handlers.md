@@ -106,7 +106,7 @@ To make your action handler appear in the admin UI, you need to create and regis
 for your action. Create a class extending `pimcore.settings.targeting.action.abstract` and register it to the system by
 calling `pimcore.settings.targeting.actions.register()`. 
 
-Have a look at [Pimcore's core actions](https://github.com/pimcore/pimcore/blob/master/web/bundles/pimcoreadmin/js/pimcore/settings/targeting/actions.js)
+Have a look at [Pimcore's core actions](https://github.com/pimcore/pimcore/blob/master/bundles/AdminBundle/Resources/public/js/pimcore/settings/targeting/actions.js)
 and the [Customer Management Framework](https://github.com/pimcore/customer-data-framework/blob/master/src/Resources/public/js/pimcore/targeting/actions.js)
 for examples.
 
