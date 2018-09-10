@@ -38,7 +38,7 @@ pimcore:
                 # Example:
                 - \Pimcore\Model\DataObject\Product
 
-            # Can be used to implement a special logic which subjects are supported by the workflow. For example only products matching certain criteria.
+            # Can be used to implement a special logic which subjects are supported by the workflow. For example only products matching certain criteria. Take a look at the support strategies page of the Pimcore workflow docs for more details.
             support_strategy:
 
                 # Examples:
