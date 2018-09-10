@@ -620,7 +620,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
         $docTypes = [];
         foreach ($list->getDocTypes() as $type) {
             if ($this->getAdminUser()->isAllowed($type->getId(), 'docType')) {
-                $docTypes[] = $type;
+                $docTypes[] = $type->getObjectVars();
             }
         }
 
