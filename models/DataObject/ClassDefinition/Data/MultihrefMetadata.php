@@ -286,7 +286,7 @@ class MultihrefMetadata extends Model\DataObject\ClassDefinition\Data\Multihref
                         $itemData = ['id' => $id, 'path' => $fullpath, 'type' => 'object', 'subtype' => $className];
                     }
                     $obj = Element\Service::getElementById('object', $id);
-                    $itemData['published'] = $obj->o_published;
+                    $itemData['published'] = $obj->getPublished();
                 } elseif ($targetType == 'asset') {
                     $itemData = ['id' => $id, 'path' => $fullpath, 'type' => 'asset', 'subtype' => $type];
                 } elseif ($targetType == 'document') {
