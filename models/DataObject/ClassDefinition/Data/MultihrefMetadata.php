@@ -284,15 +284,17 @@ class MultihrefMetadata extends Model\DataObject\ClassDefinition\Data\Multihref
                     } else {
                         $className = $elementData['className'];
                         $itemData = ['id' => $id, 'path' => $fullpath, 'type' => 'object', 'subtype' => $className];
+                        $obj = Element\Service::getElementById('object', $id);
+                        $itemData['published'] = $obj->getPublished();
                     }
-                    $obj = Element\Service::getElementById('object', $id);
-                    $itemData['published'] = $obj->getPublished();
                 } elseif ($targetType == 'asset') {
                     $itemData = ['id' => $id, 'path' => $fullpath, 'type' => 'asset', 'subtype' => $type];
                 } elseif ($targetType == 'document') {
                     $itemData = ['id' => $id, 'path' => $fullpath, 'type' => 'document', 'subtype' => $type];
                     $document = Element\Service::getElementById('document', $id);
-                    $itemData['published'] = $document->published;
+                    if(method_exists($document, 'getPublished')) {
+                        $itemData['published'] = $document->getPublished();
+                    }
                 }
 
                 if (!$itemData) {
