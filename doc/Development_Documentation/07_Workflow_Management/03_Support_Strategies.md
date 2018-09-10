@@ -50,7 +50,6 @@ If a very specific logic is needed it's possible to add a service which implemen
 
 ```php
 <?php
-
 namespace AppBundle\Workflow;
 
 use Symfony\Component\Workflow\SupportStrategy\SupportStrategyInterface;
@@ -74,4 +73,4 @@ class SupportStrategy implements SupportStrategyInterface
         return false;
     }
 }
-´´´
+```
