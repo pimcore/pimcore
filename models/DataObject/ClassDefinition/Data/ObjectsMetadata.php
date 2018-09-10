@@ -945,7 +945,7 @@ class ObjectsMetadata extends Model\DataObject\ClassDefinition\Data\Objects
                     ],
                     'fieldname' => $elementMetadata->getFieldname(),
                     'columns' => $elementMetadata->getColumns(),
-                    'data' => $elementMetadata->data];
+                    'data' => $elementMetadata->getData()];
             }
 
             return $result;
@@ -977,7 +977,7 @@ class ObjectsMetadata extends Model\DataObject\ClassDefinition\Data\Objects
                     $data = $elementMetadata['data'];
 
                     $item = new DataObject\Data\ObjectMetadata($fieldname, $columns, $target);
-                    $item->data = $data;
+                    $item->setData($data);
                     $result[] = $item;
                 }
             }

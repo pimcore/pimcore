@@ -985,7 +985,7 @@ class MultihrefMetadata extends Model\DataObject\ClassDefinition\Data\Multihref
                     ],
                     'fieldname' => $elementMetadata->getFieldname(),
                     'columns' => $elementMetadata->getColumns(),
-                    'data' => $elementMetadata->data,
+                    'data' => $elementMetadata->getData(),
                 ];
             }
 
@@ -1018,7 +1018,7 @@ class MultihrefMetadata extends Model\DataObject\ClassDefinition\Data\Multihref
                     $data = $elementMetadata['data'];
 
                     $item = new DataObject\Data\ElementMetadata($fieldname, $columns, $element);
-                    $item->data = $data;
+                    $item->setData($data);
                     $result[] = $item;
                 }
             }
