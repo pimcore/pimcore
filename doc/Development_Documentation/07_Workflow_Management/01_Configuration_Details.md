@@ -26,7 +26,7 @@ pimcore:
             # A workflow with type "workflow" can handle multiple places at one time whereas a state_machine provides a finite state_machine (only one place at one time). Take a look at the Symfony docs for more details.
             type:                 ~ # One of "workflow"; "state_machine"
 
-            # Handles the way how the state/place is stored. If not defined "state_table" will be used as default. Take a look at [the marking store section](./02_Marking_Stores.md) for a description of the different types.
+            # Handles the way how the state/place is stored. If not defined "state_table" will be used as default. Take a look at the marking store section of the Pimcore workflow docs for a description of the different types.
             marking_store:
                 type:                 ~ # One of "multiple_state"; "single_state"; "state_table"; "data_object_splitted_state"
                 arguments:            []
