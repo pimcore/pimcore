@@ -22,7 +22,6 @@ use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Document;
-use Pimcore\Model\Element;
 
 /**
  * @method \Pimcore\Model\Document\Tag\Dao getDao()
@@ -191,7 +190,7 @@ class Pdf extends Model\Document\Tag
 
         $options = $this->getOptions();
         $thumbnailConfig = ['width' => 1000];
-        if(isset($options['thumbnail'])) {
+        if (isset($options['thumbnail'])) {
             $thumbnailConfig = $options['thumbnail'];
         }
 

@@ -292,7 +292,7 @@ class MultihrefMetadata extends Model\DataObject\ClassDefinition\Data\Multihref
                 } elseif ($targetType == 'document') {
                     $itemData = ['id' => $id, 'path' => $fullpath, 'type' => 'document', 'subtype' => $type];
                     $document = Element\Service::getElementById('document', $id);
-                    if(method_exists($document, 'getPublished')) {
+                    if (method_exists($document, 'getPublished')) {
                         $itemData['published'] = $document->getPublished();
                     }
                 }

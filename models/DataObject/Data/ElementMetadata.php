@@ -240,8 +240,6 @@ class ElementMetadata extends Model\AbstractModel
         $this->data = $data;
     }
 
-
-
     /**
      * @return mixed
      */

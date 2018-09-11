@@ -211,8 +211,6 @@ class ObjectMetadata extends Model\AbstractModel
         $this->data = $data;
     }
 
-
-
     /**
      * @return mixed
      */
