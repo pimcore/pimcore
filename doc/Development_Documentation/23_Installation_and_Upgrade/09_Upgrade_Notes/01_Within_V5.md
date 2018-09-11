@@ -4,6 +4,7 @@
 
 ### Major compatibility changes
 - `Document`, `Asset` and `DataObject` properties are now `protected` instead of `public`
+- PDF document editable doesn't provide a Javascript viewer anymore. Now utilizing native PDF capabilities of browsers.
 
 ### Minor compatibility changes
 - `\Pimcore\Db::set()` was removed. 
