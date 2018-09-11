@@ -431,7 +431,7 @@ abstract class PageSnippet extends Model\Document
             $contentMasterDocument = null;
         }
 
-        if ($contentMasterDocumentId == $this->getId()) {
+        if ($contentMasterDocumentId && $contentMasterDocumentId == $this->getId()) {
             throw new \Exception('You cannot use the current document as a master document, please choose a different one.');
         }
 
