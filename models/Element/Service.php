@@ -484,20 +484,20 @@ class Service extends Model\AbstractModel
             if ($p->getData() instanceof Document || $p->getData() instanceof Asset || $p->getData() instanceof DataObject\AbstractObject) {
                 $pa = [];
 
-                $vars = get_object_vars($p->getData());
+                $vars = $p->getData()->getObjectVars();
 
                 foreach ($vars as $k => $value) {
                     if (in_array($k, $allowedProperties)) {
-                        $pa[$k] = $p->getData()->$k;
+                        $pa[$k] = $value;
                     }
                 }
 
                 // clone it because of caching
                 $tmp = clone $p;
                 $tmp->setData($pa);
-                $properties[$key] = object2array($tmp);
+                $properties[$key] = $tmp->getObjectVars();
             } else {
-                $properties[$key] = object2array($p);
+                $properties[$key] = $p->getObjectVars();
             }
 
             // add config from predefined properties
