@@ -133,6 +133,9 @@ pimcore.object.variantsTab = Class.create(pimcore.object.helpers.gridTabAbstract
                 {
                     tooltip: t('remove'),
                     icon: "/bundles/pimcoreadmin/img/flat-color-icons/delete.svg",
+                    isDisabled: function(view, rowIndex, colIndex, item, record) {
+                        return record.data.locked || !record.data.permissions.delete;
+                    },
                     handler: function (grid, rowIndex) {
                         var data = grid.getStore().getAt(rowIndex);
                         Ext.MessageBox.confirm(' ', t('delete_message'),
@@ -291,17 +294,19 @@ pimcore.object.variantsTab = Class.create(pimcore.object.helpers.gridTabAbstract
         var menu = new Ext.menu.Menu();
         var data = grid.getStore().getAt(rowIndex);
 
-        menu.add(new Ext.menu.Item({
-            text: t('rename'),
-            iconCls: "pimcore_icon_key pimcore_icon_overlay_go",
-            handler: function (data) {
-                Ext.MessageBox.prompt(t('rename'), t('please_enter_the_new_name'),
-                    this.editKey.bind(this, data.id), null, null, data.data.filename);
-            }.bind(this, data)
-        }));
+        if (record.data.permissions.rename && !record.data.locked) {
+            menu.add(new Ext.menu.Item({
+                text: t('rename'),
+                iconCls: "pimcore_icon_key pimcore_icon_overlay_go",
+                handler: function (data) {
+                    Ext.MessageBox.prompt(t('rename'), t('please_enter_the_new_name'),
+                        this.editKey.bind(this, data.id), null, null, data.data.filename);
+                }.bind(this, data),
+            }));
 
-        e.stopEvent();
-        menu.showAt(e.getXY());
+            e.stopEvent();
+            menu.showAt(e.getXY());
+        }
     },
 
     editKey: function (id, button, value) {
