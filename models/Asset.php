@@ -32,8 +32,6 @@ use Symfony\Component\EventDispatcher\GenericEvent;
  */
 class Asset extends Element\AbstractElement
 {
-    use Element\ChildsCompatibilityTrait;
-
     /**
      * possible types of an asset
      *
@@ -166,20 +164,6 @@ class Asset extends Element\AbstractElement
      * @var Dependency
      */
     protected $dependencies;
-
-    /**
-     * Contains the child elements
-     *
-     * @var array
-     */
-    protected $childs;
-
-    /**
-     * Indicator if there are childs
-     *
-     * @var bool
-     */
-    protected $hasChilds;
 
     /**
      * Contains a list of sibling documents
@@ -871,43 +855,6 @@ class Asset extends Element\AbstractElement
     }
 
     /**
-     * @return array
-     */
-    public function getChildren()
-    {
-        if ($this->childs === null) {
-            $list = new Asset\Listing();
-            $list->setCondition('parentId = ?', $this->getId());
-            $list->setOrderKey('filename');
-            $list->setOrder('asc');
-
-            $this->childs = $list->load();
-        }
-
-        return $this->childs;
-    }
-
-    /**
-     * @return bool
-     */
-    public function hasChildren()
-    {
-        if ($this->getType() == 'folder') {
-            if (is_bool($this->hasChilds)) {
-                if (($this->hasChilds and empty($this->childs)) or (!$this->hasChilds and !empty($this->childs))) {
-                    return $this->getDao()->hasChildren();
-                } else {
-                    return $this->hasChilds;
-                }
-            }
-
-            return $this->getDao()->hasChildren();
-        }
-
-        return false;
-    }
-
-    /**
      * Get a list of the sibling assets
      *
      * @return array
@@ -943,6 +890,14 @@ class Asset extends Element\AbstractElement
         }
 
         return $this->getDao()->hasSiblings();
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasChildren()
+    {
+        return false;
     }
 
     /**
