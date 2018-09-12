@@ -69,11 +69,6 @@ class PageController extends DocumentControllerBase
             $page->contentMasterDocumentPath = $page->getContentMasterDocument()->getRealFullPath();
         }
 
-        // get depending redirects
-        $redirectList = new Redirect\Listing();
-        $redirectList->setCondition('target = ?', $page->getId());
-        $page->redirects = $redirectList->load();
-
         $page->url = $page->getFullPath();
         $site = \Pimcore\Tool\Frontend::getSiteForDocument($page);
         if ($site instanceof Site) {
@@ -157,46 +152,6 @@ class PageController extends DocumentControllerBase
                 $settings = [];
                 if ($request->get('settings')) {
                     $settings = $this->decodeJson($request->get('settings'));
-                }
-
-                // check for redirects
-                if ($this->getAdminUser()->isAllowed('redirects') && $request->get('settings')) {
-                    if (is_array($settings)) {
-                        $redirectList = new Redirect\Listing();
-                        $redirectList->setCondition('target = ?', $page->getId());
-                        $existingRedirects = $redirectList->load();
-                        $existingRedirectIds = [];
-                        foreach ($existingRedirects as $existingRedirect) {
-                            $existingRedirectIds[$existingRedirect->getId()] = $existingRedirect->getId();
-                        }
-
-                        for ($i = 1; $i < 100; $i++) {
-                            if (array_key_exists('redirect_url_'.$i, $settings)) {
-
-                                // check for existing
-                                if ($settings['redirect_id_'.$i]) {
-                                    $redirect = Redirect::getById($settings['redirect_id_'.$i]);
-                                    unset($existingRedirectIds[$redirect->getId()]);
-                                } else {
-                                    // create new one
-                                    $redirect = new Redirect();
-                                }
-
-                                $redirect->setType(Redirect::TYPE_PATH_QUERY);
-                                $redirect->setRegex(true);
-                                $redirect->setSource($settings['redirect_url_'.$i]);
-                                $redirect->setTarget($page->getId());
-                                $redirect->setStatusCode(301);
-                                $redirect->save();
-                            }
-                        }
-
-                        // remove existing redirects which were delete
-                        foreach ($existingRedirectIds as $existingRedirectId) {
-                            $redirect = Redirect::getById($existingRedirectId);
-                            $redirect->delete();
-                        }
-                    }
                 }
 
                 // check if settings exist, before saving meta data
