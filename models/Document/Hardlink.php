@@ -35,22 +35,22 @@ class Hardlink extends Document
      *
      * @var string
      */
-    public $type = 'hardlink';
+    protected $type = 'hardlink';
 
     /**
      * @var int
      */
-    public $sourceId;
+    protected $sourceId;
 
     /**
      * @var bool
      */
-    public $propertiesFromSource;
+    protected $propertiesFromSource;
 
     /**
      * @var bool
      */
-    public $childsFromSource;
+    protected $childsFromSource;
 
     /**
      * @return Document\PageSnippet

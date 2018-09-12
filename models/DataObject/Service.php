@@ -523,6 +523,10 @@ class Service extends Model\Element\Service
     {
         $languageAllowed = null;
 
+        $object = $object instanceof Model\DataObject\Fieldcollection\Data\AbstractData ||
+        $object instanceof  Model\DataObject\Objectbrick\Data\AbstractData ?
+            $object->getObject() : $object;
+
         $permission = $object->getPermissions($type, $user);
 
         if (!is_null($permission)) {

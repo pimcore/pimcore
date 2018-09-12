@@ -43,41 +43,9 @@ class Document extends Element\AbstractElement
     public static $types = ['folder', 'page', 'snippet', 'link', 'hardlink', 'email', 'newsletter', 'printpage', 'printcontainer'];
 
     /**
-     * Add document type to the $types array. It defines additional document types available in Pimcore.
-     *
-     * @param $type
-     */
-    public static function addDocumentType($type)
-    {
-        if (!in_array($type, self::$types)) {
-            self::$types[] = $type;
-        }
-    }
-
-    /**
      * @var bool
      */
     private static $hidePublished = false;
-
-    /**
-     * Set true if want to hide documents.
-     *
-     * @param bool $flag
-     */
-    public static function setHideUnpublished($flag)
-    {
-        self::$hidePublished = $flag;
-    }
-
-    /**
-     * Checks if unpublished documents should be hidden.
-     *
-     * @return bool
-     */
-    public static function doHideUnpublished()
-    {
-        return self::$hidePublished;
-    }
 
     /**
      * @var array
@@ -89,21 +57,21 @@ class Document extends Element\AbstractElement
      *
      * @var int
      */
-    public $id;
+    protected $id;
 
     /**
      * ID of the parent document, on root document this is null
      *
      * @var int
      */
-    public $parentId;
+    protected $parentId;
 
     /**
      * The parent document.
      *
      * @var Document
      */
-    public $parent;
+    protected $parent;
 
     /**
      * Type of the document as string (enum)
@@ -111,117 +79,117 @@ class Document extends Element\AbstractElement
      *
      * @var string
      */
-    public $type;
+    protected $type;
 
     /**
      * Filename/Key of the document
      *
      * @var string
      */
-    public $key;
+    protected $key;
 
     /**
      * Path to the document, not conaining the key (the full path of the parent document)
      *
      * @var string
      */
-    public $path;
+    protected $path;
 
     /**
      * Sorter index in the tree, can also be used for generating a navigation and so on
      *
      * @var int
      */
-    public $index;
+    protected $index;
 
     /**
      * published or not
      *
      * @var bool
      */
-    public $published = true;
+    protected $published = true;
 
     /**
      * timestamp of creationdate
      *
      * @var int
      */
-    public $creationDate;
+    protected $creationDate;
 
     /**
      * timestamp of modificationdate
      *
      * @var int
      */
-    public $modificationDate;
+    protected $modificationDate;
 
     /**
      * User-ID of the owner
      *
      * @var int
      */
-    public $userOwner;
+    protected $userOwner;
 
     /**
      * User-ID of the user last modified the document
      *
      * @var int
      */
-    public $userModification;
+    protected $userModification;
 
     /**
      * Permissions for the user which requested this document in editmode*
      */
-    public $userPermissions;
+    protected $userPermissions;
 
     /**
      * Dependencies for this document
      *
      * @var Dependency
      */
-    public $dependencies;
+    protected $dependencies;
 
     /**
      * List of Property, concerning the folder
      *
      * @var array
      */
-    public $properties = null;
+    protected $properties = null;
 
     /**
      * Contains a list of child-documents
      *
      * @var array
      */
-    public $childs;
+    protected $childs;
 
     /**
      * Indicator of document has childs or not.
      *
      * @var bool
      */
-    public $hasChilds;
+    protected $hasChilds;
 
     /**
      * Contains a list of sibling documents
      *
      * @var array
      */
-    public $siblings;
+    protected $siblings;
 
     /**
      * Indicator if document has siblings or not
      *
      * @var bool
      */
-    public $hasSiblings;
+    protected $hasSiblings;
 
     /**
      * Check if the document is locked.
      *
      * @var string
      */
-    public $locked = null;
+    protected $locked = null;
 
     /**
      * get possible types
@@ -1437,5 +1405,45 @@ class Document extends Element\AbstractElement
     public function doRenderWithLegacyStack()
     {
         return false;
+    }
+
+    /**
+     * Add document type to the $types array. It defines additional document types available in Pimcore.
+     *
+     * @param $type
+     */
+    public static function addDocumentType($type)
+    {
+        if (!in_array($type, self::$types)) {
+            self::$types[] = $type;
+        }
+    }
+
+    /**
+     * Set true if want to hide documents.
+     *
+     * @param bool $flag
+     */
+    public static function setHideUnpublished($flag)
+    {
+        self::$hidePublished = $flag;
+    }
+
+    /**
+     * Checks if unpublished documents should be hidden.
+     *
+     * @return bool
+     */
+    public static function doHideUnpublished()
+    {
+        return self::$hidePublished;
+    }
+
+    /**
+     * @param mixed $userPermissions
+     */
+    public function setUserPermissions($userPermissions): void
+    {
+        $this->userPermissions = $userPermissions;
     }
 }

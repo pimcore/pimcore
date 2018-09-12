@@ -3,7 +3,7 @@
  * Pimcore
  *
  * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
+ * - GNU General protected License version 3 (GPLv3)
  * - Pimcore Enterprise License (PEL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
@@ -37,44 +37,44 @@ class Concrete extends AbstractObject
     /**
      * @var bool
      */
-    public $o_published;
+    protected $o_published;
 
     /**
      * @var ClassDefinition
      */
-    public $o_class;
+    protected $o_class;
 
     /**
      * @var string
      */
-    public $o_classId;
+    protected $o_classId;
 
     /**
      * @var string
      */
-    public $o_className;
+    protected $o_className;
 
     /**
      * @var array
      */
-    public $o_versions = null;
+    protected $o_versions = null;
 
     /**
      * @var array
      */
-    public $lazyLoadedFields = [];
+    protected $lazyLoadedFields = [];
 
     /**
      * @var array
      */
-    public $o___loadedLazyFields = [];
+    protected $o___loadedLazyFields = [];
 
     /**
      * Contains all scheduled tasks
      *
      * @var array
      */
-    public $scheduledTasks = null;
+    protected $scheduledTasks = null;
 
     /**
      * @var bool

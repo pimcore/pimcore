@@ -90,11 +90,13 @@ class Dao extends Model\Element\Dao
      */
     public function update($isUpdate = null)
     {
-        $object = get_object_vars($this->model);
+        $object = $this->model->getObjectVars();
 
         $data = [];
+        $validTableColumns = $this->getValidTableColumns('objects');
+
         foreach ($object as $key => $value) {
-            if (in_array($key, $this->getValidTableColumns('objects'))) {
+            if (in_array($key, $validTableColumns)) {
                 if (is_bool($value)) {
                     $value = (int)$value;
                 }

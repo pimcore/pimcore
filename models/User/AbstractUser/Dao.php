@@ -107,7 +107,7 @@ class Dao extends Model\Dao\AbstractDao
             }
 
             $data = [];
-            $dataRaw = get_object_vars($this->model);
+            $dataRaw = $this->model->getObjectVars();
             foreach ($dataRaw as $key => $value) {
                 if (in_array($key, $this->getValidTableColumns('users'))) {
                     if (is_bool($value)) {

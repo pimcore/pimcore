@@ -27,5 +27,5 @@ class Text extends Model\Asset
     /**
      * @var string
      */
-    public $type = 'text';
+    protected $type = 'text';
 }

@@ -463,7 +463,7 @@ class UserController extends AdminController implements EventedControllerInterfa
         }
 
         // unset confidential informations
-        $userData = object2array($user);
+        $userData = $user->getObjectVars();
         $contentLanguages = Tool\Admin::reorderWebsiteLanguages($user, Tool::getValidLanguages());
         $userData['contentLanguages'] = $contentLanguages;
         $userData['twoFactorAuthentication']['isActive'] = ($user->getTwoFactorAuthentication('enabled') || $user->getTwoFactorAuthentication('secret'));
@@ -633,7 +633,7 @@ class UserController extends AdminController implements EventedControllerInterfa
         }
 
         // unset confidential informations
-        $userData = object2array($user);
+        $userData = $user->getObjectVars();
         $contentLanguages = Tool\Admin::reorderWebsiteLanguages($user, Tool::getValidLanguages());
         $userData['contentLanguages'] = $contentLanguages;
         $userData['keyBindings'] = $user->getKeyBindings();

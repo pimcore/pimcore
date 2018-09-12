@@ -99,7 +99,7 @@ class Dao extends Model\Dao\PhpArrayTable
             $ts = time();
             $this->model->setModificationDate($ts);
 
-            $dataRaw = get_object_vars($this->model);
+            $dataRaw = $this->model->getObjectVars();
             $data = [];
 
             foreach ($dataRaw as $key => $value) {

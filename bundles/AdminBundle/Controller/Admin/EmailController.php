@@ -58,20 +58,20 @@ class EmailController extends DocumentControllerBase
         $versions = Element\Service::getSafeVersionInfo($email->getVersions());
         $email->setVersions(array_splice($versions, 0, 1));
         $email->idPath = Element\Service::getIdPath($email);
-        $email->userPermissions = $email->getUserPermissions();
+        $email->setUserPermissions($email->getUserPermissions());
         $email->setLocked($email->isLocked());
         $email->setParent(null);
 
         // unset useless data
         $email->setElements(null);
-        $email->childs = null;
+        $email->setChildren(null);
 
         $this->addTranslationsData($email);
         $this->minimizeProperties($email);
 
         //Hook for modifying return value - e.g. for changing permissions based on object data
         //data need to wrapped into a container in order to pass parameter to event listeners by reference so that they can change the values
-        $data = object2array($email);
+        $data = $email->getObjectVars();
         $event = new GenericEvent($this, [
             'data' => $data,
             'document' => $email
@@ -221,7 +221,7 @@ class EmailController extends DocumentControllerBase
 
         if (is_array($data)) {
             foreach ($data as $entry) {
-                $tmp = (array)get_object_vars($entry);
+                $tmp = $entry->getObjectVars();
                 unset($tmp['bodyHtml']);
                 unset($tmp['bodyText']);
                 $jsonData[] = $tmp;

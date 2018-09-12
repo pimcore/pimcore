@@ -29,7 +29,7 @@ class Folder extends Model\Asset
     /**
      * @var string
      */
-    public $type = 'folder';
+    protected $type = 'folder';
 
     /**
      * set the children of the document

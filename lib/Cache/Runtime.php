@@ -40,7 +40,7 @@ final class Runtime extends \ArrayObject
      */
     public static function getInstance()
     {
-        if(self::$instance) {
+        if (self::$instance) {
             return self::$instance;
         } elseif (\Pimcore::hasContainer()) {
             $container = \Pimcore::getContainer();

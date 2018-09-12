@@ -33,49 +33,49 @@ class Link extends Model\Document
      *
      * @var int
      */
-    public $internal;
+    protected $internal;
 
     /**
      * Contains the type of the internal ID
      *
      * @var string
      */
-    public $internalType;
+    protected $internalType;
 
     /**
      * Contains object of linked Document|Asset
      *
      * @var Document | Asset
      */
-    public $object;
+    protected $object;
 
     /**
      * Contains the direct link as plain text
      *
      * @var string
      */
-    public $direct = '';
+    protected $direct = '';
 
     /**
      * Type of the link (internal/direct)
      *
      * @var string
      */
-    public $linktype = 'internal';
+    protected $linktype = 'internal';
 
     /**
      * static type of this object
      *
      * @var string
      */
-    public $type = 'link';
+    protected $type = 'link';
 
     /**
      * path of the link
      *
      * @var string
      */
-    public $href = '';
+    protected $href = '';
 
     /**
      * @see Document::resolveDependencies

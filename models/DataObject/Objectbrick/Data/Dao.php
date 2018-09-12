@@ -234,7 +234,7 @@ class Dao extends Model\Dao\AbstractDao
         $this->inheritanceHelper = new DataObject\Concrete\Dao\InheritanceHelper($object->getClassId(), 'o_id', $storeTable, $queryTable);
         $this->inheritanceHelper->resetFieldsToCheck();
 
-        $objectVars = get_object_vars($this->model);
+        $objectVars = $this->model->getObjectVars();
 
         foreach ($objectVars as $key => $value) {
             $fd = $this->model->getDefinition()->getFieldDefinition($key);

@@ -51,7 +51,7 @@ class FolderController extends DocumentControllerBase
         $folder = clone $folder;
 
         $folder->idPath = Element\Service::getIdPath($folder);
-        $folder->userPermissions = $folder->getUserPermissions();
+        $folder->setUserPermissions($folder->getUserPermissions());
         $folder->setLocked($folder->isLocked());
         $folder->setParent(null);
 
@@ -60,7 +60,7 @@ class FolderController extends DocumentControllerBase
 
         //Hook for modifying return value - e.g. for changing permissions based on object data
         //data need to wrapped into a container in order to pass parameter to event listeners by reference so that they can change the values
-        $data = object2array($folder);
+        $data = $folder->getObjectVars();
         $event = new GenericEvent($this, [
             'data' => $data,
             'document' => $folder

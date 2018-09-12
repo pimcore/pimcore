@@ -125,7 +125,7 @@ class Fieldcollections extends Model\DataObject\ClassDefinition\Data
 
                 foreach ($collectionDef->getFieldDefinitions() as $fd) {
                     if (!$fd instanceof CalculatedValue) {
-                        $collectionData[$fd->getName()] = $fd->getDataForEditmode($item->{$fd->getName()}, $object, $params);
+                        $collectionData[$fd->getName()] = $fd->getDataForEditmode($item->getObjectVar($fd->getName()), $object, $params);
                     }
                 }
 
@@ -619,7 +619,7 @@ class Fieldcollections extends Model\DataObject\ClassDefinition\Data
             throw new \Exception('Field Collections are only valid in Objects');
         }
 
-        $data = $object->{$this->getName()};
+        $data = $object->getObjectVar($this->getName());
         if ($this->getLazyLoading() and !in_array($this->getName(), $object->getO__loadedLazyFields())) {
             $data = $this->load($object, ['force' => true]);
 
@@ -759,7 +759,7 @@ class Fieldcollections extends Model\DataObject\ClassDefinition\Data
                 foreach ($collectionDef->getFieldDefinitions() as $fd) {
                     $title = !empty($fd->title) ? $fd->title : $fd->getName();
                     $html .= '<tr><td>&nbsp;</td><td>' . $title . '</td><td>';
-                    $html .= $fd->getVersionPreview($item->{$fd->getName()}, $object, $params);
+                    $html .= $fd->getVersionPreview($item->getObjectVar($fd->getName()), $object, $params);
                     $html .= '</td></tr>';
                 }
             }

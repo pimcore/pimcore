@@ -44,7 +44,9 @@ pimcore.asset.document = Class.create(pimcore.asset.asset, {
         var items = [];
         var user = pimcore.globalmanager.get("user");
 
-        items.push(this.getEditPanel());
+        if(this.data.pdfPreviewAvailable && this.hasNativePDFViewer()) {
+            items.push(this.getEditPanel());
+        }
 
         if (this.isAllowed("publish")) {
             items.push(this.metadata.getLayout());
@@ -86,25 +88,26 @@ pimcore.asset.document = Class.create(pimcore.asset.asset, {
     getEditPanel: function () {
 
         if (!this.editPanel) {
-            var frameUrl = pimcore.helpers.addCsrfTokenToUrl('/admin/asset/get-preview-document?id=' + this.id);
-
-            // Check for native/plugin PDF viewer
-            if(this.hasNativePDFViewer()) {
-                frameUrl += "&native-viewer=true"
-            }
-
             var frameId = 'asset_document_edit_' + this.id;
+
+            var content = '<iframe src="'
+                + pimcore.helpers.addCsrfTokenToUrl('/admin/asset/get-preview-document?id=' + this.id)
+                + '" frameborder="0" style="width: 100%;" id="' + frameId + '"></iframe>';
 
             this.editPanel = new Ext.Panel({
                 title: t("preview"),
                 bodyCls: "pimcore_overflow_scrolling",
-                html: '<iframe src="' + frameUrl + '" frameborder="0" style="width: 100%;" id="' + frameId + '"></iframe>',
+                html: content,
                 iconCls: "pimcore_icon_preview"
             });
+
             this.editPanel.on("resize", function (el, width, height, rWidth, rHeight) {
-                Ext.get(frameId).setStyle({
-                    height: (height-7) + "px"
-                });
+                var frameEl = Ext.get(frameId);
+                if(frameEl) {
+                    frameEl.setStyle({
+                        height: (height - 7) + "px"
+                    });
+                }
             }.bind(this));
         }
 

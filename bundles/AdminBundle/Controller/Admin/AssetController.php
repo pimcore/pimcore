@@ -89,9 +89,9 @@ class AssetController extends ElementControllerBase implements EventedController
             } else {
                 $asset->data = false;
             }
-        }
-
-        if ($asset instanceof Asset\Video) {
+        } elseif ($asset instanceof Asset\Document) {
+            $asset->pdfPreviewAvailable = (bool) $this->getDocumentPreviewPdf($asset);
+        } elseif ($asset instanceof Asset\Video) {
             $videoInfo = [];
 
             if (\Pimcore\Video::isAvailable()) {
@@ -112,9 +112,7 @@ class AssetController extends ElementControllerBase implements EventedController
             }
 
             $asset->videoInfo = $videoInfo;
-        }
-
-        if ($asset instanceof Asset\Image) {
+        } elseif ($asset instanceof Asset\Image) {
             $imageInfo = [];
 
             if ($asset->getWidth() && $asset->getHeight()) {
@@ -166,7 +164,7 @@ class AssetController extends ElementControllerBase implements EventedController
 
         //Hook for modifying return value - e.g. for changing permissions based on object data
         //data need to wrapped into a container in order to pass parameter to event listeners by reference so that they can change the values
-        $data = object2array($asset);
+        $data = $asset->getObjectVars();
         $event = new GenericEvent($this, [
             'data' => $data,
             'asset' => $asset
@@ -1478,17 +1476,45 @@ class AssetController extends ElementControllerBase implements EventedController
      *
      * @param Request $request
      *
-     * @return array
+     * @return BinaryFileResponse
      */
     public function getPreviewDocumentAction(Request $request)
     {
         $asset = Asset::getById($request->get('id'));
 
-        if (!$asset->isAllowed('view')) {
-            throw new \Exception('not allowed to preview');
+        if ($asset->isAllowed('view')) {
+            $pdfFsPath = $this->getDocumentPreviewPdf($asset);
+            if ($pdfFsPath) {
+                $response = new BinaryFileResponse($pdfFsPath);
+                $response->headers->set('Content-Type', 'application/pdf');
+
+                return $response;
+            } else {
+                throw $this->createNotFoundException('Unable to get preview for asset ' . $asset->getId());
+            }
+        } else {
+            throw $this->createAccessDeniedException('Access to asset ' . $asset->getId() . ' denied');
+        }
+    }
+
+    /**
+     * @param Asset $asset
+     */
+    protected function getDocumentPreviewPdf(Asset $asset)
+    {
+        $pdfFsPath = null;
+        if ($asset->getMimetype() == 'application/pdf') {
+            $pdfFsPath = $asset->getFileSystemPath();
+        } elseif (\Pimcore\Document::isAvailable() && \Pimcore\Document::isFileTypeSupported($asset->getFilename())) {
+            try {
+                $document = \Pimcore\Document::getInstance();
+                $pdfFsPath = $document->getPdf($asset->getFileSystemPath());
+            } catch (\Exception $e) {
+                // nothing to do
+            }
         }
 
-        return ['asset' => $asset];
+        return $pdfFsPath;
     }
 
     /**
@@ -1509,9 +1535,7 @@ class AssetController extends ElementControllerBase implements EventedController
         }
 
         $previewData = ['asset' => $asset];
-
         $config = Asset\Video\Thumbnail\Config::getPreviewConfig();
-
         $thumbnail = $asset->getThumbnail($config, ['mp4']);
 
         if ($thumbnail) {
@@ -1534,6 +1558,36 @@ class AssetController extends ElementControllerBase implements EventedController
                 'PimcoreAdminBundle:Admin/Asset:getPreviewVideoError.html.php',
                 $previewData
             );
+        }
+    }
+
+    /**
+     * @Route("/serve-video-preview")
+     * @Method({"GET"})
+     *
+     * @param Request $request
+     *
+     * @return BinaryFileResponse
+     */
+    public function serveVideoPreviewAction(Request $request)
+    {
+        $asset = Asset::getById($request->get('id'));
+
+        if (!$asset->isAllowed('view')) {
+            throw $this->createAccessDeniedException('not allowed to preview');
+        }
+
+        $config = Asset\Video\Thumbnail\Config::getPreviewConfig();
+        $thumbnail = $asset->getThumbnail($config, ['mp4']);
+        $fsFile = $asset->getVideoThumbnailSavePath() . '/' . preg_replace('@' . preg_quote($asset->getPath(), '@') . '@', '', $thumbnail['formats']['mp4']);
+
+        if (file_exists($fsFile)) {
+            $response = new BinaryFileResponse($fsFile);
+            $response->headers->set('Content-Type', 'video/mp4');
+
+            return $response;
+        } else {
+            throw $this->createNotFoundException('Video thumbnail not found');
         }
     }
 

@@ -55,7 +55,7 @@ class PrintpageControllerBase extends DocumentControllerBase
         $page->getVersions();
         $page->getScheduledTasks();
         $page->idPath = Service::getIdPath($page);
-        $page->userPermissions = $page->getUserPermissions();
+        $page->setUserPermissions($page->getUserPermissions());
         $page->setLocked($page->isLocked());
 
         if ($page->getContentMasterDocument()) {
@@ -66,14 +66,14 @@ class PrintpageControllerBase extends DocumentControllerBase
 
         // unset useless data
         $page->setElements(null);
-        $page->childs = null;
+        $page->setChildren(null);
 
         // cleanup properties
         $this->minimizeProperties($page);
 
         //Hook for modifying return value - e.g. for changing permissions based on object data
         //data need to wrapped into a container in order to pass parameter to event listeners by reference so that they can change the values
-        $data = object2array($page);
+        $data = $page->getObjectVars();
         $event = new GenericEvent($this, [
             'data' => $data,
             'document' => $page

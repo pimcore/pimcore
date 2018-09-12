@@ -48,7 +48,7 @@ class ElementMetadata extends Model\AbstractModel
     /**
      * @var array
      */
-    public $data = [];
+    protected $data = [];
 
     /**
      * @param $fieldname
@@ -222,6 +222,22 @@ class ElementMetadata extends Model\AbstractModel
     public function getColumns()
     {
         return $this->columns;
+    }
+
+    /**
+     * @return array
+     */
+    public function getData(): array
+    {
+        return $this->data;
+    }
+
+    /**
+     * @param array $data
+     */
+    public function setData(array $data): void
+    {
+        $this->data = $data;
     }
 
     /**

@@ -29,48 +29,48 @@ class Newsletter extends Model\Document\PageSnippet
      *
      * @var string
      */
-    public $type = 'newsletter';
+    protected $type = 'newsletter';
 
     /**
      * Contains the email subject
      *
      * @var string
      */
-    public $subject = '';
+    protected $subject = '';
 
     /**
      * Contains the from email address
      *
      * @var string
      */
-    public $from = '';
+    protected $from = '';
 
     /**
      * enables adding tracking parameters to all links
      *
      * @var bool
      */
-    public $enableTrackingParameters = false;
+    protected $enableTrackingParameters = false;
 
     /**
      * @var string
      */
-    public $trackingParameterSource = 'newsletter';
+    protected $trackingParameterSource = 'newsletter';
 
     /**
      * @var string
      */
-    public $trackingParameterMedium = 'email';
+    protected $trackingParameterMedium = 'email';
 
     /**
      * @var string
      */
-    public $trackingParameterName = null;
+    protected $trackingParameterName = null;
 
     /**
      * @var string
      */
-    public $sendingMode = \Pimcore\Tool\Newsletter::SENDING_MODE_SINGLE;
+    protected $sendingMode = \Pimcore\Tool\Newsletter::SENDING_MODE_SINGLE;
 
     /**
      * Contains the email subject
