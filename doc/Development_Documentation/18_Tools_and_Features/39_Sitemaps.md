@@ -230,7 +230,7 @@ and processors. For example, the `DocumentTreeProcessor` uses the context to def
 In the example above, the URL is created by using a [Link Generator](../05_Objects/01_Object_Classes/05_Class_Settings/15_Link_Generator.md).
 
 > It's important that your link generator is able to generate an absolute URL for the given object. Above is only an example, but
-  you can have a look at the [demo](https://github.com/pimcore/demo-basicsrc/AppBundle)
+  you can have a look at the [demo](https://github.com/pimcore/demo-basic/tree/master/src/AppBundle)
   for a working example building sitemap entries for News objects.
   
 After creating the generator, register it as service and add it to the config. Use filters and processors to reuse already
@@ -389,7 +389,7 @@ services:
 
 To generate absolute URLs, Pimcore defines an [url generator](https://github.com/pimcore/pimcore/blob/master/lib/Sitemap/UrlGenerator.php) which, given a path, takes care of creating an absolute URL
 based on the [Request Context](http://symfony.com/doc/3.4/console/request_context.html#configuring-the-request-context-globally).
-See core processors/generators and [demo](https://github.com/pimcore/demo-basicsrc/AppBundle)
+See core processors/generators and [demo](https://github.com/pimcore/demo-basic/tree/master/src/AppBundle)
 for details. As example how to use the URL generator in a processor:
 
 ```php
