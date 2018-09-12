@@ -63,6 +63,11 @@ class AbstractObject extends Model\Element\AbstractElement
     private static $getInheritedValues = false;
 
     /**
+     * @var bool
+     */
+    protected static $disableDirtyDetection = false;
+
+    /**
      * @static
      *
      * @return bool
@@ -292,8 +297,13 @@ class AbstractObject extends Model\Element\AbstractElement
                     }
 
                     $object = \Pimcore::getContainer()->get('pimcore.model.factory')->build($className);
+
                     \Pimcore\Cache\Runtime::set($cacheKey, $object);
+
                     $object->getDao()->getById($id);
+
+                    Service::recursiveResetDirtyMap($object);
+
                     $object->__setDataVersionTimestamp($object->getModificationDate());
 
                     Cache::save($object, $cacheKey);
@@ -1198,7 +1208,7 @@ class AbstractObject extends Model\Element\AbstractElement
 
         if (isset($this->_fulldump)) {
             // this is if we want to make a full dump of the object (eg. for a new version), including childs for recyclebin
-            $blockedVars = ['o_userPermissions', 'o_dependencies', 'o_hasChilds', 'o_versions', 'o_class', 'scheduledTasks', 'o_parent', 'omitMandatoryCheck'];
+            $blockedVars = ['o_userPermissions', 'o_dependencies', 'o_hasChilds', 'o_versions', 'o_class', 'scheduledTasks', 'o_parent', 'omitMandatoryCheck', 'o_dirtyFields'];
             $finalVars[] = '_fulldump';
             $this->removeInheritedProperties();
         } else {
@@ -1327,4 +1337,22 @@ class AbstractObject extends Model\Element\AbstractElement
     {
         return $this->{'set'.ucfirst($fieldName)}($value, $language);
     }
+
+    /**
+     * @return bool
+     */
+    public static function isDirtyDetectionDisabled()
+    {
+        return self::$disableDirtyDetection;
+    }
+
+    /**
+     * @param bool $disableDirtyDetection
+     */
+    public static function disableDirtyDetection(bool $disableDirtyDetection)
+    {
+        self::$disableDirtyDetection = $disableDirtyDetection;
+    }
+
+
 }

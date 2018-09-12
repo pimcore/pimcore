@@ -25,6 +25,8 @@ use Pimcore\Tool;
  */
 class Localizedfield extends Model\AbstractModel
 {
+    use Model\DataObject\Traits\DirtyIndicatorTrait;
+
     const STRICT_DISABLED = 0;
 
     const STRICT_ENABLED = 1;
@@ -108,6 +110,7 @@ class Localizedfield extends Model\AbstractModel
         if ($items) {
             $this->setItems($items);
         }
+        $this->markFieldDirty('_self');
     }
 
     /**
@@ -116,6 +119,7 @@ class Localizedfield extends Model\AbstractModel
     public function addItem($item)
     {
         $this->items[] = $item;
+        $this->markFieldDirty('_self');
     }
 
     /**
@@ -126,6 +130,7 @@ class Localizedfield extends Model\AbstractModel
     public function setItems($items)
     {
         $this->items = $items;
+        $this->markFieldDirty('_self');
 
         return $this;
     }
@@ -351,13 +356,17 @@ class Localizedfield extends Model\AbstractModel
      * @param $name
      * @param $value
      * @param null $language
-     *
+     * @param $markFieldAsDirty
      * @return $this
      *
      * @throws \Exception
      */
-    public function setLocalizedValue($name, $value, $language = null)
+    public function setLocalizedValue($name, $value, $language = null, $markFieldAsDirty = true)
     {
+        if ($markFieldAsDirty) {
+            $this->markFieldDirty('_self');
+        }
+
         if (self::$strictMode) {
             if (!$language || !in_array($language, Tool::getValidLanguages())) {
                 throw new \Exception('Language '.$language.' not accepted in strict mode');
@@ -412,7 +421,7 @@ class Localizedfield extends Model\AbstractModel
      */
     public function __sleep()
     {
-        return ['items', 'context', 'objectId'];
+        return ['items', 'context', 'objectId', 'o_dirtyFields'];
     }
 
     /**

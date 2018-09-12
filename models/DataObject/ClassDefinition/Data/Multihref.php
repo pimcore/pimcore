@@ -721,7 +721,11 @@ class Multihref extends Model\DataObject\ClassDefinition\Data\Relations\Abstract
 
                 $setter = 'set' . ucfirst($this->getName());
                 if (method_exists($object, $setter)) {
-                    $object->$setter($data);
+                    $object->setObjectVar($this->getName(), $data);
+
+                    if (method_exists($object, "resetDirtyMap")) {
+                        $object->resetDirtyMap($this->getName());
+                    }
                 }
             }
         } elseif ($object instanceof DataObject\Localizedfield) {

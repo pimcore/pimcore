@@ -581,7 +581,7 @@ class Href extends Model\DataObject\ClassDefinition\Data\Relations\AbstractRelat
 
                 $setter = 'set' . ucfirst($this->getName());
                 if (method_exists($object, $setter)) {
-                    $object->$setter($data);
+                    $object->setObjectVar($this->getName(), $data);
                 }
             }
         } elseif ($object instanceof DataObject\Localizedfield) {
@@ -731,4 +731,17 @@ class Href extends Model\DataObject\ClassDefinition\Data\Relations\AbstractRelat
             return Element\Service::getElementById($type, $id);
         }
     }
+
+    /**
+     * @param $value1 Element\ElementInterface
+     * @param $value2 Element\ElementInterface
+     * @return bool
+     */
+    public static function isEqual($value1, $value2) {
+        $value1 = $value1 ? $value1->getType() . $value1->getId() : null;
+        $value2 = $value2 ? $value2->getType() . $value2->getId() : null;
+
+        return $value1 == $value2;
+    }
+
 }

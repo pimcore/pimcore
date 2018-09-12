@@ -17,6 +17,7 @@
 
 namespace Pimcore\Model\DataObject\Objectbrick\Data;
 
+use Pimcore\Db;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
@@ -55,9 +56,37 @@ class Dao extends Model\Dao\AbstractDao
         $data['o_id'] = $object->getId();
         $data['fieldname'] = $this->model->getFieldname();
 
+        $fieldNameList = [];
+
         // remove all relations
         try {
-            $this->db->deleteWhere('object_relations_' . $object->getClassId(), 'src_id = ' . $object->getId() . " AND ownertype = 'objectbrick' AND ownername = '" . $this->model->getFieldname() . "' AND (position = '" . $this->model->getType() . "' OR position IS NULL OR position = '')");
+            $db = Db::get();
+
+            $where = 'src_id = ' . $object->getId() . " AND ownertype = 'objectbrick' AND ownername = '" . $this->model->getFieldname() . "' AND (position = '" . $this->model->getType() . "' OR position IS NULL OR position = '')";
+            // if the model supports dirty detection then only delete the dirty fields
+            // as a consequence, only do inserts only on dirty fields
+            if (!DataObject\AbstractObject::isDirtyDetectionDisabled() && method_exists($this->model, 'isFieldDirty')) {
+
+                /* @var  $fd DataObject\ClassDefinition\Data */
+                foreach ($fieldDefinitions as $key => $fd) {
+                    if ($fd instanceof DataObject\ClassDefinition\Data\Relations\AbstractRelations) {
+                        if ($fd->supportsDirtyRelationDetection()) {
+
+                            if ($this->model->isFieldDirty($key)) {
+                                $fieldNameList[] = $db->quote($key);
+                            }
+                        } else {
+                            $fieldNameList[] = $db->quote($key);
+                        }
+                    }
+                }
+                if ($fieldNameList) {
+                    $where .= ' AND fieldname IN (' . implode(',', $fieldNameList) . ')';
+                    $this->db->deleteWhere('object_relations_' . $object->getClassId(), $where);
+                }
+            } else {
+                $this->db->deleteWhere('object_relations_' . $object->getClassId(), $where);
+            }
         } catch (\Exception $e) {
             Logger::warning('Error during removing old relations: ' . $e);
         }
@@ -66,6 +95,13 @@ class Dao extends Model\Dao\AbstractDao
             $getter = 'get' . ucfirst($fd->getName());
 
             if (method_exists($fd, 'save')) {
+                if (!DataObject\AbstractObject::isDirtyDetectionDisabled() && method_exists($this->model, 'isFieldDirty')) {
+                    // ownerNameList contains the dirty stuff
+                    if (!in_array("'" . $key . "'", $fieldNameList)) {
+                        continue;
+                    }
+                }
+
                 // for fieldtypes which have their own save algorithm eg. objects, multihref, ...
                 $fd->save($this->model,
                     [
@@ -259,7 +295,7 @@ class Dao extends Model\Dao\AbstractDao
                 if ($fd->getQueryColumnType()) {
                     //exclude untouchables if value is not an array - this means data has not been loaded
                     //get changed fields for inheritance
-                    if ($fd instanceof  DataObject\ClassDefinition\Data\CalculatedValue) {
+                    if ($fd instanceof DataObject\ClassDefinition\Data\CalculatedValue) {
                         continue;
                     }
 

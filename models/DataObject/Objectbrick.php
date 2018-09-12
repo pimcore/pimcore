@@ -25,6 +25,9 @@ use Pimcore\Model;
  */
 class Objectbrick extends Model\AbstractModel
 {
+
+    use Model\DataObject\Traits\DirtyIndicatorTrait;
+
     /**
      * @var array
      */
@@ -96,6 +99,7 @@ class Objectbrick extends Model\AbstractModel
     public function setItems($items)
     {
         $this->items = $items;
+        $this->markFieldDirty('_self', true);
 
         return $this;
     }

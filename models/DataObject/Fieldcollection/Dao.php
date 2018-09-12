@@ -28,10 +28,11 @@ class Dao extends Model\Dao\AbstractDao
 {
     /**
      * @param DataObject\Concrete $object
+     * @return whether an insert should be done
      */
     public function save(DataObject\Concrete $object)
     {
-        $this->delete($object);
+        return $this->delete($object, true);
     }
 
     /**
@@ -85,6 +86,10 @@ class Dao extends Model\Dao\AbstractDao
                         );
                         if ($value === 0 || !empty($value)) {
                             $collection->setValue($key, $value);
+
+                            if (method_exists($collection, 'resetDirtyMap')) {
+                                $collection->resetDirtyMap($key);
+                            }
                         }
                     } else {
                         if (is_array($fd->getColumnType())) {
@@ -116,12 +121,60 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     /**
-     * @param DataObject\Concrete $object
+     * @param $object
+     * @return bool
      */
-    public function delete(DataObject\Concrete $object)
+    public function isDirty($object) {
+        if (DataObject\AbstractObject::isDirtyDetectionDisabled()) {
+            return true;
+        }
+
+        $fieldDef = $object->getClass()->getFieldDefinition($this->model->getFieldname(), ['suppressEnrichment' => true]);
+
+        foreach ($fieldDef->getAllowedTypes() as $type) {
+            try {
+                /** @var $definition Definition */
+                $definition = DataObject\Fieldcollection\Definition::getByKey($type);
+
+                $className = 'Pimcore\\Model\\DataObject\\Fieldcollection\\Data\\' .ucfirst($definition->getKey());
+                $dummy = \Pimcore::getContainer()->get('pimcore.model.factory')->build($className);
+
+                if (!method_exists($dummy, 'isFieldDirty')) {
+                    return true;
+                }
+            } catch (\Exception $e) {
+                continue;
+            }
+        }
+
+        if ($this->model->hasDirtyFields()) {
+            return true;
+        }
+
+        $items = $this->model->getItems();
+        if (is_array($items)) {
+
+            foreach ($items as $item) {
+                if ($item->hasDirtyFields()) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * @param DataObject\Concrete $object
+     * @param saveMode true if called from save method
+     * @return whether an relational data should be inserted or not
+     */
+    public function delete(DataObject\Concrete $object, $saveMode = false)
     {
         // empty or create all relevant tables
         $fieldDef = $object->getClass()->getFieldDefinition($this->model->getFieldname(), ['suppressEnrichment' => true]);
+
+        $excludeFields = [];
 
         foreach ($fieldDef->getAllowedTypes() as $type) {
             try {
@@ -176,11 +229,26 @@ class Dao extends Model\Dao\AbstractDao
             }
         }
 
+        $whereLocalizedFields = "(ownertype = 'localizedfield' AND "
+            . $this->db->quoteInto('ownername LIKE ?', '/fieldcollection~'
+                . $this->model->getFieldname() . '/%')
+            . ' AND ' . $this->db->quoteInto('src_id = ?', $object->getId()). ')';
+
+        if ($saveMode) {
+            if (!$this->model->hasDirtyFields()) {
+                // always empty localized fields
+                $this->db->deleteWhere('object_relations_' . $object->getClassId(), $whereLocalizedFields);
+                // empty relation table
+                return false;
+            }
+        }
+
+        $where = "(ownertype = 'fieldcollection' AND " . $this->db->quoteInto('ownername = ?', $this->model->getFieldname())
+            . ' AND ' . $this->db->quoteInto('src_id = ?', $object->getId()) . ')'
+            . " OR " . $whereLocalizedFields;
+
         // empty relation table
-        $this->db->deleteWhere(
-            'object_relations_' . $object->getClassId(),
-            "(ownertype = 'fieldcollection' AND " . $this->db->quoteInto('ownername = ?', $this->model->getFieldname()) . ' AND ' . $this->db->quoteInto('src_id = ?', $object->getId()) . ')'
-            . " OR (ownertype = 'localizedfield' AND " . $this->db->quoteInto('ownername LIKE ?', '/fieldcollection~' . $this->model->getFieldname() . '/%') . ' AND ' . $this->db->quoteInto('src_id = ?', $object->getId()). ')'
-        );
+        $this->db->deleteWhere('object_relations_' . $object->getClassId(), $where);
+        return true;
     }
 }

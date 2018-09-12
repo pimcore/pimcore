@@ -648,6 +648,7 @@ class Localizedfields extends Model\DataObject\ClassDefinition\Data
         $context = isset($params['context']) ? $params['context'] : null;
         $localizedFields->setContext($context);
         $localizedFields->load($object, $params);
+        $localizedFields->resetDirtyMap();
 
         return $localizedFields;
     }

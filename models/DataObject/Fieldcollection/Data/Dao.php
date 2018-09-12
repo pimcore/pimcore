@@ -29,7 +29,7 @@ class Dao extends Model\Dao\AbstractDao
      *
      * @throws \Exception
      */
-    public function save(Model\DataObject\Concrete $object)
+    public function save(Model\DataObject\Concrete $object, $saveRelationalData = true)
     {
         $tableName = $this->model->getDefinition()->getTableName($object->getClass());
         $data = [
@@ -39,10 +39,16 @@ class Dao extends Model\Dao\AbstractDao
         ];
 
         try {
+            /** @var  $fd Model\DataObject\ClassDefinition\Data */
             foreach ($this->model->getDefinition()->getFieldDefinitions() as $fd) {
                 $getter = 'get' . ucfirst($fd->getName());
 
                 if (method_exists($fd, 'save')) {
+
+                    if ($fd->supportsDirtyRelationDetection() && !$saveRelationalData) {
+                        continue;
+                    }
+
                     // for fieldtypes which have their own save algorithm eg. objects, multihref, ...
                     $index = $this->model->getIndex();
                     $fd->save(

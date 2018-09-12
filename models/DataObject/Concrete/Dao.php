@@ -182,6 +182,14 @@ class Dao extends Model\DataObject\AbstractObject\Dao
                     $untouchable[] = $key;
                 }
             }
+
+            if (!DataObject\AbstractObject::isDirtyDetectionDisabled()) {
+                if (method_exists($this->model, 'isFieldDirty') && !$this->model->isFieldDirty($key)) {
+                    if (!in_array($key, $untouchable)) {
+                        $untouchable[] = $key;
+                    }
+                }
+            }
         }
 
         // empty relation table except the untouchable fields (eg. lazy loading fields)

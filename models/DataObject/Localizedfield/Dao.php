@@ -76,12 +76,19 @@ class Dao extends Model\Dao\AbstractDao
 
     public function save()
     {
-        $this->delete(false);
+
+        $context = $this->model->getContext();
+
+        // if inside a field collection a delete is not necessary as the fieldcollection deletes all entries anyway
+        // see Pimcore\Model\DataObject\Fieldcollection\Dao::delete
+
+        if (DataObject\AbstractObject::isDirtyDetectionDisabled() || !$context["containerType"] == "fieldcollection") {
+            $this->delete(false);
+        }
 
         $object = $this->model->getObject();
         $validLanguages = Tool::getValidLanguages();
 
-        $context = $this->model->getContext();
         if ($context && $context['containerType'] == 'fieldcollection') {
             $containerKey = $context['containerKey'];
             $container = DataObject\Fieldcollection\Definition::getByKey($containerKey);
@@ -306,6 +313,9 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function delete($deleteQuery = true)
     {
+        if (!DataObject\AbstractObject::isDirtyDetectionDisabled() && !$this->model->hasDirtyFields()) {
+            return;
+        }
         $object = $this->model->getObject();
 
         try {
@@ -360,6 +370,11 @@ class Dao extends Model\Dao\AbstractDao
         }
 
         // remove relations
+        if (!DataObject\AbstractObject::isDirtyDetectionDisabled()) {
+            if (!$this->model->hasDirtyFields())  {
+                return;
+            }
+        }
         if ($container instanceof  DataObject\Objectbrick\Definition || $container instanceof DataObject\Fieldcollection\Definition) {
             $objectId = $object->getId();
             $index = $context['index'];
@@ -440,7 +455,7 @@ class Dao extends Model\Dao\AbstractDao
                         $params['context']['object'] = $object;
                         $value = $fd->load($this->model, $params);
                         if ($value === 0 || !empty($value)) {
-                            $this->model->setLocalizedValue($key, $value, $row['language']);
+                            $this->model->setLocalizedValue($key, $value, $row['language'], false);
                         }
                     } else {
                         if (is_array($fd->getColumnType())) {
@@ -448,9 +463,9 @@ class Dao extends Model\Dao\AbstractDao
                             foreach ($fd->getColumnType() as $fkey => $fvalue) {
                                 $multidata[$key . '__' . $fkey] = $row[$key . '__' . $fkey];
                             }
-                            $this->model->setLocalizedValue($key, $fd->getDataFromResource($multidata), $row['language']);
+                            $this->model->setLocalizedValue($key, $fd->getDataFromResource($multidata), $row['language'], false);
                         } else {
-                            $this->model->setLocalizedValue($key, $fd->getDataFromResource($row[$key]), $row['language']);
+                            $this->model->setLocalizedValue($key, $fd->getDataFromResource($row[$key]), $row['language'], false);
                         }
                     }
                 }

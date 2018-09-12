@@ -208,6 +208,10 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
         $cd .= 'class ' . ucfirst($this->getKey()) . ' extends ' . $extendClass . '  {';
         $cd .= "\n\n";
 
+        $cd .= "\n\n";
+        $cd .= 'use \\Pimcore\\Model\\DataObject\\Traits\\DirtyIndicatorTrait;';
+        $cd .= "\n\n";
+
         $cd .= 'protected $type = "' . $this->getKey() . "\";\n";
 
         if (is_array($this->getFieldDefinitions()) && count($this->getFieldDefinitions())) {

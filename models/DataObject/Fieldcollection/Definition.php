@@ -315,6 +315,9 @@ class Definition extends Model\AbstractModel
         $cd .= "\n\n";
 
         $cd .= 'class ' . ucfirst($this->getKey()) . ' extends ' . $extendClass . '  {';
+
+        $cd .= "\n\n";
+        $cd .= 'use \\Pimcore\\Model\\DataObject\\Traits\\DirtyIndicatorTrait;';
         $cd .= "\n\n";
 
         $cd .= 'protected $type = "' . $this->getKey() . "\";\n";

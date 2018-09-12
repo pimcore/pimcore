@@ -792,6 +792,14 @@ abstract class Data
             }
         }
 
+        if ($this->supportsDirtyRelationDetection()) {
+            $code .= "\t" . '$currentData = $this->get' . ucfirst($this->getName()) . '();' . "\n";
+            $code .= "\t" . '$isEqual = \\' . get_class($this) . '::isEqual($currentData, $' . $key . ');' . "\n";
+            $code .= "\t" . 'if (!$isEqual) {' . "\n";
+            $code .= "\t\t" . '$this->markFieldDirty("' . $key . '", true);' . "\n";
+            $code .= "\t" . '}' . "\n";
+        }
+
         if (method_exists($this, 'preSetData')) {
             $code .= "\t" . '$this->' . $key . ' = ' . '$this->getClass()->getFieldDefinition("' . $key . '")->preSetData($this, $' . $key . ');' . "\n";
         } else {
@@ -872,6 +880,14 @@ abstract class Data
             }
         }
 
+        if ($this->supportsDirtyRelationDetection()) {
+            $code .= "\t" . '$currentData = $this->get' . ucfirst($this->getName()) . '();' . "\n";
+            $code .= "\t" . '$isEqual = \\' . get_class($this) . '::isEqual($currentData, $' . $key . ');' . "\n";
+            $code .= "\t" . 'if (!$isEqual) {' . "\n";
+            $code .= "\t\t" . '$this->markFieldDirty("' . $key . '", true);' . "\n";
+            $code .= "\t" . '}' . "\n";
+        }
+
         if (method_exists($this, 'preSetData')) {
             $code .= "\t" . '$this->' . $key . ' = ' . '$this->getDefinition()->getFieldDefinition("' . $key . '")->preSetData($this, $' . $key . ');' . "\n";
         } else {
@@ -947,6 +963,14 @@ abstract class Data
                 $code .= "\t\t" . '$' . $key . ' = new \\Pimcore\\Model\\DataObject\\Data\\EncryptedField($delegate, $' . $key . ');' . "\n";
                 $code .= "\t" . '}' . "\n";
             }
+        }
+
+        if ($this->supportsDirtyRelationDetection()) {
+            $code .= "\t" . '$currentData = $this->get' . ucfirst($this->getName()) . '();' . "\n";
+            $code .= "\t" . '$isEqual = \\' . get_class($this) . '::isEqual($currentData, $' . $key . ');' . "\n";
+            $code .= "\t" . 'if (!$isEqual) {' . "\n";
+            $code .= "\t\t" . '$this->markFieldDirty("' . $key . '", true);' . "\n";
+            $code .= "\t" . '}' . "\n";
         }
 
         if (method_exists($this, 'preSetData')) {
@@ -1032,7 +1056,17 @@ abstract class Data
             }
         }
 
-        $code .= "\t" . '$this->getLocalizedfields()->setLocalizedValue("' . $key . '", $' . $key . ', $language)' . ";\n";
+        if ($this->supportsDirtyRelationDetection()) {
+            $code .= "\t" . '$currentData = $this->get' . ucfirst($this->getName()) . '();' . "\n";
+            $code .= "\t" . '$isEqual = \\' . get_class($this) . '::isEqual($currentData, $' . $key . ');' . "\n";
+//            $code .= "\t" . 'if (!$isEqual) {' . "\n";
+//            $code .= "\t\t" . '$this->markFieldDirty("' . $key . '", true);' . "\n";
+//            $code .= "\t\t" . '$this->markFieldDirty("' . 'localizedfields' . '", true);' . "\n";
+//            $code .= "\t" . '}' . "\n";
+        }
+
+
+        $code .= "\t" . '$this->getLocalizedfields()->setLocalizedValue("' . $key . '", $' . $key . ', $language, !$isEqual)' . ";\n";
 
         $code .= "\t" . 'return $this;' . "\n";
         $code .= "}\n\n";
@@ -1395,4 +1429,12 @@ abstract class Data
     {
         return true;
     }
+
+    /**
+     * @return bool
+     */
+    public function supportsDirtyRelationDetection() {
+        return false;
+    }
+
 }

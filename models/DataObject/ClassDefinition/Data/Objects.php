@@ -534,7 +534,7 @@ class Objects extends Model\DataObject\ClassDefinition\Data\Relations\AbstractRe
 
                 $setter = 'set' . ucfirst($this->getName());
                 if (method_exists($object, $setter)) {
-                    $object->$setter($data);
+                    $object->setObjectVar($this->getName(), $data);
                 }
             }
         } elseif ($object instanceof DataObject\Localizedfield) {

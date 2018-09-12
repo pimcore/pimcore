@@ -24,6 +24,9 @@ use Pimcore\Model;
  */
 class Fieldcollection extends Model\AbstractModel implements \Iterator
 {
+
+    use Model\DataObject\Traits\DirtyIndicatorTrait;
+
     /**
      * @var array
      */
@@ -46,6 +49,8 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator
         if ($fieldname) {
             $this->setFieldname($fieldname);
         }
+
+        $this->markFieldDirty('_self', true);
     }
 
     /**
@@ -64,7 +69,7 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator
     public function setItems($items)
     {
         $this->items = $items;
-
+        $this->markFieldDirty('_self', true);
         return $this;
     }
 
@@ -108,7 +113,8 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator
      */
     public function save($object)
     {
-        $this->getDao()->save($object);
+        $saveRelationalData = $this->getDao()->save($object);
+
         $allowedTypes = $object->getClass()->getFieldDefinition($this->getFieldname())->getAllowedTypes();
 
         $collectionItems = $this->getItems();
@@ -122,7 +128,7 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator
 
                         // set the current object again, this is necessary because the related object in $this->object can change (eg. clone & copy & paste, etc.)
                         $collection->setObject($object);
-                        $collection->save($object);
+                        $collection->save($object, $saveRelationalData);
                     } else {
                         throw new \Exception('Fieldcollection of type ' . $collection->getType() . ' is not allowed in field: ' . $this->getFieldname());
                     }

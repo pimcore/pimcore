@@ -273,6 +273,24 @@ abstract class AbstractRelations extends Model\DataObject\ClassDefinition\Data
      */
     public function save($object, $params = [])
     {
+        $context = $params["context"];
+
+
+        if (!DataObject\AbstractObject::isDirtyDetectionDisabled() && method_exists($object, 'isFieldDirty')) {
+            if ($object instanceof DataObject\Localizedfield) {
+                if ($context['containerType'] != 'fieldcollection' && method_exists($object->getObject(), 'isFieldDirty')) {
+                    if (!$object->hasDirtyFields()) {
+                        return;
+                    }
+                }
+            } else {
+                if ($this->supportsDirtyRelationDetection()) {
+                    if (!$object->isFieldDirty($this->getName()))
+                        return;
+                }
+            }
+        }
+
         $db = Db::get();
 
         $data = $this->getDataFromObjectParam($object, $params);
@@ -461,5 +479,43 @@ abstract class AbstractRelations extends Model\DataObject\ClassDefinition\Data
         $id = $item->getId();
 
         return $elementType . $id;
+    }
+
+    /**
+     * @param $array1
+     * @param $array2
+     * @return bool
+     */
+    public static function isEqual($array1, $array2) {
+        $array1 = array_filter($array1);
+        $array2 = array_filter($array2);
+        $count1 = count($array1);
+        $count2 = count($array2);
+        if ($count1 != $count2) {
+            return false;
+        }
+
+        $values1 = array_values($array1);
+        $values2 = array_values($array2);
+
+        for ($i = 0; $i < $count1; $i++) {
+            /** @var  $el1 Element\ElementInterface */
+            $el1 = $values1[$i];
+            /** @var  $el2 Element\ElementInterface */
+            $el2 = $values2[$i];
+
+            if (! ($el1->getType() == $el2->getType() && ($el1->getId() == $el2->getId()))) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * @return bool
+     */
+    public function supportsDirtyRelationDetection() {
+        return true;
     }
 }

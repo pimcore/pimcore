@@ -622,6 +622,10 @@ class Fieldcollections extends Model\DataObject\ClassDefinition\Data
         $data = $object->getObjectVar($this->getName());
         if ($this->getLazyLoading() and !in_array($this->getName(), $object->getO__loadedLazyFields())) {
             $data = $this->load($object, ['force' => true]);
+            if ($data) {
+                $data->resetDirtyMap();
+            }
+
 
             $setter = 'set' . ucfirst($this->getName());
             if (method_exists($object, $setter)) {
