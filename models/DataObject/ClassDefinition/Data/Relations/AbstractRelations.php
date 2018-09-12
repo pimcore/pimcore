@@ -487,8 +487,8 @@ abstract class AbstractRelations extends Model\DataObject\ClassDefinition\Data
      * @return bool
      */
     public static function isEqual($array1, $array2) {
-        $array1 = array_filter($array1);
-        $array2 = array_filter($array2);
+        $array1 = array_filter(is_array($array1) ? $array1 : []);
+        $array2 = array_filter(is_array($array2) ? $array2 : []);
         $count1 = count($array1);
         $count2 = count($array2);
         if ($count1 != $count2) {

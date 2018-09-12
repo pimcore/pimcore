@@ -1163,8 +1163,8 @@ class MultihrefMetadata extends Model\DataObject\ClassDefinition\Data\Multihref
             return false;
         }
 
-        $values1 = array_filter(array_values($array1));
-        $values2 = array_filter($array2);
+        $values1 = array_filter(array_values(is_array($array1) ? $array1 : []));
+        $values2 = array_filter(array_values(is_array($array2) ? $array2 : []));
 
         for ($i = 0; $i < $count1; $i++) {
             /** @var  $container1 DataObject\Data\ElementMetadata */
