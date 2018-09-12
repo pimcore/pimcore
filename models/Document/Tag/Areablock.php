@@ -425,59 +425,60 @@ class Areablock extends Model\Document\Tag implements BlockInterface
      */
     public function setOptions($options)
     {
-        $translator = \Pimcore::getContainer()->get('translator');
-
         // we need to set this here otherwise custom areaDir's won't work
         $this->options = $options;
 
-        if (!isset($options['allowed']) || !is_array($options['allowed'])) {
-            $options['allowed'] = [];
-        }
-
-        $availableAreas = $this->getTagHandler()->getAvailableAreablockAreas($this, $options);
-        $availableAreas = $this->sortAvailableAreas($availableAreas, $options);
-
-        $options['types'] = $availableAreas;
-
-        if (isset($options['group']) && is_array($options['group'])) {
-            $groupingareas = [];
-            foreach ($availableAreas as $area) {
-                $groupingareas[$area['type']] = $area['type'];
+        if($this->getView()) {
+            $translator = \Pimcore::getContainer()->get('translator');
+            if (!isset($options['allowed']) || !is_array($options['allowed'])) {
+                $options['allowed'] = [];
             }
 
-            $groups = [];
-            foreach ($options['group'] as $name => $areas) {
-                $n = $name;
-                if ($this->editmode) {
-                    $n = $translator->trans($name, [], 'admin');
-                }
-                $groups[$n] = $areas;
+            $availableAreas = $this->getTagHandler()->getAvailableAreablockAreas($this, $options);
+            $availableAreas = $this->sortAvailableAreas($availableAreas, $options);
 
-                foreach ($areas as $area) {
-                    unset($groupingareas[$area]);
+            $options['types'] = $availableAreas;
+
+            if (isset($options['group']) && is_array($options['group'])) {
+                $groupingareas = [];
+                foreach ($availableAreas as $area) {
+                    $groupingareas[$area['type']] = $area['type'];
                 }
+
+                $groups = [];
+                foreach ($options['group'] as $name => $areas) {
+                    $n = $name;
+                    if ($this->editmode) {
+                        $n = $translator->trans($name, [], 'admin');
+                    }
+                    $groups[$n] = $areas;
+
+                    foreach ($areas as $area) {
+                        unset($groupingareas[$area]);
+                    }
+                }
+
+                if (count($groupingareas) > 0) {
+                    $uncatAreas = [];
+                    foreach ($groupingareas as $area) {
+                        $uncatAreas[] = $area;
+                    }
+                    $n = 'Uncategorized';
+                    if ($this->editmode) {
+                        $n = $translator->trans($n, [], 'admin');
+                    }
+                    $groups[$n] = $uncatAreas;
+                }
+
+                $options['group'] = $groups;
             }
 
-            if (count($groupingareas) > 0) {
-                $uncatAreas = [];
-                foreach ($groupingareas as $area) {
-                    $uncatAreas[] = $area;
-                }
-                $n = 'Uncategorized';
-                if ($this->editmode) {
-                    $n = $translator->trans($n, [], 'admin');
-                }
-                $groups[$n] = $uncatAreas;
+            if (empty($options['limit'])) {
+                $options['limit'] = 1000000;
             }
 
-            $options['group'] = $groups;
+            $this->options = $options;
         }
-
-        if (empty($options['limit'])) {
-            $options['limit'] = 1000000;
-        }
-
-        $this->options = $options;
 
         return $this;
     }
