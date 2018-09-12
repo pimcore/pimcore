@@ -262,6 +262,8 @@ class Service extends Model\Element\Service
             $data['classname'] = $object->getClassName();
             $data['idPath'] = Element\Service::getIdPath($object);
             $data['inheritedFields'] = [];
+            $data['permissions'] = $object->getUserPermissions();
+            $data['locked'] = $object->isLocked();
 
             $user = AdminTool::getCurrentUser();
 
