@@ -120,7 +120,7 @@ pimcore.object.variantsTab = Class.create(pimcore.object.helpers.gridTabAbstract
                     handler: function (grid, rowIndex) {
                         var data = grid.getStore().getAt(rowIndex);
                         pimcore.helpers.openObject(data.id, "variant");
-                    }.bind(this),
+                    }.bind(this)
                 }
             ]
         });
