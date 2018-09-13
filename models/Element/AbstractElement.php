@@ -262,10 +262,13 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
 
     /**
      * @param null $versionNote
+     *
      * @return Model\Version
+     *
      * @throws \Exception
      */
-    protected function doSaveVersion($versionNote = null) {
+    protected function doSaveVersion($versionNote = null)
+    {
         /**
          * @var Model\Version $version
          */

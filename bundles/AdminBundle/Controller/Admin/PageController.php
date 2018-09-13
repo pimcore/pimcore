@@ -19,7 +19,6 @@ use Pimcore\Logger;
 use Pimcore\Model\Document;
 use Pimcore\Model\Document\Targeting\TargetingDocumentInterface;
 use Pimcore\Model\Element;
-use Pimcore\Model\Redirect;
 use Pimcore\Model\Site;
 use Pimcore\Tool\Session;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;

@@ -297,7 +297,6 @@ class Concrete extends AbstractObject
         if (Config::getSystemConfig()->objects->versions->steps
             || Config::getSystemConfig()->objects->versions->days
             || $setModificationDate) {
-
             $version = $this->doSaveVersion($versionNote);
         }
 

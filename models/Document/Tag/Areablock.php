@@ -428,7 +428,7 @@ class Areablock extends Model\Document\Tag implements BlockInterface
         // we need to set this here otherwise custom areaDir's won't work
         $this->options = $options;
 
-        if($this->getView()) {
+        if ($this->getView()) {
             $translator = \Pimcore::getContainer()->get('translator');
             if (!isset($options['allowed']) || !is_array($options['allowed'])) {
                 $options['allowed'] = [];

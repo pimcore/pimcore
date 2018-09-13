@@ -790,7 +790,6 @@ class Asset extends Element\AbstractElement
         if (Config::getSystemConfig()->assets->versions->steps
             || Config::getSystemConfig()->assets->versions->days
             || $setModificationDate) {
-
             $version = $this->doSaveVersion($versionNote);
         }
 

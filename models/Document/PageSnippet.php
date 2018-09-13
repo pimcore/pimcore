@@ -150,7 +150,6 @@ abstract class PageSnippet extends Model\Document
         if (Config::getSystemConfig()->documents->versions->steps
             || Config::getSystemConfig()->documents->versions->days
             || $setModificationDate) {
-
             $version = $this->doSaveVersion($versionNote);
         }
 

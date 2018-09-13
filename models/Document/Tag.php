@@ -407,7 +407,7 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
 
     final public function setParentBlockNames($parentNames)
     {
-        if(is_array($parentNames)) {
+        if (is_array($parentNames)) {
             // unfortunately we cannot make a type hint here, because of compatibility reasons
             // old versions where 'parentBlockNames' was not excluded in __sleep() have still this property
             // in the serialized data, and mostly with the value NULL, on restore this would lead to an error
