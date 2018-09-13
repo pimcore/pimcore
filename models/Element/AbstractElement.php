@@ -259,4 +259,25 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
     {
         return $this->getDao()->__isBasedOnLatestData();
     }
+
+    /**
+     * @param null $versionNote
+     * @return Model\Version
+     * @throws \Exception
+     */
+    protected function doSaveVersion($versionNote = null) {
+        /**
+         * @var Model\Version $version
+         */
+        $version = self::getModelFactory()->build(Model\Version::class);
+        $version->setCid($this->getId());
+        $version->setCtype(Service::getElementType($this));
+        $version->setDate($this->getModificationDate());
+        $version->setUserId($this->getUserModification());
+        $version->setData($this);
+        $version->setNote($versionNote);
+        $version->save();
+
+        return $version;
+    }
 }

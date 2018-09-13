@@ -301,4 +301,11 @@ abstract class AbstractModel
     {
         return $this->{$var};
     }
+
+    /**
+     * @return Factory
+     */
+    protected static function getModelFactory() {
+        return \Pimcore::getContainer()->get('pimcore.model.factory');
+    }
 }

@@ -794,14 +794,8 @@ class Asset extends Element\AbstractElement
         if (Config::getSystemConfig()->assets->versions->steps
             || Config::getSystemConfig()->assets->versions->days
             || $setModificationDate) {
-            $version = new Version();
-            $version->setCid($this->getId());
-            $version->setCtype('asset');
-            $version->setDate($this->getModificationDate());
-            $version->setUserId($this->getUserModification());
-            $version->setData($this);
-            $version->setNote($versionNote);
-            $version->save();
+
+            $version = $this->doSaveVersion($versionNote);
         }
 
         // hook should be also called if "save only new version" is selected

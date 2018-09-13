@@ -297,15 +297,8 @@ class Concrete extends AbstractObject
         if (Config::getSystemConfig()->objects->versions->steps
             || Config::getSystemConfig()->objects->versions->days
             || $setModificationDate) {
-            // create version
-            $version = new Model\Version();
-            $version->setCid($this->getId());
-            $version->setCtype('object');
-            $version->setDate($this->getModificationDate());
-            $version->setUserId($this->getUserModification());
-            $version->setData($this);
-            $version->setNote($versionNote);
-            $version->save();
+
+            $version = $this->doSaveVersion($versionNote);
         }
 
         // hook should be also called if "save only new version" is selected
