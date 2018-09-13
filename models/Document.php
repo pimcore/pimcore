@@ -275,7 +275,7 @@ class Document extends Element\AbstractElement
                     }
                 }
 
-                $document = \Pimcore::getContainer()->get('pimcore.model.factory')->build($className);
+                $document = self::getModelFactory()->build($className);
                 \Pimcore\Cache\Runtime::set($cacheKey, $document);
                 $document->getDao()->getById($id);
                 $document->__setDataVersionTimestamp($document->getModificationDate());
@@ -335,7 +335,7 @@ class Document extends Element\AbstractElement
     {
         if (is_array($config)) {
             $listClass = 'Pimcore\\Model\\Document\\Listing';
-            $list = \Pimcore::getContainer()->get('pimcore.model.factory')->build($listClass);
+            $list = self::getModelFactory()->build($listClass);
             $list->setValues($config);
             $list->load();
 
@@ -356,7 +356,7 @@ class Document extends Element\AbstractElement
     {
         if (is_array($config)) {
             $listClass = 'Pimcore\\Model\\Document\\Listing';
-            $list = \Pimcore::getContainer()->get('pimcore.model.factory')->build($listClass);
+            $list = self::getModelFactory()->build($listClass);
             $list->setValues($config);
             $count = $list->getTotalCount();
 

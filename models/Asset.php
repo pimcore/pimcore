@@ -258,7 +258,7 @@ class Asset extends Element\AbstractElement
 
                 $className = 'Pimcore\\Model\\Asset\\' . ucfirst($asset->getType());
 
-                $asset = \Pimcore::getContainer()->get('pimcore.model.factory')->build($className);
+                $asset = self::getModelFactory()->build($className);
                 \Pimcore\Cache\Runtime::set($cacheKey, $asset);
                 $asset->getDao()->getById($id);
                 $asset->__setDataVersionTimestamp($asset->getModificationDate());
@@ -354,7 +354,7 @@ class Asset extends Element\AbstractElement
         if (is_array($config)) {
             $listClass = 'Pimcore\\Model\\Asset\\Listing';
 
-            $list = \Pimcore::getContainer()->get('pimcore.model.factory')->build($listClass);
+            $list = self::getModelFactory()->build($listClass);
             $list->setValues($config);
             $list->load();
 
@@ -371,7 +371,7 @@ class Asset extends Element\AbstractElement
     {
         if (is_array($config)) {
             $listClass = 'Pimcore\\Model\\Asset\\Listing';
-            $list = \Pimcore::getContainer()->get('pimcore.model.factory')->build($listClass);
+            $list = self::getModelFactory()->build($listClass);
             $list->setValues($config);
             $count = $list->getTotalCount();
 
@@ -693,7 +693,7 @@ class Asset extends Element\AbstractElement
 
                 // not only check if the type is set but also if the implementation can be found
                 $className = 'Pimcore\\Model\\Asset\\' . ucfirst($this->getType());
-                if (!\Pimcore::getContainer()->get('pimcore.model.factory')->supports($className)) {
+                if (!self::getModelFactory()->supports($className)) {
                     throw new \Exception('unable to resolve asset implementation with type: ' . $this->getType());
                 }
             }
