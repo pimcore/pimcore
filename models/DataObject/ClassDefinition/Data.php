@@ -1039,9 +1039,13 @@ abstract class Data
         $key = $this->getName();
         if ($class instanceof DataObject\Fieldcollection\Definition) {
             $classname = 'FieldCollection\\Data\\' . ucfirst($class->getKey());
+            $containerGetter = 'getDefinition';
         } else {
             $classname = $class->getName();
+            $containerGetter = 'getClass';
         }
+
+
 
         $code = '/**' . "\n";
         $code .= '* Set ' . str_replace(['/**', '*/', '//'], '', $this->getName()) . ' - ' . str_replace(['/**', '*/', '//'], '', $this->getTitle()) . "\n";
@@ -1049,7 +1053,9 @@ abstract class Data
         $code .= '* @return \\Pimcore\\Model\\DataObject\\' . ucfirst($classname) . "\n";
         $code .= '*/' . "\n";
         $code .= 'public function set' . ucfirst($key) . ' (' . '$' . $key . ', $language = null) {' . "\n";
-        $code .= "\t" . '$fd = $this->getClass()->getFieldDefinition("localizedfields")->getFieldDefinition("' . $key . '");' . "\n";
+        if ($this->supportsDirtyDetection()) {
+            $code .= "\t" . '$fd = $this->' . $containerGetter . '()->getFieldDefinition("localizedfields")->getFieldDefinition("' . $key . '");' . "\n";
+        }
 
         if ($this instanceof DataObject\ClassDefinition\Data\EncryptedField) {
             if ($this->getDelegate()) {
