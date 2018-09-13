@@ -1049,7 +1049,7 @@ abstract class Data
         $code .= '* @return \\Pimcore\\Model\\DataObject\\' . ucfirst($classname) . "\n";
         $code .= '*/' . "\n";
         $code .= 'public function set' . ucfirst($key) . ' (' . '$' . $key . ', $language = null) {' . "\n";
-        $code .= "\t" . '$fd = $this->getClass()->getFieldDefinition("' . $key . '");' . "\n";
+        $code .= "\t" . '$fd = $this->getClass()->getFieldDefinition("localizedfields")->getFieldDefinition("' . $key . '");' . "\n";
 
         if ($this instanceof DataObject\ClassDefinition\Data\EncryptedField) {
             if ($this->getDelegate()) {
