@@ -304,8 +304,6 @@ class AbstractObject extends Model\Element\AbstractElement
                 \Pimcore\Cache\Runtime::set($cacheKey, $object);
             }
         } catch (\Exception $e) {
-            Logger::warning($e->getMessage());
-
             return null;
         }
 
@@ -332,10 +330,8 @@ class AbstractObject extends Model\Element\AbstractElement
 
             return self::getById($object->getId(), $force);
         } catch (\Exception $e) {
-            Logger::warning($e->getMessage());
+            return null;
         }
-
-        return null;
     }
 
     /**

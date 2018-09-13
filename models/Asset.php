@@ -220,10 +220,8 @@ class Asset extends Element\AbstractElement
 
             return self::getById($asset->getId(), $force);
         } catch (\Exception $e) {
-            Logger::warning($e->getMessage());
+            return null;
         }
-
-        return null;
     }
 
     /**
@@ -268,8 +266,6 @@ class Asset extends Element\AbstractElement
                 \Pimcore\Cache\Runtime::set($cacheKey, $asset);
             }
         } catch (\Exception $e) {
-            Logger::warning($e->getMessage());
-
             return null;
         }
 

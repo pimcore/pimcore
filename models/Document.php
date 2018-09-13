@@ -227,7 +227,6 @@ class Document extends Element\AbstractElement
             $doc = self::getById($helperDoc->getId(), $force);
             \Pimcore\Cache\Runtime::set($cacheKey, $doc);
         } catch (\Exception $e) {
-            Logger::debug($e->getMessage());
             $doc = null;
         }
 
@@ -285,8 +284,6 @@ class Document extends Element\AbstractElement
                 \Pimcore\Cache\Runtime::set($cacheKey, $document);
             }
         } catch (\Exception $e) {
-            Logger::warning($e->getMessage());
-
             return null;
         }
 
