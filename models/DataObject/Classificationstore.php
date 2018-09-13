@@ -23,7 +23,7 @@ use Pimcore\Tool;
 /**
  * @method \Pimcore\Model\DataObject\Classificationstore\Dao getDao()
  */
-class Classificationstore extends Model\AbstractModel
+class Classificationstore extends Model\AbstractModel implements DirtyIndicatorInterface
 {
 
     use Model\DataObject\Traits\DirtyIndicatorTrait;

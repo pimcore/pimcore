@@ -22,7 +22,7 @@ use Pimcore\Model;
 /**
  * @method \Pimcore\Model\DataObject\Fieldcollection\Dao getDao()
  */
-class Fieldcollection extends Model\AbstractModel implements \Iterator
+class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyIndicatorInterface
 {
 
     use Model\DataObject\Traits\DirtyIndicatorTrait;

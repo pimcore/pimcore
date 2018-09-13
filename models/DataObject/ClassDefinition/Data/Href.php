@@ -737,7 +737,7 @@ class Href extends Model\DataObject\ClassDefinition\Data\Relations\AbstractRelat
      * @param $value2 Element\ElementInterface
      * @return bool
      */
-    public static function isEqual($value1, $value2) {
+    public function isEqual($value1, $value2) {
         $value1 = $value1 ? $value1->getType() . $value1->getId() : null;
         $value2 = $value2 ? $value2->getType() . $value2->getId() : null;
 

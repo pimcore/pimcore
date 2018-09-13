@@ -313,4 +313,5 @@ abstract class AbstractModel
         $this->$var = $value;
         return $this;
     }
+
 }

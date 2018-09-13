@@ -46,8 +46,10 @@ trait DirtyIndicatorTrait
     }
 
     /**
+     * marks the given field as dirty
      * @param $field
-     * @param $dirty
+     * @param bool $dirty
+     * @return mixed
      */
     public function markFieldDirty($field, $dirty = true) {
 

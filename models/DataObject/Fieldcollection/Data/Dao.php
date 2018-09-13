@@ -45,7 +45,7 @@ class Dao extends Model\Dao\AbstractDao
 
                 if (method_exists($fd, 'save')) {
 
-                    if ($fd->supportsDirtyRelationDetection() && !$saveRelationalData) {
+                    if ($fd->supportsDirtyDetection() && !$saveRelationalData) {
                         continue;
                     }
 

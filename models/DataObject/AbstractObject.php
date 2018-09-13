@@ -1349,9 +1349,23 @@ class AbstractObject extends Model\Element\AbstractElement
     /**
      * @param bool $disableDirtyDetection
      */
-    public static function disableDirtyDetection(bool $disableDirtyDetection)
+    public static function setDisableDirtyDetection(bool $disableDirtyDetection)
     {
         self::$disableDirtyDetection = $disableDirtyDetection;
+    }
+
+    /**
+     * Disables the dirty detection
+     */
+    public static function disableDirtyDetection() {
+        self::setDisableDirtyDetection(true);
+    }
+
+    /**
+     * Enables the dirty detection
+     */
+    public static function enableDirtyDetection() {
+        self::setDisableDirtyDetection(false);
     }
 
 

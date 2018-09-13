@@ -729,7 +729,7 @@ class Localizedfields extends Model\DataObject\ClassDefinition\Data
             }
             $lf->setObject($object);
 
-            $container->setLocalizedfields($lf);
+            $container->setObjectVar('localizedfields', $lf);
         }
 
         return $container->getObjectVar('localizedfields');
@@ -1406,5 +1406,12 @@ class Localizedfields extends Model\DataObject\ClassDefinition\Data
         }
 
         return $lf;
+    }
+
+    /**
+     * @return bool
+     */
+    public function supportsDirtyDetection() {
+        return true;
     }
 }

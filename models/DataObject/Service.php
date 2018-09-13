@@ -1758,12 +1758,17 @@ class Service extends Model\Element\Service
             /** @var $fd Model\DataObject\ClassDefinition\Data */
             foreach ($fieldDefinitions as $fd) {
                 $value = $container->getObjectVar($fd->getName());
-                if (method_exists($value, 'resetDirtyMap')) {
-                    $value->resetDirtyMap();
-                    if (method_exists($value, 'getFieldDefinitions')) {
-                        self::doResetDirtyMap($value, $fieldDefinitions[$fd->getName()]);
-                    }
+                if (!method_exists($value, 'resetDirtyMap')) {
+                    continue;
                 }
+
+                $value->resetDirtyMap();
+
+                if (!method_exists($value, 'getFieldDefinitions')) {
+                    continue;
+                }
+
+                self::doResetDirtyMap($value, $fieldDefinitions[$fd->getName()]);
             }
         }
     }

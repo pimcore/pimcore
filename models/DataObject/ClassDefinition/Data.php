@@ -781,6 +781,8 @@ abstract class Data
         $code .= '* @return ' . $returnType . "\n";
         $code .= '*/' . "\n";
         $code .= 'public function set' . ucfirst($key) . ' (' . '$' . $key . ") {\n";
+        $code .= "\t" . '$fd = $this->getClass()->getFieldDefinition("' . $key . '");' . "\n";
+
 
         if ($this instanceof DataObject\ClassDefinition\Data\EncryptedField) {
             if ($this->getDelegate()) {
@@ -792,16 +794,16 @@ abstract class Data
             }
         }
 
-        if ($this->supportsDirtyRelationDetection()) {
+        if ($this->supportsDirtyDetection()) {
             $code .= "\t" . '$currentData = $this->get' . ucfirst($this->getName()) . '();' . "\n";
-            $code .= "\t" . '$isEqual = \\' . get_class($this) . '::isEqual($currentData, $' . $key . ');' . "\n";
+            $code .= "\t" . '$isEqual = $fd->isEqual($currentData, $' . $key . ');' . "\n";
             $code .= "\t" . 'if (!$isEqual) {' . "\n";
             $code .= "\t\t" . '$this->markFieldDirty("' . $key . '", true);' . "\n";
             $code .= "\t" . '}' . "\n";
         }
 
         if (method_exists($this, 'preSetData')) {
-            $code .= "\t" . '$this->' . $key . ' = ' . '$this->getClass()->getFieldDefinition("' . $key . '")->preSetData($this, $' . $key . ');' . "\n";
+            $code .= "\t" . '$this->' . $key . ' = ' . '$fd->preSetData($this, $' . $key . ');' . "\n";
         } else {
             $code .= "\t" . '$this->' . $key . ' = ' . '$' . $key . ";\n";
         }
@@ -869,6 +871,7 @@ abstract class Data
         $code .= '* @return \\Pimcore\\Model\\DataObject\\Objectbrick\\Data\\' . ucfirst($brickClass->getKey()) . "\n";
         $code .= '*/' . "\n";
         $code .= 'public function set' . ucfirst($key) . ' (' . '$' . $key . ") {\n";
+        $code .= "\t" . '$fd = $this->getDefinition()->getFieldDefinition("' . $key . '");' . "\n";
 
         if ($this instanceof DataObject\ClassDefinition\Data\EncryptedField) {
             if ($this->getDelegate()) {
@@ -880,16 +883,16 @@ abstract class Data
             }
         }
 
-        if ($this->supportsDirtyRelationDetection()) {
+        if ($this->supportsDirtyDetection()) {
             $code .= "\t" . '$currentData = $this->get' . ucfirst($this->getName()) . '();' . "\n";
-            $code .= "\t" . '$isEqual = \\' . get_class($this) . '::isEqual($currentData, $' . $key . ');' . "\n";
+            $code .= "\t" . '$isEqual = $fd->isEqual($currentData, $' . $key . ');' . "\n";
             $code .= "\t" . 'if (!$isEqual) {' . "\n";
             $code .= "\t\t" . '$this->markFieldDirty("' . $key . '", true);' . "\n";
             $code .= "\t" . '}' . "\n";
         }
 
         if (method_exists($this, 'preSetData')) {
-            $code .= "\t" . '$this->' . $key . ' = ' . '$this->getDefinition()->getFieldDefinition("' . $key . '")->preSetData($this, $' . $key . ');' . "\n";
+            $code .= "\t" . '$this->' . $key . ' = ' . '$fd->preSetData($this, $' . $key . ');' . "\n";
         } else {
             $code .= "\t" . '$this->' . $key . ' = ' . '$' . $key . ";\n";
         }
@@ -954,6 +957,7 @@ abstract class Data
         $code .= '* @return \\Pimcore\\Model\\DataObject\\' . ucfirst($fieldcollectionDefinition->getKey()) . "\n";
         $code .= '*/' . "\n";
         $code .= 'public function set' . ucfirst($key) . ' (' . '$' . $key . ") {\n";
+        $code .= "\t" . '$fd = $this->getDefinition()->getFieldDefinition("' . $key . '");' . "\n";
 
         if ($this instanceof DataObject\ClassDefinition\Data\EncryptedField) {
             if ($this->getDelegate()) {
@@ -965,16 +969,16 @@ abstract class Data
             }
         }
 
-        if ($this->supportsDirtyRelationDetection()) {
+        if ($this->supportsDirtyDetection()) {
             $code .= "\t" . '$currentData = $this->get' . ucfirst($this->getName()) . '();' . "\n";
-            $code .= "\t" . '$isEqual = \\' . get_class($this) . '::isEqual($currentData, $' . $key . ');' . "\n";
+            $code .= "\t" . '$isEqual = $fd->isEqual($currentData, $' . $key . ');' . "\n";
             $code .= "\t" . 'if (!$isEqual) {' . "\n";
             $code .= "\t\t" . '$this->markFieldDirty("' . $key . '", true);' . "\n";
             $code .= "\t" . '}' . "\n";
         }
 
         if (method_exists($this, 'preSetData')) {
-            $code .= "\t" . '$this->' . $key . ' = ' . '$this->getDefinition()->getFieldDefinition("' . $key . '")->preSetData($this, $' . $key . ');' . "\n";
+            $code .= "\t" . '$this->' . $key . ' = ' . '$fd->preSetData($this, $' . $key . ');' . "\n";
         } else {
             $code .= "\t" . '$this->' . $key . ' = ' . '$' . $key . ";\n";
         }
@@ -1045,6 +1049,7 @@ abstract class Data
         $code .= '* @return \\Pimcore\\Model\\DataObject\\' . ucfirst($classname) . "\n";
         $code .= '*/' . "\n";
         $code .= 'public function set' . ucfirst($key) . ' (' . '$' . $key . ', $language = null) {' . "\n";
+        $code .= "\t" . '$fd = $this->getClass()->getFieldDefinition("' . $key . '");' . "\n";
 
         if ($this instanceof DataObject\ClassDefinition\Data\EncryptedField) {
             if ($this->getDelegate()) {
@@ -1056,13 +1061,11 @@ abstract class Data
             }
         }
 
-        if ($this->supportsDirtyRelationDetection()) {
+        if ($this->supportsDirtyDetection()) {
             $code .= "\t" . '$currentData = $this->get' . ucfirst($this->getName()) . '();' . "\n";
-            $code .= "\t" . '$isEqual = \\' . get_class($this) . '::isEqual($currentData, $' . $key . ');' . "\n";
-//            $code .= "\t" . 'if (!$isEqual) {' . "\n";
-//            $code .= "\t\t" . '$this->markFieldDirty("' . $key . '", true);' . "\n";
-//            $code .= "\t\t" . '$this->markFieldDirty("' . 'localizedfields' . '", true);' . "\n";
-//            $code .= "\t" . '}' . "\n";
+            $code .= "\t" . '$isEqual = $fd->isEqual($currentData, $' . $key . ');' . "\n";
+        } else {
+            $code .= "\t" . '$isEqual = false;' . "\n";
         }
 
 
@@ -1433,7 +1436,16 @@ abstract class Data
     /**
      * @return bool
      */
-    public function supportsDirtyRelationDetection() {
+    public function supportsDirtyDetection() {
+        return false;
+    }
+
+    /**
+     * @param $oldValue
+     * @param $newValue
+     * @return bool
+     */
+    public function isEqual($oldValue, $newValue) {
         return false;
     }
 

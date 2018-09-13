@@ -275,16 +275,15 @@ abstract class AbstractRelations extends Model\DataObject\ClassDefinition\Data
     {
         $context = $params["context"];
 
-
-        if (!DataObject\AbstractObject::isDirtyDetectionDisabled() && method_exists($object, 'isFieldDirty')) {
+        if (!DataObject\AbstractObject::isDirtyDetectionDisabled() && $object instanceof DataObject\DirtyIndicatorInterface) {
             if ($object instanceof DataObject\Localizedfield) {
-                if ($context['containerType'] != 'fieldcollection' && method_exists($object->getObject(), 'isFieldDirty')) {
+                if ($context['containerType'] != 'fieldcollection' && $object->getObject() instanceof DataObject\DirtyIndicatorInterface) {
                     if (!$object->hasDirtyFields()) {
                         return;
                     }
                 }
             } else {
-                if ($this->supportsDirtyRelationDetection()) {
+                if ($this->supportsDirtyDetection()) {
                     if (!$object->isFieldDirty($this->getName()))
                         return;
                 }
@@ -486,7 +485,7 @@ abstract class AbstractRelations extends Model\DataObject\ClassDefinition\Data
      * @param $array2
      * @return bool
      */
-    public static function isEqual($array1, $array2) {
+    public function isEqual($array1, $array2) {
         $array1 = array_filter(is_array($array1) ? $array1 : []);
         $array2 = array_filter(is_array($array2) ? $array2 : []);
         $count1 = count($array1);
@@ -515,7 +514,7 @@ abstract class AbstractRelations extends Model\DataObject\ClassDefinition\Data
     /**
      * @return bool
      */
-    public function supportsDirtyRelationDetection() {
+    public function supportsDirtyDetection() {
         return true;
     }
 }

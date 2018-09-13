@@ -121,50 +121,6 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     /**
-     * @param $object
-     * @return bool
-     */
-    public function isDirty($object) {
-        if (DataObject\AbstractObject::isDirtyDetectionDisabled()) {
-            return true;
-        }
-
-        $fieldDef = $object->getClass()->getFieldDefinition($this->model->getFieldname(), ['suppressEnrichment' => true]);
-
-        foreach ($fieldDef->getAllowedTypes() as $type) {
-            try {
-                /** @var $definition Definition */
-                $definition = DataObject\Fieldcollection\Definition::getByKey($type);
-
-                $className = 'Pimcore\\Model\\DataObject\\Fieldcollection\\Data\\' .ucfirst($definition->getKey());
-                $dummy = \Pimcore::getContainer()->get('pimcore.model.factory')->build($className);
-
-                if (!method_exists($dummy, 'isFieldDirty')) {
-                    return true;
-                }
-            } catch (\Exception $e) {
-                continue;
-            }
-        }
-
-        if ($this->model->hasDirtyFields()) {
-            return true;
-        }
-
-        $items = $this->model->getItems();
-        if (is_array($items)) {
-
-            foreach ($items as $item) {
-                if ($item->hasDirtyFields()) {
-                    return true;
-                }
-            }
-        }
-
-        return false;
-    }
-
-    /**
      * @param DataObject\Concrete $object
      * @param saveMode true if called from save method
      * @return whether an relational data should be inserted or not

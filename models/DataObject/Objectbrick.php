@@ -23,7 +23,7 @@ use Pimcore\Model;
 /**
  * @method \Pimcore\Model\DataObject\Objectbrick\Dao getDao()
  */
-class Objectbrick extends Model\AbstractModel
+class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
 {
 
     use Model\DataObject\Traits\DirtyIndicatorTrait;

@@ -65,12 +65,12 @@ class Dao extends Model\Dao\AbstractDao
             $where = 'src_id = ' . $object->getId() . " AND ownertype = 'objectbrick' AND ownername = '" . $this->model->getFieldname() . "' AND (position = '" . $this->model->getType() . "' OR position IS NULL OR position = '')";
             // if the model supports dirty detection then only delete the dirty fields
             // as a consequence, only do inserts only on dirty fields
-            if (!DataObject\AbstractObject::isDirtyDetectionDisabled() && method_exists($this->model, 'isFieldDirty')) {
+            if (!DataObject\AbstractObject::isDirtyDetectionDisabled() && $this->model instanceof  DataObject\DirtyIndicatorInterface) {
 
                 /* @var  $fd DataObject\ClassDefinition\Data */
                 foreach ($fieldDefinitions as $key => $fd) {
                     if ($fd instanceof DataObject\ClassDefinition\Data\Relations\AbstractRelations) {
-                        if ($fd->supportsDirtyRelationDetection()) {
+                        if ($fd->supportsDirtyDetection()) {
 
                             if ($this->model->isFieldDirty($key)) {
                                 $fieldNameList[] = $db->quote($key);
@@ -95,9 +95,9 @@ class Dao extends Model\Dao\AbstractDao
             $getter = 'get' . ucfirst($fd->getName());
 
             if (method_exists($fd, 'save')) {
-                if (!DataObject\AbstractObject::isDirtyDetectionDisabled() && method_exists($this->model, 'isFieldDirty')) {
+                if (!DataObject\AbstractObject::isDirtyDetectionDisabled() && $this->model instanceof DataObject\DirtyIndicatorInterface) {
                     // ownerNameList contains the dirty stuff
-                    if (!in_array("'" . $key . "'", $fieldNameList)) {
+                    if (!in_array($db->quote($key), $fieldNameList)) {
                         continue;
                     }
                 }

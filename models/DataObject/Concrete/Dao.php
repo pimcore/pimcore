@@ -183,8 +183,8 @@ class Dao extends Model\DataObject\AbstractObject\Dao
                 }
             }
 
-            if (!DataObject\AbstractObject::isDirtyDetectionDisabled() && $fd->supportsDirtyRelationDetection()) {
-                if (method_exists($this->model, 'isFieldDirty') && !$this->model->isFieldDirty($key)) {
+            if (!DataObject\AbstractObject::isDirtyDetectionDisabled() && $fd->supportsDirtyDetection()) {
+                if ($this->model instanceof DataObject\DirtyIndicatorInterface && !$this->model->isFieldDirty($key)) {
                     if (!in_array($key, $untouchable)) {
                         $untouchable[] = $key;
                     }
