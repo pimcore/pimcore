@@ -111,12 +111,15 @@ class ObjectsMetadata extends Model\DataObject\ClassDefinition\Data\Objects
                 $destination = DataObject::getById($object['dest_id']);
 
                 if ($source instanceof DataObject\Concrete && $destination instanceof DataObject\Concrete && $destination->getClassName() == $this->getAllowedClassId()) {
+                    /** @var  $metaData DataObject\Data\ObjectMetadata */
                     $metaData = \Pimcore::getContainer()->get('pimcore.model.factory')
                         ->build('Pimcore\Model\DataObject\Data\ObjectMetadata', [
                             'fieldname' => $this->getName(),
                             'columns' => $this->getColumnKeys(),
                             'object' => $destination
                         ]);
+
+                    $metaData->setOwner($object, $this->getName());
 
                     $ownertype = $object['ownertype'] ? $object['ownertype'] : '';
                     $ownername = $object['ownername'] ? $object['ownername'] : '';
@@ -226,6 +229,7 @@ class ObjectsMetadata extends Model\DataObject\ClassDefinition\Data\Objects
                             'columns' => $this->getColumnKeys(),
                             'object' => $o
                         ]);
+                    $metaData->setOwner($object, $this->getName());
 
                     foreach ($this->getColumns() as $c) {
                         $setter = 'set' . ucfirst($c['key']);
@@ -379,6 +383,7 @@ class ObjectsMetadata extends Model\DataObject\ClassDefinition\Data\Objects
                         'columns' => $this->getColumnKeys(),
                         'object' => $el
                     ]);
+                $metaObject->setOwner($object, $this->getName());
 
                 $value[] = $metaObject;
             }
@@ -507,6 +512,7 @@ class ObjectsMetadata extends Model\DataObject\ClassDefinition\Data\Objects
                             'columns' => $this->getColumnKeys(),
                             'object' => $dest
                         ]);
+                    $metaObject->setOwner($object, $this->getName());
 
                     foreach ($this->getColumns() as $c) {
                         $setter = 'set' . ucfirst($c['key']);
@@ -995,6 +1001,7 @@ class ObjectsMetadata extends Model\DataObject\ClassDefinition\Data\Objects
                     $data = $elementMetadata['data'];
 
                     $item = new DataObject\Data\ObjectMetadata($fieldname, $columns, $target);
+                    $item->setOwner($object, $this->getName());
                     $item->setData($data);
                     $result[] = $item;
                 }

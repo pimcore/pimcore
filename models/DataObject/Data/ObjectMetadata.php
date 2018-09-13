@@ -23,8 +23,10 @@ use Pimcore\Model\DataObject;
 /**
  * @method \Pimcore\Model\DataObject\Data\ObjectMetadata\Dao getDao()
  */
-class ObjectMetadata extends Model\AbstractModel
+class ObjectMetadata extends Model\AbstractModel implements DataObject\OwnerAwareFieldInterface
 {
+
+    use DataObject\Traits\OwnerAwareFieldTrait;
     /**
      * @var DataObject\Concrete
      */
@@ -83,6 +85,7 @@ class ObjectMetadata extends Model\AbstractModel
             $key = strtolower(substr($name, 3, strlen($name) - 3));
             if (in_array($key, $this->columns)) {
                 $this->data[$key] = $arguments[0];
+                $this->markMeDirty();
             } else {
                 throw new \Exception("Requested data $key not available");
             }
@@ -123,7 +126,7 @@ class ObjectMetadata extends Model\AbstractModel
     public function setFieldname($fieldname)
     {
         $this->fieldname = $fieldname;
-
+        $this->markMeDirty();
         return $this;
     }
 
@@ -143,7 +146,7 @@ class ObjectMetadata extends Model\AbstractModel
     public function setObject($object)
     {
         $this->object = $object;
-
+        $this->markMeDirty();
         return $this;
     }
 
@@ -164,6 +167,7 @@ class ObjectMetadata extends Model\AbstractModel
      */
     public function setElement($element)
     {
+        $this->markMeDirty();
         return $this->setObject($element);
     }
 
@@ -183,7 +187,7 @@ class ObjectMetadata extends Model\AbstractModel
     public function setColumns($columns)
     {
         $this->columns = $columns;
-
+        $this->markMeDirty();
         return $this;
     }
 
@@ -209,6 +213,7 @@ class ObjectMetadata extends Model\AbstractModel
     public function setData(array $data): void
     {
         $this->data = $data;
+        $this->markMeDirty();
     }
 
 

@@ -373,6 +373,9 @@ abstract class AbstractRelations extends Model\DataObject\ClassDefinition\Data
         });
 
         $data = $this->getDataFromResource($relations, $object, $params);
+        if ($object instanceof DataObject\DirtyIndicatorInterface) {
+            $object->markFieldDirty($this->getName(), false);
+        }
 
         return $data;
     }

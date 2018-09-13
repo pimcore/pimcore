@@ -141,6 +141,8 @@ class MultihrefMetadata extends Model\DataObject\ClassDefinition\Data\Multihref
                             ]
                         );
 
+                    $metaData->setOwner($object, $this->getName());
+
                     $metaData->setElementTypeAndId($element['type'], $element['dest_id']);
 
                     $ownertype = $element['ownertype'] ? $element['ownertype'] : '';
@@ -354,6 +356,8 @@ class MultihrefMetadata extends Model\DataObject\ClassDefinition\Data\Multihref
                             ]
                         );
 
+                    $metaData->setOwner($object, $this->getName());
+
                     foreach ($this->getColumns() as $columnConfig) {
                         $key = $columnConfig['key'];
                         $setter = 'set' . ucfirst($key);
@@ -513,6 +517,7 @@ class MultihrefMetadata extends Model\DataObject\ClassDefinition\Data\Multihref
                         ]
                     );
 
+                $metaObject->setOwner($object, $this->getName());
                 $value[] = $metaObject;
             }
         }
@@ -1035,6 +1040,7 @@ class MultihrefMetadata extends Model\DataObject\ClassDefinition\Data\Multihref
                     $data = $elementMetadata['data'];
 
                     $item = new DataObject\Data\ElementMetadata($fieldname, $columns, $element);
+                    $item->setOwner($object, $this->getName());
                     $item->setData($data);
                     $result[] = $item;
                 }
