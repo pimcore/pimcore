@@ -25,8 +25,9 @@ trait ElementWithMetadataComparisonTrait
      * @return bool
      */
     public function isEqual($array1, $array2) {
-        $count1 = count($array1);
-        $count2 = count($array2);
+        $count1 = is_array($array1) ? count($array1) : 0;
+        $count2 = is_array($array2) ? count($array2) : 0;
+        
         if ($count1 != $count2) {
             return false;
         }
