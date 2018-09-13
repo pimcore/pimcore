@@ -638,6 +638,7 @@ class ObjectsMetadata extends Model\DataObject\ClassDefinition\Data\Objects
                 $setter = 'set' . ucfirst($this->getName());
                 if (method_exists($object, $setter)) {
                     $object->setObjectVar($this->getName(), $data);
+                    $this->markLazyloadedFieldAsLoaded($object);
                 }
             }
         } elseif ($object instanceof DataObject\Localizedfield) {

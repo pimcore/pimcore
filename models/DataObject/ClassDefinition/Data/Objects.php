@@ -535,6 +535,7 @@ class Objects extends Model\DataObject\ClassDefinition\Data\Relations\AbstractRe
                 $setter = 'set' . ucfirst($this->getName());
                 if (method_exists($object, $setter)) {
                     $object->setObjectVar($this->getName(), $data);
+                    $this->markLazyloadedFieldAsLoaded($object);
                 }
             }
         } elseif ($object instanceof DataObject\Localizedfield) {
@@ -572,11 +573,7 @@ class Objects extends Model\DataObject\ClassDefinition\Data\Relations\AbstractRe
             $data = [];
         }
 
-        if ($object instanceof DataObject\Concrete) {
-            if ($this->getLazyLoading() and !in_array($this->getName(), $object->getO__loadedLazyFields())) {
-                $object->addO__loadedLazyField($this->getName());
-            }
-        }
+        $this->markLazyloadedFieldAsLoaded($object);
 
         return $data;
     }

@@ -1414,4 +1414,5 @@ class Localizedfields extends Model\DataObject\ClassDefinition\Data
     public function supportsDirtyDetection() {
         return true;
     }
+
 }

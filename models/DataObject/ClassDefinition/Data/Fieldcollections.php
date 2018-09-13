@@ -630,6 +630,7 @@ class Fieldcollections extends Model\DataObject\ClassDefinition\Data
             $setter = 'set' . ucfirst($this->getName());
             if (method_exists($object, $setter)) {
                 $object->$setter($data);
+                $this->markLazyloadedFieldAsLoaded($object);
             }
         }
 
@@ -645,9 +646,7 @@ class Fieldcollections extends Model\DataObject\ClassDefinition\Data
      */
     public function preSetData($object, $data, $params = [])
     {
-        if ($this->getLazyLoading() and !in_array($this->getName(), $object->getO__loadedLazyFields())) {
-            $object->addO__loadedLazyField($this->getName());
-        }
+        $this->markLazyloadedFieldAsLoaded($object);
 
         if ($data instanceof DataObject\Fieldcollection) {
             $data->setFieldname($this->getName());

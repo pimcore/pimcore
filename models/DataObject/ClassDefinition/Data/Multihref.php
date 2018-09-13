@@ -722,6 +722,7 @@ class Multihref extends Model\DataObject\ClassDefinition\Data\Relations\Abstract
                 $setter = 'set' . ucfirst($this->getName());
                 if (method_exists($object, $setter)) {
                     $object->setObjectVar($this->getName(), $data);
+                    $this->markLazyloadedFieldAsLoaded($object);
 
                     if (method_exists($object, "resetDirtyMap")) {
                         $object->resetDirtyMap($this->getName());
@@ -763,11 +764,7 @@ class Multihref extends Model\DataObject\ClassDefinition\Data\Relations\Abstract
             $data = [];
         }
 
-        if ($object instanceof DataObject\Concrete) {
-            if ($this->getLazyLoading() and !in_array($this->getName(), $object->getO__loadedLazyFields())) {
-                $object->addO__loadedLazyField($this->getName());
-            }
-        }
+        $this->markLazyloadedFieldAsLoaded($object);
 
         return $data;
     }
