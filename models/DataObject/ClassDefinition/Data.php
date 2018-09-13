@@ -1456,9 +1456,9 @@ abstract class Data
     }
 
     /**
-     * @param DataObject\Concrete $object
+     * @param $object
      */
-    public function markLazyloadedFieldAsLoaded(DataObject\Concrete $object) {
+    public function markLazyloadedFieldAsLoaded($object) {
         if ($object instanceof DataObject\Concrete) {
             if ($this->getLazyLoading() and !in_array($this->getName(), $object->getO__loadedLazyFields())) {
                 $object->addO__loadedLazyField($this->getName());
