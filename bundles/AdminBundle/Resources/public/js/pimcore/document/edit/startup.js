@@ -153,9 +153,15 @@ Ext.onReady(function () {
         }
 
         if (editWindow.lastScrollposition) {
-            if (editWindow.lastScrollposition.top > 100) {
+            if(typeof editWindow.lastScrollposition === 'string') {
+                var scrollToEl = document.querySelector(editWindow.lastScrollposition);
+                if(scrollToEl) {
+                    scrollToEl.scrollIntoView();
+                }
+            } else if (editWindow.lastScrollposition.top > 100) {
                 window.scrollTo(editWindow.lastScrollposition.left, editWindow.lastScrollposition.top);
             }
+            editWindow.lastScrollposition = null;
         }
 
         editablesReady = true;

@@ -148,7 +148,9 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
     protected function getEditmodeOptions(): array
     {
         $options = [
-            'id' => 'pimcore_editable_' . $this->getName(),
+            // we don't use : and . in IDs (although it's allowed in HTML spec)
+            // because they are used in CSS syntax and therefore can't be used in querySelector()
+            'id' => 'pimcore_editable_' . str_replace([':','.'], "_", $this->getName()),
             'name' => $this->getName(),
             'realName' => $this->getRealName(),
             'options' => $this->getOptions(),
