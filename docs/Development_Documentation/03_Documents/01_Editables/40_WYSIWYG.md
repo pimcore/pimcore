@@ -95,6 +95,26 @@ and add the file to your `plugin.xml`:
 </pluginDocumentEditmodeJsPaths-extjs6>
 ```
 
+Alternatively, you can simply create a plugin that directly modifies the CKeditor configuration file.
+To do so, create a new plugin via the Pimcore interface and add the following to the generated startup.js file inside the pimcoreReady handler.
+
+This sample configuration filters out span tags from the pasted content when pasted via Paste with Word functionality:
+
+```js
+// See documentation for allowing/disallowing tags, etc, @ https://ckeditor.com/docs/ckeditor4/latest/guide/dev_disallowed_content.html#how-to-allow-everything-except
+if (CKEDITOR) {
+    CKEDITOR.config.allowedContent = {
+        $1: {
+            elements: CKEDITOR.dtd,
+            attributes: true,
+            styles: true,
+            classes: true
+        }
+    };
+    CKEDITOR.config.disallowedContent = 'span';
+}
+```
+
 ##### CKEditor Configuration
 
 The default CKEditor configuration files can be found in pimcore/static/js/lib/ckeditor and pimcore/static6/js/lib/ckeditor as config.js.
