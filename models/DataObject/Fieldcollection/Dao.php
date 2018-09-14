@@ -130,8 +130,6 @@ class Dao extends Model\Dao\AbstractDao
         // empty or create all relevant tables
         $fieldDef = $object->getClass()->getFieldDefinition($this->model->getFieldname(), ['suppressEnrichment' => true]);
 
-        $excludeFields = [];
-
         foreach ($fieldDef->getAllowedTypes() as $type) {
             try {
                 /** @var $definition Definition */

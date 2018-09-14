@@ -45,7 +45,7 @@ class Dao extends Model\Dao\AbstractDao
 
                 if (method_exists($fd, 'save')) {
 
-                    if ($fd->supportsDirtyDetection() && !$saveRelationalData) {
+                    if (!$fd instanceof Model\DataObject\ClassDefinition\Data\Localizedfields && $fd->supportsDirtyDetection() && !$saveRelationalData) {
                         continue;
                     }
 
