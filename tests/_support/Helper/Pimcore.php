@@ -7,6 +7,7 @@ use Codeception\Lib\ModuleContainer;
 use Codeception\Module;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DriverManager;
+use Pimcore\Bundle\InstallBundle\Installer;
 use Pimcore\Cache;
 use Pimcore\Config;
 use Pimcore\Event\TestEvents;
@@ -199,11 +200,8 @@ class Pimcore extends Module\Symfony
 
         $this->connectDb($connection);
 
-        /** @var Setup|Setup\Dao $setup */
-        $setup = new Setup();
-        $setup->database();
-
-        $setup->contents([
+        $installer = $this->getContainer()->get(Installer::class);
+        $installer->setupDatabase([
             'username' => 'admin',
             'password' => microtime()
         ]);
