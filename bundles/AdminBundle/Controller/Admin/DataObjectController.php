@@ -464,9 +464,6 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                 $objectData['currentLayoutId'] = $currentLayoutId;
             }
 
-            $objectData = $this->filterLocalizedFields($object, $objectData);
-            DataObject\Service::enrichLayoutDefinition($objectData['layout'], $object);
-
             //Hook for modifying return value - e.g. for changing permissions based on object data
             //data need to wrapped into a container in order to pass parameter to event listeners by reference so that they can change the values
             $event = new GenericEvent($this, [
