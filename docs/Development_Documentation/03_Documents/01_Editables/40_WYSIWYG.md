@@ -80,6 +80,7 @@ There is also an additional way to specify the configuration by adding `customCo
 ```
 
 ##### Global Configuration
+
 You can add a Global Configuration for all WYSIWYG Editors for all documents by setting ```pimcore.document.tags.wysiwyg.defaultEditorConfig```
 
 For this purpose, you can create a plugin and add the configuration in the new created file `/plugins/MyPlugin/static/js/editmode.js` like this:
@@ -92,6 +93,55 @@ and add the file to your `plugin.xml`:
 <pluginDocumentEditmodeJsPaths-extjs6>
     <path>/MyPlugin/static/js/editmode.js</path>
 </pluginDocumentEditmodeJsPaths-extjs6>
+```
+
+Alternatively, you can simply create a plugin that directly modifies the CKeditor configuration file.
+To do so, create a new plugin via the Pimcore interface and add the following to the generated startup.js file inside the pimcoreReady handler.
+
+This sample configuration filters out span tags from the pasted content when pasted via Paste with Word functionality:
+
+```js
+// See documentation for allowing/disallowing tags, etc, @ https://ckeditor.com/docs/ckeditor4/latest/guide/dev_disallowed_content.html#how-to-allow-everything-except
+if (CKEDITOR) {
+    CKEDITOR.config.allowedContent = {
+        $1: {
+            elements: CKEDITOR.dtd,
+            attributes: true,
+            styles: true,
+            classes: true
+        }
+    };
+    CKEDITOR.config.disallowedContent = 'span';
+}
+```
+
+##### CKEditor Configuration
+
+The default CKEditor configuration files can be found in pimcore/static/js/lib/ckeditor and pimcore/static6/js/lib/ckeditor as config.js.
+
+This sample configuration filters out span tags from the pasted content when pasted via Paste with Word functionality:
+
+```js
+/**
+ * @license Copyright (c) 2003-2013, CKSource - Frederico Knabben. All rights reserved.
+ * For licensing, see LICENSE.html or http://ckeditor.com/license
+ */
+
+CKEDITOR.editorConfig = function( config ) {
+	// Define changes to default configuration here. For example:
+	// config.language = 'fr';
+	// config.uiColor = '#AADC6E';
+	// See documentation for allowing/disallowing tags, etc, @ https://ckeditor.com/docs/ckeditor4/latest/guide/dev_disallowed_content.html#how-to-allow-everything-except
+	config.allowedContent = {
+		$1: {
+			elements: CKEDITOR.dtd,
+			attributes: true,
+			styles: true,
+			classes: true
+		}
+	};
+	config.disallowedContent = 'span';
+};
 ```
 
 ### Text Output in Editmode
