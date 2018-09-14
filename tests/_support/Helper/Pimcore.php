@@ -200,7 +200,7 @@ class Pimcore extends Module\Symfony
 
         $this->connectDb($connection);
 
-        $installer = $this->getContainer()->get(Installer::class);
+        $installer = new Installer($this->getContainer()->get('monolog.logger.pimcore'), $this->getContainer()->get('event_dispatcher'));
         $installer->setupDatabase([
             'username' => 'admin',
             'password' => microtime()

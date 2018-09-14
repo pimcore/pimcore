@@ -443,7 +443,7 @@ class Installer
 
     public function setupDatabase(array $userCredentials, array $errors = []): array
     {
-        $mysqlInstallScript = file_get_contents(__DIR__ . '/../../../bundles/InstallBundle/Resources/install.sql');
+        $mysqlInstallScript = file_get_contents(__DIR__ . '/Resources/install.sql');
 
         // remove comments in SQL script
         $mysqlInstallScript = preg_replace("/\s*(?!<\")\/\*[^\*]+\*\/(?!\")\s*/", '', $mysqlInstallScript);
