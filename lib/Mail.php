@@ -571,9 +571,8 @@ class Mail extends \Swift_Message
         }
         $bodyTextRendered = $this->getBodyTextRendered();
         if ($bodyTextRendered) {
-            //create mime part for plain text body
-            $this->bodyTextMimePart = \Swift_MimePart::newInstance($bodyTextRendered, 'text/plain');
-            $this->attach($this->bodyTextMimePart);
+            //add mime part for plain text body
+            $this->addPart($bodyTextRendered, 'text/plain');
         }
 
         return $this->sendWithoutRendering($mailer);
