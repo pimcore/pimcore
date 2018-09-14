@@ -741,8 +741,9 @@ class Asset extends Element\AbstractElement
         }
 
         // save dependencies
-        $d = $this->getDependencies();
-        $d->clean();
+        $d = new Dependency();
+        $d->setSourceType("asset");
+        $d->setSourceId($this->getId());
 
         foreach ($this->resolveDependencies() as $requirement) {
             if ($requirement['id'] == $this->getId() && $requirement['type'] == 'asset') {

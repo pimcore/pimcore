@@ -782,8 +782,10 @@ class AbstractObject extends Model\Element\AbstractElement
         }
 
         // save dependencies
-        $d = $this->getDependencies();
-        $d->clean();
+        $d = new Model\Dependency();
+        $d->setSourceType("object");
+        $d->setSourceId($this->getId());
+
 
         foreach ($this->resolveDependencies() as $requirement) {
             if ($requirement['id'] == $this->getId() && $requirement['type'] == 'object') {
