@@ -421,7 +421,7 @@ class Localizedfield extends Model\AbstractModel implements DirtyIndicatorInterf
      */
     public function __sleep()
     {
-        return ['items', 'context', 'objectId', 'o_dirtyFields'];
+        return ['items', 'context', 'objectId'];
     }
 
     /**
