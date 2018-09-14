@@ -797,7 +797,6 @@ pimcore.object.tags.multihrefMetadata = Class.create(pimcore.object.tags.abstrac
                 var data = Ext.decode(res.response.responseText);
                 if(data["id"]) {
                     var toBeRequested = new Ext.util.Collection();
-
                     toBeRequested.add(this.store.add({
                         id: data["id"],
                         path: data["fullpath"],
