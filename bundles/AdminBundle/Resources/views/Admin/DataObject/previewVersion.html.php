@@ -184,13 +184,13 @@ $fields = $this->object->getClass()->getFieldDefinitions();
             if (!is_null($fieldItems) && count($fieldItems)) {
 
                 foreach ($fieldItems as $fkey => $fieldItem) {
-                    $fieldKeys = $fieldDefinitions[$fieldItem->type]->getFieldDefinitions();
+                    $fieldKeys = $fieldDefinitions[$fieldItem->getType()]->getFieldDefinitions();
                     foreach ($fieldKeys as $fieldKey) {
 
 
                         $value = $fieldItem->{"get" . ucfirst($fieldKey->name)}();  ?>
                         <tr<?php if ($c % 2) { ?> class="odd"<?php } ?>>
-                            <td><?= ucfirst($fieldItem->type) . " - " . $fieldKey->title ?> (<?= $language; ?>)</td>
+                            <td><?= ucfirst($fieldItem->getType()) . " - " . $fieldKey->title ?> (<?= $language; ?>)</td>
                             <td><?= $fieldKey->name ?></td>
                             <td><?= $fieldKey->getVersionPreview($value) ?></td>
                         </tr>

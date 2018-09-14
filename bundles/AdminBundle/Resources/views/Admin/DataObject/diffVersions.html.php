@@ -283,11 +283,11 @@ $fields = $this->object1->getClass()->getFieldDefinitions();
 
             if (!is_null($fieldItems1) && count($fieldItems1)) {
                 foreach ($fieldItems1 as $fkey1 => $fieldItem1) {
-                    $fieldKeys1 = $fieldDefinitions1[$fieldItem1->type]->getFieldDefinitions();
+                    $fieldKeys1 = $fieldDefinitions1[$fieldItem1->getType()]->getFieldDefinitions();
 
-                    if (isset($fieldItems2[$fkey1]) && $fieldItem1->type == $fieldItems2[$fkey1]->type) {
+                    if (isset($fieldItems2[$fkey1]) && $fieldItem1->getType() == $fieldItems2[$fkey1]->getType()) {
                         $ffkey2 = $fieldItems2[$fkey1];
-                        $fieldKeys2 = $fieldDefinitions2[$ffkey2->type]->getFieldDefinitions();
+                        $fieldKeys2 = $fieldDefinitions2[$ffkey2->getType()]->getFieldDefinitions();
                         unset($fieldItems2[$fkey1]);
                     }
                     foreach ($fieldKeys1 as $fkey => $fieldKey1) {
@@ -305,7 +305,7 @@ $fields = $this->object1->getClass()->getFieldDefinitions();
 
                         ?>
                         <tr<?php if ($c % 2) { ?> class="odd"<?php } ?>>
-                            <td><?= ucfirst($fieldItem1->type) . " - " . $fieldKey1->title ?></td>
+                            <td><?= ucfirst($fieldItem1->getType()) . " - " . $fieldKey1->title ?></td>
                             <td><?= $fieldKey1->name ?></td>
                             <?php if (!$this->isImportPreview || !$this->isNew) { ?>
                                 <td><?= $v1 ?></td>
@@ -320,7 +320,7 @@ $fields = $this->object1->getClass()->getFieldDefinitions();
 
             if (!is_null($fieldItems2) && count($fieldItems2)) {
                 foreach ($fieldItems2 as $fkey2 => $fieldItem2) {
-                    $fieldKeys2 = $fieldDefinitions2[$fieldItem2->type]->getFieldDefinitions();
+                    $fieldKeys2 = $fieldDefinitions2[$fieldItem2->getType()]->getFieldDefinitions();
                     foreach ($fieldKeys2 as $fkey => $fieldKey2) {
                         $v1 = null;
                         $v2 = null;
@@ -328,7 +328,7 @@ $fields = $this->object1->getClass()->getFieldDefinitions();
 
                         ?>
                         <tr<?php if ($c % 2) { ?> class="odd"<?php } ?>>
-                            <td><?= ucfirst($fieldItem2->type) . " - " . $fieldKey2->title ?></td>
+                            <td><?= ucfirst($fieldItem2->getType()) . " - " . $fieldKey2->title ?></td>
                             <td><?= $fieldKey2->name ?></td>
                             <?php if (!$this->isImportPreview || !$this->isNew) { ?>
                                 <td><?= $v1 ?></td>
