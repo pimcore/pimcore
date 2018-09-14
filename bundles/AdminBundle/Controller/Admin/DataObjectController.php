@@ -476,6 +476,9 @@ class DataObjectController extends ElementControllerBase implements EventedContr
             $eventDispatcher->dispatch(AdminEvents::OBJECT_GET_PRE_SEND_DATA, $event);
             $data = $event->getArgument('data');
 
+            $data = $this->filterLocalizedFields($object, $data);
+            DataObject\Service::enrichLayoutDefinition($data['layout'], $object);
+
             DataObject\Service::removeObjectFromSession($object->getId());
 
             return $this->adminJson($data);
