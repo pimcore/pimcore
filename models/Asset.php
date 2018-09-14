@@ -32,8 +32,6 @@ use Symfony\Component\EventDispatcher\GenericEvent;
  */
 class Asset extends Element\AbstractElement
 {
-    use Element\ChildsCompatibilityTrait;
-
     /**
      * possible types of an asset
      *
@@ -168,20 +166,6 @@ class Asset extends Element\AbstractElement
     protected $dependencies;
 
     /**
-     * Contains the child elements
-     *
-     * @var array
-     */
-    protected $childs;
-
-    /**
-     * Indicator if there are childs
-     *
-     * @var bool
-     */
-    protected $hasChilds;
-
-    /**
      * Contains a list of sibling documents
      *
      * @var array
@@ -236,10 +220,8 @@ class Asset extends Element\AbstractElement
 
             return self::getById($asset->getId(), $force);
         } catch (\Exception $e) {
-            Logger::warning($e->getMessage());
+            return null;
         }
-
-        return null;
     }
 
     /**
@@ -274,7 +256,7 @@ class Asset extends Element\AbstractElement
 
                 $className = 'Pimcore\\Model\\Asset\\' . ucfirst($asset->getType());
 
-                $asset = \Pimcore::getContainer()->get('pimcore.model.factory')->build($className);
+                $asset = self::getModelFactory()->build($className);
                 \Pimcore\Cache\Runtime::set($cacheKey, $asset);
                 $asset->getDao()->getById($id);
                 $asset->__setDataVersionTimestamp($asset->getModificationDate());
@@ -284,8 +266,6 @@ class Asset extends Element\AbstractElement
                 \Pimcore\Cache\Runtime::set($cacheKey, $asset);
             }
         } catch (\Exception $e) {
-            Logger::warning($e->getMessage());
-
             return null;
         }
 
@@ -370,7 +350,7 @@ class Asset extends Element\AbstractElement
         if (is_array($config)) {
             $listClass = 'Pimcore\\Model\\Asset\\Listing';
 
-            $list = \Pimcore::getContainer()->get('pimcore.model.factory')->build($listClass);
+            $list = self::getModelFactory()->build($listClass);
             $list->setValues($config);
             $list->load();
 
@@ -387,7 +367,7 @@ class Asset extends Element\AbstractElement
     {
         if (is_array($config)) {
             $listClass = 'Pimcore\\Model\\Asset\\Listing';
-            $list = \Pimcore::getContainer()->get('pimcore.model.factory')->build($listClass);
+            $list = self::getModelFactory()->build($listClass);
             $list->setValues($config);
             $count = $list->getTotalCount();
 
@@ -709,7 +689,7 @@ class Asset extends Element\AbstractElement
 
                 // not only check if the type is set but also if the implementation can be found
                 $className = 'Pimcore\\Model\\Asset\\' . ucfirst($this->getType());
-                if (!\Pimcore::getContainer()->get('pimcore.model.factory')->supports($className)) {
+                if (!self::getModelFactory()->supports($className)) {
                     throw new \Exception('unable to resolve asset implementation with type: ' . $this->getType());
                 }
             }
@@ -811,14 +791,7 @@ class Asset extends Element\AbstractElement
         if (Config::getSystemConfig()->assets->versions->steps
             || Config::getSystemConfig()->assets->versions->days
             || $setModificationDate) {
-            $version = new Version();
-            $version->setCid($this->getId());
-            $version->setCtype('asset');
-            $version->setDate($this->getModificationDate());
-            $version->setUserId($this->getUserModification());
-            $version->setData($this);
-            $version->setNote($versionNote);
-            $version->save();
+            $version = $this->doSaveVersion($versionNote);
         }
 
         // hook should be also called if "save only new version" is selected
@@ -872,43 +845,6 @@ class Asset extends Element\AbstractElement
     }
 
     /**
-     * @return array
-     */
-    public function getChildren()
-    {
-        if ($this->childs === null) {
-            $list = new Asset\Listing();
-            $list->setCondition('parentId = ?', $this->getId());
-            $list->setOrderKey('filename');
-            $list->setOrder('asc');
-
-            $this->childs = $list->load();
-        }
-
-        return $this->childs;
-    }
-
-    /**
-     * @return bool
-     */
-    public function hasChildren()
-    {
-        if ($this->getType() == 'folder') {
-            if (is_bool($this->hasChilds)) {
-                if (($this->hasChilds and empty($this->childs)) or (!$this->hasChilds and !empty($this->childs))) {
-                    return $this->getDao()->hasChildren();
-                } else {
-                    return $this->hasChilds;
-                }
-            }
-
-            return $this->getDao()->hasChildren();
-        }
-
-        return false;
-    }
-
-    /**
      * Get a list of the sibling assets
      *
      * @return array
@@ -944,6 +880,14 @@ class Asset extends Element\AbstractElement
         }
 
         return $this->getDao()->hasSiblings();
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasChildren()
+    {
+        return false;
     }
 
     /**

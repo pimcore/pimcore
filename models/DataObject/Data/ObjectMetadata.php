@@ -216,8 +216,6 @@ class ObjectMetadata extends Model\AbstractModel implements DataObject\OwnerAwar
         $this->markMeDirty();
     }
 
-
-
     /**
      * @return mixed
      */

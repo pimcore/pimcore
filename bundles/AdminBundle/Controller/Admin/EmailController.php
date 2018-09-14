@@ -221,7 +221,7 @@ class EmailController extends DocumentControllerBase
 
         if (is_array($data)) {
             foreach ($data as $entry) {
-                $tmp = (array)get_object_vars($entry);
+                $tmp = $entry->getObjectVars();
                 unset($tmp['bodyHtml']);
                 unset($tmp['bodyText']);
                 $jsonData[] = $tmp;

@@ -1355,11 +1355,9 @@ class DocumentController extends ElementControllerBase implements EventedControl
             // overwrite internal store to avoid "duplicate full path" error
             \Pimcore\Cache\Runtime::set('document_' . $document->getId(), $new);
 
-            $props = get_object_vars($document);
+            $props = $document->getObjectVars();
             foreach ($props as $name => $value) {
-                if (property_exists($new, $name)) {
-                    $new->$name = $value;
-                }
+                $new->setValue($name, $value);
             }
 
             if ($type == 'hardlink' || $type == 'folder') {

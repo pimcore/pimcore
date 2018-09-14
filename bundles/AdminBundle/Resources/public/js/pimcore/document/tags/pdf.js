@@ -54,6 +54,20 @@ pimcore.document.tags.pdf = Class.create(pimcore.document.tag, {
         this.element.render(id);
 
 
+        pimcore.helpers.registerAssetDnDSingleUpload(this.element.getEl().dom, this.options["uploadPath"], 'path', function (e) {
+            if (e['asset']['type'] === "document" && !this.inherited) {
+                this.resetData();
+                this.data.id = e['asset']['id'];
+
+                this.updateImage();
+                this.reload();
+
+                return true;
+            } else {
+                pimcore.helpers.showNotification(t("error"), t('unsupported_filetype'), "error");
+            }
+        }.bind(this));
+
         // insert image
         if (this.data) {
             this.updateImage();
@@ -65,17 +79,6 @@ pimcore.document.tags.pdf = Class.create(pimcore.document.tag, {
         var menu = new Ext.menu.Menu();
 
         if(this.data.id) {
-
-            menu.add(new Ext.menu.Item({
-                text: t('add_metadata'),
-                iconCls: "pimcore_icon_metadata",
-                handler: function (item) {
-                    item.parentMenu.destroy();
-
-                    this.openMetadataWindow();
-                }.bind(this)
-            }));
-
             menu.add(new Ext.menu.Item({
                 text: t('empty'),
                 iconCls: "pimcore_icon_delete",
@@ -281,105 +284,11 @@ pimcore.document.tags.pdf = Class.create(pimcore.document.tag, {
         this.updateCounter++;
     },
 
-    hasMetaData : function(page){
-        if(this.hotspotStore[page] || this.chapterStore[page] || this.textStore[page]){
-            return true;
-        }else{
-            return false;
-        }
-    },
-
-    openMetadataWindow: function() {
-        top.pimcore.helpers.editmode.openPdfEditPanel.bind(this)();
-    },
-
-    requestTextForCurrentPage : function(){
-        Ext.Ajax.request({
-            url: "/admin/asset/get-text",
-            params: {
-                id: this.data.id,
-                page : this.currentPage
-            },
-            success: function(response) {
-                var res = Ext.decode(response.responseText);
-                if(res.success){
-                    this.textArea.setValue(res.text);
-                }
-            }.bind(this)
-        });
-    },
-
-    saveCurrentPage: function () {
-        if(this.currentPage) {
-            var chapterText = this.metaDataWindow.getComponent("pageContainer").getEl().query('[name="chapter"]')[0].value;
-            if(!chapterText){
-                            delete this.chapterStore[this.currentPage];
-                        }else{
-                            this.chapterStore[this.currentPage] = chapterText;
-                        }
-
-            // var hotspots = this.metaDataWindow.getComponent("pageContainer").body.query(".pimcore_pdf_hotspot");
-            var hotspot = null;
-            var metaData = null;
-
-            var imgEl = Ext.get(this.metaDataWindow.getComponent("pageContainer").body.query("img")[0]);
-            var originalWidth = imgEl.getWidth();
-            var originalHeight = imgEl.getHeight();
-
-            var absoluteImgX = imgEl.dom.x;
-            var absoluteImgY = imgEl.dom.y;
-
-            this.hotspotStore[this.currentPage] = [];
-
-            for (var id in this.hotspotCmps) {
-                if (this.hotspotCmps.hasOwnProperty(id)) {
-                    var hotspotCmp = this.hotspotCmps[id];
-                    var hotspot = hotspotCmp.getEl();
-
-                    var dimensions = hotspot.getStyle(["top", "left", "width", "height"]);
-
-                    dimensions.left = intval(dimensions.left) - absoluteImgX;
-                    dimensions.top = intval(dimensions.top) - absoluteImgY;
-
-                    metaData = null;
-                    if (this.hotspotMetaData[hotspot.getAttribute("id")]) {
-                        metaData = this.hotspotMetaData[hotspot.getAttribute("id")];
-                    }
-
-                    this.hotspotStore[this.currentPage].push({
-                        top: intval(dimensions.top) * 100 / originalHeight,
-                        left: intval(dimensions.left) * 100 / originalWidth,
-                        width: intval(dimensions.width) * 100 / originalWidth,
-                        height: intval(dimensions.height) * 100 / originalHeight,
-                        data: metaData
-                    });
-                }
-            }
-
-            if(this.hotspotStore[this.currentPage].length < 1) {
-                delete this.hotspotStore[this.currentPage];
-            }
-
-            var metaData = this.hasMetaData(this.currentPage);
-
-            Ext.each(this.pagesContainer.body.query('.nr'), function(value) {
-                if(parseInt(jQuery(value).text()) == this.currentPage){
-                    metaData ? jQuery(value).addClass('hasMetadata') : jQuery(value).removeClass('hasMetadata');
-               }
-            }.bind(this));
-
-        }
-
-    },
-
-
     getValue: function () {
         return this.data;
-//        return value;
     },
 
     getType: function () {
-        return "pdf" +
-            "";
+        return "pdf";
     }
 });

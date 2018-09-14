@@ -296,10 +296,8 @@ class AbstractObject extends Model\Element\AbstractElement
                         $className = 'Pimcore\\Model\\DataObject\\' . ucfirst($typeInfo['o_className']);
                     }
 
-                    $object = \Pimcore::getContainer()->get('pimcore.model.factory')->build($className);
-
+                    $object = self::getModelFactory()->build($className);
                     \Pimcore\Cache\Runtime::set($cacheKey, $object);
-
                     $object->getDao()->getById($id);
 
                     Service::recursiveResetDirtyMap($object);
@@ -314,8 +312,6 @@ class AbstractObject extends Model\Element\AbstractElement
                 \Pimcore\Cache\Runtime::set($cacheKey, $object);
             }
         } catch (\Exception $e) {
-            Logger::warning($e->getMessage());
-
             return null;
         }
 
@@ -342,10 +338,8 @@ class AbstractObject extends Model\Element\AbstractElement
 
             return self::getById($object->getId(), $force);
         } catch (\Exception $e) {
-            Logger::warning($e->getMessage());
+            return null;
         }
-
-        return null;
     }
 
     /**
@@ -371,7 +365,7 @@ class AbstractObject extends Model\Element\AbstractElement
         if (is_array($config)) {
             if ($className) {
                 $listClass = $className . '\\Listing';
-                $list = \Pimcore::getContainer()->get('pimcore.model.factory')->build($listClass);
+                $list = self::getModelFactory()->build($listClass);
                 $list->setValues($config);
 
                 return $list;
@@ -402,7 +396,7 @@ class AbstractObject extends Model\Element\AbstractElement
         if (is_array($config)) {
             if ($className) {
                 $listClass = ucfirst($className) . '\\Listing';
-                $list = \Pimcore::getContainer()->get('pimcore.model.factory')->build($listClass);
+                $list = self::getModelFactory()->build($listClass);
             }
 
             $list->setValues($config);

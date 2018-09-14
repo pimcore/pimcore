@@ -148,7 +148,9 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
     protected function getEditmodeOptions(): array
     {
         $options = [
-            'id' => 'pimcore_editable_' . $this->getName(),
+            // we don't use : and . in IDs (although it's allowed in HTML spec)
+            // because they are used in CSS syntax and therefore can't be used in querySelector()
+            'id' => 'pimcore_editable_' . str_replace([':', '.'], '_', $this->getName()),
             'name' => $this->getName(),
             'realName' => $this->getRealName(),
             'options' => $this->getOptions(),
@@ -405,9 +407,14 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
         $this->realName = $realName;
     }
 
-    final public function setParentBlockNames(array $parentNames)
+    final public function setParentBlockNames($parentNames)
     {
-        $this->parentBlockNames = $parentNames;
+        if (is_array($parentNames)) {
+            // unfortunately we cannot make a type hint here, because of compatibility reasons
+            // old versions where 'parentBlockNames' was not excluded in __sleep() have still this property
+            // in the serialized data, and mostly with the value NULL, on restore this would lead to an error
+            $this->parentBlockNames = $parentNames;
+        }
     }
 
     final public function getParentBlockNames(): array
@@ -424,7 +431,7 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
     {
 
         // here the "normal" task of __sleep ;-)
-        $blockedVars = ['dao', 'controller', 'view', 'editmode', 'options'];
+        $blockedVars = ['dao', 'controller', 'view', 'editmode', 'options', 'parentBlockNames'];
         $vars = get_object_vars($this);
         foreach ($vars as $key => $value) {
             if (!in_array($key, $blockedVars)) {

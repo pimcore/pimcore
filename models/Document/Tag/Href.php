@@ -170,7 +170,7 @@ class Href extends Model\Document\Tag
      *
      * @return $this
      */
-    private function setElement()
+    protected function setElement()
     {
         if (!$this->element) {
             $this->element = Element\Service::getElementById($this->type, $this->id);

@@ -246,8 +246,6 @@ class ElementMetadata extends Model\AbstractModel implements DataObject\OwnerAwa
         $this->markMeDirty();
     }
 
-
-
     /**
      * @return mixed
      */

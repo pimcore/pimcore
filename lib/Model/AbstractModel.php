@@ -204,11 +204,13 @@ abstract class AbstractModel
     public function setValue($key, $value)
     {
         $method = 'set' . $key;
-        if (method_exists($this, $method)) {
-            $this->$method($value);
-        } elseif (method_exists($this, 'set' . preg_replace('/^o_/', '', $key))) {
-            // compatibility mode for objects (they do not have any set_oXyz() methods anymore)
-            $this->$method($value);
+        if (strcasecmp($method, __FUNCTION__) !== 0) {
+            if (method_exists($this, $method)) {
+                $this->$method($value);
+            } elseif (method_exists($this, 'set' . preg_replace('/^o_/', '', $key))) {
+                // compatibility mode for objects (they do not have any set_oXyz() methods anymore)
+                $this->$method($value);
+            }
         }
 
         return $this;
@@ -300,6 +302,14 @@ abstract class AbstractModel
     public function getObjectVar($var)
     {
         return $this->{$var};
+    }
+
+    /**
+     * @return Factory
+     */
+    protected static function getModelFactory()
+    {
+        return \Pimcore::getContainer()->get('pimcore.model.factory');
     }
 
     /**

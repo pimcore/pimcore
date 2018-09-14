@@ -99,7 +99,7 @@ class Version extends AbstractModel
      */
     public static function getById($id)
     {
-        $version = new self();
+        $version = self::getModelFactory()->build(Version::class);
         $version->getDao()->getById($id);
 
         return $version;

@@ -25,6 +25,7 @@ use Pimcore\Config;
 use Pimcore\Console\Style\PimcoreStyle;
 use Pimcore\Db\Connection;
 use Pimcore\Model\Tool\Setup;
+use Pimcore\Model\User;
 use Pimcore\Process\PartsBuilder;
 use Pimcore\Tool\AssetsInstaller;
 use Pimcore\Tool\Console;
@@ -296,10 +297,7 @@ class Installer
 
         $this->dispatchStepEvent('setup_database');
 
-        $setup = new Setup();
-        $setup->database();
-
-        $errors = $this->setupDatabase($setup, $userCredentials, $errors);
+        $errors = $this->setupDatabase($userCredentials, $errors);
 
         $this->dispatchStepEvent('install_assets');
         $this->installAssets($kernel);
@@ -443,21 +441,41 @@ class Installer
         $filesystem->remove($oldCacheDir);
     }
 
-    private function setupDatabase(Setup $setup, array $userCredentials, array $errors = []): array
+    public function setupDatabase(array $userCredentials, array $errors = []): array
     {
+        $mysqlInstallScript = file_get_contents(__DIR__ . '/Resources/install.sql');
+
+        // remove comments in SQL script
+        $mysqlInstallScript = preg_replace("/\s*(?!<\")\/\*[^\*]+\*\/(?!\")\s*/", '', $mysqlInstallScript);
+
+        // get every command as single part
+        $mysqlInstallScripts = explode(';', $mysqlInstallScript);
+
+        $db = \Pimcore\Db::get();
+        // execute every script with a separate call, otherwise this will end in a PDO_Exception "unbufferd queries, ..." seems to be a PDO bug after some googling
+        foreach ($mysqlInstallScripts as $m) {
+            $sql = trim($m);
+            if (strlen($sql) > 0) {
+                $sql .= ';';
+                $db->query($sql);
+            }
+        }
+
+
         $dataFiles = $this->getDataFiles();
 
         try {
             if (empty($dataFiles)) {
                 // empty installation
-                $setup->contents($userCredentials);
+                $this->insertDatabaseContents();
+                $this->createOrUpdateUser($userCredentials);
             } else {
                 foreach ($dataFiles as $dbFile) {
                     $this->logger->info('Importing DB file {dbFile}', ['dbFile' => $dbFile]);
-                    $setup->insertDump($dbFile);
+                    $this->insertDatabaseDump($dbFile);
                 }
 
-                $setup->createOrUpdateUser($userCredentials);
+                $this->createOrUpdateUser($userCredentials);
             }
         } catch (\Exception $e) {
             $this->logger->error($e);
@@ -472,5 +490,171 @@ class Installer
         $files = glob(PIMCORE_PROJECT_ROOT . '/dump/*.sql');
 
         return $files;
+    }
+
+    protected function createOrUpdateUser($config = [])
+    {
+        $defaultConfig = [
+            'username' => 'admin',
+            'password' => md5(microtime())
+        ];
+
+        $settings = array_replace_recursive($defaultConfig, $config);
+
+        /**
+         * @var User $user
+         */
+        if ($user = User::getByName($settings['username'])) {
+            $user->delete();
+        }
+
+        $user = User::create([
+            'parentId' => 0,
+            'username' => $settings['username'],
+            'password' => \Pimcore\Tool\Authentication::getPasswordHash($settings['username'], $settings['password']),
+            'active' => true
+        ]);
+        $user->setAdmin(true);
+        $user->save();
+    }
+
+    /**
+     * @param $file
+     *
+     * @throws \Exception
+     */
+    public function insertDatabaseDump($file)
+    {
+        $db = \Pimcore\Db::get();
+        $dumpFile = file_get_contents($file);
+
+        // remove comments in SQL script
+        $dumpFile = preg_replace("/\s*(?!<\")\/\*[^\*]+\*\/(?!\")\s*/", '', $dumpFile);
+
+        // get every command as single part - ; at end of line
+        $singleQueries = explode(";\n", $dumpFile);
+
+        // execute queries in bulk mode to prevent max_packet_size errors
+        $batchQueries = [];
+        foreach ($singleQueries as $m) {
+            $sql = trim($m);
+            if (strlen($sql) > 0) {
+                $batchQueries[] = $sql . ';';
+            }
+
+            if (count($batchQueries) > 500) {
+                $db->exec(implode("\n", $batchQueries));
+                $batchQueries = [];
+            }
+        }
+
+        $db->exec(implode("\n", $batchQueries));
+
+        // set the id of the system user to 0
+        $db->update('users', ['id' => 0], ['name' => 'system']);
+    }
+
+    protected function insertDatabaseContents() {
+        $db = \Pimcore\Db::get();
+        $db->insert('assets', [
+            'id' => 1,
+            'parentId' => 0,
+            'type' => 'folder',
+            'filename' => '',
+            'path' => '/',
+            'creationDate' => time(),
+            'modificationDate' => time(),
+            'userOwner' => 1,
+            'userModification' => 1
+        ]);
+        $db->insert('documents', [
+            'id' => 1,
+            'parentId' => 0,
+            'type' => 'page',
+            'key' => '',
+            'path' => '/',
+            'index' => 999999,
+            'published' => 1,
+            'creationDate' => time(),
+            'modificationDate' => time(),
+            'userOwner' => 1,
+            'userModification' => 1
+        ]);
+        $db->insert('documents_page', [
+            'id' => 1,
+            'controller' => 'default',
+            'action' => 'default',
+            'template' => '',
+            'title' => '',
+            'description' => ''
+        ]);
+        $db->insert('objects', [
+            'o_id' => 1,
+            'o_parentId' => 0,
+            'o_type' => 'folder',
+            'o_key' => '',
+            'o_path' => '/',
+            'o_index' => 999999,
+            'o_published' => 1,
+            'o_creationDate' => time(),
+            'o_modificationDate' => time(),
+            'o_userOwner' => 1,
+            'o_userModification' => 1
+        ]);
+
+        $db->insert('users', [
+            'parentId' => 0,
+            'name' => 'system',
+            'admin' => 1,
+            'active' => 1
+        ]);
+        $db->update('users', ['id' => 0], ['name' => 'system']);
+
+        $userPermissions = [
+            ['key' => 'application_logging'],
+            ['key' => 'assets'],
+            ['key' => 'classes'],
+            ['key' => 'clear_cache'],
+            ['key' => 'clear_fullpage_cache'],
+            ['key' => 'clear_temp_files'],
+            ['key' => 'dashboards'],
+            ['key' => 'document_types'],
+            ['key' => 'documents'],
+            ['key' => 'emails'],
+            ['key' => 'gdpr_data_extractor'],
+            ['key' => 'glossary'],
+            ['key' => 'http_errors'],
+            ['key' => 'notes_events'],
+            ['key' => 'objects'],
+            ['key' => 'piwik_settings'],
+            ['key' => 'piwik_reports'],
+            ['key' => 'plugins'],
+            ['key' => 'predefined_properties'],
+            ['key' => 'asset_metadata'],
+            ['key' => 'recyclebin'],
+            ['key' => 'redirects'],
+            ['key' => 'reports'],
+            ['key' => 'robots.txt'],
+            ['key' => 'routes'],
+            ['key' => 'seemode'],
+            ['key' => 'seo_document_editor'],
+            ['key' => 'share_configurations'],
+            ['key' => 'system_settings'],
+            ['key' => 'tag_snippet_management'],
+            ['key' => 'tags_configuration'],
+            ['key' => 'tags_assignment'],
+            ['key' => 'tags_search'],
+            ['key' => 'targeting'],
+            ['key' => 'thumbnails'],
+            ['key' => 'translations'],
+            ['key' => 'users'],
+            ['key' => 'website_settings'],
+            ['key' => 'admin_translations'],
+            ['key' => 'web2print_settings']
+        ];
+
+        foreach ($userPermissions as $up) {
+            $db->insert('users_permission_definitions', $up);
+        }
     }
 }

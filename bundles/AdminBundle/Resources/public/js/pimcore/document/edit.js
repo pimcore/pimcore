@@ -16,7 +16,7 @@ pimcore.document.edit = Class.create({
 
     initialize: function(document) {
         this.document = document;
-
+        this.lastScrollposition = null;
     },
 
     getEditLink: function () {
@@ -303,7 +303,7 @@ pimcore.document.edit = Class.create({
         this.reloadInProgress = true;
 
         try {
-            if(this["frame"]) {
+            if(this["frame"] && !this.lastScrollposition) {
                 this.lastScrollposition = this.frame.Ext.getBody().getScroll();
             }
         }
