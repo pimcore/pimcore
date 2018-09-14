@@ -2095,7 +2095,8 @@ class DataObjectHelperController extends AdminController
             'classname' => 'getClassname'
         ];
         if (in_array($field, array_keys($systemFieldMap))) {
-            $getter  = $systemFieldMap[$field];
+            $getter = $systemFieldMap[$field];
+
             return $object->$getter();
         } else {
             //check if field is standard object field
