@@ -273,6 +273,10 @@ abstract class AbstractRelations extends Model\DataObject\ClassDefinition\Data
      */
     public function save($object, $params = [])
     {
+        if ($params["isUntouchable"]) {
+            return;
+        }
+
         $context = $params["context"];
 
         if (!DataObject\AbstractObject::isDirtyDetectionDisabled() && $object instanceof DataObject\DirtyIndicatorInterface) {
