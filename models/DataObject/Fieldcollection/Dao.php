@@ -129,6 +129,7 @@ class Dao extends Model\Dao\AbstractDao
     {
         // empty or create all relevant tables
         $fieldDef = $object->getClass()->getFieldDefinition($this->model->getFieldname(), ['suppressEnrichment' => true]);
+        $hasLocalizedFields = false;
 
         foreach ($fieldDef->getAllowedTypes() as $type) {
             try {
@@ -136,6 +137,10 @@ class Dao extends Model\Dao\AbstractDao
                 $definition = DataObject\Fieldcollection\Definition::getByKey($type);
             } catch (\Exception $e) {
                 continue;
+            }
+
+            if ($definition->getFieldDefinition('localizedfields')) {
+                $hasLocalizedFields = true;
             }
 
             $tableName = $definition->getTableName($object->getClass());
@@ -189,7 +194,7 @@ class Dao extends Model\Dao\AbstractDao
             . ' AND ' . $this->db->quoteInto('src_id = ?', $object->getId()). ')';
 
         if ($saveMode) {
-            if (!$this->model->hasDirtyFields()) {
+            if (!$this->model->hasDirtyFields() && $hasLocalizedFields) {
                 // always empty localized fields
                 $this->db->deleteWhere('object_relations_' . $object->getClassId(), $whereLocalizedFields);
                 // empty relation table
