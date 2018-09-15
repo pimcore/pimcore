@@ -24,7 +24,6 @@ use Pimcore\Bundle\InstallBundle\SystemConfig\ConfigWriter;
 use Pimcore\Config;
 use Pimcore\Console\Style\PimcoreStyle;
 use Pimcore\Db\Connection;
-use Pimcore\Model\Tool\Setup;
 use Pimcore\Model\User;
 use Pimcore\Process\PartsBuilder;
 use Pimcore\Tool\AssetsInstaller;
@@ -461,7 +460,6 @@ class Installer
             }
         }
 
-
         $dataFiles = $this->getDataFiles();
 
         try {
@@ -554,7 +552,8 @@ class Installer
         $db->update('users', ['id' => 0], ['name' => 'system']);
     }
 
-    protected function insertDatabaseContents() {
+    protected function insertDatabaseContents()
+    {
         $db = \Pimcore\Db::get();
         $db->insert('assets', [
             'id' => 1,
