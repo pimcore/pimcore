@@ -514,7 +514,7 @@ class Localizedfield extends Model\AbstractModel implements DirtyIndicatorInterf
      */
     public function markLanguageAsDirty($language, $dirty = true)
     {
-        if (!is_array($this->o_dirtyLanguages && $dirty)) {
+        if (!is_array($this->o_dirtyLanguages) && $dirty) {
             $this->o_dirtyLanguages = [];
         }
 
@@ -523,7 +523,7 @@ class Localizedfield extends Model\AbstractModel implements DirtyIndicatorInterf
         }
 
         if (!$this->o_dirtyLanguages) {
-            !$this->o_dirtyLanguages =  null;
+            $this->o_dirtyLanguages =  null;
         }
     }
 }

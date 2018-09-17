@@ -453,7 +453,7 @@ class Localizedfields extends Model\DataObject\ClassDefinition\Data
             }
 
             if ($object instanceof DataObject\Concrete) {
-                $localizedFields->setObject($object);
+                $localizedFields->setObject($object, false);
             }
 
             $user = Tool\Admin::getCurrentUser();
