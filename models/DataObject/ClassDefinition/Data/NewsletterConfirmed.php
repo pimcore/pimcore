@@ -20,6 +20,9 @@ use Pimcore\Model;
 
 class NewsletterConfirmed extends Model\DataObject\ClassDefinition\Data\Checkbox
 {
+
+    use Model\DataObject\Traits\SimpleComparisonTrait;
+
     /**
      * Static type of this element
      *

@@ -715,7 +715,7 @@ class Concrete extends AbstractObject
         // do not use the getter ($this->getLocalizedfields()) as it somehow slows down the process around a sec
         // no clue why this happens
         if (property_exists($this, 'localizedfields') && $this->localizedfields instanceof Localizedfield) {
-            $this->localizedfields->setObject($this);
+            $this->localizedfields->setObject($this, false);
         }
     }
 

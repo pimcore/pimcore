@@ -17,17 +17,22 @@
 
 namespace Pimcore\Model\DataObject\Data;
 
-class Geopoint
+use Pimcore\Model\DataObject\OwnerAwareFieldInterface;
+use Pimcore\Model\DataObject\Traits\OwnerAwareFieldTrait;
+
+class Geopoint implements OwnerAwareFieldInterface
 {
-    /**
-     * @var float
-     */
-    public $longitude;
+    use OwnerAwareFieldTrait;
 
     /**
      * @var float
      */
-    public $latitude;
+    protected $longitude;
+
+    /**
+     * @var float
+     */
+    protected $latitude;
 
     /**
      * @param null $longitude
@@ -41,6 +46,7 @@ class Geopoint
         if ($latitude !== null) {
             $this->setLatitude($latitude);
         }
+        $this->markMeDirty();
     }
 
     /**
@@ -58,7 +64,12 @@ class Geopoint
      */
     public function setLongitude($longitude)
     {
-        $this->longitude = (float) $longitude;
+        $longitude = (float)$longitude;
+
+        if ($this->longitude != $longitude) {
+            $this->longitude = $longitude;
+            $this->markMeDirty();
+        }
 
         return $this;
     }
@@ -78,7 +89,11 @@ class Geopoint
      */
     public function setLatitude($latitude)
     {
-        $this->latitude = (float) $latitude;
+        $latitude = (float)$latitude;
+        if ($this->latitude != $latitude) {
+            $this->latitude = $latitude;
+            $this->markMeDirty();
+        }
 
         return $this;
     }

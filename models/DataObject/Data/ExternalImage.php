@@ -17,10 +17,15 @@
 
 namespace Pimcore\Model\DataObject\Data;
 
-class ExternalImage
+use Pimcore\Model\DataObject\OwnerAwareFieldInterface;
+use Pimcore\Model\DataObject\Traits\OwnerAwareFieldTrait;
+
+class ExternalImage implements OwnerAwareFieldInterface
 {
+    use OwnerAwareFieldTrait;
+
     /** @var string */
-    public $url;
+    protected $url;
 
     /**
      * ExternalImage constructor.
@@ -30,6 +35,7 @@ class ExternalImage
     public function __construct($url = null)
     {
         $this->url = $url;
+        $this->markMeDirty();
     }
 
     /**
@@ -46,6 +52,7 @@ class ExternalImage
     public function setUrl($url)
     {
         $this->url = $url;
+        $this->markMeDirty();
     }
 
     /**

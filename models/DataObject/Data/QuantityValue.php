@@ -16,24 +16,28 @@
 
 namespace Pimcore\Model\DataObject\Data;
 
+use Pimcore\Model\DataObject\OwnerAwareFieldInterface;
 use Pimcore\Model\DataObject\QuantityValue\Unit;
+use Pimcore\Model\DataObject\Traits\OwnerAwareFieldTrait;
 
-class QuantityValue
+class QuantityValue implements OwnerAwareFieldInterface
 {
+    use OwnerAwareFieldTrait;
+
     /**
      * @var float | string
      */
-    public $value;
+    protected $value;
 
     /**
      * @var int
      */
-    public $unitId;
+    protected $unitId;
 
     /**
      * @var \Pimcore\Model\DataObject\QuantityValue\Unit
      */
-    public $unit;
+    protected $unit;
 
     /**
      * QuantityValue constructor.
@@ -50,6 +54,7 @@ class QuantityValue
         if ($unitId) {
             $this->unit = Unit::getById($this->unitId);
         }
+        $this->markMeDirty();
     }
 
     /**
@@ -59,6 +64,7 @@ class QuantityValue
     {
         $this->unitId = $unitId;
         $this->unit = null;
+        $this->markMeDirty();
     }
 
     /**
@@ -87,6 +93,7 @@ class QuantityValue
     public function setValue($value)
     {
         $this->value = $value;
+        $this->markMeDirty();
     }
 
     /**

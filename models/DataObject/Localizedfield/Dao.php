@@ -107,6 +107,9 @@ class Dao extends Model\Dao\AbstractDao
          */
         DataObject\Concrete\Dao\InheritanceHelper::setUseRuntimeCache(true);
         foreach ($validLanguages as $language) {
+            if (!$this->model->isLanguageDirty($language)) {
+                continue;
+            }
             $inheritedValues = DataObject\AbstractObject::doGetInheritedValues();
             DataObject\AbstractObject::setGetInheritedValues(false);
 
@@ -463,9 +466,15 @@ class Dao extends Model\Dao\AbstractDao
                             foreach ($fd->getColumnType() as $fkey => $fvalue) {
                                 $multidata[$key . '__' . $fkey] = $row[$key . '__' . $fkey];
                             }
-                            $this->model->setLocalizedValue($key, $fd->getDataFromResource($multidata), $row['language'], false);
+                            $value = $fd->getDataFromResource($multidata);
+                            $this->model->setLocalizedValue($key, $value, $row['language'], false);
                         } else {
-                            $this->model->setLocalizedValue($key, $fd->getDataFromResource($row[$key]), $row['language'], false);
+                            $value = $fd->getDataFromResource($row[$key]);
+                            $this->model->setLocalizedValue($key, $value, $row['language'], false);
+                        }
+
+                        if ($value instanceof DataObject\OwnerAwareFieldInterface) {
+                            $value->setOwner($this->model, $key, $row['language']);
                         }
                     }
                 }

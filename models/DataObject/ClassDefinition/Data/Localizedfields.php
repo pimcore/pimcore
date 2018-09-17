@@ -620,11 +620,15 @@ class Localizedfields extends Model\DataObject\ClassDefinition\Data
     {
         $localizedFields = $this->getDataFromObjectParam($object, $params);
         if ($localizedFields instanceof DataObject\Localizedfield) {
+            if (!$localizedFields->hasDirtyLanguages()) {
+                return;
+            }
+
             if ($object instanceof DataObject\Fieldcollection\Data\AbstractData || $object instanceof DataObject\Objectbrick\Data\AbstractData) {
                 $object = $object->getObject();
             }
 
-            $localizedFields->setObject($object);
+            $localizedFields->setObject($object, false);
             $context = isset($params['context']) ? $params['context'] : null;
             $localizedFields->setContext($context);
             $localizedFields->save();
@@ -639,16 +643,19 @@ class Localizedfields extends Model\DataObject\ClassDefinition\Data
      */
     public function load($object, $params = [])
     {
+        $theObject = $object;
         if ($object instanceof DataObject\Fieldcollection\Data\AbstractData || $object instanceof DataObject\Objectbrick\Data\AbstractData) {
-            $object = $object->getObject();
+            $theObject = $object->getObject();
         }
 
         $localizedFields = new DataObject\Localizedfield();
-        $localizedFields->setObject($object);
+        $localizedFields->setObject($theObject);
         $context = isset($params['context']) ? $params['context'] : null;
         $localizedFields->setContext($context);
-        $localizedFields->load($object, $params);
+        $localizedFields->load($theObject, $params);
+
         $localizedFields->resetDirtyMap();
+        $localizedFields->resetLanguageDirtyMap();
 
         return $localizedFields;
     }

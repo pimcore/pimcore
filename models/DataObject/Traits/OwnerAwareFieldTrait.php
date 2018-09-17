@@ -18,6 +18,7 @@
 namespace Pimcore\Model\DataObject\Traits;
 
 use Pimcore\Model\DataObject\DirtyIndicatorInterface;
+use Pimcore\Model\DataObject\Localizedfield;
 
 trait OwnerAwareFieldTrait
 {
@@ -25,28 +26,37 @@ trait OwnerAwareFieldTrait
     /**
      * @var mixed
      */
-    protected $owner;
+    protected $_owner;
 
     /**
      * @var string
      */
-    protected $fieldname;
+    protected $_fieldname;
+
+    /**
+     * @var string
+     */
+    protected $_language;
 
     /**
      * @param $owner
      * @param string $fieldname
      */
-    public function setOwner($owner, string $fieldname) {
-        $this->owner = $owner;
-        $this->fieldname = $fieldname;
+    public function setOwner($owner, string $fieldname, $language = null) {
+        $this->_owner = $owner;
+        $this->_fieldname = $fieldname;
+        $this->_language = $language;
     }
 
     /**
      *
      */
     protected function markMeDirty() {
-        if ($this->owner && $this->owner instanceof DirtyIndicatorInterface) {
-            $this->owner->markFieldDirty($this->fieldname, true);
+        if ($this->_owner && $this->_owner instanceof DirtyIndicatorInterface) {
+            $this->_owner->markFieldDirty($this->_fieldname, true);
+        }
+        if ($this->_language && $this->_owner instanceof Localizedfield) {
+            $this->_owner->markLanguageAsDirty($this->_language);
         }
     }
 

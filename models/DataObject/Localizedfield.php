@@ -62,6 +62,11 @@ class Localizedfield extends Model\AbstractModel implements DirtyIndicatorInterf
      */
     private static $strictMode;
 
+    /** @var
+     * list of dirty languages. if null then no language is dirty. if empty array then all languages are dirty
+     */
+    protected $o_dirtyLanguages;
+
     /**
      * @param bool $getFallbackValues
      */
@@ -111,6 +116,7 @@ class Localizedfield extends Model\AbstractModel implements DirtyIndicatorInterf
             $this->setItems($items);
         }
         $this->markFieldDirty('_self');
+        $this->markAllLanguagesAsDirty();
     }
 
     /**
@@ -120,6 +126,7 @@ class Localizedfield extends Model\AbstractModel implements DirtyIndicatorInterf
     {
         $this->items[] = $item;
         $this->markFieldDirty('_self');
+        $this->markAllLanguagesAsDirty();
     }
 
     /**
@@ -131,6 +138,7 @@ class Localizedfield extends Model\AbstractModel implements DirtyIndicatorInterf
     {
         $this->items = $items;
         $this->markFieldDirty('_self');
+        $this->markAllLanguagesAsDirty();
 
         return $this;
     }
@@ -150,10 +158,13 @@ class Localizedfield extends Model\AbstractModel implements DirtyIndicatorInterf
      *
      * @throws \Exception
      */
-    public function setObject($object)
+    public function setObject($object, $markAsDirty = true)
     {
         if ($object && !$object instanceof Concrete) {
             throw new \Exception('must be instance of object concrete');
+        }
+        if ($markAsDirty) {
+            $this->markAllLanguagesAsDirty();
         }
         $this->object = $object;
         $this->objectId = $object ? $object->getId() : null;
@@ -357,6 +368,7 @@ class Localizedfield extends Model\AbstractModel implements DirtyIndicatorInterf
      * @param $value
      * @param null $language
      * @param $markFieldAsDirty
+     *
      * @return $this
      *
      * @throws \Exception
@@ -367,6 +379,8 @@ class Localizedfield extends Model\AbstractModel implements DirtyIndicatorInterf
             $this->markFieldDirty('_self');
         }
 
+        //TODO comparison on datatype
+
         if (self::$strictMode) {
             if (!$language || !in_array($language, Tool::getValidLanguages())) {
                 throw new \Exception('Language '.$language.' not accepted in strict mode');
@@ -376,6 +390,7 @@ class Localizedfield extends Model\AbstractModel implements DirtyIndicatorInterf
         $language = $this->getLanguage($language);
         if (!$this->languageExists($language)) {
             $this->items[$language] = [];
+            $this->markAllLanguagesAsDirty();
         }
 
         $contextInfo = $this->getContext();
@@ -384,6 +399,7 @@ class Localizedfield extends Model\AbstractModel implements DirtyIndicatorInterf
             $containerDefinition = ClassDefinition::getById($classId);
             $blockDefinition = $containerDefinition->getFieldDefinition($contextInfo['fieldname']);
 
+            /** @var $fieldDefinition Model\DataObject\ClassDefinition\Data */
             $fieldDefinition = $blockDefinition->getFieldDefinition('localizedfields');
         } else {
             if ($contextInfo && $contextInfo['containerType'] == 'fieldcollection') {
@@ -411,6 +427,10 @@ class Localizedfield extends Model\AbstractModel implements DirtyIndicatorInterf
             );
         }
 
+        //TODO implement isEqual for as many datatypes as possible (at least the rather simple ones)
+        if (!$fieldDefinition->isEqual($this->items[$language][$name], $value)) {
+            $this->markLanguageAsDirty($language);
+        }
         $this->items[$language][$name] = $value;
 
         return $this;
@@ -438,5 +458,72 @@ class Localizedfield extends Model\AbstractModel implements DirtyIndicatorInterf
     public function setContext($context)
     {
         $this->context = $context;
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasDirtyLanguages() {
+        if (AbstractObject::disableDirtyDetection()) {
+            return true;
+        }
+        return (is_array($this->o_dirtyLanguages) && count($this->o_dirtyLanguages) > 0);
+    }
+
+    /**
+     * @param $language
+     * @return bool|mixed
+     */
+    public function isLanguageDirty($language)
+    {
+        if (AbstractObject::disableDirtyDetection()) {
+            return true;
+        }
+
+        if (is_array($this->o_dirtyLanguages)) {
+            if (count($this->o_dirtyLanguages) == 0) {
+                return true;
+            }
+            if (isset($this->o_dirtyLanguages[$language])) {
+                return $this->o_dirtyLanguages[$language];
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     *
+     */
+    public function resetLanguageDirtyMap()
+    {
+        $this->o_dirtyLanguages = null;
+    }
+
+    /**
+     *
+     */
+    public function markAllLanguagesAsDirty()
+    {
+        $this->o_dirtyLanguages = [];
+    }
+
+    /**
+     * @param $language
+     * @param $dirty
+     */
+    public function markLanguageAsDirty($language, $dirty = true)
+    {
+        if (!is_array($this->o_dirtyLanguages && $dirty)) {
+            $this->o_dirtyLanguages = [];
+        }
+
+        if ($dirty) {
+            $this->o_dirtyLanguages[$language] = true;
+        }
+
+        if (!$this->o_dirtyLanguages) {
+            !$this->o_dirtyLanguages =  null;
+        }
     }
 }

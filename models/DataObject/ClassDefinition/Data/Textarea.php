@@ -21,6 +21,7 @@ use Pimcore\Model;
 class Textarea extends Model\DataObject\ClassDefinition\Data
 {
     use Model\DataObject\ClassDefinition\Data\Extension\Text;
+    use Model\DataObject\Traits\SimpleComparisonTrait;
 
     /**
      * Static type of this element

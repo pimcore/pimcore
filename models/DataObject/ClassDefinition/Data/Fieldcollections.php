@@ -125,7 +125,8 @@ class Fieldcollections extends Model\DataObject\ClassDefinition\Data
 
                 foreach ($collectionDef->getFieldDefinitions() as $fd) {
                     if (!$fd instanceof CalculatedValue) {
-                        $collectionData[$fd->getName()] = $fd->getDataForEditmode($item->getObjectVar($fd->getName()), $object, $params);
+                        $value = $item->{'get' . $fd->getName()}();
+                        $collectionData[$fd->getName()] = $fd->getDataForEditmode($value, $object, $params);
                     }
                 }
 

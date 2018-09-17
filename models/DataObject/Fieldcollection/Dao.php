@@ -188,6 +188,9 @@ class Dao extends Model\Dao\AbstractDao
             }
         }
 
+        if (!$this->model->isFieldDirty($this->model->getFieldname())) {
+            return false;
+        }
         $whereLocalizedFields = "(ownertype = 'localizedfield' AND "
             . $this->db->quoteInto('ownername LIKE ?', '/fieldcollection~'
                 . $this->model->getFieldname() . '/%')

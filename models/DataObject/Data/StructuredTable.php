@@ -17,12 +17,14 @@
 
 namespace Pimcore\Model\DataObject\Data;
 
-class StructuredTable
+use Pimcore\Model\DataObject\OwnerAwareFieldInterface;
+
+class StructuredTable implements OwnerAwareFieldInterface
 {
     /**
      * @var array
      */
-    public $data = [];
+    protected $data = [];
 
     /**
      * @param array $data
@@ -32,6 +34,7 @@ class StructuredTable
         if ($data) {
             $this->data = $data;
         }
+        $this->markMeDirty();
     }
 
     /**
@@ -42,7 +45,7 @@ class StructuredTable
     public function setData($data)
     {
         $this->data = $data;
-
+        $this->markMeDirty();
         return $this;
     }
 
@@ -95,7 +98,7 @@ class StructuredTable
                     $rowArray = $this->data[$row];
                     if (array_key_exists($col, $rowArray)) {
                         $this->data[$row][$col] = $arguments[0];
-
+                        $this->markMeDirty();
                         return;
                     }
                 }

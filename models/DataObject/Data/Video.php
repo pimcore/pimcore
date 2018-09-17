@@ -18,33 +18,37 @@
 namespace Pimcore\Model\DataObject\Data;
 
 use Pimcore\Model\Asset;
+use Pimcore\Model\DataObject\OwnerAwareFieldInterface;
+use Pimcore\Model\DataObject\Traits\OwnerAwareFieldTrait;
 
-class Video
+class Video implements OwnerAwareFieldInterface
 {
+    use OwnerAwareFieldTrait;
+
     /**
      * @var string
      */
-    public $type;
+    protected $type;
 
     /**
      * @var Asset|string
      */
-    public $data;
+    protected $data;
 
     /**
      * @var Asset
      */
-    public $poster;
+    protected $poster;
 
     /**
      * @var string
      */
-    public $title;
+    protected $title;
 
     /**
      * @var string
      */
-    public $description;
+    protected $description;
 
     /**
      * @param Asset|string $data
@@ -52,6 +56,7 @@ class Video
     public function setData($data)
     {
         $this->data = $data;
+        $this->markMeDirty();
     }
 
     /**
@@ -68,6 +73,7 @@ class Video
     public function setType($type)
     {
         $this->type = $type;
+        $this->markMeDirty();
     }
 
     /**
@@ -84,6 +90,7 @@ class Video
     public function setDescription($description)
     {
         $this->description = $description;
+        $this->markMeDirty();
     }
 
     /**
@@ -100,6 +107,7 @@ class Video
     public function setPoster($poster)
     {
         $this->poster = $poster;
+        $this->markMeDirty();
     }
 
     /**
@@ -116,6 +124,7 @@ class Video
     public function setTitle($title)
     {
         $this->title = $title;
+        $this->markMeDirty();
     }
 
     /**

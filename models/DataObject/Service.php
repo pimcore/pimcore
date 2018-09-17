@@ -1764,6 +1764,11 @@ class Service extends Model\Element\Service
             /** @var $fd Model\DataObject\ClassDefinition\Data */
             foreach ($fieldDefinitions as $fd) {
                 $value = $container->getObjectVar($fd->getName());
+
+                if ($value instanceof Localizedfield) {
+                    $value->resetLanguageDirtyMap();
+                }
+
                 if (!method_exists($value, 'resetDirtyMap')) {
                     continue;
                 }

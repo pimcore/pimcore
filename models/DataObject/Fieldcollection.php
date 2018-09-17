@@ -30,12 +30,12 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyInd
     /**
      * @var array
      */
-    public $items = [];
+    protected $items = [];
 
     /**
      * @var
      */
-    public $fieldname;
+    protected $fieldname;
 
     /**
      * @param array $items
