@@ -76,7 +76,7 @@ cd ./my-project
 ```
 
 This will install an empty skeleton application, 
-but we're also offering 3 different demo packages your your convenience - of course also with 3 commands 💪
+but we're also offering 3 different demo packages for your convenience - of course also with 3 commands 💪
 [Click here for more installation options and a detailed guide](https://pimcore.com/docs/5.x/Development_Documentation/Getting_Started/Installation.html)
 
 ## Copyright and License 
