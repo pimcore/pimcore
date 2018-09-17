@@ -18,9 +18,12 @@
 namespace Pimcore\Model\DataObject\Data;
 
 use Pimcore\Model\DataObject\OwnerAwareFieldInterface;
+use Pimcore\Model\DataObject\Traits\OwnerAwareFieldTrait;
 
 class StructuredTable implements OwnerAwareFieldInterface
 {
+
+    use OwnerAwareFieldTrait;
     /**
      * @var array
      */
