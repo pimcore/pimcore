@@ -31,6 +31,9 @@ class BrowserKitRestClient extends AbstractRestClient
      */
     public function getJsonResponse($method, $uri, array $parameters = [], array $files = [], array $server = [], $content = null, $expectedStatus = 200)
     {
+        //TODO temporary
+        var_dump($content);
+
         try {
             return parent::getJsonResponse($method, $uri, $parameters, $files, $server, $content, $expectedStatus);
         } catch (\Exception $e) {
