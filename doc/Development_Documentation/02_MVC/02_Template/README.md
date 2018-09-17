@@ -9,7 +9,7 @@ Pimcore uses an enhanced version of [Symfony's PHP templating engine](http://sym
 For historical reasons, Pimcore defaults to PHP as template language, but can easily reconfigured to use [Twig](./00_Twig.md)
 for templating.
 
-We're stil working on adding Twig references throughout the documentation. In the meantime please:
+We're still working on adding Twig references throughout the documentation. In the meantime please:
 
 * Have a look at the dedicated [Twig](./00_Twig.md) documentation page
 * Check the [Twig Demo](https://github.com/pimcore/demo-basic-twig) as starting point
