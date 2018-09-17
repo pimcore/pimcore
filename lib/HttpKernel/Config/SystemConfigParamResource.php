@@ -83,7 +83,7 @@ class SystemConfigParamResource
                 ]
             ],
             'email' => [
-                'method' => 'mail',
+                'method' => 'sendmail',
                 'smtp' => [
                     'host' => '',
                     'port' => '',
@@ -100,7 +100,7 @@ class SystemConfigParamResource
                 ]
             ],
             'newsletter' => [
-                'method' => 'mail',
+                'method' => 'sendmail',
                 'smtp' => [
                     'host' => '',
                     'port' => '',
