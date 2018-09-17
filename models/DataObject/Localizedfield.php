@@ -390,7 +390,7 @@ class Localizedfield extends Model\AbstractModel implements DirtyIndicatorInterf
         $language = $this->getLanguage($language);
         if (!$this->languageExists($language)) {
             $this->items[$language] = [];
-            $this->markAllLanguagesAsDirty();
+            $this->markLanguageAsDirty($language);
         }
 
         $contextInfo = $this->getContext();

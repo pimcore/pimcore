@@ -672,7 +672,7 @@ class Localizedfields extends Model\DataObject\ClassDefinition\Data
             $localizedFields->setObject($object);
             $context = isset($params['context']) ? $params['context'] : null;
             $localizedFields->setContext($context);
-            $localizedFields->delete();
+            $localizedFields->delete(true, false);
         }
     }
 

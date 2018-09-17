@@ -314,9 +314,9 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * @param bool $deleteQuery
      */
-    public function delete($deleteQuery = true)
+    public function delete($deleteQuery = true, $isUpdate = true)
     {
-        if (!DataObject\AbstractObject::isDirtyDetectionDisabled() && !$this->model->hasDirtyFields()) {
+        if ($isUpdate && !DataObject\AbstractObject::isDirtyDetectionDisabled() && !$this->model->hasDirtyFields()) {
             return;
         }
         $object = $this->model->getObject();
