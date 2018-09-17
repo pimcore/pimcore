@@ -1,6 +1,6 @@
 # Advanced Installation Topics
 
-Pimcore allows the to fully automate the installation process, every question asked by the 
+Pimcore allows to fully automate the installation process, every question asked by the 
 interactive installer, can also be passed as an option. 
 
 The `--no-interaction` flag will avoid any interactive prompts:
