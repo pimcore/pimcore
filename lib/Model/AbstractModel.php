@@ -15,6 +15,7 @@
 namespace Pimcore\Model;
 
 use Pimcore\Logger;
+use Pimcore\Model\DataObject\Traits\ObjectVarTrait;
 
 /**
  * @method void beginTransaction()
@@ -26,6 +27,8 @@ use Pimcore\Logger;
  */
 abstract class AbstractModel
 {
+
+    use ObjectVarTrait;
     /**
      * @var \Pimcore\Model\Dao\AbstractDao
      */
@@ -271,19 +274,6 @@ abstract class AbstractModel
     }
 
     /**
-     * returns object values without the dao
-     *
-     * @return array
-     */
-    public function getObjectVars()
-    {
-        $data = get_object_vars($this);
-        unset($data['dao']);
-
-        return $data;
-    }
-
-    /**
      * @return array
      */
     public function __debugInfo()
@@ -295,33 +285,11 @@ abstract class AbstractModel
     }
 
     /**
-     * @param $var
-     *
-     * @return mixed
-     */
-    public function getObjectVar($var)
-    {
-        return $this->{$var};
-    }
-
-    /**
      * @return Factory
      */
     protected static function getModelFactory()
     {
         return \Pimcore::getContainer()->get('pimcore.model.factory');
-    }
-
-    /**
-     * @param $var mixed
-     * @param $value mixed
-     *
-     * @return $this
-     */
-    public function setObjectVar($var, $value)
-    {
-        $this->$var = $value;
-        return $this;
     }
 
 }

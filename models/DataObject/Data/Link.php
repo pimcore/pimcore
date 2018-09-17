@@ -20,6 +20,7 @@ namespace Pimcore\Model\DataObject\Data;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\OwnerAwareFieldInterface;
+use Pimcore\Model\DataObject\Traits\ObjectVarTrait;
 use Pimcore\Model\DataObject\Traits\OwnerAwareFieldTrait;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element\Service;
@@ -27,6 +28,7 @@ use Pimcore\Model\Element\Service;
 class Link implements OwnerAwareFieldInterface
 {
     use OwnerAwareFieldTrait;
+    use ObjectVarTrait;
     
     /**
      * @var string
