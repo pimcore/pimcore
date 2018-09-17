@@ -74,7 +74,7 @@ class Dao extends Model\Dao\AbstractDao
         return 'object_localized_query_' . $this->model->getClass()->getId();
     }
 
-    public function save()
+    public function save($params = [])
     {
 
         $context = $this->model->getContext();
@@ -107,7 +107,7 @@ class Dao extends Model\Dao\AbstractDao
          */
         DataObject\Concrete\Dao\InheritanceHelper::setUseRuntimeCache(true);
         foreach ($validLanguages as $language) {
-            if (!$this->model->isLanguageDirty($language)) {
+            if (isset($params["isUpdate"]) && $params["isUpdate"] && !$this->model->isLanguageDirty($language)) {
                 continue;
             }
             $inheritedValues = DataObject\AbstractObject::doGetInheritedValues();
@@ -153,7 +153,11 @@ class Dao extends Model\Dao\AbstractDao
             $queryTable = $this->getQueryTableName() . '_' . $language;
 
             try {
-                $this->db->insertOrUpdate($storeTable, $insertData);
+
+                if (!isset($params["isUpdate"]) || !$params["isUpdate"] || $this->model->isLanguageDirty($language)) {
+                    $this->db->insertOrUpdate($storeTable, $insertData);
+                }
+
             } catch (\Exception $e) {
                 // if the table doesn't exist -> create it! deferred creation for object bricks ...
                 if (strpos($e->getMessage(), 'exist')) {
