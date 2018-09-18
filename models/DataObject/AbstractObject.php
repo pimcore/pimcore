@@ -964,7 +964,7 @@ class AbstractObject extends Model\Element\AbstractElement
     public function setParentId($o_parentId)
     {
         $o_parentId = (int) $o_parentId;
-        if ($o_parentId != $this->o_parentId) {
+        if ($o_parentId != $this->o_parentId && $this instanceof DirtyIndicatorInterface) {
             $this->markFieldDirty("o_parentId");
         }
         $this->o_parentId = $o_parentId;

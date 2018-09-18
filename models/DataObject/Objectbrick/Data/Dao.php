@@ -34,10 +34,11 @@ class Dao extends Model\Dao\AbstractDao
 
     /**
      * @param DataObject\Concrete $object
+     * @param array $params
      *
      * @throws \Exception
      */
-    public function save(DataObject\Concrete $object)
+    public function save(DataObject\Concrete $object, $params = [])
     {
 
         // HACK: set the pimcore admin mode to false to get the inherited values from parent if this source one is empty
@@ -56,7 +57,7 @@ class Dao extends Model\Dao\AbstractDao
         $data['o_id'] = $object->getId();
         $data['fieldname'] = $this->model->getFieldname();
 
-        $fieldNameList = [];
+        $dirtyRelations = [];
 
         // remove all relations
         try {
@@ -73,15 +74,15 @@ class Dao extends Model\Dao\AbstractDao
                         if ($fd->supportsDirtyDetection()) {
 
                             if ($this->model->isFieldDirty($key)) {
-                                $fieldNameList[] = $db->quote($key);
+                                $dirtyRelations[] = $db->quote($key);
                             }
                         } else {
-                            $fieldNameList[] = $db->quote($key);
+                            $dirtyRelations[] = $db->quote($key);
                         }
                     }
                 }
-                if ($fieldNameList) {
-                    $where .= ' AND fieldname IN (' . implode(',', $fieldNameList) . ')';
+                if ($dirtyRelations) {
+                    $where .= ' AND fieldname IN (' . implode(',', $dirtyRelations) . ')';
                     $this->db->deleteWhere('object_relations_' . $object->getClassId(), $where);
                 }
             } else {
@@ -95,22 +96,22 @@ class Dao extends Model\Dao\AbstractDao
             $getter = 'get' . ucfirst($fd->getName());
 
             if (method_exists($fd, 'save')) {
-                if (!DataObject\AbstractObject::isDirtyDetectionDisabled() && $this->model instanceof DataObject\DirtyIndicatorInterface) {
+                if ((!isset($params["newParent"] )|| !$params["newParent"]) && isset($params["isUpdate"]) && $params["isUpdate"] && !DataObject\AbstractObject::isDirtyDetectionDisabled() && $this->model instanceof DataObject\DirtyIndicatorInterface) {
                     // ownerNameList contains the dirty stuff
-                    if (!in_array($db->quote($key), $fieldNameList)) {
+                    if ($fd instanceof DataObject\ClassDefinition\Data\Relations\AbstractRelations && !in_array($db->quote($key), $dirtyRelations)) {
                         continue;
                     }
                 }
 
                 // for fieldtypes which have their own save algorithm eg. objects, multihref, ...
                 $fd->save($this->model,
-                    [
+                    array_merge($params, [
                         'context' => [
                             'containerType' => 'objectbrick',
                             'containerKey' => $this->model->getType(),
                             'fieldname' => $this->model->getFieldname()
                         ]
-                    ]);
+                    ]));
             } elseif ($fd->getColumnType()) {
                 if (is_array($fd->getColumnType())) {
                     $insertDataArray = $fd->getDataForResource($this->model->$getter(), $object, [

@@ -108,12 +108,12 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyInd
 
     /**
      * @throws \Exception
-     *
+     * @param array $params
      * @param $object
      */
-    public function save($object)
+    public function save($object, $params = [])
     {
-        $saveRelationalData = $this->getDao()->save($object);
+        $saveRelationalData = $this->getDao()->save($object, $params);
 
         $allowedTypes = $object->getClass()->getFieldDefinition($this->getFieldname())->getAllowedTypes();
 
@@ -128,7 +128,7 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyInd
 
                         // set the current object again, this is necessary because the related object in $this->object can change (eg. clone & copy & paste, etc.)
                         $collection->setObject($object);
-                        $collection->save($object, $saveRelationalData);
+                        $collection->save($object, $params, $saveRelationalData);
                     } else {
                         throw new \Exception('Fieldcollection of type ' . $collection->getType() . ' is not allowed in field: ' . $this->getFieldname());
                     }

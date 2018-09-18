@@ -620,7 +620,7 @@ class Localizedfields extends Model\DataObject\ClassDefinition\Data
     {
         $localizedFields = $this->getDataFromObjectParam($object, $params);
         if ($localizedFields instanceof DataObject\Localizedfield) {
-            if (!$localizedFields->hasDirtyLanguages()) {
+            if ((!isset($params["newParent"] )|| !$params["newParent"]) && isset($params["isUpdate"]) && $params["isUpdate"] && !$localizedFields->hasDirtyLanguages()) {
                 return;
             }
 
