@@ -148,7 +148,6 @@ class LocalizedFieldTest extends ModelTestCase
         $two = AbstractObject::getById($id2);
 
         // save both objects again
-        AbstractObject::disableDirtyDetection();
         $one->save();
         $two->save();
 
