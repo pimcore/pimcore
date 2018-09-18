@@ -476,7 +476,7 @@ class Localizedfield extends Model\AbstractModel implements DirtyIndicatorInterf
      */
     public function isLanguageDirty($language)
     {
-        if (AbstractObject::disableDirtyDetection()) {
+        if (AbstractObject::isDirtyDetectionDisabled()) {
             return true;
         }
 
