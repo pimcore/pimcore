@@ -640,8 +640,6 @@ class AbstractObject extends Model\Element\AbstractElement
                 self::setHideUnpublished($hideUnpublishedBackup);
 
                 $this->commit();
-                $this->resetDirtyMap();
-
                 break; // transaction was successfully completed, so we cancel the loop here -> no restart required
             } catch (\Exception $e) {
                 try {
