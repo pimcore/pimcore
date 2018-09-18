@@ -107,7 +107,7 @@ class Dao extends Model\Dao\AbstractDao
          */
         DataObject\Concrete\Dao\InheritanceHelper::setUseRuntimeCache(true);
         foreach ($validLanguages as $language) {
-            if (isset($params["isUpdate"]) && $params["isUpdate"] && !$this->model->isLanguageDirty($language)) {
+            if ((!isset($params["newParent"] )|| !$params["newParent"]) && isset($params["isUpdate"]) && $params["isUpdate"] && !$this->model->isLanguageDirty($language)) {
                 continue;
             }
             $inheritedValues = DataObject\AbstractObject::doGetInheritedValues();
@@ -154,7 +154,7 @@ class Dao extends Model\Dao\AbstractDao
 
             try {
 
-                if (!isset($params["isUpdate"]) || !$params["isUpdate"] || $this->model->isLanguageDirty($language)) {
+                if ((isset($params["newParent"])&& $params["newParent"]) || !isset($params["isUpdate"]) || !$params["isUpdate"] || $this->model->isLanguageDirty($language)) {
                     $this->db->insertOrUpdate($storeTable, $insertData);
                 }
 

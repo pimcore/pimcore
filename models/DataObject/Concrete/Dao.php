@@ -214,7 +214,8 @@ class Dao extends Model\DataObject\AbstractObject\Dao
             if (method_exists($fd, 'save')) {
                 // for fieldtypes which have their own save algorithm eg. fieldcollections, objects, multihref, ...
                 $fd->save($this->model, ["isUntouchable" => in_array($fd->getName(), $untouchable),
-                    "isUpdate" => $isUpdate]);
+                    "isUpdate" => $isUpdate,
+                    "newParent" => $this->model->isFieldDirty("o_parentId")]);
             } elseif ($fd->getColumnType()) {
                 // pimcore saves the values with getDataForResource
                 if (is_array($fd->getColumnType())) {

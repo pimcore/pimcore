@@ -640,6 +640,7 @@ class AbstractObject extends Model\Element\AbstractElement
                 self::setHideUnpublished($hideUnpublishedBackup);
 
                 $this->commit();
+                $this->resetDirtyMap();
 
                 break; // transaction was successfully completed, so we cancel the loop here -> no restart required
             } catch (\Exception $e) {
@@ -962,7 +963,11 @@ class AbstractObject extends Model\Element\AbstractElement
      */
     public function setParentId($o_parentId)
     {
-        $this->o_parentId = (int) $o_parentId;
+        $o_parentId = (int) $o_parentId;
+        if ($o_parentId != $this->o_parentId) {
+            $this->markFieldDirty("o_parentId");
+        }
+        $this->o_parentId = $o_parentId;
         $this->o_parent = null;
 
         return $this;
@@ -1108,11 +1113,9 @@ class AbstractObject extends Model\Element\AbstractElement
      */
     public function setParent($o_parent)
     {
+        $newParentId = $o_parent instanceof self ? $o_parent->getId() : 0;
+        $this->setParentId($newParentId);
         $this->o_parent = $o_parent;
-        if ($o_parent instanceof self) {
-            $this->o_parentId = $o_parent->getId();
-        }
-
         return $this;
     }
 
