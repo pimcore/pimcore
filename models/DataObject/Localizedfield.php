@@ -190,7 +190,7 @@ class Localizedfield extends Model\AbstractModel implements DirtyIndicatorInterf
      *
      * @return $this
      */
-    public function setClass(ClassDefinition $class)
+    public function setClass($class)
     {
         $this->class = $class;
 
