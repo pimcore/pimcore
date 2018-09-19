@@ -168,6 +168,7 @@ class Localizedfield extends Model\AbstractModel implements DirtyIndicatorInterf
         }
         $this->object = $object;
         $this->objectId = $object ? $object->getId() : null;
+        $this->setClass($object ? $object->getClass() : null);
 
         return $this;
     }
