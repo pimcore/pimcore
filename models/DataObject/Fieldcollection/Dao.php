@@ -87,7 +87,7 @@ class Dao extends Model\Dao\AbstractDao
                         if ($value === 0 || !empty($value)) {
                             $collection->setValue($key, $value);
 
-                            if (method_exists($collection, 'resetDirtyMap')) {
+                            if ($collection instanceof DataObject\DirtyIndicatorInterface) {
                                 $collection->resetDirtyMap($key);
                             }
                         }
@@ -200,7 +200,6 @@ class Dao extends Model\Dao\AbstractDao
             if (!$this->model->hasDirtyFields() && $hasLocalizedFields) {
                 // always empty localized fields
                 $this->db->deleteWhere('object_relations_' . $object->getClassId(), $whereLocalizedFields);
-                // empty relation table
                 return false;
             }
         }

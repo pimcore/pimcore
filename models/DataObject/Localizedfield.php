@@ -427,7 +427,6 @@ class Localizedfield extends Model\AbstractModel implements DirtyIndicatorInterf
             );
         }
 
-        //TODO implement isEqual for as many datatypes as possible (at least the rather simple ones)
         if (!$fieldDefinition->isEqual($this->items[$language][$name], $value)) {
             $this->markLanguageAsDirty($language);
         }

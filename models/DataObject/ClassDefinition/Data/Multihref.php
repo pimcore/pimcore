@@ -724,7 +724,7 @@ class Multihref extends Model\DataObject\ClassDefinition\Data\Relations\Abstract
                     $object->setObjectVar($this->getName(), $data);
                     $this->markLazyloadedFieldAsLoaded($object);
 
-                    if (method_exists($object, "resetDirtyMap")) {
+                    if ($object instanceof DataObject\DirtyIndicatorInterface) {
                         $object->resetDirtyMap($this->getName());
                     }
                 }

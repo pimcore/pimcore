@@ -643,16 +643,15 @@ class Localizedfields extends Model\DataObject\ClassDefinition\Data
      */
     public function load($object, $params = [])
     {
-        $theObject = $object;
         if ($object instanceof DataObject\Fieldcollection\Data\AbstractData || $object instanceof DataObject\Objectbrick\Data\AbstractData) {
-            $theObject = $object->getObject();
+            $object = $object->getObject();
         }
 
         $localizedFields = new DataObject\Localizedfield();
-        $localizedFields->setObject($theObject);
+        $localizedFields->setObject($object);
         $context = isset($params['context']) ? $params['context'] : null;
         $localizedFields->setContext($context);
-        $localizedFields->load($theObject, $params);
+        $localizedFields->load($object, $params);
 
         $localizedFields->resetDirtyMap();
         $localizedFields->resetLanguageDirtyMap();

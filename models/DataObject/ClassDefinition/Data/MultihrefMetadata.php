@@ -658,8 +658,9 @@ class MultihrefMetadata extends Model\DataObject\ClassDefinition\Data\Multihref
                 }
             } else {
                 if ($this->supportsDirtyDetection()) {
-                    if (!$object->isFieldDirty($this->getName()))
+                    if (!$object->isFieldDirty($this->getName())) {
                         return;
+                    }
                 }
             }
         }

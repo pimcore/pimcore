@@ -95,7 +95,7 @@ class Dao extends Model\DataObject\Fieldcollection\Dao
 
                 $setter = 'set' . ucfirst($type);
 
-                if (method_exists($brick, "resetDirtyMap")) {
+                if ($brick instanceof DataObject\DirtyIndicatorInterface) {
                     $brick->resetDirtyMap($key);
                 }
 

@@ -6,7 +6,8 @@ use Doctrine\DBAL\Schema\Schema;
 use Pimcore\Migrations\Migration\AbstractPimcoreMigration;
 
 /**
- * Auto-generated Migration: Please modify to your needs!
+ * Class Version20180912140913
+ * @package Pimcore\Bundle\CoreBundle\Migrations
  */
 class Version20180912140913 extends AbstractPimcoreMigration
 {

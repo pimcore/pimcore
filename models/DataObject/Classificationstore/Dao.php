@@ -85,7 +85,7 @@ class Dao extends Model\Dao\AbstractDao
                         $value = $fd->getDataForResource($value, null, []);
                         $this->model->setLocalizedKeyValue($groupId, $keyId, $value, $language);
                     } elseif ($fd instanceof DataObject\ClassDefinition\Data\EncryptedField) {
-                        $value = $fd->getDataForResource($value, $this->model->getObject(), ['skipEncryption' => true]);
+                        $value = $fd->getDataForResource($value, $object, ['skipEncryption' => true]);
                         $delegate = $fd->getDelegate();
                         $value = new DataObject\Data\EncryptedField($delegate, $value);
                     } else {
