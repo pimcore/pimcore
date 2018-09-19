@@ -152,6 +152,7 @@ class Localizedfield extends Model\AbstractModel
         }
         $this->object = $object;
         $this->objectId = $object ? $object->getId() : null;
+        $this->setClass($object ? $object->getClass() : null);
 
         return $this;
     }
