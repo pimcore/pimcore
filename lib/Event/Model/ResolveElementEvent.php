@@ -76,5 +76,4 @@ class ResolveElementEvent extends Event
     {
         $this->type = $type;
     }
-
 }

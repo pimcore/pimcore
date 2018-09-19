@@ -367,5 +367,4 @@ final class AdminEvents
      * @var string
      */
     const RESOLVE_ELEMENT = 'pimcore.admin.resolve.element';
-
 }
