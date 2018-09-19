@@ -59,7 +59,7 @@ class Bootstrap
 
         if ($pimcoreConsole) {
             $input = new ArgvInput();
-            $env   = $input->getParameterOption(['--env', '-e'], Config::getEnvironment());
+            $env = $input->getParameterOption(['--env', '-e'], Config::getEnvironment());
             $debug = \Pimcore::inDebugMode() && !$input->hasParameterOption(['--no-debug', '']);
 
             Config::setEnvironment($env);
@@ -215,6 +215,8 @@ class Bootstrap
         // configure PHP's error logging
         $resolveConstant('PIMCORE_PHP_ERROR_REPORTING', E_ALL & ~E_NOTICE & ~E_STRICT);
         $resolveConstant('PIMCORE_PHP_ERROR_LOG', PIMCORE_LOG_DIRECTORY . '/php.log');
+        $resolveConstant('PIMCORE_KERNEL_CLASS', '\AppKernel');
+        $resolveConstant('PIMCORE_SYMFONY_DEFAULT_BUNDLE', 'AppBundle');
     }
 
     public static function autoload()
@@ -277,15 +279,28 @@ class Bootstrap
     public static function kernel()
     {
         $environment = Config::getEnvironment();
-        $debug       = Config::getEnvironmentConfig()->activatesKernelDebugMode($environment);
+        $debug = Config::getEnvironmentConfig()->activatesKernelDebugMode($environment);
 
         if ($debug) {
             Debug::enable();
             @ini_set('display_errors', 'On');
         }
 
-        $debug = true;
-        $kernel = new \AppKernel($environment, $debug);
+        if (defined('PIMCORE_KERNEL_CLASS')) {
+            $kernelClass = PIMCORE_KERNEL_CLASS;
+        } else {
+            $kernelClass = '\AppKernel';
+        }
+
+        if (!class_exists($kernelClass)) {
+            throw new \InvalidArgumentException(sprintf('Defined Kernel Class %s not found', $kernelClass));
+        }
+
+        if (!is_subclass_of($kernelClass, Kernel::class)) {
+            throw new \InvalidArgumentException(sprintf('Defined Kernel Class %s needs to extend the \Pimcore\Kernel Class', $kernelClass));
+        }
+
+        $kernel = new $kernelClass($environment, $debug);
         \Pimcore::setKernel($kernel);
         $kernel->boot();
 

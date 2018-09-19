@@ -43,7 +43,7 @@ class RedisStorage implements TargetingStorageInterface
             return [];
         }
 
-        $key    = $this->buildKey($visitorInfo, $scope);
+        $key = $this->buildKey($visitorInfo, $scope);
         $result = $this->redis->hGetAll($key);
 
         $blacklist = [
@@ -71,7 +71,7 @@ class RedisStorage implements TargetingStorageInterface
             return false;
         }
 
-        $key    = $this->buildKey($visitorInfo, $scope);
+        $key = $this->buildKey($visitorInfo, $scope);
         $result = $this->redis->hExists($key, $name);
 
         return 1 === $result;
@@ -104,7 +104,7 @@ class RedisStorage implements TargetingStorageInterface
             return $default;
         }
 
-        $key    = $this->buildKey($visitorInfo, $scope);
+        $key = $this->buildKey($visitorInfo, $scope);
         $result = $this->redis->hGet($key, $name);
 
         if (!$result) {
@@ -142,7 +142,7 @@ class RedisStorage implements TargetingStorageInterface
             throw new \LogicException('Can\'t migrate to Redis storage as no visitor ID is set');
         }
 
-        $values    = $storage->all($visitorInfo, $scope);
+        $values = $storage->all($visitorInfo, $scope);
         $createdAt = $storage->getCreatedAt($visitorInfo, $scope);
         $updatedAt = $storage->getUpdatedAt($visitorInfo, $scope);
 
@@ -196,7 +196,7 @@ class RedisStorage implements TargetingStorageInterface
             return null;
         }
 
-        $key       = $this->buildKey($visitorInfo, $scope);
+        $key = $this->buildKey($visitorInfo, $scope);
         $timestamp = $this->redis->hGet($key, $storageKey);
 
         if (empty($timestamp)) {

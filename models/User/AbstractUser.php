@@ -56,7 +56,7 @@ class AbstractUser extends Model\AbstractModel
         $cacheKey = 'user_' . $id;
         try {
             if (\Pimcore\Cache\Runtime::isRegistered($cacheKey)) {
-                $user =  \Pimcore\Cache\Runtime::get($cacheKey);
+                $user = \Pimcore\Cache\Runtime::get($cacheKey);
             } else {
                 $user = new static();
                 $user->getDao()->getById($id);

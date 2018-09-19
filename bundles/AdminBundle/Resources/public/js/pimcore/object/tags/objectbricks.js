@@ -84,11 +84,11 @@ pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
         this.layoutDefinitions = bricksData.layoutDefinitions;
 
         this.component.insert(0, this.getControls());
-        if(this.data.length > 0) {
-            for (var i=0; i<this.data.length; i++) {
-                if(this.data[i] != null) {
+        if (this.data.length > 0) {
+            for (var i = 0; i < this.data.length; i++) {
+                if (this.data[i] != null) {
                     this.preventDelete[this.data[i].type] = this.data[i].inherited;
-                    this.addBlockElement(i,this.data[i].type, this.data[i], true, this.data[i].title);
+                    this.addBlockElement(i, this.data[i].type, this.data[i], true, this.data[i].title);
                 }
             }
         }
@@ -98,14 +98,14 @@ pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
         pimcore.layout.refresh();
     },
 
-    buildMenu: function(data, blockElement) {
+    buildMenu: function (data, blockElement) {
         var menu = [];
 
         if (data) {
-            for(var i=0; i<data.length; i++) {
+            for (var i = 0; i < data.length; i++) {
 
                 var elementData = data[i];
-                if(this.addedTypes[elementData.key]) {
+                if (this.addedTypes[elementData.key]) {
                     continue;
                 }
 
@@ -139,355 +139,376 @@ pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
 
         var items = [];
 
-        if(!this.fieldConfig.noteditable) {
+        if (!this.fieldConfig.noteditable) {
 
-            if(menu.length == 1) {
-                var handler = menu[0].menu ? menu[0].menu[0].handler : menu[0].handler;
-                items.push({
-                    cls: "pimcore_block_button_plus",
-                    iconCls: "pimcore_icon_plus",
-                    handler: handler
-                });
-            } else if (menu.length > 1) {
-                items.push({
-                    cls: "pimcore_block_button_plus",
-                    iconCls: "pimcore_icon_plus",
-                    menu: menu
-                });
-            }
-        }
-
-        items.push({
-            xtype: "tbtext",
-            text: ts(this.fieldConfig.title)
-        });
-
-        var toolbar = new Ext.Toolbar({
-            items: items
-        });
-
-        return toolbar;
-    },
-
-    addBlock: function (blockElement, type, title) {
-
-        var index = 0;
-
-        this.addBlockElement(index, type, null, false, title);
-    },
-
-    removeBlock: function (blockElement) {
-
-        Ext.MessageBox.confirm(' ', t('delete_message'), function(blockElement, answer) {
-            if(answer == "yes") {
-
-                var key = blockElement.key;
-                this.currentElements[key].action = "deleted";
-
-                this.tabpanel.remove(blockElement);
-                this.addedTypes[blockElement.fieldtype] = false;
-                this.component.remove(this.component.getComponent(0));
-                this.component.insert(0, this.getControls());
-                this.component.updateLayout();
-
-                this.dirty = true;
-            }
-        }.bind(this, blockElement), this);
-        return false;
-    },
-
-
-    getCurrentElementsCount: function() {
-        var i = 0;
-        var types = Object.keys(this.currentElements);
-        for(var t=0; t < types.length; t++) {
-            if (this.currentElements[types[t]]) {
-                var element = this.currentElements[types[t]];
-                if (element.action != "deleted") {
-                    i++;
-                }
-            }
-        }
-        return i;
-    },
-
-    addBlockElement: function (index, type, blockData, ignoreChange, title) {
-        if(!type){
-            return;
-        }
-        if(!this.layoutDefinitions[type]) {
-            return;
-        }
-        if (this.fieldConfig.maxItems && this.getCurrentElementsCount() >= this.fieldConfig.maxItems) {
-            Ext.Msg.alert(t("error"),t("limit_reached"));
-            return;
-        }
-
-        var dataFields = [];
-        var currentData = {};
-        var currentMetaData = {};
-
-        if(blockData) {
-            currentData = blockData.data;
-            currentMetaData = blockData.metaData;
-        }
-
-        var dataProvider = {
-            getDataForField: function (fieldConfig) {
-                var name = fieldConfig.name;
-                return currentData[name];
-            },
-
-            getMetaDataForField: function (fieldConfig) {
-                var name = fieldConfig.name;
-                return currentMetaData[name];
-            },
-
-            addToDataFields: function (field, name) {
-                dataFields.push(field);
-            }
-        };
-
-        var childConfig = this.layoutDefinitions[type];
-
-        var blockElement = new Ext.Panel({
-            //bodyStyle: "padding:10px;",
-            style: "margin: 0 0 10px 0;",
-            closable: !this.fieldConfig.noteditable,
-            autoHeight: true,
-            border: false,
-            title: title ? ts(title) : ts(type),
-            // items: items
-            items: [],
-            listeners: {
-                afterrender: function (childConfig, dataProvider, panel) {
-                    if (!panel.__tabpanel_initialized) {
-                        var copy = Ext.decode(Ext.encode(childConfig));
-                        var children = this.getRecursiveLayout(copy, null,             {
-                            containerType: "objectbrick",
-                            containerKey: type,
-                            ownerName: this.fieldConfig.name
-                        }, false, true, dataProvider);
-                        if(this.fieldConfig.noteditable && children) {
-                            children.forEach(function (record) {
-                                record.disabled = true;
-                            });
-                        }
-
-                        if (children) {
-                            panel.add(children);
-                        }
-
-                        panel.updateLayout();
-
-                        if (panel.setActiveTab) {
-                            var activeTab = panel.items.items[0];
-                            if (activeTab) {
-                                activeTab.updateLayout();
-                                panel.setActiveTab(activeTab);
-                            }
-                        }
-
-                        panel.__tabpanel_initialized = true;
-
-
-                    }
-                }.bind(this, childConfig, dataProvider)
-
-            }
-        });
-
-        if(!this.fieldConfig.noteditable) {
-            blockElement.on("beforeclose", this.removeBlock.bind(this, blockElement));
-        }
-
-        this.component.remove(this.component.getComponent(0));
-
-        this.addedTypes[type] = true;
-
-        blockElement.key = type;
-        blockElement.fieldtype = type;
-        this.tabpanel.add(blockElement);
-        this.component.insert(0, this.getControls(null));
-
-        this.tabpanel.updateLayout();
-        this.component.updateLayout();
-
-        this.currentElements[type] = null;
-        this.currentElements[type] = {
-            container: blockElement,
-            fields: dataFields,
-            type: type
-        };
-
-        if(!ignoreChange) {
-            this.dirty = true;
-            this.tabpanel.setActiveTab(blockElement);
-        }
-    },
-
-    getLayoutShow: function () {
-
-        this.component = this.getLayoutEdit();
-
-        return this.component;
-    },
-
-    getValue: function () {
-
-        var data = [];
-        var element;
-        var elementData = {};
-
-        var types = Object.keys(this.currentElements);
-        for(var t=0; t < types.length; t++) {
-            elementData = {};
-            if(this.currentElements[types[t]]) {
-                element = this.currentElements[types[t]];
-
-                if(element.action == "deleted") {
-                    elementData = "deleted";
+            if (menu.length == 1) {
+                if (!menu[0].menu) {
+                    var handler = menu[0].menu ? menu[0].menu[0].handler : menu[0].handler;
+                    items.push({
+                        cls: "pimcore_block_button_plus",
+                        iconCls: "pimcore_icon_plus",
+                        handler: handler
+                    });
                 } else {
-                    for (var u=0; u<element.fields.length; u++) {
+                    items.push({
+                        cls: "pimcore_block_button_plus",
+                        iconCls: "pimcore_icon_plus",
+                        menu: menu
+                    });
 
-                        var field = element.fields[u];
-                        try {
-                            if(field.isDirty()) {
-                                field.unmarkInherited();
-                                elementData[field.getName()] = field.getValue();
-                            }
-                        } catch (e) {
-                            console.log(e);
-                            elementData[field.getName()] = "";
-                        }
-
-                    }
                 }
-
-                data.push({
-                    type: element.type,
-                    data: elementData
-                });
+            } else if (menu.length > 1) {
+                    items.push({
+                        cls: "pimcore_block_button_plus",
+                        iconCls: "pimcore_icon_plus",
+                        menu: menu
+                    });
+                }
             }
+
+            items.push({
+                xtype: "tbtext",
+                text: ts(this.fieldConfig.title)
+            });
+
+            var toolbar = new Ext.Toolbar({
+                items: items
+            });
+
+            return toolbar;
         }
+    ,
 
-        return data;
-    },
+        addBlock: function (blockElement, type, title) {
 
-    getName: function () {
-        return this.fieldConfig.name;
-    },
+            var index = 0;
 
-    isDirty: function() {
-        if(!this.isRendered()) {
+            this.addBlockElement(index, type, null, false, title);
+        }
+    ,
+
+        removeBlock: function (blockElement) {
+
+            Ext.MessageBox.confirm(' ', t('delete_message'), function (blockElement, answer) {
+                if (answer == "yes") {
+
+                    var key = blockElement.key;
+                    this.currentElements[key].action = "deleted";
+
+                    this.tabpanel.remove(blockElement);
+                    this.addedTypes[blockElement.fieldtype] = false;
+                    this.component.remove(this.component.getComponent(0));
+                    this.component.insert(0, this.getControls());
+                    this.component.updateLayout();
+
+                    this.dirty = true;
+                }
+            }.bind(this, blockElement), this);
             return false;
         }
+    ,
 
-        var types = Object.keys(this.currentElements);
-        for(var t=0; t < types.length; t++) {
-            if(this.currentElements[types[t]]) {
-                var element = this.currentElements[types[t]];
-                if(element.action != "deleted") {
-                    for (var u=0; u<element.fields.length; u++) {
-                        var field = element.fields[u];
-                        if(field.isDirty()) {
 
-                            this.dirty = true;
+        getCurrentElementsCount: function () {
+            var i = 0;
+            var types = Object.keys(this.currentElements);
+            for (var t = 0; t < types.length; t++) {
+                if (this.currentElements[types[t]]) {
+                    var element = this.currentElements[types[t]];
+                    if (element.action != "deleted") {
+                        i++;
+                    }
+                }
+            }
+            return i;
+        }
+    ,
 
-                            if (field.fieldConfig.fieldtype == "localizedfields") {
-                                field.dataIsNotInherited(true);
-                            } else {
-                                field.unmarkInherited();
+        addBlockElement: function (index, type, blockData, ignoreChange, title) {
+            if (!type) {
+                return;
+            }
+            if (!this.layoutDefinitions[type]) {
+                return;
+            }
+            if (this.fieldConfig.maxItems && this.getCurrentElementsCount() >= this.fieldConfig.maxItems) {
+                Ext.Msg.alert(t("error"), t("limit_reached"));
+                return;
+            }
+
+            var dataFields = [];
+            var currentData = {};
+            var currentMetaData = {};
+
+            if (blockData) {
+                currentData = blockData.data;
+                currentMetaData = blockData.metaData;
+            }
+
+            var dataProvider = {
+                getDataForField: function (fieldConfig) {
+                    var name = fieldConfig.name;
+                    return currentData[name];
+                },
+
+                getMetaDataForField: function (fieldConfig) {
+                    var name = fieldConfig.name;
+                    return currentMetaData[name];
+                },
+
+                addToDataFields: function (field, name) {
+                    dataFields.push(field);
+                }
+            };
+
+            var childConfig = this.layoutDefinitions[type];
+
+            var blockElement = new Ext.Panel({
+                //bodyStyle: "padding:10px;",
+                style: "margin: 0 0 10px 0;",
+                closable: !this.fieldConfig.noteditable,
+                autoHeight: true,
+                border: false,
+                title: title ? ts(title) : ts(type),
+                // items: items
+                items: [],
+                listeners: {
+                    afterrender: function (childConfig, dataProvider, panel) {
+                        if (!panel.__tabpanel_initialized) {
+                            var copy = Ext.decode(Ext.encode(childConfig));
+                            var children = this.getRecursiveLayout(copy, null, {
+                                containerType: "objectbrick",
+                                containerKey: type,
+                                ownerName: this.fieldConfig.name
+                            }, false, true, dataProvider);
+                            if (this.fieldConfig.noteditable && children) {
+                                children.forEach(function (record) {
+                                    record.disabled = true;
+                                });
                             }
 
+                            if (children) {
+                                panel.add(children);
+                            }
 
-                            return this.dirty;
+                            panel.updateLayout();
 
+                            if (panel.setActiveTab) {
+                                var activeTab = panel.items.items[0];
+                                if (activeTab) {
+                                    activeTab.updateLayout();
+                                    panel.setActiveTab(activeTab);
+                                }
+                            }
+
+                            panel.__tabpanel_initialized = true;
+
+
+                        }
+                    }.bind(this, childConfig, dataProvider)
+
+                }
+            });
+
+            if (!this.fieldConfig.noteditable) {
+                blockElement.on("beforeclose", this.removeBlock.bind(this, blockElement));
+            }
+
+            this.component.remove(this.component.getComponent(0));
+
+            this.addedTypes[type] = true;
+
+            blockElement.key = type;
+            blockElement.fieldtype = type;
+            this.tabpanel.add(blockElement);
+            this.component.insert(0, this.getControls(null));
+
+            this.tabpanel.updateLayout();
+            this.component.updateLayout();
+
+            this.currentElements[type] = null;
+            this.currentElements[type] = {
+                container: blockElement,
+                fields: dataFields,
+                type: type
+            };
+
+            if (!ignoreChange) {
+                this.dirty = true;
+                this.tabpanel.setActiveTab(blockElement);
+            }
+        }
+    ,
+
+        getLayoutShow: function () {
+
+            this.component = this.getLayoutEdit();
+
+            return this.component;
+        }
+    ,
+
+        getValue: function () {
+
+            var data = [];
+            var element;
+            var elementData = {};
+
+            var types = Object.keys(this.currentElements);
+            for (var t = 0; t < types.length; t++) {
+                elementData = {};
+                if (this.currentElements[types[t]]) {
+                    element = this.currentElements[types[t]];
+
+                    if (element.action == "deleted") {
+                        elementData = "deleted";
+                    } else {
+                        for (var u = 0; u < element.fields.length; u++) {
+
+                            var field = element.fields[u];
+                            try {
+                                if (field.isDirty()) {
+                                    field.unmarkInherited();
+                                    elementData[field.getName()] = field.getValue();
+                                }
+                            } catch (e) {
+                                console.log(e);
+                                elementData[field.getName()] = "";
+                            }
+
+                        }
+                    }
+
+                    data.push({
+                        type: element.type,
+                        data: elementData
+                    });
+                }
+            }
+
+            return data;
+        }
+    ,
+
+        getName: function () {
+            return this.fieldConfig.name;
+        }
+    ,
+
+        isDirty: function () {
+            if (!this.isRendered()) {
+                return false;
+            }
+
+            var types = Object.keys(this.currentElements);
+            for (var t = 0; t < types.length; t++) {
+                if (this.currentElements[types[t]]) {
+                    var element = this.currentElements[types[t]];
+                    if (element.action != "deleted") {
+                        for (var u = 0; u < element.fields.length; u++) {
+                            var field = element.fields[u];
+                            if (field.isDirty()) {
+
+                                this.dirty = true;
+
+                                if (field.fieldConfig.fieldtype == "localizedfields") {
+                                    field.dataIsNotInherited(true);
+                                } else {
+                                    field.unmarkInherited();
+                                }
+
+
+                                return this.dirty;
+
+                            }
                         }
                     }
                 }
             }
+
+            return this.dirty;
         }
+    ,
 
-        return this.dirty;
-    },
+        markInherited:function (metaData) {
+            // nothing to do, only sub-elements can be marked
+        }
+    ,
 
-    markInherited:function (metaData) {
-        // nothing to do, only sub-elements can be marked
-    },
-
-    dataIsNotInherited: function() {
-        var types = Object.keys(this.currentElements);
-        for(var t=0; t < types.length; t++) {
-            if(this.currentElements[types[t]]) {
-                var element = this.currentElements[types[t]];
-                if(element.action != "deleted") {
-                    for (var u=0; u<element.fields.length; u++) {
-                        var field = element.fields[u];
-                        if(field.isDirty()) {
-                            if (field.fieldConfig.fieldtype == "localizedfields") {
-                                field.dataIsNotInherited(true);
-                            } else {
-                                field.unmarkInherited();
+        dataIsNotInherited: function () {
+            var types = Object.keys(this.currentElements);
+            for (var t = 0; t < types.length; t++) {
+                if (this.currentElements[types[t]]) {
+                    var element = this.currentElements[types[t]];
+                    if (element.action != "deleted") {
+                        for (var u = 0; u < element.fields.length; u++) {
+                            var field = element.fields[u];
+                            if (field.isDirty()) {
+                                if (field.fieldConfig.fieldtype == "localizedfields") {
+                                    field.dataIsNotInherited(true);
+                                } else {
+                                    field.unmarkInherited();
+                                }
                             }
                         }
                     }
                 }
             }
         }
-    },
+    ,
 
-    isMandatory: function () {
-        var element;
+        isMandatory: function () {
+            var element;
 
-        var types = Object.keys(this.currentElements);
-        for(var t=0; t < types.length; t++) {
-            if(this.currentElements[types[t]]) {
-                element = this.currentElements[types[t]];
-                if(element.action != "deleted") {
-                    for (var u=0; u<element.fields.length; u++) {
-                        if(element.fields[u].isMandatory()) {
-                            return true;
-                        }
-                    }
-                }
-            }
-        }
-
-        return false;
-    },
-
-    isInvalidMandatory: function () {
-        var element;
-        var isInvalid = false;
-        var invalidMandatoryFields = [];
-
-        var types = Object.keys(this.currentElements);
-        for(var t=0; t < types.length; t++) {
-            if(this.currentElements[types[t]]) {
-                element = this.currentElements[types[t]];
-                if(element.action != "deleted") {
-                    for (var u=0; u<element.fields.length; u++) {
-                        if(element.fields[u].isMandatory()) {
-                            if(element.fields[u].isInvalidMandatory()) {
-                                invalidMandatoryFields.push(element.fields[u].getTitle()
-                                    + " (" + element.fields[u].getName() + "|" + types[t] + ")");
-                                isInvalid = true;
+            var types = Object.keys(this.currentElements);
+            for (var t = 0; t < types.length; t++) {
+                if (this.currentElements[types[t]]) {
+                    element = this.currentElements[types[t]];
+                    if (element.action != "deleted") {
+                        for (var u = 0; u < element.fields.length; u++) {
+                            if (element.fields[u].isMandatory()) {
+                                return true;
                             }
                         }
                     }
                 }
             }
+
+            return false;
+        }
+    ,
+
+        isInvalidMandatory: function () {
+            var element;
+            var isInvalid = false;
+            var invalidMandatoryFields = [];
+
+            var types = Object.keys(this.currentElements);
+            for (var t = 0; t < types.length; t++) {
+                if (this.currentElements[types[t]]) {
+                    element = this.currentElements[types[t]];
+                    if (element.action != "deleted") {
+                        for (var u = 0; u < element.fields.length; u++) {
+                            if (element.fields[u].isMandatory()) {
+                                if (element.fields[u].isInvalidMandatory()) {
+                                    invalidMandatoryFields.push(element.fields[u].getTitle()
+                                        + " (" + element.fields[u].getName() + "|" + types[t] + ")");
+                                    isInvalid = true;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            // return the error messages not bool, this is handled in object/edit.js
+            if (isInvalid) {
+                return invalidMandatoryFields;
+            }
+
+            return isInvalid;
         }
 
-        // return the error messages not bool, this is handled in object/edit.js
-        if(isInvalid) {
-            return invalidMandatoryFields;
-        }
-
-        return isInvalid;
-    }
-
-});
+    });
 
 pimcore.object.tags.objectbricks.addMethods(pimcore.object.helpers.edit);

@@ -18,6 +18,7 @@ pimcore.document.tags.video = Class.create(pimcore.document.tag, {
         this.id = id;
         this.name = name;
         this.data = {};
+        this.inherited = inherited;
 
         this.options = this.parseOptions(options);
         this.data = data;
@@ -32,7 +33,10 @@ pimcore.document.tags.video = Class.create(pimcore.document.tag, {
             handler: this.openEditor.bind(this)
         });
         button.render(element.insertHtml("afterBegin", '<div class="pimcore_video_edit_button"></div>'));
-
+        if (inherited) {
+            button.hide();
+        }
+        this.button = button;
         var emptyContainer = element.query(".pimcore_tag_video_empty")[0];
         if(emptyContainer) {
             emptyContainer = Ext.get(emptyContainer);
@@ -81,5 +85,41 @@ pimcore.document.tags.video = Class.create(pimcore.document.tag, {
 
     getType: function () {
         return "video";
-    }
+    },
+
+    setInherited: function(inherited, el) {
+        this.inherited = inherited;
+
+        // if an element given is as optional second parameter we use this for the mask
+        if(!(el instanceof Ext.Element)) {
+            el = Ext.get(this.id);
+        }
+
+        // check for inherited elements, and mask them if necessary
+        if(this.inherited) {
+            var mask = el.mask();
+            new Ext.ToolTip({
+                target: mask,
+                showDelay: 100,
+                trackMouse:true,
+                html: t("click_right_to_overwrite")
+            });
+            mask.on("contextmenu", function (e) {
+                var menu = new Ext.menu.Menu();
+                menu.add(new Ext.menu.Item({
+                    text: t('overwrite'),
+                    iconCls: "pimcore_icon_overwrite",
+                    handler: function (item) {
+                        this.button.show();
+                        this.setInherited(false);
+                    }.bind(this)
+                }));
+                menu.showAt(e.getXY());
+
+                e.stopEvent();
+            }.bind(this));
+        } else {
+            el.unmask();
+        }
+    },
 });

@@ -111,7 +111,7 @@ abstract class Kernel extends SymfonyKernel
         }
 
         $configRealPath = realpath($this->getRootDir() . '/config/config_' . $this->getEnvironment() . '.yml');
-        if($configRealPath === false) {
+        if ($configRealPath === false) {
             throw new InvalidConfigurationException('File ' . $this->getRootDir() . '/config/config_' . $this->getEnvironment() . '.yml  cannot be found.');
         }
         $loader->load($configRealPath);

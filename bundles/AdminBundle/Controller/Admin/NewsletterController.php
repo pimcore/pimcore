@@ -57,20 +57,20 @@ class NewsletterController extends DocumentControllerBase
         $versions = Element\Service::getSafeVersionInfo($email->getVersions());
         $email->setVersions(array_splice($versions, 0, 1));
         $email->idPath = Element\Service::getIdPath($email);
-        $email->userPermissions = $email->getUserPermissions();
+        $email->setUserPermissions($email->getUserPermissions());
         $email->setLocked($email->isLocked());
         $email->setParent(null);
 
         // unset useless data
         $email->setElements(null);
-        $email->childs = null;
+        $email->setChildren(null);
 
         $this->addTranslationsData($email);
         $this->minimizeProperties($email);
 
         //Hook for modifying return value - e.g. for changing permissions based on object data
         //data need to wrapped into a container in order to pass parameter to event listeners by reference so that they can change the values
-        $data = object2array($email);
+        $data = $email->getObjectVars();
         $event = new GenericEvent($this, [
             'data' => $data,
             'document' => $email
@@ -351,7 +351,7 @@ class NewsletterController extends DocumentControllerBase
         $testMailAddress = $request->get('testMailAddress');
 
         if (empty($testMailAddress)) {
-            return $this->adminJson(['success' => false, 'message' =>  'Please provide a valid email address to send test newsletter']);
+            return $this->adminJson(['success' => false, 'message' => 'Please provide a valid email address to send test newsletter']);
         }
 
         $serviceLocator = $this->get('pimcore.newsletter.address_source_adapter.factories');

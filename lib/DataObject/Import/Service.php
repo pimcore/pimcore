@@ -64,10 +64,10 @@ class Service
         ContainerInterface $operatorFactories,
         ContainerInterface $valueFactories
     ) {
-        $this->db                = $db;
-        $this->resolvers         = $resolvers;
+        $this->db = $db;
+        $this->resolvers = $resolvers;
         $this->operatorFactories = $operatorFactories;
-        $this->valueFactories    = $valueFactories;
+        $this->valueFactories = $valueFactories;
     }
 
     public function getResolver(string $name): ResolverInterface
@@ -173,7 +173,7 @@ class Service
         $db = Db::get();
 
         $query = 'select distinct c.id from importconfigs c, importconfig_shares s where '
-            . ' c.id = s.importConfigId and s.sharedWithUserId IN (' . $userIds . ') and c.classId = ' . $classId
+            . ' c.id = s.importConfigId and s.sharedWithUserId IN (' . $userIds . ') and c.classId = ' . $db->quote($classId)
                 . ' UNION distinct select c2.id from importconfigs c2 where shareGlobally = 1 and c2.classId = ' . $db->quote($classId);
 
         $ids = $this->db->fetchCol($query);

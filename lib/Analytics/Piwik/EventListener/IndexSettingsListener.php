@@ -47,8 +47,8 @@ class IndexSettingsListener implements EventSubscriberInterface
         TokenStorageUserResolver $tokenStorageUserResolver
     ) {
         $this->configProvider = $configProvider;
-        $this->reportBroker   = $reportBroker;
-        $this->userResolver   = $tokenStorageUserResolver;
+        $this->reportBroker = $reportBroker;
+        $this->userResolver = $tokenStorageUserResolver;
     }
 
     public static function getSubscribedEvents()
@@ -73,10 +73,10 @@ class IndexSettingsListener implements EventSubscriberInterface
         $config = $this->configProvider->getConfig();
 
         $settings = [
-            'configured'              => $config->isConfigured(),
-            'iframe_configured'       => $config->isIframeIntegrationConfigured(),
+            'configured' => $config->isConfigured(),
+            'iframe_configured' => $config->isIframeIntegrationConfigured(),
             'report_token_configured' => !empty($config->getReportToken()),
-            'api_token_configured'    => !empty($config->getApiToken()),
+            'api_token_configured' => !empty($config->getApiToken()),
         ];
 
         $settings = $this->addReportSettings($settings);
@@ -89,7 +89,7 @@ class IndexSettingsListener implements EventSubscriberInterface
         $reports = [];
         foreach ($this->reportBroker->getReports() as $report) {
             $reports[$report->getId()] = [
-                'id'    => $report->getId(),
+                'id' => $report->getId(),
                 'title' => $report->getTitle()
             ];
         }

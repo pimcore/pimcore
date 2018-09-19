@@ -110,7 +110,7 @@ class Renderlet extends Model\Document\Tag
     public function frontend()
     {
         // TODO inject services via DI when tags are built through container
-        $container  = \Pimcore::getContainer();
+        $container = \Pimcore::getContainer();
         $tagHandler = $container->get('pimcore.document.tag.handler');
 
         if (!$tagHandler->supports($this->view)) {
@@ -356,8 +356,8 @@ class Renderlet extends Model\Document\Tag
                 Logger::notice('Detected insane relation, removing reference to non existent '.$this->type.' with id ['.$this->id.']');
                 $this->id = null;
                 $this->type = null;
-                $this->o=null;
-                $this->subtype=null;
+                $this->o = null;
+                $this->subtype = null;
             }
         }
 

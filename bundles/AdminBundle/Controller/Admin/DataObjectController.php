@@ -57,6 +57,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
     {
         $allParams = array_merge($request->request->all(), $request->query->all());
 
+        $filter = $request->get('filter');
         $object = DataObject\AbstractObject::getById($request->get('node'));
         $objectTypes = null;
         $objects = [];
@@ -74,11 +75,21 @@ class DataObjectController extends ElementControllerBase implements EventedContr
             $objectTypes = [DataObject\AbstractObject::OBJECT_TYPE_OBJECT, DataObject\AbstractObject::OBJECT_TYPE_FOLDER];
         }
 
+        $filteredTotalCount = 0;
+
         if ($object->hasChildren($objectTypes)) {
             $limit = intval($request->get('limit'));
-            if (!$request->get('limit')) {
+            if (!is_null($filter)) {
+                if (substr($filter, -1) != '*') {
+                    $filter .= '*';
+                }
+                $filter = str_replace('*', '%', $filter);
+
+                $limit = 100;
+            } elseif (!$request->get('limit')) {
                 $limit = 100000000;
             }
+
             $offset = intval($request->get('start'));
 
             $childsList = new DataObject\Listing();
@@ -114,6 +125,11 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                                                  )';
             }
 
+            if (!is_null($filter)) {
+                $db = Db::get();
+                $condition .= ' AND o_key LIKE ' . $db->quote($filter);
+            }
+
             $childsList->setCondition($condition);
             $childsList->setLimit($limit);
             $childsList->setOffset($offset);
@@ -133,6 +149,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
             $childsList = $beforeListLoadEvent->getArgument('list');
 
             $childs = $childsList->load();
+            $filteredTotalCount = $childsList->getTotalCount();
 
             foreach ($childs as $child) {
                 $tmpObject = $this->getTreeNodeConfig($child);
@@ -160,8 +177,11 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                 'offset' => $offset,
                 'limit' => $limit,
                 'total' => $total,
+                'overflow' => !is_null($filter) && ($filteredTotalCount > $limit),
                 'nodes' => $objects,
-                'fromPaging' => intval($request->get('fromPaging'))
+                'fromPaging' => intval($request->get('fromPaging')),
+                'filter' => $request->get('filter') ? $request->get('filter') : '',
+                'inSearch' => intval($request->get('inSearch'))
             ]);
         } else {
             return $this->adminJson($objects);
@@ -353,7 +373,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
             $objectData['general'] = [];
             $allowedKeys = ['o_published', 'o_key', 'o_id', 'o_modificationDate', 'o_creationDate', 'o_classId', 'o_className', 'o_locked', 'o_type', 'o_parentId', 'o_userOwner', 'o_userModification'];
 
-            foreach (get_object_vars($object) as $key => $value) {
+            foreach ($object->getObjectVars() as $key => $value) {
                 if (strstr($key, 'o_') && in_array($key, $allowedKeys)) {
                     $objectData['general'][$key] = $value;
                 }
@@ -444,9 +464,6 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                 $objectData['currentLayoutId'] = $currentLayoutId;
             }
 
-            $objectData = $this->filterLocalizedFields($object, $objectData);
-            DataObject\Service::enrichLayoutDefinition($objectData['layout'], $object);
-
             //Hook for modifying return value - e.g. for changing permissions based on object data
             //data need to wrapped into a container in order to pass parameter to event listeners by reference so that they can change the values
             $event = new GenericEvent($this, [
@@ -455,6 +472,9 @@ class DataObjectController extends ElementControllerBase implements EventedContr
             ]);
             $eventDispatcher->dispatch(AdminEvents::OBJECT_GET_PRE_SEND_DATA, $event);
             $data = $event->getArgument('data');
+
+            $data = $this->filterLocalizedFields($object, $data);
+            DataObject\Service::enrichLayoutDefinition($data['layout'], $object);
 
             DataObject\Service::removeObjectFromSession($object->getId());
 
@@ -534,12 +554,13 @@ class DataObjectController extends ElementControllerBase implements EventedContr
 
                 if ($fielddefinition instanceof DataObject\ClassDefinition\Data\Href) {
                     $data = $relations[0];
+                    $data['published'] = (bool) $data['published'];
                 } else {
                     foreach ($relations as $rel) {
                         if ($fielddefinition instanceof DataObject\ClassDefinition\Data\Objects) {
-                            $data[] = [$rel['id'], $rel['path'], $rel['subtype']];
+                            $data[] = [$rel['id'], $rel['path'], $rel['subtype'], (bool) $rel['published']];
                         } else {
-                            $data[] = [$rel['id'], $rel['path'], $rel['type'], $rel['subtype']];
+                            $data[] = [$rel['id'], $rel['path'], $rel['type'], $rel['subtype'], (bool) $rel['published']];
                         }
                     }
                 }
@@ -728,7 +749,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
             $objectData['general'] = [];
             $objectData['idPath'] = Element\Service::getIdPath($object);
             $allowedKeys = ['o_published', 'o_key', 'o_id', 'o_type', 'o_path', 'o_modificationDate', 'o_creationDate', 'o_userOwner', 'o_userModification'];
-            foreach (get_object_vars($object) as $key => $value) {
+            foreach ($object->getObjectVars() as $key => $value) {
                 if (strstr($key, 'o_') && in_array($key, $allowedKeys)) {
                     $objectData['general'][$key] = $value;
                 }
@@ -1136,17 +1157,16 @@ class DataObjectController extends ElementControllerBase implements EventedContr
             }
 
             if ($allowUpdate) {
-                $newIndex = $values['index'] ?? null;
-                if (is_int($newIndex)) {
-                    $object->setIndex($newIndex);
-                    $this->updateIndexesOfObjectSiblings($object);
-                }
-
                 $object->setModificationDate(time());
                 $object->setUserModification($this->getAdminUser()->getId());
 
                 try {
                     $object->save();
+
+                    if (isset($values['index']) && is_int($values['index'])) {
+                        $this->updateIndexesOfObjectSiblings($object, $values['index']);
+                    }
+
                     $success = true;
                 } catch (\Exception $e) {
                     Logger::error($e);
@@ -1177,8 +1197,18 @@ class DataObjectController extends ElementControllerBase implements EventedContr
     /**
      * @param DataObject\AbstractObject $updatedObject
      */
-    protected function updateIndexesOfObjectSiblings(DataObject\AbstractObject $updatedObject)
+    protected function updateIndexesOfObjectSiblings(DataObject\AbstractObject $updatedObject, $newIndex)
     {
+        $updateLatestVersionIndex = function ($object, $newIndex) {
+            if ($object instanceof DataObject\Concrete && $latestVersion = $object->getLatestVersion()) {
+                $object = $latestVersion->loadData();
+                $object->setIndex($newIndex);
+                $latestVersion->save();
+            }
+        };
+
+        $updatedObject->saveIndex($newIndex);
+
         $list = new DataObject\Listing();
         $list->setCondition(
             'o_parentId = ? AND o_id != ?',
@@ -1191,15 +1221,12 @@ class DataObjectController extends ElementControllerBase implements EventedContr
         $index = 0;
         /** @var DataObject\AbstractObject $child */
         foreach ($siblings as $sibling) {
-            if ($index == intval($updatedObject->getIndex())) {
+            if ($index == $newIndex) {
                 $index++;
             }
-            if (method_exists($sibling, 'setOmitMandatoryCheck')) {
-                $sibling->setOmitMandatoryCheck(true);
-            }
-            $sibling
-                ->setIndex($index)
-                ->save();
+
+            $sibling->saveIndex($index);
+            $updateLatestVersionIndex($sibling, $index);
             $index++;
         }
     }
@@ -1354,20 +1381,89 @@ class DataObjectController extends ElementControllerBase implements EventedContr
         } catch (\Exception $e) {
             Logger::log($e);
             if ($e instanceof Element\ValidationException) {
-                $detailedInfo = '<b>Message:</b><br>';
-                $detailedInfo .= $e->getMessage();
-
-                $detailedInfo .= '<br><br><b>Trace:</b> ' . $e->getTraceAsString();
-                if ($e->getPrevious()) {
-                    $detailedInfo .= '<br><br><b>Previous Message:</b><br>';
-                    $detailedInfo .= $e->getPrevious()->getMessage();
-                    $detailedInfo .= '<br><br><b>Previous Trace:</b><br>' . $e->getPrevious()->getTraceAsString();
-                }
-
-                return $this->adminJson(['success' => false, 'type' => 'ValidationException', 'message' => $e->getMessage(), 'stack' => $detailedInfo, 'code' => $e->getCode()]);
+                return $this->buildValidationExceptionMessage($e);
             }
             throw $e;
         }
+    }
+
+    /**
+     * @param Element\ValidationException $e
+     * @param $message
+     */
+    protected function addContext(Element\ValidationException $e, &$message)
+    {
+        $contextStack = $e->getContextStack();
+        if ($contextStack) {
+            $message = $message . ' (' . implode(',', $contextStack) . ')';
+        }
+    }
+
+    /**
+     * @param $e
+     *
+     * @return mixed
+     */
+    protected function getInnerStack($e)
+    {
+        while ($e->getPrevious()) {
+            $e = $e->getPrevious();
+        }
+
+        return $e;
+    }
+
+    /**
+     * @param $items
+     * @param $message
+     * @param $detailedInfo
+     */
+    protected function recursiveAddValidationExceptionSubItems($items, &$message, &$detailedInfo)
+    {
+        if (!$items) {
+            return;
+        }
+        /** @var $item Element\ValidationException */
+        foreach ($items as $e) {
+            if ($e->getMessage()) {
+                $message .= '<b>' . $e->getMessage() . '</b>';
+                $this->addContext($e, $message);
+                $message .= '<br>';
+
+                $detailedInfo .= '<br><b>Message:</b><br>';
+                $detailedInfo .= $e->getMessage() . '<br>';
+
+                $inner = $this->getInnerStack($e);
+                $detailedInfo .= '<br><b>Trace:</b> ' . $inner->getTraceAsString() . '<br>';
+            }
+            $this->recursiveAddValidationExceptionSubItems($e->getSubItems(), $message, $detailedInfo);
+        }
+    }
+
+    /**
+     * @param Element\ValidationException $e
+     *
+     * @return \Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse
+     */
+    protected function buildValidationExceptionMessage(Element\ValidationException $e)
+    {
+        $detailedInfo = '';
+        if ($e->getMessage()) {
+            $detailedInfo .= '<b>Message:</b><br>';
+            $detailedInfo .= $e->getMessage();
+        }
+
+        $detailedInfo .= '<br><br><b>Trace:</b> ' . $e->getTraceAsString() . '<br>';
+        $inner = $this->getInnerStack($e);
+        $detailedInfo .= '<br><b>Trace:</b> ' . $inner->getTraceAsString() . '<br>';
+
+        $message = $e->getMessage();
+        $this->addContext($e, $message);
+        $message .= '<br>';
+
+        $this->recursiveAddValidationExceptionSubItems($e->getSubItems(), $message, $detailedInfo);
+
+        return $this->adminJson(['success' => false, 'type' => 'ValidationException', 'message' => $message, 'stack' => $detailedInfo, 'code' => $e->getCode()]);
     }
 
     /**
@@ -2227,7 +2323,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
         $url = $object->getClass()->getPreviewUrl();
         if ($url) {
             // replace named variables
-            $vars = get_object_vars($object);
+            $vars = $object->getObjectVars();
             foreach ($vars as $key => $value) {
                 if (!empty($value) && (is_string($value) || is_numeric($value))) {
                     $url = str_replace('%' . $key, urlencode($value), $url);

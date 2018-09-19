@@ -30,6 +30,7 @@ use Pimcore\Sitemap\EventListener\SitemapGeneratorListener;
 use Pimcore\Targeting\ActionHandler\DelegatingActionHandler;
 use Pimcore\Targeting\DataLoaderInterface;
 use Pimcore\Targeting\Storage\TargetingStorageInterface;
+use Pimcore\Translation\ExportDataExtractorService\DataExtractor\DataObjectDataExtractor;
 use Pimcore\Translation\Translator;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\Config\Loader\LoaderInterface;
@@ -72,6 +73,8 @@ class PimcoreCoreExtension extends ConfigurableExtension implements PrependExten
         $container->setParameter('pimcore.web_profiler.toolbar.excluded_routes', $config['web_profiler']['toolbar']['excluded_routes']);
 
         $container->setParameter('pimcore.response_exception_listener.render_error_document', $config['error_handling']['render_error_document']);
+
+        $container->setParameter('pimcore.mime.extensions', $config['mime']['extensions']);
 
         // register pimcore config on container
         // TODO is this bad practice?
@@ -303,6 +306,11 @@ class PimcoreCoreExtension extends ConfigurableExtension implements PrependExten
         } else {
             $definition = $container->getDefinition(TranslationDebugListener::class);
             $definition->setArgument('$parameterName', $parameter);
+        }
+
+        if (!empty($config['data_object']['translation_extractor']['attributes'])) {
+            $definition = $container->getDefinition(DataObjectDataExtractor::class);
+            $definition->setArgument('$exportAttributes', $config['data_object']['translation_extractor']['attributes']);
         }
     }
 

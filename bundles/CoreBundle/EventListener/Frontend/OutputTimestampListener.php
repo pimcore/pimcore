@@ -35,7 +35,7 @@ class OutputTimestampListener implements EventSubscriberInterface
 
     public function __construct(OutputTimestampResolver $outputTimestampResolver)
     {
-        $this->outputTimestampResolver    = $outputTimestampResolver;
+        $this->outputTimestampResolver = $outputTimestampResolver;
     }
 
     /**

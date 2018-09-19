@@ -132,7 +132,7 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
         $options = $this->getEditmodeOptions();
         $code = $this->outputEditmodeOptions($options, true);
 
-        $attributes      = $this->getEditmodeElementAttributes($options);
+        $attributes = $this->getEditmodeElementAttributes($options);
         $attributeString = HtmlUtils::assembleAttributeString($attributes);
 
         $code .= ('<div ' . $attributeString . '></div>');
@@ -148,12 +148,14 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
     protected function getEditmodeOptions(): array
     {
         $options = [
-            'id'        => 'pimcore_editable_' . $this->getName(),
-            'name'      => $this->getName(),
-            'realName'  => $this->getRealName(),
-            'options'   => $this->getOptions(),
-            'data'      => $this->getEditmodeData(),
-            'type'      => $this->getType(),
+            // we don't use : and . in IDs (although it's allowed in HTML spec)
+            // because they are used in CSS syntax and therefore can't be used in querySelector()
+            'id' => 'pimcore_editable_' . str_replace([':', '.'], '_', $this->getName()),
+            'name' => $this->getName(),
+            'realName' => $this->getRealName(),
+            'options' => $this->getOptions(),
+            'data' => $this->getEditmodeData(),
+            'type' => $this->getType(),
             'inherited' => $this->getInherited()
         ];
 
@@ -191,7 +193,7 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
         }
 
         $attributes = array_merge($this->getEditmodeBlockStateAttributes(), [
-            'id'    => $options['id'],
+            'id' => $options['id'],
             'class' => implode(' ', $this->getEditmodeElementClasses()),
         ]);
 
@@ -206,10 +208,10 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
         }, $blockState->getBlocks());
 
         $attributes = [
-            'data-name'          => $this->getName(),
-            'data-real-name'     => $this->getRealName(),
-            'data-type'          => $this->getType(),
-            'data-block-names'   => implode(', ', $blockNames),
+            'data-name' => $this->getName(),
+            'data-real-name' => $this->getRealName(),
+            'data-type' => $this->getType(),
+            'data-block-names' => implode(', ', $blockNames),
             'data-block-indexes' => implode(', ', $blockState->getIndexes())
         ];
 
@@ -264,18 +266,6 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
      */
     protected function outputEditmodeOptions(array $options, $return = false)
     {
-        // clean up invalid brick editmode options
-        if (array_key_exists('options', $options) && array_key_exists('params', $options['options'])) {
-            $validOptions = ['forceEditInView', 'editWidth', 'editHeight'];
-            foreach ($options['options']['params'] as $brickName => $params) {
-                foreach ($params as $key => $val) {
-                    if (!in_array($key, $validOptions)) {
-                        unset($options['options']['params'][$brickName][$key]);
-                    }
-                }
-            }
-        }
-
         $code = '
             <script>
                 editableConfigurations.push(' . json_encode($options) . ');
@@ -417,9 +407,14 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
         $this->realName = $realName;
     }
 
-    final public function setParentBlockNames(array $parentNames)
+    final public function setParentBlockNames($parentNames)
     {
-        $this->parentBlockNames = $parentNames;
+        if (is_array($parentNames)) {
+            // unfortunately we cannot make a type hint here, because of compatibility reasons
+            // old versions where 'parentBlockNames' was not excluded in __sleep() have still this property
+            // in the serialized data, and mostly with the value NULL, on restore this would lead to an error
+            $this->parentBlockNames = $parentNames;
+        }
     }
 
     final public function getParentBlockNames(): array
@@ -436,7 +431,7 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
     {
 
         // here the "normal" task of __sleep ;-)
-        $blockedVars = ['dao', 'controller', 'view', 'editmode', 'options'];
+        $blockedVars = ['dao', 'controller', 'view', 'editmode', 'options', 'parentBlockNames'];
         $vars = get_object_vars($this);
         foreach ($vars as $key => $value) {
             if (!in_array($key, $blockedVars)) {
@@ -648,8 +643,8 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
         // @todo add document-id to registry key | for example for embeded snippets
         // set suffixes if the tag is inside a block
 
-        $container      = \Pimcore::getContainer();
-        $blockState     = $container->get('pimcore.document.tag.block_state_stack')->getCurrentState();
+        $container = \Pimcore::getContainer();
+        $blockState = $container->get('pimcore.document.tag.block_state_stack')->getCurrentState();
         $namingStrategy = $container->get('pimcore.document.tag.naming.strategy');
 
         // if element not nested inside a hierarchical element (e.g. block), add the
@@ -684,7 +679,7 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
 
     public static function buildTagRealName(string $name, Document $document): string
     {
-        $container  = \Pimcore::getContainer();
+        $container = \Pimcore::getContainer();
         $blockState = $container->get('pimcore.document.tag.block_state_stack')->getCurrentState();
 
         // if element not nested inside a hierarchical element (e.g. block), add the

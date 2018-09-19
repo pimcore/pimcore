@@ -273,6 +273,16 @@ class ClassDefinition extends Model\AbstractModel
     }
 
     /**
+     * @return bool
+     */
+    public function exists()
+    {
+        $name = $this->getDao()->getNameById($this->getId());
+
+        return is_string($name);
+    }
+
+    /**
      * @param bool $saveDefinitionFile
      *
      * @throws \Exception
@@ -285,9 +295,8 @@ class ClassDefinition extends Model\AbstractModel
             $this->setId($maxId ? $maxId + 1 : 1);
         }
 
-        $existingDefinition = ClassDefinition::getById($this->getId());
+        $isUpdate = $this->exists();
 
-        $isUpdate = !is_null($existingDefinition);
         if (!$isUpdate) {
             \Pimcore::getEventDispatcher()->dispatch(
                 DataObjectClassDefinitionEvents::PRE_ADD,
@@ -380,15 +389,15 @@ class ClassDefinition extends Model\AbstractModel
             $cd .= "\n";
         }
 
-        $cd .= 'public $o_classId = "' . $this->getId(). "\";\n";
-        $cd .= 'public $o_className = "'.$this->getName().'"'.";\n";
+        $cd .= 'protected $o_classId = "' . $this->getId(). "\";\n";
+        $cd .= 'protected $o_className = "'.$this->getName().'"'.";\n";
 
         if (is_array($this->getFieldDefinitions()) && count($this->getFieldDefinitions())) {
             foreach ($this->getFieldDefinitions() as $key => $def) {
                 if (!(method_exists($def, 'isRemoteOwner') && $def->isRemoteOwner(
                         )) && !$def instanceof DataObject\ClassDefinition\Data\CalculatedValue
                 ) {
-                    $cd .= 'public $'.$key.";\n";
+                    $cd .= 'protected $'.$key.";\n";
                 }
             }
         }
@@ -437,7 +446,7 @@ class ClassDefinition extends Model\AbstractModel
             }
 
             $cd .= 'protected static $_relationFields = '.var_export($relationTypes, true).";\n\n";
-            $cd .= 'public $lazyLoadedFields = '.var_export($lazyLoadedFields, true).";\n\n";
+            $cd .= 'protected $lazyLoadedFields = '.var_export($lazyLoadedFields, true).";\n\n";
         }
 
         $cd .= "}\n";
@@ -477,8 +486,8 @@ class ClassDefinition extends Model\AbstractModel
             $cd .= "\n";
         }
 
-        $cd .= 'public $classId = "'. $this->getId()."\";\n";
-        $cd .= 'public $className = "'.$this->getName().'"'.";\n";
+        $cd .= 'protected $classId = "'. $this->getId()."\";\n";
+        $cd .= 'protected $className = "'.$this->getName().'"'.";\n";
 
         $cd .= "\n\n";
         $cd .= "}\n";

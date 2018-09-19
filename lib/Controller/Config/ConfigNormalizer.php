@@ -70,7 +70,7 @@ class ConfigNormalizer
                 $action
             );
         } else {
-            $bundle     = $this->normalizeBundleName($bundle);
+            $bundle = $this->normalizeBundleName($bundle);
             $controller = $this->normalizeControllerName($controller);
 
             return sprintf(
@@ -92,7 +92,7 @@ class ConfigNormalizer
     public function normalizeBundleName(string $bundle = null): string
     {
         if (empty($bundle)) {
-            return defined('PIMCORE_SYMFONY_DEFAULT_BUNDLE') ? PIMCORE_SYMFONY_DEFAULT_BUNDLE : 'AppBundle';
+            return PIMCORE_SYMFONY_DEFAULT_BUNDLE;
         }
 
         $originalBundle = $bundle;
@@ -129,7 +129,7 @@ class ConfigNormalizer
     public function normalizeControllerName(string $controller = null): string
     {
         if (empty($controller)) {
-            return defined('PIMCORE_SYMFONY_DEFAULT_BUNDLE') ? PIMCORE_SYMFONY_DEFAULT_BUNDLE : 'Content';
+            return PIMCORE_SYMFONY_DEFAULT_BUNDLE;
         }
 
         // split submodules with _ and uppercase first character
@@ -196,7 +196,7 @@ class ConfigNormalizer
 
         $path = '';
         if (false !== strpos($template, '/')) {
-            $parts    = explode('/', $template);
+            $parts = explode('/', $template);
             $template = array_pop($parts);
 
             // ucfirst to match views/Content - TODO should we remove this?

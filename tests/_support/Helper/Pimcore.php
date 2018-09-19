@@ -7,6 +7,7 @@ use Codeception\Lib\ModuleContainer;
 use Codeception\Module;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DriverManager;
+use Pimcore\Bundle\InstallBundle\Installer;
 use Pimcore\Cache;
 use Pimcore\Config;
 use Pimcore\Event\TestEvents;
@@ -91,7 +92,7 @@ class Pimcore extends Module\Symfony
      */
     protected function initializeKernel()
     {
-        $maxNestingLevel   = 200; // Symfony may have very long nesting level
+        $maxNestingLevel = 200; // Symfony may have very long nesting level
         $xdebugMaxLevelKey = 'xdebug.max_nesting_level';
         if (ini_get($xdebugMaxLevelKey) < $maxNestingLevel) {
             ini_set($xdebugMaxLevelKey, $maxNestingLevel);
@@ -160,7 +161,7 @@ class Pimcore extends Module\Symfony
 
         $connection = $this->getDbConnection();
 
-        $connected  = false;
+        $connected = false;
         if ($this->config['initialize_db']) {
             // (re-)initialize DB
             $connected = $this->initializeDb($connection);
@@ -199,11 +200,8 @@ class Pimcore extends Module\Symfony
 
         $this->connectDb($connection);
 
-        /** @var Setup|Setup\Dao $setup */
-        $setup = new Setup();
-        $setup->database();
-
-        $setup->contents([
+        $installer = new Installer($this->getContainer()->get('monolog.logger.pimcore'), $this->getContainer()->get('event_dispatcher'));
+        $installer->setupDatabase([
             'username' => 'admin',
             'password' => microtime()
         ]);
@@ -230,7 +228,7 @@ class Pimcore extends Module\Symfony
         // use a dedicated setup connection as the framework connection is bound to the DB and will
         // fail if the DB doesn't exist
         $setupConnection = DriverManager::getConnection($params, $config);
-        $schemaManager   = $setupConnection->getSchemaManager();
+        $schemaManager = $setupConnection->getSchemaManager();
 
         $databases = $schemaManager->listDatabases();
         if (in_array($dbName, $databases)) {

@@ -51,9 +51,9 @@ class TagController extends AbstractElementController
         /** @var Element\Tag $tag */
         foreach ($tags as $tag) {
             $item = [
-                'id'       => $tag->getId(),
+                'id' => $tag->getId(),
                 'parentId' => $tag->getParentId(),
-                'name'     => $tag->getName()
+                'name' => $tag->getName()
             ];
 
             $result[] = $item;
@@ -102,7 +102,7 @@ class TagController extends AbstractElementController
 
         if (!$element) {
             return $this->createErrorResponse([
-                'msg'  => 'Element does not exist',
+                'msg' => 'Element does not exist',
                 'code' => static::ELEMENT_DOES_NOT_EXIST
             ], Response::HTTP_NOT_FOUND);
         }
@@ -114,9 +114,9 @@ class TagController extends AbstractElementController
         $result = [];
         foreach ($assignedTags as $tag) {
             $item = [
-                'id'       => $tag->getId(),
+                'id' => $tag->getId(),
                 'parentId' => $tag->getParentId(),
-                'name'     => $tag->getName()
+                'name' => $tag->getName()
             ];
 
             $result[] = $item;
@@ -158,7 +158,7 @@ class TagController extends AbstractElementController
 
         if (!$tag) {
             return $this->createErrorResponse([
-                'msg'  => 'Tag does not exist',
+                'msg' => 'Tag does not exist',
                 'code' => static::TAG_DOES_NOT_EXIST
             ], Response::HTTP_NOT_FOUND);
         }
@@ -170,7 +170,7 @@ class TagController extends AbstractElementController
         /** @var Element\ElementInterface $element */
         foreach ($elementsForTag as $element) {
             $item = [
-                'id'   => $element->getId(),
+                'id' => $element->getId(),
                 'type' => $element->getType()
             ];
 

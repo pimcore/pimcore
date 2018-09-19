@@ -29,5 +29,5 @@ class Printpage extends Document\PrintAbstract
      *
      * @var string
      */
-    public $type = 'printpage';
+    protected $type = 'printpage';
 }

@@ -84,8 +84,8 @@ class CartDiscount implements IDiscount
     public function toJSON()
     {
         return json_encode([
-            'type'    => 'CartDiscount',
-            'amount'  => $this->getAmount(),
+            'type' => 'CartDiscount',
+            'amount' => $this->getAmount(),
             'percent' => $this->getPercent()
         ]);
     }

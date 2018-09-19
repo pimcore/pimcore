@@ -55,14 +55,8 @@ class Dao extends Model\Element\Dao
      */
     public function getByPath($path)
     {
-
-        // check for root node
-        $_path = $path != '/' ? dirname($path) : $path;
-        $_path = str_replace('\\', '/', $_path); // windows patch
-        $_key = basename($path);
-        $_path .= $_path != '/' ? '/' : '';
-
-        $data = $this->db->fetchRow('SELECT o_id FROM objects WHERE o_path = ' . $this->db->quote($_path) . ' and `o_key` = ' . $this->db->quote($_key));
+        $params = $this->extractKeyAndPath($path);
+        $data = $this->db->fetchRow('SELECT o_id FROM objects WHERE o_path = :path AND `o_key` = :key', $params);
 
         if ($data['o_id']) {
             $this->assignVariablesToModel($data);
@@ -96,11 +90,13 @@ class Dao extends Model\Element\Dao
      */
     public function update($isUpdate = null)
     {
-        $object = get_object_vars($this->model);
+        $object = $this->model->getObjectVars();
 
         $data = [];
+        $validTableColumns = $this->getValidTableColumns('objects');
+
         foreach ($object as $key => $value) {
-            if (in_array($key, $this->getValidTableColumns('objects'))) {
+            if (in_array($key, $validTableColumns)) {
                 if (is_bool($value)) {
                     $value = (int)$value;
                 }
@@ -175,7 +171,8 @@ class Dao extends Model\Element\Dao
             }
 
             //update object child paths
-            $this->db->query('update objects set o_path = replace(o_path,' . $this->db->quote($oldPath . '/') . ',' . $this->db->quote($this->model->getRealFullPath() . '/') . "), o_modificationDate = '" . time() . "', o_userModification = '" . $userId . "' where o_path like " . $this->db->quote($oldPath . '/%') . ';');
+            // we don't update the modification date here, as this can have side-effects when there's an unpublished version for an element
+            $this->db->query('update objects set o_path = replace(o_path,' . $this->db->quote($oldPath . '/') . ',' . $this->db->quote($this->model->getRealFullPath() . '/') . "), o_userModification = '" . $userId . "' where o_path like " . $this->db->quote($oldPath . '/%') . ';');
 
             //update object child permission paths
             $this->db->query('update users_workspaces_object set cpath = replace(cpath,' . $this->db->quote($oldPath . '/') . ',' . $this->db->quote($this->model->getRealFullPath() . '/') . ') where cpath like ' . $this->db->quote($oldPath . '/%') . ';');
@@ -563,6 +560,18 @@ class Dao extends Model\Element\Dao
         }
 
         return $permissions;
+    }
+
+    /**
+     * @param $index
+     */
+    public function saveIndex($index)
+    {
+        $this->db->update('objects', [
+            'o_index' => $index
+        ], [
+            'o_id' => $this->model->getId()
+        ]);
     }
 
     /**

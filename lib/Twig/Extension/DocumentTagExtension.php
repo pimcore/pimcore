@@ -41,7 +41,7 @@ class DocumentTagExtension extends \Twig_Extension
         return [
             new \Twig_Function('pimcore_*', [$this, 'renderTag'], [
                 'needs_context' => true,
-                'is_safe'       => ['html'],
+                'is_safe' => ['html'],
             ]),
             new \Twig_Function('pimcore_iterate_block', [$this, 'getBlockIterator'])
         ];
@@ -60,11 +60,12 @@ class DocumentTagExtension extends \Twig_Extension
     public function renderTag($context, $name, $inputName, array $options = [])
     {
         $document = $context['document'];
+        $editmode = $context['editmode'];
         if (!($document instanceof PageSnippet)) {
             return '';
         }
 
-        return $this->tagRenderer->render($document, $name, $inputName, $options);
+        return $this->tagRenderer->render($document, $name, $inputName, $options, $editmode);
     }
 
     /**

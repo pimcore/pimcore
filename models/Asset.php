@@ -32,8 +32,6 @@ use Symfony\Component\EventDispatcher\GenericEvent;
  */
 class Asset extends Element\AbstractElement
 {
-    use Element\ChildsCompatibilityTrait;
-
     /**
      * possible types of an asset
      *
@@ -46,106 +44,106 @@ class Asset extends Element\AbstractElement
      *
      * @var int
      */
-    public $id;
+    protected $id;
 
     /**
      * ID of the parent asset
      *
      * @var int
      */
-    public $parentId;
+    protected $parentId;
 
     /**
      * @var Asset
      */
-    public $parent;
+    protected $parent;
 
     /**
      * Type
      *
      * @var string
      */
-    public $type;
+    protected $type;
 
     /**
      * Name of the file
      *
      * @var string
      */
-    public $filename;
+    protected $filename;
 
     /**
      * Path of the file, without the filename, only the full path of the parent asset
      *
      * @var string
      */
-    public $path;
+    protected $path;
 
     /**
      * Mime-Type of the file
      *
      * @var string
      */
-    public $mimetype;
+    protected $mimetype;
 
     /**
      * Timestamp of creation
      *
      * @var int
      */
-    public $creationDate;
+    protected $creationDate;
 
     /**
      * Timestamp of modification
      *
      * @var int
      */
-    public $modificationDate;
+    protected $modificationDate;
 
     /**
      * @var resource
      */
-    public $stream;
+    protected $stream;
 
     /**
      * ID of the owner user
      *
      * @var int
      */
-    public $userOwner;
+    protected $userOwner;
 
     /**
      * ID of the user who make the latest changes
      *
      * @var int
      */
-    public $userModification;
+    protected $userModification;
 
     /**
      * List of properties
      *
      * @var array
      */
-    public $properties = null;
+    protected $properties = null;
 
     /**
      * List of versions
      *
      * @var array
      */
-    public $versions = null;
+    protected $versions = null;
 
     /**
      * @var array
      */
-    public $metadata = [];
+    protected $metadata = [];
 
     /**
      * enum('self','propagate') nullable
      *
      * @var string
      */
-    public $locked;
+    protected $locked;
 
     /**
      * List of some custom settings  [key] => value
@@ -153,54 +151,40 @@ class Asset extends Element\AbstractElement
      *
      * @var array
      */
-    public $customSettings = [];
+    protected $customSettings = [];
 
     /**
      * @var bool
      */
-    public $hasMetaData = false;
+    protected $hasMetaData = false;
 
     /**
      * Dependencies of this asset
      *
      * @var Dependency
      */
-    public $dependencies;
-
-    /**
-     * Contains the child elements
-     *
-     * @var array
-     */
-    public $childs;
-
-    /**
-     * Indicator if there are childs
-     *
-     * @var bool
-     */
-    public $hasChilds;
+    protected $dependencies;
 
     /**
      * Contains a list of sibling documents
      *
      * @var array
      */
-    public $siblings;
+    protected $siblings;
 
     /**
      * Indicator if document has siblings or not
      *
      * @var bool
      */
-    public $hasSiblings;
+    protected $hasSiblings;
 
     /**
      * Contains all scheduled tasks
      *
      * @var array
      */
-    public $scheduledTasks = null;
+    protected $scheduledTasks = null;
 
     /**
      * Indicator if data has changed
@@ -232,17 +216,12 @@ class Asset extends Element\AbstractElement
 
         try {
             $asset = new Asset();
+            $asset->getDao()->getByPath($path);
 
-            if (Element\Service::isValidPath($path, 'asset')) {
-                $asset->getDao()->getByPath($path);
-
-                return self::getById($asset->getId(), $force);
-            }
+            return self::getById($asset->getId(), $force);
         } catch (\Exception $e) {
-            Logger::warning($e->getMessage());
+            return null;
         }
-
-        return null;
     }
 
     /**
@@ -277,7 +256,7 @@ class Asset extends Element\AbstractElement
 
                 $className = 'Pimcore\\Model\\Asset\\' . ucfirst($asset->getType());
 
-                $asset = \Pimcore::getContainer()->get('pimcore.model.factory')->build($className);
+                $asset = self::getModelFactory()->build($className);
                 \Pimcore\Cache\Runtime::set($cacheKey, $asset);
                 $asset->getDao()->getById($id);
                 $asset->__setDataVersionTimestamp($asset->getModificationDate());
@@ -287,8 +266,6 @@ class Asset extends Element\AbstractElement
                 \Pimcore\Cache\Runtime::set($cacheKey, $asset);
             }
         } catch (\Exception $e) {
-            Logger::warning($e->getMessage());
-
             return null;
         }
 
@@ -373,7 +350,7 @@ class Asset extends Element\AbstractElement
         if (is_array($config)) {
             $listClass = 'Pimcore\\Model\\Asset\\Listing';
 
-            $list = \Pimcore::getContainer()->get('pimcore.model.factory')->build($listClass);
+            $list = self::getModelFactory()->build($listClass);
             $list->setValues($config);
             $list->load();
 
@@ -390,7 +367,7 @@ class Asset extends Element\AbstractElement
     {
         if (is_array($config)) {
             $listClass = 'Pimcore\\Model\\Asset\\Listing';
-            $list = \Pimcore::getContainer()->get('pimcore.model.factory')->build($listClass);
+            $list = self::getModelFactory()->build($listClass);
             $list->setValues($config);
             $count = $list->getTotalCount();
 
@@ -465,7 +442,7 @@ class Asset extends Element\AbstractElement
         // additional parameters (e.g. "versionNote" for the version note)
         $params = [];
         if (func_num_args() && is_array(func_get_arg(0))) {
-            $params =  func_get_arg(0);
+            $params = func_get_arg(0);
         }
 
         $isUpdate = false;
@@ -487,7 +464,7 @@ class Asset extends Element\AbstractElement
         // if a transaction fails it gets restarted $maxRetries times, then the exception is thrown out
         // this is especially useful to avoid problems with deadlocks in multi-threaded environments (forked workers, ...)
         $maxRetries = 5;
-        for ($retries=0; $retries < $maxRetries; $retries++) {
+        for ($retries = 0; $retries < $maxRetries; $retries++) {
             $this->beginTransaction();
 
             try {
@@ -712,7 +689,7 @@ class Asset extends Element\AbstractElement
 
                 // not only check if the type is set but also if the implementation can be found
                 $className = 'Pimcore\\Model\\Asset\\' . ucfirst($this->getType());
-                if (!\Pimcore::getContainer()->get('pimcore.model.factory')->supports($className)) {
+                if (!self::getModelFactory()->supports($className)) {
                     throw new \Exception('unable to resolve asset implementation with type: ' . $this->getType());
                 }
             }
@@ -813,14 +790,7 @@ class Asset extends Element\AbstractElement
         if (Config::getSystemConfig()->assets->versions->steps
             || Config::getSystemConfig()->assets->versions->days
             || $setModificationDate) {
-            $version = new Version();
-            $version->setCid($this->getId());
-            $version->setCtype('asset');
-            $version->setDate($this->getModificationDate());
-            $version->setUserId($this->getUserModification());
-            $version->setData($this);
-            $version->setNote($versionNote);
-            $version->save();
+            $version = $this->doSaveVersion($versionNote);
         }
 
         // hook should be also called if "save only new version" is selected
@@ -874,43 +844,6 @@ class Asset extends Element\AbstractElement
     }
 
     /**
-     * @return array
-     */
-    public function getChildren()
-    {
-        if ($this->childs === null) {
-            $list = new Asset\Listing();
-            $list->setCondition('parentId = ?', $this->getId());
-            $list->setOrderKey('filename');
-            $list->setOrder('asc');
-
-            $this->childs = $list->load();
-        }
-
-        return $this->childs;
-    }
-
-    /**
-     * @return bool
-     */
-    public function hasChildren()
-    {
-        if ($this->getType() == 'folder') {
-            if (is_bool($this->hasChilds)) {
-                if (($this->hasChilds and empty($this->childs)) or (!$this->hasChilds and !empty($this->childs))) {
-                    return $this->getDao()->hasChildren();
-                } else {
-                    return $this->hasChilds;
-                }
-            }
-
-            return $this->getDao()->hasChildren();
-        }
-
-        return false;
-    }
-
-    /**
      * Get a list of the sibling assets
      *
      * @return array
@@ -946,6 +879,14 @@ class Asset extends Element\AbstractElement
         }
 
         return $this->getDao()->hasSiblings();
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasChildren()
+    {
+        return false;
     }
 
     /**
@@ -1689,7 +1630,7 @@ class Asset extends Element\AbstractElement
             return null;
         }
 
-        $metaData = $this->metadata;
+        $metaData = $this->getObjectVar('metadata');
         if (is_array($metaData)) {
             foreach ($metaData as &$md) {
                 $md = (array)$md;

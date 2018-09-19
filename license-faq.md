@@ -114,5 +114,5 @@ please post your question in the Pimcore discussion group.
 
 
 ### Credits / License of this FAQ page
-This FAQ is based on https://www.drupal.org/licensing/faq (modified)- many thanks to the Drupal Association!  
+This FAQ is based on https://www.drupal.org/licensing/faq (modified)- many thanks to the Drupal Association!
 License: Creative Commons Attribution-ShareAlike license 2.0 (http://creativecommons.org/licenses/by-sa/2.0/)   

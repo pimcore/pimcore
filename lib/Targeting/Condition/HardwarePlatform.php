@@ -35,8 +35,8 @@ class HardwarePlatform extends AbstractVariableCondition implements DataProvider
      * @var array
      */
     protected static $deviceMapping = [
-        'smartphone'    => 'mobile',
-        'phablet'       => 'mobile',
+        'smartphone' => 'mobile',
+        'phablet' => 'mobile',
         'feature phone' => 'mobile',
     ];
 

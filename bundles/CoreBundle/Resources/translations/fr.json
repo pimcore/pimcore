@@ -800,7 +800,7 @@
     "bundle_ecommerce_pricing_config_action_product_discount_percent": "Remise en %",
     "bundle_ecommerce_pricing_config_action_product_discount_amount": "Remise Absolue",
     "bundle_ecommerce_pricing_config_action_free_shipping": "Livraison gratuite",
-    "ecommerce": " E-Commerce",
+    "ecommerce": "E-Commerce",
     "preSelectMode": "Mode de pré-sélection",
     "remote_single": "Sélection unique à distance",
     "remote_multi": "Sélection multiple à distance",
@@ -818,5 +818,6 @@
     "thumbnail": "Vignette",
     "download_thumbnail": "Télécharger Vignette",
     "no_thumbnail_selected": "Aucune miniature sélectionnée",
-    "list_thumbnail_in_download_section_on_image_detail_view": "Lister en option dans la section de téléchargement sur la vue détaillée de l'image"
+    "list_thumbnail_in_download_section_on_image_detail_view": "Lister en option dans la section de téléchargement sur la vue détaillée de l'image",
+    "there_are_more_items": "Il y a plus d'éléments que ceux affichés"
 }

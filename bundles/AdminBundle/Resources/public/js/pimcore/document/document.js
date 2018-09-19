@@ -47,6 +47,13 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
                     pimcore.helpers.recordElement(this.id, "document", this.data.path + this.data.key);
                 }
 
+                //update published state in trees
+                pimcore.elementservice.setElementPublishedState({
+                    elementType: "document",
+                    id: this.id,
+                    published: this.data.published
+                });
+
                 this.startChangeDetector();
             }
             else {

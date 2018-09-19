@@ -973,7 +973,7 @@ class Block extends Model\DataObject\ClassDefinition\Data
     {
         $data = null;
         if ($object instanceof DataObject\Concrete) {
-            $data = $object->{$this->getName()};
+            $data = $object->getObjectVar($this->getName());
             if ($this->getLazyLoading() and !in_array($this->getName(), $object->getO__loadedLazyFields())) {
                 $data = $this->load($object, ['force' => true]);
 
@@ -985,9 +985,9 @@ class Block extends Model\DataObject\ClassDefinition\Data
         } elseif ($object instanceof DataObject\Localizedfield) {
             $data = $params['data'];
         } elseif ($object instanceof DataObject\Fieldcollection\Data\AbstractData) {
-            $data = $object->{$this->getName()};
+            $data = $object->getObjectVar($this->getName());
         } elseif ($object instanceof DataObject\Objectbrick\Data\AbstractData) {
-            $data = $object->{$this->getName()};
+            $data = $object->getObjectVar($this->getName());
         }
 
         return is_array($data) ? $data : [];
@@ -1047,5 +1047,53 @@ class Block extends Model\DataObject\ClassDefinition\Data
     public function setDisallowReorder($disallowReorder)
     {
         $this->disallowReorder = $disallowReorder;
+    }
+
+    /**
+     * Checks if data is valid for current data field
+     *
+     * @param mixed $data
+     * @param bool $omitMandatoryCheck
+     *
+     * @throws \Exception
+     */
+    public function checkValidity($data, $omitMandatoryCheck = false)
+    {
+        if (!$omitMandatoryCheck) {
+            if (is_array($data)) {
+                $blockDefinitions = $this->getFieldDefinitions();
+
+                $validationExceptions = [];
+
+                $idx = -1;
+                foreach ($data as $item) {
+                    $idx++;
+                    if (!is_array($item)) {
+                        continue;
+                    }
+
+                    foreach ($blockDefinitions as $fd) {
+                        try {
+                            $blockElement = $item[$fd->getName()];
+                            if (!$blockElement) {
+                                throw new Element\ValidationException('Block element empty [ ' . $fd->getName() . ' ]');
+                            }
+
+                            $data = $blockElement->getData();
+                            $fd->checkValidity($data);
+                        } catch (Model\Element\ValidationException $ve) {
+                            $ve->addContext($this->getName() . '-' . $idx);
+                            $validationExceptions[] = $ve;
+                        }
+                    }
+                }
+
+                if ($validationExceptions) {
+                    $aggregatedExceptions = new Model\Element\ValidationException();
+                    $aggregatedExceptions->setSubItems($validationExceptions);
+                    throw $aggregatedExceptions;
+                }
+            }
+        }
     }
 }

@@ -125,7 +125,7 @@ class Fieldcollections extends Model\DataObject\ClassDefinition\Data
 
                 foreach ($collectionDef->getFieldDefinitions() as $fd) {
                     if (!$fd instanceof CalculatedValue) {
-                        $collectionData[$fd->getName()] = $fd->getDataForEditmode($item->{$fd->getName()}, $object, $params);
+                        $collectionData[$fd->getName()] = $fd->getDataForEditmode($item->getObjectVar($fd->getName()), $object, $params);
                     }
                 }
 
@@ -570,7 +570,11 @@ class Fieldcollections extends Model\DataObject\ClassDefinition\Data
     {
         if (!$omitMandatoryCheck) {
             if ($data instanceof DataObject\Fieldcollection) {
+                $validationExceptions = [];
+
+                $idx = -1;
                 foreach ($data as $item) {
+                    $idx++;
                     if (!$item instanceof DataObject\Fieldcollection\Data\AbstractData) {
                         continue;
                     }
@@ -582,9 +586,20 @@ class Fieldcollections extends Model\DataObject\ClassDefinition\Data
                     }
 
                     foreach ($collectionDef->getFieldDefinitions() as $fd) {
-                        $getter = 'get' . ucfirst($fd->getName());
-                        $fd->checkValidity($item->$getter());
+                        try {
+                            $getter = 'get' . ucfirst($fd->getName());
+                            $fd->checkValidity($item->$getter());
+                        } catch (Model\Element\ValidationException $ve) {
+                            $ve->addContext($this->getName() . '-' . $idx);
+                            $validationExceptions[] = $ve;
+                        }
                     }
+                }
+
+                if ($validationExceptions) {
+                    $aggregatedExceptions = new Model\Element\ValidationException();
+                    $aggregatedExceptions->setSubItems($validationExceptions);
+                    throw $aggregatedExceptions;
                 }
             }
         }
@@ -604,7 +619,7 @@ class Fieldcollections extends Model\DataObject\ClassDefinition\Data
             throw new \Exception('Field Collections are only valid in Objects');
         }
 
-        $data = $object->{$this->getName()};
+        $data = $object->getObjectVar($this->getName());
         if ($this->getLazyLoading() and !in_array($this->getName(), $object->getO__loadedLazyFields())) {
             $data = $this->load($object, ['force' => true]);
 
@@ -744,7 +759,7 @@ class Fieldcollections extends Model\DataObject\ClassDefinition\Data
                 foreach ($collectionDef->getFieldDefinitions() as $fd) {
                     $title = !empty($fd->title) ? $fd->title : $fd->getName();
                     $html .= '<tr><td>&nbsp;</td><td>' . $title . '</td><td>';
-                    $html .= $fd->getVersionPreview($item->{$fd->getName()}, $object, $params);
+                    $html .= $fd->getVersionPreview($item->getObjectVar($fd->getName()), $object, $params);
                     $html .= '</td></tr>';
                 }
             }

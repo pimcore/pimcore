@@ -27,7 +27,7 @@ class ImageChart
      *
      * @return string
      */
-    public static function lineSmall($data, $parameters='')
+    public static function lineSmall($data, $parameters = '')
     {
         return self::$serviceUrl . '?cht=lc&chs=150x40&chd=t:' . implode(',', $data) . '&chds=' . min($data) . ',' . max($data) . '&' . $parameters;
     }

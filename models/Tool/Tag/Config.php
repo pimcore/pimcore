@@ -18,8 +18,8 @@
 namespace Pimcore\Model\Tool\Tag;
 
 use Pimcore\Cache;
-use Pimcore\Model;
 use Pimcore\Logger;
+use Pimcore\Model;
 
 /**
  * @method \Pimcore\Model\Tool\Tag\Config\Dao getDao()
@@ -351,8 +351,6 @@ class Config extends Model\AbstractModel
         $this->disabled = $disabled;
     }
 
-    /**
-     */
     public static function markExpiredTagsAsDisabled()
     {
         $currentTime = new \Carbon\Carbon();
@@ -369,7 +367,6 @@ class Config extends Model\AbstractModel
                 } catch (\Exception $e) {
                     Logger::debug('Unable to process tag' . $tag->name . ', reason: '.$e->getMessage());
                 }
-
             }
         }
     }

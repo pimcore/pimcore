@@ -77,7 +77,7 @@ class AssetsInstaller
         $options = $this->resolveOptions($options);
 
         $partsBuilder = new PartsBuilder($arguments, $options);
-        $parts        = $partsBuilder->getParts();
+        $parts = $partsBuilder->getParts();
 
         $process = new Process($parts);
         $process->setWorkingDirectory(PIMCORE_PROJECT_ROOT);
@@ -112,23 +112,23 @@ class AssetsInstaller
     private function configureOptions(OptionsResolver $resolver)
     {
         $defaults = [
-            'symlink'  => true,
+            'symlink' => true,
             'relative' => true,
-            'env'      => false,
-            'ansi'     => false,
-            'no-ansi'  => false,
+            'env' => false,
+            'ansi' => false,
+            'no-ansi' => false,
         ];
 
         $composerJsonSetting = $this->readComposerJsonSetting();
         if (null !== $composerJsonSetting) {
             if ('symlink' === $composerJsonSetting) {
                 $defaults = array_merge([
-                    'symlink'  => true,
+                    'symlink' => true,
                     'relative' => false
                 ], $defaults);
             } elseif ('relative' === $composerJsonSetting) {
                 $defaults = array_merge([
-                    'symlink'  => true,
+                    'symlink' => true,
                     'relative' => true
                 ], $defaults);
             }

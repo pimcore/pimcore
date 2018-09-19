@@ -80,7 +80,7 @@ template will be used for auto-rendering when the controller does not return a r
 
 ## Twig Reference
 
-To make Pimcore's functions available in Twig templates, Pimcore implements a set of extensions. Please see the [Twig Demo](https://github.com/pimcore/pimcore/tree/master/install-profiles/demo-basic-twig)
+To make Pimcore's functions available in Twig templates, Pimcore implements a set of extensions. Please see the [Twig Demo](https://github.com/pimcore/demo-basic-twig)
 as first reference how to use Pimcore with Twig. 
 
 Although we're working on adding Twig examples throughout the documentation where applicable, here follows a list of 

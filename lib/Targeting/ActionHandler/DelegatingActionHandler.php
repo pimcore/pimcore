@@ -40,7 +40,7 @@ class DelegatingActionHandler implements ActionHandlerInterface
         DataLoaderInterface $dataLoader
     ) {
         $this->actionHandlers = $actionHandlers;
-        $this->dataLoader     = $dataLoader;
+        $this->dataLoader = $dataLoader;
     }
 
     /**

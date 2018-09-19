@@ -212,7 +212,7 @@ class Href extends Model\DataObject\ClassDefinition\Data\Relations\AbstractRelat
     public function getDataForResource($data, $object = null, $params = [])
     {
         if ($data instanceof Element\ElementInterface) {
-            $type =  Element\Service::getType($data);
+            $type = Element\Service::getType($data);
             $id = $data->getId();
 
             return [[
@@ -284,7 +284,8 @@ class Href extends Model\DataObject\ClassDefinition\Data\Relations\AbstractRelat
                 'id' => $data->getId(),
                 'path' => $data->getRealFullPath(),
                 'subtype' => $data->getType(),
-                'type' => Element\Service::getElementType($data)
+                'type' => Element\Service::getElementType($data),
+                'published' => Element\Service::isPublished($data)
             ];
 
             return $r;
@@ -573,7 +574,7 @@ class Href extends Model\DataObject\ClassDefinition\Data\Relations\AbstractRelat
     {
         $data = null;
         if ($object instanceof DataObject\Concrete) {
-            $data = $object->{$this->getName()};
+            $data = $object->getObjectVar($this->getName());
 
             if ($this->getLazyLoading() and !in_array($this->getName(), $object->getO__loadedLazyFields())) {
                 $data = $this->load($object, ['force' => true]);
@@ -586,9 +587,9 @@ class Href extends Model\DataObject\ClassDefinition\Data\Relations\AbstractRelat
         } elseif ($object instanceof DataObject\Localizedfield) {
             $data = $params['data'];
         } elseif ($object instanceof DataObject\Fieldcollection\Data\AbstractData) {
-            $data = $object->{$this->getName()};
+            $data = $object->getObjectVar($this->getName());
         } elseif ($object instanceof DataObject\Objectbrick\Data\AbstractData) {
-            $data = $object->{$this->getName()};
+            $data = $object->getObjectVar($this->getName());
         }
 
         if (DataObject\AbstractObject::doHideUnpublished() and ($data instanceof Element\ElementInterface)) {

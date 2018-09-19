@@ -37,7 +37,8 @@ pimcore.object.tags.multihref = Class.create(pimcore.object.tags.abstract, {
                     'id',
                     'path',
                     'type',
-                    'subtype'
+                    'subtype',
+                    'published'
                 ]
             });
         }
@@ -120,7 +121,8 @@ pimcore.object.tags.multihref = Class.create(pimcore.object.tags.abstract, {
                 },
                 items: [
                     {text: 'ID', dataIndex: 'id', width: 50},
-                    {text: t("reference"), dataIndex: 'path', flex: 200},
+                    {text: t("reference"), dataIndex: 'path', flex: 200, renderer:this.fullPathRenderCheck.bind(this)
+                    },
                     {text: t("type"), dataIndex: 'type', width: 100},
                     {text: t("subtype"), dataIndex: 'subtype', width: 100},
                     {
@@ -234,6 +236,7 @@ pimcore.object.tags.multihref = Class.create(pimcore.object.tags.abstract, {
                     try {
                         var record = data.records[0];
                         var data = record.data;
+                        this.nodeElement = data;
                         var fromTree = this.isFromTree(dd);
 
                         var toBeRequested = new Ext.util.Collection();
@@ -251,7 +254,8 @@ pimcore.object.tags.multihref = Class.create(pimcore.object.tags.abstract, {
                                 var initData = {
                                     id: data.id,
                                     path: data.path,
-                                    type: data.elementType
+                                    type: data.elementType,
+                                    published: data.published
                                 };
 
                                 if (initData.type == "object") {
@@ -341,7 +345,7 @@ pimcore.object.tags.multihref = Class.create(pimcore.object.tags.abstract, {
             store: this.store,
             columns: [
                 {text: 'ID', dataIndex: 'id', width: 50, sortable: false},
-                {text: t("reference"), dataIndex: 'path', width: 200, sortable: false},
+                {text: t("reference"), dataIndex: 'path', width: 200, sortable: false, renderer:this.fullPathRenderCheck.bind(this)},
                 {text: t("type"), dataIndex: 'type', width: 100, sortable: false},
                 {text: t("subtype"), dataIndex: 'subtype', width: 100, sortable: false},
                 {
@@ -386,12 +390,14 @@ pimcore.object.tags.multihref = Class.create(pimcore.object.tags.abstract, {
             try {
                 var data = Ext.decode(res.response.responseText);
                 if (data["id"]) {
-                    this.store.add({
+                    var toBeRequested = new Ext.util.Collection();
+                    toBeRequested.add(this.store.add({
                         id: data["id"],
                         path: data["fullpath"],
                         type: "asset",
                         subtype: data["type"]
-                    });
+                    }));
+                    this.requestNicePathData(toBeRequested);
                 }
             } catch (e) {
                 console.log(e);
@@ -513,7 +519,6 @@ pimcore.object.tags.multihref = Class.create(pimcore.object.tags.abstract, {
 
     addDataFromSelector: function (items) {
         if (items.length > 0) {
-
             toBeRequested = new Ext.util.Collection();
 
             for (var i = 0; i < items.length; i++) {
@@ -532,7 +537,8 @@ pimcore.object.tags.multihref = Class.create(pimcore.object.tags.abstract, {
                         id: items[i].id,
                         path: items[i].fullpath,
                         type: items[i].type,
-                        subtype: subtype
+                        subtype: subtype,
+                        published: items[i].published
                     }));
                 }
             }

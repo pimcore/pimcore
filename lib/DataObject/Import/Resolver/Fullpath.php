@@ -36,13 +36,13 @@ class Fullpath extends AbstractResolver
     public function resolve(\stdClass $config, int $parentId, array $rowData)
     {
         $createOnDemand = $config->resolverSettings->createOnDemand;
-        $createParents  = $config->resolverSettings->createParents;
+        $createParents = $config->resolverSettings->createParents;
 
         $fullpath = $rowData[$this->getIdColumn($config)];
-        $object   = DataObject::getByPath($fullpath);
+        $object = DataObject::getByPath($fullpath);
 
         if (!$object && $createOnDemand) {
-            $keyParts  = explode('/', $fullpath);
+            $keyParts = explode('/', $fullpath);
             $objectKey = $keyParts[count($keyParts) - 1];
             array_pop($keyParts);
 
@@ -53,9 +53,9 @@ class Fullpath extends AbstractResolver
                 $parent = DataObject\Service::createFolderByPath($parentPath);
             }
 
-            $classId         = $config->classId;
+            $classId = $config->classId;
             $classDefinition = ClassDefinition::getById($classId);
-            $className       = 'Pimcore\\Model\\DataObject\\' . ucfirst($classDefinition->getName());
+            $className = 'Pimcore\\Model\\DataObject\\' . ucfirst($classDefinition->getName());
 
             $object = $this->modelFactory->build($className);
             $object->setKey($objectKey);

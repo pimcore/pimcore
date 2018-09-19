@@ -52,8 +52,8 @@ All helpers are described below in detail, the following tables give just a shor
 
 
 You can also create your own custom templating helpers to make certain functionalities available to your views.  
-Here you can find an example how to [create](https://github.com/pimcore/pimcore/blob/master/install-profiles/demo-basic/src/AppBundle/Templating/Helper/LanguageSwitcher.php)
-and [register](https://github.com/pimcore/pimcore/blob/master/install-profiles/demo-basic/src/AppBundle/Resources/config/services.yml#L41)
+Here you can find an example how to [create](https://github.com/pimcore/demo-basic/tree/master/src/AppBundle/Templating/Helper/LanguageSwitcher.php)
+and [register](https://github.com/pimcore/demo-basic/tree/master/src/AppBundle/Resources/config/services.yml#L41)
 your own templating helper.
 
 ### `$this->action()`
@@ -208,10 +208,11 @@ For details please see [Glossary Documentation](../../../18_Tools_and_Features/2
 ```php
 <section class="area-wysiwyg">
 
-    <?php // start filtering content with Glossary feature ?>
+    <?php // start capturing content with Glossary feature ?>
     <?php $this->glossary()->start(); ?>
         <?= $this->wysiwyg("content"); ?>
-    <?php $this->glossary()->stop(); ?>
+    <?php // call the processor with optional parameters ?>
+    <?php $this->glossary()->stop(['limit' => 1]); ?>
 
 </section>
 ```

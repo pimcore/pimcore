@@ -52,7 +52,7 @@ class RenderletController extends AdminController
         TagHandlerInterface $tagHandler,
         LocaleServiceInterface $localeService
     ) {
-        $query      = $request->query->all();
+        $query = $request->query->all();
         $attributes = [];
 
         // load element to make sure the request is valid
@@ -62,7 +62,7 @@ class RenderletController extends AdminController
         $this->configureElementTargeting($request, $element);
 
         $controller = $request->get('controller');
-        $action     = $request->get('action');
+        $action = $request->get('action');
 
         $moduleOrBundle = null;
         if ($request->get('bundle')) {
@@ -106,7 +106,7 @@ class RenderletController extends AdminController
     {
         $element = null;
 
-        $id   = $request->get('id');
+        $id = $request->get('id');
         $type = $request->get('type');
 
         if ($id && $type) {

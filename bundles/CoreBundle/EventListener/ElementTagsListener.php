@@ -30,9 +30,9 @@ class ElementTagsListener implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            DataObjectEvents::POST_COPY  => 'onPostCopy',
-            DocumentEvents::POST_COPY  => 'onPostCopy',
-            AssetEvents::POST_COPY  => 'onPostCopy',
+            DataObjectEvents::POST_COPY => 'onPostCopy',
+            DocumentEvents::POST_COPY => 'onPostCopy',
+            AssetEvents::POST_COPY => 'onPostCopy',
 
             AssetEvents::POST_DELETE => ['onPostAssetDelete', -9999]
         ];

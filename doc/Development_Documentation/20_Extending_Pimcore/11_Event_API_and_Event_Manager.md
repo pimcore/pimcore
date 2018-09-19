@@ -92,3 +92,29 @@ This way, it is possible to create custom permission rules to decide if the obje
 
 It extends the possibility further than just limiting list permissions folder by folder depending the user/role object workspace.
 To ensure maximum security, it is advisable to combine this with an object DI to overload isAllowed method with the same custom permission rules. This way proper permission is ensuring all the way (rest services, ...).
+
+### Hook into the Open Document|Asset|Data Object dialog
+
+By the default, Pimcore tries to a resolve an element by its ID or path.
+You can change this behavior by handling the [AdminEvents::RESOLVE_ELEMENT](https://github.com/pimcore/pimcore/blob/master/lib/Event/AdminEvents.php) event
+and implement your own logic.
+
+```php
+    \Pimcore::getEventDispatcher()->addListener(AdminEvents::RESOLVE_ELEMENT, function(ResolveElementEvent $event) {
+        $id  = $event->getId();
+        if ($event->getType() == "object") {
+            if (is_numeric($event->getId())) {
+                return;
+            }
+
+            $listing = new News\Listing();
+            $listing->setLocale('en');
+            $listing->setLimit(1);
+            $listing->setCondition('title LIKE ' . $listing->quote('%' . $id . '%'));
+            $listing = $listing->load();
+            if ($listing) {
+                $id = ($listing[0])->getId();
+                $event->setId($id);
+            }
+        }
+```

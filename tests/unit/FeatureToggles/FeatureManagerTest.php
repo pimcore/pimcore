@@ -199,7 +199,7 @@ class FeatureManagerTest extends TestCase
         $this->assertCount($count, $propertyValue);
         $this->assertEquals($keys, array_keys($propertyValue));
 
-        $values         = array_values($values);
+        $values = array_values($values);
         $propertyValues = array_values($propertyValue);
 
         for ($i = 0; $i < count($values); $i++) {
@@ -346,7 +346,7 @@ class FeatureManagerTest extends TestCase
 
     public function testInitializerIsNotCalledWhenAStateIsSet()
     {
-        $state  = FeatureState::fromFeature(ValidFeature::FLAG_3());
+        $state = FeatureState::fromFeature(ValidFeature::FLAG_3());
         $state2 = FeatureState::fromFeature(ValidFeature::FLAG_2());
 
         $initializer = $this->createInitializerMock(ValidFeature::getType(), $state);
@@ -367,7 +367,7 @@ class FeatureManagerTest extends TestCase
 
     public function testInitializerIsCalledAfterStateWasCleared()
     {
-        $state  = FeatureState::fromFeature(ValidFeature::FLAG_3());
+        $state = FeatureState::fromFeature(ValidFeature::FLAG_3());
         $state2 = FeatureState::fromFeature(ValidFeature::FLAG_2());
 
         $initializer = $this->createInitializerMock(ValidFeature::getType(), $state);
@@ -398,7 +398,7 @@ class FeatureManagerTest extends TestCase
         $this->assertCount(2, $manager->getInitializers(ValidFeatureMaximumFlags::getType()));
 
         $byType = [
-            ValidFeature::getType()             => $manager->getInitializers(ValidFeature::getType()),
+            ValidFeature::getType() => $manager->getInitializers(ValidFeature::getType()),
             ValidFeatureMaximumFlags::getType() => $manager->getInitializers(ValidFeatureMaximumFlags::getType()),
         ];
 

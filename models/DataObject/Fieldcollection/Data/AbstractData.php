@@ -27,22 +27,22 @@ abstract class AbstractData extends Model\AbstractModel
     /**
      * @var int
      */
-    public $index;
+    protected $index;
 
     /**
      * @var string
      */
-    public $fieldname;
+    protected $fieldname;
 
     /**
      * @var Model\DataObject\Concrete
      */
-    public $object;
+    protected $object;
 
     /**
      * @var string
      */
-    public $type;
+    protected $type;
 
     /**
      * @return int

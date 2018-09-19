@@ -83,7 +83,7 @@ class TargetGroup extends Model\DataObject\ClassDefinition\Data\Select
         foreach ($targetGroups as $targetGroup) {
             $options[] = [
                 'value' => $targetGroup->getId(),
-                'key'   => $targetGroup->getName()
+                'key' => $targetGroup->getName()
             ];
         }
 

@@ -50,7 +50,7 @@ class PageSnippet extends Model\Webservice\Data\Document
     {
         $originalElements = [];
         if (is_array($object->getElements())) {
-            $originalElements=$object->getElements();
+            $originalElements = $object->getElements();
         }
 
         parent::map($object);
@@ -66,7 +66,7 @@ class PageSnippet extends Model\Webservice\Data\Document
     }
 
     /**
-     * @param $object
+     * @param $object Model\Document\PageSnippet
      * @param bool $disableMappingExceptions
      * @param null $idMapper
      *
@@ -76,15 +76,15 @@ class PageSnippet extends Model\Webservice\Data\Document
     {
         parent::reverseMap($object, $disableMappingExceptions, $idMapper);
 
-        $object->childs = null;
-        $object->elements = [];
+        $object->setChildren(null);
+        $object->setElements([]);
 
         if (is_array($this->elements)) {
             foreach ($this->elements as $element) {
                 $tag = Model\Document\Tag::factory($element->type, $element->name, $this->id);
                 $tag->getFromWebserviceImport($element, $object, [], $idMapper);
 
-                $object->elements[$element->name] = $tag;
+                $object->setElement($element->name, $tag);
             }
         }
     }

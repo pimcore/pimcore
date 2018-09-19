@@ -81,6 +81,8 @@ services:
         arguments:
             $fragmentRenderer: '@fragment.renderer.inline'
 
+    Pimcore\Document\Tag\TagUsageResolver:
+        public: true
 
     #
     # DOCUMENT TAG MIGRATION

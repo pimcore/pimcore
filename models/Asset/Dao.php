@@ -66,14 +66,8 @@ class Dao extends Model\Element\Dao
      */
     public function getByPath($path)
     {
-
-        // check for root node
-        $_path = $path != '/' ? dirname($path) : $path;
-        $_path = str_replace('\\', '/', $_path); // windows patch
-        $_key = basename($path);
-        $_path .= $_path != '/' ? '/' : '';
-
-        $data = $this->db->fetchRow('SELECT id FROM assets WHERE path = ' . $this->db->quote($_path) . ' and `filename` = ' . $this->db->quote($_key));
+        $params = $this->extractKeyAndPath($path);
+        $data = $this->db->fetchRow('SELECT id FROM assets WHERE path = :path AND `filename` = :key', $params);
 
         if ($data['id']) {
             $this->assignVariablesToModel($data);
@@ -113,7 +107,7 @@ class Dao extends Model\Element\Dao
         try {
             $this->model->setModificationDate(time());
 
-            $asset = get_object_vars($this->model);
+            $asset = $this->model->getObjectVars();
 
             foreach ($asset as $key => $value) {
                 if (in_array($key, $this->getValidTableColumns('assets'))) {
@@ -199,7 +193,8 @@ class Dao extends Model\Element\Dao
         }
 
         //update assets child paths
-        $this->db->query('update assets set path = replace(path,' . $this->db->quote($oldPath . '/') . ',' . $this->db->quote($this->model->getRealFullPath() . '/') . "), modificationDate = '" . time() . "', userModification = '" . $userId . "' where path like " . $this->db->quote($oldPath . '/%') . ';');
+        // we don't update the modification date here, as this can have side-effects when there's an unpublished version for an element
+        $this->db->query('update assets set path = replace(path,' . $this->db->quote($oldPath . '/') . ',' . $this->db->quote($this->model->getRealFullPath() . '/') . "), userModification = '" . $userId . "' where path like " . $this->db->quote($oldPath . '/%') . ';');
 
         //update assets child permission paths
         $this->db->query('update users_workspaces_asset set cpath = replace(cpath,' . $this->db->quote($oldPath . '/') . ',' . $this->db->quote($this->model->getRealFullPath() . '/') . ') where cpath like ' . $this->db->quote($oldPath . '/%') . ';');

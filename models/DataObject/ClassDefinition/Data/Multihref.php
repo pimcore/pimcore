@@ -326,13 +326,13 @@ class Multihref extends Model\DataObject\ClassDefinition\Data\Relations\Abstract
         if (is_array($data) && count($data) > 0) {
             foreach ($data as $element) {
                 if ($element instanceof DataObject\Concrete) {
-                    $return[] = [$element->getId(), $element->getRealFullPath(), 'object', $element->getClassName()];
+                    $return[] = [$element->getId(), $element->getRealFullPath(), 'object', $element->getClassName(), $element->getPublished()];
                 } elseif ($element instanceof DataObject\AbstractObject) {
                     $return[] = [$element->getId(), $element->getRealFullPath(), 'object', 'folder'];
                 } elseif ($element instanceof Asset) {
                     $return[] = [$element->getId(), $element->getRealFullPath(), 'asset', $element->getType()];
                 } elseif ($element instanceof Document) {
-                    $return[] = [$element->getId(), $element->getRealFullPath(), 'document', $element->getType()];
+                    $return[] = [$element->getId(), $element->getRealFullPath(), 'document', $element->getType(), $element->getPublished()];
                 }
             }
             if (empty($return)) {
@@ -714,7 +714,7 @@ class Multihref extends Model\DataObject\ClassDefinition\Data\Relations\Abstract
     {
         $data = null;
         if ($object instanceof DataObject\Concrete) {
-            $data = $object->{$this->getName()};
+            $data = $object->getObjectVar($this->getName());
             if ($this->getLazyLoading() and !in_array($this->getName(), $object->getO__loadedLazyFields())) {
                 //$data = $this->getDataFromResource($object->getRelationData($this->getName(), true, null));
                 $data = $this->load($object, ['force' => true]);
@@ -727,9 +727,9 @@ class Multihref extends Model\DataObject\ClassDefinition\Data\Relations\Abstract
         } elseif ($object instanceof DataObject\Localizedfield) {
             $data = $params['data'];
         } elseif ($object instanceof DataObject\Fieldcollection\Data\AbstractData) {
-            $data = $object->{$this->getName()};
+            $data = $object->getObjectVar($this->getName());
         } elseif ($object instanceof DataObject\Objectbrick\Data\AbstractData) {
-            $data = $object->{$this->getName()};
+            $data = $object->getObjectVar($this->getName());
         }
 
         if (DataObject::doHideUnpublished() and is_array($data)) {
@@ -904,7 +904,7 @@ class Multihref extends Model\DataObject\ClassDefinition\Data\Relations\Abstract
             foreach ($value as $element) {
                 $type = Element\Service::getType($element);
                 $id = $element->getId();
-                $result[] =  [
+                $result[] = [
                     'type' => $type,
                     'id' => $id
                 ];

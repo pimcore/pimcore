@@ -50,7 +50,7 @@ class Admin
     {
         $baseResource = \Pimcore::getContainer()->getParameter('pimcore.admin.translations.path');
         $languageDir = \Pimcore::getKernel()->locateResource($baseResource);
-
+        $adminLang = \Pimcore::getContainer()->getParameter('pimcore_admin.admin_languages');
         $languages = [];
         $languageDirs = [$languageDir];
         foreach ($languageDirs as $filesDir) {
@@ -59,9 +59,11 @@ class Admin
                 foreach ($files as $file) {
                     if (is_file($filesDir . '/' . $file)) {
                         $parts = explode('.', $file);
-                        if ($parts[1] == 'json') {
-                            if (\Pimcore::getContainer()->get('pimcore.locale')->isLocale($parts[0])) {
-                                $languages[] = $parts[0];
+                        if (($adminLang != null && in_array($parts[0], array_values($adminLang))) || $adminLang == null) {
+                            if ($parts[1] == 'json') {
+                                if (\Pimcore::getContainer()->get('pimcore.locale')->isLocale($parts[0])) {
+                                    $languages[] = $parts[0];
+                                }
                             }
                         }
                     }
@@ -88,7 +90,7 @@ class Admin
         }
 
         $params = [
-            'scripts' =>  basename($scriptPath),
+            'scripts' => basename($scriptPath),
             '_dc' => \Pimcore\Version::getRevision()
         ];
 
@@ -105,7 +107,7 @@ class Admin
 
         // minimum 10 lines, to be sure take more
         $sample = '';
-        for ($i=0; $i < 10; $i++) {
+        for ($i = 0; $i < 10; $i++) {
             $sample .= implode('', array_slice(file($file), 0, 11)); // grab 20 lines
         }
 

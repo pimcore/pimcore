@@ -291,7 +291,7 @@ class AbstractObject extends Model\Element\AbstractElement
                         $className = 'Pimcore\\Model\\DataObject\\' . ucfirst($typeInfo['o_className']);
                     }
 
-                    $object = \Pimcore::getContainer()->get('pimcore.model.factory')->build($className);
+                    $object = self::getModelFactory()->build($className);
                     \Pimcore\Cache\Runtime::set($cacheKey, $object);
                     $object->getDao()->getById($id);
                     $object->__setDataVersionTimestamp($object->getModificationDate());
@@ -304,8 +304,6 @@ class AbstractObject extends Model\Element\AbstractElement
                 \Pimcore\Cache\Runtime::set($cacheKey, $object);
             }
         } catch (\Exception $e) {
-            Logger::warning($e->getMessage());
-
             return null;
         }
 
@@ -328,17 +326,12 @@ class AbstractObject extends Model\Element\AbstractElement
 
         try {
             $object = new self();
+            $object->getDao()->getByPath($path);
 
-            if (Element\Service::isValidPath($path, 'object')) {
-                $object->getDao()->getByPath($path);
-
-                return self::getById($object->getId(), $force);
-            }
+            return self::getById($object->getId(), $force);
         } catch (\Exception $e) {
-            Logger::warning($e->getMessage());
+            return null;
         }
-
-        return null;
     }
 
     /**
@@ -364,7 +357,7 @@ class AbstractObject extends Model\Element\AbstractElement
         if (is_array($config)) {
             if ($className) {
                 $listClass = $className . '\\Listing';
-                $list = \Pimcore::getContainer()->get('pimcore.model.factory')->build($listClass);
+                $list = self::getModelFactory()->build($listClass);
                 $list->setValues($config);
 
                 return $list;
@@ -395,7 +388,7 @@ class AbstractObject extends Model\Element\AbstractElement
         if (is_array($config)) {
             if ($className) {
                 $listClass = ucfirst($className) . '\\Listing';
-                $list = \Pimcore::getContainer()->get('pimcore.model.factory')->build($listClass);
+                $list = self::getModelFactory()->build($listClass);
             }
 
             $list->setValues($config);
@@ -581,7 +574,7 @@ class AbstractObject extends Model\Element\AbstractElement
         // additional parameters (e.g. "versionNote" for the version note)
         $params = [];
         if (func_num_args() && is_array(func_get_arg(0))) {
-            $params =  func_get_arg(0);
+            $params = func_get_arg(0);
         }
 
         $isUpdate = false;
@@ -602,7 +595,7 @@ class AbstractObject extends Model\Element\AbstractElement
         // if a transaction fails it gets restarted $maxRetries times, then the exception is thrown out
         // this is especially useful to avoid problems with deadlocks in multi-threaded environments (forked workers, ...)
         $maxRetries = 5;
-        for ($retries=0; $retries < $maxRetries; $retries++) {
+        for ($retries = 0; $retries < $maxRetries; $retries++) {
 
             // be sure that unpublished objects in relations are saved also in frontend mode, eg. in importers, ...
             $hideUnpublishedBackup = self::getHideUnpublished();
@@ -806,6 +799,15 @@ class AbstractObject extends Model\Element\AbstractElement
         } catch (\Exception $e) {
             Logger::crit($e);
         }
+    }
+
+    /**
+     * @param int $index
+     */
+    public function saveIndex($index)
+    {
+        $this->getDao()->saveIndex($index);
+        $this->clearDependentCache();
     }
 
     /**
@@ -1069,9 +1071,9 @@ class AbstractObject extends Model\Element\AbstractElement
     {
         $this->o_childs = $children;
         if (is_array($children) and count($children) > 0) {
-            $this->o_hasChilds=true;
+            $this->o_hasChilds = true;
         } else {
-            $this->o_hasChilds=false;
+            $this->o_hasChilds = false;
         }
 
         return $this;

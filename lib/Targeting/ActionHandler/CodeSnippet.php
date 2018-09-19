@@ -39,7 +39,7 @@ class CodeSnippet implements ActionHandlerInterface, ResponseTransformingActionH
      */
     public function apply(VisitorInfo $visitorInfo, array $action, Rule $rule = null)
     {
-        $code     = $action['code'] ?? '';
+        $code = $action['code'] ?? '';
         $selector = $action['selector'] ?? '';
         $position = $action['position'] ?? '';
 
@@ -48,9 +48,9 @@ class CodeSnippet implements ActionHandlerInterface, ResponseTransformingActionH
         }
 
         $visitorInfo->addAction([
-            'type'     => 'codesnippet',
-            'scope'    => VisitorInfo::ACTION_SCOPE_RESPONSE,
-            'code'     => $code,
+            'type' => 'codesnippet',
+            'scope' => VisitorInfo::ACTION_SCOPE_RESPONSE,
+            'code' => $code,
             'selector' => $selector,
             'position' => $position
         ]);

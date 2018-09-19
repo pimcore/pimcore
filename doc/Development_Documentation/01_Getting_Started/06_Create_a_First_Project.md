@@ -270,7 +270,7 @@ $this->extend('layout.html.php');
 ```
 
 `$this->editmode` is a standard variable (is always set) to check if the view is called from the Pimcore admin backend and gives you the 
- possibility to to different stuff in editmode and in frontend. 
+ possibility to do different stuff in editmode and in frontend. 
 
 `$this->href('product')` is one of the possible editable placeholders. It can be used to make 1 to 1 relations, a cool 
 alternative for that, would be also the [Renderlet](../03_Documents/01_Editables/28_Renderlet.md) editable.  

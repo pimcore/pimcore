@@ -240,7 +240,7 @@ CSS;
                 if (strpos($path, '//') === 0) {
                     $absolutePath = 'http:' . $path;
                 } elseif (strpos($path, '/') === 0) {
-                    $absolutePath = preg_replace('@^' . $replacePrefix . '/@', '/', $path);
+                    $absolutePath = preg_replace('@^' . $replacePrefix . '(/(.*))?$@', '/$2', $path);
                     $absolutePath = $hostUrl . $absolutePath;
                 } else {
                     $absolutePath = $hostUrl . "/$path";
@@ -290,6 +290,8 @@ CSS;
             throw new \Exception('$document has to be an instance of Document');
         }
 
+        $css = null;
+
         //matches all <link> Tags
         preg_match_all("@<link.*?href\s*=\s*[\"'](.*?)[\"'].*?(/?>|</\s*link>)@is", $string, $matches);
         if (!empty($matches[0])) {
@@ -325,12 +327,10 @@ CSS;
                     $string = str_replace($fullMatch, '', $string);
                 }
             }
-
-            $cssToInlineStyles = new CssToInlineStyles();
-            $cssToInlineStyles->setHTML($string);
-            $cssToInlineStyles->setCSS($css);
-            $string = $cssToInlineStyles->convert();
         }
+
+        $cssToInlineStyles = new CssToInlineStyles();
+        $string = $cssToInlineStyles->convert($string, $css);
 
         return $string;
     }

@@ -108,8 +108,8 @@ class JWTCookieSaveHandler extends AbstractCookieSaveHandler
         }
 
         $builder = $this->createTokenBuilder($scope, $name, $expire, $data);
-        $token   = $builder->getToken();
-        $result  = (string)$token;
+        $token = $builder->getToken();
+        $result = (string)$token;
 
         return $result;
     }

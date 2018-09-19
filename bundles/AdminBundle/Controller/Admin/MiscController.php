@@ -51,6 +51,8 @@ class MiscController extends AdminController
             ];
         }, $bundles);
 
+        sort($result);
+
         return $this->adminJson([
             'data' => $result
         ]);
@@ -67,7 +69,7 @@ class MiscController extends AdminController
      */
     public function getAvailableControllersAction(Request $request, ControllerDataProvider $provider)
     {
-        $bundle      = $request->get('moduleName');
+        $bundle = $request->get('moduleName');
         $controllers = $provider->getControllers($bundle, 'AppBundle');
 
         $result = array_map(function ($controller) {
@@ -75,6 +77,8 @@ class MiscController extends AdminController
                 'name' => $controller
             ];
         }, $controllers);
+
+        sort($result);
 
         return $this->adminJson([
             'data' => $result
@@ -98,13 +102,15 @@ class MiscController extends AdminController
         }
 
         $controller = $request->get('controllerName');
-        $actions    = $provider->getActions($controller, $bundle);
+        $actions = $provider->getActions($controller, $bundle);
 
         $result = array_map(function ($action) {
             return [
                 'name' => $action
             ];
         }, $actions);
+
+        sort($result);
 
         return $this->adminJson([
             'data' => $result
@@ -128,6 +134,8 @@ class MiscController extends AdminController
                 'path' => $template
             ];
         }, $templates);
+
+        sort($result);
 
         return $this->adminJson([
             'data' => $result

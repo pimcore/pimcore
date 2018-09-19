@@ -58,7 +58,7 @@ class Processor
         EditmodeResolver $editmodeResolver,
         DocumentResolver $documentResolver
     ) {
-        $this->requestHelper    = $requestHelper;
+        $this->requestHelper = $requestHelper;
         $this->editmodeResolver = $editmodeResolver;
         $this->documentResolver = $documentResolver;
     }
@@ -67,15 +67,20 @@ class Processor
      * Process glossary entries in content string
      *
      * @param string $content
+     * @param array $options
      *
      * @return string
      */
-    public function process(string $content): string
+    public function process(string $content, array $options): string
     {
         $data = $this->getData();
         if (empty($data)) {
             return $content;
         }
+
+        $options = array_merge([
+            'limit' => -1
+        ], $options);
 
         if ($this->editmodeResolver->isEditmode()) {
             return $content;
@@ -95,8 +100,8 @@ class Processor
         $es = $html->find('text');
 
         $tmpData = [
-            'search'      => [],
-            'replace'     => [],
+            'search' => [],
+            'replace' => [],
             'placeholder' => []
         ];
 
@@ -122,7 +127,7 @@ class Processor
                 continue;
             }
 
-            $tmpData['search'][]  = $entry['search'];
+            $tmpData['search'][] = $entry['search'];
             $tmpData['replace'][] = $entry['replace'];
         }
 
@@ -135,7 +140,7 @@ class Processor
 
         foreach ($es as $e) {
             if (!in_array((string)$e->parent()->tag, $this->blockedTags)) {
-                $e->innertext = preg_replace($data['search'], $data['placeholder'], $e->innertext);
+                $e->innertext = preg_replace($data['search'], $data['placeholder'], $e->innertext, $options['limit']);
                 $e->innertext = str_replace($data['placeholder'], $data['replace'], $e->innertext);
             }
         }
@@ -198,9 +203,9 @@ class Processor
         $tmpData = [];
         foreach ($data as $d) {
             if ($d['text'] != htmlentities($d['text'], null, 'UTF-8')) {
-                $td         = $d;
+                $td = $d;
                 $td['text'] = htmlentities($d['text'], null, 'UTF-8');
-                $tmpData[]  = $td;
+                $tmpData[] = $td;
             }
 
             $tmpData[] = $d;
@@ -221,18 +226,18 @@ class Processor
                 $r = '<acronym class="pimcore_glossary" title="' . $d['acronym'] . '">' . $r . '</acronym>';
             }
 
-            $linkType   = '';
+            $linkType = '';
             $linkTarget = '';
 
             if ($d['link']) {
-                $linkType   = 'external';
+                $linkType = 'external';
                 $linkTarget = $d['link'];
 
                 if (intval($d['link'])) {
                     if ($doc = Document::getById($d['link'])) {
                         $d['link'] = $doc->getFullPath();
 
-                        $linkType   = 'internal';
+                        $linkType = 'internal';
                         $linkTarget = $doc->getId();
                     }
                 }
@@ -252,9 +257,9 @@ class Processor
             }
 
             $mappedData[] = [
-                'replace'    => $r,
-                'search'     => $d['text'],
-                'linkType'   => $linkType,
+                'replace' => $r,
+                'search' => $d['text'],
+                'linkType' => $linkType,
                 'linkTarget' => $linkTarget
             ];
         }

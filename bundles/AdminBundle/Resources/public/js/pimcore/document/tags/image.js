@@ -18,6 +18,7 @@ pimcore.document.tags.image = Class.create(pimcore.document.tag, {
         this.id = id;
         this.name = name;
         this.datax = {};
+        this.inherited = inherited;
         this.options = this.parseOptions(options);
 
         this.originalDimensions = {
@@ -92,7 +93,7 @@ pimcore.document.tags.image = Class.create(pimcore.document.tag, {
             });
         }
 
-        this.element.insertHtml("beforeEnd",'<div class="pimcore_tag_droptarget"></div>');
+        this.element.insertHtml("beforeEnd",'<div class="pimcore_tag_droptarget_upload"></div>');
 
         this.element.addCls("pimcore_tag_image_empty");
 
@@ -107,6 +108,19 @@ pimcore.document.tags.image = Class.create(pimcore.document.tag, {
             }
         }
 
+        pimcore.helpers.registerAssetDnDSingleUpload(this.element.dom, this.options["uploadPath"], 'path', function (e) {
+            if (e['asset']['type'] === "image" && !this.inherited) {
+                this.resetData();
+                this.datax.id = e['asset']['id'];
+
+                this.updateImage();
+                this.reload();
+
+                return true;
+            } else {
+                pimcore.helpers.showNotification(t("error"), t('unsupported_filetype'), "error");
+            }
+        }.bind(this));
 
         // insert image
         if (this.datax) {
@@ -225,7 +239,7 @@ pimcore.document.tags.image = Class.create(pimcore.document.tag, {
         var record = data.records[0];
         data = record.data;
 
-        if (this.dndAllowed(data)) {
+        if (this.dndAllowed(data) && !this.inherited) {
             return Ext.dd.DropZone.prototype.dropAllowed;
         }
         else {
@@ -237,7 +251,7 @@ pimcore.document.tags.image = Class.create(pimcore.document.tag, {
         var record = data.records[0];
         data = record.data;
 
-        if (data.type == "image") {
+        if (data.type == "image" && this.dndAllowed(data) && !this.inherited) {
             this.resetData();
             this.datax.id = data.id;
 
@@ -246,6 +260,8 @@ pimcore.document.tags.image = Class.create(pimcore.document.tag, {
 
             return true;
         }
+
+        return false;
     },
 
     dndAllowed: function(data) {

@@ -2,13 +2,13 @@
 
 namespace Pimcore\Migrations\Command;
 
+use Doctrine\Bundle\MigrationsBundle\Command\DoctrineCommand;
 use Doctrine\Bundle\MigrationsBundle\Command\Helper\DoctrineCommandHelper;
 use Doctrine\Bundle\MigrationsBundle\Command\MigrationsStatusDoctrineCommand;
 use Pimcore\Migrations\Command\Traits\PimcoreMigrationsConfiguration;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Doctrine\Bundle\MigrationsBundle\Command\DoctrineCommand;
 
 class StatusCommand extends MigrationsStatusDoctrineCommand
 {
@@ -31,25 +31,25 @@ class StatusCommand extends MigrationsStatusDoctrineCommand
 
     public function execute(InputInterface $input, OutputInterface $output)
     {
-        if($input->getOption('only')) {
+        if ($input->getOption('only')) {
             DoctrineCommandHelper::setApplicationHelper($this->getApplication(), $input);
             $configuration = $this->getMigrationConfiguration($input, $output);
             DoctrineCommand::configureMigrations($this->getApplication()->getKernel()->getContainer(), $configuration);
 
             $configuration = $this->getMigrationConfiguration($input, $output);
-            if($input->getOption('only') == 'current_version') {
+            if ($input->getOption('only') == 'current_version') {
                 $output->write($configuration->getCurrentVersion());
-            } else if($input->getOption('only') == 'next_version') {
+            } elseif ($input->getOption('only') == 'next_version') {
                 $output->write($configuration->getNextVersion());
-            } else if($input->getOption('only') == 'number_new_migrations') {
+            } elseif ($input->getOption('only') == 'number_new_migrations') {
                 $output->write($configuration->getNumberOfNewMigrations());
-            } else if($input->getOption('only') == 'number_available_migrations') {
+            } elseif ($input->getOption('only') == 'number_available_migrations') {
                 $output->write($configuration->getNumberOfAvailableMigrations());
-            } else if($input->getOption('only') == 'number_executed_migrations') {
+            } elseif ($input->getOption('only') == 'number_executed_migrations') {
                 $output->write($configuration->getNumberOfExecutedMigrations());
-            } else if($input->getOption('only') == 'prev_version') {
+            } elseif ($input->getOption('only') == 'prev_version') {
                 $output->write($configuration->getPrevVersion());
-            } else if($input->getOption('only') == 'latest_version') {
+            } elseif ($input->getOption('only') == 'latest_version') {
                 $output->write($configuration->getLatestVersion());
             } else {
                 throw new \InvalidArgumentException('Unsupported option `' . $input->getOption('only') . '` for option --only');

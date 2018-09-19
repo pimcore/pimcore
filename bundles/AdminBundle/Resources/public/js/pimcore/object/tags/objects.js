@@ -43,7 +43,8 @@ pimcore.object.tags.objects = Class.create(pimcore.object.tags.abstract, {
             fields: [
                 "id",
                 "path",
-                "type"
+                "type",
+                "published"
             ]
         });
     },
@@ -299,7 +300,8 @@ pimcore.object.tags.objects = Class.create(pimcore.object.tags.abstract, {
             columns: [
                 {text: 'ID', dataIndex: 'id', width: 50}
                 ,
-                {text: t("reference"), dataIndex: 'path', flex: 200},
+                {text: t("reference"), dataIndex: 'path', flex: 200, renderer:this.fullPathRenderCheck.bind(this)
+                },
                 {text: t("type"), dataIndex: 'type', width: 100},
                 {
                     xtype: 'actioncolumn',
@@ -413,6 +415,7 @@ pimcore.object.tags.objects = Class.create(pimcore.object.tags.abstract, {
                     try {
                         var record = data.records[0];
                         var data = record.data;
+                        this.nodeElement = data;
                         var fromTree = this.isFromTree(dd);
 
                         var toBeRequested = new Ext.util.Collection();
@@ -430,7 +433,8 @@ pimcore.object.tags.objects = Class.create(pimcore.object.tags.abstract, {
                                 var initData = {
                                     id: data.id,
                                     path: data.path,
-                                    type: data.className
+                                    type: data.className,
+                                    published: data.published
                                 };
 
                                 if (!this.objectAlreadyExists(initData.id)) {
@@ -501,7 +505,7 @@ pimcore.object.tags.objects = Class.create(pimcore.object.tags.abstract, {
             store: this.store,
             columns: [
                 {text: 'ID', dataIndex: 'id', width: 50, sortable: false},
-                {text: t("reference"), dataIndex: 'path', width: 200, sortable: false},
+                {text: t("reference"), dataIndex: 'path', width: 200, sortable: false, renderer:this.fullPathRenderCheck.bind(this)},
                 {text: t("type"), dataIndex: 'type', width: 100, sortable: false},
                 {
                     xtype: 'actioncolumn',
@@ -627,7 +631,6 @@ pimcore.object.tags.objects = Class.create(pimcore.object.tags.abstract, {
     addDataFromSelector: function (items) {
 
         if (items.length > 0) {
-
             var toBeRequested = new Ext.util.Collection();
 
             for (var i = 0; i < items.length; i++) {
@@ -635,7 +638,8 @@ pimcore.object.tags.objects = Class.create(pimcore.object.tags.abstract, {
                     toBeRequested.add(this.store.add({
                         id: items[i].id,
                         path: items[i].fullpath,
-                        type: items[i].classname
+                        type: items[i].classname,
+                        published: items[i].published
                     }));
                 }
             }

@@ -72,7 +72,7 @@ class Dao extends Model\Dao\AbstractDao
                         'context' => [
                             'containerType' => 'objectbrick',
                             'containerKey' => $this->model->getType(),
-                            'fieldname' =>  $this->model->getFieldname()
+                            'fieldname' => $this->model->getFieldname()
                         ]
                     ]);
             } elseif ($fd->getColumnType()) {
@@ -234,7 +234,7 @@ class Dao extends Model\Dao\AbstractDao
         $this->inheritanceHelper = new DataObject\Concrete\Dao\InheritanceHelper($object->getClassId(), 'o_id', $storeTable, $queryTable);
         $this->inheritanceHelper->resetFieldsToCheck();
 
-        $objectVars = get_object_vars($this->model);
+        $objectVars = $this->model->getObjectVars();
 
         foreach ($objectVars as $key => $value) {
             $fd = $this->model->getDefinition()->getFieldDefinition($key);
@@ -249,7 +249,7 @@ class Dao extends Model\Dao\AbstractDao
                     $fakeModel->setContext([
                         'containerType' => 'objectbrick',
                         'containerKey' => $this->model->getType(),
-                        'fieldname' =>  $this->model->getFieldname()
+                        'fieldname' => $this->model->getFieldname()
                     ]);
                     $localizedFieldDao->setModel($fakeModel);
                     $localizedFieldDao->delete();

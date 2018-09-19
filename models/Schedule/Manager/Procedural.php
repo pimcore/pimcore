@@ -60,7 +60,7 @@ class Procedural
     public function __construct(string $pidFileName, LoggerInterface $logger)
     {
         $this->pidFileName = $pidFileName;
-        $this->logger      = $logger;
+        $this->logger = $logger;
     }
 
     /**
@@ -155,7 +155,7 @@ class Procedural
                 ]);
             } catch (\Exception $e) {
                 $this->logger->error('Failed to execute job with ID {id}: {exception}', [
-                    'id'        => $job->getId(),
+                    'id' => $job->getId(),
                     'exception' => $e
                 ]);
             }

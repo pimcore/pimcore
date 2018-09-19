@@ -49,8 +49,8 @@ class UrlGenerator implements UrlGeneratorInterface
     protected function configureOptions(OptionsResolver $options)
     {
         $options->setDefaults([
-            'scheme'   => $this->requestContext->getScheme(),
-            'host'     => $this->requestContext->getHost(),
+            'scheme' => $this->requestContext->getScheme(),
+            'host' => $this->requestContext->getHost(),
             'base_url' => $this->requestContext->getBaseUrl()
         ]);
 
@@ -82,8 +82,8 @@ class UrlGenerator implements UrlGeneratorInterface
         $options = $this->resolveOptions($options);
 
         $scheme = $options['scheme'];
-        $host   = $options['host'];
-        $port   = $options['port'];
+        $host = $options['host'];
+        $port = $options['port'];
 
         if (!empty($port)) {
             $port = ':' . $port;

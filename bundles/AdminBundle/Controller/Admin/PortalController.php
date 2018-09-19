@@ -14,12 +14,9 @@
 
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 
-use FeedIo\Adapter\Guzzle\Client;
-use FeedIo\FeedIo;
 use Pimcore\Analytics\Google\Config\SiteConfigProvider;
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Controller\EventedControllerInterface;
-use Pimcore\Logger;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\Document;
@@ -254,77 +251,6 @@ class PortalController extends AdminController implements EventedControllerInter
     }
 
     /**
-     * @Route("/portlet-feed")
-     * @Method({"GET"})
-     *
-     * @param Request $request
-     *
-     * @return JsonResponse
-     */
-    public function portletFeedAction(Request $request)
-    {
-        $dashboard = $this->getCurrentConfiguration($request);
-        $id = $request->get('id');
-
-        $portlet = [];
-        foreach ($dashboard['positions'] as $col) {
-            foreach ($col as $row) {
-                if ($row['id'] == $id) {
-                    $portlet = $row;
-                }
-            }
-        }
-
-        $feedUrl = $portlet['config'];
-
-        // get feedio
-        $feedIoClient = new Client(new \GuzzleHttp\Client());
-        $feedIo = new FeedIo($feedIoClient, $this->container->get('logger'));
-
-        $feed = null;
-        if (!empty($feedUrl)) {
-            try {
-                $feed = $feedIo->read($feedUrl)->getFeed();
-            } catch (\Exception $e) {
-                Logger::error($e);
-            }
-        }
-
-        $count = 0;
-        $entries = [];
-
-        if ($feed) {
-            foreach ($feed as $entry) {
-
-                // display only the latest 11 entries
-                $count++;
-                if ($count > 10) {
-                    break;
-                }
-
-                $entry = [
-                    'title' => $entry->getTitle(),
-                    'description' => $entry->getDescription(),
-                    'authors' => $entry->getValue('author'),
-                    'link' => $entry->getLink(),
-                    'content' => $entry->getDescription()
-                ];
-
-                foreach ($entry as &$content) {
-                    $content = strip_tags($content, '<h1><h2><h3><h4><h5><p><br><a><img><div><b><strong><i>');
-                    $content = preg_replace('/on([a-z]+)([ ]+)?=/i', 'data-on$1=', $content);
-                }
-
-                $entries[] = $entry;
-            }
-        }
-
-        return $this->adminJson([
-            'entries' => $entries
-        ]);
-    }
-
-    /**
      * @Route("/portlet-modified-documents")
      * @Method({"GET"})
      *
@@ -337,20 +263,25 @@ class PortalController extends AdminController implements EventedControllerInter
         $list = Document::getList([
             'limit' => 10,
             'order' => 'DESC',
-            'orderKey' => 'modificationDate'
+            'orderKey' => 'modificationDate',
+            'condition' => "userModification = '".$this->getAdminUser()->getId()."'"
         ]);
 
         $response = [];
         $response['documents'] = [];
 
         foreach ($list as $doc) {
-            $response['documents'][] = [
-                'id' => $doc->getId(),
-                'type' => $doc->getType(),
-                'path' => $doc->getRealFullPath(),
-                'date' => $doc->getModificationDate(),
-                'condition' => "userModification = '".$this->getAdminUser()->getId()."'"
-            ];
+            /**
+             * @var Document $doc
+             */
+            if ($doc->isAllowed('view')) {
+                $response['documents'][] = [
+                    'id' => $doc->getId(),
+                    'type' => $doc->getType(),
+                    'path' => $doc->getRealFullPath(),
+                    'date' => $doc->getModificationDate()
+                ];
+            }
         }
 
         return $this->adminJson($response);
@@ -369,20 +300,25 @@ class PortalController extends AdminController implements EventedControllerInter
         $list = Asset::getList([
             'limit' => 10,
             'order' => 'DESC',
-            'orderKey' => 'modificationDate'
+            'orderKey' => 'modificationDate',
+            'condition' => "userModification = '".$this->getAdminUser()->getId()."'"
         ]);
 
         $response = [];
         $response['assets'] = [];
 
         foreach ($list as $doc) {
-            $response['assets'][] = [
-                'id' => $doc->getId(),
-                'type' => $doc->getType(),
-                'path' => $doc->getRealFullPath(),
-                'date' => $doc->getModificationDate(),
-                'condition' => "userModification = '".$this->getAdminUser()->getId()."'"
-            ];
+            /**
+             * @var Asset $doc
+             */
+            if ($doc->isAllowed('view')) {
+                $response['assets'][] = [
+                    'id' => $doc->getId(),
+                    'type' => $doc->getType(),
+                    'path' => $doc->getRealFullPath(),
+                    'date' => $doc->getModificationDate()
+                ];
+            }
         }
 
         return $this->adminJson($response);
@@ -409,12 +345,17 @@ class PortalController extends AdminController implements EventedControllerInter
         $response['objects'] = [];
 
         foreach ($list as $object) {
-            $response['objects'][] = [
-                'id' => $object->getId(),
-                'type' => $object->getType(),
-                'path' => $object->getRealFullPath(),
-                'date' => $object->getModificationDate()
-            ];
+            /**
+             * @var DataObject $object
+             */
+            if ($object->isAllowed('view')) {
+                $response['objects'][] = [
+                    'id' => $object->getId(),
+                    'type' => $object->getType(),
+                    'path' => $object->getRealFullPath(),
+                    'date' => $object->getModificationDate()
+                ];
+            }
         }
 
         return $this->adminJson($response);
@@ -437,7 +378,7 @@ class PortalController extends AdminController implements EventedControllerInter
 
         $data = [];
 
-        for ($i=0; $i < $days; $i++) {
+        for ($i = 0; $i < $days; $i++) {
             // documents
             $end = $startDate - ($i * 86400);
             $start = $end - 86399;

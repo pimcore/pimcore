@@ -40,7 +40,7 @@ class AttributeFactory
         ContainerInterface $getters,
         ContainerInterface $interpreters
     ) {
-        $this->getters      = $getters;
+        $this->getters = $getters;
         $this->interpreters = $interpreters;
     }
 

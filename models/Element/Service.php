@@ -484,20 +484,20 @@ class Service extends Model\AbstractModel
             if ($p->getData() instanceof Document || $p->getData() instanceof Asset || $p->getData() instanceof DataObject\AbstractObject) {
                 $pa = [];
 
-                $vars = get_object_vars($p->getData());
+                $vars = $p->getData()->getObjectVars();
 
                 foreach ($vars as $k => $value) {
                     if (in_array($k, $allowedProperties)) {
-                        $pa[$k] = $p->getData()->$k;
+                        $pa[$k] = $value;
                     }
                 }
 
                 // clone it because of caching
                 $tmp = clone $p;
                 $tmp->setData($pa);
-                $properties[$key] = object2array($tmp);
+                $properties[$key] = $tmp->getObjectVars();
             } else {
-                $properties[$key] = object2array($p);
+                $properties[$key] = $p->getObjectVars();
             }
 
             // add config from predefined properties
@@ -653,9 +653,16 @@ class Service extends Model\AbstractModel
                     }
                 }
 
-                $properties = get_object_vars($data);
-                foreach ($properties as $name => $value) {
-                    $data->$name = self::renewReferences($value, false);
+                if ($data instanceof Model\AbstractModel) {
+                    $properties = $data->getObjectVars();
+                    foreach ($properties as $name => $value) {
+                        $data->setValue($name, self::renewReferences($value, false));
+                    }
+                } else {
+                    $properties = get_object_vars($data);
+                    foreach ($properties as $name => $value) {
+                        $data->$name = self::renewReferences($value, false);
+                    }
                 }
 
                 return $data;
@@ -760,53 +767,53 @@ class Service extends Model\AbstractModel
             $sanitizedPath = $sanitizedPath . self::getValidKey($part, $itemType) . '/';
         }
 
-        if (!($foundElement = $type::getByPath($sanitizedPath))) {
-            foreach ($parts as $part) {
-                $pathPart = $pathsArray[count($pathsArray) - 1] ?? '';
-                $pathsArray[] = $pathPart . '/' . self::getValidKey($part, $itemType);
-            }
+        if (self::pathExists($sanitizedPath, $itemType)) {
+            return $type::getByPath($sanitizedPath);
+        }
 
-            for ($i = 0; $i < count($pathsArray); $i++) {
-                $currentPath = $pathsArray[$i];
-                if (!($type::getByPath($currentPath) instanceof $type)) {
-                    $parentFolderPath = ($i == 0) ? '/' : $pathsArray[$i - 1];
+        foreach ($parts as $part) {
+            $pathPart = $pathsArray[count($pathsArray) - 1] ?? '';
+            $pathsArray[] = $pathPart . '/' . self::getValidKey($part, $itemType);
+        }
 
-                    $parentFolder = $type::getByPath($parentFolderPath);
+        for ($i = 0; $i < count($pathsArray); $i++) {
+            $currentPath = $pathsArray[$i];
+            if (!self::pathExists($currentPath, $itemType)) {
+                $parentFolderPath = ($i == 0) ? '/' : $pathsArray[$i - 1];
 
-                    $folder = new $folderType();
-                    $folder->setParent($parentFolder);
-                    if ($parentFolder) {
-                        $folder->setParentId($parentFolder->getId());
-                    } else {
-                        $folder->setParentId(1);
-                    }
+                $parentFolder = $type::getByPath($parentFolderPath);
 
-                    $key = substr($currentPath, strrpos($currentPath, '/') + 1, strlen($currentPath));
-
-                    if (method_exists($folder, 'setKey')) {
-                        $folder->setKey($key);
-                    }
-
-                    if (method_exists($folder, 'setFilename')) {
-                        $folder->setFilename($key);
-                    }
-
-                    if (method_exists($folder, 'setType')) {
-                        $folder->setType('folder');
-                    }
-
-                    $folder->setPath($currentPath);
-                    $folder->setUserModification(0);
-                    $folder->setUserOwner(1);
-                    $folder->setCreationDate(time());
-                    $folder->setModificationDate(time());
-                    $folder->setValues($options);
-                    $folder->save();
-                    $lastFolder = $folder;
+                $folder = new $folderType();
+                $folder->setParent($parentFolder);
+                if ($parentFolder) {
+                    $folder->setParentId($parentFolder->getId());
+                } else {
+                    $folder->setParentId(1);
                 }
+
+                $key = substr($currentPath, strrpos($currentPath, '/') + 1, strlen($currentPath));
+
+                if (method_exists($folder, 'setKey')) {
+                    $folder->setKey($key);
+                }
+
+                if (method_exists($folder, 'setFilename')) {
+                    $folder->setFilename($key);
+                }
+
+                if (method_exists($folder, 'setType')) {
+                    $folder->setType('folder');
+                }
+
+                $folder->setPath($currentPath);
+                $folder->setUserModification(0);
+                $folder->setUserOwner(1);
+                $folder->setCreationDate(time());
+                $folder->setModificationDate(time());
+                $folder->setValues($options);
+                $folder->save();
+                $lastFolder = $folder;
             }
-        } else {
-            return $foundElement;
         }
 
         return $lastFolder;

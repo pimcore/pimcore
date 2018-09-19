@@ -39,7 +39,7 @@ class Dao extends Model\Dao\AbstractDao
         $data = [];
 
         // add all permissions
-        $dataRaw = get_object_vars($this->model);
+        $dataRaw = $this->model->getObjectVars();
         foreach ($dataRaw as $key => $value) {
             if (in_array($key, $this->getValidTableColumns($tableName))) {
                 if (is_bool($value)) {

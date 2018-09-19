@@ -39,11 +39,11 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin\External {
          */
         public function adminerAction(Request $request)
         {
-            $conf = \Pimcore\Config::getSystemConfig()->database->params;
+            $db = \Pimcore\Db::get();
             $request->query->remove('csrfToken');
 
             if (!$request->query->count()) {
-                return $this->redirect('/admin/external_adminer/adminer?username=' . $conf->username . '&db=' . $conf->dbname);
+                return $this->redirect('/admin/external_adminer/adminer?username=' . $db->getUsername() . '&db=' . $db->getDatabase());
             }
 
             // disable debug error handler while including adminer
@@ -243,18 +243,18 @@ namespace {
                  */
                 public function credentials()
                 {
-                    $conf = \Pimcore\Config::getSystemConfig()->database->params;
+                    $db = \Pimcore\Db::get();
 
-                    $host = $conf->host;
-                    if ($conf->port) {
-                        $host .= ':' . $conf->port;
+                    $host = $db->getHost();
+                    if ($db->getPort()) {
+                        $host .= ':' . $db->getPort();
                     }
 
                     // server, username and password for connecting to database
                     $result = [
                         $host,
-                        $conf->username,
-                        $conf->password
+                        $db->getUsername(),
+                        $db->getPassword()
                     ];
 
                     return $result;
@@ -265,9 +265,9 @@ namespace {
                  */
                 public function database()
                 {
-                    $conf = \Pimcore\Config::getSystemConfig()->database->params;
+                    $db = \Pimcore\Db::get();
                     // database name, will be escaped by Adminer
-                    return $conf->dbname;
+                    return $db->getDatabase();
                 }
 
                 public function databases($flush = true)

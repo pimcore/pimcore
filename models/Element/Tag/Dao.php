@@ -52,7 +52,7 @@ class Dao extends Model\Dao\AbstractDao
     {
         $this->db->beginTransaction();
         try {
-            $dataAttributes = get_object_vars($this->model);
+            $dataAttributes = $this->model->getObjectVars();
 
             $originalIdPath = null;
             if ($this->model->getId()) {
@@ -238,8 +238,8 @@ class Dao extends Model\Dao\AbstractDao
 
         $map = [
             'document' => ['documents', 'id', 'type', '\Pimcore\Model\Document'],
-            'asset'    => ['assets', 'id', 'type', '\Pimcore\Model\Asset'],
-            'object'   => ['objects', 'o_id', 'o_type', '\Pimcore\Model\DataObject\AbstractObject'],
+            'asset' => ['assets', 'id', 'type', '\Pimcore\Model\Asset'],
+            'object' => ['objects', 'o_id', 'o_type', '\Pimcore\Model\DataObject\AbstractObject'],
         ];
 
         $select = $this->db->select()
@@ -264,11 +264,17 @@ class Dao extends Model\Dao\AbstractDao
         );
 
         if (! empty($subtypes)) {
-            $select->where($map[$type][2] . ' IN (?)', $subtypes);
+            foreach ($subtypes as $subType) {
+                $quotedSubTypes[] = $this->db->quote($subType);
+            }
+            $select->where($map[$type][2] . ' IN (' . implode(',', $quotedSubTypes) . ')');
         }
 
         if ('object' === $type && ! empty($classNames)) {
-            $select->where('o_className IN (?)', $classNames);
+            foreach ($classNames as $cName) {
+                $quotedClassNames[] = $this->db->quote($cName);
+            }
+            $select->where('o_className IN ( ' .  implode(',', $quotedClassNames) . ' )');
         }
 
         $res = $this->db->query($select);

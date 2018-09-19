@@ -28,9 +28,9 @@ class DeviceOverrideHandler implements OverrideHandlerInterface
     public function buildOverrideForm(FormBuilderInterface $form, Request $request)
     {
         $form->add('device', DeviceType::class, [
-            'label'    => 'Device',
+            'label' => 'Device',
             'required' => false,
-            'attr'     => [
+            'attr' => [
                 'class' => '_ptgtb__override-form__collapse-section'
             ]
         ]);

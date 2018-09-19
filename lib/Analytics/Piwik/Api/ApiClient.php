@@ -53,8 +53,8 @@ class ApiClient
         SerializerInterface $serializer
     ) {
         $this->configProvider = $configProvider;
-        $this->clientFactory  = $clientFactory;
-        $this->serializer     = $serializer;
+        $this->clientFactory = $clientFactory;
+        $this->serializer = $serializer;
     }
 
     /**
@@ -93,7 +93,7 @@ class ApiClient
      */
     private function requestRaw(string $method, array $options): array
     {
-        $client   = $this->getClient();
+        $client = $this->getClient();
         $response = $client->request($method, '', $options);
 
         if (200 !== $response->getStatusCode()) {

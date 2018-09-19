@@ -7,7 +7,7 @@ No matter which solution your're using, it's crucial to back up the following co
 `web/var/tmp`, `var/tmp`, `var/logs`, `var/cache` and `var/sessions`
 - The entire database 
 
-#- Poor man's backup using Unix tools
+## Poor man's backup using Unix tools
 
 We definitely recommend to use a professional backup solution depending on your infrastructure, but sometimes a poor 
 man's backup can be quite handy :) 

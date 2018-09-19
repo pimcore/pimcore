@@ -36,7 +36,7 @@ class Availability implements IAvailability
      */
     public function __construct(ICheckoutable $product, bool $available)
     {
-        $this->product   = $product;
+        $this->product = $product;
         $this->available = $available;
     }
 

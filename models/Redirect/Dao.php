@@ -52,42 +52,27 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     /**
-     * Save object to database
-     *
-     * @return bool
-     *
-     * @todo: update() don't returns anything
+     * @throws \Exception
      */
     public function save()
     {
-        if ($this->model->getId()) {
-            return $this->model->update();
+        if (!$this->model->getId()) {
+            // create in database
+            $this->db->insert('redirects', []);
+
+            $ts = time();
+            $this->model->setModificationDate($ts);
+            $this->model->setCreationDate($ts);
+
+            $this->model->setId($this->db->lastInsertId());
         }
 
-        return $this->create();
-    }
-
-    /**
-     * Deletes object from database
-     */
-    public function delete()
-    {
-        $this->db->delete('redirects', ['id' => $this->model->getId()]);
-
-        $this->model->clearDependentCache();
-    }
-
-    /**
-     * @throws \Exception
-     */
-    public function update()
-    {
         try {
             $ts = time();
             $this->model->setModificationDate($ts);
 
             $data = [];
-            $type = get_object_vars($this->model);
+            $type = $this->model->getObjectVars();
 
             foreach ($type as $key => $value) {
                 if (in_array($key, $this->getValidTableColumns('redirects'))) {
@@ -102,25 +87,13 @@ class Dao extends Model\Dao\AbstractDao
         } catch (\Exception $e) {
             throw $e;
         }
-
-        $this->model->clearDependentCache();
     }
 
     /**
-     * Create a new record for the object in database
-     *
-     * @return bool
+     * Deletes object from database
      */
-    public function create()
+    public function delete()
     {
-        $this->db->insert('redirects', []);
-
-        $ts = time();
-        $this->model->setModificationDate($ts);
-        $this->model->setCreationDate($ts);
-
-        $this->model->setId($this->db->lastInsertId());
-
-        return $this->save();
+        $this->db->delete('redirects', ['id' => $this->model->getId()]);
     }
 }

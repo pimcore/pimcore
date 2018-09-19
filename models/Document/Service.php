@@ -173,7 +173,7 @@ class Service extends Model\Element\Service
         $source->getProperties();
 
         $new = Element\Service::cloneMe($source);
-        $new->id = null;
+        $new->setId(null);
         $new->setChildren(null);
         $new->setKey(Element\Service::getSaveCopyName('document', $new->getKey(), $target));
         $new->setParentId($target->getId());
@@ -224,7 +224,7 @@ class Service extends Model\Element\Service
         $source->getProperties();
 
         $new = Element\Service::cloneMe($source);
-        $new->id = null;
+        $new->setId(null);
         $new->setChilds(null);
         $new->setKey(Element\Service::getSaveCopyName('document', $new->getKey(), $target));
         $new->setParentId($target->getId());
@@ -549,7 +549,7 @@ class Service extends Model\Element\Service
         if (isset($this->nearestPathCache[$cacheKey])) {
             $document = $this->nearestPathCache[$cacheKey];
         } else {
-            $paths    = ['/'];
+            $paths = ['/'];
             $tmpPaths = [];
 
             $pathParts = explode('/', $path);

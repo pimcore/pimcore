@@ -272,8 +272,7 @@ pimcore.settings.tagmanagement.item = Class.create({
                 fieldLabel: t("expiry"),
                 value: data.date,
                 format: "m/d/y",
-                renderer:
-                function(d) {
+                renderer: function(d) {
                     if(d instanceof Date) {
                         return Ext.Date.format(d, "m/d/y");
                     }
@@ -286,7 +285,7 @@ pimcore.settings.tagmanagement.item = Class.create({
                 style: "float: left;",
                 value: data.date,
                 format: 'H:i A',
-                function(d) {
+                renderer: function(d) {
                     if(d instanceof Date) {
                         return Ext.Date.format(d, "H:i A");
                     }

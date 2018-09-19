@@ -186,15 +186,15 @@ class OGone extends AbstractPayment
         $form->setAttribute('data-currency', 'EUR');
 
         $params = [
-            'PSPID'         => $this->getProviderOption('pspid'),
-            'ORDERID'       => $config['orderIdent'],
-            'AMOUNT'        => $price->getAmount()->asNumeric() * 100,
-            'CURRENCY'      => $price->getCurrency()->getShortName(),
-            'LANGUAGE'      => $config['language'],
-            'ACCEPTURL'     =>  $config['successUrl'],
-            'CANCELURL'     => $config['cancelUrl'],
-            'DECLINEURL'    => $config['errorUrl'],
-            'TP'            =>  $this->getProviderOption('TP', 'paymenttemplate.html'),
+            'PSPID' => $this->getProviderOption('pspid'),
+            'ORDERID' => $config['orderIdent'],
+            'AMOUNT' => $price->getAmount()->asNumeric() * 100,
+            'CURRENCY' => $price->getCurrency()->getShortName(),
+            'LANGUAGE' => $config['language'],
+            'ACCEPTURL' => $config['successUrl'],
+            'CANCELURL' => $config['cancelUrl'],
+            'DECLINEURL' => $config['errorUrl'],
+            'TP' => $this->getProviderOption('TP', 'paymenttemplate.html'),
         ];
 
         if (isset($config['customerStatement'])) {
@@ -237,26 +237,26 @@ class OGone extends AbstractPayment
             throw new \Exception('The verification of the response data was not successful.');
         }
 
-        $currency       = $response['currency'];
-        $amount         = $response['amount']; //e.g., 512, not 51200
-        $paymentMethod  = $response['PM']; //e.g. sofortüberweisung.de
-        $customerName   = $response['CN'];
+        $currency = $response['currency'];
+        $amount = $response['amount']; //e.g., 512, not 51200
+        $paymentMethod = $response['PM']; //e.g. sofortüberweisung.de
+        $customerName = $response['CN'];
         $oGonePaymentId = $response['PAYID'];
-        $ip             = $response['IP'];
-        $orderId        = $response['orderID'];
-        $state          = $response['state']; //success,
+        $ip = $response['IP'];
+        $orderId = $response['orderID'];
+        $state = $response['state']; //success,
 
         // restore price object for payment status
         $price = new Price(Decimal::create($amount), new Currency($currency));
 
         $this->setAuthorizedData([
-            'orderNumber'       => $orderId,
-            'paymentMethod'     => $paymentMethod,
-            'paymentId'         => $oGonePaymentId,
-            'amount'            => $amount,
-            'currency'          => $currency,
-            'ip'                => $ip,
-            'customerName'      => $customerName
+            'orderNumber' => $orderId,
+            'paymentMethod' => $paymentMethod,
+            'paymentId' => $oGonePaymentId,
+            'amount' => $amount,
+            'currency' => $currency,
+            'ip' => $ip,
+            'customerName' => $customerName
         ]);
 
         $responseStatus = new Status(
@@ -265,11 +265,11 @@ class OGone extends AbstractPayment
             '',
             !empty($orderId) && $state === 'success' ? IStatus::STATUS_AUTHORIZED : IStatus::STATUS_CANCELLED,
             [
-                'ogone_amount'          => (string)$price,
-                'ogone_paymentId'       => $oGonePaymentId,
-                'ogone_paymentState'    => $state,
-                'ogone_paymentType'     => $paymentMethod,
-                'ogone_response'        => $response
+                'ogone_amount' => (string)$price,
+                'ogone_paymentId' => $oGonePaymentId,
+                'ogone_paymentState' => $state,
+                'ogone_paymentType' => $paymentMethod,
+                'ogone_response' => $response
             ]
         );
 

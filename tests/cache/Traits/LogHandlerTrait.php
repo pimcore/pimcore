@@ -29,7 +29,7 @@ trait LogHandlerTrait
     {
         static::$logHandlers = [
             'buffer' => new BufferHandler(new StreamHandler('php://stdout')),
-            'test'   => new TestHandler()
+            'test' => new TestHandler()
         ];
 
         static::$logger = new Logger($name, array_values(static::$logHandlers));

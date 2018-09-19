@@ -28,9 +28,9 @@ class LocationOverrideHandler implements OverrideHandlerInterface
     public function buildOverrideForm(FormBuilderInterface $form, Request $request)
     {
         $form->add('location', LocationType::class, [
-            'label'    => 'Location',
+            'label' => 'Location',
             'required' => false,
-            'attr'     => [
+            'attr' => [
                 'class' => '_ptgtb__override-form__collapse-section'
             ]
         ]);

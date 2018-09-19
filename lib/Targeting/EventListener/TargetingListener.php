@@ -79,10 +79,10 @@ class TargetingListener implements EventSubscriberInterface
         TargetingCodeGenerator $codeGenerator
     ) {
         $this->visitorInfoResolver = $visitorInfoResolver;
-        $this->actionHandler       = $actionHandler;
-        $this->visitorInfoStorage  = $visitorInfoStorage;
-        $this->requestHelper       = $requestHelper;
-        $this->codeGenerator       = $codeGenerator;
+        $this->actionHandler = $actionHandler;
+        $this->visitorInfoStorage = $visitorInfoStorage;
+        $this->requestHelper = $requestHelper;
+        $this->codeGenerator = $codeGenerator;
     }
 
     public static function getSubscribedEvents()
@@ -90,8 +90,8 @@ class TargetingListener implements EventSubscriberInterface
         return [
             // needs to run before ElementListener to make sure there's a
             // resolved VisitorInfo when the document is loaded
-            KernelEvents::REQUEST        => ['onKernelRequest', 7],
-            KernelEvents::RESPONSE       => ['onKernelResponse', -115],
+            KernelEvents::REQUEST => ['onKernelRequest', 7],
+            KernelEvents::RESPONSE => ['onKernelResponse', -115],
             TargetingEvents::PRE_RESOLVE => 'onPreResolve',
         ];
     }
@@ -166,7 +166,7 @@ class TargetingListener implements EventSubscriberInterface
         }
 
         $visitorInfo = $this->visitorInfoStorage->getVisitorInfo();
-        $response    = $event->getResponse();
+        $response = $event->getResponse();
 
         if ($event->isMasterRequest()) {
             $this->startStopwatch('Targeting:responseActions', 'targeting');
@@ -231,7 +231,7 @@ class TargetingListener implements EventSubscriberInterface
         }
 
         foreach ($visitorInfo->getActions() as $action) {
-            $type  = $action['type'] ?? null;
+            $type = $action['type'] ?? null;
             $scope = $action['scope'] ?? null;
 
             if (empty($type) || empty($scope) || $scope !== VisitorInfo::ACTION_SCOPE_RESPONSE) {

@@ -184,7 +184,7 @@ class Objects extends Model\DataObject\ClassDefinition\Data\Relations\AbstractRe
         if (is_array($data) && count($data) > 0) {
             foreach ($data as $object) {
                 if ($object instanceof DataObject\Concrete) {
-                    $return[] = [$object->getId(), $object->getRealFullPath(), $object->getClassName()];
+                    $return[] = [$object->getId(), $object->getRealFullPath(), $object->getClassName(), (bool) $object->isPublished()];
                 }
             }
             if (empty($return)) {
@@ -219,7 +219,7 @@ class Objects extends Model\DataObject\ClassDefinition\Data\Relations\AbstractRe
             foreach ($data as $object) {
                 $o = DataObject::getById($object['id']);
                 if ($o) {
-                    $objects[]=$o;
+                    $objects[] = $o;
                 }
             }
         }
@@ -527,7 +527,7 @@ class Objects extends Model\DataObject\ClassDefinition\Data\Relations\AbstractRe
     {
         $data = null;
         if ($object instanceof DataObject\Concrete) {
-            $data = $object->{$this->getName()};
+            $data = $object->getObjectVar($this->getName());
             if ($this->getLazyLoading() and !in_array($this->getName(), $object->getO__loadedLazyFields())) {
                 //$data = $this->getDataFromResource($object->getRelationData($this->getName(),true,null));
                 $data = $this->load($object, ['force' => true]);
@@ -540,9 +540,9 @@ class Objects extends Model\DataObject\ClassDefinition\Data\Relations\AbstractRe
         } elseif ($object instanceof DataObject\Localizedfield) {
             $data = $params['data'];
         } elseif ($object instanceof DataObject\Fieldcollection\Data\AbstractData) {
-            $data = $object->{$this->getName()};
+            $data = $object->getObjectVar($this->getName());
         } elseif ($object instanceof DataObject\Objectbrick\Data\AbstractData) {
-            $data = $object->{$this->getName()};
+            $data = $object->getObjectVar($this->getName());
         }
 
         if (DataObject\AbstractObject::doHideUnpublished() and is_array($data)) {
@@ -719,7 +719,7 @@ class Objects extends Model\DataObject\ClassDefinition\Data\Relations\AbstractRe
             foreach ($value as $element) {
                 $type = Element\Service::getType($element);
                 $id = $element->getId();
-                $result[] =  [
+                $result[] = [
                     'type' => $type,
                     'id' => $id
                 ];

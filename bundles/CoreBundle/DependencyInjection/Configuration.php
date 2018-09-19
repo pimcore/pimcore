@@ -80,6 +80,28 @@ class Configuration implements ConfigurationInterface
                                 ->end()
                             ->end()
                         ->end()
+
+                        ->arrayNode('data_object')
+                            ->addDefaultsIfNotSet()
+                            ->children()
+                                ->arrayNode('translation_extractor')
+                                    ->children()
+                                        ->arrayNode('attributes')
+                                            ->info('Can be used to restrict the extracted localized fields (e.g. used by XLIFF exporter in the Pimcore backend)')
+                                            ->prototype('array')
+                                                ->prototype('scalar')->end()
+                                            ->end()
+                                            ->example(
+                                                [
+                                                    'Product' => ['name', 'description'],
+                                                    'Brand' => ['name'],
+                                                ]
+                                            )
+                                        ->end()
+                                    ->end()
+                                ->end()
+                            ->end()
+                        ->end()
                     ->end()
                 ->end()
                 ->arrayNode('maps')
@@ -114,6 +136,7 @@ class Configuration implements ConfigurationInterface
         $this->addMigrationsNode($rootNode);
         $this->addTargetingNode($rootNode);
         $this->addSitemapsNode($rootNode);
+        $this->addMimeNode($rootNode);
 
         return $treeBuilder;
     }
@@ -145,6 +168,9 @@ class Configuration implements ConfigurationInterface
                 ->arrayNode('assets')
                 ->addDefaultsIfNotSet()
                 ->children()
+                    ->scalarNode('defaultUploadPath')
+                        ->defaultValue('_default_upload_bucket')
+                        ->end()
                     ->arrayNode('image')
                         ->addDefaultsIfNotSet()
                         ->children()
@@ -564,7 +590,7 @@ class Configuration implements ConfigurationInterface
                                             ->integerNode('port')
                                                 ->defaultValue($defaultOptions['port'])
                                             ->end()
-                                            ->integerNode('database')
+                                            ->scalarNode('database')
                                                 ->defaultValue($defaultOptions['database'])
                                             ->end()
                                             ->scalarNode('password')
@@ -669,14 +695,14 @@ class Configuration implements ConfigurationInterface
                             ->example([
                                 [
                                     'custom_set' => [
-                                        'name'       => 'Custom Migrations',
-                                        'namespace'  => 'App\\Migrations\\Custom',
-                                        'directory'  => 'src/App/Migrations/Custom'
+                                        'name' => 'Custom Migrations',
+                                        'namespace' => 'App\\Migrations\\Custom',
+                                        'directory' => 'src/App/Migrations/Custom'
                                     ],
                                     'custom_set_2' => [
-                                        'name'       => 'Custom Migrations 2',
-                                        'namespace'  => 'App\\Migrations\\Custom2',
-                                        'directory'  => 'src/App/Migrations/Custom2',
+                                        'name' => 'Custom Migrations 2',
+                                        'namespace' => 'App\\Migrations\\Custom2',
+                                        'directory' => 'src/App/Migrations/Custom2',
                                         'connection' => 'custom_connection'
                                     ],
                                 ]
@@ -767,9 +793,9 @@ class Configuration implements ConfigurationInterface
                                     ->ifString()
                                     ->then(function ($v) {
                                         return [
-                                            'enabled'      => true,
+                                            'enabled' => true,
                                             'generator_id' => $v,
-                                            'priority'     => 0
+                                            'priority' => 0
                                         ];
                                     })
                                 ->end()
@@ -784,6 +810,23 @@ class Configuration implements ConfigurationInterface
                                     ->end()
                                 ->end()
                             ->end()
+                        ->end()
+                    ->end()
+                ->end()
+            ->end()
+        ->end();
+    }
+
+    private function addMimeNode(ArrayNodeDefinition $rootNode)
+    {
+        $rootNode
+            ->children()
+                ->arrayNode('mime')
+                    ->addDefaultsIfNotSet()
+                    ->children()
+                        ->arrayNode('extensions')
+                            ->useAttributeAsKey('name')
+                            ->prototype('scalar')
                         ->end()
                     ->end()
                 ->end()

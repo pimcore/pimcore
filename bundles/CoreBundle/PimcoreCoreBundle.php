@@ -16,9 +16,9 @@ namespace Pimcore\Bundle\CoreBundle;
 
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\AreabrickPass;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\CacheCollectorPass;
-use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\ComposerConfigNormalizersPass;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\DebugStopwatchPass;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\DoctrineMigrationsParametersPass;
+use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\LongRunningHelperPass;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\MonologPsrLogMessageProcessorPass;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\MonologPublicLoggerPass;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\NavigationRendererPass;
@@ -78,7 +78,7 @@ class PimcoreCoreBundle extends Bundle
         $container->addCompilerPass(new DoctrineMigrationsParametersPass());
         $container->addCompilerPass(new MonologPublicLoggerPass());
         $container->addCompilerPass(new MonologPsrLogMessageProcessorPass());
-        $container->addCompilerPass(new ComposerConfigNormalizersPass());
         $container->addCompilerPass(new DebugStopwatchPass());
+        $container->addCompilerPass(new LongRunningHelperPass());
     }
 }

@@ -16,6 +16,7 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 
 use Pimcore\Config;
 use Pimcore\Controller\EventedControllerInterface;
+use Pimcore\Db;
 use Pimcore\Event\AdminEvents;
 use Pimcore\Image\HtmlToImage;
 use Pimcore\Logger;
@@ -62,7 +63,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
 
         //Hook for modifying return value - e.g. for changing permissions based on object data
         //data need to wrapped into a container in order to pass parameter to event listeners by reference so that they can change the values
-        $data = object2array($document);
+        $data = $document->getObjectVars();
         $event = new GenericEvent($this, [
             'data' => $data,
             'document' => $document
@@ -89,8 +90,18 @@ class DocumentController extends ElementControllerBase implements EventedControl
     {
         $allParams = array_merge($request->request->all(), $request->query->all());
 
-        $limit  = intval($allParams['limit'] ?? 100000000);
+        $filter = $request->get('filter');
+        $limit = intval($allParams['limit'] ?? 100000000);
         $offset = intval($allParams['start'] ?? 0);
+
+        if (!is_null($filter)) {
+            if (substr($filter, -1) != '*') {
+                $filter .= '*';
+            }
+            $filter = str_replace('*', '%', $filter);
+            $limit = 100;
+            $offset = 0;
+        }
 
         $document = Document::getById($allParams['node']);
         if (!$document) {
@@ -104,19 +115,29 @@ class DocumentController extends ElementControllerBase implements EventedControl
                 $cv = \Pimcore\Model\Element\Service::getCustomViewById($allParams['view']);
             }
 
+            $db = Db::get();
+
             $list = new Document\Listing();
             if ($this->getAdminUser()->isAdmin()) {
-                $list->setCondition('parentId = ? ', $document->getId());
+                $condition = 'parentId =  ' . $db->quote($document->getId());
             } else {
                 $userIds = $this->getAdminUser()->getRoles();
                 $userIds[] = $this->getAdminUser()->getId();
-                $list->setCondition('parentId = ? and
+                $condition = 'parentId = ' . $db->quote($document->getId()) . ' and
                                         (
                                         (select list from users_workspaces_document where userId in (' . implode(',', $userIds) . ') and LOCATE(CONCAT(path,`key`),cpath)=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
                                         or
                                         (select list from users_workspaces_document where userId in (' . implode(',', $userIds) . ') and LOCATE(cpath,CONCAT(path,`key`))=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
-                                        )', $document->getId());
+                                        )';
             }
+
+            if ($filter) {
+                $db = Db::get();
+
+                $condition = '(' . $condition . ')' . ' AND ' . $db->quoteIdentifier('key') . ' LIKE ' . $db->quote($filter);
+            }
+
+            $list->setCondition($condition);
 
             $list->setOrderKey(['index', 'id']);
             $list->setOrder(['asc', 'asc']);
@@ -156,7 +177,9 @@ class DocumentController extends ElementControllerBase implements EventedControl
                 'offset' => $offset,
                 'limit' => $limit,
                 'total' => $document->getChildAmount($this->getAdminUser()),
-                'nodes' => $documents
+                'nodes' => $documents,
+                'filter' => $request->get('filter') ? $request->get('filter') : '',
+                'inSearch' => intval($request->get('inSearch'))
             ]);
         } else {
             return $this->adminJson($documents);
@@ -466,7 +489,6 @@ class DocumentController extends ElementControllerBase implements EventedControl
         }
 
         if ($document->isAllowed('settings')) {
-
             // if the position is changed the path must be changed || also from the childs
             if ($request->get('parentId')) {
                 $parentDocument = Document::getById($request->get('parentId'));
@@ -511,27 +533,14 @@ class DocumentController extends ElementControllerBase implements EventedControl
                     }
                 }
 
-                // if changed the index change also all documents on the same level
-                if ($request->get('index') !== null) {
-                    $list = new Document\Listing();
-                    $list->setCondition('parentId = ? AND id != ?', [$request->get('parentId'), $document->getId()]);
-                    $list->setOrderKey('index');
-                    $list->setOrder('asc');
-                    $childsList = $list->load();
-
-                    $count = 0;
-                    foreach ($childsList as $child) {
-                        if ($count == intval($request->get('index'))) {
-                            $count++;
-                        }
-                        $child->saveIndex($count);
-                        $count++;
-                    }
-                }
-
                 $document->setUserModification($this->getAdminUser()->getId());
                 try {
                     $document->save();
+
+                    if ($request->get('index') !== null) {
+                        $this->updateIndexesOfDocumentSiblings($document, $request->get('index'));
+                    }
+
                     $success = true;
                 } catch (\Exception $e) {
                     return $this->adminJson(['success' => false, 'message' => $e->getMessage()]);
@@ -560,6 +569,41 @@ class DocumentController extends ElementControllerBase implements EventedControl
     }
 
     /**
+     * @param Document $updatedObject
+     * @param $newIndex
+     */
+    protected function updateIndexesOfDocumentSiblings(Document $document, $newIndex)
+    {
+        $updateLatestVersionIndex = function ($document, $newIndex) {
+            if ($document instanceof Document\PageSnippet && $latestVersion = $document->getLatestVersion()) {
+                $document = $latestVersion->loadData();
+                $document->setIndex($newIndex);
+                $latestVersion->save();
+            }
+        };
+
+        // if changed the index change also all documents on the same level
+        $newIndex = intval($newIndex);
+        $document->saveIndex($newIndex);
+
+        $list = new Document\Listing();
+        $list->setCondition('parentId = ? AND id != ?', [$document->getParentId(), $document->getId()]);
+        $list->setOrderKey('index');
+        $list->setOrder('asc');
+        $childsList = $list->load();
+
+        $count = 0;
+        foreach ($childsList as $child) {
+            if ($count == $newIndex) {
+                $count++;
+            }
+            $child->saveIndex($count);
+            $updateLatestVersionIndex($child, $count);
+            $count++;
+        }
+    }
+
+    /**
      * @Route("/doc-types")
      * @Method({"GET"})
      *
@@ -576,7 +620,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
         $docTypes = [];
         foreach ($list->getDocTypes() as $type) {
             if ($this->getAdminUser()->isAllowed($type->getId(), 'docType')) {
-                $docTypes[] = $type;
+                $docTypes[] = $type->getObjectVars();
             }
         }
 
@@ -999,7 +1043,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
         $prefix = $request->getSchemeAndHttpHost() . $docFrom->getRealFullPath() . '?pimcore_version=';
 
         $fromUrl = $prefix . $from;
-        $toUrl   = $prefix . $to;
+        $toUrl = $prefix . $to;
 
         $toFileId = uniqid();
         $fromFileId = uniqid();
@@ -1311,11 +1355,9 @@ class DocumentController extends ElementControllerBase implements EventedControl
             // overwrite internal store to avoid "duplicate full path" error
             \Pimcore\Cache\Runtime::set('document_' . $document->getId(), $new);
 
-            $props = get_object_vars($document);
+            $props = $document->getObjectVars();
             foreach ($props as $name => $value) {
-                if (property_exists($new, $name)) {
-                    $new->$name = $value;
-                }
+                $new->setValue($name, $value);
             }
 
             if ($type == 'hardlink' || $type == 'folder') {
@@ -1456,7 +1498,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
             $nodeConfig['title'] = $title;
             $nodeConfig['description'] = $description;
 
-            $nodeConfig['title_length']       = mb_strlen($title);
+            $nodeConfig['title_length'] = mb_strlen($title);
             $nodeConfig['description_length'] = mb_strlen($description);
         }
 

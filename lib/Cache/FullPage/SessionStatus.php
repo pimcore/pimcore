@@ -43,7 +43,7 @@ class SessionStatus
         EventDispatcherInterface $eventDispatcher
     ) {
         $this->symfonyMetadataStorageKey = $symfonyMetadataStorageKey;
-        $this->eventDispatcher           = $eventDispatcher;
+        $this->eventDispatcher = $eventDispatcher;
     }
 
     public function isDisabledBySession(Request $request): bool

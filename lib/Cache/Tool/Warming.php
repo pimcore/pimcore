@@ -112,7 +112,7 @@ class Warming
 
         Logger::info('New list of elements queued for storing into the cache with ' . $iterations . ' iterations and ' . $totalCount . ' total items');
 
-        for ($i=0; $i < $iterations; $i++) {
+        for ($i = 0; $i < $iterations; $i++) {
             Logger::info('Starting iteration ' . $i . ' with offset: ' . (self::getPerIteration() * $i));
 
             $list->setLimit(self::getPerIteration());

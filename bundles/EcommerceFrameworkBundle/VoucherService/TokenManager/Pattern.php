@@ -448,7 +448,7 @@ class Pattern extends AbstractTokenManager implements IExportableTokenManager
                 if ($this->tokenExists($checkTokens, $insertCheckTokens)) {
                     $checkTokenCount--;
                     unset($checkTokens[$token]);
-                    // Check if the length of the checkTokens Array matches the defined step range
+                // Check if the length of the checkTokens Array matches the defined step range
                     // so the the checkTokens get matched against the database.
                 } elseif ($checkTokenCount == $tokenCheckStep) {
                     // Check if any of the tokens in the temporary array checkTokens already exists,
@@ -590,9 +590,9 @@ class Pattern extends AbstractTokenManager implements IExportableTokenManager
         /** @var Token $token */
         foreach ($paginator as $token) {
             $data[] = [
-                'token'     => $token->getToken(),
-                'usages'    => $token->getUsages(),
-                'length'    => $token->getLength(),
+                'token' => $token->getToken(),
+                'usages' => $token->getUsages(),
+                'length' => $token->getLength(),
                 'timestamp' => $token->getTimestamp()
             ];
         }

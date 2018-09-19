@@ -40,7 +40,7 @@ class IncludeRenderer
         ActionRenderer $actionRenderer,
         DocumentTargetingConfigurator $targetingConfigurator
     ) {
-        $this->actionRenderer        = $actionRenderer;
+        $this->actionRenderer = $actionRenderer;
         $this->targetingConfigurator = $targetingConfigurator;
     }
 
@@ -90,7 +90,7 @@ class IncludeRenderer
         }
 
         // check if output-cache is enabled, if so, we're also using the cache here
-        $cacheKey    = null;
+        $cacheKey = null;
         $cacheConfig = false;
 
         if ($cacheEnabled) {
@@ -127,7 +127,7 @@ class IncludeRenderer
 
         \Pimcore\Cache\Runtime::set('pimcore_editmode', false);
 
-        $params  = array_merge($params, ['document' => $include]);
+        $params = array_merge($params, ['document' => $include]);
         $content = '';
 
         if ($include instanceof PageSnippet && $include->isPublished()) {
@@ -213,9 +213,9 @@ class IncludeRenderer
             $childs = $html->find('*');
             if (is_array($childs)) {
                 foreach ($childs as $child) {
-                    $child->class        = $child->class . $editmodeClass;
+                    $child->class = $child->class . $editmodeClass;
                     $child->pimcore_type = $include->getType();
-                    $child->pimcore_id   = $include->getId();
+                    $child->pimcore_id = $include->getId();
                 }
             }
             $content = $html->save();

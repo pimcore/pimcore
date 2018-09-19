@@ -132,7 +132,7 @@ class Dao extends Model\Dao\AbstractDao
         $this->model->setModificationDate($ts);
 
         $data = [];
-        $site = get_object_vars($this->model);
+        $site = $this->model->getObjectVars();
 
         foreach ($site as $key => $value) {
             if (in_array($key, $this->getValidTableColumns('sites'))) {

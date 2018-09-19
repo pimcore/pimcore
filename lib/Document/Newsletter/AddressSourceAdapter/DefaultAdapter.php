@@ -53,8 +53,8 @@ class DefaultAdapter implements AddressSourceAdapterInterface
      */
     public function __construct($params)
     {
-        $this->class        = $params['class'];
-        $this->condition    = empty($params['condition']) ? $params['objectFilterSQL'] : $params['condition'];
+        $this->class = $params['class'];
+        $this->condition = empty($params['condition']) ? $params['objectFilterSQL'] : $params['condition'];
         $this->targetGroups = $params['target_groups'] ?? [];
     }
 

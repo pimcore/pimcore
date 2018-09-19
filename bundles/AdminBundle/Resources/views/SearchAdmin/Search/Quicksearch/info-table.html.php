@@ -6,6 +6,13 @@
 ?>
 <div class="data-table <?= $cls ?>">
     <table>
+        <?php if($element instanceof \Pimcore\Model\DataObject) { ?>
+            <tr>
+                <th><?= $this->translate('class') ?></th>
+                <td><?= $element->getClassName() ?> [<?= $element->getClassId() ?>]</td>
+            </tr>
+        <?php } ?>
+
         <?php if($element instanceof \Pimcore\Model\Asset) { ?>
             <tr>
                 <th><?= $this->translate('mimetype') ?></th>

@@ -91,7 +91,8 @@ pimcore.object.tags.multihrefMetadata = Class.create(pimcore.object.tags.abstrac
 
         var columns = [];
         columns.push({text: 'ID', dataIndex: 'id', width: 50});
-        columns.push({text: t('reference'), dataIndex: 'path', flex: 1});
+        columns.push({text: t('reference'), dataIndex: 'path', flex: 1, renderer:this.fullPathRenderCheck.bind(this)
+        });
 
         var visibleFieldsCount = columns.length;
 
@@ -191,6 +192,12 @@ pimcore.object.tags.multihrefMetadata = Class.create(pimcore.object.tags.abstrac
 
                     return editor;
                 }.bind(this, this.fieldConfig.columns[i].type, readOnly);
+            }
+            
+            if(this.fieldConfig.columns[i].type == "select") {
+                renderer = function (value, metaData, record, rowIndex, colIndex, store) {
+                    return ts(value);
+                }
             }
 
             var columnConfig = {
@@ -401,6 +408,7 @@ pimcore.object.tags.multihrefMetadata = Class.create(pimcore.object.tags.abstrac
                         try {
                             var record = data.records[0];
                             var data = record.data;
+                            this.nodeElement = data;
                             var fromTree = this.isFromTree(dd);
 
                             var toBeRequested = new Ext.util.Collection();
@@ -418,7 +426,8 @@ pimcore.object.tags.multihrefMetadata = Class.create(pimcore.object.tags.abstrac
                                     var initData = {
                                         id: data.id,
                                         path: data.path,
-                                        type: data.elementType
+                                        type: data.elementType,
+                                        published: data.published
                                     };
 
                                     if (initData.type == "object") {
@@ -497,7 +506,7 @@ pimcore.object.tags.multihrefMetadata = Class.create(pimcore.object.tags.abstrac
             ]);
         }
 
-        if (this.fieldConfig.assetsAllowed) {
+        if (this.fieldConfig.assetsAllowed && this.fieldConfig.noteditable == false) {
             toolbarItems.push({
                 xtype: "button",
                 cls: "pimcore_inline_upload",
@@ -706,7 +715,6 @@ pimcore.object.tags.multihrefMetadata = Class.create(pimcore.object.tags.abstrac
 
     addDataFromSelector: function (items) {
         if (items.length > 0) {
-
             var toBeRequested = new Ext.util.Collection();
 
             for (var i = 0; i < items.length; i++) {
@@ -725,7 +733,8 @@ pimcore.object.tags.multihrefMetadata = Class.create(pimcore.object.tags.abstrac
                         id: items[i].id,
                         path: items[i].fullpath,
                         type: items[i].type,
-                        subtype: subtype
+                        subtype: subtype,
+                        published: items[i].published
                     }));
                 }
             }
@@ -787,12 +796,14 @@ pimcore.object.tags.multihrefMetadata = Class.create(pimcore.object.tags.abstrac
             try {
                 var data = Ext.decode(res.response.responseText);
                 if(data["id"]) {
-                    this.store.add({
+                    var toBeRequested = new Ext.util.Collection();
+                    toBeRequested.add(this.store.add({
                         id: data["id"],
                         path: data["fullpath"],
                         type: "asset",
                         subtype: data["type"]
-                    });
+                    }))
+                    this.requestNicePathData(toBeRequested);
                 }
             } catch (e) {
                 console.log(e);

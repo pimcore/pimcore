@@ -338,9 +338,16 @@
 }
 
 .pimcore_droptarget_image  {
-    background: url(/bundles/pimcoreadmin/img/flat-color-icons/target.svg) center center/45px no-repeat #fff;
+    background: url(/bundles/pimcoreadmin/img/flat-color-icons/drop-target-upload.svg) center center/90px no-repeat #fff;
 }
 
+.pimcore_icon_droptarget_upload {
+    background: url(/bundles/pimcoreadmin/img/flat-color-icons/drop-target-upload.svg) center center/40px no-repeat;
+}
+
+.pimcore_externalimage_container {
+    background: url(/bundles/pimcoreadmin/img/flat-color-icons/image.svg) center center/90px no-repeat #fff;
+}
 
 .pimcore_property_name .x-grid3-col-name {
     padding-left: 20px !important;
@@ -1036,7 +1043,53 @@ span.warning {
 
 .objectlayout_element_accordion .x-accordion-item, .objectlayout_element_text  {
     border: 1px solid #d0d0d0;
+    padding: 10px;
 }
+
+.objectlayout_element_text .alert {
+    position: relative;
+    padding: .75rem 1.25rem;
+    margin-bottom: 1rem;
+    border: 1px solid transparent;
+    border-radius: .25rem;
+}
+
+.objectlayout_element_text .alert-primary {
+    color: #004085;
+    background-color: #cce5ff;
+    border-color: #b8daff;
+}
+
+.objectlayout_element_text .alert-secondary {
+    color: #383d41;
+    background-color: #e2e3e5;
+    border-color: #d6d8db;
+}
+
+.objectlayout_element_text .alert-success {
+    color: #155724;
+    background-color: #d4edda;
+    border-color: #c3e6cb;
+}
+
+.objectlayout_element_text .alert-danger {
+    color: #721c24;
+    background-color: #f8d7da;
+    border-color: #f5c6cb;
+}
+
+.objectlayout_element_text .alert-warning {
+    color: #856404;
+    background-color: #fff3cd;
+    border-color: #ffeeba;
+}
+
+.objectlayout_element_text .alert-info {
+    color: #0c5460;
+    background-color: #d1ecf1;
+    border-color: #bee5eb;
+}
+
 
 .object_field .x-panel-header-title-default > .x-title-icon-wrap-default > .x-title-icon-default {
     width: 24px;
@@ -1262,7 +1315,6 @@ span.warning {
     height: 18px;
     text-align: center;
     padding: 0;
-    width: 38px;
 }
 
 .pimcore_pagingtoolbar_container .x-toolbar-text-default {
@@ -1864,4 +1916,33 @@ ul.leaflet-draw-actions.leaflet-draw-actions-top.leaflet-draw-actions-bottom li:
     border: 2px dashed rgba(51, 136, 255, .5);
     margin-left: -12px !important;
     margin-top: -41px !important;
+}
+
+
+.strikeThrough {
+    text-decoration: line-through;
+    color: #777;
+}
+
+
+.x-btn-icon-el.x-tbar-page-filter:before {
+    content: "\f002";
+    font-family: FontAwesome;
+    font-size: 14px;
+    color: #919191;
+    position: absolute;
+    top: 0;
+    left: 2px;
+}
+
+.x-btn-icon-el.x-tbar-page-cancel-filter:before {
+    content: "\f00d";
+    font: 24px/16px FontAwesome;
+    font-size: 19px;
+    color: #919191;
+}
+
+.pimcore_pagingtoolbar_container_filter .x-form-text-default {
+    text-align: left; !important
+
 }

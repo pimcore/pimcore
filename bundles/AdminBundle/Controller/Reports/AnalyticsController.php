@@ -278,7 +278,7 @@ class AnalyticsController extends ReportsControllerBase implements EventedContro
         }
 
         $order = [
-            'ga:pageviews'=> 0,
+            'ga:pageviews' => 0,
             'ga:uniquePageviews' => 1,
             'ga:exits' => 2,
             'ga:entrances' => 3,

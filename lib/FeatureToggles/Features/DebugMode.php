@@ -44,20 +44,20 @@ use Symfony\Component\HttpFoundation\IpUtils;
  */
 final class DebugMode extends Feature
 {
-    const SYMFONY_ENVIRONMENT        = 1;
-    const SYMFONY_KERNEL_DEBUG       = 2;
-    const MAGIC_PARAMS               = 4;
-    const EXCEPTION_TRACES           = 8;
-    const ERROR_REPORTING            = 16;
-    const NO_ERROR_PAGE              = 32;
-    const REST_ERRORS                = 64;
+    const SYMFONY_ENVIRONMENT = 1;
+    const SYMFONY_KERNEL_DEBUG = 2;
+    const MAGIC_PARAMS = 4;
+    const EXCEPTION_TRACES = 8;
+    const ERROR_REPORTING = 16;
+    const NO_ERROR_PAGE = 32;
+    const REST_ERRORS = 64;
     const RENDER_DOCUMENT_TAG_ERRORS = 128;
-    const MAIL                       = 256;
-    const LOG                        = 512;
-    const UPDATE                     = 1024;
-    const DISABLE_HTTP_CACHE         = 2048;
-    const DISABLE_FULL_PAGE_CACHE    = 4096;
-    const TARGETING                  = 8192;
+    const MAIL = 256;
+    const LOG = 512;
+    const UPDATE = 1024;
+    const DISABLE_HTTP_CACHE = 2048;
+    const DISABLE_FULL_PAGE_CACHE = 4096;
+    const TARGETING = 8192;
 
     public static function getType(): string
     {
@@ -79,7 +79,7 @@ final class DebugMode extends Feature
                 $debugModeFile = PIMCORE_CONFIGURATION_DIRECTORY . '/debug-mode.php';
 
                 if (file_exists($debugModeFile)) {
-                    $conf  = include $debugModeFile;
+                    $conf = include $debugModeFile;
                     $debug = $conf['active'];
 
                     // enable debug mode only for a comma-separated list of IP addresses/ranges

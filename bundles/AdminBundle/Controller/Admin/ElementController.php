@@ -17,6 +17,8 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Bundle\AdminBundle\DependencyInjection\PimcoreAdminExtension;
 use Pimcore\Db;
+use Pimcore\Event\AdminEvents;
+use Pimcore\Event\Model\ResolveElementEvent;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Asset;
@@ -77,6 +79,12 @@ class ElementController extends AdminController
     {
         $idOrPath = trim($request->get('id'));
         $type = $request->get('type');
+
+        $event = new ResolveElementEvent($type, $idOrPath);
+        \Pimcore::getEventDispatcher()->dispatch(AdminEvents::RESOLVE_ELEMENT, $event);
+        $idOrPath = $event->getId();
+        $type = $event->getType();
+
         if (is_numeric($idOrPath)) {
             $el = Element\Service::getElementById($type, (int) $idOrPath);
         } else {
@@ -235,7 +243,7 @@ class ElementController extends AdminController
                 } else {
                     if ($filter['type'] == 'date' && $filter[$comparisonKey] == 'eq') {
                         $maxTime = $filter['value'] + (86400 - 1); //specifies the top point of the range used in the condition
-                        $dateCondition =  '`' . $filter[$propertyKey] . '` ' . ' BETWEEN ' . $db->quote($filter['value']) . ' AND ' . $db->quote($maxTime);
+                        $dateCondition = '`' . $filter[$propertyKey] . '` ' . ' BETWEEN ' . $db->quote($filter['value']) . ' AND ' . $db->quote($maxTime);
                         $conditions[] = $dateCondition;
                     } else {
                         $field = '`'.$filter[$propertyKey].'` ';

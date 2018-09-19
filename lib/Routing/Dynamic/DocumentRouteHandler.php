@@ -73,9 +73,9 @@ class DocumentRouteHandler implements DynamicRouteHandlerInterface
         RequestHelper $requestHelper,
         ConfigNormalizer $configNormalizer
     ) {
-        $this->documentService  = $documentService;
-        $this->siteResolver     = $siteResolver;
-        $this->requestHelper    = $requestHelper;
+        $this->documentService = $documentService;
+        $this->siteResolver = $siteResolver;
+        $this->requestHelper = $requestHelper;
         $this->configNormalizer = $configNormalizer;
     }
 
@@ -307,7 +307,7 @@ class DocumentRouteHandler implements DynamicRouteHandlerInterface
             }
 
             // only allow the original key of a document to be the URL (lowercase/uppercase)
-            if ($redirectTargetUrl !== rawurldecode($document->getFullPath())) {
+            if ($redirectTargetUrl !== '/' && rtrim($redirectTargetUrl, '/') !== rawurldecode($document->getFullPath())) {
                 $redirectTargetUrl = $document->getFullPath();
             }
         }

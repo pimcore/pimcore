@@ -3,7 +3,7 @@
  * Pimcore
  *
  * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
+ * - GNU General protected License version 3 (GPLv3)
  * - Pimcore Enterprise License (PEL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
@@ -25,6 +25,7 @@ use Pimcore\Model;
 
 /**
  * @method \Pimcore\Model\DataObject\Concrete\Dao getDao()
+ * @method \Pimcore\Model\Version getLatestVersion()
  */
 class Concrete extends AbstractObject
 {
@@ -36,44 +37,44 @@ class Concrete extends AbstractObject
     /**
      * @var bool
      */
-    public $o_published;
+    protected $o_published;
 
     /**
      * @var ClassDefinition
      */
-    public $o_class;
+    protected $o_class;
 
     /**
      * @var string
      */
-    public $o_classId;
+    protected $o_classId;
 
     /**
      * @var string
      */
-    public $o_className;
+    protected $o_className;
 
     /**
      * @var array
      */
-    public $o_versions = null;
+    protected $o_versions = null;
 
     /**
      * @var array
      */
-    public $lazyLoadedFields = [];
+    protected $lazyLoadedFields = [];
 
     /**
      * @var array
      */
-    public $o___loadedLazyFields = [];
+    protected $o___loadedLazyFields = [];
 
     /**
      * Contains all scheduled tasks
      *
      * @var array
      */
-    public $scheduledTasks = null;
+    protected $scheduledTasks = null;
 
     /**
      * @var bool
@@ -102,7 +103,7 @@ class Concrete extends AbstractObject
      */
     public function addLazyLoadedField($fieldName)
     {
-        $this->lazyLoadedFields[]=$fieldName;
+        $this->lazyLoadedFields[] = $fieldName;
     }
 
     /**
@@ -150,51 +151,70 @@ class Concrete extends AbstractObject
     protected function update($isUpdate = null, $params = [])
     {
         $fieldDefintions = $this->getClass()->getFieldDefinitions();
+
+        $validationExceptions = [];
+
         foreach ($fieldDefintions as $fd) {
-            $getter = 'get'.ucfirst($fd->getName());
-            $setter = 'set'.ucfirst($fd->getName());
+            try {
+                $getter = 'get' . ucfirst($fd->getName());
+                $setter = 'set' . ucfirst($fd->getName());
 
-            if (method_exists($this, $getter)) {
+                if (method_exists($this, $getter)) {
 
-                //To make sure, inherited values are not set again
-                $inheritedValues = AbstractObject::doGetInheritedValues();
-                AbstractObject::setGetInheritedValues(false);
+                    //To make sure, inherited values are not set again
+                    $inheritedValues = AbstractObject::doGetInheritedValues();
+                    AbstractObject::setGetInheritedValues(false);
 
-                $value = $this->$getter();
+                    $value = $this->$getter();
 
-                if (is_array($value) and ($fd instanceof ClassDefinition\Data\Multihref or $fd instanceof ClassDefinition\Data\Objects)) {
-                    //don't save relations twice
-                    $this->$setter(array_unique($value));
-                }
-                AbstractObject::setGetInheritedValues($inheritedValues);
+                    if (is_array($value) and ($fd instanceof ClassDefinition\Data\Multihref or $fd instanceof ClassDefinition\Data\Objects)) {
+                        //don't save relations twice
+                        $this->$setter(array_unique($value));
+                    }
+                    AbstractObject::setGetInheritedValues($inheritedValues);
 
-                $value = $this->$getter();
-                $omitMandatoryCheck = $this->getOmitMandatoryCheck();
+                    $value = $this->$getter();
+                    $omitMandatoryCheck = $this->getOmitMandatoryCheck();
 
-                //check throws Exception
-                try {
-                    $fd->checkValidity($value, $omitMandatoryCheck);
-                } catch (\Exception $e) {
-                    if ($this->getClass()->getAllowInherit()) {
-                        //try again with parent data when inheritance in activated
-                        try {
-                            $getInheritedValues = AbstractObject::doGetInheritedValues();
-                            AbstractObject::setGetInheritedValues(true);
+                    //check throws Exception
+                    try {
+                        $fd->checkValidity($value, $omitMandatoryCheck);
+                    } catch (\Exception $e) {
+                        if ($this->getClass()->getAllowInherit()) {
+                            //try again with parent data when inheritance is activated
+                            try {
+                                $getInheritedValues = AbstractObject::doGetInheritedValues();
+                                AbstractObject::setGetInheritedValues(true);
 
-                            $value = $this->$getter();
-                            $fd->checkValidity($value, $omitMandatoryCheck);
+                                $value = $this->$getter();
+                                $fd->checkValidity($value, $omitMandatoryCheck);
 
-                            AbstractObject::setGetInheritedValues($getInheritedValues);
-                        } catch (\Exception $e) {
+                                AbstractObject::setGetInheritedValues($getInheritedValues);
+                            } catch (\Exception $e) {
+                                if ($e instanceof Model\Element\ValidationException) {
+                                    throw $e;
+                                }
+                                $exceptionClass = get_class($e);
+                                throw new $exceptionClass($e->getMessage() . ' fieldname=' . $fd->getName(), $e->getCode(), $e->getPrevious());
+                            }
+                        } else {
                             $exceptionClass = get_class($e);
-                            throw new $exceptionClass($e->getMessage() . ' fieldname=' . $fd->getName());
+                            if ($e instanceof Model\Element\ValidationException) {
+                                throw $e;
+                            }
+                            throw new $exceptionClass($e->getMessage() . ' fieldname=' . $fd->getName(), $e->getCode(), $e);
                         }
-                    } else {
-                        $exceptionClass = get_class($e);
-                        throw new $exceptionClass($e->getMessage() . ' fieldname=' . $fd->getName());
                     }
                 }
+            } catch (Model\Element\ValidationException $ve) {
+                $validationExceptions[] = $ve;
             }
+        }
+
+        if ($validationExceptions) {
+            $aggregatedExceptions = new Model\Element\ValidationException('Validation failed');
+            $aggregatedExceptions->setSubItems($validationExceptions);
+            throw $aggregatedExceptions;
         }
 
         parent::update($isUpdate, $params);
@@ -277,15 +297,7 @@ class Concrete extends AbstractObject
         if (Config::getSystemConfig()->objects->versions->steps
             || Config::getSystemConfig()->objects->versions->days
             || $setModificationDate) {
-            // create version
-            $version = new Model\Version();
-            $version->setCid($this->getId());
-            $version->setCtype('object');
-            $version->setDate($this->getModificationDate());
-            $version->setUserId($this->getUserModification());
-            $version->setData($this);
-            $version->setNote($versionNote);
-            $version->save();
+            $version = $this->doSaveVersion($versionNote);
         }
 
         // hook should be also called if "save only new version" is selected

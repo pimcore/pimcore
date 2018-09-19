@@ -400,12 +400,12 @@ abstract class AbstractTranslation extends Model\AbstractModel implements Transl
                                             $dirty = true;
                                         }
                                     } elseif ($t->getTranslation($key) != $value && $value) {
-                                        $delta[]=
+                                        $delta[] =
                                             [
                                                 'lg' => $key,
                                                 'key' => $textKey,
                                                 'text' => $t->getTranslation($key),
-                                                'csv' =>  $value
+                                                'csv' => $value
                                             ];
                                     }
                                 }

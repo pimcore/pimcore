@@ -68,10 +68,10 @@ class DocumentFallbackListener implements EventSubscriberInterface
         Document\Service $documentService,
         array $options = []
     ) {
-        $this->requestStack     = $requestStack;
+        $this->requestStack = $requestStack;
         $this->documentResolver = $documentResolver;
-        $this->siteResolver     = $siteResolver;
-        $this->documentService  = $documentService;
+        $this->siteResolver = $siteResolver;
+        $this->documentService = $documentService;
 
         $optionsResolver = new OptionsResolver();
         $this->configureOptions($optionsResolver);

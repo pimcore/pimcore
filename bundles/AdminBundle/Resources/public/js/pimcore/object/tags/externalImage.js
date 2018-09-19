@@ -68,7 +68,7 @@ pimcore.object.tags.externalImage = Class.create(pimcore.object.tags.abstract, {
             height: intval(this.fieldConfig.previewHeight),
             border: true,
             style: "padding-bottom: 10px",
-            bodyCls: "pimcore_droptarget_image pimcore_externalimage_container pimcore_image_container"
+            bodyCls: "pimcore_externalimage_container pimcore_image_container"
         };
 
         this.inputField =  new Ext.form.field.Text({
@@ -100,7 +100,7 @@ pimcore.object.tags.externalImage = Class.create(pimcore.object.tags.abstract, {
                 this.inputField,
                 {
                     xtype: "button",
-                    iconCls: "pimcore_icon_open",
+                    iconCls: "pimcore_icon_open_window",
                     handler: this.openImage.bind(this),
                     style: "margin-left: 5px",
                 },

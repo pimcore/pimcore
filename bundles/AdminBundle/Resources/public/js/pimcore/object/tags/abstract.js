@@ -264,6 +264,13 @@ pimcore.object.tags.abstract = Class.create({
         return new pimcore.object.helpers.gridCellEditor({
             fieldInfo: field
         });
+    },
+
+    fullPathRenderCheck :function (value, metaData, record) {
+        if(record.data.published === false) {
+            metaData.tdStyle = 'text-decoration: line-through;color: #777;';
+        }
+        return value;
     }
 
 });

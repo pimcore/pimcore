@@ -13,7 +13,6 @@
  */
 use Pimcore\Cache;
 use Pimcore\Config;
-use Pimcore\Db;
 use Pimcore\FeatureToggles\Feature;
 use Pimcore\FeatureToggles\FeatureManager;
 use Pimcore\FeatureToggles\FeatureManagerInterface;
@@ -52,11 +51,6 @@ class Pimcore
      * @var \Composer\Autoload\ClassLoader
      */
     private static $autoloader;
-
-    /**
-     * @var array items to be excluded from garbage collection
-     */
-    private static $globallyProtectedItems;
 
     /**
      * @static
@@ -289,20 +283,26 @@ class Pimcore
 
     /** Add $keepItems to the list of items which are protected from garbage collection.
      * @param $keepItems
+     *
+     * @deprecated
      */
     public static function addToGloballyProtectedItems($keepItems)
     {
         if (is_string($keepItems)) {
             $keepItems = [$keepItems];
         }
-        if (!is_array(self::$globallyProtectedItems) && $keepItems) {
-            self::$globallyProtectedItems = [];
+        if (is_array($keepItems)) {
+            $longRunningHelper = self::getContainer()->get(\Pimcore\Helper\LongRunningHelper::class);
+            $longRunningHelper->addPimcoreRuntimeCacheProtectedItems($keepItems);
+        } else {
+            throw new \InvalidArgumentException('keepItems must be an instance of array');
         }
-        self::$globallyProtectedItems = array_merge(self::$globallyProtectedItems, $keepItems);
     }
 
     /** Items to be deleted.
      * @param $deleteItems
+     *
+     * @deprecated
      */
     public static function removeFromGloballyProtectedItems($deleteItems)
     {
@@ -310,13 +310,11 @@ class Pimcore
             $deleteItems = [$deleteItems];
         }
 
-        if (is_array($deleteItems) && is_array(self::$globallyProtectedItems)) {
-            foreach ($deleteItems as $item) {
-                $key = array_search($item, self::$globallyProtectedItems);
-                if ($key !== false) {
-                    unset(self::$globallyProtectedItems[$key]);
-                }
-            }
+        if (is_array($deleteItems)) {
+            $longRunningHelper = self::getContainer()->get(\Pimcore\Helper\LongRunningHelper::class);
+            $longRunningHelper->removePimcoreRuntimeCacheProtectedItems($deleteItems);
+        } else {
+            throw new \InvalidArgumentException('deleteItems must be an instance of array');
         }
     }
 
@@ -329,42 +327,12 @@ class Pimcore
      */
     public static function collectGarbage($keepItems = [])
     {
-
-        // close mysql-connection
-        Db::close();
-
-        $protectedItems = [
-            'Config_system',
-            'pimcore_admin_user',
-            'Config_website',
-            'pimcore_editmode',
-            'pimcore_error_document',
-            'pimcore_site',
-            'Pimcore_Db'
-        ];
-
-        if (is_array($keepItems) && count($keepItems) > 0) {
-            $protectedItems = array_merge($protectedItems, $keepItems);
-        }
-
-        if (is_array(self::$globallyProtectedItems) && count(self::$globallyProtectedItems)) {
-            $protectedItems = array_merge($protectedItems, self::$globallyProtectedItems);
-        }
-
-        Cache\Runtime::clear($protectedItems);
-
-        if (class_exists('Pimcore\\Legacy')) {
-            // @TODO: should be removed
-            Pimcore\Legacy::collectGarbage($protectedItems);
-        }
-
-        Db::reset();
-
-        // force PHP garbage collector
-        gc_enable();
-        $collectedCycles = gc_collect_cycles();
-
-        Logger::debug('garbage collection finished, collected cycles: ' . $collectedCycles);
+        $longRunningHelper = self::getContainer()->get(\Pimcore\Helper\LongRunningHelper::class);
+        $longRunningHelper->cleanUp([
+            'pimcoreRuntimeCache' => [
+                'keepItems' => $keepItems
+            ]
+        ]);
     }
 
     /**

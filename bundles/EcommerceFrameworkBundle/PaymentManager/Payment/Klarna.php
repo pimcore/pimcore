@@ -53,7 +53,7 @@ class Klarna extends AbstractPayment
     {
         parent::processOptions($options);
 
-        $this->eid             = $options['eid'];
+        $this->eid = $options['eid'];
         $this->sharedSecretKey = $options['shared_secret_key'];
 
         // set endpoint depending on mode
@@ -112,8 +112,8 @@ class Klarna extends AbstractPayment
     {
         // check params
         $required = [
-            'purchase_country'   => null,
-            'locale'             => null,
+            'purchase_country' => null,
+            'locale' => null,
             'merchant_reference' => null
         ];
 
@@ -179,10 +179,10 @@ class Klarna extends AbstractPayment
                 ? $statMap[$order['status']]
                 : IStatus::STATUS_CANCELLED,
             [
-                'klarna_amount'      => $order['cart']['total_price_including_tax'],
-                'klarna_marshal'     => json_encode($order->marshal()),
+                'klarna_amount' => $order['cart']['total_price_including_tax'],
+                'klarna_marshal' => json_encode($order->marshal()),
                 'klarna_reservation' => $order['reservation'],
-                'klarna_reference'   => $order['reference']
+                'klarna_reference' => $order['reference']
             ]
         );
     }
@@ -231,7 +231,7 @@ class Klarna extends AbstractPayment
                     ? IStatus::STATUS_CLEARED
                     : IStatus::STATUS_CANCELLED,
                 [
-                    'klarna_amount'  => $order['cart']['total_price_including_tax'],
+                    'klarna_amount' => $order['cart']['total_price_including_tax'],
                     'klarna_marshal' => json_encode($order->marshal())
                 ]
             );

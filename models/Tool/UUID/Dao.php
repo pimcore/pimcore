@@ -28,7 +28,7 @@ class Dao extends Model\Dao\AbstractDao
 
     public function save()
     {
-        $data = get_object_vars($this->model);
+        $data = $this->model->getObjectVars();
 
         foreach ($data as $key => $value) {
             if (!in_array($key, $this->getValidTableColumns(static::TABLE_NAME))) {

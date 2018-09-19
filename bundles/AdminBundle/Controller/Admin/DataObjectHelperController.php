@@ -618,7 +618,7 @@ class DataObjectHelperController extends AdminController
         if ($frontendLanguages) {
             $language = explode(',', $frontendLanguages)[0];
         } else {
-            $language = $this->getLanguage();
+            $language = $request->getLocale();
         }
 
         if (!Tool::isValidLanguage($language)) {
@@ -646,7 +646,6 @@ class DataObjectHelperController extends AdminController
         return [
             'sortinfo' => isset($gridConfig['sortinfo']) ? $gridConfig['sortinfo'] : false,
             'language' => $language,
-            'pageSize' => $pageSize,
             'availableFields' => $availableFields,
             'settings' => $settings,
             'onlyDirectChildren' => isset($gridConfig['onlyDirectChildren']) ? $gridConfig['onlyDirectChildren'] : false,
@@ -1585,8 +1584,7 @@ class DataObjectHelperController extends AdminController
             $selectedGridColumns = $configData['selectedGridColumns'];
             $resolverSettings = $configData['resolverSettings'];
             $shareSettings = $configData['shareSettings'];
-            $dialect = json_decode(json_encode($configData['csvSettings']), FALSE);
-
+            $dialect = json_decode(json_encode($configData['csvSettings']), false);
         }
 
         $availableConfigs = $this->getImportConfigs($importService, $this->getAdminUser(), $classId);
@@ -2079,7 +2077,7 @@ class DataObjectHelperController extends AdminController
     /**
      * @param Request $request
      * @param $field
-     * @param $object
+     * @param $object DataObject\AbstractObject
      * @param $requestedLanguage
      *
      * @return mixed
@@ -2097,7 +2095,9 @@ class DataObjectHelperController extends AdminController
             'classname' => 'getClassname'
         ];
         if (in_array($field, array_keys($systemFieldMap))) {
-            return $object->{$systemFieldMap[$field]}();
+            $getter = $systemFieldMap[$field];
+
+            return $object->$getter();
         } else {
             //check if field is standard object field
             $fieldDefinition = $object->getClass()->getFieldDefinition($field);

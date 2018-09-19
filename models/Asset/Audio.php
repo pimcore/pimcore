@@ -27,5 +27,5 @@ class Audio extends Model\Asset
     /**
      * @var string
      */
-    public $type = 'audio';
+    protected $type = 'audio';
 }

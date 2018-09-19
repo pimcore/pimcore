@@ -1,5 +1,28 @@
 # Upgrade Notes for Upgrades within Pimcore 5
 
+## Version 5.5.0
+
+### Major compatibility changes
+- `Document`, `Asset` and `DataObject` properties are now `protected` instead of `public`
+- PDF document editable doesn't provide a Javascript viewer anymore. Now utilizing native PDF capabilities of browsers.
+- Swiftmailer `mail` transport is not supported anymore, see https://github.com/swiftmailer/swiftmailer/issues/866
+
+### Minor compatibility changes
+- `\Pimcore\Db::set()` was removed. 
+- deprecated `\Pimcore::addToGloballyProtectedItems()`
+- deprecated `\Pimcore::removeFromGloballyProtectedItems()`
+- Image adapter `Pimcore\Image\Adapter\ImageMagick` was removed
+
+## Version 5.4.3
+Mime types for Assets are now configured using Symfony Configurations, that means that `Pimcore\Tool\Mime::$extensionMapping` has been removed.
+In order for you to still add custom mappings, create new configuration like this:
+
+```yml
+pimcore:
+    mime:
+        extensions:
+            dwg: 'application/acad'
+```
 
 ## Version 5.4.0
 
@@ -89,6 +112,29 @@ If you have scripts that rely (include or require) on Pimcore's startup scripts 
 which used to be located under `/pimcore/config/`, you can keep that folder in your project for compatibility reasons. 
 This won't have any side-effects, since they are just calling functions from within the Pimcore library, so you can keep
 them as long as it is necessary.  
+
+##### Pimcore Static Resources Path Change
+Since the Pimcore admin user interface is now also a Symfony bundle, the path to static resources has changed from 
+`/pimcore/static6/` to `/bundles/pimcoreadmin/`. If you're using Pimcore static resources somewhere in your application 
+you'd have to change the path accordingly or you can use the following RewriteRule in your `.htaccess`: 
+```
+RewriteRule ^pimcore/static6/(.*) /bundles/pimcoreadmin/$1 [PT,L]
+```
+
+##### FAQ regarding Pimcore as a Composer Dependency
+###### Is there still the concept of build numbers? 
+No. 
+
+###### How can I install a non-tagged/unstable version of Pimcore? 
+For updating always to the latest sourcecode state of the master branch, use the following in your `composer.json`:  
+```json
+"pimcore/pimcore": "dev-master"
+```
+
+For referencing a specific state of the master branch, you can append the Git commit hash to the branch, eg.: 
+```json
+"pimcore/pimcore": "dev-master#2734529c7f287a88fa2961fa7af8e5473da0a2a1"
+```
 
 
 #### Removed PrototypeJS (light) library from the Admin UI
@@ -465,6 +511,11 @@ services:
         calls:
             - [setModelFactory, ['@Pimcore\Model\Factory']]
 ```
+#### Build 143
+The constructor signature of ApplicationLoggerDb changed from 
+`public function __construct($level = 'debug', $bubble = true)` to `public function __construct(Db\Connection $db, $level = 'debug', $bubble = true)`
+
+Adopt all calls of `new ApplicationLoggerDb('INFO')` to `new ApplicationLoggerDb(\Pimcore\Db::get(), 'INFO')` or get the logger directly from the container: `\Pimcore::getContainer()->get('pimcore.app_logger')`
 
 #### Build 134 (2017-10-03)
 

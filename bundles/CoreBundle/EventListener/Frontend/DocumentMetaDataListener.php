@@ -47,7 +47,7 @@ class DocumentMetaDataListener implements EventSubscriberInterface
     public function __construct(DocumentResolverService $documentResolverService, HeadMeta $headMeta)
     {
         $this->documentResolverService = $documentResolverService;
-        $this->headMeta                = $headMeta;
+        $this->headMeta = $headMeta;
     }
 
     /**

@@ -272,12 +272,12 @@ class EnhancedEcommerce extends AbstractAnalyticsTracker implements
     protected function transformTransaction(Transaction $transaction)
     {
         return [
-            'id'         => $transaction->getId(),                           // order ID - required
+            'id' => $transaction->getId(),                           // order ID - required
             'affilation' => $transaction->getAffiliation() ?: '',            // affiliation or store name
-            'revenue'    => round($transaction->getTotal(), 2),     // total - required
-            'tax'        => round($transaction->getTax(), 2),       // tax
-            'coupon'     => $transaction->getCoupon(), // voucher code - optional
-            'shipping'   => round($transaction->getShipping(), 2),  // shipping
+            'revenue' => round($transaction->getTotal(), 2),     // total - required
+            'tax' => round($transaction->getTax(), 2),       // tax
+            'coupon' => $transaction->getCoupon(), // voucher code - optional
+            'shipping' => round($transaction->getShipping(), 2),  // shipping
         ];
     }
 

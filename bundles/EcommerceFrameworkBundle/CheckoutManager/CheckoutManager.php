@@ -114,7 +114,7 @@ class CheckoutManager implements ICheckoutManager
         $this->cart = $cart;
         $this->environment = $environment;
 
-        $this->orderManagers         = $orderManagers;
+        $this->orderManagers = $orderManagers;
         $this->commitOrderProcessors = $commitOrderProcessors;
 
         $this->payment = $paymentProvider;
@@ -285,10 +285,6 @@ class CheckoutManager implements ICheckoutManager
 
         if (!$this->payment) {
             throw new UnsupportedException('Payment is not activated');
-        }
-
-        if ($this->isCommitted()) {
-            throw new UnsupportedException('Order is already committed.');
         }
 
         if (!$this->isFinished()) {

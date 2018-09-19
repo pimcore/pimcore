@@ -78,10 +78,10 @@ class WidgetBroker
         array $options = []
     ) {
         $this->configProvider = $configProvider;
-        $this->apiClient      = $apiClient;
-        $this->cache          = $cache;
-        $this->userLoader     = $userLoader;
-        $this->logger         = $logger;
+        $this->apiClient = $apiClient;
+        $this->cache = $cache;
+        $this->userLoader = $userLoader;
+        $this->logger = $logger;
 
         $optionsResolver = new OptionsResolver();
         $this->configureOptions($optionsResolver);
@@ -92,9 +92,9 @@ class WidgetBroker
     protected function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'cache'                 => true,
-            'cache_interval'        => 'PT3H',
-            'exclude_categories'    => [
+            'cache' => true,
+            'cache_interval' => 'PT3H',
+            'exclude_categories' => [
                 'About Piwik'
             ],
             'exclude_subcategories' => [],
@@ -124,8 +124,8 @@ class WidgetBroker
 
     public function getWidgetConfig(string $widgetId, string $configKey, string $locale = null, array $urlParams = []): WidgetConfig
     {
-        $config  = $this->loadConfig();
-        $locale  = $this->resolveLocale($locale);
+        $config = $this->loadConfig();
+        $locale = $this->resolveLocale($locale);
         $widgets = $this->getWidgetData($configKey, $locale);
 
         if (!isset($widgets[$widgetId])) {
@@ -133,7 +133,7 @@ class WidgetBroker
         }
 
         $widget = $widgets[$widgetId];
-        $url    = $this->generateWidgetUrl($config, $configKey, $widget, $locale, $urlParams);
+        $url = $this->generateWidgetUrl($config, $configKey, $widget, $locale, $urlParams);
 
         return new WidgetConfig($widgetId, $widget['name'], $this->generateTitle($widget), $url, $widget);
     }
@@ -145,7 +145,7 @@ class WidgetBroker
             throw new \InvalidArgumentException(sprintf('Site "%s" is not configured', $configKey));
         }
 
-        $locale   = $this->resolveLocale($locale);
+        $locale = $this->resolveLocale($locale);
         $cacheKey = $this->generateCacheKey($config->getPiwikSiteId($configKey), $locale);
 
         if (isset($this->widgets[$cacheKey])) {
@@ -217,7 +217,7 @@ class WidgetBroker
         $data = $this->loadFromApi($config, $configKey, $locale);
 
         $categorizedTree = $this->categorizeWidgets($data);
-        $widgets         = $this->flattenCategorizedWidgetTree($categorizedTree);
+        $widgets = $this->flattenCategorizedWidgetTree($categorizedTree);
 
         return $widgets;
     }
@@ -231,12 +231,12 @@ class WidgetBroker
      */
     private function categorizeWidgets(array $data): array
     {
-        $excludeCategories    = $this->options['exclude_categories'] ?? [];
+        $excludeCategories = $this->options['exclude_categories'] ?? [];
         $excludeSubCategories = $this->options['exclude_subcategories'] ?? [];
 
         $tree = [];
         foreach ($data as $entry) {
-            $categoryId    = $entry['category'] ? $entry['category']['id'] : '_uncategorized';
+            $categoryId = $entry['category'] ? $entry['category']['id'] : '_uncategorized';
             $subcategoryId = $entry['subcategory'] ? $entry['subcategory']['id'] : '_uncategorized';
 
             if (in_array($categoryId, $excludeCategories)) {
@@ -247,7 +247,7 @@ class WidgetBroker
                 continue;
             }
 
-            $categoryOrder    = $entry['category'] ? ($entry['category']['order'] ?? 0) : 0;
+            $categoryOrder = $entry['category'] ? ($entry['category']['order'] ?? 0) : 0;
             $subcategoryOrder = $entry['subcategory'] ? ($entry['subcategory']['order'] ?? 0) : 0;
 
             if (!isset($tree[$categoryOrder])) {
@@ -294,10 +294,10 @@ class WidgetBroker
     private function loadFromApi(Config $config, string $configKey, string $locale = null): array
     {
         $params = [
-            'module'     => 'API',
-            'method'     => 'API.getWidgetMetadata',
-            'format'     => 'JSON',
-            'idSite'     => $config->getPiwikSiteId($configKey),
+            'module' => 'API',
+            'method' => 'API.getWidgetMetadata',
+            'format' => 'JSON',
+            'idSite' => $config->getPiwikSiteId($configKey),
             'token_auth' => $config->getReportToken()
         ];
 
@@ -311,14 +311,14 @@ class WidgetBroker
     private function generateWidgetUrl(Config $config, string $configKey, array $widget, string $locale = null, array $urlParams = []): string
     {
         $params = array_merge([
-            'module'      => 'Widgetize',
-            'action'      => 'iframe',
-            'widget'      => 1,
-            'period'      => 'day',
-            'date'        => 'yesterday',
+            'module' => 'Widgetize',
+            'action' => 'iframe',
+            'widget' => 1,
+            'period' => 'day',
+            'date' => 'yesterday',
             'disableLink' => 1,
-            'idSite'      => $config->getPiwikSiteId($configKey),
-            'token_auth'  => $config->getReportToken()
+            'idSite' => $config->getPiwikSiteId($configKey),
+            'token_auth' => $config->getReportToken()
         ], $urlParams);
 
         $params['moduleToWidgetize'] = $widget['module'];
@@ -348,7 +348,7 @@ class WidgetBroker
 
     private function generateTitle(array $widget)
     {
-        $title    = [];
+        $title = [];
         $category = [];
 
         if ($widget['category'] && !empty($widget['category']['name'])) {

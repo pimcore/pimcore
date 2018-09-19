@@ -17,6 +17,8 @@
 
 namespace Pimcore\Model;
 
+use Pimcore\Event\Model\RedirectEvent;
+use Pimcore\Event\RedirectEvents;
 use Pimcore\Logger;
 
 /**
@@ -48,11 +50,6 @@ class Redirect extends AbstractModel
      * @var string
      */
     public $source;
-
-    /**
-     * @var bool
-     */
-    public $sourceEntireUrl;
 
     /**
      * @var int
@@ -491,5 +488,21 @@ class Redirect extends AbstractModel
     public function getCreationDate()
     {
         return $this->creationDate;
+    }
+
+    public function save()
+    {
+        \Pimcore::getEventDispatcher()->dispatch(RedirectEvents::PRE_SAVE, new RedirectEvent($this));
+        $this->getDao()->save();
+        \Pimcore::getEventDispatcher()->dispatch(RedirectEvents::POST_SAVE, new RedirectEvent($this));
+        $this->clearDependentCache();
+    }
+
+    public function delete()
+    {
+        \Pimcore::getEventDispatcher()->dispatch(RedirectEvents::PRE_DELETE, new RedirectEvent($this));
+        $this->getDao()->delete();
+        \Pimcore::getEventDispatcher()->dispatch(RedirectEvents::POST_DELETE, new RedirectEvent($this));
+        $this->clearDependentCache();
     }
 }

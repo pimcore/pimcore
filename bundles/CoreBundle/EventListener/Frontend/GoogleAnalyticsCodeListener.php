@@ -20,6 +20,7 @@ namespace Pimcore\Bundle\CoreBundle\EventListener\Frontend;
 use Pimcore\Analytics\Google\Tracker;
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\EnabledTrait;
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\PimcoreContextAwareTrait;
+use Pimcore\Bundle\CoreBundle\EventListener\Traits\PreviewRequestTrait;
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\ResponseInjectionTrait;
 use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
 use Pimcore\Tool;
@@ -30,6 +31,7 @@ class GoogleAnalyticsCodeListener
     use EnabledTrait;
     use ResponseInjectionTrait;
     use PimcoreContextAwareTrait;
+    use PreviewRequestTrait;
 
     /**
      * @var Tracker
@@ -61,8 +63,7 @@ class GoogleAnalyticsCodeListener
             return;
         }
 
-        // It's standard industry practice to exclude tracking if the request includes the header 'X-Purpose:preview'
-        if ($request->server->get('HTTP_X_PURPOSE') === 'preview') {
+        if ($this->isPreviewRequest($request)) {
             return;
         }
 

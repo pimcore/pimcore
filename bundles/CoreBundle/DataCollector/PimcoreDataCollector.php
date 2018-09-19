@@ -41,22 +41,22 @@ class PimcoreDataCollector extends DataCollector
         FeatureManagerInterface $featureManager
     ) {
         $this->contextResolver = $contextResolver;
-        $this->featureManager  = $featureManager;
+        $this->featureManager = $featureManager;
     }
 
     public function collect(Request $request, Response $response, \Exception $exception = null)
     {
         $this->data = [
-            'version'  => Version::getVersion(),
+            'version' => Version::getVersion(),
             'revision' => Version::getRevision(),
-            'context'  => $this->contextResolver->getPimcoreContext($request),
+            'context' => $this->contextResolver->getPimcoreContext($request),
             'features' => []
         ];
 
         /** @var Feature $feature */
         foreach ([DebugMode::class, DevMode::class] as $feature) {
             $featureConfig = [
-                'all'   => false,
+                'all' => false,
                 'flags' => []
             ];
 

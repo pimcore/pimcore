@@ -1,7 +1,10 @@
 <?php
 
-    include("../../../../pimcore/config/startup_cli.php");
+    include('../../../../../../../../vendor/autoload.php');
+    \Pimcore\Bootstrap::startupCli();
 
+    $prefixSearch = realpath(__DIR__ . '/../');
+    $prefixReplace = '/bundles/pimcoreadmin';
     $iconDir = realpath(__DIR__ . '/../img');
     $icons = rscandir($iconDir . '/flat-color-icons/');
     $twemoji = rscandir($iconDir . '/twemoji/');
@@ -49,12 +52,14 @@
     </div>
 
     <div id="icon8" class="icons">
-        <?php foreach ($icons as $icon) { ?>
+        <?php foreach ($icons as $icon) {
+    ?>
             <div class="icon">
-                <img style="width:50px;" src="<?= str_replace(PIMCORE_WEB_ROOT, "", $icon) ?>" title="<?= basename($icon) ?>">
+                <img style="width:50px;" src="<?= str_replace($prefixSearch, $prefixReplace, $icon) ?>" title="<?= basename($icon) ?>">
                 <div class="label"><?= basename($icon) ?></div>
             </div>
-        <?php } ?>
+        <?php
+} ?>
     </div>
 
 
@@ -63,12 +68,14 @@
     </div>
 
     <div id="icon8" class="icons">
-        <?php foreach ($twemoji as $icon) { ?>
+        <?php foreach ($twemoji as $icon) {
+        ?>
             <div class="icon">
-                <img style="width:50px;" src="<?= str_replace(PIMCORE_WEB_ROOT, "", $icon) ?>" title="<?= basename($icon) ?>">
+                <img style="width:50px;" src="<?= str_replace($prefixSearch, $prefixReplace, $icon) ?>" title="<?= basename($icon) ?>">
                 <div class="label"><?= basename($icon) ?></div>
             </div>
-        <?php } ?>
+        <?php
+    } ?>
     </div>
 
 </body>

@@ -39,7 +39,7 @@ class ConsoleOutputDecorator implements OutputInterface, ConsoleOutputInterface
 
     public function __construct(OutputInterface $output, OutputInterface $errorOutput)
     {
-        $this->output      = $output;
+        $this->output = $output;
         $this->errorOutput = $errorOutput;
     }
 
