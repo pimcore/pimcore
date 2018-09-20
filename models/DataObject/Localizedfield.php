@@ -380,8 +380,6 @@ class Localizedfield extends Model\AbstractModel implements DirtyIndicatorInterf
             $this->markFieldDirty('_self');
         }
 
-        //TODO comparison on datatype
-
         if (self::$strictMode) {
             if (!$language || !in_array($language, Tool::getValidLanguages())) {
                 throw new \Exception('Language '.$language.' not accepted in strict mode');
