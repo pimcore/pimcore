@@ -18,6 +18,8 @@ use Pimcore\Controller\Configuration\TemplatePhp;
 use Pimcore\Controller\EventedControllerInterface;
 use Pimcore\Db;
 use Pimcore\Event\AdminEvents;
+use Pimcore\Event\AssetEvents;
+use Pimcore\Event\Model\ResolveUploadTargetEvent;
 use Pimcore\File;
 use Pimcore\Logger;
 use Pimcore\Model;
@@ -365,6 +367,7 @@ class AssetController extends ElementControllerBase implements EventedController
         }
 
         $parentId = $request->get('parentId');
+        $parentPath = $request->get('parentPath');
 
         if ($request->get('dir') && $request->get('parentId')) {
             // this is for uploading folders with Drag&Drop
@@ -395,20 +398,29 @@ class AssetController extends ElementControllerBase implements EventedController
                 }
             }
             $parentId = $newParent->getId();
-        } elseif (!$request->get('parentId') && $request->get('parentPath')) {
-            $parent = Asset::getByPath($request->get('parentPath'));
+        } elseif (!$request->get('parentId') && $parentPath) {
+            $parent = Asset::getByPath($parentPath);
             if ($parent instanceof Asset\Folder) {
                 $parentId = $parent->getId();
-            } else {
-                $parentId = Asset\Service::createFolderByPath($defaultUploadPath)->getId();
             }
-        } elseif (!$request->get('parentId')) {
-            $parentId = Asset\Service::createFolderByPath($defaultUploadPath)->getId();
         }
 
         $filename = Element\Service::getValidKey($filename, 'asset');
         if (empty($filename)) {
             throw new \Exception('The filename of the asset is empty');
+        }
+
+        $context = $request->get('context');
+        if ($context) {
+            $context = json_decode($context, true);
+            $context = $context ? $context : [];
+            $event = new \Pimcore\Event\Model\Asset\ResolveUploadTargetEvent($parentId, $filename, $context);
+            \Pimcore::getEventDispatcher()->dispatch(AssetEvents::RESOLVE_UPLOAD_TARGET, $event);
+            $parentId = $event->getParentId();
+        }
+
+        if (!$parentId) {
+            $parentId = Asset\Service::createFolderByPath($defaultUploadPath)->getId();
         }
 
         $parentAsset = Asset::getById(intval($parentId));

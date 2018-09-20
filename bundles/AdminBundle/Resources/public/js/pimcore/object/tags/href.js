@@ -233,7 +233,7 @@ pimcore.object.tags.href = Class.create(pimcore.object.tags.abstract, {
             } catch (e) {
                 console.log(e);
             }
-        }.bind(this));
+        }.bind(this), null, this.context);
     },
 
     onNodeDrop: function (target, dd, e, data) {

@@ -808,7 +808,7 @@ pimcore.object.tags.multihrefMetadata = Class.create(pimcore.object.tags.abstrac
             } catch (e) {
                 console.log(e);
             }
-        }.bind(this));
+        }.bind(this), null, this.context);
     },
 
     removeElement: function (index, item) {

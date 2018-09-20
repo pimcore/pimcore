@@ -965,7 +965,7 @@ pimcore.helpers.openMemorizedTabs = function () {
     }
 };
 
-pimcore.helpers.assetSingleUploadDialog = function (parent, parentType, success, failure) {
+pimcore.helpers.assetSingleUploadDialog = function (parent, parentType, success, failure, context) {
 
     if (typeof success != "function") {
         success = function () {
@@ -978,6 +978,10 @@ pimcore.helpers.assetSingleUploadDialog = function (parent, parentType, success,
     }
 
     var url = '/admin/asset/add-asset-compatibility?parent' + ucfirst(parentType) + '=' + parent;
+
+    if (context) {
+        url += "&context=" + Ext.encode(context);
+    }
     url = pimcore.helpers.addCsrfTokenToUrl(url);
 
     var uploadWindowCompatible = new Ext.Window({
@@ -2797,7 +2801,7 @@ pimcore.helpers.keyBindingMapping = {
     "quickSearch": pimcore.helpers.showQuickSearch
 };
 
-pimcore.helpers.registerAssetDnDSingleUpload = function (element, parent, parentType, success, failure) {
+pimcore.helpers.registerAssetDnDSingleUpload = function (element, parent, parentType, success, failure, context) {
 
     if (typeof success != "function") {
         success = function () {
@@ -2854,6 +2858,10 @@ pimcore.helpers.registerAssetDnDSingleUpload = function (element, parent, parent
                         uploadUrl += "parentPath=" + parent;
                     } else if (parentType === 'id') {
                         uploadUrl += "parentId=" + parent;
+                    }
+
+                    if (context) {
+                        uploadUrl += "&context=" + Ext.encode(context);
                     }
 
                     pimcore.helpers.uploadAssetFromFileObject(file, uploadUrl,

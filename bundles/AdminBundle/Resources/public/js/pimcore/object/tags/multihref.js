@@ -402,7 +402,7 @@ pimcore.object.tags.multihref = Class.create(pimcore.object.tags.abstract, {
             } catch (e) {
                 console.log(e);
             }
-        }.bind(this));
+        }.bind(this), null, this.context);
     },
 
     onRowContextmenu: function (grid, record, tr, rowIndex, e, eOpts) {
