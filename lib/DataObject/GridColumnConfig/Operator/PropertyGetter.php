@@ -10,8 +10,8 @@
  *
  * @category   Pimcore
  * @package    Object
- * @author     Michal Bolka <mbolka@divante.co>
  *
+ * @author     Michal Bolka <mbolka@divante.co>
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
@@ -24,6 +24,7 @@ class PropertyGetter extends AbstractOperator
 
     /**
      * AnyPropertyGetter constructor.
+     *
      * @param \stdClass $config
      * @param null      $context
      */
@@ -36,6 +37,7 @@ class PropertyGetter extends AbstractOperator
 
     /**
      * @param \Pimcore\Model\Element\ElementInterface $element
+     *
      * @return \stdClass
      */
     public function getLabeledValue($element)
@@ -47,6 +49,7 @@ class PropertyGetter extends AbstractOperator
         if (array_key_exists($this->getPropertyName(), $properties)) {
             $result->value = $properties[$this->getPropertyName()]->data;
         }
+
         return $result;
     }
 
@@ -65,5 +68,4 @@ class PropertyGetter extends AbstractOperator
     {
         $this->propertyName = $propertyName;
     }
-
 }

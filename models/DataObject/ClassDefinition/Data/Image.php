@@ -175,6 +175,7 @@ class Image extends Model\DataObject\ClassDefinition\Data
         if ($data instanceof Asset\Image) {
             return $data->getObjectVars();
         }
+
         return $data;
     }
 
