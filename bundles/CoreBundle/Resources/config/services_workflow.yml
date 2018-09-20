@@ -85,3 +85,9 @@ services:
     pimcore.workflow.place-options-provider:
         class: Pimcore\Workflow\Place\OptionsProvider
         public: true
+
+    Pimcore\Workflow\Dumper\GraphvizDumper:
+        public: true
+
+    Pimcore\Workflow\Dumper\StateMachineGraphvizDumper:
+        public: true
