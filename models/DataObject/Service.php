@@ -132,7 +132,7 @@ class Service extends Model\Element\Service
         self::loadAllObjectFields($source);
 
         $new = Element\Service::cloneMe($source);
-        $new->o_id = null;
+        $new->setId(null);
         $new->setChilds(null);
         $new->setKey(Element\Service::getSaveCopyName('object', $new->getKey(), $target));
         $new->setParentId($target->getId());
@@ -176,7 +176,7 @@ class Service extends Model\Element\Service
         self::loadAllObjectFields($source);
 
         $new = Element\Service::cloneMe($source);
-        $new->o_id = null;
+        $new->setId(null);
 
         $new->setChildren(null);
         $new->setKey(Element\Service::getSaveCopyName('object', $new->getKey(), $target));
