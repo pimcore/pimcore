@@ -4,6 +4,7 @@ namespace Pimcore\Bundle\CoreBundle\Migrations;
 
 use Doctrine\DBAL\Schema\Schema;
 use Pimcore\Migrations\Migration\AbstractPimcoreMigration;
+use Pimcore\Model\DataObject\Objectbrick\Definition;
 
 /**
  * Class Version20180912140913
