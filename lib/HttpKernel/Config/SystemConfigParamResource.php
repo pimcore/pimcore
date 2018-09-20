@@ -54,6 +54,18 @@ class SystemConfigParamResource
         if ($config) {
             $this->processConfig('pimcore_system_config', $config->toArray());
 
+            // @TODO remove in 6.0
+            // compatibility layer for sendmail
+            // mail transport is not supported anymore -> use sendmail instead
+            foreach(['email', 'newsletter'] as $type) {
+                $parameterName = sprintf('pimcore_system_config.%s.method', $type);
+                if ($this->container->hasParameter($parameterName)) {
+                    if($this->container->getParameter($parameterName) == 'mail') {
+                        $this->container->setParameter($parameterName, 'sendmail');
+                    }
+                }
+            }
+
             // set default domain for router to main domain if configured
             // this will be overridden from the request in web context but is handy for CLI scripts
             if (!empty($config->general->domain)) {
