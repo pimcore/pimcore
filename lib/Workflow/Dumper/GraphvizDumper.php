@@ -95,10 +95,6 @@ class GraphvizDumper implements DumperInterface
             }
 
             $placeConfig = $this->workflowManager->getPlaceConfig($workflowName, $place);
-            /*$attributes['color'] = $placeConfig->getBorderColor();
-            $attributes['style'] = 'filled';
-            $attributes['fillcolor'] = $placeConfig->getBackgroundColor();
-            $attributes['fontcolor'] = $placeConfig->getFontColor();*/
 
             $places[$place] = [
                 'attributes' => $attributes,
