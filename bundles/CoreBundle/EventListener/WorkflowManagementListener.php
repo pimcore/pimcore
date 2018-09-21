@@ -25,6 +25,7 @@ use Pimcore\Model\DataObject\ClassDefinition;
 use Pimcore\Model\DataObject\Concrete as ConcreteObject;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element\AbstractElement;
+use Pimcore\Workflow\ActionsButtonService;
 use Pimcore\Workflow\Transition;
 use Pimcore\Workflow\Manager;
 use Pimcore\Workflow\Place;
@@ -60,12 +61,18 @@ class WorkflowManagementListener implements EventSubscriberInterface
      */
     private $requestStack;
 
-    public function __construct(Manager $workflowManager, Registry $workflowRegistry, Place\StatusInfo $placeStatusInfo, RequestStack $requestStack)
+    /**
+     * @var ActionsButtonService
+     */
+    private $actionsButtonService;
+
+    public function __construct(Manager $workflowManager, Registry $workflowRegistry, Place\StatusInfo $placeStatusInfo, RequestStack $requestStack, ActionsButtonService $actionsButtonService)
     {
         $this->workflowManager = $workflowManager;
         $this->workflowRegistry = $workflowRegistry;
         $this->placeStatusInfo = $placeStatusInfo;
         $this->requestStack = $requestStack;
+        $this->actionsButtonService = $actionsButtonService;
     }
 
     /**
@@ -74,9 +81,6 @@ class WorkflowManagementListener implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            DataObjectEvents::POST_ADD  => 'onElementPostAdd',
-            DocumentEvents::POST_ADD  => 'onElementPostAdd',
-            AssetEvents::POST_ADD  => 'onElementPostAdd',
 
             DataObjectEvents::POST_DELETE => 'onElementPostDelete',
             DocumentEvents::POST_DELETE => 'onElementPostDelete',
@@ -86,25 +90,6 @@ class WorkflowManagementListener implements EventSubscriberInterface
             AdminEvents::ASSET_GET_PRE_SEND_DATA => 'onAdminElementGetPreSendData',
             AdminEvents::DOCUMENT_GET_PRE_SEND_DATA => 'onAdminElementGetPreSendData',
         ];
-    }
-
-    /**
-     * Ensures that any elements which support workflows are given the correct default state / status
-     *
-     * @param ElementEventInterface $e
-     */
-    public function onElementPostAdd(ElementEventInterface $e)
-    {
-        /**
-         * @var Asset|Document|ConcreteObject $element
-         */
-        /*$element = $e->getElement();
-
-        if ($this->isEnabled() && Workflow\Manager::elementHasWorkflow($element)) {
-            $manager = Workflow\Manager\Factory::getManager($element);
-            $manager->setElementState($manager->getWorkflow()->getDefaultState());
-            $manager->setElementStatus($manager->getWorkflow()->getDefaultStatus());
-        }*/
     }
 
     /**
@@ -161,41 +146,8 @@ class WorkflowManagementListener implements EventSubscriberInterface
             $data['workflowManagement']['hasWorkflowManagement'] = true;
             $data['workflowManagement']['workflows'] = $data['workflowManagement']['workflows'] ?? [];
 
-            $allowedTransitions = [];
-
-            /**
-             * @var Transition $transition
-             */
-            foreach($transitions as $transition) {
-
-                if(($notes = $transition->getNotes()) && $element instanceof DataObject\AbstractObject) {
-                    $notes = $this->enrichNotes($element, $notes);
-                }
-
-                $allowedTransitions[] = [
-                    'name' => $transition->getName(),
-                    'label' => $transition->getLabel(),
-                    'iconCls' => $transition->getIconClass(),
-                    'notes' => $notes
-                ];
-            }
-
-            $globalActions = [];
-            foreach($this->workflowManager->getGlobalActions($workflowName) as $globalAction) {
-                if($globalAction->isGuardValid($workflow, $element)) {
-
-                    if(($notes = $globalAction->getNotes()) && $element instanceof DataObject\AbstractObject) {
-                        $notes = $this->enrichNotes($element, $notes);
-                    }
-
-                    $globalActions[] = [
-                        'name' => $globalAction->getName(),
-                        'label' => $globalAction->getLabel(),
-                        'iconCls' => $globalAction->getIconClass(),
-                        'notes' => $notes
-                    ];
-                }
-            }
+            $allowedTransitions = $this->actionsButtonService->getAllowedTransitions($workflow, $element);
+            $globalActions = $this->actionsButtonService->getGlobalActions($workflow, $element);
 
             $data['workflowManagement']['workflows'][] = [
                 'name' => $workflow->getName(),

@@ -338,6 +338,7 @@ $scripts = array(
     "pimcore/element/history.js",
     "pimcore/element/notes.js",
     "pimcore/element/note_details.js",
+    "pimcore/element/workflows.js",
     "pimcore/element/tag/imagecropper.js",
     "pimcore/element/tag/imagehotspotmarkereditor.js",
     "pimcore/element/replace_assignments.js",

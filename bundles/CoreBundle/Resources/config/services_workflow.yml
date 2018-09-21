@@ -91,3 +91,6 @@ services:
 
     Pimcore\Workflow\Dumper\StateMachineGraphvizDumper:
         public: true
+
+
+    Pimcore\Workflow\ActionsButtonService: ~

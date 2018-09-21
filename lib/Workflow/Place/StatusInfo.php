@@ -56,9 +56,9 @@ class StatusInfo {
         );
     }
 
-    public function getAllPalacesHtml($subject): string
+    public function getAllPalacesHtml($subject, string $workflowName = null): string
     {
-        $places = $this->getAllPlaces($subject);
+        $places = $this->getAllPlaces($subject, false, $workflowName);
 
         return $this->templatingEngine->render(
             '@PimcoreCore/Workflow/statusinfo/allPlacesStatusInfo.html.twig',
@@ -74,11 +74,15 @@ class StatusInfo {
      * @param bool $visibleInHeaderOnly
      * @return PlaceConfig
      */
-    private function getAllPlaces($subject, bool $visibleInHeaderOnly = false): array
+    private function getAllPlaces($subject, bool $visibleInHeaderOnly = false, string $workflowName = null): array
     {
         $places = [];
 
         foreach ($this->workflowManager->getAllWorkflowsForSubject($subject) as $workflow) {
+
+            if(!is_null($workflowName) && $workflow->getName() != $workflowName) {
+                continue;
+            }
 
             $marking = $workflow->getMarking($subject);
             foreach($this->workflowManager->getOrderedPlaceConfigs($workflow, $marking) as $place) {

@@ -14,6 +14,7 @@
 
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 
+use http\Exception\InvalidArgumentException;
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Controller\EventedControllerInterface;
 use Pimcore\Model\Asset;
@@ -21,14 +22,20 @@ use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\Concrete as ConcreteObject;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element\ValidationException;
+use Pimcore\Tool\Console;
+use Pimcore\Workflow\ActionsButtonService;
 use Pimcore\Workflow\Manager;
+use Pimcore\Workflow\Place\StatusInfo;
 use Pimcore\Workflow\Transition;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Workflow\Registry;
+use Symfony\Component\Workflow\Workflow;
 
 /**
  * @Route("/workflow")
@@ -196,6 +203,118 @@ class WorkflowController extends AdminController implements EventedControllerInt
 
 
         return $this->adminJson($data);
+    }
+
+    /**
+     * Returns the JSON needed by the workflow elements detail tab store
+     *
+     * @Route("/get-workflow-details")
+     *
+     * @param Request $request
+     * @param Manager $workflowManager
+     * @param StatusInfo $placeStatusInfo
+     * @param RouterInterface $router
+     *
+     * @return JsonResponse
+     * @throws \Exception
+     */
+    public function getWorkflowDetailsStore(Request $request, Manager $workflowManager, StatusInfo $placeStatusInfo, RouterInterface $router, ActionsButtonService $actionsButtonService)
+    {
+        $data = [];
+
+        foreach($workflowManager->getAllWorkflowsForSubject($this->element) as $workflow) {
+            $workflowConfig = $workflowManager->getWorkflowConfig($workflow->getName());
+
+            $msg = '';
+            try {
+                $svg = $this->getWorkflowSvg($workflow);
+            } catch(\InvalidArgumentException $e) {
+                $msg = $e->getMessage();
+            }
+
+
+            $url = $router->generate(
+                'pimcore_admin_workflow_show_graph',
+                [
+                    'cid' => $request->get('cid'),
+                    'ctype' => $request->get('ctype'),
+                    'workflow' =>$workflow->getName()
+                ]
+            );
+
+            $allowedTransitions = $actionsButtonService->getAllowedTransitions($workflow, $this->element);
+            $globalActions = $actionsButtonService->getGlobalActions($workflow, $this->element);
+
+            $data[] = [
+                'workflowName' => $workflowConfig->getLabel(),
+                'placeInfo' => $placeStatusInfo->getAllPalacesHtml($this->element, $workflow->getName()),
+                'graph' => $msg ?: '<a href="' . $url .'" target="_blank"><div class="workflow-graph-preview">'.$svg.'</div></a>',
+                'allowedTransitions' => $allowedTransitions,
+                'globalActions' => $globalActions
+            ];
+        }
+
+        return $this->adminJson([
+            'data' => $data,
+            'success' => true,
+            'total' => sizeof($data)
+        ]);
+    }
+
+    /**
+     * Returns the JSON needed by the workflow elements detail tab store
+     *
+     * @Route("/show-graph", name="pimcore_admin_workflow_show_graph")
+     *
+     * @param Request $request
+     * @param Manager $workflowManager
+     *
+     * @return Response
+     * @throws \Exception
+     */
+    public function showGraph(Request $request, Manager $workflowManager)
+    {
+        $workflow = $workflowManager->getWorkflowByName($request->get('workflow'));
+
+        $response = new Response($this->getWorkflowSvg($workflow));
+        $response->headers->set('Content-Type', 'image/svg+xml');
+        return $response;
+    }
+
+    /**
+     * @param Workflow $workflow
+     * @throws \Exception
+     */
+    private function getWorkflowSvg(Workflow $workflow)
+    {
+        $marking = $workflow->getMarking($this->element);
+
+        $php = Console::getExecutable('php');
+
+        /**
+         * @TODO: check why the lookup of "dot" does not work
+         */
+        $dot = Console::getExecutable('dot');
+        $dot = 'dot';
+
+        if(!$php) {
+            throw new \InvalidArgumentException($this->trans('workflow_cmd_not_found', ['php']));
+        }
+
+        if(!$dot) {
+            throw new \InvalidArgumentException($this->trans('workflow_cmd_not_found', ['dot']));
+        }
+
+        $cmd = sprintf('%s %s/bin/console pimcore:workflow:dump %s %s | %s -Tsvg',
+            $php,
+            PIMCORE_PROJECT_ROOT,
+            $workflow->getName(),
+            implode(' ', array_keys($marking->getPlaces())),
+            $dot
+        );
+
+        return Console::exec($cmd);
+
     }
 
 

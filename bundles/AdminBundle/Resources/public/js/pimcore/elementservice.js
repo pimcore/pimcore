@@ -780,88 +780,15 @@ pimcore.elementservice.integrateWorkflowManagement = function(elementType, eleme
 
     if(elementEditor.data.workflowManagement && elementEditor.data.workflowManagement.hasWorkflowManagement === true) {
 
-        var workflowsWithTransitions = [];
+        var workflows = elementEditor.data.workflowManagement.workflows;
 
-        elementEditor.data.workflowManagement.workflows.forEach(function(el){
+        if(workflows.length > 0) {
 
-            if(el.allowedTransitions.length) {
-                workflowsWithTransitions.push(el);
-            } else if(el.globalActions.length) {
-                workflowsWithTransitions.push(el);
-            }
-        }.bind(workflowsWithTransitions));
-
-        if(workflowsWithTransitions.length > 0) {
-
-            var items = [];
-
-            workflowsWithTransitions.forEach(function(workflow) {
-                if(workflowsWithTransitions.length > 1) {
-                    items.push({
-                        xtype: 'container',
-                        html: '<span class="pimcore-workflow-action-workflow-label">' + t(workflow.label) + '</span>'
-                    });
-                }
-
-                for (i = 0; i < workflow.allowedTransitions.length; i++) {
-                    var transition = workflow.allowedTransitions[i];
-
-                    items.push({
-                        text: t(transition.label),
-                        iconCls: transition.iconCls,
-                        handler: function (workflow, transition) {
-
-                            transition.isGlobalAction = false;
-                            if(transition.notes) {
-                                new pimcore.workflow.transitionPanel(elementType, elementId, elementEditor, workflow.name, transition);
-                            } else {
-                                pimcore.workflow.transitions.perform(elementType, elementId, elementEditor, workflow.name, transition);
-                            }
-
-
-
-                        }.bind(this, workflow, transition)
-                    });
-                }
-
-
-
-                for (i = 0; i < workflow.globalActions.length; i++) {
-                    var transition = workflow.globalActions[i];
-
-                    items.push({
-                        text: t(transition.label),
-                        iconCls: transition.iconCls,
-                        handler: function (workflow, transition) {
-
-                            transition.isGlobalAction = true;
-                            if(transition.notes) {
-                                new pimcore.workflow.transitionPanel(elementType, elementId, elementEditor, workflow.name, transition);
-                            } else {
-                                pimcore.workflow.transitions.perform(elementType, elementId, elementEditor, workflow.name, transition);
-                            }
-
-
-
-                        }.bind(this, workflow, transition)
-                    });
-                }
-            });
-
-
+            var button = pimcore.elementservice.getWorkflowActionsButton(workflows, elementType, elementId, elementEditor);
 
             buttons.push("-");
 
-            buttons.push({
-                text: t('actions'),
-                scale: "medium",
-                iconCls: 'pimcore_icon_workflow_action',
-                cls: 'pimcore_workflow_button',
-                menu: {
-                    xtype: 'menu',
-                    items: items
-                }
-            });
+            buttons.push(button);
         }
 
 
@@ -875,6 +802,87 @@ pimcore.elementservice.integrateWorkflowManagement = function(elementType, eleme
 
     }
 
+};
+
+pimcore.elementservice.getWorkflowActionsButton = function(workflows, elementType, elementId, elementEditor) {
+    var workflowsWithTransitions = [];
+
+    workflows.forEach(function(el){
+
+        if(el.allowedTransitions.length) {
+            workflowsWithTransitions.push(el);
+        } else if(el.globalActions.length) {
+            workflowsWithTransitions.push(el);
+        }
+    }.bind(workflowsWithTransitions));
+
+    if(workflowsWithTransitions.length > 0) {
+
+        var items = [];
+
+        workflowsWithTransitions.forEach(function (workflow) {
+            if (workflowsWithTransitions.length > 1) {
+                items.push({
+                    xtype: 'container',
+                    html: '<span class="pimcore-workflow-action-workflow-label">' + t(workflow.label) + '</span>'
+                });
+            }
+
+            for (i = 0; i < workflow.allowedTransitions.length; i++) {
+                var transition = workflow.allowedTransitions[i];
+
+                items.push({
+                    text: t(transition.label),
+                    iconCls: transition.iconCls,
+                    handler: function (workflow, transition) {
+
+                        transition.isGlobalAction = false;
+                        if (transition.notes) {
+                            new pimcore.workflow.transitionPanel(elementType, elementId, elementEditor, workflow.name, transition);
+                        } else {
+                            pimcore.workflow.transitions.perform(elementType, elementId, elementEditor, workflow.name, transition);
+                        }
+
+
+                    }.bind(this, workflow, transition)
+                });
+            }
+
+
+            for (i = 0; i < workflow.globalActions.length; i++) {
+                var transition = workflow.globalActions[i];
+
+                items.push({
+                    text: t(transition.label),
+                    iconCls: transition.iconCls,
+                    handler: function (workflow, transition) {
+
+                        transition.isGlobalAction = true;
+                        if (transition.notes) {
+                            new pimcore.workflow.transitionPanel(elementType, elementId, elementEditor, workflow.name, transition);
+                        } else {
+                            pimcore.workflow.transitions.perform(elementType, elementId, elementEditor, workflow.name, transition);
+                        }
+
+
+                    }.bind(this, workflow, transition)
+                });
+            }
+        });
+
+        return {
+            text: t('actions'),
+            scale: "medium",
+            iconCls: 'pimcore_icon_workflow_action',
+            cls: 'pimcore_workflow_button',
+            menu: {
+                xtype: 'menu',
+                items: items
+            }
+        };
+    }
+
+    return false;
 };
 
 
