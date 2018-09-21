@@ -32,7 +32,7 @@ class TargetGroup implements ICondition
     /**
      * @var int
      */
-    protected $threshold;
+    protected $threshold = 0;
 
     /**
      * @param IEnvironment $environment
@@ -67,6 +67,9 @@ class TargetGroup implements ICondition
         if ($this->targetGroupId) {
             $this->targetGroup = \Pimcore\Model\Tool\Targeting\TargetGroup::getById($this->targetGroupId);
         }
+        if($this->threshold === null) {
+            $this->threshold = 0;
+        }
     }
 
     /**
@@ -76,7 +79,7 @@ class TargetGroup implements ICondition
     {
         // basic
         $json = [
-            'type' => 'TargetGroup', 'targetGroupId' => $this->targetGroupId, 'threshold' => $this->threshold
+            'type' => 'TargetGroup', 'targetGroupId' => $this->targetGroupId, 'threshold' => (int) $this->threshold
         ];
 
         return json_encode($json);
@@ -95,7 +98,7 @@ class TargetGroup implements ICondition
             $this->setTargetGroupId($json->targetGroupId);
         }
         if ($json->threshold) {
-            $this->setThreshold($json->threshold);
+            $this->setThreshold((int) $json->threshold);
         }
 
         return $this;
