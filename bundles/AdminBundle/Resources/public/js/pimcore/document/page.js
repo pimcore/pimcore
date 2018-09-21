@@ -53,6 +53,7 @@ pimcore.document.page = Class.create(pimcore.document.page_snippet, {
         this.preview = new pimcore.document.pages.preview(this);
         this.reports = new pimcore.report.panel("document_page", this);
         this.tagAssignment = new pimcore.element.tag.assignment(this, "document");
+        this.workflows = new pimcore.element.workflows(this, "document");
     },
 
     getTabPanel: function () {
@@ -87,6 +88,10 @@ pimcore.document.page = Class.create(pimcore.document.page_snippet, {
 
         if (user.isAllowed("notes_events")) {
             items.push(this.notes.getLayout());
+        }
+
+        if (user.isAllowed("workflow_details") && this.data.workflowManagement && this.data.workflowManagement.hasWorkflowManagement === true) {
+            items.push(this.workflows.getLayout());
         }
 
         if (user.isAllowed("tags_assignment")) {
