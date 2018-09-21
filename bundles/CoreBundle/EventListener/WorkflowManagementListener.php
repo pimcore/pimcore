@@ -25,8 +25,9 @@ use Pimcore\Model\DataObject\ClassDefinition;
 use Pimcore\Model\DataObject\Concrete as ConcreteObject;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element\AbstractElement;
+use Pimcore\Model\Element\Service;
+use Pimcore\Model\Element\WorkflowState;
 use Pimcore\Workflow\ActionsButtonService;
-use Pimcore\Workflow\Transition;
 use Pimcore\Workflow\Manager;
 use Pimcore\Workflow\Place;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -104,13 +105,12 @@ class WorkflowManagementListener implements EventSubscriberInterface
          */
         $element = $e->getElement();
 
-        /*if (Workflow\Manager::elementHasWorkflow($element)) {
-            $manager = Workflow\Manager\Factory::getManager($element);
-            $workflowState = $manager->getWorkflowStateForElement();
-            if ($workflowState) {
-                $workflowState->delete();
-            }
-        }*/
+        $list = new WorkflowState\Listing;
+        $list->setCondition('cid = ? and ctype = ?', [$element->getId(), Service::getType($element)]);
+
+        foreach($list->load() as $item) {
+            $item->delete();
+        }
     }
 
     /**
@@ -139,9 +139,6 @@ class WorkflowManagementListener implements EventSubscriberInterface
             if(empty($workflow)) {
                 continue;
             }
-
-            $transitions = $workflow->getEnabledTransitions($element);
-
 
             $data['workflowManagement']['hasWorkflowManagement'] = true;
             $data['workflowManagement']['workflows'] = $data['workflowManagement']['workflows'] ?? [];
