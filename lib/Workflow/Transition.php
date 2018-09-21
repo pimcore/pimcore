@@ -56,7 +56,7 @@ class Transition extends \Symfony\Component\Workflow\Transition implements Notes
     }
 
     public function getChangePublishedState(): string {
-        return $this->options['changePublishedState'];
+        return (string) $this->options['changePublishedState'];
     }
 
 }
