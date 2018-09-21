@@ -195,14 +195,22 @@ class Concrete extends AbstractObject
                                     throw $e;
                                 }
                                 $exceptionClass = get_class($e);
-                                throw new $exceptionClass($e->getMessage() . ' fieldname=' . $fd->getName(), $e->getCode(), $e->getPrevious());
+                                $new_message = $e->getMessage() . ' fieldname=' . $fd->getName();
+                                if ($e instanceof \ErrorException) {
+                                    throw new $exceptionClass($new_message, $e->getCode(), $e->getSeverity(), $e->getFile(), $e->getLine(), $e);
+                                }
+                                throw new $exceptionClass($new_message, $e->getCode(), $e);
                             }
                         } else {
-                            $exceptionClass = get_class($e);
                             if ($e instanceof Model\Element\ValidationException) {
                                 throw $e;
                             }
-                            throw new $exceptionClass($e->getMessage() . ' fieldname=' . $fd->getName(), $e->getCode(), $e);
+                            $exceptionClass = get_class($e);
+                            $new_message = $e->getMessage() . ' fieldname=' . $fd->getName();
+                            if ($e instanceof \ErrorException) {
+                                throw new $exceptionClass($new_message, $e->getCode(), $e->getSeverity(), $e->getFile(), $e->getLine(), $e);
+                            }
+                            throw new $exceptionClass($new_message, $e->getCode(), $e);
                         }
                     }
                 }
