@@ -19,7 +19,7 @@ namespace Pimcore\Bundle\AdminBundle\Controller\GDPR;
 
 use Pimcore\Bundle\AdminBundle\GDPR\DataProvider\Manager;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
-use Symfony\Component\Routing\Annotation\Route
+use Symfony\Component\Routing\Annotation\Route;
 
 class AdminController extends \Pimcore\Bundle\AdminBundle\Controller\AdminController
 {

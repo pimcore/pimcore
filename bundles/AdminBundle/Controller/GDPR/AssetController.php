@@ -17,7 +17,7 @@ namespace Pimcore\Bundle\AdminBundle\Controller\GDPR;
 use Pimcore\Bundle\AdminBundle\GDPR\DataProvider\Assets;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
-use Symfony\Component\Routing\Annotation\Route
+use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * Class AssetController

@@ -106,7 +106,7 @@ namespace AppBundle\Controller;
 
 use Pimcore\Targeting\VisitorInfoStorageInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\Routing\Annotation\Route
+use Symfony\Component\Routing\Annotation\Route;
 
 class VisitorInfoController
 {
