@@ -17,9 +17,8 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\Controller;
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\IProductList;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * Class IndexController
@@ -29,8 +28,7 @@ use Symfony\Component\HttpFoundation\Request;
 class IndexController extends AdminController
 {
     /**
-     * @Route("/get-filter-groups")
-     * @Method({"GET"})
+     * @Route("/get-filter-groups", methods={"GET"})
      *
      * @return \Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse
      */
@@ -58,8 +56,7 @@ class IndexController extends AdminController
     }
 
     /**
-     * @Route("/get-values-for-filter-field")
-     * @Method({"GET"})
+     * @Route("/get-values-for-filter-field", methods={"GET"})
      *
      * @return \Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse
      */
@@ -102,8 +99,7 @@ class IndexController extends AdminController
     }
 
     /**
-     * @Route("/get-fields")
-     * @Method({"GET"})
+     * @Route("/get-fields", methods={"GET"})
      *
      * @param Request $request
      *
@@ -155,8 +151,7 @@ class IndexController extends AdminController
     }
 
     /**
-     * @Route("/get-all-tenants")
-     * @Method({"GET"})
+     * @Route("/get-all-tenants", methods={"GET"})
      *
      * @return \Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse
      */

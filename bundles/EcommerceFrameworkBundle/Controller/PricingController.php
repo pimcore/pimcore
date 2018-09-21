@@ -20,11 +20,10 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IRule;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Rule;
 use Pimcore\Controller\EventedControllerInterface;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
+use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * Class ConfigController
@@ -46,8 +45,7 @@ class PricingController extends AdminController implements EventedControllerInte
     }
 
     /**
-     * @Route("/list")
-     * @Method({"GET"})
+     * @Route("/list", methods={"GET"})
      */
     public function listAction()
     {
@@ -83,8 +81,7 @@ class PricingController extends AdminController implements EventedControllerInte
     }
 
     /**
-     * @Route("/get")
-     * @Method({"GET"})
+     * @Route("/get", methods={"GET"})
      *
      * @param Request $request
      * preisregel details als json ausgeben
@@ -124,8 +121,7 @@ class PricingController extends AdminController implements EventedControllerInte
     }
 
     /**
-     * @Route("/add")
-     * @Method({"POST"})
+     * @Route("/add", methods={"POST"})
      *
      * @param Request $request
      * add new rule
@@ -155,8 +151,7 @@ class PricingController extends AdminController implements EventedControllerInte
     }
 
     /**
-     * @Route("/delete")
-     * @Method({"DELETE"})
+     * @Route("/delete", methods={"DELETE"})
      *
      * @param Request $request
      * delete exiting rule
@@ -183,8 +178,7 @@ class PricingController extends AdminController implements EventedControllerInte
     }
 
     /**
-     * @Route("/save")
-     * @Method({"PUT"})
+     * @Route("/save", methods={"PUT"})
      *
      * @param Request $request
      * save rule config
@@ -275,8 +269,7 @@ class PricingController extends AdminController implements EventedControllerInte
     }
 
     /**
-     * @Route("/save-order")
-     * @Method({"PUT"})
+     * @Route("/save-order", methods={"PUT"})
      *
      * @param Request $request
      */
@@ -303,8 +296,7 @@ class PricingController extends AdminController implements EventedControllerInte
     }
 
     /**
-     * @Route("/get-config")
-     * @Method({"GET"})
+     * @Route("/get-config", methods={"GET"})
      *
      * @return JsonResponse
      */
