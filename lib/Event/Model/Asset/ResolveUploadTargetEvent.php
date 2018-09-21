@@ -40,6 +40,7 @@ class ResolveUploadTargetEvent extends Event implements ElementEventInterface
 
     /**
      * ResolveUploadTargetEvent constructor.
+     *
      * @param int $parentId
      * @param string $filename
      * @param array $context contextual information
@@ -98,8 +99,6 @@ class ResolveUploadTargetEvent extends Event implements ElementEventInterface
     {
         $this->parentId = $parentId;
     }
-
-
 
     /**
      * @return Asset

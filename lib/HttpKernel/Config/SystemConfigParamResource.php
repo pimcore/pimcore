@@ -57,10 +57,10 @@ class SystemConfigParamResource
             // @TODO remove in 6.0
             // compatibility layer for sendmail
             // mail transport is not supported anymore -> use sendmail instead
-            foreach(['email', 'newsletter'] as $type) {
+            foreach (['email', 'newsletter'] as $type) {
                 $parameterName = sprintf('pimcore_system_config.%s.method', $type);
                 if ($this->container->hasParameter($parameterName)) {
-                    if($this->container->getParameter($parameterName) == 'mail') {
+                    if ($this->container->getParameter($parameterName) == 'mail') {
                         $this->container->setParameter($parameterName, 'sendmail');
                     }
                 }

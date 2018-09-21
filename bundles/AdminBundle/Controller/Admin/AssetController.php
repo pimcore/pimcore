@@ -19,7 +19,6 @@ use Pimcore\Controller\EventedControllerInterface;
 use Pimcore\Db;
 use Pimcore\Event\AdminEvents;
 use Pimcore\Event\AssetEvents;
-use Pimcore\Event\Model\ResolveUploadTargetEvent;
 use Pimcore\File;
 use Pimcore\Logger;
 use Pimcore\Model;

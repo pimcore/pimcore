@@ -145,5 +145,4 @@ final class AssetEvents
      * @var string
      */
     const RESOLVE_UPLOAD_TARGET = 'pimcore.asset.resolve-upload-target';
-
 }
