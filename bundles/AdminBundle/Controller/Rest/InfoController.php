@@ -17,9 +17,8 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Rest;
 use Pimcore\ExtensionManager;
 use Pimcore\Tool\Console;
 use Pimcore\Version;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * Contains actions to gather information about the API. The /user endpoint
@@ -28,8 +27,7 @@ use Symfony\Component\HttpFoundation\Request;
 class InfoController extends AbstractRestController
 {
     /**
-     * @Method("GET")
-     * @Route("/system-clock")
+     * @Route("/system-clock", methods={"GET"})
      */
     public function systemClockAction()
     {
@@ -37,8 +35,7 @@ class InfoController extends AbstractRestController
     }
 
     /**
-     * @Method("GET")
-     * @Route("/user")
+     * @Route("/user", methods={"GET"})
      */
     public function userAction()
     {
@@ -53,8 +50,7 @@ class InfoController extends AbstractRestController
     }
 
     /**
-     * @Method("GET")
-     * @Route("/server-info")
+     * @Route("/server-info", methods={"GET"})
      *
      * Returns a list of all class definitions.
      */
@@ -93,8 +89,7 @@ class InfoController extends AbstractRestController
     }
 
     /**
-     * @Method("GET")
-     * @Route("/translations")
+     * @Route("/translations", methods={"GET"})
      */
     public function translationsAction(Request $request)
     {

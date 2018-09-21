@@ -20,15 +20,13 @@ use Pimcore\Http\Exception\ResponseException;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Webservice\Data\Asset\File\In as WebserviceAssetFileIn;
 use Pimcore\Model\Webservice\Data\Asset\Folder\In as WebserviceAssetFolderIn;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\Annotation\Route;
 
 class AssetController extends AbstractElementController
 {
     /**
-     * @Method("GET")
-     * @Route("/asset/id/{id}", requirements={"id": "\d+"})
+     * @Route("/asset/id/{id}", requirements={"id": "\d+"}, methods={"GET"})
      * @Route("/asset")
      *
      * @api {get} /asset Get asset
@@ -94,8 +92,7 @@ class AssetController extends AbstractElementController
     }
 
     /**
-     * @Method({"POST", "PUT"})
-     * @Route("/asset")
+     * @Route("/asset", methods={"POST", "PUT"})
      *
      * @param Request $request
      *
@@ -120,8 +117,7 @@ class AssetController extends AbstractElementController
     }
 
     /**
-     * @Method({"POST", "PUT"})
-     * @Route("/asset/id/{id}", requirements={"id": "\d+"})
+     * @Route("/asset/id/{id}", requirements={"id": "\d+"}, methods={"POST", "PUT"})
      *
      * @param Request  $request
      * @param int|null $id
@@ -142,8 +138,7 @@ class AssetController extends AbstractElementController
     }
 
     /**
-     * @Method("DELETE")
-     * @Route("/asset/id/{id}", requirements={"id": "\d+"})
+     * @Route("/asset/id/{id}", requirements={"id": "\d+"}, methods={"DELETE"})
      * @Route("/asset")
      *
      * @api {delete} /asset Delete asset
@@ -188,8 +183,7 @@ class AssetController extends AbstractElementController
     }
 
     /**
-     * @Method("GET")
-     * @Route("/asset-list")
+     * @Route("/asset-list", methods={"GET"})
      *
      * Returns a list of assets id/type pairs matching the given criteria.
      *  Example:
@@ -230,8 +224,7 @@ class AssetController extends AbstractElementController
     }
 
     /**
-     * @Method("GET")
-     * @Route("/asset-count")
+     * @Route("/asset-count", methods={"GET"})
      *
      * Returns the total number of assets matching the given condition
      *  GET http://[YOUR-DOMAIN]/webservice/rest/asset-count?apikey=[API-KEY]&q={"type":%20"folder"}
@@ -274,8 +267,7 @@ class AssetController extends AbstractElementController
     }
 
     /**
-     * @Method({"GET", "POST"})
-     * @Route("/asset-inquire")
+     * @Route("/asset-inquire", methods={"GET", "POST"})
      *
      * Checks for existence of the given asset IDs
      *

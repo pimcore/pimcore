@@ -17,16 +17,14 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Rest;
 use Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse;
 use Pimcore\Http\Exception\ResponseException;
 use Pimcore\Model\Asset\Image\Thumbnail\Config;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\Annotation\Route;
 
 class ImageController extends AbstractRestController
 {
     /**
-     * @Method("GET")
-     * @Route("/image-thumbnail/id/{id}")
-     * @Route("/image-thumbnail")
+     * @Route("/image-thumbnail/id/{id}", methods={"GET"})
+     * @Route("/image-thumbnail", methods={"GET"})
      *
      * @param Request     $request
      * @param string|null $id
@@ -52,8 +50,7 @@ class ImageController extends AbstractRestController
     }
 
     /**
-     * @Method("GET")
-     * @Route("/image-thumbnails")
+     * @Route("/image-thumbnails", methods={"GET"})
      */
     public function imageThumbnailsAction()
     {

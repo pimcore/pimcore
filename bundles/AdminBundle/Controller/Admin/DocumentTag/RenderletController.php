@@ -27,10 +27,10 @@ use Pimcore\Model\Element\Service;
 use Pimcore\Model\Tool\Targeting\TargetGroup;
 use Pimcore\Templating\Model\ViewModel;
 use Pimcore\Templating\Renderer\ActionRenderer;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Cmf\Bundle\RoutingBundle\Routing\DynamicRouter;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Annotation\Route;
 
 class RenderletController extends AdminController
 {

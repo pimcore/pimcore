@@ -19,13 +19,12 @@ use Pimcore\Controller\EventedControllerInterface;
 use Pimcore\Google;
 use Pimcore\Model\Document;
 use Pimcore\Model\Site;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
+use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * @Route("/analytics")
@@ -38,8 +37,7 @@ class AnalyticsController extends ReportsControllerBase implements EventedContro
     protected $service;
 
     /**
-     * @Route("/deeplink")
-     * @Method({"GET"})
+     * @Route("/deeplink", methods={"GET"})
      *
      * @param Request $request
      *
@@ -57,8 +55,7 @@ class AnalyticsController extends ReportsControllerBase implements EventedContro
     }
 
     /**
-     * @Route("/get-profiles")
-     * @Method({"GET"})
+     * @Route("/get-profiles", methods={"GET"})
      *
      * @param Request $request
      *
@@ -141,8 +138,7 @@ class AnalyticsController extends ReportsControllerBase implements EventedContro
     }
 
     /**
-     * @Route("/chartmetricdata")
-     * @Method({"GET"})
+     * @Route("/chartmetricdata", methods={"GET"})
      *
      * @param Request $request
      * @param SiteConfigProvider $siteConfigProvider
@@ -225,8 +221,7 @@ class AnalyticsController extends ReportsControllerBase implements EventedContro
     }
 
     /**
-     * @Route("/summary")
-     * @Method({"GET"})
+     * @Route("/summary", methods={"GET"})
      *
      * @param Request $request
      * @param SiteConfigProvider $siteConfigProvider
@@ -301,8 +296,7 @@ class AnalyticsController extends ReportsControllerBase implements EventedContro
     }
 
     /**
-     * @Route("/source")
-     * @Method({"GET"})
+     * @Route("/source", methods={"GET"})
      *
      * @param Request $request
      * @param SiteConfigProvider $siteConfigProvider
@@ -356,8 +350,7 @@ class AnalyticsController extends ReportsControllerBase implements EventedContro
     }
 
     /**
-     * @Route("/data-explorer")
-     * @Method({"GET", "POST"})
+     * @Route("/data-explorer", methods={"GET", "POST"})
      *
      * @param Request $request
      * @param SiteConfigProvider $siteConfigProvider
@@ -428,8 +421,7 @@ class AnalyticsController extends ReportsControllerBase implements EventedContro
     }
 
     /**
-     * @Route("/get-dimensions")
-     * @Method({"GET"})
+     * @Route("/get-dimensions", methods={"GET"})
      *
      * @param Request $request
      *
@@ -441,8 +433,7 @@ class AnalyticsController extends ReportsControllerBase implements EventedContro
     }
 
     /**
-     * @Route("/get-metrics")
-     * @Method({"GET"})
+     * @Route("/get-metrics", methods={"GET"})
      *
      * @param Request $request
      *
@@ -454,8 +445,7 @@ class AnalyticsController extends ReportsControllerBase implements EventedContro
     }
 
     /**
-     * @Route("/get-segments")
-     * @Method({"GET"})
+     * @Route("/get-segments", methods={"GET"})
      *
      * @param Request $request
      *

@@ -26,8 +26,6 @@ use Pimcore\Model\Version;
 use Pimcore\Routing\Dynamic\DocumentRouteHandler;
 use Pimcore\Tool;
 use Pimcore\Tool\Session;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
@@ -37,6 +35,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
+use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * @Route("/document")
@@ -49,8 +48,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
     protected $_documentService;
 
     /**
-     * @Route("/get-data-by-id")
-     * @Method({"GET"})
+     * @Route("/get-data-by-id", methods={"GET"})
      *
      * @param Request $request
      *
@@ -79,8 +77,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
     }
 
     /**
-     * @Route("/tree-get-childs-by-id")
-     * @Method({"GET"})
+     * @Route("/tree-get-childs-by-id", methods={"GET"})
      *
      * @param Request $request
      *
@@ -187,8 +184,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
     }
 
     /**
-     * @Route("/add")
-     * @Method({"POST"})
+     * @Route("/add", methods={"POST"})
      *
      * @param Request $request
      *
@@ -333,8 +329,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
     }
 
     /**
-     * @Route("/delete")
-     * @Method({"DELETE"})
+     * @Route("/delete", methods={"DELETE"})
      *
      * @param Request $request
      *
@@ -381,8 +376,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
     }
 
     /**
-     * @Route("/delete-info")
-     * @Method({"GET"})
+     * @Route("/delete-info", methods={"GET"})
      *
      * @param Request $request
      *
@@ -463,8 +457,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
     }
 
     /**
-     * @Route("/update")
-     * @Method({"PUT"})
+     * @Route("/update", methods={"PUT"})
      *
      * @param Request $request
      *
@@ -604,8 +597,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
     }
 
     /**
-     * @Route("/doc-types")
-     * @Method({"GET"})
+     * @Route("/doc-types", methods={"GET"})
      *
      * @param Request $request
      *
@@ -628,8 +620,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
     }
 
     /**
-     * @Route("/doc-types")
-     * @Method({"PUT", "POST","DELETE"})
+     * @Route("/doc-types", methods={"PUT", "POST","DELETE"})
      *
      * @param Request $request
      *
@@ -675,8 +666,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
     }
 
     /**
-     * @Route("/get-doc-types")
-     * @Method({"GET"})
+     * @Route("/get-doc-types", methods={"GET"})
      *
      * @param Request $request
      *
@@ -708,8 +698,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
     }
 
     /**
-     * @Route("/version-to-session")
-     * @Method({"POST"})
+     * @Route("/version-to-session", methods={"POST"})
      *
      * @param Request $request
      *
@@ -729,8 +718,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
     }
 
     /**
-     * @Route("/publish-version")
-     * @Method({"POST"})
+     * @Route("/publish-version", methods={"POST"})
      *
      * @param Request $request
      *
@@ -761,8 +749,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
     }
 
     /**
-     * @Route("/update-site")
-     * @Method({"PUT"})
+     * @Route("/update-site", methods={"PUT"})
      *
      * @param Request $request
      *
@@ -793,8 +780,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
     }
 
     /**
-     * @Route("/remove-site")
-     * @Method({"DELETE"})
+     * @Route("/remove-site", methods={"DELETE"})
      *
      * @param Request $request
      *
@@ -809,8 +795,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
     }
 
     /**
-     * @Route("/copy-info")
-     * @Method({"GET"})
+     * @Route("/copy-info", methods={"GET"})
      *
      * @param Request $request
      *
@@ -906,8 +891,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
     }
 
     /**
-     * @Route("/copy-rewrite-ids")
-     * @Method({"PUT"})
+     * @Route("/copy-rewrite-ids", methods={"PUT"})
      *
      * @param Request $request
      *
@@ -952,8 +936,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
     }
 
     /**
-     * @Route("/copy")
-     * @Method({"POST"})
+     * @Route("/copy", methods={"POST"})
      *
      * @param Request $request
      *
@@ -1022,8 +1005,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
     }
 
     /**
-     * @Route("/diff-versions/from/{from}/to/{to}", requirements={"from": "\d+", "to": "\d+"})
-     * @Method({"GET"})
+     * @Route("/diff-versions/from/{from}/to/{to}", requirements={"from": "\d+", "to": "\d+"}, methods={"GET"})
      *
      * @param Request $request
      * @param int $from
@@ -1084,8 +1066,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
     }
 
     /**
-     * @Route("/diff-versions-image")
-     * @Method({"GET"})
+     * @Route("/diff-versions-image", methods={"GET"})
      *
      * @param Request $request
      *
@@ -1215,8 +1196,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
     }
 
     /**
-     * @Route("/get-id-for-path")
-     * @Method({"GET"})
+     * @Route("/get-id-for-path", methods={"GET"})
      *
      * @param Request $request
      *
@@ -1239,8 +1219,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
      */
 
     /**
-     * @Route("/seopanel-tree-root")
-     * @Method({"GET"})
+     * @Route("/seopanel-tree-root", methods={"GET"})
      *
      * @param DocumentRouteHandler $documentRouteHandler
      *
@@ -1264,8 +1243,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
     }
 
     /**
-     * @Route("/seopanel-tree")
-     * @Method({"GET"})
+     * @Route("/seopanel-tree", methods={"GET"})
      *
      * @param Request $request
      * @param EventDispatcherInterface $eventDispatcher
@@ -1336,8 +1314,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
     }
 
     /**
-     * @Route("/convert")
-     * @Method({"PUT"})
+     * @Route("/convert", methods={"PUT"})
      *
      * @param Request $request
      *
@@ -1375,8 +1352,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
     }
 
     /**
-     * @Route("/translation-determine-parent")
-     * @Method({"GET"})
+     * @Route("/translation-determine-parent", methods={"GET"})
      *
      * @param Request $request
      *
@@ -1405,8 +1381,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
     }
 
     /**
-     * @Route("/translation-add")
-     * @Method({"POST"})
+     * @Route("/translation-add", methods={"POST"})
      *
      * @param Request $request
      *
@@ -1431,8 +1406,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
     }
 
     /**
-     * @Route("/translation-remove")
-     * @Method({"DELETE"})
+     * @Route("/translation-remove", methods={"DELETE"})
      *
      * @param Request $request
      *
@@ -1453,8 +1427,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
     }
 
     /**
-     * @Route("/translation-check-language")
-     * @Method({"GET"})
+     * @Route("/translation-check-language", methods={"GET"})
      *
      * @param Request $request
      *

@@ -24,8 +24,6 @@ use Pimcore\Model;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Element;
 use Pimcore\Tool;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
@@ -36,6 +34,7 @@ use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
+use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * @Route("/asset")
@@ -48,8 +47,7 @@ class AssetController extends ElementControllerBase implements EventedController
     protected $_assetService;
 
     /**
-     * @Route("/get-data-by-id")
-     * @Method({"GET"})
+     * @Route("/get-data-by-id", methods={"GET"})
      *
      * @param Request $request
      *
@@ -180,8 +178,7 @@ class AssetController extends ElementControllerBase implements EventedController
     }
 
     /**
-     * @Route("/tree-get-childs-by-id")
-     * @Method({"GET"})
+     * @Route("/tree-get-childs-by-id", methods={"GET"})
      *
      * @param Request $request
      *
@@ -291,8 +288,7 @@ class AssetController extends ElementControllerBase implements EventedController
     }
 
     /**
-     * @Route("/add-asset")
-     * @Method({"POST"})
+     * @Route("/add-asset", methods={"POST"})
      *
      * @param Request $request
      *
@@ -318,8 +314,7 @@ class AssetController extends ElementControllerBase implements EventedController
     }
 
     /**
-     * @Route("/add-asset-compatibility")
-     * @Method({"POST"})
+     * @Route("/add-asset-compatibility", methods={"POST"})
      *
      * @param Request $request
      *
@@ -470,8 +465,7 @@ class AssetController extends ElementControllerBase implements EventedController
     }
 
     /**
-     * @Route("/replace-asset")
-     * @Method({"POST", "PUT"})
+     * @Route("/replace-asset", methods={"POST", "PUT"})
      *
      * @param Request $request
      *
@@ -529,8 +523,7 @@ class AssetController extends ElementControllerBase implements EventedController
     }
 
     /**
-     * @Route("/add-folder")
-     * @Method({"POST"})
+     * @Route("/add-folder", methods={"POST"})
      *
      * @param Request $request
      *
@@ -560,8 +553,7 @@ class AssetController extends ElementControllerBase implements EventedController
     }
 
     /**
-     * @Route("/delete")
-     * @Method({"DELETE"})
+     * @Route("/delete", methods={"DELETE"})
      *
      * @param Request $request
      *
@@ -606,8 +598,7 @@ class AssetController extends ElementControllerBase implements EventedController
     }
 
     /**
-     * @Route("/delete-info")
-     * @Method({"GET"})
+     * @Route("/delete-info", methods={"GET"})
      *
      * @param Request $request
      *
@@ -851,8 +842,7 @@ class AssetController extends ElementControllerBase implements EventedController
     }
 
     /**
-     * @Route("/update")
-     * @Method({"PUT"})
+     * @Route("/update", methods={"PUT"})
      *
      * @param Request $request
      *
@@ -970,8 +960,7 @@ class AssetController extends ElementControllerBase implements EventedController
     }
 
     /**
-     * @Route("/save")
-     * @Method({"PUT","POST"})
+     * @Route("/save", methods={"PUT","POST"})
      *
      * @param Request $request
      *
@@ -1088,8 +1077,7 @@ class AssetController extends ElementControllerBase implements EventedController
     }
 
     /**
-     * @Route("/publish-version")
-     * @Method({"POST"})
+     * @Route("/publish-version", methods={"POST"})
      *
      * @param Request $request
      *
@@ -1116,8 +1104,7 @@ class AssetController extends ElementControllerBase implements EventedController
     }
 
     /**
-     * @Route("/show-version")
-     * @Method({"GET"})
+     * @Route("/show-version", methods={"GET"})
      * @TemplatePhp()
      *
      * @param Request $request
@@ -1143,8 +1130,7 @@ class AssetController extends ElementControllerBase implements EventedController
     }
 
     /**
-     * @Route("/download")
-     * @Method({"GET"})
+     * @Route("/download", methods={"GET"})
      *
      * @param Request $request
      *
@@ -1164,8 +1150,7 @@ class AssetController extends ElementControllerBase implements EventedController
     }
 
     /**
-     * @Route("/download-image-thumbnail")
-     * @Method({"GET"})
+     * @Route("/download-image-thumbnail", methods={"GET"})
      *
      * @param Request $request
      *
@@ -1277,8 +1262,7 @@ class AssetController extends ElementControllerBase implements EventedController
     }
 
     /**
-     * @Route("/get-image-thumbnail")
-     * @Method({"GET"})
+     * @Route("/get-image-thumbnail", methods={"GET"})
      *
      * @param Request $request
      *
@@ -1352,8 +1336,7 @@ class AssetController extends ElementControllerBase implements EventedController
     }
 
     /**
-     * @Route("/get-video-thumbnail")
-     * @Method({"GET"})
+     * @Route("/get-video-thumbnail", methods={"GET"})
      *
      * @param Request $request
      *
@@ -1411,8 +1394,7 @@ class AssetController extends ElementControllerBase implements EventedController
     }
 
     /**
-     * @Route("/get-document-thumbnail")
-     * @Method({"GET"})
+     * @Route("/get-document-thumbnail", methods={"GET"})
      *
      * @param Request $request
      *
@@ -1470,8 +1452,7 @@ class AssetController extends ElementControllerBase implements EventedController
     }
 
     /**
-     * @Route("/get-preview-document")
-     * @Method({"GET"})
+     * @Route("/get-preview-document", methods={"GET"})
      * @TemplatePhp()
      *
      * @param Request $request
@@ -1518,8 +1499,7 @@ class AssetController extends ElementControllerBase implements EventedController
     }
 
     /**
-     * @Route("/get-preview-video")
-     * @Method({"GET"})
+     * @Route("/get-preview-video", methods={"GET"})
      * @TemplatePhp()
      *
      * @param Request $request
@@ -1562,8 +1542,7 @@ class AssetController extends ElementControllerBase implements EventedController
     }
 
     /**
-     * @Route("/serve-video-preview")
-     * @Method({"GET"})
+     * @Route("/serve-video-preview", methods={"GET"})
      *
      * @param Request $request
      *
@@ -1592,8 +1571,7 @@ class AssetController extends ElementControllerBase implements EventedController
     }
 
     /**
-     * @Route("/image-editor")
-     * @Method({"GET"})
+     * @Route("/image-editor", methods={"GET"})
      *
      * @param Request $request
      * @TemplatePhp()
@@ -1612,8 +1590,7 @@ class AssetController extends ElementControllerBase implements EventedController
     }
 
     /**
-     * @Route("/image-editor-save")
-     * @Method({"PUT"})
+     * @Route("/image-editor-save", methods={"PUT"})
      *
      * @param Request $request
      *
@@ -1638,8 +1615,7 @@ class AssetController extends ElementControllerBase implements EventedController
     }
 
     /**
-     * @Route("/get-folder-content-preview")
-     * @Method({"GET"})
+     * @Route("/get-folder-content-preview", methods={"GET"})
      *
      * @param Request $request
      *
@@ -1746,8 +1722,7 @@ class AssetController extends ElementControllerBase implements EventedController
     }
 
     /**
-     * @Route("/copy-info")
-     * @Method({"GET"})
+     * @Route("/copy-info", methods={"GET"})
      *
      * @param Request $request
      *
@@ -1822,8 +1797,7 @@ class AssetController extends ElementControllerBase implements EventedController
     }
 
     /**
-     * @Route("/copy")
-     * @Method({"POST"})
+     * @Route("/copy", methods={"POST"})
      *
      * @param Request $request
      *
@@ -1888,8 +1862,7 @@ class AssetController extends ElementControllerBase implements EventedController
     }
 
     /**
-     * @Route("/download-as-zip-jobs")
-     * @Method({"GET"})
+     * @Route("/download-as-zip-jobs", methods={"GET"})
      *
      * @param Request $request
      *
@@ -1962,8 +1935,7 @@ class AssetController extends ElementControllerBase implements EventedController
     }
 
     /**
-     * @Route("/download-as-zip-add-files")
-     * @Method({"GET"})
+     * @Route("/download-as-zip-add-files", methods={"GET"})
      *
      * @param Request $request
      *
@@ -2038,8 +2010,7 @@ class AssetController extends ElementControllerBase implements EventedController
     }
 
     /**
-     * @Route("/download-as-zip")
-     * @Method({"GET"})
+     * @Route("/download-as-zip", methods={"GET"})
      *
      * @param Request $request
      *
@@ -2065,8 +2036,7 @@ class AssetController extends ElementControllerBase implements EventedController
     }
 
     /**
-     * @Route("/import-zip")
-     * @Method({"POST"})
+     * @Route("/import-zip", methods={"POST"})
      *
      * @param Request $request
      *
@@ -2119,8 +2089,7 @@ class AssetController extends ElementControllerBase implements EventedController
     }
 
     /**
-     * @Route("/import-zip-files")
-     * @Method({"POST"})
+     * @Route("/import-zip-files", methods={"POST"})
      *
      * @param Request $request
      *
@@ -2189,8 +2158,7 @@ class AssetController extends ElementControllerBase implements EventedController
     }
 
     /**
-     * @Route("/import-server")
-     * @Method({"POST"})
+     * @Route("/import-server", methods={"POST"})
      *
      * @param Request $request
      *
@@ -2236,8 +2204,7 @@ class AssetController extends ElementControllerBase implements EventedController
     }
 
     /**
-     * @Route("/import-server-files")
-     * @Method({"POST"})
+     * @Route("/import-server-files", methods={"POST"})
      *
      * @param Request $request
      *
@@ -2279,8 +2246,7 @@ class AssetController extends ElementControllerBase implements EventedController
     }
 
     /**
-     * @Route("/import-url")
-     * @Method({"POST"})
+     * @Route("/import-url", methods={"POST"})
      *
      * @param Request $request
      *
@@ -2323,8 +2289,7 @@ class AssetController extends ElementControllerBase implements EventedController
     }
 
     /**
-     * @Route("/clear-thumbnail")
-     * @Method({"POST"})
+     * @Route("/clear-thumbnail", methods={"POST"})
      *
      * @param Request $request
      *
@@ -2351,8 +2316,7 @@ class AssetController extends ElementControllerBase implements EventedController
     }
 
     /**
-     * @Route("/grid-proxy")
-     * @Method({"GET"})
+     * @Route("/grid-proxy", methods={"GET"})
      *
      * @param Request $request
      *
@@ -2519,8 +2483,7 @@ class AssetController extends ElementControllerBase implements EventedController
     }
 
     /**
-     * @Route("/get-text")
-     * @Method({"GET"})
+     * @Route("/get-text", methods={"GET"})
      *
      * @param Request $request
      *

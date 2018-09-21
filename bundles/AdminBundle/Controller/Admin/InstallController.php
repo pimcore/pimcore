@@ -17,10 +17,9 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Db\Connection;
 use Pimcore\Tool\Requirements;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * @Route("/install")
@@ -28,8 +27,7 @@ use Symfony\Component\HttpFoundation\Response;
 class InstallController extends AdminController
 {
     /**
-     * @Route("/check")
-     * @Method({"GET", "POST"})
+     * @Route("/check", methods={"GET", "POST"})
      *
      * @param Request $request
      * @param Connection $db

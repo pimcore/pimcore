@@ -21,8 +21,6 @@ use Pimcore\Model\DataObject;
 use Pimcore\Model\Element;
 use Pimcore\Model\User;
 use Pimcore\Tool;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -30,12 +28,12 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
+use Symfony\Component\Routing\Annotation\Route;
 
 class UserController extends AdminController implements EventedControllerInterface
 {
     /**
-     * @Route("/user/tree-get-childs-by-id")
-     * @Method({"GET"})
+     * @Route("/user/tree-get-childs-by-id", methods={"GET"})
      *
      * @param Request $request
      *
@@ -104,8 +102,7 @@ class UserController extends AdminController implements EventedControllerInterfa
     }
 
     /**
-     * @Route("/user/add")
-     * @Method({"POST"})
+     * @Route("/user/add", methods={"POST"})
      *
      * @param Request $request
      *
@@ -227,8 +224,7 @@ class UserController extends AdminController implements EventedControllerInterfa
     }
 
     /**
-     * @Route("/user/delete")
-     * @Method({"DELETE"})
+     * @Route("/user/delete", methods={"DELETE"})
      *
      * @param Request $request
      *
@@ -286,8 +282,7 @@ class UserController extends AdminController implements EventedControllerInterfa
     }
 
     /**
-     * @Route("/user/update")
-     * @Method({"PUT"})
+     * @Route("/user/update", methods={"PUT"})
      *
      * @param Request $request
      *
@@ -392,8 +387,7 @@ class UserController extends AdminController implements EventedControllerInterfa
     }
 
     /**
-     * @Route("/user/get")
-     * @Method({"GET"})
+     * @Route("/user/get", methods={"GET"})
      *
      * @param Request $request
      *
@@ -491,8 +485,7 @@ class UserController extends AdminController implements EventedControllerInterfa
     }
 
     /**
-     * @Route("/user/get-minimal")
-     * @Method({"GET"})
+     * @Route("/user/get-minimal", methods={"GET"})
      *
      * @param Request $request
      *
@@ -514,8 +507,7 @@ class UserController extends AdminController implements EventedControllerInterfa
     }
 
     /**
-     * @Route("/user/upload-current-user-image")
-     * @Method({"GET"})
+     * @Route("/user/upload-current-user-image", methods={"GET"})
      *
      * @param Request $request
      *
@@ -538,8 +530,7 @@ class UserController extends AdminController implements EventedControllerInterfa
     }
 
     /**
-     * @Route("/user/update-current-user")
-     * @Method({"PUT"})
+     * @Route("/user/update-current-user", methods={"PUT"})
      *
      * @param Request $request
      *
@@ -614,8 +605,7 @@ class UserController extends AdminController implements EventedControllerInterfa
     }
 
     /**
-     * @Route("/user/get-current-user")
-     * @Method({"GET"})
+     * @Route("/user/get-current-user", methods={"GET"})
      *
      * @param Request $request
      *
@@ -656,8 +646,7 @@ class UserController extends AdminController implements EventedControllerInterfa
     /* ROLES */
 
     /**
-     * @Route("/user/role-tree-get-childs-by-id")
-     * @Method({"GET"})
+     * @Route("/user/role-tree-get-childs-by-id", methods={"GET"})
      *
      * @param Request $request
      *
@@ -717,8 +706,7 @@ class UserController extends AdminController implements EventedControllerInterfa
     }
 
     /**
-     * @Route("/user/role-get")
-     * @Method({"GET"})
+     * @Route("/user/role-get", methods={"GET"})
      *
      * @param Request $request
      *
@@ -760,8 +748,7 @@ class UserController extends AdminController implements EventedControllerInterfa
     }
 
     /**
-     * @Route("/user/upload-image")
-     * @Method({"POST"})
+     * @Route("/user/upload-image", methods={"POST"})
      *
      * @param Request $request
      *
@@ -798,8 +785,7 @@ class UserController extends AdminController implements EventedControllerInterfa
     }
 
     /**
-     * @Route("/user/renew-2fa-qr-secret")
-     * @Method({"GET"})
+     * @Route("/user/renew-2fa-qr-secret", methods={"GET"})
      *
      * @param Request $request
      */
@@ -839,8 +825,7 @@ class UserController extends AdminController implements EventedControllerInterfa
     }
 
     /**
-     * @Route("/user/disable-2fa")
-     * @Method({"DELETE"})
+     * @Route("/user/disable-2fa", methods={"DELETE"})
      *
      * @param Request $request
      */
@@ -862,8 +847,7 @@ class UserController extends AdminController implements EventedControllerInterfa
     }
 
     /**
-     * @Route("/user/reset-2fa-secret")
-     * @Method({"PUT"})
+     * @Route("/user/reset-2fa-secret", methods={"PUT"})
      *
      * @param Request $request
      */
@@ -884,8 +868,7 @@ class UserController extends AdminController implements EventedControllerInterfa
     }
 
     /**
-     * @Route("/user/get-image")
-     * @Method({"GET"})
+     * @Route("/user/get-image", methods={"GET"})
      *
      * @param Request $request
      *
@@ -913,8 +896,7 @@ class UserController extends AdminController implements EventedControllerInterfa
     }
 
     /**
-     * @Route("/user/get-token-login-link")
-     * @Method({"GET"})
+     * @Route("/user/get-token-login-link", methods={"GET"})
      *
      * @param Request $request
      *
@@ -958,8 +940,7 @@ class UserController extends AdminController implements EventedControllerInterfa
     }
 
     /**
-     * @Route("/user/search")
-     * @Method({"GET"})
+     * @Route("/user/search", methods={"GET"})
      *
      * @param Request $request
      *
@@ -1025,8 +1006,7 @@ class UserController extends AdminController implements EventedControllerInterfa
 
     /**
      * @param Request $request
-     * @Route("/user/get-users")
-     * @Method({"GET"})
+     * @Route("/user/get-users", methods={"GET"})
      */
     public function getUsersAction(Request $request)
     {
@@ -1051,8 +1031,7 @@ class UserController extends AdminController implements EventedControllerInterfa
 
     /**
      * @param Request $request
-     * @Route("/user/get-roles")
-     * @Method({"GET"})
+     * @Route("/user/get-roles", methods={"GET"})
      */
     public function getRolesAction(Request $request)
     {
@@ -1075,8 +1054,7 @@ class UserController extends AdminController implements EventedControllerInterfa
 
     /**
      * @param Request $request
-     * @Route("/user/get-default-key-bindings")
-     * @Method({"GET"})
+     * @Route("/user/get-default-key-bindings", methods={"GET"})
      */
     public function getDefaultKeyBindingsAction(Request $request)
     {
