@@ -67,7 +67,7 @@ class TargetGroup implements ICondition
         if ($this->targetGroupId) {
             $this->targetGroup = \Pimcore\Model\Tool\Targeting\TargetGroup::getById($this->targetGroupId);
         }
-        if($this->threshold === null) {
+        if ($this->threshold === null) {
             $this->threshold = 0;
         }
     }

@@ -175,7 +175,6 @@ class ObjectsMetadata extends Model\DataObject\ClassDefinition\Data\Objects
     {
         $return = [];
 
-
         $visibleFieldsArray = $this->getVisibleFields() ? explode(',', $this->getVisibleFields()) : [];
 
         $gridFields = (array)$visibleFieldsArray;
@@ -726,7 +725,7 @@ class ObjectsMetadata extends Model\DataObject\ClassDefinition\Data\Objects
         if (is_array($visibleFields) && count($visibleFields)) {
             $visibleFields = implode(',', $visibleFields);
         } else {
-            $visibleFields = "";
+            $visibleFields = '';
         }
 
         $this->visibleFields = $visibleFields;
