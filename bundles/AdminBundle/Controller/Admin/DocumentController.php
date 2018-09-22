@@ -656,7 +656,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
                 $type->setValues($data);
                 $type->save();
 
-                return $this->adminJson(['data' => $type, 'success' => true]);
+                return $this->adminJson(['data' => $type->getObjectVars(), 'success' => true]);
             } elseif ($request->get('xaction') == 'create') {
                 $data = $this->decodeJson($request->get('data'));
                 unset($data['id']);
@@ -667,7 +667,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
 
                 $type->save();
 
-                return $this->adminJson(['data' => $type, 'success' => true]);
+                return $this->adminJson(['data' => $type->getObjectVars(), 'success' => true]);
             }
         }
 
