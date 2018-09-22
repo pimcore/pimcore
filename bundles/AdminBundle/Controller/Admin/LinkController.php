@@ -65,7 +65,7 @@ class LinkController extends DocumentControllerBase
         //data need to wrapped into a container in order to pass parameter to event listeners by reference so that they can change the values
         $serializer = $this->get('pimcore_admin.serializer');
 
-        $data = $serializer->serialize($link, 'json', [
+        $data = $serializer->serialize($link->getObjectVars(), 'json', [
         ]);
         $data = json_decode($data, true);
         $data['rawHref'] = $link->getRawHref();
