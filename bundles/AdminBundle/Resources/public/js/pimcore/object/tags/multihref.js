@@ -390,17 +390,19 @@ pimcore.object.tags.multihref = Class.create(pimcore.object.tags.abstract, {
             try {
                 var data = Ext.decode(res.response.responseText);
                 if (data["id"]) {
-                    this.store.add({
+                    var toBeRequested = new Ext.util.Collection();
+                    toBeRequested.add(this.store.add({
                         id: data["id"],
                         path: data["fullpath"],
                         type: "asset",
                         subtype: data["type"]
-                    });
+                    }));
+                    this.requestNicePathData(toBeRequested);
                 }
             } catch (e) {
                 console.log(e);
             }
-        }.bind(this));
+        }.bind(this), null, this.context);
     },
 
     onRowContextmenu: function (grid, record, tr, rowIndex, e, eOpts) {

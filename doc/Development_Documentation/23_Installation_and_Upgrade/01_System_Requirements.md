@@ -107,7 +107,7 @@ On Debian based systems, you can use the following command to install all requir
 Please visit [Additional Tools Installation](03_System_Setup_and_Hosting/06_Additional_Tools_Installation.md) for additional information. 
 
 ## Browser Requirements
-Pimcore supports always the latest 2 versions of all 4 major browsers at the time of a release. 
+Pimcore supports always the latest 2 versions of all 4 major desktop browsers at the time of a release. 
 
 - **Google Chrome  (Recommended)**
 - Mozilla Firefox 
@@ -115,3 +115,8 @@ Pimcore supports always the latest 2 versions of all 4 major browsers at the tim
 - Apple Safari
 - Microsoft Internet Explorer (only version 11)   
 **[Note: support for IE will be removed soon!](https://github.com/pimcore/pimcore/issues/2989)**
+
+Click [here](http://browserl.ist/?q=last+2+Chrome+versions%2C+last+2+Firefox+versions%2C+last+2+Edge+versions%2C+last+1+IE+versions%2C+last+2+Safari+versions) 
+to check out the latest 2 versions at the current moment of all supported browsers. 
+Please keep in mind that this doesn't necessarily means that they are supported by the latest available Pimcore release, 
+the crucial factor are the versions available at the time of the release.

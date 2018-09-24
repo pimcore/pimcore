@@ -471,7 +471,7 @@ class Data extends \Pimcore\Model\AbstractModel
 
                 $this->published = $element->isPublished();
                 foreach ($element->getClass()->getFieldDefinitions() as $key => $value) {
-                    $this->data .= $value->getDataForSearchIndex($element).' ';
+                    $this->data .= ' ' . $value->getDataForSearchIndex($element);
                 }
 
                 DataObject\AbstractObject::setGetInheritedValues($getInheritedValues);

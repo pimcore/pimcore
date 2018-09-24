@@ -52,7 +52,7 @@ class Dao extends Model\Dao\AbstractDao
     {
         $this->db->beginTransaction();
         try {
-            $dataAttributes = get_object_vars($this->model);
+            $dataAttributes = $this->model->getObjectVars();
 
             $originalIdPath = null;
             if ($this->model->getId()) {

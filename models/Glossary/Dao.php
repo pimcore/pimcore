@@ -73,7 +73,7 @@ class Dao extends Model\Dao\AbstractDao
             $this->model->setModificationDate($ts);
 
             $data = [];
-            $type = get_object_vars($this->model);
+            $type = $this->model->getObjectVars();
 
             foreach ($type as $key => $value) {
                 if (in_array($key, $this->getValidTableColumns('glossary'))) {

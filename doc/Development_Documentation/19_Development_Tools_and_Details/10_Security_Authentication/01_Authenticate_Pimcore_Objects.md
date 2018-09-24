@@ -169,6 +169,6 @@ security:
 
 This should get you started with a custom authentication system based on Pimcore objects. For further information see:
 
-* The [Demo CMS profile](https://github.com/pimcore/pimcore/blob/master/install-profiles/demo-basic) which acts as base for
+* The [Demo CMS profile](https://github.com/pimcore/demo-basic) which acts as base for
   this guide and implements a form/session login.
 * The [Symfony Security Component documentation](http://symfony.com/doc/3.4/security.html)

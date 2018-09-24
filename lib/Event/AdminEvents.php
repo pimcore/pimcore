@@ -353,4 +353,18 @@ final class AdminEvents
      * @var string
      */
     const QUICKSEARCH_LIST_AFTER_LIST_LOAD = 'pimcore.admin.quickSearch.list.afterListLoad';
+
+    /**
+     * Fired before the an element is opened
+     *
+     * Subject: \Pimcore\Bundle\AdminBundle\Controller\Admin\ElementController
+     * Arguments:
+     *  - type element type
+     *  - id
+     *
+     * @Event("Pimcore\Event\Model\ResolveElementEvent")
+     *
+     * @var string
+     */
+    const RESOLVE_ELEMENT = 'pimcore.admin.resolve.element';
 }

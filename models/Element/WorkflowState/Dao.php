@@ -50,7 +50,7 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function save()
     {
-        $dataAttributes = get_object_vars($this->model);
+        $dataAttributes = $this->model->getObjectVars();
 
         $data = [];
         foreach ($dataAttributes as $key => $value) {

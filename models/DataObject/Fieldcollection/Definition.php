@@ -317,11 +317,11 @@ class Definition extends Model\AbstractModel
         $cd .= 'class ' . ucfirst($this->getKey()) . ' extends ' . $extendClass . '  {';
         $cd .= "\n\n";
 
-        $cd .= 'public $type = "' . $this->getKey() . "\";\n";
+        $cd .= 'protected $type = "' . $this->getKey() . "\";\n";
 
         if (is_array($this->getFieldDefinitions()) && count($this->getFieldDefinitions())) {
             foreach ($this->getFieldDefinitions() as $key => $def) {
-                $cd .= 'public $' . $key . ";\n";
+                $cd .= 'protected $' . $key . ";\n";
             }
         }
 

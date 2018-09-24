@@ -92,7 +92,7 @@ class CsrfProtectionListener implements EventSubscriberInterface
         ];
 
         $route = $request->attributes->get('_route');
-        if (in_array($route, $exludedRoutes)) {
+        if (in_array($route, $exludedRoutes) || in_array($route, $this->excludedRoutes)) {
             return;
         }
 

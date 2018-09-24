@@ -1,6 +1,5 @@
 parameters:
     locale: en
-    swiftmailer.plugin.redirecting.class: 'Pimcore\Mail\Plugins\RedirectingPlugin'
 
 framework:
     translator:

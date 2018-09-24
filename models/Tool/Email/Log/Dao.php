@@ -54,7 +54,7 @@ class Dao extends Model\Dao\AbstractDao
     {
         $data = [];
 
-        $emailLog = get_object_vars($this->model);
+        $emailLog = $this->model->getObjectVars();
 
         foreach ($emailLog as $key => $value) {
             if (in_array($key, $this->getValidTableColumns(self::$dbTable))) {

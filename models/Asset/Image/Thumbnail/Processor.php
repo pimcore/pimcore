@@ -276,7 +276,7 @@ class Processor
                 if (!empty($transformation)) {
                     $arguments = [];
 
-                    if(is_string($transformation['method'])) {
+                    if (is_string($transformation['method'])) {
                         $mapping = self::$argumentMapping[$transformation['method']];
                         if (is_array($transformation['arguments'])) {
                             foreach ($transformation['arguments'] as $key => $value) {
@@ -330,7 +330,7 @@ class Processor
                     }
 
                     ksort($arguments);
-                    if(is_callable($transformation['method'])) {
+                    if (is_callable($transformation['method'])) {
                         $transformation['method']($image);
                     } elseif (method_exists($image, $transformation['method'])) {
                         call_user_func_array([$image, $transformation['method']], $arguments);

@@ -164,6 +164,13 @@ services:
         tags:
             - { name: pimcore.data_object.grid_column_config.operator_factory, id: PHPCode }
 
+    pimcore.data_object.grid_column_config.operator.factory.property_getter:
+        class: Pimcore\DataObject\GridColumnConfig\Operator\Factory\DefaultOperatorFactory
+        arguments:
+            $className: Pimcore\DataObject\GridColumnConfig\Operator\PropertyGetter
+        tags:
+            - { name: pimcore.data_object.grid_column_config.operator_factory, id: PropertyGetter }
+
     pimcore.data_object.grid_column_config.operator.factory.required_by:
         class: Pimcore\DataObject\GridColumnConfig\Operator\Factory\DefaultOperatorFactory
         arguments:

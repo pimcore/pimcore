@@ -639,7 +639,7 @@ pimcore.report.custom.item = Class.create({
 
         sourceDefinitionData.type = sourceDefinitionData.type ? sourceDefinitionData.type : 'sql';
 
-        var adapter = new pimcore.report.custom.definition[sourceDefinitionData.type](sourceDefinitionData, key, this.getDeleteControl(t("custom_report_adapter_" + sourceDefinitionData.type), key), this.getColumnSettings.bind(this));
+        var adapter = new pimcore.report.custom.definition[sourceDefinitionData.type](sourceDefinitionData, key, this.getDeleteControl(t("custom_report_adapter_" + sourceDefinitionData.type, ucfirst(sourceDefinitionData.type)), key), this.getColumnSettings.bind(this));
 
 
         this.currentElements.push({key: key, adapter: adapter});

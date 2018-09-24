@@ -11,12 +11,21 @@ The areablock is the content construction kit for documents offered by Pimcore.
 ## Integrate an Areablock in a Template
 Similar to the other document editables, an areablock can be integrated in any document view template as follows:
 
+<div class="code-section">
+    
 ```php
 <?= $this->areablock('myAreablock'); ?>
 ```
 
+```twig
+{{ pimcore_areablock("myAreablock") }}
+```
+</div>
+
 Advanced usage with allowed areas, below:
 
+<div class="code-section">
+    
 ```php
 <?= $this->areablock("myAreablock", [
     "allowed" => ["iframe","googletagcloud","spacer","rssreader"],
@@ -38,6 +47,30 @@ Advanced usage with allowed areas, below:
     ]]);
 ?>
 ```
+
+```twig
+{{ pimcore_areablock("myAreablock", {
+            "allowed": ["iframe","googletagcloud","spacer","rssreader"],
+            "group": {
+                "First Group": ["iframe", "spacer"],
+                "Second Group": ["rssreader"]
+            },
+            "globalParams": {
+                "myGlobalParam": "Global param value"
+            },
+            "params": {
+                "iframe": {
+                    "parameter1": "value1",
+                    "parameter2": "value2"
+                },
+                "googletagcloud": {
+                    "param1": "value1"
+                }
+            }
+        })
+    }}
+```
+</div>
 
 ##### Accessing Parameters from the Brick File
 ```php

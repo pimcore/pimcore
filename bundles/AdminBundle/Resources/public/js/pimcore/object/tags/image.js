@@ -141,7 +141,7 @@ pimcore.object.tags.image = Class.create(pimcore.object.tags.abstract, {
                 } else {
                     pimcore.helpers.showNotification(t("error"), t('unsupported_filetype'), "error");
                 }
-            }.bind(this));
+            }.bind(this), null, this.context);
 
             this.updateImage();
 
@@ -221,7 +221,7 @@ pimcore.object.tags.image = Class.create(pimcore.object.tags.abstract, {
             } catch (e) {
                 console.log(e);
             }
-        }.bind(this));
+        }.bind(this), null, this.context);
     },
 
     addDataFromSelector: function (item) {

@@ -2,10 +2,16 @@
 
 ## Version 5.5.0
 
+### Major compatibility changes
+- `Document`, `Asset` and `DataObject` properties are now `protected` instead of `public`
+- PDF document editable doesn't provide a Javascript viewer anymore. Now utilizing native PDF capabilities of browsers.
+- Swiftmailer `mail` transport is not supported anymore, see https://github.com/swiftmailer/swiftmailer/issues/866
+
 ### Minor compatibility changes
 - `\Pimcore\Db::set()` was removed. 
 - deprecated `\Pimcore::addToGloballyProtectedItems()`
 - deprecated `\Pimcore::removeFromGloballyProtectedItems()`
+- Image adapter `Pimcore\Image\Adapter\ImageMagick` was removed
 
 ### Breaking Changes
 - [Pimcore Workflow Management Reloaded](./01_Workflow_Management.md)

@@ -191,7 +191,10 @@ pimcore.log.admin = Class.create({
                     text: t("log_message"),
                     dataIndex: 'message',
                     flex: 220,
-                    sortable: true
+                    sortable: true,
+                    renderer: function (s) {
+                        return Ext.util.Format.htmlEncode(s);
+                    }
                 },{
                     text: t("log_type"),
                     dataIndex: 'priority',

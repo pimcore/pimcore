@@ -22,7 +22,7 @@ use Pimcore\Model;
 class In extends Model\Webservice\Data\Document\Link
 {
     /**
-     * @param $object
+     * @param $object Model\Document\Link
      * @param bool $disableMappingExceptions
      * @param null $idMapper
      */

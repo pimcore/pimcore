@@ -478,6 +478,7 @@ pimcore.elementservice.editAssetKeyComplete = function (options, button, value, 
 };
 
 pimcore.elementservice.editElementKey = function(options) {
+    var completeCallback;
     if (options.elementType == "asset") {
         completeCallback = pimcore.elementservice.editAssetKeyComplete.bind(this, options);
     } else if (options.elementType == "document") {

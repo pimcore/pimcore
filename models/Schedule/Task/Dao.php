@@ -70,7 +70,7 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function update()
     {
-        $site = get_object_vars($this->model);
+        $site = $this->model->getObjectVars();
         $data = [];
 
         foreach ($site as $key => $value) {

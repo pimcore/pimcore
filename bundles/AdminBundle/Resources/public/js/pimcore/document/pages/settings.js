@@ -17,91 +17,6 @@ pimcore.document.pages.settings = Class.create(pimcore.document.settings_abstrac
     getLayout: function () {
 
         if (this.layout == null) {
-
-            // redirects
-            var addUrlAlias = function (url, id) {
-
-                if(typeof url != "string") {
-                    url = "";
-                }
-                if(typeof id != "string" && typeof id != "number") {
-                    id = "";
-                }
-
-                var count = this.urlAliasPanel.query("textfield").length+1;
-
-                var compositeField = new Ext.Container({
-                    hideLabel: true,
-                    style: "padding-bottom:5px;",
-                    items: [{
-                        xtype: "textfield",
-                        value: url,
-                        width: 630,
-                        name: "redirect_url_" + count,
-                        style: "float:left;margin-right:5px;",
-                        enableKeyEvents: true,
-                        listeners: {
-                            keyup: function () {
-                                if(this.getValue().indexOf("http") >= 0) {
-                                    try {
-                                        var newUrl = "@" + preg_quote(parse_url(this.getValue(), "path")) + "@";
-                                        this.setValue(newUrl);
-                                    } catch (e) {
-                                        console.log(e);
-                                    }
-                                }
-                            }
-                        }
-                    },{
-                        xtype: "hidden",
-                        value: id,
-                        name: "redirect_id_"  + count
-                    }]
-                });
-
-                compositeField.add([{
-                    xtype: "button",
-                    iconCls: "pimcore_icon_delete",
-                    style: "float:left;",
-                    handler: function (compositeField, el) {
-                        this.urlAliasPanel.remove(compositeField);
-                        this.urlAliasPanel.updateLayout();
-                    }.bind(this, compositeField)
-                },{
-                    xtype: "box",
-                    style: "clear:both;"
-                }]);
-
-                this.urlAliasPanel.add(compositeField);
-
-                this.urlAliasPanel.updateLayout();
-            }.bind(this);
-
-            var user = pimcore.globalmanager.get("user");
-
-            this.urlAliasPanel = new Ext.form.FieldSet({
-                title: t("path_aliases") + " (" + t("redirects") + ")",
-                collapsible: false,
-                autoHeight: true,
-                style: "margin-top: 0;",
-                layout: 'fit',
-                width: 700,
-                disabled: !user.isAllowed("redirects"),
-                items: [{
-                    xtype: "toolbar",
-                    style: "margin-bottom: 10px;",
-                    items: ["->", {
-                        text: t("add"),
-                        iconCls: "pimcore_icon_add",
-                        handler: addUrlAlias
-                    }]
-                }]
-            });
-
-            for(var r=0; r<this.document.data.redirects.length; r++) {
-                addUrlAlias(this.document.data.redirects[r].source, this.document.data.redirects[r]["id"]);
-            }
-
             // meta-data
             var addMetaData = function (value) {
 
@@ -303,7 +218,7 @@ pimcore.document.pages.settings = Class.create(pimcore.document.settings_abstrac
                         }
                     },{
                         xtype:'fieldset',
-                        title: t('pretty_url') + " / " + t("redirects"),
+                        title: t('pretty_url') + " / URL Slug",
                         collapsible: true,
                         autoHeight:true,
                         defaults: {
@@ -338,7 +253,7 @@ pimcore.document.pages.settings = Class.create(pimcore.document.settings_abstrac
                                         });
                                     }.bind(this)
                                 }
-                            }, this.urlAliasPanel
+                            }
                         ]
                     }, {
                         xtype:'fieldset',

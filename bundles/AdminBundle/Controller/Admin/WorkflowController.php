@@ -14,7 +14,6 @@
 
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 
-use http\Exception\InvalidArgumentException;
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Controller\EventedControllerInterface;
 use Pimcore\Model\Asset;

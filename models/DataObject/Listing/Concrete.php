@@ -29,17 +29,17 @@ abstract class Concrete extends Model\DataObject\Listing
     /**
      * @var int
      */
-    public $classId;
+    protected $classId;
 
     /**
      * @var string
      */
-    public $className;
+    protected $className;
 
     /**
      * @var string|
      */
-    public $locale;
+    protected $locale;
 
     /**
      * do not use the localized views for this list (in the case the class contains localized fields),

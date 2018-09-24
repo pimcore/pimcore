@@ -28,17 +28,17 @@ class Objectbrick extends Model\AbstractModel
     /**
      * @var array
      */
-    public $items = [];
+    protected $items = [];
 
     /**
      * @var string
      */
-    public $fieldname;
+    protected $fieldname;
 
     /**
      * @var Concrete
      */
-    public $object;
+    protected $object;
 
     /**
      * @var array
@@ -77,7 +77,7 @@ class Objectbrick extends Model\AbstractModel
             return $values;
         } else {
             if (empty($this->items)) {
-                foreach (get_object_vars($this) as $var) {
+                foreach ($this->getObjectVars() as $var) {
                     if ($var instanceof Objectbrick\Data\AbstractData) {
                         $this->items[] = $var;
                     }

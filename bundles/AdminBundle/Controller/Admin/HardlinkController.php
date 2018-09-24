@@ -51,7 +51,7 @@ class HardlinkController extends DocumentControllerBase
         $link = clone $link;
 
         $link->idPath = Element\Service::getIdPath($link);
-        $link->userPermissions = $link->getUserPermissions();
+        $link->setUserPermissions($link->getUserPermissions());
         $link->setLocked($link->isLocked());
         $link->setParent(null);
 
@@ -65,7 +65,7 @@ class HardlinkController extends DocumentControllerBase
 
         //Hook for modifying return value - e.g. for changing permissions based on object data
         //data need to wrapped into a container in order to pass parameter to event listeners by reference so that they can change the values
-        $data = object2array($link);
+        $data = $link->getObjectVars();
         $event = new GenericEvent($this, [
             'data' => $data,
             'document' => $link
