@@ -108,8 +108,12 @@ class LinkController extends DocumentControllerBase
                     $link->setPublished(true);
                 }
 
+                $task = $request->get('task');
                 // only save when publish or unpublish
-                if (($request->get('task') == 'publish' && $link->isAllowed('publish')) || ($request->get('task') == 'unpublish' && $link->isAllowed('unpublish'))) {
+                if (($task == 'publish' && $link->isAllowed('publish'))
+                    || ($task == 'unpublish' && $link->isAllowed('unpublish'))
+                    || $task == 'scheduler' && $link->isAllowed('settings')
+                ) {
                     $link->save();
 
                     return $this->adminJson(['success' => true]);
