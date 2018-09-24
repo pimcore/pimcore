@@ -1,10 +1,14 @@
 # Marking Stores
 
-The Pimcore workflow engine provides several different ways how to store the acutal places of a subject. These are represented of the following marking store types.
+The Pimcore workflow engine provides several different ways how to store the acutal places of a subject. These are 
+represented of the following marking store types.
 
 ## state_table (default)
 
-This is the default marking store. The place information is stored in the element_workfow_state table. This would be the best option for Assets and Documents. For data objects the following 3 options might be the better choice as the data would be stored directly in the data object model as attributes.
+This is the default marking store. The place information is stored in the element_workfow_state table. This would be 
+the best option for Assets and Documents. For data objects the following 3 options might be the better choice as the 
+data would be stored directly in the data object model as attributes.
+
 ##### configuration example
 ```yaml
    marking_store:
@@ -13,7 +17,10 @@ This is the default marking store. The place information is stored in the elemen
 
 ## single_state
 
-Stores the place in a attribute of the subject (calls the setter method). Can be used if a model cannot be in more then one state at the same time. This is the default single_state marking store provided by the Symfony framework. For data objects a select field (or maybe input field) would be the right Pimcore field to store the places when the single_state marking store is used.
+Stores the place in a attribute of the subject (calls the setter method). Can be used if a model cannot be in more then 
+one state at the same time. This is the default single_state marking store provided by the Symfony framework. For data 
+objects a select field (or maybe input field) would be the right Pimcore field to store the places when the single_state 
+marking store is used.
 
 
 ##### configuration example
@@ -26,7 +33,8 @@ Stores the place in a attribute of the subject (calls the setter method). Can be
 
 ## multiple_state
 
-Same as single_state but can be used if the subject can be in more then one state at the same time. Therefore a multiselect field would be the best option if used for data objects.
+Same as single_state but can be used if the subject can be in more then one state at the same time. Therefore a 
+multiselect field would be the best option if used for data objects.
 
 ##### configuration example
 ```yaml
@@ -38,11 +46,13 @@ Same as single_state but can be used if the subject can be in more then one stat
 
 ## data_object_splitted_state (data objects only)
 
-Works similar to single_state and multiple_state but is able to store different places in different Pimcore data object attributes. Therfore it's needed to configure a mapping between places and data object attribute names.
+Works similar to single_state and multiple_state but is able to store different places in different Pimcore data object 
+attributes. Therefore it's needed to configure a mapping between places and data object attribute names.
 
 ##### configuration example
 
-In the following example places which are related to the text of the data object are stored in the `workflowStateText` attribute whereas image related places are stored in `workflowStateImages`:
+In the following example places which are related to the text of the data object are stored in the `workflowStateText` 
+attribute whereas image related places are stored in `workflowStateImages`:
 
 ```yaml
    marking_store:
@@ -60,7 +70,9 @@ In the following example places which are related to the text of the data object
 
 ## Options provider (for single_state, multiple_state and data_object_splitted_state)
 
-If data object attributes (select or multiselect) are used to store the places a special options provider can be used to automatically provide the correct select options. Just setup `@pimcore.workflow.place-options-provider` as options provider and the workflow name as options provider data in the used data object attribute.
+If data object attributes (select or multiselect) are used to store the places a special options provider can be used 
+to automatically provide the correct select options. Just setup `@pimcore.workflow.place-options-provider` as options 
+provider and the workflow name as options provider data in the used data object attribute.
 
 ![Options Provider](../img/workflow_options_provider.jpg)
 
