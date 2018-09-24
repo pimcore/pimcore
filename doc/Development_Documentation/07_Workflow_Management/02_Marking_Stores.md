@@ -6,7 +6,7 @@ represented of the following marking store types.
 ## state_table (default)
 
 This is the default marking store. The place information is stored in the element_workfow_state table. This would be 
-the best option for Assets and Documents. For data objects the following 3 options might be the better choice as the 
+the best option for Assets and Documents. For data objects the other marking store options might be the better choice as the
 data would be stored directly in the data object model as attributes.
 
 ##### configuration example
@@ -33,8 +33,7 @@ marking store is used.
 
 ## multiple_state
 
-Same as single_state but can be used if the subject can be in more then one state at the same time. Therefore a 
-multiselect field would be the best option if used for data objects.
+Same as single_state but can be used if the subject can be in more then one state at the same time. Note: this cannot be used in combination with data object multiselect fields - use data_object_multiple_state instead.
 
 ##### configuration example
 ```yaml
@@ -43,6 +42,19 @@ multiselect field would be the best option if used for data objects.
       arguments:
          - workflowState
 ```
+
+## data_object_multiple_state
+
+Can be used to store mutliple places in a data object multiselect field.
+
+##### configuration example
+```yaml
+   marking_store:
+      type: data_object_multiple_state
+      arguments:
+         - workflowState
+```
+
 
 ## data_object_splitted_state (data objects only)
 
