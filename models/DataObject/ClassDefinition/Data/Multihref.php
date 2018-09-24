@@ -719,14 +719,11 @@ class Multihref extends Model\DataObject\ClassDefinition\Data\Relations\Abstract
                 //$data = $this->getDataFromResource($object->getRelationData($this->getName(), true, null));
                 $data = $this->load($object, ['force' => true]);
 
-                $setter = 'set' . ucfirst($this->getName());
-                if (method_exists($object, $setter)) {
-                    $object->setObjectVar($this->getName(), $data);
-                    $this->markLazyloadedFieldAsLoaded($object);
+                $object->setObjectVar($this->getName(), $data);
+                $this->markLazyloadedFieldAsLoaded($object);
 
-                    if ($object instanceof DataObject\DirtyIndicatorInterface) {
-                        $object->resetDirtyMap($this->getName());
-                    }
+                if ($object instanceof DataObject\DirtyIndicatorInterface) {
+                    $object->resetDirtyMap($this->getName());
                 }
             }
         } elseif ($object instanceof DataObject\Localizedfield) {

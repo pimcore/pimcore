@@ -56,6 +56,9 @@ trait ObjectVarTrait
      */
     public function setObjectVar($var, $value)
     {
+        if (!property_exists($this, $var)) {
+            throw new \Exception("property " . $var . " does not exist");
+        }
         $this->$var = $value;
         return $this;
     }
