@@ -113,15 +113,16 @@ class Console
                 }
 
                 $checkCmd = 'which ' . escapeshellarg($executablePath);
-                if(self::getSystemEnvironment() == 'windows') {
+                if (self::getSystemEnvironment() == 'windows') {
                     $checkCmd = 'where ' . escapeshellarg($path) . ':' . $name;
                 }
 
                 $fullQualifiedPath = shell_exec($checkCmd . ' ' . $executablePath);
                 $fullQualifiedPath = trim(strtok($fullQualifiedPath, "\n")); // get the first line/result
                 if ($fullQualifiedPath) {
-                    if(!$customCheckMethod || self::$customCheckMethod($executablePath)) {
+                    if (!$customCheckMethod || self::$customCheckMethod($executablePath)) {
                         self::$executableCache[$name] = $fullQualifiedPath;
+
                         return $fullQualifiedPath;
                     }
                 }
