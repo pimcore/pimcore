@@ -92,13 +92,13 @@ pimcore.settings.translations = Class.create({
         ];
 
         for (var i = 0; i < languages.length; i++) {
-            readerFields.push({name: languages[i]});
+            readerFields.push({name: "_" + languages[i]});
 
             var columnConfig = {
                 cls: "x-column-header_" + languages[i].toLowerCase(),
                 text: pimcore.available_languages[languages[i]],
                 sortable: true,
-                dataIndex: languages[i],
+                dataIndex: "_" + languages[i],
                 filter: 'string',
                 getEditor: this.getCellEditor.bind(this, languages[i]),
                 id: "translation_column_" + this.translationType + "_" + languages[i].toLowerCase()
