@@ -761,10 +761,18 @@ pimcore.object.classes.klass = Class.create({
                             iconCls: "pimcore_icon_refresh",
                             xtype: "button",
                             tooltip: t("refresh"),
-
+                            style: "margin-right: 5px;",
                             handler: function(iconField) {
                                 iconField.inputEl.applyStyles("background:url(" + iconField.getValue() + ") right center no-repeat;");
                             }.bind(this, iconField)
+                        },
+                        {
+                            xtype: "button",
+                            iconCls: "pimcore_icon_icons",
+                            text: t('icon_library'),
+                            handler: function () {
+                                pimcore.helpers.openGenericIframeWindow("icon-library", "/admin/misc/icon-list", "pimcore_icon_icons", t("icon_library"));
+                            }
                         }
                     ]
                 },

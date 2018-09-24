@@ -16,6 +16,7 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Controller\Config\ControllerDataProvider;
+use Pimcore\Controller\Configuration\TemplatePhp;
 use Pimcore\Db;
 use Pimcore\File;
 use Pimcore\Tool;
@@ -725,6 +726,19 @@ class MiscController extends AdminController
         $response->headers->set('Content-Type', 'image/svg+xml');
 
         return $response;
+    }
+
+    /**
+     * @Route("/icon-list", methods={"GET"})
+     * @TemplatePhp()
+     *
+     * @param Request $request
+     *
+     * @return Response
+     */
+    public function iconListAction(Request $request)
+    {
+
     }
 
     /**
