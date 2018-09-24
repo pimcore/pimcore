@@ -46,7 +46,7 @@ class DocumentController extends AbstractElementController
 {
     /**
      * @Route("/document/id/{id}", requirements={"id": "\d+"}, methods={"GET"})
-     * @Route("/document")
+     * @Route("/document", methods={"GET"})
      *
      * @api              {get} /document Get document
      * @apiName          getDocument

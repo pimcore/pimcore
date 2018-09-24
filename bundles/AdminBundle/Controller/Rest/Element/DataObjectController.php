@@ -50,7 +50,7 @@ class DataObjectController extends AbstractElementController
 {
     /**
      * @Route("/object/id/{id}", requirements={"id": "\d+"}, methods={"GET"})
-     * @Route("/object")
+     * @Route("/object", methods={"GET"})
      *
      * @api {get} /object Get object data
      * @apiName Get object by id
