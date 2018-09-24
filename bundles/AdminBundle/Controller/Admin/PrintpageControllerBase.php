@@ -21,19 +21,17 @@ use Pimcore\Model\Document;
 use Pimcore\Model\Element\Service;
 use Pimcore\Tool\Session;
 use Pimcore\Web2Print\Processor;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
+use Symfony\Component\Routing\Annotation\Route;
 
 class PrintpageControllerBase extends DocumentControllerBase
 {
     /**
-     * @Route("/get-data-by-id")
-     * @Method({"GET"})
+     * @Route("/get-data-by-id", methods={"GET"})
      *
      * @param Request $request
      *
@@ -90,8 +88,7 @@ class PrintpageControllerBase extends DocumentControllerBase
     }
 
     /**
-     * @Route("/save")
-     * @Method({"PUT", "POST"})
+     * @Route("/save", methods={"PUT", "POST"})
      *
      * @param Request $request
      *
@@ -171,8 +168,7 @@ class PrintpageControllerBase extends DocumentControllerBase
     }
 
     /**
-     * @Route("/active-generate-process")
-     * @Method({"POST"})
+     * @Route("/active-generate-process", methods={"POST"})
      *
      * @param Request $request
      *
@@ -212,8 +208,7 @@ class PrintpageControllerBase extends DocumentControllerBase
     }
 
     /**
-     * @Route("/pdf-download")
-     * @Method({"GET"})
+     * @Route("/pdf-download", methods={"GET"})
      *
      * @param Request $request
      *
@@ -242,8 +237,7 @@ class PrintpageControllerBase extends DocumentControllerBase
     }
 
     /**
-     * @Route("/start-pdf-generation")
-     * @Method({"POST"})
+     * @Route("/start-pdf-generation", methods={"POST"})
      *
      * @param Request $request
      *
@@ -280,8 +274,7 @@ class PrintpageControllerBase extends DocumentControllerBase
     }
 
     /**
-     * @Route("/check-pdf-dirty")
-     * @Method({"GET"})
+     * @Route("/check-pdf-dirty", methods={"GET"})
      *
      * @param Request $request
      *
@@ -300,8 +293,7 @@ class PrintpageControllerBase extends DocumentControllerBase
     }
 
     /**
-     * @Route("/get-processing-options")
-     * @Method({"GET"})
+     * @Route("/get-processing-options", methods={"GET"})
      *
      * @param Request $request
      *
@@ -358,8 +350,7 @@ class PrintpageControllerBase extends DocumentControllerBase
     }
 
     /**
-     * @Route("/cancel-generation")
-     * @Method({"DELETE"})
+     * @Route("/cancel-generation", methods={"DELETE"})
      *
      * @param Request $request
      *

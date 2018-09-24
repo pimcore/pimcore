@@ -15,10 +15,9 @@
 namespace Pimcore\Bundle\AdminBundle\Controller\GDPR;
 
 use Pimcore\Bundle\AdminBundle\GDPR\DataProvider\Assets;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
+use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * Class AssetController
@@ -44,8 +43,7 @@ class AssetController extends \Pimcore\Bundle\AdminBundle\Controller\AdminContro
 
     /**
      * @param Request $request
-     * @Route("/search-assets")
-     * @Method({"GET"})
+     * @Route("/search-assets", methods={"GET"})
      */
     public function searchAssetAction(Request $request, Assets $service)
     {
@@ -66,8 +64,7 @@ class AssetController extends \Pimcore\Bundle\AdminBundle\Controller\AdminContro
 
     /**
      * @param Request $request
-     * @Route("/export")
-     * @Method({"GET"})
+     * @Route("/export", methods={"GET"})
      */
     public function exportAssetsAction(Request $request, Assets $service)
     {

@@ -20,12 +20,11 @@ use Pimcore\Mail;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
 use Pimcore\Model\Tool;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * @Route("/email")
@@ -33,8 +32,7 @@ use Symfony\Component\HttpFoundation\Response;
 class EmailController extends DocumentControllerBase
 {
     /**
-     * @Route("/get-data-by-id")
-     * @Method({"GET"})
+     * @Route("/get-data-by-id", methods={"GET"})
      *
      * @param Request $request
      *
@@ -87,8 +85,7 @@ class EmailController extends DocumentControllerBase
     }
 
     /**
-     * @Route("/save")
-     * @Method({"PUT", "POST"})
+     * @Route("/save", methods={"PUT", "POST"})
      *
      * @param Request $request
      *
@@ -170,8 +167,7 @@ class EmailController extends DocumentControllerBase
     }
 
     /**
-     * @Route("/email-logs")
-     * @Method({"GET", "POST"})
+     * @Route("/email-logs", methods={"GET", "POST"})
      *
      * @param Request $request
      *
@@ -236,8 +232,7 @@ class EmailController extends DocumentControllerBase
     }
 
     /**
-     * @Route("/show-email-log")
-     * @Method({"GET"})
+     * @Route("/show-email-log", methods={"GET"})
      *
      * @param Request $request
      *
@@ -356,8 +351,7 @@ class EmailController extends DocumentControllerBase
     }
 
     /**
-     * @Route("/delete-email-log")
-     * @Method({"DELETE"})
+     * @Route("/delete-email-log", methods={"DELETE"})
      *
      * @param Request $request
      *
@@ -384,8 +378,7 @@ class EmailController extends DocumentControllerBase
     }
 
     /**
-     * @Route("/resend-email")
-     * @Method({"POST"})
+     * @Route("/resend-email", methods={"POST"})
      *
      * @param Request $request
      *
@@ -476,8 +469,7 @@ class EmailController extends DocumentControllerBase
     }
 
     /**
-     * @Route("/send-test-email")
-     * @Method({"POST"})
+     * @Route("/send-test-email", methods={"POST"})
      *
      * @param Request $request
      *
@@ -510,8 +502,7 @@ class EmailController extends DocumentControllerBase
     }
 
     /**
-     * @Route("/blacklist")
-     * @Method({"POST"})
+     * @Route("/blacklist", methods={"POST"})
      *
      * @param Request $request
      *

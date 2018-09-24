@@ -20,11 +20,10 @@ use Pimcore\Controller\FrontendController;
 use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Model\DataObject\Localizedfield;
 use Pimcore\Model\DataObject\OnlineShopVoucherSeries;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
+use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * Class VoucherController
@@ -57,8 +56,7 @@ class VoucherController extends FrontendController
     /**
      * Loads and shows voucherservice backend tab
      *
-     * @Route("/voucher-code-tab", name="pimcore_ecommerce_backend_voucher_voucher-code-tab")
-     * @Method({"GET"})
+     * @Route("/voucher-code-tab", name="pimcore_ecommerce_backend_voucher_voucher-code-tab", methods={"GET"})
      */
     public function voucherCodeTabAction(Request $request)
     {
@@ -89,8 +87,7 @@ class VoucherController extends FrontendController
     /**
      * Export tokens to file. The action should implement all export formats defined in IExportableTokenManager.
      *
-     * @Route("/export-tokens", name="pimcore_ecommerce_backend_voucher_export-tokens")
-     * @Method({"GET"})
+     * @Route("/export-tokens", name="pimcore_ecommerce_backend_voucher_export-tokens", methods={"GET"})
      */
     public function exportTokensAction(Request $request)
     {
@@ -142,8 +139,7 @@ class VoucherController extends FrontendController
     /**
      * Generates new Tokens or Applies single token settings.
      *
-     * @Route("/generate", name="pimcore_ecommerce_backend_voucher_generate")
-     * @Method({"GET"})
+     * @Route("/generate", name="pimcore_ecommerce_backend_voucher_generate", methods={"GET"})
      */
     public function generateAction(Request $request)
     {
@@ -174,8 +170,7 @@ class VoucherController extends FrontendController
     /**
      * Removes tokens due to given filter parameters.
      *
-     * @Route("/cleanup", name="pimcore_ecommerce_backend_voucher_cleanup")
-     * @Method({"POST"})
+     * @Route("/cleanup", name="pimcore_ecommerce_backend_voucher_cleanup", methods={"POST"})
      */
     public function cleanupAction(Request $request)
     {
@@ -210,8 +205,7 @@ class VoucherController extends FrontendController
     /**
      * Removes token reservations due to given duration.
      *
-     * @Route("/cleanup-reservations", name="pimcore_ecommerce_backend_voucher_cleanup-reservations")
-     * @Method({"POST"})
+     * @Route("/cleanup-reservations", name="pimcore_ecommerce_backend_voucher_cleanup-reservations", methods={"POST"})
      *
      * @throws \Pimcore\Bundle\EcommerceFrameworkBundle\Exception\InvalidConfigException
      */

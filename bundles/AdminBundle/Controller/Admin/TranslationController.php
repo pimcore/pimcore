@@ -27,14 +27,13 @@ use Pimcore\Translation\ExportService\ExportServiceInterface;
 use Pimcore\Translation\ImportDataExtractor\ImportDataExtractorInterface;
 use Pimcore\Translation\ImporterService\ImporterServiceInterface;
 use Pimcore\Translation\TranslationItemCollection\TranslationItemCollection;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * @Route("/translation")
@@ -42,8 +41,7 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 class TranslationController extends AdminController
 {
     /**
-     * @Route("/import")
-     * @Method({"POST"})
+     * @Route("/import", methods={"POST"})
      *
      * @param Request $request
      *
@@ -98,8 +96,7 @@ class TranslationController extends AdminController
     }
 
     /**
-     * @Route("/export")
-     * @Method({"GET"})
+     * @Route("/export", methods={"GET"})
      *
      * @param Request $request
      *
@@ -234,8 +231,7 @@ class TranslationController extends AdminController
     }
 
     /**
-     * @Route("/add-admin-translation-keys")
-     * @Method({"POST"})
+     * @Route("/add-admin-translation-keys", methods={"POST"})
      *
      * @param Request $request
      *
@@ -279,8 +275,7 @@ class TranslationController extends AdminController
     }
 
     /**
-     * @Route("/translations")
-     * @Method({"POST"})
+     * @Route("/translations", methods={"POST"})
      *
      * @param Request $request
      *
@@ -590,8 +585,7 @@ class TranslationController extends AdminController
     }
 
     /**
-     * @Route("/cleanup")
-     * @Method({"DELETE"})
+     * @Route("/cleanup", methods={"DELETE"})
      *
      * @param Request $request
      *
@@ -620,8 +614,7 @@ class TranslationController extends AdminController
      */
 
     /**
-     * @Route("/content-export-jobs")
-     * @Method({"POST"})
+     * @Route("/content-export-jobs", methods={"POST"})
      *
      * @param Request $request
      *
@@ -713,8 +706,7 @@ class TranslationController extends AdminController
     }
 
     /**
-     * @Route("/xliff-export")
-     * @Method({"POST"})
+     * @Route("/xliff-export", methods={"POST"})
      *
      * @param Request $request
      * @param ExportServiceInterface $exportService
@@ -745,8 +737,7 @@ class TranslationController extends AdminController
     }
 
     /**
-     * @Route("/xliff-export-download")
-     * @Method({"GET"})
+     * @Route("/xliff-export-download", methods={"GET"})
      *
      * @param Request $request
      * @param ExporterInterface $translationExporter
@@ -767,8 +758,7 @@ class TranslationController extends AdminController
     }
 
     /**
-     * @Route("/xliff-import-upload")
-     * @Method({"POST"})
+     * @Route("/xliff-import-upload", methods={"POST"})
      *
      * @param Request $request
      * @param ImportDataExtractorInterface $importDataExtractor
@@ -810,8 +800,7 @@ class TranslationController extends AdminController
     }
 
     /**
-     * @Route("/xliff-import-element")
-     * @Method({"POST"})
+     * @Route("/xliff-import-element", methods={"POST"})
      *
      * @param Request $request
      * @param ImportDataExtractorInterface $importDataExtractor
@@ -843,8 +832,7 @@ class TranslationController extends AdminController
     }
 
     /**
-     * @Route("/word-export")
-     * @Method({"POST"})
+     * @Route("/word-export", methods={"POST"})
      *
      * @param Request $request
      *
@@ -1069,8 +1057,7 @@ class TranslationController extends AdminController
     }
 
     /**
-     * @Route("/word-export-download")
-     * @Method({"GET"})
+     * @Route("/word-export-download", methods={"GET"})
      *
      * @param Request $request
      *
@@ -1133,8 +1120,7 @@ class TranslationController extends AdminController
     }
 
     /**
-     * @Route("/merge-item")
-     * @Method({"PUT"})
+     * @Route("/merge-item", methods={"PUT"})
      *
      * @param Request $request
      *
@@ -1163,8 +1149,7 @@ class TranslationController extends AdminController
     }
 
     /**
-     * @Route("/get-website-translation-languages")
-     * @Method({"GET"})
+     * @Route("/get-website-translation-languages", methods={"GET"})
      *
      * @param Request $request
      *

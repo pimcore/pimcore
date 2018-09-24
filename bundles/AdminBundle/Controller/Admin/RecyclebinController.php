@@ -18,18 +18,16 @@ use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Controller\EventedControllerInterface;
 use Pimcore\Model\Element;
 use Pimcore\Model\Element\Recyclebin;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
+use Symfony\Component\Routing\Annotation\Route;
 
 class RecyclebinController extends AdminController implements EventedControllerInterface
 {
     /**
-     * @Route("/recyclebin/list")
-     * @Method({"POST"})
+     * @Route("/recyclebin/list", methods={"POST"})
      *
      * @param Request $request
      *
@@ -132,8 +130,7 @@ class RecyclebinController extends AdminController implements EventedControllerI
     }
 
     /**
-     * @Route("/recyclebin/restore")
-     * @Method({"POST"})
+     * @Route("/recyclebin/restore", methods={"POST"})
      *
      * @param Request $request
      *
@@ -148,8 +145,7 @@ class RecyclebinController extends AdminController implements EventedControllerI
     }
 
     /**
-     * @Route("/recyclebin/flush")
-     * @Method({"DELETE"})
+     * @Route("/recyclebin/flush", methods={"DELETE"})
      *
      * @param Request $request
      *
@@ -164,8 +160,7 @@ class RecyclebinController extends AdminController implements EventedControllerI
     }
 
     /**
-     * @Route("/recyclebin/add")
-     * @Method({"POST"})
+     * @Route("/recyclebin/add", methods={"POST"})
      *
      * @param Request $request
      *

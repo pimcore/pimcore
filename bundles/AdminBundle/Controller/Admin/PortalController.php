@@ -21,12 +21,11 @@ use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\Document;
 use Pimcore\Model\Site;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
+use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Translation\TranslatorInterface;
 
 /**
@@ -59,8 +58,7 @@ class PortalController extends AdminController implements EventedControllerInter
     }
 
     /**
-     * @Route("/dashboard-list")
-     * @Method({"GET"})
+     * @Route("/dashboard-list", methods={"GET"})
      *
      * @param Request $request
      *
@@ -81,8 +79,7 @@ class PortalController extends AdminController implements EventedControllerInter
     }
 
     /**
-     * @Route("/create-dashboard")
-     * @Method({"POST"})
+     * @Route("/create-dashboard", methods={"POST"})
      *
      * @param Request $request
      *
@@ -105,8 +102,7 @@ class PortalController extends AdminController implements EventedControllerInter
     }
 
     /**
-     * @Route("/delete-dashboard")
-     * @Method({"DELETE"})
+     * @Route("/delete-dashboard", methods={"DELETE"})
      *
      * @param Request $request
      *
@@ -121,8 +117,7 @@ class PortalController extends AdminController implements EventedControllerInter
     }
 
     /**
-     * @Route("/get-configuration")
-     * @Method({"GET"})
+     * @Route("/get-configuration", methods={"GET"})
      *
      * @param Request $request
      *
@@ -134,8 +129,7 @@ class PortalController extends AdminController implements EventedControllerInter
     }
 
     /**
-     * @Route("/remove-widget")
-     * @Method({"DELETE"})
+     * @Route("/remove-widget", methods={"DELETE"})
      *
      * @param Request $request
      *
@@ -163,8 +157,7 @@ class PortalController extends AdminController implements EventedControllerInter
     }
 
     /**
-     * @Route("/add-widget")
-     * @Method({"POST"})
+     * @Route("/add-widget", methods={"POST"})
      *
      * @param Request $request
      *
@@ -190,8 +183,7 @@ class PortalController extends AdminController implements EventedControllerInter
     }
 
     /**
-     * @Route("/reorder-widget")
-     * @Method({"PUT"})
+     * @Route("/reorder-widget", methods={"PUT"})
      *
      * @param Request $request
      *
@@ -223,8 +215,7 @@ class PortalController extends AdminController implements EventedControllerInter
     }
 
     /**
-     * @Route("/update-portlet-config")
-     * @Method({"PUT"})
+     * @Route("/update-portlet-config", methods={"PUT"})
      *
      * @param Request $request
      *
@@ -251,8 +242,7 @@ class PortalController extends AdminController implements EventedControllerInter
     }
 
     /**
-     * @Route("/portlet-modified-documents")
-     * @Method({"GET"})
+     * @Route("/portlet-modified-documents", methods={"GET"})
      *
      * @param Request $request
      *
@@ -288,8 +278,7 @@ class PortalController extends AdminController implements EventedControllerInter
     }
 
     /**
-     * @Route("/portlet-modified-assets")
-     * @Method({"GET"})
+     * @Route("/portlet-modified-assets", methods={"GET"})
      *
      * @param Request $request
      *
@@ -325,8 +314,7 @@ class PortalController extends AdminController implements EventedControllerInter
     }
 
     /**
-     * @Route("/portlet-modified-objects")
-     * @Method({"GET"})
+     * @Route("/portlet-modified-objects", methods={"GET"})
      *
      * @param Request $request
      *
@@ -362,8 +350,7 @@ class PortalController extends AdminController implements EventedControllerInter
     }
 
     /**
-     * @Route("/portlet-modification-statistics")
-     * @Method({"GET"})
+     * @Route("/portlet-modification-statistics", methods={"GET"})
      *
      * @param Request $request
      *
@@ -405,8 +392,7 @@ class PortalController extends AdminController implements EventedControllerInter
     }
 
     /**
-     * @Route("/portlet-analytics-sites")
-     * @Method({"GET"})
+     * @Route("/portlet-analytics-sites", methods={"GET"})
      *
      * @param TranslatorInterface $translator
      * @param SiteConfigProvider $siteConfigProvider

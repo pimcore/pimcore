@@ -16,10 +16,9 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Reports;
 
 use Pimcore\Config;
 use Pimcore\Config\ReportConfigWriter;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * @Route("/settings")
@@ -27,8 +26,7 @@ use Symfony\Component\HttpFoundation\Request;
 class SettingsController extends ReportsControllerBase
 {
     /**
-     * @Route("/get")
-     * @Method({"GET"})
+     * @Route("/get", methods={"GET"})
      *
      * @param Request $request
      *
@@ -54,8 +52,7 @@ class SettingsController extends ReportsControllerBase
     }
 
     /**
-     * @Route("/save")
-     * @Method({"PUT"})
+     * @Route("/save", methods={"PUT"})
      *
      * @param Request $request
      * @param ReportConfigWriter $configWriter

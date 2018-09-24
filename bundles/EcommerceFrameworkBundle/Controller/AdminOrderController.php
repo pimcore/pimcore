@@ -33,11 +33,10 @@ use Pimcore\Model\DataObject\Localizedfield;
 use Pimcore\Model\DataObject\OnlineShopOrder;
 use Pimcore\Model\DataObject\OnlineShopOrderItem;
 use Pimcore\Model\User;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
+use Symfony\Component\Routing\Annotation\Route;
 use Zend\Paginator\Paginator;
 
 /**
@@ -83,8 +82,7 @@ class AdminOrderController extends AdminController implements EventedControllerI
     }
 
     /**
-     * @Route("/list", name="pimcore_ecommerce_backend_admin-order_list")
-     * @Method({"GET"})
+     * @Route("/list", name="pimcore_ecommerce_backend_admin-order_list", methods={"GET"})
      * @TemplatePhp()
      */
     public function listAction(Request $request)
@@ -164,8 +162,7 @@ class AdminOrderController extends AdminController implements EventedControllerI
     }
 
     /**
-     * @Route("/detail", name="pimcore_ecommerce_backend_admin-order_detail")
-     * @Method({"GET"})
+     * @Route("/detail", name="pimcore_ecommerce_backend_admin-order_detail", methods={"GET"})
      * @TemplatePhp()
      */
     public function detailAction(Request $request)
@@ -302,8 +299,7 @@ class AdminOrderController extends AdminController implements EventedControllerI
     }
 
     /**
-     * @Route("/item-cancel", name="pimcore_ecommerce_backend_admin-order_item-cancel")
-     * @Method({"GET", "POST"})
+     * @Route("/item-cancel", name="pimcore_ecommerce_backend_admin-order_item-cancel", methods={"GET", "POST"})
      * @TemplatePhp()
      */
     public function itemCancelAction(Request $request)
@@ -335,8 +331,7 @@ class AdminOrderController extends AdminController implements EventedControllerI
     }
 
     /**
-     * @Route("/item-edit", name="pimcore_ecommerce_backend_admin-order_item-edit")
-     * @Method({"GET", "POST"})
+     * @Route("/item-edit", name="pimcore_ecommerce_backend_admin-order_item-edit", methods={"GET", "POST"})
      * @TemplatePhp()
      */
     public function itemEditAction(Request $request)
@@ -367,8 +362,7 @@ class AdminOrderController extends AdminController implements EventedControllerI
     }
 
     /**
-     * @Route("/item-complaint", name="pimcore_ecommerce_backend_admin-order_item-complaint")
-     * @Method({"GET", "POST"})
+     * @Route("/item-complaint", name="pimcore_ecommerce_backend_admin-order_item-complaint", methods={"GET", "POST"})
      * @TemplatePhp()
      */
     public function itemComplaintAction(Request $request)

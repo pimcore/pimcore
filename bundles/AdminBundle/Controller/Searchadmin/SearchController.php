@@ -21,12 +21,11 @@ use Pimcore\Model\DataObject;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
 use Pimcore\Model\Search\Backend\Data;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * @Route("/search")
@@ -34,8 +33,7 @@ use Symfony\Component\HttpFoundation\Request;
 class SearchController extends AdminController
 {
     /**
-     * @Route("/find")
-     * @Method({"GET", "POST"})
+     * @Route("/find", methods={"GET", "POST"})
      *
      * @param Request $request
      *
@@ -401,8 +399,7 @@ class SearchController extends AdminController
     }
 
     /**
-     * @Route("/quicksearch")
-     * @Method({"GET"})
+     * @Route("/quicksearch", methods={"GET"})
      *
      * @param Request $request
      *

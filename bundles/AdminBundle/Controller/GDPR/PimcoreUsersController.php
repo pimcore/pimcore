@@ -16,10 +16,9 @@ namespace Pimcore\Bundle\AdminBundle\Controller\GDPR;
 
 use Pimcore\Bundle\AdminBundle\GDPR\DataProvider\PimcoreUsers;
 use Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
+use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * Class PimcoreUsersController
@@ -46,8 +45,7 @@ class PimcoreUsersController extends \Pimcore\Bundle\AdminBundle\Controller\Admi
     /**
      * @param Request $request
      * @param PimcoreUsers $pimcoreUsers
-     * @Route("/search-users")
-     * @Method({"GET"})
+     * @Route("/search-users", methods={"GET"})
      */
     public function searchUsersAction(Request $request, PimcoreUsers $pimcoreUsers)
     {
@@ -69,8 +67,7 @@ class PimcoreUsersController extends \Pimcore\Bundle\AdminBundle\Controller\Admi
     /**
      * @param Request $request
      * @param PimcoreUsers $pimcoreUsers
-     * @Route("/export-user-data")
-     * @Method({"GET"})
+     * @Route("/export-user-data", methods={"GET"})
      *
      * @return \Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse
      */

@@ -20,18 +20,16 @@ use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Annotation\Route;
 
 class TagController extends AbstractElementController
 {
     const TAG_DOES_NOT_EXIST = -1;
 
     /**
-     * @Method("GET")
-     * @Route("/tag-list")
+     * @Route("/tag-list", methods={"GET"})
      *
      * Returns a list of all tags.
      *  GET http://[YOUR-DOMAIN]/webservice/rest/tag-list?apikey=[API-KEY]
@@ -63,8 +61,7 @@ class TagController extends AbstractElementController
     }
 
     /**
-     * @Method("GET")
-     * @Route("/tags-element-list")
+     * @Route("/tags-element-list", methods={"GET"})
      *
      * Returns a list of all tags for an element.
      *  GET http://[YOUR-DOMAIN]/webservice/rest/tags-element-list?apikey=[API-KEY]&id=1281&type=object
@@ -126,8 +123,7 @@ class TagController extends AbstractElementController
     }
 
     /**
-     * @Method("GET")
-     * @Route("/elements-tag-list")
+     * @Route("/elements-tag-list", methods={"GET"})
      *
      * Returns a list of elements id/type pairs for a tag.
      *  GET http://[YOUR-DOMAIN]/webservice/rest/elements-tag-list?apikey=[API-KEY]&id=12&type=object

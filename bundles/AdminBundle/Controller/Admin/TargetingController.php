@@ -19,12 +19,11 @@ use Pimcore\Cache\Core\CoreHandlerInterface;
 use Pimcore\Controller\EventedControllerInterface;
 use Pimcore\Model\Tool\Targeting;
 use Pimcore\Model\Tool\Targeting\TargetGroup;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
+use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * @Route("/targeting")
@@ -34,8 +33,7 @@ class TargetingController extends AdminController implements EventedControllerIn
     /* RULES */
 
     /**
-     * @Route("/rule/list")
-     * @Method({"GET"})
+     * @Route("/rule/list", methods={"GET"})
      *
      * @param Request $request
      *
@@ -64,8 +62,7 @@ class TargetingController extends AdminController implements EventedControllerIn
     }
 
     /**
-     * @Route("/rule/add")
-     * @Method({"POST"})
+     * @Route("/rule/add", methods={"POST"})
      *
      * @param Request $request
      *
@@ -81,8 +78,7 @@ class TargetingController extends AdminController implements EventedControllerIn
     }
 
     /**
-     * @Route("/rule/delete")
-     * @Method({"DELETE"})
+     * @Route("/rule/delete", methods={"DELETE"})
      *
      * @param Request $request
      *
@@ -102,8 +98,7 @@ class TargetingController extends AdminController implements EventedControllerIn
     }
 
     /**
-     * @Route("/rule/get")
-     * @Method({"GET"})
+     * @Route("/rule/get", methods={"GET"})
      *
      * @param Request $request
      *
@@ -117,8 +112,7 @@ class TargetingController extends AdminController implements EventedControllerIn
     }
 
     /**
-     * @Route("/rule/save")
-     * @Method({"PUT"})
+     * @Route("/rule/save", methods={"PUT"})
      *
      * @param Request $request
      *
@@ -139,8 +133,7 @@ class TargetingController extends AdminController implements EventedControllerIn
     }
 
     /**
-     * @Route("/rule/order")
-     * @Method("POST")
+     * @Route("/rule/order", methods={"POST"})
      *
      * @param Request $request
      *
@@ -187,8 +180,7 @@ class TargetingController extends AdminController implements EventedControllerIn
     /* TARGET GROUPS */
 
     /**
-     * @Route("/target-group/list")
-     * @Method({"GET"})
+     * @Route("/target-group/list", methods={"GET"})
      *
      * @param Request $request
      *
@@ -224,8 +216,7 @@ class TargetingController extends AdminController implements EventedControllerIn
     }
 
     /**
-     * @Route("/target-group/add")
-     * @Method({"POST"})
+     * @Route("/target-group/add", methods={"POST"})
      *
      * @param Request $request
      * @param CoreHandlerInterface $cache
@@ -245,8 +236,7 @@ class TargetingController extends AdminController implements EventedControllerIn
     }
 
     /**
-     * @Route("/target-group/delete")
-     * @Method({"DELETE"})
+     * @Route("/target-group/delete", methods={"DELETE"})
      *
      * @param Request $request
      * @param CoreHandlerInterface $cache
@@ -270,8 +260,7 @@ class TargetingController extends AdminController implements EventedControllerIn
     }
 
     /**
-     * @Route("/target-group/get")
-     * @Method({"GET"})
+     * @Route("/target-group/get", methods={"GET"})
      *
      * @param Request $request
      *
@@ -286,8 +275,7 @@ class TargetingController extends AdminController implements EventedControllerIn
     }
 
     /**
-     * @Route("/target-group/save")
-     * @Method({"PUT"})
+     * @Route("/target-group/save", methods={"PUT"})
      *
      * @param Request $request
      * @param CoreHandlerInterface $cache

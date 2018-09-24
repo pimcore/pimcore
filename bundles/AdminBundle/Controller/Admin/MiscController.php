@@ -19,13 +19,12 @@ use Pimcore\Controller\Config\ControllerDataProvider;
 use Pimcore\Db;
 use Pimcore\File;
 use Pimcore\Tool;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Bundle\BundleInterface;
+use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * @Route("/misc")
@@ -33,8 +32,7 @@ use Symfony\Component\HttpKernel\Bundle\BundleInterface;
 class MiscController extends AdminController
 {
     /**
-     * @Route("/get-available-modules")
-     * @Method({"GET"})
+     * @Route("/get-available-modules", methods={"GET"})
      *
      * @param ControllerDataProvider $provider
      *
@@ -59,8 +57,7 @@ class MiscController extends AdminController
     }
 
     /**
-     * @Route("/get-available-controllers")
-     * @Method({"GET"})
+     * @Route("/get-available-controllers", methods={"GET"})
      *
      * @param Request $request
      * @param ControllerDataProvider $provider
@@ -86,8 +83,7 @@ class MiscController extends AdminController
     }
 
     /**
-     * @Route("/get-available-actions")
-     * @Method({"GET"})
+     * @Route("/get-available-actions", methods={"GET"})
      *
      * @param Request $request
      * @param ControllerDataProvider $provider
@@ -118,8 +114,7 @@ class MiscController extends AdminController
     }
 
     /**
-     * @Route("/get-available-templates")
-     * @Method({"GET"})
+     * @Route("/get-available-templates", methods={"GET"})
      *
      * @param ControllerDataProvider $provider
      *
@@ -143,8 +138,7 @@ class MiscController extends AdminController
     }
 
     /**
-     * @Route("/json-translations-system")
-     * @Method({"GET"})
+     * @Route("/json-translations-system", methods={"GET"})
      *
      * @param Request $request
      *
@@ -175,8 +169,7 @@ class MiscController extends AdminController
     }
 
     /**
-     * @Route("/script-proxy")
-     * @Method({"GET"})
+     * @Route("/script-proxy", methods={"GET"})
      *
      * @param Request $request
      *
@@ -219,8 +212,7 @@ class MiscController extends AdminController
     }
 
     /**
-     * @Route("/admin-css")
-     * @Method({"GET"})
+     * @Route("/admin-css", methods={"GET"})
      *
      * @param Request $request
      *
@@ -238,8 +230,7 @@ class MiscController extends AdminController
     }
 
     /**
-     * @Route("/ping")
-     * @Method({"GET"})
+     * @Route("/ping", methods={"GET"})
      *
      * @param Request $request
      *
@@ -255,8 +246,7 @@ class MiscController extends AdminController
     }
 
     /**
-     * @Route("/available-languages")
-     * @Method({"GET"})
+     * @Route("/available-languages", methods={"GET"})
      *
      * @param Request $request
      *
@@ -272,8 +262,7 @@ class MiscController extends AdminController
     }
 
     /**
-     * @Route("/get-valid-filename")
-     * @Method({"GET"})
+     * @Route("/get-valid-filename", methods={"GET"})
      *
      * @param Request $request
      *
@@ -289,8 +278,7 @@ class MiscController extends AdminController
     /* FILEEXPLORER */
 
     /**
-     * @Route("/fileexplorer-tree")
-     * @Method({"GET"})
+     * @Route("/fileexplorer-tree", methods={"GET"})
      *
      * @param Request $request
      *
@@ -339,8 +327,7 @@ class MiscController extends AdminController
     }
 
     /**
-     * @Route("/fileexplorer-content")
-     * @Method({"GET"})
+     * @Route("/fileexplorer-content", methods={"GET"})
      *
      * @param Request $request
      *
@@ -371,8 +358,7 @@ class MiscController extends AdminController
     }
 
     /**
-     * @Route("/fileexplorer-content-save")
-     * @Method({"PUT"})
+     * @Route("/fileexplorer-content-save", methods={"PUT"})
      *
      * @param Request $request
      *
@@ -399,8 +385,7 @@ class MiscController extends AdminController
     }
 
     /**
-     * @Route("/fileexplorer-add")
-     * @Method({"POST"})
+     * @Route("/fileexplorer-add", methods={"POST"})
      *
      * @param Request $request
      *
@@ -436,8 +421,7 @@ class MiscController extends AdminController
     }
 
     /**
-     * @Route("/fileexplorer-add-folder")
-     * @Method({"POST"})
+     * @Route("/fileexplorer-add-folder", methods={"POST"})
      *
      * @param Request $request
      *
@@ -473,8 +457,7 @@ class MiscController extends AdminController
     }
 
     /**
-     * @Route("/fileexplorer-delete")
-     * @Method({"DELETE"})
+     * @Route("/fileexplorer-delete", methods={"DELETE"})
      *
      * @param Request $request
      *
@@ -498,8 +481,7 @@ class MiscController extends AdminController
     }
 
     /**
-     * @Route("/fileexplorer-rename")
-     * @Method({"PUT"})
+     * @Route("/fileexplorer-rename", methods={"PUT"})
      *
      * @param Request $request
      *
@@ -542,8 +524,7 @@ class MiscController extends AdminController
     }
 
     /**
-     * @Route("/maintenance")
-     * @Method({"POST"})
+     * @Route("/maintenance", methods={"POST"})
      *
      * @param Request $request
      *
@@ -567,8 +548,7 @@ class MiscController extends AdminController
     }
 
     /**
-     * @Route("/http-error-log")
-     * @Method({"POST"})
+     * @Route("/http-error-log", methods={"POST"})
      *
      * @param Request $request
      *
@@ -620,8 +600,7 @@ class MiscController extends AdminController
     }
 
     /**
-     * @Route("/http-error-log-flush")
-     * @Method({"DELETE"})
+     * @Route("/http-error-log-flush", methods={"DELETE"})
      *
      * @param Request $request
      *
@@ -640,8 +619,7 @@ class MiscController extends AdminController
     }
 
     /**
-     * @Route("/http-error-log-detail")
-     * @Method({"GET"})
+     * @Route("/http-error-log-detail", methods={"GET"})
      *
      * @param Request $request
      *
@@ -666,8 +644,7 @@ class MiscController extends AdminController
     }
 
     /**
-     * @Route("/country-list")
-     * @Method({"GET"})
+     * @Route("/country-list", methods={"GET"})
      *
      * @param Request $request
      *
@@ -692,8 +669,7 @@ class MiscController extends AdminController
     }
 
     /**
-     * @Route("/language-list")
-     * @Method({"GET"})
+     * @Route("/language-list", methods={"GET"})
      *
      * @param Request $request
      *
@@ -714,8 +690,7 @@ class MiscController extends AdminController
     }
 
     /**
-     * @Route("/phpinfo")
-     * @Method({"GET"})
+     * @Route("/phpinfo", methods={"GET"})
      *
      * @param Request $request
      *
@@ -737,8 +712,7 @@ class MiscController extends AdminController
     }
 
     /**
-     * @Route("/get-language-flag")
-     * @Method({"GET"})
+     * @Route("/get-language-flag", methods={"GET"})
      *
      * @param Request $request
      *

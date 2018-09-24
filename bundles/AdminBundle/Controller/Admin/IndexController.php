@@ -33,12 +33,11 @@ use Pimcore\Tool;
 use Pimcore\Tool\Admin;
 use Pimcore\Tool\Session;
 use Pimcore\Version;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 use Symfony\Component\HttpKernel\KernelInterface;
+use Symfony\Component\Routing\Annotation\Route;
 
 class IndexController extends AdminController
 {
@@ -56,8 +55,7 @@ class IndexController extends AdminController
     }
 
     /**
-     * @Route("/", name="pimcore_admin_index")
-     * @Method({"GET"})
+     * @Route("/", name="pimcore_admin_index", methods={"GET"})
      * @TemplatePhp()
      *
      * @param Request $request
@@ -109,8 +107,7 @@ class IndexController extends AdminController
     }
 
     /**
-     * @Route("/index/statistics", name="pimcore_admin_index_statistics")
-     * @Method({"GET"})
+     * @Route("/index/statistics", name="pimcore_admin_index_statistics", methods={"GET"})
      *
      * @param Request $request
      * @param Connection $db
