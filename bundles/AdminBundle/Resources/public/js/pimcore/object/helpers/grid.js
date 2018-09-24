@@ -96,9 +96,8 @@ pimcore.object.helpers.grid = Class.create({
                             return v;
                         }.bind(this, key);
                         var readerFieldConfigOptions = {name: key + "%options", allowBlank: true, persist: false};
+                        readerFields.push(readerFieldConfigOptions);
                     }
-
-                    readerFields.push(readerFieldConfigOptions);
                 }
 
                 if (pimcore.object.tags[type] && pimcore.object.tags[type].prototype.allowBatchAppend) {
