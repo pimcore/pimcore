@@ -289,12 +289,7 @@ class WorkflowController extends AdminController implements EventedControllerInt
         $marking = $workflow->getMarking($this->element);
 
         $php = Console::getExecutable('php');
-
-        /**
-         * @TODO: check why the lookup of "dot" does not work
-         */
         $dot = Console::getExecutable('dot');
-        $dot = 'dot';
 
         if(!$php) {
             throw new \InvalidArgumentException($this->trans('workflow_cmd_not_found', ['php']));
