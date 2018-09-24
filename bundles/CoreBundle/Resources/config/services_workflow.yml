@@ -50,6 +50,10 @@ services:
         class: Pimcore\Workflow\MarkingStore\DataObjectSplittedStateMarkingStore
         abstract: true
 
+    workflow.marking_store.data_object_multiple_state:
+        class: Pimcore\Workflow\MarkingStore\DataObjectMultipleStateMarkingStore
+        abstract: true
+
     workflow.support_strategy.expression:
         class: Pimcore\Workflow\SupportStrategy\ExpressionSupportStrategy
         arguments:

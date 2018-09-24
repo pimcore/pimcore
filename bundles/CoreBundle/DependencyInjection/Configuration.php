@@ -870,7 +870,7 @@ class Configuration implements ConfigurationInterface
                                     ->fixXmlConfig('argument')
                                     ->children()
                                         ->enumNode('type')
-                                            ->values(array('multiple_state', 'single_state', 'state_table', 'data_object_splitted_state'))
+                                            ->values(array('multiple_state', 'single_state', 'state_table', 'data_object_multiple_state', 'data_object_splitted_state'))
                                         ->end()
                                         ->arrayNode('arguments')
                                             ->beforeNormalization()
