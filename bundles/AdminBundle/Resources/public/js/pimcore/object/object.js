@@ -47,7 +47,6 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
         });
         this.tagAssignment = new pimcore.element.tag.assignment(this, "object");
 
-
         this.getData();
     },
 
@@ -83,6 +82,14 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
 
             this.startChangeDetector();
             this.setupInheritanceDetector();
+
+            //update published state in trees
+            pimcore.elementservice.setElementPublishedState({
+                elementType: "object",
+                id: this.id,
+                published: this.data.general.o_published
+            });
+
         }
         catch (e) {
             console.log(e);

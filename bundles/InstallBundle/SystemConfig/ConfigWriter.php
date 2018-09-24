@@ -76,7 +76,7 @@ class ConfigWriter
                 'name' => '',
                 'email' => ''
             ],
-            'method' => 'mail',
+            'method' => 'sendmail',
             'smtp' => [
                 'host' => '',
                 'port' => '',
@@ -101,7 +101,7 @@ class ConfigWriter
                 'name' => '',
                 'email' => ''
             ],
-            'method' => 'mail',
+            'method' => 'sendmail',
             'smtp' => [
                 'host' => '',
                 'port' => '',

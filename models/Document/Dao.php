@@ -121,7 +121,7 @@ class Dao extends Model\Element\Dao
 
             $this->model->setModificationDate(time());
 
-            $document = get_object_vars($this->model);
+            $document = $this->model->getObjectVars();
 
             $dataDocument = [];
             $dataTypeSpecific = [];

@@ -136,4 +136,13 @@ final class AssetEvents
      * @var string
      */
     const DOCUMENT_IMAGE_THUMBNAIL = 'pimcore.asset.document.image-thumbnail';
+
+    /**
+     * Fires before an asset upload created
+     *
+     * @Event("Pimcore\Event\Model\Asset\ResolveUploadTargetEvent")
+     *
+     * @var string
+     */
+    const RESOLVE_UPLOAD_TARGET = 'pimcore.asset.resolve-upload-target';
 }

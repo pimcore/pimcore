@@ -173,7 +173,7 @@ class Service
         $db = Db::get();
 
         $query = 'select distinct c.id from importconfigs c, importconfig_shares s where '
-            . ' c.id = s.importConfigId and s.sharedWithUserId IN (' . $userIds . ') and c.classId = ' . $classId
+            . ' c.id = s.importConfigId and s.sharedWithUserId IN (' . $userIds . ') and c.classId = ' . $db->quote($classId)
                 . ' UNION distinct select c2.id from importconfigs c2 where shareGlobally = 1 and c2.classId = ' . $db->quote($classId);
 
         $ids = $this->db->fetchCol($query);

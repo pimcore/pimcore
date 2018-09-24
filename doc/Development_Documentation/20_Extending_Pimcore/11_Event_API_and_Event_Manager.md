@@ -92,3 +92,64 @@ This way, it is possible to create custom permission rules to decide if the obje
 
 It extends the possibility further than just limiting list permissions folder by folder depending the user/role object workspace.
 To ensure maximum security, it is advisable to combine this with an object DI to overload isAllowed method with the same custom permission rules. This way proper permission is ensuring all the way (rest services, ...).
+
+### Hook into the Open Document|Asset|Data Object dialog
+
+By the default, Pimcore tries to a resolve an element by its ID or path.
+You can change this behavior by handling the [AdminEvents::RESOLVE_ELEMENT](https://github.com/pimcore/pimcore/blob/master/lib/Event/AdminEvents.php) event
+and implement your own logic.
+
+```php
+    \Pimcore::getEventDispatcher()->addListener(AdminEvents::RESOLVE_ELEMENT, function(ResolveElementEvent $event) {
+        $id  = $event->getId();
+        if ($event->getType() == "object") {
+            if (is_numeric($event->getId())) {
+                return;
+            }
+
+            $listing = new News\Listing();
+            $listing->setLocale('en');
+            $listing->setLimit(1);
+            $listing->setCondition('title LIKE ' . $listing->quote('%' . $id . '%'));
+            $listing = $listing->load();
+            if ($listing) {
+                $id = ($listing[0])->getId();
+                $event->setId($id);
+            }
+        }               
+```
+
+### Asset Upload Path
+
+Certain data types (like image, href, etc ...) allow you to specify a dedicated upload path which defaults 
+to '/_default_upload_bucket' if not otherwise specified in the config yml file or in the class definition.
+
+The [AssetEvents::RESOLVE_UPLOAD_TARGET](https://github.com/pimcore/pimcore/blob/master/lib/Event/AssetEvents.php) event
+allows you to dynamically modify the target path depending on the object it will be assigned to. 
+Additional contextual information (like fieldname, fieldcollection index number, etc... ) could be utilized to
+support the decision.
+
+The contextual info provided is the same as described [here](../05_Objects/01_Object_Classes/01_Data_Types/33_Calculated_Value_Type.md):
+
+Example Code: For the demo instance, this sample code would place an image which is dragged onto the image_1 field of object 6 (in-enim-justo_2)
+into the /news/in-enim-justo_2/image_1 asset folder.
+
+```php
+        \Pimcore::getEventDispatcher()->addListener(AssetEvents::RESOLVE_UPLOAD_TARGET,
+            function(\Pimcore\Event\Model\Asset\ResolveUploadTargetEvent $event) {
+                $context = $event->getContext();
+                if ($context["containerType"] == "object") {
+                    $objectId = $context["objectId"];
+                    $newsObject = News::getById($objectId);
+                    if ($newsObject) {
+                        $fieldname = $context["fieldname"];
+                        $targetPath = $newsObject->getPath() . $newsObject->getKey() . "/" . $fieldname;
+                        $parent = \Pimcore\Model\Asset\Service::createFolderByPath($targetPath);
+                        if ($parent) {
+                            $event->setParentId($parent->getId());
+                        }
+                    }
+
+                }
+        });
+```  

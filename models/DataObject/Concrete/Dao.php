@@ -245,7 +245,7 @@ class Dao extends Model\DataObject\AbstractObject\Dao
         foreach ($fieldDefinitions as $key => $fd) {
             if ($fd->getQueryColumnType()) {
                 //exclude untouchables if value is not an array - this means data has not been loaded
-                if (!(in_array($key, $untouchable) and !is_array($this->model->$key))) {
+                if (!(in_array($key, $untouchable) and !is_array($this->model->getObjectVar($key)))) {
                     $method = 'get' . $key;
                     $fieldValue = $this->model->$method();
                     $insertData = $fd->getDataForQueryResource($fieldValue, $this->model);

@@ -510,12 +510,10 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
 
         // check if any of our tags is in cleared tags or tags ignored on save lists
         foreach ($tags as $tag) {
-            if (in_array($tag, $this->clearedTags)) {
+            if (isset($this->clearedTags[$tag])) {
                 $this->logger->debug('Aborted caching for key {key} because tag {tag} is in the cleared tags list', [
                     'key' => $cacheItem->getKey(),
-                    'tag' => $tag,
-                    'tags' => $tags,
-                    'clearedTags' => $this->clearedTags
+                    'tag' => $tag
                 ]);
 
                 return null;
@@ -745,10 +743,8 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
         }
 
         foreach ($tags as $tag) {
-            $this->clearedTags[] = $tag;
+            $this->clearedTags[$tag] = true;
         }
-
-        $this->clearedTags = array_unique($this->clearedTags);
 
         return $this;
     }

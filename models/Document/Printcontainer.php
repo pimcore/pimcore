@@ -29,12 +29,12 @@ class Printcontainer extends Document\PrintAbstract
      *
      * @var string
      */
-    public $type = 'printcontainer';
+    protected $type = 'printcontainer';
 
     /**
      * @var string
      */
-    public $action = 'container';
+    protected $action = 'container';
 
     /**
      * @var

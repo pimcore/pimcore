@@ -63,7 +63,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
 
         //Hook for modifying return value - e.g. for changing permissions based on object data
         //data need to wrapped into a container in order to pass parameter to event listeners by reference so that they can change the values
-        $data = object2array($document);
+        $data = $document->getObjectVars();
         $event = new GenericEvent($this, [
             'data' => $data,
             'document' => $document
@@ -620,7 +620,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
         $docTypes = [];
         foreach ($list->getDocTypes() as $type) {
             if ($this->getAdminUser()->isAllowed($type->getId(), 'docType')) {
-                $docTypes[] = $type;
+                $docTypes[] = $type->getObjectVars();
             }
         }
 
@@ -656,7 +656,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
                 $type->setValues($data);
                 $type->save();
 
-                return $this->adminJson(['data' => $type, 'success' => true]);
+                return $this->adminJson(['data' => $type->getObjectVars(), 'success' => true]);
             } elseif ($request->get('xaction') == 'create') {
                 $data = $this->decodeJson($request->get('data'));
                 unset($data['id']);
@@ -667,7 +667,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
 
                 $type->save();
 
-                return $this->adminJson(['data' => $type, 'success' => true]);
+                return $this->adminJson(['data' => $type->getObjectVars(), 'success' => true]);
             }
         }
 
@@ -1355,11 +1355,9 @@ class DocumentController extends ElementControllerBase implements EventedControl
             // overwrite internal store to avoid "duplicate full path" error
             \Pimcore\Cache\Runtime::set('document_' . $document->getId(), $new);
 
-            $props = get_object_vars($document);
+            $props = $document->getObjectVars();
             foreach ($props as $name => $value) {
-                if (property_exists($new, $name)) {
-                    $new->$name = $value;
-                }
+                $new->setValue($name, $value);
             }
 
             if ($type == 'hardlink' || $type == 'folder') {

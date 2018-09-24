@@ -57,7 +57,7 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function save()
     {
-        $gridConfigFavourite = get_object_vars($this->model);
+        $gridConfigFavourite = $this->model->getObjectVars();
 
         foreach ($gridConfigFavourite as $key => $value) {
             if (in_array($key, $this->getValidTableColumns('gridconfig_favourites'))) {

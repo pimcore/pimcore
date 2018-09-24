@@ -52,8 +52,8 @@ All helpers are described below in detail, the following tables give just a shor
 
 
 You can also create your own custom templating helpers to make certain functionalities available to your views.  
-Here you can find an example how to [create](https://github.com/pimcore/pimcore/blob/master/install-profiles/demo-basic/src/AppBundle/Templating/Helper/LanguageSwitcher.php)
-and [register](https://github.com/pimcore/pimcore/blob/master/install-profiles/demo-basic/src/AppBundle/Resources/config/services.yml#L41)
+Here you can find an example how to [create](https://github.com/pimcore/demo-basic/tree/master/src/AppBundle/Templating/Helper/LanguageSwitcher.php)
+and [register](https://github.com/pimcore/demo-basic/tree/master/src/AppBundle/Resources/config/services.yml#L41)
 your own templating helper.
 
 ### `$this->action()`

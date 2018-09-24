@@ -52,11 +52,6 @@ class Redirect extends AbstractModel
     public $source;
 
     /**
-     * @var bool
-     */
-    public $sourceEntireUrl;
-
-    /**
      * @var int
      */
     public $sourceSite;

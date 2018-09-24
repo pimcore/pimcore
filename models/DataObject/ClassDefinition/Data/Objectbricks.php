@@ -485,6 +485,7 @@ class Objectbricks extends Model\DataObject\ClassDefinition\Data
         $wsData = [];
 
         if ($data instanceof DataObject\Objectbrick) {
+            $data = $data->getObjectVars();
             foreach ($data as $item) {
                 if (!$item instanceof DataObject\Objectbrick\Data\AbstractData) {
                     continue;

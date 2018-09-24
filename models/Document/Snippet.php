@@ -27,5 +27,5 @@ class Snippet extends TargetingDocument
      *
      * @var string
      */
-    public $type = 'snippet';
+    protected $type = 'snippet';
 }

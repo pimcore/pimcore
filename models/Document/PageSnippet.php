@@ -31,45 +31,44 @@ use Pimcore\Model\Document;
 abstract class PageSnippet extends Model\Document
 {
     use Document\Traits\ScheduledTasksTrait;
+    /**
+     * @var string
+     */
+    protected $module;
 
     /**
      * @var string
      */
-    public $module;
+    protected $controller = 'default';
 
     /**
      * @var string
      */
-    public $controller = 'default';
+    protected $action = 'default';
 
     /**
      * @var string
      */
-    public $action = 'default';
-
-    /**
-     * @var string
-     */
-    public $template;
+    protected $template;
 
     /**
      * Contains all content-elements of the document
      *
      * @var array
      */
-    public $elements = null;
+    protected $elements = null;
 
     /**
      * Contains all versions of the document
      *
      * @var array
      */
-    public $versions = null;
+    protected $versions = null;
 
     /**
      * @var null|int
      */
-    public $contentMasterDocumentId;
+    protected $contentMasterDocumentId;
 
     /**
      * @var array
@@ -79,7 +78,7 @@ abstract class PageSnippet extends Model\Document
     /**
      * @var bool
      */
-    public $legacy = false;
+    protected $legacy = false;
 
     /**
      * @param array $params additional parameters (e.g. "versionNote" for the version note)
@@ -151,14 +150,7 @@ abstract class PageSnippet extends Model\Document
         if (Config::getSystemConfig()->documents->versions->steps
             || Config::getSystemConfig()->documents->versions->days
             || $setModificationDate) {
-            $version = new Model\Version();
-            $version->setCid($this->getId());
-            $version->setCtype('document');
-            $version->setDate($this->getModificationDate());
-            $version->setUserId($this->getUserModification());
-            $version->setData($this);
-            $version->setNote($versionNote);
-            $version->save();
+            $version = $this->doSaveVersion($versionNote);
         }
 
         // hook should be also called if "save only new version" is selected
@@ -432,7 +424,7 @@ abstract class PageSnippet extends Model\Document
             $contentMasterDocument = null;
         }
 
-        if ($contentMasterDocumentId == $this->getId()) {
+        if ($contentMasterDocumentId && $contentMasterDocumentId == $this->getId()) {
             throw new \Exception('You cannot use the current document as a master document, please choose a different one.');
         }
 

@@ -93,7 +93,7 @@ class DefaultValue extends AbstractConfigElement implements ValueInterface
         }
 
         if ($this->mode != 'direct') {
-            $data = $fd->getFromCsvImport($data);
+            $data = $fd->getFromCsvImport($data, $target);
         }
 
         $setter = 'set' . ucfirst($realAttribute);

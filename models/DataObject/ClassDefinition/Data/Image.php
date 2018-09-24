@@ -172,6 +172,10 @@ class Image extends Model\DataObject\ClassDefinition\Data
      */
     public function getDataForEditmode($data, $object = null, $params = [])
     {
+        if ($data instanceof Asset\Image) {
+            return $data->getObjectVars();
+        }
+
         return $data;
     }
 

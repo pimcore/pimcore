@@ -707,15 +707,15 @@ class Classificationstore extends Model\DataObject\ClassDefinition\Data
             throw new \Exception('Classification store fields are only valid in Objects');
         }
 
-        if (!$object->{$this->getName()} instanceof DataObject\Classificationstore) {
+        if (!$object->getObjectVar($this->getName()) instanceof DataObject\Classificationstore) {
             $store = new DataObject\Classificationstore();
             $store->setObject($object);
             $store->setFieldname($this->getName());
 
-            $object->{$this->getName()} = $store;
+            $object->{'set' . $this->getName()}($store);
         }
 
-        return $object->{$this->getName()};
+        return $object->getObjectVar($this->getName());
     }
 
     /**

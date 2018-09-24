@@ -620,7 +620,7 @@ abstract class AbstractCoreHandlerTest extends TestCase
         $this->handler->clearTags(['tag_a', 'tag_b', 'output']);
 
         // output is shifted to shutdown tags (see next test)
-        $this->assertEquals(['tag_a', 'tag_b'], $this->getHandlerPropertyValue('clearedTags'));
+        $this->assertEquals(['tag_a' => true, 'tag_b' => true], $this->getHandlerPropertyValue('clearedTags'));
     }
 
     public function testClearedTagIsShiftedToShutdownList()
@@ -633,7 +633,7 @@ abstract class AbstractCoreHandlerTest extends TestCase
 
         $this->handler->clearTagsOnShutdown();
 
-        $this->assertEquals(['tag_a', 'tag_b', 'output'], $this->getHandlerPropertyValue('clearedTags'));
+        $this->assertEquals(['tag_a' => true, 'tag_b' => true, 'output' => true], $this->getHandlerPropertyValue('clearedTags'));
     }
 
     protected function handleShutdownTagListProcessing($shutdown = false)
@@ -651,7 +651,7 @@ abstract class AbstractCoreHandlerTest extends TestCase
             $this->handler->clearTagsOnShutdown();
         }
 
-        $this->assertEquals(['foo'], $this->getHandlerPropertyValue('clearedTags'));
+        $this->assertEquals(['foo' => true], $this->getHandlerPropertyValue('clearedTags'));
     }
 
     public function testShutdownTagListIsProcessedOnMethodCall()

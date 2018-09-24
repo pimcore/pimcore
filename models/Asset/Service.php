@@ -110,7 +110,7 @@ class Service extends Model\Element\Service
         $source->getProperties();
 
         $new = Element\Service::cloneMe($source);
-        $new->id = null;
+        $new->setId(null);
 
         if ($new instanceof Asset\Folder) {
             $new->setChildren(null);

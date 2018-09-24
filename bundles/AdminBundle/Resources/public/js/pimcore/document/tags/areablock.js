@@ -777,12 +777,12 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
 
     addBlockAfter : function (element, type) {
         var index = this.getElementIndex(element) + 1;
-        this.addBlockAt(type, index)
+        this.addBlockAt(type, index);
     },
 
     addBlockBefore : function (element, type) {
         var index = this.getElementIndex(element);
-        this.addBlockAt(type, index)
+        this.addBlockAt(type, index);
     },
 
     addBlockAt: function (type, index) {
@@ -792,22 +792,17 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
             return;
         }
 
-        // get next heigher key
         var nextKey = this.getNextKey();
-        var amount = 1;
-
-
-        var args = [index, 0];
-
-        for (var p = 0; p < amount; p++) {
-            nextKey++;
-            args.push({
-                key: nextKey,
-                type: type
-            });
-        }
+        nextKey++;
+        var args = [index, 0, {
+            key: nextKey,
+            type: type
+        }];
 
         this.elements.splice.apply(this.elements, args);
+
+        editWindow.lastScrollposition = '#' + this.id + ' .pimcore_block_entry[data-name="' + this.name + '"][key="' + nextKey + '"]';
+
         this.reloadDocument();
     },
 

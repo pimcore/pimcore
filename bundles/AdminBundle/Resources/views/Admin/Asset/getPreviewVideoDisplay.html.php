@@ -47,7 +47,7 @@
 
 <div id="videoContainer">
     <video id="video" controls="controls" height="400" poster="<?= $previewImage ?>">
-        <source src="<?= $this->thumbnail["formats"]["mp4"] ?>" type="video/mp4" />
+        <source src="/admin/asset/serve-video-preview?id=<?= $this->asset->getId() ?>" type="video/mp4" />
     </video>
 </div>
 

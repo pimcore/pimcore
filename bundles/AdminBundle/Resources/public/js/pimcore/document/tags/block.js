@@ -206,6 +206,7 @@ pimcore.document.tags.block = Class.create(pimcore.document.tag, {
         }
 
         var args = [index, 0];
+        var firstNewKey = nextKey+1;
 
         for (var p = 0; p < amount; p++) {
             nextKey++;
@@ -214,7 +215,7 @@ pimcore.document.tags.block = Class.create(pimcore.document.tag, {
 
        this.elements.splice.apply(this.elements, args);
 
-        //this.elements.splice(index, 0, {key: nextKey});
+        editWindow.lastScrollposition = '#' + this.id + ' .pimcore_block_entry[data-name="' + this.name + '"][key="' + firstNewKey + '"]';
 
         this.reloadDocument();
     },

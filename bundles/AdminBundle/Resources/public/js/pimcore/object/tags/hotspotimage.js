@@ -276,7 +276,7 @@ pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
                 } else {
                     pimcore.helpers.showNotification(t("error"), t('unsupported_filetype'), "error");
                 }
-            }.bind(this));
+            }.bind(this), null, this.context);
 
             if (this.data.id) {
                 this.updateImage();

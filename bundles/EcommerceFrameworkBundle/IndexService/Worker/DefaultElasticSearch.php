@@ -395,7 +395,7 @@ class DefaultElasticSearch extends AbstractMockupCacheWorker implements IBatchPr
             try {
                 $params = ['index' => $this->getIndexNameVersion(), 'type' => $object->getOSIndexType(), 'id' => $objectId];
                 if ($object->getOSIndexType() == IProductList::PRODUCT_TYPE_VARIANT) {
-                    $params['parent'] = $object->getOSParentId();
+                    $params['parent'] = $this->tenantConfig->createVirtualParentIdForSubId($object, $objectId);
                 }
                 $esClient->delete($params);
 

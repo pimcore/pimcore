@@ -2077,7 +2077,7 @@ class DataObjectHelperController extends AdminController
     /**
      * @param Request $request
      * @param $field
-     * @param $object
+     * @param $object DataObject\AbstractObject
      * @param $requestedLanguage
      *
      * @return mixed
@@ -2095,7 +2095,9 @@ class DataObjectHelperController extends AdminController
             'classname' => 'getClassname'
         ];
         if (in_array($field, array_keys($systemFieldMap))) {
-            return $object->{$systemFieldMap[$field]}();
+            $getter = $systemFieldMap[$field];
+
+            return $object->$getter();
         } else {
             //check if field is standard object field
             $fieldDefinition = $object->getClass()->getFieldDefinition($field);

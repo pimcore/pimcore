@@ -27,5 +27,5 @@ class Archive extends Model\Asset
     /**
      * @var string
      */
-    public $type = 'archive';
+    protected $type = 'archive';
 }

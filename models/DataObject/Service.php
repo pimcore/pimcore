@@ -132,7 +132,7 @@ class Service extends Model\Element\Service
         self::loadAllObjectFields($source);
 
         $new = Element\Service::cloneMe($source);
-        $new->o_id = null;
+        $new->setId(null);
         $new->setChilds(null);
         $new->setKey(Element\Service::getSaveCopyName('object', $new->getKey(), $target));
         $new->setParentId($target->getId());
@@ -176,7 +176,7 @@ class Service extends Model\Element\Service
         self::loadAllObjectFields($source);
 
         $new = Element\Service::cloneMe($source);
-        $new->o_id = null;
+        $new->setId(null);
 
         $new->setChildren(null);
         $new->setKey(Element\Service::getSaveCopyName('object', $new->getKey(), $target));
@@ -262,6 +262,8 @@ class Service extends Model\Element\Service
             $data['classname'] = $object->getClassName();
             $data['idPath'] = Element\Service::getIdPath($object);
             $data['inheritedFields'] = [];
+            $data['permissions'] = $object->getUserPermissions();
+            $data['locked'] = $object->isLocked();
 
             $user = AdminTool::getCurrentUser();
 
@@ -522,6 +524,10 @@ class Service extends Model\Element\Service
     public static function getLanguagePermissions($object, $user, $type)
     {
         $languageAllowed = null;
+
+        $object = $object instanceof Model\DataObject\Fieldcollection\Data\AbstractData ||
+        $object instanceof  Model\DataObject\Objectbrick\Data\AbstractData ?
+            $object->getObject() : $object;
 
         $permission = $object->getPermissions($type, $user);
 

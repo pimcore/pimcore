@@ -179,9 +179,11 @@ class Item extends Model\AbstractModel
                     fclose($handle);
                 }
 
-                $children = $element->getChildren();
-                foreach ($children as $child) {
-                    $rec($child, $rec, $scope);
+                if (method_exists($element, 'getChildren')) {
+                    $children = $element->getChildren();
+                    foreach ($children as $child) {
+                        $rec($child, $rec, $scope);
+                    }
                 }
             }
         };

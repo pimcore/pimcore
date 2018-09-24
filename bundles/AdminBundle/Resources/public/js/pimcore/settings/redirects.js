@@ -107,24 +107,6 @@ pimcore.settings.redirects = Class.create({
             }
         });
 
-        var sourceEntireUrlCheck = new Ext.grid.column.Check({
-            text: t("source_entire_url"),
-            dataIndex: "sourceEntireUrl",
-            width: 70
-        });
-
-        var activeCheck = new Ext.grid.column.Check({
-            text: t("active"),
-            dataIndex: "active",
-            width: 70
-        });
-
-        var passThroughParametersCheck = new Ext.grid.column.Check({
-            text: t("pass_through_params"),
-            dataIndex: "passThroughParameters",
-            width: 70
-        });
-
         var redirectTypesStore = Ext.create('Ext.data.ArrayStore', {
             fields: ['type', 'name'],
             data : [

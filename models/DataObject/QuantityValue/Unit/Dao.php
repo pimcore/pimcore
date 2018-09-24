@@ -115,7 +115,7 @@ class Dao extends Model\Dao\AbstractDao
 
     public function update()
     {
-        $class = get_object_vars($this->model);
+        $class = $this->model->getObjectVars();
         $data = [];
 
         foreach ($class as $key => $value) {

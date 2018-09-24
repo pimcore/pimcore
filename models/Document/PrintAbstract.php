@@ -29,17 +29,17 @@ abstract class PrintAbstract extends Document\PageSnippet
     /**
      * @var int
      */
-    public $lastGenerated;
+    protected $lastGenerated;
 
     /**
      * @var string
      */
-    public $lastGenerateMessage;
+    protected $lastGenerateMessage;
 
     /**
      * @var string
      */
-    public $controller = 'web2print';
+    protected $controller = 'web2print';
 
     /**
      * @param \DateTime $lastGenerated
