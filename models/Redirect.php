@@ -316,7 +316,7 @@ class Redirect extends AbstractModel
     public static function maintenanceCleanUp()
     {
         $list = new Redirect\Listing();
-        $list->setCondition('expiry < ' . time() . " AND expiry IS NOT NULL AND expiry != ''");
+        $list->setCondition('active = 1 AND expiry < ' . time() . " AND expiry IS NOT NULL AND expiry != ''");
         $list->load();
 
         foreach ($list->getRedirects() as $redirect) {
