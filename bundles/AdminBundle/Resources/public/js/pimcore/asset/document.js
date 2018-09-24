@@ -35,6 +35,7 @@ pimcore.asset.document = Class.create(pimcore.asset.asset, {
 
         this.tagAssignment = new pimcore.element.tag.assignment(this, "asset");
         this.metadata = new pimcore.asset.metadata(this);
+        this.workflows = new pimcore.element.workflows(this, "asset");
 
         this.getData();
     },
@@ -70,6 +71,10 @@ pimcore.asset.document = Class.create(pimcore.asset.asset, {
 
         if (user.isAllowed("tags_assignment")) {
             items.push(this.tagAssignment.getLayout());
+        }
+
+        if (user.isAllowed("workflow_details") && this.data.workflowManagement && this.data.workflowManagement.hasWorkflowManagement === true) {
+            items.push(this.workflows.getLayout());
         }
 
         this.tabbar = new Ext.TabPanel({

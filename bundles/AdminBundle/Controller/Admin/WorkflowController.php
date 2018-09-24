@@ -324,6 +324,15 @@ class WorkflowController extends AdminController implements EventedControllerInt
      */
     protected function getLatestVersion($element)
     {
+        if(
+            $element instanceof Document\Folder
+            || $element instanceof Asset\Folder
+            || $element instanceof DataObject\Folder
+            || $element instanceof Document\Hardlink
+            || $element instanceof Document\Link
+        ) {
+            return $element;
+        }
 
         //TODO move this maybe to a service method, since this is also used in DataObjectController and DocumentControllers
         if ($element instanceof Document) {

@@ -43,6 +43,7 @@ pimcore.document.folder = Class.create(pimcore.document.document, {
 
         this.dependencies = new pimcore.element.dependencies(this, "document");
         this.tagAssignment = new pimcore.element.tag.assignment(this, "document");
+        this.workflows = new pimcore.element.workflows(this, "document");
     },
 
     getSaveData : function () {
@@ -222,6 +223,10 @@ pimcore.document.folder = Class.create(pimcore.document.document, {
         var user = pimcore.globalmanager.get("user");
         if (user.isAllowed("tags_assignment")) {
             items.push(this.tagAssignment.getLayout());
+        }
+
+        if (user.isAllowed("workflow_details") && this.data.workflowManagement && this.data.workflowManagement.hasWorkflowManagement === true) {
+            items.push(this.workflows.getLayout());
         }
 
 

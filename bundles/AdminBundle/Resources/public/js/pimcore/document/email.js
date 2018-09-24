@@ -55,6 +55,7 @@ pimcore.document.email = Class.create(pimcore.document.page_snippet, {
         this.reports = new pimcore.report.panel("document_snippet", this);
 
         this.tagAssignment = new pimcore.element.tag.assignment(this, "document");
+        this.workflows = new pimcore.element.workflows(this, "document");
     },
 
     getTabPanel: function () {
@@ -91,6 +92,10 @@ pimcore.document.email = Class.create(pimcore.document.page_snippet, {
 
         if (user.isAllowed("tags_assignment")) {
             items.push(this.tagAssignment.getLayout());
+        }
+
+        if (user.isAllowed("workflow_details") && this.data.workflowManagement && this.data.workflowManagement.hasWorkflowManagement === true) {
+            items.push(this.workflows.getLayout());
         }
 
         this.tabbar = new Ext.TabPanel({
