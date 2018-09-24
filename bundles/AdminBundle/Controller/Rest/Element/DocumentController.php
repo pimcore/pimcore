@@ -46,7 +46,6 @@ class DocumentController extends AbstractElementController
 {
     /**
      * @Route("/document/id/{id}", requirements={"id": "\d+"}, methods={"GET"})
-     * @Route("/document", methods={"GET"})
      *
      * @api              {get} /document Get document
      * @apiName          getDocument
@@ -188,7 +187,6 @@ class DocumentController extends AbstractElementController
 
     /**
      * @Route("/document/id/{id}", requirements={"id": "\d+"}, methods={"DELETE"})
-     * @Route("/document")
      *
      * @api              {delete} /document Delete document
      * @apiName          deleteDocument

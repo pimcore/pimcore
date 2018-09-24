@@ -27,7 +27,6 @@ class AssetController extends AbstractElementController
 {
     /**
      * @Route("/asset/id/{id}", requirements={"id": "\d+"}, methods={"GET"})
-     * @Route("/asset", methods={"GET"})
      *
      * @api {get} /asset Get asset
      * @apiParamExample {json} Request-Example:
@@ -139,7 +138,6 @@ class AssetController extends AbstractElementController
 
     /**
      * @Route("/asset/id/{id}", requirements={"id": "\d+"}, methods={"DELETE"})
-     * @Route("/asset")
      *
      * @api {delete} /asset Delete asset
      * @apiName deleteAsset

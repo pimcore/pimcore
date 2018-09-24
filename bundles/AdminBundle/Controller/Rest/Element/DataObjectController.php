@@ -50,7 +50,6 @@ class DataObjectController extends AbstractElementController
 {
     /**
      * @Route("/object/id/{id}", requirements={"id": "\d+"}, methods={"GET"})
-     * @Route("/object", methods={"GET"})
      *
      * @api {get} /object Get object data
      * @apiName Get object by id
@@ -331,7 +330,6 @@ class DataObjectController extends AbstractElementController
 
     /**
      * @Route("/object/id/{id}", requirements={"id": "\d+"}, methods={"DELETE"})
-     * @Route("/object")
      *
      * @api {delete} /object/id/{id} Delete object
      * @apiName Delete object
