@@ -20,12 +20,21 @@ use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\Concrete as ConcreteObject;
 use Pimcore\Model\Document;
-use Pimcore\WorkflowManagement\Workflow;
+use Pimcore\Model\Element\ValidationException;
+use Pimcore\Tool\Console;
+use Pimcore\Workflow\ActionsButtonService;
+use Pimcore\Workflow\Manager;
+use Pimcore\Workflow\Place\StatusInfo;
+use Pimcore\Workflow\Transition;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\RouterInterface;
+use Symfony\Component\Workflow\Registry;
+use Symfony\Component\Workflow\Workflow;
 
 /**
  * @Route("/workflow")
@@ -33,106 +42,60 @@ use Symfony\Component\Routing\Annotation\Route;
 class WorkflowController extends AdminController implements EventedControllerInterface
 {
     /**
-     * @var Workflow\Manager $manager;
-     */
-    private $manager;
-
-    /**
-     * @var Workflow\Decorator $decorator;
-     */
-    private $decorator;
-
-    /**
      * @var Document|Asset|ConcreteObject $element
      */
     private $element;
 
     /**
-     * @var string $selectedAction
-     */
-    private $selectedAction;
-
-    /**
-     * @var string $newState
-     */
-    private $newState;
-
-    /**
-     * @var string $newStatus
-     */
-    private $newStatus;
-
-    /**
      * Returns a JSON of the available workflow actions to the admin panel
      *
-     * @Route("/get-workflow-form", methods={"POST"})
+     * @Route("/get-workflow-form")
      *
      * @param Request $request
      *
      * @return JsonResponse
      */
-    public function getWorkflowFormAction(Request $request)
+    public function getWorkflowFormAction(Request $request, Manager $workflowManager)
     {
-        $params = $request->get('workflow', []);
-        $manager = $this->getWorkflowManager();
-        $workflow = $manager->getWorkflow();
-
-        //this is the default returned workflow data
-        $wfConfig = [
-            'message' => '',
-            'available_actions' => [],
-            'available_states' => [],
-            'available_statuses' => [],
-            'notes_required' => false,
-            'additional_fields' => []
-        ];
-
         try {
 
-            //get user selections
-            $this->selectedAction = empty($params['action']) ? null : $params['action'];
-            $this->newState = empty($params['newState']) ? null : $params['newState'];
-            $this->newStatus = empty($params['newStatus']) ? null : $params['newStatus'];
+            $workflow = $workflowManager->getWorkflowIfExists($this->element, (string) $request->get('workflowName'));
+            $workflowConfig = $workflowManager->getWorkflowConfig((string) $request->get('workflowName'));
 
-            //always return the available actions
-            $wfConfig['available_actions'] = $this->getDecorator()->getAvailableActionsForForm(
-                $manager->getAvailableActions()
-            );
+            if(empty($workflow) || empty($workflowConfig)) {
+                $wfConfig = [
+                    'message' => 'workflow not found'
+                ];
+            } else {
 
-            //if only one action select it by default
-            if (count($wfConfig['available_actions']) === 1) {
-                $this->selectedAction = $wfConfig['available_actions'][0]['value'];
-            } elseif ($this->selectedAction && !$workflow->isValidAction($this->selectedAction)) {
-                $this->selectedAction = null;
-            }
+                //this is the default returned workflow data
+                $wfConfig = [
+                    'message'               => '',
+                    'notes_enabled'         => false,
+                    'notes_required'        => false,
+                    'additional_fields'     => []
+                ];
 
-            //if user has selected an action & it's valid
-            if ($this->selectedAction) {
-
-                //set the available states for this action
-                $wfConfig['available_states'] = $this->getDecorator()->getAvailableStatesForForm(
-                    $manager->getAvailableStates($this->selectedAction)
-                );
-
-                //validate the new state
-                if (count($wfConfig['available_states']) === 1) {
-                    $this->newState = $wfConfig['available_states'][0]['value'];
-                } elseif ($this->newState && !$workflow->isValidState($this->newState)) {
-                    $this->newState = null;
+                $enabledTransitions = $workflow->getEnabledTransitions($this->element);
+                /**
+                 * @var Transition $transition
+                 */
+                $transition = null;
+                foreach($enabledTransitions as $_transition) {
+                    if($_transition->getName() === $request->get('transitionName')) {
+                        $transition = $_transition;
+                    }
                 }
 
-                //load the available statuses, notes and additional fields
-                if ($this->newState) {
-                    $wfConfig['available_statuses'] = $this->getDecorator()->getAvailableStatusesForForm(
-                        $manager->getAvailableStatuses($this->selectedAction, $this->newState)
-                    );
-
-                    // fetch additional fields, using the current status of the element
-                    // to load additional fields that may be required
-                    $wfConfig['notes_required'] = $manager->getNotesRequiredForAction($this->selectedAction);
-                    $wfConfig['additional_fields'] = $manager->getAdditionalFieldsForAction($this->selectedAction);
+                if(empty($transition)) {
+                    $wfConfig['message'] = sprintf("transition %s currently not allowed", (string) $request->get('transitionName'));
+                } else {
+                    $wfConfig['notes_required'] = $transition->getNotesCommentRequired();
+                    $wfConfig['additional_fields'] = [];
                 }
+
             }
+
         } catch (\Exception $e) {
             $wfConfig['message'] = $e->getMessage();
         }
@@ -147,19 +110,35 @@ class WorkflowController extends AdminController implements EventedControllerInt
      *
      * @return JsonResponse
      */
-    public function submitWorkflowTransitionAction(Request $request)
+    public function submitWorkflowTransitionAction(Request $request, Registry $workflowRegistry, Manager $workflowManager)
     {
-        $manager = $this->getWorkflowManager();
-        $params = $request->get('workflow', []);
+        $workflowOptions = $request->get('workflow', []);
+        $workflow = $workflowRegistry->get($this->element, $request->get('workflowName'));
 
-        if ($manager->validateAction($params['action'], $params['newState'], $params['newStatus'])) {
 
-            //perform the action on the element
+        if ($workflow->can($this->element, $request->get('transition'))) {
+
             try {
-                $manager->performAction($params['action'], $params);
+                $workflowManager->applyWithAdditionalData($workflow, $this->element, $request->get('transition'), $workflowOptions, true);
+
                 $data = [
                     'success' => true,
                     'callback' => 'reloadObject'
+                ];
+            } catch (ValidationException $e) {
+
+                $reason = '';
+                if(sizeof((array)$e->getSubItems())>0) {
+                    $reason = '<ul>' . implode('', array_map(function($item){
+                            return '<li>' . $item . '</li>';
+                        },$e->getSubItems())) . '</ul>';
+                }
+
+                $data = [
+                    'success' => false,
+                    'message' => $e->getMessage(),
+                    'reason' => $reason
+
                 ];
             } catch (\Exception $e) {
                 $data = [
@@ -172,7 +151,7 @@ class WorkflowController extends AdminController implements EventedControllerInt
             $data = [
                 'success' => false,
                 'message' => 'error validating the action on this element, element cannot peform this action',
-                'reason' => $manager->getError()
+                'reason' => 'transition is currently not allowed'
             ];
         }
 
@@ -180,33 +159,158 @@ class WorkflowController extends AdminController implements EventedControllerInt
     }
 
     /**
-     * Returns a new workflow manager for the current element
+     * @Route("/submit-global-action", methods={"POST"})
      *
-     * @return Workflow\Manager
+     * @param Request $request
+     *
+     * @return JsonResponse
      */
-    protected function getWorkflowManager()
+    public function submitGlobalAction(Request $request, Registry $workflowRegistry, Manager $workflowManager)
     {
-        if (!$this->manager) {
-            $this->manager = Workflow\Manager\Factory::getManager($this->element, $this->getAdminUser());
+        $workflowOptions = $request->get('workflow', []);
+        $workflow = $workflowRegistry->get($this->element, $request->get('workflowName'));
+
+        try {
+            $workflowManager->applyGlobalAction($workflow, $this->element, $request->get('transition'), $workflowOptions, true);
+
+            $data = [
+                'success' => true,
+                'callback' => 'reloadObject'
+            ];
+        } catch (ValidationException $e) {
+
+            $reason = '';
+            if(sizeof((array)$e->getSubItems())>0) {
+                $reason = '<ul>' . implode('', array_map(function($item){
+                        return '<li>' . $item . '</li>';
+                    },$e->getSubItems())) . '</ul>';
+            }
+
+            $data = [
+                'success' => false,
+                'message' => $e->getMessage(),
+                'reason' => $reason
+
+            ];
+        } catch (\Exception $e) {
+            $data = [
+                'success' => false,
+                'message' => 'error performing action on this element',
+                'reason' => $e->getMessage()
+            ];
         }
 
-        return $this->manager;
+
+        return $this->adminJson($data);
     }
 
     /**
-     * Returns a Decorator for the Workflow
+     * Returns the JSON needed by the workflow elements detail tab store
      *
-     * @return Workflow\Decorator
+     * @Route("/get-workflow-details")
+     *
+     * @param Request $request
+     * @param Manager $workflowManager
+     * @param StatusInfo $placeStatusInfo
+     * @param RouterInterface $router
+     *
+     * @return JsonResponse
+     * @throws \Exception
      */
-    protected function getDecorator()
+    public function getWorkflowDetailsStore(Request $request, Manager $workflowManager, StatusInfo $placeStatusInfo, RouterInterface $router, ActionsButtonService $actionsButtonService)
     {
-        if ($this->decorator) {
-            return $this->decorator;
-        }
-        $this->decorator = new Workflow\Decorator();
+        $data = [];
 
-        return $this->decorator;
+        foreach($workflowManager->getAllWorkflowsForSubject($this->element) as $workflow) {
+            $workflowConfig = $workflowManager->getWorkflowConfig($workflow->getName());
+
+            $msg = '';
+            try {
+                $svg = $this->getWorkflowSvg($workflow);
+            } catch(\InvalidArgumentException $e) {
+                $msg = $e->getMessage();
+            }
+
+
+            $url = $router->generate(
+                'pimcore_admin_workflow_show_graph',
+                [
+                    'cid' => $request->get('cid'),
+                    'ctype' => $request->get('ctype'),
+                    'workflow' =>$workflow->getName()
+                ]
+            );
+
+            $allowedTransitions = $actionsButtonService->getAllowedTransitions($workflow, $this->element);
+            $globalActions = $actionsButtonService->getGlobalActions($workflow, $this->element);
+
+            $data[] = [
+                'workflowName' => $workflowConfig->getLabel(),
+                'placeInfo' => $placeStatusInfo->getAllPalacesHtml($this->element, $workflow->getName()),
+                'graph' => $msg ?: '<a href="' . $url .'" target="_blank"><div class="workflow-graph-preview">'.$svg.'</div></a>',
+                'allowedTransitions' => $allowedTransitions,
+                'globalActions' => $globalActions
+            ];
+        }
+
+        return $this->adminJson([
+            'data' => $data,
+            'success' => true,
+            'total' => sizeof($data)
+        ]);
     }
+
+    /**
+     * Returns the JSON needed by the workflow elements detail tab store
+     *
+     * @Route("/show-graph", name="pimcore_admin_workflow_show_graph")
+     *
+     * @param Request $request
+     * @param Manager $workflowManager
+     *
+     * @return Response
+     * @throws \Exception
+     */
+    public function showGraph(Request $request, Manager $workflowManager)
+    {
+        $workflow = $workflowManager->getWorkflowByName($request->get('workflow'));
+
+        $response = new Response($this->getWorkflowSvg($workflow));
+        $response->headers->set('Content-Type', 'image/svg+xml');
+        return $response;
+    }
+
+    /**
+     * @param Workflow $workflow
+     * @throws \Exception
+     */
+    private function getWorkflowSvg(Workflow $workflow)
+    {
+        $marking = $workflow->getMarking($this->element);
+
+        $php = Console::getExecutable('php');
+        $dot = Console::getExecutable('dot');
+
+        if(!$php) {
+            throw new \InvalidArgumentException($this->trans('workflow_cmd_not_found', ['php']));
+        }
+
+        if(!$dot) {
+            throw new \InvalidArgumentException($this->trans('workflow_cmd_not_found', ['dot']));
+        }
+
+        $cmd = sprintf('%s %s/bin/console pimcore:workflow:dump %s %s | %s -Tsvg',
+            $php,
+            PIMCORE_PROJECT_ROOT,
+            $workflow->getName(),
+            implode(' ', array_keys($marking->getPlaces())),
+            $dot
+        );
+
+        return Console::exec($cmd);
+
+    }
+
 
     /**
      * @param  Document|Asset|ConcreteObject $element
@@ -215,6 +319,15 @@ class WorkflowController extends AdminController implements EventedControllerInt
      */
     protected function getLatestVersion($element)
     {
+        if(
+            $element instanceof Document\Folder
+            || $element instanceof Asset\Folder
+            || $element instanceof DataObject\Folder
+            || $element instanceof Document\Hardlink
+            || $element instanceof Document\Link
+        ) {
+            return $element;
+        }
 
         //TODO move this maybe to a service method, since this is also used in DataObjectController and DocumentControllers
         if ($element instanceof Document) {

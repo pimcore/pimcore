@@ -42,6 +42,7 @@ pimcore.object.folder = Class.create(pimcore.object.abstract, {
 
         this.dependencies = new pimcore.element.dependencies(this, "object");
         this.tagAssignment = new pimcore.element.tag.assignment(this, "object");
+        this.workflows = new pimcore.element.workflows(this, "object");
     },
 
 
@@ -231,6 +232,9 @@ pimcore.object.folder = Class.create(pimcore.object.abstract, {
                 scale: "medium"
             });
 
+            //workflow management
+            pimcore.elementservice.integrateWorkflowManagement('object', this.id, this, buttons);
+
             this.toolbar = new Ext.Toolbar({
                 id: "object_toolbar_" + this.id,
                 region: "north",
@@ -264,6 +268,10 @@ pimcore.object.folder = Class.create(pimcore.object.abstract, {
 
         if (user.isAllowed("tags_assignment")) {
             items.push(this.tagAssignment.getLayout());
+        }
+
+        if (user.isAllowed("workflow_details") && this.data.workflowManagement && this.data.workflowManagement.hasWorkflowManagement === true) {
+            items.push(this.workflows.getLayout());
         }
 
         this.tabbar = new Ext.TabPanel({

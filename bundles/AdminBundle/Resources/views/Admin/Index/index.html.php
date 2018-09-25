@@ -338,6 +338,7 @@ $scripts = array(
     "pimcore/element/history.js",
     "pimcore/element/notes.js",
     "pimcore/element/note_details.js",
+    "pimcore/element/workflows.js",
     "pimcore/element/tag/imagecropper.js",
     "pimcore/element/tag/imagehotspotmarkereditor.js",
     "pimcore/element/replace_assignments.js",
@@ -516,6 +517,7 @@ $scripts = array(
     "pimcore/object/gridcolumn/operator/Substring.js",
     "pimcore/object/gridcolumn/operator/LFExpander.js",
     "pimcore/object/gridcolumn/operator/Trimmer.js",
+    "pimcore/object/gridcolumn/operator/WorkflowState.js",
     "pimcore/object/gridcolumn/value/Href.js",
     "pimcore/object/gridcolumn/value/Objects.js",
     "pimcore/object/gridcolumn/value/DefaultValue.js",
@@ -669,7 +671,8 @@ $scripts = array(
     "pimcore/object/classificationstore/columnConfigDialog.js",
 
     //workflow
-    "pimcore/workflowmanagement/actionPanel.js",
+    "pimcore/workflow/transitionPanel.js",
+    "pimcore/workflow/transitions.js",
 
     // Piwik - this needs to be loaded after treepanel manager as
     // it adds panels in pimcore ready

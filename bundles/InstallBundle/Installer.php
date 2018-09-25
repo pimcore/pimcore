@@ -650,7 +650,8 @@ class Installer
             ['key' => 'users'],
             ['key' => 'website_settings'],
             ['key' => 'admin_translations'],
-            ['key' => 'web2print_settings']
+            ['key' => 'web2print_settings'],
+            ['key' => 'workflow_details']
         ];
 
         foreach ($userPermissions as $up) {

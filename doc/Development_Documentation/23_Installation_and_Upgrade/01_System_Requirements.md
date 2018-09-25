@@ -34,6 +34,7 @@ Both **mod_php** and **FCGI (FPM)** are supported.
 - [imagick](http://php.net/imagick) (if not installed *gd* is used instead, but with less supported image types)
 - [curl](http://php.net/curl) (required if Google APIs are used)
 - [phpredis](https://github.com/phpredis/phpredis) (recommended cache backend adapter)
+- [graphviz](https://www.graphviz.org/) (for rendering workflow overview)
 
 ### Database Server
 - MariaDB >= 10.0.0.5

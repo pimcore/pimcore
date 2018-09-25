@@ -1946,3 +1946,53 @@ ul.leaflet-draw-actions.leaflet-draw-actions-top.leaflet-draw-actions-bottom li:
     text-align: left; !important
 
 }
+
+/** workflow engine **/
+
+.pimcore-workflow-place-indicator-wrapper {
+    white-space: nowrap;
+}
+
+.pimcore-workflow-place-indicator {
+    color: #fff;
+    margin-right: 5px;
+    height: 20px;
+    padding: 0.15em 4px;
+    margin-top: 2px;
+    margin-bottom: 2px;
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 15px;
+    border-radius: 2px;
+    box-shadow: inset 0 -1px 0 rgba(27,31,35,0.12);
+    display: inline-block;
+}
+
+.pimcore-workflow-place-indicator:last-of-type {
+    margin-right: 0;
+}
+.pimcore_workflow_button {
+    background: #dae2e3;
+}
+.pimcore_workflow_button.x-btn-over, .pimcore_workflow_button.x-btn-pressed, .pimcore_workflow_button.x-btn-menu-active, .pimcore_workflow_button.x-btn-focus {
+    background: #CBD5D6 !important;
+}
+
+.pimcore-workflow-action-workflow-label {
+    display: block;
+    color: #bababa;
+    margin-left: -32px;
+    margin-top: 10px;
+    margin-bottom: 5px;
+}
+
+.workflow-graph-preview {
+    width: 100%;
+}
+
+.workflow-graph-preview svg {
+    max-height: 100px;
+    width: 100%;
+}
+
+/** END workflow engine **/

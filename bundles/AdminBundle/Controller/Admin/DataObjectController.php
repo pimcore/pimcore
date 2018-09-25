@@ -727,7 +727,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
      *
      * @return JsonResponse
      */
-    public function getFolderAction(Request $request)
+    public function getFolderAction(Request $request, EventDispatcherInterface $eventDispatcher)
     {
         // check for lock
         if (Element\Editlock::isLocked($request->get('id'), 'object')) {
@@ -772,6 +772,15 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                     }
                 }
             }
+
+            //Hook for modifying return value - e.g. for changing permissions based on object data
+            //data need to wrapped into a container in order to pass parameter to event listeners by reference so that they can change the values
+            $event = new GenericEvent($this, [
+                'data' => $objectData,
+                'object' => $object,
+            ]);
+            $eventDispatcher->dispatch(AdminEvents::OBJECT_GET_PRE_SEND_DATA, $event);
+            $objectData = $event->getArgument('data');
 
             return $this->adminJson($objectData);
         } else {

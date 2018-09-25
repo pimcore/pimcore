@@ -1,0 +1,100 @@
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: false
+
+    Pimcore\Workflow\Manager:
+        public: true
+
+    Pimcore\Workflow\Place\StatusInfo:
+        public: true
+
+    Pimcore\Workflow\NotificationEmail\NotificationEmailService:
+        public: true
+
+    workflow.abstract:
+        class: Symfony\Component\Workflow\Workflow
+        abstract: true
+        public: true
+        arguments:
+            - ~
+            - null
+            - '@event_dispatcher'
+            - ~
+
+    state_machine.abstract:
+        class: Symfony\Component\Workflow\StateMachine
+        abstract: true
+        public: true
+        arguments:
+            - ~
+            - null
+            - '@event_dispatcher'
+            - ~
+
+    workflow.marking_store.multiple_state:
+        class: Symfony\Component\Workflow\MarkingStore\MultipleStateMarkingStore
+        abstract: true
+
+    workflow.marking_store.single_state:
+        class: Symfony\Component\Workflow\MarkingStore\SingleStateMarkingStore
+        abstract: true
+
+    workflow.marking_store.state_table:
+        class: Pimcore\Workflow\MarkingStore\StateTableMarkingStore
+        abstract: true
+
+
+    workflow.marking_store.data_object_splitted_state:
+        class: Pimcore\Workflow\MarkingStore\DataObjectSplittedStateMarkingStore
+        abstract: true
+
+    workflow.marking_store.data_object_multiple_state:
+        class: Pimcore\Workflow\MarkingStore\DataObjectMultipleStateMarkingStore
+        abstract: true
+
+    workflow.support_strategy.expression:
+        class: Pimcore\Workflow\SupportStrategy\ExpressionSupportStrategy
+        arguments:
+            - '@Pimcore\Workflow\ExpressionService'
+        abstract: true
+
+    Pimcore\Workflow\ExpressionService:
+        class: Pimcore\Workflow\ExpressionService
+        arguments:
+            - '@workflow.security.expression_language'
+            - '@security.token_storage'
+            - '@security.authorization_checker'
+            - '@security.authentication.trust_resolver'
+            - '@security.role_hierarchy'
+            - '@validator'
+        public: true
+
+    workflow.registry:
+        class: Symfony\Component\Workflow\Registry
+
+    Symfony\Component\Workflow\Registry:
+        alias: workflow.registry
+
+    Pimcore\Workflow\EventSubscriber\NotificationEmailSubscriber: ~
+
+    Pimcore\Workflow\EventSubscriber\NotesSubscriber: ~
+
+    Pimcore\Workflow\EventSubscriber\ChangePublishedStateSubscriber: ~
+
+    workflow.security.expression_language:
+        class: Symfony\Component\Workflow\EventListener\ExpressionLanguage
+
+    pimcore.workflow.place-options-provider:
+        class: Pimcore\Workflow\Place\OptionsProvider
+        public: true
+
+    Pimcore\Workflow\Dumper\GraphvizDumper:
+        public: true
+
+    Pimcore\Workflow\Dumper\StateMachineGraphvizDumper:
+        public: true
+
+
+    Pimcore\Workflow\ActionsButtonService: ~
