@@ -12,7 +12,7 @@ Therefore it is crucial to know the fundamentals about the pattern in general an
 If you don't know the MVC pattern please read [this article](http://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93controller) first.
 
 
-The MVC module of Pimcore built on top of Symfony. If you are new to Symfony you can read about 
+The MVC module of Pimcore is built on top of Symfony. If you are new to Symfony you can read about 
 [controllers](http://symfony.com/doc/3.4/controller.html) in the Symfony manual. With this 
 knowledge learning Pimcore will be much easier and faster.
 
