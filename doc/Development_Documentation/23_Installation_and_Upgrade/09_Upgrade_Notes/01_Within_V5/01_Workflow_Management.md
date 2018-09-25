@@ -75,4 +75,4 @@ Here is what Pimcore provides and what steps need to be done manually:
     
 
 ## Additional System Requirements
-To render the graph in workflow overview, `graphvis` is needed as additional system requirement. 
+To render the graph in workflow overview, `graphviz` is needed as additional system requirement. 
