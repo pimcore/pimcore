@@ -13,19 +13,15 @@ class Version20180904201947 extends AbstractPimcoreMigration
      */
     public function up(Schema $schema)
     {
+        $this->writeMessage('Changing Database schema for new workflows. Please see upgrade notes for migration of data!');
+
         $table = $schema->getTable('element_workflow_state');
         $table->addColumn('place', 'string', ['length' => 255]);
         $table->addColumn('workflow', 'string', ['length' => 100]);
         $table->dropPrimaryKey();
         $table->setPrimaryKey(['cid', 'ctype', 'workflowId', 'workflow']);
 
-
-        $db = Db::get();
-        try {
-            $db->query("INSERT INTO users_permission_definitions VALUES('workflow_details');");
-        } catch (\Exception $e) {
-        }
-
+        $this->addSql("INSERT IGNORE INTO users_permission_definitions VALUES('workflow_details');");
     }
 
     /**
