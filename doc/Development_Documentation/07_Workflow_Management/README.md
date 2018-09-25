@@ -96,8 +96,8 @@ To customize the e-mail template, following options are available:
   `workflowName`, `deeplink`, `note_description`, `translator`, `lang`. If additional parameters are required, overwrite 
   the service `Pimcore\Workflow\NotificationEmail\NotificationEmailService`.
 
-- Configure a Pimcore Mail Document and use full power of Pimcore Mail Documents, with Controller, Action, Placeholders, etc. 
-  In the mail document same parameters as above are available.    
+- Configure a Pimcore Mail Document and use full power of Pimcore Mail Documents, with Controller, Action, Placeholders, 
+  etc. In the mail document same parameters as above are available.    
   
 - If more custom notifications are necessary, use custom event listeners. 
 
@@ -106,3 +106,11 @@ In the *"Notes & Events"* tab, there is a list with every action used on the obj
 
 ![Notes & Events - notes from the workflow](../img/notesandevents_object_grid.png)
 
+## Workflow Overview
+
+If workflows are configured for a Pimcore element, an additional tab with workflow details like all configured workflows, 
+their current places and a workflow graph is added to Pimcore element detail page. 
+
+![Workflow Overview](../img/workflow-overview.jpg)
+
+> To render the graph, `graphvis` is needed as additional system requirement. 

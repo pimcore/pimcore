@@ -73,3 +73,6 @@ Here is what Pimcore provides and what steps need to be done manually:
   - all data in `status` need to be migrated to `place` - ideally all places in the new configuration are called the same 
     as the status were in the old configuration, then it is just a copy from one to the other column.   
     
+
+## Additional System Requirements
+To render the graph in workflow overview, `graphvis` is needed as additional system requirement. 

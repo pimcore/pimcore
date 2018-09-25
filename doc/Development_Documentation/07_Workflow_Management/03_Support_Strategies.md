@@ -4,11 +4,11 @@ The workflow engine offers several different ways to define which entities are s
 
 Important: The different configuration ways cannot be combined. It's necessary to choose one.
 
-## supports
+## Supports
 
 The simplest way is to use `supports`. A single entity class name or an array of entity class names can be defined.
 
-##### configuration examples
+##### Configuration Examples
 ```yaml
    supports: Pimcore\Model\DataObject\Product
 ```
@@ -21,9 +21,10 @@ The simplest way is to use `supports`. A single entity class name or an array of
 
 ## Expression Support Strategy
 
-The expression support strategy can be used if a workflow should apply to a entity under certain cercumstances only. It's possible to define a symfony expression - the workflow then applies only if the expression is valid.
+The expression support strategy can be used if a workflow should apply to a entity under certain circumstances only. 
+It's possible to define a symfony expression - the workflow then applies only if the expression is valid.
 
-##### configuration example
+##### Configuration Example
 
 In the following example the workflow applies to products where the attribute "productType" is equal to "article".
 
@@ -37,16 +38,17 @@ In the following example the workflow applies to products where the attribute "p
 
 ## Custom Support Strategy
 
-If a very specific logic is needed it's possible to add a service which implements the `Symfony\Component\Workflow\SupportStrategy\SupportStrategyInterface`.
+If a very specific logic is needed it's possible to add a service which implements the 
+`Symfony\Component\Workflow\SupportStrategy\SupportStrategyInterface`.
 
-##### configuration example
+##### Configuration Example
 
 ```yaml
    support_strategy:
        service: AppBundle\Workflow\SupportStrategy
 ```
 
-##### example implementation (needs to be registered in the service container)
+##### Example Implementation (needs to be registered in the service container)
 
 ```php
 <?php
