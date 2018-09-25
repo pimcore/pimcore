@@ -426,7 +426,7 @@ class QuantityValue extends Model\DataObject\ClassDefinition\Data
         if ($data instanceof \Pimcore\Model\DataObject\Data\QuantityValue) {
             return [
                 'value' => $data->getValue(),
-                'unit' => $data->getUnitId(),
+                'unit' => is_object($data->getUnit()) ? $data->getUnit()->getId() : null,
                 'unitAbbreviation' => is_object($data->getUnit()) ? $data->getUnit()->getAbbreviation() : ''
             ];
         } else {
