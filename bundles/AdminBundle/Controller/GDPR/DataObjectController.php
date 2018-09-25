@@ -17,10 +17,9 @@ namespace Pimcore\Bundle\AdminBundle\Controller\GDPR;
 use Pimcore\Bundle\AdminBundle\GDPR\DataProvider\DataObjects;
 use Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse;
 use Pimcore\Model\DataObject\AbstractObject;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
+use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * Class DataObjectController
@@ -46,8 +45,7 @@ class DataObjectController extends \Pimcore\Bundle\AdminBundle\Controller\AdminC
 
     /**
      * @param Request $request
-     * @Route("/search-data-objects")
-     * @Method({"GET"})
+     * @Route("/search-data-objects", methods={"GET"})
      */
     public function searchDataObjectsAction(Request $request, DataObjects $service)
     {
@@ -68,8 +66,7 @@ class DataObjectController extends \Pimcore\Bundle\AdminBundle\Controller\AdminC
 
     /**
      * @param Request $request
-     * @Route("/export")
-     * @Method({"GET"})
+     * @Route("/export", methods={"GET"})
      */
     public function exportDataObjectAction(Request $request, DataObjects $service)
     {

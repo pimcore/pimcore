@@ -23,9 +23,8 @@ use Pimcore\Model\Webservice\Data\DataObject\Concrete\Out as WebserviceObjectOut
 use Pimcore\Model\Webservice\Data\DataObject\Folder\In as WebserviceFolderIn;
 use Pimcore\Model\Webservice\Data\DataObject\Folder\Out as WebserviceFolderOut;
 use Pimcore\Tool;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Stopwatch\Stopwatch;
 
 /**
@@ -50,9 +49,7 @@ use Symfony\Component\Stopwatch\Stopwatch;
 class DataObjectController extends AbstractElementController
 {
     /**
-     * @Method("GET")
-     * @Route("/object/id/{id}", requirements={"id": "\d+"})
-     * @Route("/object")
+     * @Route("/object/id/{id}", requirements={"id": "\d+"}, methods={"GET"})
      *
      * @api {get} /object Get object data
      * @apiName Get object by id
@@ -147,8 +144,7 @@ class DataObjectController extends AbstractElementController
     }
 
     /**
-     * @Method({"POST", "PUT"})
-     * @Route("/object")
+     * @Route("/object", methods={"POST", "PUT"})
      *
      * @api {post} /object Create a new object
      * @apiName Create a new object
@@ -242,8 +238,7 @@ class DataObjectController extends AbstractElementController
     }
 
     /**
-     * @Method({"POST", "PUT"})
-     * @Route("/object/id/{id}", requirements={"id": "\d+"})
+     * @Route("/object/id/{id}", requirements={"id": "\d+"}, methods={"POST", "PUT"})
      *
      * @api {put} /object/id/{id} Update an object
      * @apiName Create a new object
@@ -334,9 +329,7 @@ class DataObjectController extends AbstractElementController
     }
 
     /**
-     * @Method("DELETE")
-     * @Route("/object/id/{id}", requirements={"id": "\d+"})
-     * @Route("/object")
+     * @Route("/object/id/{id}", requirements={"id": "\d+"}, methods={"DELETE"})
      *
      * @api {delete} /object/id/{id} Delete object
      * @apiName Delete object
@@ -383,8 +376,7 @@ class DataObjectController extends AbstractElementController
     }
 
     /**
-     * @Method("GET")
-     * @Route("/object-list")
+     * @Route("/object-list", methods={"GET"})
      *
      * Returns a list of object id/type pairs matching the given criteria.
      *  Example:
@@ -428,8 +420,7 @@ class DataObjectController extends AbstractElementController
     }
 
     /**
-     * @Method("GET")
-     * @Route("/object-meta/id/{id}", requirements={"id": "\d+"})
+     * @Route("/object-meta/id/{id}", requirements={"id": "\d+"}, methods={"GET"})
      *
      * end point for object metadata
      *  Example:
@@ -455,8 +446,7 @@ class DataObjectController extends AbstractElementController
     }
 
     /**
-     * @Method("GET")
-     * @Route("/object-count")
+     * @Route("/object-count", methods={"GET"})
      *
      * Returns the total number of objects matching the given condition
      *  Example:
@@ -518,8 +508,7 @@ class DataObjectController extends AbstractElementController
     }
 
     /**
-     * @Method({"GET", "POST"})
-     * @Route("/object-inquire")
+     * @Route("/object-inquire", methods={"GET", "POST"})
      *
      * Checks for existence of the given object IDs
      *

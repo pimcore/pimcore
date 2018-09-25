@@ -16,10 +16,9 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Model\DataObject;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * @Route("/variants")
@@ -27,8 +26,7 @@ use Symfony\Component\HttpFoundation\Request;
 class VariantsController extends AdminController
 {
     /**
-     * @Route("/update-key")
-     * @Method({"PUT"})
+     * @Route("/update-key", methods={"PUT"})
      *
      * @param Request $request
      *
@@ -55,8 +53,7 @@ class VariantsController extends AdminController
     }
 
     /**
-     * @Route("/get-variants")
-     * @Method({"GET", "POST"})
+     * @Route("/get-variants", methods={"GET", "POST"})
      *
      * @param Request $request
      *

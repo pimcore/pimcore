@@ -33,8 +33,6 @@ use Pimcore\Model\Staticroute;
 use Pimcore\Model\Tool\Tag;
 use Pimcore\Model\WebsiteSetting;
 use Pimcore\Tool;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
@@ -43,6 +41,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\HttpKernel\KernelInterface;
+use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * @Route("/settings")
@@ -50,8 +49,7 @@ use Symfony\Component\HttpKernel\KernelInterface;
 class SettingsController extends AdminController
 {
     /**
-     * @Route("/display-custom-logo", name="pimcore_settings_display_custom_logo")
-     * @Method({"GET"})
+     * @Route("/display-custom-logo", name="pimcore_settings_display_custom_logo", methods={"GET"})
      *
      * @param Request $request
      *
@@ -81,8 +79,7 @@ class SettingsController extends AdminController
     }
 
     /**
-     * @Route("/upload-custom-logo")
-     * @Method({"POST"})
+     * @Route("/upload-custom-logo", methods={"POST"})
      *
      * @param Request $request
      *
@@ -111,8 +108,7 @@ class SettingsController extends AdminController
     }
 
     /**
-     * @Route("/delete-custom-logo")
-     * @Method({"DELETE"})
+     * @Route("/delete-custom-logo", methods={"DELETE"})
      *
      * @param Request $request
      *
@@ -131,8 +127,7 @@ class SettingsController extends AdminController
     }
 
     /**
-     * @Route("/metadata")
-     * @Method({"POST"})
+     * @Route("/metadata", methods={"POST"})
      *
      * @param Request $request
      *
@@ -219,8 +214,7 @@ class SettingsController extends AdminController
     }
 
     /**
-     * @Route("/get-predefined-metadata")
-     * @Method({"GET"})
+     * @Route("/get-predefined-metadata", methods={"GET"})
      *
      * @param Request $request
      *
@@ -242,8 +236,7 @@ class SettingsController extends AdminController
     }
 
     /**
-     * @Route("/properties")
-     * @Method({"POST"})
+     * @Route("/properties", methods={"POST"})
      *
      * @param Request $request
      *
@@ -373,8 +366,7 @@ class SettingsController extends AdminController
     }
 
     /**
-     * @Route("/get-system")
-     * @Method({"GET"})
+     * @Route("/get-system", methods={"GET"})
      *
      * @param Request $request
      *
@@ -454,8 +446,7 @@ class SettingsController extends AdminController
     }
 
     /**
-     * @Route("/set-system")
-     * @Method({"PUT"})
+     * @Route("/set-system", methods={"PUT"})
      *
      * @param Request $request
      *
@@ -672,8 +663,7 @@ class SettingsController extends AdminController
     }
 
     /**
-     * @Route("/get-web2print")
-     * @Method({"GET"})
+     * @Route("/get-web2print", methods={"GET"})
      *
      * @param Request $request
      *
@@ -706,8 +696,7 @@ class SettingsController extends AdminController
     }
 
     /**
-     * @Route("/set-web2print")
-     * @Method({"PUT"})
+     * @Route("/set-web2print", methods={"PUT"})
      *
      * @param Request $request
      *
@@ -740,8 +729,7 @@ class SettingsController extends AdminController
     }
 
     /**
-     * @Route("/clear-cache")
-     * @Method({"DELETE"})
+     * @Route("/clear-cache", methods={"DELETE"})
      *
      * @param Request $request
      * @param KernelInterface $kernel
@@ -850,8 +838,7 @@ class SettingsController extends AdminController
     }
 
     /**
-     * @Route("/clear-output-cache")
-     * @Method({"DELETE"})
+     * @Route("/clear-output-cache", methods={"DELETE"})
      *
      * @param EventDispatcherInterface $eventDispatcher
      *
@@ -873,8 +860,7 @@ class SettingsController extends AdminController
     }
 
     /**
-     * @Route("/clear-temporary-files")
-     * @Method({"DELETE"})
+     * @Route("/clear-temporary-files", methods={"DELETE"})
      *
      * @param EventDispatcherInterface $eventDispatcher
      *
@@ -900,8 +886,7 @@ class SettingsController extends AdminController
     }
 
     /**
-     * @Route("/staticroutes")
-     * @Method({"POST"})
+     * @Route("/staticroutes", methods={"POST"})
      *
      * @param Request $request
      *
@@ -989,8 +974,7 @@ class SettingsController extends AdminController
     }
 
     /**
-     * @Route("/get-available-admin-languages")
-     * @Method({"GET"})
+     * @Route("/get-available-admin-languages", methods={"GET"})
      *
      * @param Request $request
      *
@@ -1015,8 +999,7 @@ class SettingsController extends AdminController
     }
 
     /**
-     * @Route("/glossary")
-     * @Method({"POST"})
+     * @Route("/glossary", methods={"POST"})
      *
      * @param Request $request
      *
@@ -1127,8 +1110,7 @@ class SettingsController extends AdminController
     }
 
     /**
-     * @Route("/get-available-sites")
-     * @Method({"GET"})
+     * @Route("/get-available-sites", methods={"GET"})
      *
      * @param Request $request
      *
@@ -1167,8 +1149,7 @@ class SettingsController extends AdminController
     }
 
     /**
-     * @Route("/get-available-countries")
-     * @Method({"GET"})
+     * @Route("/get-available-countries", methods={"GET"})
      *
      * @param Request $request
      *
@@ -1196,8 +1177,7 @@ class SettingsController extends AdminController
     }
 
     /**
-     * @Route("/thumbnail-adapter-check")
-     * @Method({"GET"})
+     * @Route("/thumbnail-adapter-check", methods={"GET"})
      *
      * @param Request $request
      *
@@ -1218,8 +1198,7 @@ class SettingsController extends AdminController
     }
 
     /**
-     * @Route("/thumbnail-tree")
-     * @Method({"GET", "POST"})
+     * @Route("/thumbnail-tree", methods={"GET", "POST"})
      *
      * @param Request $request
      *
@@ -1275,8 +1254,7 @@ class SettingsController extends AdminController
     }
 
     /**
-     * @Route("/thumbnail-downloadable")
-     * @Method("GET")
+     * @Route("/thumbnail-downloadable", methods={"GET"})
      *
      * @param Request $request
      *
@@ -1304,8 +1282,7 @@ class SettingsController extends AdminController
     }
 
     /**
-     * @Route("/thumbnail-add")
-     * @Method({"POST"})
+     * @Route("/thumbnail-add", methods={"POST"})
      *
      * @param Request $request
      *
@@ -1331,8 +1308,7 @@ class SettingsController extends AdminController
     }
 
     /**
-     * @Route("/thumbnail-delete")
-     * @Method({"DELETE"})
+     * @Route("/thumbnail-delete", methods={"DELETE"})
      *
      * @param Request $request
      *
@@ -1349,8 +1325,7 @@ class SettingsController extends AdminController
     }
 
     /**
-     * @Route("/thumbnail-get")
-     * @Method({"GET"})
+     * @Route("/thumbnail-get", methods={"GET"})
      *
      * @param Request $request
      *
@@ -1366,8 +1341,7 @@ class SettingsController extends AdminController
     }
 
     /**
-     * @Route("/thumbnail-update")
-     * @Method({"PUT"})
+     * @Route("/thumbnail-update", methods={"PUT"})
      *
      * @param Request $request
      *
@@ -1407,8 +1381,7 @@ class SettingsController extends AdminController
     }
 
     /**
-     * @Route("/video-thumbnail-adapter-check")
-     * @Method({"GET"})
+     * @Route("/video-thumbnail-adapter-check", methods={"GET"})
      *
      * @param Request $request
      *
@@ -1428,8 +1401,7 @@ class SettingsController extends AdminController
     }
 
     /**
-     * @Route("/video-thumbnail-tree")
-     * @Method({"GET", "POST"})
+     * @Route("/video-thumbnail-tree", methods={"GET", "POST"})
      *
      * @param Request $request
      *
@@ -1485,8 +1457,7 @@ class SettingsController extends AdminController
     }
 
     /**
-     * @Route("/video-thumbnail-add")
-     * @Method({"POST"})
+     * @Route("/video-thumbnail-add", methods={"POST"})
      *
      * @param Request $request
      *
@@ -1512,8 +1483,7 @@ class SettingsController extends AdminController
     }
 
     /**
-     * @Route("/video-thumbnail-delete")
-     * @Method({"DELETE"})
+     * @Route("/video-thumbnail-delete", methods={"DELETE"})
      *
      * @param Request $request
      *
@@ -1530,8 +1500,7 @@ class SettingsController extends AdminController
     }
 
     /**
-     * @Route("/video-thumbnail-get")
-     * @Method({"GET"})
+     * @Route("/video-thumbnail-get", methods={"GET"})
      *
      * @param Request $request
      *
@@ -1547,8 +1516,7 @@ class SettingsController extends AdminController
     }
 
     /**
-     * @Route("/video-thumbnail-update")
-     * @Method({"PUT"})
+     * @Route("/video-thumbnail-update", methods={"PUT"})
      *
      * @param Request $request
      *
@@ -1590,8 +1558,7 @@ class SettingsController extends AdminController
     }
 
     /**
-     * @Route("/robots-txt")
-     * @Method({"GET"})
+     * @Route("/robots-txt", methods={"GET"})
      *
      * @param Request $request
      *
@@ -1616,8 +1583,7 @@ class SettingsController extends AdminController
     }
 
     /**
-     * @Route("/robots-txt")
-     * @Method({"PUT"})
+     * @Route("/robots-txt", methods={"PUT"})
      *
      * @param Request $request
      *
@@ -1654,8 +1620,7 @@ class SettingsController extends AdminController
     }
 
     /**
-     * @Route("/tag-management-tree")
-     * @Method({"GET", "POST"})
+     * @Route("/tag-management-tree", methods={"GET", "POST"})
      *
      * @param Request $request
      *
@@ -1681,8 +1646,7 @@ class SettingsController extends AdminController
     }
 
     /**
-     * @Route("/tag-management-add")
-     * @Method({"POST"})
+     * @Route("/tag-management-add", methods={"POST"})
      *
      * @param Request $request
      *
@@ -1708,8 +1672,7 @@ class SettingsController extends AdminController
     }
 
     /**
-     * @Route("/tag-management-delete")
-     * @Method({"DELETE"})
+     * @Route("/tag-management-delete", methods={"DELETE"})
      *
      * @param Request $request
      *
@@ -1726,8 +1689,7 @@ class SettingsController extends AdminController
     }
 
     /**
-     * @Route("/tag-management-get")
-     * @Method({"GET"})
+     * @Route("/tag-management-get", methods={"GET"})
      *
      * @param Request $request
      *
@@ -1743,8 +1705,7 @@ class SettingsController extends AdminController
     }
 
     /**
-     * @Route("/tag-management-update")
-     * @Method({"PUT"})
+     * @Route("/tag-management-update", methods={"PUT"})
      *
      * @param Request $request
      *
@@ -1812,8 +1773,7 @@ class SettingsController extends AdminController
     }
 
     /**
-     * @Route("/website-settings")
-     * @Method({"POST"})
+     * @Route("/website-settings", methods={"POST"})
      *
      * @param Request $request
      *
@@ -1972,8 +1932,7 @@ class SettingsController extends AdminController
     }
 
     /**
-     * @Route("/get-available-algorithms")
-     * @Method({"GET"})
+     * @Route("/get-available-algorithms", methods={"GET"})
      *
      * @param Request $request
      *
@@ -2023,8 +1982,7 @@ class SettingsController extends AdminController
     }
 
     /**
-     * @Route("/test-web2print")
-     * @Method({"GET"})
+     * @Route("/test-web2print", methods={"GET"})
      *
      * @param Request $request
      *

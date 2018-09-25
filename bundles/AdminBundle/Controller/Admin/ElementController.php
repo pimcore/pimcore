@@ -27,17 +27,15 @@ use Pimcore\Model\Document;
 use Pimcore\Model\Element;
 use Pimcore\Model\Version;
 use Pimcore\Tool;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Annotation\Route;
 
 class ElementController extends AdminController
 {
     /**
-     * @Route("/element/lock-element")
-     * @Method({"PUT"})
+     * @Route("/element/lock-element", methods={"PUT"})
      *
      * @param Request $request
      *
@@ -51,8 +49,7 @@ class ElementController extends AdminController
     }
 
     /**
-     * @Route("/element/unlock-element")
-     * @Method({"PUT"})
+     * @Route("/element/unlock-element", methods={"PUT"})
      *
      * @param Request $request
      *
@@ -68,8 +65,7 @@ class ElementController extends AdminController
     /**
      * Returns the element data denoted by the given type and ID or path.
      *
-     * @Route("/element/get-subtype")
-     * @Method({"GET"})
+     * @Route("/element/get-subtype", methods={"GET"})
      *
      * @param Request $request
      *
@@ -136,8 +132,7 @@ class ElementController extends AdminController
     }
 
     /**
-     * @Route("/element/note-types")
-     * @Method({"GET"})
+     * @Route("/element/note-types", methods={"GET"})
      *
      * @param Request $request
      *
@@ -159,8 +154,7 @@ class ElementController extends AdminController
     }
 
     /**
-     * @Route("/element/note-list")
-     * @Method({"POST"})
+     * @Route("/element/note-list", methods={"POST"})
      *
      * @param Request $request
      *
@@ -279,8 +273,7 @@ class ElementController extends AdminController
     }
 
     /**
-     * @Route("/element/note-add")
-     * @Method({"POST"})
+     * @Route("/element/note-add", methods={"POST"})
      *
      * @param Request $request
      *
@@ -305,8 +298,7 @@ class ElementController extends AdminController
     }
 
     /**
-     * @Route("/element/find-usages")
-     * @Method({"GET"})
+     * @Route("/element/find-usages", methods={"GET"})
      *
      * @param Request $request
      *
@@ -348,8 +340,7 @@ class ElementController extends AdminController
     }
 
     /**
-     * @Route("/element/replace-assignments")
-     * @Method({"POST"})
+     * @Route("/element/replace-assignments", methods={"POST"})
      *
      * @param Request $request
      *
@@ -396,8 +387,7 @@ class ElementController extends AdminController
     }
 
     /**
-     * @Route("/element/unlock-propagate")
-     * @Method({"PUT"})
+     * @Route("/element/unlock-propagate", methods={"PUT"})
      *
      * @param Request $request
      *
@@ -419,8 +409,7 @@ class ElementController extends AdminController
     }
 
     /**
-     * @Route("/element/type-path")
-     * @Method({"GET"})
+     * @Route("/element/type-path", methods={"GET"})
      *
      * @param Request $request
      *
@@ -452,8 +441,7 @@ class ElementController extends AdminController
     }
 
     /**
-     * @Route("/element/version-update")
-     * @Method({"PUT"})
+     * @Route("/element/version-update", methods={"PUT"})
      *
      * @param Request $request
      *
@@ -472,8 +460,7 @@ class ElementController extends AdminController
     }
 
     /**
-     * @Route("/element/get-nice-path")
-     * @Method({"POST"})
+     * @Route("/element/get-nice-path", methods={"POST"})
      *
      * @param Request $request
      *
@@ -544,8 +531,7 @@ class ElementController extends AdminController
     }
 
     /**
-     * @Route("/element/get-versions")
-     * @Method({"GET"})
+     * @Route("/element/get-versions", methods={"GET"})
      *
      * @param Request $request
      *
@@ -591,8 +577,7 @@ class ElementController extends AdminController
     }
 
     /**
-     * @Route("/element/delete-version")
-     * @Method({"DELETE"})
+     * @Route("/element/delete-version", methods={"DELETE"})
      *
      * @param Request $request
      *
@@ -607,8 +592,7 @@ class ElementController extends AdminController
     }
 
     /**
-     * @Route("/element/delete-all-versions")
-     * @Method({"DELETE"})
+     * @Route("/element/delete-all-versions", methods={"DELETE"})
      *
      * @param Request $request
      *
@@ -630,8 +614,7 @@ class ElementController extends AdminController
     }
 
     /**
-     * @Route("/element/get-requires-dependencies")
-     * @Method({"GET"})
+     * @Route("/element/get-requires-dependencies", methods={"GET"})
      *
      * @param Request $request
      *
@@ -664,8 +647,7 @@ class ElementController extends AdminController
     }
 
     /**
-     * @Route("/element/get-required-by-dependencies")
-     * @Method({"GET"})
+     * @Route("/element/get-required-by-dependencies", methods={"GET"})
      *
      * @param Request $request
      *
@@ -698,8 +680,7 @@ class ElementController extends AdminController
     }
 
     /**
-     * @Route("/element/get-predefined-properties")
-     * @Method({"GET"})
+     * @Route("/element/get-predefined-properties", methods={"GET"})
      *
      * @param Request $request
      *
@@ -735,8 +716,7 @@ class ElementController extends AdminController
     }
 
     /**
-     * @Route("/element/analyze-permissions")
-     * @Method({"POST"})
+     * @Route("/element/analyze-permissions", methods={"POST"})
      *
      * @param Request $request
      *

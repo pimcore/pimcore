@@ -14,7 +14,7 @@
 
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * @Route("/printcontainer")

@@ -17,13 +17,12 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Reports;
 use Pimcore\Controller\EventedControllerInterface;
 use Pimcore\Model\Document;
 use Pimcore\Model\Tool\Qrcode;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
+use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * @Route("/qrcode")
@@ -31,8 +30,7 @@ use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 class QrcodeController extends ReportsControllerBase implements EventedControllerInterface
 {
     /**
-     * @Route("/tree")
-     * @Method({"GET", "POST"})
+     * @Route("/tree", methods={"GET", "POST"})
      *
      * @param Request $request
      *
@@ -56,8 +54,7 @@ class QrcodeController extends ReportsControllerBase implements EventedControlle
     }
 
     /**
-     * @Route("/add")
-     * @Method({"POST"})
+     * @Route("/add", methods={"POST"})
      *
      * @param Request $request
      *
@@ -81,8 +78,7 @@ class QrcodeController extends ReportsControllerBase implements EventedControlle
     }
 
     /**
-     * @Route("/delete")
-     * @Method({"DELETE"})
+     * @Route("/delete", methods={"DELETE"})
      *
      * @param Request $request
      *
@@ -97,8 +93,7 @@ class QrcodeController extends ReportsControllerBase implements EventedControlle
     }
 
     /**
-     * @Route("/get")
-     * @Method({"GET"})
+     * @Route("/get", methods={"GET"})
      *
      * @param Request $request
      *
@@ -112,8 +107,7 @@ class QrcodeController extends ReportsControllerBase implements EventedControlle
     }
 
     /**
-     * @Route("/update")
-     * @Method({"PUT"})
+     * @Route("/update", methods={"PUT"})
      *
      * @param Request $request
      *
@@ -137,8 +131,7 @@ class QrcodeController extends ReportsControllerBase implements EventedControlle
     }
 
     /**
-     * @Route("/code")
-     * @Method({"GET"})
+     * @Route("/code", methods={"GET"})
      *
      * @param Request $request
      *

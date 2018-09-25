@@ -18,16 +18,14 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Model\DataObject\QuantityValue\Unit;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\Annotation\Route;
 
 class QuantityValueController extends AdminController
 {
     /**
-     * @Route("/quantity-value/unit-proxy")
-     * @Method({"GET"})
+     * @Route("/quantity-value/unit-proxy", methods={"GET"})
      *
      * @param Request $request
      *
@@ -83,8 +81,7 @@ class QuantityValueController extends AdminController
     }
 
     /**
-     * @Route("/quantity-value/unit-proxy")
-     * @Method({"POST", "PUT"})
+     * @Route("/quantity-value/unit-proxy", methods={"POST", "PUT"})
      *
      * @param Request $request
      *
@@ -146,8 +143,7 @@ class QuantityValueController extends AdminController
     }
 
     /**
-     * @Route("/quantity-value/unit-list")
-     * @Method({"GET"})
+     * @Route("/quantity-value/unit-list", methods={"GET"})
      *
      * @param Request $request
      *

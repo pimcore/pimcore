@@ -22,10 +22,9 @@ use Pimcore\Analytics\Piwik\Config\ConfigProvider;
 use Pimcore\Analytics\Piwik\ReportBroker;
 use Pimcore\Analytics\Piwik\WidgetBroker;
 use Pimcore\Analytics\SiteId\SiteIdProvider;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Translation\TranslatorInterface;
 
 /**
@@ -34,8 +33,7 @@ use Symfony\Component\Translation\TranslatorInterface;
 class PiwikController extends ReportsControllerBase
 {
     /**
-     * @Route("/reports")
-     * @Method({"GET"})
+     * @Route("/reports", methods={"GET"})
      *
      * @param ReportBroker $reportBroker
      *
@@ -51,8 +49,7 @@ class PiwikController extends ReportsControllerBase
     }
 
     /**
-     * @Route("/reports/{report}")
-     * @Method({"GET"})
+     * @Route("/reports/{report}", methods={"GET"})
      *
      * @param ReportBroker $reportBroker
      *
@@ -72,8 +69,7 @@ class PiwikController extends ReportsControllerBase
     }
 
     /**
-     * @Route("/iframe-integration")
-     * @Method({"GET"})
+     * @Route("/iframe-integration", methods={"GET"})
      *
      * @param ConfigProvider $configProvider
      *
@@ -100,8 +96,7 @@ class PiwikController extends ReportsControllerBase
     }
 
     /**
-     * @Route("/config/configured-sites")
-     * @Method({"GET"})
+     * @Route("/config/configured-sites", methods={"GET"})
      *
      * @param SiteIdProvider $siteConfigProvider
      * @param ConfigProvider $configProvider
@@ -135,8 +130,7 @@ class PiwikController extends ReportsControllerBase
     }
 
     /**
-     * @Route("/portal-widgets/{configKey}")
-     * @Method({"GET"})
+     * @Route("/portal-widgets/{configKey}", methods={"GET"})
      *
      * @param WidgetBroker $widgetBroker
      * @param string $configKey
@@ -153,8 +147,7 @@ class PiwikController extends ReportsControllerBase
     }
 
     /**
-     * @Route("/portal-widgets/{configKey}/{widgetId}")
-     * @Method({"GET"})
+     * @Route("/portal-widgets/{configKey}/{widgetId}", methods={"GET"})
      *
      * @param Request $request
      * @param WidgetBroker $widgetBroker
@@ -187,8 +180,7 @@ class PiwikController extends ReportsControllerBase
     }
 
     /**
-     * @Route("/api/site/{configKey}")
-     * @Method("POST")
+     * @Route("/api/site/{configKey}", methods={"POST"})
      *
      * @param string $configKey
      * @param SiteIdProvider $siteConfigProvider
@@ -212,8 +204,7 @@ class PiwikController extends ReportsControllerBase
     }
 
     /**
-     * @Route("/api/site/{configKey}")
-     * @Method("PUT")
+     * @Route("/api/site/{configKey}", methods={"PUT"})
      *
      * @param string $configKey
      * @param SiteIdProvider $siteConfigProvider

@@ -18,15 +18,13 @@ use Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse;
 use Pimcore\Event\Webservice\FilterEvent;
 use Pimcore\Http\Exception\ResponseException;
 use Pimcore\Model\DataObject;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\Annotation\Route;
 
 class ClassController extends AbstractRestController
 {
     /**
-     * @Method("GET")
-     * @Route("/class/id/{id}")
+     * @Route("/class/id/{id}", methods={"GET"})
      *
      * end point for the class definition
      *
@@ -57,8 +55,7 @@ class ClassController extends AbstractRestController
     }
 
     /**
-     * @Method("GET")
-     * @Route("/classes")
+     * @Route("/classes", methods={"GET"})
      *
      * @return JsonResponse
      */
@@ -84,8 +81,7 @@ class ClassController extends AbstractRestController
     }
 
     /**
-     * @Method("GET")
-     * @Route("/object-brick/id/{id}")
+     * @Route("/object-brick/id/{id}", methods={"GET"})
      *
      * end point for the object-brick definition
      *
@@ -116,8 +112,7 @@ class ClassController extends AbstractRestController
     }
 
     /**
-     * @Method("GET")
-     * @Route("/object-bricks")
+     * @Route("/object-bricks", methods={"GET"})
      *
      * Returns a list of all object brick definitions.
      */
@@ -144,8 +139,7 @@ class ClassController extends AbstractRestController
     }
 
     /**
-     * @Method("GET")
-     * @Route("/field-collection/id/{id}")
+     * @Route("/field-collection/id/{id}", methods={"GET"})
      *
      * end point for the field collection definition
      *
@@ -176,8 +170,7 @@ class ClassController extends AbstractRestController
     }
 
     /**
-     * @Method("GET")
-     * @Route("/field-collections")
+     * @Route("/field-collections", methods={"GET"})
      *
      * Returns a list of all field collection definitions.
      */
@@ -204,8 +197,7 @@ class ClassController extends AbstractRestController
     }
 
     /**
-     * @Method("GET")
-     * @Route("/quantity-value-unit-definition")
+     * @Route("/quantity-value-unit-definition", methods={"GET"})
      *
      * Returns the classification store feature definition as JSON. Could be useful to provide separate endpoints
      * for the various sub-configs.
@@ -242,8 +234,7 @@ class ClassController extends AbstractRestController
     }
 
     /**
-     * @Method("GET")
-     * @Route("/classificationstore-definition")
+     * @Route("/classificationstore-definition", methods={"GET"})
      *
      * Returns the classification store feature definition as JSON. Could be useful to provide separate endpoints
      * for the various sub-configs.

@@ -18,15 +18,13 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\AdminBundle\Controller\GDPR;
 
 use Pimcore\Bundle\AdminBundle\GDPR\DataProvider\Manager;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
+use Symfony\Component\Routing\Annotation\Route;
 
 class AdminController extends \Pimcore\Bundle\AdminBundle\Controller\AdminController
 {
     /**
-     * @Route("/get-data-providers")
-     * @Method({"GET"})
+     * @Route("/get-data-providers", methods={"GET"})
      */
     public function getDataProvidersAction(Manager $manager)
     {

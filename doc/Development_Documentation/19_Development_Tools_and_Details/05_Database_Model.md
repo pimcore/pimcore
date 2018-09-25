@@ -50,7 +50,8 @@ These tables are created during Pimcore install and are always the same.
 | notes | [Notes](../18_Tools_and_Features/05_Notes_and_Events.md) for elements | 
 | notes_data | Additional data for notes | 
 | objects | List of all objects with metadata like id, class name, path, parent, ...|
-| properties | Data from the `properties` tab | 
+| properties | Data from the `properties` tab |
+| qr_codes | Edit QR Code configurations | 
 | quantityvalue_units | Available quantites for quantity value object data type |
 | recyclebin | Stores metadata of deleted elements |
 | redirects | Stores redirects | 
@@ -73,7 +74,6 @@ These tables are created during Pimcore install and are always the same.
 | uuids | stores Unique Identifiers - if enabled |
 | versions | List of object/asset/document versions. Actual data is serialized and written to disk |
 | website_settings | Stores `Website Settings` |
-
 
 # Object Tables 
 These tables are created and modified dynamically during configuration of object data model. 

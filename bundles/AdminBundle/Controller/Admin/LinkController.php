@@ -20,11 +20,10 @@ use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * @Route("/link")
@@ -32,8 +31,7 @@ use Symfony\Component\HttpFoundation\Request;
 class LinkController extends DocumentControllerBase
 {
     /**
-     * @Route("/get-data-by-id")
-     * @Method({"GET"})
+     * @Route("/get-data-by-id", methods={"GET"})
      *
      * @param Request $request
      *
@@ -85,8 +83,7 @@ class LinkController extends DocumentControllerBase
     }
 
     /**
-     * @Route("/save")
-     * @Method({"POST", "PUT"})
+     * @Route("/save", methods={"POST", "PUT"})
      *
      * @param Request $request
      *
@@ -111,8 +108,12 @@ class LinkController extends DocumentControllerBase
                     $link->setPublished(true);
                 }
 
+                $task = $request->get('task');
                 // only save when publish or unpublish
-                if (($request->get('task') == 'publish' && $link->isAllowed('publish')) || ($request->get('task') == 'unpublish' && $link->isAllowed('unpublish'))) {
+                if (($task == 'publish' && $link->isAllowed('publish'))
+                    || ($task == 'unpublish' && $link->isAllowed('unpublish'))
+                    || $task == 'scheduler' && $link->isAllowed('settings')
+                ) {
                     $link->save();
 
                     return $this->adminJson(['success' => true]);

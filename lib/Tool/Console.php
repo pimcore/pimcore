@@ -100,39 +100,34 @@ class Console
         // allow custom check routines for certain programs
         $customCheckMethod = 'check' . ucfirst($name);
         if (!method_exists(__CLASS__, $customCheckMethod)) {
-            $customCheckMethod = 'checkDummy';
+            $customCheckMethod = null;
         }
 
         foreach ($paths as $path) {
-            foreach (['--help', '-h', '-help'] as $option) {
-                try {
-                    $path = rtrim($path, '/\\ ');
-                    if ($path) {
-                        $executablePath = $path . DIRECTORY_SEPARATOR . $name;
-                    } else {
-                        $executablePath = $name;
-                    }
-
-                    $process = new Process($executablePath . ' ' . $option);
-                    $process->run();
-
-                    if ($process->isSuccessful() || self::$customCheckMethod($process)) {
-                        if (empty($path) && self::getSystemEnvironment() == 'unix') {
-                            // get the full qualified path, seems to solve a lot of problems :)
-                            // if not using the full path, timeout, nohup and nice will fail
-                            $fullQualifiedPath = shell_exec('which ' . $executablePath);
-                            $fullQualifiedPath = trim($fullQualifiedPath);
-                            if ($fullQualifiedPath) {
-                                $executablePath = $fullQualifiedPath;
-                            }
-                        }
-
-                        self::$executableCache[$name] = $executablePath;
-
-                        return $executablePath;
-                    }
-                } catch (\Exception $e) {
+            try {
+                $path = rtrim($path, '/\\ ');
+                if ($path) {
+                    $executablePath = $path . DIRECTORY_SEPARATOR . $name;
+                } else {
+                    $executablePath = $name;
                 }
+
+                $checkCmd = 'which ' . escapeshellarg($executablePath);
+                if (self::getSystemEnvironment() == 'windows') {
+                    $checkCmd = 'where ' . escapeshellarg($path) . ':' . $name;
+                }
+
+                $fullQualifiedPath = shell_exec($checkCmd . ' ' . $executablePath);
+                $fullQualifiedPath = trim(strtok($fullQualifiedPath, "\n")); // get the first line/result
+                if ($fullQualifiedPath) {
+                    if (!$customCheckMethod || self::$customCheckMethod($executablePath)) {
+                        self::$executableCache[$name] = $fullQualifiedPath;
+
+                        return $fullQualifiedPath;
+                    }
+                }
+            } catch (\Exception $e) {
+                // nothing to do ...
             }
         }
 
@@ -163,30 +158,42 @@ class Console
     }
 
     /**
-     * @param $process
+     * @param string $executablePath
      *
      * @return bool
      */
-    protected static function checkPngout($process)
+    protected static function checkPngout($executablePath)
     {
-        if (strpos($process->getOutput() . $process->getErrorOutput(), 'bitdepth') !== false) {
-            return true;
+        try {
+            $process = new Process($executablePath . ' --help');
+            $process->run();
+            if (strpos($process->getOutput() . $process->getErrorOutput(), 'bitdepth') !== false) {
+                return true;
+            }
+        } catch (\Exception $e) {
+            // noting to do
         }
 
         return false;
     }
 
     /**
-     * @param $process
+     * @param string $executablePath
      *
      * @return bool
      */
-    protected static function checkCjpeg($process)
+    protected static function checkCjpeg($executablePath)
     {
-        if (strpos($process->getOutput() . $process->getErrorOutput(), '-optimize') !== false) {
-            if (strpos($process->getOutput() . $process->getErrorOutput(), 'mozjpeg') !== false) {
-                return true;
+        try {
+            $process = new Process($executablePath . ' --help');
+            $process->run();
+            if (strpos($process->getOutput() . $process->getErrorOutput(), '-optimize') !== false) {
+                if (strpos($process->getOutput() . $process->getErrorOutput(), 'mozjpeg') !== false) {
+                    return true;
+                }
             }
+        } catch (\Exception $e) {
+            // noting to do
         }
 
         return false;
@@ -203,26 +210,22 @@ class Console
     }
 
     /**
-     * @param $process
+     * @param string $executablePath
      *
      * @return bool
      */
-    protected static function checkConvert($process)
+    protected static function checkConvert($executablePath)
     {
-        if (strpos($process->getOutput() . $process->getErrorOutput(), 'imagemagick.org') !== false) {
-            return true;
+        try {
+            $process = new Process($executablePath . ' --help');
+            $process->run();
+            if (strpos($process->getOutput() . $process->getErrorOutput(), 'imagemagick.org') !== false) {
+                return true;
+            }
+        } catch (\Exception $e) {
+            // noting to do
         }
 
-        return false;
-    }
-
-    /**
-     * @param $process
-     *
-     * @return bool
-     */
-    protected static function checkDummy($process)
-    {
         return false;
     }
 

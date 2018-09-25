@@ -18,10 +18,9 @@ use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Db;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\Classificationstore;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * @Route("/classificationstore")
@@ -31,8 +30,7 @@ class ClassificationstoreController extends AdminController
     /**
      * Delete collection with the group-relations
      *
-     * @Route("/delete-collection")
-     * @Method({"DELETE"})
+     * @Route("/delete-collection", methods={"DELETE"})
      *
      * @param Request $request
      *
@@ -56,8 +54,7 @@ class ClassificationstoreController extends AdminController
     }
 
     /**
-     * @Route("/delete-collection-relation")
-     * @Method({"DELETE"})
+     * @Route("/delete-collection-relation", methods={"DELETE"})
      *
      * @param Request $request
      *
@@ -78,8 +75,7 @@ class ClassificationstoreController extends AdminController
     }
 
     /**
-     * @Route("/delete-relation")
-     * @Method({"DELETE"})
+     * @Route("/delete-relation", methods={"DELETE"})
      *
      * @param Request $request
      *
@@ -100,8 +96,7 @@ class ClassificationstoreController extends AdminController
     }
 
     /**
-     * @Route("/delete-group")
-     * @Method({"DELETE"})
+     * @Route("/delete-group", methods={"DELETE"})
      *
      * @param Request $request
      *
@@ -118,8 +113,7 @@ class ClassificationstoreController extends AdminController
     }
 
     /**
-     * @Route("/create-group")
-     * @Method({"POST"})
+     * @Route("/create-group", methods={"POST"})
      *
      * @param Request $request
      *
@@ -143,8 +137,7 @@ class ClassificationstoreController extends AdminController
     }
 
     /**
-     * @Route("/create-store")
-     * @Method({"POST"})
+     * @Route("/create-store", methods={"POST"})
      *
      * @param Request $request
      *
@@ -170,8 +163,7 @@ class ClassificationstoreController extends AdminController
     }
 
     /**
-     * @Route("/create-collection")
-     * @Method({"POST"})
+     * @Route("/create-collection", methods={"POST"})
      *
      * @param Request $request
      *
@@ -195,8 +187,7 @@ class ClassificationstoreController extends AdminController
     }
 
     /**
-     * @Route("/collections")
-     * @Method({"GET"})
+     * @Route("/collections", methods={"GET"})
      *
      * @param Request $request
      *
@@ -329,8 +320,7 @@ class ClassificationstoreController extends AdminController
     }
 
     /**
-     * @Route("/collections")
-     * @Method({"POST", "PUT"})
+     * @Route("/collections", methods={"POST", "PUT"})
      *
      * @param Request $request
      *
@@ -359,8 +349,7 @@ class ClassificationstoreController extends AdminController
     }
 
     /**
-     * @Route("/groups")
-     * @Method({"GET"})
+     * @Route("/groups", methods={"GET"})
      *
      * @param Request $request
      *
@@ -477,8 +466,7 @@ class ClassificationstoreController extends AdminController
     }
 
     /**
-     * @Route("/groups")
-     * @Method({"POST", "PUT"})
+     * @Route("/groups", methods={"POST", "PUT"})
      *
      * @param Request $request
      *
@@ -507,8 +495,7 @@ class ClassificationstoreController extends AdminController
     }
 
     /**
-     * @Route("/collection-relations")
-     * @Method({"GET"})
+     * @Route("/collection-relations", methods={"GET"})
      *
      * @param Request $request
      *
@@ -605,8 +592,7 @@ class ClassificationstoreController extends AdminController
     }
 
     /**
-     * @Route("/collection-relations")
-     * @Method({"POST", "PUT"})
+     * @Route("/collection-relations", methods={"POST", "PUT"})
      *
      * @param Request $request
      *
@@ -642,8 +628,7 @@ class ClassificationstoreController extends AdminController
     }
 
     /**
-     * @Route("/list-stores")
-     * @Method({"GET"})
+     * @Route("/list-stores", methods={"GET"})
      *
      * @param Request $request
      *
@@ -658,8 +643,7 @@ class ClassificationstoreController extends AdminController
     }
 
     /**
-     * @Route("/search-relations")
-     * @Method({"GET"})
+     * @Route("/search-relations", methods={"GET"})
      *
      * @param Request $request
      *
@@ -775,8 +759,7 @@ class ClassificationstoreController extends AdminController
     }
 
     /**
-     * @Route("/relations")
-     * @Method({"GET"})
+     * @Route("/relations", methods={"GET"})
      *
      * @param Request $request
      *
@@ -891,8 +874,7 @@ class ClassificationstoreController extends AdminController
     }
 
     /**
-     * @Route("/relations")
-     * @Method({"POST", "PUT"})
+     * @Route("/relations", methods={"POST", "PUT"})
      *
      * @param Request $request
      *
@@ -923,8 +905,7 @@ class ClassificationstoreController extends AdminController
     }
 
     /**
-     * @Route("/add-collections")
-     * @Method({"POST"})
+     * @Route("/add-collections", methods={"POST"})
      *
      * @param Request $request
      *
@@ -1030,8 +1011,7 @@ class ClassificationstoreController extends AdminController
     }
 
     /**
-     * @Route("/add-groups")
-     * @Method({"POST"})
+     * @Route("/add-groups", methods={"POST"})
      *
      * @param Request $request
      *
@@ -1107,8 +1087,7 @@ class ClassificationstoreController extends AdminController
     }
 
     /**
-     * @Route("/properties")
-     * @Method({"GET"})
+     * @Route("/properties", methods={"GET"})
      *
      * @param Request $request
      *
@@ -1259,8 +1238,7 @@ class ClassificationstoreController extends AdminController
     }
 
     /**
-     * @Route("/properties")
-     * @Method({"POST", "PUT"})
+     * @Route("/properties", methods={"POST", "PUT"})
      *
      * @param Request $request
      *
@@ -1329,8 +1307,7 @@ class ClassificationstoreController extends AdminController
     }
 
     /**
-     * @Route("/add-property")
-     * @Method({"POST"})
+     * @Route("/add-property", methods={"POST"})
      *
      * @param Request $request
      *
@@ -1363,8 +1340,7 @@ class ClassificationstoreController extends AdminController
     }
 
     /**
-     * @Route("/delete-property")
-     * @Method({"DELETE"})
+     * @Route("/delete-property", methods={"DELETE"})
      *
      * @param Request $request
      *
@@ -1383,8 +1359,7 @@ class ClassificationstoreController extends AdminController
     }
 
     /**
-     * @Route("/edit-store")
-     * @Method({"PUT"})
+     * @Route("/edit-store", methods={"PUT"})
      *
      * @param Request $request
      *
@@ -1423,8 +1398,7 @@ class ClassificationstoreController extends AdminController
     }
 
     /**
-     * @Route("/storetree")
-     * @Method({"GET"})
+     * @Route("/storetree", methods={"GET"})
      *
      * @param Request $request
      *
@@ -1459,8 +1433,7 @@ class ClassificationstoreController extends AdminController
     }
 
     /**
-     * @Route("/get-page")
-     * @Method({"GET"})
+     * @Route("/get-page", methods={"GET"})
      *
      * @param Request $request
      *

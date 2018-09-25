@@ -22,13 +22,12 @@ use Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse;
 use Pimcore\Model\Document;
 use Pimcore\Model\Redirect;
 use Pimcore\Routing\Redirect\Csv;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * @Route("/redirects")
@@ -36,8 +35,7 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 class RedirectsController extends AdminController
 {
     /**
-     * @Route("/list")
-     * @Method({"POST"})
+     * @Route("/list", methods={"POST"})
      *
      * @param Request $request
      *
@@ -159,8 +157,7 @@ class RedirectsController extends AdminController
     }
 
     /**
-     * @Route("/csv-export")
-     * @Method("GET")
+     * @Route("/csv-export", methods={"GET"})
      *
      * @param Request $request
      * @param Csv $csv
@@ -192,8 +189,7 @@ class RedirectsController extends AdminController
     }
 
     /**
-     * @Route("/csv-import")
-     * @Method("POST")
+     * @Route("/csv-import", methods={"POST"})
      *
      * @param Request $request
      * @param Csv $csv

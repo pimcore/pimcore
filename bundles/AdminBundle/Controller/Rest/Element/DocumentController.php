@@ -21,9 +21,8 @@ use Pimcore\Http\Exception\ResponseException;
 use Pimcore\Model\Document;
 use Pimcore\Model\Webservice;
 use Pimcore\Tool;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * end point for document related data.
@@ -46,9 +45,7 @@ use Symfony\Component\HttpFoundation\Request;
 class DocumentController extends AbstractElementController
 {
     /**
-     * @Method("GET")
-     * @Route("/document/id/{id}", requirements={"id": "\d+"})
-     * @Route("/document")
+     * @Route("/document/id/{id}", requirements={"id": "\d+"}, methods={"GET"})
      *
      * @api              {get} /document Get document
      * @apiName          getDocument
@@ -108,8 +105,7 @@ class DocumentController extends AbstractElementController
     }
 
     /**
-     * @Method({"POST", "PUT"})
-     * @Route("/document")
+     * @Route("/document", methods={"POST", "PUT"})
      *
      * @api              {post} /document/id/{id} Create document
      * @apiName          createDocument
@@ -151,8 +147,7 @@ class DocumentController extends AbstractElementController
     }
 
     /**
-     * @Method({"POST", "PUT"})
-     * @Route("/document/id/{id}", requirements={"id": "\d+"})
+     * @Route("/document/id/{id}", requirements={"id": "\d+"}, methods={"POST", "PUT"})
      *
      * @api              {put} /document/id/{id} Update document
      * @apiName          updateDocument
@@ -191,9 +186,7 @@ class DocumentController extends AbstractElementController
     }
 
     /**
-     * @Method("DELETE")
-     * @Route("/document/id/{id}", requirements={"id": "\d+"})
-     * @Route("/document")
+     * @Route("/document/id/{id}", requirements={"id": "\d+"}, methods={"DELETE"})
      *
      * @api              {delete} /document Delete document
      * @apiName          deleteDocument
@@ -240,8 +233,7 @@ class DocumentController extends AbstractElementController
     }
 
     /**
-     * @Method("GET")
-     * @Route("/document-list")
+     * @Route("/document-list", methods={"GET"})
      *
      * Returns a list of document id/type pairs matching the given criteria.
      *  Example:
@@ -282,8 +274,7 @@ class DocumentController extends AbstractElementController
     }
 
     /**
-     * @Method("GET")
-     * @Route("/document-count")
+     * @Route("/document-count", methods={"GET"})
      *
      * Returns the total number of documents matching the given condition
      *  GET http://[YOUR-DOMAIN]/webservice/rest/asset-count?apikey=[API-KEY]&q={"type": "folder"}
@@ -326,8 +317,7 @@ class DocumentController extends AbstractElementController
     }
 
     /**
-     * @Method({"GET", "POST"})
-     * @Route("/document-inquire")
+     * @Route("/document-inquire", methods={"GET", "POST"})
      *
      * Checks for existence of the given document IDs
      *

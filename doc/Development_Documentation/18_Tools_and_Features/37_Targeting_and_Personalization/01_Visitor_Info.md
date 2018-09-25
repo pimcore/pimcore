@@ -105,8 +105,8 @@ If your controllers are defined as services, you can make use of argument inject
 namespace AppBundle\Controller;
 
 use Pimcore\Targeting\VisitorInfoStorageInterface;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\Routing\Annotation\Route;
 
 class VisitorInfoController
 {

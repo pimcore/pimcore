@@ -28,8 +28,6 @@ use Pimcore\Extension\Document\Areabrick\AreabrickManager;
 use Pimcore\Extension\Document\Areabrick\AreabrickManagerInterface;
 use Pimcore\Routing\RouteReferenceInterface;
 use Pimcore\Tool\AssetsInstaller;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use SensioLabs\AnsiConverter\AnsiToHtmlConverter;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
@@ -37,6 +35,7 @@ use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Process\Exception\ProcessFailedException;
+use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * Handles all "new" extensions as of pimcore 5 (bundles, new areabrick layout) and pipes legacy extension requests
@@ -79,8 +78,7 @@ class ExtensionManagerController extends AdminController implements EventedContr
     }
 
     /**
-     * @Route("/admin/extensions")
-     * @Method("GET")
+     * @Route("/admin/extensions", methods={"GET"})
      *
      * @return JsonResponse
      */
@@ -102,8 +100,7 @@ class ExtensionManagerController extends AdminController implements EventedContr
     /**
      * Updates bundle options (priority, environments)
      *
-     * @Route("/admin/extensions")
-     * @Method("PUT")
+     * @Route("/admin/extensions", methods={"PUT"})
      *
      * @param Request $request
      *
@@ -150,8 +147,7 @@ class ExtensionManagerController extends AdminController implements EventedContr
     }
 
     /**
-     * @Route("/admin/toggle-extension-state")
-     * @Method({"PUT"})
+     * @Route("/admin/toggle-extension-state", methods={"PUT"})
      *
      * @param Request $request
      * @param KernelInterface $kernel
@@ -244,8 +240,7 @@ class ExtensionManagerController extends AdminController implements EventedContr
     }
 
     /**
-     * @Route("/admin/install")
-     * @Method({"POST"})
+     * @Route("/admin/install", methods={"POST"})
      *
      * @param Request $request
      *
@@ -261,8 +256,7 @@ class ExtensionManagerController extends AdminController implements EventedContr
     }
 
     /**
-     * @Route("/admin/uninstall")
-     * @Method({"POST"})
+     * @Route("/admin/uninstall", methods={"POST"})
      *
      * @param Request $request
      *
@@ -278,8 +272,7 @@ class ExtensionManagerController extends AdminController implements EventedContr
     }
 
     /**
-     * @Route("/admin/update")
-     * @Method({"POST"})
+     * @Route("/admin/update", methods={"POST"})
      *
      * @param Request $request
      *
