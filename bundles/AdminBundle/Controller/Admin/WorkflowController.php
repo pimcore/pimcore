@@ -104,7 +104,7 @@ class WorkflowController extends AdminController implements EventedControllerInt
     }
 
     /**
-     * @Route("/submit-workflow-transition")
+     * @Route("/submit-workflow-transition", methods={"POST"})
      *
      * @param Request $request
      *
@@ -159,7 +159,7 @@ class WorkflowController extends AdminController implements EventedControllerInt
     }
 
     /**
-     * @Route("/submit-global-action")
+     * @Route("/submit-global-action", methods={"POST"})
      *
      * @param Request $request
      *
