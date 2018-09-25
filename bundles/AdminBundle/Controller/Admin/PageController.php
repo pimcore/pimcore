@@ -68,7 +68,7 @@ class PageController extends DocumentControllerBase
 
         $page->url = $page->getFullPath();
         $site = \Pimcore\Tool\Frontend::getSiteForDocument($page);
-        if ($site instanceof Site) {
+        if ($site instanceof Site && $site->getMainDomain()) {
             $page->url = 'http://' . $site->getMainDomain() . preg_replace('@^' . $site->getRootPath() . '/?@', '/', $page->getRealFullPath());
         }
 
