@@ -738,7 +738,6 @@ class MiscController extends AdminController
      */
     public function iconListAction(Request $request)
     {
-
     }
 
     /**

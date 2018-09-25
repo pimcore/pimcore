@@ -6,7 +6,6 @@ use Doctrine\DBAL\Schema\Schema;
 use Pimcore\Db;
 use Pimcore\Migrations\Migration\AbstractPimcoreMigration;
 
-
 class Version20180924111736 extends AbstractPimcoreMigration
 {
     public function doesSqlMigrations(): bool
@@ -23,9 +22,7 @@ class Version20180924111736 extends AbstractPimcoreMigration
         try {
             $db->query("INSERT INTO users_permission_definitions VALUES('qr_codes');");
         } catch (\Exception $e) {
-
         }
-
     }
 
     /**
