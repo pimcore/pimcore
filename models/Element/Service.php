@@ -906,6 +906,8 @@ class Service extends Model\AbstractModel
             $key = ltrim($key, '.');
         }
 
+        $key = substr($key, 0, 255);
+
         return $key;
     }
 
