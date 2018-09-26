@@ -14,10 +14,8 @@
 
 namespace Pimcore\Workflow\Notes;
 
-
-interface NotesAwareInterface {
-
-
+interface NotesAwareInterface
+{
     public function getNotes(): ?array;
 
     public function getNotesCommentRequired(): bool;

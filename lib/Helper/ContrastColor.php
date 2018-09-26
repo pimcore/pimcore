@@ -14,15 +14,17 @@
 
 namespace Pimcore\Helper;
 
-class ContrastColor {
-
+class ContrastColor
+{
     /**
      * returns either hex code of black or white depending on the contrast to the given color
      *
      * @param $hexColor
+     *
      * @return string
      */
-    public static function getContrastColor($hexColor) {
+    public static function getContrastColor($hexColor)
+    {
 
         //////////// hexColor RGB
         $R1 = hexdec(substr($hexColor, 1, 2));
@@ -30,7 +32,7 @@ class ContrastColor {
         $B1 = hexdec(substr($hexColor, 5, 2));
 
         //////////// Black RGB
-        $blackColor = "#000000";
+        $blackColor = '#000000';
         $R2BlackColor = hexdec(substr($blackColor, 1, 2));
         $G2BlackColor = hexdec(substr($blackColor, 3, 2));
         $B2BlackColor = hexdec(substr($blackColor, 5, 2));

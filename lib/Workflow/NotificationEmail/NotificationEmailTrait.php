@@ -1,8 +1,9 @@
 <?php
+
 namespace Pimcore\Workflow\NotificationEmail;
 
-trait NotificationEmailTrait {
-
+trait NotificationEmailTrait
+{
     public function getNotifyUsers(): array
     {
         return $this->options['notifyUsers'] ?? [];

@@ -19,12 +19,10 @@ use Pimcore\Model\DataObject\ClassDefinition\DynamicOptionsProvider\Data;
 use Pimcore\Model\DataObject\ClassDefinition\DynamicOptionsProvider\SelectOptionsProviderInterface;
 use Pimcore\Workflow\Manager;
 use Pimcore\Workflow\MarkingStore\DataObjectSplittedStateMarkingStore;
-use Symfony\Component\Templating\EngineInterface;
 use Symfony\Component\Translation\TranslatorInterface;
-use Symfony\Component\Workflow\Workflow;
 
-class OptionsProvider implements SelectOptionsProviderInterface {
-
+class OptionsProvider implements SelectOptionsProviderInterface
+{
     /**
      * @var Manager
      */
@@ -35,7 +33,6 @@ class OptionsProvider implements SelectOptionsProviderInterface {
      */
     private $translator;
 
-
     public function __construct(Manager $workflowManager, TranslatorInterface $translator)
     {
         $this->workflowManager = $workflowManager;
@@ -45,16 +42,17 @@ class OptionsProvider implements SelectOptionsProviderInterface {
     /**
      * @param array $context
      * @param Data $fieldDefinition
+     *
      * @return array
+     *
      * @throws \Exception
      */
     public function getOptions($context, $fieldDefinition)
     {
         $workflowName = $fieldDefinition->getOptionsProviderData();
-        if(!$workflowName) {
+        if (!$workflowName) {
             throw new \Exception('setup workflow name as options provider data');
         }
-
 
         $options = [];
 
@@ -63,13 +61,12 @@ class OptionsProvider implements SelectOptionsProviderInterface {
         $mappedPlaces = null;
         $markingStore = $workflow->getMarkingStore();
 
-        if($markingStore instanceof DataObjectSplittedStateMarkingStore) {
+        if ($markingStore instanceof DataObjectSplittedStateMarkingStore) {
             $mappedPlaces = $markingStore->getMappedPlaces($fieldDefinition->getName());
         }
 
-        foreach($this->workflowManager->getPlaceConfigsByWorkflowName($workflowName) as $placeConfig) {
-
-            if(!is_array($mappedPlaces) || in_array($placeConfig->getPlace(), $mappedPlaces)) {
+        foreach ($this->workflowManager->getPlaceConfigsByWorkflowName($workflowName) as $placeConfig) {
+            if (!is_array($mappedPlaces) || in_array($placeConfig->getPlace(), $mappedPlaces)) {
                 $options[] = [
                     'key' => $this->generatePlaceLabel($placeConfig),
                     'value' => $placeConfig->getPlace(),
@@ -83,7 +80,7 @@ class OptionsProvider implements SelectOptionsProviderInterface {
     protected function generatePlaceLabel(PlaceConfig $placeConfig): string
     {
         // do not translate or format options when not in admin context
-        if(empty($this->translator->getLocale())) {
+        if (empty($this->translator->getLocale())) {
             return $placeConfig->getLabel();
         }
 
@@ -104,6 +101,4 @@ class OptionsProvider implements SelectOptionsProviderInterface {
     {
         return null;
     }
-
-
 }

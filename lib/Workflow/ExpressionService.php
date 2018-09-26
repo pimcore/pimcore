@@ -19,14 +19,12 @@ use Symfony\Component\Security\Core\Authentication\Token\AnonymousToken;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Security\Core\Role\RoleHierarchyInterface;
-use Symfony\Component\Security\Core\User\User;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Component\Workflow\EventListener\ExpressionLanguage;
-use Symfony\Component\Workflow\Exception\InvalidTokenConfigurationException;
 use Symfony\Component\Workflow\Workflow;
 
-class ExpressionService {
-
+class ExpressionService
+{
     /**
      * @var ExpressionLanguage
      */
@@ -75,14 +73,14 @@ class ExpressionService {
     // code should be sync with Symfony\Component\Security\Core\Authorization\Voter\ExpressionVoter
     private function getVariables(Workflow $workflow, $subject)
     {
-        $token = $this->tokenStorage->getToken() ?: new AnonymousToken('', 'anonymous', array());
+        $token = $this->tokenStorage->getToken() ?: new AnonymousToken('', 'anonymous', []);
 
         $roles = $token ? $token->getRoles() : [];
         if (null !== $this->roleHierarchy) {
             $roles = $this->roleHierarchy->getReachableRoles($roles);
         }
 
-        $variables = array(
+        $variables = [
             'token' => $token,
             'user' => $token->getUser(),
             'subject' => $subject,
@@ -95,7 +93,7 @@ class ExpressionService {
             'trust_resolver' => $this->trustResolver,
             // needed for the is_valid expression function
             'validator' => $this->validator,
-        );
+        ];
 
         return $variables;
     }

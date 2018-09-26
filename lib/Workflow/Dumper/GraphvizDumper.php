@@ -32,12 +32,12 @@ use Symfony\Component\Workflow\Marking;
  */
 class GraphvizDumper implements DumperInterface
 {
-    protected static $defaultOptions = array(
+    protected static $defaultOptions = [
         'workflowName' => '',
-        'graph' => array('ratio' => 'compress', 'rankdir' => 'LR'),
-        'node' => array('fontsize' => 9, 'fontname' => 'Arial', 'color' => '#333333', 'fillcolor' => 'lightblue', 'fixedsize' => false, 'width' => 1, 'height' => 0.8),
-        'edge' => array('fontsize' => 9, 'fontname' => 'Arial', 'color' => '#333333', 'arrowhead' => 'normal', 'arrowsize' => 0.5),
-    );
+        'graph' => ['ratio' => 'compress', 'rankdir' => 'LR'],
+        'node' => ['fontsize' => 9, 'fontname' => 'Arial', 'color' => '#333333', 'fillcolor' => 'lightblue', 'fixedsize' => false, 'width' => 1, 'height' => 0.8],
+        'edge' => ['fontsize' => 9, 'fontname' => 'Arial', 'color' => '#333333', 'arrowhead' => 'normal', 'arrowsize' => 0.5],
+    ];
 
     /**
      * @var Manager
@@ -60,7 +60,7 @@ class GraphvizDumper implements DumperInterface
      *  * node: The default options for nodes (places + transitions)
      *  * edge: The default options for edges
      */
-    public function dump(Definition $definition, Marking $marking = null, array $options = array())
+    public function dump(Definition $definition, Marking $marking = null, array $options = [])
     {
         $places = $this->findPlaces($definition, $marking, $options['workflowName']);
         $transitions = $this->findTransitions($definition);
@@ -116,7 +116,7 @@ class GraphvizDumper implements DumperInterface
             $transitions[] = [
                 'attributes' => ['shape' => 'box', 'regular' => false, 'height' => 0.6, 'style' => 'dotted'],
                 'name' => $transition->getName(),
-                'label' => $transition instanceof Transition ?  $transition->getLabel() : $transition->getName()
+                'label' => $transition instanceof Transition ? $transition->getLabel() : $transition->getName()
             ];
         }
 
@@ -155,7 +155,7 @@ class GraphvizDumper implements DumperInterface
      */
     protected function findEdges(Definition $definition)
     {
-        $dotEdges = array();
+        $dotEdges = [];
 
         foreach ($definition->getTransitions() as $transition) {
             foreach ($transition->getFroms() as $from) {
@@ -226,7 +226,7 @@ class GraphvizDumper implements DumperInterface
 
     private function addAttributes(array $attributes)
     {
-        $code = array();
+        $code = [];
 
         foreach ($attributes as $k => $v) {
             $code[] = sprintf('%s="%s"', $k, $v);
@@ -237,7 +237,7 @@ class GraphvizDumper implements DumperInterface
 
     private function addOptions(array $options)
     {
-        $code = array();
+        $code = [];
 
         foreach ($options as $k => $v) {
             $code[] = sprintf('%s="%s"', $k, $v);

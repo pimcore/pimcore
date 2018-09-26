@@ -108,7 +108,7 @@ class WorkflowManagementListener implements EventSubscriberInterface
         $list = new WorkflowState\Listing;
         $list->setCondition('cid = ? and ctype = ?', [$element->getId(), Service::getType($element)]);
 
-        foreach($list->load() as $item) {
+        foreach ($list->load() as $item) {
             $item->delete();
         }
     }
@@ -125,18 +125,17 @@ class WorkflowManagementListener implements EventSubscriberInterface
         $element = self::extractElementFromEvent($e);
         $data = $e->getArgument('data');
 
-
         //create a new namespace for WorkflowManagement
         //set some defaults
         $data['workflowManagement'] = [
             'hasWorkflowManagement' => false,
         ];
 
-        foreach($this->workflowManager->getAllWorkflows() as $workflowName) {
+        foreach ($this->workflowManager->getAllWorkflows() as $workflowName) {
             $workflow = $this->workflowManager->getWorkflowIfExists($element, $workflowName);
             $workflowConfig = $this->workflowManager->getWorkflowConfig($workflowName);
 
-            if(empty($workflow)) {
+            if (empty($workflow)) {
                 continue;
             }
 
@@ -154,19 +153,16 @@ class WorkflowManagementListener implements EventSubscriberInterface
             ];
 
             if ($element instanceof ConcreteObject) {
-
                 $marking = $workflow->getMarking($element);
 
-                if(!sizeof($marking->getPlaces())) {
+                if (!sizeof($marking->getPlaces())) {
                     continue;
                 }
 
                 $permissionsRespected = false;
-                foreach($this->workflowManager->getOrderedPlaceConfigs($workflow, $marking) as $placeConfig) {
-
-                    if(!$permissionsRespected && !empty($placeConfig->getPermissions($workflow, $element))) {
+                foreach ($this->workflowManager->getOrderedPlaceConfigs($workflow, $marking) as $placeConfig) {
+                    if (!$permissionsRespected && !empty($placeConfig->getPermissions($workflow, $element))) {
                         $data['userPermissions'] = array_merge((array)$data['userPermissions'], $placeConfig->getUserPermissions($workflow, $element));
-
 
                         $workflowLayoutId = $placeConfig->getObjectLayout($workflow, $element);
                         $hasSelectedCustomLayout = $this->requestStack->getMasterRequest() && $this->requestStack->getMasterRequest()->query->has('layoutId') && $this->requestStack->getMasterRequest()->query->get('layoutId') !== '';
@@ -195,7 +191,7 @@ class WorkflowManagementListener implements EventSubscriberInterface
             }
         }
 
-        if($data['workflowManagement']['hasWorkflowManagement']) {
+        if ($data['workflowManagement']['hasWorkflowManagement']) {
             $data['workflowManagement']['statusInfo'] = $this->placeStatusInfo->getToolbarHtml($element);
         }
 
@@ -205,17 +201,17 @@ class WorkflowManagementListener implements EventSubscriberInterface
     /**
      * @param DataObject\AbstractObject $object
      * @param array $notes
+     *
      * @return array
      */
     private function enrichNotes(DataObject\AbstractObject $object, array $notes)
     {
-        if(!empty($notes['commentGetterFn'])) {
+        if (!empty($notes['commentGetterFn'])) {
             $commentGetterFn = $notes['commentGetterFn'];
             $notes['commentPrefill'] = $object->$commentGetterFn();
-        } elseif(!empty($notes)) {
+        } elseif (!empty($notes)) {
             $notes['commentPrefill'] = '';
         }
-
 
         return $notes;
     }

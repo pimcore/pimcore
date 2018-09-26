@@ -35,6 +35,4 @@ final class WorkflowEvents
      * @var string
      */
     const POST_GLOBAL_ACTION = 'pimcore.workflow.postGlobalAction';
-
-
 }

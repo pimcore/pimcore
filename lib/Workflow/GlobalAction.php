@@ -18,8 +18,8 @@ use Pimcore\Workflow\Notes\NotesAwareInterface;
 use Pimcore\Workflow\Notes\NotesAwareTrait;
 use Symfony\Component\Workflow\Workflow;
 
-class GlobalAction implements NotesAwareInterface {
-
+class GlobalAction implements NotesAwareInterface
+{
     use NotesAwareTrait;
 
     /**
@@ -37,7 +37,6 @@ class GlobalAction implements NotesAwareInterface {
      */
     private $expressionService;
 
-
     public function __construct(string $name, array $options, ExpressionService $expressionService)
     {
         $this->name = $name;
@@ -52,7 +51,6 @@ class GlobalAction implements NotesAwareInterface {
     {
         return $this->name;
     }
-
 
     /**
      * @return string
@@ -88,7 +86,7 @@ class GlobalAction implements NotesAwareInterface {
      */
     public function isGuardValid(Workflow $workflow, $subject): bool
     {
-        if(empty($this->getGuard())) {
+        if (empty($this->getGuard())) {
             return true;
         }
 

@@ -103,7 +103,7 @@ class Service
      *
      * @return Element\Note $note
      */
-    public static function createActionNote($element, $type, $title, $description, $noteData, $user=null)
+    public static function createActionNote($element, $type, $title, $description, $noteData, $user = null)
     {
         //prepare some vars for creating the note
         if (!$user) {

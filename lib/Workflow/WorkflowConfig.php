@@ -14,8 +14,8 @@
 
 namespace Pimcore\Workflow;
 
-class WorkflowConfig {
-
+class WorkflowConfig
+{
     /**
      * @var string
      */
@@ -59,6 +59,4 @@ class WorkflowConfig {
     {
         return $this->workflowConfigArray;
     }
-
-
 }

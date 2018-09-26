@@ -27,9 +27,8 @@ use Symfony\Component\Workflow\Marking;
 use Symfony\Component\Workflow\Registry;
 use Symfony\Component\Workflow\Workflow;
 
-
-class Manager {
-
+class Manager
+{
     /**
      * @var Registry
      */
@@ -76,6 +75,7 @@ class Manager {
     /**
      * @param string $place
      * @param array $placeConfig
+     *
      * @return $this
      */
     public function addPlaceConfig(string $workflowName, string $place, array $placeConfig)
@@ -89,6 +89,7 @@ class Manager {
     /**
      * @param string $place
      * @param array $placeConfig
+     *
      * @return $this
      */
     public function addGlobalAction(string $workflowName, string $action, array $actionConfig)
@@ -122,19 +123,20 @@ class Manager {
      *
      * @param Workflow $workflow
      * @param Marking $marking
+     *
      * @return PlaceConfig[];
      */
     public function getOrderedPlaceConfigs(Workflow $workflow, Marking $marking = null): array
     {
-        if(is_null($marking)) {
+        if (is_null($marking)) {
             return $this->placeConfigs[$workflow->getName()] ?? [];
         }
 
         $placeNames = array_keys($marking->getPlaces());
         $placeConfigs = [];
 
-        foreach($this->placeConfigs[$workflow->getName()] ?? [] as $placeConfig) {
-            if(in_array($placeConfig->getPlace(), $placeNames)) {
+        foreach ($this->placeConfigs[$workflow->getName()] ?? [] as $placeConfig) {
+            if (in_array($placeConfig->getPlace(), $placeNames)) {
                 $placeConfigs[] = $placeConfig;
             }
         }
@@ -142,16 +144,16 @@ class Manager {
         return $placeConfigs;
     }
 
-    public function getPlaceConfigsByWorkflowName(string $workflowName) {
+    public function getPlaceConfigsByWorkflowName(string $workflowName)
+    {
         return $this->placeConfigs[$workflowName] ?? [];
     }
-
 
     public function registerWorkflow(string $workflowName, array $options = [])
     {
         $this->workflows[$workflowName] = new WorkflowConfig($workflowName, $options);
 
-        uasort($this->workflows, function(WorkflowConfig $a, WorkflowConfig $b) {
+        uasort($this->workflows, function (WorkflowConfig $a, WorkflowConfig $b) {
             return $a->getPriority() < $b->getPriority();
         });
     }
@@ -166,7 +168,7 @@ class Manager {
 
     public function getWorkflowConfig(string $workflowName): WorkflowConfig
     {
-        if(!isset($this->workflows[$workflowName])) {
+        if (!isset($this->workflows[$workflowName])) {
             throw new LogicException(sprintf('workflow %s not found', $workflowName));
         }
 
@@ -175,16 +177,17 @@ class Manager {
 
     /**
      * @param $subject
+     *
      * @return Workflow[]
      */
     public function getAllWorkflowsForSubject($subject): array
     {
         $workflows = [];
 
-        foreach($this->getAllWorkflows() as $workflowName) {
+        foreach ($this->getAllWorkflows() as $workflowName) {
             $workflow = $this->getWorkflowIfExists($subject, $workflowName);
 
-            if(empty($workflow)) {
+            if (empty($workflow)) {
                 continue;
             }
 
@@ -198,7 +201,7 @@ class Manager {
     {
         try {
             $workflow = $this->workflowRegistry->get($subject, $workflowName);
-        } catch(InvalidARgumentException $e) { // workflow does not apply to given subject
+        } catch (InvalidARgumentException $e) { // workflow does not apply to given subject
             return null;
         }
 
@@ -207,6 +210,7 @@ class Manager {
 
     /**
      * @param string $workflowName
+     *
      * @return Workflow
      *
      * @throws \Exception
@@ -224,19 +228,21 @@ class Manager {
      * @param string $transition
      * @param array $additionalData
      * @param bool $saveSubject
+     *
      * @return Marking
+     *
      * @throws ValidationException
      * @throws \Exception
      */
-    public function applyWithAdditionalData(Workflow $workflow, $subject, string $transition, array $additionalData, $saveSubject = false) {
-
+    public function applyWithAdditionalData(Workflow $workflow, $subject, string $transition, array $additionalData, $saveSubject = false)
+    {
         $this->notesSubscriber->setAdditionalData($additionalData);
 
         $marking = $workflow->apply($subject, $transition);
 
         $this->notesSubscriber->setAdditionalData([]);
 
-        if($saveSubject && $subject instanceof AbstractElement && method_exists($subject, "save")) {
+        if ($saveSubject && $subject instanceof AbstractElement && method_exists($subject, 'save')) {
             $subject->save();
         }
 
@@ -249,14 +255,16 @@ class Manager {
      * @param string $globalAction
      * @param array $additionalData
      * @param bool $saveSubject
+     *
      * @return Marking
+     *
      * @throws ValidationException
      * @throws \Exception
      */
-    public function applyGlobalAction(Workflow $workflow, $subject, string $globalAction, array $additionalData, $saveSubject = false) {
-
+    public function applyGlobalAction(Workflow $workflow, $subject, string $globalAction, array $additionalData, $saveSubject = false)
+    {
         $globalActionObj = $this->getGlobalAction($workflow->getName(), $globalAction);
-        if(!$globalActionObj) {
+        if (!$globalActionObj) {
             throw new LogicException(sprintf('global action %s not found', $globalAction));
         }
 
@@ -270,10 +278,9 @@ class Manager {
 
         $markingStore = $workflow->getMarkingStore();
 
-        if(!empty($globalActionObj->getTos())) {
-
+        if (!empty($globalActionObj->getTos())) {
             $places = [];
-            foreach($globalActionObj->getTos() as $place) {
+            foreach ($globalActionObj->getTos() as $place) {
                 $places[$place] = 1;
             }
 
@@ -283,7 +290,7 @@ class Manager {
         $this->eventDispatcher->dispatch(WorkflowEvents::POST_GLOBAL_ACTION, $event);
         $this->notesSubscriber->setAdditionalData([]);
 
-        if($saveSubject && $subject instanceof AbstractElement && method_exists($subject, "save")) {
+        if ($saveSubject && $subject instanceof AbstractElement && method_exists($subject, 'save')) {
             $subject->save();
         }
 

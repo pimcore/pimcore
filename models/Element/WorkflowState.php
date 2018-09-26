@@ -72,11 +72,13 @@ class WorkflowState extends Model\AbstractModel
 
     /**
      * @param int $cid
+     *
      * @return WorkflowState
      */
     public function setCid($cid)
     {
         $this->cid = $cid;
+
         return $this;
     }
 
@@ -90,6 +92,7 @@ class WorkflowState extends Model\AbstractModel
 
     /**
      * @param string $ctype
+     *
      * @return WorkflowState
      */
     public function setCtype($ctype)
@@ -109,6 +112,7 @@ class WorkflowState extends Model\AbstractModel
 
     /**
      * @param string $place
+     *
      * @return WorkflowState
      */
     public function setPlace(string $place)
@@ -128,6 +132,7 @@ class WorkflowState extends Model\AbstractModel
 
     /**
      * @param string $workflow
+     *
      * @return WorkflowState
      */
     public function setWorkflow(string $workflow)

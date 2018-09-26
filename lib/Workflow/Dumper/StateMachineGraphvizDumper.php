@@ -28,7 +28,7 @@ class StateMachineGraphvizDumper extends GraphvizDumper
      *  * node: The default options for nodes (places)
      *  * edge: The default options for edges
      */
-    public function dump(Definition $definition, Marking $marking = null, array $options = array())
+    public function dump(Definition $definition, Marking $marking = null, array $options = [])
     {
         $places = $this->findPlaces($definition, $marking, $options['workflowName']);
         $edges = $this->findEdges($definition);
@@ -47,16 +47,16 @@ class StateMachineGraphvizDumper extends GraphvizDumper
      */
     protected function findEdges(Definition $definition)
     {
-        $edges = array();
+        $edges = [];
 
         foreach ($definition->getTransitions() as $transition) {
             foreach ($transition->getFroms() as $from) {
                 foreach ($transition->getTos() as $to) {
-                    $edges[$from][] = array(
+                    $edges[$from][] = [
                         'name' => $transition->getName(),
                         'label' => $transition instanceof Transition ? $transition->getLabel() : $transition->getName(),
                         'to' => $to,
-                    );
+                    ];
                 }
             }
         }
@@ -73,7 +73,7 @@ class StateMachineGraphvizDumper extends GraphvizDumper
 
         foreach ($edges as $id => $edges) {
             foreach ($edges as $edge) {
-                $code .= sprintf("  place_%s -> place_%s [label=\"%s\" color=\"%s\" style=\"%s\"];\n", $this->dotize($id), $this->dotize($edge['to']), $edge['label'],'#AFAFAF', 'dashed');
+                $code .= sprintf("  place_%s -> place_%s [label=\"%s\" color=\"%s\" style=\"%s\"];\n", $this->dotize($id), $this->dotize($edge['to']), $edge['label'], '#AFAFAF', 'dashed');
             }
         }
 

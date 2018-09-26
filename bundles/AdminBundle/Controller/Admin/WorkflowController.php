@@ -26,9 +26,9 @@ use Pimcore\Workflow\ActionsButtonService;
 use Pimcore\Workflow\Manager;
 use Pimcore\Workflow\Place\StatusInfo;
 use Pimcore\Workflow\Transition;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\Routing\Annotation\Route;
@@ -58,11 +58,10 @@ class WorkflowController extends AdminController implements EventedControllerInt
     public function getWorkflowFormAction(Request $request, Manager $workflowManager)
     {
         try {
-
             $workflow = $workflowManager->getWorkflowIfExists($this->element, (string) $request->get('workflowName'));
             $workflowConfig = $workflowManager->getWorkflowConfig((string) $request->get('workflowName'));
 
-            if(empty($workflow) || empty($workflowConfig)) {
+            if (empty($workflow) || empty($workflowConfig)) {
                 $wfConfig = [
                     'message' => 'workflow not found'
                 ];
@@ -70,10 +69,10 @@ class WorkflowController extends AdminController implements EventedControllerInt
 
                 //this is the default returned workflow data
                 $wfConfig = [
-                    'message'               => '',
-                    'notes_enabled'         => false,
-                    'notes_required'        => false,
-                    'additional_fields'     => []
+                    'message' => '',
+                    'notes_enabled' => false,
+                    'notes_required' => false,
+                    'additional_fields' => []
                 ];
 
                 $enabledTransitions = $workflow->getEnabledTransitions($this->element);
@@ -81,21 +80,19 @@ class WorkflowController extends AdminController implements EventedControllerInt
                  * @var Transition $transition
                  */
                 $transition = null;
-                foreach($enabledTransitions as $_transition) {
-                    if($_transition->getName() === $request->get('transitionName')) {
+                foreach ($enabledTransitions as $_transition) {
+                    if ($_transition->getName() === $request->get('transitionName')) {
                         $transition = $_transition;
                     }
                 }
 
-                if(empty($transition)) {
-                    $wfConfig['message'] = sprintf("transition %s currently not allowed", (string) $request->get('transitionName'));
+                if (empty($transition)) {
+                    $wfConfig['message'] = sprintf('transition %s currently not allowed', (string) $request->get('transitionName'));
                 } else {
                     $wfConfig['notes_required'] = $transition->getNotesCommentRequired();
                     $wfConfig['additional_fields'] = [];
                 }
-
             }
-
         } catch (\Exception $e) {
             $wfConfig['message'] = $e->getMessage();
         }
@@ -115,9 +112,7 @@ class WorkflowController extends AdminController implements EventedControllerInt
         $workflowOptions = $request->get('workflow', []);
         $workflow = $workflowRegistry->get($this->element, $request->get('workflowName'));
 
-
         if ($workflow->can($this->element, $request->get('transition'))) {
-
             try {
                 $workflowManager->applyWithAdditionalData($workflow, $this->element, $request->get('transition'), $workflowOptions, true);
 
@@ -126,12 +121,11 @@ class WorkflowController extends AdminController implements EventedControllerInt
                     'callback' => 'reloadObject'
                 ];
             } catch (ValidationException $e) {
-
                 $reason = '';
-                if(sizeof((array)$e->getSubItems())>0) {
-                    $reason = '<ul>' . implode('', array_map(function($item){
-                            return '<li>' . $item . '</li>';
-                        },$e->getSubItems())) . '</ul>';
+                if (sizeof((array)$e->getSubItems()) > 0) {
+                    $reason = '<ul>' . implode('', array_map(function ($item) {
+                        return '<li>' . $item . '</li>';
+                    }, $e->getSubItems())) . '</ul>';
                 }
 
                 $data = [
@@ -178,12 +172,11 @@ class WorkflowController extends AdminController implements EventedControllerInt
                 'callback' => 'reloadObject'
             ];
         } catch (ValidationException $e) {
-
             $reason = '';
-            if(sizeof((array)$e->getSubItems())>0) {
-                $reason = '<ul>' . implode('', array_map(function($item){
-                        return '<li>' . $item . '</li>';
-                    },$e->getSubItems())) . '</ul>';
+            if (sizeof((array)$e->getSubItems()) > 0) {
+                $reason = '<ul>' . implode('', array_map(function ($item) {
+                    return '<li>' . $item . '</li>';
+                }, $e->getSubItems())) . '</ul>';
             }
 
             $data = [
@@ -200,7 +193,6 @@ class WorkflowController extends AdminController implements EventedControllerInt
             ];
         }
 
-
         return $this->adminJson($data);
     }
 
@@ -215,29 +207,29 @@ class WorkflowController extends AdminController implements EventedControllerInt
      * @param RouterInterface $router
      *
      * @return JsonResponse
+     *
      * @throws \Exception
      */
     public function getWorkflowDetailsStore(Request $request, Manager $workflowManager, StatusInfo $placeStatusInfo, RouterInterface $router, ActionsButtonService $actionsButtonService)
     {
         $data = [];
 
-        foreach($workflowManager->getAllWorkflowsForSubject($this->element) as $workflow) {
+        foreach ($workflowManager->getAllWorkflowsForSubject($this->element) as $workflow) {
             $workflowConfig = $workflowManager->getWorkflowConfig($workflow->getName());
 
             $msg = '';
             try {
                 $svg = $this->getWorkflowSvg($workflow);
-            } catch(\InvalidArgumentException $e) {
+            } catch (\InvalidArgumentException $e) {
                 $msg = $e->getMessage();
             }
-
 
             $url = $router->generate(
                 'pimcore_admin_workflow_show_graph',
                 [
                     'cid' => $request->get('cid'),
                     'ctype' => $request->get('ctype'),
-                    'workflow' =>$workflow->getName()
+                    'workflow' => $workflow->getName()
                 ]
             );
 
@@ -269,6 +261,7 @@ class WorkflowController extends AdminController implements EventedControllerInt
      * @param Manager $workflowManager
      *
      * @return Response
+     *
      * @throws \Exception
      */
     public function showGraph(Request $request, Manager $workflowManager)
@@ -277,11 +270,13 @@ class WorkflowController extends AdminController implements EventedControllerInt
 
         $response = new Response($this->getWorkflowSvg($workflow));
         $response->headers->set('Content-Type', 'image/svg+xml');
+
         return $response;
     }
 
     /**
      * @param Workflow $workflow
+     *
      * @throws \Exception
      */
     private function getWorkflowSvg(Workflow $workflow)
@@ -291,11 +286,11 @@ class WorkflowController extends AdminController implements EventedControllerInt
         $php = Console::getExecutable('php');
         $dot = Console::getExecutable('dot');
 
-        if(!$php) {
+        if (!$php) {
             throw new \InvalidArgumentException($this->trans('workflow_cmd_not_found', ['php']));
         }
 
-        if(!$dot) {
+        if (!$dot) {
             throw new \InvalidArgumentException($this->trans('workflow_cmd_not_found', ['dot']));
         }
 
@@ -308,9 +303,7 @@ class WorkflowController extends AdminController implements EventedControllerInt
         );
 
         return Console::exec($cmd);
-
     }
-
 
     /**
      * @param  Document|Asset|ConcreteObject $element
@@ -319,7 +312,7 @@ class WorkflowController extends AdminController implements EventedControllerInt
      */
     protected function getLatestVersion($element)
     {
-        if(
+        if (
             $element instanceof Document\Folder
             || $element instanceof Asset\Folder
             || $element instanceof DataObject\Folder

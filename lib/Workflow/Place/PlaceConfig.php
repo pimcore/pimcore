@@ -18,8 +18,8 @@ use Pimcore\Helper\ContrastColor;
 use Pimcore\Workflow\ExpressionService;
 use Symfony\Component\Workflow\Workflow;
 
-class PlaceConfig {
-
+class PlaceConfig
+{
     /**
      * @var string
      */
@@ -102,10 +102,9 @@ class PlaceConfig {
 
     public function getPermissions(Workflow $workflow, $subject): array
     {
-        foreach($this->placeConfigArray['permissions'] ?? [] as $permission) {
-
+        foreach ($this->placeConfigArray['permissions'] ?? [] as $permission) {
             $condition = $permission['condition'] ?? false;
-            if($condition && !$this->expressionService->evaluateExpression($workflow, $subject, $condition)) {
+            if ($condition && !$this->expressionService->evaluateExpression($workflow, $subject, $condition)) {
                 continue;
             }
 
@@ -119,20 +118,18 @@ class PlaceConfig {
     {
         $result = [];
 
-        foreach($this->getPermissions($workflow, $subject) as $permission => $value)
-        {
-            if(in_array($permission, ['save', 'publish', 'unpublish', 'delete', 'view', 'rename', 'settings', 'versions', 'properties'])) {
+        foreach ($this->getPermissions($workflow, $subject) as $permission => $value) {
+            if (in_array($permission, ['save', 'publish', 'unpublish', 'delete', 'view', 'rename', 'settings', 'versions', 'properties'])) {
                 $result[$permission] = $value;
-            } elseif(in_array($permission, ['lEdit', 'lView'])) {
+            } elseif (in_array($permission, ['lEdit', 'lView'])) {
                 $result[$permission] = implode(',', $value);
-            } elseif($permission === 'modify') {
+            } elseif ($permission === 'modify') {
                 $result['save'] = $value;
                 $result['publish'] = $value;
                 $result['unpublish'] = $value;
                 $result['delete'] = $value;
                 $result['rename'] = $value;
             }
-
         }
 
         return $result;
