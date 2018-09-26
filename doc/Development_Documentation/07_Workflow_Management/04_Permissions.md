@@ -6,7 +6,7 @@ element permissions based on the current workflow place.
 It's possible to add multiple permission configurations based on conditions. The first entry where the condition is 
 valid will be used.
 
-##### configuration examples
+##### Configuration Examples
 
 Pimcore admins are allowed to publish and delete the object but for all other users it will be suppressed:
 
