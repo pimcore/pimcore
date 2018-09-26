@@ -9,7 +9,7 @@ This is the default marking store. The place information is stored in the elemen
 the best option for Assets and Documents. For data objects the other marking store options might be the better choice as 
 the data would be stored directly in the data object model as attributes.
 
-##### configuration example
+^##### Configuration Example
 ```yaml
    marking_store:
       type: state_table
@@ -23,7 +23,7 @@ objects a select field (or maybe input field) would be the right Pimcore field t
 marking store is used.
 
 
-##### configuration example
+##### Configuration Example
 ```yaml
    marking_store:
       type: multiple_state
@@ -36,7 +36,7 @@ marking store is used.
 Same as single_state but can be used if the subject can be in more then one state at the same time. Note: this cannot be 
 used in combination with data object multiselect fields - use data_object_multiple_state instead.
 
-##### configuration example
+##### Configuration Example
 ```yaml
    marking_store:
       type: multiple_state
@@ -48,7 +48,7 @@ used in combination with data object multiselect fields - use data_object_multip
 
 Can be used to store mutliple places in a data object multiselect field.
 
-##### configuration example
+##### Eonfiguration Example
 ```yaml
    marking_store:
       type: data_object_multiple_state
@@ -59,10 +59,10 @@ Can be used to store mutliple places in a data object multiselect field.
 
 ## data_object_splitted_state (data objects only)
 
-Works similar to single_state and multiple_state but is able to store different places in different Pimcore data object 
+Works similar to single_state and data_object_multiple_state but is able to store different places in different Pimcore data object 
 attributes. Therefore it's needed to configure a mapping between places and data object attribute names.
 
-##### configuration example
+##### Configuration Example
 
 In the following example places which are related to the text of the data object are stored in the `workflowStateText` 
 attribute whereas image related places are stored in `workflowStateImages`:
@@ -81,7 +81,7 @@ attribute whereas image related places are stored in `workflowStateImages`:
 ```
 
 
-## Options provider (for single_state, multiple_state and data_object_splitted_state)
+## Options provider (for single_state, data_object_multiple_state and data_object_splitted_state)
 
 If data object attributes (select or multiselect) are used to store the places a special options provider can be used 
 to automatically provide the correct select options. Just setup `@pimcore.workflow.place-options-provider` as options 
