@@ -21,10 +21,8 @@ use Symfony\Component\Workflow\Exception\LogicException;
 use Symfony\Component\Workflow\Marking;
 use Symfony\Component\Workflow\MarkingStore\MarkingStoreInterface;
 
-
 class DataObjectSplittedStateMarkingStore implements MarkingStoreInterface
 {
-
     const ALLOWED_PLACE_FIELD_TYPES = ['input', 'select', 'multiselect'];
 
     /**
@@ -47,7 +45,6 @@ class DataObjectSplittedStateMarkingStore implements MarkingStoreInterface
      */
     private $workflowManager;
 
-
     public function __construct(string $workflowName, array $places, array $stateMapping, PropertyAccessor $propertyAccessor, Manager $workflowManager)
     {
         $this->workflowName = $workflowName;
@@ -61,6 +58,7 @@ class DataObjectSplittedStateMarkingStore implements MarkingStoreInterface
 
     /**
      * @inheritdoc
+     *
      * @throws LogicException
      */
     public function getMarking($subject)
@@ -70,10 +68,10 @@ class DataObjectSplittedStateMarkingStore implements MarkingStoreInterface
         $properties = array_unique(array_values($this->stateMapping));
 
         $placeNames = [];
-        foreach($properties as $property) {
+        foreach ($properties as $property) {
             $propertyPlaces = $this->propertyAccessor->getValue($subject, $property);
 
-            if(is_null($propertyPlaces) || $propertyPlaces === '') {
+            if (is_null($propertyPlaces) || $propertyPlaces === '') {
                 continue;
             }
 
@@ -81,8 +79,8 @@ class DataObjectSplittedStateMarkingStore implements MarkingStoreInterface
         }
 
         $places = [];
-        foreach($placeNames as $place) {
-            if($this->workflowManager->getPlaceConfig($this->workflowName, $place)) {
+        foreach ($placeNames as $place) {
+            if ($this->workflowManager->getPlaceConfig($this->workflowName, $place)) {
                 $places[$place] = 1;
             }
         }
@@ -92,6 +90,7 @@ class DataObjectSplittedStateMarkingStore implements MarkingStoreInterface
 
     /**
      * @inheritdoc
+     *
      * @throws LogicException
      * @throws \Exception
      */
@@ -102,29 +101,30 @@ class DataObjectSplittedStateMarkingStore implements MarkingStoreInterface
 
         $groupedProperties = [];
 
-        foreach(array_unique(array_values($this->stateMapping)) as $property) {
+        foreach (array_unique(array_values($this->stateMapping)) as $property) {
             $groupedProperties[$property] = [];
         }
 
-        foreach($places as $place) {
+        foreach ($places as $place) {
             $property = $this->stateMapping[$place];
             $groupedProperties[$property][] = $place;
         }
 
-        foreach($groupedProperties as $property => $places) {
+        foreach ($groupedProperties as $property => $places) {
             $this->setProperty($subject, $property, $places);
         }
     }
 
     /**
      * @param string $fieldName
+     *
      * @return string[]
      */
     public function getMappedPlaces(string $fieldName)
     {
         $places = [];
-        foreach($this->stateMapping as $place => $_fieldName) {
-            if($fieldName === $_fieldName) {
+        foreach ($this->stateMapping as $place => $_fieldName) {
+            if ($fieldName === $_fieldName) {
                 $places[] = $place;
             }
         }
@@ -136,29 +136,29 @@ class DataObjectSplittedStateMarkingStore implements MarkingStoreInterface
     {
         $fd = $subject->getClass()->getFieldDefinition($property);
 
-        if(!in_array($fd->getFieldtype(), self::ALLOWED_PLACE_FIELD_TYPES)) {
+        if (!in_array($fd->getFieldtype(), self::ALLOWED_PLACE_FIELD_TYPES)) {
             throw new LogicException(sprintf('field type "%s" not allowed as marking store - allowed types are [%s]', $fd->getFieldtype(), implode(', ', self::ALLOWED_PLACE_FIELD_TYPES)));
         }
 
-        if($fd->getFieldtype() !== 'multiselect') {
-            if(sizeof($places) > 1) {
+        if ($fd->getFieldtype() !== 'multiselect') {
+            if (sizeof($places) > 1) {
                 throw new LogicException(sprintf('field type "%s" is not able to handle multiple values - given values are [%s]', $fd->getFieldtype(), implode(', ', $places)));
             }
 
             $places = array_shift($places);
         }
 
-
         $this->propertyAccessor->setValue($subject, $property, $places);
     }
 
     /**
      * @param $subject
+     *
      * @return Concrete
      */
     private function checkIfSubjectIsValid($subject): Concrete
     {
-        if(!$subject instanceof Concrete) {
+        if (!$subject instanceof Concrete) {
             throw new LogicException('data_object_splitted_state marking store works for pimcore data objects only.');
         }
 
@@ -169,7 +169,7 @@ class DataObjectSplittedStateMarkingStore implements MarkingStoreInterface
     {
         $diff = array_diff($places, array_keys($stateMapping));
 
-        if(sizeof($diff) > 0) {
+        if (sizeof($diff) > 0) {
             throw new LogicException(sprintf('State mapping and places configuration need to match each other [detected differences: %s].', implode(', ', $diff)));
         }
     }

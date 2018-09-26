@@ -18,13 +18,13 @@ use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Model\Element\AbstractElement;
 use Symfony\Component\Workflow\Workflow;
 
-class ActionsButtonService {
-
+class ActionsButtonService
+{
     /**
-     * @var Manager 
+     * @var Manager
      */
     private $workflowManager;
-    
+
     public function __construct(Manager $workflowManager)
     {
         $this->workflowManager = $workflowManager;
@@ -33,6 +33,7 @@ class ActionsButtonService {
     /**
      * @param Workflow $workflow
      * @param AbstractElement $element
+     *
      * @return array
      */
     public function getAllowedTransitions(Workflow $workflow, AbstractElement $element)
@@ -42,9 +43,8 @@ class ActionsButtonService {
         /**
          * @var Transition $transition
          */
-        foreach($workflow->getEnabledTransitions($element) as $transition) {
-
-            if(($notes = $transition->getNotes()) && $element instanceof AbstractObject) {
+        foreach ($workflow->getEnabledTransitions($element) as $transition) {
+            if (($notes = $transition->getNotes()) && $element instanceof AbstractObject) {
                 $notes = $this->enrichNotes($element, $notes);
             }
 
@@ -55,22 +55,22 @@ class ActionsButtonService {
                 'notes' => $notes
             ];
         }
-        
+
         return $allowedTransitions;
     }
 
     /**
      * @param Workflow $workflow
      * @param AbstractElement $element
+     *
      * @return array
      */
     public function getGlobalActions(Workflow $workflow, AbstractElement $element)
     {
         $globalActions = [];
-        foreach($this->workflowManager->getGlobalActions($workflow->getName()) as $globalAction) {
-            if($globalAction->isGuardValid($workflow, $element)) {
-
-                if(($notes = $globalAction->getNotes()) && $element instanceof AbstractObject) {
+        foreach ($this->workflowManager->getGlobalActions($workflow->getName()) as $globalAction) {
+            if ($globalAction->isGuardValid($workflow, $element)) {
+                if (($notes = $globalAction->getNotes()) && $element instanceof AbstractObject) {
                     $notes = $this->enrichNotes($element, $notes);
                 }
 
@@ -89,17 +89,17 @@ class ActionsButtonService {
     /**
      * @param AbstractObject $object
      * @param array $notes
+     *
      * @return array
      */
     private function enrichNotes(AbstractObject $object, array $notes)
     {
-        if(!empty($notes['commentGetterFn'])) {
+        if (!empty($notes['commentGetterFn'])) {
             $commentGetterFn = $notes['commentGetterFn'];
             $notes['commentPrefill'] = $object->$commentGetterFn();
-        } elseif(!empty($notes)) {
+        } elseif (!empty($notes)) {
             $notes['commentPrefill'] = '';
         }
-
 
         return $notes;
     }

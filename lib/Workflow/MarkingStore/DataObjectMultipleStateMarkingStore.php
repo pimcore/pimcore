@@ -1,4 +1,5 @@
 <?php
+
 namespace Pimcore\Workflow\MarkingStore;
 
 use Pimcore\Model\DataObject\Concrete;
@@ -26,6 +27,7 @@ class DataObjectMultipleStateMarkingStore extends MultipleStateMarkingStore
 
     /**
      * @inheritdoc
+     *
      * @throws LogicException
      */
     public function getMarking($subject)
@@ -35,7 +37,7 @@ class DataObjectMultipleStateMarkingStore extends MultipleStateMarkingStore
         $marking = (array) $this->propertyAccessor->getValue($subject, $this->property);
 
         $_marking = [];
-        foreach($marking as $place) {
+        foreach ($marking as $place) {
             $_marking[$place] = 1;
         }
 
@@ -44,6 +46,7 @@ class DataObjectMultipleStateMarkingStore extends MultipleStateMarkingStore
 
     /**
      * @inheritdoc
+     *
      * @throws LogicException
      * @throws \Exception
      */
@@ -52,7 +55,7 @@ class DataObjectMultipleStateMarkingStore extends MultipleStateMarkingStore
         $subject = $this->checkIfSubjectIsValid($subject);
 
         $places = [];
-        foreach(array_keys($marking->getPlaces()) as $place) {
+        foreach (array_keys($marking->getPlaces()) as $place) {
             $places[] = $place;
         }
 
@@ -63,15 +66,15 @@ class DataObjectMultipleStateMarkingStore extends MultipleStateMarkingStore
 
     /**
      * @param $subject
+     *
      * @return Concrete
      */
     private function checkIfSubjectIsValid($subject): Concrete
     {
-        if(!$subject instanceof Concrete) {
+        if (!$subject instanceof Concrete) {
             throw new LogicException('data_object_multiple_state marking store works for pimcore data objects only.');
         }
 
         return $subject;
     }
-
 }

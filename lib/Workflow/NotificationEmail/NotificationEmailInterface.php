@@ -14,9 +14,7 @@
 
 namespace Pimcore\Workflow\NotificationEmail;
 
-
-interface NotificationEmailInterface {
-
+interface NotificationEmailInterface
+{
     public function getNotificationSettings(): array;
-
 }

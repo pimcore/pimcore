@@ -17,10 +17,9 @@ namespace Pimcore\Workflow\Place;
 use Pimcore\Workflow\Manager;
 use Symfony\Component\Templating\EngineInterface;
 use Symfony\Component\Translation\TranslatorInterface;
-use Symfony\Component\Workflow\Workflow;
 
-class StatusInfo {
-
+class StatusInfo
+{
     /**
      * @var Manager
      */
@@ -72,6 +71,7 @@ class StatusInfo {
     /**
      * @param $subject
      * @param bool $visibleInHeaderOnly
+     *
      * @return PlaceConfig
      */
     private function getAllPlaces($subject, bool $visibleInHeaderOnly = false, string $workflowName = null): array
@@ -79,14 +79,13 @@ class StatusInfo {
         $places = [];
 
         foreach ($this->workflowManager->getAllWorkflowsForSubject($subject) as $workflow) {
-
-            if(!is_null($workflowName) && $workflow->getName() != $workflowName) {
+            if (!is_null($workflowName) && $workflow->getName() != $workflowName) {
                 continue;
             }
 
             $marking = $workflow->getMarking($subject);
-            foreach($this->workflowManager->getOrderedPlaceConfigs($workflow, $marking) as $place) {
-                if(!$visibleInHeaderOnly || $place->isVisibleInHeader()) {
+            foreach ($this->workflowManager->getOrderedPlaceConfigs($workflow, $marking) as $place) {
+                if (!$visibleInHeaderOnly || $place->isVisibleInHeader()) {
                     $places[] = $place;
                 }
             }

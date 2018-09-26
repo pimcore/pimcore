@@ -49,13 +49,14 @@ class NotesSubscriber implements EventSubscriberInterface
         $this->translator = $translator;
     }
 
-
     /**
      * @param Event $event
+     *
      * @throws ValidationException
      */
-    public function onWorkflowEnter(Event $event) {
-        if(!$this->checkEvent($event)) {
+    public function onWorkflowEnter(Event $event)
+    {
+        if (!$this->checkEvent($event)) {
             return;
         }
 
@@ -71,11 +72,12 @@ class NotesSubscriber implements EventSubscriberInterface
 
     /**
      * @param Event $event
+     *
      * @throws ValidationException
      */
     public function onWorkflowCompleted(Event $event)
     {
-        if(!$this->checkEvent($event)) {
+        if (!$this->checkEvent($event)) {
             return;
         }
 
@@ -89,13 +91,14 @@ class NotesSubscriber implements EventSubscriberInterface
         $this->handleNotesPostWorkflow($transition, $subject);
     }
 
-
     /**
      * @param GlobalActionEvent $event
+     *
      * @throws ValidationException
      */
-    public function onPreGlobalAction(GlobalActionEvent $event) {
-        if(!$this->checkGlobalActionEvent($event)) {
+    public function onPreGlobalAction(GlobalActionEvent $event)
+    {
+        if (!$this->checkGlobalActionEvent($event)) {
             return;
         }
 
@@ -103,15 +106,16 @@ class NotesSubscriber implements EventSubscriberInterface
         $globalAction = $event->getGlobalAction();
 
         $this->handleNotesPreWorkflow($globalAction, $subject);
-
     }
 
     /**
      * @param GlobalActionEvent $event
+     *
      * @throws ValidationException
      */
-    public function onPostGlobalAction(GlobalActionEvent $event) {
-        if(!$this->checkGlobalActionEvent($event)) {
+    public function onPostGlobalAction(GlobalActionEvent $event)
+    {
+        if (!$this->checkGlobalActionEvent($event)) {
             return;
         }
 
@@ -119,21 +123,21 @@ class NotesSubscriber implements EventSubscriberInterface
         $globalAction = $event->getGlobalAction();
 
         $this->handleNotesPostWorkflow($globalAction, $subject);
-
     }
 
     /**
      * @param Workflow\Notes\NotesAwareInterface $notesAware
      * @param AbstractElement $subject
+     *
      * @throws ValidationException
      */
     private function handleNotesPreWorkflow(Workflow\Notes\NotesAwareInterface $notesAware, AbstractElement $subject)
     {
-        if(($setterFn = $notesAware->getNotesCommentSetterFn()) && ($notes = $this->getNotesComment())) {
+        if (($setterFn = $notesAware->getNotesCommentSetterFn()) && ($notes = $this->getNotesComment())) {
             $subject->$setterFn($notes);
         }
 
-        foreach($notesAware->getNotesAdditionalFields() as $additionalFieldConfig) {
+        foreach ($notesAware->getNotesAdditionalFields() as $additionalFieldConfig) {
             $data = $this->getAdditionalDataForField($additionalFieldConfig);
 
             //check required
@@ -143,7 +147,7 @@ class NotesSubscriber implements EventSubscriberInterface
                     : $additionalFieldConfig['name'];
 
                 throw new ValidationException(
-                    $this->translator->trans('workflow_notes_requred_field_message', [$label],'admin')
+                    $this->translator->trans('workflow_notes_requred_field_message', [$label], 'admin')
                 );
             }
 
@@ -154,16 +158,17 @@ class NotesSubscriber implements EventSubscriberInterface
             }
         }
     }
+
     /**
      * @param Workflow\Notes\NotesAwareInterface $notesAware
      * @param AbstractElement $subject
+     *
      * @throws ValidationException
      */
     private function handleNotesPostWorkflow(Workflow\Notes\NotesAwareInterface $notesAware, AbstractElement $subject)
     {
-
         $additionalFieldsData = [];
-        foreach($notesAware->getNotesAdditionalFields() as $additionalFieldConfig) {
+        foreach ($notesAware->getNotesAdditionalFields() as $additionalFieldConfig) {
             /**
              * Additional Field example
              * [
@@ -194,6 +199,7 @@ class NotesSubscriber implements EventSubscriberInterface
      * check's if the event subscriber should be executed
      *
      * @param Event $event
+     *
      * @return bool
      */
     private function checkEvent(Event $event): bool
@@ -247,7 +253,7 @@ class NotesSubscriber implements EventSubscriberInterface
 
         $data = $additional[$fieldConfig['name']];
 
-        if($fieldConfig['fieldType'] === 'checkbox') {
+        if ($fieldConfig['fieldType'] === 'checkbox') {
             return $data === 'true';
         }
 
@@ -267,7 +273,7 @@ class NotesSubscriber implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            'workflow.completed' => array('onWorkflowCompleted', 1),
+            'workflow.completed' => ['onWorkflowCompleted', 1],
             'workflow.enter' => 'onWorkflowEnter',
             WorkflowEvents::PRE_GLOBAL_ACTION => 'onPreGlobalAction',
             WorkflowEvents::POST_GLOBAL_ACTION => 'onPostGlobalAction'

@@ -18,12 +18,11 @@ use Pimcore\Model\Element\AbstractElement;
 use Pimcore\Model\Element\Service;
 use Pimcore\Model\Element\ValidationException;
 use Pimcore\Workflow;
-use Pimcore\Workflow\Transition;
 use Pimcore\Workflow\NotificationEmail\NotificationEmailService;
+use Pimcore\Workflow\Transition;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Component\Workflow\Event\Event;
-
 
 class NotificationEmailSubscriber implements EventSubscriberInterface
 {
@@ -59,6 +58,7 @@ class NotificationEmailSubscriber implements EventSubscriberInterface
 
     /**
      * NotificationEmailSubscriber constructor.
+     *
      * @param NotificationEmailService $mailService
      * @param TranslatorInterface $translator
      * @param Workflow\ExpressionService $expressionService
@@ -74,11 +74,12 @@ class NotificationEmailSubscriber implements EventSubscriberInterface
 
     /**
      * @param Event $event
+     *
      * @throws ValidationException
      */
     public function onWorkflowCompleted(Event $event)
     {
-        if(!$this->checkEvent($event)) {
+        if (!$this->checkEvent($event)) {
             return;
         }
 
@@ -91,20 +92,16 @@ class NotificationEmailSubscriber implements EventSubscriberInterface
         $workflow = $this->workflowManager->getWorkflowByName($event->getWorkflowName());
 
         $notificationSettings = $transition->getNotificationSettings();
-        foreach($notificationSettings as $notificationSetting) {
-
+        foreach ($notificationSettings as $notificationSetting) {
             $condition = $notificationSetting['condition'];
 
-            if(empty($condition) || $this->expressionService->evaluateExpression($workflow, $subject, $condition)) {
-
+            if (empty($condition) || $this->expressionService->evaluateExpression($workflow, $subject, $condition)) {
                 $notifyUsers = $notificationSetting['notifyUsers'] ?? [];
                 $notifyRoles = $notificationSetting['notifyRoles'] ?? [];
 
                 $this->handleNotifyPostWorkflow($transition, $workflow, $subject, $notificationSetting['mailType'], $notificationSetting['mailPath'], $notifyUsers, $notifyRoles);
             }
-
         }
-
     }
 
     /**
@@ -135,6 +132,7 @@ class NotificationEmailSubscriber implements EventSubscriberInterface
      * check's if the event subscriber should be executed
      *
      * @param Event $event
+     *
      * @return bool
      */
     private function checkEvent(Event $event): bool
@@ -163,7 +161,7 @@ class NotificationEmailSubscriber implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            'workflow.completed' => array('onWorkflowCompleted', 0)
+            'workflow.completed' => ['onWorkflowCompleted', 0]
         ];
     }
 }

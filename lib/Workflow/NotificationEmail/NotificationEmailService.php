@@ -14,15 +14,15 @@
 
 namespace Pimcore\Workflow\NotificationEmail;
 
-use Pimcore\Model\Element\AbstractElement;
 use Pimcore\Model\DataObject\AbstractObject;
+use Pimcore\Model\Element;
+use Pimcore\Model\Element\AbstractElement;
+use Pimcore\Model\User;
 use Pimcore\Tool;
 use Pimcore\Workflow\EventSubscriber\NotificationEmailSubscriber;
-use Symfony\Component\Templating\EngineInterface;
 use Symfony\Component\Routing\RouterInterface;
+use Symfony\Component\Templating\EngineInterface;
 use Symfony\Component\Translation\TranslatorInterface;
-use Pimcore\Model\User;
-use Pimcore\Model\Element;
 use Symfony\Component\Workflow\Workflow;
 
 class NotificationEmailService
@@ -56,7 +56,6 @@ class NotificationEmailService
         $this->router = $router;
     }
 
-
     /**
      * Sends an Mail
      *
@@ -84,7 +83,6 @@ class NotificationEmailService
             }
 
             foreach ($recipients as $language => $recipientsPerLanguage) {
-
                 $localizedMailPath = str_replace(self::MAIL_PATH_LANGUAGE_PLACEHOLDER, $language, $mailPath);
 
                 switch ($mailType) {
@@ -118,11 +116,9 @@ class NotificationEmailService
 
                         break;
                 }
-
             }
-
-        } catch(\Exception $e) {
-            \Pimcore\Logger::error("Error sending Workflow change notification email.");
+        } catch (\Exception $e) {
+            \Pimcore\Logger::error('Error sending Workflow change notification email.');
         }
     }
 
@@ -136,8 +132,8 @@ class NotificationEmailService
      * @param string $mailPath
      * @param string $deeplink
      */
-    protected function sendPimcoreDocumentMail(array $recipients, string $subjectType, AbstractElement $subject, Workflow $workflow, string $action, string $language, string $mailPath, string $deeplink) {
-
+    protected function sendPimcoreDocumentMail(array $recipients, string $subjectType, AbstractElement $subject, Workflow $workflow, string $action, string $language, string $mailPath, string $deeplink)
+    {
         $mail = new \Pimcore\Mail(['document' => $mailPath, 'params' => $this->getNotificationEmailParameters($subjectType, $subject, $workflow, $action, $deeplink, $language)]);
 
         foreach ($recipients as $user) {
@@ -160,8 +156,8 @@ class NotificationEmailService
      * @param string $mailPath
      * @param string $deeplink
      */
-    protected function sendTemplateMail(array $recipients, string $subjectType, AbstractElement $subject, Workflow $workflow, string $action, string $language, string $mailPath, string $deeplink) {
-
+    protected function sendTemplateMail(array $recipients, string $subjectType, AbstractElement $subject, Workflow $workflow, string $action, string $language, string $mailPath, string $deeplink)
+    {
         $mail = new \Pimcore\Mail();
 
         foreach ($recipients as $user) {
@@ -172,7 +168,7 @@ class NotificationEmailService
         }
 
         $mail->setSubject(
-            $this->translator->trans('workflow_change_email_notification_subject', [$subjectType . " " . $subject->getFullPath(), $workflow->getName()], 'admin', $language)
+            $this->translator->trans('workflow_change_email_notification_subject', [$subjectType . ' ' . $subject->getFullPath(), $workflow->getName()], 'admin', $language)
         );
 
         $mail->setBodyHtml($this->getHtmlBody($subjectType, $subject, $workflow, $action, $language, $mailPath, $deeplink));
@@ -220,24 +216,26 @@ class NotificationEmailService
             }
         }
 
-        foreach($notifyUsers as $language => $usersPerLanguage) {
+        foreach ($notifyUsers as $language => $usersPerLanguage) {
             $notifyUsers[$language] = array_values($notifyUsers[$language]);
         }
 
         return $notifyUsers;
     }
 
-        /**
-         * @param string $subjectType
-         * @param AbstractElement $subject
-         * @param Workflow $workflow
-         * @param string $action
-         * @param string $language
-         * @param string $mailPath
-         * @param string $deeplink
-         * @return string
-         */
-    protected function getHtmlBody(string $subjectType, AbstractElement $subject, Workflow $workflow, string $action, string $language, string $mailPath, string $deeplink): string {
+    /**
+     * @param string $subjectType
+     * @param AbstractElement $subject
+     * @param Workflow $workflow
+     * @param string $action
+     * @param string $language
+     * @param string $mailPath
+     * @param string $deeplink
+     *
+     * @return string
+     */
+    protected function getHtmlBody(string $subjectType, AbstractElement $subject, Workflow $workflow, string $action, string $language, string $mailPath, string $deeplink): string
+    {
         // allow retrieval of inherited values
         $inheritanceBackup = AbstractObject::getGetInheritedValues();
         AbstractObject::setGetInheritedValues(true);
@@ -259,9 +257,11 @@ class NotificationEmailService
      * @param string $action
      * @param string $deeplink
      * @param string $language
+     *
      * @return array
      */
-    protected function getNotificationEmailParameters(string $subjectType, AbstractElement $subject, Workflow $workflow, string $action, string $deeplink, string $language): array {
+    protected function getNotificationEmailParameters(string $subjectType, AbstractElement $subject, Workflow $workflow, string $action, string $deeplink, string $language): array
+    {
         $noteDescription = $this->getNoteInfo($subject->getId());
 
         return [
@@ -277,11 +277,12 @@ class NotificationEmailService
         ];
     }
 
-    protected function getNoteInfo($id): string {
+    protected function getNoteInfo($id): string
+    {
         $noteList = new Element\Note\Listing();
-        $noteList->addConditionParam("(cid = ?)", [$id]);
-        $noteList->setOrderKey("date");
-        $noteList->setOrder("desc");
+        $noteList->addConditionParam('(cid = ?)', [$id]);
+        $noteList->setOrderKey('date');
+        $noteList->setOrder('desc');
         $noteList->setLimit(1);
 
         $notes = $noteList->load();

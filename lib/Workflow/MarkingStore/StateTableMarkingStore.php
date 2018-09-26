@@ -23,12 +23,10 @@ use Symfony\Component\Workflow\MarkingStore\MarkingStoreInterface;
 
 class StateTableMarkingStore implements MarkingStoreInterface
 {
-
     /**
      * @var string
      */
     private $workflowName;
-
 
     public function __construct(string $workflowName)
     {
@@ -44,7 +42,7 @@ class StateTableMarkingStore implements MarkingStoreInterface
 
         $placeName = '';
 
-        if($workflowState = WorkflowState::getByPrimary($subject->getId(), Service::getType($subject), $this->workflowName)) {
+        if ($workflowState = WorkflowState::getByPrimary($subject->getId(), Service::getType($subject), $this->workflowName)) {
             $placeName = $workflowState->getPlace();
         }
 
@@ -54,7 +52,7 @@ class StateTableMarkingStore implements MarkingStoreInterface
 
         $placeName = explode(',', $placeName);
         $places = [];
-        foreach($placeName as $place) {
+        foreach ($placeName as $place) {
             $places[$place] = 1;
         }
 
@@ -70,14 +68,14 @@ class StateTableMarkingStore implements MarkingStoreInterface
     {
         $subject = $this->checkIfSubjectIsValid($subject);
 
-        if(!$workflowState = WorkflowState::getByPrimary($subject->getId(),'object', $this->workflowName)) {
+        if (!$workflowState = WorkflowState::getByPrimary($subject->getId(), 'object', $this->workflowName)) {
             $workflowState = new WorkflowState();
             $workflowState->setCtype(Service::getType($subject));
             $workflowState->setCid($subject->getId());
             $workflowState->setWorkflow($this->workflowName);
         }
 
-        $workflowState->setPlace(implode(',',array_keys($marking->getPlaces())));
+        $workflowState->setPlace(implode(',', array_keys($marking->getPlaces())));
         $workflowState->save();
     }
 
@@ -91,11 +89,12 @@ class StateTableMarkingStore implements MarkingStoreInterface
 
     /**
      * @param $subject
+     *
      * @return ElementInterface
      */
     private function checkIfSubjectIsValid($subject): ElementInterface
     {
-        if(!$subject instanceof ElementInterface) {
+        if (!$subject instanceof ElementInterface) {
             throw new LogicException('state_table marking store works for pimcore elements (documents, assets, data objects) only.');
         }
 

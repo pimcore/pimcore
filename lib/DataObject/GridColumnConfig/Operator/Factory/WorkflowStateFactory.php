@@ -17,7 +17,6 @@ declare(strict_types=1);
 
 namespace Pimcore\DataObject\GridColumnConfig\Operator\Factory;
 
-
 use Pimcore\DataObject\GridColumnConfig\Operator\OperatorInterface;
 use Pimcore\DataObject\GridColumnConfig\Operator\WorkflowState;
 use Pimcore\Workflow\Place\StatusInfo;
@@ -38,6 +37,7 @@ class WorkflowStateFactory implements OperatorFactoryInterface
     {
         $operator = new WorkflowState($configElement, $context);
         $operator->setWorkflowStatusInfo($this->workflowStatusInfo);
+
         return $operator;
     }
 }

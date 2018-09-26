@@ -840,7 +840,6 @@ class Configuration implements ConfigurationInterface
 
     private function addWorkflowNode(ArrayNodeDefinition $rootNode)
     {
-
         $rootNode
             ->children()
                  ->arrayNode('workflows')
@@ -863,19 +862,21 @@ class Configuration implements ConfigurationInterface
                                     ->info('Enable default audit trail feature provided by Symfony. Take a look at the Symfony docs for more details.')
                                 ->end()
                                 ->enumNode('type')
-                                    ->values(array('workflow', 'state_machine'))
+                                    ->values(['workflow', 'state_machine'])
                                     ->info('A workflow with type "workflow" can handle multiple places at one time whereas a state_machine provides a finite state_machine (only one place at one time). Take a look at the Symfony docs for more details.')
                                 ->end()
                                 ->arrayNode('marking_store')
                                     ->fixXmlConfig('argument')
                                     ->children()
                                         ->enumNode('type')
-                                            ->values(array('multiple_state', 'single_state', 'state_table', 'data_object_multiple_state', 'data_object_splitted_state'))
+                                            ->values(['multiple_state', 'single_state', 'state_table', 'data_object_multiple_state', 'data_object_splitted_state'])
                                         ->end()
                                         ->arrayNode('arguments')
                                             ->beforeNormalization()
                                                 ->ifString()
-                                                ->then(function ($v) { return array($v); })
+                                                ->then(function ($v) {
+                                                    return [$v];
+                                                })
                                             ->end()
                                             ->requiresAtLeastOneElement()
                                             ->prototype('variable')
@@ -887,23 +888,31 @@ class Configuration implements ConfigurationInterface
                                     ->end()
                                     ->info('Handles the way how the state/place is stored. If not defined "state_table" will be used as default. Take a look at @TODO for a description of the different types.')
                                     ->validate()
-                                        ->ifTrue(function ($v) { return isset($v['type']) && isset($v['service']); })
+                                        ->ifTrue(function ($v) {
+                                            return isset($v['type']) && isset($v['service']);
+                                        })
                                         ->thenInvalid('"type" and "service" cannot be used together.')
                                     ->end()
                                     ->validate()
-                                        ->ifTrue(function ($v) { return !empty($v['arguments']) && isset($v['service']); })
+                                        ->ifTrue(function ($v) {
+                                            return !empty($v['arguments']) && isset($v['service']);
+                                        })
                                         ->thenInvalid('"arguments" and "service" cannot be used together.')
                                     ->end()
                                 ->end()
                                 ->arrayNode('supports')
                                     ->beforeNormalization()
                                         ->ifString()
-                                        ->then(function ($v) { return array($v); })
+                                        ->then(function ($v) {
+                                            return [$v];
+                                        })
                                     ->end()
                                     ->prototype('scalar')
                                         ->cannotBeEmpty()
                                         ->validate()
-                                            ->ifTrue(function ($v) { return !class_exists($v); })
+                                            ->ifTrue(function ($v) {
+                                                return !class_exists($v);
+                                            })
                                             ->thenInvalid('The supported class %s does not exist.')
                                         ->end()
                                     ->end()
@@ -914,13 +923,15 @@ class Configuration implements ConfigurationInterface
                                     ->fixXmlConfig('argument')
                                     ->children()
                                         ->enumNode('type')
-                                            ->values(array('expression'))
+                                            ->values(['expression'])
                                             ->info('Type "expression": a symfony expression to define a criteria.')
                                         ->end()
                                         ->arrayNode('arguments')
                                             ->beforeNormalization()
                                                 ->ifString()
-                                                ->then(function ($v) { return array($v); })
+                                                ->then(function ($v) {
+                                                    return [$v];
+                                                })
                                             ->end()
                                             ->requiresAtLeastOneElement()
                                             ->prototype('variable')
@@ -932,11 +943,15 @@ class Configuration implements ConfigurationInterface
                                         ->end()
                                     ->end()
                                     ->validate()
-                                        ->ifTrue(function ($v) { return isset($v['type']) && isset($v['service']); })
+                                        ->ifTrue(function ($v) {
+                                            return isset($v['type']) && isset($v['service']);
+                                        })
                                         ->thenInvalid('"type" and "service" cannot be used together.')
                                     ->end()
                                     ->validate()
-                                        ->ifTrue(function ($v) { return !empty($v['arguments']) && isset($v['service']); })
+                                        ->ifTrue(function ($v) {
+                                            return !empty($v['arguments']) && isset($v['service']);
+                                        })
                                         ->thenInvalid('"arguments" and "service" cannot be used together.')
                                     ->end()
                                     ->info('Can be used to implement a special logic which subjects are supported by the workflow. For example only products matching certain criteria.')
@@ -983,17 +998,17 @@ class Configuration implements ConfigurationInterface
                                     ->end()
 
                                     ->example([
-                                        "places" => [
-                                            "closed" => [
-                                                "label" => "close product",
-                                                "permissions" => [
+                                        'places' => [
+                                            'closed' => [
+                                                'label' => 'close product',
+                                                'permissions' => [
                                                     [
-                                                        "condition" => "is_fully_authenticated() and 'ROLE_PIMCORE_ADMIN' in roles",
-                                                        "modify" => false
+                                                        'condition' => "is_fully_authenticated() and 'ROLE_PIMCORE_ADMIN' in roles",
+                                                        'modify' => false
                                                     ],
                                                     [
-                                                        "modify" => false,
-                                                        "objectLayout" => 2
+                                                        'modify' => false,
+                                                        'objectLayout' => 2
                                                     ]
                                                 ]
                                             ]
@@ -1036,7 +1051,9 @@ class Configuration implements ConfigurationInterface
                                             ->arrayNode('from')
                                                 ->beforeNormalization()
                                                     ->ifString()
-                                                    ->then(function ($v) { return array($v); })
+                                                    ->then(function ($v) {
+                                                        return [$v];
+                                                    })
                                                 ->end()
                                                 ->requiresAtLeastOneElement()
                                                 ->prototype('scalar')
@@ -1046,7 +1063,9 @@ class Configuration implements ConfigurationInterface
                                             ->arrayNode('to')
                                                 ->beforeNormalization()
                                                     ->ifString()
-                                                    ->then(function ($v) { return array($v); })
+                                                    ->then(function ($v) {
+                                                        return [$v];
+                                                    })
                                                 ->end()
                                                 ->requiresAtLeastOneElement()
                                                 ->prototype('scalar')
@@ -1130,31 +1149,31 @@ class Configuration implements ConfigurationInterface
                                     ->end()
 
                                     ->example([
-                                        "close_product" => [
-                                            "from" => "open",
-                                            "to" => "closed",
-                                            "options" => [
-                                                "label" => "close product",
-                                                "notes" => [
-                                                    "commentEnabled" => true,
-                                                    "commentRequired" => true,
-                                                    "additionalFields" => [
+                                        'close_product' => [
+                                            'from' => 'open',
+                                            'to' => 'closed',
+                                            'options' => [
+                                                'label' => 'close product',
+                                                'notes' => [
+                                                    'commentEnabled' => true,
+                                                    'commentRequired' => true,
+                                                    'additionalFields' => [
                                                         [
-                                                            "name" => "accept",
-                                                            "title" => "accept terms",
-                                                            "required" => true,
-                                                            "fieldType" => "checkbox",
+                                                            'name' => 'accept',
+                                                            'title' => 'accept terms',
+                                                            'required' => true,
+                                                            'fieldType' => 'checkbox',
                                                         ],
                                                         [
-                                                            "name" => "select",
-                                                            "title" => "please select a type",
-                                                            "setterFn" => "setSpecialWorkflowType",
-                                                            "fieldType" => "select",
-                                                            "fieldTypeSettings" => [
-                                                                "options" => [
-                                                                    ["key" => "Option A", "value" => "a"],
-                                                                    ["key" => "Option B", "value" => "b"],
-                                                                    ["key" => "Option C", "value" => "c"],
+                                                            'name' => 'select',
+                                                            'title' => 'please select a type',
+                                                            'setterFn' => 'setSpecialWorkflowType',
+                                                            'fieldType' => 'select',
+                                                            'fieldTypeSettings' => [
+                                                                'options' => [
+                                                                    ['key' => 'Option A', 'value' => 'a'],
+                                                                    ['key' => 'Option B', 'value' => 'b'],
+                                                                    ['key' => 'Option C', 'value' => 'c'],
                                                                 ]
                                                             ],
                                                         ]
@@ -1177,7 +1196,9 @@ class Configuration implements ConfigurationInterface
                                             ->arrayNode('to')
                                                 ->beforeNormalization()
                                                     ->ifString()
-                                                    ->then(function ($v) { return array($v); })
+                                                    ->then(function ($v) {
+                                                        return [$v];
+                                                    })
                                                 ->end()
                                                 ->requiresAtLeastOneElement()
                                                 ->prototype('scalar')

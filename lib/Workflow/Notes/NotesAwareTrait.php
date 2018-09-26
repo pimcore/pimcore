@@ -16,14 +16,14 @@ namespace Pimcore\Workflow\Notes;
 
 /**
  * @method getLabel()
+ *
  * @property array options
  */
-trait NotesAwareTrait {
-
-
+trait NotesAwareTrait
+{
     public function getNotes(): ?array
     {
-        if($this->getNotesCommentEnabled()) {
+        if ($this->getNotesCommentEnabled()) {
             return $this->options['notes'];
         }
 

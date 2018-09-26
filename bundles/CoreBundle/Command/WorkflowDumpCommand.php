@@ -11,15 +11,14 @@
 
 namespace Pimcore\Bundle\CoreBundle\Command;
 
+use Pimcore\Workflow\Dumper\GraphvizDumper;
+use Pimcore\Workflow\Dumper\StateMachineGraphvizDumper;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Exception\InvalidArgumentException;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Pimcore\Workflow\Dumper\GraphvizDumper;
-use Pimcore\Workflow\Dumper\StateMachineGraphvizDumper;
 use Symfony\Component\Workflow\Marking;
-
 
 class WorkflowDumpCommand extends ContainerAwareCommand
 {
@@ -31,10 +30,10 @@ class WorkflowDumpCommand extends ContainerAwareCommand
     protected function configure()
     {
         $this
-            ->setDefinition(array(
+            ->setDefinition([
                 new InputArgument('name', InputArgument::REQUIRED, 'A workflow name'),
                 new InputArgument('marking', InputArgument::IS_ARRAY, 'A marking (a list of places)'),
-            ))
+            ])
             ->setDescription('Dump a workflow')
             ->setHelp(<<<'EOF'
 The <info>%command.name%</info> command dumps the graphical representation of a
@@ -70,6 +69,6 @@ EOF
             $marking->mark($place);
         }
 
-        $output->writeln($dumper->dump($workflow->getDefinition(), $marking, ['workflowName'=>$workflow->getName()]));
+        $output->writeln($dumper->dump($workflow->getDefinition(), $marking, ['workflowName' => $workflow->getName()]));
     }
 }

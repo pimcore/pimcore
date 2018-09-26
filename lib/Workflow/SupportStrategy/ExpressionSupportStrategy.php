@@ -15,13 +15,6 @@
 namespace Pimcore\Workflow\SupportStrategy;
 
 use Pimcore\Workflow\ExpressionService;
-use Symfony\Component\Security\Core\Authentication\AuthenticationTrustResolverInterface;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
-use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
-use Symfony\Component\Security\Core\Role\RoleHierarchyInterface;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
-use Symfony\Component\Workflow\EventListener\ExpressionLanguage;
-use Symfony\Component\Workflow\Exception\InvalidTokenConfigurationException;
 use Symfony\Component\Workflow\SupportStrategy\SupportStrategyInterface;
 use Symfony\Component\Workflow\Workflow;
 
@@ -30,7 +23,6 @@ use Symfony\Component\Workflow\Workflow;
  */
 class ExpressionSupportStrategy implements SupportStrategyInterface
 {
-
     /**
      * @var ExpressionService
      */
@@ -48,6 +40,7 @@ class ExpressionSupportStrategy implements SupportStrategyInterface
 
     /**
      * ExpressionSupportStrategy constructor.
+     *
      * @param ExpressionService $expressionService
      * @param string|string[] $className a FQCN
      * @param string $expression
@@ -64,7 +57,7 @@ class ExpressionSupportStrategy implements SupportStrategyInterface
      */
     public function supports(Workflow $workflow, $subject)
     {
-        if(!$this->supportsClass($subject)) {
+        if (!$this->supportsClass($subject)) {
             return false;
         }
 
@@ -73,13 +66,13 @@ class ExpressionSupportStrategy implements SupportStrategyInterface
 
     private function supportsClass($subject)
     {
-        if(is_string($this->className)) {
+        if (is_string($this->className)) {
             return $subject instanceof $this->className;
         }
 
-        if(is_array($this->className)) {
-            foreach($this->className as $className) {
-                if($subject instanceof $className) {
+        if (is_array($this->className)) {
+            foreach ($this->className as $className) {
+                if ($subject instanceof $className) {
                     return true;
                 }
             }
@@ -87,7 +80,6 @@ class ExpressionSupportStrategy implements SupportStrategyInterface
 
         return false;
     }
-
 
     /**
      * @return string

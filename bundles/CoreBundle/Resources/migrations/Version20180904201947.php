@@ -3,7 +3,6 @@
 namespace Pimcore\Bundle\CoreBundle\Migrations;
 
 use Doctrine\DBAL\Schema\Schema;
-use Pimcore\Db;
 use Pimcore\Migrations\Migration\AbstractPimcoreMigration;
 
 class Version20180904201947 extends AbstractPimcoreMigration
