@@ -28,7 +28,7 @@ class Dao extends Model\DataObject\Fieldcollection\Dao
     /**
      * @param DataObject\Concrete $object
      * @param array $params
-     *
+     *r
      * @return array
      */
     public function load(DataObject\Concrete $object, $params = [])
@@ -96,7 +96,7 @@ class Dao extends Model\DataObject\Fieldcollection\Dao
                 $setter = 'set' . ucfirst($type);
 
                 if ($brick instanceof DataObject\DirtyIndicatorInterface) {
-                    $brick->resetDirtyMap($key);
+                    $brick->markFieldDirty($key, false);
                 }
 
                 $this->model->$setter($brick);

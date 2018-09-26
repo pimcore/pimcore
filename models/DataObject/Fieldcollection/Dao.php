@@ -88,7 +88,7 @@ class Dao extends Model\Dao\AbstractDao
                             $collection->setValue($key, $value);
 
                             if ($collection instanceof DataObject\DirtyIndicatorInterface) {
-                                $collection->resetDirtyMap($key);
+                                $collection->markFieldDirty($key, false);
                             }
                         }
                     } else {
