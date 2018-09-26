@@ -54,14 +54,8 @@ class DataObjectMultipleStateMarkingStore extends MultipleStateMarkingStore
     {
         $subject = $this->checkIfSubjectIsValid($subject);
 
-        $places = [];
-        foreach (array_keys($marking->getPlaces()) as $place) {
-            $places[] = $place;
-        }
-
+        $places = array_keys($marking->getPlaces());
         $this->propertyAccessor->setValue($subject, $this->property, $places);
-
-        $subject->save();
     }
 
     /**
