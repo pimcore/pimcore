@@ -48,7 +48,7 @@ used in combination with data object multiselect fields - use data_object_multip
 
 Can be used to store mutliple places in a data object multiselect field.
 
-##### Eonfiguration Example
+##### Configuration Example
 ```yaml
    marking_store:
       type: data_object_multiple_state
