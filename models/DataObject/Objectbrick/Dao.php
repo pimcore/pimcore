@@ -28,7 +28,7 @@ class Dao extends Model\DataObject\Fieldcollection\Dao
     /**
      * @param DataObject\Concrete $object
      * @param array $params
-     *r
+     *
      * @return array
      */
     public function load(DataObject\Concrete $object, $params = [])
