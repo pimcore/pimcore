@@ -151,7 +151,7 @@ class Dao extends Model\Dao\AbstractDao
                     $this->createUpdateTable();
                     throw new \Exception('missing table created, start next run ... ;-)');
                 }
-                throw new \Exception('passing it on ...');
+                throw $e;
             }
 
             if ($container instanceof DataObject\ClassDefinition || $container instanceof DataObject\Objectbrick\Definition) {
