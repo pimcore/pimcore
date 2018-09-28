@@ -37,7 +37,7 @@ pimcore.object.helpers.import.saveAndShareTab = Class.create({
                 autoScroll: true,
                 border: false,
                 iconCls: "pimcore_icon_save_and_share",
-                title: t("save_and_share"),
+                title: user.isAllowed("share_configurations") ? t("save_and_share") : t("save"),
                 items: []
             });
 
@@ -57,7 +57,7 @@ pimcore.object.helpers.import.saveAndShareTab = Class.create({
                 autoLoad: true,
                 proxy: {
                     type: 'ajax',
-                    url: '/admin/user/get-users',
+                    url: '/admin/user/get-users-for-sharing',
                     reader: {
                         rootProperty: 'data',
                         idProperty: 'id'
@@ -71,7 +71,7 @@ pimcore.object.helpers.import.saveAndShareTab = Class.create({
                 autoLoad: true,
                 proxy: {
                     type: 'ajax',
-                    url: '/admin/user/get-roles',
+                    url: '/admin/user/get-roles-for-sharing',
                     reader: {
                         rootProperty: 'data',
                         idProperty: 'id'

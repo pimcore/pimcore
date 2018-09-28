@@ -321,7 +321,7 @@ class UserController extends AdminController implements EventedControllerInterfa
             }
 
             if (isset($values['2fa_required'])) {
-                $user->setTwoFactorAuthentication('required', (bool) $values['2fa_required']);
+                $user->setTwoFactorAuthentication('required', (bool)$values['2fa_required']);
             }
 
             $user->setValues($values);
@@ -340,7 +340,7 @@ class UserController extends AdminController implements EventedControllerInterfa
 
             foreach ($availableUserPermissions as $permission) {
                 if (isset($values['permission_' . $permission->getKey()])) {
-                    $user->setPermission($permission->getKey(), (bool) $values['permission_' . $permission->getKey()]);
+                    $user->setPermission($permission->getKey(), (bool)$values['permission_' . $permission->getKey()]);
                 }
             }
 
@@ -352,7 +352,7 @@ class UserController extends AdminController implements EventedControllerInterfa
                     $newWorkspaces = [];
                     foreach ($spaces as $space) {
                         if (in_array($space['path'], $processedPaths[$type])) {
-                            throw new \Exception('Error saving workspaces as multiple entries found for path "' . $space['path'] .'" in '.$this->trans("$type") . 's');
+                            throw new \Exception('Error saving workspaces as multiple entries found for path "' . $space['path'] . '" in ' . $this->trans("$type") . 's');
                         }
 
                         $element = Element\Service::getElementByPath($type, $space['path']);
@@ -1009,7 +1009,8 @@ class UserController extends AdminController implements EventedControllerInterfa
         // check permissions
         $unrestrictedActions = [
             'getCurrentUserAction', 'updateCurrentUserAction', 'getAvailablePermissionsAction', 'getMinimalAction',
-            'getImageAction', 'uploadCurrentUserImageAction', 'disable2FaSecretAction', 'renew2FaSecretAction'
+            'getImageAction', 'uploadCurrentUserImageAction', 'disable2FaSecretAction', 'renew2FaSecretAction',
+            'getUsersForSharingAction', 'getRolesForSharingAction'
         ];
 
         $this->checkActionPermission($event, 'users', $unrestrictedActions);
@@ -1022,6 +1023,27 @@ class UserController extends AdminController implements EventedControllerInterfa
     {
         // nothing to do
     }
+
+    /**
+     * @param Request $request
+     * @Route("/user/get-users-for-sharing")
+     * @Method({"GET"})
+     */
+    public function getUsersForSharingAction(Request $request) {
+        $this->checkPermission("share_configurations");
+        return $this->getUsersAction($request);
+    }
+
+    /**
+     * @param Request $request
+     * @Route("/user/get-roles-for-sharing")
+     * @Method({"GET"})
+     */
+    public function getRolesForSharingAction(Request $request) {
+        $this->checkPermission("share_configurations");
+        return $this->getRolesAction($request);
+    }
+
 
     /**
      * @param Request $request
