@@ -18,9 +18,12 @@
 namespace Pimcore\Model\DataObject\Data;
 
 use Pimcore\Model\DataObject\OwnerAwareFieldInterface;
+use Pimcore\Model\DataObject\Traits\OwnerAwareFieldTrait;
 
 class RgbaColor implements OwnerAwareFieldInterface
 {
+    use OwnerAwareFieldTrait;
+
     /** @var int */
     protected $r;
 
