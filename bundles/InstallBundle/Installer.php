@@ -715,7 +715,9 @@ class Installer
             ['key' => 'website_settings'],
             ['key' => 'admin_translations'],
             ['key' => 'web2print_settings'],
-            ['key' => 'workflow_details']
+            ['key' => 'workflow_details'],
+            ['key' => 'notifications'],
+            ['key' => 'notifications_send']
         ];
 
         foreach ($userPermissions as $up) {

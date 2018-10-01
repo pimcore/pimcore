@@ -686,6 +686,12 @@ $scripts = array(
 
     // color picker
     "pimcore/colorpicker-overrides.js",
+
+    //notification
+    "pimcore/notification/helper.js",
+    "pimcore/notification/panel.js",
+    "pimcore/notification/plugin.js",
+    "pimcore/notification/modal.js",
 );
 
 ?>
