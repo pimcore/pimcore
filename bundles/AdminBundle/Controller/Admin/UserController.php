@@ -990,7 +990,8 @@ class UserController extends AdminController implements EventedControllerInterfa
         // check permissions
         $unrestrictedActions = [
             'getCurrentUserAction', 'updateCurrentUserAction', 'getAvailablePermissionsAction', 'getMinimalAction',
-            'getImageAction', 'uploadCurrentUserImageAction', 'disable2FaSecretAction', 'renew2FaSecretAction'
+            'getImageAction', 'uploadCurrentUserImageAction', 'disable2FaSecretAction', 'renew2FaSecretAction',
+            'getUsersForSharingAction', 'getRolesForSharingAction'
         ];
 
         $this->checkActionPermission($event, 'users', $unrestrictedActions);
@@ -1006,7 +1007,27 @@ class UserController extends AdminController implements EventedControllerInterfa
 
     /**
      * @param Request $request
-     * @Route("/user/get-users", methods={"GET"})
+     * @Route("/user/get-users-for-sharing", methods={"GET"})
+     */
+    public function getUsersForSharingAction(Request $request) {
+        $this->checkPermission("share_configurations");
+        return $this->getUsersAction($request);
+    }
+
+    /**
+     * @param Request $request
+     * @Route("/user/get-roles-for-sharing", methods={"GET"}))
+     */
+    public function getRolesForSharingAction(Request $request) {
+        $this->checkPermission("share_configurations");
+        return $this->getRolesAction($request);
+    }
+
+
+    /**
+     * @param Request $request
+     * @Route("/user/get-users")
+     * @Method({"GET"})
      */
     public function getUsersAction(Request $request)
     {

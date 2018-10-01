@@ -88,19 +88,19 @@ pimcore.object.helpers.gridConfigDialog = Class.create({
                 text: this.isShared ? t("save_copy_and_share") : t("save_and_share"),
                 iconCls: "pimcore_icon_save",
                 handler: function () {
-                if (!this.nameField.getValue()) {
-                    this.tabPanel.setActiveTab(this.savePanel);
-                    Ext.Msg.show({
-                        title: t("error"),
-                        msg: t('invalid_name'),
-                        buttons: Ext.Msg.OK,
-                        icon: Ext.MessageBox.ERROR
-                    });
-                    return;
-                }
-                this.commitData(true);
-            }.bind(this)
-        });
+                    if (!this.nameField.getValue()) {
+                        this.tabPanel.setActiveTab(this.savePanel);
+                        Ext.Msg.show({
+                            title: t("error"),
+                            msg: t('invalid_name'),
+                            buttons: Ext.Msg.OK,
+                            icon: Ext.MessageBox.ERROR
+                        });
+                        return;
+                    }
+                    this.commitData(true);
+                }.bind(this)
+            });
         }
 
         this.window = new Ext.Window({
@@ -126,7 +126,7 @@ pimcore.object.helpers.gridConfigDialog = Class.create({
                 autoLoad: true,
                 proxy: {
                     type: 'ajax',
-                    url: '/admin/user/get-users',
+                    url: '/admin/user/get-users-for-sharing',
                     reader: {
                         rootProperty: 'data',
                         idProperty: 'id'
@@ -140,7 +140,7 @@ pimcore.object.helpers.gridConfigDialog = Class.create({
                 autoLoad: true,
                 proxy: {
                     type: 'ajax',
-                    url: '/admin/user/get-roles',
+                    url: '/admin/user/get-roles-for-sharing',
                     reader: {
                         rootProperty: 'data',
                         idProperty: 'id'
@@ -233,7 +233,7 @@ pimcore.object.helpers.gridConfigDialog = Class.create({
             autoScroll: true,
             border: false,
             iconCls: "pimcore_icon_save_and_share",
-            title: t("save_and_share"),
+            title: user.isAllowed("share_configurations") ? t("save_and_share") : t("save"),
             items: items
         });
         return this.settingsForm;
@@ -399,7 +399,7 @@ pimcore.object.helpers.gridConfigDialog = Class.create({
                 pimcore.available_languages[pimcore.settings.websiteLanguages[i]]]);
         }
 
-       var itemsPerPageStore = [
+        var itemsPerPageStore = [
             [25, "25"],
             [50, "50"],
             [100, "100"],
@@ -456,8 +456,8 @@ pimcore.object.helpers.gridConfigDialog = Class.create({
             hideLabel: false,
             fieldLabel: t("language"),
             items: [this.languageField,{
-                    xtype: 'tbfill'
-                    }, this.itemsPerPage]
+                xtype: 'tbfill'
+            }, this.itemsPerPage]
         };
 
         if (!this.languagePanel) {
