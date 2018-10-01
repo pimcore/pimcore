@@ -136,6 +136,9 @@ Pimcore documents to set up manual landing pages etc.
 Both is demonstrated at [E-Commerce demo](http://ecommercedemo.pimcore.org/en) and also available as 
 [source code](https://github.com/pimcore/demo-ecommerce). 
 
+In case that a filter contains relational objects (```FilterMultiRelation```, ```FilterRelation```, etc.), 
+the ```getName()``` method of the object is used to render the text in pre-select lists and filters. 
+Implement the ```getNameForFilterDefinition()``` method in your data objects to show customized (HTML) texts, including icons. 
 
 ## 3 - Putting it all together
 Once Filter Types and Filter Definitions are set up, it is quite easy to put it all together and use the *Filter Service* 
