@@ -1026,8 +1026,7 @@ class UserController extends AdminController implements EventedControllerInterfa
 
     /**
      * @param Request $request
-     * @Route("/user/get-users")
-     * @Method({"GET"})
+     * @Route("/user/get-users", methods={"GET"})
      */
     public function getUsersAction(Request $request)
     {
