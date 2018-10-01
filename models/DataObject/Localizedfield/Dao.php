@@ -74,14 +74,21 @@ class Dao extends Model\Dao\AbstractDao
         return 'object_localized_query_' . $this->model->getClass()->getId();
     }
 
-    public function save()
+    public function save($params = [])
     {
-        $this->delete(false);
+
+        $context = $this->model->getContext();
+
+        // if inside a field collection a delete is not necessary as the fieldcollection deletes all entries anyway
+        // see Pimcore\Model\DataObject\Fieldcollection\Dao::delete
+
+        if (DataObject\AbstractObject::isDirtyDetectionDisabled() || !$context["containerType"] == "fieldcollection") {
+            $this->delete(false);
+        }
 
         $object = $this->model->getObject();
         $validLanguages = Tool::getValidLanguages();
 
-        $context = $this->model->getContext();
         if ($context && $context['containerType'] == 'fieldcollection') {
             $containerKey = $context['containerKey'];
             $container = DataObject\Fieldcollection\Definition::getByKey($containerKey);
@@ -100,6 +107,9 @@ class Dao extends Model\Dao\AbstractDao
          */
         DataObject\Concrete\Dao\InheritanceHelper::setUseRuntimeCache(true);
         foreach ($validLanguages as $language) {
+            if ((!isset($params["newParent"] )|| !$params["newParent"]) && isset($params["isUpdate"]) && $params["isUpdate"] && !$this->model->isLanguageDirty($language)) {
+                continue;
+            }
             $inheritedValues = DataObject\AbstractObject::doGetInheritedValues();
             DataObject\AbstractObject::setGetInheritedValues(false);
 
@@ -143,7 +153,11 @@ class Dao extends Model\Dao\AbstractDao
             $queryTable = $this->getQueryTableName() . '_' . $language;
 
             try {
-                $this->db->insertOrUpdate($storeTable, $insertData);
+
+                if ((isset($params["newParent"])&& $params["newParent"]) || !isset($params["isUpdate"]) || !$params["isUpdate"] || $this->model->isLanguageDirty($language)) {
+                    $this->db->insertOrUpdate($storeTable, $insertData);
+                }
+
             } catch (\Exception $e) {
                 // if the table doesn't exist -> create it! deferred creation for object bricks ...
                 if (strpos($e->getMessage(), 'exist')) {
@@ -304,8 +318,11 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * @param bool $deleteQuery
      */
-    public function delete($deleteQuery = true)
+    public function delete($deleteQuery = true, $isUpdate = true)
     {
+        if ($isUpdate && !DataObject\AbstractObject::isDirtyDetectionDisabled() && !$this->model->hasDirtyFields()) {
+            return;
+        }
         $object = $this->model->getObject();
 
         try {
@@ -360,6 +377,11 @@ class Dao extends Model\Dao\AbstractDao
         }
 
         // remove relations
+        if (!DataObject\AbstractObject::isDirtyDetectionDisabled()) {
+            if (!$this->model->hasDirtyFields())  {
+                return;
+            }
+        }
         if ($container instanceof  DataObject\Objectbrick\Definition || $container instanceof DataObject\Fieldcollection\Definition) {
             $objectId = $object->getId();
             $index = $context['index'];
@@ -440,7 +462,7 @@ class Dao extends Model\Dao\AbstractDao
                         $params['context']['object'] = $object;
                         $value = $fd->load($this->model, $params);
                         if ($value === 0 || !empty($value)) {
-                            $this->model->setLocalizedValue($key, $value, $row['language']);
+                            $this->model->setLocalizedValue($key, $value, $row['language'], false);
                         }
                     } else {
                         if (is_array($fd->getColumnType())) {
@@ -448,9 +470,15 @@ class Dao extends Model\Dao\AbstractDao
                             foreach ($fd->getColumnType() as $fkey => $fvalue) {
                                 $multidata[$key . '__' . $fkey] = $row[$key . '__' . $fkey];
                             }
-                            $this->model->setLocalizedValue($key, $fd->getDataFromResource($multidata), $row['language']);
+                            $value = $fd->getDataFromResource($multidata);
+                            $this->model->setLocalizedValue($key, $value, $row['language'], false);
                         } else {
-                            $this->model->setLocalizedValue($key, $fd->getDataFromResource($row[$key]), $row['language']);
+                            $value = $fd->getDataFromResource($row[$key]);
+                            $this->model->setLocalizedValue($key, $value, $row['language'], false);
+                        }
+
+                        if ($value instanceof DataObject\OwnerAwareFieldInterface) {
+                            $value->setOwner($this->model, $key, $row['language']);
                         }
                     }
                 }

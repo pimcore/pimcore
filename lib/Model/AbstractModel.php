@@ -15,6 +15,7 @@
 namespace Pimcore\Model;
 
 use Pimcore\Logger;
+use Pimcore\Model\DataObject\Traits\ObjectVarTrait;
 
 /**
  * @method void beginTransaction()
@@ -26,6 +27,8 @@ use Pimcore\Logger;
  */
 abstract class AbstractModel
 {
+
+    use ObjectVarTrait;
     /**
      * @var \Pimcore\Model\Dao\AbstractDao
      */
@@ -222,7 +225,7 @@ abstract class AbstractModel
     public function __sleep()
     {
         $finalVars = [];
-        $blockedVars = ['dao', '_fulldump']; // _fulldump is a temp var which is used to trigger a full serialized dump in __sleep eg. in Document, \Object_Abstract
+        $blockedVars = ['dao', '_fulldump', 'o_dirtyFields']; // _fulldump is a temp var which is used to trigger a full serialized dump in __sleep eg. in Document, \Object_Abstract
         $vars = get_object_vars($this);
         foreach ($vars as $key => $value) {
             if (!in_array($key, $blockedVars)) {
@@ -271,19 +274,6 @@ abstract class AbstractModel
     }
 
     /**
-     * returns object values without the dao
-     *
-     * @return array
-     */
-    public function getObjectVars()
-    {
-        $data = get_object_vars($this);
-        unset($data['dao']);
-
-        return $data;
-    }
-
-    /**
      * @return array
      */
     public function __debugInfo()
@@ -295,20 +285,11 @@ abstract class AbstractModel
     }
 
     /**
-     * @param $var
-     *
-     * @return mixed
-     */
-    public function getObjectVar($var)
-    {
-        return $this->{$var};
-    }
-
-    /**
      * @return Factory
      */
     protected static function getModelFactory()
     {
         return \Pimcore::getContainer()->get('pimcore.model.factory');
     }
+
 }

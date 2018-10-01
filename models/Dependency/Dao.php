@@ -17,6 +17,7 @@
 
 namespace Pimcore\Model\Dependency;
 
+use Pimcore\Db;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Element;
@@ -95,14 +96,37 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function save()
     {
-        foreach ($this->model->getRequires() as $r) {
-            if ($r['id'] && $r['type']) {
-                $this->db->insert('dependencies', [
-                    'sourceid' => $this->model->getSourceId(),
-                    'sourcetype' => $this->model->getSourceType(),
-                    'targetid' => $r['id'],
-                    'targettype' => $r['type']
-                ]);
+        $db = Db::get();
+        $currentHash = $db->fetchOne('SELECT MD5(GROUP_CONCAT(sourceid, sourcetype, targetid, targettype order by concat(sourceid, sourcetype, targetid, targettype))) FROM dependencies where sourceId = '
+            . $this->model->getSourceId() .  ' and sourceType = ' . $db->quote($this->model->getSourceType()));
+        $newData = [];
+
+        $requires = $this->model->getRequires();
+
+        if ($currentHash == null && ! $requires) {
+            return;
+        }
+
+        foreach ($requires as $r) {
+            $row = $this->model->getSourceId() . $this->model->getSourceType(). $r['id']  . $r['type'];
+            $newData[] = $row;
+        }
+
+        sort($newData);
+        $newData = implode(',', $newData);
+        $newHash = md5($newData);
+        if ($newHash != $currentHash) {
+            $this->clear();
+
+            foreach ($requires as $r) {
+                if ($r['id'] && $r['type']) {
+                    $this->db->insert('dependencies', [
+                        'sourceid' => $this->model->getSourceId(),
+                        'sourcetype' => $this->model->getSourceType(),
+                        'targetid' => $r['id'],
+                        'targettype' => $r['type']
+                    ]);
+                }
             }
         }
     }

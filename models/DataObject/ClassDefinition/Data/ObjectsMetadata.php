@@ -23,6 +23,8 @@ use Pimcore\Model\Element;
 
 class ObjectsMetadata extends Model\DataObject\ClassDefinition\Data\Objects
 {
+    use DataObject\Traits\ElementWithMetadataComparisonTrait;
+
     /**
      * @var
      */
@@ -109,12 +111,15 @@ class ObjectsMetadata extends Model\DataObject\ClassDefinition\Data\Objects
                 $destination = DataObject::getById($object['dest_id']);
 
                 if ($source instanceof DataObject\Concrete && $destination instanceof DataObject\Concrete && $destination->getClassName() == $this->getAllowedClassId()) {
+                    /** @var  $metaData DataObject\Data\ObjectMetadata */
                     $metaData = \Pimcore::getContainer()->get('pimcore.model.factory')
                         ->build('Pimcore\Model\DataObject\Data\ObjectMetadata', [
                             'fieldname' => $this->getName(),
                             'columns' => $this->getColumnKeys(),
                             'object' => $destination
                         ]);
+
+                    $metaData->setOwner($object, $this->getName());
 
                     $ownertype = $object['ownertype'] ? $object['ownertype'] : '';
                     $ownername = $object['ownername'] ? $object['ownername'] : '';
@@ -224,6 +229,7 @@ class ObjectsMetadata extends Model\DataObject\ClassDefinition\Data\Objects
                             'columns' => $this->getColumnKeys(),
                             'object' => $o
                         ]);
+                    $metaData->setOwner($object, $this->getName());
 
                     foreach ($this->getColumns() as $c) {
                         $setter = 'set' . ucfirst($c['key']);
@@ -377,6 +383,7 @@ class ObjectsMetadata extends Model\DataObject\ClassDefinition\Data\Objects
                         'columns' => $this->getColumnKeys(),
                         'object' => $el
                     ]);
+                $metaObject->setOwner($object, $this->getName());
 
                 $value[] = $metaObject;
             }
@@ -505,6 +512,7 @@ class ObjectsMetadata extends Model\DataObject\ClassDefinition\Data\Objects
                             'columns' => $this->getColumnKeys(),
                             'object' => $dest
                         ]);
+                    $metaObject->setOwner($object, $this->getName());
 
                     foreach ($this->getColumns() as $c) {
                         $setter = 'set' . ucfirst($c['key']);
@@ -533,6 +541,21 @@ class ObjectsMetadata extends Model\DataObject\ClassDefinition\Data\Objects
      */
     public function save($object, $params = [])
     {
+        if (!DataObject\AbstractObject::isDirtyDetectionDisabled() && $object instanceof DataObject\DirtyIndicatorInterface) {
+            if ($object instanceof DataObject\Localizedfield) {
+                if ($object->getObject() instanceof DataObject\DirtyIndicatorInterface) {
+                    if (!$object->hasDirtyFields()) {
+                        return;
+                    }
+                }
+            } else {
+                if ($this->supportsDirtyDetection()) {
+                    if (!$object->isFieldDirty($this->getName()))
+                        return;
+                }
+            }
+        }
+
         $objectsMetadata = $this->getDataFromObjectParam($object, $params);
 
         $classId = null;
@@ -618,10 +641,8 @@ class ObjectsMetadata extends Model\DataObject\ClassDefinition\Data\Objects
                 //$data = $this->getDataFromResource($object->getRelationData($this->getName(),true,null));
                 $data = $this->load($object, ['force' => true]);
 
-                $setter = 'set' . ucfirst($this->getName());
-                if (method_exists($object, $setter)) {
-                    $object->$setter($data);
-                }
+                $object->setObjectVar($this->getName(), $data);
+                $this->markLazyloadedFieldAsLoaded($object);
             }
         } elseif ($object instanceof DataObject\Localizedfield) {
             $data = $params['data'];
@@ -979,6 +1000,7 @@ class ObjectsMetadata extends Model\DataObject\ClassDefinition\Data\Objects
                     $data = $elementMetadata['data'];
 
                     $item = new DataObject\Data\ObjectMetadata($fieldname, $columns, $target);
+                    $item->setOwner($object, $this->getName());
                     $item->setData($data);
                     $result[] = $item;
                 }
@@ -1059,4 +1081,5 @@ class ObjectsMetadata extends Model\DataObject\ClassDefinition\Data\Objects
 
         return $elementType . $id;
     }
+
 }

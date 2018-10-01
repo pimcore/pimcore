@@ -125,7 +125,8 @@ class Fieldcollections extends Model\DataObject\ClassDefinition\Data
 
                 foreach ($collectionDef->getFieldDefinitions() as $fd) {
                     if (!$fd instanceof CalculatedValue) {
-                        $collectionData[$fd->getName()] = $fd->getDataForEditmode($item->getObjectVar($fd->getName()), $object, $params);
+                        $value = $item->{'get' . $fd->getName()}();
+                        $collectionData[$fd->getName()] = $fd->getDataForEditmode($value, $object, $params);
                     }
                 }
 
@@ -622,10 +623,15 @@ class Fieldcollections extends Model\DataObject\ClassDefinition\Data
         $data = $object->getObjectVar($this->getName());
         if ($this->getLazyLoading() and !in_array($this->getName(), $object->getO__loadedLazyFields())) {
             $data = $this->load($object, ['force' => true]);
+            if ($data) {
+                $data->resetDirtyMap();
+            }
+
 
             $setter = 'set' . ucfirst($this->getName());
             if (method_exists($object, $setter)) {
                 $object->$setter($data);
+                $this->markLazyloadedFieldAsLoaded($object);
             }
         }
 
@@ -641,9 +647,7 @@ class Fieldcollections extends Model\DataObject\ClassDefinition\Data
      */
     public function preSetData($object, $data, $params = [])
     {
-        if ($this->getLazyLoading() and !in_array($this->getName(), $object->getO__loadedLazyFields())) {
-            $object->addO__loadedLazyField($this->getName());
-        }
+        $this->markLazyloadedFieldAsLoaded($object);
 
         if ($data instanceof DataObject\Fieldcollection) {
             $data->setFieldname($this->getName());

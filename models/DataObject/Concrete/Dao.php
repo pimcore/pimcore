@@ -182,6 +182,14 @@ class Dao extends Model\DataObject\AbstractObject\Dao
                     $untouchable[] = $key;
                 }
             }
+
+            if (!DataObject\AbstractObject::isDirtyDetectionDisabled() && $fd->supportsDirtyDetection()) {
+                if ($this->model instanceof DataObject\DirtyIndicatorInterface && !$this->model->isFieldDirty($key)) {
+                    if (!in_array($key, $untouchable)) {
+                        $untouchable[] = $key;
+                    }
+                }
+            }
         }
 
         // empty relation table except the untouchable fields (eg. lazy loading fields)
@@ -205,7 +213,9 @@ class Dao extends Model\DataObject\AbstractObject\Dao
 
             if (method_exists($fd, 'save')) {
                 // for fieldtypes which have their own save algorithm eg. fieldcollections, objects, multihref, ...
-                $fd->save($this->model);
+                $fd->save($this->model, ["isUntouchable" => in_array($fd->getName(), $untouchable),
+                    "isUpdate" => $isUpdate,
+                    "newParent" => $this->model->isFieldDirty("o_parentId")]);
             } elseif ($fd->getColumnType()) {
                 // pimcore saves the values with getDataForResource
                 if (is_array($fd->getColumnType())) {

@@ -686,6 +686,27 @@ class Concrete extends AbstractObject
         throw new \Exception('Call to undefined static method ' . $method . ' in class DataObject\\Concrete');
     }
 
+    /**
+     * @return $this
+     *
+     * @throws \Exception
+     */
+    public function save() {
+        $isDirtyDetectionDisabled = AbstractObject::isDirtyDetectionDisabled();
+
+        // if the class is newer then better disable the dirty detection. This should fix issues with the query table if
+        // the inheritance enabled flag has been changed in the meantime
+        if ($this->getClass()->getModificationDate() >= $this->getModificationDate() && $this->getId()) {
+            AbstractObject::disableDirtyDetection();
+        }
+        try {
+            parent::save();
+            $this->resetDirtyMap();
+        } finally {
+            AbstractObject::setDisableDirtyDetection($isDirtyDetectionDisabled);
+        }
+    }
+
     public function __sleep()
     {
         $parentVars = parent::__sleep();
@@ -715,7 +736,7 @@ class Concrete extends AbstractObject
         // do not use the getter ($this->getLocalizedfields()) as it somehow slows down the process around a sec
         // no clue why this happens
         if (property_exists($this, 'localizedfields') && $this->localizedfields instanceof Localizedfield) {
-            $this->localizedfields->setObject($this);
+            $this->localizedfields->setObject($this, false);
         }
     }
 

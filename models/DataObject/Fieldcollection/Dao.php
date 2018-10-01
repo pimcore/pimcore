@@ -28,10 +28,11 @@ class Dao extends Model\Dao\AbstractDao
 {
     /**
      * @param DataObject\Concrete $object
+     * @return whether an insert should be done
      */
     public function save(DataObject\Concrete $object)
     {
-        $this->delete($object);
+        return $this->delete($object, true);
     }
 
     /**
@@ -85,6 +86,10 @@ class Dao extends Model\Dao\AbstractDao
                         );
                         if ($value === 0 || !empty($value)) {
                             $collection->setValue($key, $value);
+
+                            if ($collection instanceof DataObject\DirtyIndicatorInterface) {
+                                $collection->markFieldDirty($key, false);
+                            }
                         }
                     } else {
                         if (is_array($fd->getColumnType())) {
@@ -117,11 +122,14 @@ class Dao extends Model\Dao\AbstractDao
 
     /**
      * @param DataObject\Concrete $object
+     * @param saveMode true if called from save method
+     * @return whether an relational data should be inserted or not
      */
-    public function delete(DataObject\Concrete $object)
+    public function delete(DataObject\Concrete $object, $saveMode = false)
     {
         // empty or create all relevant tables
         $fieldDef = $object->getClass()->getFieldDefinition($this->model->getFieldname(), ['suppressEnrichment' => true]);
+        $hasLocalizedFields = false;
 
         foreach ($fieldDef->getAllowedTypes() as $type) {
             try {
@@ -129,6 +137,10 @@ class Dao extends Model\Dao\AbstractDao
                 $definition = DataObject\Fieldcollection\Definition::getByKey($type);
             } catch (\Exception $e) {
                 continue;
+            }
+
+            if ($definition->getFieldDefinition('localizedfields')) {
+                $hasLocalizedFields = true;
             }
 
             $tableName = $definition->getTableName($object->getClass());
@@ -176,11 +188,28 @@ class Dao extends Model\Dao\AbstractDao
             }
         }
 
+        if (!$this->model->isFieldDirty($this->model->getFieldname())) {
+            return false;
+        }
+        $whereLocalizedFields = "(ownertype = 'localizedfield' AND "
+            . $this->db->quoteInto('ownername LIKE ?', '/fieldcollection~'
+                . $this->model->getFieldname() . '/%')
+            . ' AND ' . $this->db->quoteInto('src_id = ?', $object->getId()). ')';
+
+        if ($saveMode) {
+            if (!$this->model->hasDirtyFields() && $hasLocalizedFields) {
+                // always empty localized fields
+                $this->db->deleteWhere('object_relations_' . $object->getClassId(), $whereLocalizedFields);
+                return false;
+            }
+        }
+
+        $where = "(ownertype = 'fieldcollection' AND " . $this->db->quoteInto('ownername = ?', $this->model->getFieldname())
+            . ' AND ' . $this->db->quoteInto('src_id = ?', $object->getId()) . ')'
+            . " OR " . $whereLocalizedFields;
+
         // empty relation table
-        $this->db->deleteWhere(
-            'object_relations_' . $object->getClassId(),
-            "(ownertype = 'fieldcollection' AND " . $this->db->quoteInto('ownername = ?', $this->model->getFieldname()) . ' AND ' . $this->db->quoteInto('src_id = ?', $object->getId()) . ')'
-            . " OR (ownertype = 'localizedfield' AND " . $this->db->quoteInto('ownername LIKE ?', '/fieldcollection~' . $this->model->getFieldname() . '/%') . ' AND ' . $this->db->quoteInto('src_id = ?', $object->getId()). ')'
-        );
+        $this->db->deleteWhere('object_relations_' . $object->getClassId(), $where);
+        return true;
     }
 }

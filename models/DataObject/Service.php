@@ -1750,4 +1750,50 @@ class Service extends Model\Element\Service
             $session->remove($key);
         }, 'pimcore_objects');
     }
+
+
+    /**
+     * @param $container
+     * @param $fd
+     */
+    public static function doResetDirtyMap($container, $fd)
+    {
+        $fieldDefinitions = $fd->getFieldDefinitions();
+
+        if (is_array($fieldDefinitions)) {
+            /** @var $fd Model\DataObject\ClassDefinition\Data */
+            foreach ($fieldDefinitions as $fd) {
+                $value = $container->getObjectVar($fd->getName());
+
+                if ($value instanceof Localizedfield) {
+                    $value->resetLanguageDirtyMap();
+                }
+
+                if (!method_exists($value, 'resetDirtyMap')) {
+                    continue;
+                }
+
+                $value->resetDirtyMap();
+
+                if (!method_exists($value, 'getFieldDefinitions')) {
+                    continue;
+                }
+
+                self::doResetDirtyMap($value, $fieldDefinitions[$fd->getName()]);
+            }
+        }
+    }
+
+    /**
+     * @param AbstractObject $object
+     */
+    public static function recursiveResetDirtyMap(AbstractObject $object)
+    {
+        if (method_exists($object, 'resetDirtyMap')) {
+            $object->resetDirtyMap();
+        }
+        if ($object instanceof Concrete) {
+            self::doResetDirtyMap($object, $object->getClass());
+        }
+    }
 }

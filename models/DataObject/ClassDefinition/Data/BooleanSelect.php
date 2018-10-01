@@ -21,6 +21,8 @@ use Pimcore\Model\DataObject;
 
 class BooleanSelect extends Model\DataObject\ClassDefinition\Data
 {
+    use Model\DataObject\Traits\SimpleComparisonTrait;
+
     /** storage value for yes */
     const YES_VALUE = 1;
     /** storage value for no */

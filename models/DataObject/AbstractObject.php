@@ -63,6 +63,11 @@ class AbstractObject extends Model\Element\AbstractElement
     private static $getInheritedValues = false;
 
     /**
+     * @var bool
+     */
+    protected static $disableDirtyDetection = false;
+
+    /**
      * @static
      *
      * @return bool
@@ -294,6 +299,9 @@ class AbstractObject extends Model\Element\AbstractElement
                     $object = self::getModelFactory()->build($className);
                     \Pimcore\Cache\Runtime::set($cacheKey, $object);
                     $object->getDao()->getById($id);
+
+                    Service::recursiveResetDirtyMap($object);
+
                     $object->__setDataVersionTimestamp($object->getModificationDate());
 
                     Cache::save($object, $cacheKey);
@@ -632,7 +640,6 @@ class AbstractObject extends Model\Element\AbstractElement
                 self::setHideUnpublished($hideUnpublishedBackup);
 
                 $this->commit();
-
                 break; // transaction was successfully completed, so we cancel the loop here -> no restart required
             } catch (\Exception $e) {
                 try {
@@ -768,8 +775,10 @@ class AbstractObject extends Model\Element\AbstractElement
         }
 
         // save dependencies
-        $d = $this->getDependencies();
-        $d->clean();
+        $d = new Model\Dependency();
+        $d->setSourceType("object");
+        $d->setSourceId($this->getId());
+
 
         foreach ($this->resolveDependencies() as $requirement) {
             if ($requirement['id'] == $this->getId() && $requirement['type'] == 'object') {
@@ -952,7 +961,11 @@ class AbstractObject extends Model\Element\AbstractElement
      */
     public function setParentId($o_parentId)
     {
-        $this->o_parentId = (int) $o_parentId;
+        $o_parentId = (int) $o_parentId;
+        if ($o_parentId != $this->o_parentId && $this instanceof DirtyIndicatorInterface) {
+            $this->markFieldDirty("o_parentId");
+        }
+        $this->o_parentId = $o_parentId;
         $this->o_parent = null;
 
         return $this;
@@ -1098,11 +1111,9 @@ class AbstractObject extends Model\Element\AbstractElement
      */
     public function setParent($o_parent)
     {
+        $newParentId = $o_parent instanceof self ? $o_parent->getId() : 0;
+        $this->setParentId($newParentId);
         $this->o_parent = $o_parent;
-        if ($o_parent instanceof self) {
-            $this->o_parentId = $o_parent->getId();
-        }
-
         return $this;
     }
 
@@ -1194,7 +1205,7 @@ class AbstractObject extends Model\Element\AbstractElement
 
         if (isset($this->_fulldump)) {
             // this is if we want to make a full dump of the object (eg. for a new version), including childs for recyclebin
-            $blockedVars = ['o_userPermissions', 'o_dependencies', 'o_hasChilds', 'o_versions', 'o_class', 'scheduledTasks', 'o_parent', 'omitMandatoryCheck'];
+            $blockedVars = ['o_userPermissions', 'o_dependencies', 'o_hasChilds', 'o_versions', 'o_class', 'scheduledTasks', 'o_parent', 'omitMandatoryCheck', 'o_dirtyFields'];
             $finalVars[] = '_fulldump';
             $this->removeInheritedProperties();
         } else {
@@ -1323,4 +1334,36 @@ class AbstractObject extends Model\Element\AbstractElement
     {
         return $this->{'set'.ucfirst($fieldName)}($value, $language);
     }
+
+    /**
+     * @return bool
+     */
+    public static function isDirtyDetectionDisabled()
+    {
+        return self::$disableDirtyDetection;
+    }
+
+    /**
+     * @param bool $disableDirtyDetection
+     */
+    public static function setDisableDirtyDetection(bool $disableDirtyDetection)
+    {
+        self::$disableDirtyDetection = $disableDirtyDetection;
+    }
+
+    /**
+     * Disables the dirty detection
+     */
+    public static function disableDirtyDetection() {
+        self::setDisableDirtyDetection(true);
+    }
+
+    /**
+     * Enables the dirty detection
+     */
+    public static function enableDirtyDetection() {
+        self::setDisableDirtyDetection(false);
+    }
+
+
 }

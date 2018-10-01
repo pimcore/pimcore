@@ -17,17 +17,22 @@
 
 namespace Pimcore\Model\DataObject\Data;
 
-class Geobounds
+use Pimcore\Model\DataObject\OwnerAwareFieldInterface;
+use Pimcore\Model\DataObject\Traits\OwnerAwareFieldTrait;
+
+class Geobounds implements OwnerAwareFieldInterface
 {
+    use OwnerAwareFieldTrait;
+    
     /**
      * @var Geopoint
      */
-    public $nortEast;
+    protected $nortEast;
 
     /**
      * @var Geopoint
      */
-    public $southWest;
+    protected $southWest;
 
     /**
      * @param null $nortEast
@@ -41,6 +46,8 @@ class Geobounds
         if ($southWest) {
             $this->setSouthWest($southWest);
         }
+        $this->markMeDirty();
+
     }
 
     /**
@@ -59,7 +66,7 @@ class Geobounds
     public function setNorthEast($nortEast)
     {
         $this->nortEast = $nortEast;
-
+        $this->markMeDirty();
         return $this;
     }
 
@@ -79,7 +86,7 @@ class Geobounds
     public function setSouthWest($southWest)
     {
         $this->southWest = $southWest;
-
+        $this->markMeDirty();
         return $this;
     }
 

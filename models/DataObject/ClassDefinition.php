@@ -381,7 +381,11 @@ class ClassDefinition extends Model\AbstractModel
         }
         $cd .= "*/\n\n";
 
-        $cd .= 'class '.ucfirst($this->getName()).' extends '.$extendClass.' {';
+        $cd .= 'class '.ucfirst($this->getName()).' extends '.$extendClass.' implements \\Pimcore\\Model\\DataObject\\DirtyIndicatorInterface {';
+        $cd .= "\n\n";
+
+        $cd .= "\n\n";
+        $cd .= 'use \\Pimcore\\Model\\DataObject\\Traits\\DirtyIndicatorTrait;';
         $cd .= "\n\n";
 
         if ($this->getUseTraits()) {

@@ -20,6 +20,9 @@ use Pimcore\Model;
 
 class Numeric extends Model\DataObject\ClassDefinition\Data
 {
+
+    use Model\DataObject\Traits\SimpleComparisonTrait;
+
     const DECIMAL_SIZE_DEFAULT = 64;
     const DECIMAL_PRECISION_DEFAULT = 0;
 

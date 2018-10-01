@@ -19,80 +19,86 @@ namespace Pimcore\Model\DataObject\Data;
 
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject\Concrete;
+use Pimcore\Model\DataObject\OwnerAwareFieldInterface;
+use Pimcore\Model\DataObject\Traits\ObjectVarTrait;
+use Pimcore\Model\DataObject\Traits\OwnerAwareFieldTrait;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element\Service;
 
-class Link
+class Link implements OwnerAwareFieldInterface
 {
+    use OwnerAwareFieldTrait;
+    use ObjectVarTrait;
+    
     /**
      * @var string
      */
-    public $text;
+    protected $text;
 
     /**
      * @var string
      */
-    public $internalType;
+    protected $internalType;
 
     /**
      * @var string
      */
-    public $internal;
+    protected $internal;
 
     /**
      * @var string
      */
-    public $direct;
+    protected $direct;
 
     /**
      * @var string
      */
-    public $linktype;
+    protected $linktype;
 
     /**
      * @var string
      */
-    public $target;
+    protected $target;
 
     /**
      * @var string
      */
-    public $parameters;
+    protected $parameters;
 
     /**
      * @var string
      */
-    public $anchor;
+    protected $anchor;
 
     /**
      * @var string
      */
-    public $title;
+    protected $title;
 
     /**
      * @var string
      */
-    public $accesskey;
+    protected $accesskey;
 
     /**
      * @var string
      */
-    public $rel;
+    protected $rel;
 
     /**
      * @var string
      */
-    public $tabindex;
+    protected $tabindex;
 
     /**
      * @var string
      */
-    public $class;
+    protected $class;
 
     /**
      * @var string
      */
-    public $attributes;
+    protected $attributes;
 
     /**
      * @return string
@@ -110,6 +116,7 @@ class Link
     public function setText($text)
     {
         $this->text = $text;
+        $this->markMeDirty();
 
         return $this;
     }
@@ -130,6 +137,7 @@ class Link
     public function setInternalType($internalType)
     {
         $this->internalType = $internalType;
+        $this->markMeDirty();
 
         return $this;
     }
@@ -153,6 +161,7 @@ class Link
         if (!empty($internal)) {
             $this->setObjectFromId();
         }
+        $this->markMeDirty();
 
         return $this;
     }
@@ -173,7 +182,7 @@ class Link
     public function setDirect($direct)
     {
         $this->direct = $direct;
-
+        $this->markMeDirty();
         return $this;
     }
 
@@ -193,7 +202,7 @@ class Link
     public function setLinktype($linktype)
     {
         $this->linktype = $linktype;
-
+        $this->markMeDirty();
         return $this;
     }
 
@@ -213,6 +222,7 @@ class Link
     public function setTarget($target)
     {
         $this->target = $target;
+        $this->markMeDirty();
 
         return $this;
     }
@@ -233,6 +243,7 @@ class Link
     public function setParameters($parameters)
     {
         $this->parameters = $parameters;
+        $this->markMeDirty();
 
         return $this;
     }
@@ -253,6 +264,7 @@ class Link
     public function setAnchor($anchor)
     {
         $this->anchor = $anchor;
+        $this->markMeDirty();
 
         return $this;
     }
@@ -273,6 +285,7 @@ class Link
     public function setTitle($title)
     {
         $this->title = $title;
+        $this->markMeDirty();
 
         return $this;
     }
@@ -293,6 +306,7 @@ class Link
     public function setAccesskey($accesskey)
     {
         $this->accesskey = $accesskey;
+        $this->markMeDirty();
 
         return $this;
     }
@@ -313,6 +327,7 @@ class Link
     public function setRel($rel)
     {
         $this->rel = $rel;
+        $this->markMeDirty();
 
         return $this;
     }
@@ -333,6 +348,7 @@ class Link
     public function setTabindex($tabindex)
     {
         $this->tabindex = $tabindex;
+        $this->markMeDirty();
 
         return $this;
     }
@@ -343,6 +359,7 @@ class Link
     public function setAttributes($attributes)
     {
         $this->attributes = $attributes;
+        $this->markMeDirty();
     }
 
     /**
@@ -359,6 +376,7 @@ class Link
     public function setClass($class)
     {
         $this->class = $class;
+        $this->markMeDirty();
     }
 
     /**
@@ -406,7 +424,7 @@ class Link
                 }
             }
         }
-
+        $this->markMeDirty();
         return $this;
     }
 
@@ -487,7 +505,7 @@ class Link
     public function setObject($object)
     {
         $this->object = $object;
-
+        $this->markMeDirty();
         return $this;
     }
 
@@ -505,7 +523,7 @@ class Link
         } elseif ($this->internalType == 'object') {
             $this->object = Concrete::getById($this->internal);
         }
-
+        $this->markMeDirty();
         return $this->object;
     }
 
@@ -563,7 +581,7 @@ class Link
                 }
             }
         }
-
+        $this->markMeDirty();
         return $this;
     }
 

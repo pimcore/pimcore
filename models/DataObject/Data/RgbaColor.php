@@ -17,19 +17,24 @@
 
 namespace Pimcore\Model\DataObject\Data;
 
-class RgbaColor
+use Pimcore\Model\DataObject\OwnerAwareFieldInterface;
+use Pimcore\Model\DataObject\Traits\OwnerAwareFieldTrait;
+
+class RgbaColor implements OwnerAwareFieldInterface
 {
-    /** @var int */
-    public $r;
+    use OwnerAwareFieldTrait;
 
     /** @var int */
-    public $g;
+    protected $r;
 
     /** @var int */
-    public $b;
+    protected $g;
 
     /** @var int */
-    public $a;
+    protected $b;
+
+    /** @var int */
+    protected $a;
 
     /**
      * RgbaColor constructor.
@@ -45,6 +50,7 @@ class RgbaColor
         $this->setG($g);
         $this->setB($b);
         $this->setA($a);
+        $this->markMeDirty();
     }
 
     /**
@@ -61,6 +67,7 @@ class RgbaColor
     public function setR($r)
     {
         $this->r = is_null($r) ? 0 : $r;
+        $this->markMeDirty();
     }
 
     /**
@@ -77,6 +84,7 @@ class RgbaColor
     public function setG($g)
     {
         $this->g = is_null($g) ? 0 : $g;
+        $this->markMeDirty();
     }
 
     /**
@@ -93,6 +101,7 @@ class RgbaColor
     public function setB($b)
     {
         $this->b = is_null($b) ? 0 : $b;
+        $this->markMeDirty();
     }
 
     /**
@@ -109,6 +118,7 @@ class RgbaColor
     public function setA($a)
     {
         $this->a = is_null($a) ? 255 : $a;
+        $this->markMeDirty();
     }
 
     /**
@@ -182,6 +192,7 @@ class RgbaColor
         } else {
             throw new \Exception('Format must be either hex6 or hex8 with or without leading hash');
         }
+        $this->markMeDirty();
     }
 
     /**
@@ -196,6 +207,7 @@ class RgbaColor
         $this->setG($g);
         $this->setB($b);
         $this->setA($a);
+        $this->markMeDirty();
     }
 
     /**

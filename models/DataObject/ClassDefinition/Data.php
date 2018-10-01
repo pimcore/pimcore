@@ -781,6 +781,8 @@ abstract class Data
         $code .= '* @return ' . $returnType . "\n";
         $code .= '*/' . "\n";
         $code .= 'public function set' . ucfirst($key) . ' (' . '$' . $key . ") {\n";
+        $code .= "\t" . '$fd = $this->getClass()->getFieldDefinition("' . $key . '");' . "\n";
+
 
         if ($this instanceof DataObject\ClassDefinition\Data\EncryptedField) {
             if ($this->getDelegate()) {
@@ -792,8 +794,16 @@ abstract class Data
             }
         }
 
+        if ($this->supportsDirtyDetection()) {
+            $code .= "\t" . '$currentData = $this->get' . ucfirst($this->getName()) . '();' . "\n";
+            $code .= "\t" . '$isEqual = $fd->isEqual($currentData, $' . $key . ');' . "\n";
+            $code .= "\t" . 'if (!$isEqual) {' . "\n";
+            $code .= "\t\t" . '$this->markFieldDirty("' . $key . '", true);' . "\n";
+            $code .= "\t" . '}' . "\n";
+        }
+
         if (method_exists($this, 'preSetData')) {
-            $code .= "\t" . '$this->' . $key . ' = ' . '$this->getClass()->getFieldDefinition("' . $key . '")->preSetData($this, $' . $key . ');' . "\n";
+            $code .= "\t" . '$this->' . $key . ' = ' . '$fd->preSetData($this, $' . $key . ');' . "\n";
         } else {
             $code .= "\t" . '$this->' . $key . ' = ' . '$' . $key . ";\n";
         }
@@ -861,6 +871,7 @@ abstract class Data
         $code .= '* @return \\Pimcore\\Model\\DataObject\\Objectbrick\\Data\\' . ucfirst($brickClass->getKey()) . "\n";
         $code .= '*/' . "\n";
         $code .= 'public function set' . ucfirst($key) . ' (' . '$' . $key . ") {\n";
+        $code .= "\t" . '$fd = $this->getDefinition()->getFieldDefinition("' . $key . '");' . "\n";
 
         if ($this instanceof DataObject\ClassDefinition\Data\EncryptedField) {
             if ($this->getDelegate()) {
@@ -872,8 +883,16 @@ abstract class Data
             }
         }
 
+        if ($this->supportsDirtyDetection()) {
+            $code .= "\t" . '$currentData = $this->get' . ucfirst($this->getName()) . '();' . "\n";
+            $code .= "\t" . '$isEqual = $fd->isEqual($currentData, $' . $key . ');' . "\n";
+            $code .= "\t" . 'if (!$isEqual) {' . "\n";
+            $code .= "\t\t" . '$this->markFieldDirty("' . $key . '", true);' . "\n";
+            $code .= "\t" . '}' . "\n";
+        }
+
         if (method_exists($this, 'preSetData')) {
-            $code .= "\t" . '$this->' . $key . ' = ' . '$this->getDefinition()->getFieldDefinition("' . $key . '")->preSetData($this, $' . $key . ');' . "\n";
+            $code .= "\t" . '$this->' . $key . ' = ' . '$fd->preSetData($this, $' . $key . ');' . "\n";
         } else {
             $code .= "\t" . '$this->' . $key . ' = ' . '$' . $key . ";\n";
         }
@@ -938,6 +957,7 @@ abstract class Data
         $code .= '* @return \\Pimcore\\Model\\DataObject\\' . ucfirst($fieldcollectionDefinition->getKey()) . "\n";
         $code .= '*/' . "\n";
         $code .= 'public function set' . ucfirst($key) . ' (' . '$' . $key . ") {\n";
+        $code .= "\t" . '$fd = $this->getDefinition()->getFieldDefinition("' . $key . '");' . "\n";
 
         if ($this instanceof DataObject\ClassDefinition\Data\EncryptedField) {
             if ($this->getDelegate()) {
@@ -949,8 +969,16 @@ abstract class Data
             }
         }
 
+        if ($this->supportsDirtyDetection()) {
+            $code .= "\t" . '$currentData = $this->get' . ucfirst($this->getName()) . '();' . "\n";
+            $code .= "\t" . '$isEqual = $fd->isEqual($currentData, $' . $key . ');' . "\n";
+            $code .= "\t" . 'if (!$isEqual) {' . "\n";
+            $code .= "\t\t" . '$this->markFieldDirty("' . $key . '", true);' . "\n";
+            $code .= "\t" . '}' . "\n";
+        }
+
         if (method_exists($this, 'preSetData')) {
-            $code .= "\t" . '$this->' . $key . ' = ' . '$this->getDefinition()->getFieldDefinition("' . $key . '")->preSetData($this, $' . $key . ');' . "\n";
+            $code .= "\t" . '$this->' . $key . ' = ' . '$fd->preSetData($this, $' . $key . ');' . "\n";
         } else {
             $code .= "\t" . '$this->' . $key . ' = ' . '$' . $key . ";\n";
         }
@@ -1011,9 +1039,13 @@ abstract class Data
         $key = $this->getName();
         if ($class instanceof DataObject\Fieldcollection\Definition) {
             $classname = 'FieldCollection\\Data\\' . ucfirst($class->getKey());
+            $containerGetter = 'getDefinition';
         } else {
             $classname = $class->getName();
+            $containerGetter = 'getClass';
         }
+
+
 
         $code = '/**' . "\n";
         $code .= '* Set ' . str_replace(['/**', '*/', '//'], '', $this->getName()) . ' - ' . str_replace(['/**', '*/', '//'], '', $this->getTitle()) . "\n";
@@ -1021,6 +1053,9 @@ abstract class Data
         $code .= '* @return \\Pimcore\\Model\\DataObject\\' . ucfirst($classname) . "\n";
         $code .= '*/' . "\n";
         $code .= 'public function set' . ucfirst($key) . ' (' . '$' . $key . ', $language = null) {' . "\n";
+        if ($this->supportsDirtyDetection()) {
+            $code .= "\t" . '$fd = $this->' . $containerGetter . '()->getFieldDefinition("localizedfields")->getFieldDefinition("' . $key . '");' . "\n";
+        }
 
         if ($this instanceof DataObject\ClassDefinition\Data\EncryptedField) {
             if ($this->getDelegate()) {
@@ -1032,7 +1067,15 @@ abstract class Data
             }
         }
 
-        $code .= "\t" . '$this->getLocalizedfields()->setLocalizedValue("' . $key . '", $' . $key . ', $language)' . ";\n";
+        if ($this->supportsDirtyDetection()) {
+            $code .= "\t" . '$currentData = $this->get' . ucfirst($this->getName()) . '();' . "\n";
+            $code .= "\t" . '$isEqual = $fd->isEqual($currentData, $' . $key . ');' . "\n";
+        } else {
+            $code .= "\t" . '$isEqual = false;' . "\n";
+        }
+
+
+        $code .= "\t" . '$this->getLocalizedfields()->setLocalizedValue("' . $key . '", $' . $key . ', $language, !$isEqual)' . ";\n";
 
         $code .= "\t" . 'return $this;' . "\n";
         $code .= "}\n\n";
@@ -1395,4 +1438,32 @@ abstract class Data
     {
         return true;
     }
+
+    /**
+     * @return bool
+     */
+    public function supportsDirtyDetection() {
+        return false;
+    }
+
+    /**
+     * @param $oldValue
+     * @param $newValue
+     * @return bool
+     */
+    public function isEqual($oldValue, $newValue) {
+        return false;
+    }
+
+    /**
+     * @param $object
+     */
+    public function markLazyloadedFieldAsLoaded($object) {
+        if ($object instanceof DataObject\Concrete) {
+            if ($this->getLazyLoading() and !in_array($this->getName(), $object->getO__loadedLazyFields())) {
+                $object->addO__loadedLazyField($this->getName());
+            }
+        }
+    }
+
 }

@@ -26,6 +26,7 @@ use Pimcore\Model\Element;
 
 class MultihrefMetadata extends Model\DataObject\ClassDefinition\Data\Multihref
 {
+    use DataObject\Traits\ElementWithMetadataComparisonTrait;
     /**
      * @var
      */
@@ -139,6 +140,8 @@ class MultihrefMetadata extends Model\DataObject\ClassDefinition\Data\Multihref
                                 'element' => null,
                             ]
                         );
+
+                    $metaData->setOwner($object, $this->getName());
 
                     $metaData->setElementTypeAndId($element['type'], $element['dest_id']);
 
@@ -353,6 +356,8 @@ class MultihrefMetadata extends Model\DataObject\ClassDefinition\Data\Multihref
                             ]
                         );
 
+                    $metaData->setOwner($object, $this->getName());
+
                     foreach ($this->getColumns() as $columnConfig) {
                         $key = $columnConfig['key'];
                         $setter = 'set' . ucfirst($key);
@@ -512,6 +517,7 @@ class MultihrefMetadata extends Model\DataObject\ClassDefinition\Data\Multihref
                         ]
                     );
 
+                $metaObject->setOwner($object, $this->getName());
                 $value[] = $metaObject;
             }
         }
@@ -643,6 +649,22 @@ class MultihrefMetadata extends Model\DataObject\ClassDefinition\Data\Multihref
      */
     public function save($object, $params = [])
     {
+        if (!DataObject\AbstractObject::isDirtyDetectionDisabled() && $object instanceof DataObject\DirtyIndicatorInterface) {
+            if ($object instanceof DataObject\Localizedfield) {
+                if ($object->getObject() instanceof  DataObject\DirtyIndicatorInterface) {
+                    if (!$object->hasDirtyFields()) {
+                        return;
+                    }
+                }
+            } else {
+                if ($this->supportsDirtyDetection()) {
+                    if (!$object->isFieldDirty($this->getName())) {
+                        return;
+                    }
+                }
+            }
+        }
+
         $multihrefMetadata = $this->getDataFromObjectParam($object, $params);
 
         $classId = null;
@@ -733,10 +755,8 @@ class MultihrefMetadata extends Model\DataObject\ClassDefinition\Data\Multihref
                 //$data = $this->getDataFromResource($object->getRelationData($this->getName(),true,null));
                 $data = $this->load($object, ['force' => true]);
 
-                $setter = 'set' . ucfirst($this->getName());
-                if (method_exists($object, $setter)) {
-                    $object->$setter($data);
-                }
+                $object->setObjectVar($this->getName(), $data);
+                $this->markLazyloadedFieldAsLoaded($object);
             }
         } elseif ($object instanceof DataObject\Localizedfield) {
             $data = $params['data'];
@@ -1018,6 +1038,7 @@ class MultihrefMetadata extends Model\DataObject\ClassDefinition\Data\Multihref
                     $data = $elementMetadata['data'];
 
                     $item = new DataObject\Data\ElementMetadata($fieldname, $columns, $element);
+                    $item->setOwner($object, $this->getName());
                     $item->setData($data);
                     $result[] = $item;
                 }
