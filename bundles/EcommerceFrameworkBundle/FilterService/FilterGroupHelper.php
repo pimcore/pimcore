@@ -68,7 +68,10 @@ class FilterGroupHelper
                 $obj = AbstractObject::getById($v);
                 if ($obj) {
                     $name = $obj->getKey();
-                    if (method_exists($obj, 'getName')) {
+                    //give the possibility to add a nice name with HTML-icons etc. to the filter definition output fields
+                    if (method_exists($obj, 'getNameForFilterDefinition')) {
+                        $name = $obj->getNameForFilterDefinition();
+                    } elseif (method_exists($obj, 'getName')) {
                         $name = $obj->getName();
                     }
                     $data[$v] = ['key' => $v, 'value' => $name . ' (' . $obj->getId() . ')'];
