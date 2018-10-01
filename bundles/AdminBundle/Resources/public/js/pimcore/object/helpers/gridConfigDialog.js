@@ -126,7 +126,7 @@ pimcore.object.helpers.gridConfigDialog = Class.create({
                 autoLoad: true,
                 proxy: {
                     type: 'ajax',
-                    url: '/admin/user/get-users-for-sharing',
+                    url: '/admin/user/get-users',
                     reader: {
                         rootProperty: 'data',
                         idProperty: 'id'
@@ -140,7 +140,7 @@ pimcore.object.helpers.gridConfigDialog = Class.create({
                 autoLoad: true,
                 proxy: {
                     type: 'ajax',
-                    url: '/admin/user/get-roles-for-sharing',
+                    url: '/admin/user/get-roles',
                     reader: {
                         rootProperty: 'data',
                         idProperty: 'id'
@@ -233,7 +233,7 @@ pimcore.object.helpers.gridConfigDialog = Class.create({
             autoScroll: true,
             border: false,
             iconCls: "pimcore_icon_save_and_share",
-            title: user.isAllowed("share_configurations") ? t("save_and_share") : t("save"),
+            title: t("save_and_share"),
             items: items
         });
         return this.settingsForm;
