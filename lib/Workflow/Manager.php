@@ -296,4 +296,26 @@ class Manager
 
         return $markingStore->getMarking($subject);
     }
+
+    /**
+     * @param string $workflowName
+     * @param string $transitionName
+     * @return null|\Symfony\Component\Workflow\Transition
+     * @throws \Exception
+     */
+    public function getTransitionByName(string $workflowName, string $transitionName): ?\Symfony\Component\Workflow\Transition
+    {
+        if(!$workflow = $this->getWorkflowByName($workflowName)) {
+            throw new \Exception(sprintf('workflow %s not found', $workflowName));
+        }
+
+        foreach($workflow->getDefinition()->getTransitions() as $transition) {
+            if($transition->getName() === $transitionName) {
+                return $transition;
+            }
+        }
+
+        return null;
+    }
+
 }
