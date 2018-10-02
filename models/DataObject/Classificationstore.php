@@ -25,7 +25,6 @@ use Pimcore\Tool;
  */
 class Classificationstore extends Model\AbstractModel implements DirtyIndicatorInterface
 {
-
     use Model\DataObject\Traits\DirtyIndicatorTrait;
     /**
      * @var array
@@ -80,6 +79,7 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
     {
         $this->items = $items;
         $this->markFieldDirty('_self');
+
         return $this;
     }
 
@@ -190,7 +190,6 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
         $keyConfig = Model\DataObject\Classificationstore\DefinitionCache::get($keyId);
         $dataDefinition = Model\DataObject\Classificationstore\Service::getFieldDefinitionFromKeyConfig($keyConfig);
 
-
         if (!$this->isFieldDirty('_self')) {
             if ($this->object) {
                 $oldData = $this->items[$groupId][$keyId][$language];
@@ -203,7 +202,6 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
                 if ($newData != $oldData) {
                     $this->markFieldDirty('_self');
                 }
-
             } else {
                 $this->markFieldDirty('_self');
             }
@@ -268,7 +266,8 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
         return $this->activeGroups;
     }
 
-    protected function sanitizeActiveGroups($activeGroups) {
+    protected function sanitizeActiveGroups($activeGroups)
+    {
         $newList = [];
 
         if ($activeGroups) {
@@ -278,6 +277,7 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
                 }
             }
         }
+
         return $newList;
     }
 
@@ -293,8 +293,6 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
             $this->markFieldDirty('_self');
         }
         $this->activeGroups = $activeGroups;
-
-
     }
 
     /**

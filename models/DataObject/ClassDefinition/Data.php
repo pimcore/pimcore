@@ -783,7 +783,6 @@ abstract class Data
         $code .= 'public function set' . ucfirst($key) . ' (' . '$' . $key . ") {\n";
         $code .= "\t" . '$fd = $this->getClass()->getFieldDefinition("' . $key . '");' . "\n";
 
-
         if ($this instanceof DataObject\ClassDefinition\Data\EncryptedField) {
             if ($this->getDelegate()) {
                 $code .= "\t" . '$encryptedFd = $this->getClass()->getFieldDefinition("' . $key . '");' . "\n";
@@ -1045,8 +1044,6 @@ abstract class Data
             $containerGetter = 'getClass';
         }
 
-
-
         $code = '/**' . "\n";
         $code .= '* Set ' . str_replace(['/**', '*/', '//'], '', $this->getName()) . ' - ' . str_replace(['/**', '*/', '//'], '', $this->getTitle()) . "\n";
         $code .= '* @param ' . $this->getPhpdocType() . ' $' . $key . "\n";
@@ -1073,7 +1070,6 @@ abstract class Data
         } else {
             $code .= "\t" . '$isEqual = false;' . "\n";
         }
-
 
         $code .= "\t" . '$this->getLocalizedfields()->setLocalizedValue("' . $key . '", $' . $key . ', $language, !$isEqual)' . ";\n";
 
@@ -1442,28 +1438,31 @@ abstract class Data
     /**
      * @return bool
      */
-    public function supportsDirtyDetection() {
+    public function supportsDirtyDetection()
+    {
         return false;
     }
 
     /**
      * @param $oldValue
      * @param $newValue
+     *
      * @return bool
      */
-    public function isEqual($oldValue, $newValue) {
+    public function isEqual($oldValue, $newValue)
+    {
         return false;
     }
 
     /**
      * @param $object
      */
-    public function markLazyloadedFieldAsLoaded($object) {
+    public function markLazyloadedFieldAsLoaded($object)
+    {
         if ($object instanceof DataObject\Concrete) {
             if ($this->getLazyLoading() and !in_array($this->getName(), $object->getO__loadedLazyFields())) {
                 $object->addO__loadedLazyField($this->getName());
             }
         }
     }
-
 }

@@ -1751,7 +1751,6 @@ class Service extends Model\Element\Service
         }, 'pimcore_objects');
     }
 
-
     /**
      * @param $container
      * @param $fd

@@ -691,7 +691,8 @@ class Concrete extends AbstractObject
      *
      * @throws \Exception
      */
-    public function save() {
+    public function save()
+    {
         $isDirtyDetectionDisabled = AbstractObject::isDirtyDetectionDisabled();
 
         // if the class is newer then better disable the dirty detection. This should fix issues with the query table if

@@ -273,11 +273,11 @@ abstract class AbstractRelations extends Model\DataObject\ClassDefinition\Data
      */
     public function save($object, $params = [])
     {
-        if ($params["isUntouchable"]) {
+        if ($params['isUntouchable']) {
             return;
         }
 
-        $context = $params["context"];
+        $context = $params['context'];
 
         if (!DataObject\AbstractObject::isDirtyDetectionDisabled() && $object instanceof DataObject\DirtyIndicatorInterface) {
             if ($object instanceof DataObject\Localizedfield) {
@@ -288,8 +288,9 @@ abstract class AbstractRelations extends Model\DataObject\ClassDefinition\Data
                 }
             } else {
                 if ($this->supportsDirtyDetection()) {
-                    if (!$object->isFieldDirty($this->getName()))
+                    if (!$object->isFieldDirty($this->getName())) {
                         return;
+                    }
                 }
             }
         }
@@ -490,9 +491,11 @@ abstract class AbstractRelations extends Model\DataObject\ClassDefinition\Data
     /**
      * @param $array1
      * @param $array2
+     *
      * @return bool
      */
-    public function isEqual($array1, $array2) {
+    public function isEqual($array1, $array2)
+    {
         $array1 = array_filter(is_array($array1) ? $array1 : []);
         $array2 = array_filter(is_array($array2) ? $array2 : []);
         $count1 = count($array1);
@@ -505,9 +508,9 @@ abstract class AbstractRelations extends Model\DataObject\ClassDefinition\Data
         $values2 = array_values($array2);
 
         for ($i = 0; $i < $count1; $i++) {
-            /** @var  $el1 Element\ElementInterface */
+            /** @var $el1 Element\ElementInterface */
             $el1 = $values1[$i];
-            /** @var  $el2 Element\ElementInterface */
+            /** @var $el2 Element\ElementInterface */
             $el2 = $values2[$i];
 
             if (! ($el1->getType() == $el2->getType() && ($el1->getId() == $el2->getId()))) {
@@ -521,7 +524,8 @@ abstract class AbstractRelations extends Model\DataObject\ClassDefinition\Data
     /**
      * @return bool
      */
-    public function supportsDirtyDetection() {
+    public function supportsDirtyDetection()
+    {
         return true;
     }
 }

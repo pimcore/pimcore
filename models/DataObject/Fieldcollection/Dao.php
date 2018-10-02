@@ -28,6 +28,7 @@ class Dao extends Model\Dao\AbstractDao
 {
     /**
      * @param DataObject\Concrete $object
+     *
      * @return whether an insert should be done
      */
     public function save(DataObject\Concrete $object)
@@ -123,6 +124,7 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * @param DataObject\Concrete $object
      * @param saveMode true if called from save method
+     *
      * @return whether an relational data should be inserted or not
      */
     public function delete(DataObject\Concrete $object, $saveMode = false)
@@ -200,16 +202,18 @@ class Dao extends Model\Dao\AbstractDao
             if (!$this->model->hasDirtyFields() && $hasLocalizedFields) {
                 // always empty localized fields
                 $this->db->deleteWhere('object_relations_' . $object->getClassId(), $whereLocalizedFields);
+
                 return false;
             }
         }
 
         $where = "(ownertype = 'fieldcollection' AND " . $this->db->quoteInto('ownername = ?', $this->model->getFieldname())
             . ' AND ' . $this->db->quoteInto('src_id = ?', $object->getId()) . ')'
-            . " OR " . $whereLocalizedFields;
+            . ' OR ' . $whereLocalizedFields;
 
         // empty relation table
         $this->db->deleteWhere('object_relations_' . $object->getClassId(), $where);
+
         return true;
     }
 }

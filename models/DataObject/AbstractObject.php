@@ -776,9 +776,8 @@ class AbstractObject extends Model\Element\AbstractElement
 
         // save dependencies
         $d = new Model\Dependency();
-        $d->setSourceType("object");
+        $d->setSourceType('object');
         $d->setSourceId($this->getId());
-
 
         foreach ($this->resolveDependencies() as $requirement) {
             if ($requirement['id'] == $this->getId() && $requirement['type'] == 'object') {
@@ -963,7 +962,7 @@ class AbstractObject extends Model\Element\AbstractElement
     {
         $o_parentId = (int) $o_parentId;
         if ($o_parentId != $this->o_parentId && $this instanceof DirtyIndicatorInterface) {
-            $this->markFieldDirty("o_parentId");
+            $this->markFieldDirty('o_parentId');
         }
         $this->o_parentId = $o_parentId;
         $this->o_parent = null;
@@ -1114,6 +1113,7 @@ class AbstractObject extends Model\Element\AbstractElement
         $newParentId = $o_parent instanceof self ? $o_parent->getId() : 0;
         $this->setParentId($newParentId);
         $this->o_parent = $o_parent;
+
         return $this;
     }
 
@@ -1354,16 +1354,16 @@ class AbstractObject extends Model\Element\AbstractElement
     /**
      * Disables the dirty detection
      */
-    public static function disableDirtyDetection() {
+    public static function disableDirtyDetection()
+    {
         self::setDisableDirtyDetection(true);
     }
 
     /**
      * Enables the dirty detection
      */
-    public static function enableDirtyDetection() {
+    public static function enableDirtyDetection()
+    {
         self::setDisableDirtyDetection(false);
     }
-
-
 }

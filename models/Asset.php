@@ -722,7 +722,7 @@ class Asset extends Element\AbstractElement
 
         // save dependencies
         $d = new Dependency();
-        $d->setSourceType("asset");
+        $d->setSourceType('asset');
         $d->setSourceId($this->getId());
 
         foreach ($this->resolveDependencies() as $requirement) {

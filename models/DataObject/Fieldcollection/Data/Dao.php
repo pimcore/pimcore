@@ -28,6 +28,7 @@ class Dao extends Model\Dao\AbstractDao
      * @param Model\DataObject\Concrete $object
      * @param array $params
      * @param $saveRelationalData
+     *
      * @throws \Exception
      */
     public function save(Model\DataObject\Concrete $object, $params = [], $saveRelationalData = true)
@@ -40,29 +41,28 @@ class Dao extends Model\Dao\AbstractDao
         ];
 
         try {
-            /** @var  $fd Model\DataObject\ClassDefinition\Data */
+            /** @var $fd Model\DataObject\ClassDefinition\Data */
             foreach ($this->model->getDefinition()->getFieldDefinitions() as $fd) {
                 $getter = 'get' . ucfirst($fd->getName());
 
                 if (method_exists($fd, 'save')) {
-
                     if (!$fd instanceof Model\DataObject\ClassDefinition\Data\Localizedfields && $fd->supportsDirtyDetection() && !$saveRelationalData) {
                         continue;
                     }
 
                     // for fieldtypes which have their own save algorithm eg. objects, multihref, ...
                     $index = $this->model->getIndex();
-                    $params = array_merge($params,[
+                    $params = array_merge($params, [
                         'context' => [
                             'containerType' => 'fieldcollection',
                             'containerKey' => $this->model->getType(),
                             'fieldname' => $this->model->getFieldname(),
                             'index' => $index
                         ]
-                    ] );
+                    ]);
 
                     $fd->save(
-                        $this->model,$params
+                        $this->model, $params
 
                     );
                 } elseif ($fd->getColumnType()) {

@@ -21,7 +21,6 @@ use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject\OwnerAwareFieldInterface;
 use Pimcore\Model\DataObject\Traits\OwnerAwareFieldTrait;
 
-
 class Hotspotimage implements OwnerAwareFieldInterface
 {
     use OwnerAwareFieldTrait;
@@ -88,6 +87,7 @@ class Hotspotimage implements OwnerAwareFieldInterface
     {
         $this->hotspots = $hotspots;
         $this->markMeDirty();
+
         return $this;
     }
 

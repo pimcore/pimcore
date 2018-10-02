@@ -271,5 +271,4 @@ class Input extends Model\DataObject\ClassDefinition\Data
     {
         $this->columnLength = $masterDefinition->columnLength;
     }
-
 }

@@ -25,7 +25,6 @@ use Pimcore\Model\DataObject;
  */
 class ElementMetadata extends Model\AbstractModel implements DataObject\OwnerAwareFieldInterface
 {
-
     use DataObject\Traits\OwnerAwareFieldTrait;
     /**
      * @var string
@@ -146,6 +145,7 @@ class ElementMetadata extends Model\AbstractModel implements DataObject\OwnerAwa
     {
         $this->fieldname = $fieldname;
         $this->markMeDirty();
+
         return $this;
     }
 
@@ -218,6 +218,7 @@ class ElementMetadata extends Model\AbstractModel implements DataObject\OwnerAwa
     {
         $this->columns = $columns;
         $this->markMeDirty();
+
         return $this;
     }
 

@@ -876,6 +876,7 @@ class Block extends Model\DataObject\ClassDefinition\Data
     public function preSetData($object, $data, $params = [])
     {
         $this->markLazyloadedFieldAsLoaded($object);
+
         return $data;
     }
 

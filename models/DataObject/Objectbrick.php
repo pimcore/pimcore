@@ -25,7 +25,6 @@ use Pimcore\Model;
  */
 class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
 {
-
     use Model\DataObject\Traits\DirtyIndicatorTrait;
 
     /**

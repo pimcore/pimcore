@@ -17,12 +17,8 @@
 
 namespace Pimcore\Model\DataObject\Traits;
 
-use Pimcore\Model\DataObject\DirtyIndicatorInterface;
-use Pimcore\Model\DataObject\Localizedfield;
-
 trait ObjectVarTrait
 {
-
     /**
      * returns object values without the dao
      *
@@ -36,7 +32,6 @@ trait ObjectVarTrait
         return $data;
     }
 
-
     /**
      * @param $var
      *
@@ -47,7 +42,6 @@ trait ObjectVarTrait
         return $this->{$var};
     }
 
-
     /**
      * @param $var mixed
      * @param $value mixed
@@ -57,10 +51,10 @@ trait ObjectVarTrait
     public function setObjectVar($var, $value)
     {
         if (!property_exists($this, $var)) {
-            throw new \Exception("property " . $var . " does not exist");
+            throw new \Exception('property ' . $var . ' does not exist');
         }
         $this->$var = $value;
+
         return $this;
     }
-
 }

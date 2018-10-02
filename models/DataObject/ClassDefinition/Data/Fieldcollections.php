@@ -627,7 +627,6 @@ class Fieldcollections extends Model\DataObject\ClassDefinition\Data
                 $data->resetDirtyMap();
             }
 
-
             $setter = 'set' . ucfirst($this->getName());
             if (method_exists($object, $setter)) {
                 $object->$setter($data);

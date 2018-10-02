@@ -29,7 +29,7 @@ class Link implements OwnerAwareFieldInterface
 {
     use OwnerAwareFieldTrait;
     use ObjectVarTrait;
-    
+
     /**
      * @var string
      */
@@ -183,6 +183,7 @@ class Link implements OwnerAwareFieldInterface
     {
         $this->direct = $direct;
         $this->markMeDirty();
+
         return $this;
     }
 
@@ -203,6 +204,7 @@ class Link implements OwnerAwareFieldInterface
     {
         $this->linktype = $linktype;
         $this->markMeDirty();
+
         return $this;
     }
 
@@ -425,6 +427,7 @@ class Link implements OwnerAwareFieldInterface
             }
         }
         $this->markMeDirty();
+
         return $this;
     }
 
@@ -506,6 +509,7 @@ class Link implements OwnerAwareFieldInterface
     {
         $this->object = $object;
         $this->markMeDirty();
+
         return $this;
     }
 
@@ -524,6 +528,7 @@ class Link implements OwnerAwareFieldInterface
             $this->object = Concrete::getById($this->internal);
         }
         $this->markMeDirty();
+
         return $this->object;
     }
 
@@ -582,6 +587,7 @@ class Link implements OwnerAwareFieldInterface
             }
         }
         $this->markMeDirty();
+
         return $this;
     }
 

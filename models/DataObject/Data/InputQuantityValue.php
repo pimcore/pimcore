@@ -22,7 +22,6 @@ use Pimcore\Model\DataObject\Traits\OwnerAwareFieldTrait;
 
 class InputQuantityValue extends QuantityValue implements OwnerAwareFieldInterface
 {
-
     use OwnerAwareFieldTrait;
 
     /**

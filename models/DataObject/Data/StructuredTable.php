@@ -22,7 +22,6 @@ use Pimcore\Model\DataObject\Traits\OwnerAwareFieldTrait;
 
 class StructuredTable implements OwnerAwareFieldInterface
 {
-
     use OwnerAwareFieldTrait;
     /**
      * @var array
@@ -49,6 +48,7 @@ class StructuredTable implements OwnerAwareFieldInterface
     {
         $this->data = $data;
         $this->markMeDirty();
+
         return $this;
     }
 
@@ -102,6 +102,7 @@ class StructuredTable implements OwnerAwareFieldInterface
                     if (array_key_exists($col, $rowArray)) {
                         $this->data[$row][$col] = $arguments[0];
                         $this->markMeDirty();
+
                         return;
                     }
                 }

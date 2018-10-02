@@ -19,7 +19,6 @@ namespace Pimcore\Model\DataObject;
 
 interface DirtyIndicatorInterface
 {
-
     /**
      * @return bool
      */
@@ -27,21 +26,20 @@ interface DirtyIndicatorInterface
 
     /**
      * @param $key
+     *
      * @return bool
      */
     public function isFieldDirty($key);
 
     /**
      * marks the given field as dirty
+     *
      * @param $field
      * @param bool $dirty
+     *
      * @return mixed
      */
     public function markFieldDirty($field, $dirty = true);
 
-    /**
-     *
-     */
     public function resetDirtyMap();
-
 }

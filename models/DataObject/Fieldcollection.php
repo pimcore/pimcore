@@ -24,7 +24,6 @@ use Pimcore\Model;
  */
 class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyIndicatorInterface
 {
-
     use Model\DataObject\Traits\DirtyIndicatorTrait;
 
     /**
@@ -70,6 +69,7 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyInd
     {
         $this->items = $items;
         $this->markFieldDirty('_self', true);
+
         return $this;
     }
 
@@ -108,6 +108,7 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyInd
 
     /**
      * @throws \Exception
+     *
      * @param array $params
      * @param $object
      */

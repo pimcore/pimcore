@@ -23,7 +23,6 @@ use Pimcore\Model\DataObject\Traits\OwnerAwareFieldTrait;
 
 class BlockElement extends AbstractModel implements OwnerAwareFieldInterface
 {
-
     use OwnerAwareFieldTrait;
 
     /**
@@ -92,7 +91,6 @@ class BlockElement extends AbstractModel implements OwnerAwareFieldInterface
             $this->type = $type;
             $this->markMeDirty();
         }
-
     }
 
     /**

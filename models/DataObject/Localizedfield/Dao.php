@@ -76,13 +76,12 @@ class Dao extends Model\Dao\AbstractDao
 
     public function save($params = [])
     {
-
         $context = $this->model->getContext();
 
         // if inside a field collection a delete is not necessary as the fieldcollection deletes all entries anyway
         // see Pimcore\Model\DataObject\Fieldcollection\Dao::delete
 
-        if (DataObject\AbstractObject::isDirtyDetectionDisabled() || !$context["containerType"] == "fieldcollection") {
+        if (DataObject\AbstractObject::isDirtyDetectionDisabled() || !$context['containerType'] == 'fieldcollection') {
             $this->delete(false);
         }
 
@@ -107,7 +106,7 @@ class Dao extends Model\Dao\AbstractDao
          */
         DataObject\Concrete\Dao\InheritanceHelper::setUseRuntimeCache(true);
         foreach ($validLanguages as $language) {
-            if ((!isset($params["newParent"] )|| !$params["newParent"]) && isset($params["isUpdate"]) && $params["isUpdate"] && !$this->model->isLanguageDirty($language)) {
+            if ((!isset($params['newParent']) || !$params['newParent']) && isset($params['isUpdate']) && $params['isUpdate'] && !$this->model->isLanguageDirty($language)) {
                 continue;
             }
             $inheritedValues = DataObject\AbstractObject::doGetInheritedValues();
@@ -153,11 +152,9 @@ class Dao extends Model\Dao\AbstractDao
             $queryTable = $this->getQueryTableName() . '_' . $language;
 
             try {
-
-                if ((isset($params["newParent"])&& $params["newParent"]) || !isset($params["isUpdate"]) || !$params["isUpdate"] || $this->model->isLanguageDirty($language)) {
+                if ((isset($params['newParent']) && $params['newParent']) || !isset($params['isUpdate']) || !$params['isUpdate'] || $this->model->isLanguageDirty($language)) {
                     $this->db->insertOrUpdate($storeTable, $insertData);
                 }
-
             } catch (\Exception $e) {
                 // if the table doesn't exist -> create it! deferred creation for object bricks ...
                 if (strpos($e->getMessage(), 'exist')) {
@@ -378,7 +375,7 @@ class Dao extends Model\Dao\AbstractDao
 
         // remove relations
         if (!DataObject\AbstractObject::isDirtyDetectionDisabled()) {
-            if (!$this->model->hasDirtyFields())  {
+            if (!$this->model->hasDirtyFields()) {
                 return;
             }
         }

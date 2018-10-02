@@ -461,15 +461,18 @@ class Localizedfield extends Model\AbstractModel implements DirtyIndicatorInterf
     /**
      * @return bool
      */
-    public function hasDirtyLanguages() {
+    public function hasDirtyLanguages()
+    {
         if (AbstractObject::isDirtyDetectionDisabled()) {
             return true;
         }
-        return (is_array($this->o_dirtyLanguages) && count($this->o_dirtyLanguages) > 0);
+
+        return is_array($this->o_dirtyLanguages) && count($this->o_dirtyLanguages) > 0;
     }
 
     /**
      * @param $language
+     *
      * @return bool|mixed
      */
     public function isLanguageDirty($language)
@@ -490,17 +493,11 @@ class Localizedfield extends Model\AbstractModel implements DirtyIndicatorInterf
         return false;
     }
 
-    /**
-     *
-     */
     public function resetLanguageDirtyMap()
     {
         $this->o_dirtyLanguages = null;
     }
 
-    /**
-     *
-     */
     public function markAllLanguagesAsDirty()
     {
         $this->o_dirtyLanguages = [];
@@ -521,7 +518,7 @@ class Localizedfield extends Model\AbstractModel implements DirtyIndicatorInterf
         }
 
         if (!$this->o_dirtyLanguages) {
-            $this->o_dirtyLanguages =  null;
+            $this->o_dirtyLanguages = null;
         }
     }
 }

@@ -22,7 +22,6 @@ use Pimcore\Model\DataObject\Localizedfield;
 
 trait OwnerAwareFieldTrait
 {
-
     /**
      * @var mixed
      */
@@ -42,16 +41,15 @@ trait OwnerAwareFieldTrait
      * @param $owner
      * @param string $fieldname
      */
-    public function setOwner($owner, string $fieldname, $language = null) {
+    public function setOwner($owner, string $fieldname, $language = null)
+    {
         $this->_owner = $owner;
         $this->_fieldname = $fieldname;
         $this->_language = $language;
     }
 
-    /**
-     *
-     */
-    protected function markMeDirty() {
+    protected function markMeDirty()
+    {
         if ($this->_owner && $this->_owner instanceof DirtyIndicatorInterface) {
             $this->_owner->markFieldDirty($this->_fieldname, true);
         }
@@ -59,5 +57,4 @@ trait OwnerAwareFieldTrait
             $this->_owner->markLanguageAsDirty($this->_language);
         }
     }
-
 }

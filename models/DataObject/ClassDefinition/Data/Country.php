@@ -20,7 +20,6 @@ use Pimcore\Model;
 
 class Country extends Model\DataObject\ClassDefinition\Data\Select
 {
-
     use Model\DataObject\Traits\SimpleComparisonTrait;
 
     /**

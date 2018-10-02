@@ -111,7 +111,7 @@ class ObjectsMetadata extends Model\DataObject\ClassDefinition\Data\Objects
                 $destination = DataObject::getById($object['dest_id']);
 
                 if ($source instanceof DataObject\Concrete && $destination instanceof DataObject\Concrete && $destination->getClassName() == $this->getAllowedClassId()) {
-                    /** @var  $metaData DataObject\Data\ObjectMetadata */
+                    /** @var $metaData DataObject\Data\ObjectMetadata */
                     $metaData = \Pimcore::getContainer()->get('pimcore.model.factory')
                         ->build('Pimcore\Model\DataObject\Data\ObjectMetadata', [
                             'fieldname' => $this->getName(),
@@ -550,8 +550,9 @@ class ObjectsMetadata extends Model\DataObject\ClassDefinition\Data\Objects
                 }
             } else {
                 if ($this->supportsDirtyDetection()) {
-                    if (!$object->isFieldDirty($this->getName()))
+                    if (!$object->isFieldDirty($this->getName())) {
                         return;
+                    }
                 }
             }
         }
@@ -1081,5 +1082,4 @@ class ObjectsMetadata extends Model\DataObject\ClassDefinition\Data\Objects
 
         return $elementType . $id;
     }
-
 }

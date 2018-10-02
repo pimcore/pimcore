@@ -21,7 +21,6 @@ use Pimcore\Tool;
 
 class Language extends Model\DataObject\ClassDefinition\Data\Select
 {
-
     use Model\DataObject\Traits\SimpleComparisonTrait;
 
     /**

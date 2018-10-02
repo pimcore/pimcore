@@ -22,7 +22,6 @@ use Pimcore\Model\DataObject;
 
 class Consent extends Model\DataObject\ClassDefinition\Data
 {
-
     use Model\DataObject\Traits\SimpleComparisonTrait;
 
     /**

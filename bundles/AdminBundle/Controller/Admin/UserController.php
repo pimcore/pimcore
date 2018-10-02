@@ -1009,8 +1009,10 @@ class UserController extends AdminController implements EventedControllerInterfa
      * @param Request $request
      * @Route("/user/get-users-for-sharing", methods={"GET"})
      */
-    public function getUsersForSharingAction(Request $request) {
-        $this->checkPermission("share_configurations");
+    public function getUsersForSharingAction(Request $request)
+    {
+        $this->checkPermission('share_configurations');
+
         return $this->getUsersAction($request);
     }
 
@@ -1018,11 +1020,12 @@ class UserController extends AdminController implements EventedControllerInterfa
      * @param Request $request
      * @Route("/user/get-roles-for-sharing", methods={"GET"}))
      */
-    public function getRolesForSharingAction(Request $request) {
-        $this->checkPermission("share_configurations");
+    public function getRolesForSharingAction(Request $request)
+    {
+        $this->checkPermission('share_configurations');
+
         return $this->getRolesAction($request);
     }
-
 
     /**
      * @param Request $request

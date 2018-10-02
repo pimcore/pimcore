@@ -9,11 +9,11 @@ use Pimcore\Model\DataObject\Objectbrick\Definition;
 
 /**
  * Class Version20180912140913
+ *
  * @package Pimcore\Bundle\CoreBundle\Migrations
  */
 class Version20180912140913 extends AbstractPimcoreMigration
 {
-
     public function doesSqlMigrations(): bool
     {
         return false;
@@ -24,7 +24,6 @@ class Version20180912140913 extends AbstractPimcoreMigration
      */
     public function up(Schema $schema)
     {
-
         $list = new ClassDefinition\Listing();
         $list = $list->load();
 

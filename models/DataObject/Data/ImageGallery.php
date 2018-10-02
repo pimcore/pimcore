@@ -23,7 +23,7 @@ use Pimcore\Model\DataObject\Traits\OwnerAwareFieldTrait;
 class ImageGallery implements \Iterator, OwnerAwareFieldInterface
 {
     use OwnerAwareFieldTrait;
-    
+
     /**
      * @var Hotspotimage[]
      */

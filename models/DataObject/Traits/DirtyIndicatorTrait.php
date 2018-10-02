@@ -19,25 +19,26 @@ namespace Pimcore\Model\DataObject\Traits;
 
 trait DirtyIndicatorTrait
 {
-
     /**
      * @var array
      */
     protected $o_dirtyFields;
 
-
     /**
      * @return bool
      */
-    public function hasDirtyFields() {
+    public function hasDirtyFields()
+    {
         return is_array($this->o_dirtyFields) && count($this->o_dirtyFields);
     }
 
     /**
      * @param $key
+     *
      * @return bool
      */
-    public function isFieldDirty($key) {
+    public function isFieldDirty($key)
+    {
         if (is_array($this->o_dirtyFields) && $this->o_dirtyFields[$key]) {
             return true;
         }
@@ -47,12 +48,14 @@ trait DirtyIndicatorTrait
 
     /**
      * marks the given field as dirty
+     *
      * @param $field
      * @param bool $dirty
+     *
      * @return mixed
      */
-    public function markFieldDirty($field, $dirty = true) {
-
+    public function markFieldDirty($field, $dirty = true)
+    {
         if ($dirty && !is_array($this->o_dirtyFields)) {
             $this->o_dirtyFields = [];
         }
@@ -64,11 +67,8 @@ trait DirtyIndicatorTrait
         }
     }
 
-    /**
-     *
-     */
-    public function resetDirtyMap() {
+    public function resetDirtyMap()
+    {
         $this->o_dirtyFields = null;
     }
-
 }

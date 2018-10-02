@@ -27,7 +27,6 @@ use Pimcore\Model\DataObject\Traits\ObjectVarTrait;
  */
 abstract class AbstractModel
 {
-
     use ObjectVarTrait;
     /**
      * @var \Pimcore\Model\Dao\AbstractDao
@@ -291,5 +290,4 @@ abstract class AbstractModel
     {
         return \Pimcore::getContainer()->get('pimcore.model.factory');
     }
-
 }

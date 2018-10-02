@@ -8,6 +8,7 @@ use Pimcore\Model\DataObject\Objectbrick\Definition;
 
 /**
  * Class Version20180907115436
+ *
  * @package Pimcore\Bundle\CoreBundle\Migrations
  */
 class Version20180907115436 extends AbstractPimcoreMigration

@@ -552,7 +552,7 @@ class Document extends Element\AbstractElement
 
         // save dependencies
         $d = new Dependency();
-        $d->setSourceType("document");
+        $d->setSourceType('document');
         $d->setSourceId($this->getId());
 
         foreach ($this->resolveDependencies() as $requirement) {

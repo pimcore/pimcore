@@ -829,7 +829,9 @@ class Config
 
     /**
      * @param $file
+     *
      * @return null|Config\Config
+     *
      * @throws \Exception
      */
     protected static function getConfigInstance($file)
@@ -844,6 +846,6 @@ class Config
             throw new \Exception($file . " doesn't exist");
         }
 
-        throw new \Exception($file . " is invalid");
+        throw new \Exception($file . ' is invalid');
     }
 }

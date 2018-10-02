@@ -21,7 +21,6 @@ use Pimcore\Model\DataObject\Traits\OwnerAwareFieldTrait;
 
 class CalculatedValue implements OwnerAwareFieldInterface
 {
-
     use OwnerAwareFieldTrait;
 
     /** @var string */

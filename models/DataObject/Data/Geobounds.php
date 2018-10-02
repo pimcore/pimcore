@@ -23,7 +23,7 @@ use Pimcore\Model\DataObject\Traits\OwnerAwareFieldTrait;
 class Geobounds implements OwnerAwareFieldInterface
 {
     use OwnerAwareFieldTrait;
-    
+
     /**
      * @var Geopoint
      */
@@ -47,7 +47,6 @@ class Geobounds implements OwnerAwareFieldInterface
             $this->setSouthWest($southWest);
         }
         $this->markMeDirty();
-
     }
 
     /**
@@ -67,6 +66,7 @@ class Geobounds implements OwnerAwareFieldInterface
     {
         $this->nortEast = $nortEast;
         $this->markMeDirty();
+
         return $this;
     }
 
@@ -87,6 +87,7 @@ class Geobounds implements OwnerAwareFieldInterface
     {
         $this->southWest = $southWest;
         $this->markMeDirty();
+
         return $this;
     }
 

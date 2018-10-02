@@ -17,17 +17,16 @@
 
 namespace Pimcore\Model\DataObject\Traits;
 
-use Pimcore\Model\DataObject\DirtyIndicatorInterface;
-
 trait SimpleComparisonTrait
 {
     /**
      * @param $oldValue
      * @param $newValue
+     *
      * @return bool
      */
     public function isEqual($oldValue, $newValue)
     {
-        return ($oldValue == $newValue);
+        return $oldValue == $newValue;
     }
 }
