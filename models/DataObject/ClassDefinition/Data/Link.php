@@ -139,7 +139,7 @@ class Link extends Model\DataObject\ClassDefinition\Data
         }
         $data->path = $data->getPath();
 
-        return $data;
+        return $data->getObjectVars();
     }
 
     /**
