@@ -1780,7 +1780,7 @@ class DataObjectHelperController extends AdminController
 
         if ($request->get('filter')) {
             $conditionFilters[] = DataObject\Service::getFilterCondition($request->get('filter'), $class);
-            $featureFilters = DataObject\Service::getFeatureFilters($request->get('filter'), $class);
+            $featureFilters = DataObject\Service::getFeatureFilters($request->get('filter'), $class, $requestedLanguage);
             if ($featureFilters) {
                 $featureJoins = array_merge($featureJoins, $featureFilters['joins']);
             }
@@ -1826,7 +1826,7 @@ class DataObjectHelperController extends AdminController
         }
 
         $list->setLocale($requestedLanguage);
-        DataObject\Service::addGridFeatureJoins($list, $featureJoins, $class, $featureFilters, $requestedLanguage);
+        DataObject\Service::addGridFeatureJoins($list, $featureJoins, $class, $featureFilters);
 
         return [$list, $fields, $requestedLanguage];
     }

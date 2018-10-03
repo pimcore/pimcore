@@ -1709,7 +1709,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
             $requestedLanguage = $request->getLocale();
         }
 
-        if ($allParams['data']) {
+        if (isset($allParams['data']) && $allParams['data']) {
             $this->checkCsrfToken($request);
             if ($allParams['xaction'] == 'update') {
                 try {
@@ -1972,7 +1972,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
             // create filter condition
             if ($allParams['filter']) {
                 $conditionFilters[] = DataObject\Service::getFilterCondition($allParams['filter'], $class);
-                $featureFilters = DataObject\Service::getFeatureFilters($allParams['filter'], $class);
+                $featureFilters = DataObject\Service::getFeatureFilters($allParams['filter'], $class, $requestedLanguage);
                 if ($featureFilters) {
                     $featureJoins = array_merge($featureJoins, $featureFilters['joins']);
                 }
@@ -1997,10 +1997,16 @@ class DataObjectController extends ElementControllerBase implements EventedContr
             $list->setOffset($start);
 
             if (isset($sortingSettings['isFeature']) && $sortingSettings['isFeature']) {
-                $orderKey = 'cskey_' . $sortingSettings['fieldname'] . '_' . $sortingSettings['groupId']. '_' . $sortingSettings['keyId'];
+                $orderKey = 'cskey_' . $sortingSettings['fieldname'] . '_' . $sortingSettings['groupId'] . '_' . $sortingSettings['keyId'];
                 $list->setOrderKey($orderKey);
                 $list->setGroupBy('o_id');
 
+                $parts = explode('_', $orderKey);
+
+                $fieldname = $parts[1];
+                /** @var  $csFieldDefinition DataObject\ClassDefinition\Data\Classificationstore */
+                $csFieldDefinition = $class->getFieldDefinition($fieldname);
+                $sortingSettings['language'] = $csFieldDefinition->isLocalized() ? $requestedLanguage : 'default';
                 $featureJoins[] = $sortingSettings;
             } else {
                 $list->setOrderKey($orderKey, !$doNotQuote);
@@ -2011,7 +2017,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                 $list->setObjectTypes([DataObject\AbstractObject::OBJECT_TYPE_OBJECT, DataObject\AbstractObject::OBJECT_TYPE_VARIANT]);
             }
 
-            DataObject\Service::addGridFeatureJoins($list, $featureJoins, $class, $featureFilters, $requestedLanguage);
+            DataObject\Service::addGridFeatureJoins($list, $featureJoins, $class, $featureFilters);
 
             $beforeListLoadEvent = new GenericEvent($this, [
                 'list' => $list,
