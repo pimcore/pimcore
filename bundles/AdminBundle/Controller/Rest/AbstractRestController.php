@@ -44,7 +44,6 @@ abstract class AbstractRestController extends AdminController
     public function __construct(Service $service)
     {
         $this->service = $service;
-        AbstractObject::setGetInheritedValues(false);
     }
 
     /**
