@@ -239,7 +239,7 @@ class Layout
      */
     public function setCollapsible($collapsible)
     {
-        $this->collapsible = (bool) $collapsible;
+        $this->collapsible = (bool) $collapsible ? true : NULL;
 
         $this->filterCollapsibleValue();
 
@@ -354,7 +354,7 @@ class Layout
      */
     public function setLocked($locked)
     {
-        $this->locked = (bool) $locked;
+        $this->locked = (bool) $locked ? true : NULL;
 
         return $this;
     }
@@ -366,7 +366,7 @@ class Layout
      */
     public function setCollapsed($collapsed)
     {
-        $this->collapsed = $collapsed;
+        $this->collapsed = $collapsed ? true : NULL;
 
         $this->filterCollapsibleValue();
 

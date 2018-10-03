@@ -979,7 +979,7 @@ class ClassDefinition extends Model\AbstractModel
      */
     public function setUseTraits($useTraits)
     {
-        $this->useTraits = $useTraits;
+        $this->useTraits = $useTraits ? $useTraits : NULL;
 
         return $this;
     }
@@ -999,7 +999,7 @@ class ClassDefinition extends Model\AbstractModel
      */
     public function setListingUseTraits($listingUseTraits)
     {
-        $this->listingUseTraits = $listingUseTraits;
+        $this->listingUseTraits = $listingUseTraits ? true : NULL;
 
         return $this;
     }
@@ -1039,7 +1039,7 @@ class ClassDefinition extends Model\AbstractModel
      */
     public function setListingParentClass($listingParentClass)
     {
-        $this->listingParentClass = $listingParentClass;
+        $this->listingParentClass = $listingParentClass ? $listingParentClass : NULL;
 
         return $this;
     }
@@ -1051,7 +1051,7 @@ class ClassDefinition extends Model\AbstractModel
      */
     public function setAllowInherit($allowInherit)
     {
-        $this->allowInherit = (bool)$allowInherit;
+        $this->allowInherit = (bool)$allowInherit ? true : NULL;
 
         return $this;
     }
@@ -1063,7 +1063,7 @@ class ClassDefinition extends Model\AbstractModel
      */
     public function setAllowVariants($allowVariants)
     {
-        $this->allowVariants = (bool)$allowVariants;
+        $this->allowVariants = (bool)$allowVariants ? true : NULL;
 
         return $this;
     }
@@ -1171,7 +1171,7 @@ class ClassDefinition extends Model\AbstractModel
      */
     public function setShowVariants($showVariants)
     {
-        $this->showVariants = (bool)$showVariants;
+        $this->showVariants = (bool)$showVariants ? true : NULL;
     }
 
     /**
@@ -1195,7 +1195,7 @@ class ClassDefinition extends Model\AbstractModel
      */
     public function setShowAppLoggerTab($showAppLoggerTab)
     {
-        $this->showAppLoggerTab = (bool) $showAppLoggerTab;
+        $this->showAppLoggerTab = (bool) $showAppLoggerTab ? true : NULL;
     }
 
     /**
