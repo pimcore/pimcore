@@ -250,7 +250,7 @@ class Classificationstore extends Model\DataObject\ClassDefinition\Data
                 }
 
                 if ($foundEmptyValue) {
-                    // still some values are passing, ask the parent
+                    // still some values are missing, ask the parent
                     $getter = 'get' . ucfirst($this->getName());
                     $parentData = $parent->$getter();
                     $parentResult = $this->doGetDataForEditMode($parentData, $parent, $fieldData, $metaData, $level + 1);
@@ -417,32 +417,48 @@ class Classificationstore extends Model\DataObject\ClassDefinition\Data
     }
 
     /**
-     * @param DataObject\AbstractObject $object
+     * @param DataObject\Concrete $object
      * @param mixed $params
      *
      * @throws \Exception
      */
     public function getForWebserviceExport($object, $params = [])
     {
+
+        $this->doGetForWebserviceExport($object, $params, $result);
+
+        return $result;
+    }
+
+    /**
+     * @param $object DataObject\AbstractObject
+     * @param array $params
+     * @param array $result
+     * @param int $level
+     * @throws \Exception
+     */
+    private function doGetForWebserviceExport($object, $params = [], &$result = [], $level = 0) {
+
         /** @var $data DataObject\Classificationstore */
+
         $data = $this->getDataFromObjectParam($object, $params);
 
-        if ($data) {
-            if ($this->isLocalized()) {
-                $validLanguages = Tool::getValidLanguages();
-            } else {
-                $validLanguages = [];
-            }
-            array_unshift($validLanguages, 'default');
+        if ($this->isLocalized()) {
+            $validLanguages = Tool::getValidLanguages();
+        } else {
+            $validLanguages = [];
+        }
+        array_unshift($validLanguages, 'default');
 
-            $result = [];
+        if ($data) {
+
             $activeGroups = [];
             $items = $data->getActiveGroups();
             if (is_array($items)) {
                 foreach ($items as $groupId => $groupData) {
                     $groupDef = DataObject\Classificationstore\GroupConfig::getById($groupId);
                     if (!is_null($groupDef)) {
-                        $activeGroups[] = [
+                        $activeGroups[$groupId] = [
                             'id' => $groupId,
                             'name' => $groupDef->getName(). ' - ' . $groupDef->getDescription(),
                             'enabled' => $groupData
@@ -470,12 +486,16 @@ class Classificationstore extends Model\DataObject\ClassDefinition\Data
                     foreach ($validLanguages as $language) {
                         $context['language'] = $language;
                         $value = $fd->getForWebserviceExport($object, ['context' => $context, 'language' => $language]);
-                        $groupResult[$language][] = [
+                        $resultItem = [
                             'id' => $keyId,
                             'name' => $keyConfig->getName(),
                             'description' => $keyConfig->getDescription(),
                             'value' => $value
                         ];
+                        if ($level > 0) {
+                            $resultItem['inheritedFrom'] = $object->getId();
+                        }
+                        $groupResult[$language][] = $resultItem;
                     }
                 }
 
@@ -493,8 +513,47 @@ class Classificationstore extends Model\DataObject\ClassDefinition\Data
                 $result['groups'][] = $groupResult;
             }
 
-            return $result;
         }
+
+        $inheritanceAllowed = $object->getClass()->getAllowInherit();
+        if ($inheritanceAllowed) {
+            $parent = DataObject\Service::hasInheritableParentObject($object);
+            if ($parent) {
+                $foundEmptyValue = false;
+
+                $activeGroupIds = $this->recursiveGetActiveGroupsIds($object);
+
+                foreach ($validLanguages as $language) {
+                    foreach ($activeGroupIds as $groupId => $enabled) {
+                        if (!$enabled) {
+                            continue;
+                        }
+
+                        $relation = new DataObject\Classificationstore\KeyGroupRelation\Listing();
+                        $relation->setCondition('groupId = ' . $relation->quote($groupId));
+                        $relation = $relation->load();
+                        foreach ($relation as $key) {
+                            $keyId = $key->getKeyId();
+                            $fd = DataObject\Classificationstore\Service::getFieldDefinitionFromKeyConfig($key);
+
+                            if ($fd->isEmpty($result[$language][$groupId][$keyId])) {
+                                $foundEmptyValue = true;
+
+
+                            }
+                        }
+                    }
+                }
+
+                if ($foundEmptyValue) {
+                    // still some values are missing, ask the parent
+                    $getter = 'get' . ucfirst($this->getName());
+                    $parentData = $parent->$getter();
+                    $parentResult = $this->doGetForWebserviceExport($parent, $params, $result, $level + 1);
+                }
+            }
+        }
+
     }
 
     /**
