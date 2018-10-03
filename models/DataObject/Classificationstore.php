@@ -124,7 +124,7 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
      *
      * @return $this
      */
-    public function setClass(ClassDefinition $class)
+    public function setClass(?ClassDefinition $class)
     {
         $this->class = $class;
 
@@ -441,9 +441,9 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
      * @param $groupId
      * @param $collectionId
      */
-    public function setGroupCollectionMapping($groupId, $collectionId)
+    public function setGroupCollectionMapping($groupId = null, $collectionId = null)
     {
-        if (!is_array($this->groupCollectionMapping)) {
+        if (!is_array($this->groupCollectionMapping) && $groupId) {
             $this->groupCollectionMapping[$groupId] = $collectionId;
         }
     }
