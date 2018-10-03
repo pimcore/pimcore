@@ -787,11 +787,11 @@ pimcore.elementservice.integrateWorkflowManagement = function(elementType, eleme
 
             var button = pimcore.elementservice.getWorkflowActionsButton(workflows, elementType, elementId, elementEditor);
 
-            buttons.push("-");
-
-            buttons.push(button);
+            if(button !== false) {
+                buttons.push("-");
+                buttons.push(button);
+            }
         }
-
 
         buttons.push("-");
         buttons.push({
