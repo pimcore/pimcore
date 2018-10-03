@@ -21,7 +21,6 @@ use Pimcore\Event\Webservice\FilterEvent;
 use Pimcore\Event\WebserviceEvents;
 use Pimcore\FeatureToggles\Features\DebugMode;
 use Pimcore\Http\Exception\ResponseException;
-use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Model\Webservice\Service;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Request;
