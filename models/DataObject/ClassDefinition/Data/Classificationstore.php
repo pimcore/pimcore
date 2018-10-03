@@ -516,7 +516,7 @@ class Classificationstore extends Model\DataObject\ClassDefinition\Data
         }
 
         $inheritanceAllowed = $object->getClass()->getAllowInherit();
-        if ($inheritanceAllowed) {
+        if (DataObject\AbstractObject::doGetInheritedValues($object)) {
             $parent = DataObject\Service::hasInheritableParentObject($object);
             if ($parent) {
                 $foundEmptyValue = false;
