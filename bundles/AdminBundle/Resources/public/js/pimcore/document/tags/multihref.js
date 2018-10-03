@@ -42,6 +42,37 @@ pimcore.document.tags.multihref = Class.create(pimcore.document.tag, {
             model: modelName
         });
 
+        var tbar = [
+            Ext.create('Ext.toolbar.Spacer', {
+                width: 20,
+                height: 16,
+                cls: "pimcore_icon_droptarget"
+            }),
+            Ext.create('Ext.toolbar.TextItem', {
+                text: "<b>" + (this.options.title ? this.options.title : "") + "</b>"
+            }),
+            "->",
+            {
+                xtype: "button",
+                iconCls: "pimcore_icon_delete",
+                handler: this.empty.bind(this)
+            },
+            {
+                xtype: "button",
+                iconCls: "pimcore_icon_search",
+                handler: this.openSearchEditor.bind(this)
+            }
+        ];
+
+        if (this.canInlineUpload()) {
+            tbar.push({
+                xtype: "button",
+                cls: "pimcore_inline_upload",
+                iconCls: "pimcore_icon_upload",
+                handler: this.uploadDialog.bind(this)
+            });
+        }
+
         var elementConfig = {
             store: this.store,
             bodyStyle: "color:#000",
@@ -124,33 +155,7 @@ pimcore.document.tags.multihref = Class.create(pimcore.document.tag, {
                 ]
             },
             tbar: {
-                items: [
-                    Ext.create('Ext.toolbar.Spacer', {
-                        width: 20,
-                        height: 16,
-                        cls: "pimcore_icon_droptarget"
-                    }),
-                    Ext.create('Ext.toolbar.TextItem', {
-                        text: "<b>" + (this.options.title ? this.options.title : "") + "</b>"
-                    }),
-                    "->",
-                    {
-                        xtype: "button",
-                        iconCls: "pimcore_icon_delete",
-                        handler: this.empty.bind(this)
-                    },
-                    {
-                        xtype: "button",
-                        iconCls: "pimcore_icon_search",
-                        handler: this.openSearchEditor.bind(this)
-                    },
-                    {
-                        xtype: "button",
-                        cls: "pimcore_inline_upload",
-                        iconCls: "pimcore_icon_upload",
-                        handler: this.uploadDialog.bind(this)
-                    }
-                ]
+                items: tbar
             }
         };
 
@@ -180,6 +185,19 @@ pimcore.document.tags.multihref = Class.create(pimcore.document.tag, {
         }.bind(this));
 
         this.element.render(id);
+    },
+
+    canInlineUpload: function() {
+        if(this.options["disableInlineUpload"] === true) {
+            return false;
+        }
+
+        // no assets allowed, disable inline upload
+        if(this.options["types"] && this.options["types"].length && this.options["types"].indexOf("asset") === -1) {
+            return false;
+        }
+
+        return true;
     },
 
     uploadDialog: function () {
