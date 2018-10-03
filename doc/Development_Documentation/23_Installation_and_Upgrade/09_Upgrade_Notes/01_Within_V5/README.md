@@ -12,6 +12,9 @@
 - deprecated `\Pimcore::addToGloballyProtectedItems()`
 - deprecated `\Pimcore::removeFromGloballyProtectedItems()`
 - Image adapter `Pimcore\Image\Adapter\ImageMagick` was removed
+- REST Webservice: Inheritance is disabled by default (which was also the case in pimcore 4 not in the previous versions of pimcore 5).
+See the [Webservices API](../../../24_Web_Services/README.md) for further details.
+
 
 ### Breaking Changes
 - [Pimcore Workflow Management Reloaded](./01_Workflow_Management.md)
