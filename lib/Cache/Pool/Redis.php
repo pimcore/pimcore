@@ -15,7 +15,6 @@
 namespace Pimcore\Cache\Pool;
 
 use Pimcore\Cache\Pool\Exception\CacheException;
-use Pimcore\Storage\Redis\Connection;
 
 /**
  * Redis2 item pool with tagging and LUA support.
@@ -45,7 +44,7 @@ class Redis extends AbstractCacheItemPool implements PurgeableCacheItemPoolInter
     const COMPRESS_PREFIX = ":\x1f\x8b";
 
     /**
-     * @var Connection
+     * @var \Credis_Client
      */
     protected $redis;
 
@@ -96,11 +95,11 @@ class Redis extends AbstractCacheItemPool implements PurgeableCacheItemPoolInter
     protected $luaMaxCStack = 5000;
 
     /**
-     * @param Connection $redis
+     * @param \Credis_Client $redis
      * @param array $options
      * @param int $defaultLifetime
      */
-    public function __construct(Connection $redis, $options = [], $defaultLifetime = 0)
+    public function __construct(\Credis_Client $redis, $options = [], $defaultLifetime = 0)
     {
         parent::__construct($defaultLifetime);
 
@@ -177,14 +176,6 @@ class Redis extends AbstractCacheItemPool implements PurgeableCacheItemPoolInter
         foreach ($result as $idx => $entry) {
             if (empty($entry)) {
                 continue;
-            }
-
-            // map response indexes from numeric indexes to their named key only
-            // if redis is running as standalone version without redis extension as
-            // the extension directly returns an array indexed by name instead of by
-            // index
-            if ($this->redis->isStandalone()) {
-                $entry = $this->mapResponseIndexes($entry, $fields);
             }
 
             // we rely on mtime always being set
