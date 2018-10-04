@@ -260,11 +260,15 @@ pimcore.object.versions = Class.create({
             method: "POST",
             params: {id: versionId},
             success: function(response) {
-                this.object.reload();
-
                 var rdata = Ext.decode(response.responseText);
-                if (rdata && rdata.success) {
+
+                if (rdata.success) {
+                    this.object.reload();
+
                     pimcore.helpers.updateObjectStyle(this.object.id, rdata.treeData);
+                }
+                else {
+                    Ext.MessageBox.alert(t("error"), rdata.message);
                 }
 
             }.bind(this)
