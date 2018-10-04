@@ -44,7 +44,7 @@
     "pimcore/core-version": "5.4.4",
     "amnuts/opcache-gui": "~2",
     "cache/tag-interop": "^1",
-    "colinmollenhour/credis": "1.8.*",
+    "colinmollenhour/credis": "^1.10.0",
     "composer/ca-bundle": "^1",
     "defuse/php-encryption": "~2",
     "doctrine/annotations": "^1.6.0",
