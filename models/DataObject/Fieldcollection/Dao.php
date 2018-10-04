@@ -28,10 +28,11 @@ class Dao extends Model\Dao\AbstractDao
 {
     /**
      * @param DataObject\Concrete $object
+     * @param $params mixed
      *
      * @return whether an insert should be done
      */
-    public function save(DataObject\Concrete $object)
+    public function save(DataObject\Concrete $object, $params = [])
     {
         return $this->delete($object, true);
     }
@@ -123,7 +124,7 @@ class Dao extends Model\Dao\AbstractDao
 
     /**
      * @param DataObject\Concrete $object
-     * @param saveMode true if called from save method
+     * @param $saveMode true if called from save method
      *
      * @return whether an relational data should be inserted or not
      */

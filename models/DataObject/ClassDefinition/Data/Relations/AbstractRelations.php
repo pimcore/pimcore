@@ -185,7 +185,7 @@ abstract class AbstractRelations extends Model\DataObject\ClassDefinition\Data
      *
      * Checks if an document is an allowed relation
      *
-     * @param Document $document
+     * @param Model\Document $document
      *
      * @return bool
      */

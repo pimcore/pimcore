@@ -17,6 +17,9 @@
 
 namespace Pimcore\Model\DataObject\Traits;
 
+use Pimcore\Model\DataObject\Data\ElementMetadata;
+use Pimcore\Model\Element\ElementInterface;
+
 trait ElementWithMetadataComparisonTrait
 {
     /**
@@ -38,9 +41,9 @@ trait ElementWithMetadataComparisonTrait
         $values2 = array_filter(array_values(is_array($array2) ? $array2 : []));
 
         for ($i = 0; $i < $count1; $i++) {
-            /** @var $container1 DataObject\Data\ElementMetadata */
+            /** @var $container1 ElementMetadata */
             $container1 = $values1[$i];
-            /** @var $container2 DataObject\Data\ElementMetadata */
+            /** @var $container2 ElementMetadata */
             $container2 = $values2[$i];
 
             if (!$container1 && $container2 || $container1 && !$container2) {
@@ -50,9 +53,9 @@ trait ElementWithMetadataComparisonTrait
                 return true;
             }
 
-            /** @var $el1 Element\ElementInterface */
+            /** @var $el1 ElementInterface */
             $el1 = $container1->getElement();
-            /** @var $el2 Element\ElementInterface */
+            /** @var $el2 ElementInterface */
             $el2 = $container2->getElement();
 
             if (! ($el1->getType() == $el2->getType() && ($el1->getId() == $el2->getId()))) {

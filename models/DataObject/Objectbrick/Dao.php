@@ -110,7 +110,7 @@ class Dao extends Model\DataObject\Fieldcollection\Dao
 
     /**
      * @param DataObject\Concrete $object
-     * @param saveMode true if called from save method
+     * @param $saveMode true if called from save method
      *
      * @return whether an insert should be done or not
      */

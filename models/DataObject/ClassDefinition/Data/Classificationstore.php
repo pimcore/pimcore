@@ -555,7 +555,7 @@ class Classificationstore extends Model\DataObject\ClassDefinition\Data
      * @param mixed $value
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
-     * @param IdMapper $idMapper
+     * @param Model\Webservice\Data\Mapper $idMapper
      *
      * @return mixed|null|DataObject\Classificationstore
      *

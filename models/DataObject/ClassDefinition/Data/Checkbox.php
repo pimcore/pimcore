@@ -307,7 +307,7 @@ class Checkbox extends Model\DataObject\ClassDefinition\Data
         $db = \Pimcore\Db::get();
         $name = $params['name'] ? $params['name'] : $this->name;
         $value = $db->quote($value);
-        $key = $db->quoteIdentifier($this->name, $name);
+        $key = $db->quoteIdentifier($this->name);
 
         $brickPrefix = $params['brickType'] ? $db->quoteIdentifier($params['brickType']) . '.' : '';
 

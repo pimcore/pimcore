@@ -19,5 +19,11 @@ namespace Pimcore\Model\DataObject;
 
 interface OwnerAwareFieldInterface
 {
-    public function setOwner($owner, string $fieldname);
+    /**
+     * @param $owner
+     * @param string $fieldname
+     * @param null $language
+     * @return mixed
+     */
+    public function setOwner($owner, string $fieldname, $language = null);
 }
