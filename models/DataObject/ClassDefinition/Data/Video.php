@@ -205,7 +205,7 @@ class Video extends Model\DataObject\ClassDefinition\Data
             if ($data->getPoster() instanceof Asset) {
                 $data->setPoster($data->getPoster()->getFullpath());
             }
-            $data = object2array($data);
+            $data = object2array($data->getObjectVars());
         }
 
         return $data;
