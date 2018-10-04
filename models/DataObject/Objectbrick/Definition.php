@@ -123,7 +123,14 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
         $validLanguages = Tool::getValidLanguages();
         foreach ($classDefinitions as $classDef) {
             $classname = $classDef['classname'];
+
             $class = DataObject\ClassDefinition::getByName($classname);
+
+            if (!$class) {
+                Logger::error('class ' . $classname . " doesn't exist anymore");
+                continue;
+            }
+
             $tables[] = 'object_brick_query_' . $key .  '_' . $class->getId();
             $tables[] = 'object_brick_store_' . $key .  '_' . $class->getId();
             if ($isLocalized) {
