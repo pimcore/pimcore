@@ -143,7 +143,7 @@ class ClassesRebuildCommand extends AbstractCommand
                 $output->writeln(sprintf('%s saved', $brickDefinition->getKey()));
             }
 
-            $brickDefinition->save();
+            $brickDefinition->save(false);
         }
 
         if ($output->isVerbose()) {
@@ -157,7 +157,7 @@ class ClassesRebuildCommand extends AbstractCommand
                 $output->writeln(sprintf('%s saved', $fc->getKey()));
             }
 
-            $fc->save();
+            $fc->save(false);
         }
     }
 }

@@ -151,9 +151,11 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
     }
 
     /**
+     * @param bool $saveDefinitionFile
+     *
      * @throws \Exception
      */
-    public function save()
+    public function save($saveDefinitionFile = true)
     {
         if (!$this->getKey()) {
             throw new \Exception('A object-brick needs a key to be saved!');
@@ -180,21 +182,23 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
 
         $this->cleanupOldFiles($definitionFile);
 
-        $clone = clone $this;
-        $clone->setDao(null);
-        unset($clone->oldClassDefinitions);
-        unset($clone->fieldDefinitions);
+        if ($saveDefinitionFile) {
+            $clone = clone $this;
+            $clone->setDao(null);
+            unset($clone->oldClassDefinitions);
+            unset($clone->fieldDefinitions);
 
-        $exportedClass = var_export($clone, true);
+            $exportedClass = var_export($clone, true);
 
-        $data = '<?php ';
-        $data .= "\n\n";
-        $data .= $infoDocBlock;
-        $data .= "\n\n";
+            $data = '<?php ';
+            $data .= "\n\n";
+            $data .= $infoDocBlock;
+            $data .= "\n\n";
 
-        $data .= "\nreturn " . $exportedClass . ";\n";
+            $data .= "\nreturn " . $exportedClass . ";\n";
 
-        \Pimcore\File::put($definitionFile, $data);
+            \Pimcore\File::put($definitionFile, $data);
+        }
 
         $extendClass = 'DataObject\\Objectbrick\\Data\\AbstractData';
         if ($this->getParentClass()) {
