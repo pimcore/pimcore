@@ -19,11 +19,13 @@ namespace Pimcore\Model\DataObject\Data;
 
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject\OwnerAwareFieldInterface;
+use Pimcore\Model\DataObject\Traits\ObjectVarTrait;
 use Pimcore\Model\DataObject\Traits\OwnerAwareFieldTrait;
 
 class Video implements OwnerAwareFieldInterface
 {
     use OwnerAwareFieldTrait;
+    use ObjectVarTrait;
 
     /**
      * @var string
