@@ -89,8 +89,7 @@ class Dao extends Model\Element\Dao
                 'path' => $this->model->getRealPath(),
                 'parentId' => $this->model->getParentId()
             ]);
-
-            $date = time();
+            
             $this->model->setId($this->db->lastInsertId());
         } catch (\Exception $e) {
             throw $e;
