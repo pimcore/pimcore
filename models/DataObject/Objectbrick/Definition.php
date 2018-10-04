@@ -19,6 +19,7 @@ namespace Pimcore\Model\DataObject\Objectbrick;
 
 use Pimcore\Cache\Runtime;
 use Pimcore\File;
+use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Tool;
@@ -246,6 +247,46 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
     }
 
     /**
+     * @param $definitions
+     *
+     * @return array
+     */
+    protected function buildClassList($definitions)
+    {
+        $result = [];
+        foreach ($definitions as $definition) {
+            $result[] = $definition['classname'] . '-' . $definition['fieldname'];
+        }
+
+        return $result;
+    }
+
+    /** Returns a list of classes which need to be "rebuild" because they are affected of changes.
+     * @param $oldObject
+     * @return array
+     */
+    protected function getClassesToCleanup($oldObject)
+    {
+        $oldDefinitions = $oldObject->getClassDefinitions() ? $oldObject->getClassDefinitions() : [];
+        $newDefinitions = $this->getClassDefinitions() ? $this->getClassDefinitions() : [];
+
+        $old  = $this->buildClassList($oldDefinitions);
+        $new  = $this->buildClassList($newDefinitions);
+
+        $diff1 = array_diff($old, $new);
+        $diff2 = array_diff($new, $old);
+
+        $diff = array_merge($diff1, $diff2);
+        $result = [];
+        foreach ($diff as $item) {
+            $parts = explode('-', $item);
+            $result[] = ['classname' => $parts[0], 'fieldname' => $parts[1]];
+        }
+
+        return $result;
+    }
+
+    /**
      * @param $serializedFilename
      */
     private function cleanupOldFiles($serializedFilename)
@@ -257,7 +298,9 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
         }
 
         if ($oldObject && !empty($oldObject->classDefinitions)) {
-            foreach ($oldObject->classDefinitions as $cl) {
+            $classlist = $this->getClassesToCleanup($oldObject);
+
+            foreach ($classlist as $cl) {
                 $this->oldClassDefinitions[$cl['classname']] = $cl['classname'];
                 $class = DataObject\ClassDefinition::getByName($cl['classname']);
                 if ($class) {
@@ -323,6 +366,28 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
     }
 
     /**
+     * @param DataObject\ClassDefinition $class
+     * @return array
+     */
+    private function getAllowedTypesWithFieldname(DataObject\ClassDefinition $class)
+    {
+        $result = [];
+        $fieldDefinitions = $class->getFieldDefinitions();
+        foreach ($fieldDefinitions as $fd) {
+            if (!$fd instanceof DataObject\ClassDefinition\Data\Objectbricks) {
+                continue;
+            }
+
+            $allowedTypes = $fd->getAllowedTypes() ? $fd->getAllowedTypes() : [];
+            foreach ($allowedTypes as $allowedType) {
+                $result[] = $fd->getName() . '-' . $allowedType;
+            }
+        }
+
+        return $result;
+    }
+
+    /**
      * @throws \Exception
      *
      * @todo: creates a PHP-Dock with "@return void" (line 351)
@@ -341,12 +406,23 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
                 if (!$fd) {
                     throw new \Exception('Could not resolve field definition for ' . $cl['fieldname']);
                 }
-                $allowedTypes = $fd->getAllowedTypes();
+
+                $old = $this->getAllowedTypesWithFieldname($class);
+
+                $allowedTypes = $fd->getAllowedTypes() ? $fd->getAllowedTypes() : [];
+
                 if (!in_array($this->key, $allowedTypes)) {
                     $allowedTypes[] = $this->key;
                 }
+
                 $fd->setAllowedTypes($allowedTypes);
-                $class->save();
+                $new = $this->getAllowedTypesWithFieldname($class);
+
+                if (array_diff($new, $old) || array_diff($old, $new)) {
+                    $class->save();
+                } else {
+                    Logger::debug('Objectbrick ' . $this->getKey() . ', no change for class ' . $class->getName());
+                }
             }
         }
 
