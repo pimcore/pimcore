@@ -263,6 +263,7 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
 
     /** Returns a list of classes which need to be "rebuild" because they are affected of changes.
      * @param $oldObject
+     *
      * @return array
      */
     protected function getClassesToCleanup($oldObject)
@@ -270,8 +271,8 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
         $oldDefinitions = $oldObject->getClassDefinitions() ? $oldObject->getClassDefinitions() : [];
         $newDefinitions = $this->getClassDefinitions() ? $this->getClassDefinitions() : [];
 
-        $old  = $this->buildClassList($oldDefinitions);
-        $new  = $this->buildClassList($newDefinitions);
+        $old = $this->buildClassList($oldDefinitions);
+        $new = $this->buildClassList($newDefinitions);
 
         $diff1 = array_diff($old, $new);
         $diff2 = array_diff($new, $old);
@@ -367,6 +368,7 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
 
     /**
      * @param DataObject\ClassDefinition $class
+     *
      * @return array
      */
     private function getAllowedTypesWithFieldname(DataObject\ClassDefinition $class)

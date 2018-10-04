@@ -424,7 +424,6 @@ class Classificationstore extends Model\DataObject\ClassDefinition\Data
      */
     public function getForWebserviceExport($object, $params = [])
     {
-
         $this->doGetForWebserviceExport($object, $params, $result);
 
         return $result;
@@ -435,12 +434,13 @@ class Classificationstore extends Model\DataObject\ClassDefinition\Data
      * @param array $params
      * @param array $result
      * @param int $level
+     *
      * @throws \Exception
      */
-    private function doGetForWebserviceExport($object, $params = [], &$result = [], $level = 0) {
+    private function doGetForWebserviceExport($object, $params = [], &$result = [], $level = 0)
+    {
 
         /** @var $data DataObject\Classificationstore */
-
         $data = $this->getDataFromObjectParam($object, $params);
 
         if ($this->isLocalized()) {
@@ -451,7 +451,6 @@ class Classificationstore extends Model\DataObject\ClassDefinition\Data
         array_unshift($validLanguages, 'default');
 
         if ($data) {
-
             $activeGroups = [];
             $items = $data->getActiveGroups();
             if (is_array($items)) {
@@ -512,7 +511,6 @@ class Classificationstore extends Model\DataObject\ClassDefinition\Data
 
                 $result['groups'][] = $groupResult;
             }
-
         }
 
         $inheritanceAllowed = $object->getClass()->getAllowInherit();
@@ -538,8 +536,6 @@ class Classificationstore extends Model\DataObject\ClassDefinition\Data
 
                             if ($fd->isEmpty($result[$language][$groupId][$keyId])) {
                                 $foundEmptyValue = true;
-
-
                             }
                         }
                     }
@@ -553,7 +549,6 @@ class Classificationstore extends Model\DataObject\ClassDefinition\Data
                 }
             }
         }
-
     }
 
     /**

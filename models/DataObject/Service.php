@@ -712,6 +712,7 @@ class Service extends Model\Element\Service
      * @param string $filterJson
      * @param ClassDefinition $class
      * @param $requestedLanguage
+     *
      * @return string
      */
     public static function getFeatureFilters($filterJson, $class, $requestedLanguage)
@@ -768,13 +769,12 @@ class Service extends Model\Element\Service
                 $groupKeyId = explode('-', $keyParts[3]);
 
                 /** @var $csFieldDefinition Model\DataObject\ClassDefinition\Data\Classificationstore */
-                $csFieldDefinition = $class->getFieldDefinition("cs");
+                $csFieldDefinition = $class->getFieldDefinition('cs');
 
                 $language = $requestedLanguage;
                 if (!$csFieldDefinition->isLocalized()) {
                     $language = 'default';
                 }
-
 
                 $groupId = $groupKeyId[0];
                 $keyid = $groupKeyId[1];

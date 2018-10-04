@@ -2004,7 +2004,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                 $parts = explode('_', $orderKey);
 
                 $fieldname = $parts[1];
-                /** @var  $csFieldDefinition DataObject\ClassDefinition\Data\Classificationstore */
+                /** @var $csFieldDefinition DataObject\ClassDefinition\Data\Classificationstore */
                 $csFieldDefinition = $class->getFieldDefinition($fieldname);
                 $sortingSettings['language'] = $csFieldDefinition->isLocalized() ? $requestedLanguage : 'default';
                 $featureJoins[] = $sortingSettings;
