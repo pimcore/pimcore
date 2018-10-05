@@ -31,9 +31,14 @@ class QuantityValue extends Model\DataObject\ClassDefinition\Data
     public $fieldtype = 'quantityValue';
 
     /**
-     * @var float
+     * @var int
      */
     public $width;
+
+    /**
+     * @var int
+     */
+    public $unitWidth;
 
     /**
      * @var float
@@ -96,6 +101,22 @@ class QuantityValue extends Model\DataObject\ClassDefinition\Data
     public function setWidth($width)
     {
         $this->width = $width;
+    }
+
+    /**
+     * @return int
+     */
+    public function getUnitWidth()
+    {
+        return $this->width;
+    }
+
+    /**
+     * @param int $width
+     */
+    public function setUnitWidth($unitWidth)
+    {
+        $this->unitWidth = $unitWidth;
     }
 
     /**
@@ -426,7 +447,7 @@ class QuantityValue extends Model\DataObject\ClassDefinition\Data
         if ($data instanceof \Pimcore\Model\DataObject\Data\QuantityValue) {
             return [
                 'value' => $data->getValue(),
-                'unit' => is_object($data->getUnit()) ? $data->getUnit()->getId() : null,
+                'unit' => $data->getUnitId(),
                 'unitAbbreviation' => is_object($data->getUnit()) ? $data->getUnit()->getAbbreviation() : ''
             ];
         } else {
