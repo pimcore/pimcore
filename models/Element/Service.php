@@ -661,7 +661,11 @@ class Service extends Model\AbstractModel
                 } else {
                     $properties = method_exists($data, 'getObjectVars') ? $data->getObjectVars() : get_object_vars($data);
                     foreach ($properties as $name => $value) {
-                        $data->$name = self::renewReferences($value, false);
+                        if (method_exists($data, 'setObjectVar')) {
+                            $data->setObjectVar($name, self::renewReferences($value, false));
+                        } else {
+                            $data->$name = self::renewReferences($value, false);
+                        }
                     }
                 }
 
