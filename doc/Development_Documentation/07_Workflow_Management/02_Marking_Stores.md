@@ -9,7 +9,7 @@ This is the default marking store. The place information is stored in the elemen
 the best option for Assets and Documents. For data objects the other marking store options might be the better choice as 
 the data would be stored directly in the data object model as attributes.
 
-^##### Configuration Example
+##### Configuration Example
 ```yaml
    marking_store:
       type: state_table
@@ -26,7 +26,7 @@ marking store is used.
 ##### Configuration Example
 ```yaml
    marking_store:
-      type: multiple_state
+      type: single_state
       arguments:
          - workflowState
 ```
