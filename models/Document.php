@@ -124,6 +124,13 @@ class Document extends Element\AbstractElement
     protected $modificationDate;
 
     /**
+     * timestamp of modificationdate - micro seconds part
+     *
+     * @var int
+     */
+    protected $modificationDateMicros;
+
+    /**
      * User-ID of the owner
      *
      * @var int
@@ -252,6 +259,7 @@ class Document extends Element\AbstractElement
         $cacheKey = 'document_' . $id;
 
         if (!$force && \Pimcore\Cache\Runtime::isRegistered($cacheKey)) {
+            /** @var  $document Document */
             $document = \Pimcore\Cache\Runtime::get($cacheKey);
             if ($document) {
                 return $document;
@@ -278,6 +286,7 @@ class Document extends Element\AbstractElement
                 \Pimcore\Cache\Runtime::set($cacheKey, $document);
                 $document->getDao()->getById($id);
                 $document->__setDataVersionTimestamp($document->getModificationDate());
+                $document->__setDataVersionTimestampMicros($document->getModificationDateMicros());
 
                 \Pimcore\Cache::save($document, $cacheKey);
             } else {
@@ -1444,4 +1453,22 @@ class Document extends Element\AbstractElement
     {
         $this->userPermissions = $userPermissions;
     }
+
+    /**
+     * @return int
+     */
+    public function getModificationDateMicros(): int
+    {
+        return $this->modificationDateMicros;
+    }
+
+    /**
+     * @param int $modificationDateMicros
+     */
+    public function setModificationDateMicros(int $modificationDateMicros): void
+    {
+        $this->modificationDateMicros = $modificationDateMicros;
+    }
+
+
 }

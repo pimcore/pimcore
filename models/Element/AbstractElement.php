@@ -29,10 +29,25 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
      */
     protected $__dataVersionTimestamp = null;
 
+    /**
+     * @var int
+     */
+    protected $__dataVersionTimestampMicros = null;
+
     protected function updateModificationInfos()
     {
-        $updateTime = time();
+        $updateTime = microtime(true);
+
         $this->setModificationDate($updateTime);
+
+        $parts = explode('.', number_format(
+                $updateTime,
+                6,
+                '.',
+                ''
+            ));
+
+        $this->setModificationDateMicros($parts[1]);
 
         if (!$this->getCreationDate()) {
             $this->setCreationDate($updateTime);
@@ -250,6 +265,22 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
     public function __setDataVersionTimestamp($_dataVersionTimestamp)
     {
         $this->__dataVersionTimestamp = $_dataVersionTimestamp;
+    }
+
+    /**
+     * @return int
+     */
+    public function __getDataVersionTimestampMicros()
+    {
+        return $this->__dataVersionTimestampMicros;
+    }
+
+    /**
+     * @param int $_dataVersionTimestamp
+     */
+    public function __setDataVersionTimestampMicros($_dataVersionTimestampMicros)
+    {
+        $this->__dataVersionTimestampMicros = $_dataVersionTimestampMicros;
     }
 
     /**

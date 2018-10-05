@@ -183,6 +183,11 @@ class AbstractObject extends Model\Element\AbstractElement
     /**
      * @var int
      */
+    public $o_modificationDateMicros;
+
+    /**
+     * @var int
+     */
     public $o_userOwner;
 
     /**
@@ -278,6 +283,7 @@ class AbstractObject extends Model\Element\AbstractElement
         $cacheKey = 'object_' . $id;
 
         if (!$force && \Pimcore\Cache\Runtime::isRegistered($cacheKey)) {
+            /** @var  $object AbstractObject */
             $object = \Pimcore\Cache\Runtime::get($cacheKey);
             if ($object && static::typeMatch($object)) {
                 return $object;
@@ -303,6 +309,7 @@ class AbstractObject extends Model\Element\AbstractElement
                     Service::recursiveResetDirtyMap($object);
 
                     $object->__setDataVersionTimestamp($object->getModificationDate());
+                    $object->__setDataVersionTimestampMicros($object->getModificationDateMicros());
 
                     Cache::save($object, $cacheKey);
                 } else {
@@ -1039,16 +1046,36 @@ class AbstractObject extends Model\Element\AbstractElement
     }
 
     /**
-     * @param int $o_modificationDate
+     * @param int|float $o_modificationDate
      *
      * @return $this
      */
     public function setModificationDate($o_modificationDate)
     {
         $this->o_modificationDate = (int) $o_modificationDate;
-
         return $this;
     }
+
+    /**
+     * @return int
+     */
+    public function getModificationDateMicros(): ?int
+    {
+        return $this->o_modificationDateMicros;
+    }
+
+    /**
+     * @param int $o_modificationDateMicros
+     *
+     * @return $this
+     */
+    public function setModificationDateMicros(?int $o_modificationDateMicros)
+    {
+        $this->o_modificationDateMicros = $o_modificationDateMicros;
+        return $this;
+    }
+
+
 
     /**
      * @param int $o_userOwner
@@ -1366,4 +1393,6 @@ class AbstractObject extends Model\Element\AbstractElement
     {
         self::setDisableDirtyDetection(false);
     }
+
+
 }
