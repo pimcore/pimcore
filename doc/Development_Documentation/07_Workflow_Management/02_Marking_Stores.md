@@ -26,7 +26,7 @@ marking store is used.
 ##### Configuration Example
 ```yaml
    marking_store:
-      type: multiple_state
+      type: single_state
       arguments:
          - workflowState
 ```
