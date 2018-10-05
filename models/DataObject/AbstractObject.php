@@ -65,7 +65,7 @@ class AbstractObject extends Model\Element\AbstractElement
     /**
      * @var bool
      */
-    protected static $disableDirtyDetection = false;
+    protected static $disableDirtyDetection = true;
 
     /**
      * @static
