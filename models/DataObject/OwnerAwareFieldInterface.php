@@ -23,6 +23,7 @@ interface OwnerAwareFieldInterface
      * @param $owner
      * @param string $fieldname
      * @param null $language
+     *
      * @return mixed
      */
     public function setOwner($owner, string $fieldname, $language = null);
