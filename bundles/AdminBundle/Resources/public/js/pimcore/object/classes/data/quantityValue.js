@@ -35,7 +35,7 @@ pimcore.object.classes.data.quantityValue = Class.create(pimcore.object.classes.
     },
 
     getGroup: function () {
-            return "numeric";
+        return "numeric";
     },
 
     getIconClass: function () {
@@ -53,6 +53,12 @@ pimcore.object.classes.data.quantityValue = Class.create(pimcore.object.classes.
                 fieldLabel: t("width"),
                 name: "width",
                 value: this.datax.width
+            },
+            {
+                xtype: "numberfield",
+                fieldLabel: t("unit_width"),
+                name: "unitWidth",
+                value: this.datax.unitWidth
             },
             {
                 xtype: "numberfield",
@@ -107,6 +113,7 @@ pimcore.object.classes.data.quantityValue = Class.create(pimcore.object.classes.
             Ext.apply(this.datax,
                 {
                     width: source.datax.width,
+                    unitWidth: source.datax.unitWidth,
                     height: source.datax.height,
                     validUnits: source.datax.validUnits,
                     defaultUnit: source.datax.defaultUnit,
