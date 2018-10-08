@@ -1061,7 +1061,6 @@ class AssetController extends ElementControllerBase implements EventedController
 
                     try {
                         $asset->save();
-                        $asset->getData();
                         $success = true;
                     } catch (\Exception $e) {
                         if ($e instanceof Element\ValidationException) {
