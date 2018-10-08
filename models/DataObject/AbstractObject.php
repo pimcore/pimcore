@@ -249,6 +249,9 @@ class AbstractObject extends Model\Element\AbstractElement
      */
     private $lastGetSiblingObjectTypes = [];
 
+    /** @var int  */
+    protected $o_versionCount = 0;
+
     /**
      * get possible types
      *
@@ -1366,4 +1369,22 @@ class AbstractObject extends Model\Element\AbstractElement
     {
         self::setDisableDirtyDetection(false);
     }
+
+    /**
+     * @return int
+     */
+    public function getVersionCount(): int
+    {
+        return $this->o_versionCount;
+    }
+
+    /**
+     * @param int $versionCount
+     */
+    public function setVersionCount(int $o_versionCount): void
+    {
+        $this->o_versionCount = $o_versionCount;
+    }
+
+
 }
