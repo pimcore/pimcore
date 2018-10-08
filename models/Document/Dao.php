@@ -523,8 +523,10 @@ class Dao extends Model\Element\Dao
      */
     public function __isBasedOnLatestData()
     {
-        $currentDataTimestamp = $this->db->fetchOne('SELECT modificationDate from documents WHERE id = ?', $this->model->getId());
-        if ($currentDataTimestamp == $this->model->__getDataVersionTimestamp()) {
+        $modificationDate = $this->db->fetchRow('SELECT modificationDate, modificationDateMicros from documents WHERE id = ?', $this->model->getId());
+        $currentDataTimestamp = $modificationDate['modificationDate'];
+        $currentDataTimestampMicros = $modificationDate['modificationDateMicros'];
+        if ($currentDataTimestamp == $this->model->__getDataVersionTimestamp() && $currentDataTimestampMicros == $this->model->__getDataVersionTimestampMicros()) {
             return true;
         }
 

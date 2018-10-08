@@ -101,6 +101,14 @@ class Asset extends Element\AbstractElement
     protected $modificationDate;
 
     /**
+     * Timestamp of modification - microseconds part
+     *
+     * @var int
+     */
+    protected $modificationDateMicros;
+
+
+    /**
      * @var resource
      */
     protected $stream;
@@ -243,6 +251,7 @@ class Asset extends Element\AbstractElement
         $cacheKey = 'asset_' . $id;
 
         if (!$force && \Pimcore\Cache\Runtime::isRegistered($cacheKey)) {
+            /** @var  $asset Asset */
             $asset = \Pimcore\Cache\Runtime::get($cacheKey);
             if ($asset) {
                 return $asset;
@@ -260,6 +269,7 @@ class Asset extends Element\AbstractElement
                 \Pimcore\Cache\Runtime::set($cacheKey, $asset);
                 $asset->getDao()->getById($id);
                 $asset->__setDataVersionTimestamp($asset->getModificationDate());
+                $asset->__setDataVersionTimestampMicros($asset->getModificationDateMicros());
 
                 \Pimcore\Cache::save($asset, $cacheKey);
             } else {
@@ -1856,4 +1866,22 @@ class Asset extends Element\AbstractElement
         // close open streams
         $this->closeStream();
     }
+
+    /**
+     * @return int
+     */
+    public function getModificationDateMicros(): ?int
+    {
+        return $this->modificationDateMicros;
+    }
+
+    /**
+     * @param int $modificationDateMicros
+     */
+    public function setModificationDateMicros(?int $modificationDateMicros): void
+    {
+        $this->modificationDateMicros = $modificationDateMicros;
+    }
+
+
 }
