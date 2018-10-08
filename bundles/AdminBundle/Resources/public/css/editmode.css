@@ -64,7 +64,7 @@
     left: -40px;
     top:-8px;
     width: 25px;
-    z-index: 10;
+    z-index: 1000;
     display: none;
 }
 
