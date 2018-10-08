@@ -143,7 +143,7 @@ abstract class Kernel extends SymfonyKernel
     }
 
     /**
-     * Boots the current kernel.
+     * @inheritdoc
      */
     public function boot()
     {
@@ -164,6 +164,17 @@ abstract class Kernel extends SymfonyKernel
         $this->extensionConfig = new Extension\Config();
 
         parent::boot();
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function shutdown()
+    {
+        // cleanup runtime cache, doctrine, monolog ... to free some memory and avoid locking issues
+        $this->container->get(\Pimcore\Helper\LongRunningHelper::class)->cleanUp();
+
+        return parent::shutdown();
     }
 
     /**
