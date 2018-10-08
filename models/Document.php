@@ -1453,15 +1453,15 @@ class Document extends Element\AbstractElement
      */
     public function getVersionCount(): int
     {
-        return $this->versionCount;
+        return $this->versionCount ? $this->versionCount : 0;
     }
 
     /**
      * @param int $versionCount
      */
-    public function setVersionCount(int $versionCount): void
+    public function setVersionCount(?int $versionCount): void
     {
-        $this->versionCount = $versionCount;
+        $this->versionCount = (int) $versionCount;
     }
 
 
