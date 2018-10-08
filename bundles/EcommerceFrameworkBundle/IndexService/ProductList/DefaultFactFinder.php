@@ -134,7 +134,7 @@ class DefaultFactFinder implements IProductList
      */
     protected $order;
 
-    /**getSearchUrl
+    /**
      * @var string | array
      */
     protected $orderKey;
