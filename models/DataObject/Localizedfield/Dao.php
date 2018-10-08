@@ -17,6 +17,7 @@
 
 namespace Pimcore\Model\DataObject\Localizedfield;
 
+use Pimcore\Db;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
@@ -45,15 +46,15 @@ class Dao extends Model\Dao\AbstractDao
             if ($containerType == 'fieldcollection') {
                 $containerKey = $context['containerKey'];
 
-                return 'object_collection_' . $containerKey . '_localized_' . $this->model->getClass()->getId();
+                return 'object_collection_'.$containerKey.'_localized_'.$this->model->getClass()->getId();
             } elseif ($containerType == 'objectbrick') {
                 $containerKey = $context['containerKey'];
 
-                return 'object_brick_localized_' . $containerKey . '_' . $this->model->getClass()->getId();
+                return 'object_brick_localized_'.$containerKey.'_'.$this->model->getClass()->getId();
             }
         }
 
-        return 'object_localized_data_' . $this->model->getClass()->getId();
+        return 'object_localized_data_'.$this->model->getClass()->getId();
     }
 
     /**
@@ -67,11 +68,11 @@ class Dao extends Model\Dao\AbstractDao
             if ($containerType == 'objectbrick') {
                 $containerKey = $context['containerKey'];
 
-                return 'object_brick_localized_query_' . $containerKey . '_' . $this->model->getClass()->getId();
+                return 'object_brick_localized_query_'.$containerKey.'_'.$this->model->getClass()->getId();
             }
         }
 
-        return 'object_localized_query_' . $this->model->getClass()->getId();
+        return 'object_localized_query_'.$this->model->getClass()->getId();
     }
 
     public function save($params = [])
@@ -81,7 +82,8 @@ class Dao extends Model\Dao\AbstractDao
         // if inside a field collection a delete is not necessary as the fieldcollection deletes all entries anyway
         // see Pimcore\Model\DataObject\Fieldcollection\Dao::delete
 
-        if (DataObject\AbstractObject::isDirtyDetectionDisabled() || !$context['containerType'] == 'fieldcollection') {
+        if (DataObject\AbstractObject::isDirtyDetectionDisabled() || $this->model->hasDirtyLanguages(
+            ) || $context['containerType'] == 'fieldcollection') {
             $this->delete(false);
         }
 
@@ -98,7 +100,9 @@ class Dao extends Model\Dao\AbstractDao
             $container = $this->model->getClass();
         }
 
-        $fieldDefinitions = $container->getFielddefinition('localizedfields')->getFielddefinitions(['suppressEnrichment' => true]);
+        $fieldDefinitions = $container->getFielddefinition('localizedfields')->getFielddefinitions(
+            ['suppressEnrichment' => true]
+        );
 
         /**
          * We temporary enable the runtime cache so we don't have to calculate the tree for each language
@@ -106,15 +110,17 @@ class Dao extends Model\Dao\AbstractDao
          */
         DataObject\Concrete\Dao\InheritanceHelper::setUseRuntimeCache(true);
         foreach ($validLanguages as $language) {
-            if ((!isset($params['newParent']) || !$params['newParent']) && isset($params['isUpdate']) && $params['isUpdate'] && !$this->model->isLanguageDirty($language)) {
+            if ((!isset($params['newParent']) || !$params['newParent']) && isset($params['isUpdate']) && $params['isUpdate'] && !$this->model->isLanguageDirty(
+                    $language
+                )) {
                 continue;
             }
             $inheritedValues = DataObject\AbstractObject::doGetInheritedValues();
             DataObject\AbstractObject::setGetInheritedValues(false);
 
             $insertData = [
-                'ooo_id' => $this->model->getObject()->getId(),
-                'language' => $language
+                'ooo_id'   => $this->model->getObject()->getId(),
+                'language' => $language,
             ];
 
             if ($container instanceof DataObject\Objectbrick\Definition) {
@@ -133,26 +139,34 @@ class Dao extends Model\Dao\AbstractDao
                     }
 
                     $childParams = [
-                        'context' => $context,
-                        'language' => $language
+                        'context'  => $context,
+                        'language' => $language,
                     ];
 
                     $fd->save($this->model, $childParams);
                 } else {
                     if (is_array($fd->getColumnType())) {
-                        $insertDataArray = $fd->getDataForResource($this->model->getLocalizedValue($fd->getName(), $language, true), $object);
+                        $insertDataArray = $fd->getDataForResource(
+                            $this->model->getLocalizedValue($fd->getName(), $language, true),
+                            $object
+                        );
                         $insertData = array_merge($insertData, $insertDataArray);
                     } else {
-                        $insertData[$fd->getName()] = $fd->getDataForResource($this->model->getLocalizedValue($fd->getName(), $language, true), $object);
+                        $insertData[$fd->getName()] = $fd->getDataForResource(
+                            $this->model->getLocalizedValue($fd->getName(), $language, true),
+                            $object
+                        );
                     }
                 }
             }
 
             $storeTable = $this->getTableName();
-            $queryTable = $this->getQueryTableName() . '_' . $language;
+            $queryTable = $this->getQueryTableName().'_'.$language;
 
             try {
-                if ((isset($params['newParent']) && $params['newParent']) || !isset($params['isUpdate']) || !$params['isUpdate'] || $this->model->isLanguageDirty($language)) {
+                if ((isset($params['newParent']) && $params['newParent']) || !isset($params['isUpdate']) || !$params['isUpdate'] || $this->model->isLanguageDirty(
+                        $language
+                    )) {
                     $this->db->insertOrUpdate($storeTable, $insertData);
                 }
             } catch (\Exception $e) {
@@ -171,9 +185,15 @@ class Dao extends Model\Dao\AbstractDao
                 $data['ooo_id'] = $this->model->getObject()->getId();
                 $data['language'] = $language;
 
-                $this->inheritanceHelper = new DataObject\Concrete\Dao\InheritanceHelper($object->getClassId(), 'ooo_id', $storeTable, $queryTable);
+                $this->inheritanceHelper = new DataObject\Concrete\Dao\InheritanceHelper(
+                    $object->getClassId(),
+                    'ooo_id',
+                    $storeTable,
+                    $queryTable
+                );
                 $this->inheritanceHelper->resetFieldsToCheck();
-                $sql = 'SELECT * FROM ' . $queryTable . ' WHERE ooo_id = ' . $object->getId() . " AND language = '" . $language . "'";
+                $sql = 'SELECT * FROM '.$queryTable.' WHERE ooo_id = '.$object->getId(
+                    )." AND language = '".$language."'";
 
                 $oldData = [];
                 try {
@@ -212,7 +232,10 @@ class Dao extends Model\Dao\AbstractDao
                         // we cannot DataObject\AbstractObject::setGetInheritedValues(true); and then $this->model->getLocalizedValue($key, $language)
                         // so we select the data from the parent object using FOR UPDATE, which causes a lock on this row
                         // so the data of the parent cannot be changed while this transaction is on progress
-                        $parentData = $this->db->fetchRow('SELECT * FROM ' . $queryTable . ' WHERE ooo_id = ? AND language = ? FOR UPDATE', [$parentForInheritance->getId(), $language]);
+                        $parentData = $this->db->fetchRow(
+                            'SELECT * FROM '.$queryTable.' WHERE ooo_id = ? AND language = ? FOR UPDATE',
+                            [$parentForInheritance->getId(), $language]
+                        );
                     }
                 }
 
@@ -256,7 +279,7 @@ class Dao extends Model\Dao\AbstractDao
                                         foreach ($insertData as $insertDataKey => $insertDataValue) {
                                             if ($isEmpty && $oldData[$insertDataKey] == $parentData[$insertDataKey]) {
                                                 Logger::debug('do nothing');
-                                            // do nothing, ... value is still empty and parent data is equal to current data in query table
+                                                // do nothing, ... value is still empty and parent data is equal to current data in query table
                                             } elseif ($oldData[$insertDataKey] != $insertDataValue) {
                                                 $doInsert = true;
                                                 break;
@@ -264,7 +287,11 @@ class Dao extends Model\Dao\AbstractDao
                                         }
 
                                         if ($doInsert) {
-                                            $this->inheritanceHelper->addRelationToCheck($key, $fd, array_keys($insertData));
+                                            $this->inheritanceHelper->addRelationToCheck(
+                                                $key,
+                                                $fd,
+                                                array_keys($insertData)
+                                            );
                                         }
                                     } else {
                                         if ($isEmpty && $oldData[$key] == $parentData[$key]) {
@@ -293,12 +320,15 @@ class Dao extends Model\Dao\AbstractDao
                                 }
                             }
                         } else {
-                            Logger::debug('Excluding untouchable query value for object [ ' . $this->model->getId() . " ]  key [ $key ] because it has not been loaded");
+                            Logger::debug(
+                                'Excluding untouchable query value for object [ '.$this->model->getId(
+                                )." ]  key [ $key ] because it has not been loaded"
+                            );
                         }
                     }
                 }
 
-                $queryTable = $this->getQueryTableName() . '_' . $language;
+                $queryTable = $this->getQueryTableName().'_'.$language;
                 $this->db->insertOrUpdate($queryTable, $data);
                 if ($inheritanceEnabled) {
                     $this->inheritanceHelper->doUpdate($object->getId(), true);
@@ -346,7 +376,7 @@ class Dao extends Model\Dao\AbstractDao
                 if (!$container instanceof DataObject\Fieldcollection\Definition || $container instanceof DataObject\Objectbrick\Definition) {
                     $validLanguages = Tool::getValidLanguages();
                     foreach ($validLanguages as $language) {
-                        $queryTable = $this->getQueryTableName() . '_' . $language;
+                        $queryTable = $this->getQueryTableName().'_'.$language;
                         $this->db->delete($queryTable, ['ooo_id' => $id]);
                     }
                 }
@@ -379,7 +409,27 @@ class Dao extends Model\Dao\AbstractDao
                 return;
             }
         }
-        if ($container instanceof  DataObject\Objectbrick\Definition || $container instanceof DataObject\Fieldcollection\Definition) {
+
+        $db = Db::get();
+
+        if ($this->model->allLanguagesAreDirty() || $container instanceof DataObject\Objectbrick\Definition || $container instanceof DataObject\Fieldcollection\Definition) {
+            $dirtyLanguageCondition = "";
+        } else if ($this->model->hasDirtyLanguages()) {
+            $languageList = [];
+            if (is_array($this->model->getDirtyLanguages())) {
+                foreach ($this->model->getDirtyLanguages() as $language => $flag) {
+                    if ($flag) {
+                        $languageList[] = $db->quote($language);
+                    }
+                }
+            }
+
+            $dirtyLanguageCondition = ' AND position IN('.implode(',', $languageList).')';
+
+        }
+
+
+        if ($container instanceof DataObject\Objectbrick\Definition || $container instanceof DataObject\Fieldcollection\Definition) {
             $objectId = $object->getId();
             $index = $context['index'];
             $containerName = $context['fieldname'];
@@ -387,16 +437,17 @@ class Dao extends Model\Dao\AbstractDao
                 throw new \Exception('no container type set');
             }
 
-            $sql = $this->db->quoteInto('src_id = ?', $objectId) . " AND ownertype = 'localizedfield' AND "
-                . $this->db->quoteInto('ownername LIKE ?', '/' . $context['containerType'] . '~' . $containerName . '/' . $index . '/%');
+            $sql = $this->db->quoteInto('src_id = ?', $objectId)." AND ownertype = 'localizedfield' AND "
+                .$this->db->quoteInto(
+                    'ownername LIKE ?',
+                    '/'.$context['containerType'].'~'.$containerName.'/'.$index.'/%'
+                ).$dirtyLanguageCondition;
 
-            $this->db->deleteWhere('object_relations_' . $object->getClassId(), $sql);
+            $this->db->deleteWhere('object_relations_'.$object->getClassId(), $sql);
         } else {
-            $this->db->delete('object_relations_' . $this->model->getObject()->getClassId(), [
-                'ownertype' => 'localizedfield',
-                'ownername' => 'localizedfield',
-                'src_id' => $this->model->getObject()->getId()
-            ]);
+            $sql = 'ownertype = "localizedfield" AND ownername = "localizedfield" and src_id = '.$this->model->getObject(
+                )->getId().$dirtyLanguageCondition;
+            $this->db->deleteWhere('object_relations_'.$this->model->getObject()->getClassId(), $sql);
         }
     }
 
@@ -420,12 +471,15 @@ class Dao extends Model\Dao\AbstractDao
             $container = DataObject\Fieldcollection\Definition::getByKey($containerKey);
 
             $data = $this->db->fetchAll(
-                'SELECT * FROM ' . $this->getTableName()
-                . ' WHERE ooo_id = ? AND language IN (' . implode(',', $validLanguages) . ') AND `fieldname` = ? AND `index` = ?',
+                'SELECT * FROM '.$this->getTableName()
+                .' WHERE ooo_id = ? AND language IN ('.implode(
+                    ',',
+                    $validLanguages
+                ).') AND `fieldname` = ? AND `index` = ?',
                 [
                     $this->model->getObject()->getId(),
                     $fieldname,
-                    $index
+                    $index,
                 ]
             );
         } elseif ($context && $context['containerType'] == 'objectbrick') {
@@ -434,20 +488,28 @@ class Dao extends Model\Dao\AbstractDao
             $fieldname = $context['fieldname'];
 
             $data = $this->db->fetchAll(
-                'SELECT * FROM ' . $this->getTableName()
-                . ' WHERE ooo_id = ? AND language IN (' . implode(',', $validLanguages) . ') AND `fieldname` = ?',
+                'SELECT * FROM '.$this->getTableName()
+                .' WHERE ooo_id = ? AND language IN ('.implode(',', $validLanguages).') AND `fieldname` = ?',
                 [
                     $this->model->getObject()->getId(),
-                    $fieldname
+                    $fieldname,
                 ]
             );
         } else {
             $container = $this->model->getClass();
-            $data = $this->db->fetchAll('SELECT * FROM ' . $this->getTableName() . ' WHERE ooo_id = ? AND language IN (' . implode(',', $validLanguages) . ')', [$this->model->getObject()->getId()]);
+            $data = $this->db->fetchAll(
+                'SELECT * FROM '.$this->getTableName().' WHERE ooo_id = ? AND language IN ('.implode(
+                    ',',
+                    $validLanguages
+                ).')',
+                [$this->model->getObject()->getId()]
+            );
         }
 
         foreach ($data as $row) {
-            foreach ($container->getFielddefinition('localizedfields')->getFielddefinitions(['object' => $object, 'suppressEnrichment' => true]) as $key => $fd) {
+            foreach ($container->getFielddefinition('localizedfields')->getFielddefinitions(
+                ['object' => $object, 'suppressEnrichment' => true]
+            ) as $key => $fd) {
                 if ($fd) {
                     if (method_exists($fd, 'load')) {
                         // datafield has it's own loader
@@ -465,7 +527,7 @@ class Dao extends Model\Dao\AbstractDao
                         if (is_array($fd->getColumnType())) {
                             $multidata = [];
                             foreach ($fd->getColumnType() as $fkey => $fvalue) {
-                                $multidata[$key . '__' . $fkey] = $row[$key . '__' . $fkey];
+                                $multidata[$key.'__'.$fkey] = $row[$key.'__'.$fkey];
                             }
                             $value = $fd->getDataFromResource($multidata);
                             $this->model->setLocalizedValue($key, $value, $row['language'], false);
@@ -488,7 +550,7 @@ class Dao extends Model\Dao\AbstractDao
 
         // init
         $languages = Tool::getValidLanguages();
-        $defaultTable = 'object_query_' . $this->model->getClass()->getId();
+        $defaultTable = 'object_query_'.$this->model->getClass()->getId();
 
         $db = $this->db;
 
@@ -513,27 +575,30 @@ class Dao extends Model\Dao\AbstractDao
             // create query
             $sql = sprintf(
                 'IF(`%s`.`%s` IS NULL OR `%s`.`%s` = "", %s, `%s`.`%s`)',
-                $lang, $field,
-                $lang, $field,
+                $lang,
+                $field,
+                $lang,
+                $field,
                 $fallback,
-                $lang, $field
+                $lang,
+                $field
             );
 
             return $fallback !== 'null'
                 ? $sql
-                : $db->quoteIdentifier($lang) . '.' . $db->quoteIdentifier($field);
+                : $db->quoteIdentifier($lang).'.'.$db->quoteIdentifier($field);
         };
 
         foreach ($languages as $language) {
             try {
-                $tablename = $this->getQueryTableName() . '_' . $language;
+                $tablename = $this->getQueryTableName().'_'.$language;
 
                 // get available columns
                 $viewColumns = array_merge(
-                    $this->db->fetchAll('SHOW COLUMNS FROM `' . $defaultTable . '`'),
+                    $this->db->fetchAll('SHOW COLUMNS FROM `'.$defaultTable.'`'),
                     $this->db->fetchAll('SHOW COLUMNS FROM `objects`')
                 );
-                $localizedColumns = $this->db->fetchAll('SHOW COLUMNS FROM `' . $tablename . '`');
+                $localizedColumns = $this->db->fetchAll('SHOW COLUMNS FROM `'.$tablename.'`');
 
                 // get view fields
                 $viewFields = [];
@@ -547,9 +612,12 @@ class Dao extends Model\Dao\AbstractDao
                 array_unshift($fallbackLanguages, $language);
                 foreach ($localizedColumns as $row) {
                     if ($row['Field'] == 'language' || $row['Field'] == 'ooo_id') {
-                        $localizedFields[] = $db->quoteIdentifier($language) . '.' . $db->quoteIdentifier($row['Field']);
+                        $localizedFields[] = $db->quoteIdentifier($language).'.'.$db->quoteIdentifier($row['Field']);
                     } else {
-                        $localizedFields[] = $getFallbackValue($row['Field'], $fallbackLanguages) . sprintf(' as "%s"', $row['Field']);
+                        $localizedFields[] = $getFallbackValue($row['Field'], $fallbackLanguages).sprintf(
+                                ' as "%s"',
+                                $row['Field']
+                            );
                     }
                 }
 
@@ -590,7 +658,8 @@ QUERY;
 
         $context = $this->model->getContext();
         if ($context && $context['containerType'] == 'fieldcollection' || $context['containerType'] == 'objectbrick') {
-            $this->db->query('CREATE TABLE IF NOT EXISTS `' . $table . "` (
+            $this->db->query(
+                'CREATE TABLE IF NOT EXISTS `'.$table."` (
               `ooo_id` int(11) NOT NULL default '0',
               `index` INT(11) NOT NULL DEFAULT '0',
               `fieldname` VARCHAR(190) NOT NULL DEFAULT '',
@@ -600,15 +669,18 @@ QUERY;
               INDEX `index` (`index`),
               INDEX `fieldname` (`fieldname`),
               INDEX `language` (`language`)
-            ) DEFAULT CHARSET=utf8mb4;");
+            ) DEFAULT CHARSET=utf8mb4;"
+            );
         } else {
-            $this->db->query('CREATE TABLE IF NOT EXISTS `' . $table . "` (
+            $this->db->query(
+                'CREATE TABLE IF NOT EXISTS `'.$table."` (
               `ooo_id` int(11) NOT NULL default '0',
               `language` varchar(10) NOT NULL DEFAULT '',
               PRIMARY KEY (`ooo_id`,`language`),
               INDEX `ooo_id` (`ooo_id`),
               INDEX `language` (`language`)
-            ) DEFAULT CHARSET=utf8mb4;");
+            ) DEFAULT CHARSET=utf8mb4;"
+            );
         }
 
         $existingColumns = $this->getValidTableColumns($table, false); // no caching of table definition
@@ -637,8 +709,8 @@ QUERY;
                 if (is_array($value->getColumnType())) {
                     // if a datafield requires more than one field
                     foreach ($value->getColumnType() as $fkey => $fvalue) {
-                        $this->addModifyColumn($table, $key . '__' . $fkey, $fvalue, '', 'NULL');
-                        $protectedColumns[] = $key . '__' . $fkey;
+                        $this->addModifyColumn($table, $key.'__'.$fkey, $fvalue, '', 'NULL');
+                        $protectedColumns[] = $key.'__'.$fkey;
                     }
                 } else {
                     if ($value->getColumnType()) {
@@ -658,15 +730,17 @@ QUERY;
         if ($container instanceof DataObject\ClassDefinition || $container instanceof DataObject\Objectbrick\Definition) {
             foreach ($validLanguages as &$language) {
                 $queryTable = $this->getQueryTableName();
-                $queryTable .= '_' . $language;
+                $queryTable .= '_'.$language;
 
-                $this->db->query('CREATE TABLE IF NOT EXISTS `' . $queryTable . "` (
+                $this->db->query(
+                    'CREATE TABLE IF NOT EXISTS `'.$queryTable."` (
                       `ooo_id` int(11) NOT NULL default '0',
                       `language` varchar(10) NOT NULL DEFAULT '',
                       PRIMARY KEY (`ooo_id`,`language`),
                       INDEX `ooo_id` (`ooo_id`),
                       INDEX `language` (`language`)
-                    ) DEFAULT CHARSET=utf8mb4;");
+                    ) DEFAULT CHARSET=utf8mb4;"
+                );
 
                 // create object table if not exists
                 $protectedColumns = ['ooo_id', 'language'];
@@ -679,9 +753,15 @@ QUERY;
                 if ($container instanceof DataObject\Objectbrick\Definition) {
                     $containerKey = $context['containerKey'];
                     $container = DataObject\Objectbrick\Definition::getByKey($containerKey);
-                    $fieldDefinitions = $container->getFielddefinition('localizedfields', ['suppressEnrichment' => true])->getFielddefinitions(['suppressEnrichment' => true]);
+                    $fieldDefinitions = $container->getFielddefinition(
+                        'localizedfields',
+                        ['suppressEnrichment' => true]
+                    )->getFielddefinitions(['suppressEnrichment' => true]);
                 } else {
-                    $fieldDefinitions = $this->model->getClass()->getFielddefinition('localizedfields', ['suppressEnrichment' => true])->getFielddefinitions(['suppressEnrichment' => true]);
+                    $fieldDefinitions = $this->model->getClass()->getFielddefinition(
+                        'localizedfields',
+                        ['suppressEnrichment' => true]
+                    )->getFielddefinitions(['suppressEnrichment' => true]);
                 }
 
                 // add non existing columns in the table
@@ -693,8 +773,8 @@ QUERY;
                             // if a datafield requires more than one column in the query table
                             if (is_array($value->getQueryColumnType())) {
                                 foreach ($value->getQueryColumnType() as $fkey => $fvalue) {
-                                    $this->addModifyColumn($queryTable, $key . '__' . $fkey, $fvalue, '', 'NULL');
-                                    $protectedColumns[] = $key . '__' . $fkey;
+                                    $this->addModifyColumn($queryTable, $key.'__'.$fkey, $fvalue, '', 'NULL');
+                                    $protectedColumns[] = $key.'__'.$fkey;
                                 }
                             }
 

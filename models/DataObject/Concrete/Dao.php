@@ -17,6 +17,7 @@
 
 namespace Pimcore\Model\DataObject\Concrete;
 
+use Pimcore\Db;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
@@ -175,6 +176,8 @@ class Dao extends Model\DataObject\AbstractObject\Dao
         // get fields which shouldn't be updated
         $fieldDefinitions = $this->model->getClass()->getFieldDefinitions();
         $untouchable = [];
+        $db = Db::get();
+
         foreach ($fieldDefinitions as $key => $fd) {
             if (method_exists($fd, 'getLazyLoading') && $fd->getLazyLoading()) {
                 if (!in_array($key, $this->model->getLazyLoadedFields())) {
@@ -195,13 +198,16 @@ class Dao extends Model\DataObject\AbstractObject\Dao
         // empty relation table except the untouchable fields (eg. lazy loading fields)
         if (count($untouchable) > 0) {
             $untouchables = "'" . implode("','", $untouchable) . "'";
-            $this->db->deleteWhere('object_relations_' . $this->model->getClassId(), $this->db->quoteInto('src_id = ? AND fieldname not in (' . $untouchables . ") AND ownertype = 'object'", $this->model->getId()));
+            $condition = $this->db->quoteInto('src_id = ? AND fieldname not in (' . $untouchables . ") AND ownertype = 'object'", $this->model->getId());
         } else {
-            $this->db->delete('object_relations_' . $this->model->getClassId(), [
-                'src_id' => $this->model->getId(),
-                'ownertype' => 'object'
-            ]);
+            $condition = 'src_id = ' . $db->quote($this->model->getId()) . ' AND ownertype = "object"';
         }
+
+        if (!DataObject\AbstractObject::isDirtyDetectionDisabled()) {
+            $condition = '(' . $condition . ' AND ownerType != "localizedfield" AND ownerType != "fieldcollection")';
+        }
+
+        $this->db->deleteWhere('object_relations_' . $this->model->getClassId(), $condition);
 
         $inheritedValues = DataObject\AbstractObject::doGetInheritedValues();
         DataObject\AbstractObject::setGetInheritedValues(false);
