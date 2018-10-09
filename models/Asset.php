@@ -193,6 +193,9 @@ class Asset extends Element\AbstractElement
      */
     protected $_dataChanged = false;
 
+    /** @var int */
+    protected $versionCount;
+
     /**
      *
      * @return array
@@ -1856,4 +1859,25 @@ class Asset extends Element\AbstractElement
         // close open streams
         $this->closeStream();
     }
+
+    /**
+     * @return int
+     */
+    public function getVersionCount(): int
+    {
+        return $this->versionCount ? $this->versionCount : 0;
+    }
+
+    /**
+     * @param int|null $versionCount
+     * @return Asset
+     */
+    public function setVersionCount(?int $versionCount): self
+    {
+        $this->versionCount = (int) $versionCount;
+
+        return $this;
+    }
+
+
 }

@@ -191,6 +191,9 @@ class Document extends Element\AbstractElement
      */
     protected $locked = null;
 
+    /** @var int */
+    protected $versionCount;
+
     /**
      * get possible types
      *
@@ -1444,4 +1447,25 @@ class Document extends Element\AbstractElement
     {
         $this->userPermissions = $userPermissions;
     }
+
+    /**
+     * @return int
+     */
+    public function getVersionCount(): int
+    {
+        return $this->versionCount ? $this->versionCount : 0;
+    }
+
+    /**
+     * @param int|null $versionCount
+     * @return Document
+     */
+    public function setVersionCount(?int $versionCount): self
+    {
+        $this->versionCount = (int) $versionCount;
+
+        return $this;
+    }
+
+
 }
