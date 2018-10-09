@@ -1869,11 +1869,14 @@ class Asset extends Element\AbstractElement
     }
 
     /**
-     * @param int $versionCount
+     * @param int|null $versionCount
+     * @return Asset
      */
-    public function setVersionCount(?int $versionCount): void
+    public function setVersionCount(?int $versionCount): self
     {
         $this->versionCount = (int) $versionCount;
+
+        return $this;
     }
 
 

@@ -1379,12 +1379,13 @@ class AbstractObject extends Model\Element\AbstractElement
     }
 
     /**
-     * @param int $versionCount
+     * @param int|null $o_versionCount
+     * @return AbstractObject
      */
-    public function setVersionCount(?int $o_versionCount): void
+    public function setVersionCount(?int $o_versionCount): self
     {
         $this->o_versionCount = (int) $o_versionCount;
+
+        return $this;
     }
-
-
 }
