@@ -6,9 +6,6 @@ use Doctrine\DBAL\Schema\Schema;
 use Pimcore\Db;
 use Pimcore\Migrations\Migration\AbstractPimcoreMigration;
 
-/**
- * Auto-generated Migration: Please modify to your needs!
- */
 class Version20181008132414 extends AbstractPimcoreMigration
 {
     public function doesSqlMigrations(): bool
