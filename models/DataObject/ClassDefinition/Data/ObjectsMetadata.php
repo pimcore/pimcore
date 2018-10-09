@@ -189,7 +189,7 @@ class ObjectsMetadata extends Model\DataObject\ClassDefinition\Data\Objects
             foreach ($data as $metaObject) {
                 $object = $metaObject->getObject();
                 if ($object instanceof DataObject\Concrete) {
-                    $columnData = DataObject\Service::gridObjectData($object, $gridFields);
+                    $columnData = DataObject\Service::gridObjectData($object, $gridFields, null, ['purpose' => 'editmode']);
                     foreach ($this->getColumns() as $c) {
                         $getter = 'get' . ucfirst($c['key']);
                         $columnData[$c['key']] = $metaObject->$getter();
@@ -936,6 +936,10 @@ class ObjectsMetadata extends Model\DataObject\ClassDefinition\Data\Objects
                 $this->visibleFieldDefinitions[$field]['noteditable'] = true;
 
                 if ($fd instanceof DataObject\ClassDefinition\Data\Select) {
+                    if ($fd->getOptionsProviderClass()) {
+                        $this->visibleFieldDefinitions[$field]['optionsProviderClass'] = $fd->getOptionsProviderClass();
+                    }
+
                     $this->visibleFieldDefinitions[$field]['options'] = $fd->getOptions();
                 }
             }

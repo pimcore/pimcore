@@ -253,7 +253,7 @@ class Service extends Model\Element\Service
      *
      * @return array
      */
-    public static function gridObjectData($object, $fields = null, $requestedLanguage = null)
+    public static function gridObjectData($object, $fields = null, $requestedLanguage = null, $params = [])
     {
         $data = Element\Service::gridElementData($object);
 
@@ -379,7 +379,11 @@ class Service extends Model\Element\Service
                                     $context['outerFieldname'] = $key;
                                 }
 
-                                $params = ['context' => $context, 'purpose' => 'gridview'];
+                                $params = array_merge($params, ['context' => $context]);
+                                if (!isset($params["purpose"])) {
+                                    $params['purpose'] = 'gridview';
+                                }
+
                                 $tempData = $def->getDataForGrid($valueObject->value, $object, $params);
 
                                 if ($def instanceof ClassDefinition\Data\Localizedfields) {
@@ -389,6 +393,9 @@ class Service extends Model\Element\Service
                                     }
                                 } else {
                                     $data[$dataKey] = $tempData;
+                                    if ($def instanceof Model\DataObject\ClassDefinition\Data\Select && $def->getOptionsProviderClass()) {
+                                        $data[$dataKey . "%options"] = $def->getOptions();
+                                    }
                                 }
                             } else {
                                 $data[$dataKey] = $valueObject->value;
