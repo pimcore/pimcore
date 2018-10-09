@@ -15,7 +15,6 @@ pimcore.registerNS("pimcore.settings.gdpr.dataproviders.sentMail");
 pimcore.settings.gdpr.dataproviders.sentMail = Class.create({
 
     searchParams: [],
-    user: null,
 
     initialize: function (searchParams) {
         this.searchParams = searchParams;
