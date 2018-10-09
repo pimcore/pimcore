@@ -102,7 +102,6 @@ class Processor
         $tmpData = [
             'search' => [],
             'replace' => [],
-            'placeholder' => []
         ];
 
         // get initial document from request (requested document, if it was a "document" request)
@@ -132,16 +131,24 @@ class Processor
         }
 
         $data = $tmpData;
-
-        $data['placeholder'] = [];
-        for ($i = 0; $i < count($data['search']); $i++) {
-            $data['placeholder'][] = '%%' . uniqid($i, true) . '%%';
-        }
+        $data['count'] = array_fill(0, count($data['search']), 0);
 
         foreach ($es as $e) {
-            if (!in_array((string)$e->parent()->tag, $this->blockedTags)) {
-                $e->innertext = preg_replace($data['search'], $data['placeholder'], $e->innertext, $options['limit']);
-                $e->innertext = str_replace($data['placeholder'], $data['replace'], $e->innertext);
+            $text = $e->innertext;
+            if (!in_array((string)$e->parent()->tag, $this->blockedTags) && strlen(trim($text))) {
+                if($options['limit'] < 0) {
+                    $text = preg_replace($data['search'], $data['replace'], $text);
+                } else {
+                    foreach($data['search'] as $index => $search) {
+                        if($data['count'][$index] < $options['limit']) {
+                            $limit = $options['limit'] - $data['count'][$index];
+                            $text = preg_replace($search, $data['replace'][$index], $text, $limit, $count);
+                            $data['count'][$index] += $count;
+                        }
+                    }
+                }
+
+                $e->innertext = $text;
             }
         }
 
