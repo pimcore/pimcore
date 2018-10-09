@@ -746,10 +746,7 @@ class ObjectsMetadata extends Model\DataObject\ClassDefinition\Data\Objects
          */
         if (is_array($visibleFields) && count($visibleFields)) {
             $visibleFields = implode(',', $visibleFields);
-        } else {
-            $visibleFields = '';
         }
-
         $this->visibleFields = $visibleFields;
 
         return $this;
