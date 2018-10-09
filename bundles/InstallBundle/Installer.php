@@ -438,6 +438,7 @@ class Installer
         }
 
         $filesystem->rename($cacheDir, $oldCacheDir);
+        $filesystem->mkdir($cacheDir);
         $filesystem->remove($oldCacheDir);
     }
 
