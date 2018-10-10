@@ -31,6 +31,7 @@ pimcore.object.variantsTab = Class.create(pimcore.object.helpers.gridTabAbstract
         var klassIndex = classStore.findExact("text", this.selectedClass);
         var klass = classStore.getAt(klassIndex);
         this.classId = klass.id;
+        this.object = this.element;
 
         if (this.layout == null) {
             this.getTableDescription()
@@ -192,7 +193,8 @@ pimcore.object.variantsTab = Class.create(pimcore.object.helpers.gridTabAbstract
             iconCls: "pimcore_icon_publish",
             hidden: hideSaveColumnConfig,
             handler: function () {
-                pimcore.helpers.saveColumnConfig(this.element.id, this.classId, this.getGridConfig(), this.searchType, this.saveColumnConfigButton);
+                var asCopy = !(this.settings.gridConfigId > 0);
+                this.saveConfig(asCopy)
             }.bind(this)
         });
 
