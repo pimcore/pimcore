@@ -22,6 +22,11 @@ use Pimcore\Model\Tool\Lock;
 class Job
 {
     /**
+     * By default, 24h expire timestamp.
+     */
+    CONST EXPIRE_TIMESTAMP = 86400;
+
+    /**
      * @var string
      */
     private $id;
@@ -37,25 +42,32 @@ class Job
     private $arguments = [];
 
     /**
+     * @var int
+     */
+    private $expire = self::EXPIRE_TIMESTAMP;
+
+    /**
      * @param string $id
      * @param mixed $callable
      * @param array|null $arguments
+     * @param int $expire
      */
-    public function __construct(string $id, $callable, array $arguments = [])
+    public function __construct(string $id, $callable, array $arguments = [], int $expire = self::EXPIRE_TIMESTAMP)
     {
         $this->id = $id;
         $this->callable = $callable;
         $this->arguments = $arguments;
+        $this->expire = $expire;
     }
 
-    public static function fromMethodCall(string $id, $object, string $method, array $arguments = []): Job
+    public static function fromMethodCall(string $id, $object, string $method, array $arguments = [], int $expire = self::EXPIRE_TIMESTAMP): Job
     {
-        return new static($id, [$object, $method], $arguments);
+        return new static($id, [$object, $method], $arguments, $expire);
     }
 
-    public static function fromClosure(string $id, \Closure $closure, array $arguments = []): Job
+    public static function fromClosure(string $id, \Closure $closure, array $arguments = [], int $expire = self::EXPIRE_TIMESTAMP): Job
     {
-        return new static($id, $closure, $arguments);
+        return new static($id, $closure, $arguments, $expire);
     }
 
     public function getId(): string
@@ -80,7 +92,7 @@ class Job
 
     public function isLocked(): bool
     {
-        return Lock::isLocked($this->getLockKey(), 86400); // 24h expire
+        return Lock::isLocked($this->getLockKey(), $this->expire);
     }
 
     public function execute()
