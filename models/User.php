@@ -868,6 +868,7 @@ class User extends User\UserRole
                 [
                     'action' => 'glossary',
                     'key' => ord('G'),
+                    'shift' => true,
                     'alt' => true
                 ],
                 [
