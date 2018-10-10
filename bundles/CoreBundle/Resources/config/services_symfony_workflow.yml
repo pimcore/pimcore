@@ -1,0 +1,39 @@
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: false
+
+    workflow.abstract:
+        class: Symfony\Component\Workflow\Workflow
+        abstract: true
+        public: true
+        arguments:
+            - ~
+            - null
+            - '@event_dispatcher'
+            - ~
+    state_machine.abstract:
+        class: Symfony\Component\Workflow\StateMachine
+        abstract: true
+        public: true
+        arguments:
+            - ~
+            - null
+            - '@event_dispatcher'
+            - ~
+    workflow.marking_store.multiple_state:
+        class: Symfony\Component\Workflow\MarkingStore\MultipleStateMarkingStore
+        abstract: true
+    workflow.marking_store.single_state:
+        class: Symfony\Component\Workflow\MarkingStore\SingleStateMarkingStore
+        abstract: true
+
+    workflow.registry:
+        class: Symfony\Component\Workflow\Registry
+
+    Symfony\Component\Workflow\Registry:
+        alias: workflow.registry
+
+    workflow.security.expression_language:
+        class: Symfony\Component\Workflow\EventListener\ExpressionLanguage

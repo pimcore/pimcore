@@ -31,6 +31,7 @@ use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\TargetingOverrideHand
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\TemplateVarsProviderPass;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\TemplatingEngineAwareHelperPass;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\WebDebugToolbarListenerPass;
+use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\WorkflowPass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Extension\ExtensionInterface;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
@@ -80,5 +81,6 @@ class PimcoreCoreBundle extends Bundle
         $container->addCompilerPass(new MonologPsrLogMessageProcessorPass());
         $container->addCompilerPass(new DebugStopwatchPass());
         $container->addCompilerPass(new LongRunningHelperPass());
+        $container->addCompilerPass(new WorkflowPass());
     }
 }
