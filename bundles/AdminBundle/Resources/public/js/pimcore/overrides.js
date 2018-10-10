@@ -488,7 +488,7 @@ Ext.define('pimcore.toolbar.Paging', {
             width: 160,
             border: true,
             cls: "pimcore_pagingtoolbar_container_filter",
-            fieldStyle: "padding: 10px;",
+            fieldStyle: "padding: 0 10px 0 10px;",
             height: 18,
             value: node.filter ? node.filter : "",
             enableKeyEvents: true,
