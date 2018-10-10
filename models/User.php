@@ -868,11 +868,13 @@ class User extends User\UserRole
                 [
                     'action' => 'glossary',
                     'key' => ord('G'),
+                    'shift' => true,
                     'alt' => true
                 ],
                 [
                     'action' => 'redirects',
                     'key' => ord('R'),
+                    'ctrl' => false,
                     'alt' => true
                 ],
                 [
@@ -956,11 +958,13 @@ class User extends User\UserRole
                 [
                     'action' => 'clearAllCaches',
                     'key' => ord('Q'),
+                    'ctrl' => false,
                     'alt' => true
                 ],
                 [
                     'action' => 'clearDataCache',
                     'key' => ord('C'),
+                    'ctrl' => false,
                     'alt' => true
                 ],
                 [
