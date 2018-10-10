@@ -914,7 +914,7 @@ class Block extends Model\DataObject\ClassDefinition\Data
             if (!method_exists($this, 'getLazyLoading') or !$this->getLazyLoading() or (array_key_exists('force', $params) && $params['force'])) {
                 $data = null;
 
-                $query = 'select ' . $field . ' from object_store_' . $container->getClassId() . ' where oo_id  = ' . $container->getId();
+                $query = 'select ' . $db->quoteIdentifier($field) . ' from object_store_' . $container->getClassId() . ' where oo_id  = ' . $container->getId();
                 $data = $db->fetchOne($query);
                 $data = $this->getDataFromResource($data, $container, $params);
             } else {
