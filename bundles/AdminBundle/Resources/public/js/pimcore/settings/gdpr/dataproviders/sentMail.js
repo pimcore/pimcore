@@ -23,7 +23,8 @@ pimcore.settings.gdpr.dataproviders.sentMail = Class.create({
 
     getPanel: function () {
 
-        if(!this.panel) {
+        var user = pimcore.globalmanager.get("user");
+        if(!this.panel && user && user.isAllowed("emails")) {
 
             this.panel = new Ext.Panel({
                 title: t("gdpr_dataSource_sentMail"),
