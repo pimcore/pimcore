@@ -284,7 +284,7 @@ class Dao extends Model\Element\Dao
      */
     public function getVersions()
     {
-        $versionIds = $this->db->fetchAll("SELECT id FROM versions WHERE cid = ? AND ctype='asset' ORDER BY `id` DESC", [$this->model->getId()]);
+        $versionIds = $this->db->fetchAll("SELECT id FROM versions WHERE cid = ? AND ctype='asset' ORDER BY `id` ASC", [$this->model->getId()]);
 
         $versions = [];
         foreach ($versionIds as $versionId) {

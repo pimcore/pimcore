@@ -44,7 +44,7 @@ pimcore.asset.versions = Class.create({
             this.store = new Ext.data.Store({
                 model: modelName,
                 sorters: [{
-                    property: 'date',
+                    property: 'id',
                     direction: 'DESC'
                 }],
                 proxy: {
@@ -74,8 +74,11 @@ pimcore.asset.versions = Class.create({
                 store: this.store,
                 plugins: [this.cellEditing],
                 columns: [
-                    {text: t("published"), width:50, sortable: false, dataIndex: 'date', renderer: function(d, metaData) {
-                        if (d == this.asset.data.modificationDate) {
+                    {text: t("published"), width:50, sortable: false, dataIndex: 'id', renderer: function(d, metaData, cellValues) {
+                        var d = cellValues.get('date');
+                        var versionCount = cellValues.get('versionCount');
+                        var index = cellValues.get('index');
+                        if (index === 0 && d == this.asset.data.versionDate && versionCount == this.asset.data.versionCount) {
                             metaData.tdCls = "pimcore_icon_publish";
                         }
                         return "";

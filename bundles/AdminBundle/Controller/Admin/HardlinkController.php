@@ -70,6 +70,7 @@ class HardlinkController extends DocumentControllerBase
         ]);
         \Pimcore::getEventDispatcher()->dispatch(AdminEvents::DOCUMENT_GET_PRE_SEND_DATA, $event);
         $data = $event->getArgument('data');
+        $data["versionDate"] = $link->getModificationDate();
 
         if ($link->isAllowed('view')) {
             return $this->adminJson($data);
@@ -108,7 +109,9 @@ class HardlinkController extends DocumentControllerBase
                 if (($request->get('task') == 'publish' && $link->isAllowed('publish')) || ($request->get('task') == 'unpublish' && $link->isAllowed('unpublish'))) {
                     $link->save();
 
-                    return $this->adminJson(['success' => true]);
+                    return $this->adminJson(['success' => true,
+                                             'data' => ['versionDate' => $link->getModificationDate(),
+                                                        'versionCount' => $link->getVersionCount()]]);
                 }
             }
         } catch (\Exception $e) {
