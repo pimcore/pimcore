@@ -136,11 +136,11 @@ class Processor
         foreach ($es as $e) {
             $text = $e->innertext;
             if (!in_array((string)$e->parent()->tag, $this->blockedTags) && strlen(trim($text))) {
-                if($options['limit'] < 0) {
+                if ($options['limit'] < 0) {
                     $text = preg_replace($data['search'], $data['replace'], $text);
                 } else {
-                    foreach($data['search'] as $index => $search) {
-                        if($data['count'][$index] < $options['limit']) {
+                    foreach ($data['search'] as $index => $search) {
+                        if ($data['count'][$index] < $options['limit']) {
                             $limit = $options['limit'] - $data['count'][$index];
                             $text = preg_replace($search, $data['replace'][$index], $text, $limit, $count);
                             $data['count'][$index] += $count;

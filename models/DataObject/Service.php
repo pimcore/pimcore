@@ -380,7 +380,7 @@ class Service extends Model\Element\Service
                                 }
 
                                 $params = array_merge($params, ['context' => $context]);
-                                if (!isset($params["purpose"])) {
+                                if (!isset($params['purpose'])) {
                                     $params['purpose'] = 'gridview';
                                 }
 
@@ -394,7 +394,7 @@ class Service extends Model\Element\Service
                                 } else {
                                     $data[$dataKey] = $tempData;
                                     if ($def instanceof Model\DataObject\ClassDefinition\Data\Select && $def->getOptionsProviderClass()) {
-                                        $data[$dataKey . "%options"] = $def->getOptions();
+                                        $data[$dataKey . '%options'] = $def->getOptions();
                                     }
                                 }
                             } else {

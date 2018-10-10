@@ -523,7 +523,7 @@ class Dao extends Model\Element\Dao
      */
     public function __isBasedOnLatestData()
     {
-        $data = $this->db->fetchRow('SELECT modificationDate,versionCount from documents WHERE id = ?', $this->model->getId());;
+        $data = $this->db->fetchRow('SELECT modificationDate,versionCount from documents WHERE id = ?', $this->model->getId());
         if ($data['modificationDate'] == $this->model->__getDataVersionTimestamp() && $data['versionCount'] == $this->model->getVersionCount()) {
             return true;
         }

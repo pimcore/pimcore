@@ -249,7 +249,7 @@ class AbstractObject extends Model\Element\AbstractElement
      */
     private $lastGetSiblingObjectTypes = [];
 
-    /** @var int  */
+    /** @var int */
     protected $o_versionCount = 0;
 
     /**
@@ -1380,6 +1380,7 @@ class AbstractObject extends Model\Element\AbstractElement
 
     /**
      * @param int|null $o_versionCount
+     *
      * @return AbstractObject
      */
     public function setVersionCount(?int $o_versionCount): self

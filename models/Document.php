@@ -1458,6 +1458,7 @@ class Document extends Element\AbstractElement
 
     /**
      * @param int|null $versionCount
+     *
      * @return Document
      */
     public function setVersionCount(?int $versionCount): self
@@ -1466,6 +1467,4 @@ class Document extends Element\AbstractElement
 
         return $this;
     }
-
-
 }

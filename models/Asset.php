@@ -1870,6 +1870,7 @@ class Asset extends Element\AbstractElement
 
     /**
      * @param int|null $versionCount
+     *
      * @return Asset
      */
     public function setVersionCount(?int $versionCount): self
@@ -1878,6 +1879,4 @@ class Asset extends Element\AbstractElement
 
         return $this;
     }
-
-
 }
