@@ -217,6 +217,16 @@ class Bootstrap
         $resolveConstant('PIMCORE_PHP_ERROR_LOG', PIMCORE_LOG_DIRECTORY . '/php.log');
         $resolveConstant('PIMCORE_KERNEL_CLASS', '\AppKernel');
         $resolveConstant('PIMCORE_SYMFONY_DEFAULT_BUNDLE', 'AppBundle');
+
+        $kernelDebug = $resolveConstant('PIMCORE_KERNEL_DEBUG', null, false);
+        if($kernelDebug === 'true') {
+            $kernelDebug = true;
+        } elseif ($kernelDebug === 'false') {
+            $kernelDebug = false;
+        } else {
+            $kernelDebug = null;
+        }
+        define('PIMCORE_KERNEL_DEBUG', $kernelDebug);
     }
 
     public static function autoload()
@@ -280,6 +290,10 @@ class Bootstrap
     {
         $environment = Config::getEnvironment();
         $debug = Config::getEnvironmentConfig()->activatesKernelDebugMode($environment);
+
+        if(PIMCORE_KERNEL_DEBUG !== null) {
+            $debug = PIMCORE_KERNEL_DEBUG;
+        }
 
         if ($debug) {
             Debug::enable();
