@@ -80,17 +80,17 @@ class ClassDefinition extends Model\AbstractModel
      *
      * @var string
      */
-    public $listingParentClass;
+    public $listingParentClass = '';
 
     /**
      * @var bool
      */
-    public $useTraits;
+    public $useTraits = false;
 
     /**
      * @var bool
      */
-    public $listingUseTraits;
+    public $listingUseTraits = false;
 
     /**
      * @var bool
@@ -135,7 +135,7 @@ class ClassDefinition extends Model\AbstractModel
     /**
      * @var bool
      */
-    public $showAppLoggerTab;
+    public $showAppLoggerTab = false;
 
     /**
      * @var string
@@ -979,7 +979,7 @@ class ClassDefinition extends Model\AbstractModel
      */
     public function setUseTraits($useTraits)
     {
-        $this->useTraits = $useTraits ? $useTraits : null;
+        $this->useTraits = (bool) $useTraits;
 
         return $this;
     }
@@ -999,7 +999,7 @@ class ClassDefinition extends Model\AbstractModel
      */
     public function setListingUseTraits($listingUseTraits)
     {
-        $this->listingUseTraits = $listingUseTraits ? true : null;
+        $this->listingUseTraits = (bool) $listingUseTraits;
 
         return $this;
     }
@@ -1039,7 +1039,7 @@ class ClassDefinition extends Model\AbstractModel
      */
     public function setListingParentClass($listingParentClass)
     {
-        $this->listingParentClass = $listingParentClass ? $listingParentClass : null;
+        $this->listingParentClass = (string) $listingParentClass;
 
         return $this;
     }
@@ -1051,7 +1051,7 @@ class ClassDefinition extends Model\AbstractModel
      */
     public function setAllowInherit($allowInherit)
     {
-        $this->allowInherit = (bool)$allowInherit ? true : null;
+        $this->allowInherit = (bool)$allowInherit;
 
         return $this;
     }
@@ -1171,7 +1171,7 @@ class ClassDefinition extends Model\AbstractModel
      */
     public function setShowVariants($showVariants)
     {
-        $this->showVariants = (bool)$showVariants ? true : null;
+        $this->showVariants = (bool)$showVariants;
     }
 
     /**
@@ -1195,7 +1195,7 @@ class ClassDefinition extends Model\AbstractModel
      */
     public function setShowAppLoggerTab($showAppLoggerTab)
     {
-        $this->showAppLoggerTab = (bool) $showAppLoggerTab ? true : null;
+        $this->showAppLoggerTab = (bool) $showAppLoggerTab;
     }
 
     /**

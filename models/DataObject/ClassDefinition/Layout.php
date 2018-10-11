@@ -56,12 +56,12 @@ class Layout
     /**
      * @var bool
      */
-    public $collapsible;
+    public $collapsible = false;
 
     /**
      * @var bool
      */
-    public $collapsed;
+    public $collapsed = false;
 
     /**
      * @var string
@@ -86,7 +86,7 @@ class Layout
     /**
      * @var bool
      */
-    public $locked;
+    public $locked = false;
 
     /**
      * @return string
@@ -239,7 +239,7 @@ class Layout
      */
     public function setCollapsible($collapsible)
     {
-        $this->collapsible = (bool) $collapsible ? true : null;
+        $this->collapsible = (bool) $collapsible;
 
         $this->filterCollapsibleValue();
 
@@ -354,7 +354,7 @@ class Layout
      */
     public function setLocked($locked)
     {
-        $this->locked = (bool) $locked ? true : null;
+        $this->locked = (bool) $locked;
 
         return $this;
     }
@@ -366,7 +366,7 @@ class Layout
      */
     public function setCollapsed($collapsed)
     {
-        $this->collapsed = $collapsed ? true : null;
+        $this->collapsed = (bool) $collapsed;
 
         $this->filterCollapsibleValue();
 
