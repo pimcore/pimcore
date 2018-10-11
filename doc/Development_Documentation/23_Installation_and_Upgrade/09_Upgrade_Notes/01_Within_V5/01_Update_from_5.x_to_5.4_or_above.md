@@ -119,6 +119,7 @@ Additionally we have to update to files in the project manually, use the followi
 wget https://raw.githubusercontent.com/pimcore/skeleton/master/bin/console -O bin/console
 chmod 0755 bin/console
 wget https://raw.githubusercontent.com/pimcore/skeleton/master/web/app.php -O web/app.php
+wget https://raw.githubusercontent.com/pimcore/demo-basic/master/app/AppKernel.php -O app/AppKernel.php
 ```
 
 
