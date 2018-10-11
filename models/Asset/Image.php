@@ -40,8 +40,12 @@ class Image extends Model\Asset
      */
     protected function update($params = [])
     {
+        $imageDimensionsCalculated = null;
 
         if ($this->getDataChanged() || !$this->getCustomSetting('imageDimensionsCalculated')) {
+            // getDimensions() might fail, so assume `false` first
+            $imageDimensionsCalculated = false;
+
             try {
                 // save the current data into a tmp file to calculate the dimensions, otherwise updates wouldn't be updated
                 // because the file is written in parent::update();
@@ -52,6 +56,7 @@ class Image extends Model\Asset
                 if ($dimensions && $dimensions['width']) {
                     $this->setCustomSetting('imageWidth', $dimensions['width']);
                     $this->setCustomSetting('imageHeight', $dimensions['height']);
+                    $imageDimensionsCalculated = true;
                 }
             } catch (\Exception $e) {
                 Logger::error('Problem getting the dimensions of the image with ID ' . $this->getId());
@@ -60,7 +65,7 @@ class Image extends Model\Asset
             // this is to be downward compatible so that the controller can check if the dimensions are already calculated
             // and also to just do the calculation once, because the calculation can fail, an then the controller tries to
             // calculate the dimensions on every request an also will create a version, ...
-            $this->setCustomSetting('imageDimensionsCalculated', true);
+            $this->setCustomSetting('imageDimensionsCalculated', $imageDimensionsCalculated);
         }
 
         $this->clearThumbnails();
