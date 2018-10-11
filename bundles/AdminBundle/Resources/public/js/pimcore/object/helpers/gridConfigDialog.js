@@ -486,7 +486,7 @@ pimcore.object.helpers.gridConfigDialog = Class.create({
                     child = child[0];
                     child.renderer = nodeConf.attributes.renderer;
                 } else {
-                    var text = nodeConf.label;
+                    var text = ts(nodeConf.label);
 
                     if (nodeConf.dataType !== "system" && this.showFieldname && nodeConf.key) {
                         text = text + " (" + nodeConf.key.replace("~", ".") + ")";
