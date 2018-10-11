@@ -6,7 +6,7 @@
 - `Document`, `Asset` and `DataObject` properties are now `protected` instead of `public`
 - PDF document editable doesn't provide a Javascript viewer anymore. Now utilizing native PDF capabilities of browsers.
 - Swiftmailer `mail` transport is not supported anymore, see https://github.com/swiftmailer/swiftmailer/issues/866
-
+- Ecommerce: The fallback for old filter view scripts (website/views/scripts/...) has been removed. 
 ### Minor compatibility changes
 - `\Pimcore\Db::set()` was removed. 
 - deprecated `\Pimcore::addToGloballyProtectedItems()`
