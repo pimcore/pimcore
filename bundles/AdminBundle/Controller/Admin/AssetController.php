@@ -164,6 +164,8 @@ class AssetController extends ElementControllerBase implements EventedController
         //Hook for modifying return value - e.g. for changing permissions based on object data
         //data need to wrapped into a container in order to pass parameter to event listeners by reference so that they can change the values
         $data = $asset->getObjectVars();
+        $data["versionDate"] = $asset->getModificationDate();
+
         $event = new GenericEvent($this, [
             'data' => $data,
             'asset' => $asset
@@ -1073,7 +1075,10 @@ class AssetController extends ElementControllerBase implements EventedController
                     Logger::debug('prevented save asset because of missing permissions ');
                 }
 
-                return $this->adminJson(['success' => $success]);
+                return $this->adminJson(['success' => $success,
+                    'data' => ['versionDate' => $asset->getModificationDate(),
+                                'versionCount' => $asset->getVersionCount()
+                ]]);
             }
 
             return $this->adminJson(false);

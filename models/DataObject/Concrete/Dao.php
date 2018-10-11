@@ -379,7 +379,7 @@ class Dao extends Model\DataObject\AbstractObject\Dao
      */
     public function getVersions()
     {
-        $versionIds = $this->db->fetchCol("SELECT id FROM versions WHERE cid = ? AND ctype='object' ORDER BY `id` DESC", $this->model->getId());
+        $versionIds = $this->db->fetchCol("SELECT id FROM versions WHERE cid = ? AND ctype='object' ORDER BY `id` ASC", $this->model->getId());
 
         $versions = [];
         foreach ($versionIds as $versionId) {

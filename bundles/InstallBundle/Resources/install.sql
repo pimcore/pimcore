@@ -768,6 +768,7 @@ CREATE TABLE `versions` (
   `date` int(11) unsigned default NULL,
   `public` tinyint(1) unsigned NOT NULL default '0',
   `serialized` tinyint(1) unsigned default '0',
+  `versionCount` INT UNSIGNED NOT NULL DEFAULT '0',
   PRIMARY KEY  (`id`),
   KEY `cid` (`cid`),
   KEY `ctype` (`ctype`),

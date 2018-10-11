@@ -67,6 +67,7 @@ class LinkController extends DocumentControllerBase
         ]);
         $data = json_decode($data, true);
         $data['rawHref'] = $link->getRawHref();
+        $data["versionDate"] = $link->getModificationDate();
 
         $event = new GenericEvent($this, [
             'data' => $data,
@@ -116,7 +117,9 @@ class LinkController extends DocumentControllerBase
                 ) {
                     $link->save();
 
-                    return $this->adminJson(['success' => true]);
+                    return $this->adminJson(['success' => true,
+                                             'data' => ['versionDate' => $link->getModificationDate(),
+                                                        'versionCount' => $link->getVersionCount()]]);
                 }
             }
         } catch (\Exception $e) {

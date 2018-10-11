@@ -62,6 +62,8 @@ class DocumentController extends ElementControllerBase implements EventedControl
         //Hook for modifying return value - e.g. for changing permissions based on object data
         //data need to wrapped into a container in order to pass parameter to event listeners by reference so that they can change the values
         $data = $document->getObjectVars();
+        $data["versionDate"] = $document->getModificationDate();
+
         $event = new GenericEvent($this, [
             'data' => $data,
             'document' => $document

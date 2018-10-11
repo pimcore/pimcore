@@ -341,6 +341,8 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
                     if (rdata && rdata.success) {
                         pimcore.helpers.showNotification(t("save"), t("saved_successfully"), "success");
                         this.resetChanges();
+                        Ext.apply(this.data, rdata.data);
+
                         pimcore.plugin.broker.fireEvent("postSaveAsset", this.id);
                     }
                     else {

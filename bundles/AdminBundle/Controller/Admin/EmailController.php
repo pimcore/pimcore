@@ -70,6 +70,8 @@ class EmailController extends DocumentControllerBase
         //Hook for modifying return value - e.g. for changing permissions based on object data
         //data need to wrapped into a container in order to pass parameter to event listeners by reference so that they can change the values
         $data = $email->getObjectVars();
+        $data["versionDate"] = $email->getModificationDate();
+
         $event = new GenericEvent($this, [
             'data' => $data,
             'document' => $email
@@ -116,7 +118,9 @@ class EmailController extends DocumentControllerBase
                         $page->save();
                         $this->saveToSession($page);
 
-                        return $this->adminJson(['success' => true]);
+                        return $this->adminJson(['success' => true,
+                                                 'data' => ['versionDate' => $page->getModificationDate(),
+                                                            'versionCount' => $page->getVersionCount()]]);
                     } catch (\Exception $e) {
                         Logger::err($e);
 

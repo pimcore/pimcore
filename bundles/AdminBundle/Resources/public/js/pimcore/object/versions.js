@@ -35,14 +35,14 @@ pimcore.object.versions = Class.create({
                             }
                         }
                         return null;
-                    }}]
+                    }}, 'versionCount']
                 });
             }
 
             this.store = new Ext.data.Store({
                 model: modelName,
                 sorters: [{
-                    property: 'date',
+                    property: 'id',
                     direction: 'DESC'
                 }],
                 proxy: {
@@ -71,8 +71,11 @@ pimcore.object.versions = Class.create({
                 store: this.store,
                 plugins: [this.cellEditing],
                 columns: [
-                    {text: t("published"), width:50, sortable: false, dataIndex: 'date', renderer: function(d, metaData) {
-                        if (d == this.object.data.general.versionDate) {
+                    {text: t("published"), width:50, sortable: false, dataIndex: 'id', renderer: function(d, metaData, cellValues) {
+                        var d = cellValues.get('date');
+                        var versionCount = cellValues.get('versionCount');
+                        var index = cellValues.get('index');
+                        if (index === 0 && d == this.object.data.general.versionDate && versionCount == this.object.data.general.versionCount) {
                             metaData.tdCls = "pimcore_icon_publish";
                         }
                         return "";

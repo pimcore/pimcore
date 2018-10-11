@@ -82,6 +82,8 @@ class PageController extends DocumentControllerBase
         //Hook for modifying return value - e.g. for changing permissions based on object data
         //data need to wrapped into a container in order to pass parameter to event listeners by reference so that they can change the values
         $data = $page->getObjectVars();
+        $data["versionDate"] = $page->getModificationDate();
+
         $event = new GenericEvent($this, [
             'data' => $data,
             'document' => $page
@@ -169,7 +171,8 @@ class PageController extends DocumentControllerBase
                         $page->save();
                         $this->saveToSession($page);
 
-                        return $this->adminJson(['success' => true]);
+                        return $this->adminJson(['success' => true, 'data' => ['versionDate' => $page->getModificationDate(),
+                                                                               'versionCount' => $page->getVersionCount()]]);
                     } catch (\Exception $e) {
                         if ($e instanceof Element\ValidationException) {
                             throw $e;
