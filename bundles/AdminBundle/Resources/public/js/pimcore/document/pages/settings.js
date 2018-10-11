@@ -125,14 +125,19 @@ pimcore.document.pages.settings = Class.create(pimcore.document.settings_abstrac
             if (typeof subSites === 'object' && subSites.length) {
                 var idPath = this.document.data.idPath.replace(/^\/+/g, '');
                 var splitPath = idPath.split('/');
+                var siteKey = 1;
+                if (this.document.data.path === "/") {
+                    siteKey = splitPath.length - 1;
+                }
 
-                if (typeof splitPath[1] !== 'undefined') {
-                    var subSiteId = parseInt(splitPath[1], 10);
+                if (typeof splitPath[siteKey] !== 'undefined') {
+                    var subSiteId = parseInt(splitPath[siteKey], 10);
 
                     subSites.forEach(function(item) {
                         if (item.data.rootId === subSiteId) {
+                            urlPath = urlPath.substring(urlPath.indexOf(item.data.rootPath), urlPath.length);
                             urlPath = urlPath.replace(item.data.rootPath, '');
-                            serpAbsoluteUrl = item.data.domain + urlPath;
+                            serpAbsoluteUrl = window.location.protocol + '//' + item.data.domain + urlPath;
                         }
                     });
                 }
