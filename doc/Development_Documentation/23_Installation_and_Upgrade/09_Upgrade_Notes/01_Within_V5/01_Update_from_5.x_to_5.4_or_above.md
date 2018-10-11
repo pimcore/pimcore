@@ -114,5 +114,13 @@ In the following example we were on build 100, replace `100` with your build num
 php manual-migration.php 100
 ```
 
+Additionally we have to update to files in the project manually, use the following commands: 
+```
+wget https://raw.githubusercontent.com/pimcore/skeleton/master/bin/console -O bin/console
+chmod 0755 bin/console
+wget https://raw.githubusercontent.com/pimcore/skeleton/master/web/app.php -O web/app.php
+```
+
+
 ## 8. Done 
 You should be done now, Pimcore should boot up and behave as normal. 
