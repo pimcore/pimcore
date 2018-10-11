@@ -83,14 +83,14 @@ class ClassDefinition extends Model\AbstractModel
     public $listingParentClass = '';
 
     /**
-     * @var bool
+     * @var string
      */
-    public $useTraits = false;
+    public $useTraits = '';
 
     /**
-     * @var bool
+     * @var string
      */
-    public $listingUseTraits = false;
+    public $listingUseTraits = '';
 
     /**
      * @var bool
@@ -979,7 +979,7 @@ class ClassDefinition extends Model\AbstractModel
      */
     public function setUseTraits($useTraits)
     {
-        $this->useTraits = (bool) $useTraits;
+        $this->useTraits = (string) $useTraits;
 
         return $this;
     }
@@ -999,7 +999,7 @@ class ClassDefinition extends Model\AbstractModel
      */
     public function setListingUseTraits($listingUseTraits)
     {
-        $this->listingUseTraits = (bool) $listingUseTraits;
+        $this->listingUseTraits = (string) $listingUseTraits;
 
         return $this;
     }
