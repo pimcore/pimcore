@@ -158,14 +158,6 @@ abstract class AbstractFilterType
      */
     protected function render($template, array $parameters = [])
     {
-        try {
-            return $this->templatingEngine->render($template, $parameters);
-        } catch (\Exception $e) {
-
-            //legacy fallback for view rendering
-            $prefix = PIMCORE_PROJECT_ROOT . '/legacy/website/views/scripts';
-
-            return $this->templatingEngine->render($prefix . $template, $parameters);
-        }
+        return $this->templatingEngine->render($template, $parameters);
     }
 }
