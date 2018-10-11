@@ -329,7 +329,7 @@ class Dao extends Model\Element\Dao
      */
     public function hasChildren()
     {
-        $c = $this->db->fetchOne('SELECT id FROM assets WHERE parentId = ?', $this->model->getId());
+        $c = $this->db->fetchOne('SELECT id FROM assets WHERE parentId = ? LIMIT 1', $this->model->getId());
 
         return (bool)$c;
     }
@@ -405,7 +405,7 @@ class Dao extends Model\Element\Dao
      *
      * @param bool $force
      *
-     * @return array
+     * @return Model\Version|null
      */
     public function getLatestVersion($force = false)
     {
@@ -419,12 +419,12 @@ class Dao extends Model\Element\Dao
             }
         }
 
-        return;
+        return null;
     }
 
     /**
      * @param $type
-     * @param $user
+     * @param Model\User $user
      *
      * @return bool
      */
