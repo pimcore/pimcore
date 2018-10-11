@@ -508,10 +508,12 @@ class Localizedfield extends Model\AbstractModel implements DirtyIndicatorInterf
         $this->o_dirtyLanguages = [];
     }
 
-    public function allLanguagesAreDirty() {
+    public function allLanguagesAreDirty()
+    {
         if (AbstractObject::isDirtyDetectionDisabled()) {
             return true;
         }
+
         return is_array($this->o_dirtyLanguages) && count($this->o_dirtyLanguages) == 0;
     }
 

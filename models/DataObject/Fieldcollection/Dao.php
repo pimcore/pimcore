@@ -191,7 +191,7 @@ class Dao extends Model\Dao\AbstractDao
             }
         }
 
-        if (!$this->model->isFieldDirty("_self")) {
+        if (!$this->model->isFieldDirty('_self')) {
             return false;
         }
         $whereLocalizedFields = "(ownertype = 'localizedfield' AND "

@@ -24,7 +24,7 @@ class Job
     /**
      * By default, 24h expire timestamp.
      */
-    CONST EXPIRE_TIMESTAMP = 86400;
+    const EXPIRE_TIMESTAMP = 86400;
 
     /**
      * @var string

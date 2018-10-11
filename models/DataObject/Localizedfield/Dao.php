@@ -119,7 +119,7 @@ class Dao extends Model\Dao\AbstractDao
             DataObject\AbstractObject::setGetInheritedValues(false);
 
             $insertData = [
-                'ooo_id'   => $this->model->getObject()->getId(),
+                'ooo_id' => $this->model->getObject()->getId(),
                 'language' => $language,
             ];
 
@@ -139,7 +139,7 @@ class Dao extends Model\Dao\AbstractDao
                     }
 
                     $childParams = [
-                        'context'  => $context,
+                        'context' => $context,
                         'language' => $language,
                     ];
 
@@ -279,7 +279,7 @@ class Dao extends Model\Dao\AbstractDao
                                         foreach ($insertData as $insertDataKey => $insertDataValue) {
                                             if ($isEmpty && $oldData[$insertDataKey] == $parentData[$insertDataKey]) {
                                                 Logger::debug('do nothing');
-                                                // do nothing, ... value is still empty and parent data is equal to current data in query table
+                                            // do nothing, ... value is still empty and parent data is equal to current data in query table
                                             } elseif ($oldData[$insertDataKey] != $insertDataValue) {
                                                 $doInsert = true;
                                                 break;
@@ -413,8 +413,8 @@ class Dao extends Model\Dao\AbstractDao
         $db = Db::get();
 
         if ($this->model->allLanguagesAreDirty() || $container instanceof DataObject\Objectbrick\Definition || $container instanceof DataObject\Fieldcollection\Definition) {
-            $dirtyLanguageCondition = "";
-        } else if ($this->model->hasDirtyLanguages()) {
+            $dirtyLanguageCondition = '';
+        } elseif ($this->model->hasDirtyLanguages()) {
             $languageList = [];
             if (is_array($this->model->getDirtyLanguages())) {
                 foreach ($this->model->getDirtyLanguages() as $language => $flag) {
@@ -425,9 +425,7 @@ class Dao extends Model\Dao\AbstractDao
             }
 
             $dirtyLanguageCondition = ' AND position IN('.implode(',', $languageList).')';
-
         }
-
 
         if ($container instanceof DataObject\Objectbrick\Definition || $container instanceof DataObject\Fieldcollection\Definition) {
             $objectId = $object->getId();
