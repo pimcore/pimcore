@@ -41,7 +41,6 @@ class Image extends Model\Asset
     protected function update($params = [])
     {
 
-        // only do this if the file exists and contains data
         if ($this->getDataChanged() || !$this->getCustomSetting('imageDimensionsCalculated')) {
             try {
                 // save the current data into a tmp file to calculate the dimensions, otherwise updates wouldn't be updated
