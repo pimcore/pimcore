@@ -118,7 +118,9 @@ class EmailController extends DocumentControllerBase
                         $page->save();
                         $this->saveToSession($page);
 
-                        return $this->adminJson(['success' => true]);
+                        return $this->adminJson(['success' => true,
+                                                 'data' => ['versionDate' => $page->getModificationDate(),
+                                                            'versionCount' => $page->getVersionCount()]]);
                     } catch (\Exception $e) {
                         Logger::err($e);
 

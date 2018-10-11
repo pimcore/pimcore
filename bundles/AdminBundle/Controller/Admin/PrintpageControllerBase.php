@@ -130,7 +130,9 @@ class PrintpageControllerBase extends DocumentControllerBase
                 try {
                     $page->save();
 
-                    return $this->adminJson(['success' => true]);
+                    return $this->adminJson(['success' => true,
+                                             'data' => ['versionDate' => $page->getModificationDate(),
+                                                        'versionCount' => $page->getVersionCount()]]);
                 } catch (\Exception $e) {
                     Logger::err($e);
 
