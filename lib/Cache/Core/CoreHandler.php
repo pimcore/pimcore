@@ -658,6 +658,7 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
                 $this->addClearedTags($tags);
             }
 
+            $this->writeLock->removeLock();
             return $result;
         }
 
@@ -669,6 +670,7 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
             ]
         );
 
+        $this->writeLock->removeLock();
         return false;
     }
 
