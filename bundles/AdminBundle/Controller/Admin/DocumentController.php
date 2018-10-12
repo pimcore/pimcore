@@ -763,9 +763,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
         $domains = str_replace(' ', '', $domains);
         $domains = explode("\n", $domains);
 
-        try {
-            $site = Site::getByRootId(intval($request->get('id')));
-        } catch (\Exception $e) {
+        if(!$site = Site::getByRootId(intval($request->get('id')))) {
             $site = Site::create([
                 'rootId' => intval($request->get('id'))
             ]);
@@ -1130,12 +1128,10 @@ class DocumentController extends ElementControllerBase implements EventedControl
             $tmpDocument['iconCls'] = 'pimcore_icon_page';
 
             // test for a site
-            try {
-                $site = Site::getByRootId($childDocument->getId());
+            if($site = Site::getByRootId($childDocument->getId())) {
                 $tmpDocument['iconCls'] = 'pimcore_icon_site';
                 unset($site->rootDocument);
                 $tmpDocument['site'] = $site;
-            } catch (\Exception $e) {
             }
         } elseif ($childDocument->getType() == 'folder' || $childDocument->getType() == 'link' || $childDocument->getType() == 'hardlink') {
             $tmpDocument['leaf'] = false;
