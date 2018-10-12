@@ -128,6 +128,17 @@ pimcore.element.abstract = Class.create({
         }
     },
 
+    hotUpdateInitData: function() {
+        this.changeDetectorInitData = {};
+        this.changeDetectorInitData = this.getSaveData();
+
+        var keys = Object.keys(liveData);
+
+        for (var i = 0; i < keys.length; i++) {
+            this.changeDetectorInitData[keys[i]] = liveData[keys[i]];
+        }
+    },
+
     checkForChanges: function () {
         // tab was closed before first cycle
         // stop change detector again

@@ -77,8 +77,6 @@ pimcore.object.classes.data.classificationstore = Class.create(pimcore.object.cl
             value: this.datax.allowedGroupIds
         });
 
-
-
         var  store = new Ext.data.Store({
             proxy: {
                 type: 'ajax',
@@ -104,6 +102,13 @@ pimcore.object.classes.data.classificationstore = Class.create(pimcore.object.cl
 
         this.specificPanel.add(this.storeCombo);
 
+        this.specificPanel.add({
+            xtype: "checkbox",
+            name: "hideEmptyData",
+            fieldLabel: t("hide_empty_data"),
+            checked: this.datax.hideEmptyData
+
+        });
 
         this.layout.on("render", this.layoutRendered.bind(this));
 

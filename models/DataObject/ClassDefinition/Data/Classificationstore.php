@@ -93,6 +93,11 @@ class Classificationstore extends Model\DataObject\ClassDefinition\Data
     public $storeId;
 
     /**
+     * @var bool
+     */
+    public $hideEmptyData;
+
+    /**
      * contains further localized field definitions if there are more than one localized fields in on class
      *
      * @var array
@@ -1329,4 +1334,26 @@ class Classificationstore extends Model\DataObject\ClassDefinition\Data
 
         return $validLanguages;
     }
+
+
+    /**
+     * @return bool
+     */
+    public function getHideEmptyData()
+    {
+        return $this->hideEmptyData;
+    }
+
+
+    /**
+     * @param $hideEmptyData bool
+     * @return $this
+     */
+    public function setHideEmptyData($hideEmptyData)
+    {
+        $this->hideEmptyData = (bool) $hideEmptyData;
+        return $this;
+    }
+
+
 }

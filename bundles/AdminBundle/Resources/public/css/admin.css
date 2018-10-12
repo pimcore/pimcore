@@ -1272,6 +1272,23 @@ span.warning {
     color: #919191;
 }
 
+.x-fieldset-header-tool-right .x-tool-expand {
+    font: 16px/1 FontAwesome;
+    background: none;
+    color: #008d4c;
+    width: 30px;
+}
+
+.x-fieldset-header-tool-right.x-tool-expanding .x-tool-expand {
+    color: #ff9933;
+
+}
+
+/* http://localhost:1843/classic/theme-neutral/sass/etc/mixins/font-icon.scss:125 */
+.x-tool-expand:before {
+    content: "\f205";
+}
+
 .pimcore_pagingtoolbar_container {
     display: inline-block;
     white-space: nowrap;

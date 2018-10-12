@@ -194,10 +194,8 @@ pimcore.object.tags.classificationstore = Class.create(pimcore.object.tags.abstr
                 }
 
                 var item = new Ext.Panel({
-                    border:false,
-                    //autoScroll: true,
+                    border: false,
                     height: 'auto',
-                    //autoHeight: true,
                     padding: "10px",
                     deferredRender: false,
                     hideMode: "offsets",
@@ -406,20 +404,25 @@ pimcore.object.tags.classificationstore = Class.create(pimcore.object.tags.abstr
         return isInvalid;
     },
 
-    createGroupFieldset: function(language, group, groupedChildItems, cls) {
+    createGroupFieldset: function (language, group, groupedChildItems, isNew) {
         var groupId = group.id;
         var groupTitle = group.description ? group.name + " - " + group.description : group.name;
+        var invisibleItems = [];
 
-        var editable =  !this.fieldConfig.noteditable &&
+        var editable = !this.fieldConfig.noteditable &&
             (pimcore.currentuser.admin
-            || this.fieldConfig.permissionEdit === undefined
-            || this.fieldConfig.permissionEdit.length == 0
-            || in_array(this.currentLanguage, this.fieldConfig.permissionEdit));
+                || this.fieldConfig.permissionEdit === undefined
+                || this.fieldConfig.permissionEdit.length == 0
+                || in_array(this.currentLanguage, this.fieldConfig.permissionEdit));
 
 
         var keys = group.keys;
+        var expandable = false;
+
+        var index = -1;
 
         for (var k = 0; k < keys.length; k++) {
+            index++;
             var key = keys[k];
             var definition = key.definition;
             definition.csKeyId = key.id;
@@ -427,7 +430,26 @@ pimcore.object.tags.classificationstore = Class.create(pimcore.object.tags.abstr
             if (this.fieldConfig.labelWidth) {
                 definition.labelWidth = this.fieldConfig.labelWidth;
             }
+
+            var visible = true;
+
+            if (this.fieldConfig.hideEmptyData && !isNew) {
+                // check if we should hide the feature because it is empty but only if the group hasn't been just added added via the dialog
+                if (!this.data[language] || !this.data[language][group.id] || typeof this.data[language][group.id][key.id] === "undefined") {
+                    expandable = true;
+
+                    invisibleItems.push({
+                        "definition": definition,
+                        "index": index
+                    });
+
+                    continue;
+                }
+            }
+
             var childItem = this.getRecursiveLayout(definition, !editable);
+            // index++;
+
             groupedChildItems.push(childItem);
         }
 
@@ -438,8 +460,9 @@ pimcore.object.tags.classificationstore = Class.create(pimcore.object.tags.abstr
             collapsible: true
         };
 
+        var tools = [];
         if (!this.fieldConfig.noteditable) {
-            config.tools = [
+            tools.push(
                 {
                     type: 'close',
                     qtip: t('remove_group'),
@@ -447,15 +470,80 @@ pimcore.object.tags.classificationstore = Class.create(pimcore.object.tags.abstr
                         this.deleteGroup(groupId);
                     }.bind(this)
 
-                }];
-        }
-        if (cls) {
-            config.cls = cls;
+                });
         }
 
-        var fieldset =  new Ext.create('pimcore.FieldSetTools', config);
+        if (expandable) {
+            var expandableId = Ext.id();
+            var expandingId = Ext.id();
+            tools.push(
+                {
+                    type: 'expand',
+                    qtip: t('expand_cs_group'),
+                    id: expandableId,
+                    handler: function (editable, groupId, language, e, el, legend, tool) {
+                        if (tool.__isExpanding) {
+                            return;
+                        }
+                        tool.__isExpanding = true;
+                        var invisibleItems = tool.__invisibleItems;
+                        if (!invisibleItems) {
+                            return;
+                        }
 
-        this.groupElements[language][groupId]  = fieldset;
+                        tool.el.dom.classList.add('x-tool-expanding');
+
+                        window.setTimeout(function (editable, groupId, language, e, el, legend, tool) {
+                            Ext.suspendLayouts();
+
+                            var fieldset = this.groupElements[language][groupId];
+
+                            var currentLanguage = this.currentLanguage;
+                            // switch the language before call getRecursiveLayout (getDataForField)
+                            this.currentLanguage = language;
+
+                            for (var i = 0; i < invisibleItems.length; i++) {
+                                var item = invisibleItems[i];
+                                var definition = item["definition"];
+                                var index = item["index"];
+                                var childItem = this.getRecursiveLayout(definition, !editable);
+                                fieldset.insert(index, childItem);
+                            }
+
+                            this.currentLanguage = currentLanguage;
+                            Ext.resumeLayouts(true);
+                            tool.hide();
+
+                            // not needed anymore
+                            delete tool.__invisibleItems;
+                            this.object.hotUpdateInitData();
+                        }.bind(this, editable, groupId, language, e, el, legend, tool), 0);
+
+
+                    }.bind(this, editable, groupId, language)
+
+                });
+
+
+        }
+
+        if (tools) {
+            config.tools = tools;
+        }
+
+        if (isNew) {
+            config.cls = "pimcore_new_cs_group";
+        }
+
+        var fieldset = new Ext.create('pimcore.FieldSetTools', config);
+
+        if (expandable) {
+            var expandableTool = Ext.getCmp(expandableId);
+            expandableTool.__invisibleItems = invisibleItems;
+
+        }
+
+        this.groupElements[language][groupId] = fieldset;
         return fieldset;
     },
 
@@ -527,7 +615,7 @@ pimcore.object.tags.classificationstore = Class.create(pimcore.object.tags.abstr
                     addedGroups[groupId] = true;
                     this.groupCollectionMapping[groupId] = group.collectionId;
 
-                    var fieldset = this.createGroupFieldset(currentLanguage, group, groupedChildItems, "pimcore_new_cs_group");
+                    var fieldset = this.createGroupFieldset(currentLanguage, group, groupedChildItems, true);
                     var panel = this.languagePanels[currentLanguage];
 
                     panel.add(fieldset);

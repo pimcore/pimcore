@@ -1168,7 +1168,7 @@ class ClassificationstoreController extends AdminController
 
         $list = new Classificationstore\KeyConfig\Listing();
 
-        if ($limit > 0) {
+        if ($limit > 0 && !$request->get('groupIds') && !$request->get('keyIds')) {
             $list->setLimit($limit);
         }
         $list->setOffset($start);
@@ -1196,6 +1196,7 @@ class ClassificationstoreController extends AdminController
         $list->setCondition($condition);
 
         if ($request->get('groupIds') || $request->get('keyIds')) {
+            $list->setLimit(null);
             $db = Db::get();
 
             if ($request->get('groupIds')) {
