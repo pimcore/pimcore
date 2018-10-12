@@ -779,6 +779,11 @@ class Document extends Element\AbstractElement
             $service = new Document\Service;
             $service->removeTranslation($this);
 
+            // if document is registered as site remove it
+            if (($site = Site::getByRootId($this->getId())) instanceof Site) {
+                $site->delete();
+            }
+
             $this->getDao()->delete();
 
             // clear cache
