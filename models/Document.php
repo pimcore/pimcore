@@ -780,8 +780,12 @@ class Document extends Element\AbstractElement
             $service->removeTranslation($this);
 
             // if document is registered as site remove it
-            if (($site = Site::getByRootId($this->getId())) instanceof Site) {
-                $site->delete();
+            try {
+                if (($site = Site::getByRootId($this->getId())) instanceof Site) {
+                    $site->delete();
+                }
+            } catch (\Exception $e) {
+                Logger::warning($e->getMessage());
             }
 
             $this->getDao()->delete();
