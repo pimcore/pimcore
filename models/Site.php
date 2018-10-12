@@ -183,6 +183,16 @@ class Site extends AbstractModel
     }
 
     /**
+     * Remove the site
+     *
+     * @return void
+     */
+    public function delete()
+    {
+        $this->getDao()->delete();
+    }
+
+    /**
      * returns true if the current process/request is inside a site
      *
      * @static
