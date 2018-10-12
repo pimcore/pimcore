@@ -910,17 +910,17 @@ class ObjectsMetadata extends Model\DataObject\ClassDefinition\Data\Objects
 
         $visibleFields = explode(',', $this->visibleFields);
         foreach ($visibleFields as $field) {
-            $fd = $class->getFieldDefinition($field);
+            $fd = $class->getFieldDefinition($field, $context);
 
             if (!$fd) {
                 $fieldFound = false;
-                if ($localizedfields = $class->getFieldDefinitions()['localizedfields']) {
+                if ($localizedfields = $class->getFieldDefinitions($context)['localizedfields']) {
                     if ($fd = $localizedfields->getFieldDefinition($field)) {
                         $this->visibleFieldDefinitions[$field]['name'] = $fd->getName();
                         $this->visibleFieldDefinitions[$field]['title'] = $fd->getTitle();
                         $this->visibleFieldDefinitions[$field]['fieldtype'] = $fd->getFieldType();
 
-                        if ($fd instanceof DataObject\ClassDefinition\Data\Select) {
+                        if ($fd instanceof DataObject\ClassDefinition\Data\Select || $fd instanceof DataObject\ClassDefinition\Data\Multiselect) {
                             $this->visibleFieldDefinitions[$field]['options'] = $fd->getOptions();
                         }
 
@@ -939,7 +939,7 @@ class ObjectsMetadata extends Model\DataObject\ClassDefinition\Data\Objects
                 $this->visibleFieldDefinitions[$field]['fieldtype'] = $fd->getFieldType();
                 $this->visibleFieldDefinitions[$field]['noteditable'] = true;
 
-                if ($fd instanceof DataObject\ClassDefinition\Data\Select) {
+                if ($fd instanceof DataObject\ClassDefinition\Data\Select ||$fd instanceof DataObject\ClassDefinition\Data\MultiSelect) {
                     if ($fd->getOptionsProviderClass()) {
                         $this->visibleFieldDefinitions[$field]['optionsProviderClass'] = $fd->getOptionsProviderClass();
                     }

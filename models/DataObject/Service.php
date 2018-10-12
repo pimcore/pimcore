@@ -279,7 +279,7 @@ class Service extends Model\Element\Service
                 $dataKey = $key;
                 $keyParts = explode('~', $key);
 
-                $def = $object->getClass()->getFieldDefinition($key);
+                $def = $object->getClass()->getFieldDefinition($key, $context);
 
                 if (strpos($key, '#') === 0) {
                     if (!$haveHelperDefinition) {
@@ -1558,6 +1558,8 @@ class Service extends Model\Element\Service
      */
     public static function enrichLayoutDefinition(&$layout, $object = null, $context = [])
     {
+        $context["object"] = $object;
+
         if (method_exists($layout, 'enrichLayoutDefinition')) {
             $layout->enrichLayoutDefinition($object, $context);
         }
