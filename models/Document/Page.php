@@ -20,6 +20,7 @@ namespace Pimcore\Model\Document;
 use Pimcore\Logger;
 use Pimcore\Model\Document\Targeting\TargetingDocumentInterface;
 use Pimcore\Model\Redirect;
+use Pimcore\Model\Site;
 use Pimcore\Model\Tool\Targeting\TargetGroup;
 use Pimcore\Tool\Frontend;
 
@@ -92,6 +93,10 @@ class Page extends TargetingDocument
 
         foreach ($redirects->getRedirects() as $redirect) {
             $redirect->delete();
+        }
+
+        if ($site = Site::getByRootId($this->getId())) {
+            $site->delete();
         }
 
         parent::delete();
@@ -428,5 +433,39 @@ class Page extends TargetingDocument
         }
 
         return PIMCORE_SYSTEM_TEMP_DIRECTORY . '/document-page-previews/document-page-screenshot-' . $this->getId() . $suffix . '.jpg';
+    }
+
+    /**
+     * @param null $hostname
+     * @param null $scheme
+     * @return string
+     * @throws \Exception
+     */
+    public function getUrl($hostname = null, $scheme = null) {
+
+        if(!$scheme) {
+            $scheme = 'http://';
+            $requestHelper = \Pimcore::getContainer()->get('pimcore.http.request_helper');
+            if ($requestHelper->hasMasterRequest()) {
+                $scheme = $requestHelper->getMasterRequest()->getScheme() . '://';
+            }
+        }
+
+        if(!$hostname) {
+            if (!$hostname = \Pimcore\Config::getSystemConfig()->general->domain) {
+                if (!$hostname = \Pimcore\Tool::getHostname()) {
+                    throw new \Exception('No hostname available');
+                }
+            }
+        }
+
+        $url = $scheme . $hostname . $this->getFullPath();
+
+        $site = \Pimcore\Tool\Frontend::getSiteForDocument($this);
+        if ($site instanceof Site && $site->getMainDomain()) {
+            $url = $scheme . $site->getMainDomain() . preg_replace('@^' . $site->getRootPath() . '/?@', '/', $this->getRealFullPath());
+        }
+
+        return $url;
     }
 }

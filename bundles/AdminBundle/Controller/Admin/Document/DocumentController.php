@@ -12,8 +12,9 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
+namespace Pimcore\Bundle\AdminBundle\Controller\Admin\Document;
 
+use Pimcore\Bundle\AdminBundle\Controller\Admin\ElementControllerBase;
 use Pimcore\Config;
 use Pimcore\Controller\EventedControllerInterface;
 use Pimcore\Db;
@@ -62,7 +63,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
         //Hook for modifying return value - e.g. for changing permissions based on object data
         //data need to wrapped into a container in order to pass parameter to event listeners by reference so that they can change the values
         $data = $document->getObjectVars();
-        $data["versionDate"] = $document->getModificationDate();
+        $data['versionDate'] = $document->getModificationDate();
 
         $event = new GenericEvent($this, [
             'data' => $data,
@@ -763,9 +764,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
         $domains = str_replace(' ', '', $domains);
         $domains = explode("\n", $domains);
 
-        try {
-            $site = Site::getByRootId(intval($request->get('id')));
-        } catch (\Exception $e) {
+        if (!$site = Site::getByRootId(intval($request->get('id')))) {
             $site = Site::create([
                 'rootId' => intval($request->get('id'))
             ]);
@@ -1130,12 +1129,10 @@ class DocumentController extends ElementControllerBase implements EventedControl
             $tmpDocument['iconCls'] = 'pimcore_icon_page';
 
             // test for a site
-            try {
-                $site = Site::getByRootId($childDocument->getId());
+            if ($site = Site::getByRootId($childDocument->getId())) {
                 $tmpDocument['iconCls'] = 'pimcore_icon_site';
                 unset($site->rootDocument);
                 $tmpDocument['site'] = $site;
-            } catch (\Exception $e) {
             }
         } elseif ($childDocument->getType() == 'folder' || $childDocument->getType() == 'link' || $childDocument->getType() == 'hardlink') {
             $tmpDocument['leaf'] = false;

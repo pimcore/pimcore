@@ -12,7 +12,7 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
+namespace Pimcore\Bundle\AdminBundle\Controller\Admin\Document;
 
 use Pimcore\Event\AdminEvents;
 use Pimcore\Logger;
@@ -50,6 +50,9 @@ class PageController extends DocumentControllerBase
         }
         Element\Editlock::lock($request->get('id'), 'document');
 
+        /**
+         * @var $page Document\Page
+         */
         $page = Document\Page::getById($request->get('id'));
         $page = clone $page;
         $page = $this->getLatestVersion($page);
@@ -66,11 +69,7 @@ class PageController extends DocumentControllerBase
             $page->contentMasterDocumentPath = $page->getContentMasterDocument()->getRealFullPath();
         }
 
-        $page->url = $page->getFullPath();
-        $site = \Pimcore\Tool\Frontend::getSiteForDocument($page);
-        if ($site instanceof Site && $site->getMainDomain()) {
-            $page->url = 'http://' . $site->getMainDomain() . preg_replace('@^' . $site->getRootPath() . '/?@', '/', $page->getRealFullPath());
-        }
+        $page->url = $page->getUrl();
 
         // unset useless data
         $page->setElements(null);
@@ -82,7 +81,7 @@ class PageController extends DocumentControllerBase
         //Hook for modifying return value - e.g. for changing permissions based on object data
         //data need to wrapped into a container in order to pass parameter to event listeners by reference so that they can change the values
         $data = $page->getObjectVars();
-        $data["versionDate"] = $page->getModificationDate();
+        $data['versionDate'] = $page->getModificationDate();
 
         $event = new GenericEvent($this, [
             'data' => $data,

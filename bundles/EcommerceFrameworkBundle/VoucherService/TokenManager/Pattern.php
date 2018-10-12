@@ -331,7 +331,7 @@ class Pattern extends AbstractTokenManager implements IExportableTokenManager
      *
      * @param string $code Generated Code.
      *
-     * @return string formated Code.
+     * @return string formatted Code.
      */
     protected function formatCode($code)
     {
@@ -339,12 +339,12 @@ class Pattern extends AbstractTokenManager implements IExportableTokenManager
         $prefix = $this->getConfiguration()->getPrefix();
         if (!empty($separator)) {
             if (!empty($prefix)) {
-                $code = $this->configuration->prefix . $separator . implode($separator, str_split($code, $this->configuration->getSeparatorCount()));
+                $code = $this->configuration->getPrefix() . $separator . implode($separator, str_split($code, $this->configuration->getSeparatorCount()));
             } else {
                 $code = implode($separator, str_split($code, $this->configuration->getSeparatorCount()));
             }
         } else {
-            $code = $this->configuration->prefix . $code;
+            $code = $this->configuration->getPrefix() . $code;
         }
 
         return $code;

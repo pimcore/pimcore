@@ -118,25 +118,8 @@ pimcore.document.pages.settings = Class.create(pimcore.document.settings_abstrac
                 return true;
             }.bind(this);
 
-            var urlPath = this.document.data.path + this.document.data.key;
-            var serpAbsoluteUrl = window.location.protocol + '//' + window.location.hostname + urlPath;
+            var serpAbsoluteUrl = this.document.data.url;
 
-            var subSites = pimcore.globalmanager.get('sites').data.items;
-            if (typeof subSites === 'object' && subSites.length) {
-                var idPath = this.document.data.idPath.replace(/^\/+/g, '');
-                var splitPath = idPath.split('/');
-
-                if (typeof splitPath[1] !== 'undefined') {
-                    var subSiteId = parseInt(splitPath[1], 10);
-
-                    subSites.forEach(function(item) {
-                        if (item.data.rootId === subSiteId) {
-                            urlPath = urlPath.replace(item.data.rootPath, '');
-                            serpAbsoluteUrl = item.data.domain + urlPath;
-                        }
-                    });
-                }
-            }
             // create layout
             this.layout = new Ext.FormPanel({
                 title: t('settings'),

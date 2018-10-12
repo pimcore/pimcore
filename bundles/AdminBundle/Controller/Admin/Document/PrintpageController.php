@@ -12,13 +12,13 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
+namespace Pimcore\Bundle\AdminBundle\Controller\Admin\Document;
 
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
- * @Route("/printcontainer")
+ * @Route("/printpage")
  */
-class PrintcontainerController extends PrintpageControllerBase
+class PrintpageController extends PrintpageControllerBase
 {
 }

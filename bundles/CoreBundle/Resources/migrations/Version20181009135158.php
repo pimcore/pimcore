@@ -7,11 +7,11 @@ use Pimcore\Migrations\Migration\AbstractPimcoreMigration;
 
 class Version20181009135158 extends AbstractPimcoreMigration
 {
-
     public function doesSqlMigrations(): bool
     {
         return true;
     }
+
     /**
      * @param Schema $schema
      */
@@ -21,7 +21,6 @@ class Version20181009135158 extends AbstractPimcoreMigration
         $this->addSql('UPDATE `assets` SET versionCount = 0;');
         $this->addSql('UPDATE `documents` SET versionCount = 0;');
         $this->addSql('UPDATE `objects` SET o_versionCount = 0;');
-
     }
 
     /**
@@ -30,6 +29,5 @@ class Version20181009135158 extends AbstractPimcoreMigration
     public function down(Schema $schema)
     {
         $this->addSql('ALTER TABLE `versions` DROP COLUMN `versionCount`;');
-
     }
 }

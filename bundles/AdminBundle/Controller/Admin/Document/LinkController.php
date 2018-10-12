@@ -12,7 +12,7 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
+namespace Pimcore\Bundle\AdminBundle\Controller\Admin\Document;
 
 use Pimcore\Event\AdminEvents;
 use Pimcore\Logger;
@@ -67,7 +67,7 @@ class LinkController extends DocumentControllerBase
         ]);
         $data = json_decode($data, true);
         $data['rawHref'] = $link->getRawHref();
-        $data["versionDate"] = $link->getModificationDate();
+        $data['versionDate'] = $link->getModificationDate();
 
         $event = new GenericEvent($this, [
             'data' => $data,

@@ -12,7 +12,7 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
+namespace Pimcore\Bundle\AdminBundle\Controller\Admin\Document;
 
 use Pimcore\Event\AdminEvents;
 use Pimcore\Logger;
@@ -70,7 +70,7 @@ class SnippetController extends DocumentControllerBase
         //Hook for modifying return value - e.g. for changing permissions based on object data
         //data need to wrapped into a container in order to pass parameter to event listeners by reference so that they can change the values
         $data = $snippet->getObjectVars();
-        $data["versionDate"] = $snippet->getModificationDate();
+        $data['versionDate'] = $snippet->getModificationDate();
 
         $event = new GenericEvent($this, [
             'data' => $data,

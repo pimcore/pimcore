@@ -1196,7 +1196,6 @@ class ClassificationstoreController extends AdminController
         $list->setCondition($condition);
 
         if ($request->get('groupIds') || $request->get('keyIds')) {
-            $list->setLimit(null);
             $db = Db::get();
 
             if ($request->get('groupIds')) {
