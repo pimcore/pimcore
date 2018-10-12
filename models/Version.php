@@ -617,10 +617,6 @@ class Version extends AbstractModel
         $this->versionCount = (int) $versionCount;
     }
 
-
-
-
-
     public function maintenanceCompress()
     {
         $perIteration = 100;

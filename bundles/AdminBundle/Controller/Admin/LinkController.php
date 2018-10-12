@@ -67,7 +67,7 @@ class LinkController extends DocumentControllerBase
         ]);
         $data = json_decode($data, true);
         $data['rawHref'] = $link->getRawHref();
-        $data["versionDate"] = $link->getModificationDate();
+        $data['versionDate'] = $link->getModificationDate();
 
         $event = new GenericEvent($this, [
             'data' => $data,

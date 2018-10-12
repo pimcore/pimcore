@@ -288,5 +288,4 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
 
         return $version;
     }
-
 }

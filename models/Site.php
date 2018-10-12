@@ -106,6 +106,7 @@ class Site extends AbstractModel
         try {
             $site = new self();
             $site->getDao()->getByRootId(intval($id));
+
             return $site;
         } catch (\Exception $e) {
             return null;

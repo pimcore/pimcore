@@ -163,8 +163,6 @@ class Classificationstore extends Model\DataObject\ClassDefinition\Data
                     $childData->setContextualData('classificationstore', $this->getName(), null, $language, $groupId, $keyId, $childDef);
                     $childData = $childDef->getDataForEditmode($childData, $object, $params);
                     $result['data'][$language][$groupId][$keyId] = $childData;
-
-
                 }
             }
         }

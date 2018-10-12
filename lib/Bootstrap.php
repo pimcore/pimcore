@@ -219,7 +219,7 @@ class Bootstrap
         $resolveConstant('PIMCORE_SYMFONY_DEFAULT_BUNDLE', 'AppBundle');
 
         $kernelDebug = $resolveConstant('PIMCORE_KERNEL_DEBUG', null, false);
-        if($kernelDebug === 'true') {
+        if ($kernelDebug === 'true') {
             $kernelDebug = true;
         } elseif ($kernelDebug === 'false') {
             $kernelDebug = false;
@@ -291,7 +291,7 @@ class Bootstrap
         $environment = Config::getEnvironment();
         $debug = Config::getEnvironmentConfig()->activatesKernelDebugMode($environment);
 
-        if(PIMCORE_KERNEL_DEBUG !== null) {
+        if (PIMCORE_KERNEL_DEBUG !== null) {
             $debug = PIMCORE_KERNEL_DEBUG;
         }
 

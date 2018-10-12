@@ -70,7 +70,7 @@ class HardlinkController extends DocumentControllerBase
         ]);
         \Pimcore::getEventDispatcher()->dispatch(AdminEvents::DOCUMENT_GET_PRE_SEND_DATA, $event);
         $data = $event->getArgument('data');
-        $data["versionDate"] = $link->getModificationDate();
+        $data['versionDate'] = $link->getModificationDate();
 
         if ($link->isAllowed('view')) {
             return $this->adminJson($data);

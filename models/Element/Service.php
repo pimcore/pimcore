@@ -1014,14 +1014,14 @@ class Service extends Model\AbstractModel
         if (is_array($versions)) {
             $versions = json_decode(json_encode($versions), true);
             $result = [];
-            /** @var  $version Model\Version */
+            /** @var $version Model\Version */
             foreach ($versions as $version) {
                 $name = $version['user']['name'];
                 $id = $version['user']['id'];
                 unset($version['user']);
                 $version['user']['name'] = $name;
                 $version['user']['id'] = $id;
-                $versionKey = $version['date'] . "-" . $version['versionCount'];
+                $versionKey = $version['date'] . '-' . $version['versionCount'];
                 if (!isset($indexMap[$versionKey])) {
                     $indexMap[$versionKey] = 0;
                 }

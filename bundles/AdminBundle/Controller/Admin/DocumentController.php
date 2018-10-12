@@ -62,7 +62,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
         //Hook for modifying return value - e.g. for changing permissions based on object data
         //data need to wrapped into a container in order to pass parameter to event listeners by reference so that they can change the values
         $data = $document->getObjectVars();
-        $data["versionDate"] = $document->getModificationDate();
+        $data['versionDate'] = $document->getModificationDate();
 
         $event = new GenericEvent($this, [
             'data' => $data,
@@ -763,7 +763,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
         $domains = str_replace(' ', '', $domains);
         $domains = explode("\n", $domains);
 
-        if(!$site = Site::getByRootId(intval($request->get('id')))) {
+        if (!$site = Site::getByRootId(intval($request->get('id')))) {
             $site = Site::create([
                 'rootId' => intval($request->get('id'))
             ]);
@@ -1128,7 +1128,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
             $tmpDocument['iconCls'] = 'pimcore_icon_page';
 
             // test for a site
-            if($site = Site::getByRootId($childDocument->getId())) {
+            if ($site = Site::getByRootId($childDocument->getId())) {
                 $tmpDocument['iconCls'] = 'pimcore_icon_site';
                 unset($site->rootDocument);
                 $tmpDocument['site'] = $site;
