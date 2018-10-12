@@ -12,7 +12,7 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
+namespace Pimcore\Bundle\AdminBundle\Controller\Admin\Document;
 
 use Pimcore\Event\AdminEvents;
 use Pimcore\Logger;
@@ -24,9 +24,9 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
- * @Route("/hardlink")
+ * @Route("/folder")
  */
-class HardlinkController extends DocumentControllerBase
+class FolderController extends DocumentControllerBase
 {
     /**
      * @Route("/get-data-by-id", methods={"GET"})
@@ -45,34 +45,28 @@ class HardlinkController extends DocumentControllerBase
         }
         Element\Editlock::lock($request->get('id'), 'document');
 
-        $link = Document\Hardlink::getById($request->get('id'));
-        $link = clone $link;
+        $folder = Document\Folder::getById($request->get('id'));
+        $folder = clone $folder;
 
-        $link->idPath = Element\Service::getIdPath($link);
-        $link->setUserPermissions($link->getUserPermissions());
-        $link->setLocked($link->isLocked());
-        $link->setParent(null);
+        $folder->idPath = Element\Service::getIdPath($folder);
+        $folder->setUserPermissions($folder->getUserPermissions());
+        $folder->setLocked($folder->isLocked());
+        $folder->setParent(null);
 
-        if ($link->getSourceDocument()) {
-            $link->sourcePath = $link->getSourceDocument()->getRealFullPath();
-        }
-
-        $this->addTranslationsData($link);
-        $this->minimizeProperties($link);
-        $link->getScheduledTasks();
+        $this->addTranslationsData($folder);
+        $this->minimizeProperties($folder);
 
         //Hook for modifying return value - e.g. for changing permissions based on object data
         //data need to wrapped into a container in order to pass parameter to event listeners by reference so that they can change the values
-        $data = $link->getObjectVars();
+        $data = $folder->getObjectVars();
         $event = new GenericEvent($this, [
             'data' => $data,
-            'document' => $link
+            'document' => $folder
         ]);
         \Pimcore::getEventDispatcher()->dispatch(AdminEvents::DOCUMENT_GET_PRE_SEND_DATA, $event);
         $data = $event->getArgument('data');
-        $data['versionDate'] = $link->getModificationDate();
 
-        if ($link->isAllowed('view')) {
+        if ($folder->isAllowed('view')) {
             return $this->adminJson($data);
         }
 
@@ -80,7 +74,7 @@ class HardlinkController extends DocumentControllerBase
     }
 
     /**
-     * @Route("/save", methods={"POST", "PUT"})
+     * @Route("/save", methods={"PUT", "POST"})
      *
      * @param Request $request
      *
@@ -92,26 +86,15 @@ class HardlinkController extends DocumentControllerBase
     {
         try {
             if ($request->get('id')) {
-                $link = Document\Hardlink::getById($request->get('id'));
-                $this->setValuesToDocument($request, $link);
+                $folder = Document\Folder::getById($request->get('id'));
+                $folder->setModificationDate(time());
+                $folder->setUserModification($this->getAdminUser()->getId());
 
-                $link->setModificationDate(time());
-                $link->setUserModification($this->getAdminUser()->getId());
+                if ($folder->isAllowed('publish')) {
+                    $this->setValuesToDocument($request, $folder);
+                    $folder->save();
 
-                if ($request->get('task') == 'unpublish') {
-                    $link->setPublished(false);
-                }
-                if ($request->get('task') == 'publish') {
-                    $link->setPublished(true);
-                }
-
-                // only save when publish or unpublish
-                if (($request->get('task') == 'publish' && $link->isAllowed('publish')) || ($request->get('task') == 'unpublish' && $link->isAllowed('unpublish'))) {
-                    $link->save();
-
-                    return $this->adminJson(['success' => true,
-                                             'data' => ['versionDate' => $link->getModificationDate(),
-                                                        'versionCount' => $link->getVersionCount()]]);
+                    return $this->adminJson(['success' => true]);
                 }
             }
         } catch (\Exception $e) {
@@ -127,24 +110,10 @@ class HardlinkController extends DocumentControllerBase
 
     /**
      * @param Request $request
-     * @param Document\Hardlink $link
+     * @param Document $folder
      */
-    protected function setValuesToDocument(Request $request, Document $link)
+    protected function setValuesToDocument(Request $request, Document $folder)
     {
-
-        // data
-        if ($request->get('data')) {
-            $data = $this->decodeJson($request->get('data'));
-
-            $sourceId = null;
-            if ($sourceDocument = Document::getByPath($data['sourcePath'])) {
-                $sourceId = $sourceDocument->getId();
-            }
-            $link->setSourceId($sourceId);
-            $link->setValues($data);
-        }
-
-        $this->addPropertiesToDocument($request, $link);
-        $this->addSchedulerToDocument($request, $link);
+        $this->addPropertiesToDocument($request, $folder);
     }
 }

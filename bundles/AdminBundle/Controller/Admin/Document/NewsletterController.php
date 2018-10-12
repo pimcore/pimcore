@@ -12,7 +12,7 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
+namespace Pimcore\Bundle\AdminBundle\Controller\Admin\Document;
 
 use Pimcore\Document\Newsletter\AddressSourceAdapterFactoryInterface;
 use Pimcore\Event\AdminEvents;
