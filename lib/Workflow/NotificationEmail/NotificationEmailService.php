@@ -190,7 +190,7 @@ class NotificationEmailService
 
         //get roles
         $roleList = new User\Role\Listing();
-        $roleList->setCondition('name in (?) and email is not null', [implode(',', $roles)]);
+        $roleList->setCondition('FIND_IN_SET(name, ?)', [implode(',', $roles)]);
 
         foreach ($roleList->load() as $role) {
             $userList = new User\Listing();
