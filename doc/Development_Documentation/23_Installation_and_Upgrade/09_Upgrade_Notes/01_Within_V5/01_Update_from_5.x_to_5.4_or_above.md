@@ -16,7 +16,7 @@ Even if we don't use the legacy updater, we still need to perform the necessary 
 We've prepared a simple PHP script that does all the necessary steps for us.
 Just install the script in your project-root with the following command: 
 ```bash
-wget https://gist.github.com/brusch/c3e572947a7a7e8523e18e9787cf88c3 -O manual-migrations.php
+wget https://gist.githubusercontent.com/brusch/c3e572947a7a7e8523e18e9787cf88c3/raw/pimcore-migrations-40-to-54.php -O manual-migration.php
 ```
 
 ## 3. Cleanup your `composer.json`
