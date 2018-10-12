@@ -106,6 +106,7 @@ class Frontend
             $sites = \Pimcore\Cache\Runtime::get($cacheKey);
         } else {
             $sites = new Site\Listing();
+            $sites->setOrderKey('(SELECT LENGTH(path) FROM documents WHERE documents.id = sites.rootId) DESC', false);
             $sites = $sites->load();
             \Pimcore\Cache\Runtime::set($cacheKey, $sites);
         }

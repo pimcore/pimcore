@@ -50,6 +50,9 @@ class PageController extends DocumentControllerBase
         }
         Element\Editlock::lock($request->get('id'), 'document');
 
+        /**
+         * @var $page Document\Page
+         */
         $page = Document\Page::getById($request->get('id'));
         $page = clone $page;
         $page = $this->getLatestVersion($page);
@@ -66,11 +69,7 @@ class PageController extends DocumentControllerBase
             $page->contentMasterDocumentPath = $page->getContentMasterDocument()->getRealFullPath();
         }
 
-        $page->url = $page->getFullPath();
-        $site = \Pimcore\Tool\Frontend::getSiteForDocument($page);
-        if ($site instanceof Site && $site->getMainDomain()) {
-            $page->url = 'http://' . $site->getMainDomain() . preg_replace('@^' . $site->getRootPath() . '/?@', '/', $page->getRealFullPath());
-        }
+        $page->url = $page->getUrl();
 
         // unset useless data
         $page->setElements(null);
