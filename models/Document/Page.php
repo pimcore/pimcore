@@ -20,6 +20,7 @@ namespace Pimcore\Model\Document;
 use Pimcore\Logger;
 use Pimcore\Model\Document\Targeting\TargetingDocumentInterface;
 use Pimcore\Model\Redirect;
+use Pimcore\Model\Site;
 use Pimcore\Model\Tool\Targeting\TargetGroup;
 use Pimcore\Tool\Frontend;
 
@@ -92,6 +93,10 @@ class Page extends TargetingDocument
 
         foreach ($redirects->getRedirects() as $redirect) {
             $redirect->delete();
+        }
+
+        if ($site = Site::getByRootId($this->getId())) {
+            $site->delete();
         }
 
         parent::delete();
