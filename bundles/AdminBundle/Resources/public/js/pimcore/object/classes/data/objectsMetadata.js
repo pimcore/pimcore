@@ -248,6 +248,7 @@ pimcore.object.classes.data.objectsMetadata = Class.create(pimcore.object.classe
             var types = {
                 number: t("objectsMetadata_type_number"),
                 text: t("objectsMetadata_type_text"),
+                date: t("objectsMetadata_type_date"),
                 select: t("objectsMetadata_type_select"),
                 bool: t("objectsMetadata_type_bool"),
                 multiselect: t("objectsMetadata_type_multiselect")
@@ -265,8 +266,8 @@ pimcore.object.classes.data.objectsMetadata = Class.create(pimcore.object.classe
                         'value',
                         'label'
                     ],
-                    data: [['number', types.number], ['text', types.text], ['select', types.select],
-                        ['bool', types.bool], ['multiselect', types.multiselect]]
+                    data: [['number', types.number], ['text', types.text], ['date', types.date],
+                        ['select', types.select], ['bool', types.bool], ['multiselect', types.multiselect]]
                 }),
                 valueField: 'value',
                 displayField: 'label'
