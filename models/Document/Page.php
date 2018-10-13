@@ -438,12 +438,14 @@ class Page extends TargetingDocument
     /**
      * @param null $hostname
      * @param null $scheme
+     *
      * @return string
+     *
      * @throws \Exception
      */
-    public function getUrl($hostname = null, $scheme = null) {
-
-        if(!$scheme) {
+    public function getUrl($hostname = null, $scheme = null)
+    {
+        if (!$scheme) {
             $scheme = 'http://';
             $requestHelper = \Pimcore::getContainer()->get('pimcore.http.request_helper');
             if ($requestHelper->hasMasterRequest()) {
@@ -451,7 +453,7 @@ class Page extends TargetingDocument
             }
         }
 
-        if(!$hostname) {
+        if (!$hostname) {
             if (!$hostname = \Pimcore\Config::getSystemConfig()->general->domain) {
                 if (!$hostname = \Pimcore\Tool::getHostname()) {
                     throw new \Exception('No hostname available');
