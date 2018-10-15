@@ -204,15 +204,17 @@ pimcore.document.tags.image = Class.create(pimcore.document.tag, {
             }.bind(this)
         }));
 
-        menu.add(new Ext.menu.Item({
-            text: t('upload'),
-            cls: "pimcore_inline_upload",
-            iconCls: "pimcore_icon_upload",
-            handler: function (item) {
-                item.parentMenu.destroy();
-                this.uploadDialog();
-            }.bind(this)
-        }));
+        if(this.options["disableInlineUpload"] !== true) {
+            menu.add(new Ext.menu.Item({
+                text: t('upload'),
+                cls: "pimcore_inline_upload",
+                iconCls: "pimcore_icon_upload",
+                handler: function (item) {
+                    item.parentMenu.destroy();
+                    this.uploadDialog();
+                }.bind(this)
+            }));
+        }
 
         menu.showAt(e.pageX, e.pageY);
         e.stopEvent();
