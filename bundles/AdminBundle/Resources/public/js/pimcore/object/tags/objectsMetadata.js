@@ -142,10 +142,9 @@ pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, 
                     return new Ext.form.TextField({});
                 };
             } else if (this.fieldConfig.columns[i].type == "date" && !readOnly) {
-                    cellEditor = function() {
-                        return new Ext.form.DateField({});
-                    };
-                }
+                cellEditor = function() {
+                    return new Ext.form.DateField({});
+                };
             } else if (this.fieldConfig.columns[i].type == "select" && !readOnly) {
                var selectData = [];
 

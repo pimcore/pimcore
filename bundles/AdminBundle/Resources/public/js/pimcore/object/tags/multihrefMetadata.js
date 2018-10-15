@@ -118,7 +118,6 @@ pimcore.object.tags.multihrefMetadata = Class.create(pimcore.object.tags.abstrac
                 cellEditor = function() {
                     return new Ext.form.DateField({});
                 };
-            }
             } else if(this.fieldConfig.columns[i].type == "select" && !readOnly) {
                 var selectData = [];
                 if (this.fieldConfig.columns[i].value) {
