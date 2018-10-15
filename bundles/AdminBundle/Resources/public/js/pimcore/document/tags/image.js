@@ -93,10 +93,6 @@ pimcore.document.tags.image = Class.create(pimcore.document.tag, {
             });
         }
 
-        this.element.insertHtml("beforeEnd",'<div class="pimcore_tag_droptarget_upload"></div>');
-
-        this.element.addCls("pimcore_tag_image_empty");
-
         // add additional drop targets
         if (this.options["dropClass"]) {
             var extra_drop_targets = Ext.query('.' + this.options.dropClass);
@@ -108,19 +104,26 @@ pimcore.document.tags.image = Class.create(pimcore.document.tag, {
             }
         }
 
-        pimcore.helpers.registerAssetDnDSingleUpload(this.element.dom, this.options["uploadPath"], 'path', function (e) {
-            if (e['asset']['type'] === "image" && !this.inherited) {
-                this.resetData();
-                this.datax.id = e['asset']['id'];
+        if(this.options["disableInlineUpload"] !== true) {
+            this.element.insertHtml("beforeEnd",'<div class="pimcore_tag_droptarget_upload"></div>');
+            this.element.addCls("pimcore_tag_image_empty");
+            pimcore.helpers.registerAssetDnDSingleUpload(this.element.dom, this.options["uploadPath"], 'path', function (e) {
+                if (e['asset']['type'] === "image" && !this.inherited) {
+                    this.resetData();
+                    this.datax.id = e['asset']['id'];
 
-                this.updateImage();
-                this.reload();
+                    this.updateImage();
+                    this.reload();
 
-                return true;
-            } else {
-                pimcore.helpers.showNotification(t("error"), t('unsupported_filetype'), "error");
-            }
-        }.bind(this));
+                    return true;
+                } else {
+                    pimcore.helpers.showNotification(t("error"), t('unsupported_filetype'), "error");
+                }
+            }.bind(this));
+        } else {
+            this.element.insertHtml("beforeEnd",'<div class="pimcore_tag_droptarget"></div>');
+            this.element.addCls("pimcore_tag_image_no_upload_empty");
+        }
 
         // insert image
         if (this.datax) {
