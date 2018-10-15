@@ -311,7 +311,7 @@ class TranslationController extends AdminController
                 $t = $class::getByKey($data['key']);
 
                 foreach ($data as $key => $value) {
-                    $key = substr($key, 1); //replace first "_" from key
+                    $key = preg_replace('/^_/', '', $key, 1);
                     if ($key != 'key') {
                         $t->addTranslation($key, $value);
                     }
@@ -378,7 +378,7 @@ class TranslationController extends AdminController
             $joins = [];
 
             if ($sortingSettings['orderKey']) {
-                $sortingSettings['orderKey'] = substr($sortingSettings['orderKey'], 1); //replace first "_" from key
+                $sortingSettings['orderKey'] = preg_replace('/^_/', '', $sortingSettings['orderKey'], 1);
                 if (in_array($sortingSettings['orderKey'], $validLanguages)) {
                     $sortingSettings['orderKey'] = str_replace('_', '', $sortingSettings['orderKey']); //replace all "_" from key
                     $joins[] = [
