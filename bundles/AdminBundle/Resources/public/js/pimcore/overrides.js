@@ -61,38 +61,44 @@ Ext.define('pimcore.FieldSetTools', {
         var result = this.callSuper(arguments);
 
         if (me.config.tools && me.config.tools.length > 0) {
-            this.createCloseCmp(result);
+            for (var i = 0; i < me.config.tools.length; i++) {
+                var tool = me.config.tools[i];
+                this.createToolCmp(tool, result);
+            }
         }
         return result;
 
     },
 
 
-    createCloseCmp: function(result) {
+    createToolCmp: function(tool, result) {
         var me = this;
-        var tool = me.config.tools[0];
-
+        var cls = me.baseCls + '-header-tool-default ' + me.baseCls + '-header-tool-right';
+        if (tool['cls']) {
+            cls = cls + ' ' + tool['cls'];
+        }
         var cfg = {
-            type: 'close',
+            type: tool['type'],
             html: me.title,
             ui: me.ui,
             tooltip: tool.qtip,
             handler: tool.handler,
-            cls: me.baseCls + '-header-tool-default ' + me.baseCls + '-header-tool-right',
-            id: me.id + '-legendTitle2',
+            hidden: tool.hidden,
+            cls: cls,
             ariaRole: 'checkbox',
             ariaRenderAttributes: {
                 'aria-checked': !me.collapsed
             }
         };
 
-        me.titleCmp2 = new Ext.panel.Tool(cfg);
-        result.add(me.titleCmp2);
-        return me.titleCmp2;
-        result.add(closeCmp);
-        return closeCmp;
-    },
+        if (tool['id']) {
+            cfg['id'] = tool['id'];
+        }
 
+        var cmp = new Ext.panel.Tool(cfg);
+        result.add(cmp);
+        return result;
+    },
 });
 
 
