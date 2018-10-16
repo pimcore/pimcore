@@ -1335,7 +1335,6 @@ class Classificationstore extends Model\DataObject\ClassDefinition\Data
         return $validLanguages;
     }
 
-
     /**
      * @return bool
      */
@@ -1344,16 +1343,15 @@ class Classificationstore extends Model\DataObject\ClassDefinition\Data
         return $this->hideEmptyData;
     }
 
-
     /**
      * @param $hideEmptyData bool
+     *
      * @return $this
      */
     public function setHideEmptyData($hideEmptyData)
     {
         $this->hideEmptyData = (bool) $hideEmptyData;
+
         return $this;
     }
-
-
 }
