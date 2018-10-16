@@ -19,6 +19,7 @@ use Pimcore\Console\AbstractCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Style\SymfonyStyle;
 
 class CacheClearCommand extends AbstractCommand
 {
@@ -50,13 +51,19 @@ class CacheClearCommand extends AbstractCommand
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $io = new SymfonyStyle($input, $output);
+        $io->newLine();
+
         if ($input->getOption('tags')) {
             $tags = $this->prepareTags($input->getOption('tags'));
             Cache::clearTags($tags);
+            $io->success('Pimcore data cache cleared tags: ' . implode(',', $tags));
         } elseif ($input->getOption('output')) {
             Cache::clearTag('output');
+            $io->success('Pimcore output cache cleared successfully');
         } else {
             Cache::clearAll();
+            $io->success('Pimcore data cache cleared successfully');
         }
     }
 
