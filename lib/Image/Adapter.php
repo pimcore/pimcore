@@ -499,6 +499,12 @@ abstract class Adapter
      */
     abstract public function getContentOptimizedFormat();
 
+    /**
+     * @param string $format
+     * @return bool
+     */
+    abstract public function supportsFormat(string $format);
+
     public function preModify()
     {
         if ($this->getModified()) {
