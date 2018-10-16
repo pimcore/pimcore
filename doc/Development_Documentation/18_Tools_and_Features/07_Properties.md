@@ -2,14 +2,14 @@
 
 ## General
 
-An every element can have custom properties. 
+Every element can have custom properties. 
 You can find these in the **Properties** tab for each type of elements (documents, assets, objects).
 
 ![Properties in the document](../img/properties_tab_editmode_preview.png)
 
-The properties could be used to specify some special bahavior when the document is rendered.
+The properties could be used to specify some special behavior when the document is rendered.
 
-Have a look at, few cases below:
+Have a look at a few cases below:
 
 * Hide the main navigation
 * Show the sidebar
@@ -17,7 +17,7 @@ Have a look at, few cases below:
 
 ## Get property in the template
 
-Following example shows how you can get property value from the template:
+The following example shows how you can get a property value in the template:
 
 <div class="code-section">
 
@@ -43,7 +43,7 @@ With predefined properties you can help/show the editors working within your Pim
 You can also define default values for each defined property to improve the productivity of your editors.
 
 **Predefined** does not mean that the value of the predefined property is available for every document. 
-To add global properties which are available everywhere use Website Settings instead.
+To add global properties which are available everywhere use [Website Settings](./27_Website_Settings.md) instead.
 
 ![Predefined properties - selectbox](../img/properties_predefined_selectbox.png)
 
@@ -51,13 +51,13 @@ To add global properties which are available everywhere use Website Settings ins
 
 <div class="inline-imgs">
 
-The Predefined properties configuration you can find in the ![Settings](../img/Icon_settings.png) **Settings -> Predefined properties** menu.
+You can find the Predefined properties configuration in the ![Settings](../img/Icon_settings.png) **Settings -> Predefined properties** menu.
 
 </div>
 
 ![Predefined properties configuration](../img/properties_predefined_configuration.png)
 
-Fields available in the properties configuration.
+The following fields are available in the properties configuration.
 
 | Name          | Is required? | Description                                                                                                                                                                                                      |
 |---------------|--------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
