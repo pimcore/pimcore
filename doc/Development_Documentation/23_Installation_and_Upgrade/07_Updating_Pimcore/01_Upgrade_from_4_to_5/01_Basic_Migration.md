@@ -51,14 +51,15 @@ You can use `--no-scripts` to install dependencies and then iterate through erro
   To execute the script, use the following command (making a backup at this stage is strongly recommended):
   
   ```bash
-  $ wget https://gist.githubusercontent.com/brusch/c3e572947a7a7e8523e18e9787cf88c3/raw/da97304ab59a7220ef41e1c09346a5370dda898c/pimcore-migrations-40-to-54.php -O  pimcore-migrations-40-to-54.php 
-  $ php pimcore-migrations-40-to-54.php
+  wget https://gist.githubusercontent.com/brusch/c3e572947a7a7e8523e18e9787cf88c3/raw/da97304ab59a7220ef41e1c09346a5370dda898c/pimcore-migrations-40-to-54.php -O  pimcore-migrations-40-to-54.php 
+  php pimcore-migrations-40-to-54.php
   ```
   
-- Execute all core migrations from 5.4.x to the latest version, by running the following command: 
+- Execute all core migrations from 5.4.x to the latest version, by running the following commands: 
 
   ```bash
-  $ ./bin/console pimcore:migrations:migrate -s pimcore_core 
+  ./bin/console pimcore:migrations:execute -s pimcore_core 20180724144005
+  ./bin/console pimcore:migrations:migrate -s pimcore_core 
   ```
   
 - Run `composer update` once again to update the autoloader and class maps
