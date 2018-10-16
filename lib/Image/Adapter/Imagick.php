@@ -153,6 +153,19 @@ class Imagick extends Adapter
     }
 
     /**
+     * @return string
+     */
+    public function getContentOptimizedFormat()
+    {
+        $format = 'jpeg';
+        if ($this->hasAlphaChannel()) {
+            $format = 'png32';
+        }
+
+        return $format;
+    }
+
+    /**
      * @param $path
      * @param null $format
      * @param null $quality
@@ -180,15 +193,6 @@ class Imagick extends Adapter
         }
 
         $originalFilename = null;
-        if (!$this->reinitializing) {
-            if ($this->getUseContentOptimizedFormat()) {
-                $format = 'jpeg';
-                if ($this->hasAlphaChannel()) {
-                    $format = 'png32';
-                }
-            }
-        }
-
         $i = $this->resource; // this is because of HHVM which has problems with $this->resource->writeImage();
 
         if (in_array($format, ['jpeg', 'pjpeg', 'jpg']) && $this->isAlphaPossible) {

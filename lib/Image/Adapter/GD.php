@@ -63,6 +63,19 @@ class GD extends Adapter
     }
 
     /**
+     * @return string
+     */
+    public function getContentOptimizedFormat()
+    {
+        $format = 'pjpeg';
+        if ($this->hasAlphaChannel()) {
+            $format = 'png';
+        }
+
+        return $format;
+    }
+
+    /**
      * @param $path
      * @param null $format
      * @param null $quality
@@ -80,13 +93,6 @@ class GD extends Adapter
         }
 
         $format = strtolower($format);
-
-        if (!$this->reinitializing && $this->getUseContentOptimizedFormat()) {
-            $format = 'pjpeg';
-            if ($this->hasAlphaChannel()) {
-                $format = 'png';
-            }
-        }
 
         // progressive jpeg
         if ($format == 'pjpeg') {

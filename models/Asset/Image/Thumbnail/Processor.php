@@ -194,8 +194,6 @@ class Processor
             return self::returnPath($errorImage, $returnAbsolutePath);
         }
 
-        $image->setUseContentOptimizedFormat($contentOptimizedFormat);
-
         $startTime = microtime(true);
 
         $transformations = $config->getItems();
@@ -337,6 +335,10 @@ class Processor
                     }
                 }
             }
+        }
+
+        if($contentOptimizedFormat) {
+            $format = $image->getContentOptimizedFormat();
         }
 
         $image->save($fsPath, $format, $config->getQuality());
