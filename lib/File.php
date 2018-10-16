@@ -129,7 +129,7 @@ class File
             self::mkdir(dirname($path));
         }
 
-        $return = file_put_contents($path, $data, null, self::getContext());
+        $return = file_put_contents('nette.safe://'.$path, $data, null, self::getContext());
         @chmod($path, self::$defaultMode);
 
         return $return;
