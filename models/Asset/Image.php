@@ -259,7 +259,7 @@ EOT;
      */
     public function getLowQualityPreviewFileSystemPath()
     {
-        $path = $this->getThumbnail(Image\Thumbnail\Config::getPreviewConfig())->getFileSystemPath();
+        $path = $this->getThumbnail(Image\Thumbnail\Config::getPreviewConfig())->getFileSystemPath(true);
         $svgPath = preg_replace("/\.p?jpe?g$/", '-low-quality-preview.svg', $path);
 
         return $svgPath;
