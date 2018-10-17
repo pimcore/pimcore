@@ -16,6 +16,7 @@ namespace Pimcore\Tool;
 
 use Pimcore\Db\Connection;
 use Pimcore\File;
+use Pimcore\Image;
 use Pimcore\Tool\Requirements\Check;
 
 class Requirements
@@ -638,6 +639,15 @@ class Requirements
             'name' => 'curl',
             'link' => 'http://www.php.net/curl',
             'state' => function_exists('curl_init') ? Check::STATE_OK : Check::STATE_WARNING
+        ]);
+
+        // WebP for active image adapter
+        $imageAdapter = Image::getInstance();
+        $reflect = new \ReflectionClass($imageAdapter);
+        $imageAdapterType = $reflect->getShortName();
+        $checks[] = new Check([
+            'name' => 'WebP (via ' . $imageAdapterType . ')',
+            'state' => $imageAdapter->supportsFormat('webp') ? Check::STATE_OK : Check::STATE_WARNING
         ]);
 
         return $checks;
