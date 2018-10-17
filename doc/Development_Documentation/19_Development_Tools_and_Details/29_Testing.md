@@ -17,7 +17,7 @@ bootstrap file to ensure the Pimcore startup process has everything it needs. St
 to your project:
 
 ```
-$ composer require --dev 'symfony/phpunit-bridge:^3.4'
+$ composer require --dev 'symfony/phpunit-bridge:*'
 ```
 
 Next, add a PHPUnit config file named `phpunit.xml.dist` in the root directory of your project. The config file below
