@@ -501,6 +501,7 @@ abstract class Adapter
 
     /**
      * @param string $format
+     *
      * @return bool
      */
     abstract public function supportsFormat(string $format);

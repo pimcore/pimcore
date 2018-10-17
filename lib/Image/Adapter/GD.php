@@ -114,7 +114,7 @@ class GD extends Adapter
             imagesavealpha($this->resource, true);
         }
 
-        if($format == 'jpeg' || $format == 'webp') {
+        if ($format == 'jpeg' || $format == 'webp') {
             $functionName($this->resource, $path, $quality);
         } else {
             $functionName($this->resource, $path);
@@ -443,7 +443,7 @@ class GD extends Adapter
      */
     public function supportsFormat(string $format)
     {
-        if(!isset($this->supportedFormatsCache[$format])) {
+        if (!isset($this->supportedFormatsCache[$format])) {
             $info = gd_info();
             $mappings = [
                 'jpg' => 'JPEG Support',
@@ -453,9 +453,9 @@ class GD extends Adapter
                 'gif' => 'GIF Create Support',
                 'png' => 'PNG Support',
             ];
-            
-            if(isset($info[$mappings[$format]]) && $info[$mappings[$format]]) {
-                $this->supportedFormatsCache[$format] = true; 
+
+            if (isset($info[$mappings[$format]]) && $info[$mappings[$format]]) {
+                $this->supportedFormatsCache[$format] = true;
             } else {
                 $this->supportedFormatsCache[$format] = false;
             }

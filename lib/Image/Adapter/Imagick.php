@@ -963,7 +963,7 @@ class Imagick extends Adapter
      */
     public function supportsFormat(string $format)
     {
-        if(!isset($this->supportedFormatsCache[$format])) {
+        if (!isset($this->supportedFormatsCache[$format])) {
             try {
                 // we don't use \Imagick::queryFormats() here, because this doesn't consider configured delegates
                 $tmpFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/' . uniqid() . '.' . $format;

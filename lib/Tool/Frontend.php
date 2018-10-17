@@ -146,10 +146,10 @@ class Frontend
     /**
      * @return bool
      */
-    public static function hasWebpSupport() {
-
+    public static function hasWebpSupport()
+    {
         $config = \Pimcore::getContainer()->getParameter('pimcore.config')['assets']['image']['thumbnails']['webp_auto_support'];
-        if($config) {
+        if ($config) {
             try {
                 $requestHelper = \Pimcore::getContainer()->get('Pimcore\Http\RequestHelper');
                 if ($requestHelper->hasMasterRequest()) {

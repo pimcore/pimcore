@@ -140,7 +140,7 @@ class Processor
 
         $image = Asset\Image::getImageTransformInstance();
 
-        if($contentOptimizedFormat && Frontend::hasWebpSupport() && $image->supportsFormat('webp')) {
+        if ($contentOptimizedFormat && Frontend::hasWebpSupport() && $image->supportsFormat('webp')) {
             $format = 'webp';
         }
 
@@ -343,7 +343,7 @@ class Processor
             }
         }
 
-        if($contentOptimizedFormat && !Frontend::hasWebpSupport()) {
+        if ($contentOptimizedFormat && !Frontend::hasWebpSupport()) {
             $format = $image->getContentOptimizedFormat();
         }
 
