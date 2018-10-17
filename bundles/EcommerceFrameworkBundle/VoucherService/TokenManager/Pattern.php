@@ -219,13 +219,17 @@ class Pattern extends AbstractTokenManager implements IExportableTokenManager
      * Generates Codes and an according Insert Query, if the MAX_PACKAGE_SIZE
      * may be reached several queries are generated.
      *
-     * @return array|bool
+     * @return bool
      */
     public function insertOrUpdateVoucherSeries()
     {
         $db = \Pimcore\Db::get();
         try {
             $codeSets = $this->generateCodes();
+
+            if($codeSets === false) {
+                return false;
+            }
 
             if (is_array($codeSets)) {
                 foreach ($codeSets as $query) {
@@ -235,12 +239,12 @@ class Pattern extends AbstractTokenManager implements IExportableTokenManager
                 $db->query($this->buildInsertQuery($codeSets));
             }
 
-            return $codeSets;
+            return true;
         } catch (\Exception $e) {
-            //            var_dump($e);
-            //            \Pimcore\Log\Simple::log('VoucherSystem', $e);
             return false;
         }
+
+        return false;
     }
 
     /**
