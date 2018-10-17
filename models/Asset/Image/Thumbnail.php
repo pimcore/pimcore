@@ -95,7 +95,8 @@ class Thumbnail
         if ($this->getConfig()) {
             if ($this->useOriginalFile($this->asset->getFilename()) && $this->getConfig()->isSvgTargetFormatPossible()) {
                 // we still generate the raster image, to get the final size of the thumbnail
-                $path = $this->asset->getFullPath();
+                // we use getRealFullPath() here, to avoid double encoding (getFullPath() returns already encoded path)
+                $path = $this->asset->getRealFullPath();
             }
         }
 
