@@ -706,6 +706,8 @@ class Concrete extends AbstractObject
         } finally {
             AbstractObject::setDisableDirtyDetection($isDirtyDetectionDisabled);
         }
+
+        return $this;
     }
 
     public function __sleep()
