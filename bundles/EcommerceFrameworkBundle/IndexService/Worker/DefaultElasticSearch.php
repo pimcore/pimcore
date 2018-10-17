@@ -499,6 +499,7 @@ class DefaultElasticSearch extends AbstractMockupCacheWorker implements IBatchPr
 
             //check if parent should exist and if so, consider parent relation at indexing
             if (!empty($indexSystemData['o_virtualProductId']) && $indexSystemData['o_id'] != $indexSystemData['o_virtualProductId']) {
+                $this->deleteMovedParentRelations($indexSystemData);
                 $this->bulkIndexData[] = ['index' => ['_index' => $this->getIndexNameVersion(), '_type' => $indexSystemData['o_type'], '_id' => $objectId, '_parent' => $indexSystemData['o_virtualProductId']]];
             } else {
                 $this->bulkIndexData[] = ['index' => ['_index' => $this->getIndexNameVersion(), '_type' => $indexSystemData['o_type'], '_id' => $objectId]];
@@ -507,6 +508,43 @@ class DefaultElasticSearch extends AbstractMockupCacheWorker implements IBatchPr
 
             //save new indexed element to mockup cache
             $this->saveToMockupCache($objectId, $data);
+        }
+    }
+
+    /**
+     * If a variant is moved from one parent to another one the original document needs to be deleted as otherwise the variant will be stored twice in the index
+     *
+     * @param array $indexSystemData
+     * @param int $objectid
+     */
+    protected function deleteMovedParentRelations($indexSystemData)
+    {
+        $esClient = $this->getElasticSearchClient();
+
+        $variants = $esClient->search([
+            'index' => $this->getIndexNameVersion(), 'type' => IProductList::PRODUCT_TYPE_VARIANT,
+            'body' => [
+                '_source' => false,
+                'query' => [
+                    'bool' => [
+                        'must' => [
+                            'term' => [
+                                'system.o_id' => $indexSystemData['o_id']
+                            ]
+                        ]
+                    ]
+                ]
+            ]
+        ]);
+
+        $hits = $variants['hits']['hits'] ?? [];
+
+        foreach($hits as $hit) {
+            if($hit['_parent'] != $indexSystemData['o_virtualProductId']) {
+                $params = ['index' => $this->getIndexNameVersion(), 'type' => IProductList::PRODUCT_TYPE_VARIANT, 'id' => $indexSystemData['o_id']];
+                $params['parent'] = $hit['_parent'];
+                $esClient->delete($params);
+            }
         }
     }
 
