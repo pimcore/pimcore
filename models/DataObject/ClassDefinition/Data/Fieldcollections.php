@@ -623,7 +623,7 @@ class Fieldcollections extends Model\DataObject\ClassDefinition\Data
         $data = $object->getObjectVar($this->getName());
         if ($this->getLazyLoading() and !in_array($this->getName(), $object->getO__loadedLazyFields())) {
             $data = $this->load($object, ['force' => true]);
-            if ($data) {
+            if ($data instanceof DataObject\DirtyIndicatorInterface) {
                 $data->resetDirtyMap();
             }
 
