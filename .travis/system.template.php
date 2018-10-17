@@ -70,8 +70,7 @@ return [
         "google" => [
             "client_id"     => "",
             "email"         => "",
-            "simpleapikey"  => "",
-            "browserapikey" => ""
+            "simpleapikey"  => ""
         ]
     ],
     "cache"          => [
