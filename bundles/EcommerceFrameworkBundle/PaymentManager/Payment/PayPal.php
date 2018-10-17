@@ -337,6 +337,7 @@ class PayPal extends AbstractPayment
      * @param null|AbstractOrder $order
      *
      * @return \stdClass
+     *
      * @throws \Pimcore\Bundle\EcommerceFrameworkBundle\Exception\UnsupportedException
      */
     protected function createPaymentDetails(IPrice $price, ?AbstractOrder $order)
@@ -353,7 +354,7 @@ class PayPal extends AbstractPayment
 
         // add article
         $itemTotal = 0;
-        $paymentDetails->PaymentDetailsItem = array();
+        $paymentDetails->PaymentDetailsItem = [];
         $orderCurrency = $order->getCurrency();
 
         foreach ($order->getItems() as $item) {

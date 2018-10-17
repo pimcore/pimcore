@@ -1785,7 +1785,7 @@ class Service extends Model\Element\Service
                     $value->resetLanguageDirtyMap();
                 }
 
-                if($value instanceof DirtyIndicatorInterface) {
+                if ($value instanceof DirtyIndicatorInterface) {
                     $value->resetDirtyMap();
 
                     if (!method_exists($value, 'getFieldDefinitions')) {

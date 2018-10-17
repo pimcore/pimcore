@@ -702,7 +702,7 @@ class Concrete extends AbstractObject
         }
         try {
             parent::save();
-            if($this instanceof DirtyIndicatorInterface) {
+            if ($this instanceof DirtyIndicatorInterface) {
                 $this->resetDirtyMap();
             }
         } finally {

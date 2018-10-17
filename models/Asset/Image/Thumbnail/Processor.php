@@ -337,7 +337,7 @@ class Processor
             }
         }
 
-        if($contentOptimizedFormat) {
+        if ($contentOptimizedFormat) {
             $format = $image->getContentOptimizedFormat();
         }
 
