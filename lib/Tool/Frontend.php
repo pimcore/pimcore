@@ -146,17 +146,21 @@ class Frontend
     /**
      * @return bool
      */
-    public static function hasClientWebpSupport() {
-        try {
-            $requestHelper = \Pimcore::getContainer()->get('Pimcore\Http\RequestHelper');
-            if($requestHelper->hasMasterRequest()) {
-                $contentTypes = $requestHelper->getMasterRequest()->getAcceptableContentTypes();
-                if(in_array('image/webp', $contentTypes)) {
-                    return true;
+    public static function hasWebpSupport() {
+
+        $config = \Pimcore::getContainer()->getParameter('pimcore.config')['assets']['image']['thumbnails']['webp_auto_support'];
+        if($config) {
+            try {
+                $requestHelper = \Pimcore::getContainer()->get('Pimcore\Http\RequestHelper');
+                if ($requestHelper->hasMasterRequest()) {
+                    $contentTypes = $requestHelper->getMasterRequest()->getAcceptableContentTypes();
+                    if (in_array('image/webp', $contentTypes)) {
+                        return true;
+                    }
                 }
+            } catch (\Exception $e) {
+                // nothing to do
             }
-        } catch (\Exception $e) {
-            // nothing to do
         }
 
         return false;

@@ -268,7 +268,7 @@ class FullPageCacheListener
             }
         }
 
-        if(Tool\Frontend::hasClientWebpSupport()) {
+        if(Tool\Frontend::hasWebpSupport()) {
             $appendKey .= 'webp';
         }
 
