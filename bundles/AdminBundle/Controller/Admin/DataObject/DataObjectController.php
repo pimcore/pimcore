@@ -2278,6 +2278,10 @@ class DataObjectController extends ElementControllerBase implements EventedContr
 
                     $success = true;
                 } catch (\Exception $e) {
+                    if ($e instanceof Element\ValidationException) {
+                        return $this->buildValidationExceptionMessage($e);
+                    }
+
                     Logger::err($e);
                     $success = false;
                     $message = $e->getMessage() . ' in object ' . $source->getRealFullPath() . ' [id: ' . $source->getId() . ']';

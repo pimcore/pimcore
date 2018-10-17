@@ -876,11 +876,12 @@ pimcore.object.tree = Class.create({
                             record.pasteProgressBar.updateProgress(status, percent + "%");
                         }
                     }.bind(this),
-                    failure: function (message) {
+                    failure: function (message, rdata) {
                         record.pasteWindow.close();
                         record.pasteProgressBar = null;
 
-                        pimcore.helpers.showNotification(t("error"), t("error_pasting_item"), "error", t(message));
+                        pimcore.helpers.showPrettyError(rdata.type, t("error"), t("error_pasting_item"),
+                            rdata.message, rdata.stack, rdata.code);
 
                         pimcore.elementservice.refreshNodeAllTrees("object", record.parentNode.id);
                     }.bind(this),
