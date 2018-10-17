@@ -27,7 +27,7 @@ expects your tests in a `tests/` directory and processes files in `src/` when ca
 <?xml version="1.0" encoding="UTF-8"?>
 <phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/6.5/phpunit.xsd"
-         bootstrap="../../vendor/autoload.php"
+         bootstrap="vendor/autoload.php"
          colors="true">
     <testsuite name="default">
         <directory suffix="Test.php">tests</directory>
