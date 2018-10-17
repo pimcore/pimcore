@@ -1785,17 +1785,15 @@ class Service extends Model\Element\Service
                     $value->resetLanguageDirtyMap();
                 }
 
-                if (!method_exists($value, 'resetDirtyMap')) {
-                    continue;
+                if($value instanceof DirtyIndicatorInterface) {
+                    $value->resetDirtyMap();
+
+                    if (!method_exists($value, 'getFieldDefinitions')) {
+                        continue;
+                    }
+
+                    self::doResetDirtyMap($value, $fieldDefinitions[$fd->getName()]);
                 }
-
-                $value->resetDirtyMap();
-
-                if (!method_exists($value, 'getFieldDefinitions')) {
-                    continue;
-                }
-
-                self::doResetDirtyMap($value, $fieldDefinitions[$fd->getName()]);
             }
         }
     }
@@ -1805,9 +1803,10 @@ class Service extends Model\Element\Service
      */
     public static function recursiveResetDirtyMap(AbstractObject $object)
     {
-        if (method_exists($object, 'resetDirtyMap')) {
+        if ($object instanceof DirtyIndicatorInterface) {
             $object->resetDirtyMap();
         }
+
         if ($object instanceof Concrete) {
             self::doResetDirtyMap($object, $object->getClass());
         }
