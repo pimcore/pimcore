@@ -21,6 +21,7 @@ use Pimcore\File;
 use Pimcore\Logger;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Tool\TmpStore;
+use Pimcore\Tool\Frontend;
 
 class Processor
 {
@@ -137,6 +138,12 @@ class Processor
             }
         }
 
+        $image = Asset\Image::getImageTransformInstance();
+
+        if($contentOptimizedFormat && Frontend::hasWebpSupport() && $image->supportsFormat('webp')) {
+            $format = 'webp';
+        }
+
         $thumbDir = $asset->getImageThumbnailSavePath() . '/image-thumb__' . $asset->getId() . '__' . $config->getName();
         $filename = preg_replace("/\." . preg_quote(File::getFileExtension($asset->getFilename())) . '/', '', $asset->getFilename());
 
@@ -187,7 +194,6 @@ class Processor
         }
 
         // transform image
-        $image = Asset\Image::getImageTransformInstance();
         $image->setPreserveColor($config->isPreserveColor());
         $image->setPreserveMetaData($config->isPreserveMetaData());
         if (!$image->load($fileSystemPath, ['asset' => $asset])) {
@@ -337,7 +343,7 @@ class Processor
             }
         }
 
-        if ($contentOptimizedFormat) {
+        if($contentOptimizedFormat && !Frontend::hasWebpSupport()) {
             $format = $image->getContentOptimizedFormat();
         }
 

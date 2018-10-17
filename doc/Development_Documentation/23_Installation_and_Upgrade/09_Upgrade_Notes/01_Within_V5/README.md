@@ -1,5 +1,24 @@
 # Upgrade Notes for Upgrades within Pimcore 5
 
+## Version 5.5.1
+
+#### WebP Support for Thumbnails
+Pimcore now delivers automatically thumbnails in WebP format when using the `Auto` configuration for the 
+target format and when the client does support WebP (checking by evaluating the `Accept` request header).  
+In order to ensure that WebP images are served with the right `Content-Type` by your webserver, we recommend 
+to check your configuration or just add the following line to your `web/.htaccess` when using Apache.   
+```
+AddType image/webp .webp
+```
+  
+If you prefer not using WebP, you can disable the support by adding the following config option: 
+```yml
+    assets:
+        image:
+            thumbnails:
+                webp_auto_support: false
+```
+
 ## Version 5.5.0
 
 ### Major compatibility changes

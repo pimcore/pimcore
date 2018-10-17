@@ -224,7 +224,6 @@ class Imagick extends Adapter
         if (!$this->isPreserveColor()) {
             $i->profileImage('*', null);
         }
-        $i->setImageFormat($format);
 
         if ($quality && !$this->isPreserveColor()) {
             $i->setCompressionQuality((int) $quality);
@@ -253,6 +252,7 @@ class Imagick extends Adapter
         }
 
         if (!stream_is_local($path)) {
+            $i->setImageFormat($format);
             $success = File::put($path, $i->getImageBlob());
         } else {
             $success = $i->writeImage($format . ':' . $path);
@@ -954,5 +954,29 @@ class Imagick extends Adapter
         }
 
         return parent::getVectorRasterDimensions();
+    }
+
+    protected $supportedFormatsCache = [];
+
+    /**
+     * @inheritdoc
+     */
+    public function supportsFormat(string $format)
+    {
+        if(!isset($this->supportedFormatsCache[$format])) {
+            try {
+                // we don't use \Imagick::queryFormats() here, because this doesn't consider configured delegates
+                $tmpFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/' . uniqid() . '.' . $format;
+                $image = new \Imagick();
+                $image->newImage(100, 100, new \ImagickPixel('red'));
+                $image->writeImage($format . ':' . $tmpFile);
+                $this->supportedFormatsCache[$format] = true;
+                unlink($tmpFile);
+            } catch (\Exception $e) {
+                $this->supportedFormatsCache[$format] = false;
+            }
+        }
+
+        return $this->supportedFormatsCache[$format];
     }
 }

@@ -268,6 +268,10 @@ class FullPageCacheListener
             }
         }
 
+        if(Tool\Frontend::hasWebpSupport()) {
+            $appendKey .= 'webp';
+        }
+
         $this->defaultCacheKey = 'output_' . md5(\Pimcore\Tool::getHostname() . $requestUri . $appendKey);
         $cacheKeys = [
             $this->defaultCacheKey . '_' . $device,
