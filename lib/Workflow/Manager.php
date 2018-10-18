@@ -20,7 +20,7 @@ use Pimcore\Model\Element\AbstractElement;
 use Pimcore\Model\Element\ValidationException;
 use Pimcore\Workflow\EventSubscriber\NotesSubscriber;
 use Pimcore\Workflow\Place\PlaceConfig;
-use Symfony\Component\EventDispatcher\EventDispatcher;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Workflow\Exception\InvalidARgumentException;
 use Symfony\Component\Workflow\Exception\LogicException;
 use Symfony\Component\Workflow\Marking;
@@ -45,7 +45,7 @@ class Manager
     private $expressionService;
 
     /**
-     * @var EventDispatcher
+     * @var EventDispatcherInterface
      */
     private $eventDispatcher;
 
@@ -64,7 +64,7 @@ class Manager
      */
     private $workflows = [];
 
-    public function __construct(Registry $workflowRegistry, NotesSubscriber $notesSubscriber, ExpressionService $expressionService, EventDispatcher $eventDispatcher)
+    public function __construct(Registry $workflowRegistry, NotesSubscriber $notesSubscriber, ExpressionService $expressionService, EventDispatcherInterface $eventDispatcher)
     {
         $this->workflowRegistry = $workflowRegistry;
         $this->notesSubscriber = $notesSubscriber;
