@@ -83,8 +83,6 @@ class Composer
             return;
         }
 
-        self::clearDataCache($event, $consoleDir);
-
         // execute migrations
         $currentVersion = null;
         try {
@@ -92,14 +90,15 @@ class Composer
                 'pimcore:migrations:status -s pimcore_core -o current_version', 30, false);
             $currentVersion = trim($process->getOutput());
         } catch (\Throwable $e) {
-            $event->getIO()->write('<comment>Unable to retrieve current migration version</comment>');
+            // noting to do
         }
 
-        if (!empty($currentVersion)) {
+        if (!empty($currentVersion) && is_numeric($currentVersion)) {
+            self::clearDataCache($event, $consoleDir);
             static::executeCommand($event, $consoleDir, 'pimcore:migrations:migrate -s pimcore_core -n');
             self::clearDataCache($event, $consoleDir);
         } else {
-            $event->getIO()->write('<comment>Skipping migrations, because current version is `0` -> run installer first or mark migrations as done manually!</comment>', true);
+            $event->getIO()->write('<comment>Skipping migrations ... (either Pimcore is not installed yet or current status of migrations is not available)</comment>', true);
         }
     }
 
@@ -109,12 +108,10 @@ class Composer
      */
     public static function clearDataCache($event, $consoleDir)
     {
-        if(\Pimcore::isInstalled()) {
-            try {
-                static::executeCommand($event, $consoleDir, 'pimcore:cache:clear', 60);
-            } catch (\Throwable $e) {
-                $event->getIO()->write('<comment>Unable to perform command pimcore:cache:clear</comment>');
-            }
+        try {
+            static::executeCommand($event, $consoleDir, 'pimcore:cache:clear', 60);
+        } catch (\Throwable $e) {
+            $event->getIO()->write('<comment>Unable to perform command pimcore:cache:clear</comment>');
         }
     }
 

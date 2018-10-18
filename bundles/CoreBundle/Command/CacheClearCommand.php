@@ -54,20 +54,16 @@ class CacheClearCommand extends AbstractCommand
         $io = new SymfonyStyle($input, $output);
         $io->newLine();
 
-        try {
-            if ($input->getOption('tags')) {
-                $tags = $this->prepareTags($input->getOption('tags'));
-                Cache::clearTags($tags);
-                $io->success('Pimcore data cache cleared tags: ' . implode(',', $tags));
-            } elseif ($input->getOption('output')) {
-                Cache::clearTag('output');
-                $io->success('Pimcore output cache cleared successfully');
-            } else {
-                Cache::clearAll();
-                $io->success('Pimcore data cache cleared successfully');
-            }
-        } catch (\Exception $e) {
-            $io->writeln('<fg=yellow>Caching backend not available, cache clear operation canceled!</>');
+        if ($input->getOption('tags')) {
+            $tags = $this->prepareTags($input->getOption('tags'));
+            Cache::clearTags($tags);
+            $io->success('Pimcore data cache cleared tags: ' . implode(',', $tags));
+        } elseif ($input->getOption('output')) {
+            Cache::clearTag('output');
+            $io->success('Pimcore output cache cleared successfully');
+        } else {
+            Cache::clearAll();
+            $io->success('Pimcore data cache cleared successfully');
         }
     }
 
