@@ -2801,6 +2801,10 @@ pimcore.helpers.keyBindingMapping = {
     "quickSearch": pimcore.helpers.showQuickSearch
 };
 
+pimcore.helpers.showPermissionError = function(permission) {
+    Ext.MessageBox.alert(t("error"), sprintf(t('permission_missing'), ts(permission)));
+}
+
 pimcore.helpers.registerAssetDnDSingleUpload = function (element, parent, parentType, success, failure, context) {
 
     if (typeof success != "function") {
@@ -2904,4 +2908,6 @@ pimcore.helpers.registerAssetDnDSingleUpload = function (element, parent, parent
         }
     }.bind(this), true);
 };
+
+
 
