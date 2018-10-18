@@ -125,6 +125,9 @@ class Single extends AbstractTokenManager implements IExportableTokenManager
         return strlen($this->configuration->getToken());
     }
 
+    /**
+     * @return bool
+     */
     public function insertOrUpdateVoucherSeries()
     {
         $db = \Pimcore\Db::get();
@@ -134,9 +137,13 @@ class Single extends AbstractTokenManager implements IExportableTokenManager
                     ON DUPLICATE KEY UPDATE token = ?, length = ?';
 
             $db->query($query, [trim($this->configuration->getToken()), $this->getFinalTokenLength(), $this->getSeriesId(), trim($this->configuration->getToken()), $this->getFinalTokenLength()]);
+
+            return true;
         } catch (\Exception $e) {
-            return ['error' => 'Something went wrong.'];
+            return false;
         }
+
+        return false;
     }
 
     /**
