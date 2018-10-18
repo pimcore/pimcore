@@ -109,10 +109,12 @@ class Composer
      */
     public static function clearDataCache($event, $consoleDir)
     {
-        try {
-            static::executeCommand($event, $consoleDir, 'pimcore:cache:clear', 60);
-        } catch (\Throwable $e) {
-            $event->getIO()->write('<comment>Unable to perform command pimcore:cache:clear</comment>');
+        if(\Pimcore::isInstalled()) {
+            try {
+                static::executeCommand($event, $consoleDir, 'pimcore:cache:clear', 60);
+            } catch (\Throwable $e) {
+                $event->getIO()->write('<comment>Unable to perform command pimcore:cache:clear</comment>');
+            }
         }
     }
 

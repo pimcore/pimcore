@@ -204,6 +204,18 @@ class Pimcore
     }
 
     /**
+     * @return bool
+     */
+    public static function isInstalled() {
+        try {
+            \Pimcore\Db::get();
+            return true;
+        } catch (\Exception $e) {
+            return false;
+        }
+    }
+
+    /**
      * @return object|\Symfony\Component\EventDispatcher\ContainerAwareEventDispatcher
      */
     public static function getEventDispatcher()
