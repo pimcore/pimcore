@@ -79,6 +79,9 @@ class ThumbnailsImageCommand extends AbstractCommand
         }
 
         if ($input->getOption('system')) {
+            if(!$input->getOption('thumbnails')){
+                $thumbnailsToGenerate = [];
+            }
             $thumbnailsToGenerate[] = 'system';
         }
 
