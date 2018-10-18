@@ -539,8 +539,8 @@ class DefaultElasticSearch extends AbstractMockupCacheWorker implements IBatchPr
 
         $hits = $variants['hits']['hits'] ?? [];
 
-        foreach($hits as $hit) {
-            if($hit['_parent'] != $indexSystemData['o_virtualProductId']) {
+        foreach ($hits as $hit) {
+            if ($hit['_parent'] != $indexSystemData['o_virtualProductId']) {
                 $params = [
                     'index' => $this->getIndexNameVersion(),
                     'type' => IProductList::PRODUCT_TYPE_VARIANT,
