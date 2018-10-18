@@ -42,6 +42,7 @@ pimcore.settings.gdpr.dataproviders.sentMail = Class.create({
     getGrid: function () {
 
         var iFrameSettings = { width : 700, height : 500};
+        var user = pimcore.globalmanager.get("user");
 
         var itemsPerPage = pimcore.helpers.grid.getDefaultPageSize();
 
@@ -107,6 +108,11 @@ pimcore.settings.gdpr.dataproviders.sentMail = Class.create({
                 items : [{
                     icon: "/bundles/pimcoreadmin/img/flat-color-icons/feedback.svg",
                     handler: function(grid, rowIndex){
+                        if (!user.isAllowed("emails")) {
+                            pimcore.helpers.showPermissionError("emails");
+                            return;
+                        }
+
                         var rec = grid.getStore().getAt(rowIndex);
                         var url = '/admin/email/show-email-log?id=' + rec.get('id') + '&type=html';
                         url = pimcore.helpers.addCsrfTokenToUrl(url);
@@ -123,6 +129,9 @@ pimcore.settings.gdpr.dataproviders.sentMail = Class.create({
                         iframe.show();
                     }.bind(this),
                     getClass: function(v, meta, rec) {
+                        if (!user.isAllowed("emails")) {
+                            return "inactive_actioncolumn";
+                        }
                         if(!rec.get('emailLogExistsHtml')){
                             return "pimcore_hidden";
                         }
@@ -140,6 +149,11 @@ pimcore.settings.gdpr.dataproviders.sentMail = Class.create({
                 items : [{
                     icon: "/bundles/pimcoreadmin/img/flat-color-icons/text.svg",
                     handler: function(grid, rowIndex){
+                        if (!user.isAllowed("emails")) {
+                            pimcore.helpers.showPermissionError("emails");
+                            return;
+                        }
+
                         var rec = grid.getStore().getAt(rowIndex);
                         var url = '/admin/email/show-email-log?id=' + rec.get('id') + '&type=text';
                         url = pimcore.helpers.addCsrfTokenToUrl(url);
@@ -156,6 +170,9 @@ pimcore.settings.gdpr.dataproviders.sentMail = Class.create({
                         iframe.show();
                     }.bind(this),
                     getClass: function(v, meta, rec) {
+                        if (!user.isAllowed("emails")) {
+                            return "inactive_actioncolumn";
+                        }
                         if(!rec.get('emailLogExistsText')){
                             return "pimcore_hidden";
                         }
@@ -173,6 +190,11 @@ pimcore.settings.gdpr.dataproviders.sentMail = Class.create({
                 items : [{
                     icon: "/bundles/pimcoreadmin/img/flat-color-icons/info.svg",
                     handler: function(grid, rowIndex){
+                        if (!user.isAllowed("emails")) {
+                            pimcore.helpers.showPermissionError("emails");
+                            return;
+                        }
+
                         var rec = grid.getStore().getAt(rowIndex);
                         var url = '/admin/email/show-email-log?id=' + rec.get('id') + '&type=params';
                         var store = Ext.create('Ext.data.TreeStore', {
@@ -238,7 +260,12 @@ pimcore.settings.gdpr.dataproviders.sentMail = Class.create({
                         });
                         this.window.show();
 
-                    }.bind(this)
+                    }.bind(this),
+                    getClass: function(v, meta, rec) {
+                        if (!user.isAllowed("emails")) {
+                            return "inactive_actioncolumn";
+                        }
+                    }
                 }]
             },
             {
@@ -250,9 +277,20 @@ pimcore.settings.gdpr.dataproviders.sentMail = Class.create({
                         tooltip: t('gdpr_dataSource_export'),
                         icon: "/bundles/pimcoreadmin/img/flat-color-icons/export.svg",
                         handler: function (grid, rowIndex) {
+                            if (!user.isAllowed("emails")) {
+                                pimcore.helpers.showPermissionError("emails");
+                                return;
+                            }
+
                             var data = grid.getStore().getAt(rowIndex);
                             pimcore.helpers.download("/admin/gdpr/sent-mail/export?id=" + data.data.id);
-                        }.bind(this)
+                        }.bind(this),
+                        getClass: function(v, meta, rec) {
+                            if (!user.isAllowed("emails")) {
+                                return "inactive_actioncolumn";
+                            }
+                        }
+
                     }
                 ]
             },
@@ -264,6 +302,11 @@ pimcore.settings.gdpr.dataproviders.sentMail = Class.create({
                     tooltip: t('delete'),
                     icon: "/bundles/pimcoreadmin/img/flat-color-icons/delete.svg",
                     handler: function (grid, rowIndex) {
+                        if (!user.isAllowed("emails")) {
+                            pimcore.helpers.showPermissionError("emails");
+                            return;
+                        }
+
                         var rec = grid.getStore().getAt(rowIndex);
 
                         Ext.MessageBox.show({
@@ -294,7 +337,12 @@ pimcore.settings.gdpr.dataproviders.sentMail = Class.create({
 
 
 
-                    }.bind(this)
+                    }.bind(this),
+                    getClass: function(v, meta, rec) {
+                        if (!user.isAllowed("emails")) {
+                            return "inactive_actioncolumn";
+                        }
+                    }
                 }]
             }
 

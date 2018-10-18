@@ -40,6 +40,8 @@ pimcore.settings.gdpr.dataproviders.pimcoreUsers = Class.create({
 
     initGrid: function () {
 
+        var user = pimcore.globalmanager.get("user");
+
         this.store = new Ext.data.Store({
             autoDestroy: true,
             remoteSort: true,
@@ -72,9 +74,19 @@ pimcore.settings.gdpr.dataproviders.pimcoreUsers = Class.create({
                         tooltip: t('gdpr_dataSource_export'),
                         icon: "/bundles/pimcoreadmin/img/flat-color-icons/export.svg",
                         handler: function (grid, rowIndex) {
+                            if (!user.isAllowed("users")) {
+                                pimcore.helpers.showPermissionError("users");
+                                return;
+                            }
+
                             var data = grid.getStore().getAt(rowIndex);
                             pimcore.helpers.download("/admin/gdpr/pimcore-users/export-user-data?id=" + data.data.id);
-                        }.bind(this)
+                        }.bind(this),
+                        getClass: function(v, meta, rec) {
+                            if(!user.isAllowed('users')){
+                                return "inactive_actioncolumn";
+                            }
+                        }
                     }
                 ]
             },
@@ -87,6 +99,10 @@ pimcore.settings.gdpr.dataproviders.pimcoreUsers = Class.create({
                         tooltip: t('remove'),
                         icon: "/bundles/pimcoreadmin/img/flat-color-icons/delete.svg",
                         handler: function (grid, rowIndex) {
+                            if (!user.isAllowed("users")) {
+                                pimcore.helpers.showPermissionError("users");
+                                return;
+                            }
 
                             var data = grid.getStore().getAt(rowIndex);
 
@@ -114,6 +130,11 @@ pimcore.settings.gdpr.dataproviders.pimcoreUsers = Class.create({
                         }.bind(this),
                         isDisabled: function(view, rowIndex, colIndex, item, record) {
                             return record.data["__gdprIsDeletable"] == false;
+                        },
+                        getClass: function(v, meta, rec) {
+                            if(!user.isAllowed('users')){
+                                return "inactive_actioncolumn";
+                            }
                         }
                     }
                 ]

@@ -17,6 +17,7 @@ namespace Pimcore\Bundle\AdminBundle\GDPR\DataProvider;
 
 use Pimcore\Db;
 use Pimcore\Model\Asset;
+use Pimcore\Model\Element\AbstractElement;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Element\Service;
 use Pimcore\Model\Search\Backend\Data;
@@ -184,7 +185,7 @@ class Assets extends Elements implements DataProviderInterface
         if ($sortingSettings['orderKey']) {
             // we need a special mapping for classname as this is stored in subtype column
             $sortMapping = [
-                'type' => 'subtype'
+                'type' => 'subtype',
             ];
 
             $sort = $sortingSettings['orderKey'];
@@ -200,13 +201,16 @@ class Assets extends Elements implements DataProviderInterface
         $hits = $searcherList->load();
 
         $elements = [];
+        /** @var  $hit AbstractElement */
         foreach ($hits as $hit) {
             $element = Service::getElementById($hit->getId()->getType(), $hit->getId()->getId());
+
             if ($element instanceof Asset) {
                 $data = \Pimcore\Model\Asset\Service::gridAssetData($element);
+                $data["permissions"] = $element->getUserPermissions();
+                $elements[] = $data;
             }
 
-            $elements[] = $data;
         }
 
         // only get the real total-count when the limit parameter is given otherwise use the default limit

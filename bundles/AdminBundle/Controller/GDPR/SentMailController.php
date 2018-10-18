@@ -48,6 +48,9 @@ class SentMailController extends \Pimcore\Bundle\AdminBundle\Controller\AdminCon
      */
     public function exportDataObjectAction(Request $request)
     {
+
+        $this->checkPermission("emails");
+
         $sentMail = Log::getById($request->get('id'));
 
         $sentMailArray = (array)$sentMail;

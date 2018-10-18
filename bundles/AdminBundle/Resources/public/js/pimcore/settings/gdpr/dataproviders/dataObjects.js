@@ -85,8 +85,17 @@ pimcore.settings.gdpr.dataproviders.dataObjects = Class.create({
                         icon: "/bundles/pimcoreadmin/img/flat-color-icons/export.svg",
                         handler: function (grid, rowIndex) {
                             var data = grid.getStore().getAt(rowIndex);
+                            if (!data.get("permissions").view) {
+                                pimcore.helpers.showPermissionError("view");
+                                return;
+                            }
                             pimcore.helpers.download(this.downloadUrl + data.data.id);
-                        }.bind(this)
+                        }.bind(this),
+                        getClass: function (v, meta, rec) {
+                            if (!rec.get("permissions").view) {
+                                return "inactive_actioncolumn";
+                            }
+                        }
                     }
                 ]
             },
@@ -100,8 +109,18 @@ pimcore.settings.gdpr.dataproviders.dataObjects = Class.create({
                         icon: "/bundles/pimcoreadmin/img/flat-color-icons/open_file.svg",
                         handler: function (grid, rowIndex) {
                             var data = grid.getStore().getAt(rowIndex);
+                            if (!data.get("permissions").view) {
+                                pimcore.helpers.showPermissionError("view");
+                                return;
+                            }
+
                             pimcore.helpers.openObject(data.data.id, "object");
-                        }.bind(this)
+                        }.bind(this),
+                        getClass: function (v, meta, rec) {
+                            if (!rec.get("permissions").view) {
+                                return "inactive_actioncolumn";
+                            }
+                        }
                     }
                 ]
             },
@@ -116,6 +135,10 @@ pimcore.settings.gdpr.dataproviders.dataObjects = Class.create({
                         handler: function (grid, rowIndex) {
 
                             var data = grid.getStore().getAt(rowIndex);
+                            if (!data.get("permissions").delete) {
+                                pimcore.helpers.showPermissionError("delete");
+                                return;
+                            }
 
                             var options = {
                                 "elementType": "object",
@@ -130,8 +153,13 @@ pimcore.settings.gdpr.dataproviders.dataObjects = Class.create({
                             pimcore.elementservice.deleteElement(options);
 
                         }.bind(this),
-                        isDisabled: function(view, rowIndex, colIndex, item, record) {
+                        isDisabled: function (view, rowIndex, colIndex, item, record) {
                             return record.data["__gdprIsDeletable"] == false;
+                        },
+                        getClass: function (v, meta, rec) {
+                            if (!rec.get("permissions").delete) {
+                                return "inactive_actioncolumn";
+                            }
                         }
                     }
                 ]
