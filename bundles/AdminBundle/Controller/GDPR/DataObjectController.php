@@ -71,6 +71,10 @@ class DataObjectController extends \Pimcore\Bundle\AdminBundle\Controller\AdminC
     public function exportDataObjectAction(Request $request, DataObjects $service)
     {
         $object = AbstractObject::getById($request->get('id'));
+        if (!$object->isAllowed('view')) {
+            throw new \Exception("export denied");
+        }
+
         $exportResult = $service->doExportData($object);
 
         $json = $this->encodeJson($exportResult, [], JsonResponse::DEFAULT_ENCODING_OPTIONS | JSON_PRETTY_PRINT);

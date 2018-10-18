@@ -108,8 +108,8 @@ pimcore.settings.gdpr.dataproviders.sentMail = Class.create({
                 items : [{
                     icon: "/bundles/pimcoreadmin/img/flat-color-icons/feedback.svg",
                     handler: function(grid, rowIndex){
-                        if (!user.isAllowed("email")) {
-                            pimcore.helpers.showPermissionError("email");
+                        if (!user.isAllowed("emails")) {
+                            pimcore.helpers.showPermissionError("emails");
                             return;
                         }
 
@@ -129,7 +129,7 @@ pimcore.settings.gdpr.dataproviders.sentMail = Class.create({
                         iframe.show();
                     }.bind(this),
                     getClass: function(v, meta, rec) {
-                        if (!user.isAllowed("email")) {
+                        if (!user.isAllowed("emails")) {
                             return "inactive_actioncolumn";
                         }
                         if(!rec.get('emailLogExistsHtml')){
@@ -149,8 +149,8 @@ pimcore.settings.gdpr.dataproviders.sentMail = Class.create({
                 items : [{
                     icon: "/bundles/pimcoreadmin/img/flat-color-icons/text.svg",
                     handler: function(grid, rowIndex){
-                        if (!user.isAllowed("email")) {
-                            pimcore.helpers.showPermissionError("email");
+                        if (!user.isAllowed("emails")) {
+                            pimcore.helpers.showPermissionError("emails");
                             return;
                         }
 
@@ -170,7 +170,7 @@ pimcore.settings.gdpr.dataproviders.sentMail = Class.create({
                         iframe.show();
                     }.bind(this),
                     getClass: function(v, meta, rec) {
-                        if (!user.isAllowed("email")) {
+                        if (!user.isAllowed("emails")) {
                             return "inactive_actioncolumn";
                         }
                         if(!rec.get('emailLogExistsText')){
@@ -190,8 +190,8 @@ pimcore.settings.gdpr.dataproviders.sentMail = Class.create({
                 items : [{
                     icon: "/bundles/pimcoreadmin/img/flat-color-icons/info.svg",
                     handler: function(grid, rowIndex){
-                        if (!user.isAllowed("email")) {
-                            pimcore.helpers.showPermissionError("email");
+                        if (!user.isAllowed("emails")) {
+                            pimcore.helpers.showPermissionError("emails");
                             return;
                         }
 
@@ -262,7 +262,7 @@ pimcore.settings.gdpr.dataproviders.sentMail = Class.create({
 
                     }.bind(this),
                     getClass: function(v, meta, rec) {
-                        if (!user.isAllowed("email")) {
+                        if (!user.isAllowed("emails")) {
                             return "inactive_actioncolumn";
                         }
                     }
@@ -277,8 +277,8 @@ pimcore.settings.gdpr.dataproviders.sentMail = Class.create({
                         tooltip: t('gdpr_dataSource_export'),
                         icon: "/bundles/pimcoreadmin/img/flat-color-icons/export.svg",
                         handler: function (grid, rowIndex) {
-                            if (!user.isAllowed("email")) {
-                                pimcore.helpers.showPermissionError("email");
+                            if (!user.isAllowed("emails")) {
+                                pimcore.helpers.showPermissionError("emails");
                                 return;
                             }
 
@@ -286,7 +286,7 @@ pimcore.settings.gdpr.dataproviders.sentMail = Class.create({
                             pimcore.helpers.download("/admin/gdpr/sent-mail/export?id=" + data.data.id);
                         }.bind(this),
                         getClass: function(v, meta, rec) {
-                            if (!user.isAllowed("email")) {
+                            if (!user.isAllowed("emails")) {
                                 return "inactive_actioncolumn";
                             }
                         }
@@ -302,8 +302,8 @@ pimcore.settings.gdpr.dataproviders.sentMail = Class.create({
                     tooltip: t('delete'),
                     icon: "/bundles/pimcoreadmin/img/flat-color-icons/delete.svg",
                     handler: function (grid, rowIndex) {
-                        if (!user.isAllowed("email")) {
-                            pimcore.helpers.showPermissionError("email");
+                        if (!user.isAllowed("emails")) {
+                            pimcore.helpers.showPermissionError("emails");
                             return;
                         }
 
@@ -339,7 +339,7 @@ pimcore.settings.gdpr.dataproviders.sentMail = Class.create({
 
                     }.bind(this),
                     getClass: function(v, meta, rec) {
-                        if (!user.isAllowed("email")) {
+                        if (!user.isAllowed("emails")) {
                             return "inactive_actioncolumn";
                         }
                     }
