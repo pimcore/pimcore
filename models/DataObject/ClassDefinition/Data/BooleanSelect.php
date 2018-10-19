@@ -412,9 +412,9 @@ class BooleanSelect extends Model\DataObject\ClassDefinition\Data
      */
     public function getDataFromEditmode($data, $object = null, $params = [])
     {
-        if ($data === 1) {
+        if (intval($data) === 1) {
             return true;
-        } elseif ($data === -1) {
+        } elseif (intval($data) === -1) {
             return false;
         }
 
