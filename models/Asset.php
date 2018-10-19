@@ -1234,7 +1234,7 @@ class Asset extends Element\AbstractElement
     public function setStream($stream)
     {
         // close existing stream
-        if($stream !== $this->stream) {
+        if ($stream !== $this->stream) {
             $this->closeStream();
         }
 

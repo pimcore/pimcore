@@ -227,7 +227,7 @@ class Pattern extends AbstractTokenManager implements IExportableTokenManager
         try {
             $codeSets = $this->generateCodes();
 
-            if($codeSets === false) {
+            if ($codeSets === false) {
                 return false;
             }
 

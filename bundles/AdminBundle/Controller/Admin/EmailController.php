@@ -28,7 +28,6 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class EmailController extends AdminController
 {
-
     /**
      * @Route("/email-logs", methods={"GET", "POST"})
      *

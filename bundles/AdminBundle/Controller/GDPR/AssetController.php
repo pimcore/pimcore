@@ -70,7 +70,7 @@ class AssetController extends \Pimcore\Bundle\AdminBundle\Controller\AdminContro
     {
         $asset = \Pimcore\Model\Asset::getById($request->get('id'));
         if (!$asset->isAllowed('view')) {
-            throw new \Exception("export denied");
+            throw new \Exception('export denied');
         }
         $exportResult = $service->doExportData($asset);
 

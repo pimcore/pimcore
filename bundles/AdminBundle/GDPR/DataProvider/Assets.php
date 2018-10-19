@@ -201,16 +201,15 @@ class Assets extends Elements implements DataProviderInterface
         $hits = $searcherList->load();
 
         $elements = [];
-        /** @var  $hit AbstractElement */
+        /** @var $hit AbstractElement */
         foreach ($hits as $hit) {
             $element = Service::getElementById($hit->getId()->getType(), $hit->getId()->getId());
 
             if ($element instanceof Asset) {
                 $data = \Pimcore\Model\Asset\Service::gridAssetData($element);
-                $data["permissions"] = $element->getUserPermissions();
+                $data['permissions'] = $element->getUserPermissions();
                 $elements[] = $data;
             }
-
         }
 
         // only get the real total-count when the limit parameter is given otherwise use the default limit

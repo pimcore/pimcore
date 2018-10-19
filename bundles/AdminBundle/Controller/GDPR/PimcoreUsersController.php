@@ -73,7 +73,7 @@ class PimcoreUsersController extends \Pimcore\Bundle\AdminBundle\Controller\Admi
      */
     public function exportUserDataAction(Request $request, PimcoreUsers $pimcoreUsers)
     {
-        $this->checkPermission("users");
+        $this->checkPermission('users');
         $userData = $pimcoreUsers->getExportData(intval($request->get('id')));
 
         $json = $this->encodeJson($userData, [], JsonResponse::DEFAULT_ENCODING_OPTIONS | JSON_PRETTY_PRINT);

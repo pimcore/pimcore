@@ -206,9 +206,11 @@ class Pimcore
     /**
      * @return bool
      */
-    public static function isInstalled() {
+    public static function isInstalled()
+    {
         try {
             \Pimcore\Db::get();
+
             return true;
         } catch (\Exception $e) {
             return false;
