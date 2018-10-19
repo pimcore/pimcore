@@ -595,6 +595,7 @@ class AbstractObject extends Model\Element\AbstractElement
             $isUpdate = true;
             \Pimcore::getEventDispatcher()->dispatch(DataObjectEvents::PRE_UPDATE, $preEvent);
         } else {
+            AbstractObject::disableDirtyDetection();
             \Pimcore::getEventDispatcher()->dispatch(DataObjectEvents::PRE_ADD, $preEvent);
         }
 
