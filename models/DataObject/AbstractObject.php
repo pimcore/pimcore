@@ -590,12 +590,13 @@ class AbstractObject extends Model\Element\AbstractElement
 
         $isUpdate = false;
 
+        $isDirtyDetectionDisabled = self::isDirtyDetectionDisabled();
         $preEvent = new DataObjectEvent($this, $params);
         if ($this->getId()) {
             $isUpdate = true;
             \Pimcore::getEventDispatcher()->dispatch(DataObjectEvents::PRE_UPDATE, $preEvent);
         } else {
-            AbstractObject::disableDirtyDetection();
+            self::disableDirtyDetection();
             \Pimcore::getEventDispatcher()->dispatch(DataObjectEvents::PRE_ADD, $preEvent);
         }
 
@@ -700,6 +701,7 @@ class AbstractObject extends Model\Element\AbstractElement
         if ($isUpdate) {
             \Pimcore::getEventDispatcher()->dispatch(DataObjectEvents::POST_UPDATE, new DataObjectEvent($this));
         } else {
+            self::setDisableDirtyDetection($isDirtyDetectionDisabled);
             \Pimcore::getEventDispatcher()->dispatch(DataObjectEvents::POST_ADD, new DataObjectEvent($this));
         }
 
