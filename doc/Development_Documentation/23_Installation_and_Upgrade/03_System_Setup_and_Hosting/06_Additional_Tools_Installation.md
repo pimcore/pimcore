@@ -100,3 +100,13 @@ ln -s /usr/lib/go/bin/primitive
 ```bash 
 apt-get install libimage-exiftool-perl
 ```
+
+## WebP
+
+Install webp for [WebP-Support](https://pimcore.com/docs/5.x/Development_Documentation/Assets/Working_with_Thumbnails/Image_Thumbnails.html#page_WebP-Support)
+
+```bash 
+apt-get install webp
+```
+
+
