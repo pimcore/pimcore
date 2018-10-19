@@ -135,7 +135,7 @@ Following elements are configured:
   [`ICartPriceModificator` class](https://github.com/pimcore/pimcore/blob/master/bundles/EcommerceFrameworkBundle/CartManager/CartPriceModificator/ICartPriceModificator.php). 
   See [Shipping](https://github.com/pimcore/pimcore/blob/master/bundles/EcommerceFrameworkBundle/CartManager/CartPriceModificator/Shipping.php)
   or [Discount](https://github.com/pimcore/pimcore/blob/master/bundles/EcommerceFrameworkBundle/CartManager/CartPriceModificator/Discount.php)
-  for examples. This should be self speaking. 
+  for examples.
 
 
 
