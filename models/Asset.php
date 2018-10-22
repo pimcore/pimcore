@@ -298,7 +298,7 @@ class Asset extends Element\AbstractElement
             if (array_key_exists('data', $data) || array_key_exists('stream', $data)) {
                 $tmpFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/asset-create-tmp-file-' . uniqid() . '.' . File::getFileExtension($data['filename']);
                 if (array_key_exists('data', $data)) {
-                    File::put($tmpFile, $data['data']);
+                    File::put('nette.safe://'.$tmpFile, $data['data']);
                 } else {
                     $streamMeta = stream_get_meta_data($data['stream']);
                     if (file_exists($streamMeta['uri'])) {

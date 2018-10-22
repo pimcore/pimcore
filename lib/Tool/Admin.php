@@ -86,7 +86,7 @@ class Admin
         $scriptPath = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/minified_javascript_core_'.md5($scriptContent).'.js';
 
         if (!is_file($scriptPath)) {
-            File::put($scriptPath, $scriptContent);
+            File::put('nette.safe://'.$scriptPath, $scriptContent);
         }
 
         $params = [

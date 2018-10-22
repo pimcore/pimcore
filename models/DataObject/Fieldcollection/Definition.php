@@ -299,7 +299,7 @@ class Definition extends Model\AbstractModel
 
             $data .= "\nreturn " . $exportedClass . ";\n";
 
-            \Pimcore\File::put($definitionFile, $data);
+            \Pimcore\File::put('nette.safe://'.$definitionFile, $data);
         }
 
         $extendClass = 'DataObject\\Fieldcollection\\Data\\AbstractData';
@@ -358,7 +358,7 @@ class Definition extends Model\AbstractModel
         $cd .= "}\n";
         $cd .= "\n";
 
-        File::put($this->getPhpClassFile(), $cd);
+        File::put('nette.safe://'.$this->getPhpClassFile(), $cd);
 
         // update classes
         $classList = new DataObject\ClassDefinition\Listing();
