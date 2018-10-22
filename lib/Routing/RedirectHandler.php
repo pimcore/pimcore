@@ -198,6 +198,7 @@ class RedirectHandler implements LoggerAwareInterface
 
         $statusCode = $redirect->getStatusCode() ?: Response::HTTP_MOVED_PERMANENTLY;
         $response = new RedirectResponse($url, $statusCode);
+        $response->headers->set('X-Pimcore-ID', $redirect->getId());
 
         // log all redirects to the redirect log
         \Pimcore\Log\Simple::log(

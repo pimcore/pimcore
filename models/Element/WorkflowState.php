@@ -35,31 +35,26 @@ class WorkflowState extends Model\AbstractModel
     public $ctype;
 
     /**
-     * @var int
+     * @var string
      */
-    public $workflowId;
+    public $workflow;
     /**
      * @var string
      */
-    public $state;
+    public $place;
 
     /**
-     * @var string
-     */
-    public $status;
-
-    /**
-     * @param $cid
-     * @param $ctype
-     * @param $workflowId
+     * @param int $cid
+     * @param string $ctype
+     * @param string $workflow
      *
      * @return null|WorkflowState
      */
-    public static function getByPrimary($cid, $ctype, $workflowId)
+    public static function getByPrimary(int $cid, string $ctype, string $workflow)
     {
         try {
             $workflowState = new self();
-            $workflowState->getDao()->getByPrimary($cid, $ctype, $workflowId);
+            $workflowState->getDao()->getByPrimary($cid, $ctype, $workflow);
 
             return $workflowState;
         } catch (\Exception $e) {
@@ -77,10 +72,14 @@ class WorkflowState extends Model\AbstractModel
 
     /**
      * @param int $cid
+     *
+     * @return WorkflowState
      */
     public function setCid($cid)
     {
         $this->cid = $cid;
+
+        return $this;
     }
 
     /**
@@ -93,57 +92,53 @@ class WorkflowState extends Model\AbstractModel
 
     /**
      * @param string $ctype
+     *
+     * @return WorkflowState
      */
     public function setCtype($ctype)
     {
         $this->ctype = $ctype;
+
+        return $this;
     }
 
     /**
      * @return string
      */
-    public function getState()
+    public function getPlace(): string
     {
-        return $this->state;
+        return $this->place;
     }
 
     /**
-     * @param string $state
+     * @param string $place
+     *
+     * @return WorkflowState
      */
-    public function setState($state)
+    public function setPlace(string $place)
     {
-        $this->state = $state;
+        $this->place = $place;
+
+        return $this;
     }
 
     /**
      * @return string
      */
-    public function getStatus()
+    public function getWorkflow()
     {
-        return $this->status;
+        return $this->workflow;
     }
 
     /**
-     * @param string $status
+     * @param string $workflow
+     *
+     * @return WorkflowState
      */
-    public function setStatus($status)
+    public function setWorkflow(string $workflow)
     {
-        $this->status = $status;
-    }
+        $this->workflow = $workflow;
 
-    /**
-     * @return int
-     */
-    public function getWorkflowId()
-    {
-        return $this->workflowId;
-    }
-
-    /**
-     * @param int $workflowId
-     */
-    public function setWorkflowId($workflowId)
-    {
-        $this->workflowId = $workflowId;
+        return $this;
     }
 }

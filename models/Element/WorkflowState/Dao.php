@@ -25,18 +25,18 @@ use Pimcore\Model;
 class Dao extends Model\Dao\AbstractDao
 {
     /**
-     * @param $cid
-     * @param $ctype
-     * @param $workflowId
+     * @param int $cid
+     * @param string $ctype
+     * @param string $workflowId
      *
      * @throws \Exception
      */
-    public function getByPrimary($cid, $ctype, $workflowId)
+    public function getByPrimary(int $cid, string $ctype, string $workflow)
     {
-        $data = $this->db->fetchRow('SELECT * FROM element_workflow_state WHERE cid = ? AND ctype = ? AND workflowId = ?', [$cid, $ctype, $workflowId]);
+        $data = $this->db->fetchRow('SELECT * FROM element_workflow_state WHERE cid = ? AND ctype = ? AND workflow = ?', [$cid, $ctype, $workflow]);
 
         if (!$data['cid']) {
-            throw new \Exception('WorkflowStatus item with cid ' . $cid . ' and ctype ' . $ctype . ' not found');
+            throw new \Exception('WorkflowStatus item for workflow ' . $workflow . ' with cid ' . $cid . ' and ctype ' . $ctype . ' not found');
         }
         $this->assignVariablesToModel($data);
     }

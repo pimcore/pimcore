@@ -80,17 +80,17 @@ class ClassDefinition extends Model\AbstractModel
      *
      * @var string
      */
-    public $listingParentClass;
+    public $listingParentClass = '';
 
     /**
-     * @var bool
+     * @var string
      */
-    public $useTraits;
+    public $useTraits = '';
 
     /**
-     * @var bool
+     * @var string
      */
-    public $listingUseTraits;
+    public $listingUseTraits = '';
 
     /**
      * @var bool
@@ -135,7 +135,7 @@ class ClassDefinition extends Model\AbstractModel
     /**
      * @var bool
      */
-    public $showAppLoggerTab;
+    public $showAppLoggerTab = false;
 
     /**
      * @var string
@@ -381,7 +381,11 @@ class ClassDefinition extends Model\AbstractModel
         }
         $cd .= "*/\n\n";
 
-        $cd .= 'class '.ucfirst($this->getName()).' extends '.$extendClass.' {';
+        $cd .= 'class '.ucfirst($this->getName()).' extends '.$extendClass.' implements \\Pimcore\\Model\\DataObject\\DirtyIndicatorInterface {';
+        $cd .= "\n\n";
+
+        $cd .= "\n\n";
+        $cd .= 'use \\Pimcore\\Model\\DataObject\\Traits\\DirtyIndicatorTrait;';
         $cd .= "\n\n";
 
         if ($this->getUseTraits()) {
@@ -975,7 +979,7 @@ class ClassDefinition extends Model\AbstractModel
      */
     public function setUseTraits($useTraits)
     {
-        $this->useTraits = $useTraits;
+        $this->useTraits = (string) $useTraits;
 
         return $this;
     }
@@ -995,7 +999,7 @@ class ClassDefinition extends Model\AbstractModel
      */
     public function setListingUseTraits($listingUseTraits)
     {
-        $this->listingUseTraits = $listingUseTraits;
+        $this->listingUseTraits = (string) $listingUseTraits;
 
         return $this;
     }
@@ -1035,7 +1039,7 @@ class ClassDefinition extends Model\AbstractModel
      */
     public function setListingParentClass($listingParentClass)
     {
-        $this->listingParentClass = $listingParentClass;
+        $this->listingParentClass = (string) $listingParentClass;
 
         return $this;
     }
@@ -1059,7 +1063,7 @@ class ClassDefinition extends Model\AbstractModel
      */
     public function setAllowVariants($allowVariants)
     {
-        $this->allowVariants = (bool)$allowVariants;
+        $this->allowVariants = (bool)$allowVariants ? true : null;
 
         return $this;
     }

@@ -31,9 +31,14 @@ class QuantityValue extends Model\DataObject\ClassDefinition\Data
     public $fieldtype = 'quantityValue';
 
     /**
-     * @var float
+     * @var int
      */
     public $width;
+
+    /**
+     * @var int
+     */
+    public $unitWidth;
 
     /**
      * @var float
@@ -96,6 +101,22 @@ class QuantityValue extends Model\DataObject\ClassDefinition\Data
     public function setWidth($width)
     {
         $this->width = $width;
+    }
+
+    /**
+     * @return int
+     */
+    public function getUnitWidth()
+    {
+        return $this->width;
+    }
+
+    /**
+     * @param int $width
+     */
+    public function setUnitWidth($unitWidth)
+    {
+        $this->unitWidth = $unitWidth;
     }
 
     /**

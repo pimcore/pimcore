@@ -402,7 +402,7 @@ class Objectbricks extends Model\DataObject\ClassDefinition\Data
     {
         $container = $this->getDataFromObjectParam($object);
         if ($container instanceof DataObject\Objectbrick) {
-            $container->save($object);
+            $container->save($object, $params);
         }
     }
 

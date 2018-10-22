@@ -20,6 +20,7 @@ use Pimcore\Model\Document;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
@@ -80,7 +81,7 @@ class PimcoreContextListener implements EventSubscriberInterface, LoggerAwareInt
                 ]);
             }
 
-            $this->initializeContext($context);
+            $this->initializeContext($context, $request);
         }
     }
 
@@ -88,14 +89,18 @@ class PimcoreContextListener implements EventSubscriberInterface, LoggerAwareInt
      * Do context specific initialization
      *
      * @param $context
+     * @param $request Request
      */
-    protected function initializeContext($context)
+    protected function initializeContext($context, $request)
     {
-        if ($context == PimcoreContextResolver::CONTEXT_ADMIN) {
+        if ($context == PimcoreContextResolver::CONTEXT_ADMIN || $context == PimcoreContextResolver::CONTEXT_WEBSERVICE) {
             \Pimcore::setAdminMode();
             Document::setHideUnpublished(false);
             DataObject\AbstractObject::setHideUnpublished(false);
-            DataObject\AbstractObject::setGetInheritedValues(false);
+
+            if ($context == PimcoreContextResolver::CONTEXT_WEBSERVICE) {
+                DataObject\AbstractObject::setGetInheritedValues(filter_var($request->get('inheritance'), FILTER_VALIDATE_BOOLEAN));
+            }
             DataObject\Localizedfield::setGetFallbackValues(false);
         } else {
             \Pimcore::unsetAdminMode();

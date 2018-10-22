@@ -90,7 +90,6 @@ class Dao extends Model\Element\Dao
                 'parentId' => $this->model->getParentId()
             ]);
 
-            $date = time();
             $this->model->setId($this->db->lastInsertId());
         } catch (\Exception $e) {
             throw $e;
@@ -285,7 +284,7 @@ class Dao extends Model\Element\Dao
      */
     public function getVersions()
     {
-        $versionIds = $this->db->fetchAll("SELECT id FROM versions WHERE cid = ? AND ctype='asset' ORDER BY `id` DESC", [$this->model->getId()]);
+        $versionIds = $this->db->fetchAll("SELECT id FROM versions WHERE cid = ? AND ctype='asset' ORDER BY `id` ASC", [$this->model->getId()]);
 
         $versions = [];
         foreach ($versionIds as $versionId) {
@@ -330,7 +329,7 @@ class Dao extends Model\Element\Dao
      */
     public function hasChildren()
     {
-        $c = $this->db->fetchOne('SELECT id FROM assets WHERE parentId = ?', $this->model->getId());
+        $c = $this->db->fetchOne('SELECT id FROM assets WHERE parentId = ? LIMIT 1', $this->model->getId());
 
         return (bool)$c;
     }
@@ -406,7 +405,7 @@ class Dao extends Model\Element\Dao
      *
      * @param bool $force
      *
-     * @return array
+     * @return Model\Version|null
      */
     public function getLatestVersion($force = false)
     {
@@ -420,12 +419,12 @@ class Dao extends Model\Element\Dao
             }
         }
 
-        return;
+        return null;
     }
 
     /**
      * @param $type
-     * @param $user
+     * @param Model\User $user
      *
      * @return bool
      */
@@ -479,8 +478,8 @@ class Dao extends Model\Element\Dao
      */
     public function __isBasedOnLatestData()
     {
-        $currentDataTimestamp = $this->db->fetchOne('SELECT modificationDate from assets WHERE id = ?', $this->model->getId());
-        if ($currentDataTimestamp == $this->model->__getDataVersionTimestamp()) {
+        $data = $this->db->fetchRow('SELECT modificationDate, versionCount from assets WHERE id = ?', $this->model->getId());
+        if ($data['modificationDate'] == $this->model->__getDataVersionTimestamp() && $data['versionCount'] == $this->model->getVersionCount()) {
             return true;
         }
 

@@ -17,6 +17,7 @@
 
 namespace Pimcore\Model\Webservice;
 
+use Carbon\Carbon;
 use Pimcore\Model;
 use Pimcore\Model\Element;
 use Pimcore\Model\Webservice;
@@ -162,7 +163,7 @@ abstract class Data
                         }
                     }
                 } elseif ($type == 'date') {
-                    $dat = new \Pimcore\Date(strtotime($propertyWs['data']));
+                    $dat = Carbon::createFromTimestamp(strtotime($propertyWs['data']));
                 } else {
                     $dat = $propertyWs['data'];
                 }

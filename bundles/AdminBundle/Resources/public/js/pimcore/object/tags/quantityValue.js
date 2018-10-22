@@ -80,8 +80,13 @@ pimcore.object.tags.quantityValue = Class.create(pimcore.object.tags.abstract, {
             labelWidth = this.fieldConfig.labelWidth;
         }
 
+        var unitWidth = 100;
+        if(this.fieldConfig.unitWidth) {
+            unitWidth = this.fieldConfig.unitWidth;
+        }
+
         var options = {
-            width: 100,
+            width: unitWidth,
             triggerAction: "all",
             autoSelect: true,
             editable: true,

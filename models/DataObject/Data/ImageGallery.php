@@ -17,12 +17,17 @@
 
 namespace Pimcore\Model\DataObject\Data;
 
-class ImageGallery implements \Iterator
+use Pimcore\Model\DataObject\OwnerAwareFieldInterface;
+use Pimcore\Model\DataObject\Traits\OwnerAwareFieldTrait;
+
+class ImageGallery implements \Iterator, OwnerAwareFieldInterface
 {
+    use OwnerAwareFieldTrait;
+
     /**
      * @var Hotspotimage[]
      */
-    public $items;
+    protected $items;
 
     /**
      * ImageGallery constructor.
@@ -32,6 +37,7 @@ class ImageGallery implements \Iterator
     public function __construct($items)
     {
         $this->setItems($items);
+        $this->markMeDirty();
     }
 
     /**
@@ -131,5 +137,6 @@ class ImageGallery implements \Iterator
         }
         $this->items = $items;
         $this->rewind();
+        $this->markMeDirty();
     }
 }

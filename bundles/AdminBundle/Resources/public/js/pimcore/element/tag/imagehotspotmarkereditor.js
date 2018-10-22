@@ -469,7 +469,7 @@ pimcore.element.tag.imagehotspotmarkereditor = Class.create({
             var id = "item-" + uniqid();
             var valueField;
 
-            if(!data || !data["name"]) {
+            if(!data) {
                 data = {
                     name: "",
                     value: ""

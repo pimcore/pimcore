@@ -105,7 +105,7 @@ class Video extends Model\DataObject\ClassDefinition\Data
     /**
      * @see DataObject\ClassDefinition\Data::getDataForResource
      *
-     * @param Asset $data
+     * @param DataObject\Data\Video $data
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
@@ -122,7 +122,8 @@ class Video extends Model\DataObject\ClassDefinition\Data
                 $data->setPoster($data->getPoster()->getId());
             }
 
-            $data = object2array($data);
+            /** @var $data DataObject\Data\Video */
+            $data = object2array($data->getObjectVars());
 
             return serialize($data);
         }
@@ -204,7 +205,7 @@ class Video extends Model\DataObject\ClassDefinition\Data
             if ($data->getPoster() instanceof Asset) {
                 $data->setPoster($data->getPoster()->getFullpath());
             }
-            $data = object2array($data);
+            $data = object2array($data->getObjectVars());
         }
 
         return $data;

@@ -185,7 +185,7 @@ abstract class AbstractRelations extends Model\DataObject\ClassDefinition\Data
      *
      * Checks if an document is an allowed relation
      *
-     * @param Document $document
+     * @param Model\Document $document
      *
      * @return bool
      */
@@ -273,6 +273,28 @@ abstract class AbstractRelations extends Model\DataObject\ClassDefinition\Data
      */
     public function save($object, $params = [])
     {
+        if ($params['isUntouchable']) {
+            return;
+        }
+
+        $context = $params['context'];
+
+        if (!DataObject\AbstractObject::isDirtyDetectionDisabled() && $object instanceof DataObject\DirtyIndicatorInterface) {
+            if ($object instanceof DataObject\Localizedfield) {
+                if ($context['containerType'] != 'fieldcollection' && $object->getObject() instanceof DataObject\DirtyIndicatorInterface) {
+                    if (!$object->hasDirtyFields()) {
+                        return;
+                    }
+                }
+            } else {
+                if ($this->supportsDirtyDetection()) {
+                    if (!$object->isFieldDirty($this->getName())) {
+                        return;
+                    }
+                }
+            }
+        }
+
         $db = Db::get();
 
         $data = $this->getDataFromObjectParam($object, $params);
@@ -356,6 +378,9 @@ abstract class AbstractRelations extends Model\DataObject\ClassDefinition\Data
         });
 
         $data = $this->getDataFromResource($relations, $object, $params);
+        if ($object instanceof DataObject\DirtyIndicatorInterface) {
+            $object->markFieldDirty($this->getName(), false);
+        }
 
         return $data;
     }
@@ -461,5 +486,46 @@ abstract class AbstractRelations extends Model\DataObject\ClassDefinition\Data
         $id = $item->getId();
 
         return $elementType . $id;
+    }
+
+    /**
+     * @param $array1
+     * @param $array2
+     *
+     * @return bool
+     */
+    public function isEqual($array1, $array2)
+    {
+        $array1 = array_filter(is_array($array1) ? $array1 : []);
+        $array2 = array_filter(is_array($array2) ? $array2 : []);
+        $count1 = count($array1);
+        $count2 = count($array2);
+        if ($count1 != $count2) {
+            return false;
+        }
+
+        $values1 = array_values($array1);
+        $values2 = array_values($array2);
+
+        for ($i = 0; $i < $count1; $i++) {
+            /** @var $el1 Element\ElementInterface */
+            $el1 = $values1[$i];
+            /** @var $el2 Element\ElementInterface */
+            $el2 = $values2[$i];
+
+            if (! ($el1->getType() == $el2->getType() && ($el1->getId() == $el2->getId()))) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * @return bool
+     */
+    public function supportsDirtyDetection()
+    {
+        return true;
     }
 }

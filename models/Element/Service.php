@@ -52,7 +52,7 @@ class Service extends Model\AbstractModel
         }
 
         if ($ne) {
-            $path = self::getIdPath($ne, $path);
+            $path = self::getIdPath($ne);
         }
 
         if ($element) {
@@ -82,7 +82,7 @@ class Service extends Model\AbstractModel
         }
 
         if ($ne) {
-            $path = self::getTypePath($ne, $path);
+            $path = self::getTypePath($ne);
         }
 
         if ($element) {
@@ -656,12 +656,16 @@ class Service extends Model\AbstractModel
                 if ($data instanceof Model\AbstractModel) {
                     $properties = $data->getObjectVars();
                     foreach ($properties as $name => $value) {
-                        $data->setValue($name, self::renewReferences($value, false));
+                        $data->setObjectVar($name, self::renewReferences($value, false));
                     }
                 } else {
                     $properties = method_exists($data, 'getObjectVars') ? $data->getObjectVars() : get_object_vars($data);
                     foreach ($properties as $name => $value) {
-                        $data->$name = self::renewReferences($value, false);
+                        if (method_exists($data, 'setObjectVar')) {
+                            $data->setObjectVar($name, self::renewReferences($value, false));
+                        } else {
+                            $data->$name = self::renewReferences($value, false);
+                        }
                     }
                 }
 
@@ -906,6 +910,8 @@ class Service extends Model\AbstractModel
             $key = ltrim($key, '.');
         }
 
+        $key = mb_substr($key, 0, 255);
+
         return $key;
     }
 
@@ -1003,15 +1009,24 @@ class Service extends Model\AbstractModel
      */
     public static function getSafeVersionInfo($versions)
     {
+        $indexMap = [];
+
         if (is_array($versions)) {
             $versions = json_decode(json_encode($versions), true);
             $result = [];
+            /** @var $version Model\Version */
             foreach ($versions as $version) {
                 $name = $version['user']['name'];
                 $id = $version['user']['id'];
                 unset($version['user']);
                 $version['user']['name'] = $name;
                 $version['user']['id'] = $id;
+                $versionKey = $version['date'] . '-' . $version['versionCount'];
+                if (!isset($indexMap[$versionKey])) {
+                    $indexMap[$versionKey] = 0;
+                }
+                $version['index'] = $indexMap[$versionKey];
+                $indexMap[$versionKey] = $indexMap[$versionKey] + 1;
 
                 $result[] = $version;
             }

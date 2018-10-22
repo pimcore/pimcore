@@ -23,6 +23,8 @@ use Pimcore\Model\Element;
 
 class ObjectsMetadata extends Model\DataObject\ClassDefinition\Data\Objects
 {
+    use DataObject\Traits\ElementWithMetadataComparisonTrait;
+
     /**
      * @var
      */
@@ -109,12 +111,15 @@ class ObjectsMetadata extends Model\DataObject\ClassDefinition\Data\Objects
                 $destination = DataObject::getById($object['dest_id']);
 
                 if ($source instanceof DataObject\Concrete && $destination instanceof DataObject\Concrete && $destination->getClassName() == $this->getAllowedClassId()) {
+                    /** @var $metaData DataObject\Data\ObjectMetadata */
                     $metaData = \Pimcore::getContainer()->get('pimcore.model.factory')
                         ->build('Pimcore\Model\DataObject\Data\ObjectMetadata', [
                             'fieldname' => $this->getName(),
                             'columns' => $this->getColumnKeys(),
                             'object' => $destination
                         ]);
+
+                    $metaData->setOwner($object, $this->getName());
 
                     $ownertype = $object['ownertype'] ? $object['ownertype'] : '';
                     $ownername = $object['ownername'] ? $object['ownername'] : '';
@@ -184,7 +189,7 @@ class ObjectsMetadata extends Model\DataObject\ClassDefinition\Data\Objects
             foreach ($data as $metaObject) {
                 $object = $metaObject->getObject();
                 if ($object instanceof DataObject\Concrete) {
-                    $columnData = DataObject\Service::gridObjectData($object, $gridFields);
+                    $columnData = DataObject\Service::gridObjectData($object, $gridFields, null, ['purpose' => 'editmode']);
                     foreach ($this->getColumns() as $c) {
                         $getter = 'get' . ucfirst($c['key']);
                         $columnData[$c['key']] = $metaObject->$getter();
@@ -224,6 +229,7 @@ class ObjectsMetadata extends Model\DataObject\ClassDefinition\Data\Objects
                             'columns' => $this->getColumnKeys(),
                             'object' => $o
                         ]);
+                    $metaData->setOwner($object, $this->getName());
 
                     foreach ($this->getColumns() as $c) {
                         $setter = 'set' . ucfirst($c['key']);
@@ -377,6 +383,7 @@ class ObjectsMetadata extends Model\DataObject\ClassDefinition\Data\Objects
                         'columns' => $this->getColumnKeys(),
                         'object' => $el
                     ]);
+                $metaObject->setOwner($object, $this->getName());
 
                 $value[] = $metaObject;
             }
@@ -505,6 +512,7 @@ class ObjectsMetadata extends Model\DataObject\ClassDefinition\Data\Objects
                             'columns' => $this->getColumnKeys(),
                             'object' => $dest
                         ]);
+                    $metaObject->setOwner($object, $this->getName());
 
                     foreach ($this->getColumns() as $c) {
                         $setter = 'set' . ucfirst($c['key']);
@@ -533,6 +541,22 @@ class ObjectsMetadata extends Model\DataObject\ClassDefinition\Data\Objects
      */
     public function save($object, $params = [])
     {
+        if (!DataObject\AbstractObject::isDirtyDetectionDisabled() && $object instanceof DataObject\DirtyIndicatorInterface) {
+            if ($object instanceof DataObject\Localizedfield) {
+                if ($object->getObject() instanceof DataObject\DirtyIndicatorInterface) {
+                    if (!$object->hasDirtyFields()) {
+                        return;
+                    }
+                }
+            } else {
+                if ($this->supportsDirtyDetection()) {
+                    if (!$object->isFieldDirty($this->getName())) {
+                        return;
+                    }
+                }
+            }
+        }
+
         $objectsMetadata = $this->getDataFromObjectParam($object, $params);
 
         $classId = null;
@@ -618,10 +642,8 @@ class ObjectsMetadata extends Model\DataObject\ClassDefinition\Data\Objects
                 //$data = $this->getDataFromResource($object->getRelationData($this->getName(),true,null));
                 $data = $this->load($object, ['force' => true]);
 
-                $setter = 'set' . ucfirst($this->getName());
-                if (method_exists($object, $setter)) {
-                    $object->$setter($data);
-                }
+                $object->setObjectVar($this->getName(), $data);
+                $this->markLazyloadedFieldAsLoaded($object);
             }
         } elseif ($object instanceof DataObject\Localizedfield) {
             $data = $params['data'];
@@ -724,10 +746,7 @@ class ObjectsMetadata extends Model\DataObject\ClassDefinition\Data\Objects
          */
         if (is_array($visibleFields) && count($visibleFields)) {
             $visibleFields = implode(',', $visibleFields);
-        } else {
-            $visibleFields = '';
         }
-
         $this->visibleFields = $visibleFields;
 
         return $this;
@@ -875,7 +894,11 @@ class ObjectsMetadata extends Model\DataObject\ClassDefinition\Data\Objects
             return;
         }
 
-        $class = DataObject\ClassDefinition::getByName($classId);
+        if (is_numeric($classId)) {
+            $class = DataObject\ClassDefinition::getById($classId);
+        } else {
+            $class = DataObject\ClassDefinition::getByName($classId);
+        }
 
         if (!$this->visibleFields) {
             return;
@@ -887,17 +910,17 @@ class ObjectsMetadata extends Model\DataObject\ClassDefinition\Data\Objects
 
         $visibleFields = explode(',', $this->visibleFields);
         foreach ($visibleFields as $field) {
-            $fd = $class->getFieldDefinition($field);
+            $fd = $class->getFieldDefinition($field, $context);
 
             if (!$fd) {
                 $fieldFound = false;
-                if ($localizedfields = $class->getFieldDefinitions()['localizedfields']) {
+                if ($localizedfields = $class->getFieldDefinitions($context)['localizedfields']) {
                     if ($fd = $localizedfields->getFieldDefinition($field)) {
                         $this->visibleFieldDefinitions[$field]['name'] = $fd->getName();
                         $this->visibleFieldDefinitions[$field]['title'] = $fd->getTitle();
                         $this->visibleFieldDefinitions[$field]['fieldtype'] = $fd->getFieldType();
 
-                        if ($fd instanceof DataObject\ClassDefinition\Data\Select) {
+                        if ($fd instanceof DataObject\ClassDefinition\Data\Select || $fd instanceof DataObject\ClassDefinition\Data\Multiselect) {
                             $this->visibleFieldDefinitions[$field]['options'] = $fd->getOptions();
                         }
 
@@ -916,7 +939,11 @@ class ObjectsMetadata extends Model\DataObject\ClassDefinition\Data\Objects
                 $this->visibleFieldDefinitions[$field]['fieldtype'] = $fd->getFieldType();
                 $this->visibleFieldDefinitions[$field]['noteditable'] = true;
 
-                if ($fd instanceof DataObject\ClassDefinition\Data\Select) {
+                if ($fd instanceof DataObject\ClassDefinition\Data\Select || $fd instanceof DataObject\ClassDefinition\Data\MultiSelect) {
+                    if ($fd->getOptionsProviderClass()) {
+                        $this->visibleFieldDefinitions[$field]['optionsProviderClass'] = $fd->getOptionsProviderClass();
+                    }
+
                     $this->visibleFieldDefinitions[$field]['options'] = $fd->getOptions();
                 }
             }
@@ -979,6 +1006,7 @@ class ObjectsMetadata extends Model\DataObject\ClassDefinition\Data\Objects
                     $data = $elementMetadata['data'];
 
                     $item = new DataObject\Data\ObjectMetadata($fieldname, $columns, $target);
+                    $item->setOwner($object, $this->getName());
                     $item->setData($data);
                     $result[] = $item;
                 }

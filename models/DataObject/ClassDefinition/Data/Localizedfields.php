@@ -453,7 +453,7 @@ class Localizedfields extends Model\DataObject\ClassDefinition\Data
             }
 
             if ($object instanceof DataObject\Concrete) {
-                $localizedFields->setObject($object);
+                $localizedFields->setObject($object, false);
             }
 
             $user = Tool\Admin::getCurrentUser();
@@ -620,14 +620,18 @@ class Localizedfields extends Model\DataObject\ClassDefinition\Data
     {
         $localizedFields = $this->getDataFromObjectParam($object, $params);
         if ($localizedFields instanceof DataObject\Localizedfield) {
+            if ((!isset($params['newParent']) || !$params['newParent']) && isset($params['isUpdate']) && $params['isUpdate'] && !$localizedFields->hasDirtyLanguages()) {
+                return;
+            }
+
             if ($object instanceof DataObject\Fieldcollection\Data\AbstractData || $object instanceof DataObject\Objectbrick\Data\AbstractData) {
                 $object = $object->getObject();
             }
 
-            $localizedFields->setObject($object);
+            $localizedFields->setObject($object, false);
             $context = isset($params['context']) ? $params['context'] : null;
             $localizedFields->setContext($context);
-            $localizedFields->save();
+            $localizedFields->save($params);
         }
     }
 
@@ -649,6 +653,9 @@ class Localizedfields extends Model\DataObject\ClassDefinition\Data
         $localizedFields->setContext($context);
         $localizedFields->load($object, $params);
 
+        $localizedFields->resetDirtyMap();
+        $localizedFields->resetLanguageDirtyMap();
+
         return $localizedFields;
     }
 
@@ -664,7 +671,7 @@ class Localizedfields extends Model\DataObject\ClassDefinition\Data
             $localizedFields->setObject($object);
             $context = isset($params['context']) ? $params['context'] : null;
             $localizedFields->setContext($context);
-            $localizedFields->delete();
+            $localizedFields->delete(true, false);
         }
     }
 
@@ -728,7 +735,7 @@ class Localizedfields extends Model\DataObject\ClassDefinition\Data
             }
             $lf->setObject($object);
 
-            $container->setLocalizedfields($lf);
+            $container->setObjectVar('localizedfields', $lf);
         }
 
         return $container->getObjectVar('localizedfields');
@@ -1405,5 +1412,13 @@ class Localizedfields extends Model\DataObject\ClassDefinition\Data
         }
 
         return $lf;
+    }
+
+    /**
+     * @return bool
+     */
+    public function supportsDirtyDetection()
+    {
+        return true;
     }
 }

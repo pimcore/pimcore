@@ -43,7 +43,7 @@ class TargetGroup implements ICondition
     {
         $visitorInfo = $environment->getVisitorInfo();
 
-        if ($this->getTargetGroup()) {
+        if ($visitorInfo && $this->getTargetGroup()) {
             if ($visitorInfo->hasTargetGroupAssignment($this->getTargetGroup())) {
                 if ($visitorInfo->getTargetGroupAssignment($this->getTargetGroup())->getCount() > $this->getThreshold()) {
                     return true;

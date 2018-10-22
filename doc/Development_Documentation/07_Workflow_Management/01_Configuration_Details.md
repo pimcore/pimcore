@@ -1,72 +1,287 @@
 # Details
 
-## Workflows Array
-
-You can put many workflows to the array defined in `workflowmanagement.php`.
-Look at the base structure for the workflows configuration.
-
-```php
-<?php
-
-return [
-    1 => [
-        // workflow for products objects
-    ],
-    2 => [
-        // a general workflow for documents, objects and assets
-    ]
-];
-```
 
 ## Available options
 
-| Configuration Key                                                             | Type        | Is required?   | Description                                                                                                                                                                                                                                                                                                                                                                                           |
-|-------------------------------------------------------------------------------|-------------|----------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `[id]["name"]`                                                                | string      | Y              | The display name, is shown at the workflow window in the administration panel.                                                                                                                                                                                                                                                                                                                        |
-| `[id]["id"]`                                                                  | int         | Y              | Unique ID chosen by you.                                                                                                                                                                                                                                                                                                                                                                              |
-| `[id]["workflowSubject"]`                                                     | array       | Y              | Defined for which elements the workflow is for                                                                                                                                                                                                                                                                                                                                                        |
-| `[id]["workflowSubject"]["types"]`                                            | array       | Y              | Array with allowed types of elements using the workflow (asset,object,document).                                                                                                                                                                                                                                                                                                                      |
-| `[id]["workflowSubject"]["classes"]`                                          | array       | Objects only   | The class id's that this workflow applies to, defaults to NONE                                                                                                                                                                                                                                                                                                                                        |
-| `[id]["workflowSubject"]["objectTypes"]`                                      | array       | Objects only   | The type of objects to support (i.e. object or variant)                                                                                                                                                                                                                                                                                                                                               |
-| `[id]["workflowSubject"]["assetTypes"]`                                       | array       | Assets only    | Asset types the workflow is for, defaults to NONE. For example: image, video                                                                                                                                                                                                                                                                                                                          |
-| `[id]["workflowSubject"]["documentTypes"]`                                    | array       | Documents only | Document types the workflow is for, defaults to NONE. For example: page, snippet                                                                                                                                                                                                                                                                                                                      |
-| `[id]["enabled"]`                                                             | boolean     | Y              | Flag to enable / disable the workflow.                                                                                                                                                                                                                                                                                                                                                                |
-| `[id]["defaultState"]`                                                        | string      | Y              | The default state for elements. The state has to be chosen from the `["workflows"][i]["states"]` array.                                                                                                                                                                                                                                                                                               |
-| `[id]["defaultStatus"]`                                                       | string      | Y              | The default status for elements. The status has to be chosen from the `["workflows"][i]["statuses"]` array.                                                                                                                                                                                                                                                                                           |
-| `[id]["allowUnpublished"]`                                                    | boolean     | Y              | Set true to allow the workflow on unpublished elements, false to only allow published elements.                                                                                                                                                                                                                                                                                                       |
-| `[id]["states"]`                                                              | array       | Y              | Array of available states in the workflow.                                                                                                                                                                                                                                                                                                                                                            |
-| `[id]["states"][j]["name"]`                                                   | string      | Y              | The name of the state (used as a key for example in the code).                                                                                                                                                                                                                                                                                                                                        |
-| `[id]["states"][j]["label"]`                                                  | string      | Y              | The label of the state - used in the administration panel to show the state of elements.                                                                                                                                                                                                                                                                                                              |
-| `[id]["states"][j]["color"]`                                                  | string      | N              | UI colour / theme. You can choose the color visible with the label.                                                                                                                                                                                                                                                                                                                                   |
-| `[id]["statuses"]`                                                            | array       | Y              | Array of available statuses in the workflow.                                                                                                                                                                                                                                                                                                                                                          |
-| `[id]["statuses"][j]["name"]`                                                 | string      | Y              | The name of the status (used as a key for example in the code).                                                                                                                                                                                                                                                                                                                                       |
-| `[id]["statuses"][j]["label"]`                                                | string      | Y              | The label of the status - used in the administration panel to show the status of elements.                                                                                                                                                                                                                                                                                                            |
-| `[id]["statuses"][j]["objectLayout"]`                                         | int         | N              | **It works only with objects.** It's an id of the default custom layout loaded with that workflow status.                                                                                                                                                                                                                                                                                             |
-| `[id]["statuses"][j]["elementPublished"]`                                     | boolean     | N              | **It works only with objects and page snippets.** The element gets published entering in this status if all mandatory fields are filled.                                                                                                                                                                                                                                                              |
-| `[id]["actions"]`                                                             | array       | Y              | Actions definitions, operations which could be amplify to elements.                                                                                                                                                                                                                                                                                                                                   |
-| `[id]["actions"][j]["name"]`                                                  | string      | Y              | The name of the action (used as a key).                                                                                                                                                                                                                                                                                                                                                               |
-| `[id]["actions"][j]["label"]`                                                 | string      | Y              |                                                                                                                                                                                                                                                                                                                                                                                                       |
-| `[id]["actions"][j]["transitionTo"]`                                          | array       | Y              | Defines which state and status could be set with that action.                                                                                                                                                                                                                                                                                                                                         |
-| `[id]["actions"][j]["transitionTo"][stateName]`                               | array       | Y              | Every stateName (state) could have connected many statuses. To add the status to array, just use the status name. (See the example, below.)                                                                                                                                                                                                                                                           |
-| `[id]["actions"][j]["notes"]`                                                 | array       | N              | Notes configuration for the action.                                                                                                                                                                                                                                                                                                                                                                   |
-| `[id]["actions"][j]["notes"]["required"]`                                     | boolean     | N              | disable / enable notes                                                                                                                                                                                                                                                                                                                                                                                |
-| `[id]["actions"][j]["notes"]["type"]`                                         | string      | N              | An optional alternative "type" for the note, defaults to "Status update" or "Global action" if blank                                                                                                                                                                                                                                                                                                  |
-| `[id]["actions"][j]["notes"]["title"]`                                        | string      | N              | An optional alternative "title" for the note, if blank the actions transition result is used (See Decorator).                                                                                                                                                                                                                                                                                         |
-| `[id]["actions"][j]["users"]`                                                 | array       | N              | User ids able to use that action. Admin is always allowed for every action.                                                                                                                                                                                                                                                                                                                           |
-| `[id]["actions"][j]["events"]`                                                | array       | N              | Classes which would be called by special triggers available in the workflow module.                                                                                                                                                                                                                                                                                                                   |
-| `[id]["actions"][j]["events"]["before"]`                                      | array       | N              | For example: `['\\Website\\WorkflowExampleEventHandler', 'before']`. The method `before` from the `'\\Website\\WorkflowExampleEventHandler'`class will be called when the `before` event is triggered.                                                                                                                                                                                                |
-| `[id]["actions"][j]["events"]["success"]`                                     | array       | N              | For example: `['\\Website\\WorkflowExampleEventHandler', 'success']`. The method `success` from the `'\\Website\\WorkflowExampleEventHandler'`class will be called when the `success` event is triggered.                                                                                                                                                                                             |
-| `[id]["actions"][j]["events"]["failure"]`                                     | array       | N              | For example: `['\\Website\\WorkflowExampleEventHandler', 'failure']`. The method `failure` from the `'\\Website\\WorkflowExampleEventHandler'`class will be called when the `failure` event is triggered.                                                                                                                                                                                             |
-| `[id]["actions"][j]["notificationUsers"]`                                     | array       | N              | Array with user ID's. Users who are in that range are notificated when the action is triggered.                                                                                                                                                                                                                                                                                                       |
-| `[id]["actions"][j]["additionalFields"]`                                      | array       | N              | Additional fields used in the action.                                                                                                                                                                                                                                                                                                                                                                 |
-| `[id]["actions"][j]["additionalFields"][k]["name"]`                           | string      | Y              | The name used in the form.                                                                                                                                                                                                                                                                                                                                                                            |
-| `[id]["actions"][j]["additionalFields"][k]["fieldType"]`                      | string      | Y              | The data component name (for example: input, textarea). See the list of [available data types](../05_Objects/01_Object_Classes/01_Data_Types/README.md).                                                                                                                                                                                                                                              |
-| `[id]["actions"][j]["additionalFields"][k]["title"]`                          | string      | Y              | The label used by the field.                                                                                                                                                                                                                                                                                                                                                                          |
-| `[id]["actions"][j]["additionalFields"][k]["blankText"]`                      | string      | N              | The blank text used in the form component (For example it would be: *test@example.com* in the email field).                                                                                                                                                                                                                                                                                           |
-| `[id]["actions"][j]["additionalFields"][k]["required"]`                       | boolean     | Y              | Whether or not the field is required.                                                                                                                                                                                                                                                                                                                                                                 |
-| `[id]["actions"][j]["additionalFields"][k]["setternFn"]`                      | string,null | N              | Optional setter function (available in the element, for example in the updated object), if not specified, data will be added to notes. The Workflow manager will call the function with the whole field data. (See [the code line on Github](https://github.com/pimcore/pimcore/blob/master/lib/WorkflowManagement/Workflow/Manager.php#L527-L527))                                   |
-| `[id]["transitionDefinitions"]`                                               | array       | Y              | These definitions specify the true workflow, are like the sequence for actions.                                                                                                                                                                                                                                                                                                                       |
-| `[id]["transitionDefinitions"][transitionName]["validActions"]`               | array       | Y              | Specify actions valid during the specific step. A `transitionName` is the unique name of the transition. For example: todo, reopened, in_progress                                                                                                                                                                                                                                                     |
-| `[id]["transitionDefinitions"][transitionName]["validActions"][actionName]`   | null        | Y              | Specify valid action names (`actionName` as a key, null as a value).                                                                                                                                                                                                                                                                                                                                  |
-| `[id]["transitionDefinitions"]["globalActions"]`                              | array       | N              | Actions available in every step of the workflow.                                                                                                                                                                                                                                                                                                                                                      |
-| `[id]["transitionDefinitions"]["globalActions"][actionName]`                  | array       | N              | Specify valid action names (`actionName` as a key, null as a value).                                                                                                                                                                                                                                                                                                                                  |
+```yaml
+pimcore: 
+    workflows:
+
+        # Prototype
+        name:
+
+            # Can be used to enable or disable the workflow.
+            enabled:              true
+
+            # When multiple custom view or permission settings from different places in different workflows are valid, the workflow with the highest priority will be used.
+            priority:             0
+
+            # Will be used in the backend interface as nice name for the workflow. If not set the technical workflow name will be used as label too.
+            label:                ~
+
+            # Enable default audit trail feature provided by Symfony. Take a look at the Symfony docs for more details.
+            audit_trail:
+                enabled:              false
+
+            # A workflow with type "workflow" can handle multiple places at one time whereas a state_machine provides a finite state_machine (only one place at one time). Take a look at the Symfony docs for more details.
+            type:                 ~ # One of "workflow"; "state_machine"
+
+            # Handles the way how the state/place is stored. If not defined "state_table" will be used as default. Take a look at the marking store section of the Pimcore workflow docs for a description of the different types.
+            marking_store:
+                type:                 ~ # One of "multiple_state"; "single_state"; "state_table"; "data_object_multiple_state"; "data_object_splitted_state"
+                arguments:            []
+                service:              ~
+
+            # List of supported entity classes. Take a look at the Symfony docs for more details.
+            supports:
+
+                # Example:
+                - \Pimcore\Model\DataObject\Product
+
+            # Can be used to implement a special logic which subjects are supported by the workflow. For example only products matching certain criteria. Take a look at the support strategies page of the Pimcore workflow docs for more details.
+            support_strategy:
+
+                # Examples:
+                type:                expression
+                arguments:
+                    - \Pimcore\Model\DataObject\Product
+                    - subject.getProductType() == "article" and is_fully_authenticated() and "ROLE_PIMCORE_ADMIN" in roles
+
+                # Type "expression": a symfony expression to define a criteria.
+                type:                 ~ # One of "expression"
+                arguments:            []
+
+                # Define a custom service to handle the logic. Take a look at the Symfony docs for more details.
+                service:              ~
+
+            # Will be applied when the current place is empty.
+            initial_place:        null
+            places:
+
+                # Example:
+                places:
+                    closed:
+                        label:               close product
+                        permissions:
+                            -
+                                condition:           is_fully_authenticated() and 'ROLE_PIMCORE_ADMIN' in roles
+                                modify:
+                            -
+                                modify:
+                                objectLayout:        2
+
+                # Prototype
+                -
+
+                    # Nice name which will be used in the Pimcore backend.
+                    label:                ~
+
+                    # Title/tooltip for this place when it is displayed in the header of the Pimcore element detail view in the backend.
+                    title:                ''
+
+                    # Color of the place which will be used in the Pimcore backend.
+                    color:                '#bfdadc'
+
+                    # If set to true the color will be used as border and font color otherwise as background color.
+                    colorInverted:        false
+
+                    # If set to false, the place will be hidden in the header of the Pimcore element detail view in the backend.
+                    visibleInHeader:      true
+                    permissions:
+
+                        # Prototype
+                        -
+
+                            # A symfony expression can be configured here. The first set of permissions which are matching the condition will be used.
+                            condition:            ~
+
+                            # save permission as it can be configured in Pimcore workplaces
+                            save:                 ~
+
+                            # publish permission as it can be configured in Pimcore workplaces
+                            publish:              ~
+
+                            # unpublish permission as it can be configured in Pimcore workplaces
+                            unpublish:            ~
+
+                            # delete permission as it can be configured in Pimcore workplaces
+                            delete:               ~
+
+                            # rename permission as it can be configured in Pimcore workplaces
+                            rename:               ~
+
+                            # view permission as it can be configured in Pimcore workplaces
+                            view:                 ~
+
+                            # settings permission as it can be configured in Pimcore workplaces
+                            settings:             ~
+
+                            # versions permission as it can be configured in Pimcore workplaces
+                            versions:             ~
+
+                            # properties permission as it can be configured in Pimcore workplaces
+                            properties:           ~
+
+                            # a short hand for save, publish, unpublish, delete + rename
+                            modify:               ~
+
+                            # if set, the user will see the configured custom data object layout
+                            objectLayout:         ~
+            transitions:          # Required
+
+                # Example:
+                close_product:
+                    from:                open
+                    to:                  closed
+                    options:
+                        label:               close product
+                        notes:
+                            commentEnabled:      1
+                            commentRequired:     1
+                            additionalFields:
+                                -
+                                    name:                accept
+                                    title:               accept terms
+                                    required:            1
+                                    fieldType:           checkbox
+                                -
+                                    name:                select
+                                    title:               please select a type
+                                    setterFn:            setSpecialWorkflowType
+                                    fieldType:           select
+                                    fieldTypeSettings:
+                                        options:
+                                            -
+                                                key:                 Option A
+                                                value:               a
+                                            -
+                                                key:                 Option B
+                                                value:               b
+                                            -
+                                                key:                 Option C
+                                                value:               c
+
+                # Prototype
+                -
+                    name:                 ~ # Required
+
+                    # An expression to block the transition
+                    guard:                ~ # Example: is_fully_authenticated() and has_role('ROLE_JOURNALIST') and subject.getTitle() == 'My first article'
+                    from:                 []
+                    to:                   []
+                    options:
+
+                        # Nice name for the Pimcore backend.
+                        label:                ~
+                        notes:
+
+                            # If enabled a detail window will open when the user executes the transition. In this detail view the user be asked to enter a "comment". This comment then will be used as comment for the notes/events feature.
+                            commentEnabled:       false
+
+                            # Set this to true if the comment should be a required field.
+                            commentRequired:      false
+
+                            # Can be used for data objects. The comment will be saved to the data object additionally to the notes/events through this setter function.
+                            commentSetterFn:      ~
+
+                            # Can be used for data objects to prefill the comment field with data from the data object.
+                            commentGetterFn:      ~
+
+                            # Set's the type string in the saved note.
+                            type:                 'Status update'
+
+                            # An optional alternative "title" for the note, if blank the actions transition result is used.
+                            title:                ~
+
+                            # Add additional field to the transition detail window.
+                            additionalFields:
+
+                                # Prototype
+                                -
+
+                                    # The technical name used in the input form.
+                                    name:                 ~ # Required
+
+                                    # The data component name/field type.
+                                    fieldType:            ~ # One of "input"; "textarea"; "select"; "datetime"; "date"; "user"; "checkbox", Required
+
+                                    # The label used by the field
+                                    title:                ~
+
+                                    # Whether or not the field is required.
+                                    required:             false
+
+                                    # Optional setter function (available in the element, for example in the updated object), if not specified, data will be added to notes. The Workflow manager will call the function with the whole field data.
+                                    setterFn:             ~
+
+                                    # Will be passed to the underlying Pimcore data object field type. Can be used to configure the options of a select box for example.
+                                    fieldTypeSettings:    []
+
+                        # Css class to define the icon which will be used in the actions button in the backend.
+                        iconClass:            ~
+                        notificationSettings:
+
+                            # Prototype
+                            -
+
+                                # A symfony expression can be configured here. All sets of notification which are matching the condition will be used.
+                                condition:            ~
+
+                                # Send a email notification to a list of users (user names) when the transition get's applied
+                                notifyUsers:          []
+
+                                # Send a email notification to a list of user roles (role names) when the transition get's applied
+                                notifyRoles:          []
+
+                                # Type of mail source.
+                                mailType:             template # One of "template"; "pimcore_document"
+
+                                # Path to mail source - either Symfony path to template or fullpath to Pimcore document. Optional use $$lang$$ as placeholder for language.
+                                mailPath:             '@PimcoreCore/Workflow/NotificationEmail/notificationEmail.html.twig'
+
+                        # Send a email notification to a list of users (user names) when the transition get's applied
+                        notifyUsers:          []
+
+                        # Send a email notification to a list of user roles (role names) when the transition get's applied
+                        notifyRoles:          []
+
+                        # Change published state of element while transition (only available for documents and data objects).
+                        changePublishedState: no_change # One of "no_change"; "force_unpublished"; "force_published"
+
+            # Actions which will be added to actions button independently of the current workflow place.
+            globalActions:
+
+                # Prototype
+                -
+
+                    # Nice name for the Pimcore backend.
+                    label:                ~
+
+                    # Css class to define the icon which will be used in the actions button in the backend.
+                    iconClass:            ~
+
+                    # An expression to block the action
+                    guard:                ~ # Example: is_fully_authenticated() and has_role('ROLE_JOURNALIST') and subject.getTitle() == 'My first article'
+
+                    # Optionally set the current place of the workflow. Can be used for example to reset the workflow to the initial place.
+                    to:                   []
+
+                    # See notes section of transitions. It works exactly the same way.
+                    notes:
+                        commentEnabled:       false
+                        commentRequired:      false
+                        commentSetterFn:      ~
+                        commentGetterFn:      ~
+                        type:                 'Status update'
+                        title:                ~
+                        additionalFields:
+
+                            # Prototype
+                            -
+                                name:                 ~ # Required
+                                fieldType:            ~ # One of "input"; "textarea"; "select"; "datetime"; "date"; "user"; "checkbox", Required
+                                title:                ~
+                                required:             false
+                                setterFn:             ~
+                                fieldTypeSettings:    []
+```

@@ -19,6 +19,7 @@ namespace Pimcore\Model\DataObject\Objectbrick;
 
 use Pimcore\Cache\Runtime;
 use Pimcore\File;
+use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Tool;
@@ -122,7 +123,14 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
         $validLanguages = Tool::getValidLanguages();
         foreach ($classDefinitions as $classDef) {
             $classname = $classDef['classname'];
+
             $class = DataObject\ClassDefinition::getByName($classname);
+
+            if (!$class) {
+                Logger::error('class ' . $classname . " doesn't exist anymore");
+                continue;
+            }
+
             $tables[] = 'object_brick_query_' . $key .  '_' . $class->getId();
             $tables[] = 'object_brick_store_' . $key .  '_' . $class->getId();
             if ($isLocalized) {
@@ -143,9 +151,11 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
     }
 
     /**
+     * @param bool $saveDefinitionFile
+     *
      * @throws \Exception
      */
-    public function save()
+    public function save($saveDefinitionFile = true)
     {
         if (!$this->getKey()) {
             throw new \Exception('A object-brick needs a key to be saved!');
@@ -172,21 +182,23 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
 
         $this->cleanupOldFiles($definitionFile);
 
-        $clone = clone $this;
-        $clone->setDao(null);
-        unset($clone->oldClassDefinitions);
-        unset($clone->fieldDefinitions);
+        if ($saveDefinitionFile) {
+            $clone = clone $this;
+            $clone->setDao(null);
+            unset($clone->oldClassDefinitions);
+            unset($clone->fieldDefinitions);
 
-        $exportedClass = var_export($clone, true);
+            $exportedClass = var_export($clone, true);
 
-        $data = '<?php ';
-        $data .= "\n\n";
-        $data .= $infoDocBlock;
-        $data .= "\n\n";
+            $data = '<?php ';
+            $data .= "\n\n";
+            $data .= $infoDocBlock;
+            $data .= "\n\n";
 
-        $data .= "\nreturn " . $exportedClass . ";\n";
+            $data .= "\nreturn " . $exportedClass . ";\n";
 
-        \Pimcore\File::put('nette.safe://'.$definitionFile, $data);
+            \Pimcore\File::put($definitionFile, $data);
+        }
 
         $extendClass = 'DataObject\\Objectbrick\\Data\\AbstractData';
         if ($this->getParentClass()) {
@@ -205,7 +217,11 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
         $cd .= 'use Pimcore\\Model\\DataObject;';
         $cd .= "\n\n";
 
-        $cd .= 'class ' . ucfirst($this->getKey()) . ' extends ' . $extendClass . '  {';
+        $cd .= 'class ' . ucfirst($this->getKey()) . ' extends ' . $extendClass . ' implements \\Pimcore\\Model\\DataObject\\DirtyIndicatorInterface {';
+        $cd .= "\n\n";
+
+        $cd .= "\n\n";
+        $cd .= 'use \\Pimcore\\Model\\DataObject\\Traits\\DirtyIndicatorTrait;';
         $cd .= "\n\n";
 
         $cd .= 'protected $type = "' . $this->getKey() . "\";\n";
@@ -242,6 +258,47 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
     }
 
     /**
+     * @param $definitions
+     *
+     * @return array
+     */
+    protected function buildClassList($definitions)
+    {
+        $result = [];
+        foreach ($definitions as $definition) {
+            $result[] = $definition['classname'] . '-' . $definition['fieldname'];
+        }
+
+        return $result;
+    }
+
+    /** Returns a list of classes which need to be "rebuild" because they are affected of changes.
+     * @param $oldObject
+     *
+     * @return array
+     */
+    protected function getClassesToCleanup($oldObject)
+    {
+        $oldDefinitions = $oldObject->getClassDefinitions() ? $oldObject->getClassDefinitions() : [];
+        $newDefinitions = $this->getClassDefinitions() ? $this->getClassDefinitions() : [];
+
+        $old = $this->buildClassList($oldDefinitions);
+        $new = $this->buildClassList($newDefinitions);
+
+        $diff1 = array_diff($old, $new);
+        $diff2 = array_diff($new, $old);
+
+        $diff = array_merge($diff1, $diff2);
+        $result = [];
+        foreach ($diff as $item) {
+            $parts = explode('-', $item);
+            $result[] = ['classname' => $parts[0], 'fieldname' => $parts[1]];
+        }
+
+        return $result;
+    }
+
+    /**
      * @param $serializedFilename
      */
     private function cleanupOldFiles($serializedFilename)
@@ -253,7 +310,9 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
         }
 
         if ($oldObject && !empty($oldObject->classDefinitions)) {
-            foreach ($oldObject->classDefinitions as $cl) {
+            $classlist = $this->getClassesToCleanup($oldObject);
+
+            foreach ($classlist as $cl) {
                 $this->oldClassDefinitions[$cl['classname']] = $cl['classname'];
                 $class = DataObject\ClassDefinition::getByName($cl['classname']);
                 if ($class) {
@@ -319,6 +378,29 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
     }
 
     /**
+     * @param DataObject\ClassDefinition $class
+     *
+     * @return array
+     */
+    private function getAllowedTypesWithFieldname(DataObject\ClassDefinition $class)
+    {
+        $result = [];
+        $fieldDefinitions = $class->getFieldDefinitions();
+        foreach ($fieldDefinitions as $fd) {
+            if (!$fd instanceof DataObject\ClassDefinition\Data\Objectbricks) {
+                continue;
+            }
+
+            $allowedTypes = $fd->getAllowedTypes() ? $fd->getAllowedTypes() : [];
+            foreach ($allowedTypes as $allowedType) {
+                $result[] = $fd->getName() . '-' . $allowedType;
+            }
+        }
+
+        return $result;
+    }
+
+    /**
      * @throws \Exception
      *
      * @todo: creates a PHP-Dock with "@return void" (line 351)
@@ -337,12 +419,23 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
                 if (!$fd) {
                     throw new \Exception('Could not resolve field definition for ' . $cl['fieldname']);
                 }
-                $allowedTypes = $fd->getAllowedTypes();
+
+                $old = $this->getAllowedTypesWithFieldname($class);
+
+                $allowedTypes = $fd->getAllowedTypes() ? $fd->getAllowedTypes() : [];
+
                 if (!in_array($this->key, $allowedTypes)) {
                     $allowedTypes[] = $this->key;
                 }
+
                 $fd->setAllowedTypes($allowedTypes);
-                $class->save();
+                $new = $this->getAllowedTypesWithFieldname($class);
+
+                if (array_diff($new, $old) || array_diff($old, $new)) {
+                    $class->save();
+                } else {
+                    Logger::debug('Objectbrick ' . $this->getKey() . ', no change for class ' . $class->getName());
+                }
             }
         }
 
@@ -421,7 +514,7 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
                 }
 
                 $file = $folder . '/' . ucfirst($fieldname) . '.php';
-                File::put('nette.safe://'.$file, $cd);
+                File::put($file, $cd);
             }
         }
     }

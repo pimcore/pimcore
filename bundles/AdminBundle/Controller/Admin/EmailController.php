@@ -14,13 +14,10 @@
 
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 
-use Pimcore\Event\AdminEvents;
+use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Logger;
 use Pimcore\Mail;
-use Pimcore\Model\Document;
-use Pimcore\Model\Element;
 use Pimcore\Model\Tool;
-use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -29,143 +26,8 @@ use Symfony\Component\Routing\Annotation\Route;
 /**
  * @Route("/email")
  */
-class EmailController extends DocumentControllerBase
+class EmailController extends AdminController
 {
-    /**
-     * @Route("/get-data-by-id", methods={"GET"})
-     *
-     * @param Request $request
-     *
-     * @return JsonResponse
-     */
-    public function getDataByIdAction(Request $request)
-    {
-
-        // check for lock
-        if (Element\Editlock::isLocked($request->get('id'), 'document')) {
-            return $this->adminJson([
-                'editlock' => Element\Editlock::getByElement($request->get('id'), 'document')
-            ]);
-        }
-        Element\Editlock::lock($request->get('id'), 'document');
-
-        $email = Document\Email::getById($request->get('id'));
-        $email = clone $email;
-        $email = $this->getLatestVersion($email);
-
-        $versions = Element\Service::getSafeVersionInfo($email->getVersions());
-        $email->setVersions(array_splice($versions, 0, 1));
-        $email->idPath = Element\Service::getIdPath($email);
-        $email->setUserPermissions($email->getUserPermissions());
-        $email->setLocked($email->isLocked());
-        $email->setParent(null);
-
-        // unset useless data
-        $email->setElements(null);
-        $email->setChildren(null);
-
-        $this->addTranslationsData($email);
-        $this->minimizeProperties($email);
-
-        //Hook for modifying return value - e.g. for changing permissions based on object data
-        //data need to wrapped into a container in order to pass parameter to event listeners by reference so that they can change the values
-        $data = $email->getObjectVars();
-        $event = new GenericEvent($this, [
-            'data' => $data,
-            'document' => $email
-        ]);
-        \Pimcore::getEventDispatcher()->dispatch(AdminEvents::DOCUMENT_GET_PRE_SEND_DATA, $event);
-        $data = $event->getArgument('data');
-
-        if ($email->isAllowed('view')) {
-            return $this->adminJson($data);
-        }
-
-        return $this->adminJson(false);
-    }
-
-    /**
-     * @Route("/save", methods={"PUT", "POST"})
-     *
-     * @param Request $request
-     *
-     * @return JsonResponse
-     *
-     * @throws \Exception
-     */
-    public function saveAction(Request $request)
-    {
-        try {
-            if ($request->get('id')) {
-                $page = Document\Email::getById($request->get('id'));
-
-                $page = $this->getLatestVersion($page);
-                $page->setUserModification($this->getAdminUser()->getId());
-
-                if ($request->get('task') == 'unpublish') {
-                    $page->setPublished(false);
-                }
-                if ($request->get('task') == 'publish') {
-                    $page->setPublished(true);
-                }
-                // only save when publish or unpublish
-                if (($request->get('task') == 'publish' && $page->isAllowed('publish')) or ($request->get('task') == 'unpublish' && $page->isAllowed('unpublish'))) {
-                    $this->setValuesToDocument($request, $page);
-
-                    try {
-                        $page->save();
-                        $this->saveToSession($page);
-
-                        return $this->adminJson(['success' => true]);
-                    } catch (\Exception $e) {
-                        Logger::err($e);
-
-                        return $this->adminJson(['success' => false, 'message' => $e->getMessage()]);
-                    }
-                } else {
-                    if ($page->isAllowed('save')) {
-                        $this->setValuesToDocument($request, $page);
-
-                        try {
-                            $page->saveVersion();
-                            $this->saveToSession($page);
-
-                            return $this->adminJson(['success' => true]);
-                        } catch (\Exception $e) {
-                            if ($e instanceof Element\ValidationException) {
-                                throw $e;
-                            }
-
-                            Logger::err($e);
-
-                            return $this->adminJson(['success' => false, 'message' => $e->getMessage()]);
-                        }
-                    }
-                }
-            }
-        } catch (\Exception $e) {
-            Logger::log($e);
-            if ($e instanceof Element\ValidationException) {
-                return $this->adminJson(['success' => false, 'type' => 'ValidationException', 'message' => $e->getMessage(), 'stack' => $e->getTraceAsString(), 'code' => $e->getCode()]);
-            }
-            throw $e;
-        }
-
-        return $this->adminJson(false);
-    }
-
-    /**
-     * @param Request $request
-     * @param Document $page
-     */
-    protected function setValuesToDocument(Request $request, Document $page)
-    {
-        $this->addSettingsToDocument($request, $page);
-        $this->addDataToDocument($request, $page);
-        $this->addPropertiesToDocument($request, $page);
-        $this->addSchedulerToDocument($request, $page);
-    }
-
     /**
      * @Route("/email-logs", methods={"GET", "POST"})
      *
@@ -177,7 +39,7 @@ class EmailController extends DocumentControllerBase
      */
     public function emailLogsAction(Request $request)
     {
-        if (!$this->getAdminUser()->isAllowed('emails')) {
+        if (!$this->getAdminUser()->isAllowed('emails') && !$this->getAdminUser()->isAllowed('gdpr_data_extractor')) {
             throw new \Exception("Permission denied, user needs 'emails' permission.");
         }
 

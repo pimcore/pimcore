@@ -191,6 +191,9 @@ class Document extends Element\AbstractElement
      */
     protected $locked = null;
 
+    /** @var int */
+    protected $versionCount;
+
     /**
      * get possible types
      *
@@ -430,7 +433,7 @@ class Document extends Element\AbstractElement
                 // we try to start the transaction $maxRetries times again (deadlocks, ...)
                 if ($retries < ($maxRetries - 1)) {
                     $run = $retries + 1;
-                    $waitTime = 100000; // microseconds
+                    $waitTime = rand(1, 5) * 100000; // microseconds
                     Logger::warn('Unable to finish transaction (' . $run . ". run) because of the following reason '" . $e->getMessage() . "'. --> Retrying in " . $waitTime . ' microseconds ... (' . ($run + 1) . ' of ' . $maxRetries . ')');
 
                     usleep($waitTime); // wait specified time until we restart the transaction
@@ -551,8 +554,9 @@ class Document extends Element\AbstractElement
         }
 
         // save dependencies
-        $d = $this->getDependencies();
-        $d->clean();
+        $d = new Dependency();
+        $d->setSourceType('document');
+        $d->setSourceId($this->getId());
 
         foreach ($this->resolveDependencies() as $requirement) {
             if ($requirement['id'] == $this->getId() && $requirement['type'] == 'document') {
@@ -1442,5 +1446,25 @@ class Document extends Element\AbstractElement
     public function setUserPermissions($userPermissions): void
     {
         $this->userPermissions = $userPermissions;
+    }
+
+    /**
+     * @return int
+     */
+    public function getVersionCount(): int
+    {
+        return $this->versionCount ? $this->versionCount : 0;
+    }
+
+    /**
+     * @param int|null $versionCount
+     *
+     * @return Document
+     */
+    public function setVersionCount(?int $versionCount): self
+    {
+        $this->versionCount = (int) $versionCount;
+
+        return $this;
     }
 }

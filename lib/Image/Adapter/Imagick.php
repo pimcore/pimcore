@@ -153,6 +153,19 @@ class Imagick extends Adapter
     }
 
     /**
+     * @return string
+     */
+    public function getContentOptimizedFormat()
+    {
+        $format = 'jpeg';
+        if ($this->hasAlphaChannel()) {
+            $format = 'png32';
+        }
+
+        return $format;
+    }
+
+    /**
      * @param $path
      * @param null $format
      * @param null $quality
@@ -180,15 +193,6 @@ class Imagick extends Adapter
         }
 
         $originalFilename = null;
-        if (!$this->reinitializing) {
-            if ($this->getUseContentOptimizedFormat()) {
-                $format = 'jpeg';
-                if ($this->hasAlphaChannel()) {
-                    $format = 'png32';
-                }
-            }
-        }
-
         $i = $this->resource; // this is because of HHVM which has problems with $this->resource->writeImage();
 
         if (in_array($format, ['jpeg', 'pjpeg', 'jpg']) && $this->isAlphaPossible) {
@@ -220,7 +224,6 @@ class Imagick extends Adapter
         if (!$this->isPreserveColor()) {
             $i->profileImage('*', null);
         }
-        $i->setImageFormat($format);
 
         if ($quality && !$this->isPreserveColor()) {
             $i->setCompressionQuality((int) $quality);
@@ -249,6 +252,7 @@ class Imagick extends Adapter
         }
 
         if (!stream_is_local($path)) {
+            $i->setImageFormat($format);
             $success = File::put($path, $i->getImageBlob());
         } else {
             $success = $i->writeImage($format . ':' . $path);
@@ -950,5 +954,29 @@ class Imagick extends Adapter
         }
 
         return parent::getVectorRasterDimensions();
+    }
+
+    protected $supportedFormatsCache = [];
+
+    /**
+     * @inheritdoc
+     */
+    public function supportsFormat(string $format)
+    {
+        if (!isset($this->supportedFormatsCache[$format])) {
+            try {
+                // we don't use \Imagick::queryFormats() here, because this doesn't consider configured delegates
+                $tmpFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/' . uniqid() . '.' . $format;
+                $image = new \Imagick();
+                $image->newImage(100, 100, new \ImagickPixel('red'));
+                $image->writeImage($format . ':' . $tmpFile);
+                $this->supportedFormatsCache[$format] = true;
+                unlink($tmpFile);
+            } catch (\Exception $e) {
+                $this->supportedFormatsCache[$format] = false;
+            }
+        }
+
+        return $this->supportedFormatsCache[$format];
     }
 }

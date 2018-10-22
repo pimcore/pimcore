@@ -21,6 +21,8 @@ use Pimcore\Model\DataObject;
 
 class Select extends Model\DataObject\ClassDefinition\Data
 {
+    use Model\DataObject\Traits\SimpleComparisonTrait;
+
     /**
      * Static type of this element
      *
@@ -470,9 +472,10 @@ class Select extends Model\DataObject\ClassDefinition\Data
             $options = $optionsProvider->{'getOptions'}($context, $this);
             $this->setOptions($options);
 
-            $result = ['value' => null, 'options' => $this->getOptions()];
-            if ($data) {
-                $result['value'] = $data;
+            if ($params['purpose'] == 'editmode') {
+                $result = $data;
+            } else {
+                $result = ['value' => $data ? $data : null, 'options' => $this->getOptions()];
             }
 
             return $result;

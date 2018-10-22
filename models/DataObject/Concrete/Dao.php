@@ -17,6 +17,7 @@
 
 namespace Pimcore\Model\DataObject\Concrete;
 
+use Pimcore\Db;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
@@ -175,6 +176,8 @@ class Dao extends Model\DataObject\AbstractObject\Dao
         // get fields which shouldn't be updated
         $fieldDefinitions = $this->model->getClass()->getFieldDefinitions();
         $untouchable = [];
+        $db = Db::get();
+
         foreach ($fieldDefinitions as $key => $fd) {
             if (method_exists($fd, 'getLazyLoading') && $fd->getLazyLoading()) {
                 if (!in_array($key, $this->model->getLazyLoadedFields())) {
@@ -182,18 +185,29 @@ class Dao extends Model\DataObject\AbstractObject\Dao
                     $untouchable[] = $key;
                 }
             }
+
+            if (!DataObject\AbstractObject::isDirtyDetectionDisabled() && $fd->supportsDirtyDetection()) {
+                if ($this->model instanceof DataObject\DirtyIndicatorInterface && !$this->model->isFieldDirty($key)) {
+                    if (!in_array($key, $untouchable)) {
+                        $untouchable[] = $key;
+                    }
+                }
+            }
         }
 
         // empty relation table except the untouchable fields (eg. lazy loading fields)
         if (count($untouchable) > 0) {
             $untouchables = "'" . implode("','", $untouchable) . "'";
-            $this->db->deleteWhere('object_relations_' . $this->model->getClassId(), $this->db->quoteInto('src_id = ? AND fieldname not in (' . $untouchables . ") AND ownertype = 'object'", $this->model->getId()));
+            $condition = $this->db->quoteInto('src_id = ? AND fieldname not in (' . $untouchables . ") AND ownertype = 'object'", $this->model->getId());
         } else {
-            $this->db->delete('object_relations_' . $this->model->getClassId(), [
-                'src_id' => $this->model->getId(),
-                'ownertype' => 'object'
-            ]);
+            $condition = 'src_id = ' . $db->quote($this->model->getId()) . ' AND ownertype = "object"';
         }
+
+        if (!DataObject\AbstractObject::isDirtyDetectionDisabled()) {
+            $condition = '(' . $condition . ' AND ownerType != "localizedfield" AND ownerType != "fieldcollection")';
+        }
+
+        $this->db->deleteWhere('object_relations_' . $this->model->getClassId(), $condition);
 
         $inheritedValues = DataObject\AbstractObject::doGetInheritedValues();
         DataObject\AbstractObject::setGetInheritedValues(false);
@@ -205,7 +219,12 @@ class Dao extends Model\DataObject\AbstractObject\Dao
 
             if (method_exists($fd, 'save')) {
                 // for fieldtypes which have their own save algorithm eg. fieldcollections, objects, multihref, ...
-                $fd->save($this->model);
+                $saveParams = ['isUntouchable' => in_array($fd->getName(), $untouchable),
+                               'isUpdate' => $isUpdate];
+                if ($this->model instanceof DataObject\DirtyIndicatorInterface) {
+                    $saveParams['newParent'] = $this->model->isFieldDirty('o_parentId');
+                }
+                $fd->save($this->model, $saveParams);
             } elseif ($fd->getColumnType()) {
                 // pimcore saves the values with getDataForResource
                 if (is_array($fd->getColumnType())) {
@@ -360,7 +379,7 @@ class Dao extends Model\DataObject\AbstractObject\Dao
      */
     public function getVersions()
     {
-        $versionIds = $this->db->fetchCol("SELECT id FROM versions WHERE cid = ? AND ctype='object' ORDER BY `id` DESC", $this->model->getId());
+        $versionIds = $this->db->fetchCol("SELECT id FROM versions WHERE cid = ? AND ctype='object' ORDER BY `id` ASC", $this->model->getId());
 
         $versions = [];
         foreach ($versionIds as $versionId) {

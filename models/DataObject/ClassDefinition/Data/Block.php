@@ -875,11 +875,7 @@ class Block extends Model\DataObject\ClassDefinition\Data
      */
     public function preSetData($object, $data, $params = [])
     {
-        if ($object instanceof DataObject\Concrete) {
-            if ($this->getLazyLoading() and !in_array($this->getName(), $object->getO__loadedLazyFields())) {
-                $object->addO__loadedLazyField($this->getName());
-            }
-        }
+        $this->markLazyloadedFieldAsLoaded($object);
 
         return $data;
     }
@@ -918,7 +914,7 @@ class Block extends Model\DataObject\ClassDefinition\Data
             if (!method_exists($this, 'getLazyLoading') or !$this->getLazyLoading() or (array_key_exists('force', $params) && $params['force'])) {
                 $data = null;
 
-                $query = 'select ' . $field . ' from object_store_' . $container->getClassId() . ' where oo_id  = ' . $container->getId();
+                $query = 'select ' . $db->quoteIdentifier($field) . ' from object_store_' . $container->getClassId() . ' where oo_id  = ' . $container->getId();
                 $data = $db->fetchOne($query);
                 $data = $this->getDataFromResource($data, $container, $params);
             } else {
@@ -980,6 +976,7 @@ class Block extends Model\DataObject\ClassDefinition\Data
                 $setter = 'set' . ucfirst($this->getName());
                 if (method_exists($object, $setter)) {
                     $object->$setter($data);
+                    $this->markLazyloadedFieldAsLoaded($object);
                 }
             }
         } elseif ($object instanceof DataObject\Localizedfield) {

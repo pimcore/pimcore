@@ -689,5 +689,8 @@
     "system_performance_stability_warning": "Veuillez ne pas effectuer cette action, sauf si vous êtes sûr de ce que vous faites. <br /><b style='color: red'>Cette action peut avoir un impact majeur sur la stabilité et les performances de l'ensemble du système, et peut causer une surcharge ou crash complet du serveur !</b><br /><br />Etes-vous sûr ?",
     "listing_use_traits": "Listing Use (traits)",
     "listing_parent_php_class": "Listing Classe PHP Parent",
-    "clear_full_page_cache": "Clear Full Page Cache"
+    "clear_full_page_cache": "Vider le cache page entière",
+    "icon_library": "Bibliothèque d'icônes",
+    "expand_cs_group": "There are empty features not displayed here. Click to show them",
+    "hide_empty_data": "Hide empty data"
 }

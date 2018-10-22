@@ -56,12 +56,12 @@ class Layout
     /**
      * @var bool
      */
-    public $collapsible;
+    public $collapsible = false;
 
     /**
      * @var bool
      */
-    public $collapsed;
+    public $collapsed = false;
 
     /**
      * @var string
@@ -86,7 +86,7 @@ class Layout
     /**
      * @var bool
      */
-    public $locked;
+    public $locked = false;
 
     /**
      * @return string
@@ -366,7 +366,7 @@ class Layout
      */
     public function setCollapsed($collapsed)
     {
-        $this->collapsed = $collapsed;
+        $this->collapsed = (bool) $collapsed;
 
         $this->filterCollapsibleValue();
 

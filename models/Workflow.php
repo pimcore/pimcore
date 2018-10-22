@@ -406,6 +406,10 @@ class Workflow extends AbstractModel
      */
     public function getValidActionsForStatus($statusName)
     {
+        if (!is_array($this->transitionDefinitions[$statusName]['validActions'])) {
+            return [];
+        }
+
         return array_keys($this->transitionDefinitions[$statusName]['validActions']);
     }
 

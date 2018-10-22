@@ -21,6 +21,8 @@ use Pimcore\Model\DataObject;
 
 class Slider extends Model\DataObject\ClassDefinition\Data
 {
+    use Model\DataObject\Traits\SimpleComparisonTrait;
+
     /**
      * Static type of this element
      *

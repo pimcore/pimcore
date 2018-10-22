@@ -58,14 +58,14 @@ pimcore.tool.paralleljobs = Class.create({
         }
     },
 
-    error: function (message) {
+    error: function (message, rdata) {
 
         if(this.config["stopOnError"]) {
             clearInterval(this.jobsInterval);
         }
 
         if(typeof this.config.failure == "function") {
-            this.config.failure(message);
+            this.config.failure(message, rdata);
         }
     },
 
@@ -120,7 +120,7 @@ pimcore.tool.paralleljobs = Class.create({
                     } catch (e) {
                         console.log(e);
                         console.log(response);
-                        this.error((res && res["message"]) ? res["message"] : response.responseText);
+                        this.error((res && res["message"]) ? res["message"] : response.responseText, res);
 
                         if(this.config["stopOnError"]) {
                             // stop here

@@ -106,6 +106,7 @@ class Frontend
             $sites = \Pimcore\Cache\Runtime::get($cacheKey);
         } else {
             $sites = new Site\Listing();
+            $sites->setOrderKey('(SELECT LENGTH(path) FROM documents WHERE documents.id = sites.rootId) DESC', false);
             $sites = $sites->load();
             \Pimcore\Cache\Runtime::set($cacheKey, $sites);
         }
@@ -137,6 +138,29 @@ class Frontend
                 'enabled' => true,
                 'lifetime' => $cacheService->getLifetime()
             ];
+        }
+
+        return false;
+    }
+
+    /**
+     * @return bool
+     */
+    public static function hasWebpSupport()
+    {
+        $config = \Pimcore::getContainer()->getParameter('pimcore.config')['assets']['image']['thumbnails']['webp_auto_support'];
+        if ($config) {
+            try {
+                $requestHelper = \Pimcore::getContainer()->get('Pimcore\Http\RequestHelper');
+                if ($requestHelper->hasMasterRequest()) {
+                    $contentTypes = $requestHelper->getMasterRequest()->getAcceptableContentTypes();
+                    if (in_array('image/webp', $contentTypes)) {
+                        return true;
+                    }
+                }
+            } catch (\Exception $e) {
+                // nothing to do
+            }
         }
 
         return false;

@@ -4,7 +4,6 @@ namespace Pimcore\Tests\Cache\Pool\Traits;
 
 use Pimcore\Cache\Pool\PimcoreCacheItemPoolInterface;
 use Pimcore\Cache\Pool\Redis;
-use Pimcore\Storage\Redis\Connection;
 use Pimcore\Storage\Redis\ConnectionFactory;
 use Pimcore\Tests\Cache\Factory;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -44,7 +43,7 @@ trait RedisItemPoolTrait
         return (new Factory())->createRedisItemPool($this->defaultLifetime, $connectionOptions, $this->getRedisOptions());
     }
 
-    protected function getRedisConnection(Redis $cache): Connection
+    protected function getRedisConnection(Redis $cache): \Credis_Client
     {
         $reflector = new \ReflectionClass($cache);
         $property = $reflector->getProperty('redis');

@@ -26,10 +26,12 @@ class Dao extends Model\Dao\AbstractDao
 {
     /**
      * @param Model\DataObject\Concrete $object
+     * @param array $params
+     * @param $saveRelationalData
      *
      * @throws \Exception
      */
-    public function save(Model\DataObject\Concrete $object)
+    public function save(Model\DataObject\Concrete $object, $params = [], $saveRelationalData = true)
     {
         $tableName = $this->model->getDefinition()->getTableName($object->getClass());
         $data = [
@@ -39,22 +41,29 @@ class Dao extends Model\Dao\AbstractDao
         ];
 
         try {
+            /** @var $fd Model\DataObject\ClassDefinition\Data */
             foreach ($this->model->getDefinition()->getFieldDefinitions() as $fd) {
                 $getter = 'get' . ucfirst($fd->getName());
 
                 if (method_exists($fd, 'save')) {
+                    if (!$fd instanceof Model\DataObject\ClassDefinition\Data\Localizedfields && $fd->supportsDirtyDetection() && !$saveRelationalData) {
+                        continue;
+                    }
+
                     // for fieldtypes which have their own save algorithm eg. objects, multihref, ...
                     $index = $this->model->getIndex();
-                    $fd->save(
-                        $this->model,
-                        [
-                            'context' => [
-                                'containerType' => 'fieldcollection',
-                                'containerKey' => $this->model->getType(),
-                                'fieldname' => $this->model->getFieldname(),
-                                'index' => $index
-                            ]
+                    $params = array_merge($params, [
+                        'context' => [
+                            'containerType' => 'fieldcollection',
+                            'containerKey' => $this->model->getType(),
+                            'fieldname' => $this->model->getFieldname(),
+                            'index' => $index
                         ]
+                    ]);
+
+                    $fd->save(
+                        $this->model, $params
+
                     );
                 } elseif ($fd->getColumnType()) {
                     if (is_array($fd->getColumnType())) {

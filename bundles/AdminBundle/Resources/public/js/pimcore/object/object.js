@@ -31,6 +31,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
         this.versions = new pimcore.object.versions(this);
         this.scheduler = new pimcore.element.scheduler(this, "object");
         this.dependencies = new pimcore.element.dependencies(this, "object");
+        this.workflows = new pimcore.element.workflows(this, "object");
 
         if (user.isAllowed("notes_events")) {
             this.notes = new pimcore.element.notes(this, "object");
@@ -295,6 +296,9 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
             items.push(this.tagAssignment.getLayout());
         }
 
+        if (user.isAllowed("workflow_details") && this.data.workflowManagement && this.data.workflowManagement.hasWorkflowManagement === true) {
+            items.push(this.workflows.getLayout());
+        }
 
         //
         if (this.data.childdata.data.classes.length > 0) {
@@ -315,7 +319,6 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
                 console.log(e);
             }
         }
-
 
         if (user.isAllowed("application_logging") && this.data.general.showAppLoggerTab) {
             try {

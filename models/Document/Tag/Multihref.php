@@ -173,7 +173,7 @@ class Multihref extends Model\Document\Tag implements \Iterator
 
         foreach ($this->elements as $element) {
             if (
-                ($element instanceof Object && DataObject::doHideUnpublished())
+                ($element instanceof DataObject && DataObject::doHideUnpublished())
                 ||
                 ($element instanceof Document && Document::doHideUnpublished())
             ) {

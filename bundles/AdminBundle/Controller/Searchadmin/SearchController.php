@@ -408,9 +408,12 @@ class SearchController extends AdminController
     public function quicksearchAction(Request $request, EventDispatcherInterface $eventDispatcher)
     {
         $query = $this->filterQueryParam($request->get('query'));
-        if (strpos($query, '*') === false) {
+        if (!preg_match('/[\+\-\*"]/', $query)) {
+            // check for a boolean operator (which was not filtered by filterQueryParam()),
+            // if present, do not add asterisk at the end of the query
             $query = $query . '*';
         }
+
         $db = \Pimcore\Db::get();
         $searcherList = new Data\Listing();
 

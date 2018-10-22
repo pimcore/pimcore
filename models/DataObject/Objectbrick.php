@@ -23,8 +23,10 @@ use Pimcore\Model;
 /**
  * @method \Pimcore\Model\DataObject\Objectbrick\Dao getDao()
  */
-class Objectbrick extends Model\AbstractModel
+class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
 {
+    use Model\DataObject\Traits\DirtyIndicatorTrait;
+
     /**
      * @var array
      */
@@ -96,6 +98,7 @@ class Objectbrick extends Model\AbstractModel
     public function setItems($items)
     {
         $this->items = $items;
+        $this->markFieldDirty('_self', true);
 
         return $this;
     }
@@ -156,8 +159,9 @@ class Objectbrick extends Model\AbstractModel
 
     /**
      * @param Concrete $object
+     * @param array $params
      */
-    public function save($object)
+    public function save($object, $params = [])
     {
         // set the current object again, this is necessary because the related object in $this->object can change (eg. clone & copy & paste, etc.)
         $this->setObject($object);
@@ -190,12 +194,12 @@ class Objectbrick extends Model\AbstractModel
                         $brickType = '\\Pimcore\\Model\\DataObject\\Objectbrick\\Data\\' . ucfirst($parentBrick->getType());
                         $brick = new $brickType($object);
                         $brick->setFieldname($this->getFieldname());
-                        $brick->save($object);
+                        $brick->save($object, $params);
                         $this->$setter($brick);
                     }
                 } else {
                     $brick->setFieldname($this->getFieldname());
-                    $brick->save($object);
+                    $brick->save($object, $params);
                 }
             } else {
                 if ($brick == null) {
@@ -214,7 +218,7 @@ class Objectbrick extends Model\AbstractModel
                         $brickType = '\\Pimcore\\Model\\DataObject\\Objectbrick\\Data\\' . ucfirst($parentBrick->getType());
                         $brick = new $brickType($object);
                         $brick->setFieldname($this->getFieldname());
-                        $brick->save($object);
+                        $brick->save($object, $params);
                     }
                 }
             }

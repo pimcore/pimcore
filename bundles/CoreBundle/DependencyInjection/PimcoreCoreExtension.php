@@ -90,6 +90,7 @@ class PimcoreCoreExtension extends ConfigurableExtension implements PrependExten
 
         $loader->load('services.yml');
         $loader->load('services_routing.yml');
+        $loader->load('services_workflow.yml');
         $loader->load('extensions.yml');
         $loader->load('logging.yml');
         $loader->load('request_response.yml');
@@ -118,6 +119,8 @@ class PimcoreCoreExtension extends ConfigurableExtension implements PrependExten
         $this->configureMigrations($container, $config['migrations']);
         $this->configureGoogleAnalyticsFallbackServiceLocator($container);
         $this->configureSitemaps($container, $config['sitemaps']);
+
+        $container->setParameter('pimcore.workflow', $config['workflows']);
 
         // load engine specific configuration only if engine is active
         $configuredEngines = ['twig', 'php'];

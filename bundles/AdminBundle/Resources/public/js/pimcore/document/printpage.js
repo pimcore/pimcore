@@ -41,6 +41,7 @@ pimcore.document.printpage = Class.create(pimcore.document.printabstract, {
         this.dependencies = new pimcore.element.dependencies(this, "document");
         this.preview = new pimcore.document.pages.preview(this);
         this.pdfpreview = new pimcore.document.printpages.pdfpreview(this);
+        this.workflows = new pimcore.element.workflows(this, "document");
     },
 
     getTabPanel: function () {
@@ -65,6 +66,10 @@ pimcore.document.printpage = Class.create(pimcore.document.printabstract, {
 
         if (user.isAllowed("notes_events")) {
             items.push(this.notes.getLayout());
+        }
+
+        if (user.isAllowed("workflow_details") && this.data.workflowManagement && this.data.workflowManagement.hasWorkflowManagement === true) {
+            items.push(this.workflows.getLayout());
         }
 
         this.tabbar = new Ext.TabPanel({

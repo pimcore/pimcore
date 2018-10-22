@@ -63,6 +63,19 @@ class GD extends Adapter
     }
 
     /**
+     * @return string
+     */
+    public function getContentOptimizedFormat()
+    {
+        $format = 'pjpeg';
+        if ($this->hasAlphaChannel()) {
+            $format = 'png';
+        }
+
+        return $format;
+    }
+
+    /**
      * @param $path
      * @param null $format
      * @param null $quality
@@ -80,13 +93,6 @@ class GD extends Adapter
         }
 
         $format = strtolower($format);
-
-        if (!$this->reinitializing && $this->getUseContentOptimizedFormat()) {
-            $format = 'pjpeg';
-            if ($this->hasAlphaChannel()) {
-                $format = 'png';
-            }
-        }
 
         // progressive jpeg
         if ($format == 'pjpeg') {
@@ -108,12 +114,10 @@ class GD extends Adapter
             imagesavealpha($this->resource, true);
         }
 
-        switch ($format) {
-            case 'jpeg':
-                $functionName($this->resource, $path, $quality);
-                break;
-            default:
-                $functionName($this->resource, $path);
+        if ($format == 'jpeg' || $format == 'webp') {
+            $functionName($this->resource, $path, $quality);
+        } else {
+            $functionName($this->resource, $path);
         }
 
         return $this;
@@ -430,5 +434,33 @@ class GD extends Adapter
         $this->setIsAlphaPossible(true);
 
         return $this;
+    }
+
+    protected $supportedFormatsCache = [];
+
+    /**
+     * @inheritdoc
+     */
+    public function supportsFormat(string $format)
+    {
+        if (!isset($this->supportedFormatsCache[$format])) {
+            $info = gd_info();
+            $mappings = [
+                'jpg' => 'JPEG Support',
+                'jpeg' => 'JPEG Support',
+                'pjpeg' => 'JPEG Support',
+                'webp' => 'WebP Support',
+                'gif' => 'GIF Create Support',
+                'png' => 'PNG Support',
+            ];
+
+            if (isset($info[$mappings[$format]]) && $info[$mappings[$format]]) {
+                $this->supportedFormatsCache[$format] = true;
+            } else {
+                $this->supportedFormatsCache[$format] = false;
+            }
+        }
+
+        return $this->supportedFormatsCache[$format];
     }
 }

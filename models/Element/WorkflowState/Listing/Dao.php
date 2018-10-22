@@ -31,11 +31,11 @@ class Dao extends Model\Listing\Dao\AbstractDao
      */
     public function load()
     {
-        $workflowStateData = $this->db->fetchAll('SELECT cid, ctype, workflowId FROM element_workflow_state' . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
+        $workflowStateData = $this->db->fetchAll('SELECT cid, ctype, workflow FROM element_workflow_state' . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
 
         $workflowStates = [];
         foreach ($workflowStateData as $entry) {
-            if ($workflowState = Model\Element\WorkflowState::getByPrimary($entry['cid'], $entry['ctype'], $entry['workflowId'])) {
+            if ($workflowState = Model\Element\WorkflowState::getByPrimary($entry['cid'], $entry['ctype'], $entry['workflow'])) {
                 $workflowStates[] = $workflowState;
             }
         }
@@ -47,8 +47,6 @@ class Dao extends Model\Listing\Dao\AbstractDao
 
     /**
      * @return int
-     *
-     * @todo: $amount could not be defined, so this could cause an issue
      */
     public function getTotalCount()
     {

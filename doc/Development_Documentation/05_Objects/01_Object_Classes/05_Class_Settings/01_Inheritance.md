@@ -24,6 +24,13 @@ In the Pimcore backend, inherited values are visualized as in the screen below: 
 and have a green marker in the upper left corner. With a click on this corner, one can open the source object of this 
 specific attribute.
 
+> **Important Note regarding changing the inheritance flag**
+> If you toggle the inheritance flag after creating objects, the *object_*_*\_query_* might contain  
+> wrong values even after saving the object again. Pimcore will disable the dirty detection
+> if the class is newer than the object which should fix this issue.
+> However, you can still call AbstractObject::disableDirtyDetection() before saving the object
+> if you want to explicitely fix that.
+
 
 ![Data Inheritance](../../../img/classes-data-inheritance1.png)
 

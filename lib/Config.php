@@ -114,11 +114,7 @@ class Config
                     define('PIMCORE_CONFIGURATION_SYSTEM', $file);
                 }
 
-                if (file_exists($file)) {
-                    $config = new \Pimcore\Config\Config(include($file));
-                } else {
-                    throw new \Exception($file . " doesn't exist");
-                }
+                $config = static::getConfigInstance($file);
 
                 self::setSystemConfig($config);
             } catch (\Exception $e) {
@@ -303,11 +299,7 @@ class Config
         } else {
             try {
                 $file = self::locateConfigFile('reports.php');
-                if (file_exists($file)) {
-                    $config = new \Pimcore\Config\Config(include($file));
-                } else {
-                    throw new \Exception('Config-file ' . $file . " doesn't exist.");
-                }
+                $config = static::getConfigInstance($file);
             } catch (\Exception $e) {
                 $config = new \Pimcore\Config\Config([]);
             }
@@ -340,11 +332,7 @@ class Config
         } else {
             try {
                 $file = self::locateConfigFile('web2print.php');
-                if (file_exists($file)) {
-                    $config = new \Pimcore\Config\Config(include($file));
-                } else {
-                    throw new \Exception('Config-file ' . $file . " doesn't exist.");
-                }
+                $config = static::getConfigInstance($file);
             } catch (\Exception $e) {
                 $config = new \Pimcore\Config\Config([]);
             }
@@ -387,11 +375,7 @@ class Config
         } else {
             try {
                 $file = self::locateConfigFile('perspectives.php');
-                if (file_exists($file)) {
-                    $config = new \Pimcore\Config\Config(include($file));
-                } else {
-                    throw new \Exception($file . " doesn't exist");
-                }
+                $config = static::getConfigInstance($file);
                 self::setPerspectivesConfig($config);
             } catch (\Exception $e) {
                 Logger::info('Cannot find perspectives configuration, should be located at: ' . $file);
@@ -841,5 +825,27 @@ class Config
         }
 
         return null;
+    }
+
+    /**
+     * @param $file
+     *
+     * @return null|Config\Config
+     *
+     * @throws \Exception
+     */
+    protected static function getConfigInstance($file)
+    {
+        if (file_exists($file)) {
+            $content = include($file);
+
+            if (is_array($content)) {
+                return new \Pimcore\Config\Config($content);
+            }
+        } else {
+            throw new \Exception($file . " doesn't exist");
+        }
+
+        throw new \Exception($file . ' is invalid');
     }
 }

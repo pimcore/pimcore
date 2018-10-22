@@ -18,28 +18,31 @@
 namespace Pimcore\Model\DataObject\Data;
 
 use Pimcore\Model\Asset;
+use Pimcore\Model\DataObject\OwnerAwareFieldInterface;
+use Pimcore\Model\DataObject\Traits\OwnerAwareFieldTrait;
 
-class Hotspotimage
+class Hotspotimage implements OwnerAwareFieldInterface
 {
+    use OwnerAwareFieldTrait;
     /**
      * @var Asset\Image
      */
-    public $image;
+    protected $image;
 
     /**
      * @var array[]
      */
-    public $hotspots;
+    protected $hotspots;
 
     /**
      * @var array[]
      */
-    public $marker;
+    protected $marker;
 
     /**
      * @var array[]
      */
-    public $crop;
+    protected $crop;
 
     /**
      * @param null $image
@@ -72,6 +75,7 @@ class Hotspotimage
         if (is_array($crop)) {
             $this->crop = $crop;
         }
+        $this->markMeDirty();
     }
 
     /**
@@ -82,6 +86,7 @@ class Hotspotimage
     public function setHotspots($hotspots)
     {
         $this->hotspots = $hotspots;
+        $this->markMeDirty();
 
         return $this;
     }
@@ -102,6 +107,7 @@ class Hotspotimage
     public function setMarker($marker)
     {
         $this->marker = $marker;
+        $this->markMeDirty();
 
         return $this;
     }
@@ -120,6 +126,7 @@ class Hotspotimage
     public function setCrop($crop)
     {
         $this->crop = $crop;
+        $this->markMeDirty();
     }
 
     /**
@@ -138,6 +145,7 @@ class Hotspotimage
     public function setImage($image)
     {
         $this->image = $image;
+        $this->markMeDirty();
 
         return $this;
     }

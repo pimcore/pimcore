@@ -93,6 +93,11 @@ class Version extends AbstractModel
     public static $disabled = false;
 
     /**
+     * @var int
+     */
+    public $versionCount = 0;
+
+    /**
      * @param int $id
      *
      * @return Version
@@ -594,6 +599,22 @@ class Version extends AbstractModel
         $this->public = (bool) $public;
 
         return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getVersionCount(): int
+    {
+        return $this->versionCount ? $this->versionCount : 0;
+    }
+
+    /**
+     * @param int $versionCount
+     */
+    public function setVersionCount($versionCount): void
+    {
+        $this->versionCount = (int) $versionCount;
     }
 
     public function maintenanceCompress()

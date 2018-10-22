@@ -22,6 +22,7 @@ use Pimcore\Logger;
 
 /**
  * @method \Pimcore\Model\Site\Dao getDao()
+ * @method delete()
  */
 class Site extends AbstractModel
 {
@@ -98,14 +99,18 @@ class Site extends AbstractModel
     /**
      * @param int $id
      *
-     * @return Site
+     * @return Site|null
      */
     public static function getByRootId($id)
     {
-        $site = new self();
-        $site->getDao()->getByRootId(intval($id));
+        try {
+            $site = new self();
+            $site->getDao()->getByRootId(intval($id));
 
-        return $site;
+            return $site;
+        } catch (\Exception $e) {
+            return null;
+        }
     }
 
     /**

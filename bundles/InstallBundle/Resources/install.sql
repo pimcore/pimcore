@@ -36,6 +36,7 @@ CREATE TABLE `assets` (
   `userModification` int(11) unsigned DEFAULT NULL,
   `customSettings` text,
   `hasMetaData` tinyint(1) NOT NULL DEFAULT '0',
+  `versionCount` INT UNSIGNED NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   UNIQUE KEY `fullpath` (`path`,`filename`),
   KEY `parentId` (`parentId`),
@@ -122,6 +123,7 @@ CREATE TABLE `documents` (
   `modificationDate` INT(11) UNSIGNED DEFAULT NULL,
   `userOwner` int(11) unsigned DEFAULT NULL,
   `userModification` int(11) unsigned DEFAULT NULL,
+  `versionCount` INT UNSIGNED NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   UNIQUE KEY `fullpath` (`path`,`key`),
   KEY `parentId` (`parentId`),
@@ -375,6 +377,7 @@ CREATE TABLE `objects` (
   `o_classId` VARCHAR(50) NULL DEFAULT NULL,
   `o_className` varchar(255) DEFAULT NULL,
   `o_childrenSortBy` ENUM('key','index') NULL DEFAULT NULL,
+  `o_versionCount` INT UNSIGNED NOT NULL DEFAULT '0',
   PRIMARY KEY (`o_id`),
   UNIQUE KEY `fullpath` (`o_path`,`o_key`),
   KEY `key` (`o_key`),
@@ -765,6 +768,7 @@ CREATE TABLE `versions` (
   `date` int(11) unsigned default NULL,
   `public` tinyint(1) unsigned NOT NULL default '0',
   `serialized` tinyint(1) unsigned default '0',
+  `versionCount` INT UNSIGNED NOT NULL DEFAULT '0',
   PRIMARY KEY  (`id`),
   KEY `cid` (`cid`),
   KEY `ctype` (`ctype`),
@@ -868,10 +872,9 @@ DROP TABLE IF EXISTS `element_workflow_state`;
 CREATE TABLE `element_workflow_state` (
   `cid` int(10) NOT NULL DEFAULT '0',
   `ctype` enum('document','asset','object') NOT NULL,
-  `workflowId` int(11) NOT NULL,
-  `state` varchar(255) DEFAULT NULL,
-  `status` varchar(255) DEFAULT NULL,
-  PRIMARY KEY (`cid`,`ctype`,`workflowId`)
+  `place` varchar(255) DEFAULT NULL,
+  `workflow` varchar(100) NOT NULL,
+  PRIMARY KEY (`cid`,`ctype`,`workflow`)
 ) DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `gridconfigs`;

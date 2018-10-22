@@ -23,31 +23,32 @@ use Pimcore\Tool;
 /**
  * @method \Pimcore\Model\DataObject\Classificationstore\Dao getDao()
  */
-class Classificationstore extends Model\AbstractModel
+class Classificationstore extends Model\AbstractModel implements DirtyIndicatorInterface
 {
+    use Model\DataObject\Traits\DirtyIndicatorTrait;
     /**
      * @var array
      */
-    public $items = [];
+    protected $items = [];
 
     /**
      * @var Model\DataObject\Concrete
      */
-    public $object;
+    protected $object;
 
     /**
      * @var Model\DataObject\ClassDefinition
      */
-    public $class;
+    protected $class;
 
     /** @var string */
-    public $fieldname;
+    protected $fieldname;
 
     /** @var array */
-    public $activeGroups = [];
+    protected $activeGroups = [];
 
     /** @var array */
-    public $groupCollectionMapping;
+    protected $groupCollectionMapping;
 
     /**
      * @param array $items
@@ -56,6 +57,7 @@ class Classificationstore extends Model\AbstractModel
     {
         if ($items) {
             $this->setItems($items);
+            $this->markFieldDirty('_self');
         }
     }
 
@@ -65,6 +67,7 @@ class Classificationstore extends Model\AbstractModel
     public function addItem($item)
     {
         $this->items[] = $item;
+        $this->markFieldDirty('_self');
     }
 
     /**
@@ -75,6 +78,7 @@ class Classificationstore extends Model\AbstractModel
     public function setItems($items)
     {
         $this->items = $items;
+        $this->markFieldDirty('_self');
 
         return $this;
     }
@@ -97,6 +101,11 @@ class Classificationstore extends Model\AbstractModel
         if (!$object instanceof Concrete) {
             throw new \Exception('not instance of Concrete');
         }
+        if ($this->object) {
+            if ($this->object->getId() != $object->getId()) {
+                $this->markFieldDirty('_self');
+            }
+        }
         $this->object = $object;
         //$this->setClass($this->getObject()->getClass());
         return $this;
@@ -115,7 +124,7 @@ class Classificationstore extends Model\AbstractModel
      *
      * @return $this
      */
-    public function setClass(ClassDefinition $class)
+    public function setClass(?ClassDefinition $class)
     {
         $this->class = $class;
 
@@ -180,6 +189,24 @@ class Classificationstore extends Model\AbstractModel
 
         $keyConfig = Model\DataObject\Classificationstore\DefinitionCache::get($keyId);
         $dataDefinition = Model\DataObject\Classificationstore\Service::getFieldDefinitionFromKeyConfig($keyConfig);
+
+        if (!$this->isFieldDirty('_self')) {
+            if ($this->object) {
+                $oldData = $this->items[$groupId][$keyId][$language];
+                $oldData = $dataDefinition->getDataForResource($oldData, $this->object);
+                $oldData = serialize($oldData);
+
+                $newData = $dataDefinition->getDataForResource($value, $this->object);
+                $newData = serialize($newData);
+
+                if ($newData != $oldData) {
+                    $this->markFieldDirty('_self');
+                }
+            } else {
+                $this->markFieldDirty('_self');
+            }
+        }
+
         if ($dataDefinition instanceof Model\DataObject\ClassDefinition\Data\BooleanSelect) {
             $nonEmpty = true;
         }
@@ -239,11 +266,32 @@ class Classificationstore extends Model\AbstractModel
         return $this->activeGroups;
     }
 
+    protected function sanitizeActiveGroups($activeGroups)
+    {
+        $newList = [];
+
+        if ($activeGroups) {
+            foreach ($activeGroups as $key => $value) {
+                if ($value) {
+                    $newList[$key] = true;
+                }
+            }
+        }
+
+        return $newList;
+    }
+
     /**
      * @param array $activeGroups
      */
     public function setActiveGroups($activeGroups)
     {
+        $activeGroups = $this->sanitizeActiveGroups($activeGroups);
+        $diff1 = array_diff(array_keys($activeGroups), array_keys($this->activeGroups));
+        $diff2 = array_diff(array_keys($this->activeGroups), array_keys($activeGroups));
+        if ($diff1 || $diff2) {
+            $this->markFieldDirty('_self');
+        }
         $this->activeGroups = $activeGroups;
     }
 
@@ -393,9 +441,9 @@ class Classificationstore extends Model\AbstractModel
      * @param $groupId
      * @param $collectionId
      */
-    public function setGroupCollectionMapping($groupId, $collectionId)
+    public function setGroupCollectionMapping($groupId = null, $collectionId = null)
     {
-        if (!is_array($this->groupCollectionMapping)) {
+        if (!is_array($this->groupCollectionMapping) && $groupId) {
             $this->groupCollectionMapping[$groupId] = $collectionId;
         }
     }

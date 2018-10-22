@@ -16,33 +16,38 @@
 
 namespace Pimcore\Model\DataObject\Data;
 
-class CalculatedValue
+use Pimcore\Model\DataObject\OwnerAwareFieldInterface;
+use Pimcore\Model\DataObject\Traits\OwnerAwareFieldTrait;
+
+class CalculatedValue implements OwnerAwareFieldInterface
 {
-    /** @var string */
-    public $fieldname;
+    use OwnerAwareFieldTrait;
 
     /** @var string */
-    public $ownerType = 'object';
+    protected $fieldname;
 
     /** @var string */
-    public $ownerName;
+    protected $ownerType = 'object';
+
+    /** @var string */
+    protected $ownerName;
 
     /** @var int */
-    public $index;
+    protected $index;
 
     /** @var string */
-    public $position;
+    protected $position;
 
     /** @var int */
-    public $groupId;
+    protected $groupId;
 
     /** @var int */
-    public $keyId;
+    protected $keyId;
 
     /**
      * @var mixed
      */
-    public $keyDefinition;
+    protected $keyDefinition;
 
     /**
      * CalculatedValue constructor.
@@ -52,6 +57,7 @@ class CalculatedValue
     public function __construct($fieldname)
     {
         $this->fieldname = $fieldname;
+        $this->markMeDirty();
     }
 
     /** Sets contextual information.
@@ -72,6 +78,7 @@ class CalculatedValue
         $this->groupId = $groupId;
         $this->keyId = $keyId;
         $this->keyDefinition = $keyDefinition;
+        $this->markMeDirty();
     }
 
     /**

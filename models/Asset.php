@@ -193,6 +193,9 @@ class Asset extends Element\AbstractElement
      */
     protected $_dataChanged = false;
 
+    /** @var int */
+    protected $versionCount;
+
     /**
      *
      * @return array
@@ -515,7 +518,7 @@ class Asset extends Element\AbstractElement
                 // we try to start the transaction $maxRetries times again (deadlocks, ...)
                 if ($retries < ($maxRetries - 1)) {
                     $run = $retries + 1;
-                    $waitTime = 100000; // microseconds
+                    $waitTime = rand(1, 5) * 100000; // microseconds
                     Logger::warn('Unable to finish transaction (' . $run . ". run) because of the following reason '" . $e->getMessage() . "'. --> Retrying in " . $waitTime . ' microseconds ... (' . ($run + 1) . ' of ' . $maxRetries . ')');
 
                     usleep($waitTime); // wait specified time until we restart the transaction
@@ -721,8 +724,9 @@ class Asset extends Element\AbstractElement
         }
 
         // save dependencies
-        $d = $this->getDependencies();
-        $d->clean();
+        $d = new Dependency();
+        $d->setSourceType('asset');
+        $d->setSourceId($this->getId());
 
         foreach ($this->resolveDependencies() as $requirement) {
             if ($requirement['id'] == $this->getId() && $requirement['type'] == 'asset') {
@@ -1229,9 +1233,10 @@ class Asset extends Element\AbstractElement
      */
     public function setStream($stream)
     {
-
         // close existing stream
-        $this->closeStream();
+        if ($stream !== $this->stream) {
+            $this->closeStream();
+        }
 
         if (is_resource($stream)) {
             $this->setDataChanged(true);
@@ -1854,5 +1859,25 @@ class Asset extends Element\AbstractElement
 
         // close open streams
         $this->closeStream();
+    }
+
+    /**
+     * @return int
+     */
+    public function getVersionCount(): int
+    {
+        return $this->versionCount ? $this->versionCount : 0;
+    }
+
+    /**
+     * @param int|null $versionCount
+     *
+     * @return Asset
+     */
+    public function setVersionCount(?int $versionCount): self
+    {
+        $this->versionCount = (int) $versionCount;
+
+        return $this;
     }
 }

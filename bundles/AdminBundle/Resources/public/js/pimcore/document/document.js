@@ -113,6 +113,7 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
                         if (rdata && rdata.success) {
                             pimcore.helpers.showNotification(t("success"), t("saved_successfully"), "success");
                             this.resetChanges();
+                            Ext.apply(this.data, rdata.data);
 
                             if(typeof this["createScreenshot"] == "function") {
                                 this.createScreenshot();

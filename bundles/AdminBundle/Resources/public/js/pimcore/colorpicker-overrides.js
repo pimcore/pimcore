@@ -96,8 +96,31 @@ pimcore.helpers.colorpicker = {
             }
         });
 
+
         /**
-         * see https://github.com/pimcore/pimcore/issues/2465
+         * see https://github.com/pimcore/pimcore/issues/2465 and https://github.com/pimcore/pimcore/issues/3384
+         */
+        Ext.override(Ext.ux.colorpick.ColorUtils, {
+            hex2rgb: function (hex) {
+                hex = hex.replace(/^#/, '');
+
+                var parts = hex.match(/[a-f\d]{2}/ig);
+
+                if (parts === null || parts.length !== 3) {
+                    return null;
+                }
+
+                return {
+                    r: parseInt(parts[0], 16),
+                    g: parseInt(parts[1], 16),
+                    b: parseInt(parts[2], 16)
+                };
+            }
+        });
+
+
+        /**
+         * see https://github.com/pimcore/pimcore/issues/2465 and https://github.com/pimcore/pimcore/issues/3384
          */
         Ext.override(Ext.ux.colorpick.Selector, {
                 constructor: function (config) {
@@ -116,6 +139,11 @@ pimcore.helpers.colorpicker = {
                         me.getPreviewAndButtons(childViewModel, config)
                     ];
 
+                    // Make the HEX field editable (see ext/ux/colorpick/Selector.js line 206)
+                    // This is really smelly, but it seems like overkill to override the whole getMapAndHexRGBFields method
+                    me.items[0].items[1].items[0].readOnly = false;
+
+
                     me.childViewModel.bind('{selectedColor}', function (color) {
                         me.setColor(color);
                     });
@@ -125,6 +153,27 @@ pimcore.helpers.colorpicker = {
             }
         );
 
+        /**
+         * see https://github.com/pimcore/pimcore/issues/2465 and https://github.com/pimcore/pimcore/issues/3384
+         */
+        Ext.override(Ext.ux.colorpick.SelectorModel, {
+
+            changeRGB: function (rgb) {
+                if (rgb) {
+                    Ext.applyIf(rgb, this.data.selectedColor);
+
+                    var hsv = Ext.ux.colorpick.ColorUtils.rgb2hsv(rgb.r, rgb.g, rgb.b);
+
+                    rgb.h = hsv.h;
+                    rgb.s = hsv.s;
+                    rgb.v = hsv.v;
+
+                    this.set('selectedColor', rgb);
+                }
+            }
+        });
     }
 }
+
+
 ;

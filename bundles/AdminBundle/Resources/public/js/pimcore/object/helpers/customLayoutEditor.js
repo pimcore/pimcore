@@ -242,7 +242,7 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
                             id: layoutId
                         },
                         success: function(response) {
-                            this.setCurrentNode(null);
+                            this.setCurrentNode("root");
                             this.editPanel.removeAll();
                             this.initLayoutFields(true, response);
                             this.classDefinitionPanel.enable();
@@ -811,7 +811,7 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
 
                     var data = Ext.decode(response.responseText);
                     if(data && data.success) {
-                        this.setCurrentNode(null);
+                        this.setCurrentNode("root");
                         this.editPanel.removeAll();
                         this.classDefinitionPanel.enable();
                         this.enableButtons();

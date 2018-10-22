@@ -18,23 +18,27 @@
 namespace Pimcore\Model\DataObject\Data;
 
 use Pimcore\Model\AbstractModel;
+use Pimcore\Model\DataObject\OwnerAwareFieldInterface;
+use Pimcore\Model\DataObject\Traits\OwnerAwareFieldTrait;
 
-class BlockElement extends AbstractModel
+class BlockElement extends AbstractModel implements OwnerAwareFieldInterface
 {
-    /**
-     * @var string
-     */
-    public $name;
+    use OwnerAwareFieldTrait;
 
     /**
      * @var string
      */
-    public $type;
+    protected $name;
+
+    /**
+     * @var string
+     */
+    protected $type;
 
     /**
      * @var mixed
      */
-    public $data;
+    protected $data;
 
     /**
      * BlockElement constructor.
@@ -48,6 +52,7 @@ class BlockElement extends AbstractModel
         $this->name = $name;
         $this->type = $type;
         $this->data = $data;
+        $this->markMeDirty();
     }
 
     /**
@@ -63,7 +68,10 @@ class BlockElement extends AbstractModel
      */
     public function setName($name)
     {
-        $this->name = $name;
+        if ($name != $this->name) {
+            $this->name = $name;
+            $this->markMeDirty();
+        }
     }
 
     /**
@@ -79,7 +87,10 @@ class BlockElement extends AbstractModel
      */
     public function setType($type)
     {
-        $this->type = $type;
+        if ($type != $this->type) {
+            $this->type = $type;
+            $this->markMeDirty();
+        }
     }
 
     /**
@@ -96,6 +107,7 @@ class BlockElement extends AbstractModel
     public function setData($data)
     {
         $this->data = $data;
+        $this->markMeDirty();
     }
 
     /**

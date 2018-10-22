@@ -69,6 +69,7 @@ defined.
 * Allowed groups can be restricted by providing a comma-separated list of group ids
 * There can be more than one classification store field 
 * Configure the group sort order for the object editor, groups with lower values are listed first
+* Optionally you can decide whether you want to see all keys or just the non-empty ones.
 
 ![Class definitaion with Classification Store](../../../img/Objects_ClassificationStore_classes.png)
 

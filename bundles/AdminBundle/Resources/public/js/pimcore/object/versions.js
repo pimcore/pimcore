@@ -35,14 +35,14 @@ pimcore.object.versions = Class.create({
                             }
                         }
                         return null;
-                    }}]
+                    }}, 'versionCount']
                 });
             }
 
             this.store = new Ext.data.Store({
                 model: modelName,
                 sorters: [{
-                    property: 'date',
+                    property: 'id',
                     direction: 'DESC'
                 }],
                 proxy: {
@@ -71,8 +71,11 @@ pimcore.object.versions = Class.create({
                 store: this.store,
                 plugins: [this.cellEditing],
                 columns: [
-                    {text: t("published"), width:50, sortable: false, dataIndex: 'date', renderer: function(d, metaData) {
-                        if (d == this.object.data.general.versionDate) {
+                    {text: t("published"), width:50, sortable: false, dataIndex: 'id', renderer: function(d, metaData, cellValues) {
+                        var d = cellValues.get('date');
+                        var versionCount = cellValues.get('versionCount');
+                        var index = cellValues.get('index');
+                        if (index === 0 && d == this.object.data.general.versionDate && versionCount == this.object.data.general.versionCount) {
                             metaData.tdCls = "pimcore_icon_publish";
                         }
                         return "";
@@ -260,11 +263,15 @@ pimcore.object.versions = Class.create({
             method: "POST",
             params: {id: versionId},
             success: function(response) {
-                this.object.reload();
-
                 var rdata = Ext.decode(response.responseText);
-                if (rdata && rdata.success) {
+
+                if (rdata.success) {
+                    this.object.reload();
+
                     pimcore.helpers.updateObjectStyle(this.object.id, rdata.treeData);
+                }
+                else {
+                    Ext.MessageBox.alert(t("error"), rdata.message);
                 }
 
             }.bind(this)

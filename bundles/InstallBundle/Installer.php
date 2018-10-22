@@ -422,7 +422,8 @@ class Installer
 
     private function clearKernelCacheDir(KernelInterface $kernel)
     {
-        $cacheDir = $kernel->getCacheDir();
+        // we don't use $kernel->getCacheDir() here, since we want to have a fully clean cache dir at this point
+        $cacheDir = PIMCORE_SYMFONY_CACHE_DIRECTORY;
 
         if (!file_exists($cacheDir)) {
             return;
@@ -437,6 +438,7 @@ class Installer
         }
 
         $filesystem->rename($cacheDir, $oldCacheDir);
+        $filesystem->mkdir($cacheDir);
         $filesystem->remove($oldCacheDir);
     }
 
@@ -650,7 +652,8 @@ class Installer
             ['key' => 'users'],
             ['key' => 'website_settings'],
             ['key' => 'admin_translations'],
-            ['key' => 'web2print_settings']
+            ['key' => 'web2print_settings'],
+            ['key' => 'workflow_details']
         ];
 
         foreach ($userPermissions as $up) {

@@ -829,7 +829,7 @@ class DefaultFactFinder implements IProductList
         if ($this->getTransmitSessionId()) {
             $params['sid'] = session_id();
         }
-        $url = $this->getSearchUrl().'?';
+        $url = $this->getSearchUrl();
         $url .= http_build_query($params);
         $url .= '&format=json';
 

@@ -17,10 +17,13 @@
 
 namespace Pimcore\Model\DataObject\Data;
 
+use Pimcore\Model\DataObject\OwnerAwareFieldInterface;
+use Pimcore\Model\DataObject\Traits\OwnerAwareFieldTrait;
 use Pimcore\Model\Element\Note;
 
-class Consent
+class Consent implements OwnerAwareFieldInterface
 {
+    use OwnerAwareFieldTrait;
     /**
      * @var bool
      */
@@ -46,6 +49,7 @@ class Consent
     {
         $this->consent = $consent;
         $this->noteId = $noteId;
+        $this->markMeDirty();
     }
 
     /**
@@ -61,7 +65,10 @@ class Consent
      */
     public function setConsent(bool $consent)
     {
-        $this->consent = $consent;
+        if ($consent != $this->consent) {
+            $this->consent = $consent;
+            $this->markMeDirty();
+        }
     }
 
     /**
@@ -77,7 +84,10 @@ class Consent
      */
     public function setNoteId(int $noteId)
     {
-        $this->noteId = $noteId;
+        if ($noteId != $this->noteId) {
+            $this->noteId = $noteId;
+            $this->markMeDirty();
+        }
     }
 
     /**
@@ -98,6 +108,7 @@ class Consent
     public function setNote(Note $note)
     {
         $this->note = $note;
+        $this->markMeDirty();
     }
 
     /**

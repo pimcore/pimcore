@@ -359,7 +359,7 @@ class Config extends Model\AbstractModel
         foreach ($tags->load() as $tag) {
             foreach ($tag->getItems() as $itemKey => $item) {
                 try {
-                    if ($currentTime->getTimestamp() > $item['date']) {
+                    if ($item['date'] && $currentTime->getTimestamp() > $item['date']) {
                         //disable tag item if expired
                         $tag->items[$itemKey]['disabled'] = true;
                         $tag->save();

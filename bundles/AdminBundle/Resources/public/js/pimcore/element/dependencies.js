@@ -101,7 +101,7 @@ pimcore.element.dependencies = Class.create({
                 {text: t("subtype"), sortable: true, dataIndex: 'subtype', width: 50,
                   renderer:
                     function (value, metaData, record, rowIndex, colIndex, store) {
-                        return '<div style="height: 16px;" class="pimcore_icon_asset pimcore_icon_' + value
+                        return '<div style="height: 16px;" class="pimcore_icon_' + record.get('type') + ' pimcore_icon_' + value
                             + '" name="' + t(record.data.subtype) + '">&nbsp;</div>';
                     }
                 },
@@ -185,7 +185,7 @@ pimcore.element.dependencies = Class.create({
                 {text: t("subtype"), sortable: true, dataIndex: 'subtype', width: 50,
                  renderer:
                     function (value, metaData, record, rowIndex, colIndex, store) {
-                        return '<div style="height: 16px;" class="pimcore_icon_asset pimcore_icon_' + value
+                        return '<div style="height: 16px;" class="pimcore_icon_' + record.get('type') + ' pimcore_icon_' + value
                             + '" name="' + t(record.data.subtype) + '">&nbsp;</div>';
                     }
                 },

@@ -30,7 +30,7 @@ pimcore_admin:
                 #     MY_CLASS_NAME: 
                 #               include: true
                 #               allowDelete: false
-                #               includeRelations:
+                #               includedRelations:
                 #                       - manualSegemens
                 #                       - calculatedSegments
                 #                         

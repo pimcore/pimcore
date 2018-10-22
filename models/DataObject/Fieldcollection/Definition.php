@@ -271,9 +271,11 @@ class Definition extends Model\AbstractModel
     }
 
     /**
+     * @param bool $saveDefinitionFile
+     *
      * @throws \Exception
      */
-    public function save()
+    public function save($saveDefinitionFile = true)
     {
         if (!$this->getKey()) {
             throw new \Exception('A field-collection needs a key to be saved!');
@@ -283,20 +285,22 @@ class Definition extends Model\AbstractModel
 
         $definitionFile = $this->getDefinitionFile();
 
-        $clone = clone $this;
-        $clone->setDao(null);
-        unset($clone->fieldDefinitions);
+        if ($saveDefinitionFile) {
+            $clone = clone $this;
+            $clone->setDao(null);
+            unset($clone->fieldDefinitions);
 
-        $exportedClass = var_export($clone, true);
+            $exportedClass = var_export($clone, true);
 
-        $data = '<?php ';
-        $data .= "\n\n";
-        $data .= $infoDocBlock;
-        $data .= "\n\n";
+            $data = '<?php ';
+            $data .= "\n\n";
+            $data .= $infoDocBlock;
+            $data .= "\n\n";
 
-        $data .= "\nreturn " . $exportedClass . ";\n";
+            $data .= "\nreturn " . $exportedClass . ";\n";
 
-        \Pimcore\File::put('nette.safe://'.$definitionFile, $data);
+            \Pimcore\File::put($definitionFile, $data);
+        }
 
         $extendClass = 'DataObject\\Fieldcollection\\Data\\AbstractData';
         if ($this->getParentClass()) {
@@ -314,7 +318,10 @@ class Definition extends Model\AbstractModel
         $cd .= 'use Pimcore\\Model\\DataObject;';
         $cd .= "\n\n";
 
-        $cd .= 'class ' . ucfirst($this->getKey()) . ' extends ' . $extendClass . '  {';
+        $cd .= 'class ' . ucfirst($this->getKey()) . ' extends ' . $extendClass . ' implements \\Pimcore\\Model\\DataObject\\DirtyIndicatorInterface {';
+
+        $cd .= "\n\n";
+        $cd .= 'use \\Pimcore\\Model\\DataObject\\Traits\\DirtyIndicatorTrait;';
         $cd .= "\n\n";
 
         $cd .= 'protected $type = "' . $this->getKey() . "\";\n";
@@ -351,7 +358,7 @@ class Definition extends Model\AbstractModel
         $cd .= "}\n";
         $cd .= "\n";
 
-        File::put('nette.safe://'.$this->getPhpClassFile(), $cd);
+        File::put($this->getPhpClassFile(), $cd);
 
         // update classes
         $classList = new DataObject\ClassDefinition\Listing();

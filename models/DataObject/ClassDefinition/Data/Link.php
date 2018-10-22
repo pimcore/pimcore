@@ -139,7 +139,7 @@ class Link extends Model\DataObject\ClassDefinition\Data
         }
         $data->path = $data->getPath();
 
-        return $data;
+        return $data->getObjectVars();
     }
 
     /**
@@ -365,7 +365,7 @@ class Link extends Model\DataObject\ClassDefinition\Data
     {
         $data = $this->getDataFromObjectParam($object, $params);
         if ($data instanceof DataObject\Data\Link) {
-            $keys = get_object_vars($data);
+            $keys = $data->getObjectVars();
             foreach ($keys as $key => $value) {
                 $method = 'get' . ucfirst($key);
                 if (!method_exists($data, $method) or $key == 'object') {

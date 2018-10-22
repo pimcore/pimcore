@@ -94,6 +94,11 @@ class Dao extends Model\DataObject\Fieldcollection\Dao
                 }
 
                 $setter = 'set' . ucfirst($type);
+
+                if ($brick instanceof DataObject\DirtyIndicatorInterface) {
+                    $brick->markFieldDirty($key, false);
+                }
+
                 $this->model->$setter($brick);
 
                 $values[] = $brick;
@@ -104,11 +109,12 @@ class Dao extends Model\DataObject\Fieldcollection\Dao
     }
 
     /**
-     * @throws \Exception
-     *
      * @param DataObject\Concrete $object
+     * @param $saveMode true if called from save method
+     *
+     * @return whether an insert should be done or not
      */
-    public function delete(DataObject\Concrete $object)
+    public function delete(DataObject\Concrete $object, $saveMode = false)
     {
         // this is to clean up also the inherited values
         $fieldDef = $object->getClass()->getFieldDefinition($this->model->getFieldname());

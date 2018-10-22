@@ -579,10 +579,8 @@ class Href extends Model\DataObject\ClassDefinition\Data\Relations\AbstractRelat
             if ($this->getLazyLoading() and !in_array($this->getName(), $object->getO__loadedLazyFields())) {
                 $data = $this->load($object, ['force' => true]);
 
-                $setter = 'set' . ucfirst($this->getName());
-                if (method_exists($object, $setter)) {
-                    $object->$setter($data);
-                }
+                $object->setObjectVar($this->getName(), $data);
+                $this->markLazyloadedFieldAsLoaded($object);
             }
         } elseif ($object instanceof DataObject\Localizedfield) {
             $data = $params['data'];
@@ -610,11 +608,7 @@ class Href extends Model\DataObject\ClassDefinition\Data\Relations\AbstractRelat
      */
     public function preSetData($object, $data, $params = [])
     {
-        if ($object instanceof DataObject\Concrete) {
-            if ($this->getLazyLoading() and !in_array($this->getName(), $object->getO__loadedLazyFields())) {
-                $object->addO__loadedLazyField($this->getName());
-            }
-        }
+        $this->markLazyloadedFieldAsLoaded($object);
 
         return $data;
     }
@@ -730,5 +724,19 @@ class Href extends Model\DataObject\ClassDefinition\Data\Relations\AbstractRelat
 
             return Element\Service::getElementById($type, $id);
         }
+    }
+
+    /**
+     * @param $value1 Element\ElementInterface
+     * @param $value2 Element\ElementInterface
+     *
+     * @return bool
+     */
+    public function isEqual($value1, $value2)
+    {
+        $value1 = $value1 ? $value1->getType() . $value1->getId() : null;
+        $value2 = $value2 ? $value2->getType() . $value2->getId() : null;
+
+        return $value1 == $value2;
     }
 }

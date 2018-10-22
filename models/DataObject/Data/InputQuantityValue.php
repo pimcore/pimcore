@@ -16,14 +16,18 @@
 
 namespace Pimcore\Model\DataObject\Data;
 
+use Pimcore\Model\DataObject\OwnerAwareFieldInterface;
 use Pimcore\Model\DataObject\QuantityValue\Unit;
+use Pimcore\Model\DataObject\Traits\OwnerAwareFieldTrait;
 
-class InputQuantityValue extends QuantityValue
+class InputQuantityValue extends QuantityValue implements OwnerAwareFieldInterface
 {
+    use OwnerAwareFieldTrait;
+
     /**
      * @var null|string
      */
-    public $value;
+    protected $value;
 
     /**
      * @return string

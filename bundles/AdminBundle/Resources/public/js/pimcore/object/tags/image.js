@@ -257,8 +257,9 @@ pimcore.object.tags.image = Class.create(pimcore.object.tags.abstract, {
             var path = "/admin/asset/get-image-thumbnail?id=" + this.data.id + "&width=" + width + "&height=" + height
                 + "&contain=true";
 
-            body = body.down('.x-autocontainer-innerCt');
-            body.setStyle({
+            body.removeCls("pimcore_droptarget_image");
+            var innerBody = body.down('.x-autocontainer-innerCt');
+            innerBody.setStyle({
                 backgroundImage: "url(" + path + ")",
                 backgroundPosition: "center center",
                 backgroundRepeat: "no-repeat"
@@ -356,11 +357,13 @@ pimcore.object.tags.image = Class.create(pimcore.object.tags.abstract, {
             this.data = {};
         }
 
-        this.getBody().down('.x-autocontainer-innerCt').setStyle({
+        var body = this.getBody();
+        body.down('.x-autocontainer-innerCt').setStyle({
             backgroundImage: ""
         });
+        body.addCls("pimcore_droptarget_image");
         this.dirty = true;
-        this.getBody().repaint();
+        body.repaint();
     },
 
     getValue: function () {

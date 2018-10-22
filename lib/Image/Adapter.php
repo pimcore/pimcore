@@ -41,11 +41,6 @@ abstract class Adapter
     /**
      * @var bool
      */
-    protected $useContentOptimizedFormat = false;
-
-    /**
-     * @var bool
-     */
     protected $modified = false;
 
     /**
@@ -499,6 +494,18 @@ abstract class Adapter
      */
     abstract protected function destroy();
 
+    /**
+     * @return string
+     */
+    abstract public function getContentOptimizedFormat();
+
+    /**
+     * @param string $format
+     *
+     * @return bool
+     */
+    abstract public function supportsFormat(string $format);
+
     public function preModify()
     {
         if ($this->getModified()) {
@@ -566,22 +573,6 @@ abstract class Adapter
     public function setColorspace($type = 'RGB')
     {
         return $this;
-    }
-
-    /**
-     * @param bool $useContentOptimizedFormat
-     */
-    public function setUseContentOptimizedFormat($useContentOptimizedFormat)
-    {
-        $this->useContentOptimizedFormat = $useContentOptimizedFormat;
-    }
-
-    /**
-     * @return bool
-     */
-    public function getUseContentOptimizedFormat()
-    {
-        return $this->useContentOptimizedFormat;
     }
 
     /**

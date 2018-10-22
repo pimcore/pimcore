@@ -22,6 +22,8 @@ use Pimcore\Model;
 
 class Email extends Model\DataObject\ClassDefinition\Data\Input
 {
+    use Model\DataObject\Traits\SimpleComparisonTrait;
+
     /**
      * @var string
      */
