@@ -456,7 +456,7 @@ class ClassDefinition extends Model\AbstractModel
         if (!is_writable(dirname($classFile)) || (is_file($classFile) && !is_writable($classFile))) {
             throw new \Exception('Cannot write class file in '.$classFile.' please check the rights on this directory');
         }
-        File::put($classFile, $cd);
+        File::put('nette.safe://'.$classFile, $cd);
 
         // create class for object list
         $extendListingClass = 'DataObject\\Listing\\Concrete';
@@ -500,7 +500,7 @@ class ClassDefinition extends Model\AbstractModel
                 'Cannot write class file in '.$classListFile.' please check the rights on this directory'
             );
         }
-        File::put($classListFile, $cd);
+        File::put('nette.safe://'.$classListFile, $cd);
 
         // empty object cache
         try {

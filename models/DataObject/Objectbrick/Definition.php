@@ -186,7 +186,7 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
 
         $data .= "\nreturn " . $exportedClass . ";\n";
 
-        \Pimcore\File::put($definitionFile, $data);
+        \Pimcore\File::put('nette.safe://'.$definitionFile, $data);
 
         $extendClass = 'DataObject\\Objectbrick\\Data\\AbstractData';
         if ($this->getParentClass()) {
@@ -421,7 +421,7 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
                 }
 
                 $file = $folder . '/' . ucfirst($fieldname) . '.php';
-                File::put($file, $cd);
+                File::put('nette.safe://'.$file, $cd);
             }
         }
     }

@@ -185,7 +185,7 @@ class Version extends AbstractModel
         if (!is_writable(dirname($this->getFilePath())) || (is_file($this->getFilePath()) && !is_writable($this->getFilePath()))) {
             throw new \Exception('Cannot save version for element ' . $this->getCid() . ' with type ' . $this->getCtype() . ' because the file ' . $this->getFilePath() . ' is not writeable.');
         } else {
-            File::put($this->getFilePath(), $dataString);
+            File::put('nette.safe://'.$this->getFilePath(), $dataString);
 
             // assets are kinda special because they can contain massive amount of binary data which isn't serialized, we append it to the data file
             if ($data instanceof Asset && $data->getType() != 'folder' && file_exists($data->getFileSystemPath())) {

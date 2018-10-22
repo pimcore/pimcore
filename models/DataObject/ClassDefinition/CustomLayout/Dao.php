@@ -115,7 +115,7 @@ class Dao extends Model\Dao\AbstractDao
         if (!is_writable(dirname($definitionFile)) || (is_file($definitionFile) && !is_writable($definitionFile))) {
             throw new \Exception('Cannot write definition file in: ' . $definitionFile . ' please check write permission on this directory.');
         }
-        File::put($definitionFile, Serialize::serialize($this->model->layoutDefinitions));
+        File::put('nette.safe://'.$definitionFile, Serialize::serialize($this->model->layoutDefinitions));
     }
 
     /**
