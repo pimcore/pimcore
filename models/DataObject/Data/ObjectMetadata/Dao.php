@@ -51,7 +51,7 @@ class Dao extends Model\Dao\AbstractDao
             $data = $dataTemplate;
             $data['column'] = $column;
             $data['data'] = $this->model->$getter();
-            $this->db->insert($table, $data);
+            $this->db->insertOrUpdate($table, $data);
         }
     }
 
