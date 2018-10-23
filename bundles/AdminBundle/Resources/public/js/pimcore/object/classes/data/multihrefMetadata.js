@@ -424,7 +424,7 @@ pimcore.object.classes.data.multihrefMetadata = Class.create(pimcore.object.clas
             var types = {
                 number: t("objectsMetadata_type_number"),
                 text: t("objectsMetadata_type_text"),
-                date: t("objectsMetadata_type_date"),
+                date: t("date"),
                 select: t("objectsMetadata_type_select"),
                 bool: t("objectsMetadata_type_bool"),
                 columnbool: t("objectsMetadata_type_columnbool"),

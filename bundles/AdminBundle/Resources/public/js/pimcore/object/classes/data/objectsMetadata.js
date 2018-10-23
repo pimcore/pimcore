@@ -248,7 +248,7 @@ pimcore.object.classes.data.objectsMetadata = Class.create(pimcore.object.classe
             var types = {
                 number: t("objectsMetadata_type_number"),
                 text: t("objectsMetadata_type_text"),
-                date: t("objectsMetadata_type_date"),
+                date: t("date"),
                 select: t("objectsMetadata_type_select"),
                 bool: t("objectsMetadata_type_bool"),
                 multiselect: t("objectsMetadata_type_multiselect")

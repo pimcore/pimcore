@@ -116,7 +116,10 @@ pimcore.object.tags.multihrefMetadata = Class.create(pimcore.object.tags.abstrac
                 };
             } else if (this.fieldConfig.columns[i].type == "date" && !readOnly) {
                 cellEditor = function() {
-                    return new Ext.form.DateField({});
+                    return new Ext.form.DateField({
+                        format: 'Y-m-d',
+                        xtype: 'datefield'
+                    });
                 };
             } else if(this.fieldConfig.columns[i].type == "select" && !readOnly) {
                 var selectData = [];
@@ -201,6 +204,11 @@ pimcore.object.tags.multihrefMetadata = Class.create(pimcore.object.tags.abstrac
             if(this.fieldConfig.columns[i].type == "select") {
                 renderer = function (value, metaData, record, rowIndex, colIndex, store) {
                     return ts(value);
+                }
+            }
+            if(this.fieldConfig.columns[i].type == "date") {
+                renderer = function (value, metaData, record, rowIndex, colIndex, store) {
+                    return Ext.Date.format(new Date(value), 'Y-m-d')
                 }
             }
 
