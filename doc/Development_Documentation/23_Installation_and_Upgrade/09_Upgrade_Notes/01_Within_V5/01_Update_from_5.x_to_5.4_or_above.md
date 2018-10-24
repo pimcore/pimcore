@@ -122,6 +122,12 @@ wget https://raw.githubusercontent.com/pimcore/skeleton/master/web/app.php -O we
 wget https://raw.githubusercontent.com/pimcore/demo-basic/master/app/AppKernel.php -O app/AppKernel.php
 ```
 
+## 8. Execute initial and latest migrations
+execute these commands to initialize the composer migration, otherwise your composer update won't execute any migrations in the future:
+```
+bin/console pimcore:migrations:execute -s pimcore_core 20180724144005
+bin/console pimcore:migrations:migrate -s pimcore_core
+```
 
-## 8. Done 
+## 9. Done 
 You should be done now, Pimcore should boot up and behave as normal. 
