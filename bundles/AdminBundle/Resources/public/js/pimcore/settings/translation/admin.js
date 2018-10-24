@@ -51,7 +51,7 @@ pimcore.settings.translation.admin = Class.create(pimcore.settings.translations,
                 }
                 catch (e) {
                     Ext.MessageBox.alert(t('error'), t('translations_are_not_configured')
-                    + '<br /><br /><a href="http://www.pimcore.org/documentation/" target="_blank">'
+                    + '<br /><br /><a href="http://www.pimcore.org/docs/" target="_blank">'
                     + t("read_more_here") + '</a>');
                 }
             }.bind(this)
