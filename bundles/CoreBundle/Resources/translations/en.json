@@ -829,5 +829,8 @@
   "list_thumbnail_in_download_section_on_image_detail_view": "List as option in download section on image detail view",
   "there_are_more_items": "There are more items than displayed",
   "unit_width": "Width Unit",
-  "permission_missing": "You need the '%s' permission to perform this action"
+  "permission_missing": "You need the '%s' permission to perform this action",
+  "paste_as_language_variant": "Paste as new language variant",
+  "select_language_for_new_document": "Select language for New Document",
+  "source_document_language_missing": "Set Language(Properties) in Source Document"
 }
