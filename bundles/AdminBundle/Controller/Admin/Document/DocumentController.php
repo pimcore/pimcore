@@ -879,6 +879,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
                     'sourceId' => $request->get('sourceId'),
                     'targetId' => $request->get('targetId'),
                     'type' => $request->get('type'),
+                    'language' => $request->get('language'),
                     'enableInheritance' => $request->get('enableInheritance'),
                     'transactionId' => $transactionId,
                     'resetIndex' => ($request->get('type') == 'child')
@@ -975,9 +976,10 @@ class DocumentController extends ElementControllerBase implements EventedControl
                 if ($source != null) {
                     if ($request->get('type') == 'child') {
                         $enableInheritance = ($request->get('enableInheritance') == 'true') ? true : false;
+                        $language = $request->get('language', false);
                         $resetIndex = ($request->get('resetIndex') == 'true') ? true : false;
 
-                        $newDocument = $this->_documentService->copyAsChild($target, $source, $enableInheritance, $resetIndex);
+                        $newDocument = $this->_documentService->copyAsChild($target, $source, $enableInheritance, $resetIndex, $language);
 
                         $sessionBag['idMapping'][(int)$source->getId()] = (int)$newDocument->getId();
 

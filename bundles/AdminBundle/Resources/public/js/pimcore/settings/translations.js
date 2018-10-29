@@ -252,12 +252,11 @@ pimcore.settings.translations = Class.create({
                 cellClick: function( grid, cell, cellIndex, record, row, recordIndex, e ) {
                     var cm = grid.headerCt.getGridColumns()
                     var dataIndex = cm[cellIndex].dataIndex;
-                    if (!in_array(dataIndex, this.languages)) {
+                    if (!in_array(trim(dataIndex, "_"), this.languages)) {
                         return;
                     }
 
                     var data = record.get(dataIndex);
-
 
                     var htmlRegex = /<([A-Za-z][A-Za-z0-9]*)\b[^>]*>(.*?)<\/\1>/;
                     if (htmlRegex.test(data)) {
@@ -279,8 +278,8 @@ pimcore.settings.translations = Class.create({
     },
 
     createCellContextMenu: function (grid, td, cellIndex, record, tr, rowIndex, e, eOpts ) {
-        var cm = grid.headerCt.getGridColumns()
-        var dataIndex = cm[cellIndex].dataIndex;
+        var cm = grid.headerCt.getGridColumns();
+        var dataIndex = trim(cm[cellIndex].dataIndex, "_");
         if (!in_array(dataIndex, this.languages)) {
             return;
         }

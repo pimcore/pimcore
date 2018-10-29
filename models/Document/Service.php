@@ -215,7 +215,7 @@ class Service extends Model\Element\Service
      *
      * @throws \Exception
      */
-    public function copyAsChild($target, $source, $enableInheritance = false, $resetIndex = false)
+    public function copyAsChild($target, $source, $enableInheritance = false, $resetIndex = false, $language = false)
     {
         if (method_exists($source, 'getElements')) {
             $source->getElements();
@@ -248,9 +248,18 @@ class Service extends Model\Element\Service
             $new->setContentMasterDocumentId($source->getId());
         }
 
+        if ($language) {
+            $new->setProperty('language', 'text', $language, false);
+        }
+
         $new->save();
 
         $this->updateChilds($target, $new);
+
+        //link translated document
+        if ($language) {
+            $this->addTranslation($source, $new, $language);
+        }
 
         // triggers actions after the complete document cloning
         \Pimcore::getEventDispatcher()->dispatch(DocumentEvents::POST_COPY, new DocumentEvent($new, [
