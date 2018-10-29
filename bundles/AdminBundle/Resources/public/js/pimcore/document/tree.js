@@ -516,6 +516,12 @@ pimcore.document.tree = Class.create({
                     handler: this.pasteInfo.bind(this, tree, record, "child")
                 });
 
+                pasteMenu.push({
+                    text: t("paste_as_language_variant"),
+                    iconCls: "pimcore_icon_paste",
+                    handler: this.pasteLanguageDocument.bind(this, tree, record, "child")
+                });
+
                 pasteInheritanceMenu.push({
                     text: t("paste_recursive_as_childs"),
                     iconCls: "pimcore_icon_paste",
@@ -530,6 +536,12 @@ pimcore.document.tree = Class.create({
                     text: t("paste_as_child"),
                     iconCls: "pimcore_icon_paste",
                     handler: this.pasteInfo.bind(this, tree, record, "child", true)
+                });
+
+                pasteInheritanceMenu.push({
+                    text: t("paste_as_language_variant"),
+                    iconCls: "pimcore_icon_paste",
+                    handler: this.pasteLanguageDocument.bind(this, tree, record, "child", true)
                 });
             }
         }
@@ -817,6 +829,79 @@ pimcore.document.tree = Class.create({
         menu.showAt(e.pageX+1, e.pageY+1);
     },
 
+    pasteLanguageDocument: function (tree, record, type, enableInheritance) {
+        Ext.Ajax.request({
+            url: "/admin/document/translation-check-language",
+            params: {
+                path: pimcore.cachedDocument.data.path
+            },
+            success: function (response) {
+                var data = Ext.decode(response.responseText);
+
+                if (data.language === "") {
+                    pimcore.helpers.showNotification(t("error"), t("source_document_language_missing"), "error");
+                    return false;
+                }
+
+                var languagestore = [];
+                var websiteLanguages = pimcore.settings.websiteLanguages;
+                var selectContent = "";
+
+                for (var i=0; i<websiteLanguages.length; i++) {
+                    if(data.language != websiteLanguages[i]) {
+                        selectContent = pimcore.available_languages[websiteLanguages[i]] + " [" + websiteLanguages[i] + "]";
+                        languagestore.push([websiteLanguages[i], selectContent]);
+                    }
+                }
+
+                var pageForm = new Ext.form.FormPanel({
+                    title: t("select_language_for_new_document"),
+                    border: false,
+                    bodyStyle: "padding: 10px;",
+                    defaults: {
+                        labelWidth: 100
+                    },
+                    items: [{
+                        xtype: "combo",
+                        name: "language",
+                        fieldLabel: t('language'),
+                        store: languagestore,
+                        editable: false,
+                        triggerAction: 'all',
+                        mode: "local",
+                    }]
+                });
+
+                var win = new Ext.Window({
+                    width: 350,
+                    bodyStyle: "padding: 0px 0px 10px 0px",
+                    items: [pageForm],
+                    title: t("paste_as_language_variant"),
+                    buttons: [{
+                        text: t("cancel"),
+                        iconCls: "pimcore_icon_delete",
+                        handler: function () {
+                            win.close();
+                        }
+                    }, {
+                        text: t("apply"),
+                        iconCls: "pimcore_icon_apply",
+                        handler: function () {
+                            var params = pageForm.getForm().getFieldValues();
+
+                            win.close();
+
+                            this.pasteInfo(tree, record, type, enableInheritance, params.language);
+                        }.bind(this)
+                    }]
+                });
+
+                win.show();
+            }.bind(this)
+        });
+
+    },
+
     populatePredefinedDocumentTypes: function(documentMenu, tree, record) {
         var document_types = pimcore.globalmanager.get("document_types_store");
 
@@ -902,6 +987,7 @@ pimcore.document.tree = Class.create({
     },
 
     copy: function (tree, record) {
+        pimcore.cachedDocument = record;
         pimcore.cachedDocumentId = record.data.id;
     },
 
@@ -944,7 +1030,7 @@ pimcore.document.tree = Class.create({
 
     },
 
-    pasteInfo: function (tree, record, type, enableInheritance) {
+    pasteInfo: function (tree, record, type, enableInheritance, language) {
         pimcore.helpers.addTreeNodeLoadingIndicator("document", this.id);
 
         if(enableInheritance !== true) {
@@ -957,6 +1043,7 @@ pimcore.document.tree = Class.create({
                 targetId: record.data.id,
                 sourceId: pimcore.cachedDocumentId,
                 type: type,
+                language: language,
                 enableInheritance: enableInheritance
             },
             success: this.paste.bind(this, tree, record)
