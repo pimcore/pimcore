@@ -256,9 +256,11 @@ abstract class Adapter
             $focalPointYCoordinate = $orientation['y'] / 100 * $this->getHeight();
 
             $cropY = $focalPointYCoordinate - ($height / 2);
+            $cropY = min($cropY, $this->height() - $height);
             $cropY = max($cropY, 0);
 
             $cropX = $focalPointXCoordinate - ($width / 2);
+            $cropX = min($cropX, $this->width() - $width);
             $cropX = max($cropX, 0);
         } else {
             $cropX = null;
