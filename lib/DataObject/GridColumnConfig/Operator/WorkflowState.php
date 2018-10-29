@@ -31,7 +31,15 @@ class WorkflowState extends AbstractOperator
         $result = new \stdClass();
         $result->label = $this->label;
 
-        $result->value = $this->statusInfo->getAllPalacesHtml($element);
+        $context = $this->getContext();
+        $purpose = $context['purpose'] ?? null;
+
+        if($purpose === 'gridview') {
+            $result->value = $this->statusInfo->getAllPalacesHtml($element);
+        } else {
+            $result->value = $this->statusInfo->getAllPlacesForCsv($element);
+        }
+
 
         return $result;
     }
