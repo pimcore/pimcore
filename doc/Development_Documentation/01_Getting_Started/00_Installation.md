@@ -36,7 +36,7 @@ COMPOSER_MEMORY_LIMIT=3G composer create-project pimcore/demo-basic-twig my-proj
 
 ##### 4. Advanced Demo Package (E-Commerce, PIM, MDM, DAM, ...)
 ```bash
-COMPOSER_MEMORY_LIMIT=3G composer create-project pimcore/demo-ecommerce my-project
+COMPOSER_MEMORY_LIMIT=-1 composer create-project pimcore/demo-ecommerce my-project
 ```
 
 Point the document root of your vhost to the newly created `/web` folder (eg. `/your/project/web`).
@@ -63,7 +63,7 @@ cd ./my-project
 ./vendor/bin/pimcore-install
 ```
 
-This launches the interactive installer with a few questions.   
+This launches the interactive installer with a few questions. Make sure that you set the `memory_limit` to at least `512M` in your php.ini file.   
 
 > Note: Pimcore allows a fully automated installation process, read more here: [Advanced Installation Topics](./01_Advanced_Installation_Topics.md) 
 
