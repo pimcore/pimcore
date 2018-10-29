@@ -258,7 +258,8 @@ class Service extends Model\Element\Service
         $data = Element\Service::gridElementData($object);
 
         if ($object instanceof Concrete) {
-            $context = ['object' => $object];
+            $context = ['object' => $object,
+                'purpose' => 'gridview'];
             $data['classname'] = $object->getClassName();
             $data['idPath'] = Element\Service::getIdPath($object);
             $data['inheritedFields'] = [];
@@ -287,7 +288,8 @@ class Service extends Model\Element\Service
                         $haveHelperDefinition = true;
                     }
                     if ($helperDefinitions[$key]) {
-                        $data[$key] = self::calculateCellValue($object, $helperDefinitions, $key);
+                        $context['fieldname'] = $key;
+                        $data[$key] = self::calculateCellValue($object, $helperDefinitions, $key, $context);
                     }
                 } elseif (substr($key, 0, 1) == '~') {
                     $type = $keyParts[1];
@@ -451,10 +453,11 @@ class Service extends Model\Element\Service
     /**
      * @param $helperDefinitions
      * @param $key
+     * @param $context array
      *
      * @return mixed|null|ConfigElementInterface|ConfigElementInterface[]
      */
-    public static function getConfigForHelperDefinition($helperDefinitions, $key)
+    public static function getConfigForHelperDefinition($helperDefinitions, $key, $context = [])
     {
         $cacheKey = 'gridcolumn_config_' . $key;
         if (Runtime::isRegistered($cacheKey)) {
@@ -465,7 +468,7 @@ class Service extends Model\Element\Service
 
             // TODO refactor how the service is accessed into something non-static and inject the service there
             $service = \Pimcore::getContainer()->get(GridColumnConfigService::class);
-            $config = $service->buildOutputDataConfig([$attributes]);
+            $config = $service->buildOutputDataConfig([$attributes], $context);
 
             if (!$config) {
                 return null;
@@ -483,9 +486,9 @@ class Service extends Model\Element\Service
      *
      * @return null
      */
-    public static function calculateCellValue($object, $helperDefinitions, $key)
+    public static function calculateCellValue($object, $helperDefinitions, $key, $context = [])
     {
-        $config = static::getConfigForHelperDefinition($helperDefinitions, $key);
+        $config = static::getConfigForHelperDefinition($helperDefinitions, $key, $context);
         if (!$config) {
             return null;
         }
@@ -1554,6 +1557,7 @@ class Service extends Model\Element\Service
     /** Enriches the layout definition before it is returned to the admin interface.
      * @param $layout
      * @param $object Concrete
+     * @param $context array
      * @param array $context additional contextual data
      */
     public static function enrichLayoutDefinition(&$layout, $object = null, $context = [])
