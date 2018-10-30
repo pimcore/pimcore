@@ -68,6 +68,18 @@ class StatusInfo
         );
     }
 
+    public function getAllPlacesForCsv($subject, string $workflowName = null): string
+    {
+        $places = $this->getAllPlaces($subject, false, $workflowName);
+        $result = [];
+
+        foreach($places as $place) {
+            $result[] = $place->getLabel();
+        }
+
+        return implode(', ', $result);
+    }
+
     /**
      * @param $subject
      * @param bool $visibleInHeaderOnly
