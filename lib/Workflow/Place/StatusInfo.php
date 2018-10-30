@@ -73,7 +73,7 @@ class StatusInfo
         $places = $this->getAllPlaces($subject, false, $workflowName);
         $result = [];
 
-        foreach($places as $place) {
+        foreach ($places as $place) {
             $result[] = $place->getLabel();
         }
 

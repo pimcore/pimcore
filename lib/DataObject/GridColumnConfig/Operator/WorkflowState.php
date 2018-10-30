@@ -34,12 +34,11 @@ class WorkflowState extends AbstractOperator
         $context = $this->getContext();
         $purpose = $context['purpose'] ?? null;
 
-        if($purpose === 'gridview') {
+        if ($purpose === 'gridview') {
             $result->value = $this->statusInfo->getAllPalacesHtml($element);
         } else {
             $result->value = $this->statusInfo->getAllPlacesForCsv($element);
         }
-
 
         return $result;
     }
