@@ -30,14 +30,14 @@ pimcore.plugin.admin = Class.create({
     },
     postOpenObject: function (object, type) {
         if (type === 'object') {
-            var uiStates = localStorage.getItem('uiState_'+object.id);
+            var uiStates = localStorage.getItem('pimcore_uiState_'+object.id);
             var layoutContainer = object.tab;
             if(uiStates) {
                 uiStates = JSON.parse(uiStates);
                 this.setUiState(layoutContainer, uiStates);
 
                 // prevent restoration of UI state on subsequent loading of given object
-                localStorage.removeItem('uiState_'+object.id);
+                localStorage.removeItem('pimcore_uiState_'+object.id);
             }
 
             var reloadButton = object.toolbar.down('button[iconCls=pimcore_icon_reload]');
@@ -45,7 +45,7 @@ pimcore.plugin.admin = Class.create({
                 var that = this;
                 reloadButton.on('click', function() {
                     var uiStates = that.getUiState(layoutContainer);
-                    localStorage.setItem('uiState_'+object.id, JSON.stringify(uiStates));
+                    localStorage.setItem('pimcore_uiState_'+object.id, JSON.stringify(uiStates));
                 });
             }
         }
