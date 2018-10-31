@@ -24,7 +24,7 @@ sudo apt-get install ffmpeg
 ## LibreOffice, pdftotext, Inkscape, ...
 
 ```bash 
-apt-get install libreoffice python-uno libreoffice-math xfonts-75dpi poppler-utils inkscape libxrender1 libfontconfig1 ghostscript
+apt-get install libreoffice libreoffice-script-provider-python libreoffice-math xfonts-75dpi poppler-utils inkscape libxrender1 libfontconfig1 ghostscript
 ```
 
 ## Wkhtmltoimage / Wkhtmltopdf
