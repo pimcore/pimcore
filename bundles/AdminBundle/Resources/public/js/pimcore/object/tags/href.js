@@ -89,8 +89,8 @@ pimcore.object.tags.href = Class.create(pimcore.object.tags.abstract, {
                 },
 
                 onNodeOver: function (target, dd, e, data) {
-
-                    var record = data.records[0];
+				    if(data.records.length>1) return Ext.dd.DropZone.prototype.dropNotAllowed;
+					var record = data.records[0];
                     var data = record.data;
 
                     if (this.dndAllowed(data)) {
@@ -237,7 +237,8 @@ pimcore.object.tags.href = Class.create(pimcore.object.tags.abstract, {
     },
 
     onNodeDrop: function (target, dd, e, data) {
-        var record = data.records[0];
+        if(data.records.length>1) return false;
+		var record = data.records[0];
         var data = record.data;
 
         if (this.dndAllowed(data)) {
