@@ -101,6 +101,9 @@ pimcore.object.tree = Class.create({
 
         // objects
         this.tree = Ext.create('pimcore.tree.Panel', {
+			selModel : {
+                mode : 'MULTI'
+            },
             store: store,
             region: "center",
             autoLoad: false,
@@ -212,13 +215,15 @@ pimcore.object.tree = Class.create({
     },
 
     onTreeNodeClick: function (tree, record, item, index, e, eOpts ) {
-        try {
-            if (record.data.permissions.view) {
-                pimcore.helpers.openObject(record.data.id, record.data.type);
-            }
-        } catch (e) {
-            console.log(e);
-        }
+        if (event.ctrlKey === false && event.shiftKey === false && event.altKey === false) {
+			try {
+				if (record.data.permissions.view) {
+					pimcore.helpers.openObject(record.data.id, record.data.type);
+				}
+			} catch (e) {
+				console.log(e);
+			}
+		}
     },
 
     onTreeNodeOver: function (targetNode, position, dragData, e, eOpts ) {
