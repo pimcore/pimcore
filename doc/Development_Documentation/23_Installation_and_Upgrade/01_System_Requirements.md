@@ -92,7 +92,7 @@ On Debian based systems, you can use the following command to install all requir
 - wkhtmltoimage / wkhtmltopdf (>= 0.12)
 - xvfb
 - [html2text (mbayer)](http://www.mbayer.de/html2text/)
-- timeout (GNU core utils)
+- coreutils (GNU core utils)
 - pdftotext (poppler utils)
 - inkscape
 - zopflipng
