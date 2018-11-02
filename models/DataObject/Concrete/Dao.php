@@ -222,7 +222,7 @@ class Dao extends Model\DataObject\AbstractObject\Dao
                 $saveParams = ['isUntouchable' => in_array($fd->getName(), $untouchable),
                                'isUpdate' => $isUpdate,
                                 'context' => [
-                                    "containerType" => "object"
+                                    'containerType' => 'object'
                                 ]];
                 if ($this->model instanceof DataObject\DirtyIndicatorInterface) {
                     $saveParams['newParent'] = $this->model->isFieldDirty('o_parentId');
