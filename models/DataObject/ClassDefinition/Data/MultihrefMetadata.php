@@ -714,8 +714,16 @@ class MultihrefMetadata extends Model\DataObject\ClassDefinition\Data\Multihref
             $sql = $db->quoteInto('o_id = ?', $objectId) . ' AND ' . $db->quoteInto('fieldname = ?', $this->getName())
                 . ' AND ' . $db->quoteInto('position = ?', $position);
 
-            if ($params && $params['context'] && $params['context']['fieldname']) {
-                $sql .= ' AND ' . $db->quoteInto('ownername = ?', $params['context']['fieldname']);
+            if ($params && $params['context']) {
+                if ($params['context']['fieldname']) {
+                    $sql .= ' AND '.$db->quoteInto('ownername = ?', $params['context']['fieldname']);
+                }
+
+                if (!DataObject\AbstractObject::isDirtyDetectionDisabled() && $object instanceof DataObject\DirtyIndicatorInterface) {
+                    if ($params['context']['containerType']) {
+                        $sql .= ' AND '.$db->quoteInto('ownertype = ?', $params['context']['containerType']);
+                    }
+                }
             }
         }
 
@@ -816,8 +824,16 @@ class MultihrefMetadata extends Model\DataObject\ClassDefinition\Data\Multihref
                 'fieldname' => $this->getName(),
             ];
 
-            if ($params && $params['context'] && $params['context']['fieldname']) {
-                $deleteCondition['ownername'] = $params['context']['fieldname'];
+            if ($params && $params['context']) {
+                if ($params['context']['fieldname']) {
+                    $deleteCondition['ownername'] = $params['context']['fieldname'];
+                }
+
+                if (!DataObject\AbstractObject::isDirtyDetectionDisabled() && $object instanceof DataObject\DirtyIndicatorInterface) {
+                    if ($params['context']['containerType']) {
+                        $deleteCondition['ownertype'] = $params['context']['containerType'];
+                    }
+                }
             }
 
             $db->delete('object_metadata_' . $object->getClassId(), $deleteCondition);

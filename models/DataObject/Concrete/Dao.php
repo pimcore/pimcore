@@ -220,7 +220,10 @@ class Dao extends Model\DataObject\AbstractObject\Dao
             if (method_exists($fd, 'save')) {
                 // for fieldtypes which have their own save algorithm eg. fieldcollections, objects, multihref, ...
                 $saveParams = ['isUntouchable' => in_array($fd->getName(), $untouchable),
-                               'isUpdate' => $isUpdate];
+                               'isUpdate' => $isUpdate,
+                                'context' => [
+                                    "containerType" => "object"
+                                ]];
                 if ($this->model instanceof DataObject\DirtyIndicatorInterface) {
                     $saveParams['newParent'] = $this->model->isFieldDirty('o_parentId');
                 }

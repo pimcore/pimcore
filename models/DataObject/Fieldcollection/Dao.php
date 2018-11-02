@@ -126,7 +126,7 @@ class Dao extends Model\Dao\AbstractDao
      * @param DataObject\Concrete $object
      * @param $saveMode true if called from save method
      *
-     * @return whether an relational data should be inserted or not
+     * @return whether relational data should be inserted or not
      */
     public function delete(DataObject\Concrete $object, $saveMode = false)
     {
@@ -175,6 +175,14 @@ class Dao extends Model\Dao\AbstractDao
 
             if (is_array($childDefinitions)) {
                 foreach ($childDefinitions as $fd) {
+                    if (!DataObject\AbstractObject::isDirtyDetectionDisabled() && $this->model instanceof DataObject\DirtyIndicatorInterface) {
+                        if ($fd instanceof DataObject\ClassDefinition\Data\Relations\AbstractRelations && !$this->model->isFieldDirty(
+                                '_self'
+                            )) {
+                            continue;
+                        }
+                    }
+
                     if (method_exists($fd, 'delete')) {
                         $fd->delete(
                             $object,
