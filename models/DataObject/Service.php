@@ -779,7 +779,7 @@ class Service extends Model\Element\Service
                 $groupKeyId = explode('-', $keyParts[3]);
 
                 /** @var $csFieldDefinition Model\DataObject\ClassDefinition\Data\Classificationstore */
-                $csFieldDefinition = $class->getFieldDefinition('cs');
+                $csFieldDefinition = $class->getFieldDefinition($fieldName);
 
                 $language = $requestedLanguage;
                 if (!$csFieldDefinition->isLocalized()) {
