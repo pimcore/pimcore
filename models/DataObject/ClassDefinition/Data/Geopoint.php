@@ -321,4 +321,16 @@ class Geopoint extends Model\DataObject\ClassDefinition\Data\Geo\AbstractGeo
             return $data;
         }
     }
+
+    /**
+     * @param $data
+     * @param null $object
+     * @param array $params
+     *
+     * @return array
+     */
+    public function getDataForGrid($data, $object = null, $params = [])
+    {
+        return $this->getDataForEditmode($data, $object, $params);
+    }
 }
