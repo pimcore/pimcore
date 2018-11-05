@@ -195,6 +195,25 @@ pimcore.document.settings_abstract = Class.create({
             docTypeValue = "";
         }
 
+        var updateComboBoxes = function (el) {
+            var moduleEl =  Ext.getCmp("pimcore_document_settings_module_" + this.document.id);
+            var controllerEl =  Ext.getCmp("pimcore_document_settings_controller_" + this.document.id);
+            controllerEl.getStore().reload({
+                params: {
+                    moduleName: moduleEl.getValue()
+                }
+            });
+
+            var actionEl =  Ext.getCmp("pimcore_document_settings_action_" + this.document.id);
+            actionEl.getStore().reload({
+                params: {
+                    moduleName: moduleEl.getValue(),
+                    controllerName: controllerEl.getValue()
+                }
+            });
+
+        }.bind(this);
+
         var fieldSet = new Ext.form.FieldSet({
             title: t('controller') + ", " + t('action') + " & " + t('template'),
             collapsible: true,
@@ -228,6 +247,7 @@ pimcore.document.settings_abstract = Class.create({
                     name: "module",
                     disableKeyFilter: true,
                     store: new Ext.data.Store({
+                        autoLoad: true,
                         autoDestroy: true,
                         proxy: {
                             type: 'ajax',
@@ -240,13 +260,10 @@ pimcore.document.settings_abstract = Class.create({
                         fields: ["name"]
                     }),
                     triggerAction: "all",
-                    mode: "local",
                     id: "pimcore_document_settings_module_" + this.document.id,
                     value: this.document.data.module,
                     listeners: {
-                        afterrender: function (el) {
-                            el.getStore().load();
-                        }
+                        select: updateComboBoxes
                     }
                 },
                 {
@@ -255,21 +272,25 @@ pimcore.document.settings_abstract = Class.create({
                     displayField: 'name',
                     valueField: 'name',
                     name: "controller",
+                    queryMode: "local",
                     disableKeyFilter: true,
                     store: new Ext.data.Store({
                         autoDestroy: true,
+                        autoLoad: true,
                         proxy: {
                             type: 'ajax',
                             url: "/admin/misc/get-available-controllers",
                             reader: {
                                 type: 'json',
                                 rootProperty: 'data'
+                            },
+                            extraParams: {
+                                moduleName: this.document.data.module
                             }
                         },
                         fields: ["name"]
                     }),
                     triggerAction: "all",
-                    mode: "local",
                     id: "pimcore_document_settings_controller_" + this.document.id,
                     value: this.document.data.controller,
                     matchFieldWidth: false,
@@ -277,17 +298,7 @@ pimcore.document.settings_abstract = Class.create({
                         maxWidth: 600
                     },
                     listeners: {
-                        "focus": function (el) {
-                            el.getStore().reload({
-                                params: {
-                                    moduleName: Ext.getCmp("pimcore_document_settings_module_"
-                                        + this.document.id).getValue()
-                                },
-                                callback: function() {
-                                    el.expand();
-                                }
-                            });
-                        }.bind(this)
+                        select: updateComboBoxes
                     }
                 },
                 {
@@ -299,37 +310,28 @@ pimcore.document.settings_abstract = Class.create({
                     disableKeyFilter: true,
                     store: new Ext.data.Store({
                         autoDestroy: true,
+                        autoLoad: true,
                         proxy: {
                             type: 'ajax',
                             url: "/admin/misc/get-available-actions",
                             reader: {
                                 type: 'json',
                                 rootProperty: 'data'
+                            },
+                            extraParams: {
+                                moduleName: this.document.data.module,
+                                controllerName: this.document.data.controller
                             }
                         },
                         fields: ["name"]
                     }),
                     triggerAction: "all",
+                    id: "pimcore_document_settings_action_" + this.document.id,
                     queryMode: "local",
                     value: this.document.data.action,
                     matchFieldWidth: false,
                     listConfig: {
                         maxWidth: 600
-                    },
-                    listeners: {
-                        "focus": function (el) {
-                            el.getStore().reload({
-                                params: {
-                                    moduleName: Ext.getCmp("pimcore_document_settings_module_"
-                                        + this.document.id).getValue(),
-                                    controllerName: Ext.getCmp("pimcore_document_settings_controller_"
-                                        + this.document.id).getValue()
-                                },
-                                callback: function() {
-                                    el.expand();
-                                }
-                            });
-                        }.bind(this)
                     }
                 },
                 {
@@ -342,6 +344,7 @@ pimcore.document.settings_abstract = Class.create({
                     queryMode: "local",
                     store: new Ext.data.Store({
                         autoDestroy: true,
+                        autoLoad: true,
                         proxy: {
                             type: 'ajax',
                             url: "/admin/misc/get-available-templates",
@@ -353,16 +356,10 @@ pimcore.document.settings_abstract = Class.create({
                         fields: ["path"]
                     }),
                     triggerAction: "all",
-                    mode: "local",
                     value: this.document.data.template,
                     matchFieldWidth: false,
                     listConfig: {
                         maxWidth: 600
-                    },
-                    listeners: {
-                        afterrender: function (el) {
-                            el.getStore().load();
-                        }
                     }
                 }
             ]
