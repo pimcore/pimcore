@@ -317,6 +317,18 @@ final class AdminEvents
     /**
      * Subject: \Pimcore\Bundle\AdminBundle\Controller\Admin\ClassController
      * Arguments:
+     *  - list | array | the list of field collections
+     *  - objectId | int | id of the origin object
+     *
+     * @Event("Pimcore\Event\Model\GenericEvent")
+     *
+     * @var string
+     */
+    const CLASS_FIELDCOLLECTION_LIST_PRE_SEND_DATA = 'pimcore.admin.class.fieldcollectionList.preSendData';
+
+    /**
+     * Subject: \Pimcore\Bundle\AdminBundle\Controller\Admin\ClassController
+     * Arguments:
      *  - list | array | the list of object bricks
      *  - objectId | int | id of the origin object
      *
