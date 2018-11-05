@@ -999,6 +999,16 @@ pimcore.layout.toolbar = Class.create({
                 });
             }
 
+            if (user.admin) {
+                settingsItems.push({
+                    iconCls: "pimcore_icon_icons",
+                    text: t('icon_library'),
+                    handler: function() {
+                        pimcore.helpers.openGenericIframeWindow("icon-library", "/admin/misc/icon-list", "pimcore_icon_icons", t("icon_library"));
+                    }
+                });
+            }
+
             // help menu
             if (settingsItems.length > 0) {
                 this.settingsMenu = new Ext.menu.Menu({
