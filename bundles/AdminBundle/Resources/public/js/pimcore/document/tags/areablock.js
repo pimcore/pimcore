@@ -47,6 +47,10 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
             this.options.reload = false;
         }
 
+        if(!this.options['controlsTrigger']) {
+            this.options['controlsTrigger'] = 'hover';
+        }
+
         // type mapping
         var typeNameMappings = {};
         this.allowedTypes = []; // this is for the toolbar to check if an brick can be dropped to this areablock
@@ -229,56 +233,62 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
                 labelDiv.setHtml(labelText);
 
 
-                // on hover show buttons
-                Ext.get(this.elements[i]).on('mouseenter', function (event) {
+                var buttonContainer = Ext.get(this.elements[i]).selectNode('.pimcore_area_buttons', false);
+                if (this.options['controlsAlign']) {
+                    buttonContainer.addCls(this.options['controlsAlign']);
+                } else {
+                    // top is default
+                    buttonContainer.addCls('top');
+                }
 
-                    if (Ext.dd.DragDropMgr.dragCurrent) {
-                        return;
-                    }
+                buttonContainer.addCls(this.options['controlsTrigger']);
 
-                    if(hideTimeout) {
-                        window.clearTimeout(hideTimeout);
-                    }
+                if(this.options['controlsTrigger'] === 'hover') {
+                    Ext.get(this.elements[i]).on('mouseenter', function (event) {
 
-                    Ext.get(id).query('.pimcore_area_buttons', false).forEach(function (el) {
-                        if(event.target != el.dom) {
-                            el.hide();
+                        if (Ext.dd.DragDropMgr.dragCurrent) {
+                            return;
                         }
+
+                        if (hideTimeout) {
+                            window.clearTimeout(hideTimeout);
+                        }
+
+                        Ext.get(id).query('.pimcore_area_buttons', false).forEach(function (el) {
+                            if (event.target != el.dom) {
+                                el.hide();
+                            }
+                        });
+
+                        var buttonContainer = Ext.get(event.target).selectNode('.pimcore_area_buttons', false);
+                        buttonContainer.show();
+
+                        if (activeBlockEl != event.target) {
+                            Ext.menu.Manager.hideAll();
+                        }
+                        activeBlockEl = event.target;
+                    }.bind(this));
+
+                    Ext.get(this.elements[i]).on('mouseleave', function (event) {
+                        hideTimeout = window.setTimeout(function () {
+                            Ext.get(event.target).selectNode('.pimcore_area_buttons', false).hide();
+                            hideTimeout = null;
+                        }, 10000);
                     });
-
-                    var buttonContainer = Ext.get(event.target).selectNode('.pimcore_area_buttons', false);
-                    buttonContainer.show();
-
-                    if(this.options['controlsAlign']) {
-                        buttonContainer.addCls(this.options['controlsAlign']);
-                    } else {
-                        // top is default
-                        buttonContainer.addCls('top');
-                    }
-
-                    if(activeBlockEl != event.target) {
-                        Ext.menu.Manager.hideAll();
-                    }
-                    activeBlockEl = event.target;
-                }.bind(this));
-
-                Ext.get(this.elements[i]).on('mouseleave', function (event) {
-                    hideTimeout = window.setTimeout(function () {
-                        Ext.get(event.target).selectNode('.pimcore_area_buttons', false).hide();
-                        hideTimeout = null;
-                    }, 10000);
-                });
+                }
             }
         }
 
         // click outside, hide all block buttons
-        Ext.getBody().on('click', function (event) {
-            if(!Ext.get(id).isAncestor(event.target)) {
-                Ext.get(id).query('.pimcore_area_buttons', false).forEach(function (el) {
-                    el.hide();
-                });
-            }
-        });
+        if(this.options['controlsTrigger'] === 'hover') {
+            Ext.getBody().on('click', function (event) {
+                if (!Ext.get(id).isAncestor(event.target)) {
+                    Ext.get(id).query('.pimcore_area_buttons', false).forEach(function (el) {
+                        el.hide();
+                    });
+                }
+            });
+        }
     },
 
     initNamingStrategies: function() {

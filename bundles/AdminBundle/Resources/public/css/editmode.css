@@ -68,6 +68,16 @@
     display: none;
 }
 
+.pimcore_area_buttons.fixed {
+    display: block;
+}
+
+.pimcore_area_buttons.fixed.top {
+    position: relative;
+    top: 0;
+    padding-bottom: 15px;
+}
+
 .pimcore_area_buttons.right {
     right: 10px;
     left: auto;
