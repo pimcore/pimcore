@@ -1089,7 +1089,7 @@ class Localizedfields extends Model\DataObject\ClassDefinition\Data
             }
         }
 
-        if (count($validationExceptions)) {
+        if (count($validationExceptions) > 0) {
             $aggregatedExceptions = new Model\Element\ValidationException();
             $aggregatedExceptions->setSubItems($validationExceptions);
             throw $aggregatedExceptions;
