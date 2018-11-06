@@ -98,8 +98,11 @@ class Translator implements TranslatorInterface, TranslatorBagInterface
             $domain = 'messages';
         }
 
+        if (null === $locale) {
+            $locale = \Pimcore::getContainer()->get('pimcore.locale')->getLocale();
+        }
+
         $catalogue = $this->getCatalogue($locale);
-        $locale = $catalogue->getLocale();
         $this->lazyInitialize($domain, $locale);
 
         $term = $this->getFromCatalogue($catalogue, (string)$id, $domain, $locale);
@@ -132,9 +135,12 @@ class Translator implements TranslatorInterface, TranslatorBagInterface
             $domain = 'messages';
         }
 
+        if (null === $locale) {
+            $locale = \Pimcore::getContainer()->get('pimcore.locale')->getLocale();
+        }
+
         $id = (string) $id;
         $catalogue = $this->getCatalogue($locale);
-        $locale = $catalogue->getLocale();
         $this->lazyInitialize($domain, $locale);
 
         while (!$catalogue->defines($id, $domain)) {
