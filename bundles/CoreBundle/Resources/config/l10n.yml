@@ -20,10 +20,7 @@ services:
     #
 
     Pimcore\Localization\LocaleService:
-        arguments:
-            # TODO can we just type hint against TranslatorInterface and use autowiring here or do we need to call
-            # this on the pimcore.translator?
-            $translator: '@Pimcore\Translation\Translator'
+        lazy: true
 
     # formatting service for dates, times and numbers
     Pimcore\Localization\IntlFormatter: ~
