@@ -72,4 +72,9 @@ abstract class Dao extends Model\Dao\AbstractDao
             'path' => $path
         ];
     }
+
+    /**
+     * @return int
+     */
+    abstract public function getVersionCountForUpdate() : int;
 }
