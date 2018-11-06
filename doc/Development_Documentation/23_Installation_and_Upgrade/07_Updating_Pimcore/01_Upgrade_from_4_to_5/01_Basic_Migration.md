@@ -5,12 +5,6 @@ to the Pimcore 4 compatibility bridge or the Symfony Stack.
 
 - **Backup your system!**
 
-- Replace your `composer.json` with [this one](https://github.com/pimcore/skeleton/blob/master/composer.json) and re-add your custom dependencies. 
-  
-- Run `COMPOSER_MEMORY_LIMIT=3G composer update`
-If you encounter errors, please fix them until the command works properly.
-You can use `--no-scripts` to install dependencies and then iterate through errors in subsequent calls to save some time.
-
 - The [Pimcore CLI](https://github.com/pimcore/pimcore-cli) provides a set of commands to ease the migration. It is able
   to do the following:
 
@@ -41,6 +35,12 @@ You can use `--no-scripts` to install dependencies and then iterate through erro
     - `newsletter` > `smtp` > `ssl` => if `''` change to `null`
     - `newsletter` > `smtp` > `auth` > `method` => if `''` change to `null`
     - `newsletter` > `smtp` > `auth` > `password` => add if not there with value `''`
+
+- Replace your `composer.json` with [this one](https://github.com/pimcore/skeleton/blob/master/composer.json) and re-add your custom dependencies. 
+  
+- Run `COMPOSER_MEMORY_LIMIT=3G composer update`
+If you encounter errors, please fix them until the command works properly.
+You can use `--no-scripts` to install dependencies and then iterate through errors in subsequent calls to save some time.
 
 - Change document root of your webserver to `/web` directory - document root must not be project root anymore
 
