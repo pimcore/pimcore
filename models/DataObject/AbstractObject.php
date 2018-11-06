@@ -1326,7 +1326,7 @@ class AbstractObject extends Model\Element\AbstractElement
      */
     public function get($fieldName, $language = null)
     {
-        return $this->{'get'.ucfirst($fieldName)}($language);
+        return $fieldName ? $this->{'get'.ucfirst($fieldName)}($language) : null;
     }
 
     /**
