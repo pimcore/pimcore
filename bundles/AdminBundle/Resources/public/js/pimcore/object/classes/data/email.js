@@ -22,7 +22,7 @@ pimcore.object.classes.data.email = Class.create(pimcore.object.classes.data.dat
         object: true,
         objectbrick: true,
         fieldcollection: true,
-        localizedfield: false,
+        localizedfield: true,
         classificationstore : false,
         block: true,
         encryptedField: true
@@ -39,8 +39,6 @@ pimcore.object.classes.data.email = Class.create(pimcore.object.classes.data.dat
 
         initData.fieldtype = "email";
         initData.datatype = "data";
-        initData.name = "email";
-        treeNode.set("text", "email");
 
         this.initData(initData);
 
@@ -81,12 +79,6 @@ pimcore.object.classes.data.email = Class.create(pimcore.object.classes.data.dat
         ];
 
         if (!inEncryptedField) {
-
-            var nameField = this.layout.getComponent("standardSettings").getComponent("name");
-            if (nameField) {
-                nameField.disable();
-            }
-
             specificItems.push({
                 xtype: "numberfield",
                 fieldLabel: t("columnlength"),
