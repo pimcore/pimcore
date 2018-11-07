@@ -59,10 +59,11 @@ pimcore.object.classes.layout.layout = Class.create({
 
 
         this.layout = new Ext.Panel({
+            title: '<b>' + this.getTypeName() + '</b>',
+            bodyStyle: 'padding: 10px; border-top: 1px solid #606060 !important;',
             items: [
                 {
                     xtype: "form",
-                    title: t("general_settings"),
                     bodyStyle: "padding: 10px;",
                     style: "margin: 0 0 10px 0",
                     items: [

@@ -37,7 +37,7 @@ pimcore.object.classes.layout.text = Class.create(pimcore.object.classes.layout.
 
         this.layout.add({
             xtype: "form",
-            title: t("text"),
+            title: t("specific_settings"),
             bodyStyle: "padding: 10px;",
             style: "margin: 10px 0 10px 0",
             items: [

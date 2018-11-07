@@ -286,7 +286,6 @@
   "objects": "Objects",
   "default_controller": "Default controller",
   "default_action": "Default action",
-  "basic_configuration": "Basic configuration",
   "allow_inherit": "Allow inheritance",
   "parent_php_class": "Parent PHP Class",
   "use_traits": "Use (traits)",

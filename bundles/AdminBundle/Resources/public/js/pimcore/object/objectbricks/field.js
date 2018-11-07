@@ -48,8 +48,8 @@ pimcore.object.objectbricks.field = Class.create(pimcore.object.classes.klass, {
             });
 
         this.rootPanel = new Ext.form.FormPanel({
-            title: t("basic_configuration"),
-            bodyStyle: "padding: 10px;",
+            title: '<b>' + t("general_settings") + '</b>',
+            bodyStyle: 'padding: 10px; border-top: 1px solid #606060 !important;',
             defaults: {
                 labelWidth: 200
             },

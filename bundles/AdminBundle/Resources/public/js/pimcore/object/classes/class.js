@@ -56,7 +56,7 @@ pimcore.object.classes.klass = Class.create({
             root: {
                 id: "0",
                 root: true,
-                text: t("base"),
+                text: t("general_settings"),
                 leaf: true,
                 iconCls: "pimcore_icon_class",
                 isTarget: true
@@ -396,7 +396,11 @@ pimcore.object.classes.klass = Class.create({
                         layoutMenu.push({
                             text: pimcore.object.classes.layout[layouts[i]].prototype.getTypeName(),
                             iconCls: pimcore.object.classes.layout[layouts[i]].prototype.getIconClass(),
-                            handler: this.addLayoutChild.bind(record, layouts[i], null, this.context)
+                            handler: function (record, type, context) {
+                                var newNode = this.addLayoutChild.bind(record, type, null, context)();
+                                newNode.getOwnerTree().getSelectionModel().select(newNode);
+                                this.onTreeNodeClick(null, newNode);
+                            }.bind(this, record, layouts[i], this.context)
                         });
                     }
 
@@ -666,8 +670,8 @@ pimcore.object.classes.klass = Class.create({
         });
 
         this.rootPanel = new Ext.form.FormPanel({
-            title: t("basic_configuration"),
-            bodyStyle: "padding: 10px;",
+            title: '<b>' + t("general_settings") + '</b>',
+            bodyStyle: 'padding: 10px; border-top: 1px solid #606060 !important;',
             defaults: {
                 labelWidth: 200
             },
