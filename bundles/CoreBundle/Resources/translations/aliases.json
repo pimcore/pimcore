@@ -97,6 +97,7 @@
   "log_search_component": "log_component",
   "log_message": "message",
   "classificationstore_menu_config": "classification_store",
+  "classificationstore": "classification_store",
   "classificationstore_mbx_enterkey_prompt": "classificationstore_mbx_entergroup_prompt",
   "classificationstore_error_addcollection_msg": "classificationstore_error_addgroup_msg",
   "quantityValue": "quantityValue_field",

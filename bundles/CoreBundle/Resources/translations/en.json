@@ -458,6 +458,7 @@
   "element_open_message": "The desired element is already open for editing.",
   "nonownerobjects_self_selection": "In non owner objects a  relation to myself is not possible, please use original field instead of non owner field.",
   "warning": "Warning",
+  "consent": "Consent",
   "csv_object_export_warning": "Please note that the CSV export does not support all data types. Consequently, re-importing an exported CSV to pimcore might lead to data loss. Press OK to continue with the export.",
   "error_renaming_item": "There was an error while renaming the item.",
   "navigation_exclude": "Exclude from Navigation",
