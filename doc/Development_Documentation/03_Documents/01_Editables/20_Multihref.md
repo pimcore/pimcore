@@ -1,7 +1,7 @@
 # 1:n Relation Editable (Multihref)
 
 ## General
-Multihref editable provides one to many relation to other Pimcore elements (document, asset, object). 
+Provides one to many relation to other Pimcore elements (document, asset, object). 
 
 
 ## Configuration 
@@ -31,7 +31,7 @@ Multihref editable provides one to many relation to other Pimcore elements (docu
 
 ### Basic Usage
 
-The code below is responsible for showing the list of elements types related to the multihref. 
+The code below is responsible for showing the list of elements types related to the 1:n relation editable (`multihref`). 
 
 <div class="code-section">
 

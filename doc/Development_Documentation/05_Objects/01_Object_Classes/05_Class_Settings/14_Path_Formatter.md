@@ -1,7 +1,7 @@
 # Path Formatter  
 
 ### Summary
-* Allows you to show a user friendly "object information' instead of technical path in Pimcore data types such as multihref, objects etc.
+* Allows you to show a user friendly "object information' instead of technical path in Pimcore data types such as 1:n relations etc.
 * Uses Ajax to request nice path info on demand (i.e. after rendering) 
 
 ### Example

@@ -21,8 +21,7 @@ Lazy Loading is explained further below in the section about relations and lazy 
 
 
 The input widgets for all three relation data types are represented by drop areas, which allow to drag and drop elements 
-from the tree on the left to the drop target in the object layout. The href constitutes a single drop area, whereas 
-multihref and objects are grid widgets containing rows of data.
+from the tree on the left to the drop target in the object layout.
 
 In addition to the drag and drop feature, elements can be searched and selected directly from the input widget. In case 
 of objects it is even possible to create a new object and select it for the objects widget.
@@ -50,7 +49,7 @@ $objects=$list->load();
 ```
 
 #### Assigning relations via PHP API
-In order to set a href data field, a single Pimcore element needs to be passed to the setter. With multihref and objects 
+In order to set a href data field, a single Pimcore element needs to be passed to the setter. With relations as
 an array of elements is passed to the setter:
 
 ```php
@@ -74,7 +73,7 @@ $object->save();
 ```
 
 #### Deleting relations via PHP API
-In order to remove all elements from this object's multihref field, the setter can be called with null or an array:
+In order to remove all elements from this object's relational field, the setter can be called with null or an array:
 
 ```php
 $object->setMultihref([]);
@@ -86,8 +85,8 @@ Internally the setter sets the value to an empty array, regardless if an empty a
 
 > **Be Careful - Use Getters and Setters!**  
 > `$object->multihref = null;`  
-> Will not work to clear the list of elements in the multihref when lazy loading ist activated. If the value of an object 
-> or multihref data type is null, for Pimcore this means that the data of this field has not been loaded an that it is 
+> Will not work to clear the list of elements in the relational field when lazy loading ist activated. If the value of a 
+> relational data type is null, for Pimcore this means that the data of this field has not been loaded an that it is 
 > not to be touched when saving the object.
 
 
@@ -216,7 +215,7 @@ $elementMetadata->setNumber(23);
 $references[] = $elementMetadata;
  
 //set the metadata array to your object
-$object->setMetadata($references); // object’s multihref field is called „metadata“
+$object->setMetadata($references); // object’s relational field is called „metadata“
 ```
 
 
@@ -224,16 +223,16 @@ $object->setMetadata($references); // object’s multihref field is called „me
 
 ## Lazy Loading
 Whenever an object is loaded from database or cache, all these related objects are loaded with it. Especially with 
-MultiHrefs and Objects it is easy to produce a huge amount of relations, which makes the object or an object list slow 
+1:n relations it is easy to produce a huge amount of relations, which makes the object or an object list slow 
 in loading. 
 
-As a solution to this dilemma, multihref and object data types can be classified as `lazy loading` attributes 
+As a solution to this dilemma, 1:n relational data types can be classified as `lazy loading` attributes 
 in the class definition.
 
 ![Lazy Loading](../../../img/classes-datatypes-relation3.png)
 
 Object attributes which are lazy, are only loaded from the `database/cache` when their getter is called. In the 
-example above this would mean, that the multihref data is only loaded when calling `$object->getMultihref();`, 
+example above this would mean, that the relational data is only loaded when calling `$object->getMultihref();`, 
 otherwise the attribute (`$object->multihref`) remains `null`.
 
 
