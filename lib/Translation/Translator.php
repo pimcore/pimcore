@@ -108,7 +108,7 @@ class Translator implements TranslatorInterface, TranslatorBagInterface
 
         $catalogue = $this->getCatalogue($locale);
 
-        if($locale === null) {
+        if ($locale === null) {
             $locale = $this->localeService->getLocale();
         }
 
@@ -147,7 +147,7 @@ class Translator implements TranslatorInterface, TranslatorBagInterface
         $id = (string) $id;
         $catalogue = $this->getCatalogue($locale);
 
-        if($locale === null) {
+        if ($locale === null) {
             $locale = $this->localeService->getLocale();
         }
 

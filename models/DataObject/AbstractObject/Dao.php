@@ -212,8 +212,10 @@ class Dao extends Model\Element\Dao
     /**
      * @return int
      */
-    public function getVersionCountForUpdate() : int {
+    public function getVersionCountForUpdate(): int
+    {
         $versionCount = $this->db->fetchOne('SELECT o_versionCount FROM objects WHERE o_id = ? FOR UPDATE', $this->model->getId());
+
         return $versionCount;
     }
 

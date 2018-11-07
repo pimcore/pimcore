@@ -76,5 +76,5 @@ abstract class Dao extends Model\Dao\AbstractDao
     /**
      * @return int
      */
-    abstract public function getVersionCountForUpdate() : int;
+    abstract public function getVersionCountForUpdate(): int;
 }

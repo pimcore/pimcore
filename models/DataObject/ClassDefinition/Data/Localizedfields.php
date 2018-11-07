@@ -1072,7 +1072,6 @@ class Localizedfields extends Model\DataObject\ClassDefinition\Data
         $data = $this->getDataForValidity($data, $languages);
         $validationExceptions = [];
         if (!$omitMandatoryCheck) {
-
             foreach ($languages as $language) {
                 foreach ($this->getFieldDefinitions() as $fd) {
                     try {

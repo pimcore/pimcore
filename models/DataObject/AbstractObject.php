@@ -1321,7 +1321,9 @@ class AbstractObject extends Model\Element\AbstractElement
     /**
      * @param string $fieldName
      * @param null $language
+     *
      * @throws \Exception
+     *
      * @return mixed
      */
     public function get($fieldName, $language = null)
@@ -1337,7 +1339,9 @@ class AbstractObject extends Model\Element\AbstractElement
      * @param string $fieldName
      * @param $value
      * @param null $language
+     *
      * @throws \Exception
+     *
      * @return mixed
      */
     public function set($fieldName, $value, $language = null)
