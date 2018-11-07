@@ -48,7 +48,7 @@ pimcore.object.classes.data.multihref = Class.create(pimcore.object.classes.data
     },
 
     getTypeName: function () {
-        return t("multihref");
+        return t("1_n_relation");
     },
 
     getGroup: function () {

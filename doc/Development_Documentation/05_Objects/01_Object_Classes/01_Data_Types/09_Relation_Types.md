@@ -1,23 +1,21 @@
 # Relation Datatypes
 
-## Href, Multihref and Object Data Fields 
+## 1:1 Relation (Href), 1:n Relation (Multihref/Objects)
 
-Href, multihref and objects are pure relation data types, which means they represent a relation to an other Pimcore 
-element (document, asset, object). The href and multihref data types can store relations to any other Pimcore element. 
+These data types are pure relation data types, which means they represent a relation to any other Pimcore 
+element (document, asset, object).
 In the object field definition there is the possibility to configure which types and subtypes of elements are allowed.
 The configuration screen for restrictions is shown below. 
 
-The difference between href and multihref is, that a href represents a :1 relation, whereas a a multihref can be a :n 
-relation. 
 
-The objects field allows relations to one or more objects, but no other elements. Therefore the restriction settings for 
-objects are limited to object classes.
+The objects data type is kind of obsolete, since the entire functionality is also provided by the all-purpose 
+1:n relation data type (Multihref). 
 
 
 ![Relation Configuration](../../../img/classes-datatypes-relation1.png)
 
 
-Multihref and objects are grid widgets in the UI. The width and height of the input widget can be configured in the 
+The width and height of the input widget can be configured in the 
 object class settings. For a href only the width can be configured, since it is represented by a single drop area. 
 Lazy Loading is explained further below in the section about relations and lazy loading.
 
@@ -106,8 +104,8 @@ DataObject\AbstractObject::setHideUnpublished(true);
 ```
 
 
-## Objects with Metadata 
-This data type is an extension to the objects data type. To each assigned object additional metadata can be saved. 
+## 1:n Object Relation - Advanved (Objects with Metadata) 
+This data type is an extension to the 1:n Object Relation (Objects) data type. To each assigned object additional metadata can be saved. 
 The type of the metadata can be text, number, selection or a boolean value.
 
 A restriction of this data type is that only one allowed class is possible. As a result of this restriction, it is 
@@ -186,17 +184,17 @@ $object->save();
 ```
 
 
-## Multihref Advanced
+## 1:n Relation - Advanced
 
-***Formerly known as `Multihref with Metadata`***
+***Formerly known as `Multihref with Metadata` or `Multihref Advanced`***
 
 ***Important Note***: Since 5.0.0 referenced elements will be lazy-loaded! 
 
-This datatype is similar to the `Objects with Metadata` datatype in the way that additional information can be 
+This datatype is similar to the `1:n Object Relation - Advanced` datatype in the way that additional information can be 
 added to the relation.
 
 The main difference is that all element types (documents, assets and objects) can be added to the relation list. 
-The element types can also be mixed. Essentially, the same rules as for the standard multihref apply.
+The element types can also be mixed. Essentially, the same rules as for the standard 1:n relation apply.
 
 The API is nearly identical. However, instead of dealing with an `ObjectMetadata` class you have to do the same stuff 
 with `ElementMetadata`.
@@ -243,9 +241,9 @@ otherwise the attribute (`$object->multihref`) remains `null`.
 ## Dependencies
 
 There are several object data types which represent a relation to an other Pimcore element. The pure relation types are
-* Href
-* MultiHref
-* Objects
+* 1:1 Relation (Href)
+* 1:n Relation (MultiHref)
+* 1:n Object Relation (Objects)
 
 Furthermore, the following data types represent a relation, but they are not reflected in the `object_relation_..` 
 tables, since they are by some means special and not pure relations. (One could argue that the image is, but for now it 

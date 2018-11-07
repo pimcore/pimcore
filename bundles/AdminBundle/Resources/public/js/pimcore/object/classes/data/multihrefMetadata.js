@@ -52,7 +52,7 @@ pimcore.object.classes.data.multihrefMetadata = Class.create(pimcore.object.clas
     },
 
     getTypeName: function () {
-        return t("multihrefMetadata");
+        return t("1_n_relation_advanced");
     },
 
     getIconClass: function () {

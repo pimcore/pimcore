@@ -44,7 +44,7 @@ pimcore.object.classes.data.href = Class.create(pimcore.object.classes.data.data
     },
 
     getTypeName: function () {
-        return t("href");
+        return t("1_1_relation");
     },
 
     getGroup: function () {

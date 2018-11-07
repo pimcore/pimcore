@@ -96,6 +96,7 @@
   "keybinding_applicationLogger": "log_applicationlog",
   "log_search_component": "log_component",
   "log_message": "message",
+  "objectsMetadata": "1_n_object_relation",
   "classificationstore_menu_config": "classification_store",
   "classificationstore": "classification_store",
   "classificationstore_mbx_enterkey_prompt": "classificationstore_mbx_entergroup_prompt",

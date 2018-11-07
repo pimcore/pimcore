@@ -50,7 +50,7 @@ pimcore.object.classes.data.objects = Class.create(pimcore.object.classes.data.d
     },
 
     getTypeName: function () {
-        return t("objects");
+        return t("1_n_object_relation");
     },
 
     getIconClass: function () {

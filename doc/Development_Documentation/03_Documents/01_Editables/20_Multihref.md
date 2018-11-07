@@ -1,4 +1,4 @@
-# Multihref Editable
+# 1:n Relation Editable (Multihref)
 
 ## General
 Multihref editable provides one to many relation to other Pimcore elements (document, asset, object). 
@@ -66,11 +66,11 @@ The code below is responsible for showing the list of elements types related to 
 
 Picture below, presents the editmode preview:
 
-![Multihref editable - editmode preview](../../img/editables_multihref_editmode_preview.png)
+![1:n Relation (Multihref) editable - editmode preview](../../img/editables_multihref_editmode_preview.png)
 
 The frontend part looks like that:
 
-![Multihref editable - frontend preview](../../img/editables_multihref_preview.png)
+![1:n Relation (Multihref editable) - frontend preview](../../img/editables_multihref_preview.png)
 
 To better understand what exactly is the `$element` variable, have a look at the output below:
 
@@ -88,7 +88,7 @@ array(6) {
 
 
 ### Example with allowed types and subtypes
-Similar to the Href editable, Multihref also could specify allowed `types`, `subtypes` and `classes`. 
+Similar to the 1:1 Relation (Href) editable, the 1:n Relation (Multihref) also could specify allowed `types`, `subtypes` and `classes`. 
 For example:
 <div class="code-section">
 

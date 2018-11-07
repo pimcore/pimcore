@@ -48,7 +48,7 @@ pimcore.object.classes.data.objectsMetadata = Class.create(pimcore.object.classe
     },
 
     getTypeName: function () {
-        return t("objectsMetadata");
+        return t("1_n_object_relation_advanced");
     },
 
     getIconClass: function () {
