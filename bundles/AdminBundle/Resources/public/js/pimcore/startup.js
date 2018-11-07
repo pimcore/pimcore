@@ -845,7 +845,8 @@ Ext.onReady(function () {
         }, {
             key: Ext.event.Event.SPACE,
             ctrl: true,
-            fn: function () {
+            fn: function (keyCode, e) {
+                e.stopEvent();
                 pimcore.helpers.showQuickSearch();
             }
         }]
@@ -894,7 +895,8 @@ Ext.onReady(function () {
             navigationModel: 'quicksearch.boundlist',
             listeners: {
                 "highlightitem": function (view, node, opts) {
-                    var record = quicksearchStore.getAt(node.dataset.recordindex);
+                    // we use getAttribute() here instead of dataset -> IE11 has some strange issues with that in this case
+                    var record = quicksearchStore.getAt(node.getAttribute('data-recordIndex'));
                     var previewHtml = record.get('preview');
                     if(!previewHtml) {
                         previewHtml = '<div class="no_preview">' + t('preview_not_available') + '</div>';
