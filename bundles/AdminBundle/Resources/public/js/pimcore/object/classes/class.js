@@ -314,7 +314,7 @@ pimcore.object.classes.klass = Class.create({
                     if (editMode) {
                         handler = this.changeDataType.bind(this, tree, record, dataComps[i], true, this.context);
                     } else {
-                        handler = this.addDataChild.bind(record, dataComps[i], {}, this.context);
+                        handler = this.addNewDataChild.bind(this, record, dataComps[i], this.context);
                     }
 
                     groups[group].push({
@@ -962,6 +962,30 @@ pimcore.object.classes.klass = Class.create({
         this.expand();
 
         return newNode;
+    },
+
+    addNewDataChild: function (record, type, context) {
+
+        if(pimcore.object.classes.data[type].prototype.supportsCustomName()) {
+            Ext.MessageBox.prompt(t('enter_the_name_of_the_new_item'), '',
+                function (button, value, object) {
+                    if (button == "ok" && !Ext.isEmpty(value)) {
+                        var node = this.addDataChild.bind(record, type, {
+                            name: value,
+                            title: value,
+                            datatype: 'data',
+                            fieldtype: type
+                        }, context)();
+                        node.getOwnerTree().getSelectionModel().select(node);
+                        this.onTreeNodeClick(null, node);
+                    }
+                }.bind(this)
+            );
+        } else {
+            var node = this.addDataChild.bind(record, type, {}, context)();
+            node.getOwnerTree().getSelectionModel().select(node);
+            this.onTreeNodeClick(null, node);
+        }
     },
 
     addDataChild: function (type, initData, context) {

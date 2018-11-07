@@ -96,6 +96,9 @@ pimcore.object.classes.data.email = Class.create(pimcore.object.classes.data.dat
         }
 
         return specificItems;
-    }
+    },
 
+    supportsCustomName: function () {
+        return false;
+    }
 });

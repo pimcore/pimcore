@@ -72,6 +72,9 @@ pimcore.object.classes.data.newsletterActive = Class.create(pimcore.object.class
         var nameField = this.layout.getComponent("standardSettings").getComponent("name");
         nameField.disable();
         return [];
-    }
+    },
 
+    supportsCustomName: function () {
+        return false;
+    }
 });

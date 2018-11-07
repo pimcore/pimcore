@@ -64,7 +64,7 @@ pimcore.object.classes.data.localizedfields = Class.create(pimcore.object.classe
             items: [
                 {
                     xtype: "form",
-                    title: t("general_settings"),
+                    title: '<b>' + t("localizedfields") + "</b>",
                     bodyStyle: "padding: 10px;",
                     defaults: {
                         labelWidth: 140,
@@ -178,5 +178,9 @@ pimcore.object.classes.data.localizedfields = Class.create(pimcore.object.classe
                     labelWidth: source.datax.labelWidth
                 });
         }
+    },
+
+    supportsCustomName: function () {
+        return false;
     }
 });

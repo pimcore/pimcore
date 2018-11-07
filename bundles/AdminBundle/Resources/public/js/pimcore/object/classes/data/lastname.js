@@ -106,6 +106,9 @@ pimcore.object.classes.data.lastname = Class.create(pimcore.object.classes.data.
                     columnLength: source.datax.columnLength
                 });
         }
-    }
+    },
 
+    supportsCustomName: function () {
+        return false;
+    }
 });

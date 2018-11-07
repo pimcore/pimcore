@@ -70,7 +70,7 @@ pimcore.object.classes.data.data = Class.create({
         var niceName = (this.getTypeName() ? this.getTypeName() : t(this.getType()));
 
         this.specificPanel = new Ext.form.FormPanel({
-            title: t("specific_settings") + " (" + niceName + ")",
+            title: t("specific_settings"),
             bodyStyle: "padding: 10px;",
             style: "margin: 10px 0 10px 0",
             items: [],
@@ -217,7 +217,6 @@ pimcore.object.classes.data.data = Class.create({
 
         this.standardSettingsForm = new Ext.form.FormPanel(
             {
-                title: t("general_settings") + " (" + niceName + ")",
                 bodyStyle: "padding: 10px;",
                 style: "margin: 0 0 10px 0",
                 defaults: {
@@ -242,6 +241,8 @@ pimcore.object.classes.data.data = Class.create({
 
 
         this.layout = new Ext.Panel({
+            title: '<b>' + this.datax.name + " (" + t("type") + ": " + niceName + ")</b>",
+            bodyStyle: 'border-top: 1px solid #606060 !important;',
             items: [
                 this.standardSettingsForm,
                 this.layoutSettingsForm,
@@ -356,6 +357,9 @@ pimcore.object.classes.data.data = Class.create({
 
     getContext: function() {
         return this.context;
-    }
+    },
 
+    supportsCustomName: function () {
+        return true;
+    }
 });

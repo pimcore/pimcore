@@ -68,5 +68,9 @@ pimcore.object.classes.data.gender = Class.create(pimcore.object.classes.data.da
 
         this.specificPanel.removeAll();
         return this.layout;
+    },
+
+    supportsCustomName: function () {
+        return false;
     }
 });
