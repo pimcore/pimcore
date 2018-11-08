@@ -59,9 +59,5 @@ pimcore.object.classes.data.targetGroup = Class.create(pimcore.object.classes.da
 
     getIconClass: function () {
         return "pimcore_icon_targetGroup";
-    },
-
-    supportsCustomName: function () {
-        return false;
     }
 });

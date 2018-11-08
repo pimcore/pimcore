@@ -106,9 +106,5 @@ pimcore.object.classes.data.firstname = Class.create(pimcore.object.classes.data
                     columnLength: source.datax.columnLength
                 });
         }
-    },
-
-    supportsCustomName: function () {
-        return false;
     }
 });

@@ -969,32 +969,19 @@ pimcore.object.classes.klass = Class.create({
     },
 
     addNewDataChild: function (record, type, context) {
+        var node = this.addDataChild.bind(record, type, {}, context)();
+        node.getOwnerTree().getSelectionModel().select(node);
+        this.onTreeNodeClick(null, node);
 
-        if(pimcore.object.classes.data[type].prototype.supportsCustomName()) {
-            Ext.MessageBox.prompt(t('enter_the_name_of_the_new_item'), '',
-                function (button, value, object) {
-                    if (button == "ok" && !Ext.isEmpty(value)) {
-                        var node = this.addDataChild.bind(record, type, {
-                            name: value,
-                            title: value,
-                            datatype: 'data',
-                            fieldtype: type
-                        }, context)();
-                        node.getOwnerTree().getSelectionModel().select(node);
-                        this.onTreeNodeClick(null, node);
-                    }
-                }.bind(this)
-            );
-        } else {
-            var node = this.addDataChild.bind(record, type, {}, context)();
-            node.getOwnerTree().getSelectionModel().select(node);
-            this.onTreeNodeClick(null, node);
+        var result = this.editpanel.query('field[name=name]');
+        if(result.length && typeof result[0]['focus'] == 'function') {
+            result[0].focus();
         }
     },
 
     addDataChild: function (type, initData, context) {
 
-        var nodeLabel = t(type);
+        var nodeLabel = '';
 
         if (initData) {
             if (initData.name) {

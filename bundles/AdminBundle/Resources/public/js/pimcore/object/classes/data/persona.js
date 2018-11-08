@@ -76,9 +76,5 @@ pimcore.object.classes.data.persona = Class.create(pimcore.object.classes.data.d
         var nameField = this.layout.getComponent("standardSettings").getComponent("name");
         nameField.disable();
         return [];
-    },
-
-    supportsCustomName: function () {
-        return false;
     }
 });

@@ -178,9 +178,5 @@ pimcore.object.classes.data.localizedfields = Class.create(pimcore.object.classe
                     labelWidth: source.datax.labelWidth
                 });
         }
-    },
-
-    supportsCustomName: function () {
-        return false;
     }
 });

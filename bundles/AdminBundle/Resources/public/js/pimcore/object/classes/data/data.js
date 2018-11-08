@@ -357,9 +357,5 @@ pimcore.object.classes.data.data = Class.create({
 
     getContext: function() {
         return this.context;
-    },
-
-    supportsCustomName: function () {
-        return true;
     }
 });

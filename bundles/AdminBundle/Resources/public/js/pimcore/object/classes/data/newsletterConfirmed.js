@@ -76,9 +76,5 @@ pimcore.object.classes.data.newsletterConfirmed = Class.create(pimcore.object.cl
         var noteditable  = this.layout.getComponent("standardSettings").getComponent("noteditable");
         noteditable.disable();
         return [];
-    },
-
-    supportsCustomName: function () {
-        return false;
     }
 });
