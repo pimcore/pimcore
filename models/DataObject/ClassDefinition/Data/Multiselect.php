@@ -535,4 +535,21 @@ class Multiselect extends Model\DataObject\ClassDefinition\Data
 
         return $this;
     }
+
+    /**
+     * @param $existingData
+     * @param $additionalData
+     *
+     * @return mixed
+     */
+    public function appendData($existingData, $additionalData)
+    {
+        if (!is_array($existingData)) {
+            $existingData = [];
+        }
+
+        $existingData = array_unique(array_merge($existingData, $additionalData));
+
+        return $existingData;
+    }
 }

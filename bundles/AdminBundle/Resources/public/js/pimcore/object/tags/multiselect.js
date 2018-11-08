@@ -15,6 +15,7 @@ pimcore.registerNS("pimcore.object.tags.multiselect");
 pimcore.object.tags.multiselect = Class.create(pimcore.object.tags.abstract, {
 
     type: "multiselect",
+    allowBatchAppend: true,
 
     initialize: function (data, fieldConfig) {
         this.data = data;
