@@ -337,7 +337,7 @@ class Objects extends Model\DataObject\ClassDefinition\Data\Relations\AbstractRe
                     } else {
                         $id = '??';
                     }
-                    throw new Element\ValidationException('Invalid object relation to object ['.$id.'] in field ' . $this->getName(), null, null);
+                    throw new Element\ValidationException('Invalid object relation to object ['.$id.'] in field ' . $this->getName(). " , tried to assign " . $o->getId(), null, null);
                 }
             }
 
