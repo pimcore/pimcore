@@ -197,7 +197,6 @@ pimcore.object.tags.geopoint = Class.create(pimcore.object.tags.geo.abstract, {
     },
 
     reverseGeocode: function (layerObj) {
-        console.log("ble");
         if (this.latitude.getValue() !== null && this.longitude.getValue() !== null) {
             var url = pimcore.settings.reverse_geocoding_url_template.replace('{lat}', this.latitude.getValue()).replace('{lon}', this.longitude.getValue());
             jQuery.getJSON(url, function (json) {

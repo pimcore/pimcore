@@ -64,8 +64,8 @@ pimcore.object.classes.data.localizedfields = Class.create(pimcore.object.classe
             items: [
                 {
                     xtype: "form",
-                    title: t("general_settings"),
-                    bodyStyle: "padding: 10px;",
+                    title: '<b>' + t("localizedfields") + "</b>",
+                    bodyStyle: 'padding: 10px; border-top: 1px solid #606060 !important;',
                     defaults: {
                         labelWidth: 140,
                         width: 300

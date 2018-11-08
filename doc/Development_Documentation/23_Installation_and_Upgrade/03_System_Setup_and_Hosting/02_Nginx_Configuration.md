@@ -82,12 +82,6 @@ server {
         add_header Cache-Control "public";
     }
 
-    # Installer
-    # Remove this if you don't need the web installer (anymore)
-    if (-f $document_root/install.php) {
-        rewrite ^/install(/?.*) /install.php last;
-    }
-
     location / {
         error_page 404 /meta/404;
         add_header "X-UA-Compatible" "IE=edge";

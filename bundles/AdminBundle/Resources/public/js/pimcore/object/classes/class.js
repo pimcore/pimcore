@@ -56,7 +56,7 @@ pimcore.object.classes.klass = Class.create({
             root: {
                 id: "0",
                 root: true,
-                text: t("base"),
+                text: t("general_settings"),
                 leaf: true,
                 iconCls: "pimcore_icon_class",
                 isTarget: true
@@ -314,7 +314,7 @@ pimcore.object.classes.klass = Class.create({
                     if (editMode) {
                         handler = this.changeDataType.bind(this, tree, record, dataComps[i], true, this.context);
                     } else {
-                        handler = this.addDataChild.bind(record, dataComps[i], {}, this.context);
+                        handler = this.addNewDataChild.bind(this, record, dataComps[i], this.context);
                     }
 
                     groups[group].push({
@@ -396,7 +396,11 @@ pimcore.object.classes.klass = Class.create({
                         layoutMenu.push({
                             text: pimcore.object.classes.layout[layouts[i]].prototype.getTypeName(),
                             iconCls: pimcore.object.classes.layout[layouts[i]].prototype.getIconClass(),
-                            handler: this.addLayoutChild.bind(record, layouts[i], null, this.context)
+                            handler: function (record, type, context) {
+                                var newNode = this.addLayoutChild.bind(record, type, null, context)();
+                                newNode.getOwnerTree().getSelectionModel().select(newNode);
+                                this.onTreeNodeClick(null, newNode);
+                            }.bind(this, record, layouts[i], this.context)
                         });
                     }
 
@@ -666,8 +670,8 @@ pimcore.object.classes.klass = Class.create({
         });
 
         this.rootPanel = new Ext.form.FormPanel({
-            title: t("basic_configuration"),
-            bodyStyle: "padding: 10px;",
+            title: '<b>' + t("general_settings") + '</b>',
+            bodyStyle: 'padding: 10px; border-top: 1px solid #606060 !important;',
             defaults: {
                 labelWidth: 200
             },
@@ -964,9 +968,20 @@ pimcore.object.classes.klass = Class.create({
         return newNode;
     },
 
+    addNewDataChild: function (record, type, context) {
+        var node = this.addDataChild.bind(record, type, {}, context)();
+        node.getOwnerTree().getSelectionModel().select(node);
+        this.onTreeNodeClick(null, node);
+
+        var result = this.editpanel.query('field[name=name]');
+        if(result.length && typeof result[0]['focus'] == 'function') {
+            result[0].focus();
+        }
+    },
+
     addDataChild: function (type, initData, context) {
 
-        var nodeLabel = t(type);
+        var nodeLabel = '';
 
         if (initData) {
             if (initData.name) {

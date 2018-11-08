@@ -31,12 +31,14 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
 
     protected function updateModificationInfos()
     {
+        $this->setVersionCount($this->getDao()->getVersionCountForUpdate() + 1);
+
+        if ($this->getVersionCount() > 4200000000) {
+            $this->setVersionCount(1);
+        }
+
         $updateTime = time();
         $this->setModificationDate($updateTime);
-        if ($this->getVersionCount() > 4200000000) {
-            $this->setVersionCount(0);
-        }
-        $this->setVersionCount($this->getVersionCount() + 1);
 
         if (!$this->getCreationDate()) {
             $this->setCreationDate($updateTime);

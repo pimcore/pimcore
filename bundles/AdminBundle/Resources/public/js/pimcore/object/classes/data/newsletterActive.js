@@ -73,5 +73,4 @@ pimcore.object.classes.data.newsletterActive = Class.create(pimcore.object.class
         nameField.disable();
         return [];
     }
-
 });

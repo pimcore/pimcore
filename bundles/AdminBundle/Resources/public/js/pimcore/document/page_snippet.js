@@ -225,6 +225,39 @@ pimcore.document.page_snippet = Class.create(pimcore.document.document, {
                         window.open(this.data.url);
                     }.bind(this)
                 });
+
+                buttons.push({
+                    tooltip: t("open_preview_in_new_window"),
+                    iconCls: "pimcore_icon_preview_new_window",
+                    scale: "medium",
+                    handler: function () {
+                        var date = new Date();
+                        var link = this.data.path + this.data.key;
+                        var linkParams = [];
+
+                        linkParams.push("pimcore_preview=true");
+                        linkParams.push("_dc=" + date.getTime());
+
+                        // add target group parameter if available
+                        if(this["edit"] && this.edit["targetGroup"]) {
+                            if(this.edit.targetGroup && this.edit.targetGroup.getValue()) {
+                                linkParams.push("_ptg=" + this.edit.targetGroup.getValue());
+                            }
+                        }
+
+                        if(linkParams.length) {
+                            link += "?" + linkParams.join("&");
+                        }
+
+                        if(this.isDirty()) {
+                            this.saveToSession(function () {
+                                window.open(link);
+                            });
+                        } else {
+                            window.open(link);
+                        }
+                    }.bind(this)
+                });
             }
 
             buttons.push("-");

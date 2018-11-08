@@ -15,6 +15,7 @@
 namespace Pimcore\Translation;
 
 use Pimcore\Cache;
+use Pimcore\Localization\LocaleService;
 use Pimcore\Model\Translation\AbstractTranslation;
 use Pimcore\Model\Translation\TranslationInterface;
 use Pimcore\Tool;
@@ -32,6 +33,11 @@ class Translator implements TranslatorInterface, TranslatorBagInterface
      * @var TranslatorInterface|TranslatorBagInterface
      */
     protected $translator;
+
+    /**
+     * @var LocaleService
+     */
+    protected $localeService;
 
     /**
      * @var bool
@@ -68,16 +74,18 @@ class Translator implements TranslatorInterface, TranslatorBagInterface
     protected $kernel;
 
     /**
-     * @param TranslatorInterface $translator The translator must implement TranslatorBagInterface
+     * @param TranslatorInterface $translator
+     * @param LocaleService $localeService
      * @param bool $caseInsensitive
      */
-    public function __construct(TranslatorInterface $translator, bool $caseInsensitive = false)
+    public function __construct(TranslatorInterface $translator, LocaleService $localeService, bool $caseInsensitive = false)
     {
         if (!$translator instanceof TranslatorBagInterface) {
             throw new InvalidArgumentException(sprintf('The Translator "%s" must implement TranslatorInterface and TranslatorBagInterface.', get_class($translator)));
         }
 
         $this->translator = $translator;
+        $this->localeService = $localeService;
         $this->selector = new MessageSelector();
 
         $this->caseInsensitive = $caseInsensitive;
@@ -99,7 +107,11 @@ class Translator implements TranslatorInterface, TranslatorBagInterface
         }
 
         $catalogue = $this->getCatalogue($locale);
-        $locale = $catalogue->getLocale();
+
+        if ($locale === null) {
+            $locale = $this->localeService->getLocale();
+        }
+
         $this->lazyInitialize($domain, $locale);
 
         $term = $this->getFromCatalogue($catalogue, (string)$id, $domain, $locale);
@@ -134,7 +146,11 @@ class Translator implements TranslatorInterface, TranslatorBagInterface
 
         $id = (string) $id;
         $catalogue = $this->getCatalogue($locale);
-        $locale = $catalogue->getLocale();
+
+        if ($locale === null) {
+            $locale = $this->localeService->getLocale();
+        }
+
         $this->lazyInitialize($domain, $locale);
 
         while (!$catalogue->defines($id, $domain)) {
@@ -256,11 +272,13 @@ class Translator implements TranslatorInterface, TranslatorBagInterface
                 }
 
                 // aliases support
-                $aliasesPath = $this->getKernel()->locateResource($this->getAdminPath() . '/aliases.json');
-                $aliases = json_decode(file_get_contents($aliasesPath), true);
-                foreach ($aliases as $aliasTarget => $aliasSource) {
-                    if (isset($data[$aliasSource]) && !isset($data[$aliasTarget])) {
-                        $data[$aliasTarget] = $data[$aliasSource];
+                if ($domain == 'admin') {
+                    $aliasesPath = $this->getKernel()->locateResource($this->getAdminPath() . '/aliases.json');
+                    $aliases = json_decode(file_get_contents($aliasesPath), true);
+                    foreach ($aliases as $aliasTarget => $aliasSource) {
+                        if (isset($data[$aliasSource]) && (!isset($data[$aliasTarget]) || empty($data[$aliasTarget]))) {
+                            $data[$aliasTarget] = $data[$aliasSource];
+                        }
                     }
                 }
 

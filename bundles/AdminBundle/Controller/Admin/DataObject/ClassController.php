@@ -857,6 +857,13 @@ class ClassController extends AdminController implements EventedControllerInterf
             $definitions[] = $group;
         }
 
+        $event = new GenericEvent($this, [
+            'list' => $definitions,
+            'objectId' => $request->get('object_id')
+        ]);
+        \Pimcore::getEventDispatcher()->dispatch(AdminEvents::CLASS_FIELDCOLLECTION_LIST_PRE_SEND_DATA, $event);
+        $definitions = $event->getArgument('list');
+
         if ($forObjectEditor) {
             return $this->adminJson(['fieldcollections' => $definitions, 'layoutDefinitions' => $layoutDefinitions]);
         } else {
@@ -907,6 +914,13 @@ class ClassController extends AdminController implements EventedControllerInterf
 
             $list = $filteredList;
         }
+
+        $event = new GenericEvent($this, [
+            'list' => $list,
+            'objectId' => $request->get('object_id')
+        ]);
+        \Pimcore::getEventDispatcher()->dispatch(AdminEvents::CLASS_FIELDCOLLECTION_LIST_PRE_SEND_DATA, $event);
+        $list = $event->getArgument('list');
 
         return $this->adminJson(['fieldcollections' => $list]);
     }

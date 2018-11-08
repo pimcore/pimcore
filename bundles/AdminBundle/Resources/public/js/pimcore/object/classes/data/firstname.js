@@ -107,5 +107,4 @@ pimcore.object.classes.data.firstname = Class.create(pimcore.object.classes.data
                 });
         }
     }
-
 });

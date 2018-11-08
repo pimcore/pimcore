@@ -14,7 +14,7 @@ immediately which objects are of the type "football".
 
 ![Class Icons](../../../img/classes-icons1.png)
 
-Icons that come along with Pimcore by default can be found in `http://your-domain/bundles/pimcoreadmin/html/icons.php`.
+Icons that come along with Pimcore by default can be found in `<YOUR-DOMAN>/admin/misc/icon-list` (backend session needed).
 
 #### Icon Sizes
 As icons SVG graphics are recommended. If you use pixel graphics, maximum size is 18x20 pixels. 

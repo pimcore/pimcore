@@ -77,5 +77,4 @@ pimcore.object.classes.data.newsletterConfirmed = Class.create(pimcore.object.cl
         noteditable.disable();
         return [];
     }
-
 });

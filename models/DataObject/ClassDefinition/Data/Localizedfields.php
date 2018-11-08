@@ -1070,9 +1070,8 @@ class Localizedfields extends Model\DataObject\ClassDefinition\Data
         }
 
         $data = $this->getDataForValidity($data, $languages);
+        $validationExceptions = [];
         if (!$omitMandatoryCheck) {
-            $validationExceptions = [];
-
             foreach ($languages as $language) {
                 foreach ($this->getFieldDefinitions() as $fd) {
                     try {
@@ -1089,7 +1088,7 @@ class Localizedfields extends Model\DataObject\ClassDefinition\Data
             }
         }
 
-        if ($validationExceptions) {
+        if (count($validationExceptions) > 0) {
             $aggregatedExceptions = new Model\Element\ValidationException();
             $aggregatedExceptions->setSubItems($validationExceptions);
             throw $aggregatedExceptions;

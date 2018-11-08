@@ -323,6 +323,16 @@ class Dao extends Model\Element\Dao
     }
 
     /**
+     * @return int
+     */
+    public function getVersionCountForUpdate(): int
+    {
+        $versionCount = $this->db->fetchOne('SELECT versionCount FROM assets WHERE id = ? FOR UPDATE', $this->model->getId());
+
+        return $versionCount;
+    }
+
+    /**
      * quick test if there are childs
      *
      * @return bool

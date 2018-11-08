@@ -249,6 +249,16 @@ class Dao extends Model\Element\Dao
     }
 
     /**
+     * @return int
+     */
+    public function getVersionCountForUpdate(): int
+    {
+        $versionCount = $this->db->fetchOne('SELECT versionCount FROM documents WHERE id = ? FOR UPDATE', $this->model->getId());
+
+        return $versionCount;
+    }
+
+    /**
      * Returns properties for the object from the database and assigns these.
      *
      * @param bool $onlyInherited

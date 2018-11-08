@@ -482,7 +482,7 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
     getRootPanel: function() {
 
         this.rootPanel = new Ext.form.Panel({
-            title: t("basic_configuration"),
+            title: t("general_settings"),
             bodyStyle: "padding: 10px;",
             defaults: {
                 labelWidth: 200
