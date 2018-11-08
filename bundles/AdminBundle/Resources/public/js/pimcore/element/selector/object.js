@@ -299,7 +299,7 @@ pimcore.element.selector.object = Class.create(pimcore.element.selector.abstract
                 params: {
                     id: this.classId,
                     objectId: this.object.id,
-                    gridtype: "grid",
+                    gridtype: "search",
                     gridConfigId: this.settings ? this.settings.gridConfigId : null,
                     searchType: "search"
                 },
@@ -485,7 +485,7 @@ pimcore.element.selector.object = Class.create(pimcore.element.selector.abstract
                     params: {
                         id: this.classId,
                         objectId: this.object.id,
-                        gridtype: "grid",
+                        gridtype: "search",
                         searchType: this.searchType
                     },
                     success: function(response) {
@@ -574,7 +574,7 @@ pimcore.element.selector.object = Class.create(pimcore.element.selector.abstract
                 params: {
                     id: this.classId,
                     objectId: this.object.id,
-                    gridtype: "grid",
+                    gridtype: "search",
                     gridConfigId: this.settings ? this.settings.gridConfigId : null,
                     searchType: this.searchType
                 },
@@ -602,7 +602,7 @@ pimcore.element.selector.object = Class.create(pimcore.element.selector.abstract
                     id: this.classId,
                     objectId:
                     this.object.id,
-                    gridtype: "grid",
+                    gridtype: "search",
                     gridConfigId: this.settings.gridConfigId,
                     searchType: this.searchType
                 },
