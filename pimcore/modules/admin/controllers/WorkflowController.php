@@ -14,7 +14,6 @@
 
 
 use Pimcore\WorkflowManagement\Workflow;
-//use Pimcore\Model\Object
 use Pimcore\Model\Object\Concrete as ConcreteObject;
 use Pimcore\Model\Document;
 use Pimcore\Model\Asset;

@@ -15,7 +15,6 @@
 use Pimcore\Tool;
 use Pimcore\File;
 use Pimcore\Model\Translation;
-//use Pimcore\Model\Object
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
 use Pimcore\Model;

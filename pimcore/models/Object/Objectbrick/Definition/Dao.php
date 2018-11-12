@@ -17,7 +17,6 @@
 namespace Pimcore\Model\Object\Objectbrick\Definition;
 
 use Pimcore\Model;
-//use Pimcore\Model\Object
 
 /**
  * @property \Pimcore\Model\Object\Objectbrick\Definition $model

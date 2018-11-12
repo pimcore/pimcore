@@ -17,7 +17,6 @@
 use Pimcore\Logger;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Document;
-//use Pimcore\Model\Object
 use Pimcore\Model\Element;
 use Pimcore\Model\Webservice;
 use Pimcore\Tool;

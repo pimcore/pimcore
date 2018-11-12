@@ -15,7 +15,6 @@
 use Pimcore\Tool;
 use Pimcore\Model\User;
 use Pimcore\Model\Element;
-//use Pimcore\Model\Object
 use Pimcore\Logger;
 
 class Admin_UserController extends \Pimcore\Controller\Action\Admin

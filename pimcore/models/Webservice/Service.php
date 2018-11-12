@@ -19,7 +19,6 @@ namespace Pimcore\Model\Webservice;
 use Pimcore\Model\Document;
 use Pimcore\Model\Webservice;
 use Pimcore\Model\User;
-//use Pimcore\Model\Object
 use Pimcore\Model\Asset;
 use Pimcore\Logger;
 

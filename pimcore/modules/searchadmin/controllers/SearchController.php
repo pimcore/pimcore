@@ -15,7 +15,6 @@
 use Pimcore\Model\Asset;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
-//use Pimcore\Model\Object
 use Pimcore\Model\Search\Backend\Data;
 
 class Searchadmin_SearchController extends \Pimcore\Controller\Action\Admin

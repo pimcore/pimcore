@@ -17,7 +17,6 @@
 namespace Pimcore\Model\Object\ClassDefinition\Data;
 
 use Pimcore\Model;
-//use Pimcore\Model\Object
 
 class Slider extends Model\Object\ClassDefinition\Data
 {

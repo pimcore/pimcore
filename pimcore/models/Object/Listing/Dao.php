@@ -17,7 +17,6 @@
 namespace Pimcore\Model\Object\Listing;
 
 use Pimcore\Model;
-//use Pimcore\Model\Object
 use Prophecy\Comparator\ClosureComparator;
 
 /**

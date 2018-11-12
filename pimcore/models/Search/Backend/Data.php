@@ -16,7 +16,6 @@ namespace Pimcore\Model\Search\Backend;
 
 use Pimcore\Model\Asset;
 use Pimcore\Model\Document;
-//use Pimcore\Model\Object
 use Pimcore\Model\Element;
 use Pimcore\Logger;
 use ForceUTF8\Encoding;

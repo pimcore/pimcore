@@ -18,7 +18,6 @@
 namespace Pimcore\Model\Object\KeyValue;
 
 use Pimcore\Model;
-//use Pimcore\Model\Object
 
 /**
  * Class Helper

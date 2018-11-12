@@ -14,7 +14,6 @@
 
 use Pimcore\File;
 use Pimcore\Logger;
-//use Pimcore\Model\Object
 use Pimcore\Model\Element;
 use Pimcore\Tool;
 

@@ -20,7 +20,6 @@ use Pimcore\Model;
 use Pimcore\Model\Element;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Document;
-//use Pimcore\Model\Object
 
 class Multihref extends Model\Object\ClassDefinition\Data\Relations\AbstractRelations
 {

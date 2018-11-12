@@ -15,7 +15,6 @@
 use Pimcore\Model;
 use Pimcore\Model\Document;
 use Pimcore\Model\Asset;
-//use Pimcore\Model\Object
 use Pimcore\Logger;
 
 class Admin_ClassController extends \Pimcore\Controller\Action\Admin

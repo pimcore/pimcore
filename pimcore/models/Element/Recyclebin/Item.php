@@ -21,7 +21,6 @@ use Pimcore\File;
 use Pimcore\Tool\Serialize;
 use Pimcore\Model\Document;
 use Pimcore\Model\Asset;
-//use Pimcore\Model\Object
 use Pimcore\Model\Element;
 
 /**

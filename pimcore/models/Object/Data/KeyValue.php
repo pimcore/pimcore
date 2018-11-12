@@ -17,7 +17,6 @@
 namespace Pimcore\Model\Object\Data;
 
 use Pimcore\Model;
-//use Pimcore\Model\Object
 
 /**
  * @deprecated will be removed entirely in Pimcore 5

@@ -20,7 +20,6 @@ use Pimcore\Tool;
 use Pimcore\Tool\Authentication;
 use Pimcore\Tool\Session;
 use Pimcore\Model\Document;
-//use Pimcore\Model\Object
 use Pimcore\Model;
 use Pimcore\Translate;
 use Pimcore\Logger;

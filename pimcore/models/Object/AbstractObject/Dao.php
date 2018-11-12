@@ -17,7 +17,6 @@
 namespace Pimcore\Model\Object\AbstractObject;
 
 use Pimcore\Model;
-//use Pimcore\Model\Object
 use Pimcore\Logger;
 
 /**

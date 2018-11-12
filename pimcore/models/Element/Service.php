@@ -19,7 +19,6 @@ namespace Pimcore\Model\Element;
 use Pimcore\Model;
 use Pimcore\Model\Document;
 use Pimcore\Model\Asset;
-//use Pimcore\Model\Object
 use Pimcore\Model\Dependency;
 use Pimcore\File;
 use Pimcore\Tool;

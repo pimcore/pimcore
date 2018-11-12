@@ -17,7 +17,6 @@ namespace Pimcore\Console\Command;
 use Pimcore\Cache;
 use Pimcore\Console\AbstractCommand;
 use Pimcore\Model\Object\ClassDefinition;
-//use Pimcore\Model\Object
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;

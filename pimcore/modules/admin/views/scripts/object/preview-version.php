@@ -10,8 +10,7 @@
 
 <?php
 
-    //use Pimcore\Model\Object
-
+    
     $fields = $this->object->getClass()->getFieldDefinitions();
 
 ?>

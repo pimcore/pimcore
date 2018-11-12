@@ -20,7 +20,6 @@ use Pimcore\Model;
 use Pimcore\Model\Element;
 use Pimcore\Model\Document;
 use Pimcore\Model\Asset;
-//use Pimcore\Model\Object
 
 /**
  * @method \Pimcore\Model\Document\Tag\Dao getDao()

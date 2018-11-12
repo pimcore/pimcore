@@ -18,7 +18,6 @@ use Pimcore\Cache;
 use Pimcore\Model\Listing\AbstractListing;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
-//use Pimcore\Model\Object
 use Pimcore\Model\Asset;
 use Pimcore\Logger;
 

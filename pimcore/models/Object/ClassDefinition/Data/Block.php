@@ -19,7 +19,6 @@ namespace Pimcore\Model\Object\ClassDefinition\Data;
 use Pimcore\Db;
 use Pimcore\Model;
 use Pimcore\Model\Element;
-//use Pimcore\Model\Object
 use Pimcore\Tool\Serialize;
 use Pimcore\Logger;
 

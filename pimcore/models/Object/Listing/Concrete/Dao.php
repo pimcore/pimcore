@@ -17,7 +17,6 @@
 namespace Pimcore\Model\Object\Listing\Concrete;
 
 use Pimcore\Model;
-//use Pimcore\Model\Object
 use Pimcore\Tool;
 
 /**

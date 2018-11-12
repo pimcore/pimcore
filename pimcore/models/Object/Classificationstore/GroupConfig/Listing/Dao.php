@@ -17,7 +17,6 @@
 namespace Pimcore\Model\Object\Classificationstore\GroupConfig\Listing;
 
 use Pimcore\Model;
-//use Pimcore\Model\Object
 
 /**
  * @property \Pimcore\Model\Object\Classificationstore\GroupConfig\Listing $model

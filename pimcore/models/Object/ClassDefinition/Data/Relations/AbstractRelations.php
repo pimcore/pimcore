@@ -17,7 +17,6 @@
 namespace Pimcore\Model\Object\ClassDefinition\Data\Relations;
 
 use Pimcore\Model;
-//use Pimcore\Model\Object
 use Pimcore\Model\Element;
 use Pimcore\Db;
 use Pimcore\Tool\Admin;

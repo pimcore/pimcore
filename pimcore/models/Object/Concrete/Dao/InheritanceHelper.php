@@ -17,7 +17,6 @@
 namespace Pimcore\Model\Object\Concrete\Dao;
 
 use Pimcore\Model;
-//use Pimcore\Model\Object
 
 class InheritanceHelper
 {

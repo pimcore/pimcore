@@ -18,7 +18,6 @@ namespace Pimcore\Model\Object\ClassDefinition\Data;
 
 use Pimcore\Model;
 use Pimcore\Tool\Serialize;
-//use Pimcore\Model\Object
 
 class Table extends Model\Object\ClassDefinition\Data
 {

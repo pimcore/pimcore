@@ -17,7 +17,6 @@
 namespace Pimcore\Model\Object\ClassDefinition\Data;
 
 use Pimcore\Model;
-//use Pimcore\Model\Object
 
 class StructuredTable extends Model\Object\ClassDefinition\Data
 {

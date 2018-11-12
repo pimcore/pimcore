@@ -17,7 +17,6 @@
 namespace Pimcore\Model\Object\Objectbrick\Data;
 
 use Pimcore\Model;
-//use Pimcore\Model\Object
 use Pimcore\Logger;
 
 /**

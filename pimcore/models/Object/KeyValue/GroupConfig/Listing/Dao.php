@@ -17,7 +17,6 @@
 namespace Pimcore\Model\Object\KeyValue\GroupConfig\Listing;
 
 use Pimcore\Model;
-//use Pimcore\Model\Object
 
 /**
  * @deprecated will be removed entirely in Pimcore 5

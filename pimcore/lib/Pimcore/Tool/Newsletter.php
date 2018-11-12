@@ -17,7 +17,6 @@ namespace Pimcore\Tool;
 use Pimcore\Document\Newsletter\SendingParamContainer;
 use Pimcore\Mail;
 use Pimcore\Tool;
-//use Pimcore\Model\Object
 use Pimcore\Model\Document;
 use Pimcore\Model;
 use Pimcore\Logger;

@@ -17,7 +17,6 @@
 namespace Pimcore\Model\Object\Fieldcollection;
 
 use Pimcore\Model;
-//use Pimcore\Model\Object
 
 /**
  * @property \Pimcore\Model\Object\Fieldcollection $model

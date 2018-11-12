@@ -12,7 +12,6 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-//use Pimcore\Model\Object
 use Pimcore\Model\Object\Classificationstore;
 use Pimcore\Db;
 

@@ -20,7 +20,6 @@ use Pimcore\Model;
 use Pimcore\Model\Webservice;
 use Pimcore\Model\Element;
 use Pimcore\Model\Asset;
-//use Pimcore\Model\Object
 use Pimcore\Model\Document;
 
 class Service

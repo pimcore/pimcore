@@ -17,7 +17,6 @@
 namespace Pimcore\Model\Object\Localizedfield;
 
 use Pimcore\Model;
-//use Pimcore\Model\Object
 use Pimcore\Tool;
 use Pimcore\Logger;
 

@@ -13,7 +13,6 @@
  */
 
 use Pimcore\Db;
-//use Pimcore\Model\Object
 use Pimcore\Model\Object\KeyValue;
 use Pimcore\Logger;
 

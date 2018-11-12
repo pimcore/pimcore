@@ -19,7 +19,6 @@ namespace Pimcore\Model\Element\Note;
 use Pimcore\Model;
 use Pimcore\Model\Document;
 use Pimcore\Model\Asset;
-//use Pimcore\Model\Object
 
 /**
  * @property \Pimcore\Model\Element\Note $model

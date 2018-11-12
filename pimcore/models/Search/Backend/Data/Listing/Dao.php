@@ -16,7 +16,6 @@ namespace Pimcore\Model\Search\Backend\Data\Listing;
 
 use Pimcore\Model\Document;
 use Pimcore\Model\Asset;
-//use Pimcore\Model\Object
 use Pimcore\Model\Search;
 use Pimcore\Logger;
 

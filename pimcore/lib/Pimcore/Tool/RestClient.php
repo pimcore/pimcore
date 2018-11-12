@@ -18,7 +18,6 @@ use Pimcore\Tool\RestClient\Exception;
 use Pimcore\Tool;
 use Pimcore\Model;
 use Pimcore\Model\User;
-//use Pimcore\Model\Object
 use Pimcore\Model\Document;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Webservice;

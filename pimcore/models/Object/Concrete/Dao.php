@@ -17,7 +17,6 @@
 namespace Pimcore\Model\Object\Concrete;
 
 use Pimcore\Model;
-//use Pimcore\Model\Object
 use Pimcore\Logger;
 
 /**
