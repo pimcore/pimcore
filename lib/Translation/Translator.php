@@ -109,7 +109,10 @@ class Translator implements TranslatorInterface, TranslatorBagInterface
         $catalogue = $this->getCatalogue($locale);
 
         if ($locale === null) {
-            $locale = $this->localeService->getLocale();
+            $locale = $this->localeService->findLocale();
+            if(empty($locale)) {
+                $locale = $catalogue->getLocale();
+            }
         }
 
         $this->lazyInitialize($domain, $locale);
