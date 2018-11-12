@@ -20,7 +20,7 @@ use Pimcore\Model;
 use Pimcore\Model\Webservice;
 use Pimcore\Logger;
 
-class Concrete extends Model\Webservice\Data\Object
+class Concrete extends Model\Webservice\Data\ConcreteObject
 {
 
     /**
