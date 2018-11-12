@@ -110,7 +110,7 @@ class Translator implements TranslatorInterface, TranslatorBagInterface
 
         if ($locale === null) {
             $locale = $this->localeService->findLocale();
-            if(empty($locale)) {
+            if (empty($locale)) {
                 $locale = $catalogue->getLocale();
             }
         }
