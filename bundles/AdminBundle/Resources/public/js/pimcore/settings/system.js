@@ -1334,7 +1334,7 @@ pimcore.settings.system = Class.create({
             smtpFieldSet.show();
         } else {
             smtpFieldSet.hide();
-            Ext.each(smtpFieldSet.findByType("textfield"), function (item) {
+            Ext.each(smtpFieldSet.query("textfield"), function (item) {
                 item.setValue("");
             });
         }
