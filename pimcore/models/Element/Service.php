@@ -242,7 +242,29 @@ class Service extends Model\AbstractModel
         return $element;
     }
 
-
+    /**
+     * @param string|ElementInterface $element
+     *
+     * @return string
+     *
+     * @throws \Exception
+     */
+    public static function getBaseClassNameForElement($element)
+    {
+        if ($element instanceof ElementInterface) {
+            $elementType = self::getElementType($element);
+        } elseif (is_string($element)) {
+            $elementType = $element;
+        } else {
+            throw new \Exception('Wrong type given for getBaseClassNameForElement(), ElementInterface and string are allowed');
+        }
+        $baseClass = ucfirst($elementType);
+        if ($elementType == 'object') {
+            $baseClass = 'DataObject';
+        }
+        return $baseClass;
+    }
+    
     /**
      * Returns a uniqe key for the element in the $target-Path (recursive)
      * @static

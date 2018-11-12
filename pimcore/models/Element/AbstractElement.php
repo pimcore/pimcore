@@ -137,12 +137,8 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
      */
     public function getUserPermissions()
     {
-        $elementType = Service::getElementType($this);
-        if ($elementType === 'object'){
-            $vars = get_class_vars("\\Pimcore\\Model\\User\\Workspace\\" . ucfirst($elementType) . 'Workspace');
-        }else{
-            $vars = get_class_vars("\\Pimcore\\Model\\User\\Workspace\\" . ucfirst($elementType));
-        }
+        $workspaceClass = Service::getBaseClassNameForElement($this);
+        $vars = get_class_vars('\\Pimcore\\Model\\User\\Workspace\\' . $workspaceClass);
         $ignored = ["userId", "cid", "cpath", "dao"];
         $permissions = [];
 
