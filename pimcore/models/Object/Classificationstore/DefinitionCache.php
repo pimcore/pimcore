@@ -17,7 +17,7 @@
 namespace Pimcore\Model\Object\Classificationstore;
 
 use Pimcore\Model;
-use Pimcore\Model\Object;
+//use Pimcore\Model\Object
 use Pimcore\Tool;
 
 class DefinitionCache

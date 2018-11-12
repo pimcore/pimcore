@@ -18,7 +18,7 @@ namespace Pimcore\Model\Object\ClassDefinition\Data;
 
 use Pimcore\Model;
 use Pimcore\Model\Element;
-use Pimcore\Model\Object;
+//use Pimcore\Model\Object
 
 class ExternalImage extends Model\Object\ClassDefinition\Data
 {
@@ -301,7 +301,7 @@ class ExternalImage extends Model\Object\ClassDefinition\Data
      */
     public function isEmpty($data)
     {
-        if ($data instanceof Object\Data\ExternalImage and $data->getUrl()) {
+        if ($data instanceof \Pimcore\Model\Object\Data\ExternalImage and $data->getUrl()) {
             return false;
         }
 

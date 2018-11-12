@@ -35,7 +35,7 @@ class Dao extends Model\Dao\AbstractDao
             $tableName = "users_workspaces_asset";
         } elseif ($this->model instanceof Workspace\Document) {
             $tableName = "users_workspaces_document";
-        } elseif ($this->model instanceof Workspace\Object) {
+        } elseif ($this->model instanceof Workspace\ObjectWorkspace) {
             $tableName = "users_workspaces_object";
         }
 

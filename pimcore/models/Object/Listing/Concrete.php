@@ -17,7 +17,7 @@
 namespace Pimcore\Model\Object\Listing;
 
 use Pimcore\Model;
-use Pimcore\Model\Object;
+//use Pimcore\Model\Object
 
 /**
  * @method \Pimcore\Model\Object\Listing\Concrete\Dao getDao()
@@ -110,7 +110,7 @@ abstract class Concrete extends Model\Object\Listing
      */
     public function getClass()
     {
-        $class = Object\ClassDefinition::getById($this->getClassId());
+        $class = \Pimcore\Model\Object\ClassDefinition::getById($this->getClassId());
 
         return $class;
     }
@@ -171,7 +171,7 @@ abstract class Concrete extends Model\Object\Listing
             throw new \Exception("No fieldcollectiontype given");
         }
 
-        Object\Fieldcollection\Definition::getByKey($type);
+        \Pimcore\Model\Object\Fieldcollection\Definition::getByKey($type);
         $this->fieldCollectionConfigs[] = ["type" => $type, "fieldname" => $fieldname];
         ;
     }
@@ -215,7 +215,7 @@ abstract class Concrete extends Model\Object\Listing
             throw new \Exception("No objectbrick given");
         }
 
-        Object\Objectbrick\Definition::getByKey($type);
+        \Pimcore\Model\Object\Objectbrick\Definition::getByKey($type);
         if (!in_array($type, $this->objectBrickConfigs)) {
             $this->objectBrickConfigs[] = $type;
         }

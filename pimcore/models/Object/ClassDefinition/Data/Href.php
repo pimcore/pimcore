@@ -17,7 +17,7 @@
 namespace Pimcore\Model\Object\ClassDefinition\Data;
 
 use Pimcore\Model;
-use Pimcore\Model\Object;
+//use Pimcore\Model\Object
 use Pimcore\Model\Asset;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
@@ -198,7 +198,7 @@ class Href extends Model\Object\ClassDefinition\Data\Relations\AbstractRelations
 
     /**
      * @see Object\ClassDefinition\Data::getDataForResource
-     * @param Asset | Document | Object\AbstractObject $data
+     * @param Asset | Document | \Pimcore\Model\Object\AbstractObject $data
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
      * @return array
@@ -312,7 +312,7 @@ class Href extends Model\Object\ClassDefinition\Data\Relations\AbstractRelations
 
     /**
      * @see Object\ClassDefinition\Data::getVersionPreview
-     * @param Document | Asset | Object\AbstractObject $data
+     * @param Document | Asset | \Pimcore\Model\Object\AbstractObject $data
      * @param null|Object\AbstractObject $object
      * @param mixed $params
      * @return string
@@ -361,7 +361,7 @@ class Href extends Model\Object\ClassDefinition\Data\Relations\AbstractRelations
             $allow = $this->allowDocumentRelation($data);
         } elseif ($data instanceof Asset) {
             $allow = $this->allowAssetRelation($data);
-        } elseif ($data instanceof Object\AbstractObject) {
+        } elseif ($data instanceof \Pimcore\Model\Object\AbstractObject) {
             $allow = $this->allowObjectRelation($data);
         } elseif (empty($data)) {
             $allow = true;
@@ -413,7 +413,7 @@ class Href extends Model\Object\ClassDefinition\Data\Relations\AbstractRelations
                 $value = $el;
             } elseif ($el = Document::getByPath($importValue)) {
                 $value = $el;
-            } elseif ($el = Object::getByPath($importValue)) {
+            } elseif ($el = \Pimcore\Model\Object\AbstractObject::getByPath($importValue)) {
                 $value = $el;
             }
         }
@@ -533,7 +533,7 @@ class Href extends Model\Object\ClassDefinition\Data\Relations\AbstractRelations
     public function preGetData($object, $params = [])
     {
         $data = null;
-        if ($object instanceof Object\Concrete) {
+        if ($object instanceof \Pimcore\Model\Object\Concrete) {
             $data = $object->{$this->getName()};
 
             if ($this->getLazyLoading() and !in_array($this->getName(), $object->getO__loadedLazyFields())) {
@@ -544,15 +544,15 @@ class Href extends Model\Object\ClassDefinition\Data\Relations\AbstractRelations
                     $object->$setter($data);
                 }
             }
-        } elseif ($object instanceof Object\Localizedfield) {
+        } elseif ($object instanceof \Pimcore\Model\Object\Localizedfield) {
             $data = $params["data"];
-        } elseif ($object instanceof Object\Fieldcollection\Data\AbstractData) {
+        } elseif ($object instanceof \Pimcore\Model\Object\Fieldcollection\Data\AbstractData) {
             $data = $object->{$this->getName()};
-        } elseif ($object instanceof Object\Objectbrick\Data\AbstractData) {
+        } elseif ($object instanceof \Pimcore\Model\Object\Objectbrick\Data\AbstractData) {
             $data = $object->{$this->getName()};
         }
 
-        if (Object\AbstractObject::doHideUnpublished() and ($data instanceof Element\ElementInterface)) {
+        if (\Pimcore\Model\Object\AbstractObject::doHideUnpublished() and ($data instanceof Element\ElementInterface)) {
             if (!Element\Service::isPublished($data)) {
                 return null;
             }
@@ -569,7 +569,7 @@ class Href extends Model\Object\ClassDefinition\Data\Relations\AbstractRelations
      */
     public function preSetData($object, $data, $params = [])
     {
-        if ($object instanceof Object\Concrete) {
+        if ($object instanceof \Pimcore\Model\Object\Concrete) {
             if ($this->getLazyLoading() and !in_array($this->getName(), $object->getO__loadedLazyFields())) {
                 $object->addO__loadedLazyField($this->getName());
             }
@@ -636,7 +636,7 @@ class Href extends Model\Object\ClassDefinition\Data\Relations\AbstractRelations
     /**
      * @param Object\ClassDefinition\Data $masterDefinition
      */
-    public function synchronizeWithMasterDefinition(Object\ClassDefinition\Data $masterDefinition)
+    public function synchronizeWithMasterDefinition(\Pimcore\Model\Object\ClassDefinition\Data $masterDefinition)
     {
         $this->assetUploadPath = $masterDefinition->assetUploadPath;
         $this->relationType = $masterDefinition->relationType;

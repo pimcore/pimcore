@@ -17,7 +17,7 @@
 namespace Pimcore\Model\Object\ClassDefinition\Data;
 
 use Pimcore\Model;
-use Pimcore\Model\Object;
+//use Pimcore\Model\Object
 use Pimcore\Tool\Serialize;
 
 class Geopolygon extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo
@@ -125,7 +125,7 @@ class Geopolygon extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo
         if (is_array($data)) {
             $points = [];
             foreach ($data as $point) {
-                $points[] = new Object\Data\Geopoint($point["longitude"], $point["latitude"]);
+                $points[] = new \Pimcore\Model\Object\Data\Geopoint($point["longitude"], $point["latitude"]);
             }
 
             return $points;
@@ -184,7 +184,7 @@ class Geopolygon extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo
         if (is_array($rows)) {
             foreach ($rows as $row) {
                 $coords = explode(";", $row);
-                $points[] = new  Object\Data\Geopoint($coords[1], $coords[0]);
+                $points[] = new \Pimcore\Model\Object\Data\Geopoint($coords[1], $coords[0]);
             }
         }
 
@@ -234,7 +234,7 @@ class Geopolygon extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo
             foreach ($value as $point) {
                 $point = (array) $point;
                 if ($point["longitude"]!=null and  $point["latitude"]!=null) {
-                    $points[] = new Object\Data\Geopoint($point["longitude"], $point["latitude"]);
+                    $points[] = new \Pimcore\Model\Object\Data\Geopoint($point["longitude"], $point["latitude"]);
                 } else {
                     throw new \Exception("cannot get values from web service import - invalid data");
                 }
@@ -326,7 +326,7 @@ class Geopolygon extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo
             $result = [];
             if (is_array($value)) {
                 foreach ($value as $point) {
-                    $newPoint = new Object\Data\Geopoint($point[1], $point[1]);
+                    $newPoint = new \Pimcore\Model\Object\Data\Geopoint($point[1], $point[1]);
                     $newPoint->setLatitude($point[0]);
                     $newPoint->setLongitude($point[1]);
                     $result[] = $newPoint;

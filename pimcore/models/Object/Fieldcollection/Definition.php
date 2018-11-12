@@ -17,7 +17,7 @@
 namespace Pimcore\Model\Object\Fieldcollection;
 
 use Pimcore\Model;
-use Pimcore\Model\Object;
+//use Pimcore\Model\Object
 use Pimcore\File;
 
 /**
@@ -151,7 +151,7 @@ class Definition extends Model\AbstractModel
      */
     public function extractDataDefinitions($def)
     {
-        if ($def instanceof Object\ClassDefinition\Layout) {
+        if ($def instanceof \Pimcore\Model\Object\ClassDefinition\Layout) {
             if ($def->hasChilds()) {
                 foreach ($def->getChilds() as $child) {
                     $this->extractDataDefinitions($child);
@@ -159,7 +159,7 @@ class Definition extends Model\AbstractModel
             }
         }
 
-        if ($def instanceof Object\ClassDefinition\Data) {
+        if ($def instanceof \Pimcore\Model\Object\ClassDefinition\Data) {
             $this->addFieldDefinition($def->getName(), $def);
         }
     }
@@ -225,7 +225,7 @@ class Definition extends Model\AbstractModel
         \Pimcore\File::put($definitionFile, $data);
 
 
-        $extendClass = "Object\\Fieldcollection\\Data\\AbstractData";
+        $extendClass = "\\Pimcore\\Model\\Object\\Fieldcollection\\Data\\AbstractData";
         if ($this->getParentClass()) {
             $extendClass = $this->getParentClass();
             $extendClass = "\\" . ltrim($extendClass, "\\");
@@ -239,7 +239,7 @@ class Definition extends Model\AbstractModel
         $cd .= "\n\n";
         $cd .= "namespace Pimcore\\Model\\Object\\Fieldcollection\\Data;";
         $cd .= "\n\n";
-        $cd .= "use Pimcore\\Model\\Object;";
+        $cd .= "//use Pimcore\\Model\\Object;";
         $cd .= "\n\n";
 
         $cd .= "class " . ucfirst($this->getKey()) . " extends " . $extendClass . "  {";
@@ -265,7 +265,7 @@ class Definition extends Model\AbstractModel
 
                 $cd .= $def->getGetterCodeFieldcollection($this);
 
-                if ($def instanceof Object\ClassDefinition\Data\Localizedfields) {
+                if ($def instanceof \Pimcore\Model\Object\ClassDefinition\Data\Localizedfields) {
                     foreach ($def->getFieldDefinitions() as $localizedFd) {
 
                         /**
@@ -277,7 +277,7 @@ class Definition extends Model\AbstractModel
 
                 $cd .= $def->getSetterCodeFieldcollection($this);
 
-                if ($def instanceof Object\ClassDefinition\Data\Localizedfields) {
+                if ($def instanceof \Pimcore\Model\Object\ClassDefinition\Data\Localizedfields) {
                     foreach ($def->getFieldDefinitions() as $localizedFd) {
 
                         /**
@@ -295,12 +295,12 @@ class Definition extends Model\AbstractModel
         File::put($this->getPhpClassFile(), $cd);
 
         // update classes
-        $classList = new Object\ClassDefinition\Listing();
+        $classList = new \Pimcore\Model\Object\ClassDefinition\Listing();
         $classes = $classList->load();
         if (is_array($classes)) {
             foreach ($classes as $class) {
                 foreach ($class->getFieldDefinitions() as $fieldDef) {
-                    if ($fieldDef instanceof Object\ClassDefinition\Data\Fieldcollections) {
+                    if ($fieldDef instanceof \Pimcore\Model\Object\ClassDefinition\Data\Fieldcollections) {
                         if (in_array($this->getKey(), $fieldDef->getAllowedTypes())) {
                             $this->getDao()->createUpdateTable($class);
                             break;
@@ -320,12 +320,12 @@ class Definition extends Model\AbstractModel
         @unlink($this->getPhpClassFile());
 
         // update classes
-        $classList = new Object\ClassDefinition\Listing();
+        $classList = new \Pimcore\Model\Object\ClassDefinition\Listing();
         $classes = $classList->load();
         if (is_array($classes)) {
             foreach ($classes as $class) {
                 foreach ($class->getFieldDefinitions() as $fieldDef) {
-                    if ($fieldDef instanceof Object\ClassDefinition\Data\Fieldcollections) {
+                    if ($fieldDef instanceof \Pimcore\Model\Object\ClassDefinition\Data\Fieldcollections) {
                         if (in_array($this->getKey(), $fieldDef->getAllowedTypes())) {
                             $this->getDao()->delete($class);
                             break;

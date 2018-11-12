@@ -17,7 +17,7 @@
 namespace Pimcore\Model\Object\ClassDefinition\Data;
 
 use Pimcore\Model;
-use Pimcore\Model\Object;
+//use Pimcore\Model\Object
 use Pimcore\Model\Element;
 use Pimcore\Tool\Text;
 
@@ -248,13 +248,13 @@ class Wysiwyg extends Model\Object\ClassDefinition\Data
     public function preGetData($object, $params = [])
     {
         $data = "";
-        if ($object instanceof Object\Concrete) {
+        if ($object instanceof \Pimcore\Model\Object\Concrete) {
             $data = $object->{$this->getName()};
-        } elseif ($object instanceof Object\Localizedfield || $object instanceof Object\Classificationstore) {
+        } elseif ($object instanceof \Pimcore\Model\Object\Localizedfield || $object instanceof \Pimcore\Model\Object\Classificationstore) {
             $data = $params["data"];
-        } elseif ($object instanceof Object\Fieldcollection\Data\AbstractData) {
+        } elseif ($object instanceof \Pimcore\Model\Object\Fieldcollection\Data\AbstractData) {
             $data = $object->{$this->getName()};
-        } elseif ($object instanceof Object\Objectbrick\Data\AbstractData) {
+        } elseif ($object instanceof \Pimcore\Model\Object\Objectbrick\Data\AbstractData) {
             $data = $object->{$this->getName()};
         }
 

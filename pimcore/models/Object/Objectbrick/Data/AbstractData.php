@@ -17,7 +17,7 @@
 namespace Pimcore\Model\Object\Objectbrick\Data;
 
 use Pimcore\Model;
-use Pimcore\Model\Object;
+//use Pimcore\Model\Object
 
 /**
  * @method \Pimcore\Model\Object\Objectbrick\Data\Dao getDao()
@@ -44,7 +44,7 @@ class AbstractData extends Model\AbstractModel
     /**
      * @param Object\Concrete $object
      */
-    public function __construct(Object\Concrete $object)
+    public function __construct(\Pimcore\Model\Object\Concrete $object)
     {
         $this->setObject($object);
     }
@@ -81,7 +81,7 @@ class AbstractData extends Model\AbstractModel
      */
     public function getDefinition()
     {
-        $definition = Object\Objectbrick\Definition::getByKey($this->getType());
+        $definition = \Pimcore\Model\Object\Objectbrick\Definition::getByKey($this->getType());
 
         return $definition;
     }
@@ -134,7 +134,7 @@ class AbstractData extends Model\AbstractModel
             $containerGetter = "get" . ucfirst($this->fieldname);
 
             $container = $object->$containerGetter();
-            if ($container instanceof Object\Objectbrick) {
+            if ($container instanceof \Pimcore\Model\Object\Objectbrick) {
                 $container->setItems([]);
             }
         }
@@ -148,7 +148,7 @@ class AbstractData extends Model\AbstractModel
      */
     public function getValueFromParent($key)
     {
-        $parent = Object\Service::hasInheritableParentObject($this->getObject());
+        $parent = \Pimcore\Model\Object\Service::hasInheritableParentObject($this->getObject());
 
         if (!empty($parent)) {
             $containerGetter = "get" . ucfirst($this->fieldname);

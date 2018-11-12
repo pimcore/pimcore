@@ -17,7 +17,7 @@
 namespace Pimcore\Model\Object\ClassDefinition\Data;
 
 use Pimcore\Model;
-use Pimcore\Model\Object;
+//use Pimcore\Model\Object
 
 class Date extends Model\Object\ClassDefinition\Data
 {

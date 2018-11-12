@@ -21,7 +21,7 @@ use Pimcore\Model;
 /**
  * @method \Pimcore\Model\User\Workspace\Dao getDao()
  */
-class Object extends AbstractWorkspace
+class ObjectWorkspace extends AbstractWorkspace
 {
 
     /**

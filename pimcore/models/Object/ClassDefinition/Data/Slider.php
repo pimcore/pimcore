@@ -17,7 +17,7 @@
 namespace Pimcore\Model\Object\ClassDefinition\Data;
 
 use Pimcore\Model;
-use Pimcore\Model\Object;
+//use Pimcore\Model\Object
 
 class Slider extends Model\Object\ClassDefinition\Data
 {
@@ -334,7 +334,7 @@ class Slider extends Model\Object\ClassDefinition\Data
     /**
      * @param Object\ClassDefinition\Data $masterDefinition
      */
-    public function synchronizeWithMasterDefinition(Object\ClassDefinition\Data $masterDefinition)
+    public function synchronizeWithMasterDefinition(\Pimcore\Model\Object\ClassDefinition\Data $masterDefinition)
     {
         $this->minValue = $masterDefinition->minValue;
         $this->maxValue = $masterDefinition->maxValue;

@@ -17,7 +17,7 @@
 namespace Pimcore\Model\Object\ClassDefinition\Data;
 
 use Pimcore\Model;
-use Pimcore\Model\Object;
+//use Pimcore\Model\Object
 use Pimcore\Model\Asset;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
@@ -63,7 +63,7 @@ class Link extends Model\Object\ClassDefinition\Data
      */
     public function getDataForResource($data, $object = null, $params = [])
     {
-        if ($data instanceof Object\Data\Link and isset($data->object)) {
+        if ($data instanceof \Pimcore\Model\Object\Data\Link and isset($data->object)) {
             unset($data->object);
         }
 
@@ -90,7 +90,7 @@ class Link extends Model\Object\ClassDefinition\Data
     {
         $link = Serialize::unserialize($data);
 
-        if ($link instanceof Object\Data\Link) {
+        if ($link instanceof \Pimcore\Model\Object\Data\Link) {
             if ($link->isEmpty()) {
                 return false;
             }
@@ -127,7 +127,7 @@ class Link extends Model\Object\ClassDefinition\Data
      */
     public function getDataForEditmode($data, $object = null, $params = [])
     {
-        if (!$data instanceof Object\Data\Link) {
+        if (!$data instanceof \Pimcore\Model\Object\Data\Link) {
             return false;
         }
         $data->path = $data->getPath();
@@ -144,7 +144,7 @@ class Link extends Model\Object\ClassDefinition\Data
      */
     public function getDataFromEditmode($data, $object = null, $params = [])
     {
-        $link = new Object\Data\Link();
+        $link = new \Pimcore\Model\Object\Data\Link();
         $link->setValues($data);
 
         if ($link->isEmpty()) {
@@ -176,7 +176,7 @@ class Link extends Model\Object\ClassDefinition\Data
     public function checkValidity($data, $omitMandatoryCheck = false)
     {
         if ($data) {
-            if ($data instanceof Object\Data\Link) {
+            if ($data instanceof \Pimcore\Model\Object\Data\Link) {
                 if (intval($data->getInternal()) > 0) {
                     if ($data->getInternalType() == "document") {
                         $doc = Document::getById($data->getInternal());
@@ -202,7 +202,7 @@ class Link extends Model\Object\ClassDefinition\Data
     {
         $dependencies = [];
 
-        if ($data instanceof Object\Data\Link and $data->getInternal()) {
+        if ($data instanceof \Pimcore\Model\Object\Data\Link and $data->getInternal()) {
             if (intval($data->getInternal()) > 0) {
                 if ($data->getInternalType() == "document") {
                     if ($doc = Document::getById($data->getInternal())) {
@@ -239,7 +239,7 @@ class Link extends Model\Object\ClassDefinition\Data
     {
         $tags = is_array($tags) ? $tags : [];
 
-        if ($data instanceof Object\Data\Link and $data->getInternal()) {
+        if ($data instanceof \Pimcore\Model\Object\Data\Link and $data->getInternal()) {
             if (intval($data->getInternal()) > 0) {
                 if ($data->getInternalType() == "document") {
                     if ($doc = Document::getById($data->getInternal())) {
@@ -270,7 +270,7 @@ class Link extends Model\Object\ClassDefinition\Data
     public function getForCsvExport($object, $params = [])
     {
         $data = $this->getDataFromObjectParam($object, $params);
-        if ($data instanceof Object\Data\Link) {
+        if ($data instanceof \Pimcore\Model\Object\Data\Link) {
             return base64_encode(Serialize::serialize($data));
         } else {
             return null;
@@ -287,7 +287,7 @@ class Link extends Model\Object\ClassDefinition\Data
     public function getFromCsvImport($importValue, $object = null, $params = [])
     {
         $value = Serialize::unserialize(base64_decode($importValue));
-        if ($value instanceof Object\Data\Link) {
+        if ($value instanceof \Pimcore\Model\Object\Data\Link) {
             return $value;
         } else {
             return null;
@@ -302,7 +302,7 @@ class Link extends Model\Object\ClassDefinition\Data
     public function getDataForSearchIndex($object, $params = [])
     {
         $data = $this->getDataFromObjectParam($object, $params);
-        if ($data instanceof Object\Data\Link) {
+        if ($data instanceof \Pimcore\Model\Object\Data\Link) {
             return $data->getText();
         }
 
@@ -318,7 +318,7 @@ class Link extends Model\Object\ClassDefinition\Data
     public function getForWebserviceExport($object, $params = [])
     {
         $data = $this->getDataFromObjectParam($object, $params);
-        if ($data instanceof Object\Data\Link) {
+        if ($data instanceof \Pimcore\Model\Object\Data\Link) {
             $keys = get_object_vars($data);
             foreach ($keys as $key => $value) {
                 $method = "get" . ucfirst($key);
@@ -350,7 +350,7 @@ class Link extends Model\Object\ClassDefinition\Data
         if (empty($value)) {
             return null;
         } elseif (is_array($value) and !empty($value['text']) and !empty($value['direct'])) {
-            $link = new Object\Data\Link();
+            $link = new \Pimcore\Model\Object\Data\Link();
             foreach ($value as $key => $v) {
                 $method = "set" . ucfirst($key);
                 if (method_exists($link, $method)) {
@@ -380,7 +380,7 @@ class Link extends Model\Object\ClassDefinition\Data
                 }
             }
 
-            $link = new Object\Data\Link();
+            $link = new \Pimcore\Model\Object\Data\Link();
             foreach ($value as $key => $v) {
                 $method = "set" . ucfirst($key);
                 if (method_exists($link, $method)) {
@@ -392,7 +392,7 @@ class Link extends Model\Object\ClassDefinition\Data
 
             return $link;
         } elseif (is_array($value)) {
-            $link = new Object\Data\Link();
+            $link = new \Pimcore\Model\Object\Data\Link();
             foreach ($value as $key => $v) {
                 $method = "set" . ucfirst($key);
                 if (method_exists($link, $method)) {
@@ -454,7 +454,7 @@ class Link extends Model\Object\ClassDefinition\Data
     public function rewriteIds($object, $idMapping, $params = [])
     {
         $data = $this->getDataFromObjectParam($object, $params);
-        if ($data instanceof Object\Data\Link && $data->getLinktype() == "internal") {
+        if ($data instanceof \Pimcore\Model\Object\Data\Link && $data->getLinktype() == "internal") {
             $id = $data->getInternal();
             $type = $data->getInternalType();
 

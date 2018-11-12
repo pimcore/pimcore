@@ -17,14 +17,14 @@
 namespace Pimcore\Model\Object\Fieldcollection\Definition;
 
 use Pimcore\Model;
-use Pimcore\Model\Object;
+//use Pimcore\Model\Object
 
 /**
  * @property \Pimcore\Model\Object\Fieldcollection\Definition $model
  */
 class Dao extends Model\Dao\AbstractDao
 {
-    use Object\ClassDefinition\Helper\Dao;
+    use \Pimcore\Model\Object\ClassDefinition\Helper\Dao;
 
     /**
      * @var null
@@ -35,7 +35,7 @@ class Dao extends Model\Dao\AbstractDao
      * @param Object\ClassDefinition $class
      * @return string
      */
-    public function getTableName(Object\ClassDefinition $class)
+    public function getTableName(\Pimcore\Model\Object\ClassDefinition $class)
     {
         return "object_collection_" . $this->model->getKey() . "_" . $class->getId();
     }
@@ -44,7 +44,7 @@ class Dao extends Model\Dao\AbstractDao
      * @param Object\ClassDefinition $class
      * @return string
      */
-    public function getLocalizedTableName(Object\ClassDefinition $class)
+    public function getLocalizedTableName(\Pimcore\Model\Object\ClassDefinition $class)
     {
         return "object_collection_" . $this->model->getKey() . "_localized_" . $class->getId();
     }
@@ -53,7 +53,7 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * @param Object\ClassDefinition $class
      */
-    public function delete(Object\ClassDefinition $class)
+    public function delete(\Pimcore\Model\Object\ClassDefinition $class)
     {
         $table = $this->getTableName($class);
         $this->db->query("DROP TABLE IF EXISTS `" . $table . "`");
@@ -62,7 +62,7 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * @param Object\ClassDefinition $class
      */
-    public function createUpdateTable(Object\ClassDefinition $class)
+    public function createUpdateTable(\Pimcore\Model\Object\ClassDefinition $class)
     {
         $table = $this->getTableName($class);
 
@@ -80,7 +80,7 @@ class Dao extends Model\Dao\AbstractDao
         $columnsToRemove = $existingColumns;
         $protectedColums = ["o_id", "index", "fieldname"];
 
-        Object\ClassDefinition\Service::updateTableDefinitions($this->tableDefinitions, ([$table]));
+        \Pimcore\Model\Object\ClassDefinition\Service::updateTableDefinitions($this->tableDefinitions, ([$table]));
 
         foreach ($this->model->getFieldDefinitions() as $value) {
             $key = $value->getName();
@@ -101,7 +101,7 @@ class Dao extends Model\Dao\AbstractDao
             }
             $this->addIndexToField($value, $table);
 
-            if ($value instanceof  Object\ClassDefinition\Data\Localizedfields) {
+            if ($value instanceof  \Pimcore\Model\Object\ClassDefinition\Data\Localizedfields) {
                 $value->classSaved($class,
                     [
                         "context" => [

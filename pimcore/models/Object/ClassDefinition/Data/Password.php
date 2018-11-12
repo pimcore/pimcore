@@ -17,7 +17,7 @@
 namespace Pimcore\Model\Object\ClassDefinition\Data;
 
 use Pimcore\Model;
-use Pimcore\Model\Object;
+//use Pimcore\Model\Object
 
 class Password extends Model\Object\ClassDefinition\Data
 {
@@ -222,7 +222,7 @@ class Password extends Model\Object\ClassDefinition\Data
      * @param bool|true $updateHash
      * @return bool
      */
-    public function verifyPassword($password, Object\AbstractObject $object, $updateHash = true)
+    public function verifyPassword($password, \Pimcore\Model\Object\AbstractObject $object, $updateHash = true)
     {
         $getter = 'get' . ucfirst($this->getName());
         $setter = 'set' . ucfirst($this->getName());
@@ -413,7 +413,7 @@ class Password extends Model\Object\ClassDefinition\Data
     /**
      * @param Object\ClassDefinition\Data $masterDefinition
      */
-    public function synchronizeWithMasterDefinition(Object\ClassDefinition\Data $masterDefinition)
+    public function synchronizeWithMasterDefinition(\Pimcore\Model\Object\ClassDefinition\Data $masterDefinition)
     {
         $this->algorithm = $masterDefinition->algorithm;
         $this->salt = $masterDefinition->salt;

@@ -19,7 +19,7 @@ namespace Pimcore\Model\Element;
 use Pimcore\Model;
 use Pimcore\Model\Document;
 use Pimcore\Model\Asset;
-use Pimcore\Model\Object;
+//use Pimcore\Model\Object
 use Pimcore\Model\Dependency;
 use Pimcore\File;
 use Pimcore\Tool;
@@ -81,7 +81,7 @@ class Service extends Model\AbstractModel
             if ($type != "folder") {
                 if ($element instanceof Document) {
                     $type = "document";
-                } elseif ($element instanceof Object\AbstractObject) {
+                } elseif ($element instanceof \Pimcore\Model\Object\AbstractObject) {
                     $type = "object";
                 } elseif ($element instanceof Asset) {
                     $type = "asset";
@@ -171,7 +171,7 @@ class Service extends Model\AbstractModel
     }
 
     /**
-     * @param Document|Asset|Object\AbstractObject $element
+     * @param Document|Asset|\Pimcore\Model\Object\AbstractObject $element
      * @return array
      */
     public static function getDependencyForFrontend($element)
@@ -188,12 +188,12 @@ class Service extends Model\AbstractModel
 
     /**
      * @param array $config
-     * @return Object\AbstractObject|Document|Asset
+     * @return \Pimcore\Model\Object\AbstractObject|Document|Asset
      */
     public static function getDependedElement($config)
     {
         if ($config["type"] == "object") {
-            return Object::getById($config["id"]);
+            return \Pimcore\Model\Object\AbstractObject::getById($config["id"]);
         } elseif ($config["type"] == "asset") {
             return Asset::getById($config["id"]);
         } elseif ($config["type"] == "document") {
@@ -235,7 +235,7 @@ class Service extends Model\AbstractModel
         if ($type == "asset") {
             $element = Asset::getByPath($path);
         } elseif ($type == "object") {
-            $element = Object::getByPath($path);
+            $element = \Pimcore\Model\Object\AbstractObject::getByPath($path);
         } elseif ($type == "document") {
             $element = Document::getByPath($path);
         }
@@ -300,7 +300,7 @@ class Service extends Model\AbstractModel
         if ($type == "asset") {
             $element = Asset::getById($id);
         } elseif ($type == "object") {
-            $element = Object::getById($id);
+            $element = \Pimcore\Model\Object\AbstractObject::getById($id);
         } elseif ($type == "document") {
             $element = Document::getById($id);
         }
@@ -316,7 +316,7 @@ class Service extends Model\AbstractModel
     public static function getElementType($element)
     {
         $type = null;
-        if ($element instanceof Object\AbstractObject) {
+        if ($element instanceof \Pimcore\Model\Object\AbstractObject) {
             $type = "object";
         } elseif ($element instanceof Document) {
             $type = "document";
@@ -431,7 +431,7 @@ class Service extends Model\AbstractModel
                 "type"
             ];
 
-            if ($p->getData() instanceof Document || $p->getData() instanceof Asset || $p->getData() instanceof Object\AbstractObject) {
+            if ($p->getData() instanceof Document || $p->getData() instanceof Asset || $p->getData() instanceof \Pimcore\Model\Object\AbstractObject) {
                 $pa = [];
 
                 $vars = get_object_vars($p->getData());
@@ -521,7 +521,7 @@ class Service extends Model\AbstractModel
      */
     public static function getFilename(ElementInterface $element)
     {
-        if ($element instanceof Document || $element instanceof Object\AbstractObject) {
+        if ($element instanceof Document || $element instanceof \Pimcore\Model\Object\AbstractObject) {
             return $element->getKey();
         } elseif ($element instanceof Asset) {
             return $element->getFilename();
@@ -589,11 +589,11 @@ class Service extends Model\AbstractModel
                             $data->setFilename($originalElement->getFilename());
                         } elseif ($data instanceof Document) {
                             $data->setKey($originalElement->getKey());
-                        } elseif ($data instanceof Object\AbstractObject) {
+                        } elseif ($data instanceof \Pimcore\Model\Object\AbstractObject) {
                             $data->setKey($originalElement->getKey());
                         }
 
-                        if (!Object\AbstractObject::doNotRestoreKeyAndPath()) {
+                        if (!\Pimcore\Model\Object\AbstractObject::doNotRestoreKeyAndPath()) {
                             $data->setPath($originalElement->getRealPath());
                         }
                     }
@@ -642,8 +642,8 @@ class Service extends Model\AbstractModel
     {
         if ($element instanceof Document) {
             Document\Service::loadAllDocumentFields($element);
-        } elseif ($element instanceof Object\Concrete) {
-            Object\Service::loadAllObjectFields($element);
+        } elseif ($element instanceof \Pimcore\Model\Object\Concrete) {
+            \Pimcore\Model\Object\Service::loadAllObjectFields($element);
         } elseif ($element instanceof Asset) {
             Asset\Service::loadAllFields($element);
         }
@@ -679,7 +679,7 @@ class Service extends Model\AbstractModel
     {
         $calledClass = get_called_class();
         if ($calledClass == __CLASS__) {
-            throw new \Exception("This method must be called from a extended class. e.g Asset\\Service, Object\\Service, Document\\Service");
+            throw new \Exception("This method must be called from a extended class. e.g Asset\\Service, \Pimcore\Model\Object\\Service, Document\\Service");
         }
 
         $type = str_replace('\Service', '', $calledClass);
@@ -851,7 +851,7 @@ class Service extends Model\AbstractModel
      */
     public static function getUniqueKey($element)
     {
-        if ($element instanceof Object\AbstractObject) {
+        if ($element instanceof \Pimcore\Model\Object\AbstractObject) {
             return Object\Service::getUniqueKey($element);
         } elseif ($element instanceof Document) {
             return Document\Service::getUniqueKey($element);

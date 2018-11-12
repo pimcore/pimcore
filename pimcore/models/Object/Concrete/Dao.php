@@ -17,7 +17,7 @@
 namespace Pimcore\Model\Object\Concrete;
 
 use Pimcore\Model;
-use Pimcore\Model\Object;
+//use Pimcore\Model\Object
 use Pimcore\Logger;
 
 /**
@@ -36,7 +36,7 @@ class Dao extends Model\Object\AbstractObject\Dao
      */
     public function init()
     {
-        $this->inheritanceHelper = new Object\Concrete\Dao\InheritanceHelper($this->model->getClassId());
+        $this->inheritanceHelper = new \Pimcore\Model\Object\Concrete\Dao\InheritanceHelper($this->model->getClassId());
     }
 
     /**
@@ -193,8 +193,8 @@ class Dao extends Model\Object\AbstractObject\Dao
         }
 
 
-        $inheritedValues = Object\AbstractObject::doGetInheritedValues();
-        Object\AbstractObject::setGetInheritedValues(false);
+        $inheritedValues = \Pimcore\Model\Object\AbstractObject::doGetInheritedValues();
+        \Pimcore\Model\Object\AbstractObject::setGetInheritedValues(false);
 
         $data = [];
         $data["oo_id"] = $this->model->getId();
@@ -323,7 +323,7 @@ class Dao extends Model\Object\AbstractObject\Dao
 
         $this->db->insertOrUpdate("object_query_" . $this->model->getClassId(), $data);
 
-        Object\AbstractObject::setGetInheritedValues($inheritedValues);
+        \Pimcore\Model\Object\AbstractObject::setGetInheritedValues($inheritedValues);
     }
 
     /**

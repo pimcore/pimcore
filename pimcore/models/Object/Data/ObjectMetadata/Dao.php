@@ -17,7 +17,7 @@
 namespace Pimcore\Model\Object\Data\ObjectMetadata;
 
 use Pimcore\Model;
-use Pimcore\Model\Object;
+//use Pimcore\Model\Object
 
 /**
  * @property \Pimcore\Model\Object\Data\ObjectMetadata $model
@@ -33,7 +33,7 @@ class Dao extends Model\Dao\AbstractDao
      * @param $type
      * @throws \Zend_Db_Adapter_Exception
      */
-    public function save(Object\Concrete $object, $ownertype, $ownername, $position, $type = "object")
+    public function save(\Pimcore\Model\Object\Concrete $object, $ownertype, $ownername, $position, $type = "object")
     {
         $table = $this->getTablename($object);
 
@@ -73,7 +73,7 @@ class Dao extends Model\Dao\AbstractDao
      * @param $type
      * @return null|Model\Dao\\Pimcore\Model\Object\AbstractObject
      */
-    public function load(Object\Concrete $source, $destination, $fieldname, $ownertype, $ownername, $position, $type = "object")
+    public function load(\Pimcore\Model\Object\Concrete $source, $destination, $fieldname, $ownertype, $ownername, $position, $type = "object")
     {
         if ($type == "object") {
             $typeQuery = " AND (type = 'object' or type = '')";

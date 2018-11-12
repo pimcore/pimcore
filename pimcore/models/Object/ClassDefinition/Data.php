@@ -17,11 +17,11 @@
 namespace Pimcore\Model\Object\ClassDefinition;
 
 use Pimcore\Model;
-use Pimcore\Model\Object;
+//use Pimcore\Model\Object
 
 abstract class Data
 {
-    use Object\ClassDefinition\Helper\VarExport;
+    use \Pimcore\Model\Object\ClassDefinition\Helper\VarExport;
 
     /**
      * @var string
@@ -664,7 +664,7 @@ abstract class Data
             }
         }
 
-        if (in_array($operator, Object\ClassDefinition\Data::$validFilterOperators)) {
+        if (in_array($operator, \Pimcore\Model\Object\ClassDefinition\Data::$validFilterOperators)) {
             return $key . " " . $operator . " " . $value . " ";
         } else {
             return "";
@@ -702,7 +702,7 @@ abstract class Data
 
         // insert this line if inheritance from parent objects is allowed
         if ($class->getAllowInherit()) {
-            $code .= "\t" . 'if(\Pimcore\Model\Object::doGetInheritedValues() && $this->getClass()->getFieldDefinition("' . $key . '")->isEmpty($data)) {' . "\n";
+            $code .= "\t" . 'if(\Pimcore\Model\Object\AbstractObject::doGetInheritedValues() && $this->getClass()->getFieldDefinition("' . $key . '")->isEmpty($data)) {' . "\n";
             $code .= "\t\t" . 'return $this->getValueFromParent("' . $key . '");' . "\n";
             $code .= "\t" . '}' . "\n";
         }
@@ -764,7 +764,7 @@ abstract class Data
             $code .= "\t" . '$data = $this->' . $key . ";\n";
         }
 
-        $code .= "\t" . 'if(\Pimcore\Model\Object::doGetInheritedValues($this->getObject()) && $this->getDefinition()->getFieldDefinition("' . $key . '")->isEmpty($data)) {' . "\n";
+        $code .= "\t" . 'if(\Pimcore\Model\Object\AbstractObject::doGetInheritedValues($this->getObject()) && $this->getDefinition()->getFieldDefinition("' . $key . '")->isEmpty($data)) {' . "\n";
         $code .= "\t\t" . 'return $this->getValueFromParent("' . $key . '");' . "\n";
         $code .= "\t" . '}' . "\n";
 
@@ -881,7 +881,7 @@ abstract class Data
 
         $code .= "\t" . '$data = $this->getLocalizedfields()->getLocalizedValue("' . $key . '", $language);' . "\n";
 
-        if (!$class instanceof  Object\Fieldcollection\Definition) {
+        if (!$class instanceof  \Pimcore\Model\Object\Fieldcollection\Definition) {
             // adds a hook preGetValue which can be defined in an extended class
             $code .= "\t" . '$preValue = $this->preGetValue("' . $key . '");' . " \n";
             $code .= "\t" . 'if($preValue !== null && !\Pimcore::inAdmin()) { ' . "\n";
@@ -905,7 +905,7 @@ abstract class Data
     public function getSetterCodeLocalizedfields($class)
     {
         $key = $this->getName();
-        if ($class instanceof  Object\Fieldcollection\Definition) {
+        if ($class instanceof  \Pimcore\Model\Object\Fieldcollection\Definition) {
             $classname = ucfirst($class->getKey());
         } else {
             $classname = $class->getName();
@@ -1069,11 +1069,11 @@ abstract class Data
 
         if ($context) {
             if ($context["containerType"] == "fieldcollection" || $context["containerType"] == "block") {
-                if ($this instanceof Object\ClassDefinition\Data\Localizedfields || $object instanceof Object\Localizedfield) {
+                if ($this instanceof \Pimcore\Model\Object\ClassDefinition\Data\Localizedfields || $object instanceof \Pimcore\Model\Object\Localizedfield) {
                     $fieldname = $context["fieldname"];
                     $index = $context["index"];
 
-                    if ($object instanceof Object\Concrete) {
+                    if ($object instanceof \Pimcore\Model\Object\Concrete) {
                         $containerGetter = "get" . ucfirst($fieldname);
                         $container = $object->$containerGetter();
                         if ($container) {
@@ -1092,7 +1092,7 @@ abstract class Data
 
                                     if ($context["containerType"] == "block") {
                                         $data = $item[$this->getName()];
-                                        if ($data instanceof  Object\Data\BlockElement) {
+                                        if ($data instanceof  \Pimcore\Model\Object\Data\BlockElement) {
                                             $data = $data->getData();
 
                                             return $data;
@@ -1101,7 +1101,7 @@ abstract class Data
                                         $getter = "get" . ucfirst($this->getName());
                                         $data = $item->$getter();
 
-                                        if ($object instanceof Object\Localizedfield) {
+                                        if ($object instanceof \Pimcore\Model\Object\Localizedfield) {
                                             $data = $data->getLocalizedValue($this->getName(), $params["language"], true);
                                         }
                                     }
@@ -1116,7 +1116,7 @@ abstract class Data
                         } else {
                             return null;
                         }
-                    } elseif ($object instanceof Object\Localizedfield) {
+                    } elseif ($object instanceof \Pimcore\Model\Object\Localizedfield) {
                         $data = $object->getLocalizedValue($this->getName(), $params["language"], true);
 
                         return $data;
@@ -1143,9 +1143,9 @@ abstract class Data
         $container = $object;
 
         $getter = "get" . ucfirst($this->getName());
-        if (method_exists($container, $getter)) { // for Object\Concrete, Object\Fieldcollection\Data\AbstractData, Object\Objectbrick\Data\AbstractData
+        if (method_exists($container, $getter)) { // for \Pimcore\Model\Object\Concrete, \Pimcore\Model\Object\Fieldcollection\Data\AbstractData, \Pimcore\Model\Object\Objectbrick\Data\AbstractData
             $data = $container->$getter();
-        } elseif ($object instanceof Object\Localizedfield) {
+        } elseif ($object instanceof \Pimcore\Model\Object\Localizedfield) {
             $data = $object->getLocalizedValue($this->getName(), $params["language"], true);
         }
 
@@ -1155,7 +1155,7 @@ abstract class Data
     /**
      * @param Object\ClassDefinition\Data $masterDefinition
      */
-    public function synchronizeWithMasterDefinition(Object\ClassDefinition\Data $masterDefinition)
+    public function synchronizeWithMasterDefinition(\Pimcore\Model\Object\ClassDefinition\Data $masterDefinition)
     {
         // implement in child classes
     }
@@ -1163,7 +1163,7 @@ abstract class Data
     /**
      * @param Object\ClassDefinition\Data $masterDefinition
      */
-    public function adoptMasterDefinition(Object\ClassDefinition\Data $masterDefinition)
+    public function adoptMasterDefinition(\Pimcore\Model\Object\ClassDefinition\Data $masterDefinition)
     {
         $vars = get_object_vars($this);
         $protectedFields = ["noteditable", "invisible"];

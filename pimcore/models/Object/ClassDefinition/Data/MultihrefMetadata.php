@@ -18,7 +18,7 @@ namespace Pimcore\Model\Object\ClassDefinition\Data;
 
 use Pimcore\Db;
 use Pimcore\Model;
-use Pimcore\Model\Object;
+//use Pimcore\Model\Object
 use Pimcore\Model\Asset;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
@@ -97,11 +97,11 @@ class MultihrefMetadata extends Model\Object\ClassDefinition\Data\Multihref
         if (is_array($data) && count($data) > 0) {
             foreach ($data as $element) {
                 $destination = null;
-                $source = Object::getById($element["src_id"]);
+                $source = \Pimcore\Model\Object\AbstractObject::getById($element["src_id"]);
 
 
                 if ($element["type"] == "object") {
-                    $destination = Object::getById($element["dest_id"]);
+                    $destination = \Pimcore\Model\Object\AbstractObject::getById($element["dest_id"]);
                 } elseif ($element["type"] == "asset") {
                     $destination = Asset::getById($element["dest_id"]);
                 } elseif ($element["type"] == "document") {
@@ -182,9 +182,9 @@ class MultihrefMetadata extends Model\Object\ClassDefinition\Data\Multihref
 
                 $itemData = null;
 
-                if ($element instanceof Object\Concrete) {
+                if ($element instanceof \Pimcore\Model\Object\Concrete) {
                     $itemData = ["id" => $element->getId(), "path" => $element->getRealFullPath(), "type" => "object", "subtype" => $element->getClassName()];
-                } elseif ($element instanceof Object\AbstractObject) {
+                } elseif ($element instanceof \Pimcore\Model\Object\AbstractObject) {
                     $itemData = ["id" => $element->getId(), "path" => $element->getRealFullPath(), "type" => "object",  "subtype" => "folder"];
                 } elseif ($element instanceof Asset) {
                     $itemData = ["id" => $element->getId(), "path" => $element->getRealFullPath(), "type" => "asset",  "subtype" => $element->getType()];
@@ -230,7 +230,7 @@ class MultihrefMetadata extends Model\Object\ClassDefinition\Data\Multihref
         if (is_array($data) && count($data) > 0) {
             foreach ($data as $element) {
                 if ($element["type"] == "object") {
-                    $e = Object::getById($element["id"]);
+                    $e = \Pimcore\Model\Object\AbstractObject::getById($element["id"]);
                 } elseif ($element["type"] == "asset") {
                     $e = Asset::getById($element["id"]);
                 } elseif ($element["type"] == "document") {
@@ -326,7 +326,7 @@ class MultihrefMetadata extends Model\Object\ClassDefinition\Data\Multihref
 
         if (is_array($data)) {
             foreach ($data as $elementMetadata) {
-                if (!($elementMetadata instanceof Object\Data\ElementMetadata)) {
+                if (!($elementMetadata instanceof \Pimcore\Model\Object\Data\ElementMetadata)) {
                     throw new Element\ValidationException("Expected Object\\Data\\ElementMetadata");
                 }
 
@@ -336,7 +336,7 @@ class MultihrefMetadata extends Model\Object\ClassDefinition\Data\Multihref
                     $allow = $this->allowDocumentRelation($d);
                 } elseif ($d instanceof Asset) {
                     $allow = $this->allowAssetRelation($d);
-                } elseif ($d instanceof Object\AbstractObject) {
+                } elseif ($d instanceof \Pimcore\Model\Object\AbstractObject) {
                     $allow = $this->allowObjectRelation($d);
                 } elseif (empty($d)) {
                     $allow = true;
@@ -498,7 +498,7 @@ class MultihrefMetadata extends Model\Object\ClassDefinition\Data\Multihref
                     }
 
                     if ($e instanceof Element\ElementInterface) {
-                        $elMeta = new Object\Data\ElementMetadata($this->getName(), $this->getColumnKeys(), $e);
+                        $elMeta = new \Pimcore\Model\Object\Data\ElementMetadata($this->getName(), $this->getColumnKeys(), $e);
 
                         foreach ($this->getColumns() as $c) {
                             $setter = "set" . ucfirst($c['key']);
@@ -535,19 +535,19 @@ class MultihrefMetadata extends Model\Object\ClassDefinition\Data\Multihref
         $classId = null;
         $objectId = null;
 
-        if ($object instanceof Object\Concrete) {
+        if ($object instanceof \Pimcore\Model\Object\Concrete) {
             $objectId = $object->getId();
-        } elseif ($object instanceof Object\Fieldcollection\Data\AbstractData) {
+        } elseif ($object instanceof \Pimcore\Model\Object\Fieldcollection\Data\AbstractData) {
             $objectId = $object->getObject()->getId();
-        } elseif ($object instanceof Object\Localizedfield) {
+        } elseif ($object instanceof \Pimcore\Model\Object\Localizedfield) {
             $objectId = $object->getObject()->getId();
-        } elseif ($object instanceof Object\Objectbrick\Data\AbstractData) {
+        } elseif ($object instanceof \Pimcore\Model\Object\Objectbrick\Data\AbstractData) {
             $objectId = $object->getObject()->getId();
         }
 
-        if ($object instanceof Object\Localizedfield) {
+        if ($object instanceof \Pimcore\Model\Object\Localizedfield) {
             $classId = $object->getClass()->getId();
-        } elseif ($object instanceof Object\Objectbrick\Data\AbstractData || $object instanceof Object\Fieldcollection\Data\AbstractData) {
+        } elseif ($object instanceof \Pimcore\Model\Object\Objectbrick\Data\AbstractData || $object instanceof \Pimcore\Model\Object\Fieldcollection\Data\AbstractData) {
             $classId = $object->getObject()->getClassId();
         } else {
             $classId = $object->getClassId();
@@ -581,8 +581,8 @@ class MultihrefMetadata extends Model\Object\ClassDefinition\Data\Multihref
         $db->delete($table, $sql);
 
         if (!empty($multihrefMetadata)) {
-            if ($object instanceof Object\Localizedfield || $object instanceof Object\Objectbrick\Data\AbstractData
-                || $object instanceof Object\Fieldcollection\Data\AbstractData) {
+            if ($object instanceof \Pimcore\Model\Object\Localizedfield || $object instanceof \Pimcore\Model\Object\Objectbrick\Data\AbstractData
+                || $object instanceof \Pimcore\Model\Object\Fieldcollection\Data\AbstractData) {
                 $objectConcrete = $object->getObject();
             } else {
                 $objectConcrete = $object;
@@ -606,7 +606,7 @@ class MultihrefMetadata extends Model\Object\ClassDefinition\Data\Multihref
     public function preGetData($object, $params = [])
     {
         $data = null;
-        if ($object instanceof Object\Concrete) {
+        if ($object instanceof \Pimcore\Model\Object\Concrete) {
             $data = $object->{$this->getName()};
             if ($this->getLazyLoading() and !in_array($this->getName(), $object->getO__loadedLazyFields())) {
                 //$data = $this->getDataFromResource($object->getRelationData($this->getName(),true,null));
@@ -617,15 +617,15 @@ class MultihrefMetadata extends Model\Object\ClassDefinition\Data\Multihref
                     $object->$setter($data);
                 }
             }
-        } elseif ($object instanceof Object\Localizedfield) {
+        } elseif ($object instanceof \Pimcore\Model\Object\Localizedfield) {
             $data = $params["data"];
-        } elseif ($object instanceof Object\Fieldcollection\Data\AbstractData) {
+        } elseif ($object instanceof \Pimcore\Model\Object\Fieldcollection\Data\AbstractData) {
             $data = $object->{$this->getName()};
-        } elseif ($object instanceof Object\Objectbrick\Data\AbstractData) {
+        } elseif ($object instanceof \Pimcore\Model\Object\Objectbrick\Data\AbstractData) {
             $data = $object->{$this->getName()};
         }
 
-        if (Object\AbstractObject::doHideUnpublished() and is_array($data)) {
+        if (\Pimcore\Model\Object\AbstractObject::doHideUnpublished() and is_array($data)) {
             $publishedList = [];
             /** @var  $listElement Object\Data\ElementMetadata */
             foreach ($data as $listElement) {
@@ -777,7 +777,7 @@ class MultihrefMetadata extends Model\Object\ClassDefinition\Data\Multihref
     /**
      * @param Object\ClassDefinition\Data $masterDefinition
      */
-    public function synchronizeWithMasterDefinition(Object\ClassDefinition\Data $masterDefinition)
+    public function synchronizeWithMasterDefinition(\Pimcore\Model\Object\ClassDefinition\Data $masterDefinition)
     {
         parent::synchronizeWithMasterDefinition($masterDefinition);
         $this->columns = $masterDefinition->columns;
@@ -869,7 +869,7 @@ class MultihrefMetadata extends Model\Object\ClassDefinition\Data\Multihref
                     $fieldname = $elementMetadata["fieldname"];
                     $data = $elementMetadata["data"];
 
-                    $item = new Object\Data\ElementMetadata($fieldname, $columns, $element);
+                    $item = new \Pimcore\Model\Object\Data\ElementMetadata($fieldname, $columns, $element);
                     $item->data = $data;
                     $result[] = $item;
                 }

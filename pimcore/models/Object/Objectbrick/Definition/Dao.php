@@ -17,7 +17,7 @@
 namespace Pimcore\Model\Object\Objectbrick\Definition;
 
 use Pimcore\Model;
-use Pimcore\Model\Object;
+//use Pimcore\Model\Object
 
 /**
  * @property \Pimcore\Model\Object\Objectbrick\Definition $model
@@ -30,7 +30,7 @@ class Dao extends Model\Object\Fieldcollection\Definition\Dao
      * @param bool $query
      * @return string
      */
-    public function getTableName(Object\ClassDefinition $class, $query = false)
+    public function getTableName(\Pimcore\Model\Object\ClassDefinition $class, $query = false)
     {
         if ($query) {
             return "object_brick_query_" . $this->model->getKey() . "_" . $class->getId();
@@ -42,7 +42,7 @@ class Dao extends Model\Object\Fieldcollection\Definition\Dao
     /**
      * @param Object\ClassDefinition $class
      */
-    public function delete(Object\ClassDefinition $class)
+    public function delete(\Pimcore\Model\Object\ClassDefinition $class)
     {
         $table = $this->getTableName($class, false);
         $this->db->query("DROP TABLE IF EXISTS `" . $table . "`");
@@ -54,7 +54,7 @@ class Dao extends Model\Object\Fieldcollection\Definition\Dao
     /**
      * @param Object\ClassDefinition $class
      */
-    public function createUpdateTable(Object\ClassDefinition $class)
+    public function createUpdateTable(\Pimcore\Model\Object\ClassDefinition $class)
     {
         $tableStore = $this->getTableName($class, false);
         $tableQuery = $this->getTableName($class, true);
@@ -83,7 +83,7 @@ class Dao extends Model\Object\Fieldcollection\Definition\Dao
         $protectedColumnsStore = ["o_id", "fieldname"];
         $protectedColumnsQuery = ["o_id", "fieldname"];
 
-        Object\ClassDefinition\Service::updateTableDefinitions($this->tableDefinitions, ([$tableStore, $tableQuery]));
+        \Pimcore\Model\Object\ClassDefinition\Service::updateTableDefinitions($this->tableDefinitions, ([$tableStore, $tableQuery]));
 
         foreach ($this->model->getFieldDefinitions() as $value) {
             $key = $value->getName();

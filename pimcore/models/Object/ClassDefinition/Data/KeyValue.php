@@ -17,7 +17,7 @@
 namespace Pimcore\Model\Object\ClassDefinition\Data;
 
 use Pimcore\Model;
-use Pimcore\Model\Object;
+//use Pimcore\Model\Object
 use Pimcore\Logger;
 
 /**
@@ -142,12 +142,12 @@ class KeyValue extends Model\Object\ClassDefinition\Data
         // object_Class_Data_KeyValue
         // if found, create the table, otherwise do nothing
 
-        $keyValue = new Object\Data\KeyValue();
+        $keyValue = new \Pimcore\Model\Object\Data\KeyValue();
         $keyValue->setClass($class);
         $fieldDefinitions = $class->getFieldDefinitions();
         //TODO is this even called if type keyvalue not part of the class def?
         foreach ($fieldDefinitions as $definition) {
-            if ($definition instanceof Object\ClassDefinition\Data\KeyValue) {
+            if ($definition instanceof \Pimcore\Model\Object\ClassDefinition\Data\KeyValue) {
                 Logger::debug("found definition of type keyvalue, create table");
                 $keyValue->createUpdateTable();
                 break;
@@ -163,7 +163,7 @@ class KeyValue extends Model\Object\ClassDefinition\Data
     {
         $pairs = $this->getDataFromObjectParam($object);
 
-        if ($pairs instanceof Object\Data\KeyValue) {
+        if ($pairs instanceof \Pimcore\Model\Object\Data\KeyValue) {
             $pairs->setClass($object->getClass());
             $pairs->setObjectId($object->getId());
             $pairs->save();
@@ -310,7 +310,7 @@ class KeyValue extends Model\Object\ClassDefinition\Data
      */
     public function load($object, $params = [])
     {
-        $pairs = new Object\Data\KeyValue();
+        $pairs = new \Pimcore\Model\Object\Data\KeyValue();
         $pairs->setClass($object->getClass());
         $pairs->setObjectId($object->getId());
         $pairs->setMultivalent($this->multivalent);
@@ -326,7 +326,7 @@ class KeyValue extends Model\Object\ClassDefinition\Data
     {
         $pairs = $this->getDataFromObjectParam($object);
 
-        if ($pairs instanceof Object\Data\KeyValue) {
+        if ($pairs instanceof \Pimcore\Model\Object\Data\KeyValue) {
             $pairs->setClass($object->getClass());
             $pairs->setObjectId($object->getId());
             $pairs->delete();
@@ -351,13 +351,13 @@ class KeyValue extends Model\Object\ClassDefinition\Data
 
         foreach ($properties as $key => $property) {
             $key = $property["key"];
-            $keyConfig = Object\KeyValue\KeyConfig::getById($key);
+            $keyConfig = \Pimcore\Model\Object\KeyValue\KeyConfig::getById($key);
             $property["type"] = $keyConfig->getType();
             $property["possiblevalues"] = $keyConfig->getPossibleValues();
             $groupId = $keyConfig->getGroup();
 
             if ($groupId) {
-                $group = Object\KeyValue\GroupConfig::getById($groupId);
+                $group = \Pimcore\Model\Object\KeyValue\GroupConfig::getById($groupId);
                 $property["group"] = $group->getName();
                 $property["groupDesc"] = $group->getDescription();
             }
@@ -406,7 +406,7 @@ class KeyValue extends Model\Object\ClassDefinition\Data
 
 
 
-        $keyValue = new Object\Data\KeyValue();
+        $keyValue = new \Pimcore\Model\Object\Data\KeyValue();
 
         $keyValue->setObjectId($objectId);
         $keyValue->setProperties($pairs);
@@ -489,7 +489,7 @@ class KeyValue extends Model\Object\ClassDefinition\Data
             $diffdata["data"] = $property;
 
 
-            $keyConfig = Object\KeyValue\KeyConfig::getById($key);
+            $keyConfig = \Pimcore\Model\Object\KeyValue\KeyConfig::getById($key);
             $keyName = $keyConfig->getName();
 
             $prettyValue = $property["value"];
@@ -535,7 +535,7 @@ class KeyValue extends Model\Object\ClassDefinition\Data
         if ($data) {
             $result = [];
             foreach ($data->arr as $item) {
-                $keyConfig = Object\KeyValue\KeyConfig::getById($item["key"]);
+                $keyConfig = \Pimcore\Model\Object\KeyValue\KeyConfig::getById($item["key"]);
                 $keyName = $keyConfig->getName();
                 $resultItem = [
                     "id" => $item["key"],
@@ -593,7 +593,7 @@ class KeyValue extends Model\Object\ClassDefinition\Data
                 }
             }
 
-            $keyValueData = new Object\Data\KeyValue();
+            $keyValueData = new \Pimcore\Model\Object\Data\KeyValue();
             $keyValueData->setProperties($pairs);
             $keyValueData->setClass($relatedObject->getClass());
             $keyValueData->setObjectId($relatedObject->getId());
@@ -621,7 +621,7 @@ class KeyValue extends Model\Object\ClassDefinition\Data
     /**
      * @param Object\ClassDefinition\Data $masterDefinition
      */
-    public function synchronizeWithMasterDefinition(Object\ClassDefinition\Data $masterDefinition)
+    public function synchronizeWithMasterDefinition(\Pimcore\Model\Object\ClassDefinition\Data $masterDefinition)
     {
         $this->multivalent = $masterDefinition->multivalent;
     }

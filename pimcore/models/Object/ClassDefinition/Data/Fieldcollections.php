@@ -17,7 +17,7 @@
 namespace Pimcore\Model\Object\ClassDefinition\Data;
 
 use Pimcore\Model;
-use Pimcore\Model\Object;
+//use Pimcore\Model\Object
 use Pimcore\Model\Webservice;
 use Pimcore\Tool\Cast;
 use Pimcore\Logger;
@@ -105,16 +105,16 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
         $editmodeData = [];
         $idx = -1;
 
-        if ($data instanceof Object\Fieldcollection) {
+        if ($data instanceof \Pimcore\Model\Object\Fieldcollection) {
             foreach ($data as $item) {
                 $idx++;
 
-                if (!$item instanceof Object\Fieldcollection\Data\AbstractData) {
+                if (!$item instanceof \Pimcore\Model\Object\Fieldcollection\Data\AbstractData) {
                     continue;
                 }
 
                 try {
-                    $collectionDef = Object\Fieldcollection\Definition::getByKey($item->getType());
+                    $collectionDef = \Pimcore\Model\Object\Fieldcollection\Definition::getByKey($item->getType());
                 } catch (\Exception $e) {
                     continue;
                 }
@@ -132,7 +132,7 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
 
                 if ($calculatedChilds) {
                     foreach ($calculatedChilds as $fd) {
-                        $data = new Object\Data\CalculatedValue($fd->getName());
+                        $data = new \Pimcore\Model\Object\Data\CalculatedValue($fd->getName());
                         $data->setContextualData("fieldcollection", $this->getName(), $idx, null, null, null, $fd);
                         $data = $fd->getDataForEditmode($data, $object, $params);
                         $collectionData[$fd->getName()] = $data;
@@ -170,7 +170,7 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
 
                 $oIndex = $collectionRaw["oIndex"];
 
-                $collectionDef = Object\Fieldcollection\Definition::getByKey($collectionKey);
+                $collectionDef = \Pimcore\Model\Object\Fieldcollection\Definition::getByKey($collectionKey);
                 $fieldname = $this->getName();
 
                 foreach ($collectionDef->getFieldDefinitions() as $fd) {
@@ -201,7 +201,7 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
             }
         }
 
-        $container = new Object\Fieldcollection($values, $this->getName());
+        $container = new \Pimcore\Model\Object\Fieldcollection($values, $this->getName());
 
         return $container;
     }
@@ -250,14 +250,14 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
     {
         $dataString = "";
         $fcData = $this->getDataFromObjectParam($object);
-        if ($fcData instanceof Object\Fieldcollection) {
+        if ($fcData instanceof \Pimcore\Model\Object\Fieldcollection) {
             foreach ($fcData as $item) {
-                if (!$item instanceof Object\Fieldcollection\Data\AbstractData) {
+                if (!$item instanceof \Pimcore\Model\Object\Fieldcollection\Data\AbstractData) {
                     continue;
                 }
 
                 try {
-                    $collectionDef = Object\Fieldcollection\Definition::getByKey($item->getType());
+                    $collectionDef = \Pimcore\Model\Object\Fieldcollection\Definition::getByKey($item->getType());
                 } catch (\Exception $e) {
                     continue;
                 }
@@ -281,11 +281,11 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
         $container = $this->getDataFromObjectParam($object);
 
         if (is_null($container)) {
-            $container = new Object\Fieldcollection();
+            $container = new \Pimcore\Model\Object\Fieldcollection();
             $container->setFieldname($this->getName());
         }
 
-        if ($container instanceof Object\Fieldcollection) {
+        if ($container instanceof \Pimcore\Model\Object\Fieldcollection) {
             $params = [
                 "context" => [
                     "containerType" => "fieldcollection",
@@ -307,7 +307,7 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
     public function load($object, $params = [])
     {
         if (!$this->getLazyLoading() || (isset($params["force"]) && $params["force"])) {
-            $container = new Object\Fieldcollection(null, $this->getName());
+            $container = new \Pimcore\Model\Object\Fieldcollection(null, $this->getName());
             $container->load($object);
 
             if ($container->isEmpty()) {
@@ -325,7 +325,7 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
      */
     public function delete($object)
     {
-        $container = new Object\Fieldcollection(null, $this->getName());
+        $container = new \Pimcore\Model\Object\Fieldcollection(null, $this->getName());
         $container->delete($object);
     }
 
@@ -350,7 +350,7 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
         if (is_array($allowedTypes)) {
             for ($i = 0; $i < count($allowedTypes); $i++) {
                 try {
-                    Object\Fieldcollection\Definition::getByKey($allowedTypes[$i]);
+                    \Pimcore\Model\Object\Fieldcollection\Definition::getByKey($allowedTypes[$i]);
                 } catch (\Exception $e) {
                     Logger::warn("Removed unknown allowed type [ $allowedTypes[$i] ] from allowed types of field collection");
                     unset($allowedTypes[$i]);
@@ -374,9 +374,9 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
         $data = $this->getDataFromObjectParam($object, $params);
         $wsData = [];
 
-        if ($data instanceof Object\Fieldcollection) {
+        if ($data instanceof \Pimcore\Model\Object\Fieldcollection) {
             foreach ($data as $item) {
-                if (!$item instanceof Object\Fieldcollection\Data\AbstractData) {
+                if (!$item instanceof \Pimcore\Model\Object\Fieldcollection\Data\AbstractData) {
                     continue;
                 }
 
@@ -385,7 +385,7 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
                 $wsDataItem->type = $item->getType();
 
                 try {
-                    $collectionDef = Object\Fieldcollection\Definition::getByKey($item->getType());
+                    $collectionDef = \Pimcore\Model\Object\Fieldcollection\Definition::getByKey($item->getType());
                 } catch (\Exception $e) {
                     continue;
                 }
@@ -433,7 +433,7 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
 
                 $fieldcollection = $collectionRaw->type;
                 $collectionData = [];
-                $collectionDef = Object\Fieldcollection\Definition::getByKey($fieldcollection);
+                $collectionDef = \Pimcore\Model\Object\Fieldcollection\Definition::getByKey($fieldcollection);
 
                 if (!$collectionDef) {
                     throw new \Exception("Unknown fieldcollection in webservice import [" . $fieldcollection . "]");
@@ -468,7 +468,7 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
             }
         }
 
-        $container = new Object\Fieldcollection($values, $this->getName());
+        $container = new \Pimcore\Model\Object\Fieldcollection($values, $this->getName());
 
         return $container;
     }
@@ -481,14 +481,14 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
     {
         $dependencies = [];
 
-        if ($data instanceof Object\Fieldcollection) {
+        if ($data instanceof \Pimcore\Model\Object\Fieldcollection) {
             foreach ($data as $item) {
-                if (!$item instanceof Object\Fieldcollection\Data\AbstractData) {
+                if (!$item instanceof \Pimcore\Model\Object\Fieldcollection\Data\AbstractData) {
                     continue;
                 }
 
                 try {
-                    $collectionDef = Object\Fieldcollection\Definition::getByKey($item->getType());
+                    $collectionDef = \Pimcore\Model\Object\Fieldcollection\Definition::getByKey($item->getType());
                 } catch (\Exception $e) {
                     continue;
                 }
@@ -514,14 +514,14 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
     {
         $tags = is_array($tags) ? $tags : [];
 
-        if ($data instanceof Object\Fieldcollection) {
+        if ($data instanceof \Pimcore\Model\Object\Fieldcollection) {
             foreach ($data as $item) {
-                if (!$item instanceof Object\Fieldcollection\Data\AbstractData) {
+                if (!$item instanceof \Pimcore\Model\Object\Fieldcollection\Data\AbstractData) {
                     continue;
                 }
 
                 try {
-                    $collectionDef = Object\Fieldcollection\Definition::getByKey($item->getType());
+                    $collectionDef = \Pimcore\Model\Object\Fieldcollection\Definition::getByKey($item->getType());
                 } catch (\Exception $e) {
                     continue;
                 }
@@ -547,14 +547,14 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
     public function checkValidity($data, $omitMandatoryCheck = false)
     {
         if (!$omitMandatoryCheck) {
-            if ($data instanceof Object\Fieldcollection) {
+            if ($data instanceof \Pimcore\Model\Object\Fieldcollection) {
                 foreach ($data as $item) {
-                    if (!$item instanceof Object\Fieldcollection\Data\AbstractData) {
+                    if (!$item instanceof \Pimcore\Model\Object\Fieldcollection\Data\AbstractData) {
                         continue;
                     }
 
                     try {
-                        $collectionDef = Object\Fieldcollection\Definition::getByKey($item->getType());
+                        $collectionDef = \Pimcore\Model\Object\Fieldcollection\Definition::getByKey($item->getType());
                     } catch (\Exception $e) {
                         continue;
                     }
@@ -576,7 +576,7 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
      */
     public function preGetData($object, $params = [])
     {
-        if (!$object instanceof Object\Concrete) {
+        if (!$object instanceof \Pimcore\Model\Object\Concrete) {
             throw new \Exception("Field Collections are only valid in Objects");
         }
 
@@ -605,7 +605,7 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
             $object->addO__loadedLazyField($this->getName());
         }
 
-        if ($data instanceof Object\Fieldcollection) {
+        if ($data instanceof \Pimcore\Model\Object\Fieldcollection) {
             $data->setFieldname($this->getName());
         }
 
@@ -696,10 +696,10 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
     public function getDiffVersionPreview($data, $object = null, $params = [])
     {
         $html = "";
-        if ($data instanceof Object\Fieldcollection) {
+        if ($data instanceof \Pimcore\Model\Object\Fieldcollection) {
             $html = "<table>";
             foreach ($data as $item) {
-                if (!$item instanceof Object\Fieldcollection\Data\AbstractData) {
+                if (!$item instanceof \Pimcore\Model\Object\Fieldcollection\Data\AbstractData) {
                     continue;
                 }
 
@@ -707,7 +707,7 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
                 $html .= "<tr><th><b>" . $type . "</b></th><th>&nbsp;</th><th>&nbsp;</th></tr>";
 
                 try {
-                    $collectionDef = Object\Fieldcollection\Definition::getByKey($item->getType());
+                    $collectionDef = \Pimcore\Model\Object\Fieldcollection\Definition::getByKey($item->getType());
                 } catch (\Exception $e) {
                     continue;
                 }
@@ -765,14 +765,14 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
     {
         $data = $this->getDataFromObjectParam($object, $params);
 
-        if ($data instanceof Object\Fieldcollection) {
+        if ($data instanceof \Pimcore\Model\Object\Fieldcollection) {
             foreach ($data as $item) {
-                if (!$item instanceof Object\Fieldcollection\Data\AbstractData) {
+                if (!$item instanceof \Pimcore\Model\Object\Fieldcollection\Data\AbstractData) {
                     continue;
                 }
 
                 try {
-                    $collectionDef = Object\Fieldcollection\Definition::getByKey($item->getType());
+                    $collectionDef = \Pimcore\Model\Object\Fieldcollection\Definition::getByKey($item->getType());
                 } catch (\Exception $e) {
                     continue;
                 }
@@ -793,7 +793,7 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
     /**
      * @param Object\ClassDefinition\Data $masterDefinition
      */
-    public function synchronizeWithMasterDefinition(Object\ClassDefinition\Data $masterDefinition)
+    public function synchronizeWithMasterDefinition(\Pimcore\Model\Object\ClassDefinition\Data $masterDefinition)
     {
         $this->allowedTypes = $masterDefinition->allowedTypes;
         $this->lazyLoading = $masterDefinition->lazyLoading;
@@ -809,7 +809,7 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
     {
         if (is_array($this->allowedTypes)) {
             foreach ($this->allowedTypes as $allowedType) {
-                $definition = Object\Fieldcollection\Definition::getByKey($allowedType);
+                $definition = \Pimcore\Model\Object\Fieldcollection\Definition::getByKey($allowedType);
                 if ($definition) {
                     $fieldDefinition = $definition->getFieldDefinitions();
 

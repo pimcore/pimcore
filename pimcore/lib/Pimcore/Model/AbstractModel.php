@@ -93,9 +93,9 @@ abstract class AbstractModel
         }
 
         // we have 2 static mappings for objects for performance reasons
-        if ($this instanceof Object\Concrete) {
+        if ($this instanceof \Pimcore\Model\Object\Concrete) {
             $dao = 'Pimcore\Model\Object\Concrete\Dao';
-        } elseif ($this instanceof Object\Listing\Concrete) {
+        } elseif ($this instanceof \Pimcore\Model\Object\Listing\Concrete) {
             $dao = 'Pimcore\Model\Object\Listing\Concrete\Dao';
         } elseif (!$forceDetection && array_key_exists($cacheKey, self::$daoClassCache)) {
             $dao = self::$daoClassCache[$cacheKey];

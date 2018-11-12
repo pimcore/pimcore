@@ -17,7 +17,7 @@
 namespace Pimcore\Model\Object\ClassDefinition\Data;
 
 use Pimcore\Model;
-use Pimcore\Model\Object;
+//use Pimcore\Model\Object
 use Pimcore\Model\Element;
 
 class Objects extends Model\Object\ClassDefinition\Data\Relations\AbstractRelations
@@ -89,7 +89,7 @@ class Objects extends Model\Object\ClassDefinition\Data\Relations\AbstractRelati
         if (is_array($data) && count($data) > 0) {
             $counter = 1;
             foreach ($data as $object) {
-                if ($object instanceof Object\Concrete) {
+                if ($object instanceof \Pimcore\Model\Object\Concrete) {
                     $return[] = [
                         "dest_id" => $object->getId(),
                         "type" => "object",
@@ -122,8 +122,8 @@ class Objects extends Model\Object\ClassDefinition\Data\Relations\AbstractRelati
         $objects = [];
         if (is_array($data) && count($data) > 0) {
             foreach ($data as $object) {
-                $o = Object::getById($object["dest_id"]);
-                if ($o instanceof Object\Concrete) {
+                $o = \Pimcore\Model\Object\AbstractObject::getById($object["dest_id"]);
+                if ($o instanceof \Pimcore\Model\Object\Concrete) {
                     $objects[] = $o;
                 }
             }
@@ -150,7 +150,7 @@ class Objects extends Model\Object\ClassDefinition\Data\Relations\AbstractRelati
 
         if (is_array($data) && count($data) > 0) {
             foreach ($data as $object) {
-                if ($object instanceof Object\Concrete) {
+                if ($object instanceof \Pimcore\Model\Object\Concrete) {
                     $ids[] = $object->getId();
                 }
             }
@@ -177,7 +177,7 @@ class Objects extends Model\Object\ClassDefinition\Data\Relations\AbstractRelati
 
         if (is_array($data) && count($data) > 0) {
             foreach ($data as $object) {
-                if ($object instanceof Object\Concrete) {
+                if ($object instanceof \Pimcore\Model\Object\Concrete) {
                     $return[] = [$object->getId(), $object->getRealFullPath(), $object->getClassName()];
                 }
             }
@@ -209,7 +209,7 @@ class Objects extends Model\Object\ClassDefinition\Data\Relations\AbstractRelati
         $objects = [];
         if (is_array($data) && count($data) > 0) {
             foreach ($data as $object) {
-                $o = Object::getById($object["id"]);
+                $o = \Pimcore\Model\Object\AbstractObject::getById($object["id"]);
                 if ($o) {
                     $objects[]=$o;
                 }
@@ -317,8 +317,8 @@ class Objects extends Model\Object\ClassDefinition\Data\Relations\AbstractRelati
                 }
 
                 $allowClass = $this->allowObjectRelation($o);
-                if (!$allowClass or !($o instanceof Object\Concrete)) {
-                    if (!$allowClass && $o instanceof Object\Concrete) {
+                if (!$allowClass or !($o instanceof \Pimcore\Model\Object\Concrete)) {
+                    if (!$allowClass && $o instanceof \Pimcore\Model\Object\Concrete) {
                         $id = $o->getId();
                     } else {
                         $id = "??";
@@ -369,7 +369,7 @@ class Objects extends Model\Object\ClassDefinition\Data\Relations\AbstractRelati
 
         $value = [];
         foreach ($values as $element) {
-            if ($el = Object::getByPath($element)) {
+            if ($el = \Pimcore\Model\Object\AbstractObject::getByPath($element)) {
                 $value[] = $el;
             }
         }
@@ -414,7 +414,7 @@ class Objects extends Model\Object\ClassDefinition\Data\Relations\AbstractRelati
 
         if (is_array($data) && count($data) > 0) {
             foreach ($data as $o) {
-                if ($o instanceof Object\AbstractObject) {
+                if ($o instanceof \Pimcore\Model\Object\AbstractObject) {
                     $dependencies["object_" . $o->getId()] = [
                         "id" => $o->getId(),
                         "type" => "object"
@@ -475,10 +475,10 @@ class Objects extends Model\Object\ClassDefinition\Data\Relations\AbstractRelati
 
                 $relatedObject = null;
                 if ($id) {
-                    $relatedObject = Object::getById($id);
+                    $relatedObject = \Pimcore\Model\Object\AbstractObject::getById($id);
                 }
 
-                if ($relatedObject instanceof Object\AbstractObject) {
+                if ($relatedObject instanceof \Pimcore\Model\Object\AbstractObject) {
                     $relatedObjects[] = $relatedObject;
                 } else {
                     if (!$idMapper || !$idMapper->ignoreMappingFailures()) {
@@ -503,7 +503,7 @@ class Objects extends Model\Object\ClassDefinition\Data\Relations\AbstractRelati
     public function preGetData($object, $params = [])
     {
         $data = null;
-        if ($object instanceof Object\Concrete) {
+        if ($object instanceof \Pimcore\Model\Object\Concrete) {
             $data = $object->{$this->getName()};
             if ($this->getLazyLoading() and !in_array($this->getName(), $object->getO__loadedLazyFields())) {
                 //$data = $this->getDataFromResource($object->getRelationData($this->getName(),true,null));
@@ -514,16 +514,16 @@ class Objects extends Model\Object\ClassDefinition\Data\Relations\AbstractRelati
                     $object->$setter($data);
                 }
             }
-        } elseif ($object instanceof Object\Localizedfield) {
+        } elseif ($object instanceof \Pimcore\Model\Object\Localizedfield) {
             $data = $params["data"];
-        } elseif ($object instanceof Object\Fieldcollection\Data\AbstractData) {
+        } elseif ($object instanceof \Pimcore\Model\Object\Fieldcollection\Data\AbstractData) {
             $data = $object->{$this->getName()};
-        } elseif ($object instanceof Object\Objectbrick\Data\AbstractData) {
+        } elseif ($object instanceof \Pimcore\Model\Object\Objectbrick\Data\AbstractData) {
             $data = $object->{$this->getName()};
         }
 
 
-        if (Object\AbstractObject::doHideUnpublished() and is_array($data)) {
+        if (\Pimcore\Model\Object\AbstractObject::doHideUnpublished() and is_array($data)) {
             $publishedList = [];
             foreach ($data as $listElement) {
                 if (Element\Service::isPublished($listElement)) {
@@ -549,7 +549,7 @@ class Objects extends Model\Object\ClassDefinition\Data\Relations\AbstractRelati
             $data = [];
         }
 
-        if ($object instanceof Object\Concrete) {
+        if ($object instanceof \Pimcore\Model\Object\Concrete) {
             if ($this->getLazyLoading() and !in_array($this->getName(), $object->getO__loadedLazyFields())) {
                 $object->addO__loadedLazyField($this->getName());
             }
@@ -683,7 +683,7 @@ class Objects extends Model\Object\ClassDefinition\Data\Relations\AbstractRelati
     /**
      * @param Object\ClassDefinition\Data $masterDefinition
      */
-    public function synchronizeWithMasterDefinition(Object\ClassDefinition\Data $masterDefinition)
+    public function synchronizeWithMasterDefinition(\Pimcore\Model\Object\ClassDefinition\Data $masterDefinition)
     {
         $this->maxItems = $masterDefinition->maxItems;
         $this->relationType = $masterDefinition->relationType;

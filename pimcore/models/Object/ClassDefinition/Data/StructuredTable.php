@@ -17,7 +17,7 @@
 namespace Pimcore\Model\Object\ClassDefinition\Data;
 
 use Pimcore\Model;
-use Pimcore\Model\Object;
+//use Pimcore\Model\Object
 
 class StructuredTable extends Model\Object\ClassDefinition\Data
 {
@@ -274,7 +274,7 @@ class StructuredTable extends Model\Object\ClassDefinition\Data
             }
         }
 
-        return new Object\Data\StructuredTable($structuredData);
+        return new \Pimcore\Model\Object\Data\StructuredTable($structuredData);
     }
 
     /**
@@ -299,7 +299,7 @@ class StructuredTable extends Model\Object\ClassDefinition\Data
     public function getDataForEditmode($data, $object = null, $params = [])
     {
         $editArray = [];
-        if ($data instanceof Object\Data\StructuredTable) {
+        if ($data instanceof \Pimcore\Model\Object\Data\StructuredTable) {
             if ($data->isEmpty()) {
                 return [];
             } else {
@@ -328,7 +328,7 @@ class StructuredTable extends Model\Object\ClassDefinition\Data
      */
     public function getDataFromEditmode($data, $object = null, $params = [])
     {
-        $table = new Object\Data\StructuredTable();
+        $table = new \Pimcore\Model\Object\Data\StructuredTable();
         $tableData = [];
         foreach ($data as $dataLine) {
             foreach ($this->cols as $c) {
@@ -348,7 +348,7 @@ class StructuredTable extends Model\Object\ClassDefinition\Data
      */
     public function getDataForGrid($data, $object = null, $params = [])
     {
-        if ($data instanceof Object\Data\StructuredTable) {
+        if ($data instanceof \Pimcore\Model\Object\Data\StructuredTable) {
             if (!$data->isEmpty()) {
                 return $data->getData();
             }
@@ -399,7 +399,7 @@ class StructuredTable extends Model\Object\ClassDefinition\Data
             }
         }
 
-        if (!empty($data) and !$data instanceof Object\Data\StructuredTable) {
+        if (!empty($data) and !$data instanceof \Pimcore\Model\Object\Data\StructuredTable) {
             throw new Model\Element\ValidationException("invalid table data");
         }
     }
@@ -415,7 +415,7 @@ class StructuredTable extends Model\Object\ClassDefinition\Data
     {
         $value = $this->getDataFromObjectParam($object, $params);
 
-        if ($value instanceof Object\Data\StructuredTable) {
+        if ($value instanceof \Pimcore\Model\Object\Data\StructuredTable) {
             $string = "";
             $dataArray = $value->getData();
             foreach ($this->getRows() as $r) {
@@ -449,7 +449,7 @@ class StructuredTable extends Model\Object\ClassDefinition\Data
             }
         }
 
-        $value = new Object\Data\StructuredTable($dataTable);
+        $value = new \Pimcore\Model\Object\Data\StructuredTable($dataTable);
 
         return $value;
     }
@@ -465,7 +465,7 @@ class StructuredTable extends Model\Object\ClassDefinition\Data
         $webserviceArray = [];
         $table = $this->getDataFromObjectParam($object, $params);
 
-        if ($table instanceof Object\Data\StructuredTable) {
+        if ($table instanceof \Pimcore\Model\Object\Data\StructuredTable) {
             $dataArray = $table->getData();
             foreach ($this->getRows() as $r) {
                 foreach ($this->getCols() as $c) {
@@ -505,7 +505,7 @@ class StructuredTable extends Model\Object\ClassDefinition\Data
                     }
                 }
 
-                return new Object\Data\StructuredTable($dataArray);
+                return new \Pimcore\Model\Object\Data\StructuredTable($dataArray);
             } else {
                 throw new \Exception("cannot get values from web service import - invalid data");
             }
@@ -589,7 +589,7 @@ class StructuredTable extends Model\Object\ClassDefinition\Data
      */
     public function isEmpty($data)
     {
-        if ($data instanceof Object\Data\StructuredTable) {
+        if ($data instanceof \Pimcore\Model\Object\Data\StructuredTable) {
             return $data->isEmpty();
         } else {
             return true;
@@ -627,7 +627,7 @@ class StructuredTable extends Model\Object\ClassDefinition\Data
     /**
      * @param Object\ClassDefinition\Data $masterDefinition
      */
-    public function synchronizeWithMasterDefinition(Object\ClassDefinition\Data $masterDefinition)
+    public function synchronizeWithMasterDefinition(\Pimcore\Model\Object\ClassDefinition\Data $masterDefinition)
     {
         $this->labelWidth = $masterDefinition->labelWidth;
         $this->labelFirstCell = $masterDefinition->labelFirstCell;

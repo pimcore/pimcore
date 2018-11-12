@@ -17,7 +17,7 @@
 namespace Pimcore\Model\Object\Fieldcollection;
 
 use Pimcore\Model;
-use Pimcore\Model\Object;
+//use Pimcore\Model\Object
 
 /**
  * @property \Pimcore\Model\Object\Fieldcollection $model
@@ -28,7 +28,7 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * @param Object\Concrete $object
      */
-    public function save(Object\Concrete $object)
+    public function save(\Pimcore\Model\Object\Concrete $object)
     {
         $this->delete($object);
     }
@@ -37,7 +37,7 @@ class Dao extends Model\Dao\AbstractDao
      * @param Object\Concrete $object
      * @return array
      */
-    public function load(Object\Concrete $object)
+    public function load(\Pimcore\Model\Object\Concrete $object)
     {
         $fieldDef = $object->getClass()->getFieldDefinition($this->model->getFieldname());
         $values = [];
@@ -45,7 +45,7 @@ class Dao extends Model\Dao\AbstractDao
 
         foreach ($fieldDef->getAllowedTypes() as $type) {
             try {
-                $definition = Object\Fieldcollection\Definition::getByKey($type);
+                $definition = \Pimcore\Model\Object\Fieldcollection\Definition::getByKey($type);
             } catch (\Exception $e) {
                 continue;
             }
@@ -114,7 +114,7 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * @param Object\Concrete $object
      */
-    public function delete(Object\Concrete $object)
+    public function delete(\Pimcore\Model\Object\Concrete $object)
     {
         // empty or create all relevant tables
         $fieldDef = $object->getClass()->getFieldDefinition($this->model->getFieldname());
@@ -122,7 +122,7 @@ class Dao extends Model\Dao\AbstractDao
         foreach ($fieldDef->getAllowedTypes() as $type) {
             try {
                 /** @var  $definition Definition */
-                $definition = Object\Fieldcollection\Definition::getByKey($type);
+                $definition = \Pimcore\Model\Object\Fieldcollection\Definition::getByKey($type);
             } catch (\Exception $e) {
                 continue;
             }

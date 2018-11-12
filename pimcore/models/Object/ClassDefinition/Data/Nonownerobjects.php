@@ -17,7 +17,7 @@
 namespace Pimcore\Model\Object\ClassDefinition\Data;
 
 use Pimcore\Model;
-use Pimcore\Model\Object;
+//use Pimcore\Model\Object
 use Pimcore\Logger;
 
 class Nonownerobjects extends Model\Object\ClassDefinition\Data\Objects
@@ -106,7 +106,7 @@ class Nonownerobjects extends Model\Object\ClassDefinition\Data\Objects
         //fallback for legacy data
         if (empty($this->ownerClassName)) {
             try {
-                $class = Object\ClassDefinition::getById($this->ownerClassId);
+                $class = \Pimcore\Model\Object\ClassDefinition::getById($this->ownerClassId);
                 $this->ownerClassName =  $class->getName();
             } catch (\Exception $e) {
                 Logger::error($e->getMessage());
@@ -123,7 +123,7 @@ class Nonownerobjects extends Model\Object\ClassDefinition\Data\Objects
     {
         if (empty($this->ownerClassId)) {
             try {
-                $class = Object\ClassDefinition::getByName($this->ownerClassName);
+                $class = \Pimcore\Model\Object\ClassDefinition::getByName($this->ownerClassName);
                 $this->ownerClassId =  $class->getId();
             } catch (\Exception $e) {
                 Logger::error($e->getMessage());
@@ -186,10 +186,10 @@ class Nonownerobjects extends Model\Object\ClassDefinition\Data\Objects
     protected function allowObjectRelation($object)
     {
         //only relations of owner type are allowed
-        $ownerClass = Object\ClassDefinition::getByName($this->getOwnerClassName());
+        $ownerClass = \Pimcore\Model\Object\ClassDefinition::getByName($this->getOwnerClassName());
         if ($ownerClass->getId()>0 and $ownerClass->getId() == $object->getClassId()) {
             $fd = $ownerClass->getFieldDefinition($this->getOwnerFieldName());
-            if ($fd instanceof Object\ClassDefinition\Data\Objects) {
+            if ($fd instanceof \Pimcore\Model\Object\ClassDefinition\Data\Objects) {
                 return $fd->allowObjectRelation($object);
             }
         } else {
@@ -215,7 +215,7 @@ class Nonownerobjects extends Model\Object\ClassDefinition\Data\Objects
         if (is_array($data)) {
             foreach ($data as $o) {
                 $allowClass = $this->allowObjectRelation($o);
-                if (!$allowClass or!($o instanceof Object\Concrete)) {
+                if (!$allowClass or!($o instanceof \Pimcore\Model\Object\Concrete)) {
                     throw new Model\Element\ValidationException("Invalid non owner object relation to object [".$o->getId()."]", null, null);
                 }
             }

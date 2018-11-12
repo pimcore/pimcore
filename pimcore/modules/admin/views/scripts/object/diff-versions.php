@@ -10,7 +10,7 @@
 
 <?php
 
-use Pimcore\Model\Object;
+//use Pimcore\Model\Object
 
 $fields = $this->object1->getClass()->getFieldDefinitions();
 ?>
@@ -49,7 +49,7 @@ $fields = $this->object1->getClass()->getFieldDefinitions();
 <?php
     foreach ($fields as $fieldName => $definition) { ?>
     <?php
-        if($definition instanceof Object\ClassDefinition\Data\Localizedfields) { ?>
+        if($definition instanceof \Pimcore\Model\Object\ClassDefinition\Data\Localizedfields) { ?>
         <?php foreach(\Pimcore\Tool::getValidLanguages() as $language) { ?>
             <?php foreach ($definition->getFieldDefinitions() as $lfd) { ?>
                 <?php
@@ -66,7 +66,7 @@ $fields = $this->object1->getClass()->getFieldDefinitions();
                 $c++;
             } ?>
         <?php } ?>
-        <?php } else if($definition instanceof Object\ClassDefinition\Data\Classificationstore){
+        <?php } else if($definition instanceof \Pimcore\Model\Object\ClassDefinition\Data\Classificationstore){
 
 
 
@@ -122,7 +122,7 @@ $fields = $this->object1->getClass()->getFieldDefinitions();
 
                 foreach ($keyGroupRelations as $keyGroupRelation) {
 
-                    $keyDef = Object\Classificationstore\Service::getFieldDefinitionFromJson(json_decode($keyGroupRelation->getDefinition()), $keyGroupRelation->getType());
+                    $keyDef = \Pimcore\Model\Object\Classificationstore\Service::getFieldDefinitionFromJson(json_decode($keyGroupRelation->getDefinition()), $keyGroupRelation->getType());
                     if (!$keyDef) {
                         continue;
                     }
@@ -147,11 +147,11 @@ $fields = $this->object1->getClass()->getFieldDefinitions();
                 }
             }
             ?>
-    <?php } else if($definition instanceof Object\ClassDefinition\Data\ObjectBricks) {
+    <?php } else if($definition instanceof \Pimcore\Model\Object\ClassDefinition\Data\ObjectBricks) {
                 ?>
                 <?php foreach($definition->getAllowedTypes() as $asAllowedType) { ?>
                     <?php
-                    $collectionDef = Object\Objectbrick\Definition::getByKey($asAllowedType);
+                    $collectionDef = \Pimcore\Model\Object\Objectbrick\Definition::getByKey($asAllowedType);
 
                     foreach ($collectionDef->getFieldDefinitions() as $lfd) { ?>
                         <?php

@@ -18,7 +18,7 @@ namespace Pimcore\Model\Object\ClassDefinition\Data;
 
 use Pimcore\Model;
 use Pimcore\Tool\Serialize;
-use Pimcore\Model\Object;
+//use Pimcore\Model\Object
 
 class Table extends Model\Object\ClassDefinition\Data
 {
@@ -475,7 +475,7 @@ class Table extends Model\Object\ClassDefinition\Data
     /**
      * @param Object\ClassDefinition\Data $masterDefinition
      */
-    public function synchronizeWithMasterDefinition(Object\ClassDefinition\Data $masterDefinition)
+    public function synchronizeWithMasterDefinition(\Pimcore\Model\Object\ClassDefinition\Data $masterDefinition)
     {
         $this->cols = $masterDefinition->cols;
         $this->colsFixed = $masterDefinition->cols_fixed;

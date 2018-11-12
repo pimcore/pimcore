@@ -678,7 +678,7 @@ class Version extends AbstractModel
                     } elseif ($version->getCtype() == "asset") {
                         $element = Asset::getById($version->getCid());
                     } elseif ($version->getCtype() == "object") {
-                        $element = Object::getById($version->getCid());
+                        $element = \Pimcore\Model\Object\AbstractObject::getById($version->getCid());
                     }
 
                     if ($element instanceof ElementInterface) {

@@ -17,7 +17,7 @@
 namespace Pimcore\Model\Object;
 
 use Pimcore\Model;
-use Pimcore\Model\Object;
+//use Pimcore\Model\Object
 use Pimcore\File;
 use Pimcore\Cache;
 use Pimcore\Logger;
@@ -27,7 +27,7 @@ use Pimcore\Logger;
  */
 class ClassDefinition extends Model\AbstractModel
 {
-    use Object\ClassDefinition\Helper\VarExport;
+    use \Pimcore\Model\Object\ClassDefinition\Helper\VarExport;
 
     /**
      * @var int
@@ -316,7 +316,7 @@ class ClassDefinition extends Model\AbstractModel
         if (is_array($this->getFieldDefinitions()) && count($this->getFieldDefinitions())) {
             foreach ($this->getFieldDefinitions() as $key => $def) {
                 if (!(method_exists($def, "isRemoteOwner") and $def->isRemoteOwner())) {
-                    if ($def instanceof Object\ClassDefinition\Data\Localizedfields) {
+                    if ($def instanceof \Pimcore\Model\Object\ClassDefinition\Data\Localizedfields) {
                         $cd .= "* @method \\Pimcore\\Model\\Object\\" . ucfirst($this->getName()) . '\Listing getBy' . ucfirst($def->getName()) . ' ($field, $value, $locale = null, $limit = 0) ' . "\n";
                     } else {
                         $cd .= "* @method \\Pimcore\\Model\\Object\\" . ucfirst($this->getName()) . '\Listing getBy' . ucfirst($def->getName()) . ' ($value, $limit = 0) ' . "\n";
@@ -339,7 +339,7 @@ class ClassDefinition extends Model\AbstractModel
 
         if (is_array($this->getFieldDefinitions()) && count($this->getFieldDefinitions())) {
             foreach ($this->getFieldDefinitions() as $key => $def) {
-                if (!(method_exists($def, "isRemoteOwner") && $def->isRemoteOwner()) && !$def instanceof Object\ClassDefinition\Data\CalculatedValue) {
+                if (!(method_exists($def, "isRemoteOwner") && $def->isRemoteOwner()) && !$def instanceof \Pimcore\Model\Object\ClassDefinition\Data\CalculatedValue) {
                     $cd .= "public $" . $key . ";\n";
                 }
             }
@@ -407,13 +407,13 @@ class ClassDefinition extends Model\AbstractModel
         $cd .= "\n\n";
         $cd .= "namespace Pimcore\\Model\\Object\\" . ucfirst($this->getName()) . ";";
         $cd .= "\n\n";
-        $cd .= "use Pimcore\\Model\\Object;";
+        $cd .= "//use Pimcore\\Model\\Object;";
         $cd .= "\n\n";
         $cd .= "/**\n";
-        $cd .= " * @method Object\\" . ucfirst($this->getName()) . " current()\n";
+        $cd .= " * @method \\Pimcore\\Model\\Object\\" . ucfirst($this->getName()) . " current()\n";
         $cd .= " */";
         $cd .= "\n\n";
-        $cd .= "class Listing extends Object\\Listing\\Concrete {";
+        $cd .= "class Listing extends \\Pimcore\\Model\\Object\\Listing\\Concrete {";
         $cd .= "\n\n";
 
         $cd .= 'public $classId = ' . $this->getId() . ";\n";
@@ -536,9 +536,9 @@ class ClassDefinition extends Model\AbstractModel
             $customLayout->delete();
         }
 
-        $brickListing = new Object\Objectbrick\Definition\Listing();
+        $brickListing = new \Pimcore\Model\Object\Objectbrick\Definition\Listing();
         $brickListing = $brickListing->load();
-        /** @var  $brickDefinition Object\Objectbrick\Definition */
+        /** @var  $brickDefinition \Pimcore\Model\Object\Objectbrick\Definition */
         foreach ($brickListing as $brickDefinition) {
             $modified = false;
 
@@ -705,7 +705,7 @@ class ClassDefinition extends Model\AbstractModel
     }
 
     /**
-     * @return Object\ClassDefinition\Data[]
+     * @return \Pimcore\Model\Object\ClassDefinition\Data[]
      */
     public function getFieldDefinitions()
     {
@@ -733,7 +733,7 @@ class ClassDefinition extends Model\AbstractModel
 
     /**
      * @param string $key
-     * @param Object\ClassDefinition\Data $data
+     * @param \Pimcore\Model\Object\ClassDefinition\Data $data
      * @return $this
      */
     public function addFieldDefinition($key, $data)
@@ -745,7 +745,7 @@ class ClassDefinition extends Model\AbstractModel
 
     /**
      * @param $key
-     * @return Object\ClassDefinition\Data|boolean
+     * @return \Pimcore\Model\Object\ClassDefinition\Data|boolean
      */
     public function getFieldDefinition($key)
     {
@@ -771,11 +771,11 @@ class ClassDefinition extends Model\AbstractModel
     }
 
     /**
-     * @param array|Object\ClassDefinition\Layout|Object\ClassDefinition\Data $def
+     * @param array|\Pimcore\Model\Object\ClassDefinition\Layout|\Pimcore\Model\Object\ClassDefinition\Data $def
      */
     public function extractDataDefinitions($def)
     {
-        if ($def instanceof Object\ClassDefinition\Layout) {
+        if ($def instanceof \Pimcore\Model\Object\ClassDefinition\Layout) {
             if ($def->hasChilds()) {
                 foreach ($def->getChilds() as $child) {
                     $this->extractDataDefinitions($child);
@@ -783,7 +783,7 @@ class ClassDefinition extends Model\AbstractModel
             }
         }
 
-        if ($def instanceof Object\ClassDefinition\Data) {
+        if ($def instanceof \Pimcore\Model\Object\ClassDefinition\Data) {
             $existing = $this->getFieldDefinition($def->getName());
             if ($existing && method_exists($existing, "addReferencedField")) {
                 // this is especially for localized fields which get aggregated here into one field definition

@@ -17,7 +17,7 @@
 namespace Pimcore\Model\Object\ClassDefinition\Listing;
 
 use Pimcore\Model;
-use Pimcore\Model\Object;
+//use Pimcore\Model\Object
 
 /**
  * @property \Pimcore\Model\Object\ClassDefinition\Listing $model
@@ -37,7 +37,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
         $classesRaw = $this->db->fetchCol("SELECT id FROM classes" . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
 
         foreach ($classesRaw as $classRaw) {
-            $classes[] = Object\ClassDefinition::getById($classRaw);
+            $classes[] = \Pimcore\Model\Object\ClassDefinition::getById($classRaw);
         }
 
         $this->model->setClasses($classes);

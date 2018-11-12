@@ -17,7 +17,6 @@ namespace Pimcore\WorkflowManagement;
 use Pimcore\Model\Element\AbstractElement;
 use Pimcore\WorkflowManagement\Workflow;
 use Pimcore\Tool\Admin;
-use Pimcore\Model\Object;
 use Pimcore\Model\Object\Concrete as ConcreteObject;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Document;
@@ -106,7 +105,7 @@ class EventHandler
                 if (!is_null($workflowLayoutId)) {
                     //load the new layout into the object container
 
-                    $validLayouts = Object\Service::getValidLayouts($element);
+                    $validLayouts = \Pimcore\Model\Object\Object\Service::getValidLayouts($element);
 
                     //check that the layout id is valid before trying to load
                     if (!empty($validLayouts)) {
@@ -115,7 +114,7 @@ class EventHandler
                         if ($validLayouts && $validLayouts[$workflowLayoutId]) {
                             $customLayout = ClassDefinition\CustomLayout::getById($workflowLayoutId);
                             $customLayoutDefinition = $customLayout->getLayoutDefinitions();
-                            Object\Service::enrichLayoutDefinition($customLayoutDefinition, $e->getParam('object'));
+                            \Pimcore\Model\Object\Service::enrichLayoutDefinition($customLayoutDefinition, $e->getParam('object'));
                             $data["layout"] = $customLayoutDefinition;
                         }
                     }

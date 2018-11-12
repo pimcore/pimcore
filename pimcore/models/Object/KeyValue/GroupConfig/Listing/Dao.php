@@ -17,7 +17,7 @@
 namespace Pimcore\Model\Object\KeyValue\GroupConfig\Listing;
 
 use Pimcore\Model;
-use Pimcore\Model\Object;
+//use Pimcore\Model\Object
 
 /**
  * @deprecated will be removed entirely in Pimcore 5
@@ -33,12 +33,12 @@ class Dao extends Model\Listing\Dao\AbstractDao
      */
     public function load()
     {
-        $sql = "SELECT id FROM " . Object\KeyValue\GroupConfig\Dao::TABLE_NAME_GROUPS . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit();
+        $sql = "SELECT id FROM " . \Pimcore\Model\Object\KeyValue\GroupConfig\Dao::TABLE_NAME_GROUPS . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit();
         $configsData = $this->db->fetchCol($sql, $this->model->getConditionVariables());
 
         $configData = [];
         foreach ($configsData as $config) {
-            $configData[] = Object\KeyValue\GroupConfig::getById($config);
+            $configData[] = \Pimcore\Model\Object\KeyValue\GroupConfig::getById($config);
         }
 
         $this->model->setList($configData);
@@ -51,7 +51,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
      */
     public function getDataArray()
     {
-        $configsData = $this->db->fetchAll("SELECT * FROM " . Object\KeyValue\GroupConfig\Dao::TABLE_NAME_GROUPS . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
+        $configsData = $this->db->fetchAll("SELECT * FROM " . \Pimcore\Model\Object\KeyValue\GroupConfig\Dao::TABLE_NAME_GROUPS . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
 
         return $configsData;
     }
@@ -62,7 +62,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
     public function getTotalCount()
     {
         try {
-            $amount = (int) $this->db->fetchOne("SELECT COUNT(*) as amount FROM " . Object\KeyValue\GroupConfig\Dao::TABLE_NAME_GROUPS . " ". $this->getCondition(), $this->model->getConditionVariables());
+            $amount = (int) $this->db->fetchOne("SELECT COUNT(*) as amount FROM " . \Pimcore\Model\Object\KeyValue\GroupConfig\Dao::TABLE_NAME_GROUPS . " ". $this->getCondition(), $this->model->getConditionVariables());
         } catch (\Exception $e) {
         }
 

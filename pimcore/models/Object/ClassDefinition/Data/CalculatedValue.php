@@ -17,7 +17,7 @@
 namespace Pimcore\Model\Object\ClassDefinition\Data;
 
 use Pimcore\Model;
-use Pimcore\Model\Object;
+//use Pimcore\Model\Object
 use Pimcore\Logger;
 
 class CalculatedValue extends Model\Object\ClassDefinition\Data
@@ -360,13 +360,13 @@ class CalculatedValue extends Model\Object\ClassDefinition\Data
         $code .= "public function get" . ucfirst($key) . ' ($language = null) {' . "\n";
 
 
-        $code .= "\t" . '$brickDefinition = Object\Objectbrick\Definition::getByKey("' . $brickClass->getKey() . '");' . "\n";
+        $code .= "\t" . '$brickDefinition = \Pimcore\Model\Object\Objectbrick\Definition::getByKey("' . $brickClass->getKey() . '");' . "\n";
         $code .= "\t" . '$fd = $brickDefinition->getFieldDefinition("' . $key . '");' . "\n";
 
         $code .= "\t" . '$data' . ' = new \\Pimcore\\Model\\Object\\Data\\CalculatedValue($fd->getName());' . "\n";
         $code .= "\t" . '$data->setContextualData("objectbrick", $this->getFieldName() , $this->getType(), $fd->getName(), null, null, $fd);' . "\n";
 
-        $code .= "\t" . '$data = Object\Service::getCalculatedFieldValue($this->getObject(), $data);' . "\n";
+        $code .= "\t" . '$data = \Pimcore\Model\Object\Service::getCalculatedFieldValue($this->getObject(), $data);' . "\n";
         $code .= "\treturn " . '$data' . ";\n";
         $code .= "\t" . "}\n\n";
 
@@ -393,7 +393,7 @@ class CalculatedValue extends Model\Object\ClassDefinition\Data
         $code .= "\t" . '$data' . " = new \\Pimcore\\Model\\Object\\Data\\CalculatedValue('" . $key . "');\n";
         $code .= "\t" . '$data->setContextualData("fieldcollection", $this->getFieldname(), $this->getIndex(), null);' . "\n";
 
-        $code .= "\t" . '$data = Object\Service::getCalculatedFieldValue($this, $data);' . "\n";
+        $code .= "\t" . '$data = \Pimcore\Model\Object\Service::getCalculatedFieldValue($this, $data);' . "\n";
         $code .= "\t return " . '$data' . ";\n";
         $code .= "}\n\n";
 

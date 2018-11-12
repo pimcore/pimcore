@@ -17,7 +17,7 @@
 namespace Pimcore\Model\Object\Listing;
 
 use Pimcore\Model;
-use Pimcore\Model\Object;
+//use Pimcore\Model\Object
 use Prophecy\Comparator\ClosureComparator;
 
 /**
@@ -88,7 +88,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
 
         $objects = [];
         foreach ($list as $o_id) {
-            if ($object = Object::getById($o_id)) {
+            if ($object = \Pimcore\Model\Object\AbstractObject::getById($o_id)) {
                 $objects[] = $object;
             }
         }
@@ -206,10 +206,10 @@ class Dao extends Model\Listing\Dao\AbstractDao
         }
 
         if ($condition) {
-            if (Object\AbstractObject::doHideUnpublished() && !$this->model->getUnpublished()) {
+            if (\Pimcore\Model\Object\AbstractObject::doHideUnpublished() && !$this->model->getUnpublished()) {
                 $condition = "(" . $condition . ") AND " . $tableName . ".o_published = 1";
             }
-        } elseif (Object\AbstractObject::doHideUnpublished() && !$this->model->getUnpublished()) {
+        } elseif (\Pimcore\Model\Object\AbstractObject::doHideUnpublished() && !$this->model->getUnpublished()) {
             $condition = $tableName . ".o_published = 1";
         }
 

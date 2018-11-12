@@ -18,7 +18,7 @@ namespace Pimcore\Model\Webservice\Data;
 
 use Pimcore\Model;
 
-class Object extends Model\Webservice\Data
+class ConcreteObject extends Model\Webservice\Data
 {
 
 

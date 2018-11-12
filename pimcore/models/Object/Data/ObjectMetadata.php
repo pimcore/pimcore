@@ -17,7 +17,7 @@
 namespace Pimcore\Model\Object\Data;
 
 use Pimcore\Model;
-use Pimcore\Model\Object;
+//use Pimcore\Model\Object
 
 /**
  * @method \Pimcore\Model\Object\Data\ObjectMetadata\Dao getDao()
@@ -106,7 +106,7 @@ class ObjectMetadata extends Model\AbstractModel
      * @param $position
      * @return mixed
      */
-    public function load(Object\Concrete $source, $destination, $fieldname, $ownertype, $ownername, $position)
+    public function load(\Pimcore\Model\Object\Concrete $source, $destination, $fieldname, $ownertype, $ownername, $position)
     {
         return $this->getDao()->load($source, $destination, $fieldname, $ownertype, $ownername, $position);
     }
