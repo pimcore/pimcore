@@ -2336,7 +2336,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                 }
             }
         } elseif ($linkGenerator = $object->getClass()->getLinkGenerator()) {
-            $url = $linkGenerator->generate($object, [['preview' => true, 'context' => $this]]);
+            $url = $linkGenerator->generate($object, ['preview' => true, 'context' => $this]);
         }
 
         if (!$url) {
