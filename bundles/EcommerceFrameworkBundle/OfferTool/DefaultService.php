@@ -347,7 +347,7 @@ class DefaultService implements IService
 
     public function getOffersForCart(ICart $cart)
     {
-        $offerListClass = $this->offerClass . '_List';
+        $offerListClass = $this->offerClass . '\Listing';
         $list = new $offerListClass();
         $list->setCondition('cartId = ?', [$cart->getId()]);
 
