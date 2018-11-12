@@ -100,7 +100,7 @@ class ElementMetadata extends Model\AbstractModel
     }
 
     /**
-     * @param Object\Concrete $source
+     * @param Model\Object\Concrete $source
      * @param $destination
      * @param $fieldname
      * @param $ownertype
@@ -145,7 +145,7 @@ class ElementMetadata extends Model\AbstractModel
     }
 
     /**
-     * @return Object\Concrete
+     * @return Model\Object\Concrete
      */
     public function getElement()
     {

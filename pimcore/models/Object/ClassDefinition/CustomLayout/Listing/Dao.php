@@ -25,7 +25,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
 {
 
     /**
-     * Loads a list of custom layouts for the specified parameters, returns an array of Object\ClassDefinition\CustomLayout elements
+     * Loads a list of custom layouts for the specified parameters, returns an array of Model\Object\ClassDefinition\CustomLayout elements
      *
      * @return array
      */

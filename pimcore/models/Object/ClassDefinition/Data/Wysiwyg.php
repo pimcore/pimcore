@@ -127,7 +127,7 @@ class Wysiwyg extends Model\Object\ClassDefinition\Data
     }
 
     /**
-     * @see Object\ClassDefinition\Data::getDataForResource
+     * @see Model\Object\ClassDefinition\Data::getDataForResource
      * @param string $data
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
@@ -139,7 +139,7 @@ class Wysiwyg extends Model\Object\ClassDefinition\Data
     }
 
     /**
-     * @see Object\ClassDefinition\Data::getDataFromResource
+     * @see Model\Object\ClassDefinition\Data::getDataFromResource
      * @param string $data
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
@@ -151,7 +151,7 @@ class Wysiwyg extends Model\Object\ClassDefinition\Data
     }
 
     /**
-     * @see Object\ClassDefinition\Data::getDataForQueryResource
+     * @see Model\Object\ClassDefinition\Data::getDataForQueryResource
      * @param string $data
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
@@ -173,7 +173,7 @@ class Wysiwyg extends Model\Object\ClassDefinition\Data
 
 
     /**
-     * @see Object\ClassDefinition\Data::getDataForEditmode
+     * @see Model\Object\ClassDefinition\Data::getDataForEditmode
      * @param string $data
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
@@ -241,7 +241,7 @@ class Wysiwyg extends Model\Object\ClassDefinition\Data
     }
 
     /**
-     * @param Object\Concrete $object
+     * @param Model\Object\Concrete $object
      * @param array $params
      * @return string
      */

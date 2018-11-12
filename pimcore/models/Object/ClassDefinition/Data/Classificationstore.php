@@ -112,7 +112,7 @@ class Classificationstore extends Model\Object\ClassDefinition\Data
 
 
     /**
-     * @see Object\ClassDefinition\Data::getDataForEditmode
+     * @see Model\Object\ClassDefinition\Data::getDataForEditmode
      * @param string $data
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
@@ -346,9 +346,9 @@ class Classificationstore extends Model\Object\ClassDefinition\Data
     }
 
     /**
-     * @see Object\ClassDefinition\Data::getVersionPreview
+     * @see Model\Object\ClassDefinition\Data::getVersionPreview
      * @param $data
-     * @param null|Object\AbstractObject $object
+     * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
      * @return string
      */
@@ -362,7 +362,7 @@ class Classificationstore extends Model\Object\ClassDefinition\Data
     /**
      * converts object data to a simple string value or CSV Export
      * @abstract
-     * @param Object\AbstractObject $object
+     * @param Model\Object\AbstractObject $object
      * @param array $params
      * @return string
      */
@@ -412,13 +412,13 @@ class Classificationstore extends Model\Object\ClassDefinition\Data
     }
 
     /**
-     * @param Object\AbstractObject $object
+     * @param Model\Object\AbstractObject $object
      * @param mixed $params
      * @throws \Exception
      */
     public function getForWebserviceExport($object, $params = [])
     {
-        /** @var  $data Object\Classificationstore */
+        /** @var  $data Model\Object\Classificationstore */
         $data = $this->getDataFromObjectParam($object, $params);
 
         if ($data) {
@@ -491,7 +491,7 @@ class Classificationstore extends Model\Object\ClassDefinition\Data
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
      * @param IdMapper $idMapper
-     * @return mixed|null|Object\Classificationstore
+     * @return mixed|null|Model\Object\Classificationstore
      * @throws \Exception
      */
     public function getFromWebserviceImport($value, $object = null, $params = [], $idMapper = null)
@@ -640,7 +640,7 @@ class Classificationstore extends Model\Object\ClassDefinition\Data
     /**
      * @param $object
      * @param array $params
-     * @return Object\Classificationstore
+     * @return Model\Object\Classificationstore
      */
     public function load($object, $params = [])
     {
@@ -667,7 +667,7 @@ class Classificationstore extends Model\Object\ClassDefinition\Data
     }
 
     /**
-     * This method is called in Object|Class::save() and is used to create the database table for the classification data
+     * This method is called in Model\Object|Class::save() and is used to create the database table for the classification data
      * @param $class
      * @param array $params
      */
@@ -681,7 +681,7 @@ class Classificationstore extends Model\Object\ClassDefinition\Data
     /**
      * @param $object
      * @param array $params
-     * @return Object\Localizedfield
+     * @return Model\Object\Localizedfield
      * @throws \Exception
      */
     public function preGetData($object, $params = [])
@@ -731,7 +731,7 @@ class Classificationstore extends Model\Object\ClassDefinition\Data
      */
     public function getKeyConfiguration($keyId)
     {
-        /** @var $keyConfig Object\Classificationstore\KeyConfig */
+        /** @var $keyConfig Model\Object\Classificationstore\KeyConfig */
         $keyConfig = \Pimcore\Model\Object\Classificationstore\DefinitionCache::get($keyId);
 
         return $keyConfig;
@@ -877,7 +877,7 @@ class Classificationstore extends Model\Object\ClassDefinition\Data
                         continue;
                     }
 
-                    /** @var $keyGroupRelation Object\Classificationstore\KeyGroupRelation */
+                    /** @var $keyGroupRelation Model\Object\Classificationstore\KeyGroupRelation */
                     $keyGroupRelations = $groupDefinition->getRelations();
 
                     foreach ($keyGroupRelations as $keyGroupRelation) {
@@ -1019,7 +1019,7 @@ class Classificationstore extends Model\Object\ClassDefinition\Data
         }
 
         $getter = "get" . ucfirst($this->getName());
-        /** @var  $classificationStore Object\Classificationstore */
+        /** @var  $classificationStore Model\Object\Classificationstore */
         $classificationStore = $object->$getter();
         $mapping = $classificationStore->getGroupCollectionMappings();
 
@@ -1046,7 +1046,7 @@ class Classificationstore extends Model\Object\ClassDefinition\Data
 
 
     /**
-     * @param $object Object\Concrete
+     * @param $object Model\Object\Concrete
      * @param array $activeGroups
      * @return array|boolean
      *
@@ -1059,7 +1059,7 @@ class Classificationstore extends Model\Object\ClassDefinition\Data
         }
 
         $getter = "get" . ucfirst($this->getName());
-        /** @var  $classificationStore Object\Classificationstore */
+        /** @var  $classificationStore Model\Object\Classificationstore */
         $classificationStore = $object->$getter();
         $activeGroupIds = $classificationStore->getActiveGroups();
 
@@ -1085,7 +1085,7 @@ class Classificationstore extends Model\Object\ClassDefinition\Data
     }
 
     /** Override point for Enriching the layout definition before the layout is returned to the admin interface.
-     * @param $object Object\Concrete
+     * @param $object Model\Object\Concrete
      * @param array $context additional contextual data
      */
     public function enrichLayoutDefinition($object, $context = [])
@@ -1113,7 +1113,7 @@ class Classificationstore extends Model\Object\ClassDefinition\Data
         $groupList->setOrder(["ASC", "ASC"]);
         $groupList = $groupList->load();
 
-        /** @var  $group Object\Classificationstore\GroupConfig */
+        /** @var  $group Model\Object\Classificationstore\GroupConfig */
         foreach ($groupList as $group) {
             $keyList = [];
 
@@ -1122,7 +1122,7 @@ class Classificationstore extends Model\Object\ClassDefinition\Data
             $relation->setOrderKey(["sorter", "id"]);
             $relation->setOrder(["ASC", "ASC"]);
             $relation = $relation->load();
-            /** @var  $key Object\Classificationstore\KeyGroupRelation */
+            /** @var  $key Model\Object\Classificationstore\KeyGroupRelation */
             foreach ($relation as $key) {
                 if (!$key->isEnabled()) {
                     continue;
@@ -1163,7 +1163,7 @@ class Classificationstore extends Model\Object\ClassDefinition\Data
             $relation = $relation->load();
 
             $sorting = [];
-            /** @var $item Object\Classificationstore\CollectionGroupRelation */
+            /** @var $item Model\Object\Classificationstore\CollectionGroupRelation */
             foreach ($relation as $item) {
                 $sorting[$item->getGroupId()] = $item->getSorter();
             }

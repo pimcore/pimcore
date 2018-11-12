@@ -36,13 +36,13 @@ class AbstractData extends Model\AbstractModel
     public $doDelete;
 
     /**
-     * @var Object\Concrete
+     * @var Model\Object\Concrete
      */
     public $object;
 
 
     /**
-     * @param Object\Concrete $object
+     * @param Model\Object\Concrete $object
      */
     public function __construct(\Pimcore\Model\Object\Concrete $object)
     {
@@ -107,7 +107,7 @@ class AbstractData extends Model\AbstractModel
     }
 
     /**
-     * @return Object\Concrete
+     * @return Model\Object\Concrete
      */
     public function getBaseObject()
     {
@@ -164,7 +164,7 @@ class AbstractData extends Model\AbstractModel
     }
 
     /**
-     * @param Object\Concrete $object
+     * @param Model\Object\Concrete $object
      * @return $this
      */
     public function setObject($object)
@@ -175,7 +175,7 @@ class AbstractData extends Model\AbstractModel
     }
 
     /**
-     * @return Object\Concrete
+     * @return Model\Object\Concrete
      */
     public function getObject()
     {

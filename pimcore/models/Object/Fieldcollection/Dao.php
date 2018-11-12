@@ -26,7 +26,7 @@ class Dao extends Model\Dao\AbstractDao
 {
 
     /**
-     * @param Object\Concrete $object
+     * @param Model\Object\Concrete $object
      */
     public function save(\Pimcore\Model\Object\Concrete $object)
     {
@@ -34,7 +34,7 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     /**
-     * @param Object\Concrete $object
+     * @param Model\Object\Concrete $object
      * @return array
      */
     public function load(\Pimcore\Model\Object\Concrete $object)
@@ -112,7 +112,7 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     /**
-     * @param Object\Concrete $object
+     * @param Model\Object\Concrete $object
      */
     public function delete(\Pimcore\Model\Object\Concrete $object)
     {

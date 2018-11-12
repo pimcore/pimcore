@@ -55,7 +55,7 @@ class ObjectsMetadata extends Model\Object\ClassDefinition\Data\Objects
     public $phpdocType = "\\Pimcore\\Model\\Object\\Data\\ObjectMetadata[]";
 
     /**
-     * @see Object\ClassDefinition\Data::getDataForResource
+     * @see Model\Object\ClassDefinition\Data::getDataForResource
      * @param array $data
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
@@ -91,7 +91,7 @@ class ObjectsMetadata extends Model\Object\ClassDefinition\Data\Objects
     }
 
     /**
-     * @see Object\ClassDefinition\Data::getDataFromResource
+     * @see Model\Object\ClassDefinition\Data::getDataFromResource
      * @param array $data
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
@@ -160,7 +160,7 @@ class ObjectsMetadata extends Model\Object\ClassDefinition\Data\Objects
 
 
     /**
-     * @see Object\ClassDefinition\Data::getDataForEditmode
+     * @see Model\Object\ClassDefinition\Data::getDataForEditmode
      * @param array $data
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
@@ -264,9 +264,9 @@ class ObjectsMetadata extends Model\Object\ClassDefinition\Data\Objects
     }
 
     /**
-     * @see Object\ClassDefinition\Data::getVersionPreview
+     * @see Model\Object\ClassDefinition\Data::getVersionPreview
      * @param array $data
-     * @param null|Object\AbstractObject $object
+     * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
      * @return string
      */
@@ -317,7 +317,7 @@ class ObjectsMetadata extends Model\Object\ClassDefinition\Data\Objects
     /**
      * converts object data to a simple string value or CSV Export
      * @abstract
-     * @param Object\AbstractObject $object
+     * @param Model\Object\AbstractObject $object
      * @param array $params
      * @return string
      */
@@ -417,7 +417,7 @@ class ObjectsMetadata extends Model\Object\ClassDefinition\Data\Objects
     }
 
     /**
-     * @param Object\AbstractObject $object
+     * @param Model\Object\AbstractObject $object
      * @param mixed $params
      * @return array|mixed|null
      */
@@ -790,7 +790,7 @@ class ObjectsMetadata extends Model\Object\ClassDefinition\Data\Objects
     }
 
     /**
-     * @param Object\ClassDefinition\Data $masterDefinition
+     * @param Model\Object\ClassDefinition\Data $masterDefinition
      */
     public function synchronizeWithMasterDefinition(\Pimcore\Model\Object\ClassDefinition\Data $masterDefinition)
     {
@@ -800,7 +800,7 @@ class ObjectsMetadata extends Model\Object\ClassDefinition\Data\Objects
     }
 
     /** Override point for Enriching the layout definition before the layout is returned to the admin interface.
-     * @param $object Object\Concrete
+     * @param $object Model\Object\Concrete
      * @param array $context additional contextual data
      */
     public function enrichLayoutDefinition($object, $context = [])
@@ -869,7 +869,7 @@ class ObjectsMetadata extends Model\Object\ClassDefinition\Data\Objects
     {
         if (is_array($value)) {
             $result = [];
-            /** @var  $elementMetadata Object\Data\ObjectMetadata */
+            /** @var  $elementMetadata Model\Object\Data\ObjectMetadata */
             foreach ($value as $elementMetadata) {
                 $element = $elementMetadata->getElement();
 

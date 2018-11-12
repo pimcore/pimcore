@@ -75,7 +75,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
 
 
     /**
-     * Loads a list of objects for the specicifies parameters, returns an array of Object\AbstractObject elements
+     * Loads a list of objects for the specicifies parameters, returns an array of Model\Object\AbstractObject elements
      *
      * @return array
      */

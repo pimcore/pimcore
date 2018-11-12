@@ -281,7 +281,7 @@ class Service extends Model\AbstractModel
         } elseif ($type == "document") {
             return Document\Service::pathExists($path);
         } elseif ($type == "object") {
-            return Object\Service::pathExists($path);
+            return Model\Object\Service::pathExists($path);
         }
 
         return;
@@ -563,7 +563,7 @@ class Service extends Model\AbstractModel
 
     /**
      * renews all references, for example after unserializing an ElementInterface
-     * @param Document|Asset|Object\AbstractObject $data
+     * @param Document|Asset|Model\Object\AbstractObject $data
      * @param bool $initial
      * @return mixed
      */
@@ -672,7 +672,7 @@ class Service extends Model\AbstractModel
     /**
      * @param $path
      * @param array $options
-     * @return Asset\Folder|Document\Folder|Object\Folder
+     * @return Asset\Folder|Document\Folder|Model\Object\Folder
      * @throws \Exception
      */
     public static function createFolderByPath($path, $options = [])
@@ -852,7 +852,7 @@ class Service extends Model\AbstractModel
     public static function getUniqueKey($element)
     {
         if ($element instanceof \Pimcore\Model\Object\AbstractObject) {
-            return Object\Service::getUniqueKey($element);
+            return Model\Object\Service::getUniqueKey($element);
         } elseif ($element instanceof Document) {
             return Document\Service::getUniqueKey($element);
         } elseif ($element instanceof Asset) {

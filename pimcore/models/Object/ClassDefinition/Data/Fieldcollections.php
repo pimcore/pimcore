@@ -94,7 +94,7 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
     }
 
     /**
-     * @see Object\ClassDefinition\Data::getDataForEditmode
+     * @see Model\Object\ClassDefinition\Data::getDataForEditmode
      * @param string $data
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
@@ -152,7 +152,7 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
     }
 
     /**
-     * @see Model\Object\ClassDefinition\Data::getDataFromEditmode
+     * @see Model\Model\Object\ClassDefinition\Data::getDataFromEditmode
      * @param string $data
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
@@ -207,9 +207,9 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
     }
 
     /**
-     * @see Object\ClassDefinition\Data::getVersionPreview
+     * @see Model\Object\ClassDefinition\Data::getVersionPreview
      * @param string $data
-     * @param null|Object\AbstractObject $object
+     * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
      * @return string
      */
@@ -221,7 +221,7 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
     /**
      * converts object data to a simple string value or CSV Export
      * @abstract
-     * @param Object\AbstractObject $object
+     * @param Model\Object\AbstractObject $object
      * @param array $params
      * @return string
      */
@@ -295,14 +295,14 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
 
             $container->save($object, $params);
         } else {
-            throw new \Exception("Invalid value for field \"" . $this->getName()."\" provided. You have to pass a Object\\Fieldcollection or 'null'");
+            throw new \Exception("Invalid value for field \"" . $this->getName()."\" provided. You have to pass a Model\Object\\Fieldcollection or 'null'");
         }
     }
 
     /**
      * @param $object
      * @param array $params
-     * @return null|Object\Fieldcollection
+     * @return null|Model\Object\Fieldcollection
      */
     public function load($object, $params = [])
     {
@@ -413,7 +413,7 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
      * @param mixed $data
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
-     * @return mixed|Object\Fieldcollection
+     * @return mixed|Model\Object\Fieldcollection
      * @param $idMapper
      * @throws \Exception
      */
@@ -571,7 +571,7 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
     /**
      * @param $object
      * @param array $params
-     * @return null|Object\Fieldcollection
+     * @return null|Model\Object\Fieldcollection
      * @throws \Exception
      */
     public function preGetData($object, $params = [])
@@ -615,7 +615,7 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
 
     /**
      * @param $data
-     * @param Object\Concrete $object
+     * @param Model\Object\Concrete $object
      * @param mixed $params
      * @return string
      */
@@ -791,7 +791,7 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
     }
 
     /**
-     * @param Object\ClassDefinition\Data $masterDefinition
+     * @param Model\Object\ClassDefinition\Data $masterDefinition
      */
     public function synchronizeWithMasterDefinition(\Pimcore\Model\Object\ClassDefinition\Data $masterDefinition)
     {
@@ -801,7 +801,7 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
     }
 
     /**
-     * This method is called in Object|Class::save() and is used to create the database table for the localized data
+     * This method is called in Model\Object|Class::save() and is used to create the database table for the localized data
      * @param $class
      * @param array $params
      */
@@ -897,7 +897,7 @@ class Fieldcollections extends Model\Object\ClassDefinition\Data
     public static function collectCalculatedValueItems($container, &$list = [])
     {
         if (is_array($container)) {
-            /** @var  $childDef Object\ClassDefinition\Data */
+            /** @var  $childDef Model\Object\ClassDefinition\Data */
             foreach ($container as $childDef) {
                 if ($childDef instanceof Model\Object\ClassDefinition\Data\CalculatedValue) {
                     $list[] = $childDef;

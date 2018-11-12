@@ -172,7 +172,7 @@ class Dao extends Model\Dao\AbstractDao
                     $parentForInheritance = $object->getNextParentForInheritance();
                     if ($parentForInheritance) {
                         // we don't use the getter (built in functionality to get inherited values) because we need to avoid race conditions
-                        // we cannot Object\AbstractObject::setGetInheritedValues(true); and then $this->model->getLocalizedValue($key, $language)
+                        // we cannot Model\Object\AbstractObject::setGetInheritedValues(true); and then $this->model->getLocalizedValue($key, $language)
                         // so we select the data from the parent object using FOR UPDATE, which causes a lock on this row
                         // so the data of the parent cannot be changed while this transaction is on progress
                         $parentData = $this->db->fetchRow("SELECT * FROM " . $queryTable . " WHERE ooo_id = ? AND language = ? FOR UPDATE", [$parentForInheritance->getId(), $language]);

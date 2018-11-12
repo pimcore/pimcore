@@ -26,7 +26,7 @@ class Dao extends Model\Object\Fieldcollection\Definition\Dao
 {
 
     /**
-     * @param Object\ClassDefinition $class
+     * @param Model\Object\ClassDefinition $class
      * @param bool $query
      * @return string
      */
@@ -40,7 +40,7 @@ class Dao extends Model\Object\Fieldcollection\Definition\Dao
     }
 
     /**
-     * @param Object\ClassDefinition $class
+     * @param Model\Object\ClassDefinition $class
      */
     public function delete(\Pimcore\Model\Object\ClassDefinition $class)
     {
@@ -52,7 +52,7 @@ class Dao extends Model\Object\Fieldcollection\Definition\Dao
     }
 
     /**
-     * @param Object\ClassDefinition $class
+     * @param Model\Object\ClassDefinition $class
      */
     public function createUpdateTable(\Pimcore\Model\Object\ClassDefinition $class)
     {

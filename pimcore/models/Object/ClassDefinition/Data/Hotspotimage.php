@@ -121,8 +121,8 @@ class Hotspotimage extends Model\Object\ClassDefinition\Data\Image
 
 
     /**
-     * @see Object\ClassDefinition\Data::getDataForResource
-     * @param Object\Data\Hotspotimage $data
+     * @see Model\Object\ClassDefinition\Data::getDataForResource
+     * @param Model\Object\Data\Hotspotimage $data
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
      * @return integer|null
@@ -156,8 +156,8 @@ class Hotspotimage extends Model\Object\ClassDefinition\Data\Image
     }
 
     /**
-     * @see Object\ClassDefinition\Data::getDataFromResource
-     * @param Object\Data\Hotspotimage $data
+     * @see Model\Object\ClassDefinition\Data::getDataFromResource
+     * @param Model\Object\Data\Hotspotimage $data
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
      * @return Asset
@@ -214,8 +214,8 @@ class Hotspotimage extends Model\Object\ClassDefinition\Data\Image
     }
 
     /**
-     * @see Object\ClassDefinition\Data::getDataForQueryResource
-     * @param Object\Data\Hotspotimage $data
+     * @see Model\Object\ClassDefinition\Data::getDataForQueryResource
+     * @param Model\Object\Data\Hotspotimage $data
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
      * @return integer|null
@@ -226,8 +226,8 @@ class Hotspotimage extends Model\Object\ClassDefinition\Data\Image
     }
 
     /**
-     * @see Object\ClassDefinition\Data::getDataForEditmode
-     * @param Object\Data\Hotspotimage $data
+     * @see Model\Object\ClassDefinition\Data::getDataForEditmode
+     * @param Model\Object\Data\Hotspotimage $data
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
      * @return integer
@@ -277,7 +277,7 @@ class Hotspotimage extends Model\Object\ClassDefinition\Data\Image
 
     /**
      * @see Model\Object\ClassDefinition\Data::getDataFromEditmode
-     * @param Object\Data\Hotspotimage $data
+     * @param Model\Object\Data\Hotspotimage $data
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
      * @return Asset
@@ -317,9 +317,9 @@ class Hotspotimage extends Model\Object\ClassDefinition\Data\Image
     }
 
     /**
-     * @see Object\ClassDefinition\Data::getVersionPreview
+     * @see Model\Object\ClassDefinition\Data::getVersionPreview
      * @param Asset\Image $data
-     * @param null|Object\AbstractObject $object
+     * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
      * @return string
      */
@@ -333,7 +333,7 @@ class Hotspotimage extends Model\Object\ClassDefinition\Data\Image
     /**
      * converts object data to a simple string value or CSV Export
      * @abstract
-     * @param Object\AbstractObject $object
+     * @param Model\Object\AbstractObject $object
      * @param array $params
      * @return string
      */
@@ -351,7 +351,7 @@ class Hotspotimage extends Model\Object\ClassDefinition\Data\Image
      * @param string $importValue
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
-     * @return mixed|null|Object\ClassDefinition\Data
+     * @return mixed|null|Model\Object\ClassDefinition\Data
      */
     public function getFromCsvImport($importValue, $object = null, $params = [])
     {
@@ -493,7 +493,7 @@ class Hotspotimage extends Model\Object\ClassDefinition\Data\Image
      * @param null $object
      * @param array $params
      * @param null $idMapper
-     * @return null|Asset|Object\Data\Hotspotimage
+     * @return null|Asset|Model\Object\Data\Hotspotimage
      * @throws \Exception
      */
     public function getFromWebserviceImport($value, $object = null, $params = [], $idMapper = null)
@@ -512,7 +512,7 @@ class Hotspotimage extends Model\Object\ClassDefinition\Data\Image
         $hotspotImage = $this->getDataFromResource($value);
 
 
-        /** @var $hotspotImage Object\Data\Hotspotimage */
+        /** @var $hotspotImage Model\Object\Data\Hotspotimage */
 
         if (!$hotspotImage) {
             return null;

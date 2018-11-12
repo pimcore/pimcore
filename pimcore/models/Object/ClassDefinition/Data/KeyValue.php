@@ -132,8 +132,8 @@ class KeyValue extends Model\Object\ClassDefinition\Data
     }
 
     /**
-     * This method is called in Object\\ClassDefinition::save() and is used to create the database table for the localized data
-     * @param Object\ClassDefinition $class
+     * This method is called in Model\\Object\\ClassDefinition::save() and is used to create the database table for the localized data
+     * @param Model\Object\ClassDefinition $class
      * @param mixed $params
      */
     public function classSaved($class, $params = [])
@@ -229,7 +229,7 @@ class KeyValue extends Model\Object\ClassDefinition\Data
 
     /** Sets the width of the description column.
      * @param $width
-     * @return Object\ClassDefinition\Data\KeyValue
+     * @return Model\Object\ClassDefinition\Data\KeyValue
      */
     public function setDescWidth($width)
     {
@@ -306,7 +306,7 @@ class KeyValue extends Model\Object\ClassDefinition\Data
     /**
      * @param $object
      * @param array $params
-     * @return Object\Data\KeyValue
+     * @return Model\Object\Data\KeyValue
      */
     public function load($object, $params = [])
     {
@@ -334,8 +334,8 @@ class KeyValue extends Model\Object\ClassDefinition\Data
     }
 
     /**
-     * @see Object\ClassDefinition\Data::getDataForEditmode
-     * @param Object\Data\KeyValue $data
+     * @see Model\Object\ClassDefinition\Data::getDataForEditmode
+     * @param Model\Object\Data\KeyValue $data
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
      * @return tbd
@@ -377,7 +377,7 @@ class KeyValue extends Model\Object\ClassDefinition\Data
      * @param mixed $data
      * @param null $object
      * @param array $params
-     * @return mixed|Object\Data\KeyValue
+     * @return mixed|Model\Object\Data\KeyValue
      * @throws \Exception
      */
     public function getDataFromEditmode($data, $object = null, $params = [])
@@ -442,7 +442,7 @@ class KeyValue extends Model\Object\ClassDefinition\Data
      * @param $data
      * @param null $object
      * @param mixed $params
-     * @return mixed|Object\Data\KeyValue
+     * @return mixed|Model\Object\Data\KeyValue
      * @throws \Exception
      */
     public function getDiffDataFromEditmode($data, $object = null, $params = [])
@@ -560,7 +560,7 @@ class KeyValue extends Model\Object\ClassDefinition\Data
      * @param null $relatedObject
      * @param mixed $params
      * @param null $idMapper
-     * @return mixed|Object\Data\KeyValue
+     * @return mixed|Model\Object\Data\KeyValue
      * @throws \Exception
      */
     public function getFromWebserviceImport($value, $relatedObject = null, $params = [], $idMapper = null)
@@ -619,7 +619,7 @@ class KeyValue extends Model\Object\ClassDefinition\Data
     }
 
     /**
-     * @param Object\ClassDefinition\Data $masterDefinition
+     * @param Model\Object\ClassDefinition\Data $masterDefinition
      */
     public function synchronizeWithMasterDefinition(\Pimcore\Model\Object\ClassDefinition\Data $masterDefinition)
     {

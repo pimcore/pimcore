@@ -110,7 +110,7 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
 
 
     /**
-     * @see Object\ClassDefinition\Data::getDataForEditmode
+     * @see Model\Object\ClassDefinition\Data::getDataForEditmode
      * @param string $data
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
@@ -271,9 +271,9 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
     }
 
     /**
-     * @see Object\ClassDefinition\Data::getVersionPreview
+     * @see Model\Object\ClassDefinition\Data::getVersionPreview
      * @param string $data
-     * @param null|Object\AbstractObject $object
+     * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
      * @return string
      */
@@ -287,7 +287,7 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
     /**
      * converts object data to a simple string value or CSV Export
      * @abstract
-     * @param Object\AbstractObject $object
+     * @param Model\Object\AbstractObject $object
      * @param array $params
      * @return string
      */
@@ -400,7 +400,7 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
      * @param null $object
      * @param mixed $params
      * @param null $idMapper
-     * @return mixed|null|Object\Localizedfield
+     * @return mixed|null|Model\Object\Localizedfield
      * @throws \Exception
      */
     public function getFromWebserviceImport($value, $object = null, $params = [], $idMapper = null)
@@ -584,7 +584,7 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
     /**
      * @param $object
      * @param array $params
-     * @return Object\Localizedfield
+     * @return Model\Object\Localizedfield
      */
     public function load($object, $params = [])
     {
@@ -640,7 +640,7 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
     /**
      * @param $container
      * @param array $params
-     * @return Object\Localizedfield
+     * @return Model\Object\Localizedfield
      * @throws \Exception
      */
     public function preGetData($container, $params = [])
@@ -683,7 +683,7 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
         foreach ($this->getFieldDefinitions() as $fd) {
 
             /**
-             * @var $fd Object\ClassDefinition\Data
+             * @var $fd Model\Object\ClassDefinition\Data
              */
             $code .= $fd->getGetterCodeLocalizedfields($class);
         }
@@ -703,7 +703,7 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
         foreach ($this->getFieldDefinitions() as $fd) {
 
             /**
-             * @var $fd Object\ClassDefinition\Data
+             * @var $fd Model\Object\ClassDefinition\Data
              */
             $code .= $fd->getSetterCodeLocalizedfields($class);
         }
@@ -965,7 +965,7 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
     }
 
     /**
-     * @param Object\Localizedfield|mixed $localizedObject
+     * @param Model\Object\Localizedfield|mixed $localizedObject
      * @param array $languages
      * @return array
      */

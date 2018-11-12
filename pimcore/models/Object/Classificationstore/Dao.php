@@ -145,7 +145,7 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function load()
     {
-        /** @var  $classificationStore Object\Classificationstore */
+        /** @var  $classificationStore Model\Object\Classificationstore */
         $classificationStore = $this->model;
         $object = $this->model->getObject();
         $dataTableName = $this->getDataTableName();

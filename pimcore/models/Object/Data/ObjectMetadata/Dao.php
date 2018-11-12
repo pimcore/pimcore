@@ -26,7 +26,7 @@ class Dao extends Model\Dao\AbstractDao
 {
 
     /**
-     * @param Object\Concrete $object
+     * @param Model\Object\Concrete $object
      * @param $ownertype
      * @param $ownername
      * @param $position
@@ -64,7 +64,7 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     /**
-     * @param Object\Concrete $source
+     * @param Model\Object\Concrete $source
      * @param $destination
      * @param $fieldname
      * @param $ownertype

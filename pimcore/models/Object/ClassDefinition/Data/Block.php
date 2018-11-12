@@ -108,7 +108,7 @@ class Block extends Model\Object\ClassDefinition\Data
 
 
     /**
-     * @see Object\ClassDefinition\Data::getDataForResource
+     * @see Model\Object\ClassDefinition\Data::getDataForResource
      * @param string $data
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
@@ -123,10 +123,10 @@ class Block extends Model\Object\ClassDefinition\Data
                 $resultElement = [];
 
                 /**
-                 * @var  $blockElement Object\Data\BlockElement
+                 * @var  $blockElement Model\Object\Data\BlockElement
                  */
                 foreach ($blockElements as $elementName => $blockElement) {
-                    /** @var  $fd Object\ClassDefinition\Data */
+                    /** @var  $fd Model\Object\ClassDefinition\Data */
                     $fd = $this->getFielddefinition($elementName);
                     if (!$fd) {
                         // class definition seems to have changed
@@ -153,7 +153,7 @@ class Block extends Model\Object\ClassDefinition\Data
     }
 
     /**
-     * @see Object\ClassDefinition\Data::getDataFromResource
+     * @see Model\Object\ClassDefinition\Data::getDataFromResource
      * @param string $data
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
@@ -169,10 +169,10 @@ class Block extends Model\Object\ClassDefinition\Data
 
             foreach ($unserializedData as $blockElements) {
                 $items = [];
-                /** @var  $blockElement Object\Data\BlockElement */
+                /** @var  $blockElement Model\Object\Data\BlockElement */
                 foreach ($blockElements as $elementName => $blockElementRaw) {
 
-                    /** @var  $fd Object\ClassDefinition\Data */
+                    /** @var  $fd Model\Object\ClassDefinition\Data */
                     $fd = $this->getFielddefinition($elementName);
                     if (!$fd) {
                         // class definition seems to have changed
@@ -188,7 +188,7 @@ class Block extends Model\Object\ClassDefinition\Data
                     $blockElementRaw["data"] = $dataFromResource;
 
                     if ($blockElementRaw["type"] == "localizedfields") {
-                        /** @var  $data Object\Localizedfield */
+                        /** @var  $data Model\Object\Localizedfield */
                         $data = $blockElementRaw["data"];
                         if ($data) {
                             $data->setObject($object);
@@ -214,7 +214,7 @@ class Block extends Model\Object\ClassDefinition\Data
     }
 
     /**
-     * @see Object\ClassDefinition\Data::getDataForQueryResource
+     * @see Model\Object\ClassDefinition\Data::getDataForQueryResource
      * @param string $data
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
@@ -226,7 +226,7 @@ class Block extends Model\Object\ClassDefinition\Data
     }
 
     /**
-     * @see Object\ClassDefinition\Data::getDataForEditmode
+     * @see Model\Object\ClassDefinition\Data::getDataForEditmode
      * @param string $data
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
@@ -244,10 +244,10 @@ class Block extends Model\Object\ClassDefinition\Data
                 $idx++;
 
                 /**
-                 * @var  $blockElement Object\Data\BlockElement
+                 * @var  $blockElement Model\Object\Data\BlockElement
                  */
                 foreach ($blockElements as $elementName => $blockElement) {
-                    /** @var  $fd Object\ClassDefinition\Data */
+                    /** @var  $fd Model\Object\ClassDefinition\Data */
                     $fd = $this->getFielddefinition($elementName);
                     if (!$fd) {
                         // class definition seems to have changed
@@ -289,7 +289,7 @@ class Block extends Model\Object\ClassDefinition\Data
 
             foreach ($blockElement as $elementName => $elementData) {
 
-                /** @var  $fd Object\ClassDefinition\Data */
+                /** @var  $fd Model\Object\ClassDefinition\Data */
                 $fd = $this->getFielddefinition($elementName);
                 $dataFromEditMode = $fd->getDataFromEditmode($elementData, $object,
                     [
@@ -316,9 +316,9 @@ class Block extends Model\Object\ClassDefinition\Data
     }
 
     /**
-     * @see Object\ClassDefinition\Data::getVersionPreview
+     * @see Model\Object\ClassDefinition\Data::getVersionPreview
      * @param string $data
-     * @param null|Object\AbstractObject $object
+     * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
      * @return string
      */
@@ -331,7 +331,7 @@ class Block extends Model\Object\ClassDefinition\Data
     /**
      * converts object data to a simple string value or CSV Export
      * @abstract
-     * @param Object\AbstractObject $object
+     * @param Model\Object\AbstractObject $object
      * @param array $params
      * @return string
      */
@@ -415,7 +415,7 @@ class Block extends Model\Object\ClassDefinition\Data
     }
 
     /**
-     * @param Object\Data\ExternalImage $data
+     * @param Model\Object\Data\ExternalImage $data
      * @return bool
      */
     public function isEmpty($data)

@@ -58,7 +58,7 @@ class Geopoint extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo
 
 
     /**
-     * @see Object\ClassDefinition\Data::getDataForResource
+     * @see Model\Object\ClassDefinition\Data::getDataForResource
      * @param string $data
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
@@ -80,7 +80,7 @@ class Geopoint extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo
     }
 
     /**
-     * @see Object\ClassDefinition\Data::getDataFromResource
+     * @see Model\Object\ClassDefinition\Data::getDataFromResource
      * @param string $data
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
@@ -96,7 +96,7 @@ class Geopoint extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo
     }
 
     /**
-     * @see Object\ClassDefinition\Data::getDataForQueryResource
+     * @see Model\Object\ClassDefinition\Data::getDataForQueryResource
      * @param string $data
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
@@ -108,7 +108,7 @@ class Geopoint extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo
     }
 
     /**
-     * @see Object\ClassDefinition\Data::getDataForEditmode
+     * @see Model\Object\ClassDefinition\Data::getDataForEditmode
      * @param string $data
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
@@ -143,9 +143,9 @@ class Geopoint extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo
     }
 
     /**
-     * @see Object\ClassDefinition\Data::getVersionPreview
+     * @see Model\Object\ClassDefinition\Data::getVersionPreview
      * @param string $data
-     * @param null|Object\AbstractObject $object
+     * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
      * @return string
      */
@@ -163,7 +163,7 @@ class Geopoint extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo
     /**
      * converts object data to a simple string value or CSV Export
      * @abstract
-     * @param Object\AbstractObject $object
+     * @param Model\Object\AbstractObject $object
      * @param array $params
      * @return string
      */
@@ -182,7 +182,7 @@ class Geopoint extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo
      * @param string $importValue
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
-     * @return null|Object\ClassDefinition\Data|Object\Data\Geopoint
+     * @return null|Model\Object\ClassDefinition\Data|Model\Object\Data\Geopoint
      */
     public function getFromCsvImport($importValue, $object = null, $params = [])
     {

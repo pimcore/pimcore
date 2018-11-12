@@ -174,7 +174,7 @@ class CalculatedValue extends Model\Object\ClassDefinition\Data
     /**
      * @see Object_Class_Data::getDataFromEditmode
      * @param float $data
-     * @param null|Object\AbstractObject $object
+     * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
      * @return float
      */
@@ -185,7 +185,7 @@ class CalculatedValue extends Model\Object\ClassDefinition\Data
     /**
      * @see Object_Class_Data::getVersionPreview
      * @param float $data
-     * @param null|Object\AbstractObject $object
+     * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
      * @return float
      */
@@ -209,7 +209,7 @@ class CalculatedValue extends Model\Object\ClassDefinition\Data
     /**
      * converts object data to a simple string value or CSV Export
      * @abstract
-     * @param Object\AbstractObject $object
+     * @param Model\Object\AbstractObject $object
      * @param array $params
      * @return string
      */

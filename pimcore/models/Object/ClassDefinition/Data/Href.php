@@ -197,7 +197,7 @@ class Href extends Model\Object\ClassDefinition\Data\Relations\AbstractRelations
     }
 
     /**
-     * @see Object\ClassDefinition\Data::getDataForResource
+     * @see Model\Object\ClassDefinition\Data::getDataForResource
      * @param Asset | Document | \Pimcore\Model\Object\AbstractObject $data
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
@@ -220,12 +220,12 @@ class Href extends Model\Object\ClassDefinition\Data\Relations\AbstractRelations
     }
 
     /**
-     * @see Object\ClassDefinition\Data::getDataFromResource
+     * @see Model\Object\ClassDefinition\Data::getDataFromResource
      * @param array $data
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
      * @param bool $notRelationTable
-     * @return Asset|Document|Object\AbstractObject
+     * @return Asset|Document|Model\Object\AbstractObject
      */
     public function getDataFromResource($data, $object = null, $params = [], $notRelationTable = false)
     {
@@ -241,8 +241,8 @@ class Href extends Model\Object\ClassDefinition\Data\Relations\AbstractRelations
     }
 
     /**
-     * @see Object\ClassDefinition\Data::getDataForQueryResource
-     * @param Asset|Document|Object\AbstractObject $data
+     * @see Model\Object\ClassDefinition\Data::getDataForQueryResource
+     * @param Asset|Document|Model\Object\AbstractObject $data
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
      * @return array
@@ -259,8 +259,8 @@ class Href extends Model\Object\ClassDefinition\Data\Relations\AbstractRelations
     }
 
     /**
-     * @see Object\ClassDefinition\Data::getDataForEditmode
-     * @param Asset|Document|Object\AbstractObject $data
+     * @see Model\Object\ClassDefinition\Data::getDataForEditmode
+     * @param Asset|Document|Model\Object\AbstractObject $data
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
      * @return array
@@ -282,11 +282,11 @@ class Href extends Model\Object\ClassDefinition\Data\Relations\AbstractRelations
     }
 
     /**
-     * @see Model\Object\ClassDefinition\Data::getDataFromEditmode
+     * @see Model\Model\Object\ClassDefinition\Data::getDataFromEditmode
      * @param array $data
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
-     * @return Asset|Document|Object\AbstractObject
+     * @return Asset|Document|Model\Object\AbstractObject
      */
     public function getDataFromEditmode($data, $object = null, $params = [])
     {
@@ -311,9 +311,9 @@ class Href extends Model\Object\ClassDefinition\Data\Relations\AbstractRelations
     }
 
     /**
-     * @see Object\ClassDefinition\Data::getVersionPreview
+     * @see Model\Object\ClassDefinition\Data::getVersionPreview
      * @param Document | Asset | \Pimcore\Model\Object\AbstractObject $data
-     * @param null|Object\AbstractObject $object
+     * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
      * @return string
      */
@@ -378,7 +378,7 @@ class Href extends Model\Object\ClassDefinition\Data\Relations\AbstractRelations
     /**
      * converts object data to a simple string value or CSV Export
      * @abstract
-     * @param Object\AbstractObject $object
+     * @param Model\Object\AbstractObject $object
      * @param array $params
      * @return string
      */
@@ -528,7 +528,7 @@ class Href extends Model\Object\ClassDefinition\Data\Relations\AbstractRelations
     /**
      * @param $object
      * @param array $params
-     * @return null|AbstractData|Object\Concrete|Object\Objectbrick\Data\
+     * @return null|AbstractData|Model\Object\Co|Model\ObjectObject\Objectbrick\Data\
      */
     public function preGetData($object, $params = [])
     {
@@ -634,7 +634,7 @@ class Href extends Model\Object\ClassDefinition\Data\Relations\AbstractRelations
     }
 
     /**
-     * @param Object\ClassDefinition\Data $masterDefinition
+     * @param Model\Object\ClassDefinition\Data $masterDefinition
      */
     public function synchronizeWithMasterDefinition(\Pimcore\Model\Object\ClassDefinition\Data $masterDefinition)
     {

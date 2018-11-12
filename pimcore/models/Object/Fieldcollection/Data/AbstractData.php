@@ -101,7 +101,7 @@ abstract class AbstractData extends Model\AbstractModel
     }
 
     /**
-     * @param Object\Concrete $object
+     * @param Model\Object\Concrete $object
      * @return $this
      */
     public function setObject($object)
@@ -112,7 +112,7 @@ abstract class AbstractData extends Model\AbstractModel
     }
 
     /**
-     * @return Object\Concrete
+     * @return Model\Object\Concrete
      */
     public function getObject()
     {

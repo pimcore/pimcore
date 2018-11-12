@@ -55,8 +55,8 @@ class Link extends Model\Object\ClassDefinition\Data
     public $phpdocType = "\\Pimcore\\Model\\Object\\Data\\Link";
 
     /**
-     * @see Object\ClassDefinition\Data::getDataForResource
-     * @param Object\Data\Link $data
+     * @see Model\Object\ClassDefinition\Data::getDataForResource
+     * @param Model\Object\Data\Link $data
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
      * @return string
@@ -80,11 +80,11 @@ class Link extends Model\Object\ClassDefinition\Data
     }
 
     /**
-     * @see Object\ClassDefinition\Data::getDataFromResource
+     * @see Model\Object\ClassDefinition\Data::getDataFromResource
      * @param string $data
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
-     * @return Object\Data\Link
+     * @return Model\Object\Data\Link
      */
     public function getDataFromResource($data, $object = null, $params = [])
     {
@@ -107,7 +107,7 @@ class Link extends Model\Object\ClassDefinition\Data
     }
 
     /**
-     * @see Object\ClassDefinition\Data::getDataForQueryResource
+     * @see Model\Object\ClassDefinition\Data::getDataForQueryResource
      * @param string $data
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
@@ -119,7 +119,7 @@ class Link extends Model\Object\ClassDefinition\Data
     }
 
     /**
-     * @see Object\ClassDefinition\Data::getDataForEditmode
+     * @see Model\Object\ClassDefinition\Data::getDataForEditmode
      * @param string $data
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
@@ -155,9 +155,9 @@ class Link extends Model\Object\ClassDefinition\Data
     }
 
     /**
-     * @see Object\ClassDefinition\Data::getVersionPreview
+     * @see Model\Object\ClassDefinition\Data::getVersionPreview
      * @param string $data
-     * @param null|Object\AbstractObject $object
+     * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
      * @return string
      */
@@ -263,7 +263,7 @@ class Link extends Model\Object\ClassDefinition\Data
     /**
      * converts object data to a simple string value or CSV Export
      * @abstract
-     * @param Object\AbstractObject $object
+     * @param Model\Object\AbstractObject $object
      * @param array $params
      * @return string
      */
@@ -282,7 +282,7 @@ class Link extends Model\Object\ClassDefinition\Data
      * @param string $importValue
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
-     * @return Object\ClassDefinition\Data\Link
+     * @return Model\Object\ClassDefinition\Data\Link
      */
     public function getFromCsvImport($importValue, $object = null, $params = [])
     {

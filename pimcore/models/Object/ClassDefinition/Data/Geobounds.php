@@ -64,8 +64,8 @@ class Geobounds extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo
 
 
     /**
-     * @see Object\ClassDefinition\Data::getDataForResource
-     * @param Object\Data\Geobounds $data
+     * @see Model\Object\ClassDefinition\Data::getDataForResource
+     * @param Model\Object\Data\Geobounds $data
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
      * @return string
@@ -90,7 +90,7 @@ class Geobounds extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo
     }
 
     /**
-     * @see Object\ClassDefinition\Data::getDataFromResource
+     * @see Model\Object\ClassDefinition\Data::getDataFromResource
      * @param array $data
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
@@ -109,8 +109,8 @@ class Geobounds extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo
     }
 
     /**
-     * @see Object\ClassDefinition\Data::getDataForQueryResource
-     * @param Object\Data\Geobounds $data
+     * @see Model\Object\ClassDefinition\Data::getDataForQueryResource
+     * @param Model\Object\Data\Geobounds $data
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
      * @return string
@@ -121,8 +121,8 @@ class Geobounds extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo
     }
 
     /**
-     * @see Object\ClassDefinition\Data::getDataForEditmode
-     * @param Object\Data\Geobounds $data
+     * @see Model\Object\ClassDefinition\Data::getDataForEditmode
+     * @param Model\Object\Data\Geobounds $data
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
      * @return array
@@ -157,7 +157,7 @@ class Geobounds extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo
      * @param array $data
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
-     * @return Object\Data\Geobounds
+     * @return Model\Object\Data\Geobounds
      */
     public function getDataFromEditmode($data, $object = null, $params = [])
     {
@@ -172,9 +172,9 @@ class Geobounds extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo
     }
 
     /**
-     * @see Object\ClassDefinition\Data::getVersionPreview
-     * @param Object\Data\Geobounds $data
-     * @param null|Object\AbstractObject $object
+     * @see Model\Object\ClassDefinition\Data::getVersionPreview
+     * @param Model\Object\Data\Geobounds $data
+     * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
      * @return string
      */
@@ -192,7 +192,7 @@ class Geobounds extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo
     /**
      * converts object data to a simple string value or CSV Export
      * @abstract
-     * @param Object\AbstractObject $object
+     * @param Model\Object\AbstractObject $object
      * @param array $params
      * @return string
      */
@@ -210,7 +210,7 @@ class Geobounds extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo
      * @param string $importValue
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
-     * @return null|Object\ClassDefinition\Data|Object\Data\Geobounds
+     * @return null|Model\Object\ClassDefinition\Data|Model\Object\Data\Geobounds
      */
     public function getFromCsvImport($importValue, $object = null, $params = [])
     {

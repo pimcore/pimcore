@@ -576,7 +576,7 @@ class Concrete extends AbstractObject
     public static function __callStatic($method, $arguments)
     {
 
-        // check for custom static getters like Object::getByMyfield()
+        // check for custom static getters like Model\Object::getByMyfield()
         $propertyName = lcfirst(preg_replace("/^getBy/i", "", $method));
         $tmpObj = new static();
 

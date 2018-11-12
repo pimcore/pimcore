@@ -154,7 +154,7 @@ class Nonownerobjects extends Model\Object\ClassDefinition\Data\Objects
 
 
     /**
-     * @see Object\ClassDefinition\Data::getDataForResource
+     * @see Model\Object\ClassDefinition\Data::getDataForResource
      * @param array $data
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
@@ -166,7 +166,7 @@ class Nonownerobjects extends Model\Object\ClassDefinition\Data\Objects
     }
 
     /**
-     * @see Object\ClassDefinition\Data::getDataForQueryResource
+     * @see Model\Object\ClassDefinition\Data::getDataForQueryResource
      * @param array $data
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
@@ -225,7 +225,7 @@ class Nonownerobjects extends Model\Object\ClassDefinition\Data\Objects
     /**
      * converts object data to a simple string value or CSV Export
      * @abstract
-     * @param Object\AbstractObject $object
+     * @param Model\Object\AbstractObject $object
      * @param array $params
      * @return string
      */
@@ -240,7 +240,7 @@ class Nonownerobjects extends Model\Object\ClassDefinition\Data\Objects
      * @param string $importValue
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
-     * @return Object\ClassDefinition\Data
+     * @return Model\Object\ClassDefinition\Data
      */
     public function getFromCsvImport($importValue, $object = null, $params = [])
     {
@@ -269,7 +269,7 @@ class Nonownerobjects extends Model\Object\ClassDefinition\Data\Objects
     }
 
     /**
-     * @param Object\AbstractObject $object
+     * @param Model\Object\AbstractObject $object
      * @param mixed $params
      * @return array|null
      */

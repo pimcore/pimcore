@@ -25,7 +25,7 @@ class Service
 
     /**
      * @param $keyConfig
-     * @return Object\ClassDefinition\Data
+     * @return Model\Object\ClassDefinition\Data
      */
     public static function getFieldDefinitionFromKeyConfig($keyConfig)
     {
@@ -40,7 +40,7 @@ class Service
     /**
      * @param $definition
      * @param $type
-     * @return Object\ClassDefinition\Data
+     * @return Model\Object\ClassDefinition\Data
      */
     public static function getFieldDefinitionFromJson($definition, $type)
     {

@@ -27,7 +27,7 @@ class KeyValue extends Model\AbstractModel
 {
 
     /**
-     * @var Object\ClassDefinition
+     * @var Model\Object\ClassDefinition
      */
     public $class;
 
@@ -54,7 +54,7 @@ class KeyValue extends Model\AbstractModel
     }
 
     /**
-     * @param Object\ClassDefinition $class
+     * @param Model\Object\ClassDefinition $class
      * @return $this
      */
     public function setClass(\Pimcore\Model\Object\ClassDefinition $class)
@@ -65,7 +65,7 @@ class KeyValue extends Model\AbstractModel
     }
 
     /**
-     * @return Object\ClassDefinition
+     * @return Model\Object\ClassDefinition
      */
     public function getClass()
     {
@@ -302,7 +302,7 @@ class KeyValue extends Model\AbstractModel
      * @param $value the value
      * @param bool $fromGrid if true then the data is coming from the grid, we have to check if the value needs
      *                  to be translated
-     * @return Object\Data\KeyValue the resulting object
+     * @return Model\Object\Data\KeyValue the resulting object
      */
     public function setPropertyWithId($keyId, $value, $fromGrid = false)
     {

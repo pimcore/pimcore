@@ -206,7 +206,7 @@ abstract class Data
     /**
      * converts object data to a simple string value or CSV Export
      * @abstract
-     * @param Object\AbstractObject $object
+     * @param Model\Object\AbstractObject $object
      * @param array $params
      * @return string
      */
@@ -239,7 +239,7 @@ abstract class Data
 
     /**
      * converts data to be exposed via webservices
-     * @param Object\AbstractObject $object
+     * @param Model\Object\AbstractObject $object
      * @param mixed $params
      * @return mixed
      */
@@ -956,7 +956,7 @@ abstract class Data
     }
 
     /**
-     * @param Object\Concrete $data
+     * @param Model\Object\Concrete $data
      * @return bool
      */
     public function isEmpty($data)
@@ -1130,7 +1130,7 @@ abstract class Data
                     $keyId = $context["keyId"];
                     $language = $context["language"];
 
-                    /** @var  $classificationStoreData Object\Classificationstore */
+                    /** @var  $classificationStoreData Model\Object\Classificationstore */
                     $classificationStoreData = $object->$getter();
                     $data = $classificationStoreData->getLocalizedKeyValue($groupId, $keyId, $language, true, true);
 
@@ -1153,7 +1153,7 @@ abstract class Data
     }
 
     /**
-     * @param Object\ClassDefinition\Data $masterDefinition
+     * @param Model\Object\ClassDefinition\Data $masterDefinition
      */
     public function synchronizeWithMasterDefinition(\Pimcore\Model\Object\ClassDefinition\Data $masterDefinition)
     {
@@ -1161,7 +1161,7 @@ abstract class Data
     }
 
     /**
-     * @param Object\ClassDefinition\Data $masterDefinition
+     * @param Model\Object\ClassDefinition\Data $masterDefinition
      */
     public function adoptMasterDefinition(\Pimcore\Model\Object\ClassDefinition\Data $masterDefinition)
     {

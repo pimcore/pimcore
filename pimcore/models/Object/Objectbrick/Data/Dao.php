@@ -28,13 +28,13 @@ class Dao extends Model\Dao\AbstractDao
 
 
     /**
-     * @var Object\Concrete\Dao\InheritanceHelper
+     * @var Model\Object\Concrete\Dao\InheritanceHelper
      */
     protected $inheritanceHelper = null;
 
 
     /**
-     * @param Object\Concrete $object
+     * @param Model\Object\Concrete $object
      * @throws \Exception
      */
     public function save(\Pimcore\Model\Object\Concrete $object)
@@ -106,7 +106,7 @@ class Dao extends Model\Dao\AbstractDao
             $parentForInheritance = $object->getNextParentForInheritance();
             if ($parentForInheritance) {
                 // we don't use the getter (built in functionality to get inherited values) because we need to avoid race conditions
-                // we cannot Object\AbstractObject::setGetInheritedValues(true); and then $this->model->$method();
+                // we cannot Model\Object\AbstractObject::setGetInheritedValues(true); and then $this->model->$method();
                 // so we select the data from the parent object using FOR UPDATE, which causes a lock on this row
                 // so the data of the parent cannot be changed while this transaction is on progress
                 $parentData = $this->db->fetchRow("SELECT * FROM " . $querytable . " WHERE o_id = ? FOR UPDATE", $parentForInheritance->getId());
@@ -205,7 +205,7 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     /**
-     * @param Object\Concrete $object
+     * @param Model\Object\Concrete $object
      */
     public function delete(\Pimcore\Model\Object\Concrete $object)
     {

@@ -123,7 +123,7 @@ class Definition extends Model\AbstractModel
 
     /**
      * @param string $key
-     * @param Object\ClassDefinition\Data $data
+     * @param Model\Object\ClassDefinition\Data $data
      * @return $this
      */
     public function addFieldDefinition($key, $data)
@@ -135,7 +135,7 @@ class Definition extends Model\AbstractModel
 
     /**
      * @param $key
-     * @return Object\ClassDefinition\Data|boolean
+     * @return Model\Object\ClassDefinition\Data|boolean
      */
     public function getFieldDefinition($key)
     {
@@ -260,7 +260,7 @@ class Definition extends Model\AbstractModel
             foreach ($this->getFieldDefinitions() as $key => $def) {
 
                 /**
-                 * @var $def Object\ClassDefinition\Data
+                 * @var $def Model\Object\ClassDefinition\Data
                  */
 
                 $cd .= $def->getGetterCodeFieldcollection($this);
@@ -269,7 +269,7 @@ class Definition extends Model\AbstractModel
                     foreach ($def->getFieldDefinitions() as $localizedFd) {
 
                         /**
-                         * @var $fd Object\ClassDefinition\Data
+                         * @var $fd Model\Object\ClassDefinition\Data
                          */
                         $cd .= $localizedFd->getGetterCodeLocalizedfields($this);
                     }
@@ -281,7 +281,7 @@ class Definition extends Model\AbstractModel
                     foreach ($def->getFieldDefinitions() as $localizedFd) {
 
                         /**
-                         * @var $fd Object\ClassDefinition\Data
+                         * @var $fd Model\Object\ClassDefinition\Data
                          */
                         $cd .= $localizedFd->getSetterCodeLocalizedfields($this);
                     }

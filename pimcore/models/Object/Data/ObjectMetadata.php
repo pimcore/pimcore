@@ -26,7 +26,7 @@ class ObjectMetadata extends Model\AbstractModel
 {
 
     /**
-     * @var Object\Concrete
+     * @var Model\Object\Concrete
      */
     protected $object;
 
@@ -98,7 +98,7 @@ class ObjectMetadata extends Model\AbstractModel
     }
 
     /**
-     * @param Object\Concrete $source
+     * @param Model\Object\Concrete $source
      * @param $destination
      * @param $fieldname
      * @param $ownertype
@@ -142,7 +142,7 @@ class ObjectMetadata extends Model\AbstractModel
     }
 
     /**
-     * @return Object\Concrete
+     * @return Model\Object\Concrete
      */
     public function getObject()
     {
@@ -160,7 +160,7 @@ class ObjectMetadata extends Model\AbstractModel
     }
 
     /**
-     * @return Object\Concrete
+     * @return Model\Object\Concrete
      */
     public function getElement()
     {

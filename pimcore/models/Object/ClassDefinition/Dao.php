@@ -30,7 +30,7 @@ class Dao extends Model\Dao\AbstractDao
     use \Pimcore\Model\Object\ClassDefinition\Helper\Dao;
 
     /**
-     * @var Object\ClassDefinition
+     * @var Model\Object\ClassDefinition
      */
     protected $model;
 

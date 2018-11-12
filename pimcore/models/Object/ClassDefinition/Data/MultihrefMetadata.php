@@ -48,7 +48,7 @@ class MultihrefMetadata extends Model\Object\ClassDefinition\Data\Multihref
 
 
     /**
-     * @see Object\ClassDefinition\Data::getDataForResource
+     * @see Model\Object\ClassDefinition\Data::getDataForResource
      * @param array $data
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
@@ -84,7 +84,7 @@ class MultihrefMetadata extends Model\Object\ClassDefinition\Data\Multihref
     }
 
     /**
-     * @see Object\ClassDefinition\Data::getDataFromResource
+     * @see Model\Object\ClassDefinition\Data::getDataFromResource
      * @param array $data
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
@@ -166,7 +166,7 @@ class MultihrefMetadata extends Model\Object\ClassDefinition\Data\Multihref
     }
 
     /**
-     * @see Object\ClassDefinition\Data::getDataForEditmode
+     * @see Model\Object\ClassDefinition\Data::getDataForEditmode
      * @param array $data
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
@@ -293,9 +293,9 @@ class MultihrefMetadata extends Model\Object\ClassDefinition\Data\Multihref
     }
 
     /**
-     * @see Object\ClassDefinition\Data::getVersionPreview
+     * @see Model\Object\ClassDefinition\Data::getVersionPreview
      * @param array $data
-     * @param null|Object\AbstractObject $object
+     * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
      * @return string
      */
@@ -353,7 +353,7 @@ class MultihrefMetadata extends Model\Object\ClassDefinition\Data\Multihref
     /**
      * converts object data to a simple string value or CSV Export
      * @abstract
-     * @param Object\AbstractObject $object
+     * @param Model\Object\AbstractObject $object
      * @param array $params
      * @return string
      */
@@ -437,7 +437,7 @@ class MultihrefMetadata extends Model\Object\ClassDefinition\Data\Multihref
 
 
     /**
-     * @param Object\AbstractObject $object
+     * @param Model\Object\AbstractObject $object
      * @param mixed $params
      * @return array|mixed|null
      */
@@ -525,7 +525,7 @@ class MultihrefMetadata extends Model\Object\ClassDefinition\Data\Multihref
 
 
     /**
-     * @param Object\Concrete $object
+     * @param Model\Object\Concrete $object
      * @param array $params
      */
     public function save($object, $params = [])
@@ -627,7 +627,7 @@ class MultihrefMetadata extends Model\Object\ClassDefinition\Data\Multihref
 
         if (\Pimcore\Model\Object\AbstractObject::doHideUnpublished() and is_array($data)) {
             $publishedList = [];
-            /** @var  $listElement Object\Data\ElementMetadata */
+            /** @var  $listElement Model\Object\Data\ElementMetadata */
             foreach ($data as $listElement) {
                 if (Element\Service::isPublished($listElement->getElement())) {
                     $publishedList[] = $listElement;
@@ -641,7 +641,7 @@ class MultihrefMetadata extends Model\Object\ClassDefinition\Data\Multihref
     }
 
     /**
-     * @param Object\Concrete $object
+     * @param Model\Object\Concrete $object
      * @param array $params
      */
     public function delete($object, $params = [])
@@ -775,7 +775,7 @@ class MultihrefMetadata extends Model\Object\ClassDefinition\Data\Multihref
     }
 
     /**
-     * @param Object\ClassDefinition\Data $masterDefinition
+     * @param Model\Object\ClassDefinition\Data $masterDefinition
      */
     public function synchronizeWithMasterDefinition(\Pimcore\Model\Object\ClassDefinition\Data $masterDefinition)
     {
@@ -784,7 +784,7 @@ class MultihrefMetadata extends Model\Object\ClassDefinition\Data\Multihref
     }
 
     /** Override point for Enriching the layout definition before the layout is returned to the admin interface.
-     * @param $object Object\Concrete
+     * @param $object Model\Object\Concrete
      * @param array $context additional contextual data
      */
     public function enrichLayoutDefinition($object, $context = [])
@@ -826,7 +826,7 @@ class MultihrefMetadata extends Model\Object\ClassDefinition\Data\Multihref
     {
         if (is_array($value)) {
             $result = [];
-            /** @var  $elementMetadata Object\Data\ElementMetadata */
+            /** @var  $elementMetadata Model\Object\Data\ElementMetadata */
             foreach ($value as $elementMetadata) {
                 $element = $elementMetadata->getElement();
 

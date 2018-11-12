@@ -26,7 +26,7 @@ class Dao extends Model\Object\Fieldcollection\Dao
 {
 
     /**
-     * @param Object\Concrete $object
+     * @param Model\Object\Concrete $object
      * @param array $params
      * @return array
      */
@@ -102,7 +102,7 @@ class Dao extends Model\Object\Fieldcollection\Dao
 
     /**
      * @throws \Exception
-     * @param Object\Concrete $object
+     * @param Model\Object\Concrete $object
      */
     public function delete(\Pimcore\Model\Object\Concrete $object)
     {

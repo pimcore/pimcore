@@ -387,7 +387,7 @@ class Renderlet extends Model\Document\Tag
     }
 
     /**
-     * @param Asset|Document|Object $o
+     * @param Asset|Document|Model\Object $o
      * @return Document\Tag\Renderlet
      */
     public function setO($o)
@@ -398,7 +398,7 @@ class Renderlet extends Model\Document\Tag
     }
 
     /**
-     * @return Asset|Document|Object
+     * @return Asset|Document|Model\Object
      */
     public function getO()
     {

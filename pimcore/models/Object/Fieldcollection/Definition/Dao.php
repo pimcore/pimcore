@@ -32,7 +32,7 @@ class Dao extends Model\Dao\AbstractDao
     protected $tableDefinitions = null;
 
     /**
-     * @param Object\ClassDefinition $class
+     * @param Model\Object\ClassDefinition $class
      * @return string
      */
     public function getTableName(\Pimcore\Model\Object\ClassDefinition $class)
@@ -41,7 +41,7 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     /**
-     * @param Object\ClassDefinition $class
+     * @param Model\Object\ClassDefinition $class
      * @return string
      */
     public function getLocalizedTableName(\Pimcore\Model\Object\ClassDefinition $class)
@@ -51,7 +51,7 @@ class Dao extends Model\Dao\AbstractDao
 
 
     /**
-     * @param Object\ClassDefinition $class
+     * @param Model\Object\ClassDefinition $class
      */
     public function delete(\Pimcore\Model\Object\ClassDefinition $class)
     {
@@ -60,7 +60,7 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     /**
-     * @param Object\ClassDefinition $class
+     * @param Model\Object\ClassDefinition $class
      */
     public function createUpdateTable(\Pimcore\Model\Object\ClassDefinition $class)
     {

@@ -106,7 +106,7 @@ abstract class Concrete extends Model\Object\Listing
     }
 
     /**
-     * @return Object\ClassDefinition
+     * @return Model\Object\ClassDefinition
      */
     public function getClass()
     {
