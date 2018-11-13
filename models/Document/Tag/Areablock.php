@@ -323,16 +323,9 @@ class Areablock extends Model\Document\Tag implements BlockInterface
             }
             if (array_key_exists('globalParams', $options['options'])) {
                 if (array_key_exists('allowed', $options['options'])) {
-                    foreach ($options['options']['allowed'] as $brickName) {
-                        foreach ($options['options']['globalParams'] as $key => $val) {
-                            if (!in_array($key, $validOptions)) {
-                                if (!is_array($options['options']['params'])) {
-                                    $options['options']['params'] = [];
-                                }
-                                if (!array_key_exists($brickName, $options['options']['params']) || !array_key_exists($key, $options['options']['params'][$brickName])) {
-                                    $options['options']['params'][$brickName][$key] = $val;
-                                }
-                            }
+                    foreach ($options['options']['globalParams'] as $key => $val) {
+                        if (!in_array($key, $validOptions)) {
+                            unset($options['options']['globalParams'][$key]);
                         }
                     }
                 }
