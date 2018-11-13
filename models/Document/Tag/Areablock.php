@@ -308,7 +308,7 @@ class Areablock extends Model\Document\Tag implements BlockInterface
      */
     protected function outputEditmodeOptions(array $options, $return = false)
     {
-        // clean up invalid brick editmode options and merge global config to local config
+        // clean up invalid brick editmode options
         if (array_key_exists('options', $options)) {
             $validOptions = ['forceEditInView', 'editWidth', 'editHeight'];
 
