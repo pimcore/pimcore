@@ -308,15 +308,30 @@ class Areablock extends Model\Document\Tag implements BlockInterface
      */
     protected function outputEditmodeOptions(array $options, $return = false)
     {
-        // clean up invalid brick editmode options
+        // clean up invalid brick editmode options and merge global config to local config
         if (array_key_exists('options', $options)) {
-            foreach (['params', 'globalParams'] as $paramKey) {
-                if (array_key_exists($paramKey, $options['options'])) {
-                    $validOptions = ['forceEditInView', 'editWidth', 'editHeight'];
-                    foreach ($options['options'][$paramKey] as $brickName => $params) {
-                        foreach ($params as $key => $val) {
+            $validOptions = ['forceEditInView', 'editWidth', 'editHeight'];
+
+            if (array_key_exists('params', $options['options'])) {
+                foreach ($options['options']['params'] as $brickName => $params) {
+                    foreach ($params as $key => $val) {
+                        if (!in_array($key, $validOptions)) {
+                            unset($options['options']['params'][$brickName][$key]);
+                        }
+                    }
+                }
+            }
+            if (array_key_exists('globalParams', $options['options'])) {
+                if (array_key_exists('allowed', $options['options'])) {
+                    foreach ($options['options']['allowed'] as $brickName) {
+                        foreach ($options['options']['globalParams'] as $key => $val) {
                             if (!in_array($key, $validOptions)) {
-                                unset($options['options'][$paramKey][$brickName][$key]);
+                                if (!is_array($options['options']['params'])) {
+                                    $options['options']['params'] = [];
+                                }
+                                if (!array_key_exists($brickName, $options['options']['params']) || !array_key_exists($key, $options['options']['params'][$brickName])) {
+                                    $options['options']['params'][$brickName][$key] = $val;
+                                }
                             }
                         }
                     }
