@@ -38,18 +38,19 @@ class Service
                 $destDoc->setPath($doc->getRealPath());
                 $destDoc->initDao(get_class($sourceDoc), true);
                 $destDoc->setHardLinkSource($doc);
+                $destDoc->setSourceDocument($sourceDoc);
 
                 return $destDoc;
             }
         } else {
-            $sourceClass = get_class($doc);
-            $doc = self::upperCastDocument($doc);
-            $doc->initDao($sourceClass, true);
+            $destDoc = self::upperCastDocument($doc);
+            $destDoc->initDao(get_class($doc), true);
+            $destDoc->setSourceDocument($doc);
 
-            return $doc;
+            return $destDoc;
         }
 
-        return;
+        return null;
     }
 
     /**
