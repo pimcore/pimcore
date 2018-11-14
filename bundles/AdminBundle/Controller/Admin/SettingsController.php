@@ -316,56 +316,6 @@ class SettingsController extends AdminController
     }
 
     /**
-     * @param $root
-     * @param $thumbnailName
-     */
-    private function deleteThumbnailFolders($root, $thumbnailName)
-    {
-        // delete all thumbnails which are using this config
-
-        /**
-         * @param $dir
-         * @param $thumbnail
-         * @param array $matches
-         *
-         * @return array
-         */
-        function delete($dir, $thumbnail, &$matches = [])
-        {
-            $dirs = glob($dir . '/*', GLOB_ONLYDIR);
-            foreach ($dirs as $dir) {
-                if (
-                    preg_match('@/(image|video)\-thumb__[\d]+__' . $thumbnail . '$@', $dir) ||
-                    preg_match('@/(image|video)\-thumb__[\d]+__' . $thumbnail . '_auto_@', $dir)
-                ) {
-                    recursiveDelete($dir);
-                }
-                delete($dir, $thumbnail, $matches);
-            }
-
-            return $matches;
-        }
-
-        delete($root, $thumbnailName);
-    }
-
-    /**
-     * @param Asset\Image\Thumbnail\Config $thumbnail
-     */
-    private function deleteThumbnailTmpFiles(Asset\Image\Thumbnail\Config $thumbnail)
-    {
-        $this->deleteThumbnailFolders(PIMCORE_TEMPORARY_DIRECTORY . '/image-thumbnails', $thumbnail->getName());
-    }
-
-    /**
-     * @param Asset\Video\Thumbnail\Config $thumbnail
-     */
-    private function deleteVideoThumbnailTmpFiles(Asset\Video\Thumbnail\Config $thumbnail)
-    {
-        $this->deleteThumbnailFolders(PIMCORE_TEMPORARY_DIRECTORY . '/video-thumbnails', $thumbnail->getName());
-    }
-
-    /**
      * @Route("/get-system", methods={"GET"})
      *
      * @param Request $request
@@ -1374,8 +1324,6 @@ class SettingsController extends AdminController
 
         $pipe->save();
 
-        $this->deleteThumbnailTmpFiles($pipe);
-
         return $this->adminJson(['success' => true]);
     }
 
@@ -1550,8 +1498,6 @@ class SettingsController extends AdminController
         }
 
         $pipe->save();
-
-        $this->deleteVideoThumbnailTmpFiles($pipe);
 
         return $this->adminJson(['success' => true]);
     }

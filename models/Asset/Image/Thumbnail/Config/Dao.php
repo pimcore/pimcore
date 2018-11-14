@@ -73,7 +73,9 @@ class Dao extends Model\Dao\PhpArrayTable
                     $data[$key] = $value;
                 }
             }
+
             $this->db->insertOrUpdate($data, $this->model->getName());
+            $this->model->clearTempFiles();
         } catch (\Exception $e) {
             throw $e;
         }
@@ -85,5 +87,6 @@ class Dao extends Model\Dao\PhpArrayTable
     public function delete()
     {
         $this->db->delete($this->model->getName());
+        $this->model->clearTempFiles();
     }
 }

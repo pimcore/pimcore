@@ -21,9 +21,13 @@ use Pimcore\Model;
 
 /**
  * @method \Pimcore\Model\Asset\Video\Thumbnail\Config\Dao getDao()
+ * @method void save()
+ * @method void delete()
  */
 class Config extends Model\AbstractModel
 {
+    use Model\Asset\Thumbnail\ClearTempFilesTrait;
+
     /**
      * format of array:
      * array(
@@ -335,5 +339,9 @@ class Config extends Model\AbstractModel
     public function setGroup(string $group): void
     {
         $this->group = $group;
+    }
+
+    public function clearTempFiles() {
+        $this->doClearTempFiles(PIMCORE_TEMPORARY_DIRECTORY . '/video-thumbnails', $this->getName());
     }
 }

@@ -23,9 +23,13 @@ use Pimcore\Tool\Serialize;
 
 /**
  * @method \Pimcore\Model\Asset\Image\Thumbnail\Config\Dao getDao()
+ * @method void save()
+ * @method void delete()
  */
 class Config extends Model\AbstractModel
 {
+    use Model\Asset\Thumbnail\ClearTempFilesTrait;
+
     /**
      * format of array:
      * array(
@@ -799,5 +803,9 @@ class Config extends Model\AbstractModel
     public function setDownloadable(bool $downloadable): void
     {
         $this->downloadable = $downloadable;
+    }
+
+    public function clearTempFiles() {
+        $this->doClearTempFiles(PIMCORE_TEMPORARY_DIRECTORY . '/image-thumbnails', $this->getName());
     }
 }
