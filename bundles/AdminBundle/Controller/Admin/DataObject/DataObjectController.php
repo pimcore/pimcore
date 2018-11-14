@@ -1214,6 +1214,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
             'o_parentId = ? AND o_id != ?',
             [$updatedObject->getParentId(), $updatedObject->getId()]
         );
+        $list->setObjectTypes([DataObject\AbstractObject::OBJECT_TYPE_OBJECT, DataObject\AbstractObject::OBJECT_TYPE_VARIANT, DataObject\AbstractObject::OBJECT_TYPE_FOLDER]);
         $list->setOrderKey('o_index');
         $list->setOrder('asc');
         $siblings = $list->load();
