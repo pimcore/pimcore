@@ -75,7 +75,7 @@ class Dao extends Model\Dao\PhpArrayTable
             }
 
             $this->db->insertOrUpdate($data, $this->model->getName());
-            $this->model->clearTempFiles();
+            $this->autoClearTempFiles();
         } catch (\Exception $e) {
             throw $e;
         }
@@ -87,6 +87,13 @@ class Dao extends Model\Dao\PhpArrayTable
     public function delete()
     {
         $this->db->delete($this->model->getName());
-        $this->model->clearTempFiles();
+        $this->autoClearTempFiles();
+    }
+
+    protected function autoClearTempFiles() {
+        $enabled = \Pimcore::getContainer()->getParameter('pimcore.config')['assets']['image']['thumbnails']['auto_clear_temp_files'];
+        if($enabled) {
+            $this->model->clearTempFiles();
+        }
     }
 }
