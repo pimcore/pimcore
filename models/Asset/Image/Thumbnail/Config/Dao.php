@@ -90,9 +90,10 @@ class Dao extends Model\Dao\PhpArrayTable
         $this->autoClearTempFiles();
     }
 
-    protected function autoClearTempFiles() {
+    protected function autoClearTempFiles()
+    {
         $enabled = \Pimcore::getContainer()->getParameter('pimcore.config')['assets']['image']['thumbnails']['auto_clear_temp_files'];
-        if($enabled) {
+        if ($enabled) {
             $this->model->clearTempFiles();
         }
     }

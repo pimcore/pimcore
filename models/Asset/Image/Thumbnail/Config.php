@@ -805,7 +805,8 @@ class Config extends Model\AbstractModel
         $this->downloadable = $downloadable;
     }
 
-    public function clearTempFiles() {
+    public function clearTempFiles()
+    {
         $this->doClearTempFiles(PIMCORE_TEMPORARY_DIRECTORY . '/image-thumbnails', $this->getName());
     }
 }

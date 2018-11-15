@@ -16,7 +16,6 @@ namespace Pimcore\Bundle\CoreBundle\Command;
 
 use Pimcore\Console\AbstractCommand;
 use Pimcore\Model\Asset;
-use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -47,15 +46,16 @@ class ThumbnailsClearCommand extends AbstractCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-
         $possibleOptions = ['image', 'video'];
-        if(!in_array($input->getOption('type'), $possibleOptions)) {
+        if (!in_array($input->getOption('type'), $possibleOptions)) {
             $this->writeError(sprintf('Input option `type` must be one of %s', implode(',', $possibleOptions)));
+
             return;
         }
 
-        if(!$input->getOption('name')) {
+        if (!$input->getOption('name')) {
             $this->writeError('Input option `name` is required');
+
             return;
         }
 
@@ -64,8 +64,9 @@ class ThumbnailsClearCommand extends AbstractCommand
          * @var $thumbConfig Asset\Image\Thumbnail\Config|Asset\Video\Thumbnail\Config
          */
         $thumbConfig = $configClass::getByName($input->getOption('name'));
-        if(!$thumbConfig) {
+        if (!$thumbConfig) {
             $this->writeError(sprintf('Unable to find %s thumbnail config with name: %s', $input->getOption('type'), $input->getOption('name')));
+
             return;
         }
 
