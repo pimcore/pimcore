@@ -72,7 +72,8 @@ class Builder
             $navigationRootDocument = Document::getById(1);
         }
 
-        $cacheKeys = ['root_id__' . $navigationRootDocument->getId(), $htmlMenuIdPrefix];
+        // the cache key consists out of the ID and the class name (eg. for hardlinks) of the root document and the optional html prefix
+        $cacheKeys = ['root_id__' . $navigationRootDocument->getId(), $htmlMenuIdPrefix, get_class($navigationRootDocument)];
 
         if (Site::isSiteRequest()) {
             $site = Site::getCurrentSite();

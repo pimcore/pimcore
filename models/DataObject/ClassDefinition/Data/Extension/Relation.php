@@ -48,7 +48,7 @@ trait Relation
                 $class[] = '\Pimcore\Model\Document' . $strArray;
             } elseif (is_array($documentTypes)) {
                 foreach ($documentTypes as $item) {
-                    $class[] = sprintf('\Pimcore\Model\Document\%s', $item['documentTypes'] . $strArray);
+                    $class[] = sprintf('\Pimcore\Model\Document\%s', ucfirst($item['documentTypes']) . $strArray);
                 }
             }
         }
@@ -60,7 +60,7 @@ trait Relation
                 $class[] = '\Pimcore\Model\Asset' . $strArray;
             } elseif (is_array($assetTypes)) {
                 foreach ($assetTypes as $item) {
-                    $class[] = sprintf('\Pimcore\Model\Asset\%s', $item['assetTypes'] . $strArray);
+                    $class[] = sprintf('\Pimcore\Model\Asset\%s', ucfirst($item['assetTypes']) . $strArray);
                 }
             }
         }
@@ -72,7 +72,7 @@ trait Relation
                 $class[] = '\Pimcore\Model\DataObject\AbstractObject' . $strArray;
             } elseif (is_array($classes)) {
                 foreach ($this->getClasses() as $item) {
-                    $class[] = sprintf('\Pimcore\Model\DataObject\%s', $item['classes'] . $strArray);
+                    $class[] = sprintf('\Pimcore\Model\DataObject\%s', ucfirst($item['classes']) . $strArray);
                 }
             }
         }
