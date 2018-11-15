@@ -2017,5 +2017,8 @@ ul.leaflet-draw-actions.leaflet-draw-actions-top.leaflet-draw-actions-bottom li:
     opacity: 0.7 !important;
 }
 
+.pimcore_gridconfig_leftpanel .x-accordion-layout-ct {
+    padding: 0px 5px !important;
+}
 
 /** END workflow engine **/

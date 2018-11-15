@@ -18,6 +18,7 @@
 pimcore.registerNS("pimcore.object.gridcolumn.operator.workflowstate");
 
 pimcore.object.gridcolumn.operator.workflowstate = Class.create(pimcore.object.gridcolumn.Abstract, {
+    operatorGroup: "extractor",
     type: "operator",
     class: "WorkflowState",
     iconCls: "pimcore_icon_workflow_action",

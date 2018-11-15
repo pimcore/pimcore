@@ -17,6 +17,7 @@
 pimcore.registerNS("pimcore.object.gridcolumn.operator.objectbrickgetter");
 
 pimcore.object.gridcolumn.operator.objectbrickgetter = Class.create(pimcore.object.gridcolumn.Abstract, {
+    operatorGroup: "extractor",
     type: "operator",
     class: "ObjectBrickGetter",
     iconCls: "pimcore_icon_objectbricks",

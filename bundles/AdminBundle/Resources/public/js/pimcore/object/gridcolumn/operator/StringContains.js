@@ -18,6 +18,7 @@
 pimcore.registerNS("pimcore.object.gridcolumn.operator.stringcontains");
 
 pimcore.object.gridcolumn.operator.stringcontains = Class.create(pimcore.object.gridcolumn.Abstract, {
+    operatorGroup: "transformer",
     type: "operator",
     class: "StringContains",
     iconCls: "pimcore_icon_operator_stringcontains",

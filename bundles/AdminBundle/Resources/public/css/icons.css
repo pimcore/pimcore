@@ -1300,3 +1300,24 @@
 .pimcore_icon_icons {
     background: url(/bundles/pimcoreadmin/img/flat-color-icons/library.svg) center center no-repeat !important;
 }
+
+.pimcore_icon_gridconfig_class_attributes {
+    background: url(/bundles/pimcoreadmin/img/flat-color-icons/mind_map.svg) center center no-repeat !important;
+}
+
+.pimcore_icon_gridconfig_operator_extractor {
+    background: url(/bundles/pimcoreadmin/img/twemoji/1f3a3.svg) center center no-repeat !important;
+}
+
+.pimcore_icon_gridconfig_operator_transformer {
+    background: url(/bundles/pimcoreadmin/img/flat-color-icons/electronics.svg) center center no-repeat !important;
+}
+
+.pimcore_icon_gridconfig_operator_formatter {
+    background: url(/bundles/pimcoreadmin/img/twemoji/1f524.svg) center center no-repeat !important;
+}
+
+.pimcore_icon_gridconfig_operator_other {
+    background: url(/bundles/pimcoreadmin/img/twemoji/1f31f.svg) center center no-repeat !important;
+}
+

@@ -18,6 +18,7 @@
 pimcore.registerNS("pimcore.object.gridcolumn.operator.charcounter");
 
 pimcore.object.gridcolumn.operator.charcounter = Class.create(pimcore.object.gridcolumn.Abstract, {
+    operatorGroup: "transformer",
     type: "operator",
     class: "CharCounter",
     iconCls: "pimcore_icon_operator_charcounter",

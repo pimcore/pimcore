@@ -18,7 +18,7 @@ pimcore.registerNS("pimcore.object.gridcolumn.operator.dateformatter");
 
 pimcore.object.gridcolumn.operator.dateformatter = Class.create(pimcore.object.gridcolumn.Abstract, {
 
-
+    operatorGroup: "formatter",
     type: "operator",
     class: "DateFormatter",
     iconCls: "pimcore_icon_datetime",

@@ -17,6 +17,7 @@
 pimcore.registerNS("pimcore.object.gridcolumn.operator.text");
 
 pimcore.object.gridcolumn.operator.text = Class.create(pimcore.object.gridcolumn.Abstract, {
+    operatorGroup: "formatter",
     type: "operator",
     class: "Text",
     iconCls: "pimcore_icon_operator_text",

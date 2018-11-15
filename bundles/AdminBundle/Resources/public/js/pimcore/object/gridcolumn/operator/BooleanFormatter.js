@@ -18,6 +18,7 @@
 pimcore.registerNS("pimcore.object.gridcolumn.operator.booleanformatter");
 
 pimcore.object.gridcolumn.operator.booleanformatter = Class.create(pimcore.object.gridcolumn.Abstract, {
+    operatorGroup: "formatter",
     type: "operator",
     class: "BooleanFormatter",
     iconCls: "pimcore_icon_operator_booleanformatter",

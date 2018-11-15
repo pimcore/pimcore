@@ -18,6 +18,7 @@
 pimcore.registerNS("pimcore.object.gridcolumn.operator.stringreplace");
 
 pimcore.object.gridcolumn.operator.stringreplace = Class.create(pimcore.object.gridcolumn.Abstract, {
+    operatorGroup: "transformer",
     type: "operator",
     class: "StringReplace",
     iconCls: "pimcore_icon_operator_stringreplace",

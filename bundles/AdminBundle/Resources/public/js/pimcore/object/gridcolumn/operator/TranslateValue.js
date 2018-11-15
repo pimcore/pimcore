@@ -17,6 +17,7 @@
 pimcore.registerNS("pimcore.object.gridcolumn.operator.translatevalue");
 
 pimcore.object.gridcolumn.operator.translatevalue = Class.create(pimcore.object.gridcolumn.Abstract, {
+    operatorGroup: "transformer",
     type: "operator",
     class: "TranslateValue",
     iconCls: "pimcore_icon_localizedfields",

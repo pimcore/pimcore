@@ -18,6 +18,7 @@
 pimcore.registerNS("pimcore.object.gridcolumn.operator.anygetter");
 
 pimcore.object.gridcolumn.operator.anygetter = Class.create(pimcore.object.gridcolumn.Abstract, {
+        operatorGroup: "extractor",
         type: "operator",
         class: "AnyGetter",
         iconCls: "pimcore_icon_operator_anygetter",

@@ -18,6 +18,7 @@
 pimcore.registerNS("pimcore.object.gridcolumn.operator.arithmetic");
 
 pimcore.object.gridcolumn.operator.arithmetic = Class.create(pimcore.object.gridcolumn.Abstract, {
+    operatorGroup: "transformer",
     type: "operator",
     class: "Arithmetic",
     iconCls: "pimcore_icon_operator_arithmetic",

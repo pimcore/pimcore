@@ -267,15 +267,28 @@ pimcore.object.helpers.gridConfigDialog = Class.create({
     getLeftPanel: function () {
         if (!this.leftPanel) {
 
-            var items = [
-                this.getClassDefinitionTreePanel(),
-                this.getOperatorTree()
-            ];
+            var items = this.getOperatorTrees();
+            items.unshift(this.getClassDefinitionTreePanel());
+
 
             this.brickKeys = [];
             this.leftPanel = new Ext.Panel({
-                layout: "border",
+                cls: "pimcore_panel_tree pimcore_gridconfig_leftpanel",
                 region: "center",
+                split: true,
+                width: 300,
+                minSize: 175,
+                collapsible: true,
+                collapseMode: 'header',
+                collapsed: false,
+                animCollapse: false,
+                layout: 'accordion',
+                hideCollapseTool: true,
+                header: false,
+                layoutConfig: {
+                    animate: false
+                },
+                hideMode: "offsets",
                 items: items
             });
         }
@@ -311,7 +324,7 @@ pimcore.object.helpers.gridConfigDialog = Class.create({
             this.data.language = this.languageField.getValue();
         }
 
-        if(this.itemsPerPage) {
+        if (this.itemsPerPage) {
             this.data.pageSize = this.itemsPerPage.getValue();
         }
 
@@ -434,7 +447,7 @@ pimcore.object.helpers.gridConfigDialog = Class.create({
             mode: 'local',
             autoSelect: true,
             editable: true,
-            value: (this.config.pageSize?this.config.pageSize:pimcore.helpers.grid.getDefaultPageSize(-1)),
+            value: (this.config.pageSize ? this.config.pageSize : pimcore.helpers.grid.getDefaultPageSize(-1)),
             store: new Ext.data.ArrayStore({
                 id: 0,
                 fields: [
@@ -455,7 +468,7 @@ pimcore.object.helpers.gridConfigDialog = Class.create({
             style: "border-top: none !important;",
             hideLabel: false,
             fieldLabel: t("language"),
-            items: [this.languageField,{
+            items: [this.languageField, {
                 xtype: 'tbfill'
             }, this.itemsPerPage]
         };
@@ -845,25 +858,49 @@ pimcore.object.helpers.gridConfigDialog = Class.create({
         return tree;
     },
 
-    getOperatorTree: function () {
+    getOperatorTrees: function () {
         var operators = Object.keys(pimcore.object.gridcolumn.operator);
-
-        var groups = {};
-
+        var operatorGroups = [];
         // var childs = [];
         for (var i = 0; i < operators.length; i++) {
             var operator = operators[i];
             if (!this.availableOperators || this.availableOperators.indexOf(operator) >= 0) {
                 var nodeConfig = pimcore.object.gridcolumn.operator[operator].prototype;
                 var configTreeNode = nodeConfig.getConfigTreeNode();
-                var groupName = nodeConfig.group || "other";
-                if (!groups[groupName]) {
-                    groups[groupName] = [];
+
+                var operatorGroup = nodeConfig.operatorGroup ? nodeConfig.operatorGroup : "other";
+
+                if (!operatorGroups[operatorGroup]) {
+                    operatorGroups[operatorGroup] = [];
                 }
-                groups[groupName].push(configTreeNode);
+
+                var groupName = nodeConfig.group || "other";
+                if (!operatorGroups[operatorGroup][groupName]) {
+                    operatorGroups[operatorGroup][groupName] = [];
+                }
+                operatorGroups[operatorGroup][groupName].push(configTreeNode);
             }
         }
 
+        var operatorGroupKeys = [];
+        for (k in operatorGroups) {
+            if (operatorGroups.hasOwnProperty(k)) {
+                operatorGroupKeys.push(k);
+            }
+        }
+        operatorGroupKeys.sort();
+        var result = [];
+        var len = operatorGroupKeys.length;
+        for (i = 0; i < len; i++) {
+            var operatorGroupName = operatorGroupKeys[i];
+            var groupNodes = operatorGroups[operatorGroupName];
+            result.push(this.getOperatorTree(operatorGroupName, groupNodes));
+
+        }
+        return result;
+    },
+
+    getOperatorTree(operatorGroupName, groups) {
         var groupKeys = [];
         for (k in groups) {
             if (groups.hasOwnProperty(k)) {
@@ -878,7 +915,7 @@ pimcore.object.helpers.gridConfigDialog = Class.create({
         var groupNodes = [];
 
         for (i = 0; i < len; i++) {
-            k = groupKeys[i];
+            var k = groupKeys[i];
             var childs = groups[k];
             childs.sort(
                 function (x, y) {
@@ -900,12 +937,12 @@ pimcore.object.helpers.gridConfigDialog = Class.create({
         }
 
         var tree = new Ext.tree.TreePanel({
-            title: t('operators'),
-            collapsible: true,
+            title: t('operator_group_' + operatorGroupName),
+            iconCls: 'pimcore_icon_gridconfig_operator_' + operatorGroupName,
             xtype: "treepanel",
             region: "south",
             autoScroll: true,
-            height: 200,
+            layout: 'fit',
             rootVisible: false,
             resizeable: true,
             split: true,

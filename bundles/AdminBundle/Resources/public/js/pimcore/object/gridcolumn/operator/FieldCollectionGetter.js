@@ -17,6 +17,7 @@
 pimcore.registerNS("pimcore.object.gridcolumn.operator.fieldcollectiongetter");
 
 pimcore.object.gridcolumn.operator.fieldcollectiongetter = Class.create(pimcore.object.gridcolumn.Abstract, {
+    operatorGroup: "extractor",
     type: "operator",
     class: "FieldCollectionGetter",
     iconCls: "pimcore_icon_fieldcollection",

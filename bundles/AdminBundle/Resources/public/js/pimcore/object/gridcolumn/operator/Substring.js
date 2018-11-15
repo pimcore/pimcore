@@ -18,6 +18,7 @@
 pimcore.registerNS("pimcore.object.gridcolumn.operator.substring");
 
 pimcore.object.gridcolumn.operator.substring = Class.create(pimcore.object.gridcolumn.Abstract, {
+    operatorGroup: "transformer",
     type: "operator",
     class: "Substring",
     iconCls: "pimcore_icon_operator_substring",

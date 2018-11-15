@@ -691,5 +691,11 @@
   "listing_use_traits": "Listing Use (traits)",
   "listing_parent_php_class": "Listing Parent PHP Class",
   "expand_cs_group": "There are empty features not displayed here. Click to show them",
-  "hide_empty_data": "Hide empty data"
+  "hide_empty_data": "Hide empty data",
+  "class_attributes": "Class Attributes",
+  "operator_group_other": "Others",
+  "operator_group_transformer": "Transformers",
+  "operator_group_extractor": "Extractors",
+  "operator_group_formatter": "Formatters"
+
 }

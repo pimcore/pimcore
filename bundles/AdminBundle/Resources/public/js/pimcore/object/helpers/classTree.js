@@ -63,7 +63,7 @@ pimcore.object.helpers.classTree = Class.create({
 
         var filterField = new Ext.form.field.Text(
             {
-                width: 200,
+                width: 300,
                 hideLabel: true,
                 enableKeyEvents: true
             }
@@ -74,7 +74,7 @@ pimcore.object.helpers.classTree = Class.create({
         });
 
         var headerConfig = {
-            title: t('fields'),
+            title: t('class_attributes'),
             items: [
                 filterField,
                 filterButton
@@ -82,8 +82,9 @@ pimcore.object.helpers.classTree = Class.create({
         };
 
         var tree = new Ext.tree.TreePanel({
-
-            header: headerConfig,
+            title: t('class_attributes'),
+            iconCls: 'pimcore_icon_gridconfig_class_attributes',
+            tbar: headerConfig,
             region: "center",
             autoScroll: true,
             rootVisible: false,
