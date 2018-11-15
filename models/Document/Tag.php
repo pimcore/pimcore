@@ -266,9 +266,23 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
      */
     protected function outputEditmodeOptions(array $options, $return = false)
     {
+        // filter all non-scalar values before we pass them to the config object (JSON)
+        $clean = function ($value) use (&$clean) {
+            if(is_array($value)) {
+                foreach($value as &$item) {
+                    $item = $clean($item);
+                }
+            } elseif (!is_scalar($value)) {
+                $value = null;
+            }
+
+            return $value;
+        };
+        $options = $clean($options);
+
         $code = '
             <script>
-                editableConfigurations.push(' . json_encode($options) . ');
+                editableConfigurations.push(' . json_encode($options, JSON_PRETTY_PRINT) . ');
             </script>
         ';
 

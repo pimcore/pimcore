@@ -145,6 +145,18 @@ class Info
     }
 
     /**
+     * @param string $name
+     * @return mixed|null
+     */
+    public function getParam(string $name) {
+        if(isset($this->params[$name])) {
+            return $this->params[$name];
+        }
+
+        return null;
+    }
+
+    /**
      * @param array $params
      *
      * @return $this
