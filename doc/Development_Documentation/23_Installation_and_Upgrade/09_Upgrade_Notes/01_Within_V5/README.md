@@ -1,5 +1,12 @@
 # Upgrade Notes for Upgrades within Pimcore 5
 
+## Version 5.5.4
+
+The support for ElasticSearch version 6 has been added. 
+Currently the `DefaultElasticSearch` worker / product list has a fallback to `DefaultElasticSearch5` 
+(which supports ElasticSearch version 2.x to 5.x so your code should continue to work without any changes).  
+For version 6 use the `DefaultElasticSearch6` worker / product list.
+ 
 ## Version 5.5.1
 
 #### Removed Google Maps Browser API Key from System Settings
