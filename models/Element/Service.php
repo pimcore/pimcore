@@ -904,7 +904,7 @@ class Service extends Model\AbstractModel
             $key = trim($key, '. ');
 
             // windows forbidden filenames + URL reserved characters (at least the once which are problematic)
-            $key = preg_replace('/[#\?\*\:\\\\<\>\|"]/', '-', $key);
+            $key = preg_replace('/[#\?\*\:\\\\<\>\|"%]/', '-', $key);
         } else {
             $key = trim($key);
             $key = ltrim($key, '.');
