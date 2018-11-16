@@ -268,8 +268,8 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
     {
         // filter all non-scalar values before we pass them to the config object (JSON)
         $clean = function ($value) use (&$clean) {
-            if(is_array($value)) {
-                foreach($value as &$item) {
+            if (is_array($value)) {
+                foreach ($value as &$item) {
                     $item = $clean($item);
                 }
             } elseif (!is_scalar($value)) {

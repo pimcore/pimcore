@@ -146,10 +146,12 @@ class Info
 
     /**
      * @param string $name
+     *
      * @return mixed|null
      */
-    public function getParam(string $name) {
-        if(isset($this->params[$name])) {
+    public function getParam(string $name)
+    {
+        if (isset($this->params[$name])) {
             return $this->params[$name];
         }
 
