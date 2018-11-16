@@ -18,6 +18,7 @@
 namespace Pimcore\Model\DataObject\ClassDefinition;
 
 use Pimcore\Cache;
+use Pimcore\Db;
 use Pimcore\Event\DataObjectCustomLayoutEvents;
 use Pimcore\Event\Model\DataObject\CustomLayoutEvent;
 use Pimcore\Logger;
@@ -29,8 +30,10 @@ use Pimcore\Model\DataObject;
  */
 class CustomLayout extends Model\AbstractModel
 {
+    use DataObject\ClassDefinition\Helper\VarExport;
+
     /**
-     * @var int
+     * @var string
      */
     public $id;
 
@@ -153,7 +156,6 @@ class CustomLayout extends Model\AbstractModel
     {
         $class = new self();
         $class->setValues($values);
-
         return $class;
     }
 
@@ -162,7 +164,15 @@ class CustomLayout extends Model\AbstractModel
      */
     public function save()
     {
-        if ($this->getId()) {
+        if (!$this->getId()) {
+            $db = Db::get();
+            $maxId = $db->fetchOne('SELECT MAX(CAST(id AS SIGNED)) FROM custom_layouts;');
+            $this->setId($maxId ? $maxId + 1 : 1);
+        }
+
+        $isUpdate = $this->exists();
+
+        if ($isUpdate) {
             \Pimcore::getEventDispatcher()->dispatch(DataObjectCustomLayoutEvents::PRE_UPDATE, new CustomLayoutEvent($this));
         } else {
             \Pimcore::getEventDispatcher()->dispatch(DataObjectCustomLayoutEvents::PRE_ADD, new CustomLayoutEvent($this));
@@ -175,13 +185,111 @@ class CustomLayout extends Model\AbstractModel
             \Pimcore\File::mkdir(PIMCORE_CUSTOMLAYOUT_DIRECTORY);
         }
 
-        $this->getDao()->save();
+        $this->getDao()->save($isUpdate);
+
+        $this->saveCustomLayoutFile();
 
         // empty custom layout cache
         try {
             Cache::clearTag('customlayout_' . $this->getId());
         } catch (\Exception $e) {
         }
+    }
+
+
+    private function saveCustomLayoutFile($saveDefinitionFile = true)
+    {
+        // save definition as a php file
+        $definitionFile = $this->getDefinitionFile();
+        if (!is_writable(dirname($definitionFile)) || (is_file($definitionFile) && !is_writable($definitionFile))) {
+            throw new \Exception(
+                'Cannot write definition file in: '.$definitionFile.' please check write permission on this directory.'
+            );
+        }
+
+        $infoDocBlock = $this->getInfoDocBlock();
+
+        $clone = clone $this;
+        $clone->setDao(null);
+        unset($clone->fieldDefinitions);
+
+        self::cleanupForExport($clone->layoutDefinitions);
+
+        if ($saveDefinitionFile) {
+            $exportedCustomLayout = var_export($clone, true);
+
+            $data = '<?php ';
+            $data .= "\n\n";
+            $data .= $infoDocBlock;
+            $data .= "\n\n";
+
+            $data .= "\nreturn ".$exportedCustomLayout.";\n";
+
+            \Pimcore\File::putPhpFile($definitionFile, $data);
+        }
+    }
+
+    /**
+     * @param null $name
+     *
+     * @return string
+     */
+    public function getDefinitionFile()
+    {
+        $file = PIMCORE_CUSTOMLAYOUT_DIRECTORY.'/custom_definition_'. $this->getId() .'.php';
+
+        return $file;
+    }
+
+
+    /**
+     * @param $data
+     */
+    public static function cleanupForExport(&$data)
+    {
+        if (isset($data->fieldDefinitionsCache)) {
+            unset($data->fieldDefinitionsCache);
+        }
+
+        if (method_exists($data, 'getChilds')) {
+            $children = $data->getChilds();
+            if (is_array($children)) {
+                foreach ($children as $child) {
+                    self::cleanupForExport($child);
+                }
+            }
+        }
+    }
+
+    /**
+     * @return string
+     */
+    protected function getInfoDocBlock()
+    {
+        $cd = '';
+
+        $cd .= '/** ';
+        $cd .= "\n";
+        $cd .= '* Generated at: '.date('c')."\n";
+
+        $user = Model\User::getById($this->getUserModification());
+        if ($user) {
+            $cd .= '* Changed by: '.$user->getName().' ('.$user->getId().')'."\n";
+        }
+
+        if (isset($_SERVER['REMOTE_ADDR'])) {
+            $cd .= '* IP: '.$_SERVER['REMOTE_ADDR']."\n";
+        }
+
+        if ($this->getDescription()) {
+            $description = str_replace(['/**', '*/', '//'], '', $this->getDescription());
+            $description = str_replace("\n", "\n* ", $description);
+
+            $cd .= '* '.$description."\n";
+        }
+        $cd .= '*/ ';
+
+        return $cd;
     }
 
     public function delete()
@@ -202,7 +310,17 @@ class CustomLayout extends Model\AbstractModel
     }
 
     /**
-     * @return int
+     * @return bool
+     */
+    public function exists()
+    {
+        $name = $this->getDao()->getNameById($this->getId());
+
+        return is_string($name);
+    }
+
+    /**
+     * @return string
      */
     public function getId()
     {
@@ -250,13 +368,13 @@ class CustomLayout extends Model\AbstractModel
     }
 
     /**
-     * @param int $id
+     * @param string $id
      *
      * @return $this
      */
     public function setId($id)
     {
-        $this->id = (int) $id;
+        $this->id = $id;
 
         return $this;
     }

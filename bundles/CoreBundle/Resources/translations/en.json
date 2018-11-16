@@ -837,5 +837,12 @@
   "permission_missing": "You need the '%s' permission to perform this action",
   "paste_as_language_variant": "Paste as new language variant",
   "select_language_for_new_document": "Select language for New Document",
-  "source_document_language_missing": "Set Language(Properties) in Source Document"
+  "source_document_language_missing": "Set Language(Properties) in Source Document",
+  "customlayout_name":"Custom Layout Name",
+  "customlayout_identifier": "Unique Custom Layout identifier",
+  "customlayout_identifier_warning": "Be careful with the unique custom layout identifier because table names can contain only up to 64 characters.",
+  "customlayout_invalid_name": "Invalid Custom Layout Name",
+  "customlayout_invalid_identifier": "Invalid Custom Layout Identifier",
+  "customlayout_identifier_already_exists": "Custom Layout Identifier already exists",
+  "customlayout_name_already_exists": "Custom Layout Name already exists"
 }
