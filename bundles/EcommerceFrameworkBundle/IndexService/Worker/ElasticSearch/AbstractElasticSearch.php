@@ -18,10 +18,10 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\ElasticSearch;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\IElasticSearchConfig;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Interpreter\IRelationInterpreter;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\IProductList;
+use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IIndexable;
 use Pimcore\Db\Connection;
 use Pimcore\Logger;
-use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker;
 
 /**
  * @property ElasticSearch $tenantConfig
@@ -32,7 +32,6 @@ abstract class AbstractElasticSearch extends Worker\AbstractMockupCacheWorker im
     const MOCKUP_CACHE_PREFIX = 'ecommerce_mockup_elastic';
 
     const RELATION_FIELD = 'parentchildrelation';
-
 
     /**
      * Default value for the mapping of custom attributes
@@ -175,7 +174,6 @@ abstract class AbstractElasticSearch extends Worker\AbstractMockupCacheWorker im
         $this->doCreateOrUpdateIndexStructures();
     }
 
-
     protected function createMappingAttributes()
     {
         $mappingAttributes = [];
@@ -218,7 +216,6 @@ abstract class AbstractElasticSearch extends Worker\AbstractMockupCacheWorker im
                         'store' => $this->getStoreCustomAttributes()
                     ];
 
-
                     if (!empty($attribute->getOption('analyzer'))) {
                         $mapping['index'] = 'analyzed';
                         $mapping['analyzer'] = $attribute->getOption('analyzer');
@@ -233,7 +230,7 @@ abstract class AbstractElasticSearch extends Worker\AbstractMockupCacheWorker im
                     $mapping['store'] = false;
                 }
 
-                if($type == 'object'){
+                if ($type == 'object') {
                     unset($mapping['store']);
                 }
 
@@ -253,7 +250,6 @@ abstract class AbstractElasticSearch extends Worker\AbstractMockupCacheWorker im
 
         return $mappingAttributes;
     }
-
 
     /**
      * creates mapping attributes based on system attributes, in product index defined attributes and relations
@@ -308,8 +304,6 @@ abstract class AbstractElasticSearch extends Worker\AbstractMockupCacheWorker im
         $this->doCleanupOldZombieData($object, $subObjectIds);
     }
 
-
-
     /**
      * updates given element in index
      *
@@ -337,8 +331,6 @@ abstract class AbstractElasticSearch extends Worker\AbstractMockupCacheWorker im
 
         $this->fillupPreparationQueue($object);
     }
-
-
 
     /**
      * If a variant is moved from one parent to another one the original document needs to be deleted as otherwise the variant will be stored twice in the index
@@ -420,12 +412,12 @@ abstract class AbstractElasticSearch extends Worker\AbstractMockupCacheWorker im
             //check if parent should exist and if so, consider parent relation at indexing
             $routingId = $indexSystemData['o_type'] == IProductList::PRODUCT_TYPE_VARIANT ? $indexSystemData['o_virtualProductId'] : $indexSystemData['o_id'];
 
-            $this->bulkIndexData[] = ['index' => ['_index' => $this->getIndexNameVersion(), '_type' => $this->getTenantConfig()->getElasticSearchClientParams()['indexType'], '_id' => $objectId,'_routing' => $routingId]];
+            $this->bulkIndexData[] = ['index' => ['_index' => $this->getIndexNameVersion(), '_type' => $this->getTenantConfig()->getElasticSearchClientParams()['indexType'], '_id' => $objectId, '_routing' => $routingId]];
             $bulkIndexData = array_filter(['system' => array_filter($indexSystemData), 'type' => $indexSystemData['o_type'], 'attributes' => array_filter($indexAttributeData), 'relations' => $indexRelationData, 'subtenants' => $data['subtenants']]);
 
-            if($indexSystemData['o_type'] == IProductList::PRODUCT_TYPE_VARIANT){
-                $bulkIndexData[self::RELATION_FIELD] = ['name' => $indexSystemData['o_type'],'parent' => $indexSystemData['o_virtualProductId']];
-            }else{
+            if ($indexSystemData['o_type'] == IProductList::PRODUCT_TYPE_VARIANT) {
+                $bulkIndexData[self::RELATION_FIELD] = ['name' => $indexSystemData['o_type'], 'parent' => $indexSystemData['o_virtualProductId']];
+            } else {
                 $bulkIndexData[self::RELATION_FIELD] = ['name' => $indexSystemData['o_type']];
             }
             $this->bulkIndexData[] = $bulkIndexData;
@@ -434,7 +426,6 @@ abstract class AbstractElasticSearch extends Worker\AbstractMockupCacheWorker im
             $this->saveToMockupCache($objectId, $data);
         }
     }
-
 
     /**
      * override this method if you need to add custom data
@@ -680,7 +671,6 @@ abstract class AbstractElasticSearch extends Worker\AbstractMockupCacheWorker im
         } else {
             Logger::emergency("Could not delete item with id $objectId because the routing value cant be determined");
         }
-
     }
 
     protected function doCreateOrUpdateIndexStructures($exceptionOnFailure = false)

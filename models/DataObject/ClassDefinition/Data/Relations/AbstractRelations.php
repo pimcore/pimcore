@@ -276,12 +276,12 @@ abstract class AbstractRelations extends Model\DataObject\ClassDefinition\Data
         if ($params['isUntouchable']) {
             return;
         }
-        
+
         if (!isset($params['context'])) {
             $params['context'] = null;
         }
         $context = $params['context'];
-        
+
         if (!DataObject\AbstractObject::isDirtyDetectionDisabled() && $object instanceof DataObject\DirtyIndicatorInterface) {
             if ($object instanceof DataObject\Localizedfield) {
                 if ($context['containerType'] != 'fieldcollection' && $object->getObject() instanceof DataObject\DirtyIndicatorInterface) {

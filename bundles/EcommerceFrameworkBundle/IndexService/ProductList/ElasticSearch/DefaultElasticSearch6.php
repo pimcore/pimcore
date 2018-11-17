@@ -12,10 +12,8 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\ElasticSearch;
-use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\IProductList;
 
-class DefaultElasticSearch6 extends AbstractElasticSearch {
-
+class DefaultElasticSearch6 extends AbstractElasticSearch
+{
 }

@@ -206,7 +206,7 @@ class Localizedfields extends Model\DataObject\ClassDefinition\Data
                         $brickContainer = $parent->$brickContainerGetter();
                         $brickGetter = 'get' . ucfirst($params['context']['containerKey']);
                         $brickData = $brickContainer->$brickGetter();
-                        if($brickData) {
+                        if ($brickData) {
                             $parentData = $brickData->getLocalizedFields();
                         }
                     } else {
@@ -214,7 +214,7 @@ class Localizedfields extends Model\DataObject\ClassDefinition\Data
                             $parentData = $parent->getLocalizedFields();
                         }
                     }
-                    if($parentData) {
+                    if ($parentData) {
                         $parentResult = $this->doGetDataForEditMode(
                             $parentData,
                             $parent,

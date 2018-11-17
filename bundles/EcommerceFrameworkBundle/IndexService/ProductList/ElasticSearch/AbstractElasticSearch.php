@@ -13,13 +13,15 @@
  */
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\ElasticSearch;
-use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\IProductList;
+
 use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\IElasticSearchConfig;
+use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\IProductList;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractCategory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IIndexable;
 
-abstract class AbstractElasticSearch implements IProductList {
+abstract class AbstractElasticSearch implements IProductList
+{
     const LIMIT_UNLIMITED = 'unlimited';
     const INTEGER_MAX_VALUE = 2147483647;     // Elasticsearch Integer.MAX_VALUE is 2^31-1
 
@@ -561,10 +563,10 @@ abstract class AbstractElasticSearch implements IProductList {
 
         $params = [];
         $params['index'] = $this->getIndexName();
-        #$params['type'] = $this->getTenantConfig()->getElasticSearchClientParams()['indexType'];
+        //$params['type'] = $this->getTenantConfig()->getElasticSearchClientParams()['indexType'];
         $params['body']['_source'] = false;
 
-        if(is_integer($this->getLimit())){ // null not allowed
+        if (is_integer($this->getLimit())) { // null not allowed
             $params['body']['size'] = $this->getLimit();
         }
         $params['body']['from'] = $this->getOffset();
@@ -690,11 +692,10 @@ abstract class AbstractElasticSearch implements IProductList {
 
             //add matching variant Ids to the result
             $params['body']['query']['bool']['must']['has_child']['inner_hits'] = [
-                "name" => "variants",
-                "_source" => false,
-                "size" => 100
+                'name' => 'variants',
+                '_source' => false,
+                'size' => 100
             ];
-
         } else {
             $params['body']['query']['bool']['must']['bool']['must'] = $queryFilters;
             $params['body']['query']['bool']['filter']['bool']['must'] = $boolFilters;
@@ -1071,7 +1072,6 @@ abstract class AbstractElasticSearch implements IProductList {
 
         $this->preparedGroupByValuesLoaded = true;
     }
-
 
     /**
      * @return IElasticSearchConfig

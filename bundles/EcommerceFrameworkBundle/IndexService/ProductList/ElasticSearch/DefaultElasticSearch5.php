@@ -14,17 +14,11 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\ElasticSearch;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
-use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\IElasticSearchConfig;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractCategory;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IIndexable;
-
 /**
  * Implementation of product list which works based on the product index of the online shop framework
  */
 class DefaultElasticSearch5 extends AbstractElasticSearch
 {
-
     /**
      * loads all prepared group by values
      *   1 - get general filter (= filter of fields don't need to be considered in group by values or where fieldnameShouldBeExcluded set to false)
@@ -218,5 +212,4 @@ class DefaultElasticSearch5 extends AbstractElasticSearch
 
         return $params;
     }
-
 }

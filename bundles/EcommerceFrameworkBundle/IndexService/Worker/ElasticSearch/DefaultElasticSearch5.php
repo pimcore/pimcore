@@ -13,10 +13,11 @@
  */
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\ElasticSearch;
-use \Pimcore\Logger;
-use \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\IProductList;
+
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Interpreter\IRelationInterpreter;
+use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\IProductList;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IIndexable;
+use Pimcore\Logger;
 
 /**
  *
@@ -24,7 +25,6 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IIndexable;
  */
 class DefaultElasticSearch5 extends AbstractElasticSearch
 {
-
     public function getSystemAttributes($includeTypes = false)
     {
         $systemAttributes = [

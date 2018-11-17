@@ -23,5 +23,4 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList;
  */
 class DefaultElasticSearch extends ElasticSearch\DefaultElasticSearch5
 {
-
 }
