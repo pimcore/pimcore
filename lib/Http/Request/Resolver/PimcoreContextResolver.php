@@ -28,8 +28,12 @@ class PimcoreContextResolver extends AbstractRequestResolver
 
     const CONTEXT_ADMIN = 'admin';
     const CONTEXT_WEBSERVICE = 'webservice';
-    const CONTEXT_INSTALL = 'install';
     const CONTEXT_DEFAULT = 'default';
+
+    /**
+     * @deprecated
+     */
+    const CONTEXT_INSTALL = 'install';
 
     /**
      * @var PimcoreContextGuesser
