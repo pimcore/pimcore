@@ -216,21 +216,14 @@ class CustomLayout extends Model\AbstractModel
         self::cleanupForExport($clone->layoutDefinitions);
 
         if ($saveDefinitionFile) {
-            $exportedCustomLayout = var_export($clone, true);
 
-            $data = '<?php ';
-            $data .= "\n\n";
-            $data .= $infoDocBlock;
-            $data .= "\n\n";
-
-            $data .= "\nreturn ".$exportedCustomLayout.";\n";
+            $data = to_php_data_file_format($clone, $infoDocBlock);
 
             \Pimcore\File::putPhpFile($definitionFile, $data);
         }
     }
 
     /**
-     * @param null $name
      *
      * @return string
      */
@@ -290,6 +283,24 @@ class CustomLayout extends Model\AbstractModel
         $cd .= '*/ ';
 
         return $cd;
+    }
+
+    /**
+     * @param mixed $classId
+     * @return int|null
+     */
+    public static function getIdentifier($classId)
+    {
+        try {
+                $customLayout = new self();
+                $identifier = $customLayout->getDao()->getLatestIdentifier($classId);
+
+                return $identifier;
+        } catch (\Exception $e) {
+            Logger::error($e);
+
+            return null;
+        }
     }
 
     public function delete()

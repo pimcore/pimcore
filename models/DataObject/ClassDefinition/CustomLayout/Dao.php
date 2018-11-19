@@ -88,6 +88,19 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     /**
+     * Get latest identifier
+     *
+     * @param int $classId
+     * @return int
+     */
+    public function getLatestIdentifier($classId)
+    {
+        $maxId = $this->db->fetchOne('SELECT MAX(CAST(id AS SIGNED)) FROM custom_layouts');
+
+        return $maxId ? $maxId + 1 : 1;
+    }
+
+    /**
      * Save layout to database
      *
      * @return bool

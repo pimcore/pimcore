@@ -1684,15 +1684,24 @@ class ClassController extends AdminController implements EventedControllerInterf
     {
         $classId = $request->get('classId');
 
-        $db = Db::get();
-        $maxId = $db->fetchOne('SELECT MAX(CAST(id AS SIGNED)) FROM custom_layouts');
+        $identifier = DataObject\ClassDefinition\CustomLayout::getIdentifier($classId);
 
-        $existingIds = $db->fetchCol('SELECT LOWER(id) FROM custom_layouts');
+        $list = new DataObject\ClassDefinition\CustomLayout\Listing();
 
-        $existingNames = $db->fetchCol('SELECT DISTINCT name FROM custom_layouts WHERE classId = ' . $db->quote($classId));
+        $list = $list->load();
+        $existingIds = [];
+        $existingNames = [];
+
+        /** @var $item DataObject\ClassDefinition\CustomLayout */
+        foreach ($list as $item) {
+            $existingIds[] = $item->getId();
+            if ($item->getClassId() == $classId) {
+                $existingNames[] = $item->getName();
+            }
+        }
 
         $result = [
-            'suggestedIdentifier' => $maxId ? $maxId + 1 : 1,
+            'suggestedIdentifier' => $identifier,
             'existingIds' => $existingIds,
             'existingNames' => $existingNames
             ];
