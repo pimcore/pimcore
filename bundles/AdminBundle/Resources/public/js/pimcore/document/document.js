@@ -226,8 +226,9 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
     reload: function () {
 
         this.tab.on("close", function() {
+            var currentTabIndex = this.tab.ownerCt.items.indexOf(this.tab);
             window.setTimeout(function (id, type) {
-                pimcore.helpers.openDocument(id, type);
+                pimcore.helpers.openDocument(id, type, {tabIndex: currentTabIndex});
             }.bind(window, this.id, this.getType()), 500);
         }.bind(this));
 

@@ -14,8 +14,9 @@
 pimcore.registerNS("pimcore.asset.unknown");
 pimcore.asset.unknown = Class.create(pimcore.asset.asset, {
 
-    initialize: function(id) {
+    initialize: function(id, options) {
 
+        this.options = options;
         this.id = intval(id);
         this.setType("unknown");
         this.addLoadingPanel();

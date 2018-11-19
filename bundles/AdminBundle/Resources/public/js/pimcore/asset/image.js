@@ -14,8 +14,9 @@
 pimcore.registerNS("pimcore.asset.image");
 pimcore.asset.image = Class.create(pimcore.asset.asset, {
 
-    initialize: function (id) {
+    initialize: function (id, options) {
 
+        this.options = options;
         this.id = intval(id);
         this.setType("image");
         this.addLoadingPanel();

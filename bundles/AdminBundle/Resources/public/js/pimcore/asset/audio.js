@@ -14,8 +14,9 @@
 pimcore.registerNS("pimcore.asset.audio");
 pimcore.asset.audio = Class.create(pimcore.asset.asset, {
 
-    initialize: function(id) {
+    initialize: function(id, options) {
 
+        this.options = options;
         this.id = intval(id);
         this.setType("audio");
         this.addLoadingPanel();
