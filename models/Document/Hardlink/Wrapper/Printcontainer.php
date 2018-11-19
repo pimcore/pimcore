@@ -23,7 +23,7 @@ use Pimcore\Model\Element;
 /**
  * @method \Pimcore\Model\Document\Hardlink\Dao getDao()
  */
-class Printcontainer extends Model\Document\Page implements Model\Document\Hardlink\Wrapper\WrapperInterface
+class Printcontainer extends Model\Document\Printcontainer implements Model\Document\Hardlink\Wrapper\WrapperInterface
 {
     use Model\Document\Hardlink\Wrapper, Element\ChildsCompatibilityTrait;
 }
