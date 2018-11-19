@@ -226,6 +226,7 @@ pimcore.bundle.EcommerceFramework.pricing.config.objects = Class.create(pimcore.
             cls: cls,
             width: this.fieldConfig.width,
             height: this.fieldConfig.height,
+            style: this.fieldConfig.style,
             tbar: {
                 items: [
                     {
