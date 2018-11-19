@@ -2909,5 +2909,20 @@ pimcore.helpers.registerAssetDnDSingleUpload = function (element, parent, parent
     }.bind(this), true);
 };
 
+pimcore.helpers.findCaseInsensitiveValue = function (collection, needle) {
+    var match = false;
+    needle = needle.toLowerCase();
+    if (collection.length > 0) {
+        Ext.each(collection, function(item) {
+            if(item.toLowerCase() === needle) {
+                match = true;
+                return false;
+            }
+        });
+    }
+
+    return match;
+};
+
 
 
