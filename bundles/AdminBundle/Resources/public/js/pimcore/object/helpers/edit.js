@@ -284,6 +284,9 @@ pimcore.object.helpers.edit = {
                 if(l.mandatory) {
                     l.title += ' <span style="color:red;">*</span>';
                 }
+                if(l.tooltip) {
+                    l.title += ' <span class="pimcore_object_label_icon pimcore_icon_info"></span>';
+                }
 
                 var field = new pimcore.object.tags[l.fieldtype](data, l);
 
