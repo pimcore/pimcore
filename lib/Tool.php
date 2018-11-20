@@ -605,15 +605,18 @@ class Tool
      * @param $url
      * @param array $paramsGet
      * @param array $paramsPost
+     * @param array $options
      *
      * @return bool|string
      */
-    public static function getHttpData($url, $paramsGet = [], $paramsPost = [])
+    public static function getHttpData($url, $paramsGet = [], $paramsPost = [], $options = [])
     {
         $client = \Pimcore::getContainer()->get('pimcore.http_client');
         $requestType = 'GET';
 
-        $config = [];
+        if(!isset($options['timeout'])) {
+            $options['timeout'] = 5;
+        }
 
         if (is_array($paramsGet) && count($paramsGet) > 0) {
 
@@ -626,16 +629,16 @@ class Tool
                 $paramsGet = array_merge($urlParams, $paramsGet);
             }
 
-            $config[RequestOptions::QUERY] = $paramsGet;
+            $options[RequestOptions::QUERY] = $paramsGet;
         }
 
         if (is_array($paramsPost) && count($paramsPost) > 0) {
-            $config[RequestOptions::FORM_PARAMS] = $paramsPost;
+            $options[RequestOptions::FORM_PARAMS] = $paramsPost;
             $requestType = 'POST';
         }
 
         try {
-            $response = $client->request($requestType, $url, $config);
+            $response = $client->request($requestType, $url, $options);
 
             if ($response->getStatusCode() < 300) {
                 return (string)$response->getBody();
