@@ -49,7 +49,6 @@ class AnyGetter extends AbstractOperator
 
     public function getLabeledValue($element)
     {
-
         $result = new \stdClass();
         $result->label = $this->label;
 

@@ -614,7 +614,7 @@ class Tool
         $client = \Pimcore::getContainer()->get('pimcore.http_client');
         $requestType = 'GET';
 
-        if(!isset($options['timeout'])) {
+        if (!isset($options['timeout'])) {
             $options['timeout'] = 5;
         }
 
