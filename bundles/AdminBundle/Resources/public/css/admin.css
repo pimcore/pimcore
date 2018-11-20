@@ -1146,6 +1146,13 @@ span.warning {
 
 }
 
+.pimcore_object_label_icon {
+    margin: 0 1px -2px 0;
+    display: inline-block;
+    width: 14px;
+    height: 13px;
+}
+
 .pimcore_tag_wysiwyg {
     position:relative;
     padding: 10px;

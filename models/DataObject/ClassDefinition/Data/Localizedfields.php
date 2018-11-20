@@ -199,26 +199,31 @@ class Localizedfields extends Model\DataObject\ClassDefinition\Data
                 }
 
                 if ($foundEmptyValue) {
+                    $parentData = null;
                     // still some values are passing, ask the parent
                     if ($params['context'] && $params['context']['containerType'] == 'objectbrick') {
                         $brickContainerGetter = 'get' . ucfirst($params['fieldname']);
                         $brickContainer = $parent->$brickContainerGetter();
                         $brickGetter = 'get' . ucfirst($params['context']['containerKey']);
                         $brickData = $brickContainer->$brickGetter();
-                        $parentData = $brickData->getLocalizedFields();
+                        if ($brickData) {
+                            $parentData = $brickData->getLocalizedFields();
+                        }
                     } else {
                         if (method_exists($parent, 'getLocalizedFields')) {
                             $parentData = $parent->getLocalizedFields();
                         }
                     }
-                    $parentResult = $this->doGetDataForEditMode(
-                        $parentData,
-                        $parent,
-                        $fieldData,
-                        $metaData,
-                        $level + 1,
-                        $params
-                    );
+                    if ($parentData) {
+                        $parentResult = $this->doGetDataForEditMode(
+                            $parentData,
+                            $parent,
+                            $fieldData,
+                            $metaData,
+                            $level + 1,
+                            $params
+                        );
+                    }
                 }
             }
         }

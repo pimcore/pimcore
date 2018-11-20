@@ -110,7 +110,7 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
 
         this.removeLoadingPanel();
 
-        this.tabPanel.add(this.tab);
+        this.addToMainTabPanel();
 
         if (this.getAddToHistory()) {
             pimcore.helpers.recordElement(this.id, "asset", this.data.path + this.data.filename);
@@ -400,10 +400,10 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
     },
 
     reload: function () {
-
         this.tab.on("close", function() {
+            var currentTabIndex = this.tab.ownerCt.items.indexOf(this.tab);
             window.setTimeout(function (id, type) {
-                pimcore.helpers.openAsset(id, type);
+                pimcore.helpers.openAsset(id, type, {tabIndex: currentTabIndex});
             }.bind(window, this.id, this.getType()), 500);
         }.bind(this));
 

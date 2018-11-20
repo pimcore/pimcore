@@ -77,10 +77,10 @@ pimcore.helpers.openAsset = function (id, type, options) {
     if (pimcore.globalmanager.exists("asset_" + id) == false) {
 
         if (!pimcore.asset[type]) {
-            pimcore.globalmanager.add("asset_" + id, new pimcore.asset.unknown(id));
+            pimcore.globalmanager.add("asset_" + id, new pimcore.asset.unknown(id, options));
         }
         else {
-            pimcore.globalmanager.add("asset_" + id, new pimcore.asset[type](id));
+            pimcore.globalmanager.add("asset_" + id, new pimcore.asset[type](id, options));
         }
 
         pimcore.helpers.rememberOpenTab("asset_" + id + "_" + type);

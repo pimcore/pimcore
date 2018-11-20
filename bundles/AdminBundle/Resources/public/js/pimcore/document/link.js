@@ -138,7 +138,7 @@ pimcore.document.link = Class.create(pimcore.document.document, {
 
         this.removeLoadingPanel();
 
-        this.tabPanel.add(this.tab);
+        this.addToMainTabPanel();
 
         // recalculate the layout
         pimcore.layout.refresh();
