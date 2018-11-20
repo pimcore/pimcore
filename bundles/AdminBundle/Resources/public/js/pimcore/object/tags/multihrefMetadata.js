@@ -160,12 +160,12 @@ pimcore.object.tags.multihrefMetadata = Class.create(pimcore.object.tags.abstrac
                 };
 
                 if(readOnly) {
-                    columns.push(Ext.create('Ext.grid.column.Check'), {
+                    columns.push(Ext.create('Ext.grid.column.Check', {
                         text: ts(this.fieldConfig.columns[i].label),
                         dataIndex: this.fieldConfig.columns[i].key,
                         width: width,
                         renderer: renderer
-                    });
+                    }));
                     continue;
                 }
 
