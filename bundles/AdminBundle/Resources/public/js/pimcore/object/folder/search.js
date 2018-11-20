@@ -288,7 +288,7 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
             text: t('grid_options'),
             iconCls: "pimcore_icon_table_col pimcore_icon_overlay_edit",
             handler: function () {
-                this.openColumnConfig();
+                this.openColumnConfig(true);
             }.bind(this),
             menu: []
         });

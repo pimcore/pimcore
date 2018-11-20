@@ -79,7 +79,7 @@ pimcore.object.gridcolumn.operator.boolean = Class.create(pimcore.object.gridcol
     },
 
 
-    getConfigDialog: function (node) {
+    getConfigDialog: function (node, params) {
         this.node = node;
 
         this.textField = new Ext.form.TextField({
@@ -118,7 +118,7 @@ pimcore.object.gridcolumn.operator.boolean = Class.create(pimcore.object.gridcol
                 text: t("apply"),
                 iconCls: "pimcore_icon_apply",
                 handler: function () {
-                    this.commitData();
+                    this.commitData(params);
                 }.bind(this)
             }]
         });
@@ -136,7 +136,7 @@ pimcore.object.gridcolumn.operator.boolean = Class.create(pimcore.object.gridcol
         return this.window;
     },
 
-    commitData: function () {
+    commitData: function (params) {
         this.node.data.configAttributes.label = this.textField.getValue();
         this.node.data.configAttributes.skipNull = this.skipNullField.getValue();
         this.node.data.configAttributes.operator = this.operatorField.getValue().rb;
@@ -146,6 +146,10 @@ pimcore.object.gridcolumn.operator.boolean = Class.create(pimcore.object.gridcol
         this.node.set('isOperator', true);
 
         this.window.close();
+
+        if (params && params.callback) {
+            params.callback();
+        }
     },
 
 

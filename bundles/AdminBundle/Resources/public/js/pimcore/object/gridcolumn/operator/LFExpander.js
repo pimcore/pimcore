@@ -79,7 +79,7 @@ pimcore.object.gridcolumn.operator.lfexpander = Class.create(pimcore.object.grid
     },
 
 
-    getConfigDialog: function(node) {
+    getConfigDialog: function(node, params) {
         this.node = node;
 
         this.textfield = new Ext.form.TextField({
@@ -132,7 +132,7 @@ pimcore.object.gridcolumn.operator.lfexpander = Class.create(pimcore.object.grid
                 text: t("apply"),
                 iconCls: "pimcore_icon_apply",
                 handler: function () {
-                    this.commitData();
+                    this.commitData(params);
                 }.bind(this)
             }]
         });
@@ -150,13 +150,16 @@ pimcore.object.gridcolumn.operator.lfexpander = Class.create(pimcore.object.grid
         return this.window;
     },
 
-    commitData: function() {
+    commitData: function(params) {
         this.node.data.configAttributes.label = this.textfield.getValue();
         this.node.data.configAttributes.locales = this.localesField.getValue();
         this.node.data.configAttributes.asArray = this.asArrayField.getValue();
         this.node.set('text', this.textfield.getValue());
         this.node.set('isOperator', true);
         this.window.close();
+        if (params && params.callback) {
+            params.callback();
+        }
     },
 
     allowChild: function(targetNode, dropNode) {

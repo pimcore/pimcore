@@ -79,7 +79,7 @@ pimcore.object.gridcolumn.operator.anygetter = Class.create(pimcore.object.gridc
         },
 
 
-        getConfigDialog: function (node) {
+        getConfigDialog: function (node, params) {
             this.node = node;
 
             this.textfield = new Ext.form.TextField({
@@ -141,7 +141,7 @@ pimcore.object.gridcolumn.operator.anygetter = Class.create(pimcore.object.gridc
                     text: t("apply"),
                     iconCls: "pimcore_icon_apply",
                     handler: function () {
-                        this.commitData();
+                        this.commitData(params);
                     }.bind(this)
                 }]
             });
@@ -156,10 +156,11 @@ pimcore.object.gridcolumn.operator.anygetter = Class.create(pimcore.object.gridc
             });
 
             this.window.show();
+
             return this.window;
         },
 
-        commitData: function () {
+        commitData: function (params) {
             this.node.set('isOperator', true);
             this.node.data.configAttributes.label = this.textfield.getValue();
             this.node.data.configAttributes.attribute = this.attributeField.getValue();
@@ -172,6 +173,10 @@ pimcore.object.gridcolumn.operator.anygetter = Class.create(pimcore.object.gridc
             var nodeLabel = this.getNodeLabel(this.node.data.configAttributes);
             this.node.set('text', nodeLabel);
             this.window.close();
+
+            if (params && params.callback) {
+                params.callback();
+            }
         },
 
         getNodeLabel: function (configAttributes) {
@@ -185,7 +190,6 @@ pimcore.object.gridcolumn.operator.anygetter = Class.create(pimcore.object.gridc
             }
 
             return nodeLabel;
-
         }
     }
 );

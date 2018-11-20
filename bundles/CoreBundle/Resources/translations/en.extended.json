@@ -696,6 +696,8 @@
   "operator_group_other": "Others",
   "operator_group_transformer": "Transformers",
   "operator_group_extractor": "Extractors",
-  "operator_group_formatter": "Formatters"
-
+  "operator_group_formatter": "Formatters",
+  "operator_group_renderer": "Renderer",
+  "operator_renderer_settings": "Renderer Settings",
+  "refresh_preview": "Refresh Preview"
 }

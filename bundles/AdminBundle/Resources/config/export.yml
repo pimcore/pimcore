@@ -112,6 +112,27 @@ services:
         tags:
             - { name: pimcore.data_object.grid_column_config.operator_factory, id: IsEqual }
 
+    pimcore.data_object.grid_column_config.operator.factory.geopoint_renderer:
+        class: Pimcore\DataObject\GridColumnConfig\Operator\Factory\DefaultOperatorFactory
+        arguments:
+            $className: Pimcore\DataObject\GridColumnConfig\Operator\GeopointRenderer
+        tags:
+        - { name: pimcore.data_object.grid_column_config.operator_factory, id: GeopointRenderer }
+
+    pimcore.data_object.grid_column_config.operator.factory.image_renderer:
+        class: Pimcore\DataObject\GridColumnConfig\Operator\Factory\DefaultOperatorFactory
+        arguments:
+            $className: Pimcore\DataObject\GridColumnConfig\Operator\ImageRenderer
+        tags:
+        - { name: pimcore.data_object.grid_column_config.operator_factory, id: ImageRenderer }
+
+    pimcore.data_object.grid_column_config.operator.factory.hotspotimage_renderer:
+        class: Pimcore\DataObject\GridColumnConfig\Operator\Factory\DefaultOperatorFactory
+        arguments:
+            $className: Pimcore\DataObject\GridColumnConfig\Operator\HotspotimageRenderer
+        tags:
+        - { name: pimcore.data_object.grid_column_config.operator_factory, id: HotspotimageRenderer }
+
     pimcore.data_object.grid_column_config.operator.factory.json:
         class: Pimcore\DataObject\GridColumnConfig\Operator\Factory\DefaultOperatorFactory
         arguments:

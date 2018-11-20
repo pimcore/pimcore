@@ -27,7 +27,7 @@ pimcore.object.tags.image = Class.create(pimcore.object.tags.abstract, {
         this.fieldConfig = fieldConfig;
     },
 
-    getGridColumnConfig: function (field) {
+    getGridColumnConfig: function (field, forGridConfigPreview) {
 
         return {
             text: ts(field.label), width: 100, sortable: false, dataIndex: field.key,
@@ -41,8 +41,13 @@ pimcore.object.tags.image = Class.create(pimcore.object.tags.abstract, {
                 }
 
                 if (value && value.id) {
-                    return '<img src="/admin/asset/get-image-thumbnail?id=' + value.id
-                        + '&width=88&height=88&frame=true" />';
+                    var baseUrl = '<img src="/admin/asset/get-image-thumbnail?id=' + value.id;
+                    if (forGridConfigPreview) {
+                        return baseUrl + '&width=88&height=20&frame=true" />';
+                    } else {
+                        return baseUrl + '&width=88&height=20&frame=true" />';
+                    }
+
                 }
             }.bind(this, field.key)
         };
