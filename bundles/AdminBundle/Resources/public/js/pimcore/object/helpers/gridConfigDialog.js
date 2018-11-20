@@ -810,7 +810,7 @@ pimcore.object.helpers.gridConfigDialog = Class.create({
                                     var fieldType = record.data.dataType;
 
                                     try {
-                                        if (record.data.isOperator &&  record.data.configAttributes && pimcore.object.tags[record.data.configAttributes.renderer]) {
+                                        if (record.data.isOperator && record.data.configAttributes && pimcore.object.tags[record.data.configAttributes.renderer]) {
                                             var rendererType = record.data.configAttributes.renderer;
                                             var tag = pimcore.object.tags[rendererType];
                                         } else {
@@ -827,8 +827,6 @@ pimcore.object.helpers.gridConfigDialog = Class.create({
 
                                             value = fc.renderer(value, null, record);
                                         }
-
-
                                     } catch (e) {
                                         console.log(e);
                                     }
