@@ -43,7 +43,7 @@ class ObjectFieldGetter extends AbstractOperator
         $getter = 'get' . ucfirst($this->attribute);
 
         if (!$childs) {
-            if (method_exists($element, $getter)) {
+            if ($this->attribute && method_exists($element, $getter)) {
                 $result->value = $element->$getter();
                 if ($result->value instanceof ElementInterface) {
                     $result->value = $result->value->getFullPath();
@@ -57,7 +57,7 @@ class ObjectFieldGetter extends AbstractOperator
 
             if ($this->forwardAttribute) {
                 $forwardGetter = 'get' . ucfirst($this->forwardAttribute);
-                if (method_exists($element, $forwardGetter)) {
+                if ($this->attribute && method_exists($element, $forwardGetter)) {
                     $forwardObject = $element->$forwardGetter();
                     if (!$forwardObject) {
                         return $result;
@@ -76,7 +76,7 @@ class ObjectFieldGetter extends AbstractOperator
                     $newValues = [];
                     foreach ($value as $o) {
                         if ($o instanceof Concrete) {
-                            if (method_exists($o, $getter)) {
+                            if ($this->attribute && method_exists($o, $getter)) {
                                 $targetValue = $o->$getter();
                                 $newValues[] = $targetValue;
                             }
@@ -87,7 +87,7 @@ class ObjectFieldGetter extends AbstractOperator
                 }
             } elseif ($value instanceof Concrete) {
                 $o = $value; // Concrete::getById($value->getId());
-                if (method_exists($o, $getter)) {
+                if ($this->attribute && method_exists($o, $getter)) {
                     $value = $o->$getter();
                     $result->value = $value;
                 }

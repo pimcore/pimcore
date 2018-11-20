@@ -17,6 +17,8 @@
 
 namespace Pimcore\DataObject\GridColumnConfig\Operator;
 
+use Pimcore\Model\AbstractModel;
+
 class AnyGetter extends AbstractOperator
 {
     private $attribute;
@@ -47,16 +49,20 @@ class AnyGetter extends AbstractOperator
 
     public function getLabeledValue($element)
     {
+
         $result = new \stdClass();
         $result->label = $this->label;
 
         $childs = $this->getChilds();
 
-        $getter = 'get' . ucfirst($this->attribute);
+        $getter = 'get'.ucfirst($this->attribute);
 
         if (!$childs) {
-            if (method_exists($element, $getter)) {
+            if ($this->attribute && method_exists($element, $getter)) {
                 $result->value = $element->$getter();
+                if ($result->value instanceof AbstractModel) {
+                    $result->value = $result->value->getObjectVars();
+                }
 
                 return $result;
             }
@@ -74,9 +80,9 @@ class AnyGetter extends AbstractOperator
                 $forwardObject = $element;
 
                 if ($this->forwardAttribute) {
-                    $forwardGetter = 'get' . ucfirst($this->forwardAttribute);
+                    $forwardGetter = 'get'.ucfirst($this->forwardAttribute);
                     $forwardParam = $this->getForwardParam1();
-                    if (method_exists($element, $forwardGetter)) {
+                    if ($this->attribute && method_exists($element, $forwardGetter)) {
                         $forwardObject = $element->$forwardGetter($forwardParam);
                         if (!$forwardObject) {
                             return $result;
@@ -99,7 +105,7 @@ class AnyGetter extends AbstractOperator
                     if (is_array($value)) {
                         $newValues = [];
                         foreach ($value as $o) {
-                            if (method_exists($o, $getter)) {
+                            if ($this->attribute && method_exists($o, $getter)) {
                                 $targetValue = $o->$getter($this->getParam1());
                                 $newValues[] = $targetValue;
                             }
@@ -108,7 +114,7 @@ class AnyGetter extends AbstractOperator
                     }
                 } else {
                     $o = $value; // Concrete::getById($value->getId());
-                    if (method_exists($o, $getter)) {
+                    if ($this->attribute && method_exists($o, $getter)) {
                         $value = $o->$getter($this->getParam1());
                         $resultElementValue = $value;
                     }

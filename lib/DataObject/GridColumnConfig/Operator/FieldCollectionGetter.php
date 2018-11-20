@@ -40,6 +40,10 @@ class FieldCollectionGetter extends AbstractOperator
         $result->label = $this->label;
         $result->isEmpty = true;
 
+        if (!$this->attr) {
+            return $result;
+        }
+
         $getter = 'get' . ucfirst($this->attr);
 
         /** @var $fc Fieldcollection */
