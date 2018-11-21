@@ -2072,6 +2072,7 @@ class DataObjectHelperController extends AdminController
             'creationDate' => 'getCreationDate',
             'modificationDate' => 'getModificationDate',
             'filename' => 'getKey',
+            'key' => 'getKey',
             'classname' => 'getClassname'
         ];
         if (in_array($field, array_keys($systemFieldMap))) {
