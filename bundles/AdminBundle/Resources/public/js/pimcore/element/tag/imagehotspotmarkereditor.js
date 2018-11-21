@@ -34,11 +34,11 @@ pimcore.element.tag.imagehotspotmarkereditor = Class.create({
         var imageUrl = '/admin/asset/get-image-thumbnail?id=' + this.imageId + '&width=' + this.width + '&height='
             + this.height + '&contain=true';
 
-        if(this.config.crop) {
+        if (this.config.crop) {
             imageUrl = imageUrl + '&' + Ext.urlEncode(this.config.crop);
         }
 
-        if(typeof modal != "undefined") {
+        if (typeof modal != "undefined") {
             this.modal = modal;
         }
 
@@ -56,76 +56,83 @@ pimcore.element.tag.imagehotspotmarkereditor = Class.create({
             autoDestroy: true,
             resizable: false,
             bodyStyle: "background: url(" + imageUrl + ") center center no-repeat; position:relative; ",
-            tbar: [
-                markerConfig,
-                hotspotConfig
-            ],
-            bbar: ["->", {
-                xtype: "button",
-                iconCls: "pimcore_icon_apply",
-                text: t("save"),
-                handler: function () {
+            tbar: {
+                overflowHandler: 'menu',
+                items:
+                    [
+                        markerConfig,
+                        hotspotConfig
+                    ]
+            },
+            bbar: {
+                overflowHandler: 'menu',
+                items: ["->", {
+                    xtype: "button",
+                    iconCls: "pimcore_icon_apply",
+                    text: t("save"),
+                    handler: function () {
 
-                    var el;
-                    var dataHotspot = [];
-                    var dataMarker = [];
+                        var el;
+                        var dataHotspot = [];
+                        var dataMarker = [];
 
-                    var windowId = this.hotspotWindow.getId();
-                    var windowEl = Ext.getCmp(windowId).body;
-                    var originalWidth = windowEl.getWidth(true);
-                    var originalHeight = windowEl.getHeight(true);
+                        var windowId = this.hotspotWindow.getId();
+                        var windowEl = Ext.getCmp(windowId).body;
+                        var originalWidth = windowEl.getWidth(true);
+                        var originalHeight = windowEl.getHeight(true);
 
-                    for(var i=0; i<this.hotspotStore.length; i++) {
-                        el = this.hotspotStore[i];
+                        for (var i = 0; i < this.hotspotStore.length; i++) {
+                            el = this.hotspotStore[i];
 
-                        if(Ext.get(el["id"])) {
-                            var theEl = Ext.get(el["id"]);
-                            var dimensions = theEl.getStyle(["top","left","width","height"]);
-                            var name = Ext.get(el["id"]).getAttribute("title");
-                            var metaData = [];
-                            if(this.hotspotMetaData && this.hotspotMetaData[el["id"]]) {
-                                metaData = this.hotspotMetaData[el["id"]];
-                            }
+                            if (Ext.get(el["id"])) {
+                                var theEl = Ext.get(el["id"]);
+                                var dimensions = theEl.getStyle(["top", "left", "width", "height"]);
+                                var name = Ext.get(el["id"]).getAttribute("title");
+                                var metaData = [];
+                                if (this.hotspotMetaData && this.hotspotMetaData[el["id"]]) {
+                                    metaData = this.hotspotMetaData[el["id"]];
+                                }
 
-                            if(el.type == "marker") {
-                                dataMarker.push({
-                                    top:(intval(dimensions.top)+35) * 100 / originalHeight, //the marker el is 35px high
-                                    left:(intval(dimensions.left)+12) * 100 / originalWidth,//the marker el is 25px wide
-                                    data: metaData,
-                                    name: name
-                                });
-                            } else if (el.type == "hotspot") {
-                                dataHotspot.push({
-                                    top: intval(dimensions.top) * 100 / originalHeight,
-                                    left:  intval(dimensions.left) * 100 / originalWidth,
-                                    width: intval(dimensions.width) * 100 / originalWidth,
-                                    height: intval(dimensions.height) * 100 / originalHeight,
-                                    data: metaData,
-                                    name: name
-                                });
+                                if (el.type == "marker") {
+                                    dataMarker.push({
+                                        top: (intval(dimensions.top) + 35) * 100 / originalHeight, //the marker el is 35px high
+                                        left: (intval(dimensions.left) + 12) * 100 / originalWidth,//the marker el is 25px wide
+                                        data: metaData,
+                                        name: name
+                                    });
+                                } else if (el.type == "hotspot") {
+                                    dataHotspot.push({
+                                        top: intval(dimensions.top) * 100 / originalHeight,
+                                        left: intval(dimensions.left) * 100 / originalWidth,
+                                        width: intval(dimensions.width) * 100 / originalWidth,
+                                        height: intval(dimensions.height) * 100 / originalHeight,
+                                        data: metaData,
+                                        name: name
+                                    });
+                                }
                             }
                         }
-                    }
 
-                    this.data.hotspots = dataHotspot;
-                    this.data.marker = dataMarker;
+                        this.data.hotspots = dataHotspot;
+                        this.data.marker = dataMarker;
 
-                    if(typeof this.saveCallback == "function") {
-                        this.saveCallback(this.data);
-                    }
+                        if (typeof this.saveCallback == "function") {
+                            this.saveCallback(this.data);
+                        }
 
-                    this.hotspotWindow.close();
-                }.bind(this)
-            }],
+                        this.hotspotWindow.close();
+                    }.bind(this)
+                }]
+            },
             html: '<img id="hotspotImage" src="' + imageUrl + '" />'
         });
 
         this.hotspotWindowInitCount = 0;
 
-        this.hotspotWindow.on("afterrender", function ( ){
+        this.hotspotWindow.on("afterrender", function () {
             this.hotspotWindowInterval = window.setInterval(function () {
                 var el = Ext.get("hotspotImage");
-                if(!el) {
+                if (!el) {
                     clearInterval(this.hotspotWindowInterval);
                     return;
                 }
@@ -134,8 +141,8 @@ pimcore.element.tag.imagehotspotmarkereditor = Class.create({
                 var i;
                 var elId;
 
-                if(el) {
-                    if(el.getWidth() > 30) {
+                if (el) {
+                    if (el.getWidth() > 30) {
                         clearInterval(this.hotspotWindowInterval);
                         this.hotspotWindowInitCount = 0;
 
@@ -147,19 +154,19 @@ pimcore.element.tag.imagehotspotmarkereditor = Class.create({
                         this.hotspotWindow.setSize(imageWidth + paddingWidth, imageHeight + paddingHeight);
                         Ext.get("hotspotImage").remove();
 
-                        if(this.data && this.data["hotspots"]) {
-                            for(i=0; i<this.data.hotspots.length; i++) {
+                        if (this.data && this.data["hotspots"]) {
+                            for (i = 0; i < this.data.hotspots.length; i++) {
                                 elId = this.addHotspot(this.data.hotspots[i]);
-                                if(this.data.hotspots[i]["data"]) {
+                                if (this.data.hotspots[i]["data"]) {
                                     this.hotspotMetaData[elId] = this.data.hotspots[i]["data"];
                                 }
                             }
                         }
 
-                        if(this.data && this.data["marker"]) {
-                            for(i=0; i<this.data.marker.length; i++) {
+                        if (this.data && this.data["marker"]) {
+                            for (i = 0; i < this.data.marker.length; i++) {
                                 elId = this.addMarker(this.data.marker[i]);
-                                if(this.data.marker[i]["data"]) {
+                                if (this.data.marker[i]["data"]) {
                                     this.hotspotMetaData[elId] = this.data.marker[i]["data"];
                                 }
                             }
@@ -183,13 +190,13 @@ pimcore.element.tag.imagehotspotmarkereditor = Class.create({
 
     addMarker: function (config) {
 
-        var markerId = "marker-" + (this.hotspotStore.length+1);
+        var markerId = "marker-" + (this.hotspotStore.length + 1);
         this.hotspotWindow.body.getFirstChild().insertHtml("beforeEnd", '<div id="' + markerId
             + '" class="pimcore_image_marker"></div>');
 
         var markerEl = Ext.get(markerId);
 
-        if(typeof config == "object" ) {
+        if (typeof config == "object") {
             if (config["top"]) {
                 var windowId = this.hotspotWindow.getId();
                 var windowEl = Ext.getCmp(windowId).body;
@@ -202,7 +209,7 @@ pimcore.element.tag.imagehotspotmarkereditor = Class.create({
                 });
             }
 
-            if(config["name"]) {
+            if (config["name"]) {
                 markerEl.dom.setAttribute("title", config["name"]);
             }
         }
@@ -219,25 +226,25 @@ pimcore.element.tag.imagehotspotmarkereditor = Class.create({
     },
 
     addHotspot: function (config) {
-        var hotspotId = "hotspot-" + (this.hotspotStore.length+1);
+        var hotspotId = "hotspot-" + (this.hotspotStore.length + 1);
 
         this.hotspotWindow.add(
-        {
-            xtype: 'component',
-            id: hotspotId,
-            resizable: {
-                target: hotspotId,
-                pinned: true,
-                minWidth: 20,
-                minHeight: 20,
-                preserveRatio: false,
-                dynamic: true,
-                handles: 'all'
-            },
-            style: "cursor:move;",
-            draggable: true,
-            cls: 'pimcore_image_hotspot'
-        });
+            {
+                xtype: 'component',
+                id: hotspotId,
+                resizable: {
+                    target: hotspotId,
+                    pinned: true,
+                    minWidth: 20,
+                    minHeight: 20,
+                    preserveRatio: false,
+                    dynamic: true,
+                    handles: 'all'
+                },
+                style: "cursor:move;",
+                draggable: true,
+                cls: 'pimcore_image_hotspot'
+            });
 
         var hotspotEl = Ext.get(hotspotId);
 
@@ -247,7 +254,7 @@ pimcore.element.tag.imagehotspotmarkereditor = Class.create({
             height: "50px"
         });
 
-        if(typeof config == "object") {
+        if (typeof config == "object") {
             if (config["top"]) {
                 var windowId = this.hotspotWindow.getId();
                 var windowEl = Ext.getCmp(windowId).body;
@@ -262,7 +269,7 @@ pimcore.element.tag.imagehotspotmarkereditor = Class.create({
                 });
             }
 
-            if(config["name"]) {
+            if (config["name"]) {
                 hotspotEl.dom.setAttribute("title", config["name"]);
             }
         }
@@ -297,10 +304,10 @@ pimcore.element.tag.imagehotspotmarkereditor = Class.create({
                 handler: function (id, type, item) {
                     item.parentMenu.destroy();
                     if (type == "hotspot") {
-                        var cmp  = Ext.getCmp(id);
+                        var cmp = Ext.getCmp(id);
                         this.hotspotWindow.remove(cmp);
                     } else {
-                        var el  = Ext.get(id);
+                        var el = Ext.get(id);
                         el.remove();
                     }
 
@@ -322,7 +329,7 @@ pimcore.element.tag.imagehotspotmarkereditor = Class.create({
                     var originalWidth = windowEl.getWidth(true);
                     var originalHeight = windowEl.getHeight(true);
 
-                    var dimensions = el.getStyle(["top","left","width","height"]);
+                    var dimensions = el.getStyle(["top", "left", "width", "height"]);
 
                     var config = {
                         data: copiedData,
@@ -337,7 +344,7 @@ pimcore.element.tag.imagehotspotmarkereditor = Class.create({
                         var elId = this.addHotspot(config);
                     } else {
                         config["top"] = (intval(dimensions.top) + 30 + 35) * 100 / originalHeight;
-                        config["left"] = (intval(dimensions.left ) +  30 + 12) * 100 / originalWidth;
+                        config["left"] = (intval(dimensions.left) + 30 + 12) * 100 / originalWidth;
                         var elId = this.addMarker(config);
                     }
                     this.hotspotMetaData[elId] = copiedData;
@@ -424,7 +431,7 @@ pimcore.element.tag.imagehotspotmarkereditor = Class.create({
                     var normalizedData = [];
 
                     // when only one item is in the form
-                    if(typeof data["name"] == "string") {
+                    if (typeof data["name"] == "string") {
                         data = {
                             name: [data["name"]],
                             type: [data["type"]],
@@ -432,8 +439,8 @@ pimcore.element.tag.imagehotspotmarkereditor = Class.create({
                         };
                     }
 
-                    if(data && data["name"] && data["name"].length > 0) {
-                        for(var i=0; i<data["name"].length; i++) {
+                    if (data && data["name"] && data["name"].length > 0) {
+                        for (var i = 0; i < data["name"].length; i++) {
 
                             var listItem = {
                                 name: data["name"][i],
@@ -454,9 +461,9 @@ pimcore.element.tag.imagehotspotmarkereditor = Class.create({
             }],
             listeners: {
                 afterrender: function (id) {
-                    if(this.hotspotMetaData && this.hotspotMetaData[id]) {
+                    if (this.hotspotMetaData && this.hotspotMetaData[id]) {
                         var data = this.hotspotMetaData[id];
-                        for(var i=0; i<data.length; i++) {
+                        for (var i = 0; i < data.length; i++) {
                             addItem(data[i]["type"], data[i]);
                         }
                     }
@@ -469,14 +476,14 @@ pimcore.element.tag.imagehotspotmarkereditor = Class.create({
             var id = "item-" + uniqid();
             var valueField;
 
-            if(!data) {
+            if (!data) {
                 data = {
                     name: "",
                     value: ""
                 };
             }
 
-            if(type == "textfield") {
+            if (type == "textfield") {
                 valueField = {
                     xtype: "textfield",
                     name: "value",
@@ -484,7 +491,7 @@ pimcore.element.tag.imagehotspotmarkereditor = Class.create({
                     width: 500,
                     value: data["value"]
                 };
-            } else if(type == "textarea") {
+            } else if (type == "textarea") {
                 valueField = {
                     xtype: "textarea",
                     name: "value",
@@ -492,14 +499,14 @@ pimcore.element.tag.imagehotspotmarkereditor = Class.create({
                     width: 500,
                     value: data["value"]
                 };
-            } else if(type == "checkbox") {
+            } else if (type == "checkbox") {
                 valueField = {
                     xtype: "checkbox",
                     name: "value",
                     fieldLabel: t("value"),
                     checked: data["value"]
                 };
-            } else if(type == "object" || type == "asset" || type == "document") {
+            } else if (type == "object" || type == "asset" || type == "document") {
                 var textField = new Ext.form.TextField({
                     fieldCls: "pimcore_droptarget_input",
                     name: "value",
@@ -515,12 +522,12 @@ pimcore.element.tag.imagehotspotmarkereditor = Class.create({
                     xtype: "button",
                     iconCls: "pimcore_icon_edit",
                     handler: this.openElement.bind(this, textField, type)
-                },{
+                }, {
                     xtype: "button",
                     iconCls: "pimcore_icon_delete"
                     ,
                     handler: this.empty.bind(this, textField)
-                },{
+                }, {
                     xtype: "button",
                     iconCls: "pimcore_icon_search",
                     handler: this.openSearchEditor.bind(this, textField, type, hotspotMetaDataWin, nameField)
@@ -545,7 +552,7 @@ pimcore.element.tag.imagehotspotmarkereditor = Class.create({
                     xtype: "hidden",
                     name: "type",
                     value: type
-                },{
+                }, {
                     xtype: "textfield",
                     name: "name",
                     value: data["name"],
@@ -582,7 +589,7 @@ pimcore.element.tag.imagehotspotmarkereditor = Class.create({
     addDataDropTarget: function (type, el) {
         var drop = function (el, target, dd, e, data) {
             data = data.records[0].data;
-            if(data.elementType == type) {
+            if (data.elementType == type) {
                 target.component.setValue(data.path);
                 return true;
             } else {
@@ -592,13 +599,13 @@ pimcore.element.tag.imagehotspotmarkereditor = Class.create({
 
         var over = function (target, dd, e, data) {
             data = data.records[0].data;
-            if(data.elementType == type) {
+            if (data.elementType == type) {
                 return Ext.dd.DropZone.prototype.dropAllowed;
             }
             return Ext.dd.DropZone.prototype.dropNotAllowed;
         };
 
-        if(typeof dndManager == "object") {
+        if (typeof dndManager == "object") {
             // register at global DnD manager
             // in iframes, eg. document editmode
             dndManager.addDropTarget(el.getEl(), over, drop);
@@ -606,11 +613,11 @@ pimcore.element.tag.imagehotspotmarkereditor = Class.create({
             new Ext.dd.DropZone(el.getEl(), {
                 reference: this,
                 ddGroup: "element",
-                getTargetFromEvent: function(e) {
+                getTargetFromEvent: function (e) {
                     return el.getEl();
                 },
-                onNodeOver : over,
-                onNodeDrop : drop
+                onNodeOver: over,
+                onNodeDrop: drop
             });
         }
     },
@@ -623,7 +630,7 @@ pimcore.element.tag.imagehotspotmarkereditor = Class.create({
 
         allowedTypes.push(type);
         if (type == "object") {
-            allowedSubtypes.object = ["object","folder","variant"];
+            allowedSubtypes.object = ["object", "folder", "variant"];
         }
 
         var form = hotspotMetaDataWin.getComponent("form").getForm();
@@ -633,10 +640,10 @@ pimcore.element.tag.imagehotspotmarkereditor = Class.create({
 
 
         pimcore.helpers.itemselector(false, this.addDataFromSelector.bind(this, textfield), {
-            type: allowedTypes,
-            subtype: allowedSubtypes,
-            specific: allowedSpecific
-        },
+                type: allowedTypes,
+                subtype: allowedSubtypes,
+                specific: allowedSpecific
+            },
             {
                 context: Ext.apply(
                     {
@@ -654,7 +661,7 @@ pimcore.element.tag.imagehotspotmarkereditor = Class.create({
 
     ,
 
-    getButtonConfig: function(type, iconCls) {
+    getButtonConfig: function (type, iconCls) {
 
 
         var callbackFunctionName = "add" + ucfirst(type);
