@@ -396,7 +396,7 @@ class Multiselect extends Model\DataObject\ClassDefinition\Data
     {
         if ($operator == '=') {
             $name = $params['name'] ? $params['name'] : $this->name;
-            $value = "'%".$value."%'";
+            $value = "'%,".$value.",%'";
 
             return '`'.$name.'` LIKE '.$value.' ';
         }
