@@ -3,6 +3,7 @@
     "parentClass":null,
     "listingParentClass":null,
     "useTraits":null,
+    "group":null,
     "listingUseTraits":null,
     "allowInherit":true,
     "allowVariants":false,
