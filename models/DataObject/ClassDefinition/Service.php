@@ -106,6 +106,7 @@ class Service
         $class->setModificationDate(time());
         $class->setUserModification($userId);
         $class->setIcon($importData['icon']);
+        $class->setGroup($importData['group']);
         $class->setAllowInherit($importData['allowInherit']);
         $class->setAllowVariants($importData['allowVariants']);
         $class->setShowVariants($importData['showVariants']);
