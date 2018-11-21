@@ -473,7 +473,7 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
             try {
                 ea = editables[i];
 
-                if (!(ea.getName() && !ea.getInherited())) {
+                if (!ea.getName()) {
                     continue;
                 }
 
