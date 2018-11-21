@@ -322,6 +322,7 @@ pimcore.element.selector.object = Class.create(pimcore.element.selector.abstract
             fields = response;
         }
 
+        this.itemsPerPage = pimcore.helpers.grid.getDefaultPageSize(-1);
         var gridHelper = new pimcore.object.helpers.grid(selectedClass, fields, "/admin/search/search/find", null, true);
         gridHelper.limit = this.itemsPerPage;
         this.store = gridHelper.getStore();
