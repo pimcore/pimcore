@@ -460,8 +460,9 @@ class Translator implements TranslatorInterface, TranslatorBagInterface
         $this->disableTranslations = $disableTranslations;
     }
 
-    public function updateLinks(string $text) {
-        if(strpos($text, 'pimcore_id')) {
+    public function updateLinks(string $text)
+    {
+        if (strpos($text, 'pimcore_id')) {
             $text = Tool\Text::wysiwygText($text);
         }
 
