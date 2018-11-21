@@ -102,21 +102,16 @@ class Service
         if (isset($importData['id']) && $importData['id'] && !$ignoreId) {
             $class->setId($importData['id']);
         }
-        $class->setDescription($importData['description']);
         $class->setModificationDate(time());
         $class->setUserModification($userId);
-        $class->setIcon($importData['icon']);
-        $class->setGroup($importData['group']);
-        $class->setAllowInherit($importData['allowInherit']);
-        $class->setAllowVariants($importData['allowVariants']);
-        $class->setShowVariants($importData['showVariants']);
-        $class->setParentClass($importData['parentClass']);
-        $class->setListingParentClass(isset($importData['listingParentClass']) ? $importData['listingParentClass'] : null);
-        $class->setUseTraits($importData['useTraits']);
-        $class->setListingUseTraits(isset($importData['listingUseTraits']) ? $importData['listingUseTraits'] : null);
-        $class->setPreviewUrl($importData['previewUrl']);
-        $class->setPropertyVisibility($importData['propertyVisibility']);
-        $class->setLinkGeneratorReference(isset($importData['linkGeneratorReference']) ? $importData['linkGeneratorReference'] : null);
+
+        foreach(['description', 'icon', 'group', 'allowInherit', 'allowVariants', 'showVariants', 'parentClass',
+                    'listingParentClass', 'useTraits', 'listingUseTraits', 'previewUrl', 'propertyVisibility',
+                    'linkGeneratorReference'] as $importPropertyName) {
+            if(isset($importData[$importPropertyName])) {
+                $class->{'set' . $importPropertyName}($importData[$importPropertyName]);
+            }
+        }
 
         $class->save();
 
