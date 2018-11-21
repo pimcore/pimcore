@@ -125,6 +125,8 @@ class Translator implements TranslatorInterface, TranslatorBagInterface
             $term = vsprintf($term, $parameters);
         }
 
+        $term = $this->updateLinks($term);
+
         return $term;
     }
 
@@ -167,6 +169,8 @@ class Translator implements TranslatorInterface, TranslatorBagInterface
 
         $term = $this->getFromCatalogue($catalogue, $id, $domain, $locale);
         $term = $this->selector->choose($term, (int) $number, $locale);
+
+        $term = $this->updateLinks($term);
 
         return strtr($term, $parameters);
     }
@@ -454,6 +458,15 @@ class Translator implements TranslatorInterface, TranslatorBagInterface
     public function setDisableTranslations(bool $disableTranslations)
     {
         $this->disableTranslations = $disableTranslations;
+    }
+
+    public function updateLinks(string $text)
+    {
+        if (strpos($text, 'pimcore_id')) {
+            $text = Tool\Text::wysiwygText($text);
+        }
+
+        return $text;
     }
 
     /**

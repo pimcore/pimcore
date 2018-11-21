@@ -223,6 +223,12 @@ pimcore.object.tree = Class.create({
 
     onTreeNodeOver: function (targetNode, position, dragData, e, eOpts ) {
         var node = dragData.records[0];
+
+        //dropping variants not allowed on folder
+        if(node.data.type == 'variant' && targetNode.data.type == 'folder'){
+            return false;
+        }
+
         // check for permission
         try {
             if (node.data.permissions.settings) {
@@ -274,6 +280,12 @@ pimcore.object.tree = Class.create({
 
     onTreeNodeBeforeMove: function (node, oldParent, newParent, index, eOpts ) {
         var tree = node.getOwnerTree();
+
+        //dropping variants only allowed in the same parent
+        if(node.data.type == 'variant' && oldParent.data.id != newParent.data.id){
+            pimcore.helpers.showNotification(t("error"), t("element_cannot_be_moved"), "error");
+            return false;
+        }
 
         if(newParent.data.id == oldParent.data.id && oldParent.data.sortBy != 'index') {
             pimcore.helpers.showNotification(t("error"), t("element_cannot_be_moved"), "error");
