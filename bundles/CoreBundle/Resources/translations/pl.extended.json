@@ -124,8 +124,6 @@
     "debug_admin_translations": "Debuguj tłumaczenia administracyjne (otoczone plusami+)",
     "short_url": "Krótki URL",
     "width_and_height_must_be_an_even_number": "Wysokość i szerokość muszą być parzyste",
-    "server_api_key": "Klucz API serwera",
-    "browser_api_key": "Klucz API przeglądarki",
     "source_site": "Strona źródłowa",
     "target_site": "Strona docelowa",
     "source_entire_url": "Cały URL jako źródło",
@@ -299,7 +297,6 @@
     "geo": "Geograficzny",
     "default_controller": "Domyślny kontroler",
     "default_action": "Domyślna akcja",
-    "basic_configuration": "Prosta konfiguracja",
     "allow_inherit": "Dopuść dziedziczenie",
     "use_traits": "Use (traity)",
     "general_settings": "Ustawienia ogólne",
@@ -692,5 +689,12 @@
     "clear_full_page_cache": "Clear Full Page Cache",
     "icon_library": "Icon Library",
     "expand_cs_group": "There are empty features not displayed here. Click to show them",
-    "hide_empty_data": "Hide empty data"
+    "hide_empty_data": "Hide empty data",
+    "api_key": "API-Key",
+    "colorspace": "Colorspace",
+    "class_attributes": "Class Attributes",
+    "operator_group_other": "Others",
+    "operator_group_transformer": "Transformers",
+    "operator_group_extractor": "Extractors",
+    "operator_group_formatter": "Formatters"
 }
