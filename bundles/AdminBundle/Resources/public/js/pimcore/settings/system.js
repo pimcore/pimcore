@@ -957,9 +957,15 @@ pimcore.settings.system = Class.create({
                                 cls: "pimcore_extra_label"
                             },
                             {
-                                fieldLabel: t('api_key'),
+                                fieldLabel: t('server_api_key'),
                                 name: 'services.google.simpleapikey',
                                 value: this.getValue("services.google.simpleapikey"),
+                                width: 850
+                            },
+                            {
+                                fieldLabel: t('browser_api_key'),
+                                name: 'services.google.browserapikey',
+                                value: this.getValue("services.google.browserapikey"),
                                 width: 850
                             }
                         ]

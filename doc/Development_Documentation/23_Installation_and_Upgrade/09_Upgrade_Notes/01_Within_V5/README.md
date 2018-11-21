@@ -9,15 +9,6 @@ For version 6 use the `DefaultElasticSearch6` worker / product list.
  
 ## Version 5.5.1
 
-#### Removed Google Maps Browser API Key from System Settings
-Google is now providing just one keys for both server-side and client-side applications, there's no need 
-anymore to seperate them out. 
-If you're accessing the following config option `$config->serivces->google->browserapikey` somewhere in your application
-please change it to `$config->serivces->google->simpleapikey` before you upgrade and ensure that the API key
-is correctly permissioned. 
-
-## Version 5.5.1
-
 #### WebP Support for Thumbnails
 Pimcore now delivers automatically thumbnails in WebP format when using the `Auto` configuration for the 
 target format and when the client does support WebP (checking by evaluating the `Accept` request header).  

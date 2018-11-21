@@ -504,6 +504,7 @@ class SettingsController extends AdminController
                     'client_id' => $values['services.google.client_id'],
                     'email' => $values['services.google.email'],
                     'simpleapikey' => $values['services.google.simpleapikey'],
+                    'browserapikey' => $values['services.google.browserapikey']
                 ]
             ],
             'cache' => [
