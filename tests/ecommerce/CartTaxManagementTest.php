@@ -84,7 +84,7 @@ class CartTaxManagementTest extends EcommerceTestCase
             'getCategories' => function () {
                 return [];
             },
-            'getClass' => function() {
+            'getClass' => function () {
                 return ClassDefinition::getByName('Product');
             }
         ]);

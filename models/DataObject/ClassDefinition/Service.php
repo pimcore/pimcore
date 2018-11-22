@@ -105,10 +105,10 @@ class Service
         $class->setModificationDate(time());
         $class->setUserModification($userId);
 
-        foreach(['description', 'icon', 'group', 'allowInherit', 'allowVariants', 'showVariants', 'parentClass',
+        foreach (['description', 'icon', 'group', 'allowInherit', 'allowVariants', 'showVariants', 'parentClass',
                     'listingParentClass', 'useTraits', 'listingUseTraits', 'previewUrl', 'propertyVisibility',
                     'linkGeneratorReference'] as $importPropertyName) {
-            if(isset($importData[$importPropertyName])) {
+            if (isset($importData[$importPropertyName])) {
                 $class->{'set' . $importPropertyName}($importData[$importPropertyName]);
             }
         }

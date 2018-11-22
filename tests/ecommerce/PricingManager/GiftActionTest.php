@@ -8,15 +8,12 @@
 
 namespace Pimcore\Tests\Ecommerce\PricingManager;
 
-
-use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Action\FreeShipping;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Action\Gift;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Condition\CartAmount;
 use Pimcore\Tests\Ecommerce\PricingManager\Rule\AbstractRuleTest;
 
 class GiftActionTest extends AbstractRuleTest
 {
-
     protected $productDefinitions1 = [
         'singleProduct' => [
             'id' => 4,
@@ -66,7 +63,6 @@ class GiftActionTest extends AbstractRuleTest
         ]
     ];
 
-
     public function testOneGift()
     {
         $pricingManager = $this->buildPricingManager([]);
@@ -87,9 +83,7 @@ class GiftActionTest extends AbstractRuleTest
             ]
         ];
 
-
         $this->doAssertionsWithShippingCosts($ruleDefinitions, $this->productDefinitions1, $this->tests1, false);
-
 
         $tests = [
             'productPriceSingle' => 100,
@@ -129,9 +123,7 @@ class GiftActionTest extends AbstractRuleTest
             ]
         ];
 
-
         $this->doAssertionsWithShippingCosts($ruleDefinitions, $this->productDefinitions1, $this->tests1, false);
-
 
         $tests = [
             'productPriceSingle' => 100,
@@ -145,5 +137,4 @@ class GiftActionTest extends AbstractRuleTest
 
         $this->doAssertionsWithShippingCosts($ruleDefinitions, $this->productDefinitions2, $tests, false);
     }
-
 }

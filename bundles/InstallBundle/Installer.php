@@ -63,7 +63,6 @@ class Installer
      */
     private $commandLineOutput;
 
-
     /**
      * When false, skips creating database structure during install
      *
@@ -231,10 +230,10 @@ class Installer
         $adminPass = $params['admin_password'] ?? '';
 
         //check skipping database creation or database data
-        if($params['skip_database_structure']) {
+        if ($params['skip_database_structure']) {
             $this->createDatabaseStructure = false;
         }
-        if($params['skip_database_data']) {
+        if ($params['skip_database_data']) {
             $this->importDatabaseData = false;
         }
 
@@ -483,9 +482,7 @@ class Installer
 
     public function setupDatabase(array $userCredentials, array $errors = []): array
     {
-
-        if($this->createDatabaseStructure) {
-
+        if ($this->createDatabaseStructure) {
             $mysqlInstallScript = file_get_contents(__DIR__ . '/Resources/install.sql');
 
             // remove comments in SQL script
@@ -503,10 +500,9 @@ class Installer
                     $db->query($sql);
                 }
             }
-
         }
 
-        if($this->importDatabaseData) {
+        if ($this->importDatabaseData) {
             $dataFiles = $this->getDataFiles();
 
             try {
@@ -527,7 +523,6 @@ class Installer
                 $errors[] = $e->getMessage();
             }
         }
-
 
         return $errors;
     }
