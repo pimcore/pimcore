@@ -698,7 +698,7 @@ pimcore.object.classes.klass = Class.create({
                 },
                 {
                     xtype: "textfield",
-                    fieldLabel: t("class_identifier"),
+                    fieldLabel: t("unique_identifier"),
                     disabled: true,
                     value: this.data.id,
                     width: 500
