@@ -320,13 +320,13 @@ abstract class AbstractCart extends \Pimcore\Model\AbstractModel implements ICar
         }
 
         // update item
-        $item->setProduct($product);
+        $item->setProduct($product, false);
         $item->setItemKey($itemKey);
         $item->setComment($comment);
         if ($replace) {
-            $item->setCount($count);
+            $item->setCount($count, false);
         } else {
-            $item->setCount($item->getCount() + $count);
+            $item->setCount($item->getCount() + $count, false);
         }
 
         // handle sub products
