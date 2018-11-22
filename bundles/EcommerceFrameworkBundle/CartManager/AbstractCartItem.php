@@ -59,9 +59,9 @@ abstract class AbstractCartItem extends \Pimcore\Model\AbstractModel implements 
         $this->setAddedDate(new \DateTime());
     }
 
-    public function setCount($count)
+    public function setCount($count, bool $fireModified = true)
     {
-        if ($this->count != $count && $this->getCart() && !$this->isLoading) {
+        if ($this->count != $count && $this->getCart() && !$this->isLoading && $fireModified) {
             $this->getCart()->modified();
         }
         $this->count = $count;
@@ -72,9 +72,13 @@ abstract class AbstractCartItem extends \Pimcore\Model\AbstractModel implements 
         return $this->count;
     }
 
-    public function setProduct(ICheckoutable $product)
+    /**
+     * @param ICheckoutable $product
+     * @param bool $fireModified
+     */
+    public function setProduct(ICheckoutable $product, bool $fireModified = true)
     {
-        if ((empty($product) || $this->productId != $product->getId()) && $this->getCart() && !$this->isLoading) {
+        if ((empty($product) || $this->productId != $product->getId()) && $this->getCart() && !$this->isLoading && $fireModified) {
             $this->getCart()->modified();
         }
         $this->product = $product;
