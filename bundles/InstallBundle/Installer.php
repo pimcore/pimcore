@@ -63,6 +63,7 @@ class Installer
      */
     private $commandLineOutput;
 
+
     /**
      * When false, skips creating database structure during install
      *
@@ -71,11 +72,19 @@ class Installer
     private $createDatabaseStructure = true;
 
     /**
-     * When false, skips importing database data (if available) during install
+     * When false, skips importing all database data during install
      *
      * @var bool
      */
     private $importDatabaseData = true;
+
+    /**
+     * When false, skips importing database data dump files (if available) during install
+     * only imports needed base data
+     *
+     * @var bool
+     */
+    private $importDatabaseDataDump = true;
 
     /**
      * @var array
@@ -125,6 +134,14 @@ class Installer
     public function setImportDatabaseData(bool $importDatabaseData): void
     {
         $this->importDatabaseData = $importDatabaseData;
+    }
+
+    /**
+     * @param bool $importDatabaseDataDump
+     */
+    public function setImportDatabaseDataDump(bool $importDatabaseDataDump): void
+    {
+        $this->importDatabaseDataDump = $importDatabaseDataDump;
     }
 
     public function needsDbCredentials(): bool
@@ -230,11 +247,14 @@ class Installer
         $adminPass = $params['admin_password'] ?? '';
 
         //check skipping database creation or database data
-        if ($params['skip_database_structure']) {
+        if(array_key_exists('skip_database_structure', $params) ) {
             $this->createDatabaseStructure = false;
         }
-        if ($params['skip_database_data']) {
+        if(array_key_exists('skip_database_data', $params) ) {
             $this->importDatabaseData = false;
+        }
+        if(array_key_exists('skip_database_data_dump', $params) ) {
+            $this->importDatabaseDataDump = false;
         }
 
         if (strlen($adminPass) < 4 || strlen($adminUser) < 4) {
@@ -482,7 +502,9 @@ class Installer
 
     public function setupDatabase(array $userCredentials, array $errors = []): array
     {
-        if ($this->createDatabaseStructure) {
+
+        if($this->createDatabaseStructure) {
+
             $mysqlInstallScript = file_get_contents(__DIR__ . '/Resources/install.sql');
 
             // remove comments in SQL script
@@ -500,13 +522,14 @@ class Installer
                     $db->query($sql);
                 }
             }
+
         }
 
-        if ($this->importDatabaseData) {
+        if($this->importDatabaseData) {
             $dataFiles = $this->getDataFiles();
 
             try {
-                if (empty($dataFiles)) {
+                if (empty($dataFiles) || !$this->importDatabaseDataDump) {
                     // empty installation
                     $this->insertDatabaseContents();
                     $this->createOrUpdateUser($userCredentials);
@@ -523,6 +546,7 @@ class Installer
                 $errors[] = $e->getMessage();
             }
         }
+
 
         return $errors;
     }
