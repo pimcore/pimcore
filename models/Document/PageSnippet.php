@@ -584,4 +584,40 @@ abstract class PageSnippet extends Model\Document
     {
         $this->legacy = (bool) $legacy;
     }
+
+    /**
+     * @param null $hostname
+     * @param null $scheme
+     *
+     * @return string
+     *
+     * @throws \Exception
+     */
+    public function getUrl($hostname = null, $scheme = null)
+    {
+        if (!$scheme) {
+            $scheme = 'http://';
+            $requestHelper = \Pimcore::getContainer()->get('pimcore.http.request_helper');
+            if ($requestHelper->hasMasterRequest()) {
+                $scheme = $requestHelper->getMasterRequest()->getScheme() . '://';
+            }
+        }
+
+        if (!$hostname) {
+            if (!$hostname = \Pimcore\Config::getSystemConfig()->general->domain) {
+                if (!$hostname = \Pimcore\Tool::getHostname()) {
+                    throw new \Exception('No hostname available');
+                }
+            }
+        }
+
+        $url = $scheme . $hostname . $this->getFullPath();
+
+        $site = \Pimcore\Tool\Frontend::getSiteForDocument($this);
+        if ($site instanceof Site && $site->getMainDomain()) {
+            $url = $scheme . $site->getMainDomain() . preg_replace('@^' . $site->getRootPath() . '/?@', '/', $this->getRealFullPath());
+        }
+
+        return $url;
+    }
 }
