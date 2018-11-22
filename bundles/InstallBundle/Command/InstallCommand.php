@@ -115,6 +115,18 @@ class InstallCommand extends Command
                 'default' => 3306,
                 'group' => 'db_credentials',
             ],
+            'skip-database-structure' => [
+                'description' => 'Skipping creation of database structure during install',
+                'mode' => InputOption::VALUE_OPTIONAL,
+                'default' => false,
+                'group' => 'install_options',
+            ],
+            'skip-database-data' => [
+                'description' => 'Skipping importing of data into database (if available)',
+                'mode' => InputOption::VALUE_OPTIONAL,
+                'default' => false,
+                'group' => 'install_options',
+            ],
         ];
 
         foreach (array_keys($options) as $name) {
