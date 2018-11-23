@@ -1729,13 +1729,13 @@ pimcore.helpers.sendTestEmail = function (from = null, to = null, subject = null
         store: paramsStore,
         columns: [
             {
-                text: 'key',
+                text: t('key'),
                 dataIndex: 'key',
                 editor: new Ext.form.TextField(),
                 width: 200
             },
             {
-                text: 'value',
+                text: t('value'),
                 dataIndex: 'value',
                 editor: new Ext.form.TextField(),
                 flex: 1

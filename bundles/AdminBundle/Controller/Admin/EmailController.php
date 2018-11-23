@@ -356,7 +356,7 @@ class EmailController extends AdminController
 
         if ($request->get('emailType') == 'text') {
             $mail->setBodyText($request->get('content'));
-        } elseif($request->get('emailType') == 'text') {
+        } elseif($request->get('emailType') == 'html') {
             $mail->setBodyHtml($request->get('content'));
         } elseif($request->get('emailType') == 'document') {
             $doc = \Pimcore\Model\Document::getByPath($request->get('documentPath'));
