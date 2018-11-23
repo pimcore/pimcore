@@ -1631,6 +1631,10 @@ pimcore.helpers.searchAndMove = function (parentId, callback, type) {
 pimcore.helpers.sendTestEmail = function (from = null, to = null, subject = null, emailType = null, documentPath = null, content = null) {
 
 
+    if(emailType === null) {
+        emailType = 'text';
+    }
+
     var emailContentTextField = new Ext.form.TextArea({
         name: "content",
         fieldLabel: t("content"),
@@ -1678,6 +1682,7 @@ pimcore.helpers.sendTestEmail = function (from = null, to = null, subject = null
     var emailTypeDropdown = new Ext.form.ComboBox({
         name: 'emailType',
         width: 300,
+        value: emailType,
         store: [
             ['document', t('document')],
             ['html', t('html')],
