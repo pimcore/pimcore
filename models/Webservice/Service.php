@@ -196,10 +196,9 @@ class Service
     public function getDocumentList($condition = null, $order = null, $orderKey = null, $offset = null, $limit = null, $groupBy = null)
     {
         try {
-
-            $conditionParts =  [];
+            $conditionParts = [];
             if ($condition) {
-                $condition = "(" . $condition .")";
+                $condition = '(' . $condition .')';
                 $conditionParts[] = $condition;
             }
 
@@ -772,9 +771,9 @@ class Service
         try {
             $params = [];
 
-            $conditionParts =  [];
+            $conditionParts = [];
             if ($condition) {
-                $condition = "(" . $condition .")";
+                $condition = '(' . $condition .')';
                 $conditionParts[] = $condition;
             }
 
@@ -795,7 +794,6 @@ class Service
 
                 $params['condition'] = $condition;
             }
-
 
             if (!empty($order)) {
                 $params['order'] = $order;
@@ -916,9 +914,9 @@ class Service
         try {
             $params = ['objectTypes' => [DataObject\AbstractObject::OBJECT_TYPE_FOLDER, DataObject\AbstractObject::OBJECT_TYPE_OBJECT, DataObject\AbstractObject::OBJECT_TYPE_VARIANT]];
 
-            $conditionParts =  [];
+            $conditionParts = [];
             if ($condition) {
-                $condition = "(" . $condition .")";
+                $condition = '(' . $condition .')';
                 $conditionParts[] = $condition;
             }
 
