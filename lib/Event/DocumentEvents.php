@@ -68,6 +68,13 @@ final class DocumentEvents
     const POST_UPDATE_FAILURE = 'pimcore.document.postUpdateFailure';
 
     /**
+     * @Event("Pimcore\Event\Model\DocumentDeleteInfoEvent")
+     *
+     * @var string
+     */
+    const DELETE_INFO = 'pimcore.document.deleteInfo';
+
+    /**
      * @Event("Pimcore\Event\Model\DocumentEvent")
      *
      * @var string

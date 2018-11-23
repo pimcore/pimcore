@@ -68,6 +68,13 @@ final class AssetEvents
     const POST_UPDATE_FAILURE = 'pimcore.asset.postUpdateFailure';
 
     /**
+     * @Event("Pimcore\Event\Model\AssetDeleteInfoEvent")
+     *
+     * @var string
+     */
+    const DELETE_INFO = 'pimcore.asset.deleteInfo';
+
+    /**
      * @Event("Pimcore\Event\Model\AssetEvent")
      *
      * @var string

@@ -15,8 +15,17 @@
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
+use Pimcore\Event\AssetEvents;
+use Pimcore\Event\DataObjectEvents;
+use Pimcore\Event\DocumentEvents;
+use Pimcore\Event\Model\AssetDeleteInfoEvent;
+use Pimcore\Event\Model\DataObjectDeleteInfoEvent;
+use Pimcore\Event\Model\DocumentDeleteInfoEvent;
+use Pimcore\Event\Model\ElementDeleteInfoEventInterface;
 use Pimcore\Logger;
 use Pimcore\Model\Asset;
+use Pimcore\Model\DataObject\AbstractObject;
+use Pimcore\Model\Document;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Element\Service;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -72,8 +81,10 @@ class ElementControllerBase extends AdminController
     public function deleteInfoAction(Request $request)
     {
         $hasDependency = false;
+        $errors = false;
         $deleteJobs = [];
         $recycleJobs = [];
+        $itemResults = [];
 
         $totalChilds = 0;
 
@@ -89,12 +100,51 @@ class ElementControllerBase extends AdminController
                 }
                 $hasDependency = $element->getDependencies()->isRequired();
             } catch (\Exception $e) {
-                Logger::err('failed to access asset with id: ' . $id);
+                Logger::err('failed to access element with id: ' . $id);
                 continue;
             }
 
             // check for childs
             if ($element instanceof ElementInterface) {
+                $event = null;
+                $eventName = null;
+
+                if ($element instanceof Asset) {
+                    $event = new AssetDeleteInfoEvent($element);
+                    $eventName = AssetEvents::DELETE_INFO;
+                }
+                elseif ($element instanceof Document) {
+                    $event = new DocumentDeleteInfoEvent($element);
+                    $eventName = DocumentEvents::DELETE_INFO;
+                }
+                elseif ($element instanceof AbstractObject) {
+                    $event = new DataObjectDeleteInfoEvent($element);
+                    $eventName = DataObjectEvents::DELETE_INFO;
+                }
+
+                if ($event instanceof ElementDeleteInfoEventInterface) {
+                    $this->get('event_dispatcher')->dispatch($eventName, $event);
+
+                    if (!$event->getDeletionAllowed()) {
+                        $itemResults[] = [
+                            'id' => $element->getId(),
+                            'type' => $element->getType(),
+                            'key' => $element->getKey(),
+                            'reason' => $event->getReason(),
+                            'allowed' => false,
+                        ];
+                        $errors |= true;
+                        continue;
+                    }
+                }
+
+                $itemResults[] = [
+                    'id' => $element->getId(),
+                    'type' => $element->getType(),
+                    'key' => $element->getKey(),
+                    'allowed' => true,
+                ];
+
                 $recycleJobs[] = [[
                     'url' => '/admin/recyclebin/add',
                     'method' => 'POST',
@@ -150,7 +200,11 @@ class ElementControllerBase extends AdminController
         // get the element key in case of just one
         $elementKey = false;
         if (count($ids) === 1) {
-            $elementKey = Service::getElementById($type, $id)->getKey();
+            $element = Service::getElementById($type, $id)->getKey();
+
+            if ($element instanceof ElementInterface) {
+                $elementKey = $element->getKey();
+            }
         }
 
         $deleteJobs = array_merge($recycleJobs, $deleteJobs);
@@ -160,7 +214,9 @@ class ElementControllerBase extends AdminController
             'childs' => $totalChilds,
             'deletejobs' => $deleteJobs,
             'batchDelete' => count($ids) > 1,
-            'elementKey' => $elementKey
+            'elementKey' => $elementKey,
+            'errors' => $errors,
+            'itemResults' => $itemResults
         ]);
     }
 }
