@@ -75,7 +75,7 @@ pimcore.object.gridcolumn.operator.concatenator = Class.create(pimcore.object.gr
     },
 
 
-    getConfigDialog: function(node) {
+    getConfigDialog: function(node, params) {
         this.node = node;
 
         this.textfield = new Ext.form.TextField({
@@ -101,7 +101,7 @@ pimcore.object.gridcolumn.operator.concatenator = Class.create(pimcore.object.gr
                 text: t("apply"),
                 iconCls: "pimcore_icon_apply",
                 handler: function () {
-                    this.commitData();
+                    this.commitData(params);
                 }.bind(this)
             }]
         });
@@ -119,11 +119,15 @@ pimcore.object.gridcolumn.operator.concatenator = Class.create(pimcore.object.gr
         return this.window;
     },
 
-    commitData: function() {
+    commitData: function(params) {
         this.node.data.configAttributes.label = this.textfield.getValue();
         this.node.set('text', this.textfield.getValue());
         this.node.set('isOperator', true);
         this.node.data.configAttributes.glue = this.glue.getValue();
         this.window.close();
+
+        if (params && params.callback) {
+            params.callback();
+        }
     }
 });

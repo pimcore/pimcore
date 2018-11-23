@@ -1310,7 +1310,7 @@ pimcore.layout.toolbar = Class.create({
     },
 
     sendTestEmail: function () {
-        pimcore.helpers.sendTestEmail();
+        pimcore.helpers.sendTestEmail(pimcore.settings.mailDefaultAddress);
     },
 
     showReports: function (reportClass, reportConfig) {

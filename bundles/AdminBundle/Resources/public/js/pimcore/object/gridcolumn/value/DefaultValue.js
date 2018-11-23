@@ -56,11 +56,11 @@ pimcore.object.gridcolumn.value.defaultvalue = Class.create(pimcore.object.gridc
         return copy;
     },
 
-    getConfigDialog: function(node) {
+    getConfigDialog: function(node, params) {
         return null;
     },
 
-    commitData: function() {
+    commitData: function(params) {
         if(this.radiogroup.getValue().rb == "custom") {
             this.node.data.configAttributes.label = this.textfield.getValue();
             this.node.set('text', this.textfield.getValue());
@@ -68,5 +68,8 @@ pimcore.object.gridcolumn.value.defaultvalue = Class.create(pimcore.object.gridc
             this.node.data.configAttributes.label = this.node.get('text');
         }
         this.window.close();
+        if (params && params.callback) {
+            params.callback();
+        }
     }
 });

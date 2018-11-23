@@ -278,8 +278,7 @@ class Dao extends Model\Dao\AbstractDao
                                         $doInsert = false;
                                         foreach ($insertData as $insertDataKey => $insertDataValue) {
                                             if ($isEmpty && $oldData[$insertDataKey] == $parentData[$insertDataKey]) {
-                                                Logger::debug('do nothing');
-                                            // do nothing, ... value is still empty and parent data is equal to current data in query table
+                                                // do nothing, ... value is still empty and parent data is equal to current data in query table
                                             } elseif ($oldData[$insertDataKey] != $insertDataValue) {
                                                 $doInsert = true;
                                                 break;

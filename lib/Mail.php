@@ -986,7 +986,7 @@ class Mail extends \Swift_Message
      */
     public function createAttachment($data, $mimeType = null, $filename = null, $disposition = null)
     {
-        $attachment = \Swift_Attachment::newInstance($data, $filename, $mimeType);
+        $attachment = new \Swift_Attachment($data, $filename, $mimeType);
         if ($disposition) {
             $attachment->setDisposition($disposition);
         }

@@ -15,18 +15,21 @@
  */
 
 
-pimcore.registerNS("pimcore.object.gridcolumn.operator.anonymizer");
+pimcore.registerNS("pimcore.object.gridcolumn.operator.imagerenderer");
 
-pimcore.object.gridcolumn.operator.anonymizer = Class.create(pimcore.object.gridcolumn.operator.text, {
-    operatorGroup: "transformer",
+pimcore.object.gridcolumn.operator.imagerenderer = Class.create(pimcore.object.gridcolumn.Abstract, {
+    operatorGroup: "renderer",
     type: "operator",
-    class: "Anonymizer",
-    iconCls: "pimcore_icon_operator_anonymizer",
-    defaultText: "Anonymizer",
+    class: "ImageRenderer",
+    iconCls: "pimcore_icon_image",
+    defaultText: "Image Renderer",
+    group: "string",
+    maxChildCount: 1,
 
-    getConfigTreeNode: function (configAttributes) {
-        if (configAttributes) {
+    getConfigTreeNode: function(configAttributes) {
+        if(configAttributes) {
             var nodeLabel = this.getNodeLabel(configAttributes);
+
             var node = {
                 draggable: true,
                 iconCls: this.iconCls,
@@ -36,13 +39,12 @@ pimcore.object.gridcolumn.operator.anonymizer = Class.create(pimcore.object.grid
                 allowChildren: true,
                 expanded: true,
                 leaf: false,
-                expandable: false,
-                isChildAllowed: this.allowChild
+                expandable: false
             };
         } else {
 
             //For building up operator list
-            var configAttributes = {type: this.type, class: this.class, trim: 0};
+            var configAttributes = { type: this.type, class: this.class, renderer: "image"};
 
             var node = {
                 draggable: true,
@@ -50,16 +52,16 @@ pimcore.object.gridcolumn.operator.anonymizer = Class.create(pimcore.object.grid
                 text: this.getDefaultText(),
                 configAttributes: configAttributes,
                 isTarget: true,
-                leaf: true,
-                isChildAllowed: this.allowChild
+                leaf: true
             };
         }
         node.isOperator = true;
+        node.isRenderer = true;
         return node;
     },
 
 
-    getCopyNode: function (source) {
+    getCopyNode: function(source) {
         var copy = source.createNode({
             iconCls: this.iconCls,
             text: source.data.text,
@@ -67,12 +69,12 @@ pimcore.object.gridcolumn.operator.anonymizer = Class.create(pimcore.object.grid
             leaf: false,
             expandable: false,
             isOperator: true,
-            isChildAllowed: this.allowChild,
+            isRenderer: true,
             configAttributes: {
                 label: source.data.text,
                 type: this.type,
-                class: this.class
-
+                class: this.class,
+                renderer: "image"
             }
         });
 
@@ -80,35 +82,19 @@ pimcore.object.gridcolumn.operator.anonymizer = Class.create(pimcore.object.grid
     },
 
 
-    getConfigDialog: function (node, params) {
+    getConfigDialog: function(node, params) {
         this.node = node;
 
         this.textField = new Ext.form.TextField({
             fieldLabel: t('label'),
-            length: 255,
-            width: 200,
+            labelWidth: 200,
             value: this.node.data.configAttributes.label
-        });
-
-        var mode = this.node.data.configAttributes.mode;
-
-        this.modeField = new Ext.form.RadioGroup({
-            xtype: 'radiogroup',
-            fieldLabel: t('mode'),
-            border: true,
-            columns: 1,
-            vertical: true,
-            items: [
-                {boxLabel: t('md5'), name: 'rb', inputValue: 'md5', checked: mode == "md5"},
-                {boxLabel: t('bcrypt'), name: 'rb', inputValue: 'bcrypt', checked: mode == "bcrypt"},
-                {boxLabel: t('disabled'), name: 'rb', inputValue: '0', checked: mode != "md5" && mode != "bcrypt"}
-            ]
         });
 
         this.configPanel = new Ext.Panel({
             layout: "form",
             bodyStyle: "padding: 10px;",
-            items: [this.textField, this.modeField],
+            items: [this.textField],
             buttons: [{
                 text: t("apply"),
                 iconCls: "pimcore_icon_apply",
@@ -120,9 +106,9 @@ pimcore.object.gridcolumn.operator.anonymizer = Class.create(pimcore.object.grid
 
         this.window = new Ext.Window({
             width: 400,
-            height: 300,
+            height: 350,
             modal: true,
-            title: t('settings'),
+            title: t('operator_renderer_settings'),
             layout: "fit",
             items: [this.configPanel]
         });
@@ -131,35 +117,28 @@ pimcore.object.gridcolumn.operator.anonymizer = Class.create(pimcore.object.grid
         return this.window;
     },
 
-    commitData: function (params) {
+    commitData: function(params) {
+        this.node.set('isOperator', true);
+
         this.node.data.configAttributes.label = this.textField.getValue();
-        this.node.data.configAttributes.mode = this.modeField.getValue().rb;
+        this.node.data.configAttributes.renderer = "image";
+
         var nodeLabel = this.getNodeLabel(this.node.data.configAttributes);
         this.node.set('text', nodeLabel);
 
-        this.node.set('isOperator', true);
-
         this.window.close();
+
         if (params && params.callback) {
             params.callback();
         }
     },
 
-    getNodeLabel: function (configAttributes) {
-        var nodeLabel = configAttributes.label ? configAttributes.label : this.getDefaultText();
-        if (configAttributes.mode == "md5" || configAttributes.mode == "bcrypt") {
-            var mode = configAttributes.mode == "md5" ? t("md5") : t("bcrypt");
-
-            nodeLabel += '<span class="pimcore_gridnode_hint"> (' + mode + ')</span>';
-        }
-
-        return nodeLabel;
+    getDefaultText: function () {
+        return this.defaultText;
     },
 
-    allowChild: function (targetNode, dropNode) {
-        if (targetNode.childNodes.length > 0) {
-            return false;
-        }
-        return true;
+    getNodeLabel: function (configAttributes) {
+        var nodeLabel = configAttributes.label ? configAttributes.label : this.getDefaultText();
+        return nodeLabel;
     }
 });

@@ -17,6 +17,9 @@
 
 namespace Pimcore\Model\DataObject\Traits;
 
+use Pimcore\Model\AbstractModel;
+use Pimcore\Model\DataObject\OwnerAwareFieldInterface;
+
 trait ObjectVarTrait
 {
     /**
@@ -27,7 +30,14 @@ trait ObjectVarTrait
     public function getObjectVars()
     {
         $data = get_object_vars($this);
-        unset($data['dao']);
+
+        if($this instanceof AbstractModel && isset($data['dao'])) {
+            unset($data['dao']);
+        }
+
+        if($this instanceof OwnerAwareFieldInterface && isset($data['_owner'])) {
+            unset($data['_owner']);
+        }
 
         return $data;
     }

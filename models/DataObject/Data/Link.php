@@ -18,11 +18,13 @@
 namespace Pimcore\Model\DataObject\Data;
 
 use Pimcore\Model\Asset;
+use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\OwnerAwareFieldInterface;
 use Pimcore\Model\DataObject\Traits\ObjectVarTrait;
 use Pimcore\Model\DataObject\Traits\OwnerAwareFieldTrait;
 use Pimcore\Model\Document;
+use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Element\Service;
 
 class Link implements OwnerAwareFieldInterface
@@ -158,9 +160,6 @@ class Link implements OwnerAwareFieldInterface
     public function setInternal($internal)
     {
         $this->internal = $internal;
-        if (!empty($internal)) {
-            $this->setObjectFromId();
-        }
         $this->markMeDirty();
 
         return $this;
@@ -483,21 +482,21 @@ class Link implements OwnerAwareFieldInterface
     }
 
     /**
-     * @return Document|Asset|bool
-     *
-     * @todo: $this->object not found in class
+     * @return Document|Asset|DataObject|null
      */
     public function getObject()
     {
-        if ($this->object instanceof Document || $this->object instanceof Asset || $this->object instanceof Concrete) {
-            return $this->object;
-        } else {
-            if ($this->setObjectFromId()) {
-                return $this->object;
-            }
+        $element = null;
+
+        if ($this->internalType == 'document') {
+            $element = Document::getById($this->internal);
+        } elseif ($this->internalType == 'asset') {
+            $element = Asset::getById($this->internal);
+        } elseif ($this->internalType == 'object') {
+            $element = Concrete::getById($this->internal);
         }
 
-        return false;
+        return $element;
     }
 
     /**
@@ -507,29 +506,14 @@ class Link implements OwnerAwareFieldInterface
      */
     public function setObject($object)
     {
-        $this->object = $object;
+        if($object instanceof ElementInterface) {
+            $this->internal = $object->getId();
+            $this->internalType = Service::getElementType($object);
+        }
+
         $this->markMeDirty();
 
         return $this;
-    }
-
-    /**
-     * @return Asset|Document
-     *
-     * @todo: $this->object not found in class
-     */
-    public function setObjectFromId()
-    {
-        if ($this->internalType == 'document') {
-            $this->object = Document::getById($this->internal);
-        } elseif ($this->internalType == 'asset') {
-            $this->object = Asset::getById($this->internal);
-        } elseif ($this->internalType == 'object') {
-            $this->object = Concrete::getById($this->internal);
-        }
-        $this->markMeDirty();
-
-        return $this->object;
     }
 
     /**

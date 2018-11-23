@@ -82,7 +82,7 @@ pimcore.object.gridcolumn.operator.objectbrickgetter = Class.create(pimcore.obje
     },
 
 
-    getConfigDialog: function(node) {
+    getConfigDialog: function(node, params) {
         this.node = node;
 
         this.textfield = new Ext.form.TextField({
@@ -124,7 +124,7 @@ pimcore.object.gridcolumn.operator.objectbrickgetter = Class.create(pimcore.obje
                 text: t("apply"),
                 iconCls: "pimcore_icon_apply",
                 handler: function () {
-                    this.commitData();
+                    this.commitData(params);
                 }.bind(this)
             }]
         });
@@ -142,17 +142,19 @@ pimcore.object.gridcolumn.operator.objectbrickgetter = Class.create(pimcore.obje
         return this.window;
     },
 
-    commitData: function() {
+    commitData: function(params) {
         this.node.data.configAttributes.label = this.textfield.getValue();
         this.node.data.configAttributes.attr = this.attributeField.getValue();
         this.node.data.configAttributes.brickType = this.brickTypeField.getValue();
         this.node.data.configAttributes.brickAttr = this.brickAttributeField.getValue();
         var nodeLabel = this.getNodeLabel(this.node.data.configAttributes);
         this.node.set('text', nodeLabel);
-
-
         this.node.set('isOperator', true);
         this.window.close();
+
+        if (params && params.callback) {
+            params.callback();
+        }
     },
 
     allowChild: function (targetNode, dropNode) {

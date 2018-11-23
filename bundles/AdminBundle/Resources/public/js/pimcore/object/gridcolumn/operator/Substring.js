@@ -78,7 +78,7 @@ pimcore.object.gridcolumn.operator.substring = Class.create(pimcore.object.gridc
     },
 
 
-    getConfigDialog: function(node) {
+    getConfigDialog: function(node, params) {
         this.node = node;
 
         this.textField = new Ext.form.TextField({
@@ -120,7 +120,7 @@ pimcore.object.gridcolumn.operator.substring = Class.create(pimcore.object.gridc
                 text: t("apply"),
                 iconCls: "pimcore_icon_apply",
                 handler: function () {
-                    this.commitData();
+                    this.commitData(params);
                 }.bind(this)
             }]
         });
@@ -138,7 +138,7 @@ pimcore.object.gridcolumn.operator.substring = Class.create(pimcore.object.gridc
         return this.window;
     },
 
-    commitData: function() {
+    commitData: function(params) {
         this.node.set('isOperator', true);
         this.node.data.configAttributes.start = this.startField.getValue();
         this.node.data.configAttributes.length = this.lengthField.getValue();
@@ -146,6 +146,9 @@ pimcore.object.gridcolumn.operator.substring = Class.create(pimcore.object.gridc
         this.node.data.configAttributes.label = this.textField.getValue();
         this.node.set('text', this.textField.getValue());
         this.window.close();
+        if (params && params.callback) {
+            params.callback();
+        }
     },
 
     allowChild: function (targetNode, dropNode) {

@@ -214,7 +214,7 @@ pimcore.document.page_snippet = Class.create(pimcore.document.document, {
 
             buttons.push(this.getTranslationButtons());
 
-            if(this.data.type == "page") {
+            if(this.data["url"]) {
                 buttons.push("-");
                 buttons.push({
                     tooltip: t("open_in_new_window"),
