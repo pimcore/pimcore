@@ -138,8 +138,7 @@ pimcore.workflowmanagement.actionPanel = Class.create({
                 xtype: 'textareafield',
                 itemId: 'notesField',
                 name: 'workflow[notes]',
-                value: '',
-                allowBlank: true
+                value: ''
             }]
         }];
     },

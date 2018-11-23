@@ -59,17 +59,8 @@ pimcore.settings.glossary = Class.create({
         this.store = pimcore.helpers.grid.buildDefaultStore(
             '/admin/settings/glossary?',
             [
-                {name: 'id'},
-                {name: 'text', allowBlank: false},
-                {name: 'language', allowBlank: true},
-                {name: 'casesensitive', allowBlank: true},
-                {name: 'exactmatch', allowBlank: true},
-                {name: 'site', allowBlank: true},
-                {name: 'link', allowBlank: true},
-                {name: 'abbr', allowBlank: true},
-                {name: 'acronym', allowBlank: true},
-                {name: 'creationDate', allowBlank: true},
-                {name: 'modificationDate', allowBlank: true}
+                'id', {name: 'text', allowBlank: false}, 'language', 'casesensitive', 'exactmatch',
+                'site', 'link', 'acronym', 'creationDate', 'modificationDate'
             ],
             itemsPerPage
         );

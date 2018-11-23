@@ -60,15 +60,7 @@ pimcore.settings.website = Class.create({
         var url = '/admin/settings/website-settings?';
 
         this.store = pimcore.helpers.grid.buildDefaultStore(
-            url,
-            [
-                "id", 'name','type',
-                {name: "data"},
-                {name: 'siteId', allowBlank: true},
-                {name: 'creationDate', allowBlank: true},
-                {name: 'modificationDate', allowBlank: true}
-
-            ],
+            url, ["id", 'name','type', "data", 'siteId', 'creationDate', 'modificationDate'],
             itemsPerPage
         );
 

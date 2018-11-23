@@ -57,18 +57,13 @@ pimcore.settings.properties.predefined = Class.create({
 
         this.store = pimcore.helpers.grid.buildDefaultStore(
             url,
-            [
-                {name: 'id'},
-                {name: 'name', allowBlank: false},
-                {name: 'description'},
+            ['id',
+
+                {name: 'name', allowBlank: false},'description',
                 {name: 'key', allowBlank: false},
-                {name: 'type', allowBlank: false},
-                {name: 'data'},
-                {name: 'config', allowBlank: true},
-                {name: 'ctype', allowBlank: false},
-                {name: 'inheritable'},
-                {name: 'creationDate'},
-                {name: 'modificationDate'}
+                {name: 'type', allowBlank: false}, 'data', 'config',
+                {name: 'ctype', allowBlank: false}, 'inheritable', 'creationDate', 'modificationDate'
+
             ], null, {
                 remoteSort: false,
                 remoteFilter: false

@@ -57,11 +57,8 @@ pimcore.settings.metadata.predefined = Class.create({
         this.store = pimcore.helpers.grid.buildDefaultStore(
             url,
             [
-                {name: 'id'},
-                {name: 'name', allowBlank: false},
-                {name: 'description', allowBlank: true},
-                {name: 'type', allowBlank: true},
-                {name: 'data', allowBlank: true,
+                'id', {name: 'name', allowBlank: false},'description','type',
+                {name: 'data',
                     convert: function (v, r) {
                         if (r.data.type == "date" && v && !(v instanceof Date)) {
                             var d = new Date(intval(v) * 1000);
@@ -69,12 +66,7 @@ pimcore.settings.metadata.predefined = Class.create({
                         }
                         return v;
                     }
-                },
-                {name: 'config', allowBlank: true},
-                {name: 'targetSubtype', allowBlank: true},
-                {name: 'language', allowBlank: true},
-                {name: 'creationDate', allowBlank: true},
-                {name: 'modificationDate', allowBlank: true}
+                },'config', 'targetSubtype', 'language', 'creationDate' ,'modificationDate'
             ], null, {
                 remoteSort: false,
                 remoteFilter: false

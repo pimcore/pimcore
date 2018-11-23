@@ -54,19 +54,19 @@ pimcore.object.helpers.grid = Class.create({
         batchAppendColumns = batchAppendColumns || [];
         // the store
         var readerFields = [];
-        readerFields.push({name: "id", allowBlank: true});
-        readerFields.push({name: "idPath", allowBlank: true});
-        readerFields.push({name: "fullpath", allowBlank: true});
-        readerFields.push({name: "published", allowBlank: true});
-        readerFields.push({name: "type", allowBlank: true});
-        readerFields.push({name: "subtype", allowBlank: true});
-        readerFields.push({name: "filename", allowBlank: true});
-        readerFields.push({name: "classname", allowBlank: true});
-        readerFields.push({name: "creationDate", allowBlank: true, type: 'date', dateFormat: 'timestamp'});
-        readerFields.push({name: "modificationDate", allowBlank: true, type: 'date', dateFormat: 'timestamp'});
+        readerFields.push({name: "id"});
+        readerFields.push({name: "idPath"});
+        readerFields.push({name: "fullpath"});
+        readerFields.push({name: "published"});
+        readerFields.push({name: "type"});
+        readerFields.push({name: "subtype"});
+        readerFields.push({name: "filename"});
+        readerFields.push({name: "classname"});
+        readerFields.push({name: "creationDate", type: 'date', dateFormat: 'timestamp'});
+        readerFields.push({name: "modificationDate", type: 'date', dateFormat: 'timestamp'});
         readerFields.push({name: "inheritedFields", allowBlank: false});
-        readerFields.push({name: "metadata", allowBlank: true});
-        readerFields.push({name: "#kv-tr", allowBlank: true});
+        readerFields.push({name: "metadata"});
+        readerFields.push({name: "#kv-tr"});
 
         this.noBatchColumns = [];
         this.batchAppendColumns = [];
@@ -77,7 +77,7 @@ pimcore.object.helpers.grid = Class.create({
                 var fieldConfig = this.fields[i];
                 var type = fieldConfig.type;
                 var key = fieldConfig.key;
-                var readerFieldConfig = {name: key, allowBlank: true};
+                var readerFieldConfig = {name: key};
                 // dynamic select returns data + options on cell level
                 if ((type == "select" || type == "multiselect") && fieldConfig.layout.optionsProviderClass) {
                     if (typeof noBatchColumns != "undefined") {
@@ -95,7 +95,7 @@ pimcore.object.helpers.grid = Class.create({
                             }
                             return v;
                         }.bind(this, key);
-                        var readerFieldConfigOptions = {name: key + "%options", allowBlank: true, persist: false};
+                        var readerFieldConfigOptions = {name: key + "%options", persist: false};
                         readerFields.push(readerFieldConfigOptions);
                     }
                 }

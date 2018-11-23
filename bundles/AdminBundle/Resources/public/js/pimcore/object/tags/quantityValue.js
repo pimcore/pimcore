@@ -91,7 +91,6 @@ pimcore.object.tags.quantityValue = Class.create(pimcore.object.tags.abstract, {
             autoSelect: true,
             editable: true,
             selectOnFocus: true,
-            allowBlank: true,
             forceSelection: true,
             store: this.store,
             valueField: 'id',

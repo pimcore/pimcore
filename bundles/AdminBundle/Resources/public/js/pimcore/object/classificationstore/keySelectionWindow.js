@@ -352,7 +352,7 @@ pimcore.object.classificationstore.keySelectionWindow = Class.create({
 
         var readerFields = [];
         for (var i = 0; i < this.groupFields.length; i++) {
-            readerFields.push({name: this.groupFields[i], allowBlank: true});
+            readerFields.push({name: this.groupFields[i]});
         }
 
         var gridColumns = [];
