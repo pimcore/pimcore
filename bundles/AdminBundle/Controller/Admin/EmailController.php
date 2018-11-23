@@ -346,14 +346,37 @@ class EmailController extends AdminController
         }
 
         $mail = new Mail();
+
+        if($from = $request->get('from')) {
+            $mail->setFrom($from);
+        }
         $mail->addTo($request->get('to'));
         $mail->setSubject($request->get('subject'));
         $mail->setIgnoreDebugMode(true);
 
-        if ($request->get('type') == 'text') {
+        if ($request->get('emailType') == 'text') {
             $mail->setBodyText($request->get('content'));
-        } else {
+        } elseif($request->get('emailType') == 'html') {
             $mail->setBodyHtml($request->get('content'));
+        } elseif($request->get('emailType') == 'document') {
+            $doc = \Pimcore\Model\Document::getByPath($request->get('documentPath'));
+
+            if($doc instanceof \Pimcore\Model\Document\Email || $doc instanceof \Pimcore\Model\Document\Newsletter) {
+                $mail->setDocument($doc);
+
+                if($request->get('mailParamaters')) {
+                    if($mailParamsArray = json_decode($request->get('mailParamaters'), true)) {
+                        foreach($mailParamsArray as $mailParam) {
+                            if($mailParam['key']) {
+                                $mail->setParam($mailParam['key'], $mailParam['value']);
+                            }
+                        }
+                    }
+                }
+
+            } else {
+                throw new \Exception("Email document not found!");
+            }
         }
 
         $mail->send();

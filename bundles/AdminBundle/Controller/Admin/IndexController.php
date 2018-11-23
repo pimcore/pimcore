@@ -418,6 +418,7 @@ class IndexController extends AdminController
         }
 
         $settings->mail = !$mailIncomplete;
+        $settings->mailDefaultAddress = $config->email->sender->email ?: null;
 
         return $this;
     }
