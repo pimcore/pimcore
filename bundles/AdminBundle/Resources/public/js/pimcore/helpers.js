@@ -1657,7 +1657,7 @@ pimcore.helpers.sendTestEmail = function (from = null, to = null, subject = null
             }, {
                 type: ["document"],
                 subtype: {
-                    document: ["email"]
+                    document: ["email", "newsletter"]
                 }
             });
         }
