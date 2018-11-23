@@ -76,7 +76,7 @@ class TagHandler implements TagHandlerInterface, LoggerAwareInterface
     /**
      * @var ResponseStack
      */
-    private $responseStack;
+    protected $responseStack;
 
     /**
      * @var array
@@ -284,7 +284,7 @@ class TagHandler implements TagHandlerInterface, LoggerAwareInterface
         $this->handleBrickActionResult($brick->postRenderAction($info));
     }
 
-    private function handleBrickActionResult($result)
+    protected function handleBrickActionResult($result)
     {
         // TODO Pimcore 6 rely on responseStack being set as constructor dependency
         if (null === $this->responseStack) {
