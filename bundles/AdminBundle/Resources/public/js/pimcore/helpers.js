@@ -1634,14 +1634,13 @@ pimcore.helpers.sendTestEmail = function (from = null, to = null, subject = null
     var emailContentTextField = new Ext.form.TextArea({
         name: "content",
         fieldLabel: t("content"),
-        width: 780,
         height: 300,
     });
     emailContentTextField.hide();
 
     var documentTextField = new Ext.form.TextField({
         name: 'documentPath',
-        width: 300,
+        flex: 1,
         editable: false
     });
     var searchDocumentButton = new Ext.Button({
@@ -1678,6 +1677,7 @@ pimcore.helpers.sendTestEmail = function (from = null, to = null, subject = null
 
     var emailTypeDropdown = new Ext.form.ComboBox({
         name: 'emailType',
+        width: 300,
         store: [
             ['document', t('document')],
             ['html', t('html')],
@@ -1706,19 +1706,16 @@ pimcore.helpers.sendTestEmail = function (from = null, to = null, subject = null
     var fromTextField = new Ext.form.TextField({
         name: "from",
         fieldLabel: t("from"),
-        width: 780
     });
 
     var toTextField = new Ext.form.TextField({
         name: "to",
         fieldLabel: t("to"),
-        width: 780
     });
 
     var subjectTextField = new Ext.form.TextField({
         name: "subject",
         fieldLabel: t("subject"),
-        width: 780
     });
 
     var paramsStore = new Ext.data.ArrayStore({
@@ -1773,6 +1770,7 @@ pimcore.helpers.sendTestEmail = function (from = null, to = null, subject = null
     paramGrid.hide();
 
     var win = new Ext.Window({
+
         width: 800,
         height: 600,
         modal: true,
@@ -1791,7 +1789,10 @@ pimcore.helpers.sendTestEmail = function (from = null, to = null, subject = null
                 emailContentTextField,
                 documentComponent,
                 paramGrid
-            ]
+            ],
+            defaults: {
+                width: 780
+            }
         }],
         buttons: [{
             text: t("send"),
