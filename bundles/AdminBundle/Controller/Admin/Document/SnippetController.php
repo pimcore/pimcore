@@ -56,6 +56,7 @@ class SnippetController extends DocumentControllerBase
         $snippet->setUserPermissions($snippet->getUserPermissions());
         $snippet->setLocked($snippet->isLocked());
         $snippet->setParent(null);
+        $snippet->url = $snippet->getUrl();
 
         if ($snippet->getContentMasterDocument()) {
             $snippet->contentMasterDocumentPath = $snippet->getContentMasterDocument()->getRealFullPath();
