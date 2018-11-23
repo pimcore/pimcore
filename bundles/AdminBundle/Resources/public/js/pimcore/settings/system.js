@@ -498,8 +498,9 @@ pimcore.settings.system = Class.create({
                                     name: "email.method",
                                     value: this.getValue("email.method"),
                                     store: [
-                                        ["mail", "mail"],
-                                        ["smtp", "smtp"]
+                                        ["sendmail", "Sendmail"],
+                                        ["smtp", "SMTP"],
+                                        ["null", t("none")]
                                     ],
                                     listeners: {
                                         select: this.emailMethodSelected.bind(this, "email")
