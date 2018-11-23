@@ -358,7 +358,7 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
         });
     },
 
-    openColumnConfig: function() {
+    openColumnConfig: function(allowPreview) {
         var fields = this.getGridConfig().columns;
 
         var fieldKeys = Object.keys(fields);
@@ -434,7 +434,12 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
                 });
             }.bind(this),
             true,
-            this.settings
+            this.settings,
+            {
+                allowPreview: true,
+                classId: this.classId,
+                objectId: objectId
+            }
         )
 
     },
