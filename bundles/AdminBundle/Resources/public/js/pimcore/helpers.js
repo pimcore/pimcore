@@ -1646,7 +1646,7 @@ pimcore.helpers.sendTestEmail = function (from = null, to = null, subject = null
     var searchDocumentButton = new Ext.Button({
         name: 'searchDocument',
         fieldLabel: t('document'),
-        iconCls: 'pimcore_icon_open',
+        iconCls: 'pimcore_icon_search',
         handler: function() {
             pimcore.helpers.itemselector(false, function(e) {
                 documentTextField.setValue(e.fullpath);
@@ -1720,8 +1720,8 @@ pimcore.helpers.sendTestEmail = function (from = null, to = null, subject = null
 
     var paramsStore = new Ext.data.ArrayStore({
         fields: [
-            {name: 'key', type: 'string'},
-            {name: 'value', type: 'string'}
+            {name: 'key', type: 'string', persist: false},
+            {name: 'value', type: 'string', persist: false}
         ]
     });
 
