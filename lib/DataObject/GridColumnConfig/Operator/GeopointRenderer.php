@@ -19,6 +19,5 @@ namespace Pimcore\DataObject\GridColumnConfig\Operator;
 
 class GeopointRenderer extends AbstractRenderer
 {
-    public $renderer = "geopoint";
-
+    public $renderer = 'geopoint';
 }

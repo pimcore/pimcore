@@ -506,7 +506,7 @@ class Link implements OwnerAwareFieldInterface
      */
     public function setObject($object)
     {
-        if($object instanceof ElementInterface) {
+        if ($object instanceof ElementInterface) {
             $this->internal = $object->getId();
             $this->internalType = Service::getElementType($object);
         }

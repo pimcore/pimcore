@@ -434,6 +434,4 @@ class Page extends TargetingDocument
 
         return PIMCORE_SYSTEM_TEMP_DIRECTORY . '/document-page-previews/document-page-screenshot-' . $this->getId() . $suffix . '.jpg';
     }
-
-
 }

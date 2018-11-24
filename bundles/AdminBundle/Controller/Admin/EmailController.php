@@ -347,7 +347,7 @@ class EmailController extends AdminController
 
         $mail = new Mail();
 
-        if($from = $request->get('from')) {
+        if ($from = $request->get('from')) {
             $mail->setFrom($from);
         }
         $mail->addTo($request->get('to'));
@@ -356,26 +356,25 @@ class EmailController extends AdminController
 
         if ($request->get('emailType') == 'text') {
             $mail->setBodyText($request->get('content'));
-        } elseif($request->get('emailType') == 'html') {
+        } elseif ($request->get('emailType') == 'html') {
             $mail->setBodyHtml($request->get('content'));
-        } elseif($request->get('emailType') == 'document') {
+        } elseif ($request->get('emailType') == 'document') {
             $doc = \Pimcore\Model\Document::getByPath($request->get('documentPath'));
 
-            if($doc instanceof \Pimcore\Model\Document\Email || $doc instanceof \Pimcore\Model\Document\Newsletter) {
+            if ($doc instanceof \Pimcore\Model\Document\Email || $doc instanceof \Pimcore\Model\Document\Newsletter) {
                 $mail->setDocument($doc);
 
-                if($request->get('mailParamaters')) {
-                    if($mailParamsArray = json_decode($request->get('mailParamaters'), true)) {
-                        foreach($mailParamsArray as $mailParam) {
-                            if($mailParam['key']) {
+                if ($request->get('mailParamaters')) {
+                    if ($mailParamsArray = json_decode($request->get('mailParamaters'), true)) {
+                        foreach ($mailParamsArray as $mailParam) {
+                            if ($mailParam['key']) {
                                 $mail->setParam($mailParam['key'], $mailParam['value']);
                             }
                         }
                     }
                 }
-
             } else {
-                throw new \Exception("Email document not found!");
+                throw new \Exception('Email document not found!');
             }
         }
 

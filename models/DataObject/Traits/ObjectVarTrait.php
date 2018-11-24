@@ -31,11 +31,11 @@ trait ObjectVarTrait
     {
         $data = get_object_vars($this);
 
-        if($this instanceof AbstractModel && isset($data['dao'])) {
+        if ($this instanceof AbstractModel && isset($data['dao'])) {
             unset($data['dao']);
         }
 
-        if($this instanceof OwnerAwareFieldInterface && isset($data['_owner'])) {
+        if ($this instanceof OwnerAwareFieldInterface && isset($data['_owner'])) {
             unset($data['_owner']);
         }
 

@@ -19,7 +19,5 @@ namespace Pimcore\DataObject\GridColumnConfig\Operator;
 
 class ImageRenderer extends AbstractRenderer
 {
-
-    public $renderer = "image";
-
+    public $renderer = 'image';
 }
