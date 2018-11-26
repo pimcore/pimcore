@@ -132,7 +132,7 @@ class Dao extends Model\Dao\AbstractDao
 
             foreach ($fieldDefinitions as $fd) {
                 if (method_exists($fd, 'save')) {
-                    // for fieldtypes which have their own save algorithm eg. objects, multihref, ...
+                    // for fieldtypes which have their own save algorithm eg. relational data types, ...
                     $context = $this->model->getContext() ? $this->model->getContext() : [];
                     if ($context['containerType'] == 'fieldcollection' || $context['containerType'] == 'objectbrick') {
                         $context['subContainerType'] = 'localizedfield';

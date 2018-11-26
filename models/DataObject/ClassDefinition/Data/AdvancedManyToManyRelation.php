@@ -24,7 +24,7 @@ use Pimcore\Model\DataObject;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
 
-class MultihrefMetadata extends Model\DataObject\ClassDefinition\Data\Multihref
+class AdvancedManyToManyRelation extends Model\DataObject\ClassDefinition\Data\ManyToManyRelation
 {
     use DataObject\Traits\ElementWithMetadataComparisonTrait;
     /**
@@ -37,7 +37,7 @@ class MultihrefMetadata extends Model\DataObject\ClassDefinition\Data\Multihref
      *
      * @var string
      */
-    public $fieldtype = 'multihrefMetadata';
+    public $fieldtype = 'advancedManyToManyRelation';
 
     /**
      * Type for the generated phpdoc
@@ -453,7 +453,7 @@ class MultihrefMetadata extends Model\DataObject\ClassDefinition\Data\Multihref
                     $allow = false;
                 }
                 if (!$allow) {
-                    throw new Element\ValidationException('Invalid multihref relation', null, null);
+                    throw new Element\ValidationException(sprintf('Invalid relation in field `%s` [type: %s]', $this->getName(), $this->getFieldtype()), null, null);
                 }
             }
         }

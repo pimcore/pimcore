@@ -11,10 +11,10 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-pimcore.registerNS("pimcore.object.tags.multihrefMetadata");
-pimcore.object.tags.multihrefMetadata = Class.create(pimcore.object.tags.abstract, {
+pimcore.registerNS("pimcore.object.tags.advancedManyToManyRelation");
+pimcore.object.tags.advancedManyToManyRelation = Class.create(pimcore.object.tags.abstract, {
 
-    type: "objectsMetadata",
+    type: "advancedManyToManyRelation",
     dataChanged:false,
     idProperty: 'rowId',
     allowBatchAppend: true,

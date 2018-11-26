@@ -159,7 +159,7 @@ class Version extends AbstractModel
         // if necessary convert the data to save it to filesystem
         if (is_object($data) or is_array($data)) {
 
-            // this is because of lazy loaded element inside documents and objects (eg: multihref, objects, fieldcollections, ...)
+            // this is because of lazy loaded element inside documents and objects (eg: relational data-types, fieldcollections, ...)
             if ($data instanceof Element\ElementInterface) {
                 Element\Service::loadAllFields($data);
             }

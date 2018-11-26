@@ -281,13 +281,13 @@ class Service
                     $el->value = $idMapping['asset'][$el->value];
                 } elseif ($el->type == 'link' and $el->value['internal']) {
                     $el->value['internal'] = $idMapping[$el->value['internalType']][$el->value['internal']];
-                } elseif ($el->type == 'multihref') {
+                } elseif ($el->type == 'multihref' || $el->type == 'manyToManyRelation') {
                     if (is_array($el->value)) {
                         for ($i = 0; $i < count($el->value); $i++) {
                             $el->value[$i]['id'] = $idMapping[$el->value[$i]['type']][$el->value[$i]['id']];
                         }
                     }
-                } elseif ($el->type == 'objects') {
+                } elseif ($el->type == 'objects' || $el->type == 'manyToManyObjectRelation') {
                     if (is_array($el->value)) {
                         for ($i = 0; $i < count($el->value); $i++) {
                             $el->value[$i]['id'] = $idMapping['object'][$el->value[$i]['id']];
@@ -304,11 +304,11 @@ class Service
                                         $collectionItem->value = $idMapping['asset'][$collectionItem->value];
                                     } elseif ($collectionItem->type == 'wysiwyg') {
                                         $collectionItem->value = Tool\Text::replaceWysiwygTextRelationIds($idMapping, $collectionItem->value);
-                                    } elseif ($collectionItem->type == 'link' and $collectionItem->value['internalType']) {
+                                    } elseif ($collectionItem->type == 'link' && $collectionItem->value['internalType']) {
                                         $collectionItem->value['internal'] = $idMapping[$collectionItem->value['internalType']][$collectionItem->value['internal']];
-                                    } elseif ($collectionItem->type == 'href' and $collectionItem->value['id']) {
+                                    } elseif ($collectionItem->type == 'href' && $collectionItem->value['id']) {
                                         $collectionItem->value['id'] = $idMapping[$collectionItem->value['type']][$collectionItem->value['id']];
-                                    } elseif (($collectionItem->type == 'objects' or $collectionItem->type == 'multihref') and is_array($collectionItem->value) and count($collectionItem->value) > 0) {
+                                    } elseif (($collectionItem->type == 'objects' || $collectionItem->type == 'multihref'  || $collectionItem->type == 'manyToManyRelation'  || $collectionItem->type == 'manyToManyObjectRelation' ) && is_array($collectionItem->value) && count($collectionItem->value) > 0) {
                                         for ($i = 0; $i < count($collectionItem->value); $i++) {
                                             if ($collectionItem->value[$i]['id']) {
                                                 $collectionItem->value[$i]['id'] = $idMapping[$collectionItem->value[$i]['type']][$collectionItem->value[$i]['id']];

@@ -218,7 +218,7 @@ class Dao extends Model\DataObject\AbstractObject\Dao
             $getter = 'get' . ucfirst($key);
 
             if (method_exists($fd, 'save')) {
-                // for fieldtypes which have their own save algorithm eg. fieldcollections, objects, multihref, ...
+                // for fieldtypes which have their own save algorithm eg. fieldcollections, relational data-types, ...
                 $saveParams = ['isUntouchable' => in_array($fd->getName(), $untouchable),
                                'isUpdate' => $isUpdate,
                                 'context' => [

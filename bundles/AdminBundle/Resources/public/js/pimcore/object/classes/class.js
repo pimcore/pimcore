@@ -942,7 +942,7 @@ pimcore.object.classes.klass = Class.create({
         var newNode = {
             text: nodeLabel,
             type: "layout",
-            iconCls: "pimcore_icon_" + type,
+            iconCls: pimcore.object.classes.layout[type].prototype.getIconClass(),
             leaf: false,
             expandable: false,
             expanded: true
@@ -993,7 +993,7 @@ pimcore.object.classes.klass = Class.create({
             text: nodeLabel,
             type: "data",
             leaf: true,
-            iconCls: "pimcore_icon_" + type
+            iconCls: pimcore.object.classes.data[type].prototype.getIconClass()
         };
 
         if (type == "localizedfields" || type == "block") {

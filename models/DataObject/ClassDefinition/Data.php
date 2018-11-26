@@ -402,18 +402,6 @@ abstract class Data
     }
 
     /**
-     * @param string $fieldtype
-     *
-     * @return $this
-     */
-    public function setFieldtype($fieldtype)
-    {
-        $this->fieldtype = $fieldtype;
-
-        return $this;
-    }
-
-    /**
      * @return string | array
      */
     public function getColumnType()

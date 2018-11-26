@@ -11,10 +11,10 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-pimcore.registerNS("pimcore.object.tags.href");
-pimcore.object.tags.href = Class.create(pimcore.object.tags.abstract, {
+pimcore.registerNS("pimcore.object.tags.manyToOneRelation");
+pimcore.object.tags.manyToOneRelation = Class.create(pimcore.object.tags.abstract, {
 
-    type: "href",
+    type: "manyToOneRelation",
     dataChanged: false,
 
     initialize: function (data, fieldConfig) {

@@ -11,10 +11,10 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-pimcore.registerNS("pimcore.object.classes.data.href");
-pimcore.object.classes.data.href = Class.create(pimcore.object.classes.data.data, {
+pimcore.registerNS("pimcore.object.classes.data.manyToManyRelation");
+pimcore.object.classes.data.manyToManyRelation = Class.create(pimcore.object.classes.data.data, {
 
-    type: "href",
+    type: "manyToManyRelation",
     /**
      * define where this datatype is allowed
      */
@@ -28,7 +28,7 @@ pimcore.object.classes.data.href = Class.create(pimcore.object.classes.data.data
     },
 
     initialize: function (treeNode, initData) {
-        this.type = "href";
+        this.type = "manyToManyRelation";
 
         this.initData(initData);
 
@@ -40,11 +40,15 @@ pimcore.object.classes.data.href = Class.create(pimcore.object.classes.data.data
         pimcore.helpers.sanitizeAllowedTypes(this.datax, "assetTypes");
         pimcore.helpers.sanitizeAllowedTypes(this.datax, "documentTypes");
 
+        // overwrite default settings
+        this.availableSettingsFields = ["name","title","tooltip","mandatory","noteditable","invisible",
+                                        "visibleGridView","visibleSearch","style"];
+
         this.treeNode = treeNode;
     },
 
     getTypeName: function () {
-        return t("href");
+        return t("many_to_many_relation");
     },
 
     getGroup: function () {
@@ -52,7 +56,7 @@ pimcore.object.classes.data.href = Class.create(pimcore.object.classes.data.data
     },
 
     getIconClass: function () {
-        return "pimcore_icon_href";
+        return "pimcore_icon_multihref";
     },
 
     getLayout: function ($super) {
@@ -62,7 +66,6 @@ pimcore.object.classes.data.href = Class.create(pimcore.object.classes.data.data
         this.specificPanel.removeAll();
 
         this.uniqeFieldId = uniqid();
-
         var i;
 
         var allowedClasses = [];
@@ -98,53 +101,54 @@ pimcore.object.classes.data.href = Class.create(pimcore.object.classes.data.data
             allowedAssets = this.datax.assetTypes.split(",");
         }
 
-        var classesStore = new Ext.data.JsonStore({
-            autoDestroy: true,
+        var classesStore = new Ext.data.Store({
             proxy: {
                 type: 'ajax',
                 url: '/admin/class/get-tree'
             },
+            autoDestroy: true,
             fields: ["text"]
         });
         classesStore.load({
             "callback": function (allowedClasses, success) {
                 if (success) {
-                    Ext.getCmp('class_allowed_object_classes_' + this.uniqeFieldId).setValue(allowedClasses);
+                    Ext.getCmp('class_allowed_object_classes_' + this.uniqeFieldId).setValue(allowedClasses.join(","));
                 }
             }.bind(this, allowedClasses)
         });
 
-        var documentTypeStore = new Ext.data.JsonStore({
-            autoDestroy: true,
+        var documentTypeStore = new Ext.data.Store({
             proxy: {
                 type: 'ajax',
                 url: '/admin/class/get-document-types'
             },
+            autoDestroy: true,
             fields: ["text"]
         });
         documentTypeStore.load({
             "callback": function (allowedDocuments, success) {
                 if (success) {
-                    Ext.getCmp('class_allowed_document_types_' + this.uniqeFieldId).setValue(allowedDocuments);
+                    Ext.getCmp('class_allowed_document_types_' + this.uniqeFieldId).setValue(allowedDocuments.join(","));
                 }
             }.bind(this, allowedDocuments)
         });
 
-        var assetTypeStore = new Ext.data.JsonStore({
-            autoDestroy: true,
+        var assetTypeStore = new Ext.data.Store({
             proxy: {
                 type: 'ajax',
                 url: '/admin/class/get-asset-types'
             },
+            autoDestroy: true,
             fields: ["text"]
         });
         assetTypeStore.load({
             "callback": function (allowedAssets, success) {
                 if (success) {
-                    Ext.getCmp('class_allowed_asset_types_' + this.uniqeFieldId).setValue(allowedAssets);
+                    Ext.getCmp('class_allowed_asset_types_' + this.uniqeFieldId).setValue(allowedAssets.join(","));
                 }
             }.bind(this, allowedAssets)
         });
+
 
         this.specificPanel.add([
             {
@@ -159,13 +163,26 @@ pimcore.object.classes.data.href = Class.create(pimcore.object.classes.data.data
                         fieldLabel: t("width"),
                         name: "width",
                         value: this.datax.width
-                    } ,
+                    },
+                    {
+                        xtype: "numberfield",
+                        fieldLabel: t("height"),
+                        name: "height",
+                        value: this.datax.height
+                    },{
+                        xtype: "numberfield",
+                        fieldLabel: t("maximum_items"),
+                        name: "maxItems",
+                        value: this.datax.maxItems,
+                        minValue: 0
+                    },
                     {
                         xtype: "checkbox",
                         fieldLabel: t("lazy_loading"),
                         name: "lazyLoading",
-                        disabled: this.isInCustomLayoutEditor() || this.lazyLoadingNotPossible(),
-                        checked: this.datax.lazyLoading && !this.lazyLoadingNotPossible()
+                        checked: this.datax.lazyLoading && !this.lazyLoadingNotPossible(),
+                        disabled: this.isInCustomLayoutEditor() || this.lazyLoadingNotPossible()
+
                     },
                     {
                         xtype: "displayfield",
@@ -195,8 +212,8 @@ pimcore.object.classes.data.href = Class.create(pimcore.object.classes.data.data
                 title: t('document_restrictions'),
                 collapsible: false,
                 autoHeight:true,
-                disabled: this.isInCustomLayoutEditor(),
                 labelWidth: 100,
+                disabled: this.isInCustomLayoutEditor(),
                 items :[
                     {
                         xtype: "checkbox",
@@ -220,21 +237,21 @@ pimcore.object.classes.data.href = Class.create(pimcore.object.classes.data.data
                         id: 'class_allowed_document_types_' + this.uniqeFieldId,
                         hidden: !this.datax.documentsAllowed,
                         allowEdit: this.datax.documentsAllowed,
-                        value: allowedDocuments,
+                        value: allowedDocuments.join(","),
                         displayField: "text",
                         valueField: "text",
                         store: documentTypeStore,
                         width: 400
                     })
                 ]
-            }, 
+            },
             {
                 xtype:'fieldset',
                 title: t('asset_restrictions'),
-                disabled: this.isInCustomLayoutEditor(),
                 collapsible: false,
                 autoHeight:true,
                 labelWidth: 100,
+                disabled: this.isInCustomLayoutEditor(),
                 items :[
                     {
                         xtype: "checkbox",
@@ -260,7 +277,7 @@ pimcore.object.classes.data.href = Class.create(pimcore.object.classes.data.data
                         id: 'class_allowed_asset_types_' + this.uniqeFieldId,
                         hidden: !this.datax.assetsAllowed,
                         allowEdit: this.datax.assetsAllowed,
-                        value: allowedAssets,
+                        value: allowedAssets.join(","),
                         displayField: "text",
                         valueField: "text",
                         store: assetTypeStore,
@@ -304,10 +321,10 @@ pimcore.object.classes.data.href = Class.create(pimcore.object.classes.data.data
             {
                 xtype:'fieldset',
                 title: t('object_restrictions') ,
-                disabled: this.isInCustomLayoutEditor(),
                 collapsible: false,
                 autoHeight:true,
                 labelWidth: 100,
+                disabled: this.isInCustomLayoutEditor(),
                 items :[
                     {
                         xtype: "checkbox",
@@ -331,7 +348,7 @@ pimcore.object.classes.data.href = Class.create(pimcore.object.classes.data.data
                         id: 'class_allowed_object_classes_' + this.uniqeFieldId,
                         hidden: !this.datax.objectsAllowed,
                         allowEdit: this.datax.objectsAllowed,
-                        value: allowedClasses,
+                        value: allowedClasses.join(","),
                         displayField: "text",
                         valueField: "text",
                         store: classesStore,
@@ -339,10 +356,7 @@ pimcore.object.classes.data.href = Class.create(pimcore.object.classes.data.data
                     })
                 ]
             }
-
-
         ]);
-
 
         return this.layout;
     },
@@ -355,16 +369,18 @@ pimcore.object.classes.data.href = Class.create(pimcore.object.classes.data.data
             Ext.apply(this.datax,
                 {
                     width: source.datax.width,
+                    height: source.datax.height,
+                    maxItems: source.datax.maxItems,
                     assetUploadPath: source.datax.assetUploadPath,
                     relationType: source.datax.relationType,
-                    remoteOwner: source.datax.remoteOwner,
-                    lazyLoading: source.datax.lazyLoading,
-                    classes: source.datax.classes,
                     objectsAllowed: source.datax.objectsAllowed,
                     assetsAllowed: source.datax.assetsAllowed,
                     assetTypes: source.datax.assetTypes,
                     documentsAllowed: source.datax.documentsAllowed,
-                    documentTypes: source.datax.documentTypes
+                    documentTypes: source.datax.documentTypes,
+                    remoteOwner: source.datax.remoteOwner,
+                    lazyLoading: source.datax.lazyLoading,
+                    classes: source.datax.classes
                 });
         }
     }

@@ -59,7 +59,7 @@ Create a Block:
  $data = [
     "input1" => new BlockElement('input1', 'input', 'NewValue1'),
     "input2" => new BlockElement('input2', 'input', 'NewValue2'),
-    "myhref" => new BlockElement('myhref', 'multihref', [$object])
+    "myhref" => new BlockElement('myhref', 'manyToManyRelation', [$object])
     ];
  
  $blockElement = new BlockClass();
@@ -78,7 +78,7 @@ Create a Block with localized fields:
  $data = [
     "input1" => new BlockElement('input1', 'input', 'NewValue1'),
     "input2" => new BlockElement('input2', 'input', 'NewValue2'),
-    "myhref" => new BlockElement('myhref', 'multihref', [$object]),
+    "myhref" => new BlockElement('myhref', 'manyToManyRelation', [$object]),
     "localizedfields" => new BlockElement('localizedfields', 'localizedfields', new Localizedfield([
         "de" => [
             "localizedInput" => "Mein deutscher Text"

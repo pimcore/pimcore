@@ -112,7 +112,7 @@ pimcore:
                     geopoint: \Pimcore\Model\DataObject\ClassDefinition\Data\Geopoint
                     geopolygon: \Pimcore\Model\DataObject\ClassDefinition\Data\Geopolygon
                     hotspotimage: \Pimcore\Model\DataObject\ClassDefinition\Data\Hotspotimage
-                    href: \Pimcore\Model\DataObject\ClassDefinition\Data\Href
+                    manyToOneRelation: \Pimcore\Model\DataObject\ClassDefinition\Data\ManyToOneRelation
                     image: \Pimcore\Model\DataObject\ClassDefinition\Data\Image
                     imageGallery: \Pimcore\Model\DataObject\ClassDefinition\Data\ImageGallery
                     input: \Pimcore\Model\DataObject\ClassDefinition\Data\Input
@@ -121,15 +121,15 @@ pimcore:
                     lastname: \Pimcore\Model\DataObject\ClassDefinition\Data\Lastname
                     link: \Pimcore\Model\DataObject\ClassDefinition\Data\Link
                     localizedfields: \Pimcore\Model\DataObject\ClassDefinition\Data\Localizedfields
-                    multihref: \Pimcore\Model\DataObject\ClassDefinition\Data\Multihref
-                    multihrefMetadata: \Pimcore\Model\DataObject\ClassDefinition\Data\MultihrefMetadata
+                    manyToManyRelation: \Pimcore\Model\DataObject\ClassDefinition\Data\ManyToManyRelation
+                    advancedManyToManyRelation: \Pimcore\Model\DataObject\ClassDefinition\Data\AdvancedManyToManyRelation
                     multiselect: \Pimcore\Model\DataObject\ClassDefinition\Data\Multiselect
                     newsletterActive: \Pimcore\Model\DataObject\ClassDefinition\Data\NewsletterActive
                     nonownerobjects: \Pimcore\Model\DataObject\ClassDefinition\Data\Nonownerobjects
                     numeric: \Pimcore\Model\DataObject\ClassDefinition\Data\Numeric
                     objectbricks: \Pimcore\Model\DataObject\ClassDefinition\Data\Objectbricks
-                    objects: \Pimcore\Model\DataObject\ClassDefinition\Data\Objects
-                    objectsMetadata: \Pimcore\Model\DataObject\ClassDefinition\Data\ObjectsMetadata
+                    manyToManyObjectRelation: \Pimcore\Model\DataObject\ClassDefinition\Data\ManyToManyObjectRelation
+                    advancedManyToManyObjectRelation: \Pimcore\Model\DataObject\ClassDefinition\Data\AdvancedManyToManyObjectRelation
                     password: \Pimcore\Model\DataObject\ClassDefinition\Data\Password
                     rgbaColor: \Pimcore\Model\DataObject\ClassDefinition\Data\RgbaColor
                     targetGroup: \Pimcore\Model\DataObject\ClassDefinition\Data\TargetGroup

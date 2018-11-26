@@ -21,7 +21,7 @@ use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\Element;
 
-class ObjectsMetadata extends Model\DataObject\ClassDefinition\Data\Objects
+class AdvancedManyToManyObjectRelation extends Model\DataObject\ClassDefinition\Data\ManyToManyObjectRelation
 {
     use DataObject\Traits\ElementWithMetadataComparisonTrait;
 
@@ -45,7 +45,7 @@ class ObjectsMetadata extends Model\DataObject\ClassDefinition\Data\Objects
      *
      * @var string
      */
-    public $fieldtype = 'objectsMetadata';
+    public $fieldtype = 'advancedManyToManyObjectRelation';
 
     /**
      * Type for the generated phpdoc

@@ -11,10 +11,10 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-pimcore.registerNS("pimcore.object.tags.objectsMetadata");
-pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, {
+pimcore.registerNS("pimcore.object.tags.advancedManyToManyObjectRelation");
+pimcore.object.tags.advancedManyToManyObjectRelation = Class.create(pimcore.object.tags.manyToManyObjectRelation, {
 
-    type: "objectsMetadata",
+    type: "advancedManyToManyObjectRelation",
     dataChanged: false,
     idProperty: "id",
     pathProperty: "fullpath",

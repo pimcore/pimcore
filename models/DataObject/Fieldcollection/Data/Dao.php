@@ -50,7 +50,7 @@ class Dao extends Model\Dao\AbstractDao
                         continue;
                     }
 
-                    // for fieldtypes which have their own save algorithm eg. objects, multihref, ...
+                    // for fieldtypes which have their own save algorithm eg. relational data types, ...
                     $index = $this->model->getIndex();
                     $params = array_merge($params, [
                         'context' => [

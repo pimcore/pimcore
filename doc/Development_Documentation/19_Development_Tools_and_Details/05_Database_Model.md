@@ -153,7 +153,7 @@ Table: object_relations_(id) & object_meta_data_(id)
 * The columns `src_id` and `dest_id` define the relation / the link between the objects. 
 * Column `index` is used to specify the order of the relations
 * Columns `ownertype`, `ownername` and `position` are used when relations are within field collections, localized fields, object bricks, etc.  
-* The data type `Objects With Metadata` stores the extra data in a table `object_meta_data_(id)` - the column `column` 
+* The data type `Advanced Many-To-One Object Relation` stores the extra data in a table `object_meta_data_(id)` - the column `column` 
 specifies the name of the meta item and `data` stores the value
 
 
