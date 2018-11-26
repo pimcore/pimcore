@@ -63,7 +63,7 @@ pimcore.object.helpers.classTree = Class.create({
 
         var filterField = new Ext.form.field.Text(
             {
-                width: 300,
+                width: 230,
                 hideLabel: true,
                 enableKeyEvents: true
             }
@@ -90,6 +90,7 @@ pimcore.object.helpers.classTree = Class.create({
             rootVisible: false,
             bufferedRenderer: false,
             animate: false,
+            width: 300,
             root: {
                 id: "0",
                 root: true,
