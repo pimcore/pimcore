@@ -17,10 +17,12 @@
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
 use Pimcore\Model;
+use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
+use Pimcore\Model\Document;
 use Pimcore\Model\Element;
 
-class Objects extends Model\DataObject\ClassDefinition\Data\Relations\AbstractRelations
+class ManyToManyRelation extends Model\DataObject\ClassDefinition\Data\Relations\AbstractRelations
 {
     use Model\DataObject\ClassDefinition\Data\Extension\Relation;
 
@@ -29,7 +31,7 @@ class Objects extends Model\DataObject\ClassDefinition\Data\Relations\AbstractRe
      *
      * @var string
      */
-    public $fieldtype = 'objects';
+    public $fieldtype = 'manyToManyRelation';
 
     /**
      * @var int
@@ -47,6 +49,11 @@ class Objects extends Model\DataObject\ClassDefinition\Data\Relations\AbstractRe
      * @var int
      */
     public $maxItems;
+
+    /**
+     * @var string
+     */
+    public $assetUploadPath;
 
     /**
      * Type for the column to query
@@ -68,11 +75,137 @@ class Objects extends Model\DataObject\ClassDefinition\Data\Relations\AbstractRe
     public $relationType = true;
 
     /**
+     *
+     * @var bool
+     */
+    public $objectsAllowed;
+
+    /**
+     *
+     * @var bool
+     */
+    public $assetsAllowed;
+
+    /**
+     * Allowed asset types
+     *
+     * @var array
+     */
+    public $assetTypes;
+
+    /**
+     *
+     * @var bool
+     */
+    public $documentsAllowed;
+
+    /**
+     * Allowed document types
+     *
+     * @var array
+     */
+    public $documentTypes;
+
+    /**
      * @return bool
      */
     public function getObjectsAllowed()
     {
-        return true;
+        return $this->objectsAllowed;
+    }
+
+    /**
+     * @param bool $objectsAllowed
+     *
+     * @return $this
+     */
+    public function setObjectsAllowed($objectsAllowed)
+    {
+        $this->objectsAllowed = $objectsAllowed;
+
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getDocumentsAllowed()
+    {
+        return $this->documentsAllowed;
+    }
+
+    /**
+     * @param bool $documentsAllowed
+     *
+     * @return $this
+     */
+    public function setDocumentsAllowed($documentsAllowed)
+    {
+        $this->documentsAllowed = $documentsAllowed;
+
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getDocumentTypes()
+    {
+        return $this->documentTypes;
+    }
+
+    /**
+     * @param array $documentTypes
+     *
+     * @return $this
+     */
+    public function setDocumentTypes($documentTypes)
+    {
+        $this->documentTypes = Element\Service::fixAllowedTypes($documentTypes, 'documentTypes');
+
+        return $this;
+    }
+
+    /**
+     *
+     * @return bool
+     */
+    public function getAssetsAllowed()
+    {
+        return $this->assetsAllowed;
+    }
+
+    /**
+     *
+     * @param bool $assetsAllowed
+     *
+     * @return $this
+     */
+    public function setAssetsAllowed($assetsAllowed)
+    {
+        $this->assetsAllowed = $assetsAllowed;
+
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getAssetTypes()
+    {
+        return $this->assetTypes;
+    }
+
+    /**
+     * @param array $assetTypes
+     *
+     * @return $this
+     */
+    public function setAssetTypes($assetTypes)
+    {
+        $this->assetTypes = Element\Service::fixAllowedTypes($assetTypes, 'assetTypes');
+
+        return $this;
     }
 
     /**
@@ -80,6 +213,7 @@ class Objects extends Model\DataObject\ClassDefinition\Data\Relations\AbstractRe
      *
      * @param array $data
      * @param null|Model\DataObject\AbstractObject $object
+     * @param mixed $params
      * @param mixed $params
      *
      * @return array
@@ -91,10 +225,10 @@ class Objects extends Model\DataObject\ClassDefinition\Data\Relations\AbstractRe
         if (is_array($data) && count($data) > 0) {
             $counter = 1;
             foreach ($data as $object) {
-                if ($object instanceof DataObject\Concrete) {
+                if ($object instanceof Element\ElementInterface) {
                     $return[] = [
                         'dest_id' => $object->getId(),
-                        'type' => 'object',
+                        'type' => Element\Service::getElementType($object),
                         'fieldname' => $this->getName(),
                         'index' => $counter
                     ];
@@ -107,7 +241,7 @@ class Objects extends Model\DataObject\ClassDefinition\Data\Relations\AbstractRe
             //give empty array if data was not null
             return [];
         } else {
-            //return null if data was null - this indicates data was not loaded
+            //return null if data was null  - this indicates data was not loaded
             return null;
         }
     }
@@ -123,22 +257,29 @@ class Objects extends Model\DataObject\ClassDefinition\Data\Relations\AbstractRe
      */
     public function getDataFromResource($data, $object = null, $params = [])
     {
-        $objects = [];
+        $elements = [];
         if (is_array($data) && count($data) > 0) {
-            foreach ($data as $object) {
-                $o = DataObject::getById($object['dest_id']);
-                if ($o instanceof DataObject\Concrete) {
-                    $objects[] = $o;
+            foreach ($data as $element) {
+                if ($element['type'] == 'object') {
+                    $e = DataObject::getById($element['dest_id']);
+                } elseif ($element['type'] == 'asset') {
+                    $e = Asset::getById($element['dest_id']);
+                } elseif ($element['type'] == 'document') {
+                    $e = Document::getById($element['dest_id']);
+                }
+
+                if ($e instanceof Element\ElementInterface) {
+                    $elements[] = $e;
                 }
             }
         }
         //must return array - otherwise this means data is not loaded
-        return $objects;
+        return $elements;
     }
 
     /**
      * @param $data
-     * @param null $object
+     * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
      * @throws \Exception
@@ -151,20 +292,21 @@ class Objects extends Model\DataObject\ClassDefinition\Data\Relations\AbstractRe
             return null;
         }
 
-        $ids = [];
+        $d = [];
 
         if (is_array($data) && count($data) > 0) {
-            foreach ($data as $object) {
-                if ($object instanceof DataObject\Concrete) {
-                    $ids[] = $object->getId();
+            foreach ($data as $element) {
+                if ($element instanceof Element\ElementInterface) {
+                    $elementType = Element\Service::getElementType($element);
+                    $d[] = $elementType . '|' . $element->getId();
                 }
             }
 
-            return ',' . implode(',', $ids) . ',';
+            return ',' . implode(',', $d) . ',';
         } elseif (is_array($data) && count($data) === 0) {
             return '';
         } else {
-            throw new \Exception('invalid data passed to getDataForQueryResource - must be array and it is: ' . print_r($data, true));
+            throw new \Exception('invalid data passed to getDataForQueryResource - must be array');
         }
     }
 
@@ -182,9 +324,15 @@ class Objects extends Model\DataObject\ClassDefinition\Data\Relations\AbstractRe
         $return = [];
 
         if (is_array($data) && count($data) > 0) {
-            foreach ($data as $object) {
-                if ($object instanceof DataObject\Concrete) {
-                    $return[] = [$object->getId(), $object->getRealFullPath(), $object->getClassName(), (bool) $object->isPublished()];
+            foreach ($data as $element) {
+                if ($element instanceof DataObject\Concrete) {
+                    $return[] = [$element->getId(), $element->getRealFullPath(), 'object', $element->getClassName(), $element->getPublished()];
+                } elseif ($element instanceof DataObject\AbstractObject) {
+                    $return[] = [$element->getId(), $element->getRealFullPath(), 'object', 'folder'];
+                } elseif ($element instanceof Asset) {
+                    $return[] = [$element->getId(), $element->getRealFullPath(), 'asset', $element->getType()];
+                } elseif ($element instanceof Document) {
+                    $return[] = [$element->getId(), $element->getRealFullPath(), 'document', $element->getType(), $element->getPublished()];
                 }
             }
             if (empty($return)) {
@@ -214,38 +362,50 @@ class Objects extends Model\DataObject\ClassDefinition\Data\Relations\AbstractRe
             return null;
         }
 
-        $objects = [];
+        $elements = [];
         if (is_array($data) && count($data) > 0) {
-            foreach ($data as $object) {
-                $o = DataObject::getById($object['id']);
-                if ($o) {
-                    $objects[] = $o;
+            foreach ($data as $element) {
+                if ($element['type'] == 'object') {
+                    $e = DataObject::getById($element['id']);
+                } elseif ($element['type'] == 'asset') {
+                    $e = Asset::getById($element['id']);
+                } elseif ($element['type'] == 'document') {
+                    $e = Document::getById($element['id']);
+                }
+
+                if ($e instanceof Element\ElementInterface) {
+                    $elements[] = $e;
                 }
             }
         }
         //must return array if data shall be set
-        return $objects;
+        return $elements;
+    }
+
+    /**
+     * @param array $data
+     * @param null|Model\DataObject\AbstractObject $object
+     * @param mixed $params
+     *
+     * @return array
+     */
+    public function getDataFromGridEditor($data, $object = null, $params = [])
+    {
+        return $this->getDataFromEditmode($data, $object, $params);
     }
 
     /**
      * @param $data
      * @param null $object
-     * @param mixed $params
+     * @param array $params
      *
      * @return array
+     *
+     * @todo: $pathes is undefined
      */
     public function getDataForGrid($data, $object = null, $params = [])
     {
-        if (is_array($data)) {
-            $pathes = [];
-            foreach ($data as $eo) {
-                if ($eo instanceof Element\ElementInterface) {
-                    $pathes[] = $eo->getRealFullPath();
-                }
-            }
-
-            return $pathes;
-        }
+        return $this->getDataForEditmode($data, $object, $params);
     }
 
     /**
@@ -256,13 +416,15 @@ class Objects extends Model\DataObject\ClassDefinition\Data\Relations\AbstractRe
      * @param mixed $params
      *
      * @return string
+     *
+     * @todo $pathes is not defined, should be definied as empty array
      */
     public function getVersionPreview($data, $object = null, $params = [])
     {
         if (is_array($data) && count($data) > 0) {
-            foreach ($data as $o) {
-                if ($o instanceof Element\ElementInterface) {
-                    $pathes[] = $o->getRealFullPath();
+            foreach ($data as $e) {
+                if ($e instanceof Element\ElementInterface) {
+                    $pathes[] = get_class($e) . $e->getRealFullPath();
                 }
             }
 
@@ -321,23 +483,25 @@ class Objects extends Model\DataObject\ClassDefinition\Data\Relations\AbstractRe
     public function checkValidity($data, $omitMandatoryCheck = false)
     {
         if (!$omitMandatoryCheck and $this->getMandatory() and empty($data)) {
-            throw new Element\ValidationException('Empty mandatory field [ '.$this->getName().' ]');
+            throw new Element\ValidationException('Empty mandatory field [ ' . $this->getName() . ' ]');
         }
 
+        $allow = true;
         if (is_array($data)) {
-            foreach ($data as $o) {
-                if (empty($o)) {
-                    continue;
+            foreach ($data as $d) {
+                if ($d instanceof Document) {
+                    $allow = $this->allowDocumentRelation($d);
+                } elseif ($d instanceof Asset) {
+                    $allow = $this->allowAssetRelation($d);
+                } elseif ($d instanceof DataObject\AbstractObject) {
+                    $allow = $this->allowObjectRelation($d);
+                } elseif (empty($d)) {
+                    $allow = true;
+                } else {
+                    $allow = false;
                 }
-
-                $allowClass = $this->allowObjectRelation($o);
-                if (!$allowClass or !($o instanceof DataObject\Concrete)) {
-                    if (!$allowClass && $o instanceof DataObject\Concrete) {
-                        $id = $o->getId();
-                    } else {
-                        $id = '??';
-                    }
-                    throw new Element\ValidationException('Invalid object relation to object ['.$id.'] in field ' . $this->getName(). ' , tried to assign ' . $o->getId(), null, null);
+                if (!$allow) {
+                    throw new Element\ValidationException(sprintf('Invalid relation in field `%s` [type: %s]', $this->getName(), $this->getFieldtype()), null, null);
                 }
             }
 
@@ -364,7 +528,7 @@ class Objects extends Model\DataObject\ClassDefinition\Data\Relations\AbstractRe
             $paths = [];
             foreach ($data as $eo) {
                 if ($eo instanceof Element\ElementInterface) {
-                    $paths[] = $eo->getRealFullPath();
+                    $paths[] = Element\Service::getType($eo) . ':' . $eo->getRealFullPath();
                 }
             }
 
@@ -375,11 +539,15 @@ class Objects extends Model\DataObject\ClassDefinition\Data\Relations\AbstractRe
     }
 
     /**
-     * @param $importValue
+     * fills object field data values from CSV Import String
+     *
+     * @abstract
+     *
+     * @param string $importValue
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
-     * @return array|mixed
+     * @return DataObject\ClassDefinition\Data
      */
     public function getFromCsvImport($importValue, $object = null, $params = [])
     {
@@ -387,8 +555,20 @@ class Objects extends Model\DataObject\ClassDefinition\Data\Relations\AbstractRe
 
         $value = [];
         foreach ($values as $element) {
-            if ($el = DataObject::getByPath($element)) {
-                $value[] = $el;
+            $tokens = explode(':', $element);
+            if (count($tokens) == 2) {
+                $type = $tokens[0];
+                $path = $tokens[1];
+                $value[] = Element\Service::getElementByPath($type, $path);
+            } else {
+                //fallback for old export files
+                if ($el = Asset::getByPath($element)) {
+                    $value[] = $el;
+                } elseif ($el = Document::getByPath($element)) {
+                    $value[] = $el;
+                } elseif ($el = DataObject::getByPath($element)) {
+                    $value[] = $el;
+                }
             }
         }
 
@@ -412,9 +592,9 @@ class Objects extends Model\DataObject\ClassDefinition\Data\Relations\AbstractRe
         }
 
         if (is_array($data) && count($data) > 0) {
-            foreach ($data as $object) {
-                if ($object instanceof Element\ElementInterface && !array_key_exists($object->getCacheTag(), $tags)) {
-                    $tags = $object->getCacheTags($tags);
+            foreach ($data as $element) {
+                if ($element instanceof Element\ElementInterface && !array_key_exists($element->getCacheTag(), $tags)) {
+                    $tags = $element->getCacheTags($tags);
                 }
             }
         }
@@ -432,11 +612,12 @@ class Objects extends Model\DataObject\ClassDefinition\Data\Relations\AbstractRe
         $dependencies = [];
 
         if (is_array($data) && count($data) > 0) {
-            foreach ($data as $o) {
-                if ($o instanceof DataObject\AbstractObject) {
-                    $dependencies['object_' . $o->getId()] = [
-                        'id' => $o->getId(),
-                        'type' => 'object'
+            foreach ($data as $e) {
+                if ($e instanceof Element\ElementInterface) {
+                    $elementType = Element\Service::getElementType($e);
+                    $dependencies[$elementType . '_' . $e->getId()] = [
+                        'id' => $e->getId(),
+                        'type' => $elementType
                     ];
                 }
             }
@@ -446,10 +627,12 @@ class Objects extends Model\DataObject\ClassDefinition\Data\Relations\AbstractRe
     }
 
     /**
-     * @param DataObject\AbstractObject $object
+     * converts data to be exposed via webservices
+     *
+     * @param string $object
      * @param mixed $params
      *
-     * @return array|mixed|null
+     * @return mixed
      */
     public function getForWebserviceExport($object, $params = [])
     {
@@ -459,7 +642,8 @@ class Objects extends Model\DataObject\ClassDefinition\Data\Relations\AbstractRe
             foreach ($data as $eo) {
                 if ($eo instanceof Element\ElementInterface) {
                     $items[] = [
-                        'type' => $eo->getType(),
+                        'type' => Element\Service::getType($eo),
+                        'subtype' => $eo->getType(),
                         'id' => $eo->getId()
                     ];
                 }
@@ -473,48 +657,51 @@ class Objects extends Model\DataObject\ClassDefinition\Data\Relations\AbstractRe
 
     /**
      * @param mixed $value
-     * @param null $object
+     * @param null $relatedObject
      * @param mixed $params
      * @param null $idMapper
      *
-     * @return array|mixed
+     * @return mixed|void
      *
      * @throws \Exception
      */
-    public function getFromWebserviceImport($value, $object = null, $params = [], $idMapper = null)
+    public function getFromWebserviceImport($value, $relatedObject = null, $params = [], $idMapper = null)
     {
-        $relatedObjects = [];
         if (empty($value)) {
             return null;
         } elseif (is_array($value)) {
-            foreach ($value as $key => $item) {
-                $item = (array) $item;
-                $id = $item['id'];
+            $hrefs = [];
+            foreach ($value as $href) {
+                // cast is needed to make it work for both SOAP and REST
+                $href = (array) $href;
+                if (is_array($href) and array_key_exists('id', $href) and array_key_exists('type', $href)) {
+                    $type = $href['type'];
+                    $id = $href['id'];
+                    if ($idMapper) {
+                        $id = $idMapper->getMappedId($type, $id);
+                    }
 
-                if ($idMapper) {
-                    $id = $idMapper->getMappedId('object', $id);
-                }
+                    $e = null;
+                    if ($id) {
+                        $e = Element\Service::getElementById($type, $id);
+                    }
 
-                $relatedObject = null;
-                if ($id) {
-                    $relatedObject = DataObject::getById($id);
-                }
-
-                if ($relatedObject instanceof DataObject\AbstractObject) {
-                    $relatedObjects[] = $relatedObject;
-                } else {
-                    if (!$idMapper || !$idMapper->ignoreMappingFailures()) {
-                        throw new \Exception('cannot get values from web service import - references unknown object with id [ '.$item['id'].' ]');
+                    if ($e instanceof Element\ElementInterface) {
+                        $hrefs[] = $e;
                     } else {
-                        $idMapper->recordMappingFailure('object', $object->getId(), 'object', $item['id']);
+                        if (!$idMapper || !$idMapper->ignoreMappingFailures()) {
+                            throw new \Exception('cannot get values from web service import - unknown element of type [ ' . $href['type'] . ' ] with id [' . $href['id'] . '] is referenced');
+                        } else {
+                            $idMapper->recordMappingFailure('object', $relatedObject->getId(), $type, $href['id']);
+                        }
                     }
                 }
             }
+
+            return $hrefs;
         } else {
             throw new \Exception('cannot get values from web service import - invalid data');
         }
-
-        return $relatedObjects;
     }
 
     /**
@@ -529,11 +716,15 @@ class Objects extends Model\DataObject\ClassDefinition\Data\Relations\AbstractRe
         if ($object instanceof DataObject\Concrete) {
             $data = $object->getObjectVar($this->getName());
             if ($this->getLazyLoading() and !in_array($this->getName(), $object->getO__loadedLazyFields())) {
-                //$data = $this->getDataFromResource($object->getRelationData($this->getName(),true,null));
+                //$data = $this->getDataFromResource($object->getRelationData($this->getName(), true, null));
                 $data = $this->load($object, ['force' => true]);
 
                 $object->setObjectVar($this->getName(), $data);
                 $this->markLazyloadedFieldAsLoaded($object);
+
+                if ($object instanceof DataObject\DirtyIndicatorInterface) {
+                    $object->markFieldDirty($this->getName(), false);
+                }
             }
         } elseif ($object instanceof DataObject\Localizedfield) {
             $data = $params['data'];
@@ -543,7 +734,7 @@ class Objects extends Model\DataObject\ClassDefinition\Data\Relations\AbstractRe
             $data = $object->getObjectVar($this->getName());
         }
 
-        if (DataObject\AbstractObject::doHideUnpublished() and is_array($data)) {
+        if (DataObject::doHideUnpublished() and is_array($data)) {
             $publishedList = [];
             foreach ($data as $listElement) {
                 if (Element\Service::isPublished($listElement)) {
@@ -576,26 +767,6 @@ class Objects extends Model\DataObject\ClassDefinition\Data\Relations\AbstractRe
     }
 
     /**
-     * @param string $fieldtype
-     *
-     * @return $this
-     */
-    public function setFieldtype($fieldtype)
-    {
-        $this->fieldtype = $fieldtype;
-
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getFieldtype()
-    {
-        return $this->fieldtype;
-    }
-
-    /**
      * @param $maxItems
      *
      * @return $this
@@ -613,6 +784,26 @@ class Objects extends Model\DataObject\ClassDefinition\Data\Relations\AbstractRe
     public function getMaxItems()
     {
         return $this->maxItems;
+    }
+
+    /**
+     * @param $assetUploadPath
+     *
+     * @return $this
+     */
+    public function setAssetUploadPath($assetUploadPath)
+    {
+        $this->assetUploadPath = $assetUploadPath;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getAssetUploadPath()
+    {
+        return $this->assetUploadPath;
     }
 
     /** True if change is allowed in edit mode.
@@ -680,15 +871,13 @@ class Objects extends Model\DataObject\ClassDefinition\Data\Relations\AbstractRe
     public function synchronizeWithMasterDefinition(DataObject\ClassDefinition\Data $masterDefinition)
     {
         $this->maxItems = $masterDefinition->maxItems;
+        $this->assetUploadPath = $masterDefinition->assetUploadPath;
         $this->relationType = $masterDefinition->relationType;
-    }
-
-    /** Override point for Enriching the layout definition before the layout is returned to the admin interface.
-     * @param $object DataObject\Concrete
-     * @param array $context additional contextual data
-     */
-    public function enrichLayoutDefinition($object, $context = [])
-    {
+        $this->objectsAllowed = $masterDefinition->objectsAllowed;
+        $this->assetsAllowed = $masterDefinition->assetsAllowed;
+        $this->assetTypes = $masterDefinition->assetTypes;
+        $this->documentsAllowed = $masterDefinition->documentsAllowed;
+        $this->documentTypes = $masterDefinition->documentTypes;
     }
 
     /**
@@ -758,7 +947,14 @@ class Objects extends Model\DataObject\ClassDefinition\Data\Relations\AbstractRe
      */
     public function buildUniqueKeyForDiffEditor($item)
     {
-        return $item['id'];
+        $parts = [
+            $item['id'],
+            $item['path'],
+            $item['type'],
+            $item['subtype']
+        ];
+
+        return json_encode($parts);
     }
 
     /**
@@ -777,6 +973,7 @@ class Objects extends Model\DataObject\ClassDefinition\Data\Relations\AbstractRe
                     $item['id'] = $in[0];
                     $item['path'] = $in[1];
                     $item['type'] = $in[2];
+                    $item['subtype'] = $in[3];
 
                     $unique = $this->buildUniqueKeyForDiffEditor($item);
 
@@ -805,7 +1002,7 @@ class Objects extends Model\DataObject\ClassDefinition\Data\Relations\AbstractRe
                     ]
 
                 ],
-                'html' => $this->getVersionPreview($originalData, $data, $object, $params)
+                'html' => $this->getVersionPreview($originalData, $object, $params)
             ];
 
             $newData = [];

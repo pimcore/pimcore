@@ -12,7 +12,7 @@
  */
 
 pimcore.registerNS("pimcore.object.tags.nonownerobjects");
-pimcore.object.tags.nonownerobjects = Class.create(pimcore.object.tags.objects, {
+pimcore.object.tags.nonownerobjects = Class.create(pimcore.object.tags.manyToManyObjectRelation, {
 
 
     removeObject: function (index, item) {

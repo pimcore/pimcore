@@ -11,10 +11,10 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-pimcore.registerNS("pimcore.object.classes.data.objectsMetadata");
-pimcore.object.classes.data.objectsMetadata = Class.create(pimcore.object.classes.data.data, {
+pimcore.registerNS("pimcore.object.classes.data.advancedManyToManyObjectRelation");
+pimcore.object.classes.data.advancedManyToManyObjectRelation = Class.create(pimcore.object.classes.data.data, {
 
-    type: "objectsMetadata",
+    type: "advancedManyToManyObjectRelation",
     /**
      * define where this datatype is allowed
      */
@@ -28,7 +28,7 @@ pimcore.object.classes.data.objectsMetadata = Class.create(pimcore.object.classe
     },
 
     initialize: function (treeNode, initData) {
-        this.type = "objectsMetadata";
+        this.type = "advancedManyToManyObjectRelation";
 
         this.initData(initData);
 
@@ -48,7 +48,7 @@ pimcore.object.classes.data.objectsMetadata = Class.create(pimcore.object.classe
     },
 
     getTypeName: function () {
-        return t("objectsMetadata");
+        return t("advanced_many_to_many_object_relation");
     },
 
     getIconClass: function () {
@@ -380,3 +380,6 @@ pimcore.object.classes.data.objectsMetadata = Class.create(pimcore.object.classe
     }
 
 });
+
+// @TODO BC layer, to be removed in v6.0
+pimcore.object.classes.data.objectsMetadata = pimcore.object.classes.data.advancedManyToManyObjectRelation;

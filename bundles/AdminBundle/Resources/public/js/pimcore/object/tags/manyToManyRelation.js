@@ -11,10 +11,10 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-pimcore.registerNS("pimcore.object.tags.multihref");
-pimcore.object.tags.multihref = Class.create(pimcore.object.tags.abstract, {
+pimcore.registerNS("pimcore.object.tags.manyToManyRelation");
+pimcore.object.tags.manyToManyRelation = Class.create(pimcore.object.tags.abstract, {
 
-    type: "multihref",
+    type: "manyToManyRelation",
     dataChanged: false,
     idProperty: "rowId",
     allowBatchAppend: true,
@@ -686,3 +686,6 @@ pimcore.object.tags.multihref = Class.create(pimcore.object.tags.abstract, {
     }
 
 });
+
+// @TODO BC layer, to be removed in v6.0
+pimcore.object.tags.multihref = pimcore.object.tags.manyToManyRelation;

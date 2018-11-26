@@ -11,10 +11,10 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-pimcore.registerNS("pimcore.object.tags.objects");
-pimcore.object.tags.objects = Class.create(pimcore.object.tags.abstract, {
+pimcore.registerNS("pimcore.object.tags.manyToManyObjectRelation");
+pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.abstract, {
 
-    type: "objects",
+    type: "manyToManyObjectRelation",
     dataChanged: false,
     idProperty: "id",
     pathProperty: "path",
@@ -767,3 +767,6 @@ pimcore.object.tags.objects = Class.create(pimcore.object.tags.abstract, {
         return targets;
     }
 });
+
+// @TODO BC layer, to be removed in v6.0
+pimcore.object.tags.objects = pimcore.object.tags.manyToManyObjectRelation;

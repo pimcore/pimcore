@@ -268,8 +268,14 @@ pimcore.object.classes.klass = Class.create({
         var dataMenu = [];
         var dataComps = Object.keys(pimcore.object.classes.data);
 
+        // @TODO: ignoredAliases are there for BC reasons, to be removed in v6
+        var ignoredAliases = ['multihrefMetadata','objectsMetadata','objects','multihref','href'];
+        ignoredAliases.forEach(function (item) {
+            dataComps = array_remove_value(dataComps, item);
+        });
+
         var parentRestrictions;
-        var groups = new Array();
+        var groups = [];
         var groupNames = ["text","numeric","date","select","relation","structured","geo","other"];
         for (var i = 0; i < dataComps.length; i++) {
             var dataCompName = dataComps[i];
@@ -942,7 +948,7 @@ pimcore.object.classes.klass = Class.create({
         var newNode = {
             text: nodeLabel,
             type: "layout",
-            iconCls: "pimcore_icon_" + type,
+            iconCls: pimcore.object.classes.layout[type].prototype.getIconClass(),
             leaf: false,
             expandable: false,
             expanded: true
@@ -993,7 +999,7 @@ pimcore.object.classes.klass = Class.create({
             text: nodeLabel,
             type: "data",
             leaf: true,
-            iconCls: "pimcore_icon_" + type
+            iconCls: pimcore.object.classes.data[type].prototype.getIconClass()
         };
 
         if (type == "localizedfields" || type == "block") {

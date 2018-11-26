@@ -7,14 +7,14 @@
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ * @copyright  Copyright (c) 2009-2013 pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-pimcore.registerNS("pimcore.object.classes.data.href");
-pimcore.object.classes.data.href = Class.create(pimcore.object.classes.data.data, {
+pimcore.registerNS("pimcore.object.classes.data.advancedManyToManyRelation");
+pimcore.object.classes.data.advancedManyToManyRelation = Class.create(pimcore.object.classes.data.data, {
 
-    type: "href",
+    type: "advancedManyToManyRelation",
     /**
      * define where this datatype is allowed
      */
@@ -28,7 +28,7 @@ pimcore.object.classes.data.href = Class.create(pimcore.object.classes.data.data
     },
 
     initialize: function (treeNode, initData) {
-        this.type = "href";
+        this.type = "advancedManyToManyRelation";
 
         this.initData(initData);
 
@@ -40,33 +40,36 @@ pimcore.object.classes.data.href = Class.create(pimcore.object.classes.data.data
         pimcore.helpers.sanitizeAllowedTypes(this.datax, "assetTypes");
         pimcore.helpers.sanitizeAllowedTypes(this.datax, "documentTypes");
 
-        this.treeNode = treeNode;
-    },
+        // overwrite default settings
+        this.availableSettingsFields = ["name","title","tooltip","mandatory","noteditable","invisible",
+            "visibleGridView","visibleSearch","style"];
 
-    getTypeName: function () {
-        return t("href");
+        this.treeNode = treeNode;
     },
 
     getGroup: function () {
         return "relation";
     },
 
+    getTypeName: function () {
+        return t("advanced_many_to_many_relation");
+    },
+
     getIconClass: function () {
-        return "pimcore_icon_href";
+        return "pimcore_icon_multihrefMetadata";
     },
 
     getLayout: function ($super) {
 
         $super();
 
-        this.specificPanel.removeAll();
-
         this.uniqeFieldId = uniqid();
+        this.specificPanel.removeAll();
 
         var i;
 
         var allowedClasses = [];
-        if(typeof this.datax.classes == "object") {
+        if(this.datax.classes && typeof this.datax.classes == "object") {
             // this is when it comes from the server
             for(i=0; i<this.datax.classes.length; i++) {
                 allowedClasses.push(this.datax.classes[i]);
@@ -77,7 +80,7 @@ pimcore.object.classes.data.href = Class.create(pimcore.object.classes.data.data
         }
 
         var allowedDocuments = [];
-        if(typeof this.datax.documentTypes == "object") {
+        if(this.datax.documentTypes && typeof this.datax.documentTypes == "object") {
             // this is when it comes from the server
             for(i=0; i<this.datax.documentTypes.length; i++) {
                 allowedDocuments.push(this.datax.documentTypes[i]);
@@ -88,7 +91,7 @@ pimcore.object.classes.data.href = Class.create(pimcore.object.classes.data.data
         }
 
         var allowedAssets = [];
-        if(typeof this.datax.assetTypes == "object") {
+        if(this.datax.assetTypes && typeof this.datax.assetTypes == "object") {
             // this is when it comes from the server
             for(i=0; i<this.datax.assetTypes.length; i++) {
                 allowedAssets.push(this.datax.assetTypes[i]);
@@ -98,105 +101,111 @@ pimcore.object.classes.data.href = Class.create(pimcore.object.classes.data.data
             allowedAssets = this.datax.assetTypes.split(",");
         }
 
-        var classesStore = new Ext.data.JsonStore({
-            autoDestroy: true,
+        var classesStore = new Ext.data.Store({
             proxy: {
                 type: 'ajax',
                 url: '/admin/class/get-tree'
             },
+            autoDestroy: true,
             fields: ["text"]
         });
         classesStore.load({
             "callback": function (allowedClasses, success) {
                 if (success) {
-                    Ext.getCmp('class_allowed_object_classes_' + this.uniqeFieldId).setValue(allowedClasses);
+                    Ext.getCmp('class_allowed_object_classes_' + this.uniqeFieldId).setValue(allowedClasses.join(","));
                 }
             }.bind(this, allowedClasses)
         });
 
-        var documentTypeStore = new Ext.data.JsonStore({
-            autoDestroy: true,
+        var documentTypeStore = new Ext.data.Store({
             proxy: {
                 type: 'ajax',
                 url: '/admin/class/get-document-types'
             },
+            autoDestroy: true,
             fields: ["text"]
         });
         documentTypeStore.load({
             "callback": function (allowedDocuments, success) {
                 if (success) {
-                    Ext.getCmp('class_allowed_document_types_' + this.uniqeFieldId).setValue(allowedDocuments);
+                    Ext.getCmp('class_allowed_document_types_' + this.uniqeFieldId).setValue(allowedDocuments.join(","));
                 }
             }.bind(this, allowedDocuments)
         });
 
-        var assetTypeStore = new Ext.data.JsonStore({
-            autoDestroy: true,
+        var assetTypeStore = new Ext.data.Store({
             proxy: {
                 type: 'ajax',
                 url: '/admin/class/get-asset-types'
             },
+            autoDestroy: true,
             fields: ["text"]
         });
         assetTypeStore.load({
             "callback": function (allowedAssets, success) {
                 if (success) {
-                    Ext.getCmp('class_allowed_asset_types_' + this.uniqeFieldId).setValue(allowedAssets);
+                    Ext.getCmp('class_allowed_asset_types_' + this.uniqeFieldId).setValue(allowedAssets.join(","));
                 }
             }.bind(this, allowedAssets)
         });
 
+
+
         this.specificPanel.add([
             {
-                xtype:'fieldset',
-                title: t('layout'),
-                collapsible: false,
-                autoHeight:true,
-                labelWidth: 100,
-                items :[
-                    {
-                        xtype: "numberfield",
-                        fieldLabel: t("width"),
-                        name: "width",
-                        value: this.datax.width
-                    } ,
-                    {
-                        xtype: "checkbox",
-                        fieldLabel: t("lazy_loading"),
-                        name: "lazyLoading",
-                        disabled: this.isInCustomLayoutEditor() || this.lazyLoadingNotPossible(),
-                        checked: this.datax.lazyLoading && !this.lazyLoadingNotPossible()
-                    },
-                    {
-                        xtype: "displayfield",
-                        hideLabel: true,
-                        value: t('lazy_loading_description'),
-                        cls: "pimcore_extra_label_bottom",
-                        style: "padding-bottom:0;"
-                    },
-                    {
-                        xtype: "displayfield",
-                        hideLabel: true,
-                        value: t('lazy_loading_warning'),
-                        cls: "pimcore_extra_label_bottom",
-                        style: "color:red; font-weight: bold; padding-bottom:0;"
-                    },
-                    {
-                        xtype: 'textfield',
-                        width: 600,
-                        fieldLabel: t("path_formatter_class"),
-                        name: 'pathFormatterClass',
-                        value: this.datax.pathFormatterClass
-                    }
-                ]
+                xtype: "numberfield",
+                fieldLabel: t("width"),
+                name: "width",
+                value: this.datax.width
+            },
+            {
+                xtype: "numberfield",
+                fieldLabel: t("height"),
+                name: "height",
+                value: this.datax.height
+            },{
+                xtype: "numberfield",
+                fieldLabel: t("maximum_items"),
+                name: "maxItems",
+                value: this.datax.maxItems,
+                disabled: this.isInCustomLayoutEditor(),
+                minValue: 0
+            },
+            {
+                xtype: "checkbox",
+                fieldLabel: t("lazy_loading"),
+                name: "lazyLoading",
+                checked: this.datax.lazyLoading && !this.lazyLoadingNotPossible(),
+                disabled: this.isInCustomLayoutEditor() || this.lazyLoadingNotPossible()
+            },
+            {
+                xtype: "displayfield",
+                hideLabel: true,
+                value: t('lazy_loading_description'),
+                cls: "pimcore_extra_label_bottom",
+                style: "padding-bottom:0;"
+            },
+            {
+                xtype: "displayfield",
+                hideLabel: true,
+                value: t('lazy_loading_warning'),
+                cls: "pimcore_extra_label_bottom",
+                style: "color:red; font-weight: bold;"
+            },
+            {
+                xtype: 'textfield',
+                width: 600,
+                fieldLabel: t("path_formatter_class"),
+                name: 'pathFormatterClass',
+                value: this.datax.pathFormatterClass
             },
             {
                 xtype:'fieldset',
                 title: t('document_restrictions'),
                 collapsible: false,
                 autoHeight:true,
-                disabled: this.isInCustomLayoutEditor(),
                 labelWidth: 100,
+                disabled: this.isInCustomLayoutEditor(),
                 items :[
                     {
                         xtype: "checkbox",
@@ -220,21 +229,21 @@ pimcore.object.classes.data.href = Class.create(pimcore.object.classes.data.data
                         id: 'class_allowed_document_types_' + this.uniqeFieldId,
                         hidden: !this.datax.documentsAllowed,
                         allowEdit: this.datax.documentsAllowed,
-                        value: allowedDocuments,
+                        value: allowedDocuments.join(","),
                         displayField: "text",
                         valueField: "text",
                         store: documentTypeStore,
                         width: 400
                     })
                 ]
-            }, 
+            },
             {
                 xtype:'fieldset',
                 title: t('asset_restrictions'),
-                disabled: this.isInCustomLayoutEditor(),
                 collapsible: false,
                 autoHeight:true,
                 labelWidth: 100,
+                disabled: this.isInCustomLayoutEditor(),
                 items :[
                     {
                         xtype: "checkbox",
@@ -260,12 +269,14 @@ pimcore.object.classes.data.href = Class.create(pimcore.object.classes.data.data
                         id: 'class_allowed_asset_types_' + this.uniqeFieldId,
                         hidden: !this.datax.assetsAllowed,
                         allowEdit: this.datax.assetsAllowed,
-                        value: allowedAssets,
+                        value: allowedAssets.join(","),
                         displayField: "text",
                         valueField: "text",
                         store: assetTypeStore,
                         width: 400
-                    }), {
+                    })
+                    ,
+                    {
                         fieldLabel: t("upload_path"),
                         name: "assetUploadPath",
                         hidden: !this.datax.assetsAllowed,
@@ -304,10 +315,10 @@ pimcore.object.classes.data.href = Class.create(pimcore.object.classes.data.data
             {
                 xtype:'fieldset',
                 title: t('object_restrictions') ,
-                disabled: this.isInCustomLayoutEditor(),
                 collapsible: false,
                 autoHeight:true,
                 labelWidth: 100,
+                disabled: this.isInCustomLayoutEditor(),
                 items :[
                     {
                         xtype: "checkbox",
@@ -331,7 +342,7 @@ pimcore.object.classes.data.href = Class.create(pimcore.object.classes.data.data
                         id: 'class_allowed_object_classes_' + this.uniqeFieldId,
                         hidden: !this.datax.objectsAllowed,
                         allowEdit: this.datax.objectsAllowed,
-                        value: allowedClasses,
+                        value: allowedClasses.join(","),
                         displayField: "text",
                         valueField: "text",
                         store: classesStore,
@@ -340,11 +351,194 @@ pimcore.object.classes.data.href = Class.create(pimcore.object.classes.data.data
                 ]
             }
 
-
         ]);
 
 
+        this.stores = {};
+        this.grids = {};
+        this.specificPanel.add(this.getGrid("cols", this.datax.columns, true));
+
+
         return this.layout;
+    },
+
+
+    getGrid: function (title, data, hasType) {
+
+        var fields = [
+            'position',
+            'key',
+            'label'
+        ];
+
+        if(hasType) {
+            fields.push('type');
+            fields.push('value');
+            fields.push('width');
+        }
+
+        this.stores[title] = new Ext.data.JsonStore({
+            autoDestroy: false,
+            autoSave: false,
+            idIndex: 1,
+            fields: fields
+        });
+
+        if(!data || data.length < 1) {
+            data = [];
+        }
+
+        if(data) {
+            this.stores[title].loadData(data);
+        }
+
+        var keyTextField = new Ext.form.TextField({
+            //validationEvent: false,
+            validator: function(value) {
+                value = trim(value);
+                var regresult = value.match(/[a-zA-Z0-9_]+/);
+
+                if (value.length > 1 && regresult == value
+                    && in_array(value.toLowerCase(), ["id","key","path","type","index","classname",
+                    "creationdate","userowner","value","class","list","fullpath","childs","values","cachetag",
+                    "cachetags","parent","published","valuefromparent","userpermissions","dependencies",
+                    "modificationdate","usermodification","byid","bypath","data","versions","properties",
+                    "permissions","permissionsforuser","childamount","apipluginbroker","resource",
+                    "parentClass","definition","locked","language"]) == false) {
+                    return true;
+                } else {
+                    return t("objectsMetadata_invalid_key");
+                }
+            }
+        });
+
+
+        var typesColumns = [
+            {text: t("position"), width: 65, sortable: true, dataIndex: 'position',
+                editor: new Ext.form.NumberField({})},
+            {text: t("key"), flex: 40, sortable: true, dataIndex: 'key', editor: keyTextField},
+            {text: t("label"), flex: 40, sortable: true, dataIndex: 'label', editor: new Ext.form.TextField({})}
+        ];
+
+        if(hasType) {
+            var types = {
+                number: t("objectsMetadata_type_number"),
+                text: t("objectsMetadata_type_text"),
+                select: t("objectsMetadata_type_select"),
+                bool: t("objectsMetadata_type_bool"),
+                columnbool: t("objectsMetadata_type_columnbool"),
+                multiselect: t("objectsMetadata_type_multiselect")
+            };
+
+            var typeComboBox = new Ext.form.ComboBox({
+                triggerAction: 'all',
+                allowBlank: false,
+                lazyRender: true,
+                editable: false,
+                mode: 'local',
+                store: new Ext.data.ArrayStore({
+                    id: 'value',
+                    fields: [
+                        'value',
+                        'label'
+                    ],
+                    data: [
+                        ['number', types.number],
+                        ['text', types.text],
+                        ['select', types.select],
+                        ['bool', types.bool],
+                        ['columnbool', types.columnbool],
+                        ['multiselect', types.multiselect]
+                    ]
+                }),
+                valueField: 'value',
+                displayField: 'label'
+            });
+
+            typesColumns.push({text: t("type"), width: 120, sortable: true, dataIndex: 'type', editor: typeComboBox,
+                renderer: function(value) {
+                    return types[value];
+                }});
+            typesColumns.push({text: t("value"), flex: 80, sortable: true, dataIndex: 'value',
+                editor: new Ext.form.TextField({})});
+            typesColumns.push({text: t("width"), width: 80, sortable: true, dataIndex: 'width',
+                editor: new Ext.form.NumberField({})});
+
+
+        }
+
+        this.cellEditing = Ext.create('Ext.grid.plugin.CellEditing', {
+            clicksToEdit: 1
+        });
+
+
+        this.grids[title] = Ext.create('Ext.grid.Panel', {
+            title: t(title),
+            autoScroll: true,
+            autoDestroy: false,
+            store: this.stores[title],
+            height: 200,
+            columns : typesColumns,
+            selModel: Ext.create('Ext.selection.RowModel', {}),
+            plugins: [
+                this.cellEditing
+            ],
+            columnLines: true,
+            name: title,
+            tbar: [
+                {
+                    text: t('add'),
+                    handler: this.onAdd.bind(this, this.stores[title], hasType),
+                    iconCls: "pimcore_icon_add"
+                },
+                '-',
+                {
+                    text: t('delete'),
+                    handler: this.onDelete.bind(this, this.stores[title], title),
+                    iconCls: "pimcore_icon_delete"
+                },
+                '-'
+            ],
+            viewConfig: {
+                forceFit: true
+            }
+        });
+
+        return this.grids[title];
+    },
+
+    onAdd: function (store, hasType, btn, ev) {
+        var u = {};
+        if(hasType) {
+            u.type = "text";
+        }
+        u.position = store.getCount() + 1;
+        u.key = "name";
+        store.add(u);
+    },
+
+    onDelete: function (store, title) {
+        if(store.getCount() > 0) {
+            var selections = this.grids[title].getSelectionModel().getSelected();
+            if (!selections || selections.getCount() == 0) {
+                return false;
+            }
+            var rec = selections.getAt(0);
+            store.remove(rec);
+        }
+    } ,
+
+    getData: function () {
+        if(this.grids) {
+            var cols = [];
+            this.stores.cols.each(function(rec) {
+                cols.push(rec.data);
+                rec.commit();
+            });
+            this.datax.columns = cols;
+        }
+
+        return this.datax;
     },
 
     applySpecialData: function(source) {
@@ -355,11 +549,13 @@ pimcore.object.classes.data.href = Class.create(pimcore.object.classes.data.data
             Ext.apply(this.datax,
                 {
                     width: source.datax.width,
-                    assetUploadPath: source.datax.assetUploadPath,
-                    relationType: source.datax.relationType,
+                    height: source.datax.height,
+                    maxItems: source.datax.maxItems,
+                    columns: source.datax.columns,
                     remoteOwner: source.datax.remoteOwner,
                     lazyLoading: source.datax.lazyLoading,
-                    classes: source.datax.classes,
+                    assetUploadPath: source.datax.assetUploadPath,
+                    relationType: source.datax.relationType,
                     objectsAllowed: source.datax.objectsAllowed,
                     assetsAllowed: source.datax.assetsAllowed,
                     assetTypes: source.datax.assetTypes,
@@ -370,3 +566,6 @@ pimcore.object.classes.data.href = Class.create(pimcore.object.classes.data.data
     }
 
 });
+
+// @TODO BC layer, to be removed in v6.0
+pimcore.object.classes.data.multihrefMetadata = pimcore.object.classes.data.advancedManyToManyRelation;

@@ -1,5 +1,31 @@
 # Upgrade Notes for Upgrades within Pimcore 5
 
+
+## Version 5.6.0
+- Removed method \Pimcore\Model\DataObject\ClassDefinition\Data::setFieldtype($fieldtype)
+
+#### Data Objects: renamed relational data-types
+For better understanding we've renamed all relational data-types to a more meaningful name.  
+We've not just renamed them in the UI, but for consistency we've decided to rename all the files, classes and 
+identifiers as well.  
+
+**The necessary migration is performed automatically after the update, so there's no manual work necessary** 
+
+- If you've checked in files within `var/classes` into your VCS, please update them after the upgrade. 
+
+###### Overview of Renamings
+Please note that the following PHP classes are located in the namespace `\Pimcore\Model\DataObject\ClassDefinition\Data` and 
+the JS classes in `pimcore.object.tags` and `pimcore.object.classes.data`. 
+
+| Old Name | Old PHP Class Name | Old JS Class Name | New Name | New PHP Class Name | New JS Class Name |
+| ---- | ---- | ---- | ---- | ---- | ---- |  
+| Href | `Href` | `href` | **Many-To-One Relation** | `ManyToOneRelation` | `manyToOneRelation` | 
+| Multihref | `Multihref` | `multihref` | **Many-To-Many Relation** | `ManyToManyRelation` | `manyToManyRelation` | 
+| Multihref Advanced | `MultihrefMetadata` | `multihrefMetadata` | **Advanced Many-To-Many Relation** | `AdvancedManyToManyRelation` | `advancedManyToManyRelation` | 
+| Objects | `Objects` | `objects` | **Many-To-Many Object Relation** | `ManyToManyObjectRelation` | `manyToManyObjectRelation` | 
+| Objects with Metadata | `ObjectsMetadata` | `objectsMetadata` | **Advanced Many-To-One Object Relation** | `AdvancedManyToManyObjectRelation` | `advancedManyToManyObjectRelation` | 
+
+
 ## Version 5.5.4
 
 The support for ElasticSearch version 6 has been added. 

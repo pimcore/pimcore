@@ -884,7 +884,7 @@ class Service
             $object = DataObject::getById($id);
 
             if ($object instanceof DataObject\Concrete) {
-                // load all data (eg. lazy loaded fields like multihref, object, ...)
+                // load all data (eg. lazy loaded fields like relational data types ...)
                 DataObject\Service::loadAllObjectFields($object);
                 $apiObject = Webservice\Data\Mapper::map($object, '\\Pimcore\\Model\\Webservice\\Data\\DataObject\\Concrete\\Out', 'out');
 
@@ -1213,7 +1213,7 @@ class Service
             $object = DataObject\Concrete::getById($id);
 
             if ($object instanceof DataObject\Concrete) {
-                // load all data (eg. lazy loaded fields like multihref, object, ...)
+                // load all data (eg. lazy loaded fields like relational data types ...)
                 $classId = $object->getClassId();
 
                 return $this->getClassById($classId);

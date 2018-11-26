@@ -23,7 +23,7 @@ use Pimcore\Model\DataObject;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
 
-class Href extends Model\DataObject\ClassDefinition\Data\Relations\AbstractRelations
+class ManyToOneRelation extends Model\DataObject\ClassDefinition\Data\Relations\AbstractRelations
 {
     use Model\DataObject\ClassDefinition\Data\Extension\Relation;
 
@@ -32,7 +32,7 @@ class Href extends Model\DataObject\ClassDefinition\Data\Relations\AbstractRelat
      *
      * @var string
      */
-    public $fieldtype = 'href';
+    public $fieldtype = 'manyToOneRelation';
 
     /**
      * @var int
@@ -395,12 +395,12 @@ class Href extends Model\DataObject\ClassDefinition\Data\Relations\AbstractRelat
         } elseif (empty($data)) {
             $allow = true;
         } else {
-            Logger::error('invalid data in href');
+            Logger::error(sprintf('Invalid data in field `%s` [type: %s]', $this->getName(), $this->getFieldtype()));
             $allow = false;
         }
 
         if (!$allow) {
-            throw new \Exception('Invalid href relation', null, null);
+            throw new \Exception(sprintf('Invalid data in field `%s` [type: %s]', $this->getName(), $this->getFieldtype()), null, null);
         }
     }
 
@@ -555,7 +555,7 @@ class Href extends Model\DataObject\ClassDefinition\Data\Relations\AbstractRelat
                     if ($idMapper && $idMapper->ignoreMappingFailures()) {
                         $idMapper->recordMappingFailure('object', $relatedObject->getId(), $type, $value['id']);
                     } else {
-                        throw new \Exception('cannot get values from web service import - invalid href relation');
+                        throw new \Exception('cannot get values from web service import - invalid ' . $this->getFieldtype() . ' relation');
                     }
                 }
             } else {

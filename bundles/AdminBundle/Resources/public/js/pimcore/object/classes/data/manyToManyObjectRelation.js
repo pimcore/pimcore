@@ -11,10 +11,10 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-pimcore.registerNS("pimcore.object.classes.data.objects");
-pimcore.object.classes.data.objects = Class.create(pimcore.object.classes.data.data, {
+pimcore.registerNS("pimcore.object.classes.data.manyToManyObjectRelation");
+pimcore.object.classes.data.manyToManyObjectRelation = Class.create(pimcore.object.classes.data.data, {
 
-    type: "objects",
+    type: "manyToManyObjectRelation",
     /**
      * define where this datatype is allowed
      */
@@ -28,7 +28,7 @@ pimcore.object.classes.data.objects = Class.create(pimcore.object.classes.data.d
     },
 
     initialize: function (treeNode, initData) {
-        this.type = "objects";
+        this.type = "manyToManyObjectRelation";
 
         this.initData(initData);
 
@@ -50,7 +50,7 @@ pimcore.object.classes.data.objects = Class.create(pimcore.object.classes.data.d
     },
 
     getTypeName: function () {
-        return t("objects");
+        return t("many_to_many_object_relation");
     },
 
     getIconClass: function () {
@@ -177,3 +177,6 @@ pimcore.object.classes.data.objects = Class.create(pimcore.object.classes.data.d
     }
 
 });
+
+// @TODO BC layer, to be removed in v6.0
+pimcore.object.classes.data.objects = pimcore.object.classes.data.manyToManyObjectRelation;

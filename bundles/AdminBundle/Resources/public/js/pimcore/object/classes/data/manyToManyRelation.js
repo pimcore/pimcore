@@ -11,10 +11,10 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-pimcore.registerNS("pimcore.object.classes.data.multihref");
-pimcore.object.classes.data.multihref = Class.create(pimcore.object.classes.data.data, {
+pimcore.registerNS("pimcore.object.classes.data.manyToManyRelation");
+pimcore.object.classes.data.manyToManyRelation = Class.create(pimcore.object.classes.data.data, {
 
-    type: "multihref",
+    type: "manyToManyRelation",
     /**
      * define where this datatype is allowed
      */
@@ -28,7 +28,7 @@ pimcore.object.classes.data.multihref = Class.create(pimcore.object.classes.data
     },
 
     initialize: function (treeNode, initData) {
-        this.type = "multihref";
+        this.type = "manyToManyRelation";
 
         this.initData(initData);
 
@@ -48,7 +48,7 @@ pimcore.object.classes.data.multihref = Class.create(pimcore.object.classes.data
     },
 
     getTypeName: function () {
-        return t("multihref");
+        return t("many_to_many_relation");
     },
 
     getGroup: function () {
@@ -386,3 +386,6 @@ pimcore.object.classes.data.multihref = Class.create(pimcore.object.classes.data
     }
 
 });
+
+// @TODO BC layer, to be removed in v6.0
+pimcore.object.classes.data.multihref = pimcore.object.classes.data.manyToManyRelation;

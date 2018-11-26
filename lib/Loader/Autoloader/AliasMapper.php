@@ -43,6 +43,11 @@ class AliasMapper extends AbstractAutoloader
         'Pimcore\Service\Request\TemplateResolver' => \Pimcore\Http\Request\Resolver\TemplateResolver::class,
         'Pimcore\Service\Request\TemplateVarsResolver' => \Pimcore\Http\Request\Resolver\TemplateVarsResolver::class,
         'Pimcore\Service\Request\ViewModelResolver' => \Pimcore\Http\Request\Resolver\ViewModelResolver::class,
+        'Pimcore\Model\DataObject\ClassDefinition\Data\Multihref' => \Pimcore\Model\DataObject\ClassDefinition\Data\ManyToManyRelation::class,
+        'Pimcore\Model\DataObject\ClassDefinition\Data\Href' => \Pimcore\Model\DataObject\ClassDefinition\Data\ManyToOneRelation::class,
+        'Pimcore\Model\DataObject\ClassDefinition\Data\MultihrefMetadata' => \Pimcore\Model\DataObject\ClassDefinition\Data\AdvancedManyToManyRelation::class,
+        'Pimcore\Model\DataObject\ClassDefinition\Data\Objects' => \Pimcore\Model\DataObject\ClassDefinition\Data\ManyToManyObjectRelation::class,
+        'Pimcore\Model\DataObject\ClassDefinition\Data\ObjectsMetadata' => \Pimcore\Model\DataObject\ClassDefinition\Data\AdvancedManyToManyObjectRelation::class,
     ];
 
     public function createAliases()
