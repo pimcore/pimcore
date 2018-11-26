@@ -39,10 +39,6 @@ class IndexFieldSelectionCombo extends Select
 
     protected function buildOptions(): array
     {
-        if (!PimcoreEcommerceFrameworkBundle::isInstalled()) {
-            return [];
-        }
-
         $indexService = Factory::getInstance()->getIndexService();
         $indexColumns = $indexService->getIndexAttributes(true);
 
