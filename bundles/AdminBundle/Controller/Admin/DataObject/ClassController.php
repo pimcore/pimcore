@@ -824,7 +824,8 @@ class ClassController extends AdminController implements EventedControllerInterf
                 }
                 if ($forObjectEditor) {
                     $itemLayoutDefinitions = $item->getLayoutDefinitions();
-                    DataObject\Service::enrichLayoutDefinition($itemLayoutDefinitions, null);
+                    $object = DataObject\AbstractObject::getById($request->get('object_id'));
+                    DataObject\Service::enrichLayoutDefinition($itemLayoutDefinitions, $object);
                     $layoutDefinitions[$item->getKey()] = $itemLayoutDefinitions;
                 }
                 $groups[$item->getGroup()]['children'][] =
