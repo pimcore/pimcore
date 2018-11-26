@@ -27,7 +27,7 @@ use Pimcore\Model\Element;
 /**
  * @method \Pimcore\Model\Document\Tag\Dao getDao()
  */
-class Href extends Model\Document\Tag
+class Relation extends Model\Document\Tag
 {
     /**
      * ID of the source object
@@ -64,9 +64,8 @@ class Href extends Model\Document\Tag
      */
     public function getType()
     {
-
         //TODO: getType != $type ... that might be dangerous
-        return 'href';
+        return 'relation';
     }
 
     /**
@@ -362,7 +361,7 @@ class Href extends Model\Document\Tag
     /**
      * @param int $id
      *
-     * @return Document\Tag\Href
+     * @return self
      */
     public function setId($id)
     {
@@ -382,7 +381,7 @@ class Href extends Model\Document\Tag
     /**
      * @param string $subtype
      *
-     * @return Document\Tag\Href
+     * @return self
      */
     public function setSubtype($subtype)
     {

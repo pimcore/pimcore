@@ -11,8 +11,8 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-pimcore.registerNS("pimcore.document.tags.multihref");
-pimcore.document.tags.multihref = Class.create(pimcore.document.tag, {
+pimcore.registerNS("pimcore.document.tags.relations");
+pimcore.document.tags.relations = Class.create(pimcore.document.tag, {
 
     initialize: function (id, name, options, data, inherited) {
         this.id = id;
@@ -471,6 +471,9 @@ pimcore.document.tags.multihref = Class.create(pimcore.document.tag, {
     },
 
     getType: function () {
-        return "multihref";
+        return "relations";
     }
 });
+
+// @TODO BC layer, to be removed in v6.0
+pimcore.document.tags.multihref = pimcore.document.tags.relations;
