@@ -504,7 +504,12 @@ pimcore.element.selector.object = Class.create(pimcore.element.selector.abstract
                         pimcore.helpers.showNotification(t("error"), t("error_resetting_config"), "error");
                     }
                 });
-            }.bind(this), true, this.settings
+            }.bind(this), true, this.settings,
+            {
+                allowPreview: true,
+                classId: this.classId,
+                objectId: this.object.id
+            }
         );
     },
 

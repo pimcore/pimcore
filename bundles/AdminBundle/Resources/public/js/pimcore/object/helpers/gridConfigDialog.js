@@ -506,6 +506,11 @@ pimcore.object.helpers.gridConfigDialog = Class.create({
                 ],
                 data: storedata
             }),
+            listeners: {
+                change: function() {
+                    this.updatePreview();
+                }.bind(this)
+            },
             triggerAction: 'all',
             valueField: 'id',
             displayField: 'label'
