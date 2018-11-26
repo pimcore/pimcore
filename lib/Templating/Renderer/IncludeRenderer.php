@@ -65,7 +65,7 @@ class IncludeRenderer
 
         $originalInclude = $include;
 
-        // this is if $this->inc is called eg. with $this->href() as argument
+        // this is if $this->inc is called eg. with $this->relation() as argument
         if (!$include instanceof PageSnippet && is_object($include) && method_exists($include, '__toString')) {
             $include = (string)$include;
         }

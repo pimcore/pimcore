@@ -1,7 +1,7 @@
-# Multihref Editable
+# Relations (Many-To-Many) Editable
 
 ## General
-Multihref editable provides one to many relation to other Pimcore elements (document, asset, object). 
+The relations editable provides many to many relation to other Pimcore elements (document, asset, object). 
 
 
 ## Configuration 
@@ -31,17 +31,17 @@ Multihref editable provides one to many relation to other Pimcore elements (docu
 
 ### Basic Usage
 
-The code below is responsible for showing the list of elements types related to the multihref. 
+The code below is responsible for showing a list of elements types related to the relations editable. 
 
 <div class="code-section">
 
 ```php
 <p><?= $this->translate("Types of elements"); ?>:</p>
 <?php if($this->editmode): ?>
-    <?= $this->multihref("objectPaths"); ?>
+    <?= $this->relations("objectPaths"); ?>
 <?php else: ?>
     <ul>
-        <?php foreach($this->multihref("objectPaths") as $element):
+        <?php foreach($this->relations("objectPaths") as $element):
             /** @var \Pimcore\Model\Element\ElementInterface $element */
             ?>
             <li><?= $element->getType(); ?></li>
@@ -53,10 +53,10 @@ The code below is responsible for showing the list of elements types related to 
 ```twig
 <p>{{ "Types of elements" | trans }}:</p>
 {% if editmode %}
-    {{ pimcore_multihref("objectPaths") }}
+    {{ pimcore_relations("objectPaths") }}
 {% else %}
 <ul>
-    {% for element in pimcore_multihref("objectPaths") %}
+    {% for element in pimcore_relations("objectPaths") %}
         <li>{{ element.getType() }}</li>
     {% endfor %}
 </ul>
@@ -66,11 +66,11 @@ The code below is responsible for showing the list of elements types related to 
 
 Picture below, presents the editmode preview:
 
-![Multihref editable - editmode preview](../../img/editables_multihref_editmode_preview.png)
+![Relations editable - editmode preview](../../img/editables_multihref_editmode_preview.png)
 
 The frontend part looks like that:
 
-![Multihref editable - frontend preview](../../img/editables_multihref_preview.png)
+![Relations editable - frontend preview](../../img/editables_multihref_preview.png)
 
 To better understand what exactly is the `$element` variable, have a look at the output below:
 
@@ -88,12 +88,12 @@ array(6) {
 
 
 ### Example with allowed types and subtypes
-Similar to the Href editable, Multihref also could specify allowed `types`, `subtypes` and `classes`. 
+Similar to the single relation editable, this editable also could specify allowed `types`, `subtypes` and `classes`. 
 For example:
 <div class="code-section">
 
 ```php
-<?= $this->multihref("objectPaths", [
+<?= $this->relations("objectPaths", [
     "types" => ["asset","object"],
         "subtypes" => [
             "asset" => ["video","image"],
@@ -103,7 +103,7 @@ For example:
 ]); ?>
 ```
 ```twig
-{{ pimcore_multihref("objectPaths", {
+{{ pimcore_relations("objectPaths", {
     "types": ["asset","object"],
     "subtypes": {
         "asset": ["video","image"],

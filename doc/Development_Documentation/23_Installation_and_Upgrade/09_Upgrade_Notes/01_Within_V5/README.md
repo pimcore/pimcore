@@ -26,6 +26,22 @@ the JS classes in `pimcore.object.tags` and `pimcore.object.classes.data`.
 | Objects with Metadata | `ObjectsMetadata` | `objectsMetadata` | **Advanced Many-To-One Object Relation** | `AdvancedManyToManyObjectRelation` | `advancedManyToManyObjectRelation` | 
 
 
+#### Documents: renamed relational editables
+In addition to the renaming of all relational object data-types, we've also renamed the two relational editables 
+for documents, namely `href` and `multihref`.
+
+**The necessary migration is performed automatically after the update, so there's no manual work necessary** 
+
+###### Overview of Renamings
+Please note that the following PHP classes are located in the namespace `\Pimcore\Model\Document\Tag` and 
+the JS classes in `pimcore.document.tags`. 
+
+| Old Templating Helper | Old PHP Class Name | Old JS Class Name | New Templating Helper | New PHP Class Name | New JS Class Name |
+| ---- | ---- | ---- | ---- | ---- | ---- |  
+| `$this->href()` | `Href` | `href` | `$this->relation()` | `Relation` | `relation` | 
+| `$this->multihref()` | `Multihref` | `multihref` | `$this->relations()` | `Relations` | `relations` | 
+
+
 ## Version 5.5.4
 
 The support for ElasticSearch version 6 has been added. 

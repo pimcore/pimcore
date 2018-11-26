@@ -11,8 +11,8 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-pimcore.registerNS("pimcore.document.tags.href");
-pimcore.document.tags.href = Class.create(pimcore.document.tag, {
+pimcore.registerNS("pimcore.document.tags.relation");
+pimcore.document.tags.relation = Class.create(pimcore.document.tag, {
 
     initialize: function(id, name, options, data, inherited) {
 
@@ -318,6 +318,9 @@ pimcore.document.tags.href = Class.create(pimcore.document.tag, {
     },
 
     getType: function () {
-        return "href";
+        return "relation";
     }
 });
+
+// @TODO BC layer, to be removed in v6.0
+pimcore.document.tags.href = pimcore.document.tags.relation;

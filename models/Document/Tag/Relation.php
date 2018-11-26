@@ -361,7 +361,7 @@ class Relation extends Model\Document\Tag
     /**
      * @param int $id
      *
-     * @return Document\Tag\Href
+     * @return self
      */
     public function setId($id)
     {
@@ -381,7 +381,7 @@ class Relation extends Model\Document\Tag
     /**
      * @param string $subtype
      *
-     * @return Document\Tag\Href
+     * @return self
      */
     public function setSubtype($subtype)
     {

@@ -1,9 +1,9 @@
-# Href Editable
+# Relation (Many-To-One) Editable
 
 ## General
 
-Href provides the functionality to create a reference to an other element in Pimcore (document, asset, object).
-In frontend-mode the href returns the path of the linked element.
+The relation editable provides the functionality to create a reference to an other element in Pimcore (document, asset, object).
+In frontend-mode this editable returns the path of the linked element.
 
 ## Configuration
 
@@ -34,21 +34,21 @@ You can just create the code line like, below:
 <div class="code-section">
 
 ```php 
-<?= $this->href("myHref"); ?>
+<?= $this->relation("myRelation"); ?>
 ```
 
 ```twig
-{{ pimcore_href("myHref") }}
+{{ pimcore_relation("myRelation") }}
 ```
 </div>
 
 After, the view in the administration panel changes like in the picture:
 
-![Href editable preview in the administration panel](../../img/href_backend_preview.png)
+![Relation editable preview in the administration panel](../../img/href_backend_preview.png)
 
 ### Using Restriction
 
-If you want specify elements which could be assigned to the href editable, use `types`, `subtypes` and `classes`
+If you want specify elements which could be assigned to the relation editable, use `types`, `subtypes` and `classes`
 options in the editable configuration.
 
 ##### Example
@@ -56,7 +56,7 @@ options in the editable configuration.
 <div class="code-section">
 
 ```php
-<?= $this->href("myHref", [
+<?= $this->relation("myRelation", [
     "types" => ["asset","object"],
     "subtypes" => [
         "asset" => ["video","image"],
@@ -67,7 +67,7 @@ options in the editable configuration.
 ```
 
 ```twig
-{{ pimcore_href("myHref",{
+{{ pimcore_relation("myRelation",{
     "types": ["asset","object"],
     "subtypes": {
         "assets": ["video", "image"],
@@ -82,36 +82,36 @@ options in the editable configuration.
 
 
 
-We restricted the `myHref` editable to the following entities: 
+We restricted the `myRelation` editable to the following entities: 
 * Video / Image (Assets) 
 * Person Objects (`\Pimcore\Model\DataObject\Person`) (Objects) 
  
 As you see in the picture below, it's impossible to drop any other type to that editable.
 
-![Href restriction](../../img/href_restriction_in_backend.png)
+![Relation restriction](../../img/href_restriction_in_backend.png)
 
 ### Download Example
 
-Another useful use-case for the href editable is a download link. 
+Another useful use-case for the relation editable is a download link. 
 
 <div class="code-section">
 
 ```php
 <?php if ($this->editmode): ?>
-    <?= $this->href("myHref"); ?>
+    <?= $this->relation("myRelation"); ?>
 <?php else: ?>
-    <?php if ($this->href("myHref")->getElement() instanceof Asset): ?>
-        <a href="<?= $this->href("myHref")->getFullPath() ?>"><?= $this->translate("Download") ?></a>
+    <?php if ($this->relation("myRelation")->getElement() instanceof Asset): ?>
+        <a href="<?= $this->relation("myRelation")->getFullPath() ?>"><?= $this->translate("Download") ?></a>
     <?php endif; ?>
 <?php endif; ?>
 ```
 
 ```twig
 {% if editmode %}
-    {{ pimcore_href("myHref") }}
+    {{ pimcore_relation("myRelation") }}
 {% else %}
-    {% if pimcore_href("myHref").getElement() is instanceof('\\Pimcore\\Model\\Asset')  %}
-        <a href="{{ pimcore_href("myHref").getFullPath() }}">{{ "Download" | trans }}</a>
+    {% if pimcore_relation("myRelation").getElement() is instanceof('\\Pimcore\\Model\\Asset')  %}
+        <a href="{{ pimcore_relation("myRelation").getFullPath() }}">{{ "Download" | trans }}</a>
     {% endif %}
 {% endif %}
 ```

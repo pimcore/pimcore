@@ -121,7 +121,7 @@ and implement your own logic.
 
 ### Asset Upload Path
 
-Certain data types (like image, href, etc ...) allow you to specify a dedicated upload path which defaults 
+Certain data types (like image, relations, etc ...) allow you to specify a dedicated upload path which defaults 
 to '/_default_upload_bucket' if not otherwise specified in the config yml file or in the class definition.
 
 The [AssetEvents::RESOLVE_UPLOAD_TARGET](https://github.com/pimcore/pimcore/blob/master/lib/Event/AssetEvents.php) event

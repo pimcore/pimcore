@@ -88,6 +88,16 @@ class TagRenderer implements LoggerAwareInterface
                 ]);
 
                 $tag = $document->getElement($name);
+
+                // @TODO: BC layer, to be removed in v6.0
+                $aliases = [
+                    'href' => 'relation',
+                    'multihref' => 'relations',
+                ];
+                if(isset($aliases[$type])) {
+                    $type = $aliases[$type];
+                }
+
                 if ($tag instanceof Tag && $tag->getType() === $type) {
                     // call the load() method if it exists to reinitialize the data (eg. from serializing, ...)
                     if (method_exists($tag, 'load')) {

@@ -26,7 +26,7 @@ use Pimcore\Model\Element;
 /**
  * @method \Pimcore\Model\Document\Tag\Dao getDao()
  */
-class Multihref extends Model\Document\Tag implements \Iterator
+class Relations extends Model\Document\Tag implements \Iterator
 {
     /**
      * @var array
@@ -45,7 +45,7 @@ class Multihref extends Model\Document\Tag implements \Iterator
      */
     public function getType()
     {
-        return 'multihref';
+        return 'relations';
     }
 
     /**
