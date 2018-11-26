@@ -767,3 +767,6 @@ pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.
         return targets;
     }
 });
+
+// @TODO BC layer, to be removed in v6.0
+pimcore.object.tags.objects = pimcore.object.tags.manyToManyObjectRelation;

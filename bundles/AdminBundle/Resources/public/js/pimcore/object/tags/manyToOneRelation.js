@@ -492,3 +492,6 @@ pimcore.object.tags.manyToOneRelation = Class.create(pimcore.object.tags.abstrac
         return this.getValue();
     }
 });
+
+// @TODO BC layer, to be removed in v6.0
+pimcore.object.tags.href = pimcore.object.tags.manyToOneRelation;

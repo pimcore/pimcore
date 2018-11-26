@@ -12,8 +12,6 @@ identifiers as well.
 **The necessary migration is performed automatically after the update, so there's no manual work necessary** 
 
 - If you've checked in files within `var/classes` into your VCS, please update them after the upgrade. 
-- If you're extending core relational data-types in your application or bundle, please update them accordingly. 
-
 
 ###### Overview of Renamings
 Please note that the following PHP classes are located in the namespace `\Pimcore\Model\DataObject\ClassDefinition\Data` and 

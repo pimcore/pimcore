@@ -386,3 +386,6 @@ pimcore.object.classes.data.manyToManyRelation = Class.create(pimcore.object.cla
     }
 
 });
+
+// @TODO BC layer, to be removed in v6.0
+pimcore.object.classes.data.multihref = pimcore.object.classes.data.manyToManyRelation;
