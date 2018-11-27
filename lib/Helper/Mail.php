@@ -422,7 +422,10 @@ CSS;
                     $entryAddress = trim($matches[2]);
                     $entryName = trim($matches[1]);
                 }
-                $cleanedEmails[] = ['email' => $entryAddress, 'name' => $entryName];
+
+                if($entryAddress) {
+                    $cleanedEmails[] = ['email' => $entryAddress, 'name' => $entryName];
+                }
             }
         }
 
