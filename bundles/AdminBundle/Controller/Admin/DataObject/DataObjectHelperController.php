@@ -2457,19 +2457,7 @@ class DataObjectHelperController extends AdminController
      */
     public function getAvailableVisibleFieldsAction(Request $request)
     {
-        $result = $this->doGetAvailableVisibleFields($request);
 
-        return $this->adminJson($result);
-    }
-
-    /**
-     * @param Request $request
-     * @param bool $isDelete
-     *
-     * @return array
-     */
-    public function doGetAvailableVisibleFields(Request $request)
-    {
         $class = null;
         $fields = null;
 
@@ -2487,7 +2475,7 @@ class DataObjectHelperController extends AdminController
         }
 
         if (!$classList) {
-            return ["availableFields" => []];
+            return $this->adminJson(["availableFields" => []]);
         }
         $availableFields = [];
         foreach (self::SYSTEM_COLUMNS as $field) {
@@ -2534,7 +2522,7 @@ class DataObjectHelperController extends AdminController
             ];
         }
 
-        return ["availableFields" => $availableFields];
+        return $this->adminJson(["availableFields" => $availableFields]);
     }
 
     protected function processAvailableFieldDefinitions($fds, &$firstOne, &$commonFields)

@@ -544,7 +544,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
             } else {
                 $refKey = $key;
             }
-            if (!$fielddefinition instanceof DataObject\ClassDefinition\Data\Objects || $fielddefinition instanceof DataObject\Data\ObjectMetadata) {
+            if (!$fielddefinition instanceof DataObject\ClassDefinition\Data\ManyToManyObjectRelation || $fielddefinition instanceof DataObject\ClassDefinition\Data\AdvancedManyToManyObjectRelation) {
                 $relations = $object->getRelationData($refKey, !$fielddefinition->isRemoteOwner(), $refId);
             }
             if (empty($relations) && !empty($parent)) {
@@ -555,7 +555,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                 if ($fielddefinition instanceof DataObject\ClassDefinition\Data\Href) {
                     $data = $relations[0];
                     $data['published'] = (bool) $data['published'];
-                } else if ($fielddefinition instanceof DataObject\ClassDefinition\Data\Objects && !$fielddefinition instanceof DataObject\Data\ObjectMetadata) {
+                } else if ($fielddefinition instanceof DataObject\ClassDefinition\Data\ManyToManyObjectRelation && !$fielddefinition instanceof DataObject\ClassDefinition\Data\AdvancedManyToManyObjectRelation) {
                     $fieldData = $object->$getter();
                     $data = $fielddefinition->getDataForEditmode($fieldData, $object, $objectFromVersion);
                 } else {
