@@ -16,8 +16,8 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\AdminBundle\GDPR\DataProvider;
 
 use Pimcore\Model\DataObject\AbstractObject;
-use Pimcore\Model\DataObject\Data\ElementMetadata;
 use Pimcore\Model\DataObject\Concrete;
+use Pimcore\Model\DataObject\Data\ElementMetadata;
 use Pimcore\Model\DataObject\Data\ObjectMetadata;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Element\Service;

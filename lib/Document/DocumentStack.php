@@ -68,11 +68,13 @@ class DocumentStack
 
     /**
      * @param callable $function
+     *
      * @return Document|null
      */
-    public function findOneBy(callable $function) {
-        foreach($this->documents as $document) {
-            if($function($document)) {
+    public function findOneBy(callable $function)
+    {
+        foreach ($this->documents as $document) {
+            if ($function($document)) {
                 return $document;
             }
         }

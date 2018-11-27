@@ -16,7 +16,6 @@ namespace Pimcore\Tool;
 
 use Pimcore\Model\Document;
 use Pimcore\Model\Site;
-use Symfony\Cmf\Bundle\RoutingBundle\Routing\DynamicRouter;
 
 class Frontend
 {
@@ -159,13 +158,14 @@ class Frontend
                 // e.g. when an email is sent from within a document, the email shouldn't contain WebP images, even when the
                 // triggering client (browser) has WebP support, because the email client (e.g. Outlook) might not support WebP
                 $hasUnsupportedTypeInStack = $documentStack->findOneBy(function ($doc) {
-                    if(in_array($doc->getType(), ['email', 'newsletter', 'printpage', 'printcontainer'])) {
+                    if (in_array($doc->getType(), ['email', 'newsletter', 'printpage', 'printcontainer'])) {
                         return true;
                     }
+
                     return false;
                 });
 
-                if($hasUnsupportedTypeInStack) {
+                if ($hasUnsupportedTypeInStack) {
                     return false;
                 }
 

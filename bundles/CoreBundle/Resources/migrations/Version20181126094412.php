@@ -15,6 +15,7 @@ class Version20181126094412 extends AbstractPimcoreMigration
 
     /**
      * @param Schema $schema
+     *
      * @throws \Exception
      */
     public function up(Schema $schema)

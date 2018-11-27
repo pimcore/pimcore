@@ -14,10 +14,7 @@
 
 namespace Pimcore\Bundle\CoreBundle\EventListener\Frontend;
 
-use Pimcore\Bundle\CoreBundle\EventListener\Traits\PimcoreContextAwareTrait;
 use Pimcore\Document\DocumentStack;
-use Pimcore\Document\Tag\Block\BlockStateStack;
-use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
 use Pimcore\Model\Document;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
@@ -57,8 +54,8 @@ class DocumentStackListener implements EventSubscriberInterface, LoggerAwareInte
     {
         $request = $event->getRequest();
 
-        if($currentDoc = $request->get(DynamicRouter::CONTENT_KEY)) {
-            if($currentDoc instanceof Document) {
+        if ($currentDoc = $request->get(DynamicRouter::CONTENT_KEY)) {
+            if ($currentDoc instanceof Document) {
                 $this->documentStack->push($currentDoc);
             }
         }
@@ -70,8 +67,8 @@ class DocumentStackListener implements EventSubscriberInterface, LoggerAwareInte
     public function onKernelResponse(FilterResponseEvent $event)
     {
         $request = $event->getRequest();
-        if($currentDoc = $request->get(DynamicRouter::CONTENT_KEY)) {
-            if($currentDoc instanceof Document) {
+        if ($currentDoc = $request->get(DynamicRouter::CONTENT_KEY)) {
+            if ($currentDoc instanceof Document) {
                 $this->documentStack->pop();
             }
         }
