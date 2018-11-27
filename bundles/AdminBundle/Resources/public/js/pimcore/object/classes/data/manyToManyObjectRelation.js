@@ -152,8 +152,58 @@ pimcore.object.classes.data.manyToManyObjectRelation = Class.create(pimcore.obje
             valueField: "text",
             store: classesStore,
             width: 600,
-            disabled: this.isInCustomLayoutEditor()
+            disabled: this.isInCustomLayoutEditor(),
+            listeners: {
+                change: function(field, classNameValue, oldValue) {
+                    this.datax.allowedClassId = classNameValue;
+                    if (classNameValue != null) {
+                        var submitValue = classNameValue.join(',');
+                        this.fieldStore.load({params:{classes:submitValue}});
+                    }
+                }.bind(this)
+            }
         }));
+
+        this.fieldStore = new Ext.data.Store({
+            proxy: {
+                type: 'ajax',
+                url: '/admin/object-helper/get-available-visible-vields',
+                extraParams: {
+                    // no_brick_columns: "true",
+                    // gridtype: 'all',
+                    classes: classes
+                },
+                reader: {
+                    type: 'json',
+                    rootProperty: "availableFields"
+                }
+            },
+            fields: ['key', 'label'],
+            autoLoad: false,
+            forceSelection:true,
+            listeners: {
+                load: function() {
+                    this.fieldSelect.setValue(this.datax.visibleFields);
+                }.bind(this)
+
+            }
+        });
+        this.fieldStore.load();
+
+        this.fieldSelect = new Ext.ux.form.MultiSelect({
+            name: "visibleFields",
+            triggerAction: "all",
+            editable: false,
+            fieldLabel: t("objectsMetadata_visible_fields"),
+            store: this.fieldStore,
+            value: this.datax.visibleFields,
+            displayField: "key",
+            valueField: "key",
+            width: 400,
+            height: 300
+        });
+        this.specificPanel.add(this.fieldSelect);
+
 
         return this.layout;
     },
