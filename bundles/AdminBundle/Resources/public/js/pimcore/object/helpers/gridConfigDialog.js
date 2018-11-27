@@ -1015,7 +1015,7 @@ pimcore.object.helpers.gridConfigDialog = Class.create({
         return result;
     },
 
-    getOperatorTree(operatorGroupName, groups) {
+    getOperatorTree: function (operatorGroupName, groups) {
         var groupKeys = [];
         for (k in groups) {
             if (groups.hasOwnProperty(k)) {
