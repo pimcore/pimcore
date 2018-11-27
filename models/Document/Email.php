@@ -126,6 +126,7 @@ class Email extends Model\Document\PageSnippet
     /**
      * Returns the "to" receivers as array
      *
+     * @deprecated use \Pimcore\Helper\Mail::parseEmailAddressField instead
      * @return array
      */
     public function getToAsArray()
@@ -138,6 +139,7 @@ class Email extends Model\Document\PageSnippet
      *
      * @param $key
      *
+     * @deprecated use \Pimcore\Helper\Mail::parseEmailAddressField instead
      * @return array
      */
     protected function getAsArray($key)
@@ -203,6 +205,7 @@ class Email extends Model\Document\PageSnippet
     /**
      * Returns the "from" email address as array
      *
+     * @deprecated use \Pimcore\Helper\Mail::parseEmailAddressField instead
      * @return array
      */
     public function getFromAsArray()
@@ -239,6 +242,7 @@ class Email extends Model\Document\PageSnippet
     /**
      * Returns the "replyTo" email address as array
      *
+     * @deprecated use \Pimcore\Helper\Mail::parseEmailAddressField instead
      * @return array
      */
     public function getReplyToAsArray()
@@ -279,6 +283,7 @@ class Email extends Model\Document\PageSnippet
     /**
      * Returns the carbon copy receivers as array
      *
+     * @deprecated use \Pimcore\Helper\Mail::parseEmailAddressField instead
      * @return array
      */
     public function getCcAsArray()
@@ -313,6 +318,7 @@ class Email extends Model\Document\PageSnippet
     /**
      * Returns the blind carbon copy receivers as array
      *
+     * @deprecated use \Pimcore\Helper\Mail::parseEmailAddressField instead
      * @return array
      */
     public function getBccAsArray()
