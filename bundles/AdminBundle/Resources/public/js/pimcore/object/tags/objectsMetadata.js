@@ -59,7 +59,6 @@ pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, 
 
         this.store = new Ext.data.JsonStore({
             data: this.data,
-            idProperty: 'id',
             listeners: {
                 add: function () {
                     this.dataChanged = true;
@@ -79,9 +78,7 @@ pimcore.object.tags.objectsMetadata = Class.create(pimcore.object.tags.objects, 
             },
             fields: fields
         });
-
     },
-
 
     createLayout: function (readOnly) {
         var autoHeight = false;
