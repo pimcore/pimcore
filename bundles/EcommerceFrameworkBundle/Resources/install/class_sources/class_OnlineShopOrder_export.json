@@ -3133,7 +3133,8 @@
                   "PaymentProviderQpay",
                   "PaymentProviderPayPal",
                   "PaymentProviderDatatrans",
-                  "PaymentProviderWirecardSeamless"
+                  "PaymentProviderWirecardSeamless",
+                  "PaymentProviderPayU"
                 ],
                 "maxItems": "",
                 "name": "paymentProvider",
