@@ -68,6 +68,11 @@ class ManyToManyObjectRelation extends Model\DataObject\ClassDefinition\Data\Rel
     public $relationType = true;
 
     /**
+     * @var
+     */
+    public $visibleFields;
+
+    /**
      * @return bool
      */
     public function getObjectsAllowed()
@@ -181,20 +186,20 @@ class ManyToManyObjectRelation extends Model\DataObject\ClassDefinition\Data\Rel
     {
         $return = [];
 
+        $visibleFieldsArray = $this->getVisibleFields() ? explode(',', $this->getVisibleFields()) : [];
+
+        $gridFields = (array)$visibleFieldsArray;
+
+        // add data
         if (is_array($data) && count($data) > 0) {
-            foreach ($data as $object) {
-                if ($object instanceof DataObject\Concrete) {
-                    $return[] = [$object->getId(), $object->getRealFullPath(), $object->getClassName(), (bool) $object->isPublished()];
+            foreach ($data as $referencedObject) {
+                if ($referencedObject instanceof DataObject\Concrete) {
+                    $return[] = DataObject\Service::gridObjectData($referencedObject, $gridFields, null, ['purpose' => 'editmode']);
                 }
             }
-            if (empty($return)) {
-                $return = false;
-            }
-
-            return $return;
         }
 
-        return false;
+        return $return;
     }
 
     /**
@@ -669,6 +674,69 @@ class ManyToManyObjectRelation extends Model\DataObject\ClassDefinition\Data\Rel
      */
     public function enrichLayoutDefinition($object, $context = [])
     {
+
+        if (!$this->visibleFields) {
+            return;
+        }
+
+        $classIds = $this->getClasses();
+
+        if (!$classIds) {
+            $classIds;
+        }
+
+        $classId = $classIds[0]["classes"];
+
+        if (is_numeric($classId)) {
+            $class = DataObject\ClassDefinition::getById($classId);
+        } else {
+            $class = DataObject\ClassDefinition::getByName($classId);
+        }
+
+        $this->visibleFieldDefinitions = [];
+
+        $translator = \Pimcore::getContainer()->get('translator');
+
+        $visibleFields = explode(',', $this->visibleFields);
+        foreach ($visibleFields as $field) {
+            $fd = $class->getFieldDefinition($field, $context);
+
+            if (!$fd) {
+                $fieldFound = false;
+                if ($localizedfields = $class->getFieldDefinitions($context)['localizedfields']) {
+                    if ($fd = $localizedfields->getFieldDefinition($field)) {
+                        $this->visibleFieldDefinitions[$field]['name'] = $fd->getName();
+                        $this->visibleFieldDefinitions[$field]['title'] = $fd->getTitle();
+                        $this->visibleFieldDefinitions[$field]['fieldtype'] = $fd->getFieldType();
+
+                        if ($fd instanceof DataObject\ClassDefinition\Data\Select || $fd instanceof DataObject\ClassDefinition\Data\Multiselect) {
+                            $this->visibleFieldDefinitions[$field]['options'] = $fd->getOptions();
+                        }
+
+                        $fieldFound = true;
+                    }
+                }
+
+                if (!$fieldFound) {
+                    $this->visibleFieldDefinitions[$field]['name'] = $field;
+                    $this->visibleFieldDefinitions[$field]['title'] = $translator->trans($field, [], 'admin');
+                    $this->visibleFieldDefinitions[$field]['fieldtype'] = 'input';
+                }
+            } else {
+                $this->visibleFieldDefinitions[$field]['name'] = $fd->getName();
+                $this->visibleFieldDefinitions[$field]['title'] = $fd->getTitle();
+                $this->visibleFieldDefinitions[$field]['fieldtype'] = $fd->getFieldType();
+                $this->visibleFieldDefinitions[$field]['noteditable'] = true;
+
+                if ($fd instanceof DataObject\ClassDefinition\Data\Select || $fd instanceof DataObject\ClassDefinition\Data\MultiSelect) {
+                    if ($fd->getOptionsProviderClass()) {
+                        $this->visibleFieldDefinitions[$field]['optionsProviderClass'] = $fd->getOptionsProviderClass();
+                    }
+
+                    $this->visibleFieldDefinitions[$field]['options'] = $fd->getOptions();
+                }
+            }
+        }
     }
 
     /**
@@ -833,5 +901,28 @@ class ManyToManyObjectRelation extends Model\DataObject\ClassDefinition\Data\Rel
         }
 
         return;
+    }
+
+    /**
+     * @param $visibleFields
+     *
+     * @return $this
+     */
+    public function setVisibleFields($visibleFields)
+    {
+        if (is_array($visibleFields) && count($visibleFields)) {
+            $visibleFields = implode(',', $visibleFields);
+        }
+        $this->visibleFields = $visibleFields;
+
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getVisibleFields()
+    {
+        return $this->visibleFields;
     }
 }

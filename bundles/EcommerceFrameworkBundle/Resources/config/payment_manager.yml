@@ -40,3 +40,9 @@ services:
             $options: []
             $templatingEngine: '@templating.engine.delegating'
             $session: '@session'
+
+    Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment\PayU:
+        arguments:
+            $options: []
+
+

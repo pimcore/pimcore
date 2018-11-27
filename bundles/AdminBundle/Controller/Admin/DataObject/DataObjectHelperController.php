@@ -2447,4 +2447,99 @@ class DataObjectHelperController extends AdminController
 
         return $this->adminJson(['success' => $success]);
     }
+
+    /**
+     * @Route("/get-available-visible-vields", methods={"GET"})
+     *
+     * @param Request $request
+     *
+     * @return JsonResponse
+     */
+    public function getAvailableVisibleFieldsAction(Request $request)
+    {
+
+        $class = null;
+        $fields = null;
+
+        $classList = [];
+
+        if ($request->get('classes')) {
+            $classNameList = $request->get('classes');
+            $classNameList = explode(',', $classNameList);
+            foreach ($classNameList as $className) {
+                $class = DataObject\ClassDefinition::getByName($className);
+                if ($class) {
+                    $classList[] = $class;
+                }
+            }
+        }
+
+        if (!$classList) {
+            return $this->adminJson(["availableFields" => []]);
+        }
+        $availableFields = [];
+        foreach (self::SYSTEM_COLUMNS as $field) {
+            $availableFields[] = [
+                "key"   => $field,
+                "value" => $field,
+            ];
+        }
+
+        /** @var  $commonFields DataObject\ClassDefinition\Data[] */
+        $commonFields = [];
+
+        $firstOne = true;
+        foreach ($classNameList as $className) {
+            $class = DataObject\ClassDefinition::getByName($className);
+            if ($class) {
+                $fds = $class->getFieldDefinitions();
+
+                $additionalFieldNames = array_keys($fds);
+                $localizedFields = $class->getFieldDefinition('localizedfields');
+                if ($localizedFields) {
+                    $lfNames = array_keys($localizedFields->getFieldDefinitions());
+                    $additionalFieldNames = array_merge($additionalFieldNames, $lfNames);
+                }
+
+                foreach ($commonFields as $commonFieldKey => $commonFieldDefinition) {
+                    if (!in_array($commonFieldKey, $additionalFieldNames)) {
+                        unset($commonFields[$commonFieldKey]);
+                    }
+                }
+
+                $this->processAvailableFieldDefinitions($fds, $firstOne, $commonFields);
+
+
+                $firstOne = false;
+            }
+        }
+
+        $commonFieldKeys = array_keys($commonFields);
+        foreach ($commonFieldKeys as $field) {
+            $availableFields[] = [
+                "key"   => $field,
+                "value" => $field,
+            ];
+        }
+
+        return $this->adminJson(["availableFields" => $availableFields]);
+    }
+
+    protected function processAvailableFieldDefinitions($fds, &$firstOne, &$commonFields)
+    {
+        foreach ($fds as $fd) {
+            if ($fd instanceof DataObject\ClassDefinition\Data\Fieldcollections || $fd instanceof DataObject\ClassDefinition\Data\Objectbricks
+                || $fd instanceof DataObject\ClassDefinition\Data\Block) {
+                return;
+            }
+
+            if ($fd instanceof DataObject\ClassDefinition\Data\Localizedfields) {
+                $lfDefs = $fd->getFieldDefinitions();
+                $this->processAvailableFieldDefinitions($lfDefs, $firstOne, $commonFields);
+            } else if ($firstOne || (isset($commonFields[$fd->getName()]) && $commonFields[$fd->getName()]->getFieldtype() == $fd->getFieldtype())) {
+                $commonFields[$fd->getName()] = $fd;
+            }
+        }
+    }
+
 }

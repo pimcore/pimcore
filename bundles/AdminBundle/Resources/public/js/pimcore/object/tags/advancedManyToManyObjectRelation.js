@@ -62,7 +62,6 @@ pimcore.object.tags.advancedManyToManyObjectRelation = Class.create(pimcore.obje
 
         this.store = new Ext.data.JsonStore({
             data: this.data,
-            idProperty: 'id',
             listeners: {
                 add: function () {
                     this.dataChanged = true;
@@ -82,9 +81,7 @@ pimcore.object.tags.advancedManyToManyObjectRelation = Class.create(pimcore.obje
             },
             fields: fields
         });
-
     },
-
 
     createLayout: function (readOnly) {
         var autoHeight = false;
