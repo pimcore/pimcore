@@ -41,6 +41,9 @@ pimcore.object.tags.advancedManyToManyObjectRelation = Class.create(pimcore.obje
         }
 
         var fields = [];
+        if (typeof this.fieldConfig.visibleFields != "string") {
+            this.fieldConfig.visibleFields = "";
+        }
         var visibleFields = this.fieldConfig.visibleFields.split(",");
 
         fields.push("id");
