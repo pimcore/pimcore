@@ -80,8 +80,11 @@ pimcore.document.tags.snippet = Class.create(pimcore.document.tag, {
     },
 
     onNodeDrop: function (target, dd, e, data) {
-        var record = data.records[0];
-        data = record.data;
+        if(!pimcore.helpers.dragAndDropValidateSingleItem(data)) {
+            return false;
+        }
+
+        data = data.records[0].data;
 
         if (this.dndAllowed(data)) {
             // get path from nodes data
@@ -101,9 +104,7 @@ pimcore.document.tags.snippet = Class.create(pimcore.document.tag, {
     },
 
     onNodeOver: function(target, dd, e, data) {
-        var record = data.records[0];
-        data = record.data;
-        if (this.dndAllowed(data)) {
+        if (data.records.length === 1 && this.dndAllowed(data.records[0].data)) {
             return Ext.dd.DropZone.prototype.dropAllowed;
         }
         else {

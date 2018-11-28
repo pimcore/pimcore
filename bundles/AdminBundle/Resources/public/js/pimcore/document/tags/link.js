@@ -101,41 +101,6 @@ pimcore.document.tags.link = Class.create(pimcore.document.tag, {
         return text;
     },
 
-    onNodeDrop: function (target, dd, e, data) {
-        var record = data.records[0].data;
-
-        if(this.dndAllowed(data)){
-            this.fieldPath.setValue(data.path);
-            return true;
-        } else {
-            return false;
-        }
-    },
-
-    onNodeOver: function(target, dd, e, data) {
-        var record = data.records[0].data;
-
-        if (this.dndAllowed(data)) {
-            return Ext.dd.DropZone.prototype.dropAllowed;
-        }
-        else {
-            return Ext.dd.DropZone.prototype.dropNotAllowed;
-        }
-    },
-
-    dndAllowed: function(data) {
-
-        if (data.elementType == "asset" && data.type != "folder") {
-            return true;
-        } else if (data.elementType == "document"
-                            && (data.type=="page" || data.type=="hardlink"
-                                                                            || data.type=="link")){
-            return true;
-        }
-        return false;
-
-    },
-
     save: function () {
 
         // enable the global dnd dropzone again
