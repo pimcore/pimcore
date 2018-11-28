@@ -1073,7 +1073,11 @@ class Block extends Model\DataObject\ClassDefinition\Data
                         try {
                             $blockElement = $item[$fd->getName()];
                             if (!$blockElement) {
-                                throw new Element\ValidationException('Block element empty [ ' . $fd->getName() . ' ]');
+                                if ($fd->getMandatory()) {
+                                    throw new Element\ValidationException('Block element empty [ '.$fd->getName().' ]');
+                                } else {
+                                    continue;
+                                }
                             }
 
                             $data = $blockElement->getData();
