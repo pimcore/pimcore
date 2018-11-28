@@ -3080,5 +3080,13 @@ pimcore.helpers.registerAssetDnDSingleUpload = function (element, parent, parent
     }.bind(this), true);
 };
 
+pimcore.helpers.dragAndDropValidateSingleItem = function (data) {
+    if(data.records.length > 1) {
+        Ext.MessageBox.alert(t('error'), t('you_can_only_drop_one_element_here'));
+        return true;
+    }
+
+    return false;
+};
 
 

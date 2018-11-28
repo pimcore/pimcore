@@ -293,6 +293,11 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
                             },
 
                             onNodeDrop : function (target, dd, e, data) {
+
+                                if(pimcore.helpers.dragAndDropValidateSingleItem(data)) {
+                                    return false;
+                                }
+
                                 data = data.records[0].data;
                                 if (data.elementType == "document") {
                                     this.setValue(data.path);
