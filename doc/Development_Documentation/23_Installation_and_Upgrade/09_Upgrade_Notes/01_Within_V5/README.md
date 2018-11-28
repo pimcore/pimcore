@@ -41,6 +41,9 @@ the JS classes in `pimcore.document.tags`.
 | `$this->href()` | `Href` | `href` | `$this->relation()` | `Relation` | `relation` | 
 | `$this->multihref()` | `Multihref` | `multihref` | `$this->relations()` | `Relations` | `relations` | 
 
+#### Email Logs address format changed
+The format for email addresses in the `email_log` table changed. Affected columns are: `from`, `replyTo`, `to`, `cc`, `bcc`. Old format `mail@mail.com (Name)` -> New format `Name <mail@mail.com>`.
+The parsing for the email addresses is now handled in `Pimcore\Helper\Mail::parseEmailAddressField`. Several methods that had a similar purpose have been deprecated.
 
 ## Version 5.5.4
 
