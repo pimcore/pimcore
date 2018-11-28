@@ -196,7 +196,9 @@ pimcore.asset.video = Class.create(pimcore.asset.asset, {
                                     }.bind(el),
 
                                     onNodeOver : function(target, dd, e, data) {
-                                        return Ext.dd.DropZone.prototype.dropAllowed;
+                                        if(data.records.length == 1) {
+                                            return Ext.dd.DropZone.prototype.dropAllowed;
+                                        }
                                     },
 
                                     onNodeDrop : function (el, target, dd, e, data) {
