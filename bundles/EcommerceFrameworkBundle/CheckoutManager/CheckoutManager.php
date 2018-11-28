@@ -185,10 +185,10 @@ class CheckoutManager implements ICheckoutManager
     }
 
     /**
-     * @inheritdoc
+     * @return AbstractOrder
+     * @throws UnsupportedException
      */
-    public function startOrderPayment()
-    {
+    protected function checkIfPaymentIsPossible() {
         if (!$this->isFinished()) {
             throw new UnsupportedException('Checkout is not finished yet.');
         }
@@ -205,6 +205,33 @@ class CheckoutManager implements ICheckoutManager
             throw new UnsupportedException('Order is already committed');
         }
 
+        return $order;
+    }
+
+
+    /**
+     * @inheritdoc
+     */
+    public function initOrderPayment()
+    {
+        $order = $this->checkIfPaymentIsPossible();
+
+        $orderManager = $this->orderManagers->getOrderManager();
+        $orderAgent = $orderManager->createOrderAgent($order);
+        $paymentInfo = $orderAgent->initPayment();
+
+        return $paymentInfo;
+    }
+
+
+    /**
+     * @inheritdoc
+     */
+    public function startOrderPayment()
+    {
+        $order = $this->checkIfPaymentIsPossible();
+
+        $orderManager = $this->orderManagers->getOrderManager();
         $orderAgent = $orderManager->createOrderAgent($order);
         $paymentInfo = $orderAgent->startPayment();
 
