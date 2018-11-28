@@ -289,12 +289,14 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
                             }.bind(el),
 
                             onNodeOver : function(target, dd, e, data) {
-                                return Ext.dd.DropZone.prototype.dropAllowed;
+                                if (data.records.length === 1 && data.records[0].data.elementType == "document") {
+                                    return Ext.dd.DropZone.prototype.dropAllowed;
+                                }
                             },
 
                             onNodeDrop : function (target, dd, e, data) {
 
-                                if(pimcore.helpers.dragAndDropValidateSingleItem(data)) {
+                                if(!pimcore.helpers.dragAndDropValidateSingleItem(data)) {
                                     return false;
                                 }
 
@@ -416,10 +418,17 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
                             }.bind(el),
 
                             onNodeOver : function(target, dd, e, data) {
-                                return Ext.dd.DropZone.prototype.dropAllowed;
+                                if (data.records.length === 1 && data.records[0].data.elementType == "document") {
+                                    return Ext.dd.DropZone.prototype.dropAllowed;
+                                }
                             },
 
                             onNodeDrop : function (target, dd, e, data) {
+
+                                if(!pimcore.helpers.dragAndDropValidateSingleItem(data)) {
+                                    return false;
+                                }
+
                                 data = data.records[0].data;
                                 if (data.elementType == "document") {
                                     this.setValue(data.path);
