@@ -98,6 +98,9 @@ pimcore.asset.tree = Class.create({
 
         // assets
         this.tree = Ext.create('pimcore.tree.Panel', {
+            selModel : {
+                mode : 'MULTI'
+            },
             store: store,
             autoLoad: false,
             id: this.config.treeId,
@@ -380,9 +383,11 @@ pimcore.asset.tree = Class.create({
     },
 
     onTreeNodeClick: function (tree, record, item, index, e, eOpts ) {
-        if (record.data.permissions.view) {
-            pimcore.helpers.treeNodeThumbnailPreviewHide();
-            pimcore.helpers.openAsset(record.data.id, record.data.type);
+        if (event.ctrlKey === false && event.shiftKey === false && event.altKey === false) {
+            if (record.data.permissions.view) {
+                pimcore.helpers.treeNodeThumbnailPreviewHide();
+                pimcore.helpers.openAsset(record.data.id, record.data.type);
+            }
         }
     },
 

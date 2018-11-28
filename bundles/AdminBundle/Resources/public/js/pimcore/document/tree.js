@@ -115,6 +115,9 @@ pimcore.document.tree = Class.create({
 
         // documents
         this.tree = Ext.create('pimcore.tree.Panel', {
+            selModel : {
+                mode : 'MULTI'
+            },
             region: "center",
             id: this.config.treeId,
             title: this.config.treeTitle,
@@ -225,9 +228,11 @@ pimcore.document.tree = Class.create({
     },
 
     onTreeNodeClick: function (tree, record, item, index, e, eOpts ) {
-        if (record.data.permissions.view) {
-            pimcore.helpers.treeNodeThumbnailPreviewHide();
-            pimcore.helpers.openDocument(record.data.id, record.data.type);
+        if (event.ctrlKey === false && event.shiftKey === false && event.altKey === false) {
+            if (record.data.permissions.view) {
+                pimcore.helpers.treeNodeThumbnailPreviewHide();
+                pimcore.helpers.openDocument(record.data.id, record.data.type);
+            }
         }
     },
 
