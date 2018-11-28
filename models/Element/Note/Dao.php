@@ -81,16 +81,16 @@ class Dao extends Model\Dao\AbstractDao
         $this->model->setData($preparedData);
     }
 
-    /**
-     * Save object to database
-     *
+
+    /** Saves note to database.
      * @return bool
-     *
-     * @todo: not all save methods return a boolean, why this one?
+     * @throws \Exception
      */
     public function save()
     {
         $version = $this->model->getObjectVars();
+
+        $data = [];
 
         // save main table
         foreach ($version as $key => $value) {
@@ -143,8 +143,9 @@ class Dao extends Model\Dao\AbstractDao
         return true;
     }
 
-    /**
-     * Deletes object from database
+
+    /** Deletes note from database.
+     * @throws \Exception
      */
     public function delete()
     {
@@ -152,6 +153,9 @@ class Dao extends Model\Dao\AbstractDao
         $this->deleteData();
     }
 
+    /** Deletes note data from database.
+     * @throws \Exception
+     */
     protected function deleteData()
     {
         $this->db->delete('notes_data', ['id' => $this->model->getId()]);
