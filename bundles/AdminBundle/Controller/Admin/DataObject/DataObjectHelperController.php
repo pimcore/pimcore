@@ -2457,7 +2457,6 @@ class DataObjectHelperController extends AdminController
      */
     public function getAvailableVisibleFieldsAction(Request $request)
     {
-
         $class = null;
         $fields = null;
 
@@ -2475,17 +2474,17 @@ class DataObjectHelperController extends AdminController
         }
 
         if (!$classList) {
-            return $this->adminJson(["availableFields" => []]);
+            return $this->adminJson(['availableFields' => []]);
         }
         $availableFields = [];
         foreach (self::SYSTEM_COLUMNS as $field) {
             $availableFields[] = [
-                "key"   => $field,
-                "value" => $field,
+                'key' => $field,
+                'value' => $field,
             ];
         }
 
-        /** @var  $commonFields DataObject\ClassDefinition\Data[] */
+        /** @var $commonFields DataObject\ClassDefinition\Data[] */
         $commonFields = [];
 
         $firstOne = true;
@@ -2509,7 +2508,6 @@ class DataObjectHelperController extends AdminController
 
                 $this->processAvailableFieldDefinitions($fds, $firstOne, $commonFields);
 
-
                 $firstOne = false;
             }
         }
@@ -2517,12 +2515,12 @@ class DataObjectHelperController extends AdminController
         $commonFieldKeys = array_keys($commonFields);
         foreach ($commonFieldKeys as $field) {
             $availableFields[] = [
-                "key"   => $field,
-                "value" => $field,
+                'key' => $field,
+                'value' => $field,
             ];
         }
 
-        return $this->adminJson(["availableFields" => $availableFields]);
+        return $this->adminJson(['availableFields' => $availableFields]);
     }
 
     protected function processAvailableFieldDefinitions($fds, &$firstOne, &$commonFields)
@@ -2536,10 +2534,9 @@ class DataObjectHelperController extends AdminController
             if ($fd instanceof DataObject\ClassDefinition\Data\Localizedfields) {
                 $lfDefs = $fd->getFieldDefinitions();
                 $this->processAvailableFieldDefinitions($lfDefs, $firstOne, $commonFields);
-            } else if ($firstOne || (isset($commonFields[$fd->getName()]) && $commonFields[$fd->getName()]->getFieldtype() == $fd->getFieldtype())) {
+            } elseif ($firstOne || (isset($commonFields[$fd->getName()]) && $commonFields[$fd->getName()]->getFieldtype() == $fd->getFieldtype())) {
                 $commonFields[$fd->getName()] = $fd;
             }
         }
     }
-
 }
