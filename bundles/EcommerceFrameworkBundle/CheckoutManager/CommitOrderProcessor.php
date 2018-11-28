@@ -198,7 +198,7 @@ class CommitOrderProcessor implements ICommitOrderProcessor
             $order = $this->commitOrder($order);
         } else {
             $order->setOrderState(null);
-            $order->save();
+            $order->save(['versionNote' => 'CommitOrderProcessor::commitOrderPayment - set order state to null.']);
         }
 
         Lock::release(self::LOCK_KEY . $paymentStatus->getInternalPaymentId());
@@ -227,7 +227,7 @@ class CommitOrderProcessor implements ICommitOrderProcessor
         $this->processOrder($order);
 
         $order->setOrderState(AbstractOrder::ORDER_STATE_COMMITTED);
-        $order->save();
+        $order->save(['versionNote' => 'CommitOrderProcessor::commitOrder - set state to committed before sending confirmation mail.']);
 
         try {
             $this->sendConfirmationMail($order);
@@ -278,13 +278,13 @@ class CommitOrderProcessor implements ICommitOrderProcessor
         //Abort orders with payment pending
         $list = $orderManager->buildOrderList();
         $list->addFieldCollection('PaymentInfo');
-        $list->setCondition('orderState = ? AND orderdate < ?', [AbstractOrder::ORDER_STATE_PAYMENT_PENDING, $timestamp]);
+        $list->setCondition('orderState = ? AND o_modification < ?', [AbstractOrder::ORDER_STATE_PAYMENT_PENDING, $timestamp]);
 
         /** @var AbstractOrder $order */
         foreach ($list as $order) {
             Logger::warn('Setting order ' . $order->getId() . ' to ' . AbstractOrder::ORDER_STATE_ABORTED);
             $order->setOrderState(AbstractOrder::ORDER_STATE_ABORTED);
-            $order->save();
+            $order->save(['versionNote' => 'CommitOrderProcessor::cleanUpPendingOrders - set state to aborted.']);
         }
 
         //Abort payments with payment pending
@@ -302,8 +302,7 @@ class CommitOrderProcessor implements ICommitOrderProcessor
                     $payment->setPaymentState(AbstractOrder::ORDER_STATE_ABORTED);
                 }
             }
-
-            $order->save();
+            $order->save(['versionNote' => 'CommitOrderProcessor:cleanupPendingOrders- payment aborted.']);
         }
     }
 }

@@ -1628,7 +1628,7 @@ pimcore.helpers.searchAndMove = function (parentId, callback, type) {
 };
 
 
-pimcore.helpers.sendTestEmail = function (from = null, to = null, subject = null, emailType = null, documentPath = null, content = null) {
+pimcore.helpers.sendTestEmail = function (from, to, subject, emailType, documentPath, content) {
 
 
     if(emailType === null) {
@@ -2974,7 +2974,7 @@ pimcore.helpers.keyBindingMapping = {
 
 pimcore.helpers.showPermissionError = function(permission) {
     Ext.MessageBox.alert(t("error"), sprintf(t('permission_missing'), ts(permission)));
-}
+};
 
 pimcore.helpers.registerAssetDnDSingleUpload = function (element, parent, parentType, success, failure, context) {
 

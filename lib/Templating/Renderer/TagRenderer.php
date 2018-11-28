@@ -94,7 +94,7 @@ class TagRenderer implements LoggerAwareInterface
                     'href' => 'relation',
                     'multihref' => 'relations',
                 ];
-                if(isset($aliases[$type])) {
+                if (isset($aliases[$type])) {
                     $type = $aliases[$type];
                 }
 

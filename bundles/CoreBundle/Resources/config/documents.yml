@@ -84,6 +84,9 @@ services:
     Pimcore\Document\Tag\TagUsageResolver:
         public: true
 
+    Pimcore\Document\DocumentStack:
+        public: true
+
     #
     # DOCUMENT TAG MIGRATION
     #

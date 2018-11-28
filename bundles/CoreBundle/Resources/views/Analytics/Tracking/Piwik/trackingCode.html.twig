@@ -4,7 +4,7 @@
     {% autoescape 'js' %}
     {% block beforeScript %}{{ blocks.beforeScript|raw }}{% endblock %}
 
-    var _paq = _paq || [];
+    window._paq = window._paq || [];
 
     {% block beforeTrack %}{{ blocks.beforeTrack|raw }}{% endblock %}
 

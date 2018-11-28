@@ -308,7 +308,7 @@ class Service
                                         $collectionItem->value['internal'] = $idMapping[$collectionItem->value['internalType']][$collectionItem->value['internal']];
                                     } elseif ($collectionItem->type == 'href' && $collectionItem->value['id']) {
                                         $collectionItem->value['id'] = $idMapping[$collectionItem->value['type']][$collectionItem->value['id']];
-                                    } elseif (($collectionItem->type == 'objects' || $collectionItem->type == 'multihref'  || $collectionItem->type == 'manyToManyRelation'  || $collectionItem->type == 'manyToManyObjectRelation' ) && is_array($collectionItem->value) && count($collectionItem->value) > 0) {
+                                    } elseif (($collectionItem->type == 'objects' || $collectionItem->type == 'multihref' || $collectionItem->type == 'manyToManyRelation' || $collectionItem->type == 'manyToManyObjectRelation') && is_array($collectionItem->value) && count($collectionItem->value) > 0) {
                                         for ($i = 0; $i < count($collectionItem->value); $i++) {
                                             if ($collectionItem->value[$i]['id']) {
                                                 $collectionItem->value[$i]['id'] = $idMapping[$collectionItem->value[$i]['type']][$collectionItem->value[$i]['id']];
