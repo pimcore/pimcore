@@ -674,7 +674,6 @@ class ManyToManyObjectRelation extends Model\DataObject\ClassDefinition\Data\Rel
      */
     public function enrichLayoutDefinition($object, $context = [])
     {
-
         if (!$this->visibleFields) {
             return;
         }
@@ -685,7 +684,7 @@ class ManyToManyObjectRelation extends Model\DataObject\ClassDefinition\Data\Rel
             $classIds;
         }
 
-        $classId = $classIds[0]["classes"];
+        $classId = $classIds[0]['classes'];
 
         if (is_numeric($classId)) {
             $class = DataObject\ClassDefinition::getById($classId);

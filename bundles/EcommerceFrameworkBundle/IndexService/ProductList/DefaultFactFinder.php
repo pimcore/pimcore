@@ -170,7 +170,7 @@ class DefaultFactFinder implements IProductList
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function getUseIdsOnly()
     {
@@ -178,12 +178,14 @@ class DefaultFactFinder implements IProductList
     }
 
     /**
-     * @param boolean $useIdsOnly
+     * @param bool $useIdsOnly
+     *
      * @return $this
      */
     public function setUseIdsOnly($useIdsOnly)
     {
         $this->useIdsOnly = $useIdsOnly;
+
         return $this;
     }
 
@@ -842,7 +844,7 @@ class DefaultFactFinder implements IProductList
             $params['page'] = ceil($this->getOffset() / $this->getLimit()) + 1;
         }
         $params['productsPerPage'] = $this->getLimit();
-        if($this->getUseIdsOnly()){
+        if ($this->getUseIdsOnly()) {
             $params['idsOnly'] = 'true';
         }
         // $params['navigation'] = 'true';

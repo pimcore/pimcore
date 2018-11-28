@@ -74,5 +74,4 @@ class ValidationException extends \Exception
 
         return $result;
     }
-
 }
