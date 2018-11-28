@@ -251,14 +251,8 @@ pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
                 },
 
                 onNodeOver: function (target, dd, e, data) {
-
-                    var record = data.records[0];
-
-
-                    if (record.data.type == "image") {
+                    if (data.records.length === 1 && data.records[0].data.type === "image") {
                         return Ext.dd.DropZone.prototype.dropAllowed;
-                    } else {
-                        return Ext.dd.DropZone.prototype.dropNotAllowed;
                     }
                 },
 

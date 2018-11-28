@@ -211,11 +211,9 @@ pimcore.object.tags.nonownerobjects = Class.create(pimcore.object.tags.manyToMan
                 onNodeOver: function (overHtmlNode, ddSource, e, data) {
 
                     try {
-                        var record = data.records[0];
-                        var data = record.data;
+                        var record = data = data.records[0].data;
                         var fromTree = this.isFromTree(ddSource);
-
-                        if (data.elementType == "object" && this.dndAllowed(data, fromTree)) {
+                        if (data.records.length === 1 && record.elementType === "object" && this.dndAllowed(record, fromTree)) {
                             return Ext.dd.DropZone.prototype.dropAllowed;
                         } else {
                             return Ext.dd.DropZone.prototype.dropNotAllowed;
@@ -225,7 +223,13 @@ pimcore.object.tags.nonownerobjects = Class.create(pimcore.object.tags.manyToMan
                     }
 
                 }.bind(this),
+
                 onNodeDrop : function(target, dd, e, data) {
+
+                    if(!pimcore.helpers.dragAndDropValidateSingleItem(data)) {
+                        return false;
+                    }
+
                     try {
                         var record = data.records[0];
                         var data = record.data;

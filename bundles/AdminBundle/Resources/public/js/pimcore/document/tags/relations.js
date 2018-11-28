@@ -247,7 +247,7 @@ pimcore.document.tags.relations = Class.create(pimcore.document.tag, {
                 type: data.elementType
             };
 
-            if (initData.type == "object") {
+            if (initData.type === "object") {
                 if (data.className) {
                     initData.subtype = data.className;
                 }
@@ -256,7 +256,7 @@ pimcore.document.tags.relations = Class.create(pimcore.document.tag, {
                 }
             }
 
-            if (initData.type == "document" || initData.type == "asset") {
+            if (initData.type === "document" || initData.type === "asset") {
                 initData.subtype = data.type;
             }
 
