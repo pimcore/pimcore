@@ -27,7 +27,7 @@ pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.
             this.data = data;
         }
 
-        var visibleFields = this.fieldConfig.visibleFields ? this.fieldConfig.visibleFields.split(",") : [];
+        var visibleFields = Ext.isString(this.fieldConfig.visibleFields) ? this.fieldConfig.visibleFields.split(",") : [];
         var fields = [
             "id",
             "path",
@@ -36,6 +36,7 @@ pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.
         ];
 
         if (visibleFields) {
+            this.visibleFields = visibleFields;
             for (i = 0; i < visibleFields.length; i++) {
                 fields.push(visibleFields[i]);
             }
@@ -206,7 +207,7 @@ pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.
                             id: data.id
                         };
 
-                        this.loadObjectData(initData, this.fieldConfig.visibleFields.split(","));
+                        this.loadObjectData(initData, this.visibleFields);
                         this.window.close();
                     } else {
                         pimcore.helpers.showNotification(t("error"), t("saving_failed"), "error", data.message);
@@ -294,7 +295,7 @@ pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.
             {text: t("classname"), dataIndex: 'classname', width: 100}
         ];
 
-        var visibleFields = this.fieldConfig.visibleFields.split(",");
+        var visibleFields = this.visibleFields;
 
         for (i = 0; i < visibleFields.length; i++) {
             if (!empty(visibleFields[i])) {
@@ -485,7 +486,7 @@ pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.
                             };
 
                             if (!this.objectAlreadyExists(initData.id)) {
-                                toBeRequested.add(this.loadObjectData(initData, this.fieldConfig.visibleFields.split(",")));
+                                toBeRequested.add(this.loadObjectData(initData, this.visibleFields));
                                 this.requestNicePathData(toBeRequested);
                                 return true;
                             }
@@ -674,7 +675,7 @@ pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.
             toBeRequested = new Ext.util.Collection();
 
             for (var i = 0; i < items.length; i++) {
-                var fields = this.fieldConfig.visibleFields.split(",");
+                var fields = this.visibleFields;
                 if (!this.objectAlreadyExists(items[i].id)) {
                     toBeRequested.add(this.loadObjectData(items[i], fields));
                 }
