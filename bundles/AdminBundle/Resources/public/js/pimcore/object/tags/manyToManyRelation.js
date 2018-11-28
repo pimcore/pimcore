@@ -233,58 +233,61 @@ pimcore.object.tags.manyToManyRelation = Class.create(pimcore.object.tags.abstra
                     }
                 }.bind(this),
                 onNodeDrop: function (target, dd, e, data) {
-                    try {
-                        var record = data.records[0];
-                        var data = record.data;
-                        this.nodeElement = data;
-                        var fromTree = this.isFromTree(dd);
+                    var records=data.records;
+                    for (var i = 0; i < records.length; i++) {
+                        try {
+                            var record = records[i];
+                            var data = record.data;
+                            this.nodeElement = data;
+                            var fromTree = this.isFromTree(dd);
 
-                        var toBeRequested = new Ext.util.Collection();
+                            var toBeRequested = new Ext.util.Collection();
 
-                        if (this.dndAllowed(data, fromTree)) {
-                            if (data["grid"] && data["grid"] == this.component) {
-                                var rowIndex = this.component.getView().findRowIndex(e.target);
-                                if (rowIndex !== false) {
-                                    var rec = this.store.getAt(data.rowIndex);
-                                    this.store.removeAt(data.rowIndex);
-                                    toBeRequested.add(this.store.insert(rowIndex, [rec]));
-                                    this.requestNicePathData(toBeRequested);
+                            if (this.dndAllowed(data, fromTree)) {
+                                if (data["grid"] && data["grid"] == this.component) {
+                                    var rowIndex = this.component.getView().findRowIndex(e.target);
+                                    if (rowIndex !== false) {
+                                        var rec = this.store.getAt(data.rowIndex);
+                                        this.store.removeAt(data.rowIndex);
+                                        toBeRequested.add(this.store.insert(rowIndex, [rec]));
+                                        this.requestNicePathData(toBeRequested);
+                                    }
+                                } else {
+                                    var initData = {
+                                        id: data.id,
+                                        path: data.path,
+                                        type: data.elementType,
+                                        published: data.published
+                                    };
+
+                                    if (initData.type == "object") {
+                                        if (data.className) {
+                                            initData.subtype = data.className;
+                                        }
+                                        else {
+                                            initData.subtype = "folder";
+                                        }
+                                    }
+
+                                    if (initData.type == "document" || initData.type == "asset") {
+                                        initData.subtype = data.type;
+                                    }
+
+                                    // check for existing element
+                                    if (!this.elementAlreadyExists(initData.id, initData.type)) {
+                                        toBeRequested.add(this.store.add(initData));
+                                        this.requestNicePathData(toBeRequested);
+                                        //return true;
+                                    }
                                 }
+
+                                //return false;
                             } else {
-                                var initData = {
-                                    id: data.id,
-                                    path: data.path,
-                                    type: data.elementType,
-                                    published: data.published
-                                };
-
-                                if (initData.type == "object") {
-                                    if (data.className) {
-                                        initData.subtype = data.className;
-                                    }
-                                    else {
-                                        initData.subtype = "folder";
-                                    }
-                                }
-
-                                if (initData.type == "document" || initData.type == "asset") {
-                                    initData.subtype = data.type;
-                                }
-
-                                // check for existing element
-                                if (!this.elementAlreadyExists(initData.id, initData.type)) {
-                                    toBeRequested.add(this.store.add(initData));
-                                    this.requestNicePathData(toBeRequested);
-                                    return true;
-                                }
+                                //return false;
                             }
-
-                            return false;
-                        } else {
-                            return false;
+                        } catch (e) {
+                            console.log(e);
                         }
-                    } catch (e) {
-                        console.log(e);
                     }
                 }.bind(this)
             });

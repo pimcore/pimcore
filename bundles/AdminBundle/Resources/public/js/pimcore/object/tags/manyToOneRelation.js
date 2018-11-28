@@ -89,6 +89,9 @@ pimcore.object.tags.manyToOneRelation = Class.create(pimcore.object.tags.abstrac
                 },
 
                 onNodeOver: function (target, dd, e, data) {
+                    if(data.records.length>1) {
+                        return Ext.dd.DropZone.prototype.dropNotAllowed;
+                    }
 
                     var record = data.records[0];
                     var data = record.data;
@@ -237,6 +240,10 @@ pimcore.object.tags.manyToOneRelation = Class.create(pimcore.object.tags.abstrac
     },
 
     onNodeDrop: function (target, dd, e, data) {
+        if(data.records.length>1) {
+            return false;
+        }
+
         var record = data.records[0];
         var data = record.data;
 
@@ -246,10 +253,10 @@ pimcore.object.tags.manyToOneRelation = Class.create(pimcore.object.tags.abstrac
             this.data.subtype = data.type;
             this.data.path = data.path;
             this.dataChanged = true;
-            this.dataChanged = true;        
+            this.dataChanged = true;
             this.component.removeCls("strikeThrough");
             if (data.published === false) {
-              this.component.addCls("strikeThrough");
+                this.component.addCls("strikeThrough");
             }
             this.component.setValue(data.path);
             this.requestNicePathData();
