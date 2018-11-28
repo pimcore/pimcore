@@ -303,23 +303,25 @@ pimcore.asset.metadata = Class.create({
                         }.bind(this, data),
 
                         onNodeDrop : function(myRowIndex, target, dd, e, data) {
-                            try {
-                                var record = data.records[0];
-                                var data = record.data;
+                            if (pimcore.helpers.dragAndDropValidateSingleItem(data)) {
+                                try {
+                                    var record = data.records[0];
+                                    var data = record.data;
 
-                                var myRecord = this.grid.getStore().getAt(myRowIndex);
+                                    var myRecord = this.grid.getStore().getAt(myRowIndex);
 
-                                if (data.elementType != myRecord.get("type")) {
-                                    return false;
+                                    if (data.elementType != myRecord.get("type")) {
+                                        return false;
+                                    }
+
+                                    myRecord.set("data", data.path);
+
+                                    this.updateRows();
+
+                                    return true;
+                                } catch (e) {
+                                    console.log(e);
                                 }
-
-                                myRecord.set("data", data.path);
-
-                                this.updateRows();
-
-                                return true;
-                            } catch (e) {
-                                console.log(e);
                             }
                         }.bind(this, storeIndex)
                     });

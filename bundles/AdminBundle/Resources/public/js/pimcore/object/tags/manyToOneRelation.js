@@ -240,7 +240,7 @@ pimcore.object.tags.manyToOneRelation = Class.create(pimcore.object.tags.abstrac
     },
 
     onNodeDrop: function (target, dd, e, data) {
-        if(data.records.length>1) {
+        if (!pimcore.helpers.dragAndDropValidateSingleItem(data)) {
             return false;
         }
 
