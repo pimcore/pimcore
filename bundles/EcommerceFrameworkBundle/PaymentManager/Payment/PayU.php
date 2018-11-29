@@ -30,33 +30,33 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 class PayU extends AbstractPayment
 {
     const ORDER_URL = 'https://secure%s.payu.com/api/v2_1/orders';
-    const AUTHORIZE_URL = "https://secure%s.payu.com/pl/standard/user/oauth/authorize";
+    const AUTHORIZE_URL = 'https://secure%s.payu.com/pl/standard/user/oauth/authorize';
 
-    /** @var  string $pos_id */
+    /** @var string $pos_id */
     protected $posId;
 
-    /** @var  string $md5_key */
+    /** @var string $md5_key */
     protected $md5Key;
 
-    /** @var  string $oauth_client_id */
+    /** @var string $oauth_client_id */
     protected $oauthClientId;
 
-    /** @var  string $oauth_client_secret */
+    /** @var string $oauth_client_secret */
     protected $oauthClientSecret;
 
-    /** @var  string $accessToken */
+    /** @var string $accessToken */
     protected $accessToken;
 
-    /** @var  string $orderUrl */
+    /** @var string $orderUrl */
     protected $orderUrl;
 
-    /** @var  string $authorizeUrl */
+    /** @var string $authorizeUrl */
     protected $authorizeUrl;
 
-    /** @var  array $authorizedData */
+    /** @var array $authorizedData */
     protected $authorizedData;
 
-    /** @var  Client */
+    /** @var Client */
     protected $client;
 
     public function __construct(Client $client, array $options)
@@ -70,23 +70,25 @@ class PayU extends AbstractPayment
 
     /**
      * @param array $options
+     *
      * @throws \Exception
      */
     protected function processOptions(array $options)
     {
         $urlPart = $options['mode'] == 'sandbox' ? '.snd' : '';
 
-        $this->posId             = $options['pos_id'];
-        $this->md5Key            = $options['md5_key'];
-        $this->oauthClientId     = $options['oauth_client_id'];
+        $this->posId = $options['pos_id'];
+        $this->md5Key = $options['md5_key'];
+        $this->oauthClientId = $options['oauth_client_id'];
         $this->oauthClientSecret = $options['oauth_client_secret'];
-        $this->orderUrl          = sprintf(self::ORDER_URL, $urlPart);
-        $this->authorizeUrl      = sprintf(self::AUTHORIZE_URL, $urlPart);
-        $this->accessToken       = $this->getAccessToken();
+        $this->orderUrl = sprintf(self::ORDER_URL, $urlPart);
+        $this->authorizeUrl = sprintf(self::AUTHORIZE_URL, $urlPart);
+        $this->accessToken = $this->getAccessToken();
     }
 
     /**
      * @param OptionsResolver $resolver
+     *
      * @return OptionsResolver
      */
     protected function configureOptions(OptionsResolver $resolver): OptionsResolver
@@ -125,7 +127,9 @@ class PayU extends AbstractPayment
     /**
      * @param IPrice $price
      * @param array $config
+     *
      * @return mixed|string
+     *
      * @throws \Exception
      */
     public function initPayment(IPrice $price, array $config)
@@ -151,18 +155,18 @@ class PayU extends AbstractPayment
         /** @var OnlineShopOrder $order */
         $order = $config['order'];
 
-        $orderData['continueUrl']   = $config['continueUrl'];
-        $orderData['extOrderId']    = $config['extOrderId'];
-        $orderData['notifyUrl']     = $config['notifyUrl'];
-        $orderData['description']   = $config['description'];
-        $orderData['customerIp']    = $config['customerIp'];
+        $orderData['continueUrl'] = $config['continueUrl'];
+        $orderData['extOrderId'] = $config['extOrderId'];
+        $orderData['notifyUrl'] = $config['notifyUrl'];
+        $orderData['description'] = $config['description'];
+        $orderData['customerIp'] = $config['customerIp'];
         $orderData['merchantPosId'] = $this->posId;
-        $orderData['buyer']         = [
+        $orderData['buyer'] = [
             'email' => $order->getCustomer()->getEmail()
         ];
-        $orderData['currencyCode']  = $price->getCurrency()->getShortName();
-        $orderData['totalAmount']   = (string) round($price->getAmount()->asNumeric(), 2) * 100;
-        $orderData['products']      = $this->setProducts($order->getItems());
+        $orderData['currencyCode'] = $price->getCurrency()->getShortName();
+        $orderData['totalAmount'] = (string) round($price->getAmount()->asNumeric(), 2) * 100;
+        $orderData['products'] = $this->setProducts($order->getItems());
 
         $orderData = $this->setAdditionalData($orderData);
 
@@ -177,7 +181,7 @@ class PayU extends AbstractPayment
     protected function setProducts(array $items): array
     {
         $products = [];
-        $items    = array_values($items);
+        $items = array_values($items);
 
         /**
          * @var int $key
@@ -187,9 +191,9 @@ class PayU extends AbstractPayment
             /** @var ProductECommerce $product */
             $product = $item->getProduct();
 
-            $products[$key]['name']      = $product->getName();
+            $products[$key]['name'] = $product->getName();
             $products[$key]['unitPrice'] = (string) round($product->getOSPrice()->getAmount()->asNumeric(), 2) * 100;
-            $products[$key]['quantity']  = $item->getAmount();
+            $products[$key]['quantity'] = $item->getAmount();
         }
 
         return $products;
@@ -197,6 +201,7 @@ class PayU extends AbstractPayment
 
     /**
      * @return string
+     *
      * @throws \Exception
      */
     private function getAccessToken(): string
@@ -220,6 +225,7 @@ class PayU extends AbstractPayment
      * @param array $order
      *
      * @return string
+     *
      * @throws \Exception
      */
     private function create(array $order): string
@@ -342,12 +348,13 @@ class PayU extends AbstractPayment
         // TODO: Implement executeCredit() method.
         throw new \Exception('not implemented');
     }
-    
+
     /**
      * Set additional data example mcpData for multi-currency:
      * http://developers.payu.com/en/multi-currency.html
      *
      * @param array $orderData
+     *
      * @return array
      */
     protected function setAdditionalData(array $orderData): array

@@ -1059,9 +1059,7 @@ pimcore.object.classes.klass = Class.create({
                 text: nodeLabel,
                 type: "data",
                 leaf: true,
-                iconCls: "pimcore_icon_" + type
-                //,
-                //listeners: this.getTreeNodeListeners()
+                iconCls: pimcore.object.classes.data[type].prototype.getIconClass()
             };
 
             newNode = parentNode.createNode(newNode);

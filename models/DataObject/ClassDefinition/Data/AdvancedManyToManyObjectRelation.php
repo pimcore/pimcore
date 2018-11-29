@@ -744,8 +744,12 @@ class AdvancedManyToManyObjectRelation extends Model\DataObject\ClassDefinition\
         /**
          * @extjs6
          */
-        if (is_array($visibleFields) && count($visibleFields)) {
-            $visibleFields = implode(',', $visibleFields);
+        if (is_array($visibleFields)) {
+            if (count($visibleFields)) {
+                $visibleFields = implode(',', $visibleFields);
+            } else {
+                $visibleFields = null;
+            }
         }
         $this->visibleFields = $visibleFields;
 
