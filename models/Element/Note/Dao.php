@@ -81,9 +81,9 @@ class Dao extends Model\Dao\AbstractDao
         $this->model->setData($preparedData);
     }
 
-
     /** Saves note to database.
      * @return bool
+     *
      * @throws \Exception
      */
     public function save()
@@ -142,7 +142,6 @@ class Dao extends Model\Dao\AbstractDao
 
         return true;
     }
-
 
     /** Deletes note from database.
      * @throws \Exception
