@@ -49,14 +49,18 @@ pimcore.settings.targeting.actions = (function () {
                                         }.bind(el),
 
                                         onNodeOver: function (target, dd, e, data) {
-                                            return Ext.dd.DropZone.prototype.dropAllowed;
+                                            if (data.records.length == 1 && data.records[0].data.elementType === "document") {
+                                                return Ext.dd.DropZone.prototype.dropAllowed;
+                                            }
                                         },
 
                                         onNodeDrop: function (target, dd, e, data) {
-                                            var nodeData = data.records[0].data;
-                                            if (nodeData.elementType === "document") {
-                                                this.setValue(nodeData.path);
-                                                return true;
+                                            if (pimcore.helpers.dragAndDropValidateSingleItem(data)) {
+                                                var nodeData = data.records[0].data;
+                                                if (nodeData.elementType === "document") {
+                                                    this.setValue(nodeData.path);
+                                                    return true;
+                                                }
                                             }
 
                                             return false;

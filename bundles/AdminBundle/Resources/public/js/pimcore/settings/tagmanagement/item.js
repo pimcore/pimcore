@@ -148,23 +148,27 @@ pimcore.settings.tagmanagement.item = Class.create({
                                 }.bind(el),
 
                                 onNodeOver : function(target, dd, e, data) {
-                                    return Ext.dd.DropZone.prototype.dropAllowed;
+                                    if (data.records.length == 1 && data.records[0].data.elementType == "document") {
+                                        return Ext.dd.DropZone.prototype.dropAllowed;
+                                    }
                                 },
 
                                 onNodeDrop : function (el, target, dd, e, data) {
-                                    try {
-                                        var record = data.records[0];
-                                        var data = record.data;
+                                    if (pimcore.helpers.dragAndDropValidateSingleItem(data)) {
+                                        try {
+                                            var record = data.records[0];
+                                            var data = record.data;
 
-                                        if (data.elementType == "document") {
-                                            var pattern = preg_quote(data.path);
-                                            pattern = str_replace("@", "\\@", pattern);
-                                            pattern = "@^" + pattern + "$@";
-                                            el.setValue(pattern);
-                                            return true;
+                                            if (data.elementType == "document") {
+                                                var pattern = preg_quote(data.path);
+                                                pattern = str_replace("@", "\\@", pattern);
+                                                pattern = "@^" + pattern + "$@";
+                                                el.setValue(pattern);
+                                                return true;
+                                            }
+                                        } catch (e) {
+                                            console.log(e);
                                         }
-                                    } catch (e) {
-                                        console.log(e);
                                     }
                                     return false;
                                 }.bind(this, el)

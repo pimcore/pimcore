@@ -646,16 +646,20 @@ pimcore.settings.system = Class.create({
                                             }.bind(el),
 
                                             onNodeOver: function (target, dd, e, data) {
-                                                return Ext.dd.DropZone.prototype.dropAllowed;
+                                                if (data.records.length == 1 && data.records[0].data.elementType == "document") {
+                                                    return Ext.dd.DropZone.prototype.dropAllowed;
+                                                }
                                             },
 
                                             onNodeDrop: function (target, dd, e, data) {
-                                                var record = data.records[0];
-                                                var data = record.data;
+                                                if (pimcore.helpers.dragAndDropValidateSingleItem(data)) {
+                                                    var record = data.records[0];
+                                                    var data = record.data;
 
-                                                if (data.elementType == "document") {
-                                                    this.setValue(data.path);
-                                                    return true;
+                                                    if (data.elementType == "document") {
+                                                        this.setValue(data.path);
+                                                        return true;
+                                                    }
                                                 }
                                                 return false;
                                             }.bind(el)
