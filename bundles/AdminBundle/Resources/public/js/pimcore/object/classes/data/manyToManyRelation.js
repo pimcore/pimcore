@@ -301,10 +301,16 @@ pimcore.object.classes.data.manyToManyRelation = Class.create(pimcore.object.cla
                                     }.bind(el),
 
                                     onNodeOver : function(target, dd, e, data) {
-                                        return Ext.dd.DropZone.prototype.dropAllowed;
+                                        if (data.records.length === 1 && data.records[0].data.elementType === "asset") {
+                                            return Ext.dd.DropZone.prototype.dropAllowed;
+                                        }
                                     },
 
                                     onNodeDrop : function (target, dd, e, data) {
+                                        if(!pimcore.helpers.dragAndDropValidateSingleItem(data)) {
+                                            return false;
+                                        }
+
                                         data = data.records[0].data;
                                         if (data.elementType == "asset") {
                                             this.setValue(data.path);

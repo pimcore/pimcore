@@ -1666,7 +1666,7 @@ class Service extends Model\Element\Service
         }
         $className = $fd->getCalculatorClass();
         if (!$className || !\Pimcore\Tool::classExists($className)) {
-            Logger::error('Class does not exsist: ' . $className);
+            Logger::error('Calculator class "' . $className.'" does not exist -> '.$fieldname.'=null');
 
             return null;
         }

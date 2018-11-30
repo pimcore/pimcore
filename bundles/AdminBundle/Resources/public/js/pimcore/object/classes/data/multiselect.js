@@ -196,34 +196,6 @@ pimcore.object.classes.data.multiselect = Class.create(pimcore.object.classes.da
         });
 
         selectionModel = valueGrid.getSelectionModel();;
-        valueGrid.on("afterrender", function () {
-
-            var dropTargetEl = valueGrid.getEl();
-            var gridDropTarget = new Ext.dd.DropZone(dropTargetEl, {
-                ddGroup: 'objectclassmultiselect',
-                getTargetFromEvent: function (e) {
-                    return valueGrid.getEl().dom;
-                }.bind(this),
-                onNodeOver: function (overHtmlNode, ddSource, e, data) {
-                    if (data["grid"] && data["grid"] == valueGrid) {
-                        return Ext.dd.DropZone.prototype.dropAllowed;
-                    }
-                    return Ext.dd.DropZone.prototype.dropNotAllowed;
-                }.bind(this),
-                onNodeDrop: function (target, dd, e, data) {
-                    if (data["grid"] && data["grid"] == valueGrid) {
-                        var rowIndex = valueGrid.getView().findRowIndex(e.target);
-                        if (rowIndex !== false) {
-                            var store = valueGrid.getStore();
-                            var rec = store.getAt(data.rowIndex);
-                            store.removeAt(data.rowIndex);
-                            store.insert(rowIndex, [rec]);
-                        }
-                    }
-                    return false;
-                }.bind(this)
-            });
-        }.bind(this));
 
         var specificItems = [
             {

@@ -306,7 +306,7 @@ class EncryptedField extends Model\DataObject\ClassDefinition\Data
     {
         $fd = $this->getDelegateDatatypeDefinition();
         if ($fd) {
-            $data = $data instanceof Model\DataObject\Data\EncryptedField ? $data->getPlain() : data;
+            $data = $data instanceof Model\DataObject\Data\EncryptedField ? $data->getPlain() : $data;
             $result = $fd->checkValidity($data, $omitMandatoryCheck);
 
             return $result;
@@ -647,7 +647,7 @@ class EncryptedField extends Model\DataObject\ClassDefinition\Data
     {
         $delegate = $this->getDelegate();
 
-        if (method_exists($delegate, enrichLayoutDefinition)) {
+        if (method_exists($delegate, 'enrichLayoutDefinition')) {
             $delegate->enrichLayoutDefinition($object, $context);
         }
 

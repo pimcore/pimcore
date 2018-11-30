@@ -15,6 +15,9 @@
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
+use Pimcore\Logger;
+use Pimcore\Model\Asset;
+use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Element\Service;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -57,5 +60,107 @@ class ElementControllerBase extends AdminController
         }
 
         return $this->adminJson(['success' => false, 'message' => 'missing_permission']);
+    }
+
+    /**
+     * @Route("/delete-info", methods={"GET"})
+     *
+     * @param Request $request
+     *
+     * @return JsonResponse
+     */
+    public function deleteInfoAction(Request $request)
+    {
+        $hasDependency = false;
+        $deleteJobs = [];
+        $recycleJobs = [];
+
+        $totalChilds = 0;
+
+        $ids = $request->get('id');
+        $ids = explode(',', $ids);
+        $type = $request->get('type');
+
+        foreach ($ids as $id) {
+            try {
+                $element = Service::getElementById($type, $id);
+                if (!$element) {
+                    continue;
+                }
+                $hasDependency = $element->getDependencies()->isRequired();
+            } catch (\Exception $e) {
+                Logger::err('failed to access asset with id: ' . $id);
+                continue;
+            }
+
+            // check for childs
+            if ($element instanceof ElementInterface) {
+                $recycleJobs[] = [[
+                    'url' => '/admin/recyclebin/add',
+                    'method' => 'POST',
+                    'params' => [
+                        'type' => $type,
+                        'id' => $element->getId()
+                    ]
+                ]];
+
+                $hasChilds = $element->hasChildren();
+                if (!$hasDependency) {
+                    $hasDependency = $hasChilds;
+                }
+
+                $childs = 0;
+                if ($hasChilds) {
+                    // get amount of childs
+                    $listClass = '\Pimcore\Model\\' . Service::getBaseClassNameForElement($element) . '\Listing';
+                    $list = new $listClass();
+                    $pathColumn = ($type == 'object') ? 'o_path' : 'path';
+                    $list->setCondition($pathColumn . ' LIKE ?', [$element->getRealFullPath() . '/%']);
+                    $childs = $list->getTotalCount();
+                    $totalChilds += $childs;
+
+                    if ($childs > 0) {
+                        $deleteObjectsPerRequest = 5;
+                        for ($i = 0; $i < ceil($childs / $deleteObjectsPerRequest); $i++) {
+                            $deleteJobs[] = [[
+                                'url' => '/admin/' . $type . '/delete',
+                                'method' => 'DELETE',
+                                'params' => [
+                                    'step' => $i,
+                                    'amount' => $deleteObjectsPerRequest,
+                                    'type' => 'childs',
+                                    'id' => $element->getId()
+                                ]
+                            ]];
+                        }
+                    }
+                }
+
+                // the asset itself is the last one
+                $deleteJobs[] = [[
+                    'url' => '/admin/' . $type . '/delete',
+                    'method' => 'DELETE',
+                    'params' => [
+                        'id' => $element->getId()
+                    ]
+                ]];
+            }
+        }
+
+        // get the element key in case of just one
+        $elementKey = false;
+        if (count($ids) === 1) {
+            $elementKey = Service::getElementById($type, $id)->getKey();
+        }
+
+        $deleteJobs = array_merge($recycleJobs, $deleteJobs);
+
+        return $this->adminJson([
+            'hasDependencies' => $hasDependency,
+            'childs' => $totalChilds,
+            'deletejobs' => $deleteJobs,
+            'batchDelete' => count($ids) > 1,
+            'elementKey' => $elementKey
+        ]);
     }
 }

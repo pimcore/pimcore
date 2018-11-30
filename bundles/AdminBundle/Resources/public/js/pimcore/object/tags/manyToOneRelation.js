@@ -89,20 +89,9 @@ pimcore.object.tags.manyToOneRelation = Class.create(pimcore.object.tags.abstrac
                 },
 
                 onNodeOver: function (target, dd, e, data) {
-                    if(data.records.length>1) {
-                        return Ext.dd.DropZone.prototype.dropNotAllowed;
-                    }
-
-                    var record = data.records[0];
-                    var data = record.data;
-
-                    if (this.dndAllowed(data)) {
+                    if (data.records.length === 1 && this.dndAllowed(data.records[0].data)) {
                         return Ext.dd.DropZone.prototype.dropAllowed;
                     }
-                    else {
-                        return Ext.dd.DropZone.prototype.dropNotAllowed;
-                    }
-
                 }.bind(this),
 
                 onNodeDrop: this.onNodeDrop.bind(this)
@@ -240,12 +229,12 @@ pimcore.object.tags.manyToOneRelation = Class.create(pimcore.object.tags.abstrac
     },
 
     onNodeDrop: function (target, dd, e, data) {
-        if (!pimcore.helpers.dragAndDropValidateSingleItem(data)) {
+
+        if(!pimcore.helpers.dragAndDropValidateSingleItem(data)) {
             return false;
         }
 
-        var record = data.records[0];
-        var data = record.data;
+        data = data.records[0].data;
 
         if (this.dndAllowed(data)) {
             this.data.id = data.id;

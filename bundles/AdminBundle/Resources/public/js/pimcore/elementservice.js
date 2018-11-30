@@ -19,7 +19,7 @@ pimcore.elementservice.deleteElement = function (options) {
     // check for dependencies
     Ext.Ajax.request({
         url: url,
-        params: {id: options.id},
+        params: {id: options.id, type: elementType},
         success: pimcore.elementservice.deleteElementCheckDependencyComplete.bind(window, options)
     });
 };
@@ -221,6 +221,8 @@ pimcore.elementservice.updateObject = function (id, values, callback) {
 };
 
 pimcore.elementservice.getAffectedNodes = function(elementType, id) {
+
+    var ids = Ext.isString(id) ? id.split(',') : [id];
     var treeNames = pimcore.elementservice.getElementTreeNames(elementType);
     var affectedNodes = [];
     for (var index = 0; index < treeNames.length; index++) {
@@ -230,14 +232,16 @@ pimcore.elementservice.getAffectedNodes = function(elementType, id) {
             continue;
         }
         tree = tree.tree;
-        var view = tree.getView();
         var store = tree.getStore();
-        var record = store.getNodeById(id);
 
-        if (record) {
-            affectedNodes.push(record);
-        }
+        ids.forEach(function (id) {
+            var record = store.getNodeById(id);
+            if (record) {
+                affectedNodes.push(record);
+            }
+        });
     }
+
     return affectedNodes;
 
 };

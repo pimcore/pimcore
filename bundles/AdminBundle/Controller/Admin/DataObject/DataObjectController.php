@@ -555,13 +555,12 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                 if ($fielddefinition instanceof DataObject\ClassDefinition\Data\Href) {
                     $data = $relations[0];
                     $data['published'] = (bool) $data['published'];
-                } else if ($fielddefinition instanceof DataObject\ClassDefinition\Data\ManyToManyObjectRelation && !$fielddefinition instanceof DataObject\ClassDefinition\Data\AdvancedManyToManyObjectRelation) {
+                } elseif ($fielddefinition instanceof DataObject\ClassDefinition\Data\ManyToManyObjectRelation && !$fielddefinition instanceof DataObject\ClassDefinition\Data\AdvancedManyToManyObjectRelation) {
                     $fieldData = $object->$getter();
                     $data = $fielddefinition->getDataForEditmode($fieldData, $object, $objectFromVersion);
                 } else {
                     foreach ($relations as $rel) {
-                            $data[] = [$rel['id'], $rel['path'], $rel['type'], $rel['subtype'], (bool) $rel['published']];
-
+                        $data[] = [$rel['id'], $rel['path'], $rel['type'], $rel['subtype'], (bool) $rel['published']];
                     }
                 }
                 $this->objectData[$key] = $data;
@@ -991,105 +990,6 @@ class DataObjectController extends ElementControllerBase implements EventedContr
         }
 
         return $this->json(['success' => false, 'message' => 'Unable to change a sorting way of children items.']);
-    }
-
-    /**
-     * @Route("/delete-info", methods={"GET"})
-     *
-     * @param Request $request
-     *
-     * @return JsonResponse
-     */
-    public function deleteInfoAction(Request $request)
-    {
-        $hasDependency = false;
-        $deleteJobs = [];
-        $recycleJobs = [];
-
-        $totalChilds = 0;
-
-        $ids = $request->get('id');
-        $ids = explode(',', $ids);
-
-        foreach ($ids as $id) {
-            try {
-                $object = DataObject::getById($id);
-                if (!$object) {
-                    continue;
-                }
-                $hasDependency |= $object->getDependencies()->isRequired();
-            } catch (\Exception $e) {
-                Logger::err('failed to access object with id: ' . $id);
-                continue;
-            }
-
-            // check for children
-            if ($object instanceof DataObject\AbstractObject) {
-                $recycleJobs[] = [[
-                    'url' => '/admin/recyclebin/add',
-                    'method' => 'POST',
-                    'params' => [
-                        'type' => 'object',
-                        'id' => $object->getId()
-                    ]
-                ]];
-
-                $hasChilds = $object->hasChildren();
-                if (!$hasDependency) {
-                    $hasDependency = $hasChilds;
-                }
-
-                $childs = 0;
-                if ($hasChilds) {
-                    // get amount of childs
-                    $list = new DataObject\Listing();
-                    $list->setCondition('o_path LIKE ' . $list->quote($object->getRealFullPath() . '/%'));
-                    $childs = $list->getTotalCount();
-
-                    $totalChilds += $childs;
-                    if ($childs > 0) {
-                        $deleteObjectsPerRequest = 5;
-                        for ($i = 0; $i < ceil($childs / $deleteObjectsPerRequest); $i++) {
-                            $deleteJobs[] = [[
-                                'url' => '/admin/object/delete',
-                                'method' => 'DELETE',
-                                'params' => [
-                                    'step' => $i,
-                                    'amount' => $deleteObjectsPerRequest,
-                                    'type' => 'childs',
-                                    'id' => $object->getId()
-                                ]
-                            ]];
-                        }
-                    }
-                }
-
-                // the object itself is the last one
-                $deleteJobs[] = [[
-                    'url' => '/admin/object/delete',
-                    'method' => 'DELETE',
-                    'params' => [
-                        'id' => $object->getId()
-                    ]
-                ]];
-            }
-        }
-
-        // get the element key in case of just one
-        $elementKey = false;
-        if (count($ids) === 1) {
-            $elementKey = DataObject::getById($id)->getKey();
-        }
-
-        $deleteJobs = array_merge($recycleJobs, $deleteJobs);
-
-        return $this->adminJson([
-            'hasDependencies' => $hasDependency,
-            'childs' => $totalChilds,
-            'deletejobs' => $deleteJobs,
-            'batchDelete' => count($ids) > 1,
-            'elementKey' => $elementKey
-        ]);
     }
 
     /**
