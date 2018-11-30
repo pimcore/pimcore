@@ -390,29 +390,32 @@ pimcore.settings.website = Class.create({
                         },
 
                         onNodeOver : function(elementType, node, dragZone, e, data ) {
+                            if (data.records.length == 1) {
+                                var record = data.records[0];
+                                var data = record.data;
 
-                            var record = data.records[0];
-                            var data = record.data;
-
-                            if (data.elementType == elementType) {
-                                return Ext.dd.DropZone.prototype.dropAllowed;
+                                if (data.elementType == elementType) {
+                                    return Ext.dd.DropZone.prototype.dropAllowed;
+                                }
                             }
 
                             return Ext.dd.DropZone.prototype.dropNotAllowed;
                         }.bind(this, data.type),
 
                         onNodeDrop : function(storeIndex, targetNode, dragZone, e, data) {
-                            try {
-                                var record = data.records[0];
-                                var data = record.data;
-                                var rec = this.grid.getStore().getAt(storeIndex);
-                                rec.set("data", data.path);
+                            if (pimcore.helpers.dragAndDropValidateSingleItem(data)) {
+                                try {
+                                    var record = data.records[0];
+                                    var data = record.data;
+                                    var rec = this.grid.getStore().getAt(storeIndex);
+                                    rec.set("data", data.path);
 
-                                this.updateRows();
+                                    this.updateRows();
 
-                                return true;
-                            } catch (e) {
-                                console.log(e);
+                                    return true;
+                                } catch (e) {
+                                    console.log(e);
+                                }
                             }
                             return false;
                         }.bind(this, storeIndex)
