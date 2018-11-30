@@ -1630,8 +1630,7 @@ pimcore.helpers.searchAndMove = function (parentId, callback, type) {
 
 pimcore.helpers.sendTestEmail = function (from, to, subject, emailType, documentPath, content) {
 
-
-    if(emailType === null) {
+    if(!emailType) {
         emailType = 'text';
     }
 
