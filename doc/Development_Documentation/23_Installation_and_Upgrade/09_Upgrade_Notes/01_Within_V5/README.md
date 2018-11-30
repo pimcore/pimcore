@@ -42,6 +42,11 @@ the JS classes in `pimcore.document.tags`.
 | `$this->multihref()` | `Multihref` | `multihref` | `$this->relations()` | `Relations` | `relations` | 
 
 
+###### Update to Carbon 2 (Date Objects)
+Pimcore uses now Carbon 2 by default which is mostly compatible with version 1, however there are some
+special cases where your code might need some adoptions. 
+So please check the the migration guide of Carbon before you update: https://carbon.nesbot.com/docs/#api-carbon-2 
+
 ## Version 5.5.4
 
 The support for ElasticSearch version 6 has been added. 
