@@ -28,7 +28,7 @@
     "docs": "https://pimcore.com/docs/5.0.x/index.html"
   },
   "require": {
-    "php": ">=7.1",
+    "php": ">=7.2",
     "ext-SimpleXML": "*",
     "ext-dom": "*",
     "ext-exif": "*",
