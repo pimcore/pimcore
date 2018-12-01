@@ -211,10 +211,10 @@ class Concrete extends AbstractObject
         if ($validationExceptions) {
             $message = 'Validation failed: ';
             $errors = [];
-            foreach($validationExceptions as $e){
+            foreach ($validationExceptions as $e) {
                 $errors[] = $e->getMessage();
             }
-            $message .= implode(' / ',$errors);
+            $message .= implode(' / ', $errors);
             $aggregatedExceptions = new Model\Element\ValidationException($message);
             $aggregatedExceptions->setSubItems($validationExceptions);
             throw $aggregatedExceptions;
