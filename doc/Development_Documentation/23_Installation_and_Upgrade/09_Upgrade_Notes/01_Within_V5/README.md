@@ -1,5 +1,10 @@
 # Upgrade Notes for Upgrades within Pimcore 5
 
+## Version 5.8.0
+- Add PathFormatter interface, static path formatters are now deprecated and will be removed with Version 6.0. You can read
+ more about that [here](../../../05_Objects/01_Object_Classes/05_Class_Settings/14_Path_Formatter.md).
+- Removed method \Pimcore\Model\DataObject\ClassDefinition\Data::setFieldtype($fieldtype)
+
 ## Version 5.7.2 
 - Signature of `\Pimcore\Model\DataObject\LazyLoadedFieldsInterface` has changed
 - `\Pimcore\Model\DataObject\Concrete` the following methods `addLazyLoadedField($fieldName)` and `getLazyLoadedFields()` were removed
