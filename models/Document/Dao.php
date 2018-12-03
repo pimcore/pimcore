@@ -254,19 +254,19 @@ class Dao extends Model\Element\Dao
      */
     public function getVersionCountForUpdate(): int
     {
-        if ($this->model instanceof Folder) {
-            $versionCount = $this->db->fetchOne(
-                'SELECT versionCount FROM documents WHERE id = ? FOR UPDATE',
-                $this->model->getId()
-            );
-        } else {
+        if ($this->model instanceof PageSnippet) {
             $db = Db::get();
             $versionCount = $db->fetchOne(
                 'SELECT GREATEST(d.versionCount, IFNULL(v.versionCount, 0)) FROM documents as d LEFT JOIN versions as v
                         ON ctype="document" AND v.cid=d.id WHERE d.id = ? ORDER BY v.id DESC LIMIT 1 FOR UPDATE', $this->model->getId());
+        } else {
+            $versionCount = $this->db->fetchOne(
+                'SELECT versionCount FROM documents WHERE id = ? FOR UPDATE',
+                $this->model->getId()
+            );
         }
 
-        return $versionCount;
+        return (int) $versionCount;
     }
 
     /**

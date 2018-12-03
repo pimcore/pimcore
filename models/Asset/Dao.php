@@ -337,7 +337,7 @@ class Dao extends Model\Element\Dao
                         ON ctype="asset" AND v.cid=a.id WHERE a.id = ? ORDER BY v.id DESC LIMIT 1 FOR UPDATE', $this->model->getId());
         }
 
-        return $versionCount;
+        return (int) $versionCount;
     }
 
     /**

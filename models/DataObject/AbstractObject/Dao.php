@@ -227,7 +227,7 @@ class Dao extends Model\Element\Dao
             );
         }
 
-        return $versionCount;
+        return (int) $versionCount;
     }
 
     /**
