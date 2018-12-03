@@ -220,14 +220,30 @@ class Concrete extends AbstractObject
             throw $aggregatedExceptions;
         }
 
-        parent::update($isUpdate, $params);
+        $isDirtyDetectionDisabled = self::isDirtyDetectionDisabled();
+        try {
 
-        $this->getDao()->update($isUpdate);
 
-        // scheduled tasks are saved in $this->saveVersion();
+            $oldVersionCount = $this->getVersionCount();
 
-        $this->saveVersion(false, false, isset($params['versionNote']) ? $params['versionNote'] : null);
-        $this->saveChildData();
+            parent::update($isUpdate, $params);
+
+            $newVersionCount = $this->getVersionCount();
+
+            if ($newVersionCount != $oldVersionCount + 1) {
+                self::disableDirtyDetection();
+            }
+
+            $this->getDao()->update($isUpdate);
+
+            // scheduled tasks are saved in $this->saveVersion();
+
+            $this->saveVersion(false, false, isset($params['versionNote']) ? $params['versionNote'] : null);
+            $this->saveChildData();
+
+        } finally {
+            self::setDisableDirtyDetection($isDirtyDetectionDisabled);
+        }
     }
 
     protected function saveChildData()
