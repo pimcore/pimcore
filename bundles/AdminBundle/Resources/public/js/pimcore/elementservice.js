@@ -20,14 +20,60 @@ pimcore.elementservice.deleteElement = function (options) {
     Ext.Ajax.request({
         url: url,
         params: {id: options.id, type: elementType},
-        success: pimcore.elementservice.deleteElementCheckDependencyComplete.bind(window, options)
+        success: pimcore.elementservice.deleteElementsComplete.bind(window, options)
     });
 };
 
-pimcore.elementservice.deleteElementCheckDependencyComplete = function (options, response) {
-
+pimcore.elementservice.deleteElementsComplete = function(options, response) {
     try {
         var res = Ext.decode(response.responseText);
+
+        if (res.errors) {
+            var message = res.batchDelete ? t('delete_error_batch') : t('delete_error');
+            var hasDeleteable = true;
+
+            if (res.itemResults) {
+                var reasons = res.itemResults.filter(function (result) {
+                    return !result.allowed;
+                }).map(function (result) {
+                    if (res.batchDelete) {
+                        return htmlspecialchars(result.key + ': ' + result.reason);
+                    }
+
+                    return htmlspecialchars(result.reason);
+                });
+
+                message += "<br /><b style='display: block; text-align: center; padding: 10px 0;'>" + reasons.join('<br/>') + "</b>";
+
+                hasDeleteable = res.itemResults.filter(function (result) {
+                    return result.allowed;
+                }).length > 0;
+            }
+
+            Ext.MessageBox.show({
+                title:t('delete'),
+                msg: message,
+                buttons: hasDeleteable ? Ext.Msg.OKCANCEL : Ext.Msg.CANCEL,
+                icon: Ext.MessageBox.INFO,
+                fn: function(r, options, button) {
+                    if (button === "ok" && hasDeleteable && r.deletejobs && r.batchDelete) {
+                        pimcore.elementservice.deleteElementCheckDependencyComplete.call(this, window, r, options);
+                    }
+                }.bind(window, res, options)
+            });
+        }
+        else {
+            pimcore.elementservice.deleteElementCheckDependencyComplete.call(this, window, res, options);
+        }
+    }
+    catch (e) {
+        console.log(e);
+    }
+}
+
+pimcore.elementservice.deleteElementCheckDependencyComplete = function (window, res, options) {
+
+    try {
         var message = res.batchDelete ? t('delete_message_batch') : t('delete_message');
         if (res.elementKey) {
             message += "<br /><b style='display: block; text-align: center; padding: 10px 0;'>\"" + htmlspecialchars(res.elementKey) + "\"</b>";

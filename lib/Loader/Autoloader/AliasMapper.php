@@ -48,13 +48,28 @@ class AliasMapper extends AbstractAutoloader
         'Pimcore\Model\DataObject\ClassDefinition\Data\MultihrefMetadata' => \Pimcore\Model\DataObject\ClassDefinition\Data\AdvancedManyToManyRelation::class,
         'Pimcore\Model\DataObject\ClassDefinition\Data\Objects' => \Pimcore\Model\DataObject\ClassDefinition\Data\ManyToManyObjectRelation::class,
         'Pimcore\Model\DataObject\ClassDefinition\Data\ObjectsMetadata' => \Pimcore\Model\DataObject\ClassDefinition\Data\AdvancedManyToManyObjectRelation::class,
+        'Pimcore\Model\Document\Tag\Href' => \Pimcore\Model\Document\Tag\Relation::class,
+        'Pimcore\Model\Document\Tag\Multihref' => \Pimcore\Model\Document\Tag\Relations::class,
     ];
 
-    public function createAliases()
+    public function load(string $class)
     {
-        foreach ($this->mapping as $oldName => $newName) {
-            if (!$this->classExists($oldName, false)) {
-                class_alias($newName, $oldName);
+        // alias was requested, load original and create alias
+        if (isset($this->mapping[$class])) {
+            if (!$this->classExists($this->mapping[$class], false)) {
+                $this->composerAutoloader->loadClass($this->mapping[$class]);
+            }
+
+            if (!$this->classExists($class, false) && $this->classExists($this->mapping[$class], false)) {
+                class_alias($this->mapping[$class], $class);
+            }
+        }
+
+        // original was requested, load it and create alias afterwards
+        $alias = array_search($class, $this->mapping);
+        if ($alias !== false) {
+            if ($this->composerAutoloader->loadClass($class)) {
+                class_alias($class, $alias);
             }
         }
     }
