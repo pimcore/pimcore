@@ -11,6 +11,7 @@
   "color_description": "Use the HTML hex format, eg. #ffffff",
   "colors": "Colors",
   "custom_logo": "Custom Logo",
+  "custom_login_background_image": "Custom Login Background Image",
   "branding_logo_description": "Used on the login and start screen. We recommend to use a SVG (JPG & PNG are supported as well).",
   "appearance_and_branding": "Appearance & Branding",
   "dev_mode_description": "The DEV-mode sets the highest verbosity level and removes certain performance optimizations such as combining Javascript of the admin backend. It is typically used for developing\/debugging the core or plugins.",
