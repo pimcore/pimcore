@@ -55,20 +55,20 @@ class AliasMapper extends AbstractAutoloader
     public function load(string $class)
     {
         // alias was requested, load original and create alias
-        if(isset($this->mapping[$class])) {
-            if(!$this->classExists($this->mapping[$class], false)) {
+        if (isset($this->mapping[$class])) {
+            if (!$this->classExists($this->mapping[$class], false)) {
                 $this->composerAutoloader->loadClass($this->mapping[$class]);
             }
 
-            if(!$this->classExists($class, false) && $this->classExists($this->mapping[$class], false)) {
+            if (!$this->classExists($class, false) && $this->classExists($this->mapping[$class], false)) {
                 class_alias($this->mapping[$class], $class);
             }
         }
 
         // original was requested, load it and create alias afterwards
         $alias = array_search($class, $this->mapping);
-        if($alias !== false) {
-            if($this->composerAutoloader->loadClass($class)) {
+        if ($alias !== false) {
+            if ($this->composerAutoloader->loadClass($class)) {
                 class_alias($class, $alias);
             }
         }

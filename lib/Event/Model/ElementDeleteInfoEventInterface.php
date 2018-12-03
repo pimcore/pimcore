@@ -16,7 +16,7 @@ namespace Pimcore\Event\Model;
 
 interface ElementDeleteInfoEventInterface extends ElementEventInterface
 {
-     /**
+    /**
      * @return bool
      */
     public function getDeletionAllowed(): bool;

@@ -67,7 +67,7 @@ final class DataObjectEvents
      */
     const POST_UPDATE_FAILURE = 'pimcore.dataobject.postUpdateFailure';
 
-     /**
+    /**
      * @Event("Pimcore\Event\Model\DataObjectDeleteInfoEvent")
      *
      * @var string

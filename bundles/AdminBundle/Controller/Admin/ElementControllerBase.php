@@ -112,12 +112,10 @@ class ElementControllerBase extends AdminController
                 if ($element instanceof Asset) {
                     $event = new AssetDeleteInfoEvent($element);
                     $eventName = AssetEvents::DELETE_INFO;
-                }
-                elseif ($element instanceof Document) {
+                } elseif ($element instanceof Document) {
                     $event = new DocumentDeleteInfoEvent($element);
                     $eventName = DocumentEvents::DELETE_INFO;
-                }
-                elseif ($element instanceof AbstractObject) {
+                } elseif ($element instanceof AbstractObject) {
                     $event = new DataObjectDeleteInfoEvent($element);
                     $eventName = DataObjectEvents::DELETE_INFO;
                 }
