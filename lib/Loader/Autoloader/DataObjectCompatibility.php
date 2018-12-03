@@ -19,7 +19,7 @@ namespace Pimcore\Loader\Autoloader;
 
 class DataObjectCompatibility extends AbstractAutoloader
 {
-    public function load($class)
+    public function load(string $class)
     {
         if (strpos($class, 'Pimcore\\') === 0 && strpos($class, '\\Object\\')) {
             $realClassName = str_replace('\\Object\\', '\\DataObject\\', $class);
@@ -42,15 +42,5 @@ class DataObjectCompatibility extends AbstractAutoloader
         }
 
         return false;
-    }
-
-    public function register(bool $prepend = false)
-    {
-        spl_autoload_register([$this, 'load'], true, $prepend);
-    }
-
-    public function unregister()
-    {
-        spl_autoload_unregister([$this, 'load']);
     }
 }

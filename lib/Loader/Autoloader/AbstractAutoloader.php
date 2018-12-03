@@ -35,4 +35,16 @@ abstract class AbstractAutoloader
     {
         return class_exists($class, $autoload) || interface_exists($class, $autoload) || trait_exists($class, $autoload);
     }
+
+    public abstract function load(string $class);
+
+    public function register(bool $prepend = false)
+    {
+        spl_autoload_register([$this, 'load'], true, $prepend);
+    }
+
+    public function unregister()
+    {
+        spl_autoload_unregister([$this, 'load']);
+    }
 }
