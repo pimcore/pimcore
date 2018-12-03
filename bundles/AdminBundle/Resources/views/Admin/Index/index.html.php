@@ -503,6 +503,7 @@ $scripts = array(
     "pimcore/object/gridcolumn/operator/Concatenator.js",
     "pimcore/object/gridcolumn/operator/DateFormatter.js",
     "pimcore/object/gridcolumn/operator/ElementCounter.js",
+    "pimcore/object/gridcolumn/operator/Iterator.js",
     "pimcore/object/gridcolumn/operator/JSON.js",
     "pimcore/object/gridcolumn/operator/LocaleSwitcher.js",
     "pimcore/object/gridcolumn/operator/Merge.js",
