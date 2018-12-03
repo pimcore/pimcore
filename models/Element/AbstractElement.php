@@ -268,12 +268,12 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
 
     /**
      * @param null $versionNote
-     *
+     * @param bool $saveOnlyVersion
      * @return Model\Version
      *
      * @throws \Exception
      */
-    protected function doSaveVersion($versionNote = null)
+    protected function doSaveVersion($versionNote = null, $saveOnlyVersion = true)
     {
         /**
          * @var Model\Version $version
@@ -285,7 +285,11 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
         $version->setUserId($this->getUserModification());
         $version->setData($this);
         $version->setNote($versionNote);
-        $version->setVersionCount($this->getVersionCount());
+        $versionCount = $this->getVersionCountForUpdate();
+        if ($saveOnlyVersion) {
+            $versionCount++;
+        }
+        $version->setVersionCount($versionCount);
         $version->save();
 
         return $version;

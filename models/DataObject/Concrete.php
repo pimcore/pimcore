@@ -272,19 +272,19 @@ class Concrete extends AbstractObject
      * it is false when the method is called by $this->update()
      *
      * @param bool $setModificationDate
-     * @param bool $callPluginHook
+     * @param bool $saveOnlyVersion
      * @param string $versionNote version note
      *
      * @return Model\Version
      */
-    public function saveVersion($setModificationDate = true, $callPluginHook = true, $versionNote = null)
+    public function saveVersion($setModificationDate = true, $saveOnlyVersion = true, $versionNote = null)
     {
         if ($setModificationDate) {
             $this->setModificationDate(time());
         }
 
         // hook should be also called if "save only new version" is selected
-        if ($callPluginHook) {
+        if ($saveOnlyVersion) {
             \Pimcore::getEventDispatcher()->dispatch(DataObjectEvents::PRE_UPDATE, new DataObjectEvent($this, [
                 'saveVersionOnly' => true
             ]));
@@ -300,11 +300,11 @@ class Concrete extends AbstractObject
         if (Config::getSystemConfig()->objects->versions->steps
             || Config::getSystemConfig()->objects->versions->days
             || $setModificationDate) {
-            $version = $this->doSaveVersion($versionNote);
+            $version = $this->doSaveVersion($versionNote, $saveOnlyVersion);
         }
 
         // hook should be also called if "save only new version" is selected
-        if ($callPluginHook) {
+        if ($saveOnlyVersion) {
             \Pimcore::getEventDispatcher()->dispatch(DataObjectEvents::POST_UPDATE, new DataObjectEvent($this, [
                 'saveVersionOnly' => true
             ]));
