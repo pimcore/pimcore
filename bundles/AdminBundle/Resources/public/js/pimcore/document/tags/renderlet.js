@@ -78,6 +78,10 @@ pimcore.document.tags.renderlet = Class.create(pimcore.document.tag, {
 
     onNodeDrop: function (target, dd, e, data) {
 
+        if(!pimcore.helpers.dragAndDropValidateSingleItem(data)) {
+            return false;
+        }
+
         var record = data.records[0];
         data = record.data;
 
@@ -108,6 +112,10 @@ pimcore.document.tags.renderlet = Class.create(pimcore.document.tag, {
     },
 
     onNodeOver: function(target, dd, e, data) {
+        if (data.records.length !== 1) {
+            return false;
+        }
+
         data = data.records[0].data;
         if (this.options.type) {
             if (this.options.type != data.elementType) {

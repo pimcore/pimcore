@@ -1630,8 +1630,7 @@ pimcore.helpers.searchAndMove = function (parentId, callback, type) {
 
 pimcore.helpers.sendTestEmail = function (from, to, subject, emailType, documentPath, content) {
 
-
-    if(emailType === null) {
+    if(!emailType) {
         emailType = 'text';
     }
 
@@ -1944,13 +1943,19 @@ pimcore.helpers.editmode.openLinkEditPanel = function (data, callback) {
             },
 
             onNodeOver: function (target, dd, e, data) {
-                data = data.records[0].data;
-                return data.type != "folder" ? Ext.dd.DropZone.prototype.dropAllowed : Ext.dd.DropZone.prototype.dropNotAllowed;
+                if (data.records.length === 1 && data.records[0].data.type === "folder") {
+                    return Ext.dd.DropZone.prototype.dropAllowed;
+                }
             }.bind(this),
 
             onNodeDrop: function (target, dd, e, data) {
-                var record = data.records[0];
-                if (record.data.type != "folder" && (record.data.elementType == "asset" || record.data.elementType == "document" || record.data.elementType == "object")) {
+
+                if(!pimcore.helpers.dragAndDropValidateSingleItem(data)) {
+                    return false;
+                }
+
+                data = data.records[0].data;
+                if (data.type != "folder" && (data.elementType == "asset" || data.elementType == "document" || data.elementType == "object")) {
                     internalTypeField.setValue(record.data.elementType);
                     linkTypeField.setValue('internal');
                     fieldPath.setValue(record.data.path);
@@ -2176,20 +2181,27 @@ pimcore.helpers.editmode.openVideoEditPanel = function (data, callback) {
             },
 
             onNodeOver: function (target, dd, e, data) {
-                data = data.records[0].data;
-                if (target && target.getId() == poster.getId()) {
-                    if (data.elementType == "asset" && data.type == "image") {
-                        return Ext.dd.DropZone.prototype.dropAllowed;
-                    }
-                } else {
-                    if (data.elementType == "asset" && data.type == "video") {
-                        return Ext.dd.DropZone.prototype.dropAllowed;
+                if(data.records.length === 1) {
+                    data = data.records[0].data;
+                    if (target && target.getId() == poster.getId()) {
+                        if (data.elementType == "asset" && data.type == "image") {
+                            return Ext.dd.DropZone.prototype.dropAllowed;
+                        }
+                    } else {
+                        if (data.elementType == "asset" && data.type == "video") {
+                            return Ext.dd.DropZone.prototype.dropAllowed;
+                        }
                     }
                 }
                 return Ext.dd.DropZone.prototype.dropNotAllowed;
             }.bind(this),
 
             onNodeDrop: function (target, dd, e, data) {
+
+                if(!pimcore.helpers.dragAndDropValidateSingleItem(data)) {
+                    return false;
+                }
+
                 if (target) {
                     data = data.records[0].data;
 
@@ -3080,5 +3092,13 @@ pimcore.helpers.registerAssetDnDSingleUpload = function (element, parent, parent
     }.bind(this), true);
 };
 
+pimcore.helpers.dragAndDropValidateSingleItem = function (data) {
+    if(data.records.length > 1) {
+        Ext.MessageBox.alert(t('error'), t('you_can_only_drop_one_element_here'));
+        return false;
+    }
+
+    return true;
+};
 
 

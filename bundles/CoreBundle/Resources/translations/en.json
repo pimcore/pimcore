@@ -1,5 +1,6 @@
 {
   "quicksearch": "Quick Search",
+  "you_can_only_drop_one_element_here": "You can only drop one element here!",
   "grid_options": "Grid Options",
   "open_data_object": "Open Data Object",
   "data_objects": "Data Objects",
@@ -386,6 +387,7 @@
   "active": "Active",
   "success": "Success",
   "translations": "Translations",
+  "translation": "Translation",
   "firstname": "Firstname",
   "lastname": "Lastname",
   "email": "Email",

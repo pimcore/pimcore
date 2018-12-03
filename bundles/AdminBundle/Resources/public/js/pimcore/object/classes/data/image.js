@@ -78,14 +78,20 @@ pimcore.object.classes.data.image = Class.create(pimcore.object.classes.data.dat
                             }.bind(el),
 
                             onNodeOver : function(target, dd, e, data) {
-                                return Ext.dd.DropZone.prototype.dropAllowed;
+                                if (data.records.length === 1 && data.records[0].data.elementType === "asset") {
+                                    return Ext.dd.DropZone.prototype.dropAllowed;
+                                }
                             },
 
                             onNodeDrop : function (target, dd, e, data) {
+
+                                if(!pimcore.helpers.dragAndDropValidateSingleItem(data)) {
+                                    return false;
+                                }
+
                                 try {
-                                    var record = data.records[0];
-                                    var data = record.data;
-                                    if (data.elementType == "asset") {
+                                    data = data.records[0].data;
+                                    if (data.elementType === "asset") {
                                         this.setValue(data.path);
                                         return true;
                                     }

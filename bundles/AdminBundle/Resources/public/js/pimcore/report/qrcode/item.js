@@ -190,14 +190,18 @@ pimcore.report.qrcode.item = Class.create({
                                 }.bind(el),
 
                                 onNodeOver : function(target, dd, e, data) {
-                                    return Ext.dd.DropZone.prototype.dropAllowed;
+                                    if (data.records.length == 1 && data.records[0].data.elementType == "document") {
+                                        return Ext.dd.DropZone.prototype.dropAllowed;
+                                    }
                                 },
 
                                 onNodeDrop : function (el, target, dd, e, data) {
-                                    var data = data.records[0].data;
-                                    if (data.elementType == "document") {
-                                        el.setValue(data.path);
-                                        return true;
+                                    if (pimcore.helpers.dragAndDropValidateSingleItem(data)) {
+                                        var data = data.records[0].data;
+                                        if (data.elementType == "document") {
+                                            el.setValue(data.path);
+                                            return true;
+                                        }
                                     }
                                     return false;
                                 }.bind(this, el)

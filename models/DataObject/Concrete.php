@@ -199,9 +199,6 @@ class Concrete extends AbstractObject
                             }
                         } else {
                             $exceptionClass = get_class($e);
-                            if ($e instanceof Model\Element\ValidationException) {
-                                throw $e;
-                            }
                             throw new $exceptionClass($e->getMessage() . ' fieldname=' . $fd->getName(), $e->getCode(), $e);
                         }
                     }
@@ -212,7 +209,13 @@ class Concrete extends AbstractObject
         }
 
         if ($validationExceptions) {
-            $aggregatedExceptions = new Model\Element\ValidationException('Validation failed');
+            $message = 'Validation failed: ';
+            $errors = [];
+            foreach ($validationExceptions as $e) {
+                $errors[] = $e->getMessage();
+            }
+            $message .= implode(' / ', $errors);
+            $aggregatedExceptions = new Model\Element\ValidationException($message);
             $aggregatedExceptions->setSubItems($validationExceptions);
             throw $aggregatedExceptions;
         }

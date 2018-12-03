@@ -14,7 +14,7 @@
 pimcore.registerNS("pimcore.asset.video");
 pimcore.asset.video = Class.create(pimcore.asset.asset, {
 
-    initialize: function(id, options) {
+    initialize: function (id, options) {
 
         this.options = options;
         this.id = intval(id);
@@ -76,9 +76,9 @@ pimcore.asset.video = Class.create(pimcore.asset.asset, {
 
         this.tabbar = new Ext.TabPanel({
             tabPosition: "top",
-            region:'center',
-            deferredRender:true,
-            enableTabScroll:true,
+            region: 'center',
+            deferredRender: true,
+            enableTabScroll: true,
             border: false,
             items: items,
             activeTab: 0
@@ -92,7 +92,7 @@ pimcore.asset.video = Class.create(pimcore.asset.asset, {
         if (!this.editPanel) {
             this.previewFrameId = 'asset_video_edit_' + this.id;
             this.previewMode = 'video';
-            if(this.data['videoInfo'] && this.data['videoInfo']['isVrVideo']) {
+            if (this.data['videoInfo'] && this.data['videoInfo']['isVrVideo']) {
                 this.previewMode = 'vr';
             }
 
@@ -102,7 +102,7 @@ pimcore.asset.video = Class.create(pimcore.asset.asset, {
                 html: ''
             });
             this.previewPanel.on("resize", function (el, width, height, rWidth, rHeight) {
-                if(this.previewMode == 'vr') {
+                if (this.previewMode == 'vr') {
                     this.initPreviewVr();
                 } else {
                     this.initPreviewVideo();
@@ -126,7 +126,7 @@ pimcore.asset.video = Class.create(pimcore.asset.asset, {
                         textAlign: "left",
                         style: "margin-top: 5px",
                         handler: function () {
-                            if(this.previewMode != 'video') {
+                            if (this.previewMode != 'video') {
                                 this.initPreviewVideo();
                             }
                         }.bind(this)
@@ -155,8 +155,8 @@ pimcore.asset.video = Class.create(pimcore.asset.asset, {
                         height: 200,
                         id: "pimcore_asset_video_imagepreview_" + this.id,
                         html: '<img class="pimcore_video_preview_image" align="center" src="/admin/asset/get-video-thumbnail?id='
-                                        + this.id  + '&width=265&aspectratio=true&_dc=' + date.getTime() + '" />'
-                    },{
+                            + this.id + '&width=265&aspectratio=true&_dc=' + date.getTime() + '" />'
+                    }, {
                         xtype: "button",
                         text: t("use_current_player_position_as_preview"),
                         iconCls: "pimcore_icon_video pimcore_icon_overlay_edit",
@@ -167,21 +167,21 @@ pimcore.asset.video = Class.create(pimcore.asset.asset, {
 
                                 var time = window[this.previewFrameId].document.getElementById("video").currentTime;
                                 var date = new Date();
-                                var cmp = Ext.getCmp("pimcore_asset_video_imagepreview_"  + this.id);
+                                var cmp = Ext.getCmp("pimcore_asset_video_imagepreview_" + this.id);
                                 cmp.update('<img class="pimcore_video_preview_image" align="center" src="/admin/asset/get-video-thumbnail?id='
-                                    + this.id  + '&width=265&aspectratio=true&time=' + time  + '&settime=true&_dc='
+                                    + this.id + '&width=265&aspectratio=true&time=' + time + '&settime=true&_dc='
                                     + date.getTime() + '" />');
 
                             } catch (e) {
                                 console.log(e);
                             }
                         }.bind(this)
-                    },{
+                    }, {
                         xtype: "container",
-                        border:false,
+                        border: false,
                         style: "padding: 10px 0 10px 0;",
                         html: t("or_specify_an_asset_image_below") + ":"
-                    },{
+                    }, {
                         xtype: "textfield",
                         itemId: "assetPath",
                         fieldCls: "input_drop_target",
@@ -191,26 +191,30 @@ pimcore.asset.video = Class.create(pimcore.asset.asset, {
                                 new Ext.dd.DropZone(el.getEl(), {
                                     reference: el,
                                     ddGroup: "element",
-                                    getTargetFromEvent: function(e) {
+                                    getTargetFromEvent: function (e) {
                                         return this.getEl();
                                     }.bind(el),
 
-                                    onNodeOver : function(target, dd, e, data) {
-                                        return Ext.dd.DropZone.prototype.dropAllowed;
+                                    onNodeOver: function (target, dd, e, data) {
+                                        if (data.records.length == 1 && data.records[0].data.elementType == "asset") {
+                                            return Ext.dd.DropZone.prototype.dropAllowed;
+                                        }
                                     },
 
-                                    onNodeDrop : function (el, target, dd, e, data) {
-                                        data = data.records[0].data;
-                                        if (data.elementType == "asset") {
-                                            el.setValue(data.path);
+                                    onNodeDrop: function (el, target, dd, e, data) {
+                                        if (pimcore.helpers.dragAndDropValidateSingleItem(data)) {
+                                            data = data.records[0].data;
+                                            if (data.elementType == "asset") {
+                                                el.setValue(data.path);
 
-                                            var date = new Date();
-                                            var cmp = Ext.getCmp("pimcore_asset_video_imagepreview_"  + this.id);
-                                            cmp.update('<img align="center" src="/admin/asset/get-video-thumbnail?id='
-                                                                + this.id  + '&width=265&aspectratio=true&image='
-                                                                + data.id  + '&setimage=true&_dc='
-                                                                + date.getTime() + '" />');
-                                            return true;
+                                                var date = new Date();
+                                                var cmp = Ext.getCmp("pimcore_asset_video_imagepreview_" + this.id);
+                                                cmp.update('<img align="center" src="/admin/asset/get-video-thumbnail?id='
+                                                    + this.id + '&width=265&aspectratio=true&image='
+                                                    + data.id + '&setimage=true&_dc='
+                                                    + date.getTime() + '" />');
+                                                return true;
+                                            }
                                         }
                                         return false;
                                     }.bind(this, el)
@@ -268,7 +272,7 @@ pimcore.asset.video = Class.create(pimcore.asset.asset, {
         this.previewMode = 'video';
 
         this.checkVideoplayerInterval = window.setInterval(function () {
-            if(window[this.previewFrameId] && window[this.previewFrameId].document.getElementById("video")) {
+            if (window[this.previewFrameId] && window[this.previewFrameId].document.getElementById("video")) {
                 this.previewImagePanel.getComponent("inner").show();
                 clearInterval(this.checkVideoplayerInterval);
             }

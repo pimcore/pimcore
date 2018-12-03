@@ -502,23 +502,24 @@ pimcore.element.properties = Class.create({
                             },
  
                             onNodeOver : function(dataRow, target, dd, e, data) {
-                                var record = data.records[0];
-                                var data = record.data;
-
-                                if(dataRow.type == data.elementType) {
+                                if(data.records.length === 1 && dataRow.type == data.records[0].data.elementType) {
                                     return Ext.dd.DropZone.prototype.dropAllowed;
                                 }
                                 return Ext.dd.DropZone.prototype.dropNotAllowed;
+
                             }.bind(this, data),
  
                             onNodeDrop : function(myRowIndex, target, dd, e, data) {
-                                try {
-                                    var record = data.records[0];
-                                    var data = record.data;
 
+                                if(!pimcore.helpers.dragAndDropValidateSingleItem(data)) {
+                                    return false;
+                                }
+
+                                try {
+                                    data = data.records[0].data;
                                     var rec = this.propertyGrid.getStore().getAt(myRowIndex);
 
-                                    if(data.elementType != rec.get("type")) {
+                                    if(data.elementType !== rec.get("type")) {
                                         return false;
                                     }
 
