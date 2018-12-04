@@ -878,7 +878,7 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
             return false;
         }
 
-        if (in_array(layoutName.toLowerCase(), layouts["existingNames"])) {
+        if (pimcore.helpers.findCaseInsensitiveValue(layouts["existingNames"], layoutName)) {
             Ext.Msg.alert(' ', t('name_already_in_use'));
             return false;
         }
@@ -890,7 +890,7 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
             return false;
         }
 
-        if (in_array(layoutIdentifier.toLowerCase(), layouts["existingIds"])) {
+        if (pimcore.helpers.findCaseInsensitiveValue(layouts["existingIds"], layoutIdentifier)) {
             Ext.Msg.alert(' ', t('identifier_already_exists'));
             return false;
         }
