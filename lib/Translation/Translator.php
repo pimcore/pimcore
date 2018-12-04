@@ -335,18 +335,19 @@ class Translator implements TranslatorInterface, TranslatorBagInterface
 
                 // no translation found create key
                 if ($class::isValidLanguage($locale)) {
-                    try {
-                        /**
-                         * @var AbstractTranslation $t
-                         */
-                        $t = $class::getByKey($id);
+
+                    /**
+                     * @var AbstractTranslation $t
+                     */
+                    $t = $class::getByKey($id);
+                    if($t) {
                         if (!$t->hasTranslation($locale)) {
                             $t->addTranslation($locale, '');
                         } else {
                             // return the original not lowercased ID
                             return $id;
                         }
-                    } catch (\Exception $e) {
+                    } else {
                         $t = new $class();
                         $t->setKey($id);
 

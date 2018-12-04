@@ -27,6 +27,7 @@ use Pimcore\Translation\ExportService\ExportServiceInterface;
 use Pimcore\Translation\ImportDataExtractor\ImportDataExtractorInterface;
 use Pimcore\Translation\ImporterService\ImporterServiceInterface;
 use Pimcore\Translation\TranslationItemCollection\TranslationItemCollection;
+use Pimcore\Translation\Translator;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -278,10 +279,11 @@ class TranslationController extends AdminController
      * @Route("/translations", methods={"POST"})
      *
      * @param Request $request
+     * @param Translator $translator
      *
      * @return JsonResponse
      */
-    public function translationsAction(Request $request)
+    public function translationsAction(Request $request, Translator $translator)
     {
         $admin = $request->get('admin');
 
@@ -332,20 +334,20 @@ class TranslationController extends AdminController
 
                 return $this->adminJson(['data' => $return, 'success' => true]);
             } elseif ($request->get('xaction') == 'create') {
-                try {
-                    $t = $class::getByKey($data['key']);
-                } catch (\Exception $e) {
-                    $t = new $class();
-
-                    $t->setKey($data['key']);
-                    $t->setCreationDate(time());
-                    $t->setModificationDate(time());
-
-                    foreach (Tool::getValidLanguages() as $lang) {
-                        $t->addTranslation($lang, '');
-                    }
-                    $t->save();
+                $t = $class::getByKey($data['key']);
+                if($t) {
+                    throw new \Exception($translator->trans('identifier_already_exists', [], 'admin'));
                 }
+
+                $t = new $class();
+                $t->setKey($data['key']);
+                $t->setCreationDate(time());
+                $t->setModificationDate(time());
+
+                foreach (Tool::getValidLanguages() as $lang) {
+                    $t->addTranslation($lang, '');
+                }
+                $t->save();
 
                 $return = array_merge(
                     [
