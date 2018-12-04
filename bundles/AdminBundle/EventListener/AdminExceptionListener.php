@@ -66,6 +66,7 @@ class AdminExceptionListener implements EventSubscriberInterface
 
             if (\Pimcore::inDebugMode(DebugMode::EXCEPTION_TRACES)) {
                 $data['trace'] = $ex->getTrace();
+                $data['traceString'] = $ex->getTraceAsString();
             }
 
             $response = new JsonResponse($data, $code, $headers);
