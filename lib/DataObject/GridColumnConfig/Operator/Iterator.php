@@ -19,7 +19,6 @@ namespace Pimcore\DataObject\GridColumnConfig\Operator;
 
 class Iterator extends AbstractOperator
 {
-
     public function __construct(\stdClass $config, $context = null)
     {
         parent::__construct($config, $context);
@@ -33,7 +32,6 @@ class Iterator extends AbstractOperator
         if (!is_array($elements)) {
             return $result;
         }
-
 
         $childs = $this->getChilds();
 
@@ -51,7 +49,6 @@ class Iterator extends AbstractOperator
             }
 
             $result->value = $valueArray;
-
         }
 
         return $result;

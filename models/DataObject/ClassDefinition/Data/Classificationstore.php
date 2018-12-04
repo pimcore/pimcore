@@ -1299,7 +1299,7 @@ class Classificationstore extends Model\DataObject\ClassDefinition\Data
         if (is_string($allowedGroupIds) && !empty($allowedGroupIds)) {
             $allowedGroupIds = str_replace([' ', "\n"], '', $allowedGroupIds);
             $parts = explode(',', $allowedGroupIds);
-        } else if (is_array($allowedGroupIds)) {
+        } elseif (is_array($allowedGroupIds)) {
             $parts = $allowedGroupIds;
         }
 

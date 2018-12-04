@@ -269,6 +269,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
     /**
      * @param null $versionNote
      * @param bool $saveOnlyVersion
+     *
      * @return Model\Version
      *
      * @throws \Exception

@@ -222,8 +222,6 @@ class Concrete extends AbstractObject
 
         $isDirtyDetectionDisabled = self::isDirtyDetectionDisabled();
         try {
-
-
             $oldVersionCount = $this->getVersionCount();
 
             parent::update($isUpdate, $params);
@@ -240,7 +238,6 @@ class Concrete extends AbstractObject
 
             $this->saveVersion(false, false, isset($params['versionNote']) ? $params['versionNote'] : null);
             $this->saveChildData();
-
         } finally {
             self::setDisableDirtyDetection($isDirtyDetectionDisabled);
         }
