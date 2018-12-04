@@ -317,7 +317,7 @@ class Agent implements IOrderAgent
 
         // update authorizedData
         $authorizedData = $paymentProvider->getAuthorizedData();
-        foreach ($authorizedData as $field => $value) {
+        foreach ((array)$authorizedData as $field => $value) { 
             $setter = 'setAuth_' . $field;
             if (method_exists($providerData, $setter)) {
                 $providerData->{$setter}($value);
