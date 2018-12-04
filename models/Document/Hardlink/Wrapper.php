@@ -53,7 +53,9 @@ trait Wrapper
     public function getProperties()
     {
         if ($this->properties == null) {
-            if ($this->getHardLinkSource()->getPropertiesFromSource()) {
+            $hardLink = $this->getHardLinkSource();
+
+            if ($hardLink->getPropertiesFromSource()) {
                 $sourceProperties = $this->getDao()->getProperties();
             } else {
                 $sourceProperties = [];
@@ -68,7 +70,7 @@ trait Wrapper
             }
 
             $hardLinkProperties = [];
-            $hardLinkSourceProperties = $this->getHardLinkSource()->getProperties();
+            $hardLinkSourceProperties = $hardLink->getProperties();
             foreach ($hardLinkSourceProperties as $key => $prop) {
                 $prop = clone $prop;
                 $prop->setInherited(true);
@@ -91,6 +93,28 @@ trait Wrapper
         return $this->properties;
     }
 
+    public function getProperty($name, $asContainer = false)
+    {
+        $result = parent::getProperty($name, $asContainer);
+        if ($result instanceof Document) {
+            $hardLink = $this->getHardLinkSource();
+            if (strpos($result->getRealFullPath(), $hardLink->getSourceDocument()->getRealFullPath() . '/') === 0
+                || $hardLink->getSourceDocument()->getRealFullPath() === $result->getRealFullPath()
+            ) {
+                $c = Service::wrap($result);
+                if ($c) {
+                    $c->setHardLinkSource($hardLink);
+                    $c->setPath(preg_replace('@^' . preg_quote($hardLink->getSourceDocument()->getRealPath()) . '@',
+                        $hardLink->getRealPath(), $c->getRealPath()));
+
+                    return $c;
+                }
+            }
+        }
+
+        return $result;
+    }
+
     /**
      * @param bool $unpublished
      *
@@ -104,12 +128,9 @@ trait Wrapper
 
             if ($hardLink->getChildrenFromSource() && $hardLink->getSourceDocument() && !\Pimcore::inAdmin()) {
                 foreach (parent::getChildren() as $c) {
-                    $sourceDocument = $c;
                     $c = Service::wrap($c);
-
                     if ($c) {
                         $c->setHardLinkSource($hardLink);
-                        $c->setSourceDocument($sourceDocument);
                         $c->setPath(preg_replace('@^' . preg_quote($hardLink->getSourceDocument()->getRealFullpath()) . '@', $hardLink->getRealFullpath(), $c->getRealPath()));
 
                         $children[] = $c;

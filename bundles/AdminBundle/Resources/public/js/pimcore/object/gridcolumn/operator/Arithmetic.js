@@ -18,6 +18,7 @@
 pimcore.registerNS("pimcore.object.gridcolumn.operator.arithmetic");
 
 pimcore.object.gridcolumn.operator.arithmetic = Class.create(pimcore.object.gridcolumn.Abstract, {
+    operatorGroup: "transformer",
     type: "operator",
     class: "Arithmetic",
     iconCls: "pimcore_icon_operator_arithmetic",
@@ -78,7 +79,7 @@ pimcore.object.gridcolumn.operator.arithmetic = Class.create(pimcore.object.grid
     },
 
 
-    getConfigDialog: function (node) {
+    getConfigDialog: function (node, params) {
         this.node = node;
 
         this.textField = new Ext.form.TextField({
@@ -119,7 +120,7 @@ pimcore.object.gridcolumn.operator.arithmetic = Class.create(pimcore.object.grid
                 text: t("apply"),
                 iconCls: "pimcore_icon_apply",
                 handler: function () {
-                    this.commitData();
+                    this.commitData(params);
                 }.bind(this)
             }]
         });
@@ -147,6 +148,10 @@ pimcore.object.gridcolumn.operator.arithmetic = Class.create(pimcore.object.grid
         this.node.set('isOperator', true);
 
         this.window.close();
+
+        if (params && params.callback) {
+            params.callback();
+        }
     },
 
 

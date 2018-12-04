@@ -39,7 +39,7 @@ trait DirtyIndicatorTrait
      */
     public function isFieldDirty($key)
     {
-        if (is_array($this->o_dirtyFields) && $this->o_dirtyFields[$key]) {
+        if (is_array($this->o_dirtyFields) && array_key_exists($key, $this->o_dirtyFields)) {
             return true;
         }
 

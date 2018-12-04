@@ -23,6 +23,7 @@ use Pimcore\Model\DataObject;
 use Pimcore\Model\Document;
 use Pimcore\Model\User;
 use Pimcore\Model\Webservice;
+use Pimcore\Tool\Admin;
 
 class Service
 {
@@ -195,8 +196,30 @@ class Service
     public function getDocumentList($condition = null, $order = null, $orderKey = null, $offset = null, $limit = null, $groupBy = null)
     {
         try {
+            $conditionParts = [];
+            if ($condition) {
+                $condition = '(' . $condition .')';
+                $conditionParts[] = $condition;
+            }
+
+            $currentUser = Admin::getCurrentUser();
+
+            if (!$currentUser->isAdmin()) {
+                $userIds = $currentUser->getRoles();
+                $userIds[] = $currentUser->getId();
+                $conditionParts[] = '(
+                                        (select list from users_workspaces_document where userId in (' . implode(',', $userIds) . ') and LOCATE(CONCAT(path,`key`),cpath)=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
+                                        or
+                                        (select list from users_workspaces_document where userId in (' . implode(',', $userIds) . ') and LOCATE(cpath,CONCAT(path,`key`))=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
+                                        )';
+            }
+
+            if ($conditionParts) {
+                $finalCondition = implode(' AND ', $conditionParts);
+            }
+
             $list = Document::getList([
-                'condition' => $condition,
+                'condition' => $finalCondition,
                 'order' => $order,
                 'orderKey' => $orderKey,
                 'offset' => $offset,
@@ -676,7 +699,7 @@ class Service
                 if ($object instanceof DataObject\Concrete) {
                     return $this->create($wsDocument, $object);
                 } else {
-                    throw new \Exception("Unable to create new Object Concrete, could not instantiate Object with given class name [ $classname ]");
+                    throw new \Exception("Unable to create new Object Concrete, could not instantiate Object with given class name [ $className ]");
                 }
             }
 
@@ -748,9 +771,30 @@ class Service
         try {
             $params = [];
 
-            if (!empty($condition)) {
+            $conditionParts = [];
+            if ($condition) {
+                $condition = '(' . $condition .')';
+                $conditionParts[] = $condition;
+            }
+
+            $currentUser = Admin::getCurrentUser();
+
+            if (!$currentUser->isAdmin()) {
+                $userIds = $currentUser->getRoles();
+                $userIds[] = $currentUser->getId();
+                $conditionParts[] = ' (
+                                                    (select list from users_workspaces_asset where userId in (' . implode(',', $userIds) . ') and LOCATE(CONCAT(path, filename),cpath)=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
+                                                    OR
+                                                    (select list from users_workspaces_asset where userId in (' . implode(',', $userIds) . ') and LOCATE(cpath,CONCAT(path, filename))=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
+                                                 )';
+            }
+
+            if ($conditionParts) {
+                $condition = implode(' AND ', $conditionParts);
+
                 $params['condition'] = $condition;
             }
+
             if (!empty($order)) {
                 $params['order'] = $order;
             }
@@ -840,7 +884,7 @@ class Service
             $object = DataObject::getById($id);
 
             if ($object instanceof DataObject\Concrete) {
-                // load all data (eg. lazy loaded fields like multihref, object, ...)
+                // load all data (eg. lazy loaded fields like relational data types ...)
                 DataObject\Service::loadAllObjectFields($object);
                 $apiObject = Webservice\Data\Mapper::map($object, '\\Pimcore\\Model\\Webservice\\Data\\DataObject\\Concrete\\Out', 'out');
 
@@ -870,7 +914,27 @@ class Service
         try {
             $params = ['objectTypes' => [DataObject\AbstractObject::OBJECT_TYPE_FOLDER, DataObject\AbstractObject::OBJECT_TYPE_OBJECT, DataObject\AbstractObject::OBJECT_TYPE_VARIANT]];
 
-            if (!empty($condition)) {
+            $conditionParts = [];
+            if ($condition) {
+                $condition = '(' . $condition .')';
+                $conditionParts[] = $condition;
+            }
+
+            $currentUser = Admin::getCurrentUser();
+
+            if (!$currentUser->isAdmin()) {
+                $userIds = $currentUser->getRoles();
+                $userIds[] = $currentUser->getId();
+                $conditionParts[] .= ' (
+                                                    (select list from users_workspaces_object where userId in (' . implode(',', $userIds) . ') and LOCATE(CONCAT(o_path,o_key),cpath)=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
+                                                    OR
+                                                    (select list from users_workspaces_object where userId in (' . implode(',', $userIds) . ') and LOCATE(cpath,CONCAT(o_path,o_key))=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
+                                                 )';
+            }
+
+            if ($conditionParts) {
+                $condition = implode(' AND ', $conditionParts);
+
                 $params['condition'] = $condition;
             }
             if (!empty($order)) {
@@ -1149,7 +1213,7 @@ class Service
             $object = DataObject\Concrete::getById($id);
 
             if ($object instanceof DataObject\Concrete) {
-                // load all data (eg. lazy loaded fields like multihref, object, ...)
+                // load all data (eg. lazy loaded fields like relational data types ...)
                 $classId = $object->getClassId();
 
                 return $this->getClassById($classId);

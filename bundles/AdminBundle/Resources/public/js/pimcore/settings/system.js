@@ -156,12 +156,6 @@ pimcore.settings.system = Class.create({
                                 name: 'general.language'
                             },
                             {
-                                fieldLabel: t("url_to_custom_image_on_login_screen"),
-                                xtype: "textfield",
-                                name: "general.loginscreencustomimage",
-                                value: this.getValue("general.loginscreencustomimage")
-                            },
-                            {
                                 fieldLabel: t('turn_off_usage_statistics'),
                                 xtype: "checkbox",
                                 name: "general.disableusagestatistics",
@@ -264,6 +258,18 @@ pimcore.settings.system = Class.create({
                                     });
                                 }.bind(this),
                                 flex: 1
+                            }]
+                        }, {
+                            xtype: 'fieldset',
+                            title: t('custom_login_background_image'),
+                            collapsible: false,
+                            width: "100%",
+                            autoHeight: true,
+                            items: [{
+                                fieldLabel: t("url_to_custom_image_on_login_screen"),
+                                xtype: "textfield",
+                                name: "general.loginscreencustomimage",
+                                value: this.getValue("general.loginscreencustomimage")
                             }]
                         }]
                     }
@@ -498,8 +504,9 @@ pimcore.settings.system = Class.create({
                                     name: "email.method",
                                     value: this.getValue("email.method"),
                                     store: [
-                                        ["mail", "mail"],
-                                        ["smtp", "smtp"]
+                                        ["sendmail", "Sendmail"],
+                                        ["smtp", "SMTP"],
+                                        ["null", t("none")]
                                     ],
                                     listeners: {
                                         select: this.emailMethodSelected.bind(this, "email")
@@ -645,16 +652,20 @@ pimcore.settings.system = Class.create({
                                             }.bind(el),
 
                                             onNodeOver: function (target, dd, e, data) {
-                                                return Ext.dd.DropZone.prototype.dropAllowed;
+                                                if (data.records.length == 1 && data.records[0].data.elementType == "document") {
+                                                    return Ext.dd.DropZone.prototype.dropAllowed;
+                                                }
                                             },
 
                                             onNodeDrop: function (target, dd, e, data) {
-                                                var record = data.records[0];
-                                                var data = record.data;
+                                                if (pimcore.helpers.dragAndDropValidateSingleItem(data)) {
+                                                    var record = data.records[0];
+                                                    var data = record.data;
 
-                                                if (data.elementType == "document") {
-                                                    this.setValue(data.path);
-                                                    return true;
+                                                    if (data.elementType == "document") {
+                                                        this.setValue(data.path);
+                                                        return true;
+                                                    }
                                                 }
                                                 return false;
                                             }.bind(el)
@@ -957,9 +968,15 @@ pimcore.settings.system = Class.create({
                                 cls: "pimcore_extra_label"
                             },
                             {
-                                fieldLabel: t('api_key'),
+                                fieldLabel: t('server_api_key'),
                                 name: 'services.google.simpleapikey',
                                 value: this.getValue("services.google.simpleapikey"),
+                                width: 850
+                            },
+                            {
+                                fieldLabel: t('browser_api_key'),
+                                name: 'services.google.browserapikey',
+                                value: this.getValue("services.google.browserapikey"),
                                 width: 850
                             }
                         ]
@@ -1334,7 +1351,7 @@ pimcore.settings.system = Class.create({
             smtpFieldSet.show();
         } else {
             smtpFieldSet.hide();
-            Ext.each(smtpFieldSet.findByType("textfield"), function (item) {
+            Ext.each(smtpFieldSet.query("textfield"), function (item) {
                 item.setValue("");
             });
         }

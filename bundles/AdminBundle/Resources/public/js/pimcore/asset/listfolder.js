@@ -56,15 +56,7 @@ pimcore.asset.listfolder = Class.create({
             }
         });
 
-        var readerFields = [
-            {name: 'id', allowBlank: true},
-            {name: 'fullpath', allowBlank: true},
-            {name: 'type', allowBlank: true},
-            {name: 'creationDate', allowBlank: true},
-            {name: 'modificationDate', allowBlank: true},
-            {name: 'size', allowBlank: true},
-            {name: 'idPath', allowBlank: true}
-        ];
+        var readerFields = ['id', 'fullpath','type', 'creationDate', 'modificationDate', 'size', 'idPath'];
 
         this.selectionColumn = new Ext.selection.CheckboxModel();
 

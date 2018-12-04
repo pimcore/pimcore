@@ -49,7 +49,7 @@ pimcore.object.classificationstore.propertiespanel = Class.create({
 
         var readerFields = [];
         for (var i = 0; i < this.fields.length; i++) {
-            readerFields.push({name: this.fields[i], allowBlank: true});
+            readerFields.push({name: this.fields[i]});
         }
 
         var dataComps = Object.keys(pimcore.object.classes.data);

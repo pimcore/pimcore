@@ -115,6 +115,24 @@ class InstallCommand extends Command
                 'default' => 3306,
                 'group' => 'db_credentials',
             ],
+            'skip-database-structure' => [
+                'description' => 'Skipping creation of database structure during install',
+                'mode' => InputOption::VALUE_OPTIONAL,
+                'default' => false,
+                'group' => 'install_options',
+            ],
+            'skip-database-data' => [
+                'description' => 'Skipping importing of any data into database',
+                'mode' => InputOption::VALUE_OPTIONAL,
+                'default' => false,
+                'group' => 'install_options',
+            ],
+            'skip-database-data-dump' => [
+                'description' => 'Skipping importing of provided data dumps into database (if available). Only imports needed base data.',
+                'mode' => InputOption::VALUE_OPTIONAL,
+                'default' => false,
+                'group' => 'install_options',
+            ],
         ];
 
         foreach (array_keys($options) as $name) {
@@ -262,6 +280,10 @@ class InstallCommand extends Command
     private function installerNeedsOption(array $config): bool
     {
         if ('db_credentials' === ($config['group'] ?? null) && !$this->installer->needsDbCredentials()) {
+            return false;
+        }
+
+        if ('install_options' === ($config['group'] ?? null) && InputOption::VALUE_OPTIONAL === ($config['mode'] ?? null)) {
             return false;
         }
 

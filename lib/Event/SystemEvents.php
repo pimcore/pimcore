@@ -107,7 +107,7 @@ final class SystemEvents
     const CACHE_CLEAR_TEMPORARY_FILES = 'pimcore.system.cache.clearTemporaryFiles';
 
     /**
-     * This event is fired on Temporary Files clear
+     * This event is fired before Pimcore adjusts element keys to generic rules
      *
      * @Event("\Symfony\Component\EventDispatcher\GenericEvent")
      *

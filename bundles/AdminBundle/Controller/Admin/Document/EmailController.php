@@ -56,6 +56,7 @@ class EmailController extends DocumentControllerBase
         $email->setUserPermissions($email->getUserPermissions());
         $email->setLocked($email->isLocked());
         $email->setParent(null);
+        $email->url = $email->getUrl();
 
         // unset useless data
         $email->setElements(null);

@@ -70,8 +70,7 @@ pimcore.document.page_snippet = Class.create(pimcore.document.document, {
 
         this.removeLoadingPanel();
 
-        this.tabPanel.add(this.tab);
-
+        this.addToMainTabPanel();
 
         // recalculate the layout
         pimcore.layout.refresh();
@@ -215,7 +214,7 @@ pimcore.document.page_snippet = Class.create(pimcore.document.document, {
 
             buttons.push(this.getTranslationButtons());
 
-            if(this.data.type == "page") {
+            if(this.data["url"]) {
                 buttons.push("-");
                 buttons.push({
                     tooltip: t("open_in_new_window"),

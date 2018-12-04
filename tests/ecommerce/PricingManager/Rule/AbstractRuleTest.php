@@ -221,6 +221,10 @@ class AbstractRuleTest extends EcommerceTestCase
         $this->assertTrue($cart->getPriceCalculator()->getSubTotal()->getAmount()->equals(Decimal::create($tests['cartSubTotalModificators'])), 'check cart with modificators subtotal price: ' . $cart->getPriceCalculator()->getSubTotal()->getAmount() . ' vs ' . $tests['cartSubTotalModificators']);
         $this->assertTrue($cart->getPriceCalculator()->getGrandTotal()->getAmount()->equals(Decimal::create($tests['cartGrandTotalModificators'])), 'check cart with modificators total price: ' . $cart->getPriceCalculator()->getGrandTotal()->getAmount() . ' vs ' . $tests['cartGrandTotalModificators']);
 
+        if (array_key_exists('giftItemCount', $tests)) {
+            $this->assertEquals(count($cart->getGiftItems()), $tests['giftItemCount'], 'check gift item count: ' . count($cart->getGiftItems()) . ' vs. ' . $tests['giftItemCount']);
+        }
+
         return $cart;
     }
 

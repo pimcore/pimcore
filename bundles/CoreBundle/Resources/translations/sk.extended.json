@@ -124,8 +124,6 @@
     "debug_admin_translations": "Debugovať preklady administrácie (budú obalené znakom +)",
     "short_url": "Krátka URL",
     "width_and_height_must_be_an_even_number": "Šírka a výška musia byť párne čísla",
-    "server_api_key": "API kľúč serveru",
-    "browser_api_key": "API kľúč prehliadača",
     "source_site": "Zdrojová doména (site)",
     "target_site": "Cieľová doména (site)",
     "source_entire_url": "Celá URL ako zdroj",
@@ -299,7 +297,6 @@
     "geo": "Geografický",
     "default_controller": "Defaultný controller",
     "default_action": "Defaultná akcia",
-    "basic_configuration": "Základná konfigurácia",
     "allow_inherit": "Povoliť dedičnosť",
     "use_traits": "Use (traits)",
     "general_settings": "Všeobecné nastavenia",
@@ -692,5 +689,12 @@
     "clear_full_page_cache": "Clear Full Page Cache",
     "icon_library": "Icon Library",
     "expand_cs_group": "There are empty features not displayed here. Click to show them",
-    "hide_empty_data": "Hide empty data"
+    "hide_empty_data": "Hide empty data",
+    "api_key": "API-Key",
+    "colorspace": "Colorspace",
+    "class_attributes": "Class Attributes",
+    "operator_group_other": "Others",
+    "operator_group_transformer": "Transformers",
+    "operator_group_extractor": "Extractors",
+    "operator_group_formatter": "Formatters"
 }

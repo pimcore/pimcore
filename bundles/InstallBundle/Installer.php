@@ -64,6 +64,28 @@ class Installer
     private $commandLineOutput;
 
     /**
+     * When false, skips creating database structure during install
+     *
+     * @var bool
+     */
+    private $createDatabaseStructure = true;
+
+    /**
+     * When false, skips importing all database data during install
+     *
+     * @var bool
+     */
+    private $importDatabaseData = true;
+
+    /**
+     * When false, skips importing database data dump files (if available) during install
+     * only imports needed base data
+     *
+     * @var bool
+     */
+    private $importDatabaseDataDump = true;
+
+    /**
      * @var array
      */
     private $stepEvents = [
@@ -95,6 +117,30 @@ class Installer
     public function setCommandLineOutput(PimcoreStyle $commandLineOutput)
     {
         $this->commandLineOutput = $commandLineOutput;
+    }
+
+    /**
+     * @param bool $createDatabaseStructure
+     */
+    public function setCreateDatabaseStructure(bool $createDatabaseStructure): void
+    {
+        $this->createDatabaseStructure = $createDatabaseStructure;
+    }
+
+    /**
+     * @param bool $importDatabaseData
+     */
+    public function setImportDatabaseData(bool $importDatabaseData): void
+    {
+        $this->importDatabaseData = $importDatabaseData;
+    }
+
+    /**
+     * @param bool $importDatabaseDataDump
+     */
+    public function setImportDatabaseDataDump(bool $importDatabaseDataDump): void
+    {
+        $this->importDatabaseDataDump = $importDatabaseDataDump;
     }
 
     public function needsDbCredentials(): bool
@@ -198,6 +244,17 @@ class Installer
         // check username & password
         $adminUser = $params['admin_username'] ?? '';
         $adminPass = $params['admin_password'] ?? '';
+
+        //check skipping database creation or database data
+        if (array_key_exists('skip_database_structure', $params)) {
+            $this->createDatabaseStructure = false;
+        }
+        if (array_key_exists('skip_database_data', $params)) {
+            $this->importDatabaseData = false;
+        }
+        if (array_key_exists('skip_database_data_dump', $params)) {
+            $this->importDatabaseDataDump = false;
+        }
 
         if (strlen($adminPass) < 4 || strlen($adminUser) < 4) {
             $errors[] = 'Username and password should have at least 4 characters';
@@ -444,42 +501,46 @@ class Installer
 
     public function setupDatabase(array $userCredentials, array $errors = []): array
     {
-        $mysqlInstallScript = file_get_contents(__DIR__ . '/Resources/install.sql');
+        if ($this->createDatabaseStructure) {
+            $mysqlInstallScript = file_get_contents(__DIR__ . '/Resources/install.sql');
 
-        // remove comments in SQL script
-        $mysqlInstallScript = preg_replace("/\s*(?!<\")\/\*[^\*]+\*\/(?!\")\s*/", '', $mysqlInstallScript);
+            // remove comments in SQL script
+            $mysqlInstallScript = preg_replace("/\s*(?!<\")\/\*[^\*]+\*\/(?!\")\s*/", '', $mysqlInstallScript);
 
-        // get every command as single part
-        $mysqlInstallScripts = explode(';', $mysqlInstallScript);
+            // get every command as single part
+            $mysqlInstallScripts = explode(';', $mysqlInstallScript);
 
-        $db = \Pimcore\Db::get();
-        // execute every script with a separate call, otherwise this will end in a PDO_Exception "unbufferd queries, ..." seems to be a PDO bug after some googling
-        foreach ($mysqlInstallScripts as $m) {
-            $sql = trim($m);
-            if (strlen($sql) > 0) {
-                $sql .= ';';
-                $db->query($sql);
+            $db = \Pimcore\Db::get();
+            // execute every script with a separate call, otherwise this will end in a PDO_Exception "unbufferd queries, ..." seems to be a PDO bug after some googling
+            foreach ($mysqlInstallScripts as $m) {
+                $sql = trim($m);
+                if (strlen($sql) > 0) {
+                    $sql .= ';';
+                    $db->query($sql);
+                }
             }
         }
 
-        $dataFiles = $this->getDataFiles();
+        if ($this->importDatabaseData) {
+            $dataFiles = $this->getDataFiles();
 
-        try {
-            if (empty($dataFiles)) {
-                // empty installation
-                $this->insertDatabaseContents();
-                $this->createOrUpdateUser($userCredentials);
-            } else {
-                foreach ($dataFiles as $dbFile) {
-                    $this->logger->info('Importing DB file {dbFile}', ['dbFile' => $dbFile]);
-                    $this->insertDatabaseDump($dbFile);
+            try {
+                if (empty($dataFiles) || !$this->importDatabaseDataDump) {
+                    // empty installation
+                    $this->insertDatabaseContents();
+                    $this->createOrUpdateUser($userCredentials);
+                } else {
+                    foreach ($dataFiles as $dbFile) {
+                        $this->logger->info('Importing DB file {dbFile}', ['dbFile' => $dbFile]);
+                        $this->insertDatabaseDump($dbFile);
+                    }
+
+                    $this->createOrUpdateUser($userCredentials);
                 }
-
-                $this->createOrUpdateUser($userCredentials);
+            } catch (\Exception $e) {
+                $this->logger->error($e);
+                $errors[] = $e->getMessage();
             }
-        } catch (\Exception $e) {
-            $this->logger->error($e);
-            $errors[] = $e->getMessage();
         }
 
         return $errors;

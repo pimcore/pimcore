@@ -289,7 +289,7 @@ EOT;
      */
     public function clearThumbnail($name)
     {
-        $dir = $this->getImageThumbnailSavePath() . '/thumb__' . $name;
+        $dir = $this->getImageThumbnailSavePath() . '/image-thumb__' . $this->getId() . '__' . $name;
         if (is_dir($dir)) {
             recursiveDelete($dir);
         }

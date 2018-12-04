@@ -167,7 +167,7 @@ class Concrete extends AbstractObject
 
                     $value = $this->$getter();
 
-                    if (is_array($value) and ($fd instanceof ClassDefinition\Data\Multihref or $fd instanceof ClassDefinition\Data\Objects)) {
+                    if (is_array($value) and ($fd instanceof ClassDefinition\Data\ManyToManyRelation or $fd instanceof ClassDefinition\Data\ManyToManyObjectRelation)) {
                         //don't save relations twice
                         $this->$setter(array_unique($value));
                     }
@@ -199,9 +199,6 @@ class Concrete extends AbstractObject
                             }
                         } else {
                             $exceptionClass = get_class($e);
-                            if ($e instanceof Model\Element\ValidationException) {
-                                throw $e;
-                            }
                             throw new $exceptionClass($e->getMessage() . ' fieldname=' . $fd->getName(), $e->getCode(), $e);
                         }
                     }
@@ -212,19 +209,38 @@ class Concrete extends AbstractObject
         }
 
         if ($validationExceptions) {
-            $aggregatedExceptions = new Model\Element\ValidationException('Validation failed');
+            $message = 'Validation failed: ';
+            $errors = [];
+            foreach ($validationExceptions as $e) {
+                $errors[] = $e->getMessage();
+            }
+            $message .= implode(' / ', $errors);
+            $aggregatedExceptions = new Model\Element\ValidationException($message);
             $aggregatedExceptions->setSubItems($validationExceptions);
             throw $aggregatedExceptions;
         }
 
-        parent::update($isUpdate, $params);
+        $isDirtyDetectionDisabled = self::isDirtyDetectionDisabled();
+        try {
+            $oldVersionCount = $this->getVersionCount();
 
-        $this->getDao()->update($isUpdate);
+            parent::update($isUpdate, $params);
 
-        // scheduled tasks are saved in $this->saveVersion();
+            $newVersionCount = $this->getVersionCount();
 
-        $this->saveVersion(false, false, isset($params['versionNote']) ? $params['versionNote'] : null);
-        $this->saveChildData();
+            if ($newVersionCount != $oldVersionCount + 1) {
+                self::disableDirtyDetection();
+            }
+
+            $this->getDao()->update($isUpdate);
+
+            // scheduled tasks are saved in $this->saveVersion();
+
+            $this->saveVersion(false, false, isset($params['versionNote']) ? $params['versionNote'] : null);
+            $this->saveChildData();
+        } finally {
+            self::setDisableDirtyDetection($isDirtyDetectionDisabled);
+        }
     }
 
     protected function saveChildData()
@@ -269,19 +285,19 @@ class Concrete extends AbstractObject
      * it is false when the method is called by $this->update()
      *
      * @param bool $setModificationDate
-     * @param bool $callPluginHook
+     * @param bool $saveOnlyVersion
      * @param string $versionNote version note
      *
      * @return Model\Version
      */
-    public function saveVersion($setModificationDate = true, $callPluginHook = true, $versionNote = null)
+    public function saveVersion($setModificationDate = true, $saveOnlyVersion = true, $versionNote = null)
     {
         if ($setModificationDate) {
             $this->setModificationDate(time());
         }
 
         // hook should be also called if "save only new version" is selected
-        if ($callPluginHook) {
+        if ($saveOnlyVersion) {
             \Pimcore::getEventDispatcher()->dispatch(DataObjectEvents::PRE_UPDATE, new DataObjectEvent($this, [
                 'saveVersionOnly' => true
             ]));
@@ -297,11 +313,11 @@ class Concrete extends AbstractObject
         if (Config::getSystemConfig()->objects->versions->steps
             || Config::getSystemConfig()->objects->versions->days
             || $setModificationDate) {
-            $version = $this->doSaveVersion($versionNote);
+            $version = $this->doSaveVersion($versionNote, $saveOnlyVersion);
         }
 
         // hook should be also called if "save only new version" is selected
-        if ($callPluginHook) {
+        if ($saveOnlyVersion) {
             \Pimcore::getEventDispatcher()->dispatch(DataObjectEvents::POST_UPDATE, new DataObjectEvent($this, [
                 'saveVersionOnly' => true
             ]));
@@ -617,7 +633,7 @@ class Concrete extends AbstractObject
 
         if (property_exists($tmpObj, $propertyName)) {
             // check if the given fieldtype is valid for this shorthand
-            $allowedDataTypes = ['input', 'numeric', 'checkbox', 'country', 'date', 'datetime', 'image', 'language', 'multihref', 'multiselect', 'select', 'slider', 'time', 'user', 'email', 'firstname', 'lastname', 'localizedfields'];
+            $allowedDataTypes = ['input', 'numeric', 'checkbox', 'country', 'date', 'datetime', 'image', 'language', 'manyToManyRelation', 'multiselect', 'select', 'slider', 'time', 'user', 'email', 'firstname', 'lastname', 'localizedfields'];
 
             $field = $tmpObj->getClass()->getFieldDefinition($propertyName);
             if (!in_array($field->getFieldType(), $allowedDataTypes)) {

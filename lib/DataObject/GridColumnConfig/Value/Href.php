@@ -26,7 +26,7 @@ class Href extends AbstractValue
     {
         $getter = 'get' . ucfirst($this->attribute);
 
-        if (method_exists($element, $getter)) {
+        if ($this->attribute && method_exists($element, $getter)) {
             $value = $element->$getter();
 
             if (

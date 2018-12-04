@@ -14,8 +14,9 @@
 pimcore.registerNS("pimcore.asset.document");
 pimcore.asset.document = Class.create(pimcore.asset.asset, {
 
-    initialize: function(id) {
+    initialize: function(id, options) {
 
+        this.options = options;
         this.id = intval(id);
         this.setType("document");
         this.addLoadingPanel();

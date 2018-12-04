@@ -138,7 +138,7 @@ pimcore.document.hardlink = Class.create(pimcore.document.document, {
 
         this.removeLoadingPanel();
 
-        this.tabPanel.add(this.tab);
+        this.addToMainTabPanel();
 
         // recalculate the layout
         pimcore.layout.refresh();
@@ -328,13 +328,22 @@ pimcore.document.hardlink = Class.create(pimcore.document.document, {
                     },
 
                     onNodeOver: function (target, dd, e, data) {
-                        return Ext.dd.DropZone.prototype.dropAllowed;
+                        if (data.records.length === 1 && data.records[0].data.elementType === "document") {
+                            return Ext.dd.DropZone.prototype.dropAllowed;
+                        }
                     },
 
                     onNodeDrop: function (target, dd, e, data) {
+                        if(!pimcore.helpers.dragAndDropValidateSingleItem(data)) {
+                            return false;
+                        }
+
                         data = data.records[0].data;
-                        this.setValue(data.path);
-                        return true;
+                        if (data.elementType === "document") {
+                            this.setValue(data.path);
+                            return true;
+                        }
+                        return false;
                     }.bind(this)
                 });
             });

@@ -18,6 +18,7 @@
 pimcore.registerNS("pimcore.object.gridcolumn.operator.caseconverter");
 
 pimcore.object.gridcolumn.operator.caseconverter = Class.create(pimcore.object.gridcolumn.operator.text, {
+    operatorGroup: "transformer",
     type: "operator",
     class: "CaseConverter",
     iconCls: "pimcore_icon_operator_caseconverter",
@@ -79,7 +80,7 @@ pimcore.object.gridcolumn.operator.caseconverter = Class.create(pimcore.object.g
     },
 
 
-    getConfigDialog: function (node) {
+    getConfigDialog: function (node, params) {
         this.node = node;
 
         this.textfield = new Ext.form.TextField({
@@ -112,7 +113,7 @@ pimcore.object.gridcolumn.operator.caseconverter = Class.create(pimcore.object.g
                 text: t("apply"),
                 iconCls: "pimcore_icon_apply",
                 handler: function () {
-                    this.commitData();
+                    this.commitData(params);
                 }.bind(this)
             }]
         });
@@ -130,13 +131,17 @@ pimcore.object.gridcolumn.operator.caseconverter = Class.create(pimcore.object.g
         return this.window;
     },
 
-    commitData: function () {
+    commitData: function (params) {
         this.node.data.configAttributes.label = this.textfield.getValue();
         this.node.set('text', this.textfield.getValue());
         this.node.set('isOperator', true);
 
         this.node.data.configAttributes.capitalization = parseInt(this.caseField.getValue().rb);
         this.window.close();
+
+        if (params && params.callback) {
+            params.callback();
+        }
     },
 
     allowChild: function (targetNode, dropNode) {

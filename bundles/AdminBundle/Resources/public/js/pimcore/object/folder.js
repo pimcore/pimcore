@@ -143,7 +143,7 @@ pimcore.object.folder = Class.create(pimcore.object.abstract, {
 
         this.removeLoadingPanel();
 
-        this.tabPanel.add(this.tab);
+        this.addToMainTabPanel();
 
         if (this.getAddToHistory()) {
             pimcore.helpers.recordElement(this.id, "object", this.data.general.o_path + this.data.general.o_key);
@@ -367,9 +367,12 @@ pimcore.object.folder = Class.create(pimcore.object.abstract, {
     },
 
     reload: function () {
-        window.setTimeout(function (id) {
-            pimcore.helpers.openObject(id, "folder");
-        }.bind(window, this.id), 500);
+        this.tab.on("close", function() {
+            var currentTabIndex = this.tab.ownerCt.items.indexOf(this.tab);
+            window.setTimeout(function (id) {
+                pimcore.helpers.openObject(id, "folder", {tabIndex: currentTabIndex});
+            }.bind(window, this.id), 500);
+        }.bind(this));
 
         pimcore.helpers.closeObject(this.id);
     },

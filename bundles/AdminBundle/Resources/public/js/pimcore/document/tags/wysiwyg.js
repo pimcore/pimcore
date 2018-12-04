@@ -134,6 +134,11 @@ pimcore.document.tags.wysiwyg = Class.create(pimcore.document.tag, {
     },
 
     onNodeDrop: function (target, dd, e, data) {
+
+        if(!pimcore.helpers.dragAndDropValidateSingleItem(data)) {
+            return false;
+        }
+
         var record = data.records[0];
         data = record.data;
 
@@ -250,9 +255,7 @@ pimcore.document.tags.wysiwyg = Class.create(pimcore.document.tag, {
     },
 
     onNodeOver: function(target, dd, e, data) {
-        var record = data.records[0];
-        data = record.data;
-        if (this.dndAllowed(data) && !this.inherited) {
+        if (data.records.length === 1 && this.dndAllowed(data.records[0].data) && !this.inherited) {
             return Ext.dd.DropZone.prototype.dropAllowed;
         }
         else {

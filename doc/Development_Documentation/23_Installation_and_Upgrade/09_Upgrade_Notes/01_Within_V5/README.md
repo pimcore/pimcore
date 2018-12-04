@@ -1,14 +1,54 @@
 # Upgrade Notes for Upgrades within Pimcore 5
 
-## Version 5.5.1
 
-#### Removed Google Maps Browser API Key from System Settings
-Google is now providing just one keys for both server-side and client-side applications, there's no need 
-anymore to seperate them out. 
-If you're accessing the following config option `$config->serivces->google->browserapikey` somewhere in your application
-please change it to `$config->serivces->google->simpleapikey` before you upgrade and ensure that the API key
-is correctly permissioned. 
+## Version 5.6.0
+- Removed method \Pimcore\Model\DataObject\ClassDefinition\Data::setFieldtype($fieldtype)
 
+#### Data Objects: renamed relational data-types
+For better understanding we've renamed all relational data-types to a more meaningful name.  
+We've not just renamed them in the UI, but for consistency we've decided to rename all the files, classes and 
+identifiers as well.  
+
+**The necessary migration is performed automatically after the update, so there's no manual work necessary** 
+
+- If you've checked in files within `var/classes` into your VCS, please update them after the upgrade. 
+
+###### Overview of Renamings
+Please note that the following PHP classes are located in the namespace `\Pimcore\Model\DataObject\ClassDefinition\Data` and 
+the JS classes in `pimcore.object.tags` and `pimcore.object.classes.data`. 
+
+| Old Name | Old PHP Class Name | Old JS Class Name | New Name | New PHP Class Name | New JS Class Name |
+| ---- | ---- | ---- | ---- | ---- | ---- |  
+| Href | `Href` | `href` | **Many-To-One Relation** | `ManyToOneRelation` | `manyToOneRelation` | 
+| Multihref | `Multihref` | `multihref` | **Many-To-Many Relation** | `ManyToManyRelation` | `manyToManyRelation` | 
+| Multihref Advanced | `MultihrefMetadata` | `multihrefMetadata` | **Advanced Many-To-Many Relation** | `AdvancedManyToManyRelation` | `advancedManyToManyRelation` | 
+| Objects | `Objects` | `objects` | **Many-To-Many Object Relation** | `ManyToManyObjectRelation` | `manyToManyObjectRelation` | 
+| Objects with Metadata | `ObjectsMetadata` | `objectsMetadata` | **Advanced Many-To-Many Object Relation** | `AdvancedManyToManyObjectRelation` | `advancedManyToManyObjectRelation` | 
+
+
+#### Documents: renamed relational editables
+In addition to the renaming of all relational object data-types, we've also renamed the two relational editables 
+for documents, namely `href` and `multihref`.
+
+**The necessary migration is performed automatically after the update, so there's no manual work necessary** 
+
+###### Overview of Renamings
+Please note that the following PHP classes are located in the namespace `\Pimcore\Model\Document\Tag` and 
+the JS classes in `pimcore.document.tags`. 
+
+| Old Templating Helper | Old PHP Class Name | Old JS Class Name | New Templating Helper | New PHP Class Name | New JS Class Name |
+| ---- | ---- | ---- | ---- | ---- | ---- |  
+| `$this->href()` | `Href` | `href` | `$this->relation()` | `Relation` | `relation` | 
+| `$this->multihref()` | `Multihref` | `multihref` | `$this->relations()` | `Relations` | `relations` | 
+
+
+## Version 5.5.4
+
+The support for ElasticSearch version 6 has been added. 
+Currently the `DefaultElasticSearch` worker / product list has a fallback to `DefaultElasticSearch5` 
+(which supports ElasticSearch version 2.x to 5.x so your code should continue to work without any changes).  
+For version 6 use the `DefaultElasticSearch6` worker / product list.
+ 
 ## Version 5.5.1
 
 #### WebP Support for Thumbnails

@@ -57,11 +57,8 @@ pimcore.settings.metadata.predefined = Class.create({
         this.store = pimcore.helpers.grid.buildDefaultStore(
             url,
             [
-                {name: 'id'},
-                {name: 'name', allowBlank: false},
-                {name: 'description', allowBlank: true},
-                {name: 'type', allowBlank: true},
-                {name: 'data', allowBlank: true,
+                'id', {name: 'name', allowBlank: false},'description','type',
+                {name: 'data',
                     convert: function (v, r) {
                         if (r.data.type == "date" && v && !(v instanceof Date)) {
                             var d = new Date(intval(v) * 1000);
@@ -69,12 +66,7 @@ pimcore.settings.metadata.predefined = Class.create({
                         }
                         return v;
                     }
-                },
-                {name: 'config', allowBlank: true},
-                {name: 'targetSubtype', allowBlank: true},
-                {name: 'language', allowBlank: true},
-                {name: 'creationDate', allowBlank: true},
-                {name: 'modificationDate', allowBlank: true}
+                },'config', 'targetSubtype', 'language', 'creationDate' ,'modificationDate'
             ], null, {
                 remoteSort: false,
                 remoteFilter: false
@@ -378,39 +370,42 @@ pimcore.settings.metadata.predefined = Class.create({
                         },
 
                         onNodeOver: function(dataRow, target, dd, e, data) {
+                            if (data.records.length == 1) {
+                                var record = data.records[0];
+                                var data = record.data;
 
-                            var record = data.records[0];
-                            var data = record.data;
-
-                            if(dataRow.type == data.elementType) {
-                                return Ext.dd.DropZone.prototype.dropAllowed;
+                                if (dataRow.type == data.elementType) {
+                                    return Ext.dd.DropZone.prototype.dropAllowed;
+                                }
                             }
                             return Ext.dd.DropZone.prototype.dropNotAllowed;
                         }.bind(this, data),
 
                         onNodeDrop : function(recordid, target, dd, e, data) {
+                            if (pimcore.helpers.dragAndDropValidateSingleItem(data)) {
+                                var rec = this.grid.getStore().getById(recordid);
 
-                            var rec = this.grid.getStore().getById(recordid);
+                                var record = data.records[0];
+                                var data = record.data;
 
-                            var record = data.records[0];
-                            var data = record.data;
-
-                            if(data.elementType != rec.get("type")) {
-                                return false;
-                            }
-
-
-                            rec.set("data", data.path);
-                            rec.set("all",{
-                                data: {
-                                    id: data.id,
-                                    type: data.type
+                                if (data.elementType != rec.get("type")) {
+                                    return false;
                                 }
-                            });
 
-                            this.updateRows();
 
-                            return true;
+                                rec.set("data", data.path);
+                                rec.set("all", {
+                                    data: {
+                                        id: data.id,
+                                        type: data.type
+                                    }
+                                });
+
+                                this.updateRows();
+
+                                return true;
+                            }
+                            return false;
                         }.bind(this, recordid)
                     });
 

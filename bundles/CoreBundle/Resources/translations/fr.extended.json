@@ -124,8 +124,6 @@
     "debug_admin_translations": "Déboguer Traduction-Admin (entouré par +)",
     "short_url": "URL courte",
     "width_and_height_must_be_an_even_number": "La largeur et la hauteur doivent être un nombre entier",
-    "server_api_key": "Clé API Serveur",
-    "browser_api_key": "Clé API Navigateur",
     "source_site": "Site-Source",
     "target_site": "Site-Cible",
     "source_entire_url": "URL entière en tant que source",
@@ -299,7 +297,6 @@
     "geo": "Géographique",
     "default_controller": "Contrôleur par défaut",
     "default_action": "Action par défaut",
-    "basic_configuration": "Configuration basique",
     "allow_inherit": "Autoriser l'héritage",
     "use_traits": "Use (traits)",
     "general_settings": "Paramètres généraux",
@@ -691,6 +688,13 @@
     "listing_parent_php_class": "Listing Classe PHP Parent",
     "clear_full_page_cache": "Vider le cache page entière",
     "icon_library": "Bibliothèque d'icônes",
-    "expand_cs_group": "There are empty features not displayed here. Click to show them",
-    "hide_empty_data": "Hide empty data"
+    "expand_cs_group": "Il y a des fonctionnalités vides non affichées ici. Cliquez pour les afficher",
+    "hide_empty_data": "Masquer les données vides",
+    "api_key": "Clé API",
+    "colorspace": "Espace de couleurs",
+    "class_attributes": "Attributs de classe",
+    "operator_group_other": "Autres",
+    "operator_group_transformer": "Transformateurs",
+    "operator_group_extractor": "Extracteurs",
+    "operator_group_formatter": "Formateurs"
 }

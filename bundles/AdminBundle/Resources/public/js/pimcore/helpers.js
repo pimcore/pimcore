@@ -77,10 +77,10 @@ pimcore.helpers.openAsset = function (id, type, options) {
     if (pimcore.globalmanager.exists("asset_" + id) == false) {
 
         if (!pimcore.asset[type]) {
-            pimcore.globalmanager.add("asset_" + id, new pimcore.asset.unknown(id));
+            pimcore.globalmanager.add("asset_" + id, new pimcore.asset.unknown(id, options));
         }
         else {
-            pimcore.globalmanager.add("asset_" + id, new pimcore.asset[type](id));
+            pimcore.globalmanager.add("asset_" + id, new pimcore.asset[type](id, options));
         }
 
         pimcore.helpers.rememberOpenTab("asset_" + id + "_" + type);
@@ -1628,60 +1628,199 @@ pimcore.helpers.searchAndMove = function (parentId, callback, type) {
 };
 
 
-pimcore.helpers.sendTestEmail = function () {
+pimcore.helpers.sendTestEmail = function (from, to, subject, emailType, documentPath, content) {
+
+    if(!emailType) {
+        emailType = 'text';
+    }
+
+    var emailContentTextField = new Ext.form.TextArea({
+        name: "content",
+        fieldLabel: t("content"),
+        height: 300,
+    });
+    emailContentTextField.hide();
+
+    var documentTextField = new Ext.form.TextField({
+        name: 'documentPath',
+        flex: 1,
+        editable: false
+    });
+    var searchDocumentButton = new Ext.Button({
+        name: 'searchDocument',
+        fieldLabel: t('document'),
+        iconCls: 'pimcore_icon_search',
+        handler: function() {
+            pimcore.helpers.itemselector(false, function(e) {
+                documentTextField.setValue(e.fullpath);
+            }, {
+                type: ["document"],
+                subtype: {
+                    document: ["email", "newsletter"]
+                }
+            });
+        }
+    });
+
+    var documentComponent = Ext.create('Ext.form.FieldContainer', {
+        fieldLabel: t('document'),
+        layout: 'hbox',
+        items: [
+            documentTextField,
+            searchDocumentButton
+        ],
+        componentCls: "object_field",
+        border: false,
+        style: {
+            padding: 0
+        }
+    });
+    documentComponent.hide();
+
+
+    var emailTypeDropdown = new Ext.form.ComboBox({
+        name: 'emailType',
+        width: 300,
+        value: emailType,
+        store: [
+            ['document', t('document')],
+            ['html', t('html')],
+            ['text', t('text')]
+        ],
+        fieldLabel: t('type'),
+        listeners: {
+            select: function(t) {
+                if(t.value == 'text' || t.value == 'html') {
+                    emailContentTextField.show();
+                } else {
+                    emailContentTextField.hide();
+                }
+
+                if(t.value == 'document') {
+                    documentComponent.show();
+                    paramGrid.show();
+                } else {
+                    documentComponent.hide();
+                    paramGrid.hide();
+                }
+            }
+        }
+    });
+
+    var fromTextField = new Ext.form.TextField({
+        name: "from",
+        fieldLabel: t("from"),
+    });
+
+    var toTextField = new Ext.form.TextField({
+        name: "to",
+        fieldLabel: t("to"),
+    });
+
+    var subjectTextField = new Ext.form.TextField({
+        name: "subject",
+        fieldLabel: t("subject"),
+    });
+
+    var paramsStore = new Ext.data.ArrayStore({
+        fields: [
+            {name: 'key', type: 'string', persist: false},
+            {name: 'value', type: 'string', persist: false}
+        ]
+    });
+
+    var paramGrid = Ext.create('Ext.grid.Panel', {
+        store: paramsStore,
+        columns: [
+            {
+                text: t('key'),
+                dataIndex: 'key',
+                editor: new Ext.form.TextField(),
+                width: 200
+            },
+            {
+                text: t('value'),
+                dataIndex: 'value',
+                editor: new Ext.form.TextField(),
+                flex: 1
+            }
+        ],
+        stripeRows: true,
+        columnLines: true,
+        bodyCls: "pimcore_editable_grid",
+        autoHeight: true,
+        selModel: Ext.create('Ext.selection.CellModel'),
+        hideHeaders: false,
+        plugins: [
+            Ext.create('Ext.grid.plugin.CellEditing', {})
+        ],
+        tbar: [
+            {
+                iconCls: "pimcore_icon_table_row pimcore_icon_overlay_add",
+                handler: function() {
+                    paramsStore.add({'key' : '', 'value': ''});
+                }
+            },
+            {
+                xtype: 'label',
+                html: t('parameters')
+            }
+        ]
+    });
+    paramGrid.hide();
 
     var win = new Ext.Window({
+
         width: 800,
         height: 600,
         modal: true,
         title: t("send_test_email"),
-        iconCls: "pimcore_icon_email",
         layout: "fit",
         closeAction: "close",
         items: [{
             xtype: "form",
             bodyStyle: "padding:10px;",
             itemId: "form",
-            items: [{
-                xtype: "textfield",
-                name: "to",
-                fieldLabel: t("to"),
+            items: [
+                fromTextField,
+                toTextField,
+                subjectTextField,
+                emailTypeDropdown,
+                emailContentTextField,
+                documentComponent,
+                paramGrid
+            ],
+            defaults: {
                 width: 780
-            }, {
-                xtype: "textfield",
-                name: "subject",
-                fieldLabel: t("subject"),
-                width: 780
-            }, {
-                xtype: "textarea",
-                name: "content",
-                fieldLabel: t("content"),
-                width: 780,
-                height: 400
-            }]
+            }
         }],
         buttons: [{
-            text: t("send_as_plain_text"),
-            iconCls: "pimcore_icon_text",
+            text: t("send"),
+            iconCls: "pimcore_icon_email",
             handler: function () {
-                send("text");
-            }
-        }, {
-            text: t("send_as_html_mime"),
-            iconCls: "pimcore_icon_html",
-            handler: function () {
-                send("html");
+                send();
             }
         }]
     });
 
-    var send = function (type) {
+    var send = function () {
+
 
         var params = win.getComponent("form").getForm().getFieldValues();
-        params["type"] = type;
+        if(emailTypeDropdown.getValue() === 'document') {
+            var allRecords = paramsStore
+                .queryBy(function() { return true; }) // returns a collection
+                .getRange();
+            var emailParamsArray = [];
+            for (var i = 0; i < allRecords.length; i++) {
+                emailParamsArray.push({"key": allRecords[i].data['key'], "value": allRecords[i].data['value']});
+
+            }
+            params['mailParamaters'] =  JSON.stringify(emailParamsArray);
+        }
+
 
         win.disable();
-
         Ext.Ajax.request({
             url: "/admin/email/send-test-email",
             params: params,
@@ -1704,9 +1843,40 @@ pimcore.helpers.sendTestEmail = function () {
                 win.close();
             }
         });
+
     };
 
+
+
+    if(emailType) {
+        emailTypeDropdown.setValue(emailType);
+        if(emailType == 'document') {
+            documentComponent.show();
+            paramGrid.show();
+        }
+        if(emailType == 'html' || emailType == 'text') {
+            emailContentTextField.show();
+        }
+    }
+    if(documentPath) {
+        documentTextField.setValue(documentPath);
+    }
+    if(content) {
+        emailContentTextField.setValue(content);
+    }
+    if(from) {
+        fromTextField.setValue(from);
+    }
+    if(to) {
+        toTextField.setValue(to);
+    }
+    if(subject) {
+        subjectTextField.setValue(subject);
+    }
+
+
     win.show();
+
 
 };
 
@@ -1773,13 +1943,19 @@ pimcore.helpers.editmode.openLinkEditPanel = function (data, callback) {
             },
 
             onNodeOver: function (target, dd, e, data) {
-                data = data.records[0].data;
-                return data.type != "folder" ? Ext.dd.DropZone.prototype.dropAllowed : Ext.dd.DropZone.prototype.dropNotAllowed;
+                if (data.records.length === 1 && data.records[0].data.type === "folder") {
+                    return Ext.dd.DropZone.prototype.dropAllowed;
+                }
             }.bind(this),
 
             onNodeDrop: function (target, dd, e, data) {
-                var record = data.records[0];
-                if (record.data.type != "folder" && (record.data.elementType == "asset" || record.data.elementType == "document" || record.data.elementType == "object")) {
+
+                if(!pimcore.helpers.dragAndDropValidateSingleItem(data)) {
+                    return false;
+                }
+
+                data = data.records[0].data;
+                if (data.type != "folder" && (data.elementType == "asset" || data.elementType == "document" || data.elementType == "object")) {
                     internalTypeField.setValue(record.data.elementType);
                     linkTypeField.setValue('internal');
                     fieldPath.setValue(record.data.path);
@@ -2005,20 +2181,27 @@ pimcore.helpers.editmode.openVideoEditPanel = function (data, callback) {
             },
 
             onNodeOver: function (target, dd, e, data) {
-                data = data.records[0].data;
-                if (target && target.getId() == poster.getId()) {
-                    if (data.elementType == "asset" && data.type == "image") {
-                        return Ext.dd.DropZone.prototype.dropAllowed;
-                    }
-                } else {
-                    if (data.elementType == "asset" && data.type == "video") {
-                        return Ext.dd.DropZone.prototype.dropAllowed;
+                if(data.records.length === 1) {
+                    data = data.records[0].data;
+                    if (target && target.getId() == poster.getId()) {
+                        if (data.elementType == "asset" && data.type == "image") {
+                            return Ext.dd.DropZone.prototype.dropAllowed;
+                        }
+                    } else {
+                        if (data.elementType == "asset" && data.type == "video") {
+                            return Ext.dd.DropZone.prototype.dropAllowed;
+                        }
                     }
                 }
                 return Ext.dd.DropZone.prototype.dropNotAllowed;
             }.bind(this),
 
             onNodeDrop: function (target, dd, e, data) {
+
+                if(!pimcore.helpers.dragAndDropValidateSingleItem(data)) {
+                    return false;
+                }
+
                 if (target) {
                     data = data.records[0].data;
 
@@ -2803,7 +2986,7 @@ pimcore.helpers.keyBindingMapping = {
 
 pimcore.helpers.showPermissionError = function(permission) {
     Ext.MessageBox.alert(t("error"), sprintf(t('permission_missing'), ts(permission)));
-}
+};
 
 pimcore.helpers.registerAssetDnDSingleUpload = function (element, parent, parentType, success, failure, context) {
 
@@ -2922,6 +3105,15 @@ pimcore.helpers.findCaseInsensitiveValue = function (collection, needle) {
     }
 
     return match;
+};
+
+pimcore.helpers.dragAndDropValidateSingleItem = function (data) {
+    if(data.records.length > 1) {
+        Ext.MessageBox.alert(t('error'), t('you_can_only_drop_one_element_here'));
+        return false;
+    }
+
+    return true;
 };
 
 

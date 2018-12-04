@@ -18,12 +18,14 @@ pimcore.object.helpers.gridConfigDialog = Class.create({
     data: {},
     brickKeys: [],
 
-    initialize: function (columnConfig, callback, resetCallback, showSaveAndShareTab, settings) {
+    initialize: function (columnConfig, callback, resetCallback, showSaveAndShareTab, settings, previewSettings) {
+
         this.config = columnConfig;
         this.callback = callback;
         this.resetCallback = resetCallback;
         this.showSaveAndShareTab = showSaveAndShareTab;
         this.isShared = settings && settings.isShared;
+        this.previewSettings = previewSettings || {};
 
         this.settings = settings || {};
 
@@ -55,6 +57,17 @@ pimcore.object.helpers.gridConfigDialog = Class.create({
         });
 
         buttons = [];
+
+        if (this.previewSettings && this.previewSettings.allowPreview) {
+            buttons.push({
+                    text: t("refresh_preview"),
+                    iconCls: "pimcore_icon_refresh",
+                    handler: function () {
+                        this.updatePreview();
+                    }.bind(this)
+                }
+            );
+        }
 
         if (this.resetCallback) {
             buttons.push(
@@ -114,6 +127,7 @@ pimcore.object.helpers.gridConfigDialog = Class.create({
         });
 
         this.window.show();
+        this.updatePreview();
     },
 
     getSaveAndSharePanel: function () {
@@ -267,15 +281,28 @@ pimcore.object.helpers.gridConfigDialog = Class.create({
     getLeftPanel: function () {
         if (!this.leftPanel) {
 
-            var items = [
-                this.getClassDefinitionTreePanel(),
-                this.getOperatorTree()
-            ];
+            var items = this.getOperatorTrees();
+            items.unshift(this.getClassDefinitionTreePanel());
+
 
             this.brickKeys = [];
             this.leftPanel = new Ext.Panel({
-                layout: "border",
+                cls: "pimcore_panel_tree pimcore_gridconfig_leftpanel",
                 region: "center",
+                split: true,
+                width: 300,
+                minSize: 175,
+                collapsible: true,
+                collapseMode: 'header',
+                collapsed: false,
+                animCollapse: false,
+                layout: 'accordion',
+                hideCollapseTool: true,
+                header: false,
+                layoutConfig: {
+                    animate: false
+                },
+                hideMode: "offsets",
                 items: items
             });
         }
@@ -304,14 +331,18 @@ pimcore.object.helpers.gridConfigDialog = Class.create({
         return childs;
     },
 
-    commitData: function (save) {
+    updatePreview: function () {
+        this.commitData(false, true);
+    },
+
+    commitData: function (save, preview) {
 
         this.data = {};
         if (this.languageField) {
             this.data.language = this.languageField.getValue();
         }
 
-        if(this.itemsPerPage) {
+        if (this.itemsPerPage) {
             this.data.pageSize = this.itemsPerPage.getValue();
         }
 
@@ -326,10 +357,6 @@ pimcore.object.helpers.gridConfigDialog = Class.create({
                     var attributes = child.data.configAttributes;
                     var operatorChilds = this.doGetRecursiveData(child);
                     attributes.childs = operatorChilds;
-                    attributes.renderer = child.data.renderer;
-                    if (attributes.renderer == "default") {
-                        delete attributes.renderer;
-                    }
                     operatorFound = true;
 
                     obj.isOperator = true;
@@ -370,8 +397,12 @@ pimcore.object.helpers.gridConfigDialog = Class.create({
         }
 
         if (!operatorFound) {
-            this.callback(this.data, this.settings, save);
-            this.window.close();
+            if (preview) {
+                this.requestPreview();
+            } else {
+                this.callback(this.data, this.settings, save);
+                this.window.close();
+            }
         } else {
             var columnsPostData = Ext.encode(this.data.columns);
             Ext.Ajax.request({
@@ -380,17 +411,70 @@ pimcore.object.helpers.gridConfigDialog = Class.create({
                 params: {
                     columns: columnsPostData
                 },
-                success: function (response) {
+                success: function (preview, response) {
                     var responseData = Ext.decode(response.responseText);
                     this.data.columns = responseData.columns;
-                    this.callback(this.data, this.settings, save);
-                    this.window.close();
 
-                }.bind(this)
+                    if (preview) {
+                        this.requestPreview();
+                    } else {
+                        this.callback(this.data, this.settings, save);
+                        this.window.close();
+                    }
+
+                }.bind(this, preview)
             });
-
         }
     },
+
+    requestPreview: function () {
+        var language = this.languageField.getValue();
+        var fields = this.data.columns;
+        var count = fields.length;
+        var i;
+        var keys = [];
+        for (i = 0; i < count; i++) {
+            var item = fields[i];
+            keys.push(item.key);
+        }
+
+        Ext.Ajax.request({
+            url: "/admin/object/grid-proxy?classId=" + this.previewSettings.classId + "&folderId=" + this.previewSettings.objectId,
+            method: 'POST',
+            params: {
+                "fields[]": keys,
+                language: language,
+                limit: 1
+            },
+            success: function (response) {
+                var responseData = Ext.decode(response.responseText);
+                if (responseData && responseData.data && responseData.data.length == 1) {
+                    var rootNode = this.selectionPanel.getRootNode()
+                    var childNodes = rootNode.childNodes;
+                    var previewItem = responseData.data[0];
+                    var store = this.selectionPanel.getStore()
+                    var i;
+                    var count = childNodes.length;
+
+                    for (i = 0; i < count; i++) {
+                        var node = childNodes[i];
+                        var nodeId = node.id;
+                        var column = this.data.columns[i];
+
+                        var columnKey = column.key;
+                        var value = previewItem[columnKey];
+
+                        var record = store.getById(nodeId);
+                        record.set("preview", value, {
+                            commit: true
+                        });
+                    }
+                }
+
+            }.bind(this)
+        });
+    },
+
 
     getLanguageSelection: function () {
         var storedata = [["default", t("default")]];
@@ -422,6 +506,11 @@ pimcore.object.helpers.gridConfigDialog = Class.create({
                 ],
                 data: storedata
             }),
+            listeners: {
+                change: function() {
+                    this.updatePreview();
+                }.bind(this)
+            },
             triggerAction: 'all',
             valueField: 'id',
             displayField: 'label'
@@ -434,7 +523,7 @@ pimcore.object.helpers.gridConfigDialog = Class.create({
             mode: 'local',
             autoSelect: true,
             editable: true,
-            value: (this.config.pageSize?this.config.pageSize:pimcore.helpers.grid.getDefaultPageSize(-1)),
+            value: (this.config.pageSize ? this.config.pageSize : pimcore.helpers.grid.getDefaultPageSize(-1)),
             store: new Ext.data.ArrayStore({
                 id: 0,
                 fields: [
@@ -455,7 +544,7 @@ pimcore.object.helpers.gridConfigDialog = Class.create({
             style: "border-top: none !important;",
             hideLabel: false,
             fieldLabel: t("language"),
-            items: [this.languageField,{
+            items: [this.languageField, {
                 xtype: 'tbfill'
             }, this.itemsPerPage]
         };
@@ -484,7 +573,6 @@ pimcore.object.helpers.gridConfigDialog = Class.create({
                         continue;
                     }
                     child = child[0];
-                    child.renderer = nodeConf.attributes.renderer;
                 } else {
                     var text = ts(nodeConf.label);
 
@@ -512,7 +600,15 @@ pimcore.object.helpers.gridConfigDialog = Class.create({
                 clicksToEdit: 1
             });
 
-            this.selectionPanel = new Ext.tree.TreePanel({
+            var store = new Ext.data.TreeStore({
+                fields: [{
+                    name: "text"
+                }, {
+                    name: "preview",
+                    persist: false
+                }
+
+                ],
                 root: {
                     id: "0",
                     root: true,
@@ -521,8 +617,13 @@ pimcore.object.helpers.gridConfigDialog = Class.create({
                     isTarget: true,
                     expanded: true,
                     children: childs
-                },
+                }
+            });
+
+            this.selectionPanel = new Ext.tree.TreePanel({
+                store: store,
                 plugins: [this.cellEditing],
+                rootVisible: false,
                 viewConfig: {
                     plugins: {
                         ptype: 'treeviewdragdrop',
@@ -549,7 +650,10 @@ pimcore.object.helpers.gridConfigDialog = Class.create({
                                     var element = this.getConfigElement(attr);
                                     var copy = element.getCopyNode(record);
                                     data.records = [copy]; // assign the copy as the new dropNode
-                                    var configWindow = element.getConfigDialog(copy);
+                                    var configWindow = element.getConfigDialog(copy,
+                                        {
+                                            callback: this.updatePreview.bind(this)
+                                        });
 
                                     if (configWindow) {
                                         //this is needed because of new focus management of extjs6
@@ -597,7 +701,9 @@ pimcore.object.helpers.gridConfigDialog = Class.create({
 
                                     var copy = element.getCopyNode(record);
                                     data.records = [copy]; // assign the copy as the new dropNode
-                                    var window = element.getConfigDialog(copy);
+                                    var window = element.getConfigDialog(copy, {
+                                        callback: this.updatePreview.bind(this)
+                                    });
 
                                     if (window) {
                                         //this is needed because of new focus management of extjs6
@@ -612,6 +718,7 @@ pimcore.object.helpers.gridConfigDialog = Class.create({
                         }.bind(this),
                         drop: function (node, data, overModel) {
                             overModel.set('expandable', true);
+                            this.updatePreview();
 
                         }.bind(this),
                         nodedragover: function (targetNode, dropPosition, dragData, e, eOpts) {
@@ -671,56 +778,72 @@ pimcore.object.helpers.gridConfigDialog = Class.create({
                 region: 'east',
                 title: t('selected_grid_columns'),
                 layout: 'fit',
-                width: 528,
+                width: 640,
                 split: true,
                 autoScroll: true,
+                rowLines: true,
+                columnLines: true,
                 listeners: {
                     itemcontextmenu: this.onTreeNodeContextmenu.bind(this)
                 },
                 columns: [
                     {
-                        xtype: 'treecolumn', //this is so we know which column will show the tree
+                        xtype: 'treecolumn',                    //this is so we know which column will show the tree
                         text: t('configuration'),
                         dataIndex: 'text',
                         flex: 90
-                    }, {
-                        dataIndex: 'renderer',
-                        text: t('renderer'),
-                        flex: 30,
-                        renderer: function (data, metaData, record) {
-                            var value = data;
-                            if (value) {
-                                return t(value);
-                            }
-                        }.bind(this),
-                        getEditor: function (record) {
-                            var data = [];
-                            data.push(['default', t('default')]);
-                            data.push(['image', t('image')]);
-                            data.push(['hotspotimage', t('imageadvanced')]);
-                            data.push(['geopoint', t('geopoint')]);
+                    },
+                    {
+                        dataIndex: 'preview',
+                        text: t('preview'),
+                        flex: 90,
+                        renderer: function (value, metaData, record) {
 
-                            var store = new Ext.data.ArrayStore({
-                                    autoDestroy: true,
-                                    fields: ["key", "value"],
-                                    data: data
+                            if (record && record.parentNode.id == 0) {
+
+                                var key = record.data.key;
+                                record.data.inheritedFields = {};
+
+                                if (key == "modificationDate" || key == "creationDate") {
+                                    var timestamp = intval(value) * 1000;
+                                    var date = new Date(timestamp);
+                                    return Ext.Date.format(date, "Y-m-d H:i");
+
+                                } else if (key == "published") {
+                                    return Ext.String.format('<div style="text-align: left"><div role="button" class="x-grid-checkcolumn{0}" style=""></div></div>', value ? '-checked' : '');
+                                } else {
+                                    var fieldType = record.data.dataType;
+
+                                    try {
+                                        if (record.data.isOperator && record.data.configAttributes && pimcore.object.tags[record.data.configAttributes.renderer]) {
+                                            var rendererType = record.data.configAttributes.renderer;
+                                            var tag = pimcore.object.tags[rendererType];
+                                        } else {
+                                            var tag = pimcore.object.tags[fieldType];
+                                        }
+
+                                        if (tag) {
+                                            var fc = tag.prototype.getGridColumnConfig({
+                                                key: key,
+                                                layout: {
+                                                    noteditable: true
+                                                }
+                                            }, true);
+
+                                            value = fc.renderer(value, null, record);
+                                        }
+                                    } catch (e) {
+                                        console.log(e);
+                                    }
+
+                                    if (typeof value == "string") {
+                                        value = '<div style="max-height: 50px">' + value + '</div>';
+                                    }
+                                    return value;
                                 }
-                            );
+                            }
 
-                            var editorConfig = {
-                                store: store,
-                                triggerAction: "all",
-                                editable: false,
-                                queryMode: "local",
-                                valueField: 'key',
-                                displayField: 'value',
-                                forceSelection: true,
-                                value: record.data.configAttributes && record.data.configAttributes.renderer ? record.data.configAttributes.renderer : "default"
-                            };
-
-                            var combo = new Ext.form.ComboBox(editorConfig);
-                            return combo;
-                        }
+                        }.bind(this)
                     }
                 ]
             });
@@ -795,7 +918,10 @@ pimcore.object.helpers.gridConfigDialog = Class.create({
                     text: t('edit'),
                     iconCls: "pimcore_icon_edit",
                     handler: function (node) {
-                        this.getConfigElement(node.data.configAttributes).getConfigDialog(node);
+                        this.getConfigElement(node.data.configAttributes).getConfigDialog(node,
+                            {
+                                callback: this.updatePreview.bind(this)
+                            });
                     }.bind(this, record)
                 }));
             }
@@ -837,6 +963,8 @@ pimcore.object.helpers.gridConfigDialog = Class.create({
                     if (record.data.dataType == "classificationstore") {
                         var ccd = new pimcore.object.classificationstore.columnConfigDialog();
                         ccd.getConfigDialog(ownerTree, copy, this.selectionPanel);
+                    } else {
+                        this.updatePreview();
                     }
                 }
             }
@@ -845,25 +973,49 @@ pimcore.object.helpers.gridConfigDialog = Class.create({
         return tree;
     },
 
-    getOperatorTree: function () {
+    getOperatorTrees: function () {
         var operators = Object.keys(pimcore.object.gridcolumn.operator);
-
-        var groups = {};
-
+        var operatorGroups = [];
         // var childs = [];
         for (var i = 0; i < operators.length; i++) {
             var operator = operators[i];
             if (!this.availableOperators || this.availableOperators.indexOf(operator) >= 0) {
                 var nodeConfig = pimcore.object.gridcolumn.operator[operator].prototype;
                 var configTreeNode = nodeConfig.getConfigTreeNode();
-                var groupName = nodeConfig.group || "other";
-                if (!groups[groupName]) {
-                    groups[groupName] = [];
+
+                var operatorGroup = nodeConfig.operatorGroup ? nodeConfig.operatorGroup : "other";
+
+                if (!operatorGroups[operatorGroup]) {
+                    operatorGroups[operatorGroup] = [];
                 }
-                groups[groupName].push(configTreeNode);
+
+                var groupName = nodeConfig.group || "other";
+                if (!operatorGroups[operatorGroup][groupName]) {
+                    operatorGroups[operatorGroup][groupName] = [];
+                }
+                operatorGroups[operatorGroup][groupName].push(configTreeNode);
             }
         }
 
+        var operatorGroupKeys = [];
+        for (k in operatorGroups) {
+            if (operatorGroups.hasOwnProperty(k)) {
+                operatorGroupKeys.push(k);
+            }
+        }
+        operatorGroupKeys.sort();
+        var result = [];
+        var len = operatorGroupKeys.length;
+        for (i = 0; i < len; i++) {
+            var operatorGroupName = operatorGroupKeys[i];
+            var groupNodes = operatorGroups[operatorGroupName];
+            result.push(this.getOperatorTree(operatorGroupName, groupNodes));
+
+        }
+        return result;
+    },
+
+    getOperatorTree: function (operatorGroupName, groups) {
         var groupKeys = [];
         for (k in groups) {
             if (groups.hasOwnProperty(k)) {
@@ -878,7 +1030,7 @@ pimcore.object.helpers.gridConfigDialog = Class.create({
         var groupNodes = [];
 
         for (i = 0; i < len; i++) {
-            k = groupKeys[i];
+            var k = groupKeys[i];
             var childs = groups[k];
             childs.sort(
                 function (x, y) {
@@ -900,12 +1052,12 @@ pimcore.object.helpers.gridConfigDialog = Class.create({
         }
 
         var tree = new Ext.tree.TreePanel({
-            title: t('operators'),
-            collapsible: true,
+            title: t('operator_group_' + operatorGroupName),
+            iconCls: 'pimcore_icon_gridconfig_operator_' + operatorGroupName,
             xtype: "treepanel",
             region: "south",
             autoScroll: true,
-            height: 200,
+            layout: 'fit',
             rootVisible: false,
             resizeable: true,
             split: true,

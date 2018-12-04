@@ -18,6 +18,7 @@
 pimcore.registerNS("pimcore.object.gridcolumn.operator.stringcontains");
 
 pimcore.object.gridcolumn.operator.stringcontains = Class.create(pimcore.object.gridcolumn.Abstract, {
+    operatorGroup: "transformer",
     type: "operator",
     class: "StringContains",
     iconCls: "pimcore_icon_operator_stringcontains",
@@ -78,7 +79,7 @@ pimcore.object.gridcolumn.operator.stringcontains = Class.create(pimcore.object.
     },
 
 
-    getConfigDialog: function(node) {
+    getConfigDialog: function(node, params) {
         this.node = node;
 
         this.textField = new Ext.form.TextField({
@@ -112,7 +113,7 @@ pimcore.object.gridcolumn.operator.stringcontains = Class.create(pimcore.object.
                 text: t("apply"),
                 iconCls: "pimcore_icon_apply",
                 handler: function () {
-                    this.commitData();
+                    this.commitData(params);
                 }.bind(this)
             }]
         });
@@ -130,12 +131,15 @@ pimcore.object.gridcolumn.operator.stringcontains = Class.create(pimcore.object.
         return this.window;
     },
 
-    commitData: function() {
+    commitData: function(params) {
         this.node.set('isOperator', true);
         this.node.data.configAttributes.search = this.searchField.getValue();
         this.node.data.configAttributes.insensitive = this.insensitiveField.getValue();
         this.node.set('text', this.textField.getValue());
         this.window.close();
+        if (params && params.callback) {
+            params.callback();
+        }
     },
 
     allowChild: function (targetNode, dropNode) {

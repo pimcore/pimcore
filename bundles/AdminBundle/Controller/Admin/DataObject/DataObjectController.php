@@ -545,7 +545,9 @@ class DataObjectController extends ElementControllerBase implements EventedContr
             } else {
                 $refKey = $key;
             }
-            $relations = $object->getRelationData($refKey, !$fielddefinition->isRemoteOwner(), $refId);
+            if (!$fielddefinition instanceof DataObject\ClassDefinition\Data\ManyToManyObjectRelation || $fielddefinition instanceof DataObject\ClassDefinition\Data\AdvancedManyToManyObjectRelation) {
+                $relations = $object->getRelationData($refKey, !$fielddefinition->isRemoteOwner(), $refId);
+            }
             if (empty($relations) && !empty($parent)) {
                 $this->getDataForField($parent, $key, $fielddefinition, $objectFromVersion, $level + 1);
             } else {
@@ -554,13 +556,12 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                 if ($fielddefinition instanceof DataObject\ClassDefinition\Data\Href) {
                     $data = $relations[0];
                     $data['published'] = (bool) $data['published'];
+                } elseif ($fielddefinition instanceof DataObject\ClassDefinition\Data\ManyToManyObjectRelation && !$fielddefinition instanceof DataObject\ClassDefinition\Data\AdvancedManyToManyObjectRelation) {
+                    $fieldData = $object->$getter();
+                    $data = $fielddefinition->getDataForEditmode($fieldData, $object, $objectFromVersion);
                 } else {
                     foreach ($relations as $rel) {
-                        if ($fielddefinition instanceof DataObject\ClassDefinition\Data\Objects) {
-                            $data[] = [$rel['id'], $rel['path'], $rel['subtype'], (bool) $rel['published']];
-                        } else {
-                            $data[] = [$rel['id'], $rel['path'], $rel['type'], $rel['subtype'], (bool) $rel['published']];
-                        }
+                        $data[] = [$rel['id'], $rel['path'], $rel['type'], $rel['subtype'], (bool) $rel['published']];
                     }
                 }
                 $this->objectData[$key] = $data;
@@ -993,105 +994,6 @@ class DataObjectController extends ElementControllerBase implements EventedContr
     }
 
     /**
-     * @Route("/delete-info", methods={"GET"})
-     *
-     * @param Request $request
-     *
-     * @return JsonResponse
-     */
-    public function deleteInfoAction(Request $request)
-    {
-        $hasDependency = false;
-        $deleteJobs = [];
-        $recycleJobs = [];
-
-        $totalChilds = 0;
-
-        $ids = $request->get('id');
-        $ids = explode(',', $ids);
-
-        foreach ($ids as $id) {
-            try {
-                $object = DataObject::getById($id);
-                if (!$object) {
-                    continue;
-                }
-                $hasDependency |= $object->getDependencies()->isRequired();
-            } catch (\Exception $e) {
-                Logger::err('failed to access object with id: ' . $id);
-                continue;
-            }
-
-            // check for children
-            if ($object instanceof DataObject\AbstractObject) {
-                $recycleJobs[] = [[
-                    'url' => '/admin/recyclebin/add',
-                    'method' => 'POST',
-                    'params' => [
-                        'type' => 'object',
-                        'id' => $object->getId()
-                    ]
-                ]];
-
-                $hasChilds = $object->hasChildren();
-                if (!$hasDependency) {
-                    $hasDependency = $hasChilds;
-                }
-
-                $childs = 0;
-                if ($hasChilds) {
-                    // get amount of childs
-                    $list = new DataObject\Listing();
-                    $list->setCondition('o_path LIKE ' . $list->quote($object->getRealFullPath() . '/%'));
-                    $childs = $list->getTotalCount();
-
-                    $totalChilds += $childs;
-                    if ($childs > 0) {
-                        $deleteObjectsPerRequest = 5;
-                        for ($i = 0; $i < ceil($childs / $deleteObjectsPerRequest); $i++) {
-                            $deleteJobs[] = [[
-                                'url' => '/admin/object/delete',
-                                'method' => 'DELETE',
-                                'params' => [
-                                    'step' => $i,
-                                    'amount' => $deleteObjectsPerRequest,
-                                    'type' => 'childs',
-                                    'id' => $object->getId()
-                                ]
-                            ]];
-                        }
-                    }
-                }
-
-                // the object itself is the last one
-                $deleteJobs[] = [[
-                    'url' => '/admin/object/delete',
-                    'method' => 'DELETE',
-                    'params' => [
-                        'id' => $object->getId()
-                    ]
-                ]];
-            }
-        }
-
-        // get the element key in case of just one
-        $elementKey = false;
-        if (count($ids) === 1) {
-            $elementKey = DataObject::getById($id)->getKey();
-        }
-
-        $deleteJobs = array_merge($recycleJobs, $deleteJobs);
-
-        return $this->adminJson([
-            'hasDependencies' => $hasDependency,
-            'childs' => $totalChilds,
-            'deletejobs' => $deleteJobs,
-            'batchDelete' => count($ids) > 1,
-            'elementKey' => $elementKey
-        ]);
-    }
-
-    /**
      * @Route("/update", methods={"PUT"})
      *
      * @param Request $request
@@ -1215,6 +1117,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
             'o_parentId = ? AND o_id != ?',
             [$updatedObject->getParentId(), $updatedObject->getId()]
         );
+        $list->setObjectTypes([DataObject\AbstractObject::OBJECT_TYPE_OBJECT, DataObject\AbstractObject::OBJECT_TYPE_VARIANT, DataObject\AbstractObject::OBJECT_TYPE_FOLDER]);
         $list->setOrderKey('o_index');
         $list->setOrder('asc');
         $siblings = $list->load();
@@ -2337,7 +2240,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                 }
             }
         } elseif ($linkGenerator = $object->getClass()->getLinkGenerator()) {
-            $url = $linkGenerator->generate($object, [['preview' => true, 'context' => $this]]);
+            $url = $linkGenerator->generate($object, ['preview' => true, 'context' => $this]);
         }
 
         if (!$url) {

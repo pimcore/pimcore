@@ -18,6 +18,7 @@
 pimcore.registerNS("pimcore.object.gridcolumn.operator.base64");
 
 pimcore.object.gridcolumn.operator.base64 = Class.create(pimcore.object.gridcolumn.Abstract, {
+    operatorGroup: "transformer",
     type: "operator",
     class: "Base64",
     iconCls: "pimcore_icon_operator_base64",
@@ -80,7 +81,7 @@ pimcore.object.gridcolumn.operator.base64 = Class.create(pimcore.object.gridcolu
     },
 
 
-    getConfigDialog: function (node) {
+    getConfigDialog: function (node, params) {
         this.node = node;
 
         this.textField = new Ext.form.TextField({
@@ -138,7 +139,7 @@ pimcore.object.gridcolumn.operator.base64 = Class.create(pimcore.object.gridcolu
         return 'e';
     },
 
-    commitData: function () {
+    commitData: function (params) {
         this.node.data.configAttributes.label = this.textField.getValue();
         this.node.data.configAttributes.mode = this.modeField.getValue().rb;
         var nodeLabel = this.getNodeLabel(this.node.data.configAttributes);
@@ -147,6 +148,10 @@ pimcore.object.gridcolumn.operator.base64 = Class.create(pimcore.object.gridcolu
         this.node.set('isOperator', true);
 
         this.window.close();
+
+        if (params && params.callback) {
+            params.callback();
+        }
     },
 
     getNodeLabel: function (configAttributes) {

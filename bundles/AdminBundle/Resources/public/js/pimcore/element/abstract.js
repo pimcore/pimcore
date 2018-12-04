@@ -187,5 +187,13 @@ pimcore.element.abstract = Class.create({
                 }
             }.bind(this)
         );
+    },
+
+    addToMainTabPanel: function() {
+        if(this.options && this.options['tabIndex'] !== undefined) {
+            this.tabPanel.insert(this.options['tabIndex'], this.tab);
+        } else {
+            this.tabPanel.add(this.tab);
+        }
     }
 });

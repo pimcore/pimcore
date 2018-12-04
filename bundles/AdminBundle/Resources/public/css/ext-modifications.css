@@ -405,5 +405,5 @@ body > .x-mask {
 /* Ext override for making disabled fields show tooltip on mouseover - should be fixed in 6.2.0 */
 .x-item-disabled, .x-item-disabled * {
     cursor: default;
-    pointer-events: all !important; //enables tooltip for disabled elements
+    pointer-events: all !important; /* enables tooltip for disabled elements */
 }

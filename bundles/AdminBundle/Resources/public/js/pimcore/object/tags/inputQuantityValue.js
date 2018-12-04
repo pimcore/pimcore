@@ -78,7 +78,6 @@ pimcore.object.tags.inputQuantityValue = Class.create(pimcore.object.tags.abstra
             autoSelect: true,
             editable: true,
             selectOnFocus: true,
-            allowBlank: true,
             forceSelection: true,
             store: this.store,
             valueField: 'id',

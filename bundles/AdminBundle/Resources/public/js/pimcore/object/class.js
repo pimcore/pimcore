@@ -224,7 +224,7 @@ pimcore.object.klass = Class.create({
         );
 
         var identifierField = new Ext.form.field.Text({
-            fieldLabel: t('class_identifier'),
+            fieldLabel: t('unique_identifier'),
             labelWidth: 200,
             maxLength: 20,
             value: suggestedIdentifier
@@ -244,7 +244,7 @@ pimcore.object.klass = Class.create({
                 nameField,
                 identifierField, {
                     xtype: 'panel',
-                    html: t('class_identifier_warning')
+                    html: t('identifier_warning')
                 }
             ],
             buttons: [
@@ -286,12 +286,12 @@ pimcore.object.klass = Class.create({
 
         var classIdentifierRegresult = classIdentifier.match(/[a-zA-Z0-9]+/);
         if (classIdentifier.length < 1 || classIdentifierRegresult != classIdentifier) {
-            Ext.Msg.alert(' ', t('invalid_class_identifier'));
+            Ext.Msg.alert(' ', t('invalid_identifier'));
             return false;
         }
 
         if (in_array(classIdentifier.toLowerCase(), classes["existingIds"])) {
-            Ext.Msg.alert(' ', t('class_identifier_already_exists'));
+            Ext.Msg.alert(' ', t('identifier_already_exists'));
             return false;
         }
 

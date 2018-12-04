@@ -38,7 +38,6 @@ class Link extends Model\Document\Link implements Model\Document\Hardlink\Wrappe
                 if ($c) {
                     $hardLink = $this->getHardLinkSource();
                     $c->setHardLinkSource($hardLink);
-                    $c->setSourceDocument($this->getObject());
 
                     if ($hardLink->getSourceDocument()->getRealFullpath() == $c->getRealFullPath()) {
                         $c->setPath($hardLink->getPath());

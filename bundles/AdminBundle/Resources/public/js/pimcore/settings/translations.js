@@ -83,8 +83,8 @@ pimcore.settings.translations = Class.create({
             {name: 'id', persist: false},
             {name: 'editor', persist: false},
             {name: 'key', allowBlank: false},
-            {name: 'creationDate', allowBlank: true, type: 'date', convert: dateConverter, persist: false},
-            {name: 'modificationDate', allowBlank: true, type: 'date', convert: dateConverter, persist: false}
+            {name: 'creationDate', type: 'date', convert: dateConverter, persist: false},
+            {name: 'modificationDate', type: 'date', convert: dateConverter, persist: false}
         ];
 
         var typesColumns = [

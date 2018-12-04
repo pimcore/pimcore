@@ -262,12 +262,15 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
             boxLabel: t("only_children"),
             listeners: {
                 "change": function (field, checked) {
+                    this.grid.getStore().setRemoteFilter(false);
                     this.grid.filters.clearFilters();
 
                     this.store.getProxy().setExtraParam("only_direct_children", checked);
 
                     this.onlyDirectChildren = checked;
                     this.pagingtoolbar.moveFirst();
+
+                    this.grid.getStore().setRemoteFilter(true);
                 }.bind(this)
             }
         });
@@ -288,7 +291,7 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
             text: t('grid_options'),
             iconCls: "pimcore_icon_table_col pimcore_icon_overlay_edit",
             handler: function () {
-                this.openColumnConfig();
+                this.openColumnConfig(true);
             }.bind(this),
             menu: []
         });
@@ -393,7 +396,7 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
             this.saveConfig(false);
         }
     },
-    
+
     getGridConfig: function ($super) {
         var config = $super();
         config.onlyDirectChildren = this.onlyDirectChildren;

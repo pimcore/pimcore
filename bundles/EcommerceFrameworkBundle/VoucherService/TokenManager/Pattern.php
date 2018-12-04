@@ -260,13 +260,13 @@ class Pattern extends AbstractTokenManager implements IExportableTokenManager
         $prefix = $this->configuration->getPrefix();
         if (!empty($separator)) {
             if (!empty($prefix)) {
-                return strlen($this->configuration->prefix) + 1 + floor($this->configuration->getLength() / $separatorCount) + $this->configuration->getLength();
+                return strlen($this->configuration->getPrefix()) + 1 + floor($this->configuration->getLength() / $separatorCount) + $this->configuration->getLength();
             }
 
             return floor($this->configuration->getLength() / $separatorCount) + $this->configuration->getLength();
         }
 
-        return strlen($this->configuration->prefix) + $this->configuration->getLength();
+        return strlen($this->configuration->getPrefix()) + $this->configuration->getLength();
     }
 
     /**

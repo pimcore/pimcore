@@ -618,14 +618,15 @@ class Service extends Model\AbstractModel
      *
      * @param Document|Asset|DataObject\AbstractObject $data
      * @param bool $initial
+     * @param string $key
      *
      * @return mixed
      */
-    public static function renewReferences($data, $initial = true)
+    public static function renewReferences($data, $initial = true, $key = null)
     {
         if (is_array($data)) {
-            foreach ($data as &$value) {
-                $value = self::renewReferences($value, false);
+            foreach ($data as $dataKey => &$value) {
+                $value = self::renewReferences($value, false, $dataKey);
             }
 
             return $data;
@@ -656,15 +657,15 @@ class Service extends Model\AbstractModel
                 if ($data instanceof Model\AbstractModel) {
                     $properties = $data->getObjectVars();
                     foreach ($properties as $name => $value) {
-                        $data->setObjectVar($name, self::renewReferences($value, false));
+                        $data->setObjectVar($name, self::renewReferences($value, false, $name));
                     }
                 } else {
                     $properties = method_exists($data, 'getObjectVars') ? $data->getObjectVars() : get_object_vars($data);
                     foreach ($properties as $name => $value) {
                         if (method_exists($data, 'setObjectVar')) {
-                            $data->setObjectVar($name, self::renewReferences($value, false));
+                            $data->setObjectVar($name, self::renewReferences($value, false, $name));
                         } else {
-                            $data->$name = self::renewReferences($value, false);
+                            $data->$name = self::renewReferences($value, false, $name);
                         }
                     }
                 }
@@ -904,7 +905,7 @@ class Service extends Model\AbstractModel
             $key = trim($key, '. ');
 
             // windows forbidden filenames + URL reserved characters (at least the once which are problematic)
-            $key = preg_replace('/[#\?\*\:\\\\<\>\|"]/', '-', $key);
+            $key = preg_replace('/[#\?\*\:\\\\<\>\|"%]/', '-', $key);
         } else {
             $key = trim($key);
             $key = ltrim($key, '.');

@@ -102,7 +102,7 @@ class Dao extends Model\Dao\AbstractDao
                     }
                 }
 
-                // for fieldtypes which have their own save algorithm eg. objects, multihref, ...
+                // for fieldtypes which have their own save algorithm eg. relational data-types, ...
                 $fd->save($this->model,
                     array_merge($params, [
                         'context' => [

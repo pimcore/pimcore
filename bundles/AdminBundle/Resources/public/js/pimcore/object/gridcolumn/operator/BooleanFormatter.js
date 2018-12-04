@@ -18,6 +18,7 @@
 pimcore.registerNS("pimcore.object.gridcolumn.operator.booleanformatter");
 
 pimcore.object.gridcolumn.operator.booleanformatter = Class.create(pimcore.object.gridcolumn.Abstract, {
+    operatorGroup: "formatter",
     type: "operator",
     class: "BooleanFormatter",
     iconCls: "pimcore_icon_operator_booleanformatter",
@@ -77,7 +78,7 @@ pimcore.object.gridcolumn.operator.booleanformatter = Class.create(pimcore.objec
     },
 
 
-    getConfigDialog: function(node) {
+    getConfigDialog: function(node, params) {
         this.node = node;
 
         this.textField = new Ext.form.TextField({
@@ -111,7 +112,7 @@ pimcore.object.gridcolumn.operator.booleanformatter = Class.create(pimcore.objec
                 text: t("apply"),
                 iconCls: "pimcore_icon_apply",
                 handler: function () {
-                    this.commitData();
+                    this.commitData(params);
                 }.bind(this)
             }]
         });
@@ -129,12 +130,16 @@ pimcore.object.gridcolumn.operator.booleanformatter = Class.create(pimcore.objec
         return this.window;
     },
 
-    commitData: function() {
+    commitData: function(params) {
         this.node.set('isOperator', true);
         this.node.data.configAttributes.label = this.textField.getValue();
         this.node.data.configAttributes.yesValue = this.yesValueField.getValue();
         this.node.data.configAttributes.noValue = this.noValueField.getValue();
         this.node.set('text', this.textField.getValue());
         this.window.close();
+
+        if (params && params.callback) {
+            params.callback();
+        }
     }
 });

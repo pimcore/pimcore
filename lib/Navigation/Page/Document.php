@@ -120,15 +120,9 @@ class Document extends Url
      */
     public function setDocument($document)
     {
-        if ($document instanceof Model\Document\Hardlink\Wrapper\WrapperInterface) {
-            $this->setDocumentId($document->getHardlinkSource()->getId());
-            $this->setDocumentType($document->getHardlinkSource()->getType());
-            $this->setRealFullPath($document->getHardlinkSource()->getRealFullPath());
-        } elseif ($document instanceof Model\Document) {
-            $this->setDocumentId($document->getId());
-            $this->setDocumentType($document->getType());
-            $this->setRealFullPath($document->getRealFullPath());
-        }
+        $this->setDocumentId($document->getId());
+        $this->setDocumentType($document->getType());
+        $this->setRealFullPath($document->getRealFullPath());
 
         return $this;
     }

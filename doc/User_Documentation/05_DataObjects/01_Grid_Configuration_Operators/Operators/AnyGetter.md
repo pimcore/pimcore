@@ -4,7 +4,7 @@
 
 The AnyGetter aims to allow you to get virtually everyting.
 
-Let us assume that you want to first get the related href (in this case an object). 
+Let us assume that you want to first get the related Many-To-One relation (in this case an object). 
 
 ![Setting](../../../img/gridconfig/operator_anygetter_sample.png)
 

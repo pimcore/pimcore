@@ -38,7 +38,11 @@ class DefaultValue extends AbstractValue
      */
     private function getValueForObject($object, $key, $brickType = null, $brickKey = null, $fieldDefinition = null)
     {
+        if (!$key) {
+            return;
+        }
         $getter = 'get' . ucfirst($key);
+
         $value = $object->$getter();
 
         if (!empty($value) && !empty($brickType)) {
@@ -125,7 +129,7 @@ class DefaultValue extends AbstractValue
             $brickKey = $attributeParts[1];
         }
 
-        if (method_exists($element, $getter)) {
+        if ($this->attribute && method_exists($element, $getter)) {
             if ($element instanceof AbstractObject) {
                 try {
                     $result = $this->getValueForObject($element, $this->attribute, $brickType, $brickKey);

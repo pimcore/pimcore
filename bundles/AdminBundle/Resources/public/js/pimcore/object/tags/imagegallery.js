@@ -246,27 +246,26 @@ pimcore.object.tags.imageGallery = Class.create(pimcore.object.tags.abstract, {
                 },
 
                 onNodeOver: function (target, dd, e, data) {
-
-                    var record = data.records[0];
-
-                    if (record.data.type == "image") {
+                    if (data.records.length === 1 && data.records[0].data.type === "image") {
                         return Ext.dd.DropZone.prototype.dropAllowed;
-                    } else {
-                        return Ext.dd.DropZone.prototype.dropNotAllowed;
                     }
                 },
 
                 onNodeDrop: function (target, dd, e, data) {
 
+                    if(!pimcore.helpers.dragAndDropValidateSingleItem(data)) {
+                        return false;
+                    }
+
                     this.dirty = true;
                     var record = data.records[0];
-                    if (record.data.type != "image") {
+                    if (record.data.type !== "image") {
                         return;
                     }
 
                     var data = {
                         id: record.data.id
-                    }
+                    };
 
                     var fieldConfig = this.getDefaultFieldConfig();
                     fieldConfig.title = record.data.path;

@@ -53,7 +53,7 @@ pimcore.object.gridcolumn.Abstract = Class.create({
     },
 
 
-    getConfigDialog: function(node) {
+    getConfigDialog: function(node, params) {
     },
 
     commitData: function() {

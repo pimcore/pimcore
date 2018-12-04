@@ -17,7 +17,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Migrations\Migration;
 
-use Doctrine\DBAL\Migrations\AbstractMigration;
+use Doctrine\Migrations\AbstractMigration;
 
 abstract class AbstractPimcoreMigration extends AbstractMigration implements PimcoreMigrationInterface, DryRunMigrationInterface
 {

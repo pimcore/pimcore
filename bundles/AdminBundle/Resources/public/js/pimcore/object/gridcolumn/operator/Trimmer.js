@@ -18,6 +18,7 @@
 pimcore.registerNS("pimcore.object.gridcolumn.operator.trimmer");
 
 pimcore.object.gridcolumn.operator.trimmer = Class.create(pimcore.object.gridcolumn.operator.text, {
+    operatorGroup: "transformer",
     type: "operator",
     class: "Trimmer",
     iconCls: "pimcore_icon_operator_trimmer",
@@ -79,7 +80,7 @@ pimcore.object.gridcolumn.operator.trimmer = Class.create(pimcore.object.gridcol
     },
 
 
-    getConfigDialog: function (node) {
+    getConfigDialog: function (node, params) {
         this.node = node;
 
         this.textfield = new Ext.form.TextField({
@@ -113,7 +114,7 @@ pimcore.object.gridcolumn.operator.trimmer = Class.create(pimcore.object.gridcol
                 text: t("apply"),
                 iconCls: "pimcore_icon_apply",
                 handler: function () {
-                    this.commitData();
+                    this.commitData(params);
                 }.bind(this)
             }]
         });
@@ -131,13 +132,16 @@ pimcore.object.gridcolumn.operator.trimmer = Class.create(pimcore.object.gridcol
         return this.window;
     },
 
-    commitData: function () {
+    commitData: function (params) {
         this.node.data.configAttributes.label = this.textfield.getValue();
         this.node.set('text', this.textfield.getValue());
         this.node.set('isOperator', true);
 
         this.node.data.configAttributes.trim = parseInt(this.trimField.getValue().rb);
         this.window.close();
+        if (params && params.callback) {
+            params.callback();
+        }
     },
 
     allowChild: function (targetNode, dropNode) {

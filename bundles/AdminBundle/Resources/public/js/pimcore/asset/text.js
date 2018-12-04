@@ -14,8 +14,9 @@
 pimcore.registerNS("pimcore.asset.text");
 pimcore.asset.text = Class.create(pimcore.asset.asset, {
 
-    initialize: function(id) {
+    initialize: function(id, options) {
 
+        this.options = options;
         this.id = intval(id);
         this.setType("text");
         this.addLoadingPanel();

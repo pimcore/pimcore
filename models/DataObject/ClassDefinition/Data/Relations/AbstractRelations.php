@@ -277,6 +277,9 @@ abstract class AbstractRelations extends Model\DataObject\ClassDefinition\Data
             return;
         }
 
+        if (!isset($params['context'])) {
+            $params['context'] = null;
+        }
         $context = $params['context'];
 
         if (!DataObject\AbstractObject::isDirtyDetectionDisabled() && $object instanceof DataObject\DirtyIndicatorInterface) {

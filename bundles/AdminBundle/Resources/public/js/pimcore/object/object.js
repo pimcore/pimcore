@@ -112,10 +112,12 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
     },
 
     startInheritanceDetector: function () {
-        var dataKeys = Object.keys(this.data.metaData);
-        for (var i = 0; i < dataKeys.length; i++) {
-            if (this.data.metaData[dataKeys[i]].inherited == true) {
-                this.inheritedFields[dataKeys[i]] = true;
+        if(this.data.metaData) {
+            var dataKeys = Object.keys(this.data.metaData);
+            for (var i = 0; i < dataKeys.length; i++) {
+                if (this.data.metaData[dataKeys[i]].inherited == true) {
+                    this.inheritedFields[dataKeys[i]] = true;
+                }
             }
         }
 
@@ -212,7 +214,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
 
         this.removeLoadingPanel();
 
-        this.tabPanel.add(this.tab);
+        this.addToMainTabPanel();
 
         if (this.getAddToHistory()) {
             pimcore.helpers.recordElement(this.id, "object", this.data.general.fullpath);
@@ -796,8 +798,12 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
     reload: function (layoutId) {
 
         this.tab.on("close", function () {
-            var options = {};
-            options.layoutId = layoutId;
+            var currentTabIndex = this.tab.ownerCt.items.indexOf(this.tab);
+            var options = {
+                layoutId: layoutId,
+                tabIndex: currentTabIndex
+            };
+
             window.setTimeout(function (id) {
                 pimcore.helpers.openObject(id, "object", options);
             }.bind(window, this.id), 500);

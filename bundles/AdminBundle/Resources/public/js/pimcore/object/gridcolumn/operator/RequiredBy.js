@@ -18,6 +18,7 @@
 pimcore.registerNS("pimcore.object.gridcolumn.operator.requiredby");
 
 pimcore.object.gridcolumn.operator.requiredby = Class.create(pimcore.object.gridcolumn.Abstract, {
+    operatorGroup: "extractor",
     type: "operator",
     class: "RequiredBy",
     iconCls: "pimcore_icon_operator_requiredby",
@@ -78,7 +79,7 @@ pimcore.object.gridcolumn.operator.requiredby = Class.create(pimcore.object.grid
     },
 
 
-    getConfigDialog: function (node) {
+    getConfigDialog: function (node, params) {
         this.node = node;
 
         this.textField = new Ext.form.TextField({
@@ -136,7 +137,7 @@ pimcore.object.gridcolumn.operator.requiredby = Class.create(pimcore.object.grid
                 text: t("apply"),
                 iconCls: "pimcore_icon_apply",
                 handler: function () {
-                    this.commitData();
+                    this.commitData(params);
                 }.bind(this)
             }]
         });
@@ -154,7 +155,7 @@ pimcore.object.gridcolumn.operator.requiredby = Class.create(pimcore.object.grid
         return this.window;
     },
 
-    commitData: function () {
+    commitData: function (params) {
         this.node.data.configAttributes.label = this.textField.getValue();
         this.node.data.configAttributes.elementType = this.typeField.getValue();
         this.node.data.configAttributes.onlyCount = this.onlyCountField.getValue();
@@ -165,6 +166,9 @@ pimcore.object.gridcolumn.operator.requiredby = Class.create(pimcore.object.grid
         this.node.set('isOperator', true);
 
         this.window.close();
+        if (params && params.callback) {
+            params.callback();
+        }
     },
 
     getNodeLabel: function(configAttributes) {

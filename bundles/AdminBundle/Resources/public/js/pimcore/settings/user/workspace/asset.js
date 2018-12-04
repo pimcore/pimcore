@@ -143,32 +143,36 @@ pimcore.settings.user.workspace.asset = Class.create({
                 },
 
                 onNodeOver : function(target, dd, e, data) {
-                    return Ext.dd.DropZone.prototype.dropAllowed;
+                    if (data.records.length == 1 && data.records[0].data.elementType == "asset") {
+                        return Ext.dd.DropZone.prototype.dropAllowed;
+                    }
                 },
 
                 onNodeDrop : function(myRowIndex, target, dd, e, data) {
-                    try {
-                        var record = data.records[0];
-                        var data = record.data;
+                    if (pimcore.helpers.dragAndDropValidateSingleItem(data)) {
+                        try {
+                            var record = data.records[0];
+                            var data = record.data;
 
-                        // check for duplicate records
-                        var index = this.grid.getStore().findExact("path", data.path);
-                        if (index >= 0) {
-                            return false;
+                            // check for duplicate records
+                            var index = this.grid.getStore().findExact("path", data.path);
+                            if (index >= 0) {
+                                return false;
+                            }
+
+                            if (data.elementType != "asset") {
+                                return false;
+                            }
+
+                            var rec = this.grid.getStore().getAt(myRowIndex);
+                            rec.set("path", data.path);
+
+                            this.updateRows();
+
+                            return true;
+                        } catch (e) {
+                            console.log(e);
                         }
-
-                        if(data.elementType != "asset") {
-                            return false;
-                        }
-
-                        var rec = this.grid.getStore().getAt(myRowIndex);
-                        rec.set("path", data.path);
-
-                        this.updateRows();
-
-                    return true;
-                    } catch (e) {
-                        console.log(e);
                     }
                 }.bind(this, i)
             });
