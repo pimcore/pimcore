@@ -20,10 +20,11 @@ class Version20181115114003 extends AbstractPimcoreMigration
      */
     public function up(Schema $schema)
     {
-        $this->addSql("ALTER TABLE `custom_layouts` ALTER `id` DROP DEFAULT; ALTER TABLE `custom_layouts` CHANGE COLUMN `id` `id` VARCHAR(50) NOT NULL FIRST;");
+        $this->addSql("ALTER TABLE `custom_layouts` ALTER `id` DROP DEFAULT; ALTER TABLE `custom_layouts` CHANGE COLUMN `id` `id` VARCHAR(64) NOT NULL FIRST;");
 
         $customLayouts = new DataObject\ClassDefinition\CustomLayout\Listing();
         $customLayouts = $customLayouts->load();
+        $cleanupRequired = false;
 
         foreach ($customLayouts as $customLayout) {
             $psfFile = PIMCORE_CUSTOMLAYOUT_DIRECTORY . '/custom_definition_'. $customLayout->getId() .'.psf';
@@ -36,9 +37,13 @@ class Version20181115114003 extends AbstractPimcoreMigration
                 $phpFile = $this->updateCustomLayoutDefinitionToPhp($customLayout);
 
                 if (is_file($phpFile)) {
-                    @unlink($psfFil);
+                    $cleanupRequired = true;
                 }
             }
+        }
+
+        if ($cleanupRequired) {
+            $this->writeMessage('Please cleanup custom_definition_*.psf files from directory '.PIMCORE_CUSTOMLAYOUT_DIRECTORY.' manually as they are no longer used by Custom Layouts.');
         }
     }
 
@@ -137,7 +142,7 @@ class Version20181115114003 extends AbstractPimcoreMigration
      */
     public function down(Schema $schema)
     {
-        // this down() migration is auto-generated, please modify it to your needs
+        $this->addSql("ALTER TABLE `custom_layouts` CHANGE COLUMN `id` `id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT;");
 
     }
 }

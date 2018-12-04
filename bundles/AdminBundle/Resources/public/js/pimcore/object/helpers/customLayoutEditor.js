@@ -765,7 +765,7 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
 
         var regresult = this.data["name"].match(/[a-zA-Z][a-zA-Z0-9]+/);
 
-        if (this.data["name"].length > 2 && regresult == this.data["name"]) {
+        if (this.data["name"].length > 2 && this.data["name"].length < 64 && regresult == this.data["name"]) {
             this.saveCurrentNode();
 
             delete this.data.layoutDefinitions;
@@ -787,7 +787,7 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
                 });
             }
         } else {
-            Ext.Msg.alert(' ', t('customlayout_invalid_name'));
+            Ext.Msg.alert(' ', t('invalid_name'));
         }
     },
 
@@ -814,13 +814,13 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
         var suggestedIdentifier = layouts["suggestedIdentifier"];
         var nameField = new Ext.form.field.Text(
             {
-                fieldLabel: t('customlayout_name'),
+                fieldLabel: t('name'),
                 labelWidth: 200
             }
         );
 
         var identifierField = new Ext.form.field.Text({
-            fieldLabel: t('customlayout_identifier'),
+            fieldLabel: t('unique_identifier'),
             labelWidth: 200,
             maxLength: 20,
             value: suggestedIdentifier
@@ -840,7 +840,7 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
                 nameField,
                 identifierField, {
                     xtype: 'panel',
-                    html: t('customlayout_identifier_warning')
+                    html: t('unique_identifier_warning')
                 }
             ],
             buttons: [
@@ -874,24 +874,24 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
         var layoutNameRegresult = layoutName.match(/[a-zA-Z][a-zA-Z0-9]+/);
 
         if (layoutName.length <= 2 || layoutNameRegresult != layoutName) {
-            Ext.Msg.alert(' ', t('customlayout_invalid_name'));
+            Ext.Msg.alert(' ', t('invalid_name'));
             return false;
         }
 
         if (in_array(layoutName.toLowerCase(), layouts["existingNames"])) {
-            Ext.Msg.alert(' ', t('customlayout_name_already_exists'));
+            Ext.Msg.alert(' ', t('name_already_in_use'));
             return false;
         }
 
         var layoutIdentifierRegresult = layoutIdentifier.match(/[a-zA-Z0-9]+/);
 
         if (layoutIdentifier.length < 1 || layoutIdentifierRegresult != layoutIdentifier) {
-            Ext.Msg.alert(' ', t('customlayout_invalid_identifier'));
+            Ext.Msg.alert(' ', t('invalid_identifier'));
             return false;
         }
 
         if (in_array(layoutIdentifier.toLowerCase(), layouts["existingIds"])) {
-            Ext.Msg.alert(' ', t('customlayout_identifier_already_exists'));
+            Ext.Msg.alert(' ', t('identifier_already_exists'));
             return false;
         }
 

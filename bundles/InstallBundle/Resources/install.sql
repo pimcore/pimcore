@@ -84,7 +84,7 @@ CREATE TABLE `classes` (
 
 DROP TABLE IF EXISTS `custom_layouts` ;
 CREATE TABLE `custom_layouts` (
-	`id` varchar(50) NOT NULL,
+	`id` varchar(64) NOT NULL,
 	`classId` VARCHAR(50) NOT NULL,
 	`name` VARCHAR(190) NULL DEFAULT NULL,
 	`description` TEXT NULL,
