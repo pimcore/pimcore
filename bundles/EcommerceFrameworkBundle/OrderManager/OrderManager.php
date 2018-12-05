@@ -371,7 +371,7 @@ class OrderManager implements IOrderManager
                 $validItemIds[$item->getId()] = $item;
             }
         } catch(UnsupportedException $e) {
-            Logger::err('getItems not implemented for ' . get_class($order));
+            Logger::info('getItems not implemented for ' . get_class($order));
         }
 
         try {
@@ -379,14 +379,18 @@ class OrderManager implements IOrderManager
                 $validItemIds[$giftItem->getId()] = $giftItem;
             }
         } catch(UnsupportedException $e) {
-            Logger::err('getGiftItems not implemented for ' . get_class($order));
+            Logger::info('getGiftItems not implemented for ' . get_class($order));
         }
 
-        $orderItemChilds = $order->getChildren();
-        foreach($orderItemChilds?:[] as $orderItemChild) {
+        $orderItemChildren = $order->getChildren();
+        foreach($orderItemChildren?:[] as $orderItemChild) {
             if($orderItemChild instanceof AbstractOrderItem) {
                 if(!in_array($orderItemChild->getId(), $validItemIds)) {
-                    $orderItemChild->delete();
+                    if($orderItemChild->getDependencies()->getRequiredBy(null, 1)) {
+                        $orderItemChild->delete();
+                    } else {
+                        Logger::info('orderItem ('.$orderItemChild->getId().') was not removed because it still has remaining dependencies');
+                    }
                 }
             }
         }
