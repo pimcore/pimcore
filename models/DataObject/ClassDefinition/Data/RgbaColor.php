@@ -82,7 +82,7 @@ class RgbaColor extends Model\DataObject\ClassDefinition\Data
     /**
      * @see Model\DataObject\ClassDefinition\Data::getDataForResource
      *
-     * @param string $data
+     * @param Model\DataObject\Data\RgbaColor $data
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
@@ -98,18 +98,18 @@ class RgbaColor extends Model\DataObject\ClassDefinition\Data
                 $this->getName() . '__rgb' => $rgb,
                 $this->getName() . '__a' => $a
             ];
-        } else {
-            return [
-                $this->getName() . '__rgb' => null,
-                $this->getName() . '__a' => null
-            ];
         }
+
+        return [
+            $this->getName() . '__rgb' => null,
+            $this->getName() . '__a' => null
+        ];
     }
 
     /**
      * @see Model\DataObject\ClassDefinition\Data::getDataFromResource
      *
-     * @param string $data
+     * @param array $data
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
@@ -135,7 +135,7 @@ class RgbaColor extends Model\DataObject\ClassDefinition\Data
     /**
      * @see Model\DataObject\ClassDefinition\Data::getDataForQueryResource
      *
-     * @param string $data
+     * @param Model\DataObject\Data\RgbaColor $data
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
@@ -190,7 +190,7 @@ class RgbaColor extends Model\DataObject\ClassDefinition\Data
      * @param Model\DataObject\Concrete $object
      * @param mixed $params
      *
-     * @return float
+     * @return Model\DataObject\Data\RgbaColor|null
      */
     public function getDataFromGridEditor($data, $object = null, $params = [])
     {
@@ -198,7 +198,7 @@ class RgbaColor extends Model\DataObject\ClassDefinition\Data
     }
 
     /**
-     * @return string
+     * @return array
      */
     public function getQueryColumnType()
     {
@@ -206,7 +206,7 @@ class RgbaColor extends Model\DataObject\ClassDefinition\Data
     }
 
     /**
-     * @return string
+     * @return array
      */
     public function getColumnType()
     {

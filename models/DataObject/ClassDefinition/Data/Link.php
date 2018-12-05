@@ -111,7 +111,7 @@ class Link extends Model\DataObject\ClassDefinition\Data
     /**
      * @see DataObject\ClassDefinition\Data::getDataForQueryResource
      *
-     * @param string $data
+     * @param DataObject\Data\Link $data
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *

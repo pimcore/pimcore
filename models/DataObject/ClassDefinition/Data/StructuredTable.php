@@ -238,16 +238,16 @@ class StructuredTable extends Model\DataObject\ClassDefinition\Data
     /**
      * @see DataObject\ClassDefinition\Data::getDataForResource
      *
-     * @param string $data
+     * @param DataObject\Data\StructuredTable $data
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
-     * @return string
+     * @return array
      */
     public function getDataForResource($data, $object = null, $params = [])
     {
         $resourceData = [];
-        if (!empty($data)) {
+        if ($data instanceof DataObject\Data\StructuredTable) {
             $data = $data->getData();
 
             foreach ($this->getRows() as $r) {
@@ -292,11 +292,11 @@ class StructuredTable extends Model\DataObject\ClassDefinition\Data
     /**
      * @see DataObject\ClassDefinition\Data::getDataForQueryResource
      *
-     * @param string $data
+     * @param DataObject\Data\StructuredTable $data
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
-     * @return string
+     * @return array
      */
     public function getDataForQueryResource($data, $object = null, $params = [])
     {
@@ -310,7 +310,7 @@ class StructuredTable extends Model\DataObject\ClassDefinition\Data
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
-     * @return string
+     * @return array
      */
     public function getDataForEditmode($data, $object = null, $params = [])
     {
@@ -342,7 +342,7 @@ class StructuredTable extends Model\DataObject\ClassDefinition\Data
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
-     * @return string
+     * @return DataObject\Data\StructuredTable
      */
     public function getDataFromEditmode($data, $object = null, $params = [])
     {

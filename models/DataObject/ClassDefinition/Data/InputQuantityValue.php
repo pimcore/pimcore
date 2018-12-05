@@ -53,11 +53,11 @@ class InputQuantityValue extends QuantityValue
     public $phpdocType = '\\Pimcore\\Model\\DataObject\\Data\\InputQuantityValue';
 
     /**
-     * @param float $data
+     * @param array $data
      * @param null $object
      * @param array $params
      *
-     * @return InputQuantityValueDataObject|void
+     * @return InputQuantityValueDataObject|null
      */
     public function getDataFromResource($data, $object = null, $params = [])
     {
@@ -71,7 +71,7 @@ class InputQuantityValue extends QuantityValue
             return $dataObject;
         }
 
-        return;
+        return null;
     }
 
     /**
@@ -79,7 +79,7 @@ class InputQuantityValue extends QuantityValue
      * @param null $object
      * @param array $params
      *
-     * @return InputQuantityValueDataObject|void
+     * @return InputQuantityValueDataObject|null
      */
     public function getDataFromEditmode($data, $object = null, $params = [])
     {
@@ -87,15 +87,13 @@ class InputQuantityValue extends QuantityValue
             if (is_numeric($data['unit'])) {
                 if ($data['unit'] == -1 || $data['unit'] == null || empty($data['unit'])) {
                     return $this->getNewDataObject($data['value'], null);
-                } else {
-                    return $this->getNewDataObject($data['value'], $data['unit']);
                 }
-            }
 
-            return;
+                return $this->getNewDataObject($data['value'], $data['unit']);
+            }
         }
 
-        return;
+        return null;
     }
 
     /**
