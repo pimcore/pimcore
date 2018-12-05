@@ -66,10 +66,14 @@ class AliasMapper extends AbstractAutoloader
         }
 
         // original was requested, load it and create alias afterwards
-        $alias = array_search($class, $this->mapping);
-        if ($alias !== false) {
-            if ($this->composerAutoloader->loadClass($class)) {
-                class_alias($class, $alias);
+        $aliases = array_keys($this->mapping, $class);
+        if (count($aliases)) {
+            $this->composerAutoloader->loadClass($class);
+            // the return of composer autoloader obviously doesn't work, be better check manually if the class really exists
+            if ($this->classExists($class, false)) {
+                foreach ($aliases as $alias) {
+                    class_alias($class, $alias);
+                }
             }
         }
     }
