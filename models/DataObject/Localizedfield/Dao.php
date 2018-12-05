@@ -145,17 +145,16 @@ class Dao extends Model\Dao\AbstractDao
 
                     $fd->save($this->model, $childParams);
                 } else {
+                    $value = $this->model->getLocalizedValue($fd->getName(), $language, true);
+                    if ($value instanceof DataObject\OwnerAwareFieldInterface) {
+                        $value = clone $value;
+                        $value->setOwner(null, $fd->getName(), $language);
+                    }
                     if (is_array($fd->getColumnType())) {
-                        $insertDataArray = $fd->getDataForResource(
-                            $this->model->getLocalizedValue($fd->getName(), $language, true),
-                            $object
-                        );
+                        $insertDataArray = $fd->getDataForResource($value, $object);
                         $insertData = array_merge($insertData, $insertDataArray);
                     } else {
-                        $insertData[$fd->getName()] = $fd->getDataForResource(
-                            $this->model->getLocalizedValue($fd->getName(), $language, true),
-                            $object
-                        );
+                        $insertData[$fd->getName()] = $fd->getDataForResource($value, $object);
                     }
                 }
             }
@@ -246,6 +245,10 @@ class Dao extends Model\Dao\AbstractDao
                         // exclude untouchables if value is not an array - this means data has not been loaded
                         if (!(in_array($key, $untouchable) and !is_array($this->model->$key))) {
                             $localizedValue = $this->model->getLocalizedValue($key, $language);
+                            if ($localizedValue instanceof DataObject\OwnerAwareFieldInterface) {
+                                $localizedValue = clone $localizedValue;
+                                $localizedValue->setOwner(null, $key, $language);
+                            }
                             $insertData = $fd->getDataForQueryResource($localizedValue, $object);
                             $isEmpty = $fd->isEmpty($localizedValue);
 
