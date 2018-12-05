@@ -335,7 +335,7 @@ class TranslationController extends AdminController
                 return $this->adminJson(['data' => $return, 'success' => true]);
             } elseif ($request->get('xaction') == 'create') {
                 $t = $class::getByKey($data['key']);
-                if($t) {
+                if ($t) {
                     throw new \Exception($translator->trans('identifier_already_exists', [], 'admin'));
                 }
 

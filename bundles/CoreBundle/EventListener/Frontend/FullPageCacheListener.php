@@ -272,7 +272,7 @@ class FullPageCacheListener
             $appendKey .= 'webp';
         }
 
-        if($request->isXmlHttpRequest()) {
+        if ($request->isXmlHttpRequest()) {
             $appendKey .= 'xhr';
         }
 

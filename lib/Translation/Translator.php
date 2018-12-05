@@ -340,7 +340,7 @@ class Translator implements TranslatorInterface, TranslatorBagInterface
                      * @var AbstractTranslation $t
                      */
                     $t = $class::getByKey($id);
-                    if($t) {
+                    if ($t) {
                         if (!$t->hasTranslation($locale)) {
                             $t->addTranslation($locale, '');
                         } else {
