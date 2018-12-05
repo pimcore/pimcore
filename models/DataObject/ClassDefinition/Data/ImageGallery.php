@@ -232,7 +232,7 @@ class ImageGallery extends Model\DataObject\ClassDefinition\Data
     public function getDataFromResource($data, $object = null, $params = [])
     {
         if (!is_array($data)) {
-            return new DataObject\Data\ImageGallery(null);
+            return $this->createEmptyImageGallery($params);
         }
 
         $images = $data[$this->getName() . '__images'];
@@ -240,7 +240,7 @@ class ImageGallery extends Model\DataObject\ClassDefinition\Data
         $hotspots = Serialize::unserialize($hotspots);
 
         if (!$images) {
-            return new DataObject\Data\ImageGallery(null);
+            return $this->createEmptyImageGallery($params);
         }
 
         $resultItems = [];
@@ -261,7 +261,29 @@ class ImageGallery extends Model\DataObject\ClassDefinition\Data
             $resultItems[] = $itemResult;
         }
 
-        return new DataObject\Data\ImageGallery($resultItems);
+        $imageGallery = new DataObject\Data\ImageGallery($resultItems);
+
+        if (isset($params['owner'])) {
+            $imageGallery->setOwner($params['owner'], $params['fieldname'], $params['language']);
+        }
+
+        return $imageGallery;
+    }
+
+    /**
+     * @param mixed $params
+     *
+     * @return DataObject\Data\ImageGallery
+     */
+    private function createEmptyImageGallery($params = [])
+    {
+        $imageGallery = new DataObject\Data\ImageGallery(null);
+
+        if (isset($params['owner'])) {
+            $imageGallery->setOwner($params['owner'], $params['fieldname'], $params['language']);
+        }
+
+        return $imageGallery;
     }
 
     /**

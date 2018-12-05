@@ -148,13 +148,15 @@ class Dao extends Model\Dao\AbstractDao
                     if (is_array($fd->getColumnType())) {
                         $insertDataArray = $fd->getDataForResource(
                             $this->model->getLocalizedValue($fd->getName(), $language, true),
-                            $object
+                            $object,
+                            $this->getFieldDefinitionParams($fd->getName(), $language)
                         );
                         $insertData = array_merge($insertData, $insertDataArray);
                     } else {
                         $insertData[$fd->getName()] = $fd->getDataForResource(
                             $this->model->getLocalizedValue($fd->getName(), $language, true),
-                            $object
+                            $object,
+                            $this->getFieldDefinitionParams($fd->getName(), $language)
                         );
                     }
                 }
@@ -246,7 +248,11 @@ class Dao extends Model\Dao\AbstractDao
                         // exclude untouchables if value is not an array - this means data has not been loaded
                         if (!(in_array($key, $untouchable) and !is_array($this->model->$key))) {
                             $localizedValue = $this->model->getLocalizedValue($key, $language);
-                            $insertData = $fd->getDataForQueryResource($localizedValue, $object);
+                            $insertData = $fd->getDataForQueryResource(
+                                $localizedValue,
+                                $object,
+                                $this->getFieldDefinitionParams($key, $language)
+                            );
                             $isEmpty = $fd->isEmpty($localizedValue);
 
                             if (is_array($insertData)) {
@@ -526,15 +532,11 @@ class Dao extends Model\Dao\AbstractDao
                             foreach ($fd->getColumnType() as $fkey => $fvalue) {
                                 $multidata[$key.'__'.$fkey] = $row[$key.'__'.$fkey];
                             }
-                            $value = $fd->getDataFromResource($multidata);
+                            $value = $fd->getDataFromResource($multidata, null, $this->getFieldDefinitionParams($key, $row['language']));
                             $this->model->setLocalizedValue($key, $value, $row['language'], false);
                         } else {
-                            $value = $fd->getDataFromResource($row[$key]);
+                            $value = $fd->getDataFromResource($row[$key], null, $this->getFieldDefinitionParams($key, $row['language']));
                             $this->model->setLocalizedValue($key, $value, $row['language'], false);
-                        }
-
-                        if ($value instanceof DataObject\OwnerAwareFieldInterface) {
-                            $value->setOwner($this->model, $key, $row['language']);
                         }
                     }
                 }
@@ -795,5 +797,20 @@ QUERY;
         }
 
         $this->tableDefinitions = null;
+    }
+
+    /**
+     * @param string $fieldname
+     * @param string $language
+     *
+     * @return array
+     */
+    private function getFieldDefinitionParams(string $fieldname, string $language)
+    {
+        return [
+            'owner' => $this->model,
+            'fieldname' => $fieldname,
+            'language' => $language,
+        ];
     }
 }

@@ -210,6 +210,11 @@ class Block extends Model\DataObject\ClassDefinition\Data
                         }
                     }
                     $blockElement = new DataObject\Data\BlockElement($blockElementRaw['name'], $blockElementRaw['type'], $blockElementRaw['data']);
+
+                    if (isset($params['owner'])) {
+                        $blockElement->setOwner($params['owner'], $params['fieldname'], $params['language']);
+                    }
+
                     $items[$elementName] = $blockElement;
                 }
                 $result[] = $items;
