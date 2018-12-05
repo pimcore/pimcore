@@ -370,7 +370,7 @@ class OrderManager implements IOrderManager
             foreach($order->getItems()?:[] as $item) {
                 $validItemIds[$item->getId()] = $item;
             }
-        } catch(\Exception $e) {
+        } catch(UnsupportedException $e) {
             Logger::err('getItems not implemented for ' . get_class($order));
         }
 
@@ -378,7 +378,7 @@ class OrderManager implements IOrderManager
             foreach($order->getGiftItems()?:[] as $giftItem) {
                 $validItemIds[$giftItem->getId()] = $giftItem;
             }
-        } catch(\Exception $e) {
+        } catch(UnsupportedException $e) {
             Logger::err('getGiftItems not implemented for ' . get_class($order));
         }
 
