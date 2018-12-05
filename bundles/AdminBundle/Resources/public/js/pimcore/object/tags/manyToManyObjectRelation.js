@@ -28,6 +28,8 @@ pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.
         }
 
         var visibleFields = Ext.isString(this.fieldConfig.visibleFields) ? this.fieldConfig.visibleFields.split(",") : [];
+        this.visibleFields = visibleFields;
+
         var fields = [
             "id",
             "path",
@@ -36,7 +38,6 @@ pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.
         ];
 
         if (visibleFields) {
-            this.visibleFields = visibleFields;
             for (i = 0; i < visibleFields.length; i++) {
                 fields.push(visibleFields[i]);
             }
@@ -486,7 +487,7 @@ pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.
                                 };
 
                                 if (!this.objectAlreadyExists(initData.id)) {
-                                    toBeRequested.add(this.loadObjectData(initData, this.fieldConfig.visibleFields.split(",")));
+                                    toBeRequested.add(this.loadObjectData(initData, this.fieldConfig.visibleFields));
                                 }
                             }
                         }

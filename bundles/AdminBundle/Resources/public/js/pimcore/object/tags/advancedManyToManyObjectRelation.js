@@ -44,7 +44,9 @@ pimcore.object.tags.advancedManyToManyObjectRelation = Class.create(pimcore.obje
         if (typeof this.fieldConfig.visibleFields != "string") {
             this.fieldConfig.visibleFields = "";
         }
-        var visibleFields = this.fieldConfig.visibleFields.split(",");
+
+        var visibleFields = Ext.isString(this.fieldConfig.visibleFields) ? this.fieldConfig.visibleFields.split(",") : [];
+        this.visibleFields = visibleFields;
 
         fields.push("id");
         fields.push("inheritedFields");
@@ -92,7 +94,7 @@ pimcore.object.tags.advancedManyToManyObjectRelation = Class.create(pimcore.obje
         var cls = 'object_field';
         var i;
 
-        var visibleFields = this.fieldConfig.visibleFields.split(",");
+        var visibleFields = this.visibleFields;
 
         var columns = [];
         columns.push({text: 'ID', dataIndex: 'id', width: 50});
@@ -435,7 +437,7 @@ pimcore.object.tags.advancedManyToManyObjectRelation = Class.create(pimcore.obje
                                     };
 
                                     if (!this.objectAlreadyExists(initData.id)) {
-                                        toBeRequested.add(this.loadObjectData(initData, this.fieldConfig.visibleFields.split(",")));
+                                        toBeRequested.add(this.loadObjectData(initData, this.visibleFields));
                                     }
                                 }
                             }
@@ -531,9 +533,8 @@ pimcore.object.tags.advancedManyToManyObjectRelation = Class.create(pimcore.obje
             toBeRequested = new Ext.util.Collection();
 
             for (var i = 0; i < items.length; i++) {
-                var fields = this.fieldConfig.visibleFields.split(",");
                 if (!this.objectAlreadyExists(items[i].id)) {
-                    toBeRequested.add(this.loadObjectData(items[i], fields));
+                    toBeRequested.add(this.loadObjectData(items[i], this.visibleFields));
                 }
             }
             this.requestNicePathData(toBeRequested);
