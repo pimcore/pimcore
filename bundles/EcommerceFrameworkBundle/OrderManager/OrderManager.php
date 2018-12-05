@@ -30,6 +30,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IPriceInfo;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
 use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\IVoucherService;
 use Pimcore\File;
+use Pimcore\Logger;
 use Pimcore\Model\DataObject\Folder;
 use Pimcore\Model\DataObject\Service;
 use Pimcore\Model\FactoryInterface;
@@ -357,7 +358,38 @@ class OrderManager implements IOrderManager
         $order = $this->applyCustomCheckoutDataToOrder($cart, $order);
         $order->save();
 
+        $this->cleanupZombieOrderItems($order);
+
         return $order;
+    }
+
+    protected function cleanupZombieOrderItems(AbstractOrder $order) {
+
+        $validItemIds = [];
+        try {
+            foreach($order->getItems()?:[] as $item) {
+                $validItemIds[$item->getId()] = $item;
+            }
+        } catch(\Exception $e) {
+            Logger::err('getItems not implemented for ' . get_class($order));
+        }
+
+        try {
+            foreach($order->getGiftItems()?:[] as $giftItem) {
+                $validItemIds[$giftItem->getId()] = $giftItem;
+            }
+        } catch(\Exception $e) {
+            Logger::err('getGiftItems not implemented for ' . get_class($order));
+        }
+
+        $orderItemChilds = $order->getChildren();
+        foreach($orderItemChilds?:[] as $orderItemChild) {
+            if($orderItemChild instanceof AbstractOrderItem) {
+                if(!in_array($orderItemChild->getId(), $validItemIds)) {
+                    $orderItemChild->delete();
+                }
+            }
+        }
     }
 
     /**
