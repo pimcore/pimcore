@@ -217,9 +217,16 @@ class SearchController extends AdminController
         $searcherList->setOffset($offset);
         $searcherList->setLimit($limit);
 
-        // do not sort per default, it is VERY SLOW
-        //$searcherList->setOrder("desc");
-        //$searcherList->setOrderKey("modificationdate");
+        $orderQuery = $query;
+        if ($orderQuery === '*') {
+            $orderQuery = '';
+        }
+        $orderQuery = \str_replace(['+','-'.'(',')','"',"'"], '', $orderQuery);
+
+        $orderKey = 'MATCH (`data`,`properties`) AGAINST ('.$db->quote($orderQuery).')';
+        $searcherList->validOrderKeys[] = $orderKey;
+        $searcherList->setOrderKey($orderKey, false);
+        $searcherList->setOrder('DESC');
 
         $sortingSettings = \Pimcore\Bundle\AdminBundle\Helper\QueryParams::extractSortingSettings($allParams);
         if ($sortingSettings['orderKey']) {
