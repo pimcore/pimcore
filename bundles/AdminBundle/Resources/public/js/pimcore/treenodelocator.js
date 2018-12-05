@@ -246,7 +246,7 @@ pimcore.treenodelocator = function()
 
             // Reload the tree starting from given node once
             // This solves two issues: All subsequent search filters are reset and we know
-            // that the tree store us up to date:
+            // that the tree store is up to date:
             if (treeState.reloaded == false) {
                 self.reloadTree(node);
                 return;
@@ -397,7 +397,7 @@ pimcore.treenodelocator = function()
                 newPage = (pagingState.minPage + pagingState.maxPage) / 2;
                 self.switchToPage(newPage);
             } else {
-                // Child node was supposed to be on current page, but obiously isn't.
+                // Child node was supposed to be on current page, but obviously isn't.
                 // It may be filtered using a custom view or not being displayed for other
                 // reason - anyway there is nothing more to do here:
                 self.reportProcessPagingFailed();
