@@ -80,13 +80,12 @@ abstract class AbstractListing extends AbstractModel
     protected $conditionParams = [];
 
     /**
-     * @abstract
-     *
      * @param  $key
-     *
      * @return bool
      */
-    abstract public function isValidOrderKey($key);
+    public function isValidOrderKey($key) {
+        return true;
+    }
 
     /**
      * @return int
@@ -186,24 +185,15 @@ abstract class AbstractListing extends AbstractModel
         $this->orderKey = [];
 
         if (is_string($orderKey) && !empty($orderKey)) {
-            if ($this->isValidOrderKey($orderKey)) {
-                $this->orderKey[] = $orderKey;
-            }
-        } elseif (is_array($orderKey) && !empty($orderKey)) {
-            $this->orderKey = [];
-            foreach ($orderKey as $o) {
-                if ($this->isValidOrderKey($o)) {
-                    $this->orderKey[] = $o;
-                }
-            }
+            $orderKey = [$orderKey];
         }
 
-        if ($quote) {
-            $tmpKeys = [];
-            foreach ($this->orderKey as $key) {
-                $tmpKeys[] = '`' . $key . '`';
+        foreach ($orderKey as $o) {
+            if($quote === false) {
+                $this->orderKey[] = $o;
+            } elseif ($this->isValidOrderKey($o)) {
+                $this->orderKey[] = '`' . $o . '`';
             }
-            $this->orderKey = $tmpKeys;
         }
 
         return $this;

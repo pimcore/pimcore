@@ -272,18 +272,6 @@ class Listing extends Model\Listing\AbstractListing implements \Zend_Paginator_A
     );
  
     /**
-     * Test if the passed key is valid.
-     *
-     * @param string $key
-     *
-     * @return bool
-     */
-    public function isValidOrderKey($key)
-    {
-        return in_array($key, $this->validOrderKeys);
-    }
- 
-    /**
      * @return array
      */
     public function getData()

@@ -59,18 +59,6 @@ abstract class Concrete extends Model\DataObject\Listing
     }
 
     /**
-     * @todo remove always true
-     *
-     * @param string $key
-     *
-     * @return bool
-     */
-    public function isValidOrderKey($key)
-    {
-        return true;
-    }
-
-    /**
      * @return string
      */
     public function getClassId()

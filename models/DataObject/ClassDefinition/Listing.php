@@ -32,16 +32,6 @@ class Listing extends Model\Listing\AbstractListing
     public $classes;
 
     /**
-     * @param $key
-     *
-     * @return bool
-     */
-    public function isValidOrderKey($key)
-    {
-        return true;
-    }
-
-    /**
      * @return array
      */
     public function getClasses()
