@@ -115,7 +115,7 @@ pimcore.treenodelocator = function()
 
                         var allLocateConfigs = pimcore.globalmanager.get("tree_locate_configs");
                         var locateConfigs = allLocateConfigs[elementType];
-                        if (!locateConfigs) {
+                        if (!locateConfigs || locateConfigs.length === 0) {
                             self.reportFailed();
                             return;
                         }
