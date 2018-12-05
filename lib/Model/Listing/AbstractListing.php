@@ -188,11 +188,13 @@ abstract class AbstractListing extends AbstractModel
             $orderKey = [$orderKey];
         }
 
-        foreach ($orderKey as $o) {
-            if($quote === false) {
-                $this->orderKey[] = $o;
-            } elseif ($this->isValidOrderKey($o)) {
-                $this->orderKey[] = '`' . $o . '`';
+        if(is_array($orderKey)) {
+            foreach ($orderKey as $o) {
+                if ($quote === false) {
+                    $this->orderKey[] = $o;
+                } elseif ($this->isValidOrderKey($o)) {
+                    $this->orderKey[] = '`' . $o . '`';
+                }
             }
         }
 

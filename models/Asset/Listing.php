@@ -39,22 +39,6 @@ class Listing extends Model\Listing\AbstractListing implements \Zend_Paginator_A
     public $assets = null;
 
     /**
-     * List of valid order keys
-     *
-     * @var array
-     */
-    public $validOrderKeys = [
-        'creationDate',
-        'modificationDate',
-        'id',
-        'filename',
-        'type',
-        'parentId',
-        'path',
-        'mimetype'
-    ];
-
-    /**
      * @return Model\Asset[]
      */
     public function getAssets()

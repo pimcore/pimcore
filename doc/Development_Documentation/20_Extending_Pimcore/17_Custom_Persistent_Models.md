@@ -263,15 +263,6 @@ class Listing extends Model\Listing\AbstractListing implements \Zend_Paginator_A
     public $locale;
  
     /**
-     * List of valid order keys.
-     *
-     * @var array
-     */
-    public $validOrderKeys = array(
-        'id'
-    );
- 
-    /**
      * @return array
      */
     public function getData()
