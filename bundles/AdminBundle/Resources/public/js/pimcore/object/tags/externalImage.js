@@ -144,7 +144,7 @@ pimcore.object.tags.externalImage = Class.create(pimcore.object.tags.abstract, {
     getLayoutShow: function () {
 
         this.component = this.getLayoutEdit();
-        this.inputField.disable();
+        this.inputField.setReadOnly(true);
         this.deleteButton.disable();
 
         return this.component;
