@@ -39,7 +39,11 @@ pimcore.treenodelocator = function()
             }
             
             busy = true;
-            currentButton = button;
+            
+            if (button) {
+            	button.disable();
+                currentButton = button;
+            }
             self.startShowInTree(id, elementType);
         },
         
