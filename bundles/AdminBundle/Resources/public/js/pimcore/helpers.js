@@ -2919,11 +2919,13 @@ pimcore.helpers.clearDataCache = function() {
 
 pimcore.helpers.showQuickSearch = function () {
 
-    // close all windows
+    // close all windows, tooltips and previews
     // we use each() because .hideAll() doesn't hide the modal (seems to be an ExtJS bug)
     Ext.WindowManager.each(function (win) {
         win.close();
     });
+    pimcore.helpers.treeNodeThumbnailPreviewHide();
+    jQuery("#pimcore_tooltip").hide();
 
     var quicksearchContainer = Ext.get('pimcore_quicksearch');
     quicksearchContainer.show();
