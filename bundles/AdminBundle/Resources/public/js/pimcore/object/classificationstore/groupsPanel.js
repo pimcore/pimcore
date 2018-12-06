@@ -44,14 +44,14 @@ pimcore.object.classificationstore.groupsPanel = Class.create({
 
         var readerFields = [];
         for (var i = 0; i < this.relationsFields.length; i++) {
-            var columnConfig = {name: this.relationsFields[i], allowBlank: true, type: 'string'};
+            var columnConfig = {name: this.relationsFields[i], type: 'string'};
             if (this.relationsFields[i] == "sorter") {
                 columnConfig["type"] = "int";
             }
             readerFields.push(columnConfig);
         }
 
-        readerFields.push({name: 'mandatory', allowBlank: true, type: 'bool'});
+        readerFields.push({name: 'mandatory', type: 'bool'});
 
         var proxy = {
             url: "/admin/classificationstore/relations",
@@ -223,7 +223,7 @@ pimcore.object.classificationstore.groupsPanel = Class.create({
 
         var readerFields = [];
         for (var i = 0; i < this.groupsFields.length; i++) {
-            readerFields.push({name: this.groupsFields[i], allowBlank: true});
+            readerFields.push({name: this.groupsFields[i]});
         }
 
         var proxy = {

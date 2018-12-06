@@ -91,7 +91,6 @@ pimcore.object.tags.quantityValue = Class.create(pimcore.object.tags.abstract, {
             autoSelect: true,
             editable: true,
             selectOnFocus: true,
-            allowBlank: true,
             forceSelection: true,
             store: this.store,
             valueField: 'id',
@@ -156,10 +155,9 @@ pimcore.object.tags.quantityValue = Class.create(pimcore.object.tags.abstract, {
 
 
     getLayoutShow: function () {
-
         this.getLayoutEdit();
-        this.unitField.disable();
-        this.inputField.disable();
+        this.unitField.setReadOnly(true);
+        this.inputField.setReadOnly(true);
 
         return this.component;
     },

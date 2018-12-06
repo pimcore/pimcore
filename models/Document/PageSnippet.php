@@ -117,18 +117,18 @@ abstract class PageSnippet extends Model\Document
 
     /**
      * @param bool $setModificationDate
-     * @param bool $callPluginHook
+     * @param bool $saveOnlyVersion
      * @param $versionNote string version note
      *
      * @return null|Model\Version
      *
      * @throws \Exception
      */
-    public function saveVersion($setModificationDate = true, $callPluginHook = true, $versionNote = null)
+    public function saveVersion($setModificationDate = true, $saveOnlyVersion = true, $versionNote = null)
     {
 
         // hook should be also called if "save only new version" is selected
-        if ($callPluginHook) {
+        if ($saveOnlyVersion) {
             \Pimcore::getEventDispatcher()->dispatch(DocumentEvents::PRE_UPDATE, new DocumentEvent($this, [
                 'saveVersionOnly' => true
             ]));
@@ -150,11 +150,11 @@ abstract class PageSnippet extends Model\Document
         if (Config::getSystemConfig()->documents->versions->steps
             || Config::getSystemConfig()->documents->versions->days
             || $setModificationDate) {
-            $version = $this->doSaveVersion($versionNote);
+            $version = $this->doSaveVersion($versionNote, $saveOnlyVersion);
         }
 
         // hook should be also called if "save only new version" is selected
-        if ($callPluginHook) {
+        if ($saveOnlyVersion) {
             \Pimcore::getEventDispatcher()->dispatch(DocumentEvents::POST_UPDATE, new DocumentEvent($this, [
                 'saveVersionOnly' => true
             ]));
@@ -583,5 +583,41 @@ abstract class PageSnippet extends Model\Document
     public function setLegacy($legacy)
     {
         $this->legacy = (bool) $legacy;
+    }
+
+    /**
+     * @param null $hostname
+     * @param null $scheme
+     *
+     * @return string
+     *
+     * @throws \Exception
+     */
+    public function getUrl($hostname = null, $scheme = null)
+    {
+        if (!$scheme) {
+            $scheme = 'http://';
+            $requestHelper = \Pimcore::getContainer()->get('pimcore.http.request_helper');
+            if ($requestHelper->hasMasterRequest()) {
+                $scheme = $requestHelper->getMasterRequest()->getScheme() . '://';
+            }
+        }
+
+        if (!$hostname) {
+            if (!$hostname = \Pimcore\Config::getSystemConfig()->general->domain) {
+                if (!$hostname = \Pimcore\Tool::getHostname()) {
+                    throw new \Exception('No hostname available');
+                }
+            }
+        }
+
+        $url = $scheme . $hostname . $this->getFullPath();
+
+        $site = \Pimcore\Tool\Frontend::getSiteForDocument($this);
+        if ($site instanceof Site && $site->getMainDomain()) {
+            $url = $scheme . $site->getMainDomain() . preg_replace('@^' . $site->getRootPath() . '/?@', '/', $this->getRealFullPath());
+        }
+
+        return $url;
     }
 }

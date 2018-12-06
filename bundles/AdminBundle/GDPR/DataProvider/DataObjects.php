@@ -16,8 +16,8 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\AdminBundle\GDPR\DataProvider;
 
 use Pimcore\Model\DataObject\AbstractObject;
-use Pimcore\Model\DataObject\ClassDefinition\Data\MultihrefMetadata;
 use Pimcore\Model\DataObject\Concrete;
+use Pimcore\Model\DataObject\Data\ElementMetadata;
 use Pimcore\Model\DataObject\Data\ObjectMetadata;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Element\Service;
@@ -107,8 +107,10 @@ class DataObjects extends Elements implements DataProviderInterface
                         }
 
                         foreach ($subElements as $subElement) {
-                            if ($subElement instanceof ObjectMetadata || $subElement instanceof MultihrefMetadata) {
+                            if ($subElement instanceof ObjectMetadata) {
                                 $subElement = $subElement->getObject();
+                            } elseif ($subElement instanceof ElementMetadata) {
+                                $subElement = $subElement->getElement();
                             }
 
                             $this->fillIds($subElement);

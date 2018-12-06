@@ -122,6 +122,10 @@ class RgbaColor extends Model\DataObject\ClassDefinition\Data
             $a = hexdec($data[$this->getName() . '__a']);
             $color = new Model\DataObject\Data\RgbaColor($r, $g, $b, $a);
 
+            if (isset($params['owner'])) {
+                $color->setOwner($params['owner'], $params['fieldname'], $params['language']);
+            }
+
             return $color;
         }
 

@@ -4,7 +4,7 @@
     {% block beforeScript %}{{ blocks.beforeScript|raw }}{% endblock %}
     {% block beforeInit %}{{ blocks.beforeInit|raw }}{% endblock %}
 
-    var _gaq = _gaq || [];
+    window._gaq = window._gaq || [];
 
     {% block trackInit %}
     _gaq.push(['_setAccount', '{{ trackId }}']);

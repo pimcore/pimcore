@@ -81,7 +81,7 @@ pimcore.object.gridcolumn.operator.dateformatter = Class.create(pimcore.object.g
         return copy;
     },
 
-    getConfigDialog: function(node) {
+    getConfigDialog: function(node, params) {
         this.node = node;
 
         this.formatField = new Ext.form.TextField({
@@ -109,7 +109,7 @@ pimcore.object.gridcolumn.operator.dateformatter = Class.create(pimcore.object.g
                 text: t("apply"),
                 iconCls: "pimcore_icon_apply",
                 handler: function () {
-                    this.commitData();
+                    this.commitData(params);
                 }.bind(this)
             }]
         });
@@ -127,11 +127,15 @@ pimcore.object.gridcolumn.operator.dateformatter = Class.create(pimcore.object.g
         return this.window;
     },
 
-    commitData: function() {
+    commitData: function(params) {
         this.node.data.configAttributes.format = this.formatField.getValue();
         var nodeLabel = this.getNodeLabel(this.node.data.configAttributes);
         this.node.set('isOperator', true);
         this.window.close();
+
+        if (params && params.callback) {
+            params.callback();
+        }
     },
 
     getNodeLabel: function (configAttributes) {

@@ -202,7 +202,14 @@ pimcore.object.helpers.edit = {
 
                     // handlers must be eval()
                     if(configKeys[u] == "handler") {
-                        l[configKeys[u]] = eval(l[configKeys[u]]).bind(this);
+                        try {
+                            if(l[configKeys[u]] && Ext.isString(l[configKeys[u]]) && l[configKeys[u]].length > 10) {
+                                l[configKeys[u]] = eval(l[configKeys[u]]).bind(this);
+                            }
+                        } catch (e) {
+                            console.error('Unable to eval() given handler function of layout compontent: ' + l.name + " of type: " + l.fieldtype);
+                            console.log(e);
+                        }
                     }
 
                     if(l[configKeys[u]]) {

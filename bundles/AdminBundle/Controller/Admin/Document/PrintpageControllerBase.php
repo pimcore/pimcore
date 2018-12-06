@@ -55,6 +55,7 @@ class PrintpageControllerBase extends DocumentControllerBase
         $page->idPath = Service::getIdPath($page);
         $page->setUserPermissions($page->getUserPermissions());
         $page->setLocked($page->isLocked());
+        $page->url = $page->getUrl();
 
         if ($page->getContentMasterDocument()) {
             $page->contentMasterDocumentPath = $page->getContentMasterDocument()->getRealFullPath();

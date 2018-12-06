@@ -504,7 +504,12 @@ pimcore.element.selector.object = Class.create(pimcore.element.selector.abstract
                         pimcore.helpers.showNotification(t("error"), t("error_resetting_config"), "error");
                     }
                 });
-            }.bind(this), true, this.settings
+            }.bind(this), true, this.settings,
+            {
+                allowPreview: true,
+                classId: this.classId,
+                objectId: this.object.id
+            }
         );
     },
 
@@ -545,6 +550,10 @@ pimcore.element.selector.object = Class.create(pimcore.element.selector.abstract
         proxy.setExtraParam("query", formValues.query);
         proxy.setExtraParam("subtype", formValues.subtype);
         proxy.setExtraParam("class", formValues.class);
+
+        if (this.gridLanguage) {
+            proxy.setExtraParam("language", this.gridLanguage);
+        }
 
         if (this.parent.config && this.parent.config.context) {
             proxy.setExtraParam("context", Ext.encode(this.parent.config.context));

@@ -27,7 +27,7 @@ pimcore.element.selector.document = Class.create(pimcore.element.selector.abstra
                     rootProperty: 'data'
                 }
             },
-            fields: ["id","fullpath","type","subtype","published","title","description","name","filename"]
+            fields: ["id", "fullpath", "type", "subtype", "published", "title", "description", "name", "filename"]
         });
     },
 
@@ -64,7 +64,7 @@ pimcore.element.selector.document = Class.create(pimcore.element.selector.abstra
         };
 
         // check for restrictions
-        var possibleRestrictions = ["page","snippet","folder","link","hardlink","email"]; //ckogler
+        var possibleRestrictions = ["page", "snippet", "folder", "link", "hardlink", "email", "newsletter"];
         var filterStore = [];
         var selectedStore = [];
         for (var i=0; i<possibleRestrictions.length; i++) {

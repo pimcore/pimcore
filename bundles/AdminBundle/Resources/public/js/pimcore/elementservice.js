@@ -19,15 +19,61 @@ pimcore.elementservice.deleteElement = function (options) {
     // check for dependencies
     Ext.Ajax.request({
         url: url,
-        params: {id: options.id},
-        success: pimcore.elementservice.deleteElementCheckDependencyComplete.bind(window, options)
+        params: {id: options.id, type: elementType},
+        success: pimcore.elementservice.deleteElementsComplete.bind(window, options)
     });
 };
 
-pimcore.elementservice.deleteElementCheckDependencyComplete = function (options, response) {
-
+pimcore.elementservice.deleteElementsComplete = function(options, response) {
     try {
         var res = Ext.decode(response.responseText);
+
+        if (res.errors) {
+            var message = res.batchDelete ? t('delete_error_batch') : t('delete_error');
+            var hasDeleteable = true;
+
+            if (res.itemResults) {
+                var reasons = res.itemResults.filter(function (result) {
+                    return !result.allowed;
+                }).map(function (result) {
+                    if (res.batchDelete) {
+                        return htmlspecialchars(result.key + ': ' + result.reason);
+                    }
+
+                    return htmlspecialchars(result.reason);
+                });
+
+                message += "<br /><b style='display: block; text-align: center; padding: 10px 0;'>" + reasons.join('<br/>') + "</b>";
+
+                hasDeleteable = res.itemResults.filter(function (result) {
+                    return result.allowed;
+                }).length > 0;
+            }
+
+            Ext.MessageBox.show({
+                title:t('delete'),
+                msg: message,
+                buttons: hasDeleteable ? Ext.Msg.OKCANCEL : Ext.Msg.CANCEL,
+                icon: Ext.MessageBox.INFO,
+                fn: function(r, options, button) {
+                    if (button === "ok" && hasDeleteable && r.deletejobs && r.batchDelete) {
+                        pimcore.elementservice.deleteElementCheckDependencyComplete.call(this, window, r, options);
+                    }
+                }.bind(window, res, options)
+            });
+        }
+        else {
+            pimcore.elementservice.deleteElementCheckDependencyComplete.call(this, window, res, options);
+        }
+    }
+    catch (e) {
+        console.log(e);
+    }
+}
+
+pimcore.elementservice.deleteElementCheckDependencyComplete = function (window, res, options) {
+
+    try {
         var message = res.batchDelete ? t('delete_message_batch') : t('delete_message');
         if (res.elementKey) {
             message += "<br /><b style='display: block; text-align: center; padding: 10px 0;'>\"" + htmlspecialchars(res.elementKey) + "\"</b>";
@@ -221,6 +267,8 @@ pimcore.elementservice.updateObject = function (id, values, callback) {
 };
 
 pimcore.elementservice.getAffectedNodes = function(elementType, id) {
+
+    var ids = Ext.isString(id) ? id.split(',') : [id];
     var treeNames = pimcore.elementservice.getElementTreeNames(elementType);
     var affectedNodes = [];
     for (var index = 0; index < treeNames.length; index++) {
@@ -230,14 +278,16 @@ pimcore.elementservice.getAffectedNodes = function(elementType, id) {
             continue;
         }
         tree = tree.tree;
-        var view = tree.getView();
         var store = tree.getStore();
-        var record = store.getNodeById(id);
 
-        if (record) {
-            affectedNodes.push(record);
-        }
+        ids.forEach(function (id) {
+            var record = store.getNodeById(id);
+            if (record) {
+                affectedNodes.push(record);
+            }
+        });
     }
+
     return affectedNodes;
 
 };

@@ -64,11 +64,10 @@ class Link extends Model\DataObject\ClassDefinition\Data
      */
     public function getDataForResource($data, $object = null, $params = [])
     {
-        if ($data instanceof DataObject\Data\Link and isset($data->object)) {
-            unset($data->object);
-        }
+        if ($data instanceof DataObject\Data\Link) {
+            $data = clone $data;
+            $data->setOwner(null, '');
 
-        if ($data) {
             try {
                 $this->checkValidity($data, true);
             } catch (\Exception $e) {
@@ -94,8 +93,8 @@ class Link extends Model\DataObject\ClassDefinition\Data
         $link = Serialize::unserialize($data);
 
         if ($link instanceof DataObject\Data\Link) {
-            if ($link->isEmpty()) {
-                return false;
+            if (isset($params['owner'])) {
+                $link->setOwner($params['owner'], $params['fieldname'], $params['language']);
             }
 
             try {
@@ -120,7 +119,7 @@ class Link extends Model\DataObject\ClassDefinition\Data
      */
     public function getDataForQueryResource($data, $object = null, $params = [])
     {
-        return Serialize::serialize($data);
+        return $this->getDataForResource($data, $object, $params);
     }
 
     /**

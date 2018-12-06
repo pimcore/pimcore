@@ -230,6 +230,10 @@ Ext.onReady(function () {
                             if ('undefined' !== typeof json.message && json.message.length > 0) {
                                 errorDetailMessage = json.message;
                             }
+
+                            if(json['traceString']) {
+                                errorDetailMessage += "\nTrace: \n" + json['traceString'];
+                            }
                         }
                     } catch (e) {
                         // noop, just fall back to generic error message (whole response text)
@@ -272,17 +276,8 @@ Ext.onReady(function () {
     Ext.define('pimcore.model.doctypes', {
         extend: 'Ext.data.Model',
         fields: [
-            {name: 'id'},
-            {name: 'name', allowBlank: false},
-            {name: 'module', allowBlank: true},
-            {name: 'controller', allowBlank: true},
-            {name: 'action', allowBlank: true},
-            {name: 'template', allowBlank: true},
-            {name: 'type', allowBlank: false},
-            {name: 'priority', allowBlank: true},
-            {name: 'creationDate', allowBlank: true},
-            {name: 'modificationDate', allowBlank: true},
-            {name: 'legacy', allowBlank: true}
+            'id',  {name: 'name', allowBlank: false}, 'module', 'controller', 'action', 'template',
+            {name: 'type', allowBlank: false},'priority', 'creationDate', 'modificationDate', 'legacy'
         ],
         proxy: {
             type: 'ajax',

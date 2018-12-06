@@ -48,6 +48,13 @@ class SearchController extends AdminController
     {
         $allParams = array_merge($request->request->all(), $request->query->all());
 
+        $requestedLanguage = $allParams['language'];
+        if ($requestedLanguage) {
+            if ($requestedLanguage != 'default') {
+                $request->setLocale($requestedLanguage);
+            }
+        }
+
         $filterPrepareEvent = new GenericEvent($this, [
             'requestParams' => $allParams
         ]);
@@ -81,6 +88,7 @@ class SearchController extends AdminController
             $conditionParts[] = '(' . implode(' AND ', $forbiddenConditions) . ')';
         }
 
+        $queryCondition = '';
         if (!empty($query)) {
             $queryCondition = '( MATCH (`data`,`properties`) AGAINST (' . $db->quote($query) . ' IN BOOLEAN MODE) )';
 
@@ -217,9 +225,8 @@ class SearchController extends AdminController
         $searcherList->setOffset($offset);
         $searcherList->setLimit($limit);
 
-        // do not sort per default, it is VERY SLOW
-        //$searcherList->setOrder("desc");
-        //$searcherList->setOrderKey("modificationdate");
+        $searcherList->setOrderKey($queryCondition, false);
+        $searcherList->setOrder('DESC');
 
         $sortingSettings = \Pimcore\Bundle\AdminBundle\Helper\QueryParams::extractSortingSettings($allParams);
         if ($sortingSettings['orderKey']) {
@@ -424,12 +431,15 @@ class SearchController extends AdminController
             $conditionParts[] = '(' . implode(' AND ', $forbiddenConditions) . ')';
         }
 
-        $conditionParts[] = '( MATCH (`data`,`properties`) AGAINST (' . $db->quote($query) . " IN BOOLEAN MODE) AND type != 'folder') ";
+        $matchCondition = '( MATCH (`data`,`properties`) AGAINST (' . $db->quote($query) . ' IN BOOLEAN MODE) )';
+        $conditionParts[] = '(' . $matchCondition . " AND type != 'folder') ";
 
         $queryCondition = implode(' AND ', $conditionParts);
 
         $searcherList->setCondition($queryCondition);
         $searcherList->setLimit(50);
+        $searcherList->setOrderKey($matchCondition, false);
+        $searcherList->setOrder('DESC');
 
         $beforeListLoadEvent = new GenericEvent($this, [
             'list' => $searcherList,

@@ -210,6 +210,11 @@ class Block extends Model\DataObject\ClassDefinition\Data
                         }
                     }
                     $blockElement = new DataObject\Data\BlockElement($blockElementRaw['name'], $blockElementRaw['type'], $blockElementRaw['data']);
+
+                    if (isset($params['owner'])) {
+                        $blockElement->setOwner($params['owner'], $params['fieldname'], $params['language']);
+                    }
+
                     $items[$elementName] = $blockElement;
                 }
                 $result[] = $items;
@@ -1073,7 +1078,11 @@ class Block extends Model\DataObject\ClassDefinition\Data
                         try {
                             $blockElement = $item[$fd->getName()];
                             if (!$blockElement) {
-                                throw new Element\ValidationException('Block element empty [ ' . $fd->getName() . ' ]');
+                                if ($fd->getMandatory()) {
+                                    throw new Element\ValidationException('Block element empty [ '.$fd->getName().' ]');
+                                } else {
+                                    continue;
+                                }
                             }
 
                             $data = $blockElement->getData();

@@ -14,7 +14,8 @@ By default the string representation of the result value is displayed.
 
 ![Render example 1](../../img/gridconfig/gridrenderer1.png)
 
-This can be changed by defining an alternative renderer. In the following example, the image of the second collection item would be rendered as Hotspotimage.
+This can be changed wrapping the result into a renderer operator. 
+In the following example, the image (the result of getImage_1()) would be rendered as image.
 
 ![Render example 2](../../img/gridconfig/gridrenderer2.png)
 
@@ -34,6 +35,7 @@ This can be changed by defining an alternative renderer. In the following exampl
 * [ElementCounter](./Operators/ElementCounter.md)
 * [FieldCollectionGetter](./Operators/FieldCollectionGetter.md)
 * [IsEqual](./Operators/IsEqual.md)
+* [Iterator](./Operators/Iterator.md)
 * [JSON Encode/Decode](./Operators/JSON.md)
 * [LFExpander](./Operators/LFExpander.md)
 * [LocaleSwitcher](./Operators/LocaleSwitcher.md)

@@ -48,19 +48,27 @@ pimcore.element.permissionchecker = Class.create({
                     },
 
                     onNodeOver: function (target, dd, e, data) {
-                        return Ext.dd.DropZone.prototype.dropAllowed;
+                        if (data.records.length === 1) {
+                            return Ext.dd.DropZone.prototype.dropAllowed;
+                        }
                     }.bind(this),
 
                     onNodeDrop: function (target, dd, e, data) {
-                        var record = data.records[0];
-                        if (record.data.elementType == "asset" || record.data.elementType == "document" || record.data.elementType == "object") {
-                            fieldPath.setValue(record.data.path);
-                            this.elementType = record.data.elementType;
-                            this.elementId = record.data.id;
+
+                        if(!pimcore.helpers.dragAndDropValidateSingleItem(data)) {
+                            return false;
+                        }
+
+                        data = data.records[0].data;
+                        if (data.elementType === "asset" || data.elementType === "document" || data.elementType === "object") {
+                            fieldPath.setValue(data.path);
+                            this.elementType = data.elementType;
+                            this.elementId = data.id;
                             this.analyzeButton.enable();
                             return true;
                         }
                         return false;
+
                     }.bind(this)
                 });
             }.bind(this));
@@ -82,14 +90,16 @@ pimcore.element.permissionchecker = Class.create({
                     },
 
                     onNodeOver: function (target, dd, e, data) {
-                        return Ext.dd.DropZone.prototype.dropAllowed;
+                        if (data.records.length === 1 && data.records[0].data.elementType === "user") {
+                            return Ext.dd.DropZone.prototype.dropAllowed;
+                        }
                     }.bind(this),
 
                     onNodeDrop: function (target, dd, e, data) {
-                        var record = data.records[0];
-                        if (record.data.elementType == "user") {
-                            user.setValue(record.data.text);
-                            this.userId = record.data.id;
+                        data = data.records[0].data;
+                        if (data.elementType === "user") {
+                            user.setValue(data.text);
+                            this.userId = data.id;
                             return true;
                         }
                         return false;

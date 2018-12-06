@@ -80,7 +80,7 @@ pimcore.object.gridcolumn.operator.anonymizer = Class.create(pimcore.object.grid
     },
 
 
-    getConfigDialog: function (node) {
+    getConfigDialog: function (node, params) {
         this.node = node;
 
         this.textField = new Ext.form.TextField({
@@ -113,7 +113,7 @@ pimcore.object.gridcolumn.operator.anonymizer = Class.create(pimcore.object.grid
                 text: t("apply"),
                 iconCls: "pimcore_icon_apply",
                 handler: function () {
-                    this.commitData();
+                    this.commitData(params);
                 }.bind(this)
             }]
         });
@@ -131,7 +131,7 @@ pimcore.object.gridcolumn.operator.anonymizer = Class.create(pimcore.object.grid
         return this.window;
     },
 
-    commitData: function () {
+    commitData: function (params) {
         this.node.data.configAttributes.label = this.textField.getValue();
         this.node.data.configAttributes.mode = this.modeField.getValue().rb;
         var nodeLabel = this.getNodeLabel(this.node.data.configAttributes);
@@ -140,6 +140,9 @@ pimcore.object.gridcolumn.operator.anonymizer = Class.create(pimcore.object.grid
         this.node.set('isOperator', true);
 
         this.window.close();
+        if (params && params.callback) {
+            params.callback();
+        }
     },
 
     getNodeLabel: function (configAttributes) {

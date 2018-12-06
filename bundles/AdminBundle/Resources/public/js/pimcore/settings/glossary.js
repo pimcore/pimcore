@@ -59,17 +59,8 @@ pimcore.settings.glossary = Class.create({
         this.store = pimcore.helpers.grid.buildDefaultStore(
             '/admin/settings/glossary?',
             [
-                {name: 'id'},
-                {name: 'text', allowBlank: false},
-                {name: 'language', allowBlank: true},
-                {name: 'casesensitive', allowBlank: true},
-                {name: 'exactmatch', allowBlank: true},
-                {name: 'site', allowBlank: true},
-                {name: 'link', allowBlank: true},
-                {name: 'abbr', allowBlank: true},
-                {name: 'acronym', allowBlank: true},
-                {name: 'creationDate', allowBlank: true},
-                {name: 'modificationDate', allowBlank: true}
+                'id', {name: 'text', allowBlank: false}, 'language', 'casesensitive', 'exactmatch',
+                'site', 'link', 'acronym', 'creationDate', 'modificationDate'
             ],
             itemsPerPage
         );
@@ -235,22 +226,26 @@ pimcore.settings.glossary = Class.create({
                 },
 
                 onNodeOver : function(target, dd, e, data) {
-                    return Ext.dd.DropZone.prototype.dropAllowed;
+                    if (data.records.length == 1) {
+                        return Ext.dd.DropZone.prototype.dropAllowed;
+                    }
                 },
 
                 onNodeDrop : function(myRowIndex, target, dd, e, data) {
-                    try {
-                        var record = data.records[0];
-                        var data = record.data;
+                    if (pimcore.helpers.dragAndDropValidateSingleItem(data)) {
+                        try {
+                            var record = data.records[0];
+                            var data = record.data;
 
-                        var rec = this.grid.getStore().getAt(myRowIndex);
-                        rec.set("link", data.path);
+                            var rec = this.grid.getStore().getAt(myRowIndex);
+                            rec.set("link", data.path);
 
-                        this.updateRows();
+                            this.updateRows();
 
-                        return true;
-                    } catch (e) {
-                        console.log(e);
+                            return true;
+                        } catch (e) {
+                            console.log(e);
+                        }
                     }
                 }.bind(this, i)
             });

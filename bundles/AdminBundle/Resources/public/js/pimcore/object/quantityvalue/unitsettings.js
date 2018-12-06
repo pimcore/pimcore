@@ -69,12 +69,12 @@ pimcore.object.quantityValue.unitsettings = Class.create({
         var readerFields = [
             {name: 'id', allowBlank: false},
             {name: 'abbreviation', allowBlank: false},
-            {name: 'longname', allowBlank: true},
-            {name: 'group', allowBlank: true},
-            {name: 'baseunit', allowBlank: true},
-            {name: 'factor', allowBlank: true},
-            {name: 'conversionOffset', allowBlank: true},
-            {name: 'reference', allowBlank: true}
+            {name: 'longname'},
+            {name: 'group'},
+            {name: 'baseunit'},
+            {name: 'factor'},
+            {name: 'conversionOffset'},
+            {name: 'reference'}
         ];
 
 

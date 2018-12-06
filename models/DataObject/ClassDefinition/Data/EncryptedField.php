@@ -202,7 +202,13 @@ class EncryptedField extends Model\DataObject\ClassDefinition\Data
             $data = $this->decrypt($data, $object, $params);
             $data = $fd->getDataFromResource($data, $object, $params);
 
-            return new Model\DataObject\Data\EncryptedField($this->delegate, $data);
+            $field = new Model\DataObject\Data\EncryptedField($this->delegate, $data);
+
+            if (isset($params['owner'])) {
+                $field->setOwner($params['owner'], $params['fieldname'], $params['language']);
+            }
+
+            return $field;
         }
     }
 
@@ -306,7 +312,7 @@ class EncryptedField extends Model\DataObject\ClassDefinition\Data
     {
         $fd = $this->getDelegateDatatypeDefinition();
         if ($fd) {
-            $data = $data instanceof Model\DataObject\Data\EncryptedField ? $data->getPlain() : data;
+            $data = $data instanceof Model\DataObject\Data\EncryptedField ? $data->getPlain() : $data;
             $result = $fd->checkValidity($data, $omitMandatoryCheck);
 
             return $result;
@@ -647,7 +653,7 @@ class EncryptedField extends Model\DataObject\ClassDefinition\Data
     {
         $delegate = $this->getDelegate();
 
-        if (method_exists($delegate, enrichLayoutDefinition)) {
+        if (method_exists($delegate, 'enrichLayoutDefinition')) {
             $delegate->enrichLayoutDefinition($object, $context);
         }
 

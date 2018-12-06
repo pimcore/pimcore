@@ -166,6 +166,23 @@ pimcore.document.email = Class.create(pimcore.document.page_snippet, {
         }
 
         return parameters;
+    },
+
+    getLayoutToolbar : function ($super) {
+        $super();
+
+        this.toolbar.add(
+            new Ext.Button({
+                text: t('send_test_email'),
+                iconCls: "pimcore_icon_email",
+                scale: "medium",
+                handler: function() {
+                    pimcore.helpers.sendTestEmail(this.settings.document.data['from']? this.settings.document.data['from'] : pimcore.settings.mailDefaultAddress, this.settings.document.data['to'], this.settings.document.data['subject'], 'document', this.settings.document.data['path'] + this.settings.document.data['key'], null);
+                }.bind(this)
+            })
+        );
+
+        return this.toolbar;
     }
 
 });

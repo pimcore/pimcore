@@ -243,7 +243,7 @@ class Bootstrap
 
         // legacy mapping loader creates aliases for renamed classes
         $legacyMappingLoader = new \Pimcore\Loader\Autoloader\AliasMapper($loader);
-        $legacyMappingLoader->createAliases();
+        $legacyMappingLoader->register(true);
 
         // the following code is out of `app/autoload.php`
         // see also: https://github.com/symfony/symfony-demo/blob/master/app/autoload.php

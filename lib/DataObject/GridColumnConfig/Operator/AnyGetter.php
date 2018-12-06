@@ -81,7 +81,7 @@ class AnyGetter extends AbstractOperator
                 if ($this->forwardAttribute) {
                     $forwardGetter = 'get'.ucfirst($this->forwardAttribute);
                     $forwardParam = $this->getForwardParam1();
-                    if ($this->attribute && method_exists($element, $forwardGetter)) {
+                    if ($this->forwardAttribute && method_exists($element, $forwardGetter)) {
                         $forwardObject = $element->$forwardGetter($forwardParam);
                         if (!$forwardObject) {
                             return $result;

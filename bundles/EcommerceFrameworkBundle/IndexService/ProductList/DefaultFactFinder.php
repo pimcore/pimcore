@@ -145,6 +145,11 @@ class DefaultFactFinder implements IProductList
     protected $logger;
 
     /**
+     * @var bool
+     */
+    protected $useIdsOnly = true;
+
+    /**
      * @return bool
      */
     public function getTransmitSessionId()
@@ -160,6 +165,26 @@ class DefaultFactFinder implements IProductList
     public function setTransmitSessionId($transmitSessionId)
     {
         $this->transmitSessionId = $transmitSessionId;
+
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getUseIdsOnly()
+    {
+        return $this->useIdsOnly;
+    }
+
+    /**
+     * @param bool $useIdsOnly
+     *
+     * @return $this
+     */
+    public function setUseIdsOnly($useIdsOnly)
+    {
+        $this->useIdsOnly = $useIdsOnly;
 
         return $this;
     }
@@ -819,7 +844,9 @@ class DefaultFactFinder implements IProductList
             $params['page'] = ceil($this->getOffset() / $this->getLimit()) + 1;
         }
         $params['productsPerPage'] = $this->getLimit();
-        $params['idsOnly'] = 'true';
+        if ($this->getUseIdsOnly()) {
+            $params['idsOnly'] = 'true';
+        }
         // $params['navigation'] = 'true';
         $params['useAsn'] = $this->getUseAsn() ? 'true' : 'false';
         if ($this->getFollowSearchParam()) {

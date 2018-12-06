@@ -113,8 +113,10 @@ class Video extends Model\DataObject\ClassDefinition\Data
      */
     public function getDataForResource($data, $object = null, $params = [])
     {
-        if ($data) {
+        if ($data instanceof DataObject\Data\Video) {
             $data = clone $data;
+            $data->setOwner(null, '');
+
             if ($data->getData() instanceof Asset) {
                 $data->setData($data->getData()->getId());
             }
@@ -122,7 +124,6 @@ class Video extends Model\DataObject\ClassDefinition\Data
                 $data->setPoster($data->getPoster()->getId());
             }
 
-            /** @var $data DataObject\Data\Video */
             $data = object2array($data->getObjectVars());
 
             return serialize($data);
@@ -159,6 +160,9 @@ class Video extends Model\DataObject\ClassDefinition\Data
 
             if ($raw['data']) {
                 $video = new DataObject\Data\Video();
+                if (isset($params['owner'])) {
+                    $video->setOwner($params['owner'], $params['fieldname'], $params['language']);
+                }
                 $video->setData($raw['data']);
                 $video->setType($raw['type']);
                 $video->setPoster($raw['poster']);
@@ -443,7 +447,7 @@ class Video extends Model\DataObject\ClassDefinition\Data
     {
         $data = $this->getDataFromObjectParam($object, $params);
         if ($data) {
-            return  $this->getDataForResource($data, $params);
+            return $this->getDataForResource($data, $object, $params);
         }
     }
 

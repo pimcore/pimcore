@@ -1824,3 +1824,11 @@ function htmlspecialchars (string, quoteStyle, charset, doubleEncode) {
 
     return string
 }
+
+
+function array_remove_value(array, item) {
+    var index = array.indexOf(item);
+    if (index !== -1) array.splice(index, 1);
+
+    return array;
+}

@@ -83,8 +83,8 @@ pimcore.settings.translations = Class.create({
             {name: 'id', persist: false},
             {name: 'editor', persist: false},
             {name: 'key', allowBlank: false},
-            {name: 'creationDate', allowBlank: true, type: 'date', convert: dateConverter, persist: false},
-            {name: 'modificationDate', allowBlank: true, type: 'date', convert: dateConverter, persist: false}
+            {name: 'creationDate', type: 'date', convert: dateConverter, persist: false},
+            {name: 'modificationDate', type: 'date', convert: dateConverter, persist: false}
         ];
 
         var typesColumns = [
@@ -153,6 +153,14 @@ pimcore.settings.translations = Class.create({
                 idProperty: 'key'
             }
         );
+
+        var store = this.store;
+
+        this.store.getProxy().on('exception', function (proxy, request, operation) {
+            operation.config.records.forEach(function (item) {
+                store.remove(item);
+            });
+        });
 
         if (this.preconfiguredFilter) {
             this.store.getProxy().extraParams.searchString = this.preconfiguredFilter;

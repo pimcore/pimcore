@@ -48,13 +48,7 @@ pimcore.object.bulkimport = Class.create({
                 autoDestroy: true,
                 data: this.data,
                 sortInfo:{field: 'name', direction: "ASC"},
-                fields: [
-                    {name: "icon", allowBlank: true},
-                    {name: "checked", allowBlank: true},
-                    {name: "type", allowBlank: true},
-                    {name: "name", allowBlank: true},
-                    {name: "displayName", allowBlank: true}
-                ],
+                fields: ["icon", "checked", "type", "name", "displayName"],
                 groupField: 'type'
             });
 

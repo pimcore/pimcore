@@ -56,7 +56,7 @@ class ReferringSite extends AbstractVariableCondition implements ConditionInterf
     public function match(VisitorInfo $visitorInfo): bool
     {
         $request = $visitorInfo->getRequest();
-        $referrer = $request->headers->get('Referrer', 'direct');
+        $referrer = $request->headers->get('Referer', 'direct');
 
         $result = preg_match($this->pattern, $referrer);
         if ($result) {

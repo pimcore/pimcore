@@ -196,10 +196,9 @@ class Service
     public function getDocumentList($condition = null, $order = null, $orderKey = null, $offset = null, $limit = null, $groupBy = null)
     {
         try {
-
-            $conditionParts =  [];
+            $conditionParts = [];
             if ($condition) {
-                $condition = "(" . $condition .")";
+                $condition = '(' . $condition .')';
                 $conditionParts[] = $condition;
             }
 
@@ -772,9 +771,9 @@ class Service
         try {
             $params = [];
 
-            $conditionParts =  [];
+            $conditionParts = [];
             if ($condition) {
-                $condition = "(" . $condition .")";
+                $condition = '(' . $condition .')';
                 $conditionParts[] = $condition;
             }
 
@@ -795,7 +794,6 @@ class Service
 
                 $params['condition'] = $condition;
             }
-
 
             if (!empty($order)) {
                 $params['order'] = $order;
@@ -886,7 +884,7 @@ class Service
             $object = DataObject::getById($id);
 
             if ($object instanceof DataObject\Concrete) {
-                // load all data (eg. lazy loaded fields like multihref, object, ...)
+                // load all data (eg. lazy loaded fields like relational data types ...)
                 DataObject\Service::loadAllObjectFields($object);
                 $apiObject = Webservice\Data\Mapper::map($object, '\\Pimcore\\Model\\Webservice\\Data\\DataObject\\Concrete\\Out', 'out');
 
@@ -916,9 +914,9 @@ class Service
         try {
             $params = ['objectTypes' => [DataObject\AbstractObject::OBJECT_TYPE_FOLDER, DataObject\AbstractObject::OBJECT_TYPE_OBJECT, DataObject\AbstractObject::OBJECT_TYPE_VARIANT]];
 
-            $conditionParts =  [];
+            $conditionParts = [];
             if ($condition) {
-                $condition = "(" . $condition .")";
+                $condition = '(' . $condition .')';
                 $conditionParts[] = $condition;
             }
 
@@ -1215,7 +1213,7 @@ class Service
             $object = DataObject\Concrete::getById($id);
 
             if ($object instanceof DataObject\Concrete) {
-                // load all data (eg. lazy loaded fields like multihref, object, ...)
+                // load all data (eg. lazy loaded fields like relational data types ...)
                 $classId = $object->getClassId();
 
                 return $this->getClassById($classId);

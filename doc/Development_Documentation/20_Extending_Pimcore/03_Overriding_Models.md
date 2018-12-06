@@ -1,6 +1,6 @@
 # Overriding Models / Entities in Pimcore
  
-Sometimes it is necessary to override certain functionalities of Pimocore's core models, therefore it is possible to 
+Sometimes it is necessary to override certain functionalities of Pimcore's core models, therefore it is possible to 
 override the core models with your own classes. 
 
 Currently this works for all implementations of the following classes: 

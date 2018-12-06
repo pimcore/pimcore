@@ -56,7 +56,7 @@ pimcore.object.gridcolumn.value.date = Class.create(pimcore.object.gridcolumn.Ab
         return copy;
     },
 
-    getConfigDialog: function(node) {
+    getConfigDialog: function(node, params) {
         this.node = node;
 
         this.formatField = new Ext.form.TextField({
@@ -84,7 +84,7 @@ pimcore.object.gridcolumn.value.date = Class.create(pimcore.object.gridcolumn.Ab
                 text: t("apply"),
                 iconCls: "pimcore_icon_apply",
                 handler: function () {
-                    this.commitData();
+                    this.commitData(params);
                 }.bind(this)
             }]
         });
@@ -102,10 +102,13 @@ pimcore.object.gridcolumn.value.date = Class.create(pimcore.object.gridcolumn.Ab
         return this.window;
     },
 
-    commitData: function() {
+    commitData: function(params) {
         this.node.data.configAttributes.format = this.formatField.getValue();
         this.node.data.configAttributes.label = this.node.get('text');
         this.node.set('isOperator', true);
         this.window.close();
+        if (params && params.callback) {
+            params.callback();
+        }
     }
 });

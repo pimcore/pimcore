@@ -66,7 +66,7 @@ If no `TrackingItemBuilder` is configured, the `TrackingItemBuilder` will fall b
 see below. 
 
 ```yaml
-pimcore_ecommerce_config:
+pimcore_ecommerce_framework:
     # tracking manager - define which trackers (e.g. Google Analytics Universal Ecommerce) are active and should
     # be called when you track something via TrackingManager
     tracking_manager:

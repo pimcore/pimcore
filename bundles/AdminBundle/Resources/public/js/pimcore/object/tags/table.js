@@ -132,9 +132,7 @@ pimcore.object.tags.table = Class.create(pimcore.object.tags.abstract, {
             for (var i = 0; i < fields.length; i++) {
                 columns.push({
                     dataIndex: fields[i].name,
-                    editor: new Ext.form.TextField({
-                        allowBlank: true
-                    }),
+                    editor: new Ext.form.TextField(),
                     sortable: false,
                     flex: 1
                 });

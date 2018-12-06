@@ -16,6 +16,7 @@
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
+use Pimcore\Exception\NotImplementedException;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
@@ -66,6 +67,54 @@ class Objectbricks extends Model\DataObject\ClassDefinition\Data
     public function getMaxItems()
     {
         return $this->maxItems;
+    }
+
+    /**
+     * @see DataObject\ClassDefinition\Data::getDataForResource
+     *
+     * @param mixed $data
+     * @param null|\Pimcore\Model\DataObject\AbstractObject $object
+     * @param mixed $params
+     *
+     * @throws NotImplementedException
+     *
+     * @return mixed
+     */
+    public function getDataForResource($data, $object = null, $params = [])
+    {
+        throw new NotImplementedException(__METHOD__);
+    }
+
+    /**
+     * @see DataObject\ClassDefinition\Data::getDataFromResource
+     *
+     * @param mixed $data
+     * @param null|\Pimcore\Model\DataObject\AbstractObject $object
+     * @param mixed $params
+     *
+     * @throws NotImplementedException
+     *
+     * @return mixed
+     */
+    public function getDataFromResource($data, $object = null, $params = [])
+    {
+        throw new NotImplementedException(__METHOD__);
+    }
+
+    /**
+     * @see DataObject\ClassDefinition\Data::getDataForQueryResource
+     *
+     * @param mixed $data
+     * @param null|\Pimcore\Model\DataObject\AbstractObject $object
+     * @param mixed $params
+     *
+     * @throws NotImplementedException
+     *
+     * @return mixed
+     */
+    public function getDataForQueryResource($data, $object = null, $params = [])
+    {
+        throw new NotImplementedException(__METHOD__);
     }
 
     /**
@@ -197,8 +246,8 @@ class Objectbricks extends Model\DataObject\ClassDefinition\Data
         // relations but not for objectsMetadata, because they have additional data which cannot be loaded directly from the DB
         if (!$objectFromVersion && method_exists($fielddefinition, 'getLazyLoading')
             && $fielddefinition->getLazyLoading()
-            && !$fielddefinition instanceof DataObject\ClassDefinition\Data\ObjectsMetadata
-            && !$fielddefinition instanceof DataObject\ClassDefinition\Data\MultihrefMetadata
+            && !$fielddefinition instanceof DataObject\ClassDefinition\Data\AdvancedManyToManyObjectRelation
+            && !$fielddefinition instanceof DataObject\ClassDefinition\Data\AdvancedManyToManyRelation
             && !$fielddefinition instanceof DataObject\ClassDefinition\Data\Block) {
 
             //lazy loading data is fetched from DB differently, so that not every relation object is instantiated

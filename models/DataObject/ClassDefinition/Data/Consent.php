@@ -103,12 +103,16 @@ class Consent extends Model\DataObject\ClassDefinition\Data
     public function getDataFromResource($data, $object = null, $params = [])
     {
         if (is_array($data) && $data[$this->getName() . '__consent'] !== null) {
-            $data = new DataObject\Data\Consent($data[$this->getName() . '__consent'], $data[$this->getName() . '__note']);
+            $consent = new DataObject\Data\Consent($data[$this->getName() . '__consent'], $data[$this->getName() . '__note']);
         } else {
-            $data = new DataObject\Data\Consent();
+            $consent = new DataObject\Data\Consent();
         }
 
-        return $data;
+        if (isset($params['owner'])) {
+            $consent->setOwner($params['owner'], $params['fieldname'], $params['language']);
+        }
+
+        return $consent;
     }
 
     /**

@@ -79,7 +79,7 @@ pimcore.object.gridcolumn.operator.stringreplace = Class.create(pimcore.object.g
     },
 
 
-    getConfigDialog: function(node) {
+    getConfigDialog: function(node, params) {
         this.node = node;
 
         this.textField = new Ext.form.TextField({
@@ -120,7 +120,7 @@ pimcore.object.gridcolumn.operator.stringreplace = Class.create(pimcore.object.g
                 text: t("apply"),
                 iconCls: "pimcore_icon_apply",
                 handler: function () {
-                    this.commitData();
+                    this.commitData(params);
                 }.bind(this)
             }]
         });
@@ -138,12 +138,15 @@ pimcore.object.gridcolumn.operator.stringreplace = Class.create(pimcore.object.g
         return this.window;
     },
 
-    commitData: function() {
+    commitData: function(params) {
         this.node.set('isOperator', true);
         this.node.data.configAttributes.search = this.searchField.getValue();
         this.node.data.configAttributes.replace = this.replaceField.getValue();
         this.node.data.configAttributes.insensitive = this.insensitiveField.getValue();
         this.node.set('text', this.textField.getValue());
         this.window.close();
+        if (params && params.callback) {
+            params.callback();
+        }
     }
 });

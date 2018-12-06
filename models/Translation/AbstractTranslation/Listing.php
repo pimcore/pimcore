@@ -36,20 +36,6 @@ class Listing extends Model\Listing\AbstractListing
     public $translations = [];
 
     /**
-     * Tests if the given key is an valid order key to sort the results
-     *
-     * @todo remove the dummy-always-true rule
-     *
-     * @param $key
-     *
-     * @return bool
-     */
-    public function isValidOrderKey($key)
-    {
-        return true;
-    }
-
-    /**
      * @return array
      */
     public function getTranslations()

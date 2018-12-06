@@ -630,7 +630,7 @@ class Mail extends \Swift_Message
         }
 
         if ($this->loggingIsEnabled()) {
-            if (\Pimcore::inDebugMode(DebugMode::MAIL)) {
+            if (\Pimcore::inDebugMode(DebugMode::MAIL) && !$this->ignoreDebugMode) {
                 $recipients = $this->getDebugMailRecipients($recipients);
             }
 
@@ -986,7 +986,7 @@ class Mail extends \Swift_Message
      */
     public function createAttachment($data, $mimeType = null, $filename = null, $disposition = null)
     {
-        $attachment = \Swift_Attachment::newInstance($data, $filename, $mimeType);
+        $attachment = new \Swift_Attachment($data, $filename, $mimeType);
         if ($disposition) {
             $attachment->setDisposition($disposition);
         }

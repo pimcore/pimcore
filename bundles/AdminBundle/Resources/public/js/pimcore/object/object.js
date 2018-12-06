@@ -112,10 +112,12 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
     },
 
     startInheritanceDetector: function () {
-        var dataKeys = Object.keys(this.data.metaData);
-        for (var i = 0; i < dataKeys.length; i++) {
-            if (this.data.metaData[dataKeys[i]].inherited == true) {
-                this.inheritedFields[dataKeys[i]] = true;
+        if(this.data.metaData) {
+            var dataKeys = Object.keys(this.data.metaData);
+            for (var i = 0; i < dataKeys.length; i++) {
+                if (this.data.metaData[dataKeys[i]].inherited == true) {
+                    this.inheritedFields[dataKeys[i]] = true;
+                }
             }
         }
 
