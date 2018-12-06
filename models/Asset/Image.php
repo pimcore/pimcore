@@ -595,10 +595,9 @@ EOT;
     {
         $data = [];
 
-        if(!file_exists($this->getFileSystemPath())) {
+        if (!file_exists($this->getFileSystemPath())) {
             return [];
         }
-
 
         if (in_array(File::getFileExtension($this->getFilename()), ['jpg', 'jpeg', 'jp2', 'png', 'gif', 'webp', 'j2k', 'jpf', 'jpx', 'jpm'])) {
             $chunkSize = 1024;

@@ -25,5 +25,4 @@ use Pimcore\Model;
  */
 class Listing extends Model\Listing\AbstractListing
 {
-
 }

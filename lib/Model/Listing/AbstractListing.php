@@ -81,9 +81,11 @@ abstract class AbstractListing extends AbstractModel
 
     /**
      * @param  $key
+     *
      * @return bool
      */
-    public function isValidOrderKey($key) {
+    public function isValidOrderKey($key)
+    {
         return true;
     }
 
@@ -188,7 +190,7 @@ abstract class AbstractListing extends AbstractModel
             $orderKey = [$orderKey];
         }
 
-        if(is_array($orderKey)) {
+        if (is_array($orderKey)) {
             foreach ($orderKey as $o) {
                 if ($quote === false) {
                     $this->orderKey[] = $o;
