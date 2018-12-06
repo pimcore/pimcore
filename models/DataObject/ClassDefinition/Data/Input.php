@@ -245,7 +245,7 @@ class Input extends Model\DataObject\ClassDefinition\Data
     /**
      * @param bool $showCharCount
      */
-    public function setShowCharCount(bool $showCharCount)
+    public function setShowCharCount($showCharCount)
     {
         $this->showCharCount = $showCharCount;
     }
