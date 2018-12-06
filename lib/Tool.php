@@ -775,6 +775,24 @@ class Tool
     }
 
     /**
+     * @param string $class
+     * @param string $method
+     * @param string $interface
+     */
+    public static function triggerDeprecatedMethodWarning($class, $method, $interface)
+    {
+        @trigger_error(
+            sprintf(
+                '%s use method %s, but hasn\'t a %s interface. This won\'t work in v6.0.',
+                $class,
+                $method,
+                $interface
+            ),
+            E_USER_DEPRECATED
+        );
+    }
+
+    /**
      * @param $name
      * @param $arguments
      *
