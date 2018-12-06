@@ -698,5 +698,6 @@
   "operator_group_formatter": "Formatters",
   "operator_group_renderer": "Renderer",
   "operator_renderer_settings": "Renderer Settings",
-  "refresh_preview": "Refresh Preview"
+  "refresh_preview": "Refresh Preview",
+  "show_charcount": "Show Character Count"
 }

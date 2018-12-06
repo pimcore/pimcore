@@ -1971,7 +1971,15 @@ ul.leaflet-draw-actions.leaflet-draw-actions-top.leaflet-draw-actions-bottom li:
 
 }
 
-/** workflow engine **/
+.object_field .char_count {
+    text-align: right;
+    padding: 0;
+    font-size: 10pt;
+    font-style: italic;
+    color: #919191;
+}
+
+    /** workflow engine **/
 
 .pimcore-workflow-place-indicator-wrapper {
     white-space: nowrap;

@@ -74,6 +74,11 @@ class Input extends Model\DataObject\ClassDefinition\Data
     public $unique;
 
     /**
+     * @var bool
+     */
+    public $showCharCount;
+
+    /**
      * @return int
      */
     public function getWidth()
@@ -228,6 +233,23 @@ class Input extends Model\DataObject\ClassDefinition\Data
     {
         $this->unique = $unique;
     }
+
+    /**
+     * @return bool
+     */
+    public function getShowCharCount()
+    {
+        return $this->showCharCount;
+    }
+
+    /**
+     * @param bool $showCharCount
+     */
+    public function setShowCharCount(bool $showCharCount)
+    {
+        $this->showCharCount = $showCharCount;
+    }
+
 
     /**
      * @return string

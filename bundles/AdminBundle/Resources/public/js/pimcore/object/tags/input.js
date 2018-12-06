@@ -82,7 +82,44 @@ pimcore.object.tags.input = Class.create(pimcore.object.tags.abstract, {
 
         this.component = new Ext.form.TextField(input);
 
-        return this.component;
+        if(this.fieldConfig.showCharCount) {
+            var charCount = Ext.create("Ext.Panel", {
+                bodyStyle: '',
+                margin: '0 0 0 0',
+                bodyCls: 'char_count',
+                width: input.width,
+                height: 17
+            });
+
+            this.component.setStyle("margin-bottom", "0");
+            this.component.addListener("change", function(charCount) {
+                this.updateCharCount(this.component, charCount);
+            }.bind(this, charCount));
+
+            //init word count
+            this.updateCharCount(this.component, charCount);
+
+            return Ext.create("Ext.Panel", {
+                cls: "object_field",
+                style: "margin-bottom: 10px",
+                layout: {
+                    type: 'vbox',
+                    align: 'left'
+                },
+                items: [
+                    this.component,
+                    charCount
+                ]
+            });
+
+        } else {
+            return this.component;
+        }
+
+    },
+
+    updateCharCount: function(textField, charCount) {
+        charCount.setHtml(textField.getValue().length + "/" + this.fieldConfig.columnLength);
     },
 
 
