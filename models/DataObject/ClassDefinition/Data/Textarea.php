@@ -41,6 +41,16 @@ class Textarea extends Model\DataObject\ClassDefinition\Data
     public $height;
 
     /**
+     * @var int
+     */
+    public $maxLength;
+
+    /**
+     * @var bool
+     */
+    public $showCharCount;
+
+    /**
      * Type for the column to query
      *
      * @var string
@@ -100,6 +110,39 @@ class Textarea extends Model\DataObject\ClassDefinition\Data
 
         return $this;
     }
+
+    /**
+     * @return int
+     */
+    public function getMaxLength()
+    {
+        return $this->maxLength;
+    }
+
+    /**
+     * @param int $maxLength
+     */
+    public function setMaxLength($maxLength)
+    {
+        $this->maxLength = $maxLength;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isShowCharCount()
+    {
+        return $this->showCharCount;
+    }
+
+    /**
+     * @param bool $showCharCount
+     */
+    public function setShowCharCount($showCharCount)
+    {
+        $this->showCharCount = $showCharCount;
+    }
+
 
     /**
      * @see Model\DataObject\ClassDefinition\Data::getDataForResource
@@ -196,4 +239,24 @@ class Textarea extends Model\DataObject\ClassDefinition\Data
             return '';
         }
     }
+
+    /**
+     * Checks if data is valid for current data field
+     *
+     * @param mixed $data
+     * @param bool $omitMandatoryCheck
+     *
+     * @throws \Exception
+     */
+    public function checkValidity($data, $omitMandatoryCheck = false)
+    {
+        if (!$omitMandatoryCheck && $this->getMaxLength() !== null) {
+            if (mb_strlen($data) > $this->getMaxLength()) {
+                throw new Model\Element\ValidationException('Value in field [ ' . $this->getName() . " ] longer than max length of '" . $this->getMaxLength() . "'");
+            }
+        }
+
+        parent::checkValidity($data, $omitMandatoryCheck);
+    }
+
 }
