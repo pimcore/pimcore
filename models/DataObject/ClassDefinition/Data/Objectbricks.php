@@ -19,10 +19,12 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
+use Pimcore\Model\DataObject\ClassDefinition\Data;
+use Pimcore\Model\DataObject\CustomResourcePersistingInterface;
 use Pimcore\Model\Webservice;
 use Pimcore\Tool;
 
-class Objectbricks extends Model\DataObject\ClassDefinition\Data
+class Objectbricks extends Data implements CustomResourcePersistingInterface
 {
     /**
      * Static type of this element
@@ -428,8 +430,9 @@ class Objectbricks extends Model\DataObject\ClassDefinition\Data
 
     /**
      * @param $object
+     * @param array $params
      */
-    public function delete($object)
+    public function delete($object, $params = [])
     {
         $container = $this->load($object);
         if ($container) {

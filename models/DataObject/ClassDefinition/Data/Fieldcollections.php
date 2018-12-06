@@ -19,10 +19,12 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
+use Pimcore\Model\DataObject\ClassDefinition\Data;
+use Pimcore\Model\DataObject\CustomResourcePersistingInterface;
 use Pimcore\Model\Webservice;
 use Pimcore\Tool\Cast;
 
-class Fieldcollections extends Model\DataObject\ClassDefinition\Data
+class Fieldcollections extends Data implements CustomResourcePersistingInterface
 {
     /**
      * Static type of this element
@@ -338,8 +340,9 @@ class Fieldcollections extends Model\DataObject\ClassDefinition\Data
 
     /**
      * @param $object
+     * @param array $params
      */
-    public function delete($object)
+    public function delete($object, $params = [])
     {
         $container = new DataObject\Fieldcollection(null, $this->getName());
         $container->delete($object);

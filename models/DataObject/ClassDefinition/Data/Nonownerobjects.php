@@ -21,7 +21,7 @@ use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 
-class Nonownerobjects extends Model\DataObject\ClassDefinition\Data\Objects
+class Nonownerobjects extends ManyToManyObjectRelation
 {
     /**
      * @var bool
@@ -153,34 +153,6 @@ class Nonownerobjects extends Model\DataObject\ClassDefinition\Data\Objects
         $this->ownerFieldName = $fieldName;
 
         return $this;
-    }
-
-    /**
-     * @see DataObject\ClassDefinition\Data::getDataForResource
-     *
-     * @param array $data
-     * @param null|Model\DataObject\AbstractObject $object
-     * @param mixed $params
-     *
-     * @return array
-     */
-    public function getDataForResource($data, $object = null, $params = [])
-    {
-        return null;
-    }
-
-    /**
-     * @see DataObject\ClassDefinition\Data::getDataForQueryResource
-     *
-     * @param array $data
-     * @param null|Model\DataObject\AbstractObject $object
-     * @param mixed $params
-     *
-     * @return string
-     */
-    public function getDataForQueryResource($data, $object = null, $params = [])
-    {
-        return null;
     }
 
     /**

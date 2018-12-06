@@ -21,10 +21,12 @@ use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
+use Pimcore\Model\DataObject\CustomResourcePersistingInterface;
+use Pimcore\Model\DataObject\QueryResourcePersistenceAwareInterface;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
 
-class AdvancedManyToManyRelation extends Model\DataObject\ClassDefinition\Data\ManyToManyRelation
+class AdvancedManyToManyRelation extends ManyToManyObjectRelation implements CustomResourcePersistingInterface, QueryResourcePersistenceAwareInterface
 {
     use DataObject\Traits\ElementWithMetadataComparisonTrait;
     /**

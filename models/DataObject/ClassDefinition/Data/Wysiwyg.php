@@ -18,10 +18,13 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
+use Pimcore\Model\DataObject\ClassDefinition\Data;
+use Pimcore\Model\DataObject\ResourcePersistenceAwareInterface;
+use Pimcore\Model\DataObject\QueryResourcePersistenceAwareInterface;
 use Pimcore\Model\Element;
 use Pimcore\Tool\Text;
 
-class Wysiwyg extends Model\DataObject\ClassDefinition\Data
+class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface
 {
     use Model\DataObject\ClassDefinition\Data\Extension\Text;
     use Model\DataObject\Traits\SimpleComparisonTrait;

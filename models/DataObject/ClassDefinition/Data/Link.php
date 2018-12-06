@@ -19,11 +19,14 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
+use Pimcore\Model\DataObject\ClassDefinition\Data;
+use Pimcore\Model\DataObject\ResourcePersistenceAwareInterface;
+use Pimcore\Model\DataObject\QueryResourcePersistenceAwareInterface;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
 use Pimcore\Tool\Serialize;
 
-class Link extends Model\DataObject\ClassDefinition\Data
+class Link extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface
 {
     /**
      * Static type of this element

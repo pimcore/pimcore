@@ -18,8 +18,11 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
+use Pimcore\Model\DataObject\ClassDefinition\Data;
+use Pimcore\Model\DataObject\ResourcePersistenceAwareInterface;
+use Pimcore\Model\DataObject\QueryResourcePersistenceAwareInterface;
 
-class Password extends Model\DataObject\ClassDefinition\Data
+class Password extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface
 {
     const HASH_FUNCTION_PASSWORD_HASH = 'password_hash';
 

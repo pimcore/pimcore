@@ -18,8 +18,10 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
+use Pimcore\Model\DataObject\ClassDefinition\Data;
+use Pimcore\Model\DataObject\ResourcePersistenceAwareInterface;
 
-class BooleanSelect extends Model\DataObject\ClassDefinition\Data
+class BooleanSelect extends Data implements ResourcePersistenceAwareInterface
 {
     use Model\DataObject\Traits\SimpleComparisonTrait;
 
