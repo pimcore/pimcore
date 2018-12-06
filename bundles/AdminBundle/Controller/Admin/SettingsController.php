@@ -1302,6 +1302,13 @@ class SettingsController extends AdminController
         $this->checkPermission('thumbnails');
 
         $pipe = Asset\Image\Thumbnail\Config::getByName($request->get('name'));
+
+        if (!$pipe) {
+            $pipe = new Asset\Image\Thumbnail\Config();
+            $pipe->setName($request->get('name'));
+            $pipe->save();
+        }
+
         $settingsData = $this->decodeJson($request->get('settings'));
         $mediaData = $this->decodeJson($request->get('medias'));
 
