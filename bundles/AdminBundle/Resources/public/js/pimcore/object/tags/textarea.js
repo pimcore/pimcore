@@ -115,7 +115,12 @@ pimcore.object.tags.textarea = Class.create(pimcore.object.tags.abstract, {
     },
 
     updateCharCount: function(textField, charCount) {
-        charCount.setHtml(textField.getValue().length + "/" + this.fieldConfig.maxLength);
+        if( this.fieldConfig.maxLength) {
+            charCount.setHtml(textField.getValue().length + "/" + this.fieldConfig.maxLength);
+        } else {
+            charCount.setHtml(textField.getValue().length);
+        }
+
     },
 
 
