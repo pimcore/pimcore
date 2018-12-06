@@ -899,7 +899,9 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
         }
         if (extJsObject.hasOwnProperty('items')) {
             extJsObject.items.each(function (item, index) {
-                this.setUiState(item, savedState.children[index]);
+                if(savedState.children[index]) {
+                    this.setUiState(item, savedState.children[index]);
+                }
             }.bind(this));
         }
     }
