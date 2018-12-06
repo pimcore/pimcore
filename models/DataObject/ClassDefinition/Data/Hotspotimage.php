@@ -123,7 +123,7 @@ class Hotspotimage extends Model\DataObject\ClassDefinition\Data\Image
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
-     * @return int|null
+     * @return array
      */
     public function getDataForResource($data, $object = null, $params = [])
     {
@@ -156,11 +156,11 @@ class Hotspotimage extends Model\DataObject\ClassDefinition\Data\Image
     /**
      * @see DataObject\ClassDefinition\Data::getDataFromResource
      *
-     * @param DataObject\Data\Hotspotimage $data
+     * @param array $data
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
-     * @return Asset
+     * @return DataObject\Data\Hotspotimage|null
      */
     public function getDataFromResource($data, $object = null, $params = [])
     {
@@ -224,7 +224,7 @@ class Hotspotimage extends Model\DataObject\ClassDefinition\Data\Image
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
-     * @return int|null
+     * @return array
      */
     public function getDataForQueryResource($data, $object = null, $params = [])
     {
@@ -238,7 +238,7 @@ class Hotspotimage extends Model\DataObject\ClassDefinition\Data\Image
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
-     * @return int
+     * @return array|null
      */
     public function getDataForEditmode($data, $object = null, $params = [])
     {
@@ -290,7 +290,7 @@ class Hotspotimage extends Model\DataObject\ClassDefinition\Data\Image
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
-     * @return Asset
+     * @return DataObject\Data\Hotspotimage
      */
     public function getDataFromEditmode($data, $object = null, $params = [])
     {
@@ -507,7 +507,7 @@ class Hotspotimage extends Model\DataObject\ClassDefinition\Data\Image
 
         if ($dataForResource) {
             if ($dataForResource['image__hotspots']) {
-                $dataForResource['image__hotspots'] = unserialize($dataForResource['image__hotspots']);
+                $dataForResource['image__hotspots'] = Serialize::unserialize($dataForResource['image__hotspots']);
             }
 
             return $dataForResource;

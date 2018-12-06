@@ -90,7 +90,7 @@ class EncryptedField extends Model\DataObject\ClassDefinition\Data
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
-     * @return array
+     * @return mixed
      */
     public function getDataForResource($data, $object = null, $params = [])
     {
@@ -106,6 +106,8 @@ class EncryptedField extends Model\DataObject\ClassDefinition\Data
                 }
             }
         }
+
+        return null;
     }
 
     /**
@@ -193,7 +195,7 @@ class EncryptedField extends Model\DataObject\ClassDefinition\Data
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
-     * @return Model\DataObject\Data\RgbaColor|null
+     * @return Model\DataObject\Data\EncryptedField|null
      */
     public function getDataFromResource($data, $object = null, $params = [])
     {
@@ -210,6 +212,8 @@ class EncryptedField extends Model\DataObject\ClassDefinition\Data
 
             return $field;
         }
+
+        return null;
     }
 
     /**
