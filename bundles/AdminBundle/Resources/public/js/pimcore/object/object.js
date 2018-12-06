@@ -208,6 +208,14 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
         this.tab.on("afterrender", function (tabId) {
             this.tabPanel.setActiveItem(tabId);
             pimcore.plugin.broker.fireEvent("postOpenObject", this, "object");
+
+            var uiStates = localStorage.getItem('pimcore_uiState_'+this.id);
+            if(uiStates) {
+                uiStates = JSON.parse(uiStates);
+                this.setUiState(this.tab, uiStates);
+                // prevent restoration of UI state on subsequent loading of given object
+                localStorage.removeItem('pimcore_uiState_'+this.id);
+            }
         }.bind(this, tabId));
 
         this.removeLoadingPanel();
@@ -794,6 +802,8 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
     },
 
     reload: function (layoutId) {
+        var uiStates = this.getUiState(this.tab);
+        localStorage.setItem('pimcore_uiState_'+this.id, JSON.stringify(uiStates));
 
         this.tab.on("close", function () {
             var options = {};
@@ -802,7 +812,6 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
                 pimcore.helpers.openObject(id, "object", options);
             }.bind(window, this.id), 500);
         }.bind(this));
-
 
         pimcore.helpers.closeObject(this.id);
     },
@@ -859,6 +868,39 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
                 default: this.data.general.o_key
             };
             pimcore.elementservice.editElementKey(options);
+        }
+    },
+
+    getUiState: function (extJsObject) {
+        var visible = extJsObject.isVisible();
+        if (extJsObject.hasOwnProperty('collapsed')) {
+            visible = !extJsObject.collapsed;
+        }
+        var states = {visible: visible, children: []};
+
+        if (extJsObject.hasOwnProperty('items')) {
+            extJsObject.items.each(function (item, index) {
+                states.children[index] = this.getUiState(item);
+            }.bind(this));
+        }
+        return states;
+    },
+
+    setUiState: function (extJsObject, savedState) {
+        if (savedState.visible) {
+            if (!extJsObject.hasOwnProperty('collapsed')) {
+                extJsObject.setVisible(savedState.visible);
+            } else {
+                // without timeout the accordion panel's state gets confused and thus panels are not toggleable
+                setTimeout(function () {
+                    extJsObject.expand(false);
+                }, 50);
+            }
+        }
+        if (extJsObject.hasOwnProperty('items')) {
+            extJsObject.items.each(function (item, index) {
+                this.setUiState(item, savedState.children[index]);
+            }.bind(this));
         }
     }
 });
