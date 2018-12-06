@@ -202,7 +202,13 @@ class EncryptedField extends Model\DataObject\ClassDefinition\Data
             $data = $this->decrypt($data, $object, $params);
             $data = $fd->getDataFromResource($data, $object, $params);
 
-            return new Model\DataObject\Data\EncryptedField($this->delegate, $data);
+            $field = new Model\DataObject\Data\EncryptedField($this->delegate, $data);
+
+            if (isset($params['owner'])) {
+                $field->setOwner($params['owner'], $params['fieldname'], $params['language']);
+            }
+
+            return $field;
         }
     }
 

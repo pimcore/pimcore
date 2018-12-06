@@ -102,7 +102,13 @@ class Geobounds extends Model\DataObject\ClassDefinition\Data\Geo\AbstractGeo
             $ne = new DataObject\Data\Geopoint($data[$this->getName() . '__NElongitude'], $data[$this->getName() . '__NElatitude']);
             $sw = new DataObject\Data\Geopoint($data[$this->getName() . '__SWlongitude'], $data[$this->getName() . '__SWlatitude']);
 
-            return new DataObject\Data\Geobounds($ne, $sw);
+            $geobounds = new DataObject\Data\Geobounds($ne, $sw);
+
+            if (isset($params['owner'])) {
+                $geobounds->setOwner($params['owner'], $params['fieldname'], $params['language']);
+            }
+
+            return $geobounds;
         }
 
         return;

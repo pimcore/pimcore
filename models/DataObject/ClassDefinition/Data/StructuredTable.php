@@ -280,7 +280,13 @@ class StructuredTable extends Model\DataObject\ClassDefinition\Data
             }
         }
 
-        return new DataObject\Data\StructuredTable($structuredData);
+        $structuredTable = new DataObject\Data\StructuredTable($structuredData);
+
+        if (isset($params['owner'])) {
+            $structuredTable->setOwner($params['owner'], $params['fieldname'], $params['language']);
+        }
+
+        return $structuredTable;
     }
 
     /**

@@ -62,7 +62,13 @@ class InputQuantityValue extends QuantityValue
     public function getDataFromResource($data, $object = null, $params = [])
     {
         if ($data[$this->getName() . '__value'] || $data[$this->getName() . '__unit']) {
-            return $this->getNewDataObject($data[$this->getName() . '__value'], $data[$this->getName() . '__unit']);
+            $dataObject = $this->getNewDataObject($data[$this->getName() . '__value'], $data[$this->getName() . '__unit']);
+
+            if (isset($params['owner'])) {
+                $dataObject->setOwner($params['owner'], $params['fieldname'], $params['language']);
+            }
+
+            return $dataObject;
         }
 
         return;

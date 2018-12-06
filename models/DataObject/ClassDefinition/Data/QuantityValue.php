@@ -223,7 +223,13 @@ class QuantityValue extends Model\DataObject\ClassDefinition\Data
     public function getDataFromResource($data, $object = null, $params = [])
     {
         if ($data[$this->getName() . '__value'] || $data[$this->getName() . '__unit']) {
-            return new  \Pimcore\Model\DataObject\Data\QuantityValue($data[$this->getName() . '__value'], $data[$this->getName() . '__unit']);
+            $quantityValue = new Model\DataObject\Data\QuantityValue($data[$this->getName() . '__value'], $data[$this->getName() . '__unit']);
+
+            if (isset($params['owner'])) {
+                $quantityValue->setOwner($params['owner'], $params['fieldname'], $params['language']);
+            }
+
+            return $quantityValue;
         }
 
         return;
@@ -240,7 +246,7 @@ class QuantityValue extends Model\DataObject\ClassDefinition\Data
      */
     public function getDataForQueryResource($data, $object = null, $params = [])
     {
-        return $this->getDataForResource($data);
+        return $this->getDataForResource($data, $object, $params);
     }
 
     /**

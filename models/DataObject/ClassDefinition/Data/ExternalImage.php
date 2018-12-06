@@ -141,7 +141,13 @@ class ExternalImage extends Model\DataObject\ClassDefinition\Data
      */
     public function getDataFromResource($data, $object = null, $params = [])
     {
-        return new Model\DataObject\Data\ExternalImage($data);
+        $externalImage = new Model\DataObject\Data\ExternalImage($data);
+
+        if (isset($params['owner'])) {
+            $externalImage->setOwner($params['owner'], $params['fieldname'], $params['language']);
+        }
+
+        return $externalImage;
     }
 
     /**
