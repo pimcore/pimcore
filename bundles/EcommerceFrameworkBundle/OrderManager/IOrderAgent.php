@@ -93,6 +93,20 @@ interface IOrderAgent
      */
     public function setPaymentProvider(IPayment $paymentProvider, AbstractOrder $sourceOrder = null);
 
+
+    /**
+     * Init payment:
+     *
+     * creates new payment info with INIT state
+     *
+     * throws exception when payment info exists
+     *
+     * @return AbstractPaymentInformation
+     * @throws UnsupportedException
+     */
+    public function initPayment();
+
+
     /**
      * Starts payment:
      *
@@ -101,6 +115,7 @@ interface IOrderAgent
      * if false -> creates new payment info (and aborts existing PENDING payment infos)
      *
      * @return AbstractPaymentInformation
+     * @throws UnsupportedException
      */
     public function startPayment();
 
