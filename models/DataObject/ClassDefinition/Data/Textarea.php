@@ -143,7 +143,6 @@ class Textarea extends Model\DataObject\ClassDefinition\Data
         $this->showCharCount = $showCharCount;
     }
 
-
     /**
      * @see Model\DataObject\ClassDefinition\Data::getDataForResource
      *
@@ -258,5 +257,4 @@ class Textarea extends Model\DataObject\ClassDefinition\Data
 
         parent::checkValidity($data, $omitMandatoryCheck);
     }
-
 }

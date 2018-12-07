@@ -250,7 +250,6 @@ class Input extends Model\DataObject\ClassDefinition\Data
         $this->showCharCount = $showCharCount;
     }
 
-
     /**
      * @return string
      */
