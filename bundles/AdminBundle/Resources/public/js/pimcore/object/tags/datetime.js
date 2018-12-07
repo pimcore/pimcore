@@ -99,7 +99,10 @@ pimcore.object.tags.datetime = Class.create(pimcore.object.tags.abstract, {
     getLayoutShow:function () {
 
         this.component = this.getLayoutEdit();
-        this.component.setReadOnly(true);
+
+        this.component.addCls('x-form-readonly');
+        this.datefield.setReadOnly(true);
+        this.timefield.setReadOnly(true);
 
         return this.component;
     },
