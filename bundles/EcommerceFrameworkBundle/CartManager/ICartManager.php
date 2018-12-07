@@ -79,9 +79,19 @@ interface ICartManager extends IComponent
      *
      * @param string $name
      *
-     * @return ICart
+     * @return null|ICart
      */
     public function getCartByName($name);
+
+
+    /**
+     * Returns cart by name, if it does not exist, it will be created
+     *
+     * @param string $name
+     *
+     * @return ICart
+     */
+    public function getOrCreateCartByName($name);
 
     /**
      * Returns all carts

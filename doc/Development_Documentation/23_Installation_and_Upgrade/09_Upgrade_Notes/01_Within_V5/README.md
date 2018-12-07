@@ -42,13 +42,13 @@ the JS classes in `pimcore.document.tags`.
 | `$this->href()` | `Href` | `href` | `$this->relation()` | `Relation` | `relation` | 
 | `$this->multihref()` | `Multihref` | `multihref` | `$this->relations()` | `Relations` | `relations` | 
 
-#### E-Commerce Framework - Added methods to interfaces `IOrderAgent` and `ICheckoutManager`
+#### E-Commerce Framework - Added methods to interfaces `IOrderAgent`, `ICheckoutManager` and `ICartManager`
 
-This only affects you, when you created custom implementations of the interfaces `IOrderAgent` or `ICheckoutManager` and
-did not extend the default implementations. Otherwise no action is needed. 
+This only affects you, when you created custom implementations of the interfaces `IOrderAgent`, `ICheckoutManager` or
+`ICartManager` and did not extend the default implementations. Otherwise no action is needed. 
 - `IOrderAgent`: method `public function initPayment();` was added. 
 - `ICheckoutManager`: method `public function initOrderPayment();` was added. 
-
+- `ICartManager`: method `public function getOrCreateCartByName($name);` was added.  
 
 ## Version 5.5.4
 
