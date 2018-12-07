@@ -343,13 +343,19 @@ pimcore.document.link = Class.create(pimcore.document.document, {
                     },
 
                     onNodeOver: function (target, dd, e, data) {
-                        data = data.records[0].data;
-                        return data.type != "folder" ? Ext.dd.DropZone.prototype.dropAllowed : Ext.dd.DropZone.prototype.dropNotAllowed;
+                        if (data.records.length === 1 && data.records[0].data.elementType === "document" && data.records[0].data.type !== "folder") {
+                            return Ext.dd.DropZone.prototype.dropAllowed;
+                        }
                     },
 
                     onNodeDrop: function (target, dd, e, data) {
+
+                        if(!pimcore.helpers.dragAndDropValidateSingleItem(data)) {
+                            return false;
+                        }
+
                         data = data.records[0].data;
-                        if (data.type != "folder") {
+                        if (data.type !== "folder" && data.elementType === "document") {
                             internalTypeField.setValue(data.elementType);
                             linkTypeField.setValue('internal');
                             pathField.setValue(data.path);

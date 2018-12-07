@@ -35,6 +35,7 @@ In the following example, the image (the result of getImage_1()) would be render
 * [ElementCounter](./Operators/ElementCounter.md)
 * [FieldCollectionGetter](./Operators/FieldCollectionGetter.md)
 * [IsEqual](./Operators/IsEqual.md)
+* [Iterator](./Operators/Iterator.md)
 * [JSON Encode/Decode](./Operators/JSON.md)
 * [LFExpander](./Operators/LFExpander.md)
 * [LocaleSwitcher](./Operators/LocaleSwitcher.md)

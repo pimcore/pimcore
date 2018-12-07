@@ -100,7 +100,7 @@ pimcore.document.tags.relation = Class.create(pimcore.document.tag, {
         var record = data.records[0];
 
         record = this.getCustomPimcoreDropData(record);
-        if (this.dndAllowed(record)) {
+        if (data.records.length === 1 && this.dndAllowed(record)) {
             return Ext.dd.DropZone.prototype.dropAllowed;
         }
         else {
@@ -109,8 +109,12 @@ pimcore.document.tags.relation = Class.create(pimcore.document.tag, {
     },
 
     onNodeDrop: function (target, dd, e, data) {
-        var record = data.records[0];
 
+        if(!pimcore.helpers.dragAndDropValidateSingleItem(data)) {
+            return false;
+        }
+
+        var record = data.records[0];
         record = this.getCustomPimcoreDropData(record);
 
         if(!this.dndAllowed(record)){

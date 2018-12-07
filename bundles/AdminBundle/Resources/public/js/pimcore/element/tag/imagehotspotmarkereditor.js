@@ -588,6 +588,11 @@ pimcore.element.tag.imagehotspotmarkereditor = Class.create({
 
     addDataDropTarget: function (type, el) {
         var drop = function (el, target, dd, e, data) {
+
+            if(!pimcore.helpers.dragAndDropValidateSingleItem(data)) {
+                return false;
+            }
+
             data = data.records[0].data;
             if (data.elementType == type) {
                 target.component.setValue(data.path);
@@ -598,8 +603,7 @@ pimcore.element.tag.imagehotspotmarkereditor = Class.create({
         }.bind(this, el);
 
         var over = function (target, dd, e, data) {
-            data = data.records[0].data;
-            if (data.elementType == type) {
+            if (data.records.length === 1 && data.records[0].data.elementType == type) {
                 return Ext.dd.DropZone.prototype.dropAllowed;
             }
             return Ext.dd.DropZone.prototype.dropNotAllowed;

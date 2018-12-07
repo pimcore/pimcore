@@ -1,5 +1,6 @@
 {
   "quicksearch": "Quick Search",
+  "you_can_only_drop_one_element_here": "You can only drop one element here!",
   "grid_options": "Grid Options",
   "open_data_object": "Open Data Object",
   "data_objects": "Data Objects",
@@ -386,6 +387,7 @@
   "active": "Active",
   "success": "Success",
   "translations": "Translations",
+  "translation": "Translation",
   "firstname": "Firstname",
   "lastname": "Lastname",
   "email": "Email",
@@ -472,6 +474,8 @@
   "delete_message_dependencies": "There are dependencies, delete anyway?",
   "delete_message": "Do you really want to delete this item?",
   "delete_message_batch": "Do you really want to delete these elements?",
+  "delete_error_batch": "Following items cannot be deleted, do you wanna proceed with deleting the remaining?",
+  "delete_error": "The item cannot be deleted. Reason:",
   "no_further_objectbricks_allowed": "No further objectbricks allowed",
   "grid_current_language": "Current language",
   "selected_grid_columns": "Selected grid columns",

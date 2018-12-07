@@ -32,16 +32,6 @@ class Listing extends Model\Listing\AbstractListing
     public $layoutDefinitions;
 
     /**
-     * @param $key
-     *
-     * @return bool
-     */
-    public function isValidOrderKey($key)
-    {
-        return true;
-    }
-
-    /**
      * @param array $layoutDefinitions
      */
     public function setLayoutDefinitions($layoutDefinitions)

@@ -57,7 +57,7 @@ class ObjectFieldGetter extends AbstractOperator
 
             if ($this->forwardAttribute) {
                 $forwardGetter = 'get' . ucfirst($this->forwardAttribute);
-                if ($this->attribute && method_exists($element, $forwardGetter)) {
+                if ($this->forwardAttribute && method_exists($element, $forwardGetter)) {
                     $forwardObject = $element->$forwardGetter();
                     if (!$forwardObject) {
                         return $result;

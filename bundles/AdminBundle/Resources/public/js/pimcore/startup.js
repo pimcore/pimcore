@@ -230,6 +230,10 @@ Ext.onReady(function () {
                             if ('undefined' !== typeof json.message && json.message.length > 0) {
                                 errorDetailMessage = json.message;
                             }
+
+                            if(json['traceString']) {
+                                errorDetailMessage += "\nTrace: \n" + json['traceString'];
+                            }
                         }
                     } catch (e) {
                         // noop, just fall back to generic error message (whole response text)

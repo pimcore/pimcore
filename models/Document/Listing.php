@@ -52,31 +52,6 @@ class Listing extends Model\Listing\AbstractListing implements \Zend_Paginator_A
     public $unpublished = false;
 
     /**
-     * Valid order keys
-     *
-     * @var array
-     */
-    public $validOrderKeys = [
-        'creationDate',
-        'modificationDate',
-        'id',
-        'key',
-        'index'
-    ];
-
-    /**
-     * Tests if the given key is an valid order key to sort the results
-     *
-     * @param $key
-     *
-     * @return bool
-     */
-    public function isValidOrderKey($key)
-    {
-        return true;
-    }
-
-    /**
      * Returns documents, also loads the rows if these aren't loaded.
      *
      * @return array

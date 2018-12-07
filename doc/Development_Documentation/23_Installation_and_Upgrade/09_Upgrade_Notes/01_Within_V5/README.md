@@ -2,7 +2,8 @@
 
 
 ## Version 5.6.0
-- Removed method \Pimcore\Model\DataObject\ClassDefinition\Data::setFieldtype($fieldtype)
+- Removed method `\Pimcore\Model\DataObject\ClassDefinition\Data::setFieldtype($fieldtype)`
+- `\Pimcore\Model\Translation\Website::getByKey()` and `\Pimcore\Model\Translation\Admin::getByKey()` are not throwing an exception anymore if an item doesn't exist, instead they are returning `null`
 
 #### Data Objects: renamed relational data-types
 For better understanding we've renamed all relational data-types to a more meaningful name.  
@@ -23,7 +24,7 @@ the JS classes in `pimcore.object.tags` and `pimcore.object.classes.data`.
 | Multihref | `Multihref` | `multihref` | **Many-To-Many Relation** | `ManyToManyRelation` | `manyToManyRelation` | 
 | Multihref Advanced | `MultihrefMetadata` | `multihrefMetadata` | **Advanced Many-To-Many Relation** | `AdvancedManyToManyRelation` | `advancedManyToManyRelation` | 
 | Objects | `Objects` | `objects` | **Many-To-Many Object Relation** | `ManyToManyObjectRelation` | `manyToManyObjectRelation` | 
-| Objects with Metadata | `ObjectsMetadata` | `objectsMetadata` | **Advanced Many-To-One Object Relation** | `AdvancedManyToManyObjectRelation` | `advancedManyToManyObjectRelation` | 
+| Objects with Metadata | `ObjectsMetadata` | `objectsMetadata` | **Advanced Many-To-Many Object Relation** | `AdvancedManyToManyObjectRelation` | `advancedManyToManyObjectRelation` | 
 
 
 #### Documents: renamed relational editables

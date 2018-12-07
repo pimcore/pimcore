@@ -1,377 +1,562 @@
-pimcore.registerNS("pimcore.treenodelocator.x");
+pimcore.registerNS("pimcore.treenodelocator");
 
-pimcore.treenodelocator.showInTree = function (id, elementType, button) {
+pimcore.treenodelocator = function()
+{
 
-    if (button) {
-        button.disable();
-    }
+    /**
+     * Private vars
+     */    
 
-    var callback = function () {
-        if (button) {
-            button.enable();
-        }
-    }
-    pimcore.treenodelocator.startShowInTree(id, elementType, callback, 0);
+    // Holds the state
+    var busy = false;
+    
+    // The states hold current data for each phase of a tree location task.
+    var globalState = null;
+    var treeState = null;
+    var pagingState = null;
+    
+    // Holds the current button.
+    var currentButton = null;
+    
+    // Holds loading indicators type/ids.
+    var loadingIndicators = [];
+    
+    
+    /**
+     * Private functions
+     */
+    var self = {
 
-
-}
-
-pimcore.treenodelocator.startShowInTree = function(id, elementType, callback, treeIdx) {
-    Ext.Ajax.request({
-        url: "/admin/element/type-path",
-        params: {
-            id: id,
-            type: elementType
+        /**
+         * Show tree node of given id and element type (document/asset/object) 
+         * in the first matching tree.
+         */
+        showInTree: function (id, elementType, button) 
+        {
+            // don't allow concurrent execution 
+            if (busy) {
+                return;
+            }
+            
+            busy = true;
+            
+            if (button) {
+            	button.disable();
+                currentButton = button;
+            }
+            self.startShowInTree(id, elementType);
         },
-        success: function (response) {
-            try {
-                var res = Ext.decode(response.responseText);
-                if (res.success) {
-                    var locateConfigs = pimcore.globalmanager.get("tree_locate_configs");
-                    var elementLocateConfigs = locateConfigs[elementType];
-
-                    if (elementLocateConfigs) {
-                        var locateConfig = elementLocateConfigs[treeIdx];
-                        var side = locateConfig.side;
-
-                        var accordion = Ext.getCmp("pimcore_panel_tree_" + side);
-                        if (accordion) {
-                            accordion.expand();
-                        }
-                        var tree = locateConfig.tree;
-                        tree.tree.expand();
-
-                        var rootNode = tree.tree.getRootNode();
-                        var rootNodeId = rootNode.getId();
-
-                        var idPath = res.idPath;
-                        var idParts = idPath.split('/');
-
-                        var idx = idParts.indexOf(rootNodeId);
-                        if (idx) {
-                            idParts.splice(0, idx);
-                            idPath = idParts.join('/');
-                        }
-
-                        pimcore.treenodelocator.searchInTree(res, id, elementType, tree.tree, idPath, callback, treeIdx);
-                    }
-                }
-            } catch (e) {
-                //TODO nothing to do
-                console.log(e);
-                pimcore.treenodelocator.showError(null, null);
-            }
-
-        }.bind(this)
-    });
-
-}
-
-
-pimcore.treenodelocator.reportDone = function (node, id, elementType, callback) {
-    if (node) {
-        pimcore.helpers.removeTreeNodeLoadingIndicator(node, node.id);
-        var tree = node.getOwnerTree();
-        var view = tree.getView();
-        view.focusRow(node);
-    }
-    if (typeof callback == "function") {
-        callback();
-    }
-}
-
-pimcore.treenodelocator.searchInTree = function (element, id, elementType, tree, path, callback, treeIdx) {
-    try {
-
-        var initialData = {
-            tree: tree,
-            path: path,
-            callback: callback
-        };
-
-        tree.selectPath(path, null, '/', function (success, node) {
-            if (!success) {
-                try {
-                    var lastExpandedNode = pimcore.treenodelocator.getLastExpandedNode(path, tree);
-                    if (!lastExpandedNode) {
-                        lastExpandedNode = tree.getRootNode();;
-                    }
-                    if (lastExpandedNode) {
-                        lastExpandedNode.expand();
-                    }
-                    pimcore.treenodelocator.getDirection(lastExpandedNode, element, id, elementType, tree, path, callback, treeIdx, null);
-                } catch (e) {
-                    console.log(e);
-                    pimcore.treenodelocator.showError(lastExpandedNode, id, lastExpandedNode.data.elementType, tree, path, callback, treeIdx);
-                }
-            } else {
-                pimcore.treenodelocator.reportDone(null, null, callback);
-                if (typeof initialData["callback"] == "function") {
-                    initialData["callback"]();
-                }
-            }
-        }.bind(this));
-
-    } catch (e) {
-        console.log(e);
-        pimcore.treenodelocator.showError(element, id, elementType, tree, path, callback, treeIdx);
-    }
-}
-
-pimcore.treenodelocator.getDirection = function (node, element, id, elementType, tree, path, callback, treeIdx, searchData) {
-    if (!searchData) {
-        // new level
-        var pagingData = node.pagingData;
-        var pageCount = 1;
-        if (pagingData) {
-            var page = (pagingData.offset / pagingData.total) + 1;
-            pageCount = Math.ceil(pagingData.total / pagingData.limit);
-        }
-
-        var searchData = {
-            minPage: 1,
-            maxPage: pageCount
-        }
-    }
-
-    var childNodes = node.childNodes;
-    var sortBy = node.data.sortBy;
-    var childCount = childNodes.length;
-
-    var nodePath = node.getPath();
-    var nodeParts = nodePath.split("/");
-
-    if (elementType == "document") {
-        fullPath = element.fullpath;
-        var elementKey = element.index;
-    } else {
-        fullPath = element.fullpath;
-        var elementParts = fullPath.split("/");
-        if (sortBy == "index") {
-            var elementKey = element.index;
-        } else {
-            var elementKey = elementParts[nodeParts.length - 1];
-        }
-    }
-
-
-    var typePath = element.typePath;
-    var typeParts = typePath.split("/");
-    var eType = typeParts[nodeParts.length];
-
-    var idPath = element.idPath;
-
-    if (idPath == nodePath) {
-        var tree = node.getOwnerTree();
-        tree.selectPath(idPath);
-        pimcore.treenodelocator.reportDone(node, id, node.data.elementType, callback);
-        return;
-    }
-
-    var idParts = idPath.split("/");
-    var elementId = idParts[nodeParts.length];
-
-    // check if already a child
-    for (i = 0; i < childCount; i++) {
-        var childNode = childNodes[i];
-        var childId = childNode.id;
-        if (childId == elementId) {
-            if (nodePath != idPath) {
-                childNode.expand();
-                var tree = childNode.getOwnerTree();
-                tree.getSelectionModel().select(childNode);
-                var view = tree.getView();
-                view.focusRow(childNode);
-                childNode.expand(false, pimcore.treenodelocator.reloadComplete.bind(this, childNode, element, id, elementType, tree, path, callback, treeIdx, null));
-            } else {
+        
+        
+        /**
+         * Report final failure.
+         */
+        reportFailed: function()
+        {
+            // @todo: would it be nice to display an error message?
+            self.cleanup();
+        },
+        
+        
+        /**
+         * Report tree node location successful.
+         */
+        reportSuccess: function(node)
+        {
+            if (node) {
                 var tree = node.getOwnerTree();
-                tree.selectPath(idPath);
+                var view = tree.getView();
+                view.focusRow(node);
             }
-            return;
-        }
-    }
-
-    var firstFolderChild = null;
-    var lastFolderChild = null;
-    var firstelementChild = null;
-    var lastelementChild = null;
-
-    for (i = 0; i < childCount; i++) {
-        var childNode = childNodes[i];
-
-        if (elementType == "document" || (elementType == "object" && sortBy == "index")) {
-            lastelementChild = childNode;
-            if (!firstelementChild) {
-                firstelementChild = childNode;
+            self.cleanup();
+        },
+        
+        
+        /**
+         * Clean up after successful or failed tree node location.
+         */
+        cleanup: function()
+        {
+            // re-enable the button
+            if (currentButton) {
+                currentButton.enable();
+                currentButton = null;
             }
-        } else {
 
-            if (childNode.data.type == "folder") {
-                lastFolderChild = childNode;
-                if (!firstFolderChild) {
-                    firstFolderChild = childNode;
+            // reset all states
+            globalState = null;
+            treeState = null;
+            pagingState = null;
+            
+            // there is a race timing condition when the loading indicator gets
+            // cleared before being added - this keeps spinning the indicator 
+            // forever:
+            window.setTimeout(self.clearLoadingIndicators, 200);
+            
+            busy = false;
+        },
+
+        
+        /**
+         * Start tree node location for given id and element type
+         * (one of "document", "asset", "object").
+         */
+        startShowInTree: function(id, elementType) {
+            
+            Ext.Ajax.request({
+                url: "/admin/element/type-path",
+                params: {
+                    id: id,
+                    type: elementType
+                },
+                success: function (response) {
+                    var res = Ext.decode(response.responseText);
+                    if (res.success) {
+
+                        var allLocateConfigs = pimcore.globalmanager.get("tree_locate_configs");
+                        var locateConfigs = allLocateConfigs[elementType];
+                        if (!locateConfigs || locateConfigs.length === 0) {
+                            self.reportFailed();
+                            return;
+                        }
+
+                        globalState = {
+                            idPath: res.idPath,
+                            fullPath: res.fullpath,  // mind lower case here!
+                            typePath: res.typePath,
+                            pathIds: res.idPath.replace(/^\//, "").split("/"),
+                            elementType: elementType,
+                            index: res.index,
+                            locateConfigs: locateConfigs,
+                            currentTreeIndex: 0
+                        };
+                        self.processTree();
+                        
+                    } else {
+                        self.reportFailed();
+                    }
+                },
+                failure: function() {
+                    self.reportFailed();
+                }
+            });
+        },
+        
+        
+        /**
+         * Start tree node location in current tree state. 
+         */
+        processTree: function()
+        {
+            var locateConfig = globalState.locateConfigs[globalState.currentTreeIndex];
+            var tree = locateConfig.tree;
+            var rootNode = tree.tree.getRootNode();
+            var rootNodeId = rootNode.getId();
+            
+            // Tree root may be shifted to a subnode and the item to be shown
+            // is out of tree scope - don't continue if this is the case:
+            if (globalState.pathIds.indexOf(rootNodeId) == -1) {
+                self.reportProcessTreeFailed();
+                return;
+            }
+
+            // The accordion needs to be rendered and tree expanded
+            var accordion = Ext.getCmp("pimcore_panel_tree_" + locateConfig.side);
+            if (accordion) {
+                 accordion.expand();
+            }
+            tree.tree.expand();
+            
+            // We may have a tree with a shifted root defined by a custom view.
+            // Let's create a state for current tree with adjusted values:
+            var idPath = globalState.idPath;
+            
+            // Create an array copy to not tamper the original:
+            var pathIds = globalState.pathIds.slice();
+            
+            var rootNodeIndex = pathIds.indexOf(rootNodeId);
+            if (rootNodeIndex) {
+                pathIds.splice(0, rootNodeIndex);
+                idPath = "/" + pathIds.join("/");
+            }
+            
+            treeState = {
+                tree: tree.tree,
+                rootNode: rootNode,
+                rootNodeId: rootNodeId,
+                idPath: idPath,
+                pathIds: pathIds,
+                reloaded: false
+            };
+            
+            try {
+                self.processFullPath();
+            } catch (err) {
+                self.reportProcessTreeFailed();
+            }
+    
+        },
+        
+        
+        /**
+         * Tree node location has failed in the current tree.
+         */
+        reportProcessTreeFailed: function()
+        {
+            globalState.currentTreeIndex++;
+            if (globalState.currentTreeIndex < globalState.locateConfigs.length) {
+                treeState = null;
+                pagingState = null;
+                self.processTree();
+            } else {
+                self.reportFailed();
+            }
+        },
+        
+        
+        /**
+         * Try to resolve the full path.  
+         */
+        processFullPath: function()
+        {
+            treeState.tree.selectPath(treeState.idPath, null, "/", function (success, node) {
+                if (success) {
+                    self.reportSuccess(node);
+                } else {
+                    self.reportProcessFullPathFailed();
+                }
+            });
+        },
+        
+        
+        /**
+         * Resolving the full path has failed. There may be several reasons, for the target 
+         * node itself or any of its ancestors:
+         * 
+         * - Tree paging is active, and the next child node is on another page
+         * - Tree paging is active, and a search filter has blocked the next child node
+         * - A custom view filters any of our nodes
+         * - Data has changed and our tree store is not up to date anymore
+         * - ...
+         */
+        reportProcessFullPathFailed: function()
+        {
+            var node = self.getLastExpandedNode(treeState.pathIds, treeState.tree);
+            self.addLoadingIndicator(globalState.elementType, node.id);
+
+            // Reload the tree starting from given node once
+            // This solves two issues: All subsequent search filters are reset and we know
+            // that the tree store is up to date:
+            if (treeState.reloaded == false) {
+                self.reloadTree(node);
+                return;
+            }
+            
+            // Next, if the last expanded node has tree paging, try to get to our child node.
+            var pagingData = node.pagingData;
+            if (pagingData) {
+
+                var nodePath = node.getPath();
+                var nodePathIds = nodePath.replace(/^\//, "").split("/");
+                var childNodeId = treeState.pathIds[nodePathIds.length];
+                var total = parseInt(pagingData.total);
+                var limit = parseInt(pagingData.limit);
+                var offset = parseInt(pagingData.offset);
+                var sortBy = node.data.sortBy;
+
+                // We need to figure out the child node's keyname and element type from globalState.
+                // There we have for example:
+                // - fullPath: "/foo/bar/baz"
+                // - typePath: "/folder/folder/object/object"
+                // - idPath: [1, 4, 8, 12]
+                // Mind that the root node obviously has no keyname in fullPath!
+                var pos = globalState.pathIds.indexOf(childNodeId);
+
+                // elementType (from typePath):
+                var pathTypes = globalState.typePath.replace(/^\//, "").split("/");
+                var elementType = pathTypes[pos];
+
+                // elementKey (from fullPath):
+                if (globalState.elementType == "document") {
+                    var elementKey = globalState.index;
+                } else {
+                    if (sortBy == "index") {
+                        var elementKey = globalState.index;
+                    } else {
+                        var pathKeys = globalState.fullPath.replace(/^\//, "").split("/");
+                        var elementKey = pathKeys[pos-1];
+                    }
+                }
+
+                pagingState = {
+                    node: node,
+                    childNodeId: childNodeId,
+                    total: total,
+                    limit: limit,
+                    offset: offset,
+                    activePage: (offset / total) + 1,
+                    pageCount: Math.ceil(total / limit),
+                    minPage: 1,
+                    maxPage: Math.ceil(total / limit),
+                    sortBy: sortBy,
+                    elementKey: elementKey,
+                    elementType: elementType
+                };
+                
+                self.processPaging();
+                
+            } else {
+                
+                self.reportProcessTreeFailed();
+                
+            }
+        },
+        
+        
+        /**
+         * Check if the next child node in current paging state is present. 
+         */
+        processPaging: function() 
+        {
+            var node = pagingState.node;
+            var childNodes = node.childNodes;
+            var sortBy = node.data.sortBy;
+            var childCount = childNodes.length;
+
+            // Check if child exists
+            for (i = 0; i < childCount; i++) {
+                var childNode = childNodes[i];
+                if (childNode.id == pagingState.childNodeId) {
+                    self.reportProcessPagingSuccess();
+                    return;
                 }
             }
 
-            if (childNode.data.type != "folder") {
-                lastelementChild = childNode;
-                if (!firstelementChild) {
-                    firstelementChild = childNode;
+            // Find out if we have to move forward or backward in paging:
+            var direction = 0;
+            var firstFolderChild = null;
+            var lastFolderChild = null;
+            var firstelementChild = null;
+            var lastelementChild = null;
+
+            for (i = 0; i < childCount; i++) {
+                var childNode = childNodes[i];
+                if (globalState.elementType == "document" || (globalState.elementType == "object" && sortBy == "index")) {
+                    lastelementChild = childNode;
+                    if (!firstelementChild) {
+                        firstelementChild = childNode;
+                    }
+                } else {
+                    if (childNode.data.type == "folder") {
+                        lastFolderChild = childNode;
+                        if (!firstFolderChild) {
+                            firstFolderChild = childNode;
+                        }
+                    }
+                    if (childNode.data.type != "folder") {
+                        lastelementChild = childNode;
+                        if (!firstelementChild) {
+                            firstelementChild = childNode;
+                        }
+                    }
                 }
             }
+            
+            if (pagingState.elementType == "document") {
+                direction = self.getDirectionForElementsSortedByIndex(
+                    pagingState.elementKey,
+                    firstelementChild,
+                    lastelementChild
+                );
+            } else {
+                if (node.data.sortBy == "index") {
+                    direction = self.getDirectionForElementsSortedByIndex(
+                        pagingState.elementKey,
+                        firstelementChild,
+                        lastelementChild
+                    );
+                } else {
+                    direction = self.getDirectionForElementsSortedByKey(
+                        pagingState.elementKey,
+                        pagingState.elementType,
+                        firstFolderChild,
+                        lastFolderChild,
+                        firstelementChild,
+                        lastelementChild
+                    );
+                }
+            }
+            
+            // switch to page depending on direction:
+            if (direction == -1) {
+                pagingState.maxPage = pagingState.activePage - 1;
+                newPage = (pagingState.minPage + pagingState.maxPage) / 2;
+                self.switchToPage(newPage);
+            } else if (direction == 1) {
+                pagingState.minPage = pagingState.activePage + 1;
+                newPage = (pagingState.minPage + pagingState.maxPage) / 2;
+                self.switchToPage(newPage);
+            } else {
+                // Child node was supposed to be on current page, but obviously isn't.
+                // It may be filtered using a custom view or not being displayed for other
+                // reason - anyway there is nothing more to do here:
+                self.reportProcessPagingFailed();
+            }
+        },
+        
+        
+        /**
+         * Resolving the child node in current paging state failed.
+         */
+        reportProcessPagingFailed: function()
+        {
+            pagingState = null;
+            self.reportProcessTreeFailed();
+        },
+        
+        
+        /**
+         * Resolving the child node in current paging state was succesful.
+         */
+        reportProcessPagingSuccess: function()
+        {
+            pagingState = null;
+            self.processFullPath();
+        },
+        
+        
+        /**
+         * Switch to given page in current paging state.
+         */
+        switchToPage: function(pageNumber) {
+            pageNumber = Math.floor(pageNumber);
+            if ((pageNumber > pagingState.maxPage || pageNumber < pagingState.minPage)) {
+                self.reportProcessPagingFailed();
+                return;
+            }
+            
+            var node = pagingState.node;
+            var store = node.getTreeStore();
+            var proxy = store.getProxy();
+            
+            pagingState.offset = pagingState.limit * (pageNumber - 1);
+            pagingState.activePage = pageNumber;
+            
+            proxy.setExtraParam("start", pagingState.offset);
+            node.pagingData.offset = pagingState.offset;
+
+            store.load({
+                node: node,
+                callback: self.processPaging
+            });
+        },
+        
+        
+        /**
+         * Reload the tree starting from given node.
+         */
+        reloadTree: function(node)
+        {
+            treeState.reloaded = true;
+            var store = node.getTreeStore();
+            var proxy = store.getProxy();
+            store.load({
+                node: node,
+                callback: self.processFullPath
+            });
+        },
+        
+        
+        /**
+         * Returns the last expanded node of given tree.
+         */
+        getLastExpandedNode: function (pathIds, tree) {
+            var lastNode = tree.getRootNode();
+            var store = tree.getStore();
+            for (var i=0; i<pathIds.length; i++) {                
+                var testNode = store.getNodeById(pathIds[i]);
+                if (testNode) {
+                    lastNode = testNode;
+                } else {
+                    return lastNode;
+                }
+            }
+            return lastNode;
+        },
+        
+        
+        /**
+         * Returns the direction (-1/+1/0) for elements sorted by key.
+         */
+        getDirectionForElementsSortedByKey: function (elementKey, elementType, firstFolderChild, lastFolderChild, firstElementChild, lastElementChild) {
+            var direction = 0;
+            if (elementType == "folder") {
+                if (firstFolderChild && elementKey.toUpperCase() < firstFolderChild.data.text.toUpperCase()) {
+                    direction = -1;
+                } else if (lastFolderChild && elementKey.toUpperCase() > lastFolderChild.data.text.toUpperCase()) {
+                    direction = 1;
+                } else if (firstElementChild) {
+                    direction = -1;
+                }
+            } else {
+                if (lastFolderChild) {
+                    direction = 1;
+                } else if (firstElementChild && elementKey.toUpperCase() < firstElementChild.data.text.toUpperCase()) {
+                    direction = -1;
+                } else if (lastElementChild && elementKey.toUpperCase() > lastElementChild.data.text.toUpperCase()) {
+                    direction = 1;
+                }
+            }
+            return direction;
+        },
+        
+        
+        /**
+         * Returns the direction (-1/+1/0) for elements sorted by index.
+         */
+        getDirectionForElementsSortedByIndex: function(elementKey, firstElementChild, lastElementChild) {
+            var direction = 0;
+            if (firstElementChild && elementKey < firstElementChild.data.idx) {
+                direction = -1;
+            } else if (lastElementChild && elementKey > lastElementChild.data.idx) {
+                direction = 1;
+            }
+            return direction;
+        },
+        
+        
+        
+        /**
+         * Add a loading indicator for given type (document/asset/object) and id.
+         */
+        addLoadingIndicator(type, id)
+        {
+            loadingIndicators.push({type:type, id:id});
+            pimcore.helpers.addTreeNodeLoadingIndicator(type, id);
+        },
+        
+        
+        /**
+         * Clear all loading indicators.
+         */
+        clearLoadingIndicators()
+        {
+            for (var i=0; i<loadingIndicators.length; i++) {
+                pimcore.helpers.removeTreeNodeLoadingIndicator(loadingIndicators[i].type, loadingIndicators[i].id);
+            }
+            loadingIndicators = [];
         }
-    }
+        
+    };
+    
 
-    // we are looking for type elementType
-    var direction = 0;
-    var firstKey = null;
-    var lastKey = null;
-
-    if (elementType == "document") {
-        direction = pimcore.treenodelocator.getDirectionForElementsSortedByIndex(
-            elementKey, firstelementChild, lastelementChild, element, id, elementType, tree, path, callback, treeIdx
-        );
-    } else {
-        if (node.data.sortBy == "index") {
-            direction = pimcore.treenodelocator.getDirectionForElementsSortedByIndex(
-                elementKey, firstelementChild, lastelementChild, element, id, elementType, tree, path, callback, treeIdx
-            );
-        } else {
-            direction = pimcore.treenodelocator.getDirectionForElementsSortedByKey(
-                elementKey, eType, firstFolderChild, lastFolderChild, firstelementChild, lastelementChild
-            );
-        }
-    }
-
-    var pagingData = node.pagingData;
-    if (!pagingData) {
-        pimcore.treenodelocator.showError(node, id, node.data.elementType, tree, path, callback, treeIdx);
-        return;
-    }
-
-    var activePage = Math.ceil(pagingData.offset / pagingData.limit) + 1;
-    var pageCount = Math.ceil(pagingData.total / pagingData.limit);
+    /**
+     * Expose public functions
+     */
+    return {
+        showInTree: self.showInTree
+    };
+    
+}();
 
 
-    if (direction == -1) {
-        searchData.maxPage = activePage - 1;
-        newPage = (searchData.minPage + searchData.maxPage) / 2;
-        pimcore.treenodelocator.switchToPage(node, newPage, element, id, elementType, tree, path, callback, treeIdx, searchData);
-    } else if (direction == 1) {
-
-        searchData.minPage = activePage + 1;
-        newPage = (searchData.minPage + searchData.maxPage) / 2;
-        pimcore.treenodelocator.switchToPage(node, newPage, element, id, elementType, tree, path, callback, treeIdx, searchData);
-    } else {
-        pimcore.treenodelocator.reportDone(node, id, node.data.elementType, callback);
-    }
-}
-
-pimcore.treenodelocator.getDirectionForElementsSortedByKey = function (elementKey, eType, firstFolderChild, lastFolderChild, firstElementChild, lastElementChild) {
-    var direction = 0;
-
-    if (eType == "folder") {
-        if (firstFolderChild && elementKey.toUpperCase() < firstFolderChild.data.text.toUpperCase()) {
-            direction = -1;
-        } else if (lastFolderChild && elementKey.toUpperCase() > lastFolderChild.data.text.toUpperCase()) {
-            direction = 1;
-        } else if (firstElementChild) {
-            direction = -1;
-        }
-    } else {
-        if (lastFolderChild) {
-            direction = 1;
-        } else if (firstElementChild && elementKey.toUpperCase() < firstElementChild.data.text.toUpperCase()) {
-            direction = -1;
-        } else if (lastElementChild && elementKey.toUpperCase() > lastElementChild.data.text.toUpperCase()) {
-            direction = 1;
-        }
-    }
-
-    return direction;
-}
-
-pimcore.treenodelocator.getDirectionForElementsSortedByIndex = function (elementKey, firstElementChild, lastElementChild, element, id, elementType, tree, path, callback, treeIdx) {
-    var direction = 0;
-
-    if (firstElementChild && elementKey < firstElementChild.data.idx) {
-        direction = -1;
-    } else if (lastElementChild && elementKey > lastElementChild.data.idx) {
-        direction = 1;
-    } else {
-        pimcore.treenodelocator.showError(node, id, elementType, tree, path, callback, treeIdx);
-    }
-
-    return direction;
-}
-
-pimcore.treenodelocator.reloadComplete = function (node, element, id, elementType, tree, path, callback, treeIdx, searchData) {
-    try {
-        pimcore.treenodelocator.getDirection(node, element, id, elementType, tree, path, callback, treeIdx, searchData);
-    } catch (e) {
-        console.log(e);
-        pimcore.treenodelocator.showError(node, id, node.data.elementType, elementType, tree, path, callback, treeIdx);
-    }
-}
-
-pimcore.treenodelocator.switchToPage = function (node, pageNumber, element, id, elementType, tree, path, callback, treeIdx, searchData) {
-    try {
-        pageNumber = Math.floor(pageNumber);
-
-        if (pageNumber < 1) {
-            pimcore.treenodelocator.reportDone(node, id, node.data.elementType, callback);
-            return;
-        }
-
-        var pagingData = node.pagingData;
-
-        var offset = pagingData.limit * (pageNumber - 1);
-        node.pagingData.offset = offset;
-
-        var store = node.getTreeStore();
-
-        var proxy = store.getProxy();
-
-        proxy.setExtraParam("start", offset);
-
-        pimcore.helpers.addTreeNodeLoadingIndicator(node.data.elementType, node.id);
-
-        store.load({
-            node: node,
-            callback: pimcore.treenodelocator.reloadComplete.bind(this, node, element, id, elementType, tree, path, callback, treeIdx, searchData)
-        });
-    } catch (e) {
-        console.log(e);
-        pimcore.treenodelocator.showError(node, id, node.data.elementType, tree, path, callback, treeIdx);
-    }
-}
-
-
-pimcore.treenodelocator.getLastExpandedNode = function (path, tree) {
-    var ids = path.split("/");
-    var arrayLength = ids.length;
-    var store = tree.getStore();
-    var lastExpandedId = ids[1];
-    var lastExpandedNode = store.getNodeById(lastExpandedId);
-
-    return lastExpandedNode;
-}
-
-pimcore.treenodelocator.showError = function (element, id, elementType, tree, path, callback, treeIdx) {
-
-
-
-    var locateConfigs = pimcore.globalmanager.get("tree_locate_configs");
-    var elementLocateConfigs = locateConfigs[elementType];
-    if (elementLocateConfigs && elementLocateConfigs.length > treeIdx + 1) {
-        treeIdx++;
-        pimcore.treenodelocator.startShowInTree(id, elementType, callback, treeIdx);
-        return;
-    }
-    if (element) {
-        pimcore.helpers.removeTreeNodeLoadingIndicator(elementType, element.id, treeIdx, id);
-    }
-
-
-    Ext.MessageBox.alert(t("error"), t("not_possible_with_paging"));
-}

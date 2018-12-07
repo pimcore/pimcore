@@ -19,6 +19,7 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
+use Pimcore\Tool\Serialize;
 
 class Video extends Model\DataObject\ClassDefinition\Data
 {
@@ -113,8 +114,10 @@ class Video extends Model\DataObject\ClassDefinition\Data
      */
     public function getDataForResource($data, $object = null, $params = [])
     {
-        if ($data) {
+        if ($data instanceof DataObject\Data\Video) {
             $data = clone $data;
+            $data->setOwner(null, '');
+
             if ($data->getData() instanceof Asset) {
                 $data->setData($data->getData()->getId());
             }
@@ -122,10 +125,9 @@ class Video extends Model\DataObject\ClassDefinition\Data
                 $data->setPoster($data->getPoster()->getId());
             }
 
-            /** @var $data DataObject\Data\Video */
             $data = object2array($data->getObjectVars());
 
-            return serialize($data);
+            return Serialize::serialize($data);
         }
 
         return null;
@@ -138,14 +140,14 @@ class Video extends Model\DataObject\ClassDefinition\Data
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
-     * @return Asset
+     * @return DataObject\Data\Video|null
      */
     public function getDataFromResource($data, $object = null, $params = [])
     {
         if ($data) {
-            $raw = unserialize($data);
+            $raw = Serialize::unserialize($data);
 
-            if ($raw['type'] == 'asset') {
+            if ($raw['type'] === 'asset') {
                 if ($asset = Asset::getById($raw['data'])) {
                     $raw['data'] = $asset;
                 }
@@ -159,6 +161,9 @@ class Video extends Model\DataObject\ClassDefinition\Data
 
             if ($raw['data']) {
                 $video = new DataObject\Data\Video();
+                if (isset($params['owner'])) {
+                    $video->setOwner($params['owner'], $params['fieldname'], $params['language']);
+                }
                 $video->setData($raw['data']);
                 $video->setType($raw['type']);
                 $video->setPoster($raw['poster']);
@@ -175,7 +180,7 @@ class Video extends Model\DataObject\ClassDefinition\Data
     /**
      * @see DataObject\ClassDefinition\Data::getDataForQueryResource
      *
-     * @param Asset $data
+     * @param DataObject\Data\Video $data
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
@@ -189,11 +194,11 @@ class Video extends Model\DataObject\ClassDefinition\Data
     /**
      * @see DataObject\ClassDefinition\Data::getDataForEditmode
      *
-     * @param Asset $data
+     * @param DataObject\Data\Video $data
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
-     * @return int
+     * @return DataObject\Data\Video
      */
     public function getDataForEditmode($data, $object = null, $params = [])
     {
@@ -218,7 +223,7 @@ class Video extends Model\DataObject\ClassDefinition\Data
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
-     * @return Asset
+     * @return DataObject\Data\Video|null
      */
     public function getDataFromEditmode($data, $object = null, $params = [])
     {
@@ -257,7 +262,7 @@ class Video extends Model\DataObject\ClassDefinition\Data
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
-     * @return Asset
+     * @return DataObject\Data\Video
      */
     public function getDataFromGridEditor($data, $object = null, $params = [])
     {
@@ -265,7 +270,7 @@ class Video extends Model\DataObject\ClassDefinition\Data
     }
 
     /**
-     * @param $data
+     * @param DataObject\Data\Video $data
      * @param null $object
      * @param mixed $params
      *
@@ -443,7 +448,7 @@ class Video extends Model\DataObject\ClassDefinition\Data
     {
         $data = $this->getDataFromObjectParam($object, $params);
         if ($data) {
-            return  $this->getDataForResource($data, $params);
+            return $this->getDataForResource($data, $object, $params);
         }
     }
 
@@ -463,7 +468,7 @@ class Video extends Model\DataObject\ClassDefinition\Data
             if (! strlen($value)) {
                 return null;
             }
-            $data = unserialize($value);
+            $data = Serialize::unserialize($value);
             if ($data === false) {
                 throw new \Exception('cannot get object video data from web service import - value cannot be decoded');
             }

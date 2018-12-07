@@ -193,44 +193,6 @@ pimcore.object.classes.data.select = Class.create(pimcore.object.classes.data.da
 
 
         this.selectionModel = valueGrid.getSelectionModel();
-        valueGrid.on("afterrender", function () {
-
-            var dropTargetEl = valueGrid.getEl();
-            var gridDropTarget = new Ext.dd.DropZone(dropTargetEl, {
-                ddGroup: 'objectclassselect',
-                getTargetFromEvent: function (e) {
-                    return valueGrid.getEl().dom;
-                }.bind(this),
-                onNodeOver: function (overHtmlNode, ddSource, e, data) {
-                    try {
-                        if (data["grid"] && data["grid"] == valueGrid) {
-                            return Ext.dd.DropZone.prototype.dropAllowed;
-                        }
-                    } catch (e) {
-                        console.log(e);
-                    }
-                    return Ext.dd.DropZone.prototype.dropNotAllowed;
-
-                }.bind(this),
-                onNodeDrop: function (target, dd, e, data) {
-                    try {
-                        if (data["grid"] && data["grid"] == valueGrid) {
-                            var rowIndex = valueGrid.getView().findRowIndex(e.target);
-                            if (rowIndex !== false) {
-                                var store = valueGrid.getStore();
-                                var rec = store.getAt(data.rowIndex);
-                                store.removeAt(data.rowIndex);
-                                store.insert(rowIndex, [rec]);
-                            }
-                        }
-                    } catch (e) {
-                        console.log(e);
-                    }
-                    return false;
-                }.bind(this)
-            });
-        }.bind(this));
-
 
         var items = [];
 
@@ -275,7 +237,6 @@ pimcore.object.classes.data.select = Class.create(pimcore.object.classes.data.da
 
         items.push(valueGrid);
         return items;
-
     },
 
     applyData: function ($super) {

@@ -31,7 +31,14 @@ abstract class Dao extends Model\Dao\AbstractDao implements Dao\DaoInterface
      */
     public function getByKey($key)
     {
-        $data = $this->db->fetchAll('SELECT * FROM ' . static::getTableName() . ' WHERE `key` = ? ORDER BY `creationDate` ', [$key]);
+        $caseInsensitive = \Pimcore::getContainer()->getParameter('pimcore.config')['translations']['case_insensitive'];
+
+        $condition = '`key` = ?';
+        if ($caseInsensitive) {
+            $condition = 'LOWER(`key`) = LOWER(?)';
+        }
+        $data = $this->db->fetchAll('SELECT * FROM ' . static::getTableName() . ' WHERE ' . $condition . ' ORDER BY `creationDate` ', [$key]);
+
         if (!empty($data)) {
             foreach ($data as $d) {
                 $this->model->addTranslation($d['language'], $d['text']);

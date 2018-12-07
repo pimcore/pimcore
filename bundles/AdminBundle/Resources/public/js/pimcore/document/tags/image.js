@@ -241,10 +241,7 @@ pimcore.document.tags.image = Class.create(pimcore.document.tag, {
     },
 
     onNodeOver: function(target, dd, e, data) {
-        var record = data.records[0];
-        data = record.data;
-
-        if (this.dndAllowed(data) && !this.inherited) {
+        if (data.records.length === 1 && this.dndAllowed(data.records[0].data) && !this.inherited) {
             return Ext.dd.DropZone.prototype.dropAllowed;
         }
         else {
@@ -253,10 +250,14 @@ pimcore.document.tags.image = Class.create(pimcore.document.tag, {
     },
 
     onNodeDrop: function (target, dd, e, data) {
-        var record = data.records[0];
-        data = record.data;
 
-        if (data.type == "image" && this.dndAllowed(data) && !this.inherited) {
+        if(!pimcore.helpers.dragAndDropValidateSingleItem(data)) {
+            return false;
+        }
+
+        data = data.records[0].data;
+
+        if (data.type === "image" && this.dndAllowed(data) && !this.inherited) {
             this.resetData();
             this.datax.id = data.id;
 
@@ -271,7 +272,7 @@ pimcore.document.tags.image = Class.create(pimcore.document.tag, {
 
     dndAllowed: function(data) {
 
-        if(data.elementType!="asset" || data.type!="image"){
+        if(data.elementType !== "asset" || data.type !== "image"){
             return false;
         } else {
             return true;

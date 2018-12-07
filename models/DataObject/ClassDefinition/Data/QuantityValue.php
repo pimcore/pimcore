@@ -190,15 +190,15 @@ class QuantityValue extends Model\DataObject\ClassDefinition\Data
     /**
      * @see Object_Class_Data::getDataForResource
      *
-     * @param float $data
+     * @param Model\DataObject\Data\QuantityValue $data
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
-     * @return float
+     * @return array
      */
     public function getDataForResource($data, $object = null, $params = [])
     {
-        if ($data instanceof \Pimcore\Model\DataObject\Data\QuantityValue) {
+        if ($data instanceof Model\DataObject\Data\QuantityValue) {
             return [
                 $this->getName() . '__value' => $data->getValue(),
                 $this->getName() . '__unit' => $data->getUnitId()
@@ -214,33 +214,39 @@ class QuantityValue extends Model\DataObject\ClassDefinition\Data
     /**
      * @see Object_Class_Data::getDataFromResource
      *
-     * @param float $data
+     * @param array $data
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
-     * @return float
+     * @return Model\DataObject\Data\QuantityValue|null
      */
     public function getDataFromResource($data, $object = null, $params = [])
     {
         if ($data[$this->getName() . '__value'] || $data[$this->getName() . '__unit']) {
-            return new  \Pimcore\Model\DataObject\Data\QuantityValue($data[$this->getName() . '__value'], $data[$this->getName() . '__unit']);
+            $quantityValue = new Model\DataObject\Data\QuantityValue($data[$this->getName() . '__value'], $data[$this->getName() . '__unit']);
+
+            if (isset($params['owner'])) {
+                $quantityValue->setOwner($params['owner'], $params['fieldname'], $params['language']);
+            }
+
+            return $quantityValue;
         }
 
-        return;
+        return null;
     }
 
     /**
      * @see Object_Class_Data::getDataForQueryResource
      *
-     * @param float $data
+     * @param Model\DataObject\Data\QuantityValue $data
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
-     * @return float
+     * @return array
      */
     public function getDataForQueryResource($data, $object = null, $params = [])
     {
-        return $this->getDataForResource($data);
+        return $this->getDataForResource($data, $object, $params);
     }
 
     /**
@@ -250,18 +256,18 @@ class QuantityValue extends Model\DataObject\ClassDefinition\Data
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
-     * @return float
+     * @return array|null
      */
     public function getDataForEditmode($data, $object = null, $params = [])
     {
-        if ($data instanceof  \Pimcore\Model\DataObject\Data\QuantityValue) {
+        if ($data instanceof Model\DataObject\Data\QuantityValue) {
             return [
                 'value' => $data->getValue(),
                 'unit' => $data->getUnitId()
             ];
         }
 
-        return;
+        return null;
     }
 
     /**
@@ -283,23 +289,21 @@ class QuantityValue extends Model\DataObject\ClassDefinition\Data
      * @param Model\DataObject\Concrete $object
      * @param mixed $params
      *
-     * @return float
+     * @return Model\DataObject\Data\QuantityValue|null
      */
     public function getDataFromEditmode($data, $object = null, $params = [])
     {
         if ($data['value'] || $data['unit']) {
             if (is_numeric($data['unit'])) {
                 if ($data['unit'] == -1 || $data['unit'] == null || empty($data['unit'])) {
-                    return new \Pimcore\Model\DataObject\Data\QuantityValue($data['value'], null);
-                } else {
-                    return new \Pimcore\Model\DataObject\Data\QuantityValue($data['value'], $data['unit']);
+                    return new Model\DataObject\Data\QuantityValue($data['value'], null);
                 }
-            }
 
-            return;
+                return new Model\DataObject\Data\QuantityValue($data['value'], $data['unit']);
+            }
         }
 
-        return;
+        return null;
     }
 
     /**

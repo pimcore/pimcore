@@ -90,7 +90,7 @@ class EncryptedField extends Model\DataObject\ClassDefinition\Data
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
-     * @return array
+     * @return mixed
      */
     public function getDataForResource($data, $object = null, $params = [])
     {
@@ -106,6 +106,8 @@ class EncryptedField extends Model\DataObject\ClassDefinition\Data
                 }
             }
         }
+
+        return null;
     }
 
     /**
@@ -193,7 +195,7 @@ class EncryptedField extends Model\DataObject\ClassDefinition\Data
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
-     * @return Model\DataObject\Data\RgbaColor|null
+     * @return Model\DataObject\Data\EncryptedField|null
      */
     public function getDataFromResource($data, $object = null, $params = [])
     {
@@ -202,8 +204,16 @@ class EncryptedField extends Model\DataObject\ClassDefinition\Data
             $data = $this->decrypt($data, $object, $params);
             $data = $fd->getDataFromResource($data, $object, $params);
 
-            return new Model\DataObject\Data\EncryptedField($this->delegate, $data);
+            $field = new Model\DataObject\Data\EncryptedField($this->delegate, $data);
+
+            if (isset($params['owner'])) {
+                $field->setOwner($params['owner'], $params['fieldname'], $params['language']);
+            }
+
+            return $field;
         }
+
+        return null;
     }
 
     /**

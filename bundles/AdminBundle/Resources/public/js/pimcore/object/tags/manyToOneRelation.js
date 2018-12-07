@@ -89,17 +89,9 @@ pimcore.object.tags.manyToOneRelation = Class.create(pimcore.object.tags.abstrac
                 },
 
                 onNodeOver: function (target, dd, e, data) {
-
-                    var record = data.records[0];
-                    var data = record.data;
-
-                    if (this.dndAllowed(data)) {
+                    if (data.records.length === 1 && this.dndAllowed(data.records[0].data)) {
                         return Ext.dd.DropZone.prototype.dropAllowed;
                     }
-                    else {
-                        return Ext.dd.DropZone.prototype.dropNotAllowed;
-                    }
-
                 }.bind(this),
 
                 onNodeDrop: this.onNodeDrop.bind(this)
@@ -237,8 +229,12 @@ pimcore.object.tags.manyToOneRelation = Class.create(pimcore.object.tags.abstrac
     },
 
     onNodeDrop: function (target, dd, e, data) {
-        var record = data.records[0];
-        var data = record.data;
+
+        if(!pimcore.helpers.dragAndDropValidateSingleItem(data)) {
+            return false;
+        }
+
+        data = data.records[0].data;
 
         if (this.dndAllowed(data)) {
             this.data.id = data.id;
@@ -246,10 +242,10 @@ pimcore.object.tags.manyToOneRelation = Class.create(pimcore.object.tags.abstrac
             this.data.subtype = data.type;
             this.data.path = data.path;
             this.dataChanged = true;
-            this.dataChanged = true;        
+            this.dataChanged = true;
             this.component.removeCls("strikeThrough");
             if (data.published === false) {
-              this.component.addCls("strikeThrough");
+                this.component.addCls("strikeThrough");
             }
             this.component.setValue(data.path);
             this.requestNicePathData();

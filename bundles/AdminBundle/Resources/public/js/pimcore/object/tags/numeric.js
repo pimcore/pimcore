@@ -148,7 +148,7 @@ pimcore.object.tags.numeric = Class.create(pimcore.object.tags.abstract, {
         input.width += input.labelWidth;
 
         this.component = new Ext.form.TextField(input);
-        this.component.disable();
+        this.component.setReadOnly(true);
 
         return this.component;
     },

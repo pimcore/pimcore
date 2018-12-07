@@ -115,7 +115,7 @@ class Block extends Model\DataObject\ClassDefinition\Data
     /**
      * @see DataObject\ClassDefinition\Data::getDataForResource
      *
-     * @param string $data
+     * @param array $data
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
@@ -166,14 +166,14 @@ class Block extends Model\DataObject\ClassDefinition\Data
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
-     * @return string
+     * @return array|null
      */
     public function getDataFromResource($data, $object = null, $params = [])
     {
         if ($data) {
             $count = 0;
 
-            $unserializedData = unserialize($data);
+            $unserializedData = Serialize::unserialize($data);
             $result = [];
 
             foreach ($unserializedData as $blockElements) {
@@ -210,6 +210,11 @@ class Block extends Model\DataObject\ClassDefinition\Data
                         }
                     }
                     $blockElement = new DataObject\Data\BlockElement($blockElementRaw['name'], $blockElementRaw['type'], $blockElementRaw['data']);
+
+                    if (isset($params['owner'])) {
+                        $blockElement->setOwner($params['owner'], $params['fieldname'], $params['language']);
+                    }
+
                     $items[$elementName] = $blockElement;
                 }
                 $result[] = $items;

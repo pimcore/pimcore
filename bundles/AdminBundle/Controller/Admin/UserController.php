@@ -507,7 +507,7 @@ class UserController extends AdminController implements EventedControllerInterfa
     }
 
     /**
-     * @Route("/user/upload-current-user-image", methods={"GET"})
+     * @Route("/user/upload-current-user-image", methods={"POST"})
      *
      * @param Request $request
      *
@@ -518,7 +518,7 @@ class UserController extends AdminController implements EventedControllerInterfa
         $user = $this->getAdminUser();
         if ($user != null) {
             if ($user->getId() == $request->get('id')) {
-                $this->uploadImageAction();
+                return $this->uploadImageAction($request);
             } else {
                 Logger::warn('prevented save current user, because ids do not match. ');
 

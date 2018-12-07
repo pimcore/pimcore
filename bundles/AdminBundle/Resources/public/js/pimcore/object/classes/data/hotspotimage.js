@@ -74,6 +74,7 @@ pimcore.object.classes.data.hotspotimage = Class.create(pimcore.object.classes.d
                     width: "100%",
                     value: this.datax.predefinedDataTemplates,
                     validator: function (value) {
+                        if(Ext.isString(value) && value.length > 3)
                         try {
                             Ext.decode(value);
                             return true;

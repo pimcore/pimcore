@@ -33,18 +33,6 @@ class Listing extends Model\Listing\AbstractListing
     public $importconfigs = [];
 
     /**
-     * Tests if the given key is an valid order key to sort the results
-     *
-     * @param $key
-     *
-     * @return bool
-     */
-    public function isValidOrderKey($key)
-    {
-        return true;
-    }
-
-    /**
      * @return array
      */
     public function getImportconfigs(): array

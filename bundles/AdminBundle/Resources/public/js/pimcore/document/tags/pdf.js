@@ -150,8 +150,7 @@ pimcore.document.tags.pdf = Class.create(pimcore.document.tag, {
     },
 
     onNodeOver: function(target, dd, e, data) {
-        var record = data.records[0];
-        if (this.dndAllowed(record)) {
+        if (data.records.length === 1 && this.dndAllowed(data.records[0])) {
             return Ext.dd.DropZone.prototype.dropAllowed;
         }
         else {
@@ -160,11 +159,15 @@ pimcore.document.tags.pdf = Class.create(pimcore.document.tag, {
     },
 
     onNodeDrop: function (target, dd, e, data) {
-        var record = data.records[0];
 
-        if (record.data.type == "document") {
+        if(!pimcore.helpers.dragAndDropValidateSingleItem(data)) {
+            return false;
+        }
+
+        data = data.records[0].data;
+        if (data.elementType === "asset" && data.type === "document") {
             this.resetData();
-            this.data.id = record.data.id;
+            this.data.id = data.id;
 
             this.updateImage();
             this.reload();
@@ -175,7 +178,7 @@ pimcore.document.tags.pdf = Class.create(pimcore.document.tag, {
 
     dndAllowed: function(record) {
 
-        if(record.data.elementType!="asset" || record.data.type!="document"){
+        if(record.data.elementType !== "asset" || record.data.type !== "document"){
             return false;
         } else {
             return true;

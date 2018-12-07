@@ -62,7 +62,7 @@ class Geopoint extends Model\DataObject\ClassDefinition\Data\Geo\AbstractGeo
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
-     * @return string
+     * @return array
      */
     public function getDataForResource($data, $object = null, $params = [])
     {
@@ -82,19 +82,25 @@ class Geopoint extends Model\DataObject\ClassDefinition\Data\Geo\AbstractGeo
     /**
      * @see DataObject\ClassDefinition\Data::getDataFromResource
      *
-     * @param string $data
+     * @param array $data
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
-     * @return string
+     * @return DataObject\Data\Geopoint|null
      */
     public function getDataFromResource($data, $object = null, $params = [])
     {
         if ($data[$this->getName() . '__longitude'] && $data[$this->getName() . '__latitude']) {
-            return new DataObject\Data\Geopoint($data[$this->getName() . '__longitude'], $data[$this->getName() . '__latitude']);
+            $geopoint = new DataObject\Data\Geopoint($data[$this->getName() . '__longitude'], $data[$this->getName() . '__latitude']);
+
+            if (isset($params['owner'])) {
+                $geopoint->setOwner($params['owner'], $params['fieldname'], $params['language']);
+            }
+
+            return $geopoint;
         }
 
-        return;
+        return null;
     }
 
     /**
@@ -104,7 +110,7 @@ class Geopoint extends Model\DataObject\ClassDefinition\Data\Geo\AbstractGeo
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
-     * @return string
+     * @return array
      */
     public function getDataForQueryResource($data, $object = null, $params = [])
     {

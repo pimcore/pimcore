@@ -44,5 +44,4 @@ pimcore.plugin.admin = Class.create({
 
     pimcoreReady: function (viewport) {
     }
-
 });

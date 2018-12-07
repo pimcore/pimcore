@@ -216,76 +216,80 @@ pimcore.object.tags.manyToManyRelation = Class.create(pimcore.object.tags.abstra
                     return this.component.getEl().dom;
                     //return e.getTarget(this.grid.getView().rowSelector);
                 }.bind(this),
+
                 onNodeOver: function (overHtmlNode, ddSource, e, data) {
                     try {
-                        var record = data.records[0];
-                        var data = record.data;
-                        var fromTree = this.isFromTree(ddSource);
+                        var returnValue = Ext.dd.DropZone.prototype.dropAllowed;
+                        data.records.forEach(function (record) {
+                            var fromTree = this.isFromTree(ddSource);
+                            if (!this.dndAllowed(record.data, fromTree)) {
+                                returnValue = Ext.dd.DropZone.prototype.dropNotAllowed;
+                            }
+                        }.bind(this));
 
-                        if (this.dndAllowed(data, fromTree)) {
-                            return Ext.dd.DropZone.prototype.dropAllowed;
-                        }
-                        else {
-                            return Ext.dd.DropZone.prototype.dropNotAllowed;
-                        }
+                        return returnValue;
                     } catch (e) {
                         console.log(e);
                     }
                 }.bind(this),
+
                 onNodeDrop: function (target, dd, e, data) {
-                    try {
-                        var record = data.records[0];
-                        var data = record.data;
-                        this.nodeElement = data;
-                        var fromTree = this.isFromTree(dd);
 
-                        var toBeRequested = new Ext.util.Collection();
+                        try {
+                            this.nodeElement = data;
+                            var fromTree = this.isFromTree(dd);
+                            var toBeRequested = new Ext.util.Collection();
 
-                        if (this.dndAllowed(data, fromTree)) {
-                            if (data["grid"] && data["grid"] == this.component) {
-                                var rowIndex = this.component.getView().findRowIndex(e.target);
-                                if (rowIndex !== false) {
-                                    var rec = this.store.getAt(data.rowIndex);
-                                    this.store.removeAt(data.rowIndex);
-                                    toBeRequested.add(this.store.insert(rowIndex, [rec]));
-                                    this.requestNicePathData(toBeRequested);
-                                }
-                            } else {
-                                var initData = {
-                                    id: data.id,
-                                    path: data.path,
-                                    type: data.elementType,
-                                    published: data.published
-                                };
+                            data.records.forEach(function (record) {
+                                var data = record.data;
+                                if (this.dndAllowed(data, fromTree)) {
+                                    if (data["grid"] && data["grid"] == this.component) {
+                                        var rowIndex = this.component.getView().findRowIndex(e.target);
+                                        if (rowIndex !== false) {
+                                            var rec = this.store.getAt(data.rowIndex);
+                                            this.store.removeAt(data.rowIndex);
+                                            toBeRequested.add(this.store.insert(rowIndex, [rec]));
+                                            this.requestNicePathData(toBeRequested);
+                                        }
+                                    } else {
+                                        var initData = {
+                                            id: data.id,
+                                            path: data.path,
+                                            type: data.elementType,
+                                            published: data.published
+                                        };
 
-                                if (initData.type == "object") {
-                                    if (data.className) {
-                                        initData.subtype = data.className;
+                                        if (initData.type === "object") {
+                                            if (data.className) {
+                                                initData.subtype = data.className;
+                                            } else {
+                                                initData.subtype = "folder";
+                                            }
+                                        }
+
+                                        if (initData.type === "document" || initData.type === "asset") {
+                                            initData.subtype = data.type;
+                                        }
+
+                                        // check for existing element
+                                        if (!this.elementAlreadyExists(initData.id, initData.type)) {
+                                            toBeRequested.add(this.store.add(initData));
+                                        }
                                     }
-                                    else {
-                                        initData.subtype = "folder";
-                                    }
                                 }
+                            }.bind(this));
 
-                                if (initData.type == "document" || initData.type == "asset") {
-                                    initData.subtype = data.type;
-                                }
-
-                                // check for existing element
-                                if (!this.elementAlreadyExists(initData.id, initData.type)) {
-                                    toBeRequested.add(this.store.add(initData));
-                                    this.requestNicePathData(toBeRequested);
-                                    return true;
-                                }
+                            if(toBeRequested.length) {
+                                this.requestNicePathData(toBeRequested);
+                                return true;
                             }
 
                             return false;
-                        } else {
+
+                        } catch (e) {
+                            console.log(e);
                             return false;
                         }
-                    } catch (e) {
-                        console.log(e);
-                    }
                 }.bind(this)
             });
         }.bind(this));
