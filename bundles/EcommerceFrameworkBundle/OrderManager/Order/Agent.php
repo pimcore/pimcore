@@ -365,10 +365,13 @@ class Agent implements IOrderAgent
     /**
      * @param Order $order
      * @param string $paymentState
+     *
      * @return PaymentInfo
+     *
      * @throws UnsupportedException
      */
-    protected function createNewOrderInformation(Order $order, string $paymentState) {
+    protected function createNewOrderInformation(Order $order, string $paymentState)
+    {
         $paymentInformationCollection = $order->getPaymentInfo();
         if (empty($paymentInformationCollection)) {
             $paymentInformationCollection = new Fieldcollection();
@@ -392,8 +395,8 @@ class Agent implements IOrderAgent
     {
         $currentPaymentInformation = $this->getCurrentPendingPaymentInfo();
 
-        if(!empty($currentPaymentInformation)) {
-            throw new NotSupportedException("There is an existing Payment Information with State " . $currentPaymentInformation->getPaymentState());
+        if (!empty($currentPaymentInformation)) {
+            throw new NotSupportedException('There is an existing Payment Information with State ' . $currentPaymentInformation->getPaymentState());
         }
 
         $order = $this->getOrder();
@@ -444,7 +447,7 @@ class Agent implements IOrderAgent
             $orderSaveNeeded = true;
         }
 
-        if($orderSaveNeeded) {
+        if ($orderSaveNeeded) {
             $order->save(['versionNote' => 'Agent::startPayment - save order to update PaymentInformation.']);
         }
 

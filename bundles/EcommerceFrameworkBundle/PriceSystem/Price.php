@@ -69,6 +69,7 @@ class Price implements IPrice
     public function __toString()
     {
         $string = $this->getCurrency()->toCurrency($this->grossAmount);
+
         return $string ?: '';
     }
 

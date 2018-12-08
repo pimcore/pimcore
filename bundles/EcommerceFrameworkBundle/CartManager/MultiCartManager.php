@@ -271,14 +271,16 @@ class MultiCartManager implements ICartManager
 
     /**
      * @param string $name
+     *
      * @return ICart
+     *
      * @throws InvalidConfigException
      */
     public function getOrCreateCartByName($name)
     {
         $cart = $this->getCartByName($name);
 
-        if(empty($cart)) {
+        if (empty($cart)) {
             $cartKey = $this->createCart([
                 'name' => $name
             ]);

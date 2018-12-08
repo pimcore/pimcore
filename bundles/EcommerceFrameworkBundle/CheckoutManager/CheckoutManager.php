@@ -186,9 +186,11 @@ class CheckoutManager implements ICheckoutManager
 
     /**
      * @return AbstractOrder
+     *
      * @throws UnsupportedException
      */
-    protected function checkIfPaymentIsPossible() {
+    protected function checkIfPaymentIsPossible()
+    {
         if (!$this->isFinished()) {
             throw new UnsupportedException('Checkout is not finished yet.');
         }
@@ -208,7 +210,6 @@ class CheckoutManager implements ICheckoutManager
         return $order;
     }
 
-
     /**
      * @inheritdoc
      */
@@ -222,7 +223,6 @@ class CheckoutManager implements ICheckoutManager
 
         return $paymentInfo;
     }
-
 
     /**
      * @inheritdoc

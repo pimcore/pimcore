@@ -83,7 +83,6 @@ interface ICartManager extends IComponent
      */
     public function getCartByName($name);
 
-
     /**
      * Returns cart by name, if it does not exist, it will be created
      *
