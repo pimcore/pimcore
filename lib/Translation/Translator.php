@@ -15,7 +15,6 @@
 namespace Pimcore\Translation;
 
 use Pimcore\Cache;
-use Pimcore\Localization\LocaleService;
 use Pimcore\Model\Translation\AbstractTranslation;
 use Pimcore\Model\Translation\TranslationInterface;
 use Pimcore\Tool;
@@ -33,11 +32,6 @@ class Translator implements TranslatorInterface, TranslatorBagInterface
      * @var TranslatorInterface|TranslatorBagInterface
      */
     protected $translator;
-
-    /**
-     * @var LocaleService
-     */
-    protected $localeService;
 
     /**
      * @var bool
@@ -75,17 +69,15 @@ class Translator implements TranslatorInterface, TranslatorBagInterface
 
     /**
      * @param TranslatorInterface $translator
-     * @param LocaleService $localeService
      * @param bool $caseInsensitive
      */
-    public function __construct(TranslatorInterface $translator, LocaleService $localeService, bool $caseInsensitive = false)
+    public function __construct(TranslatorInterface $translator, bool $caseInsensitive = false)
     {
         if (!$translator instanceof TranslatorBagInterface) {
             throw new InvalidArgumentException(sprintf('The Translator "%s" must implement TranslatorInterface and TranslatorBagInterface.', get_class($translator)));
         }
 
         $this->translator = $translator;
-        $this->localeService = $localeService;
         $this->selector = new MessageSelector();
 
         $this->caseInsensitive = $caseInsensitive;
@@ -107,13 +99,7 @@ class Translator implements TranslatorInterface, TranslatorBagInterface
         }
 
         $catalogue = $this->getCatalogue($locale);
-
-        if ($locale === null) {
-            $locale = $this->localeService->findLocale();
-            if (empty($locale)) {
-                $locale = $catalogue->getLocale();
-            }
-        }
+        $locale = $catalogue->getLocale();
 
         $this->lazyInitialize($domain, $locale);
 
@@ -151,10 +137,7 @@ class Translator implements TranslatorInterface, TranslatorBagInterface
 
         $id = (string) $id;
         $catalogue = $this->getCatalogue($locale);
-
-        if ($locale === null) {
-            $locale = $this->localeService->getLocale();
-        }
+        $locale = $catalogue->getLocale();
 
         $this->lazyInitialize($domain, $locale);
 
