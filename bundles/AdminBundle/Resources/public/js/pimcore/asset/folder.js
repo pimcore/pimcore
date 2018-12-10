@@ -193,22 +193,24 @@ pimcore.asset.folder = Class.create(pimcore.asset.asset, {
             }));
         }
 
-        menu.add(new Ext.menu.Item({
-            text: t('delete'),
-            iconCls: "pimcore_icon_delete",
-            handler: function () {
+        if (this.isAllowed("delete")) {
+            menu.add(new Ext.menu.Item({
+                text: t('delete'),
+                iconCls: "pimcore_icon_delete",
+                handler: function () {
 
-                var options = {
-                    "elementType" : "asset",
-                    "id": id,
-                    "success": function() {
-                        this.store.reload();
-                    }.bind(this)
-                };
+                    var options = {
+                        "elementType": "asset",
+                        "id": id,
+                        "success": function () {
+                            this.store.reload();
+                        }.bind(this)
+                    };
 
-                pimcore.elementservice.deleteElement(options);
-            }.bind(this, id)
-        }));
+                    pimcore.elementservice.deleteElement(options);
+                }.bind(this, id)
+            }));
+        }
         menu.showAt(event.pageX, event.pageY);
     },
 
