@@ -189,7 +189,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
     }
 
     /**
-     * @see Object_Class_Data::getDataForResource
+     * @see ResourcePersistenceAwareInterface::getDataForResource
      *
      * @param Model\DataObject\Data\QuantityValue $data
      * @param null|Model\DataObject\AbstractObject $object
@@ -213,7 +213,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
     }
 
     /**
-     * @see Object_Class_Data::getDataFromResource
+     * @see ResourcePersistenceAwareInterface::getDataFromResource
      *
      * @param array $data
      * @param null|Model\DataObject\AbstractObject $object
@@ -237,7 +237,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
     }
 
     /**
-     * @see Object_Class_Data::getDataForQueryResource
+     * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      *
      * @param Model\DataObject\Data\QuantityValue $data
      * @param null|Model\DataObject\AbstractObject $object
@@ -251,7 +251,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
     }
 
     /**
-     * @see Object_Class_Data::getDataForEditmode
+     * @see Data::getDataForEditmode
      *
      * @param float $data
      * @param null|Model\DataObject\AbstractObject $object
@@ -284,7 +284,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
     }
 
     /**
-     * @see Object_Class_Data::getDataFromEditmode
+     * @see Data::getDataFromEditmode
      *
      * @param float $data
      * @param Model\DataObject\Concrete $object
@@ -308,7 +308,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
     }
 
     /**
-     * @see Object_Class_Data::getVersionPreview
+     * @see Data::getVersionPreview
      *
      * @param float $data
      * @param null|Model\DataObject\AbstractObject $object

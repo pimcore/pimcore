@@ -81,7 +81,7 @@ class ManyToManyObjectRelation extends Model\DataObject\ClassDefinition\Data\Rel
     }
 
     /**
-     * @see DataObject\ClassDefinition\Data::getDataForResource
+     * @see ResourcePersistenceAwareInterface::getDataForResource
      *
      * @param array $data
      * @param null|Model\DataObject\AbstractObject $object
@@ -118,7 +118,7 @@ class ManyToManyObjectRelation extends Model\DataObject\ClassDefinition\Data\Rel
     }
 
     /**
-     * @see DataObject\ClassDefinition\Data::getDataFromResource
+     * @see ResourcePersistenceAwareInterface::getDataFromResource
      *
      * @param array $data
      * @param null|Model\DataObject\AbstractObject $object
@@ -142,15 +142,18 @@ class ManyToManyObjectRelation extends Model\DataObject\ClassDefinition\Data\Rel
     }
 
     /**
-     * @param $data
-     * @param null $object
+     * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
+     *
+     * @param array $data
+     * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
      * @throws \Exception
+     *
+     * @return string|null
      */
     public function getDataForQueryResource($data, $object = null, $params = [])
     {
-
         //return null when data is not set
         if (!$data) {
             return null;
@@ -174,7 +177,7 @@ class ManyToManyObjectRelation extends Model\DataObject\ClassDefinition\Data\Rel
     }
 
     /**
-     * @see DataObject\ClassDefinition\Data::getDataForEditmode
+     * @see Data::getDataForEditmode
      *
      * @param array $data
      * @param null|Model\DataObject\AbstractObject $object
@@ -203,7 +206,7 @@ class ManyToManyObjectRelation extends Model\DataObject\ClassDefinition\Data\Rel
     }
 
     /**
-     * @see Model\DataObject\ClassDefinition\Data::getDataFromEditmode
+     * @see Data::getDataFromEditmode
      *
      * @param array $data
      * @param null|Model\DataObject\AbstractObject $object
@@ -213,7 +216,6 @@ class ManyToManyObjectRelation extends Model\DataObject\ClassDefinition\Data\Rel
      */
     public function getDataFromEditmode($data, $object = null, $params = [])
     {
-
         //if not set, return null
         if ($data === null or $data === false) {
             return null;
@@ -237,7 +239,7 @@ class ManyToManyObjectRelation extends Model\DataObject\ClassDefinition\Data\Rel
      * @param null $object
      * @param mixed $params
      *
-     * @return array
+     * @return array|null
      */
     public function getDataForGrid($data, $object = null, $params = [])
     {
@@ -251,16 +253,18 @@ class ManyToManyObjectRelation extends Model\DataObject\ClassDefinition\Data\Rel
 
             return $pathes;
         }
+
+        return null;
     }
 
     /**
-     * @see DataObject\ClassDefinition\Data::getVersionPreview
+     * @see Data::getVersionPreview
      *
      * @param array $data
      * @param null|DataObject\AbstractObject $object
      * @param mixed $params
      *
-     * @return string
+     * @return string|null
      */
     public function getVersionPreview($data, $object = null, $params = [])
     {
@@ -273,6 +277,8 @@ class ManyToManyObjectRelation extends Model\DataObject\ClassDefinition\Data\Rel
 
             return implode('<br />', $pathes);
         }
+
+        return null;
     }
 
     /**

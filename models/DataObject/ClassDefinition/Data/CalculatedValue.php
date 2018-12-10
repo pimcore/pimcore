@@ -115,7 +115,7 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
     }
 
     /**
-     * @see Object_Class_Data::getDataForQueryResource
+     * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      *
      * @param float $data
      * @param null|Model\DataObject\AbstractObject $object
@@ -129,7 +129,7 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
     }
 
     /**
-     * @see Object_Class_Data::getDataForEditmode
+     * @see Data::getDataForEditmode
      *
      * @param float $data
      * @param null|Model\DataObject\AbstractObject $object
@@ -147,7 +147,7 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
     }
 
     /**
-     * @see Object_Class_Data::getDataFromEditmode
+     * @see Data::getDataFromEditmode
      *
      * @param float $data
      * @param null|DataObject\AbstractObject $object
@@ -160,7 +160,7 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
     }
 
     /**
-     * @see Object_Class_Data::getVersionPreview
+     * @see Data::getVersionPreview
      *
      * @param float $data
      * @param null|DataObject\AbstractObject $object

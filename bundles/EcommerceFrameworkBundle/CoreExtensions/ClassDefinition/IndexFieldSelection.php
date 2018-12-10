@@ -118,7 +118,7 @@ class IndexFieldSelection extends Data
     }
 
     /**
-     * @see Object_Class_Data::getDataForResource
+     * @see ResourcePersistenceAwareInterface::getDataForResource
      *
      * @param float $data
      * @param null|\Pimcore\Model\DataObject\AbstractObject $object
@@ -144,7 +144,7 @@ class IndexFieldSelection extends Data
     }
 
     /**
-     * @see Object_Class_Data::getDataFromResource
+     * @see ResourcePersistenceAwareInterface::getDataFromResource
      *
      * @param float $data
      * @param null|\Pimcore\Model\DataObject\AbstractObject $object
@@ -162,7 +162,7 @@ class IndexFieldSelection extends Data
     }
 
     /**
-     * @see Object_Class_Data::getDataForQueryResource
+     * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      *
      * @param float $data
      * @param null|\Pimcore\Model\DataObject\AbstractObject $object
@@ -176,7 +176,7 @@ class IndexFieldSelection extends Data
     }
 
     /**
-     * @see Object_Class_Data::getDataForEditmode
+     * @see Data::getDataForEditmode
      *
      * @param float $data
      * @param null|\Pimcore\Model\DataObject\AbstractObject $object
@@ -198,7 +198,7 @@ class IndexFieldSelection extends Data
     }
 
     /**
-     * @see Object_Class_Data::getDataFromEditmode
+     * @see Data::getDataFromEditmode
      *
      * @param float $data
      * @param null|\Pimcore\Model\DataObject\AbstractObject $object
@@ -220,7 +220,7 @@ class IndexFieldSelection extends Data
     }
 
     /**
-     * @see Object_Class_Data::getVersionPreview
+     * @see Data::getVersionPreview
      *
      * @param float $data
      * @param null|\Pimcore\Model\DataObject\AbstractObject $object
