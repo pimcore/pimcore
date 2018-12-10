@@ -19,10 +19,11 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
+use Pimcore\Model\DataObject\ClassDefinition\Data\Relations\AbstractRelations;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
 
-class ManyToManyRelation extends Model\DataObject\ClassDefinition\Data\Relations\AbstractRelations
+class ManyToManyRelation extends AbstractRelations implements QueryResourcePersistenceAwareInterface
 {
     use Model\DataObject\ClassDefinition\Data\Extension\Relation;
 
