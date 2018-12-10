@@ -21,8 +21,6 @@ use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
-use Pimcore\Model\DataObject\CustomResourcePersistingInterface;
-use Pimcore\Model\DataObject\QueryResourcePersistenceAwareInterface;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
 

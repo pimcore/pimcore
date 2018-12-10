@@ -15,25 +15,27 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\Model\DataObject;
+namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
-interface QueryResourcePersistenceAwareInterface
+interface CustomResourcePersistingInterface
 {
     /**
-     * Returns the data which should be stored in the query columns
-     *
-     * @param mixed $data
-     * @param null|\Pimcore\Model\DataObject\AbstractObject $object
-     * @param mixed $params
-     *
-     * @return mixed
-     *
-     * abstract public function getDataForQueryResource($data);
+     * @param $object
+     * @param array $params
      */
-    public function getDataForQueryResource($data, $object = null, $params = []);
+    public function save($object, $params = []);
 
     /**
-     * @return string|array
+     * @param $object
+     * @param array $params
+     *
+     * @return mixed
      */
-    public function getQueryColumnType();
+    public function load($object, $params = []);
+
+    /**
+     * @param $object
+     * @param array $params
+     */
+    public function delete($object, $params = []);
 }

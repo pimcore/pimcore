@@ -19,7 +19,6 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
-use Pimcore\Model\DataObject\QueryResourcePersistenceAwareInterface;
 
 class CalculatedValue extends Data implements QueryResourcePersistenceAwareInterface
 {

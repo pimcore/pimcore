@@ -20,8 +20,6 @@ use Pimcore\DataObject\Consent\Service;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
-use Pimcore\Model\DataObject\ResourcePersistenceAwareInterface;
-use Pimcore\Model\DataObject\QueryResourcePersistenceAwareInterface;
 
 class Consent extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface
 {

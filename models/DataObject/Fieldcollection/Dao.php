@@ -20,8 +20,8 @@ namespace Pimcore\Model\DataObject\Fieldcollection;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
-use Pimcore\Model\DataObject\CustomResourcePersistingInterface;
-use Pimcore\Model\DataObject\ResourcePersistenceAwareInterface;
+use Pimcore\Model\DataObject\ClassDefinition\Data\CustomResourcePersistingInterface;
+use Pimcore\Model\DataObject\ClassDefinition\Data\ResourcePersistenceAwareInterface;
 use Pimcore\Tool;
 
 /**

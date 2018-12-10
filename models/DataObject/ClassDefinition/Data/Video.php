@@ -20,8 +20,6 @@ use Pimcore\Model;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
-use Pimcore\Model\DataObject\ResourcePersistenceAwareInterface;
-use Pimcore\Model\DataObject\QueryResourcePersistenceAwareInterface;
 use Pimcore\Tool\Serialize;
 
 class Video extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface

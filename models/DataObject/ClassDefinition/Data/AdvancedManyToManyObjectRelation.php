@@ -19,8 +19,6 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Db;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
-use Pimcore\Model\DataObject\CustomResourcePersistingInterface;
-use Pimcore\Model\DataObject\QueryResourcePersistenceAwareInterface;
 use Pimcore\Model\Element;
 
 class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implements CustomResourcePersistingInterface, QueryResourcePersistenceAwareInterface

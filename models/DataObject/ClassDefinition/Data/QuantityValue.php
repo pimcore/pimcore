@@ -21,8 +21,6 @@ use Pimcore\Cache\Runtime;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
-use Pimcore\Model\DataObject\ResourcePersistenceAwareInterface;
-use Pimcore\Model\DataObject\QueryResourcePersistenceAwareInterface;
 
 class QuantityValue extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface
 {
