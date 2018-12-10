@@ -361,7 +361,12 @@ class Table extends Model\DataObject\ClassDefinition\Data
      */
     public function getVersionPreview($data, $object = null, $params = [])
     {
-        return $data;
+        $versionPreview = $this->getDiffVersionPreview($data, $object, $params);
+        if(is_array($versionPreview) && $versionPreview['html']) {
+            return $versionPreview['html'];
+        }
+
+        return '';
     }
 
     /**
@@ -477,8 +482,8 @@ class Table extends Model\DataObject\ClassDefinition\Data
                 if (is_array($row)) {
                     foreach ($row as $cell) {
                         $html .= '<td>';
-                        $html .= $cell;
-                        $html .= '</th>';
+                        $html .= htmlentities($cell);
+                        $html .= '</td>';
                     }
                 }
                 $html .= '</tr>';
