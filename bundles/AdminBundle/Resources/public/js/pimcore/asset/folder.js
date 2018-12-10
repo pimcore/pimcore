@@ -113,7 +113,7 @@ pimcore.asset.folder = Class.create(pimcore.asset.asset, {
                         el.on("itemcontextmenu",
                             function(view, record, item, index, e, eOpts ) {
                                 e.stopEvent();
-                                this.showContextMenu(item, event, record);
+                                this.showContextMenu(item, e, record);
                             }.bind(this),
                         null, {preventDefault: true});
                     }.bind(this)
