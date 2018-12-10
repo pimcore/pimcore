@@ -382,7 +382,7 @@ pimcore.asset.tree = Class.create({
         return treeNodeListeners;
     },
 
-    onTreeNodeClick: function (tree, record, item, index, e, eOpts ) {
+    onTreeNodeClick: function (tree, record, item, index, event, eOpts ) {
         if (event.ctrlKey === false && event.shiftKey === false && event.altKey === false) {
             if (record.data.permissions.view) {
                 pimcore.helpers.treeNodeThumbnailPreviewHide();
