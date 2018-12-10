@@ -26,6 +26,7 @@ the JS classes in `pimcore.object.tags` and `pimcore.object.classes.data`.
 | Multihref Advanced | `MultihrefMetadata` | `multihrefMetadata` | **Advanced Many-To-Many Relation** | `AdvancedManyToManyRelation` | `advancedManyToManyRelation` | 
 | Objects | `Objects` | `objects` | **Many-To-Many Object Relation** | `ManyToManyObjectRelation` | `manyToManyObjectRelation` | 
 | Objects with Metadata | `ObjectsMetadata` | `objectsMetadata` | **Advanced Many-To-Many Object Relation** | `AdvancedManyToManyObjectRelation` | `advancedManyToManyObjectRelation` | 
+| Objects (Non Owner) | `Nonownerobjects` | `nonownerobjects` | **Reverse Many-To-Many Object Relation** | `ReverseManyToManyObjectRelation` | `reverseManyToManyObjectRelation` | 
 
 
 #### Documents: renamed relational editables

@@ -11,8 +11,8 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-pimcore.registerNS("pimcore.object.tags.nonownerobjects");
-pimcore.object.tags.nonownerobjects = Class.create(pimcore.object.tags.manyToManyObjectRelation, {
+pimcore.registerNS("pimcore.object.tags.reverseManyToManyObjectRelation");
+pimcore.object.tags.reverseManyToManyObjectRelation = Class.create(pimcore.object.tags.manyToManyObjectRelation, {
 
 
     removeObject: function (index, item) {
@@ -409,3 +409,6 @@ pimcore.object.tags.nonownerobjects = Class.create(pimcore.object.tags.manyToMan
     }
 
 });
+
+// @TODO BC layer, to be removed in v6.0
+pimcore.object.tags.nonownerobjects = pimcore.object.tags.reverseManyToManyObjectRelation;

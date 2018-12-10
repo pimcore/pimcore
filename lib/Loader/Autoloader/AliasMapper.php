@@ -48,6 +48,7 @@ class AliasMapper extends AbstractAutoloader
         'Pimcore\Model\DataObject\ClassDefinition\Data\MultihrefMetadata' => \Pimcore\Model\DataObject\ClassDefinition\Data\AdvancedManyToManyRelation::class,
         'Pimcore\Model\DataObject\ClassDefinition\Data\Objects' => \Pimcore\Model\DataObject\ClassDefinition\Data\ManyToManyObjectRelation::class,
         'Pimcore\Model\DataObject\ClassDefinition\Data\ObjectsMetadata' => \Pimcore\Model\DataObject\ClassDefinition\Data\AdvancedManyToManyObjectRelation::class,
+        'Pimcore\Model\DataObject\ClassDefinition\Data\Nonownerobjects' => \Pimcore\Model\DataObject\ClassDefinition\Data\ReverseManyToManyObjectRelation::class,
         'Pimcore\Model\Document\Tag\Href' => \Pimcore\Model\Document\Tag\Relation::class,
         'Pimcore\Model\Document\Tag\Multihref' => \Pimcore\Model\Document\Tag\Relations::class,
     ];

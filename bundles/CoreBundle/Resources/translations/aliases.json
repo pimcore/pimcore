@@ -134,6 +134,7 @@
   "multihref": "many_to_many_relation",
   "multihrefMetadata": "advanced_many_to_many_relation",
   "objectsMetadata": "advanced_many_to_many_object_relation",
+  "nonownerobjects": "reverse_many_to_many_object_relation",
   "href": "many_to_one_relation",
   "bool": "boolean"
 }
