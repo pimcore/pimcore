@@ -24,7 +24,7 @@ use Pimcore\Model\DataObject;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
 
-class AdvancedManyToManyRelation extends Model\DataObject\ClassDefinition\Data\ManyToManyRelation
+class AdvancedManyToManyRelation extends ManyToManyObjectRelation implements CustomResourcePersistingInterface, QueryResourcePersistenceAwareInterface
 {
     use DataObject\Traits\ElementWithMetadataComparisonTrait;
     /**

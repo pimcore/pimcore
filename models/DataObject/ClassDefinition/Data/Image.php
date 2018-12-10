@@ -18,9 +18,10 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
 use Pimcore\Model;
 use Pimcore\Model\Asset;
+use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\Element;
 
-class Image extends Model\DataObject\ClassDefinition\Data
+class Image extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface
 {
     /**
      * Static type of this element

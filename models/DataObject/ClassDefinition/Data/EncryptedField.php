@@ -20,6 +20,7 @@ use Defuse\Crypto\Crypto;
 use Defuse\Crypto\Key;
 use Pimcore\Logger;
 use Pimcore\Model;
+use Pimcore\Model\DataObject\ClassDefinition\Data;
 
 /**
  * Class EncryptedField
@@ -28,7 +29,7 @@ use Pimcore\Model;
  *
  * How to generate a key: vendor/bin/generate-defuse-key
  */
-class EncryptedField extends Model\DataObject\ClassDefinition\Data
+class EncryptedField extends Data implements ResourcePersistenceAwareInterface
 {
     /**
      * don't throw an error it encrypted field cannot be decoded (default)
@@ -217,20 +218,6 @@ class EncryptedField extends Model\DataObject\ClassDefinition\Data
     }
 
     /**
-     * @see Model\DataObject\ClassDefinition\Data::getDataForQueryResource
-     *
-     * @param string $data
-     * @param null|Model\DataObject\AbstractObject $object
-     * @param mixed $params
-     *
-     * @return array
-     */
-    public function getDataForQueryResource($data, $object = null, $params = [])
-    {
-        return null;
-    }
-
-    /**
      * @see Model\DataObject\ClassDefinition\Data::getDataForEditmode
      *
      * @param string $data
@@ -286,14 +273,6 @@ class EncryptedField extends Model\DataObject\ClassDefinition\Data
         }
 
         return $data;
-    }
-
-    /**
-     * @return string
-     */
-    public function getQueryColumnType()
-    {
-        return null;
     }
 
     /**

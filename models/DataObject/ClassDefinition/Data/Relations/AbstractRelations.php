@@ -20,9 +20,11 @@ use Pimcore\Db;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
+use Pimcore\Model\DataObject\ClassDefinition\Data;
+use Pimcore\Model\DataObject\ClassDefinition\Data\CustomResourcePersistingInterface;
 use Pimcore\Model\Element;
 
-abstract class AbstractRelations extends Model\DataObject\ClassDefinition\Data
+abstract class AbstractRelations extends Data implements CustomResourcePersistingInterface
 {
     /**
      * @var bool
@@ -386,6 +388,14 @@ abstract class AbstractRelations extends Model\DataObject\ClassDefinition\Data
         }
 
         return $data;
+    }
+
+    /**
+     * @param $object
+     * @param array $params
+     */
+    public function delete($object, $params = [])
+    {
     }
 
     /**

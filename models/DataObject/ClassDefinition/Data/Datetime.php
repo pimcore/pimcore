@@ -18,8 +18,9 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
 use Pimcore\Db;
 use Pimcore\Model;
+use Pimcore\Model\DataObject\ClassDefinition\Data;
 
-class Datetime extends Model\DataObject\ClassDefinition\Data
+class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface
 {
     /**
      * Static type of this element

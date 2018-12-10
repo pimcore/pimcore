@@ -130,36 +130,6 @@ abstract class Data
     ];
 
     /**
-     * Returns the the data that should be stored in the resource
-     *
-     * @param mixed $data
-     *
-     * @return mixed
-     *
-     * abstract public function getDataForResource($data);
-     */
-
-    /**
-     * Convert the saved data in the resource to the internal eg. Image-Id to Asset\Image object, this is the inverted getDataForResource()
-     *
-     * @param mixed $data
-     *
-     * @return mixed
-     *
-     * abstract public function getDataFromResource($data);
-     */
-
-    /**
-     * Returns the data which should be stored in the query columns
-     *
-     * @param mixed $data
-     *
-     * @return mixed
-     *
-     * abstract public function getDataForQueryResource($data);
-     */
-
-    /**
      * Returns the data for the editmode
      *
      * @param mixed $data

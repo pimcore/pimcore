@@ -20,8 +20,9 @@ use Pimcore\Cache;
 use Pimcore\Cache\Runtime;
 use Pimcore\Logger;
 use Pimcore\Model;
+use Pimcore\Model\DataObject\ClassDefinition\Data;
 
-class QuantityValue extends Model\DataObject\ClassDefinition\Data
+class QuantityValue extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface
 {
     /**
      * Static type of this element

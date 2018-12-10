@@ -21,6 +21,10 @@ use Pimcore\Db;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
+use Pimcore\Model\DataObject\ClassDefinition\Data\CustomResourcePersistingInterface;
+use Pimcore\Model\DataObject\ClassDefinition\Data\QueryResourcePersistenceAwareInterface;
+use Pimcore\Model\DataObject\ClassDefinition\Data\ResourcePersistenceAwareInterface;
+use Pimcore\Tool;
 
 /**
  * @property \Pimcore\Model\DataObject\Concrete $model
@@ -217,7 +221,10 @@ class Dao extends Model\DataObject\AbstractObject\Dao
         foreach ($fieldDefinitions as $key => $fd) {
             $getter = 'get' . ucfirst($key);
 
-            if (method_exists($fd, 'save')) {
+            if ($fd instanceof CustomResourcePersistingInterface || method_exists($fd, 'save')) {
+                if (!$fd instanceof CustomResourcePersistingInterface) {
+                    Tool::triggerDeprecatedMethodWarning(get_class($fd), 'save', CustomResourcePersistingInterface::class);
+                }
                 // for fieldtypes which have their own save algorithm eg. fieldcollections, relational data-types, ...
                 $saveParams = ['isUntouchable' => in_array($fd->getName(), $untouchable),
                                'isUpdate' => $isUpdate,
@@ -228,7 +235,11 @@ class Dao extends Model\DataObject\AbstractObject\Dao
                     $saveParams['newParent'] = $this->model->isFieldDirty('o_parentId');
                 }
                 $fd->save($this->model, $saveParams);
-            } elseif ($fd->getColumnType()) {
+            }
+            if ($fd instanceof ResourcePersistenceAwareInterface || (!method_exists($fd, 'save') && $fd->getColumnType())) {
+                if (!$fd instanceof ResourcePersistenceAwareInterface) {
+                    Tool::triggerDeprecatedMethodWarning(get_class($fd), 'getDataForResource', ResourcePersistenceAwareInterface::class);
+                }
                 // pimcore saves the values with getDataForResource
                 if (is_array($fd->getColumnType())) {
                     $insertDataArray = $fd->getDataForResource($this->model->$getter(), $this->model);
@@ -265,7 +276,10 @@ class Dao extends Model\DataObject\AbstractObject\Dao
         }
 
         foreach ($fieldDefinitions as $key => $fd) {
-            if ($fd->getQueryColumnType()) {
+            if ($fd instanceof QueryResourcePersistenceAwareInterface || $fd->getQueryColumnType()) {
+                if (!$fd instanceof QueryResourcePersistenceAwareInterface) {
+                    Tool::triggerDeprecatedMethodWarning(get_class($fd), 'getDataForQueryResource', QueryResourcePersistenceAwareInterface::class);
+                }
                 //exclude untouchables if value is not an array - this means data has not been loaded
                 if (!(in_array($key, $untouchable) and !is_array($this->model->getObjectVar($key)))) {
                     $method = 'get' . $key;
@@ -367,7 +381,10 @@ class Dao extends Model\DataObject\AbstractObject\Dao
 
         // delete fields wich have their own delete algorithm
         foreach ($this->model->getClass()->getFieldDefinitions() as $fd) {
-            if (method_exists($fd, 'delete')) {
+            if ($fd instanceof CustomResourcePersistingInterface || method_exists($fd, 'delete')) {
+                if (!$fd instanceof CustomResourcePersistingInterface) {
+                    Tool::triggerDeprecatedMethodWarning(get_class($fd), 'delete', CustomResourcePersistingInterface::class);
+                }
                 $fd->delete($this->model);
             }
         }

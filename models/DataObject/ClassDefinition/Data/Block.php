@@ -20,10 +20,11 @@ use Pimcore\Db;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
+use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\Element;
 use Pimcore\Tool\Serialize;
 
-class Block extends Model\DataObject\ClassDefinition\Data
+class Block extends Data implements CustomResourcePersistingInterface, ResourcePersistenceAwareInterface
 {
     use Element\ChildsCompatibilityTrait;
 
@@ -224,20 +225,6 @@ class Block extends Model\DataObject\ClassDefinition\Data
             return $result;
         }
 
-        return null;
-    }
-
-    /**
-     * @see DataObject\ClassDefinition\Data::getDataForQueryResource
-     *
-     * @param string $data
-     * @param null|Model\DataObject\AbstractObject $object
-     * @param mixed $params
-     *
-     * @return string
-     */
-    public function getDataForQueryResource($data, $object = null, $params = [])
-    {
         return null;
     }
 
@@ -907,6 +894,14 @@ class Block extends Model\DataObject\ClassDefinition\Data
     /**
      * @param $object
      * @param array $params
+     */
+    public function save($object, $params = [])
+    {
+    }
+
+    /**
+     * @param $object
+     * @param array $params
      *
      * @return null
      */
@@ -962,6 +957,14 @@ class Block extends Model\DataObject\ClassDefinition\Data
         }
 
         return $data;
+    }
+
+    /**
+     * @param $object
+     * @param array $params
+     */
+    public function delete($object, $params = [])
+    {
     }
 
     /**

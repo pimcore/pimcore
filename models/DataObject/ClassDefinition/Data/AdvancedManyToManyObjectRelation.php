@@ -21,7 +21,7 @@ use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\Element;
 
-class AdvancedManyToManyObjectRelation extends Model\DataObject\ClassDefinition\Data\ManyToManyObjectRelation
+class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implements CustomResourcePersistingInterface, QueryResourcePersistenceAwareInterface
 {
     use DataObject\Traits\ElementWithMetadataComparisonTrait;
 
@@ -143,7 +143,6 @@ class AdvancedManyToManyObjectRelation extends Model\DataObject\ClassDefinition\
      */
     public function getDataForQueryResource($data, $object = null, $params = [])
     {
-
         //return null when data is not set
         if (!$data) {
             return null;

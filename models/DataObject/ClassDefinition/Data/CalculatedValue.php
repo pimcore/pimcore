@@ -18,8 +18,9 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
+use Pimcore\Model\DataObject\ClassDefinition\Data;
 
-class CalculatedValue extends Model\DataObject\ClassDefinition\Data
+class CalculatedValue extends Data implements QueryResourcePersistenceAwareInterface
 {
     /**
      * Static type of this element
@@ -111,34 +112,6 @@ class CalculatedValue extends Model\DataObject\ClassDefinition\Data
     public function setCalculatorClass($calculatorClass)
     {
         $this->calculatorClass = $calculatorClass;
-    }
-
-    /**
-     * @see Object_Class_Data::getDataForResource
-     *
-     * @param float $data
-     * @param null|Model\DataObject\AbstractObject $object
-     * @param mixed $params
-     *
-     * @return float
-     */
-    public function getDataForResource($data, $object = null, $params = [])
-    {
-        // nothing to do
-    }
-
-    /**
-     * @see Object_Class_Data::getDataFromResource
-     *
-     * @param float $data
-     * @param null|Model\DataObject\AbstractObject $object
-     * @param mixed $params
-     *
-     * @return float
-     */
-    public function getDataFromResource($data, $object = null, $params = [])
-    {
-        // nothing to do
     }
 
     /**
@@ -288,15 +261,6 @@ class CalculatedValue extends Model\DataObject\ClassDefinition\Data
     public function getColumnType()
     {
         return null;
-    }
-
-    public function save()
-    {
-        // nothing to do
-    }
-
-    public function load()
-    {
     }
 
     /**

@@ -21,6 +21,10 @@ use Pimcore\Db;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
+use Pimcore\Model\DataObject\ClassDefinition\Data\CustomResourcePersistingInterface;
+use Pimcore\Model\DataObject\ClassDefinition\Data\QueryResourcePersistenceAwareInterface;
+use Pimcore\Model\DataObject\ClassDefinition\Data\ResourcePersistenceAwareInterface;
+use Pimcore\Tool;
 
 /**
  * @property \Pimcore\Model\DataObject\Objectbrick\Data\AbstractData $model
@@ -94,7 +98,10 @@ class Dao extends Model\Dao\AbstractDao
         foreach ($fieldDefinitions as $key => $fd) {
             $getter = 'get' . ucfirst($fd->getName());
 
-            if (method_exists($fd, 'save')) {
+            if ($fd instanceof CustomResourcePersistingInterface || method_exists($fd, 'save')) {
+                if (!$fd instanceof CustomResourcePersistingInterface) {
+                    Tool::triggerDeprecatedMethodWarning(get_class($fd), 'save', CustomResourcePersistingInterface::class);
+                }
                 if ((!isset($params['newParent']) || !$params['newParent']) && isset($params['isUpdate']) && $params['isUpdate'] && !DataObject\AbstractObject::isDirtyDetectionDisabled() && $this->model instanceof DataObject\DirtyIndicatorInterface) {
                     // ownerNameList contains the dirty stuff
                     if ($fd instanceof DataObject\ClassDefinition\Data\Relations\AbstractRelations && !in_array($db->quote($key), $dirtyRelations)) {
@@ -111,7 +118,11 @@ class Dao extends Model\Dao\AbstractDao
                             'fieldname' => $this->model->getFieldname()
                         ]
                     ]));
-            } elseif ($fd->getColumnType()) {
+            }
+            if ($fd instanceof ResourcePersistenceAwareInterface || (!method_exists($fd, 'save') && $fd->getColumnType())) {
+                if (!$fd instanceof ResourcePersistenceAwareInterface) {
+                    Tool::triggerDeprecatedMethodWarning(get_class($fd), 'getDataForResource', ResourcePersistenceAwareInterface::class);
+                }
                 if (is_array($fd->getColumnType())) {
                     $insertDataArray = $fd->getDataForResource($this->model->$getter(), $object, [
                         'context' => $this->model //\Pimcore\Model\DataObject\Objectbrick\Data\Dao
@@ -154,7 +165,10 @@ class Dao extends Model\Dao\AbstractDao
         }
 
         foreach ($fieldDefinitions as $key => $fd) {
-            if ($fd->getQueryColumnType()) {
+            if ($fd instanceof QueryResourcePersistenceAwareInterface || $fd->getQueryColumnType()) {
+                if (!$fd instanceof QueryResourcePersistenceAwareInterface) {
+                    Tool::triggerDeprecatedMethodWarning(get_class($fd), 'getDataForQueryResource', QueryResourcePersistenceAwareInterface::class);
+                }
                 //exclude untouchables if value is not an array - this means data has not been loaded
 
                 $method = 'get' . $key;
@@ -292,7 +306,10 @@ class Dao extends Model\Dao\AbstractDao
                     continue;
                 }
 
-                if ($fd->getQueryColumnType()) {
+                if ($fd instanceof QueryResourcePersistenceAwareInterface || $fd->getQueryColumnType()) {
+                    if (!$fd instanceof QueryResourcePersistenceAwareInterface) {
+                        Tool::triggerDeprecatedMethodWarning(get_class($fd), 'getDataForQueryResource', QueryResourcePersistenceAwareInterface::class);
+                    }
                     //exclude untouchables if value is not an array - this means data has not been loaded
                     //get changed fields for inheritance
                     if ($fd instanceof DataObject\ClassDefinition\Data\CalculatedValue) {
@@ -309,7 +326,10 @@ class Dao extends Model\Dao\AbstractDao
                         }
                     }
 
-                    if (method_exists($fd, 'delete')) {
+                    if ($fd instanceof CustomResourcePersistingInterface || method_exists($fd, 'delete')) {
+                        if (!$fd instanceof CustomResourcePersistingInterface) {
+                            Tool::triggerDeprecatedMethodWarning(get_class($fd), 'delete', CustomResourcePersistingInterface::class);
+                        }
                         $fd->delete($object);
                     }
                 }
