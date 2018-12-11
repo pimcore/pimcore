@@ -131,7 +131,7 @@ class BooleanSelect extends Data implements ResourcePersistenceAwareInterface, Q
     }
 
     /**
-     * @see DataObject\ClassDefinition\Data::getDataFromResource
+     * @see ResourcePersistenceAwareInterface::getDataFromResource
      *
      * @param string $data
      * @param null|Model\DataObject\AbstractObject $object
@@ -155,7 +155,7 @@ class BooleanSelect extends Data implements ResourcePersistenceAwareInterface, Q
     }
 
     /**
-     * @see DataObject\ClassDefinition\Data::getDataForQueryResource
+     * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      *
      * @param string $data
      * @param null|Model\DataObject\AbstractObject $object
@@ -169,7 +169,7 @@ class BooleanSelect extends Data implements ResourcePersistenceAwareInterface, Q
     }
 
     /**
-     * @see DataObject\ClassDefinition\Data::getDataForResource
+     * @see ResourcePersistenceAwareInterface::getDataForResource
      *
      * @param string $data
      * @param null|Model\DataObject\AbstractObject $object
@@ -192,7 +192,7 @@ class BooleanSelect extends Data implements ResourcePersistenceAwareInterface, Q
     }
 
     /**
-     * @see DataObject\ClassDefinition\Data::getVersionPreview
+     * @see Data::getVersionPreview
      *
      * @param string $data
      * @param null|DataObject\AbstractObject $object
@@ -371,7 +371,7 @@ class BooleanSelect extends Data implements ResourcePersistenceAwareInterface, Q
     }
 
     /**
-     * @see DataObject\ClassDefinition\Data::getDataForEditmode
+     * @see Data::getDataForEditmode
      *
      * @param string $data
      * @param null|Model\DataObject\AbstractObject $object
@@ -403,7 +403,7 @@ class BooleanSelect extends Data implements ResourcePersistenceAwareInterface, Q
     }
 
     /**
-     * @see Model\DataObject\ClassDefinition\Data::getDataFromEditmode
+     * @see Data::getDataFromEditmode
      *
      * @param string $data
      * @param null|Model\DataObject\AbstractObject $object

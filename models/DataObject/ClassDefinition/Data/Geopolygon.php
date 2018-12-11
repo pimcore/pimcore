@@ -52,7 +52,7 @@ class Geopolygon extends AbstractGeo implements ResourcePersistenceAwareInterfac
     public $phpdocType = 'array';
 
     /**
-     * @see DataObject\ClassDefinition\Data::getDataForResource
+     * @see ResourcePersistenceAwareInterface::getDataForResource
      *
      * @param string $data
      * @param null|Model\DataObject\AbstractObject $object
@@ -66,7 +66,7 @@ class Geopolygon extends AbstractGeo implements ResourcePersistenceAwareInterfac
     }
 
     /**
-     * @see DataObject\ClassDefinition\Data::getDataFromResource
+     * @see ResourcePersistenceAwareInterface::getDataFromResource
      *
      * @param string $data
      * @param null|Model\DataObject\AbstractObject $object
@@ -80,7 +80,7 @@ class Geopolygon extends AbstractGeo implements ResourcePersistenceAwareInterfac
     }
 
     /**
-     * @see DataObject\ClassDefinition\Data::getDataForQueryResource
+     * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      *
      * @param string $data
      * @param null|Model\DataObject\AbstractObject $object
@@ -94,13 +94,13 @@ class Geopolygon extends AbstractGeo implements ResourcePersistenceAwareInterfac
     }
 
     /**
-     * @see DataObject\ClassDefinition\Data::getDataForEditmode
+     * @see Data::getDataForEditmode
      *
      * @param string $data
      * @param null|Model\DataObject\AbstractObject $object
-     * @param mixed $params     *
+     * @param mixed $params
      *
-     * @return string
+     * @return array|null
      */
     public function getDataForEditmode($data, $object = null, $params = [])
     {
@@ -118,17 +118,17 @@ class Geopolygon extends AbstractGeo implements ResourcePersistenceAwareInterfac
             }
         }
 
-        return;
+        return null;
     }
 
     /**
-     * @see Model\DataObject\ClassDefinition\Data::getDataFromEditmode
+     * @see Data::getDataFromEditmode
      *
      * @param string $data
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
-     * @return string
+     * @return DataObject\Data\Geopoint[]|null
      */
     public function getDataFromEditmode($data, $object = null, $params = [])
     {
@@ -141,11 +141,11 @@ class Geopolygon extends AbstractGeo implements ResourcePersistenceAwareInterfac
             return $points;
         }
 
-        return;
+        return null;
     }
 
     /**
-     * @see DataObject\ClassDefinition\Data::getVersionPreview
+     * @see Data::getVersionPreview
      *
      * @param string $data
      * @param null|DataObject\AbstractObject $object

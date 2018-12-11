@@ -57,7 +57,7 @@ trait Text
     }
 
     /**
-     * @see Model\DataObject\ClassDefinition\Data::getVersionPreview
+     * @see Data::getVersionPreview
      *
      * @param string $data
      * @param null|Model\DataObject\AbstractObject $object

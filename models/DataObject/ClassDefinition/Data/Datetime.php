@@ -61,7 +61,7 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
     public $useCurrentDate;
 
     /**
-     * @see Model\DataObject\ClassDefinition\Data::getDataForResource
+     * @see ResourcePersistenceAwareInterface::getDataForResource
      *
      * @param \Zend_Date|\DateTime $data
      * @param null|Model\DataObject\AbstractObject $object
@@ -82,7 +82,7 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
     }
 
     /**
-     * @see Model\DataObject\ClassDefinition\Data::getDataFromResource
+     * @see ResourcePersistenceAwareInterface::getDataFromResource
      *
      * @param int $data
      * @param null|Model\DataObject\AbstractObject $object
@@ -107,7 +107,7 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
     }
 
     /**
-     * @see Model\DataObject\ClassDefinition\Data::getDataForQueryResource
+     * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      *
      * @param \Zend_Date|\DateTime $data
      * @param null|Model\DataObject\AbstractObject $object
@@ -121,7 +121,7 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
     }
 
     /**
-     * @see Model\DataObject\ClassDefinition\Data::getDataForEditmode
+     * @see Data::getDataForEditmode
      *
      * @param \Zend_Date|\DateTime $data
      * @param null|Model\DataObject\AbstractObject $object
@@ -154,7 +154,7 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
     }
 
     /**
-     * @see Model\DataObject\ClassDefinition\Data::getDataFromEditmode
+     * @see Data::getDataFromEditmode
      *
      * @param int $data
      * @param null|Model\DataObject\AbstractObject $object
@@ -204,7 +204,7 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
     }
 
     /**
-     * @see Model\DataObject\ClassDefinition\Data::getVersionPreview
+     * @see Data::getVersionPreview
      *
      * @param \Zend_Date|\DateTime $data
      * @param null|Model\DataObject\AbstractObject $object

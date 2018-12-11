@@ -81,7 +81,7 @@ class RgbaColor extends Data implements ResourcePersistenceAwareInterface, Query
     }
 
     /**
-     * @see Model\DataObject\ClassDefinition\Data::getDataForResource
+     * @see ResourcePersistenceAwareInterface::getDataForResource
      *
      * @param Model\DataObject\Data\RgbaColor $data
      * @param null|Model\DataObject\AbstractObject $object
@@ -108,7 +108,7 @@ class RgbaColor extends Data implements ResourcePersistenceAwareInterface, Query
     }
 
     /**
-     * @see Model\DataObject\ClassDefinition\Data::getDataFromResource
+     * @see ResourcePersistenceAwareInterface::getDataFromResource
      *
      * @param array $data
      * @param null|Model\DataObject\AbstractObject $object
@@ -134,7 +134,7 @@ class RgbaColor extends Data implements ResourcePersistenceAwareInterface, Query
     }
 
     /**
-     * @see Model\DataObject\ClassDefinition\Data::getDataForQueryResource
+     * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      *
      * @param Model\DataObject\Data\RgbaColor $data
      * @param null|Model\DataObject\AbstractObject $object
@@ -148,13 +148,13 @@ class RgbaColor extends Data implements ResourcePersistenceAwareInterface, Query
     }
 
     /**
-     * @see Model\DataObject\ClassDefinition\Data::getDataForEditmode
+     * @see Data::getDataForEditmode
      *
      * @param string $data
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
-     * @return string
+     * @return string|null
      */
     public function getDataForEditmode($data, $object = null, $params = [])
     {
@@ -163,10 +163,12 @@ class RgbaColor extends Data implements ResourcePersistenceAwareInterface, Query
 
             return $rgba;
         }
+
+        return null;
     }
 
     /**
-     * @see Model\DataObject\ClassDefinition\Data::getDataFromEditmode
+     * @see Data::getDataFromEditmode
      *
      * @param string $data
      * @param null|Model\DataObject\AbstractObject $object

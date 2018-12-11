@@ -61,7 +61,7 @@ class Geobounds extends AbstractGeo implements ResourcePersistenceAwareInterface
     public $phpdocType = '\\Pimcore\\Model\\DataObject\\Data\\Geobounds';
 
     /**
-     * @see DataObject\ClassDefinition\Data::getDataForResource
+     * @see ResourcePersistenceAwareInterface::getDataForResource
      *
      * @param DataObject\Data\Geobounds $data
      * @param null|Model\DataObject\AbstractObject $object
@@ -89,7 +89,7 @@ class Geobounds extends AbstractGeo implements ResourcePersistenceAwareInterface
     }
 
     /**
-     * @see DataObject\ClassDefinition\Data::getDataFromResource
+     * @see ResourcePersistenceAwareInterface::getDataFromResource
      *
      * @param array $data
      * @param null|Model\DataObject\AbstractObject $object
@@ -116,7 +116,7 @@ class Geobounds extends AbstractGeo implements ResourcePersistenceAwareInterface
     }
 
     /**
-     * @see DataObject\ClassDefinition\Data::getDataForQueryResource
+     * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      *
      * @param DataObject\Data\Geobounds $data
      * @param null|Model\DataObject\AbstractObject $object
@@ -130,13 +130,13 @@ class Geobounds extends AbstractGeo implements ResourcePersistenceAwareInterface
     }
 
     /**
-     * @see DataObject\ClassDefinition\Data::getDataForEditmode
+     * @see Data::getDataForEditmode
      *
      * @param DataObject\Data\Geobounds $data
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
-     * @return array
+     * @return array|null
      */
     public function getDataForEditmode($data, $object = null, $params = [])
     {
@@ -149,7 +149,7 @@ class Geobounds extends AbstractGeo implements ResourcePersistenceAwareInterface
             ];
         }
 
-        return;
+        return null;
     }
 
     /**
@@ -165,7 +165,7 @@ class Geobounds extends AbstractGeo implements ResourcePersistenceAwareInterface
     }
 
     /**
-     * @see Model\DataObject\ClassDefinition\Data::getDataFromEditmode
+     * @see Data::getDataFromEditmode
      *
      * @param array $data
      * @param null|Model\DataObject\AbstractObject $object
@@ -186,7 +186,7 @@ class Geobounds extends AbstractGeo implements ResourcePersistenceAwareInterface
     }
 
     /**
-     * @see DataObject\ClassDefinition\Data::getVersionPreview
+     * @see Data::getVersionPreview
      *
      * @param DataObject\Data\Geobounds $data
      * @param null|DataObject\AbstractObject $object

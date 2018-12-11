@@ -47,7 +47,7 @@ class AdvancedManyToManyRelation extends ManyToManyObjectRelation implements Cus
     public $phpdocType = '\\Pimcore\\Model\\DataObject\\Data\\ElementMetadata[]';
 
     /**
-     * @see DataObject\ClassDefinition\Data::getDataForResource
+     * @see ResourcePersistenceAwareInterface::getDataForResource
      *
      * @param array $data
      * @param null|Model\DataObject\AbstractObject $object
@@ -85,7 +85,7 @@ class AdvancedManyToManyRelation extends ManyToManyObjectRelation implements Cus
     }
 
     /**
-     * @see DataObject\ClassDefinition\Data::getDataFromResource
+     * @see ResourcePersistenceAwareInterface::getDataFromResource
      *
      * @param array $data
      * @param null|Model\DataObject\AbstractObject $object
@@ -204,7 +204,7 @@ class AdvancedManyToManyRelation extends ManyToManyObjectRelation implements Cus
     }
 
     /**
-     * @see DataObject\ClassDefinition\Data::getDataForEditmode
+     * @see Data::getDataForEditmode
      *
      * @param array $data
      * @param null|Model\DataObject\AbstractObject $object
@@ -319,7 +319,7 @@ class AdvancedManyToManyRelation extends ManyToManyObjectRelation implements Cus
     }
 
     /**
-     * @see Model\DataObject\ClassDefinition\Data::getDataFromEditmode
+     * @see Data::getDataFromEditmode
      *
      * @param array $data
      * @param null|Model\DataObject\AbstractObject $object
@@ -399,7 +399,7 @@ class AdvancedManyToManyRelation extends ManyToManyObjectRelation implements Cus
     }
 
     /**
-     * @see DataObject\ClassDefinition\Data::getVersionPreview
+     * @see Data::getVersionPreview
      *
      * @param array $data
      * @param null|DataObject\AbstractObject $object

@@ -32,7 +32,7 @@ class Persona extends Model\DataObject\ClassDefinition\Data\Select
     public $fieldtype = 'persona';
 
     /**
-     * @see Model\DataObject\ClassDefinition\Data::getDataFromResource
+     * @see ResourcePersistenceAwareInterface::getDataFromResource
      *
      * @param string $data
      * @param null|Model\DataObject\AbstractObject $object

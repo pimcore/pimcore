@@ -55,7 +55,7 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
     public $phpdocType = '\\Pimcore\\Model\\DataObject\\Data\\Link';
 
     /**
-     * @see DataObject\ClassDefinition\Data::getDataForResource
+     * @see ResourcePersistenceAwareInterface::getDataForResource
      *
      * @param DataObject\Data\Link $data
      * @param null|Model\DataObject\AbstractObject $object
@@ -81,7 +81,7 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
     }
 
     /**
-     * @see DataObject\ClassDefinition\Data::getDataFromResource
+     * @see ResourcePersistenceAwareInterface::getDataFromResource
      *
      * @param string $data
      * @param null|Model\DataObject\AbstractObject $object
@@ -110,7 +110,7 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
     }
 
     /**
-     * @see DataObject\ClassDefinition\Data::getDataForQueryResource
+     * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      *
      * @param DataObject\Data\Link $data
      * @param null|Model\DataObject\AbstractObject $object
@@ -124,18 +124,18 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
     }
 
     /**
-     * @see DataObject\ClassDefinition\Data::getDataForEditmode
+     * @see Data::getDataForEditmode
      *
      * @param string $data
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
-     * @return string
+     * @return array|null
      */
     public function getDataForEditmode($data, $object = null, $params = [])
     {
         if (!$data instanceof DataObject\Data\Link) {
-            return false;
+            return null;
         }
         $data->path = $data->getPath();
 
@@ -147,7 +147,7 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
-     * @return string
+     * @return array|null
      */
     public function getDataForGrid($data, $object = null, $params = [])
     {
@@ -155,13 +155,13 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
     }
 
     /**
-     * @see Model\DataObject\ClassDefinition\Data::getDataFromEditmode
+     * @see Data::getDataFromEditmode
      *
      * @param string $data
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
-     * @return string
+     * @return DataObject\Data\Link|null
      */
     public function getDataFromEditmode($data, $object = null, $params = [])
     {
@@ -169,7 +169,7 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
         $link->setValues($data);
 
         if ($link->isEmpty()) {
-            return false;
+            return null;
         }
 
         return $link;
@@ -188,7 +188,7 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
     }
 
     /**
-     * @see DataObject\ClassDefinition\Data::getVersionPreview
+     * @see Data::getVersionPreview
      *
      * @param string $data
      * @param null|DataObject\AbstractObject $object

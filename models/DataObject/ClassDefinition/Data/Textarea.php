@@ -145,7 +145,7 @@ class Textarea extends Data implements ResourcePersistenceAwareInterface, QueryR
     }
 
     /**
-     * @see Model\DataObject\ClassDefinition\Data::getDataForResource
+     * @see ResourcePersistenceAwareInterface::getDataForResource
      *
      * @param string $data
      * @param null|Model\DataObject\AbstractObject $object
@@ -159,7 +159,7 @@ class Textarea extends Data implements ResourcePersistenceAwareInterface, QueryR
     }
 
     /**
-     * @see Model\DataObject\ClassDefinition\Data::getDataFromResource
+     * @see ResourcePersistenceAwareInterface::getDataFromResource
      *
      * @param string $data
      * @param null|Model\DataObject\AbstractObject $object
@@ -173,7 +173,7 @@ class Textarea extends Data implements ResourcePersistenceAwareInterface, QueryR
     }
 
     /**
-     * @see Model\DataObject\ClassDefinition\Data::getDataForQueryResource
+     * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      *
      * @param string $data
      * @param null|Model\DataObject\AbstractObject $object
@@ -187,7 +187,7 @@ class Textarea extends Data implements ResourcePersistenceAwareInterface, QueryR
     }
 
     /**
-     * @see Model\DataObject\ClassDefinition\Data::getDataForEditmode
+     * @see Data::getDataForEditmode
      *
      * @param string $data
      * @param null|Model\DataObject\AbstractObject $object
@@ -201,7 +201,7 @@ class Textarea extends Data implements ResourcePersistenceAwareInterface, QueryR
     }
 
     /**
-     * @see Model\DataObject\ClassDefinition\Data::getDataFromEditmode
+     * @see Data::getDataFromEditmode
      *
      * @param string $data
      * @param null|Model\DataObject\AbstractObject $object
@@ -214,7 +214,8 @@ class Textarea extends Data implements ResourcePersistenceAwareInterface, QueryR
         return $data;
     }
 
-    /** Generates a pretty version preview (similar to getVersionPreview) can be either html or
+    /**
+     * Generates a pretty version preview (similar to getVersionPreview) can be either html or
      * a image URL. See the ObjectMerger plugin documentation for details
      *
      * @param $data

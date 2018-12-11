@@ -210,7 +210,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
     }
 
     /**
-     * @see DataObject\ClassDefinition\Data::getDataForResource
+     * @see ResourcePersistenceAwareInterface::getDataForResource
      *
      * @param array $data
      * @param null|Model\DataObject\AbstractObject $object
@@ -248,7 +248,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
     }
 
     /**
-     * @see DataObject\ClassDefinition\Data::getDataFromResource
+     * @see ResourcePersistenceAwareInterface::getDataFromResource
      *
      * @param array $data
      * @param null|Model\DataObject\AbstractObject $object
@@ -279,15 +279,18 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
     }
 
     /**
-     * @param $data
+     * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
+     *
+     * @param array $data
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
      * @throws \Exception
+     *
+     * @return string|null
      */
     public function getDataForQueryResource($data, $object = null, $params = [])
     {
-
         //return null when data is not set
         if (!$data) {
             return null;
@@ -312,13 +315,13 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
     }
 
     /**
-     * @see DataObject\ClassDefinition\Data::getDataForEditmode
+     * @see Data::getDataForEditmode
      *
      * @param array $data
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
-     * @return array
+     * @return array|null
      */
     public function getDataForEditmode($data, $object = null, $params = [])
     {
@@ -337,27 +340,26 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
                 }
             }
             if (empty($return)) {
-                $return = false;
+                $return = null;
             }
 
             return $return;
         }
 
-        return false;
+        return null;
     }
 
     /**
-     * @see Model\DataObject\ClassDefinition\Data::getDataFromEditmode
+     * @see Data::getDataFromEditmode
      *
      * @param array $data
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
-     * @return array
+     * @return array|null
      */
     public function getDataFromEditmode($data, $object = null, $params = [])
     {
-
         //if not set, return null
         if ($data === null or $data === false) {
             return null;
@@ -410,19 +412,19 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
     }
 
     /**
-     * @see DataObject\ClassDefinition\Data::getVersionPreview
+     * @see Data::getVersionPreview
      *
      * @param array $data
      * @param null|DataObject\AbstractObject $object
      * @param mixed $params
      *
-     * @return string
-     *
-     * @todo $pathes is not defined, should be definied as empty array
+     * @return string|null
      */
     public function getVersionPreview($data, $object = null, $params = [])
     {
         if (is_array($data) && count($data) > 0) {
+            $pathes = [];
+
             foreach ($data as $e) {
                 if ($e instanceof Element\ElementInterface) {
                     $pathes[] = get_class($e) . $e->getRealFullPath();
@@ -431,6 +433,8 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
 
             return implode('<br />', $pathes);
         }
+
+        return null;
     }
 
     /**

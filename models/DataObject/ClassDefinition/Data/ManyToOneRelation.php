@@ -202,7 +202,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
     }
 
     /**
-     * @see DataObject\ClassDefinition\Data::getDataForResource
+     * @see ResourcePersistenceAwareInterface::getDataForResource
      *
      * @param Asset | Document | DataObject\AbstractObject $data
      * @param null|Model\DataObject\AbstractObject $object
@@ -227,7 +227,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
     }
 
     /**
-     * @see DataObject\ClassDefinition\Data::getDataFromResource
+     * @see ResourcePersistenceAwareInterface::getDataFromResource
      *
      * @param array $data
      * @param null|Model\DataObject\AbstractObject $object
@@ -250,7 +250,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
     }
 
     /**
-     * @see DataObject\ClassDefinition\Data::getDataForQueryResource
+     * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      *
      * @param Asset|Document|DataObject\AbstractObject $data
      * @param null|Model\DataObject\AbstractObject $object
@@ -270,13 +270,13 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
     }
 
     /**
-     * @see DataObject\ClassDefinition\Data::getDataForEditmode
+     * @see Data::getDataForEditmode
      *
      * @param Asset|Document|DataObject\AbstractObject $data
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
-     * @return array
+     * @return array|null
      */
     public function getDataForEditmode($data, $object = null, $params = [])
     {
@@ -292,11 +292,11 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
             return $r;
         }
 
-        return;
+        return null;
     }
 
     /**
-     * @see Model\DataObject\ClassDefinition\Data::getDataFromEditmode
+     * @see Data::getDataFromEditmode
      *
      * @param array $data
      * @param null|Model\DataObject\AbstractObject $object
@@ -330,7 +330,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
      * @param null $object
      * @param array $params
      *
-     * @return string
+     * @return array|null
      */
     public function getDataForGrid($data, $object = null, $params = [])
     {
@@ -338,7 +338,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
     }
 
     /**
-     * @see DataObject\ClassDefinition\Data::getVersionPreview
+     * @see Data::getVersionPreview
      *
      * @param Document | Asset | DataObject\AbstractObject $data
      * @param null|DataObject\AbstractObject $object
