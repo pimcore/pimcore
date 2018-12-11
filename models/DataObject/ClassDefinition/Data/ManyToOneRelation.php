@@ -202,15 +202,9 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
     }
 
     /**
-     * @see ResourcePersistenceAwareInterface::getDataForResource
-     *
-     * @param Asset | Document | DataObject\AbstractObject $data
-     * @param null|Model\DataObject\AbstractObject $object
-     * @param mixed $params
-     *
-     * @return array
+     * @inheritdoc
      */
-    public function getDataForResource($data, $object = null, $params = [])
+    public function prepareDataForPersistence($data, $object = null, $params = [])
     {
         if ($data instanceof Element\ElementInterface) {
             $type = Element\Service::getType($data);
@@ -227,16 +221,9 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
     }
 
     /**
-     * @see ResourcePersistenceAwareInterface::getDataFromResource
-     *
-     * @param array $data
-     * @param null|Model\DataObject\AbstractObject $object
-     * @param mixed $params
-     * @param bool $notRelationTable
-     *
-     * @return Asset|Document|DataObject\AbstractObject
+     * @inheritdoc
      */
-    public function getDataFromResource($data, $object = null, $params = [], $notRelationTable = false)
+    public function loadData($data, $object = null, $params = [])
     {
         // data from relation table
         $data = is_array($data) ? $data : [];
@@ -260,7 +247,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
      */
     public function getDataForQueryResource($data, $object = null, $params = [])
     {
-        $rData = $this->getDataForResource($data, $object, $params);
+        $rData = $this->prepareDataForPersistence($data, $object, $params);
 
         $return = [];
         $return[$this->getName() . '__id'] = $rData[0]['dest_id'];

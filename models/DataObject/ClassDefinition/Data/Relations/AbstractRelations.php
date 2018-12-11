@@ -303,7 +303,7 @@ abstract class AbstractRelations extends Data implements CustomResourcePersistin
         $db = Db::get();
 
         $data = $this->getDataFromObjectParam($object, $params);
-        $relations = $this->getDataForResource($data, $object, $params);
+        $relations = $this->prepareDataForPersistence($data, $object, $params);
 
         if (is_array($relations) && !empty($relations)) {
             foreach ($relations as $relation) {
@@ -382,13 +382,29 @@ abstract class AbstractRelations extends Data implements CustomResourcePersistin
             return ($a['index'] < $b['index']) ? -1 : 1;
         });
 
-        $data = $this->getDataFromResource($relations, $object, $params);
+        $data = $this->loadData($relations, $object, $params);
         if ($object instanceof DataObject\DirtyIndicatorInterface) {
             $object->markFieldDirty($this->getName(), false);
         }
 
         return $data;
     }
+
+    /**
+     * @param array $data
+     * @param DataObject\Concrete $object
+     * @param array $params
+     * @return mixed
+     */
+    abstract public function loadData($data, $object = null, $params = []);
+
+    /**
+     * @param array $data
+     * @param DataObject\Concrete $object
+     * @param array $params
+     * @return mixed
+     */
+    abstract public function prepareDataForPersistence($data, $object = null, $params = []);
 
     /**
      * @param $object

@@ -55,15 +55,9 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
     public $phpdocType = '\\Pimcore\\Model\\DataObject\\Data\\ObjectMetadata[]';
 
     /**
-     * @see ResourcePersistenceAwareInterface::getDataForResource
-     *
-     * @param array $data
-     * @param null|Model\DataObject\AbstractObject $object
-     * @param mixed $params
-     *
-     * @return array
+     * @inheritdoc
      */
-    public function getDataForResource($data, $object = null, $params = [])
+    public function prepareDataForPersistence($data, $object = null, $params = [])
     {
         $return = [];
 
@@ -93,15 +87,9 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implemen
     }
 
     /**
-     * @see ResourcePersistenceAwareInterface::getDataFromResource
-     *
-     * @param array $data
-     * @param null|Model\DataObject\AbstractObject $object
-     * @param mixed $params
-     *
-     * @return array
+     * @inheritdoc
      */
-    public function getDataFromResource($data, $object = null, $params = [])
+    public function loadData($data, $object = null, $params = [])
     {
         $objects = [];
 

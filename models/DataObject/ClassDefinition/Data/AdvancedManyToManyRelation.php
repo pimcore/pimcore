@@ -47,15 +47,9 @@ class AdvancedManyToManyRelation extends ManyToManyObjectRelation implements Cus
     public $phpdocType = '\\Pimcore\\Model\\DataObject\\Data\\ElementMetadata[]';
 
     /**
-     * @see ResourcePersistenceAwareInterface::getDataForResource
-     *
-     * @param array $data
-     * @param null|Model\DataObject\AbstractObject $object
-     * @param mixed $params
-     *
-     * @return array
+     * @inheritdoc
      */
-    public function getDataForResource($data, $object = null, $params = [])
+    public function prepareDataForPersistence($data, $object = null, $params = [])
     {
         $return = [];
 
@@ -85,15 +79,9 @@ class AdvancedManyToManyRelation extends ManyToManyObjectRelation implements Cus
     }
 
     /**
-     * @see ResourcePersistenceAwareInterface::getDataFromResource
-     *
-     * @param array $data
-     * @param null|Model\DataObject\AbstractObject $object
-     * @param mixed $params
-     *
-     * @return array
+     * @inheritdoc
      */
-    public function getDataFromResource($data, $object = null, $params = [])
+    public function loadData($data, $object = null, $params = [])
     {
         $list = [];
 
