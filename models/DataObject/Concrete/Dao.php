@@ -147,20 +147,27 @@ class Dao extends Model\DataObject\AbstractObject\Dao
 
         $fieldDefinitions = $this->model->getClass()->getFieldDefinitions(['object' => $this->model]);
         foreach ($fieldDefinitions as $key => $value) {
-            if (method_exists($value, 'load')) {
+            if ($value instanceof CustomResourcePersistingInterface || method_exists($value, 'load')) {
+                if (!$value instanceof CustomResourcePersistingInterface) {
+                    Tool::triggerDeprecatedMethodWarning(get_class($value), 'load', CustomResourcePersistingInterface::class);
+                }
                 // datafield has it's own loader
                 $value = $value->load($this->model);
                 if ($value === 0 || !empty($value)) {
                     $this->model->setValue($key, $value);
                 }
-            } else {
+            }
+            if ($value instanceof ResourcePersistenceAwareInterface || method_exists($value, 'getDataFromResource')) {
+                    if (!$value instanceof ResourcePersistenceAwareInterface) {
+                        Tool::triggerDeprecatedMethodWarning(get_class($value), 'getDataFromResource', ResourcePersistenceAwareInterface::class);
+                    }
                 // if a datafield requires more than one field
                 if (is_array($value->getColumnType())) {
                     $multidata = [];
                     foreach ($value->getColumnType() as $fkey => $fvalue) {
                         $multidata[$key . '__' . $fkey] = $data[$key . '__' . $fkey];
                     }
-                    $this->model->setValue($key, $this->model->getClass()->getFieldDefinition($key)->getDataFromResource($multidata));
+                    $this->model->setValue($key, $value->getDataFromResource($multidata));
                 } else {
                     $this->model->setValue($key, $value->getDataFromResource($data[$key], $this->model));
                 }
