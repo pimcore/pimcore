@@ -295,7 +295,7 @@ pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.
         var columns = [
             {text: 'ID', dataIndex: 'id', width: 50, hidden: !!visibleFields.length},
             {text: t("reference"), dataIndex: 'fullpath', flex: 200, renderer:this.fullPathRenderCheck.bind(this), hidden: !!visibleFields.length},
-            {text: t("classname"), dataIndex: 'classname', width: 100, hidden: !!visibleFields.length}
+            {text: t("class"), dataIndex: 'classname', width: 100, hidden: !!visibleFields.length}
         ];
 
         for (i = 0; i < visibleFields.length; i++) {

@@ -547,7 +547,10 @@ class DataObjectController extends ElementControllerBase implements EventedContr
             } else {
                 $refKey = $key;
             }
-            if (!$fielddefinition instanceof ManyToManyObjectRelation || $fielddefinition instanceof AdvancedManyToManyObjectRelation || $fielddefinition instanceof ReverseManyToManyObjectRelation) {
+
+
+            $relations = [];
+            if (!$fielddefinition instanceof ManyToManyObjectRelation || $fielddefinition instanceof ReverseManyToManyObjectRelation) {
                 $relations = $object->getRelationData($refKey, !$fielddefinition->isRemoteOwner(), $refId);
             }
             if (empty($relations) && !empty($parent)) {
@@ -558,7 +561,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                 if ($fielddefinition instanceof DataObject\ClassDefinition\Data\ManyToOneRelation) {
                     $data = $relations[0];
                     $data['published'] = (bool) $data['published'];
-                } elseif ($fielddefinition instanceof ManyToManyObjectRelation && !$fielddefinition instanceof AdvancedManyToManyObjectRelation && !$fielddefinition instanceof ReverseManyToManyObjectRelation) {
+                } elseif ($fielddefinition instanceof ManyToManyObjectRelation && !$fielddefinition instanceof ReverseManyToManyObjectRelation) {
                     $fieldData = $object->$getter();
                     $data = $fielddefinition->getDataForEditmode($fieldData, $object, $objectFromVersion);
                 } else {
