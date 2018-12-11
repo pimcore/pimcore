@@ -546,7 +546,7 @@ class Dao extends Model\Dao\AbstractDao
                             $this->model->setLocalizedValue($key, $value, $row['language'], false);
                         }
                     }
-                    if ($fd instanceof ResourcePersistenceAwareInterface || !method_exists($fd, 'load')) {
+                    if ($fd instanceof ResourcePersistenceAwareInterface || method_exists($fd, 'getDataFromResource')) {
                         if (!$fd instanceof ResourcePersistenceAwareInterface) {
                             Tool::triggerDeprecatedMethodWarning(get_class($fd), 'getDataFromResource', ResourcePersistenceAwareInterface::class);
                         }
