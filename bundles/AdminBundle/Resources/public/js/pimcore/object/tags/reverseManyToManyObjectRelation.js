@@ -209,9 +209,8 @@ pimcore.object.tags.reverseManyToManyObjectRelation = Class.create(pimcore.objec
                     //return e.getTarget(this.grid.getView().rowSelector);
                 }.bind(this),
                 onNodeOver: function (overHtmlNode, ddSource, e, data) {
-
                     try {
-                        var record = data = data.records[0].data;
+                        var record = data.records[0].data;
                         var fromTree = this.isFromTree(ddSource);
                         if (data.records.length === 1 && record.elementType === "object" && this.dndAllowed(record, fromTree)) {
                             return Ext.dd.DropZone.prototype.dropAllowed;
