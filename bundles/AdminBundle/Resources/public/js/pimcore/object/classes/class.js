@@ -269,7 +269,7 @@ pimcore.object.classes.klass = Class.create({
         var dataComps = Object.keys(pimcore.object.classes.data);
 
         // @TODO: ignoredAliases are there for BC reasons, to be removed in v6
-        var ignoredAliases = ['multihrefMetadata','objectsMetadata','objects','multihref','href'];
+        var ignoredAliases = ['multihrefMetadata','objectsMetadata','objects','multihref','href','nonownerobjects'];
         ignoredAliases.forEach(function (item) {
             dataComps = array_remove_value(dataComps, item);
         });

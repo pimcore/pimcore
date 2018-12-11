@@ -125,7 +125,7 @@ pimcore:
                     advancedManyToManyRelation: \Pimcore\Model\DataObject\ClassDefinition\Data\AdvancedManyToManyRelation
                     multiselect: \Pimcore\Model\DataObject\ClassDefinition\Data\Multiselect
                     newsletterActive: \Pimcore\Model\DataObject\ClassDefinition\Data\NewsletterActive
-                    nonownerobjects: \Pimcore\Model\DataObject\ClassDefinition\Data\Nonownerobjects
+                    reverseManyToManyObjectRelation: \Pimcore\Model\DataObject\ClassDefinition\Data\ReverseManyToManyObjectRelation
                     numeric: \Pimcore\Model\DataObject\ClassDefinition\Data\Numeric
                     objectbricks: \Pimcore\Model\DataObject\ClassDefinition\Data\Objectbricks
                     manyToManyObjectRelation: \Pimcore\Model\DataObject\ClassDefinition\Data\ManyToManyObjectRelation

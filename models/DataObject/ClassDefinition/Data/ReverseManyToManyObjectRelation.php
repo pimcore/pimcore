@@ -21,8 +21,15 @@ use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 
-class Nonownerobjects extends ManyToManyObjectRelation
+class ReverseManyToManyObjectRelation extends ManyToManyObjectRelation
 {
+    /**
+     * Static type of this element
+     *
+     * @var string
+     */
+    public $fieldtype = 'reverseManyToManyObjectRelation';
+
     /**
      * @var bool
      */

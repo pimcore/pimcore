@@ -11,10 +11,10 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-pimcore.registerNS("pimcore.object.classes.data.nonownerobjects");
-pimcore.object.classes.data.nonownerobjects = Class.create(pimcore.object.classes.data.data, {
+pimcore.registerNS("pimcore.object.classes.data.reverseManyToManyObjectRelation");
+pimcore.object.classes.data.reverseManyToManyObjectRelation = Class.create(pimcore.object.classes.data.data, {
 
-    type: "nonownerobjects",
+    type: "reverseManyToManyObjectRelation",
     /**
      * define where this datatype is allowed
      */
@@ -23,12 +23,11 @@ pimcore.object.classes.data.nonownerobjects = Class.create(pimcore.object.classe
         objectbrick: false,
         fieldcollection: false,
         localizedfield: false,
-        classificationstore : false,
         classificationstore : false
     },
 
     initialize: function (treeNode, initData) {
-        this.type = "nonownerobjects";
+        this.type = "reverseManyToManyObjectRelation";
 
         this.initData(initData);
 
@@ -43,7 +42,7 @@ pimcore.object.classes.data.nonownerobjects = Class.create(pimcore.object.classe
     },
 
     getTypeName: function () {
-        return t("nonownerobjects");
+        return t("reverse_many_to_many_object_relation");
     },
 
     getIconClass: function () {
@@ -113,7 +112,7 @@ pimcore.object.classes.data.nonownerobjects = Class.create(pimcore.object.classe
                     rootProperty: "availableFields"
                 },
                 extraParams: {
-                    types: 'objects',
+                    types: 'manyToManyObjectRelation',
                     name: this.datax.ownerClassName
                 }
             },
@@ -173,3 +172,6 @@ pimcore.object.classes.data.nonownerobjects = Class.create(pimcore.object.classe
 
 
 });
+
+// @TODO BC layer, to be removed in v6.0
+pimcore.object.classes.data.nonownerobjects = pimcore.object.classes.data.reverseManyToManyObjectRelation;
