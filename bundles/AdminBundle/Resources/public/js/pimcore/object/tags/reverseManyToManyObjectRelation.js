@@ -127,9 +127,70 @@ pimcore.object.tags.reverseManyToManyObjectRelation = Class.create(pimcore.objec
             return this.component;
         }
 
-
         var className = record.data.text;
+        var visibleFields = this.fieldConfig.visibleFields.split(",");
+        var columnItems = [
+            {text: 'ID', dataIndex: 'id', flex: 50, hidden: !!visibleFields.length},
+            {text: t("reference"), dataIndex: 'fullpath', flex: 200, renderer: this.fullPathRenderCheck.bind(this), hidden: !!visibleFields.length},
+            {text: t("class"), dataIndex: 'classname', flex: 100, hidden: !!visibleFields.length}
+        ];
 
+        for (i = 0; i < visibleFields.length; i++) {
+            if (!empty(this.fieldConfig.visibleFieldDefinitions) && !empty(visibleFields[i])) {
+                var layout = this.fieldConfig.visibleFieldDefinitions[visibleFields[i]];
+                var field = {
+                    key: visibleFields[i],
+                    label: layout.title == "fullpath" ? t("reference") : layout.title,
+                    layout: layout,
+                    position: i,
+                    type: layout.fieldtype
+                };
+                var fc = pimcore.object.tags[layout.fieldtype].prototype.getGridColumnConfig(field);
+                fc.width = 100;
+                fc.flex = 100;
+                fc.hidden = false;
+                fc.layout = field;
+                fc.editor = null;
+                fc.sortable = false;
+                if (fc.layout.key === "fullpath") {
+                    fc.renderer = this.fullPathRenderCheck.bind(this);
+                }
+                columnItems.push(fc);
+            }
+        }
+
+        columnItems.push(
+            {
+                xtype: 'actioncolumn',
+                menuText: t('open'),
+                width: 30,
+                items: [
+                    {
+                        tooltip: t('open'),
+                        icon: "/bundles/pimcoreadmin/img/flat-color-icons/open_file.svg",
+                        handler: function (grid, rowIndex) {
+                            var data = grid.getStore().getAt(rowIndex);
+                            pimcore.helpers.openObject(data.data.id, "object");
+                        }.bind(this)
+                    }
+                ]
+            }
+        );
+
+        columnItems.push(
+            {
+                xtype: 'actioncolumn',
+                menuText: t('remove'),
+                width: 30,
+                items: [
+                    {
+                        tooltip: t('remove'),
+                        icon: "/bundles/pimcoreadmin/img/flat-color-icons/delete.svg",
+                        handler: this.actionColumnRemove.bind(this)
+                    }
+                ]
+            }
+        );
 
         this.component = new Ext.grid.GridPanel({
             store: this.store,
@@ -140,39 +201,7 @@ pimcore.object.tags.reverseManyToManyObjectRelation = Class.create(pimcore.objec
                 defaults: {
                     sortable: false
                 },
-                items: [
-                    {text: 'ID', dataIndex: 'id', flex: 50},
-                    {text: t("reference"), dataIndex: 'path', flex: 200, renderer:this.fullPathRenderCheck.bind(this)
-                    },
-                    {text: t("class"), dataIndex: 'classname', flex: 100},
-                    {
-                        xtype: 'actioncolumn',
-                        menuText: t('open'),
-                        width: 30,
-                        items: [
-                            {
-                                tooltip: t('open'),
-                                icon: "/bundles/pimcoreadmin/img/flat-color-icons/open_file.svg",
-                                handler: function (el, rowIndex) {
-                                    var data = this.store.getAt(rowIndex);
-                                    pimcore.helpers.openObject(data.data.id, "object");
-                                }.bind(this)
-                            }
-                        ]
-                    },
-                    {
-                        xtype: 'actioncolumn',
-                        menuText: t('remove'),
-                        width: 30,
-                        items: [
-                            {
-                                tooltip: t('remove'),
-                                icon: "/bundles/pimcoreadmin/img/flat-color-icons/delete.svg",
-                                handler: this.actionColumnRemove.bind(this)
-                            }
-                        ]
-                    }
-                ]
+                items: columnItems
             },
             componentCls: cls,
             width: this.fieldConfig.width,

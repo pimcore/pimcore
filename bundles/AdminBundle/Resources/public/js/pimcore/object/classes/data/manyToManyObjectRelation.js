@@ -167,7 +167,7 @@ pimcore.object.classes.data.manyToManyObjectRelation = Class.create(pimcore.obje
         this.fieldStore = new Ext.data.Store({
             proxy: {
                 type: 'ajax',
-                url: '/admin/object-helper/get-available-visible-vields',
+                url: '/admin/object-helper/get-available-visible-fields',
                 extraParams: {
                     // no_brick_columns: "true",
                     // gridtype: 'all',

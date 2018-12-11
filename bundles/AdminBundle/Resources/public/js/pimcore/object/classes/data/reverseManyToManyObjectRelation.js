@@ -55,7 +55,6 @@ pimcore.object.classes.data.reverseManyToManyObjectRelation = Class.create(pimco
 
         this.specificPanel.removeAll();
 
-        this.specificPanel.removeAll();
         this.specificPanel.add([
             {
                 xtype: "numberfield",
@@ -78,10 +77,6 @@ pimcore.object.classes.data.reverseManyToManyObjectRelation = Class.create(pimco
             }
         ]);
 
-
-
-
-
         this.classCombo = new Ext.form.ComboBox({
             typeAhead: true,
             triggerAction: 'all',
@@ -96,12 +91,11 @@ pimcore.object.classes.data.reverseManyToManyObjectRelation = Class.create(pimco
             forceSelection:true,
             editable: true,
             listeners: {
-                change: function(field, classNamevalue, oldValue) {
-                    this.datax.ownerClassName=classNamevalue;
+                change: function (field, classNameValue, oldValue) {
+                    this.datax.ownerClassName = classNameValue;
                 }.bind(this)
             }
         });
-
 
         this.fieldComboStore = new Ext.data.Store({
             proxy: {
@@ -121,7 +115,6 @@ pimcore.object.classes.data.reverseManyToManyObjectRelation = Class.create(pimco
             autoLoad: false,
             forceSelection:true
         });
-
 
         this.fieldCombo = new Ext.form.ComboBox({
             fieldLabel: t('owner_field'),
@@ -143,10 +136,52 @@ pimcore.object.classes.data.reverseManyToManyObjectRelation = Class.create(pimco
             }
         });
 
+        var classes = [];
 
+        if (this.datax.ownerClassName != null) {
+            classes.push(this.datax.ownerClassName);
+        }
+
+        this.fieldStore = new Ext.data.Store({
+            proxy: {
+                type: 'ajax',
+                url: '/admin/object-helper/get-available-visible-fields',
+                extraParams: {
+                    // no_brick_columns: "true",
+                    // gridtype: 'all',
+                    classes: classes
+                },
+                reader: {
+                    type: 'json',
+                    rootProperty: "availableFields"
+                }
+            },
+            fields: ['key', 'label'],
+            autoLoad: false,
+            forceSelection:true,
+            listeners: {
+                load: function () {
+                    this.fieldSelect.setValue(this.datax.visibleFields);
+                }.bind(this)
+            }
+        });
+        this.fieldStore.load();
+        this.fieldSelect = new Ext.ux.form.MultiSelect({
+            name: "visibleFields",
+            triggerAction: "all",
+            editable: false,
+            fieldLabel: t("objectsMetadata_visible_fields"),
+            store: this.fieldStore,
+            value: this.datax.visibleFields,
+            displayField: "key",
+            valueField: "key",
+            width: 400,
+            height: 300
+        });
 
         this.specificPanel.add(this.classCombo);
         this.specificPanel.add(this.fieldCombo);
+        this.specificPanel.add(this.fieldSelect);
 
         this.specificPanel.add(new Ext.form.DisplayField({
             hideLabel: true,

@@ -289,9 +289,7 @@ pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.
         }
 
         var cls = 'object_field';
-
         var visibleFields = this.visibleFields;
-
         var columns = [
             {text: 'ID', dataIndex: 'id', width: 50, hidden: !!visibleFields.length},
             {text: t("reference"), dataIndex: 'fullpath', flex: 200, renderer:this.fullPathRenderCheck.bind(this), hidden: !!visibleFields.length},
@@ -318,7 +316,7 @@ pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.
                 fc.layout = field;
                 fc.editor = null;
                 fc.sortable = false;
-                if(fc.layout.key === "fullpath") {
+                if (fc.layout.key === "fullpath") {
                     fc.renderer = this.fullPathRenderCheck.bind(this);
                 }
                 columns.push(fc);

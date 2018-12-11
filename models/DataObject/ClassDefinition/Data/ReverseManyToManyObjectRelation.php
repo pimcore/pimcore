@@ -77,6 +77,20 @@ class ReverseManyToManyObjectRelation extends ManyToManyObjectRelation
     }
 
     /**
+     * @return array
+     */
+    public function getClasses()
+    {
+        if (!empty($this->ownerClassName)) {
+            return [
+                ['classes' => $this->ownerClassName]
+            ];
+        }
+
+        return [];
+    }
+
+    /**
      * @return bool
      */
     public function getLazyLoading()

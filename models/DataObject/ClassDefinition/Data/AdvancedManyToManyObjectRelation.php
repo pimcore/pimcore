@@ -123,7 +123,9 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
     }
 
     /**
-     * @param $data
+     * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
+     *
+     * @param array $data
      * @param null $object
      * @param mixed $params
      *
@@ -719,36 +721,6 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
     public function getAllowedClassId()
     {
         return $this->allowedClassId;
-    }
-
-    /**
-     * @param $visibleFields
-     *
-     * @return $this
-     */
-    public function setVisibleFields($visibleFields)
-    {
-        /**
-         * @extjs6
-         */
-        if (is_array($visibleFields)) {
-            if (count($visibleFields)) {
-                $visibleFields = implode(',', $visibleFields);
-            } else {
-                $visibleFields = null;
-            }
-        }
-        $this->visibleFields = $visibleFields;
-
-        return $this;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getVisibleFields()
-    {
-        return $this->visibleFields;
     }
 
     /**

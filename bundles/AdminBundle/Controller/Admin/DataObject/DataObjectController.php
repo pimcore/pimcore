@@ -560,8 +560,12 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                 if ($fielddefinition instanceof DataObject\ClassDefinition\Data\ManyToOneRelation) {
                     $data = $relations[0];
                     $data['published'] = (bool) $data['published'];
-                } elseif ($fielddefinition instanceof ManyToManyObjectRelation && !$fielddefinition instanceof ReverseManyToManyObjectRelation) {
-                    $fieldData = $object->$getter();
+                } elseif ($fielddefinition instanceof ManyToManyObjectRelation) {
+                    if ($fielddefinition instanceof ReverseManyToManyObjectRelation) {
+                        $fieldData = $relations;
+                    } else {
+                        $fieldData = $object->$getter();
+                    }
                     $data = $fielddefinition->getDataForEditmode($fieldData, $object, $objectFromVersion);
                 } else {
                     foreach ($relations as $rel) {

@@ -158,7 +158,9 @@ class AdvancedManyToManyRelation extends ManyToManyObjectRelation
     }
 
     /**
-     * @param $data
+     * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
+     *
+     * @param array $data
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
@@ -166,7 +168,6 @@ class AdvancedManyToManyRelation extends ManyToManyObjectRelation
      */
     public function getDataForQueryResource($data, $object = null, $params = [])
     {
-
         //return null when data is not set
         if (!$data) {
             return null;

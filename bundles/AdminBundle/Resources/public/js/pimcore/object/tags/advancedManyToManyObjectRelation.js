@@ -93,11 +93,10 @@ pimcore.object.tags.advancedManyToManyObjectRelation = Class.create(pimcore.obje
 
         var cls = 'object_field';
         var i;
-
         var visibleFields = this.visibleFields;
-
-        var columns = [];
-        columns.push({text: 'ID', dataIndex: 'id', width: 50});
+        var columns = [
+            {text: 'ID', dataIndex: 'id', width: 50, hidden: !!visibleFields.length}
+        ];
 
         for (i = 0; i < visibleFields.length; i++) {
             if (!empty(this.fieldConfig.visibleFieldDefinitions) && !empty(visibleFields[i])) {

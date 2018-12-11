@@ -2449,7 +2449,7 @@ class DataObjectHelperController extends AdminController
     }
 
     /**
-     * @Route("/get-available-visible-vields", methods={"GET"})
+     * @Route("/get-available-visible-fields", methods={"GET"})
      *
      * @param Request $request
      *

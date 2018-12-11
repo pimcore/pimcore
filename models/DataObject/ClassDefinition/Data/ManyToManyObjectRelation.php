@@ -70,9 +70,14 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
     public $relationType = true;
 
     /**
-     * @var
+     * @var string|null
      */
     public $visibleFields;
+
+    /**
+     * @var array
+     */
+    public $visibleFieldDefinitions = [];
 
     /**
      * @return bool
@@ -186,6 +191,10 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
         // add data
         if (is_array($data) && count($data) > 0) {
             foreach ($data as $referencedObject) {
+                if (is_array($referencedObject) && isset($referencedObject['id'])) {
+                    $referencedObject = DataObject::getById($referencedObject['id']);
+                }
+
                 if ($referencedObject instanceof DataObject\Concrete) {
                     $return[] = DataObject\Service::gridObjectData($referencedObject, $gridFields, null, ['purpose' => 'editmode']);
                 }
@@ -897,11 +906,11 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
             return $this->getDataFromEditmode($result, $object, $params);
         }
 
-        return;
+        return null;
     }
 
     /**
-     * @param $visibleFields
+     * @param array|string $visibleFields
      *
      * @return $this
      */
@@ -916,7 +925,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getVisibleFields()
     {
