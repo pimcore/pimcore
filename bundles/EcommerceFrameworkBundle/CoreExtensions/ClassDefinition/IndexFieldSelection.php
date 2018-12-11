@@ -16,8 +16,10 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\CoreExtensions\ClassDefinition
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\CoreExtensions\ObjectData;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
+use Pimcore\Model\DataObject\ClassDefinition\Data\QueryResourcePersistenceAwareInterface;
+use Pimcore\Model\DataObject\ClassDefinition\Data\ResourcePersistenceAwareInterface;
 
-class IndexFieldSelection extends Data
+class IndexFieldSelection extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface
 {
     /**
      * Static type of this element
