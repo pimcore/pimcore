@@ -362,7 +362,7 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
     public function getVersionPreview($data, $object = null, $params = [])
     {
         $versionPreview = $this->getDiffVersionPreview($data, $object, $params);
-        if(is_array($versionPreview) && $versionPreview['html']) {
+        if (is_array($versionPreview) && $versionPreview['html']) {
             return $versionPreview['html'];
         }
 
