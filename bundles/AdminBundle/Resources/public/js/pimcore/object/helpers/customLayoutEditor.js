@@ -840,7 +840,7 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
                 nameField,
                 identifierField, {
                     xtype: 'panel',
-                    html: t('unique_identifier_warning')
+                    html: t('identifier_warning')
                 }
             ],
             buttons: [
