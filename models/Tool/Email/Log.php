@@ -482,11 +482,12 @@ class Log extends Model\AbstractModel
     /**
      * Returns the "to" recipients as array
      *
+     * @deprecated directly use \Pimcore\Helper\Mail::parseEmailAddressField instead
      * @return array
      */
     public function getToAsArray()
     {
-        return $this->buildArray($this->getTo());
+        return \Pimcore\Helper\Mail::parseEmailAddressField($this->getTo());
     }
 
     /**
@@ -514,11 +515,12 @@ class Log extends Model\AbstractModel
     /**
      * Returns the carbon copy recipients as array
      *
+     * @deprecated directly use \Pimcore\Helper\Mail::parseEmailAddressField instead
      * @return array
      */
     public function getCcAsArray()
     {
-        return $this->buildArray($this->getCc());
+        return \Pimcore\Helper\Mail::parseEmailAddressField($this->getCc());
     }
 
     /**
@@ -546,11 +548,12 @@ class Log extends Model\AbstractModel
     /**
      * Returns the blind carbon copy recipients as array
      *
+     * @deprecated directly use \Pimcore\Helper\Mail::parseEmailAddressField instead
      * @return array
      */
     public function getBccAsArray()
     {
-        return $this->buildArray($this->getBcc());
+        return \Pimcore\Helper\Mail::parseEmailAddressField($this->getBcc());
     }
 
     /**
@@ -600,11 +603,12 @@ class Log extends Model\AbstractModel
     /**
      * Returns the "replyTo" email addresses as array
      *
+     * @deprecated directly use \Pimcore\Helper\Mail::parseEmailAddressField instead
      * @return array
      */
     public function getReplyToAsArray()
     {
-        return $this->buildArray($this->getReplyTo());
+        return \Pimcore\Helper\Mail::parseEmailAddressField($this->getReplyTo());
     }
 
     /**
@@ -649,33 +653,5 @@ class Log extends Model\AbstractModel
     public function getBodyText()
     {
         return $this->bodyText;
-    }
-
-    /**
-     * Helper to get the recipients as array
-     *
-     * @param $data
-     *
-     * @return array
-     */
-    protected function buildArray($data)
-    {
-        if (is_null($data)) {
-            return [];
-        }
-
-        $dataArray = [];
-        $tmp = explode(',', trim($data));
-
-        foreach ($tmp as $entry) {
-            $entry = trim($entry);
-            $tmp2 = explode(' ', $entry);
-            $dataArray[] = [
-                'email' => trim($tmp2[0]),
-                'name' => str_replace(['(', ')'], '', $tmp2[1])
-            ];
-        }
-
-        return $dataArray;
     }
 }

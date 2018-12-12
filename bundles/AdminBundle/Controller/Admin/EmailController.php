@@ -271,22 +271,40 @@ class EmailController extends AdminController
                 $mail->setBodyText($text);
             }
 
-            $mail->setFrom($emailLog->getFrom());
-
-            foreach ($emailLog->getToAsArray() as $entry) {
-                $mail->addTo($entry['email'], $entry['name']);
+            $fromArray = \Pimcore\Helper\Mail::parseEmailAddressField($emailLog->getFrom());
+            if (!empty($fromArray)) {
+                list($from) = $fromArray;
+                if ($from) {
+                    $mail->setFrom($from['email'], $from['name']);
+                }
             }
 
-            foreach ($emailLog->getCcAsArray() as $entry) {
-                $mail->addCc($entry['email'], $entry['name']);
+            $to = \Pimcore\Helper\Mail::parseEmailAddressField($emailLog->getTo());
+            if (!empty($to)) {
+                foreach ($to as $toEntry) {
+                    $mail->addTo($toEntry['email'], $toEntry['name']);
+                }
             }
 
-            foreach ($emailLog->getBccAsArray() as $entry) {
-                $mail->addBcc($entry['email']);
+            $cc = \Pimcore\Helper\Mail::parseEmailAddressField($emailLog->getCc());
+            if (!empty($cc)) {
+                foreach ($cc as $ccEntry) {
+                    $mail->addCc($ccEntry['email'], $ccEntry['name']);
+                }
             }
 
-            foreach ($emailLog->getReplyToAsArray() as $entry) {
-                $mail->addReplyTo($entry['email']);
+            $bcc = \Pimcore\Helper\Mail::parseEmailAddressField($emailLog->getBcc());
+            if (!empty($bcc)) {
+                foreach ($bcc as $bccEntry) {
+                    $mail->addBcc($bccEntry['email'], $bccEntry['name']);
+                }
+            }
+
+            $replyTo = \Pimcore\Helper\Mail::parseEmailAddressField($emailLog->getReplyTo());
+            if (!empty($replyTo)) {
+                foreach ($replyTo as $replyToEntry) {
+                    $mail->addReplyTo($replyToEntry['email'], $replyToEntry['name']);
+                }
             }
 
             $mail->setSubject($emailLog->getSubject());
