@@ -849,9 +849,5 @@
   "permission_missing": "You need the '%s' permission to perform this action",
   "paste_as_language_variant": "Paste as new language variant",
   "select_language_for_new_document": "Select language for New Document",
-  "source_document_language_missing": "Set Language(Properties) in Source Document",
-  "unique_identifier": "Unique identifier",
-  "invalid_identifier": "Invalid Identifier",
-  "identifier_already_exists": "Identifier already exists",
-  "unique_identifier_warning": "Be careful with the unique identifier because table names can contain only up to 64 characters."
+  "source_document_language_missing": "Set Language(Properties) in Source Document"
 }
