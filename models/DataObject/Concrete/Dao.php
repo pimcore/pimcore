@@ -158,9 +158,9 @@ class Dao extends Model\DataObject\AbstractObject\Dao
                 }
             }
             if ($value instanceof ResourcePersistenceAwareInterface || method_exists($value, 'getDataFromResource')) {
-                    if (!$value instanceof ResourcePersistenceAwareInterface) {
-                        Tool::triggerDeprecatedMethodWarning(get_class($value), 'getDataFromResource', ResourcePersistenceAwareInterface::class);
-                    }
+                if (!$value instanceof ResourcePersistenceAwareInterface) {
+                    Tool::triggerDeprecatedMethodWarning(get_class($value), 'getDataFromResource', ResourcePersistenceAwareInterface::class);
+                }
                 // if a datafield requires more than one field
                 if (is_array($value->getColumnType())) {
                     $multidata = [];

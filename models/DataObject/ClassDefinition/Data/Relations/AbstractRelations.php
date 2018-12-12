@@ -394,6 +394,7 @@ abstract class AbstractRelations extends Data implements CustomResourcePersistin
      * @param array $data
      * @param DataObject\Concrete $object
      * @param array $params
+     *
      * @return mixed
      */
     abstract public function loadData($data, $object = null, $params = []);
@@ -402,6 +403,7 @@ abstract class AbstractRelations extends Data implements CustomResourcePersistin
      * @param array $data
      * @param DataObject\Concrete $object
      * @param array $params
+     *
      * @return mixed
      */
     abstract public function prepareDataForPersistence($data, $object = null, $params = []);

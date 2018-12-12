@@ -22,7 +22,6 @@ use Pimcore\Event\AdminEvents;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
-use Pimcore\Model\DataObject\ClassDefinition\Data\AdvancedManyToManyObjectRelation;
 use Pimcore\Model\DataObject\ClassDefinition\Data\ManyToManyObjectRelation;
 use Pimcore\Model\DataObject\ClassDefinition\Data\ReverseManyToManyObjectRelation;
 use Pimcore\Model\Element;
@@ -547,7 +546,6 @@ class DataObjectController extends ElementControllerBase implements EventedContr
             } else {
                 $refKey = $key;
             }
-
 
             $relations = [];
             if (!$fielddefinition instanceof ManyToManyObjectRelation || $fielddefinition instanceof ReverseManyToManyObjectRelation) {
