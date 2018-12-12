@@ -210,10 +210,10 @@ class Config extends Model\AbstractModel
             ]);
             $thumbnail->setQuality(60);
             $thumbnail->setFormat('PJPEG');
+        }
 
-            if ($hdpi) {
-                $thumbnail->setHighResolution(2);
-            }
+        if ($hdpi) {
+            $thumbnail->setHighResolution(2);
         }
 
         return $thumbnail;
