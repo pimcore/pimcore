@@ -202,13 +202,9 @@ body > .x-mask {
     border-color: #d0d0d0;
 }
 
-.x-panel > .x-panel-default-outer-border-trl {
+.x-panel > .x-panel-default-outer-border-trl, .x-panel > .x-panel-default-outer-border-rl, .x-panel > .x-panel-default-outer-border-rbl {
     border-color: #d0d0d0 !important;
     border-style: solid;
-}
-
-.x-panel > .x-panel-default-outer-border-rbl {
-    border-color: #d0d0d0 !important;
 }
 
 .x-portlet {
