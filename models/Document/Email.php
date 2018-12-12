@@ -19,6 +19,7 @@ namespace Pimcore\Model\Document;
 
 use Egulias\EmailValidator\EmailValidator;
 use Egulias\EmailValidator\Validation\RFCValidation;
+use Pimcore\Helper\Mail;
 use Pimcore\Model;
 
 /**
@@ -126,6 +127,7 @@ class Email extends Model\Document\PageSnippet
     /**
      * Returns the "to" receivers as array
      *
+     * @deprecated use \Pimcore\Helper\Mail::parseEmailAddressField instead
      * @return array
      */
     public function getToAsArray()
@@ -138,17 +140,17 @@ class Email extends Model\Document\PageSnippet
      *
      * @param $key
      *
+     * @deprecated use \Pimcore\Helper\Mail::parseEmailAddressField instead
      * @return array
      */
     protected function getAsArray($key)
     {
-        $emailAddresses = preg_split('/,|;/', $this->{'get' . ucfirst($key)}());
+        $parsedAddresses = Mail::parseEmailAddressField($this->{'get' . ucfirst($key)}());
+        $emailAddresses = [];
 
-        foreach ($emailAddresses as $key => $emailAddress) {
-            if ($validAddress = self::validateEmailAddress(trim($emailAddress))) {
-                $emailAddresses[$key] = $validAddress;
-            } else {
-                unset($emailAddresses[$key]);
+        foreach ($parsedAddresses as $emailInfo) {
+            if ($validAddress = self::validateEmailAddress($emailInfo['email'])) {
+                $emailAddresses[] = $emailInfo['email'];
             }
         }
 
@@ -203,6 +205,7 @@ class Email extends Model\Document\PageSnippet
     /**
      * Returns the "from" email address as array
      *
+     * @deprecated use \Pimcore\Helper\Mail::parseEmailAddressField instead
      * @return array
      */
     public function getFromAsArray()
@@ -239,6 +242,7 @@ class Email extends Model\Document\PageSnippet
     /**
      * Returns the "replyTo" email address as array
      *
+     * @deprecated use \Pimcore\Helper\Mail::parseEmailAddressField instead
      * @return array
      */
     public function getReplyToAsArray()
@@ -279,6 +283,7 @@ class Email extends Model\Document\PageSnippet
     /**
      * Returns the carbon copy receivers as array
      *
+     * @deprecated use \Pimcore\Helper\Mail::parseEmailAddressField instead
      * @return array
      */
     public function getCcAsArray()
@@ -313,6 +318,7 @@ class Email extends Model\Document\PageSnippet
     /**
      * Returns the blind carbon copy receivers as array
      *
+     * @deprecated use \Pimcore\Helper\Mail::parseEmailAddressField instead
      * @return array
      */
     public function getBccAsArray()
