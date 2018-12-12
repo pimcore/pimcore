@@ -19,6 +19,7 @@ namespace Pimcore\Model\Document;
 
 use Egulias\EmailValidator\EmailValidator;
 use Egulias\EmailValidator\Validation\RFCValidation;
+use Pimcore\Helper\Mail;
 use Pimcore\Model;
 
 /**
@@ -144,13 +145,12 @@ class Email extends Model\Document\PageSnippet
      */
     protected function getAsArray($key)
     {
-        $emailAddresses = preg_split('/,|;/', $this->{'get' . ucfirst($key)}());
+        $parsedAddresses = Mail::parseEmailAddressField($this->{'get' . ucfirst($key)}());
+        $emailAddresses = [];
 
-        foreach ($emailAddresses as $key => $emailAddress) {
-            if ($validAddress = self::validateEmailAddress(trim($emailAddress))) {
-                $emailAddresses[$key] = $validAddress;
-            } else {
-                unset($emailAddresses[$key]);
+        foreach ($parsedAddresses as $emailInfo) {
+            if ($validAddress = self::validateEmailAddress($emailInfo['email'])) {
+                $emailAddresses[] = $emailInfo['email'];
             }
         }
 
