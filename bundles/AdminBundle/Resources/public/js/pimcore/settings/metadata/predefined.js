@@ -370,39 +370,42 @@ pimcore.settings.metadata.predefined = Class.create({
                         },
 
                         onNodeOver: function(dataRow, target, dd, e, data) {
+                            if (data.records.length == 1) {
+                                var record = data.records[0];
+                                var data = record.data;
 
-                            var record = data.records[0];
-                            var data = record.data;
-
-                            if(dataRow.type == data.elementType) {
-                                return Ext.dd.DropZone.prototype.dropAllowed;
+                                if (dataRow.type == data.elementType) {
+                                    return Ext.dd.DropZone.prototype.dropAllowed;
+                                }
                             }
                             return Ext.dd.DropZone.prototype.dropNotAllowed;
                         }.bind(this, data),
 
                         onNodeDrop : function(recordid, target, dd, e, data) {
+                            if (pimcore.helpers.dragAndDropValidateSingleItem(data)) {
+                                var rec = this.grid.getStore().getById(recordid);
 
-                            var rec = this.grid.getStore().getById(recordid);
+                                var record = data.records[0];
+                                var data = record.data;
 
-                            var record = data.records[0];
-                            var data = record.data;
-
-                            if(data.elementType != rec.get("type")) {
-                                return false;
-                            }
-
-
-                            rec.set("data", data.path);
-                            rec.set("all",{
-                                data: {
-                                    id: data.id,
-                                    type: data.type
+                                if (data.elementType != rec.get("type")) {
+                                    return false;
                                 }
-                            });
 
-                            this.updateRows();
 
-                            return true;
+                                rec.set("data", data.path);
+                                rec.set("all", {
+                                    data: {
+                                        id: data.id,
+                                        type: data.type
+                                    }
+                                });
+
+                                this.updateRows();
+
+                                return true;
+                            }
+                            return false;
                         }.bind(this, recordid)
                     });
 

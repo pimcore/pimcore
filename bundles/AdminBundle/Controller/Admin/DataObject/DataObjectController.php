@@ -22,6 +22,8 @@ use Pimcore\Event\AdminEvents;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
+use Pimcore\Model\DataObject\ClassDefinition\Data\ManyToManyObjectRelation;
+use Pimcore\Model\DataObject\ClassDefinition\Data\ReverseManyToManyObjectRelation;
 use Pimcore\Model\Element;
 use Pimcore\Tool;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -520,16 +522,16 @@ class DataObjectController extends ElementControllerBase implements EventedContr
         $getter = 'get' . ucfirst($key);
 
         // relations but not for objectsMetadata, because they have additional data which cannot be loaded directly from the DB
-        // nonownerobjects should go in there anyway (regardless if it a version or not), so that the values can be loaded
+        // ReverseManyToManyObjectRelation should go in there anyway (regardless if it a version or not), so that the values can be loaded
         if (
             (
                 !$objectFromVersion
                 && $fielddefinition instanceof DataObject\ClassDefinition\Data\Relations\AbstractRelations
                 && $fielddefinition->getLazyLoading()
-                && !$fielddefinition instanceof DataObject\ClassDefinition\Data\ObjectsMetadata
-                && !$fielddefinition instanceof DataObject\ClassDefinition\Data\MultihrefMetadata
+                && !$fielddefinition instanceof DataObject\ClassDefinition\Data\AdvancedManyToManyObjectRelation
+                && !$fielddefinition instanceof DataObject\ClassDefinition\Data\AdvancedManyToManyRelation
             )
-            || $fielddefinition instanceof DataObject\ClassDefinition\Data\Nonownerobjects
+            || $fielddefinition instanceof ReverseManyToManyObjectRelation
         ) {
 
             //lazy loading data is fetched from DB differently, so that not every relation object is instantiated
@@ -544,7 +546,9 @@ class DataObjectController extends ElementControllerBase implements EventedContr
             } else {
                 $refKey = $key;
             }
-            if (!$fielddefinition instanceof DataObject\ClassDefinition\Data\ManyToManyObjectRelation || $fielddefinition instanceof DataObject\ClassDefinition\Data\AdvancedManyToManyObjectRelation) {
+
+            $relations = [];
+            if (!$fielddefinition instanceof ManyToManyObjectRelation || $fielddefinition instanceof ReverseManyToManyObjectRelation) {
                 $relations = $object->getRelationData($refKey, !$fielddefinition->isRemoteOwner(), $refId);
             }
             if (empty($relations) && !empty($parent)) {
@@ -552,10 +556,10 @@ class DataObjectController extends ElementControllerBase implements EventedContr
             } else {
                 $data = [];
 
-                if ($fielddefinition instanceof DataObject\ClassDefinition\Data\Href) {
+                if ($fielddefinition instanceof DataObject\ClassDefinition\Data\ManyToOneRelation) {
                     $data = $relations[0];
                     $data['published'] = (bool) $data['published'];
-                } elseif ($fielddefinition instanceof DataObject\ClassDefinition\Data\ManyToManyObjectRelation && !$fielddefinition instanceof DataObject\ClassDefinition\Data\AdvancedManyToManyObjectRelation) {
+                } elseif ($fielddefinition instanceof ManyToManyObjectRelation && !$fielddefinition instanceof ReverseManyToManyObjectRelation) {
                     $fieldData = $object->$getter();
                     $data = $fielddefinition->getDataForEditmode($fieldData, $object, $objectFromVersion);
                 } else {
@@ -990,105 +994,6 @@ class DataObjectController extends ElementControllerBase implements EventedContr
         }
 
         return $this->json(['success' => false, 'message' => 'Unable to change a sorting way of children items.']);
-    }
-
-    /**
-     * @Route("/delete-info", methods={"GET"})
-     *
-     * @param Request $request
-     *
-     * @return JsonResponse
-     */
-    public function deleteInfoAction(Request $request)
-    {
-        $hasDependency = false;
-        $deleteJobs = [];
-        $recycleJobs = [];
-
-        $totalChilds = 0;
-
-        $ids = $request->get('id');
-        $ids = explode(',', $ids);
-
-        foreach ($ids as $id) {
-            try {
-                $object = DataObject::getById($id);
-                if (!$object) {
-                    continue;
-                }
-                $hasDependency |= $object->getDependencies()->isRequired();
-            } catch (\Exception $e) {
-                Logger::err('failed to access object with id: ' . $id);
-                continue;
-            }
-
-            // check for children
-            if ($object instanceof DataObject\AbstractObject) {
-                $recycleJobs[] = [[
-                    'url' => '/admin/recyclebin/add',
-                    'method' => 'POST',
-                    'params' => [
-                        'type' => 'object',
-                        'id' => $object->getId()
-                    ]
-                ]];
-
-                $hasChilds = $object->hasChildren();
-                if (!$hasDependency) {
-                    $hasDependency = $hasChilds;
-                }
-
-                $childs = 0;
-                if ($hasChilds) {
-                    // get amount of childs
-                    $list = new DataObject\Listing();
-                    $list->setCondition('o_path LIKE ' . $list->quote($object->getRealFullPath() . '/%'));
-                    $childs = $list->getTotalCount();
-
-                    $totalChilds += $childs;
-                    if ($childs > 0) {
-                        $deleteObjectsPerRequest = 5;
-                        for ($i = 0; $i < ceil($childs / $deleteObjectsPerRequest); $i++) {
-                            $deleteJobs[] = [[
-                                'url' => '/admin/object/delete',
-                                'method' => 'DELETE',
-                                'params' => [
-                                    'step' => $i,
-                                    'amount' => $deleteObjectsPerRequest,
-                                    'type' => 'childs',
-                                    'id' => $object->getId()
-                                ]
-                            ]];
-                        }
-                    }
-                }
-
-                // the object itself is the last one
-                $deleteJobs[] = [[
-                    'url' => '/admin/object/delete',
-                    'method' => 'DELETE',
-                    'params' => [
-                        'id' => $object->getId()
-                    ]
-                ]];
-            }
-        }
-
-        // get the element key in case of just one
-        $elementKey = false;
-        if (count($ids) === 1) {
-            $elementKey = DataObject::getById($id)->getKey();
-        }
-
-        $deleteJobs = array_merge($recycleJobs, $deleteJobs);
-
-        return $this->adminJson([
-            'hasDependencies' => $hasDependency,
-            'childs' => $totalChilds,
-            'deletejobs' => $deleteJobs,
-            'batchDelete' => count($ids) > 1,
-            'elementKey' => $elementKey
-        ]);
     }
 
     /**

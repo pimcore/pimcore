@@ -104,7 +104,7 @@ class Video implements OwnerAwareFieldInterface
     }
 
     /**
-     * @param Asset $poster
+     * @param Asset|string $poster
      */
     public function setPoster($poster)
     {
@@ -113,7 +113,7 @@ class Video implements OwnerAwareFieldInterface
     }
 
     /**
-     * @return Asset
+     * @return Asset|string
      */
     public function getPoster()
     {

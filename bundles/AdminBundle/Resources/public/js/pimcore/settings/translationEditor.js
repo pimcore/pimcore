@@ -207,14 +207,14 @@ Ext.define('pimcore.settings.translationEditor', {
             },
 
             onNodeOver : function(target, dd, e, data) {
-                var record = data.records[0];
-                data = record.data;
-                if (this.dndAllowed(data)) {
-                    return Ext.dd.DropZone.prototype.dropAllowed;
+                if (data.records.length == 1) {
+                    var record = data.records[0];
+                    data = record.data;
+                    if (this.dndAllowed(data)) {
+                        return Ext.dd.DropZone.prototype.dropAllowed;
+                    }
                 }
-                else {
-                    return Ext.dd.DropZone.prototype.dropNotAllowed;
-                }
+                return Ext.dd.DropZone.prototype.dropNotAllowed;
 
             }.bind(this),
 
@@ -274,6 +274,9 @@ Ext.define('pimcore.settings.translationEditor', {
     },
 
     onNodeDrop: function (target, dd, e, data) {
+        if (!pimcore.helpers.dragAndDropValidateSingleItem(data)) {
+            return;
+        }
 
         if (!this.ckeditor) {
             return;

@@ -20,10 +20,11 @@ use Pimcore\Db;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
+use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\Element;
 use Pimcore\Tool\Serialize;
 
-class Block extends Model\DataObject\ClassDefinition\Data
+class Block extends Data implements CustomResourcePersistingInterface, ResourcePersistenceAwareInterface
 {
     use Element\ChildsCompatibilityTrait;
 
@@ -113,9 +114,9 @@ class Block extends Model\DataObject\ClassDefinition\Data
     public $fieldDefinitionsCache;
 
     /**
-     * @see DataObject\ClassDefinition\Data::getDataForResource
+     * @see ResourcePersistenceAwareInterface::getDataForResource
      *
-     * @param string $data
+     * @param array $data
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
@@ -160,20 +161,20 @@ class Block extends Model\DataObject\ClassDefinition\Data
     }
 
     /**
-     * @see DataObject\ClassDefinition\Data::getDataFromResource
+     * @see ResourcePersistenceAwareInterface::getDataFromResource
      *
      * @param string $data
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
-     * @return string
+     * @return array|null
      */
     public function getDataFromResource($data, $object = null, $params = [])
     {
         if ($data) {
             $count = 0;
 
-            $unserializedData = unserialize($data);
+            $unserializedData = Serialize::unserialize($data);
             $result = [];
 
             foreach ($unserializedData as $blockElements) {
@@ -210,6 +211,11 @@ class Block extends Model\DataObject\ClassDefinition\Data
                         }
                     }
                     $blockElement = new DataObject\Data\BlockElement($blockElementRaw['name'], $blockElementRaw['type'], $blockElementRaw['data']);
+
+                    if (isset($params['owner'])) {
+                        $blockElement->setOwner($params['owner'], $params['fieldname'], $params['language']);
+                    }
+
                     $items[$elementName] = $blockElement;
                 }
                 $result[] = $items;
@@ -223,21 +229,7 @@ class Block extends Model\DataObject\ClassDefinition\Data
     }
 
     /**
-     * @see DataObject\ClassDefinition\Data::getDataForQueryResource
-     *
-     * @param string $data
-     * @param null|Model\DataObject\AbstractObject $object
-     * @param mixed $params
-     *
-     * @return string
-     */
-    public function getDataForQueryResource($data, $object = null, $params = [])
-    {
-        return null;
-    }
-
-    /**
-     * @see DataObject\ClassDefinition\Data::getDataForEditmode
+     * @see Data::getDataForEditmode
      *
      * @param string $data
      * @param null|Model\DataObject\AbstractObject $object
@@ -283,7 +275,7 @@ class Block extends Model\DataObject\ClassDefinition\Data
     }
 
     /**
-     * @see Model\DataObject\ClassDefinition\Data::getDataFromEditmode
+     * @see Data::getDataFromEditmode
      *
      * @param array $data
      * @param null|Model\DataObject\AbstractObject $object
@@ -333,7 +325,7 @@ class Block extends Model\DataObject\ClassDefinition\Data
     }
 
     /**
-     * @see DataObject\ClassDefinition\Data::getVersionPreview
+     * @see Data::getVersionPreview
      *
      * @param string $data
      * @param null|DataObject\AbstractObject $object
@@ -902,6 +894,14 @@ class Block extends Model\DataObject\ClassDefinition\Data
     /**
      * @param $object
      * @param array $params
+     */
+    public function save($object, $params = [])
+    {
+    }
+
+    /**
+     * @param $object
+     * @param array $params
      *
      * @return null
      */
@@ -957,6 +957,14 @@ class Block extends Model\DataObject\ClassDefinition\Data
         }
 
         return $data;
+    }
+
+    /**
+     * @param $object
+     * @param array $params
+     */
+    public function delete($object, $params = [])
+    {
     }
 
     /**

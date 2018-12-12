@@ -47,11 +47,9 @@ class ObjectMetadata extends Model\AbstractModel implements DataObject\OwnerAwar
     protected $data = [];
 
     /**
-     * @param $fieldname
+     * @param string $fieldname
      * @param array $columns
      * @param null $object
-     *
-     * @throws \Exception
      */
     public function __construct($fieldname, $columns = [], $object = null)
     {

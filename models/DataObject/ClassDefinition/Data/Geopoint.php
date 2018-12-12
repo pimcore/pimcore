@@ -18,8 +18,9 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
+use Pimcore\Model\DataObject\ClassDefinition\Data\Geo\AbstractGeo;
 
-class Geopoint extends Model\DataObject\ClassDefinition\Data\Geo\AbstractGeo
+class Geopoint extends AbstractGeo implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface
 {
     /**
      * Static type of this element
@@ -56,13 +57,13 @@ class Geopoint extends Model\DataObject\ClassDefinition\Data\Geo\AbstractGeo
     public $phpdocType = '\\Pimcore\\Model\\DataObject\\Data\\Geopoint';
 
     /**
-     * @see DataObject\ClassDefinition\Data::getDataForResource
+     * @see ResourcePersistenceAwareInterface::getDataForResource
      *
      * @param string $data
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
-     * @return string
+     * @return array
      */
     public function getDataForResource($data, $object = null, $params = [])
     {
@@ -80,31 +81,37 @@ class Geopoint extends Model\DataObject\ClassDefinition\Data\Geo\AbstractGeo
     }
 
     /**
-     * @see DataObject\ClassDefinition\Data::getDataFromResource
+     * @see ResourcePersistenceAwareInterface::getDataFromResource
      *
-     * @param string $data
+     * @param array $data
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
-     * @return string
+     * @return DataObject\Data\Geopoint|null
      */
     public function getDataFromResource($data, $object = null, $params = [])
     {
         if ($data[$this->getName() . '__longitude'] && $data[$this->getName() . '__latitude']) {
-            return new DataObject\Data\Geopoint($data[$this->getName() . '__longitude'], $data[$this->getName() . '__latitude']);
+            $geopoint = new DataObject\Data\Geopoint($data[$this->getName() . '__longitude'], $data[$this->getName() . '__latitude']);
+
+            if (isset($params['owner'])) {
+                $geopoint->setOwner($params['owner'], $params['fieldname'], $params['language']);
+            }
+
+            return $geopoint;
         }
 
-        return;
+        return null;
     }
 
     /**
-     * @see DataObject\ClassDefinition\Data::getDataForQueryResource
+     * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      *
      * @param string $data
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
-     * @return string
+     * @return array
      */
     public function getDataForQueryResource($data, $object = null, $params = [])
     {
@@ -112,13 +119,13 @@ class Geopoint extends Model\DataObject\ClassDefinition\Data\Geo\AbstractGeo
     }
 
     /**
-     * @see DataObject\ClassDefinition\Data::getDataForEditmode
+     * @see Data::getDataForEditmode
      *
      * @param string $data
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
-     * @return string
+     * @return array|null
      */
     public function getDataForEditmode($data, $object = null, $params = [])
     {
@@ -129,17 +136,17 @@ class Geopoint extends Model\DataObject\ClassDefinition\Data\Geo\AbstractGeo
             ];
         }
 
-        return;
+        return null;
     }
 
     /**
-     * @see Model\DataObject\ClassDefinition\Data::getDataFromEditmode
+     * @see Data::getDataFromEditmode
      *
      * @param string $data
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
-     * @return string
+     * @return DataObject\Data\Geopoint|null
      */
     public function getDataFromEditmode($data, $object = null, $params = [])
     {
@@ -147,7 +154,7 @@ class Geopoint extends Model\DataObject\ClassDefinition\Data\Geo\AbstractGeo
             return new DataObject\Data\Geopoint($data['longitude'], $data['latitude']);
         }
 
-        return;
+        return null;
     }
 
     /**
@@ -155,7 +162,7 @@ class Geopoint extends Model\DataObject\ClassDefinition\Data\Geo\AbstractGeo
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
-     * @return string
+     * @return DataObject\Data\Geopoint|null
      */
     public function getDataFromGridEditor($data, $object = null, $params = [])
     {
@@ -163,7 +170,7 @@ class Geopoint extends Model\DataObject\ClassDefinition\Data\Geo\AbstractGeo
     }
 
     /**
-     * @see DataObject\ClassDefinition\Data::getVersionPreview
+     * @see Data::getVersionPreview
      *
      * @param string $data
      * @param null|DataObject\AbstractObject $object

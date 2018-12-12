@@ -98,16 +98,21 @@ pimcore.element.replace_assignments = Class.create({
                                                         }.bind(el),
 
                                                         onNodeOver: function (target, dd, e, data) {
-                                                            return Ext.dd.DropZone.prototype.dropAllowed;
+                                                            if (data.records.length === 1) {
+                                                                return Ext.dd.DropZone.prototype.dropAllowed;
+                                                            }
                                                         },
 
                                                         onNodeDrop: function (target, dd, e, data) {
-                                                            var record = data.records[0];
+                                                            if(!pimcore.helpers.dragAndDropValidateSingleItem(data)) {
+                                                                return false;
+                                                            }
 
-                                                            this.setValue(record.data.path);
+                                                            data = data.records[0].data;
+                                                            this.setValue(data.path);
 
-                                                            var type = record.data.elementType;
-                                                            var id = record.data.id;
+                                                            var type = data.elementType;
+                                                            var id = data.id;
 
                                                             var form = this.findParentByType("form");
                                                             form.queryById("type").setValue(type);
@@ -172,15 +177,22 @@ pimcore.element.replace_assignments = Class.create({
                                                         }.bind(el),
 
                                                         onNodeOver: function (target, dd, e, data) {
-                                                            return Ext.dd.DropZone.prototype.dropAllowed;
+                                                            if (data.records.length === 1) {
+                                                                return Ext.dd.DropZone.prototype.dropAllowed;
+                                                            }
                                                         },
 
                                                         onNodeDrop: function (target, dd, e, data) {
-                                                            var record = data.records[0];
-                                                            this.setValue(record.data.path);
+                                                            if(!pimcore.helpers.dragAndDropValidateSingleItem(data)) {
+                                                                return false;
+                                                            }
 
-                                                            var type = record.data.elementType;
-                                                            var id = record.data.id;
+                                                            data = data.records[0].data;
+
+                                                            this.setValue(data.path);
+
+                                                            var type = data.elementType;
+                                                            var id = data.id;
 
                                                             var form = this.findParentByType("form");
                                                             form.queryById("targetType").setValue(type);

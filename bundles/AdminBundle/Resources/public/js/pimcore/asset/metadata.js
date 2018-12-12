@@ -67,7 +67,7 @@ pimcore.asset.metadata = Class.create({
                 editable: false,
                 triggerAction: 'all',
                 mode: "local",
-                width: 100,
+                width: 120,
                 value: "input",
                 emptyText: t('type')
             });
@@ -210,7 +210,6 @@ pimcore.asset.metadata = Class.create({
                             width: 80
                         },
                         {
-                            //id: "value_col",
                             text: t("value"),
                             dataIndex: 'data',
                             getEditor: this.getCellEditor.bind(this),
@@ -292,34 +291,37 @@ pimcore.asset.metadata = Class.create({
                         },
 
                         onNodeOver : function(dataRow, node, dragZone, e, data ) {
+                            if(data.records.length == 1) {
+                                var record = data.records[0];
+                                var data = record.data;
 
-                            var record = data.records[0];
-                            var data = record.data;
-
-                            if(dataRow.type == data.elementType) {
-                                return Ext.dd.DropZone.prototype.dropAllowed;
+                                if (dataRow.type == data.elementType) {
+                                    return Ext.dd.DropZone.prototype.dropAllowed;
+                                }
                             }
                             return Ext.dd.DropZone.prototype.dropNotAllowed;
                         }.bind(this, data),
 
                         onNodeDrop : function(myRowIndex, target, dd, e, data) {
-                            try {
-                                var record = data.records[0];
-                                var data = record.data;
+                            if (pimcore.helpers.dragAndDropValidateSingleItem(data)) {
+                                try {
+                                    var record = data.records[0];
+                                    var data = record.data;
 
-                                var myRecord = this.grid.getStore().getAt(myRowIndex);
+                                    var myRecord = this.grid.getStore().getAt(myRowIndex);
 
-                                if (data.elementType != myRecord.get("type")) {
-                                    return false;
+                                    if (data.elementType != myRecord.get("type")) {
+                                        return false;
+                                    }
+
+                                    myRecord.set("data", data.path);
+
+                                    this.updateRows();
+
+                                    return true;
+                                } catch (e) {
+                                    console.log(e);
                                 }
-
-                                myRecord.set("data", data.path);
-
-                                this.updateRows();
-
-                                return true;
-                            } catch (e) {
-                                console.log(e);
                             }
                         }.bind(this, storeIndex)
                     });

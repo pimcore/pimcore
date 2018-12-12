@@ -19,6 +19,9 @@ namespace Pimcore\Model\DataObject\Objectbrick;
 
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
+use Pimcore\Model\DataObject\ClassDefinition\Data\CustomResourcePersistingInterface;
+use Pimcore\Model\DataObject\ClassDefinition\Data\ResourcePersistenceAwareInterface;
+use Pimcore\Tool;
 
 /**
  * @property \Pimcore\Model\DataObject\Objectbrick $model
@@ -61,7 +64,10 @@ class Dao extends Model\DataObject\Fieldcollection\Dao
                 $brick->setObject($object);
 
                 foreach ($fieldDefinitions as $key => $fd) {
-                    if (method_exists($fd, 'load')) {
+                    if ($fd instanceof CustomResourcePersistingInterface || method_exists($fd, 'load')) {
+                        if (!$fd instanceof CustomResourcePersistingInterface) {
+                            Tool::triggerDeprecatedMethodWarning(get_class($fd), 'load', CustomResourcePersistingInterface::class);
+                        }
                         // datafield has it's own loader
                         $context = [];
                         $context['object'] = $object;
@@ -74,7 +80,11 @@ class Dao extends Model\DataObject\Fieldcollection\Dao
                         if ($value === 0 || !empty($value)) {
                             $brick->setValue($key, $value);
                         }
-                    } else {
+                    }
+                    if ($fd instanceof ResourcePersistenceAwareInterface || !method_exists($fd, 'load')) {
+                        if (!$fd instanceof ResourcePersistenceAwareInterface) {
+                            Tool::triggerDeprecatedMethodWarning(get_class($fd), 'getDataFromResource', ResourcePersistenceAwareInterface::class);
+                        }
                         if (is_array($fd->getColumnType())) {
                             $multidata = [];
                             foreach ($fd->getColumnType() as $fkey => $fvalue) {

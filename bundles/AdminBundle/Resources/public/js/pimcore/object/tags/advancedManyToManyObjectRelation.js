@@ -44,7 +44,9 @@ pimcore.object.tags.advancedManyToManyObjectRelation = Class.create(pimcore.obje
         if (typeof this.fieldConfig.visibleFields != "string") {
             this.fieldConfig.visibleFields = "";
         }
-        var visibleFields = this.fieldConfig.visibleFields.split(",");
+
+        var visibleFields = Ext.isString(this.fieldConfig.visibleFields) ? this.fieldConfig.visibleFields.split(",") : [];
+        this.visibleFields = visibleFields;
 
         fields.push("id");
         fields.push("inheritedFields");
@@ -92,7 +94,7 @@ pimcore.object.tags.advancedManyToManyObjectRelation = Class.create(pimcore.obje
         var cls = 'object_field';
         var i;
 
-        var visibleFields = this.fieldConfig.visibleFields.split(",");
+        var visibleFields = this.visibleFields;
 
         var columns = [];
         columns.push({text: 'ID', dataIndex: 'id', width: 50});
@@ -397,51 +399,57 @@ pimcore.object.tags.advancedManyToManyObjectRelation = Class.create(pimcore.obje
                         return this.component.getEl().dom;
                         //return e.getTarget(this.grid.getView().rowSelector);
                     }.bind(this),
-                    onNodeOver: function (overHtmlNode, ddSource, e, data) {
-                        var record = data.records[0];
-                        var data = record.data;
-                        var fromTree = this.isFromTree(ddSource);
 
-                        if (this.dndAllowed(data, fromTree)) {
-                            return Ext.dd.DropZone.prototype.dropAllowed;
-                        } else {
-                            return Ext.dd.DropZone.prototype.dropNotAllowed;
-                        }
+                    onNodeOver: function (overHtmlNode, ddSource, e, data) {
+                        var returnValue = Ext.dd.DropZone.prototype.dropAllowed;
+                        data.records.forEach(function (record) {
+                            var fromTree = this.isFromTree(ddSource);
+                            if (!this.dndAllowed(record.data, fromTree)) {
+                                returnValue = Ext.dd.DropZone.prototype.dropNotAllowed;
+                            }
+                        }.bind(this));
+
+                        return returnValue;
                     }.bind(this),
+
                     onNodeDrop: function (target, dd, e, data) {
 
-                        var record = data.records[0];
-                        var data = record.data;
                         this.nodeElement = data;
                         var fromTree = this.isFromTree(dd);
+                        var toBeRequested = new Ext.util.Collection();
 
-                        if (this.dndAllowed(data, fromTree)) {
+                        data.records.forEach(function (record) {
+                            var data = record.data;
+                            if (this.dndAllowed(data, fromTree)) {
+                                if (data["grid"] && data["grid"] == this.component) {
+                                    var rowIndex = this.component.getView().findRowIndex(e.target);
+                                    if (rowIndex !== false) {
+                                        var rec = this.store.getAt(data.rowIndex);
+                                        this.store.removeAt(data.rowIndex);
+                                        toBeRequested.add(this.store.insert(rowIndex, [rec]));
+                                        this.requestNicePathData(toBeRequested);
+                                    }
+                                } else {
+                                    var initData = {
+                                        id: data.id,
+                                        metadata: '',
+                                        inheritedFields: {}
+                                    };
 
-                            var toBeRequested = new Ext.util.Collection();
-
-                            if (data["grid"] && data["grid"] == this.component) {
-                                var rowIndex = this.component.getView().findRowIndex(e.target);
-                                if (rowIndex !== false) {
-                                    var rec = this.store.getAt(data.rowIndex);
-                                    this.store.removeAt(data.rowIndex);
-                                    toBeRequested.add(this.store.insert(rowIndex, [rec]));
-                                    this.requestNicePathData(toBeRequested);
-                                }
-                            } else {
-                                var initData = {
-                                    id: data.id,
-                                    metadata: '',
-                                    inheritedFields: {}
-                                };
-
-                                if (!this.objectAlreadyExists(initData.id)) {
-                                    toBeRequested.add(this.loadObjectData(initData, this.fieldConfig.visibleFields.split(",")));
-                                    this.requestNicePathData(toBeRequested);
-                                    return true;
+                                    if (!this.objectAlreadyExists(initData.id)) {
+                                        toBeRequested.add(this.loadObjectData(initData, this.visibleFields));
+                                    }
                                 }
                             }
+                        }.bind(this));
+
+                        if(toBeRequested.length) {
+                            this.requestNicePathData(toBeRequested);
+                            return true;
                         }
+
                         return false;
+
                     }.bind(this)
                 });
             }.bind(this));
@@ -525,9 +533,8 @@ pimcore.object.tags.advancedManyToManyObjectRelation = Class.create(pimcore.obje
             toBeRequested = new Ext.util.Collection();
 
             for (var i = 0; i < items.length; i++) {
-                var fields = this.fieldConfig.visibleFields.split(",");
                 if (!this.objectAlreadyExists(items[i].id)) {
-                    toBeRequested.add(this.loadObjectData(items[i], fields));
+                    toBeRequested.add(this.loadObjectData(items[i], this.visibleFields));
                 }
             }
             this.requestNicePathData(toBeRequested);

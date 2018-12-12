@@ -17,8 +17,9 @@
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
 use Pimcore\Model;
+use Pimcore\Model\DataObject\ClassDefinition\Data;
 
-class Numeric extends Model\DataObject\ClassDefinition\Data
+class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface
 {
     use Model\DataObject\Traits\SimpleComparisonTrait;
 
@@ -355,7 +356,7 @@ class Numeric extends Model\DataObject\ClassDefinition\Data
     }
 
     /**
-     * @see Model\DataObject\ClassDefinition\Data::getDataForResource
+     * @see ResourcePersistenceAwareInterface::getDataForResource
      *
      * @param float|int|string $data
      * @param null|Model\DataObject\AbstractObject $object
@@ -373,7 +374,7 @@ class Numeric extends Model\DataObject\ClassDefinition\Data
     }
 
     /**
-     * @see Model\DataObject\ClassDefinition\Data::getDataFromResource
+     * @see ResourcePersistenceAwareInterface::getDataFromResource
      *
      * @param float|int|string $data
      * @param null|Model\DataObject\AbstractObject $object
@@ -391,7 +392,7 @@ class Numeric extends Model\DataObject\ClassDefinition\Data
     }
 
     /**
-     * @see Model\DataObject\ClassDefinition\Data::getDataForQueryResource
+     * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      *
      * @param float|int|string $data
      * @param null|Model\DataObject\AbstractObject $object
@@ -405,7 +406,7 @@ class Numeric extends Model\DataObject\ClassDefinition\Data
     }
 
     /**
-     * @see Model\DataObject\ClassDefinition\Data::getDataForEditmode
+     * @see Data::getDataForEditmode
      *
      * @param float|int|string $data
      * @param null|Model\DataObject\AbstractObject $object
@@ -419,7 +420,7 @@ class Numeric extends Model\DataObject\ClassDefinition\Data
     }
 
     /**
-     * @see Model\DataObject\ClassDefinition\Data::getDataFromEditmode
+     * @see Data::getDataFromEditmode
      *
      * @param float|int|string $data
      * @param null|Model\DataObject\AbstractObject $object
@@ -433,7 +434,7 @@ class Numeric extends Model\DataObject\ClassDefinition\Data
     }
 
     /**
-     * @see Model\DataObject\ClassDefinition\Data::getVersionPreview
+     * @see Data::getVersionPreview
      *
      * @param float|int|string $data
      * @param null|Model\DataObject\AbstractObject $object

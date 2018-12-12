@@ -235,7 +235,7 @@ class TestHelper
         // plus omit fields which don't have get method
         $getter = 'get' . ucfirst($key);
 
-        if (method_exists($object, $getter) and $fd instanceof ObjectModel\ClassDefinition\Data\Fieldcollections) {
+        if (method_exists($object, $getter) && $fd instanceof ObjectModel\ClassDefinition\Data\Fieldcollections) {
             if ($object->$getter()) {
                 /** @var ObjectModel\Fieldcollection $collection */
                 $collection = $object->$getter();
@@ -260,7 +260,7 @@ class TestHelper
 
                             if ($v instanceof ObjectModel\ClassDefinition\Data\Link) {
                                 $fieldValue = serialize($v);
-                            } elseif ($v instanceof ObjectModel\ClassDefinition\Data\Password or $fd instanceof ObjectModel\ClassDefinition\Data\Nonownerobjects) {
+                            } elseif ($v instanceof ObjectModel\ClassDefinition\Data\Password || $fd instanceof ObjectModel\ClassDefinition\Data\ReverseManyToManyObjectRelation) {
                                 $fieldValue = null;
                             } else {
                                 $fieldValue = $v->getForCsvExport($item);
@@ -275,7 +275,7 @@ class TestHelper
                     return serialize($returnValue);
                 }
             }
-        } elseif (method_exists($object, $getter) and $fd instanceof ObjectModel\ClassDefinition\Data\Localizedfields) {
+        } elseif (method_exists($object, $getter) && $fd instanceof ObjectModel\ClassDefinition\Data\Localizedfields) {
             $data = $object->$getter();
             $lData = [];
 
@@ -297,9 +297,9 @@ class TestHelper
             $localeService->setLocale($localeBackup);
 
             return serialize($lData);
-        } elseif (method_exists($object, $getter) and $fd instanceof ObjectModel\Data\Link) {
+        } elseif (method_exists($object, $getter) && $fd instanceof ObjectModel\Data\Link) {
             return serialize($fd);
-        } elseif (method_exists($object, $getter) and !$fd instanceof ObjectModel\ClassDefinition\Data\Password and !$fd instanceof ObjectModel\ClassDefinition\Data\Nonownerobjects) {
+        } elseif (method_exists($object, $getter) && !$fd instanceof ObjectModel\ClassDefinition\Data\Password && !$fd instanceof ObjectModel\ClassDefinition\Data\ReverseManyToManyObjectRelation) {
             return $fd->getForCsvExport($object);
         }
     }

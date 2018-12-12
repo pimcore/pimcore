@@ -150,31 +150,32 @@ pimcore.settings.translation.xliff = Class.create({
                     //return e.getTarget(this.grid.getView().rowSelector);
                 }.bind(this),
                 onNodeOver: function (overHtmlNode, ddSource, e, data) {
-                    var record = data.records[0];
+                    if (data.records.length == 1) {
+                        var record = data.records[0];
 
-                    var type = record.data.elementType;
+                        var type = record.data.elementType;
 
-                    if (type == "document" || type == "object") {
-                        return Ext.dd.DropZone.prototype.dropAllowed;
+                        if (type == "document" || type == "object") {
+                            return Ext.dd.DropZone.prototype.dropAllowed;
+                        }
                     }
-                    else {
-                        return Ext.dd.DropZone.prototype.dropNotAllowed;
-                    }
-
+                    return Ext.dd.DropZone.prototype.dropNotAllowed;
 
                 }.bind(this),
                 onNodeDrop : function(target, dd, e, data) {
-                    data = data.records[0].data;
+                    if (pimcore.helpers.dragAndDropValidateSingleItem(data)) {
+                        data = data.records[0].data;
 
-                    var type = data.elementType;
-                    if (type == "document" || type == "object") {
-                        this.exportStore.add({
-                            id: data.id,
-                            path: data.path,
-                            type: data.elementType,
-                            children: true
-                        });
-                        return true;
+                        var type = data.elementType;
+                        if (type == "document" || type == "object") {
+                            this.exportStore.add({
+                                id: data.id,
+                                path: data.path,
+                                type: data.elementType,
+                                children: true
+                            });
+                            return true;
+                        }
                     }
                     return false;
                 }.bind(this)

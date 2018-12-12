@@ -154,6 +154,14 @@ pimcore.settings.translations = Class.create({
             }
         );
 
+        var store = this.store;
+
+        this.store.getProxy().on('exception', function (proxy, request, operation) {
+            operation.config.records.forEach(function (item) {
+                store.remove(item);
+            });
+        });
+
         if (this.preconfiguredFilter) {
             this.store.getProxy().extraParams.searchString = this.preconfiguredFilter;
         }

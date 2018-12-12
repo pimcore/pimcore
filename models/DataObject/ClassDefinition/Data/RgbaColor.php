@@ -17,9 +17,10 @@
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
 use Pimcore\Model;
+use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Tool\Serialize;
 
-class RgbaColor extends Model\DataObject\ClassDefinition\Data
+class RgbaColor extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface
 {
     /**
      * Static type of this element
@@ -80,9 +81,9 @@ class RgbaColor extends Model\DataObject\ClassDefinition\Data
     }
 
     /**
-     * @see Model\DataObject\ClassDefinition\Data::getDataForResource
+     * @see ResourcePersistenceAwareInterface::getDataForResource
      *
-     * @param string $data
+     * @param Model\DataObject\Data\RgbaColor $data
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
@@ -98,18 +99,18 @@ class RgbaColor extends Model\DataObject\ClassDefinition\Data
                 $this->getName() . '__rgb' => $rgb,
                 $this->getName() . '__a' => $a
             ];
-        } else {
-            return [
-                $this->getName() . '__rgb' => null,
-                $this->getName() . '__a' => null
-            ];
         }
+
+        return [
+            $this->getName() . '__rgb' => null,
+            $this->getName() . '__a' => null
+        ];
     }
 
     /**
-     * @see Model\DataObject\ClassDefinition\Data::getDataFromResource
+     * @see ResourcePersistenceAwareInterface::getDataFromResource
      *
-     * @param string $data
+     * @param array $data
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
@@ -122,6 +123,10 @@ class RgbaColor extends Model\DataObject\ClassDefinition\Data
             $a = hexdec($data[$this->getName() . '__a']);
             $color = new Model\DataObject\Data\RgbaColor($r, $g, $b, $a);
 
+            if (isset($params['owner'])) {
+                $color->setOwner($params['owner'], $params['fieldname'], $params['language']);
+            }
+
             return $color;
         }
 
@@ -129,9 +134,9 @@ class RgbaColor extends Model\DataObject\ClassDefinition\Data
     }
 
     /**
-     * @see Model\DataObject\ClassDefinition\Data::getDataForQueryResource
+     * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      *
-     * @param string $data
+     * @param Model\DataObject\Data\RgbaColor $data
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
@@ -143,13 +148,13 @@ class RgbaColor extends Model\DataObject\ClassDefinition\Data
     }
 
     /**
-     * @see Model\DataObject\ClassDefinition\Data::getDataForEditmode
+     * @see Data::getDataForEditmode
      *
      * @param string $data
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
-     * @return string
+     * @return string|null
      */
     public function getDataForEditmode($data, $object = null, $params = [])
     {
@@ -158,10 +163,12 @@ class RgbaColor extends Model\DataObject\ClassDefinition\Data
 
             return $rgba;
         }
+
+        return null;
     }
 
     /**
-     * @see Model\DataObject\ClassDefinition\Data::getDataFromEditmode
+     * @see Data::getDataFromEditmode
      *
      * @param string $data
      * @param null|Model\DataObject\AbstractObject $object
@@ -186,7 +193,7 @@ class RgbaColor extends Model\DataObject\ClassDefinition\Data
      * @param Model\DataObject\Concrete $object
      * @param mixed $params
      *
-     * @return float
+     * @return Model\DataObject\Data\RgbaColor|null
      */
     public function getDataFromGridEditor($data, $object = null, $params = [])
     {
@@ -194,7 +201,7 @@ class RgbaColor extends Model\DataObject\ClassDefinition\Data
     }
 
     /**
-     * @return string
+     * @return array
      */
     public function getQueryColumnType()
     {
@@ -202,7 +209,7 @@ class RgbaColor extends Model\DataObject\ClassDefinition\Data
     }
 
     /**
-     * @return string
+     * @return array
      */
     public function getColumnType()
     {

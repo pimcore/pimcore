@@ -71,7 +71,7 @@ abstract class AbstractTranslation extends Model\AbstractModel implements Transl
      */
     public function setKey($key)
     {
-        $this->key = self::getValidTranslationKey($key);
+        $this->key = $key;
 
         return $this;
     }
@@ -193,18 +193,6 @@ abstract class AbstractTranslation extends Model\AbstractModel implements Transl
     }
 
     /**
-     * @static
-     *
-     * @param $key
-     *
-     * @return string
-     */
-    protected static function getValidTranslationKey($key)
-    {
-        return $key;
-    }
-
-    /**
      * @param $id
      * @param bool $create
      * @param bool $returnIdIfEmpty
@@ -222,16 +210,14 @@ abstract class AbstractTranslation extends Model\AbstractModel implements Transl
         }
 
         $translation = new static();
-
         $idOriginal = $id;
-
         $languages = static::getLanguages();
 
         try {
-            $translation->getDao()->getByKey(self::getValidTranslationKey($id));
+            $translation->getDao()->getByKey($id);
         } catch (\Exception $e) {
             if (!$create) {
-                throw new \Exception($e->getMessage());
+                return null;
             } else {
                 $translation->setKey($id);
                 $translation->setCreationDate(time());

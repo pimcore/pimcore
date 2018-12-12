@@ -219,48 +219,55 @@ pimcore.document.tags.relations = Class.create(pimcore.document.tag, {
     },
 
     onNodeOver: function (target, dd, e, data) {
-        var record = data.records[0];
+        var returnValue = Ext.dd.DropZone.prototype.dropAllowed;
+        data.records.forEach(function (record) {
+            record = this.getCustomPimcoreDropData(record);
+            if (!this.dndAllowed(record)) {
+                returnValue = Ext.dd.DropZone.prototype.dropNotAllowed;
+            }
+        }.bind(this));
 
-        record = this.getCustomPimcoreDropData(record);
-        if (this.dndAllowed(record)) {
-            return Ext.dd.DropZone.prototype.dropAllowed;
-        }
-        else {
-            return Ext.dd.DropZone.prototype.dropNotAllowed;
-        }
+        return returnValue;
     },
 
     onNodeDrop: function (target, dd, e, data) {
-        var record = data.records[0];
 
-        if (!this.dndAllowed(this.getCustomPimcoreDropData(record))) {
-            return false;
-        }
+        var elementsToAdd = [];
 
-        var data = record.data;
-
-        var initData = {
-            id: data.id,
-            path: data.path,
-            type: data.elementType
-        };
-
-        if (initData.type == "object") {
-            if (data.className) {
-                initData.subtype = data.className;
+        data.records.forEach(function (record) {
+            if (!this.dndAllowed(this.getCustomPimcoreDropData(record))) {
+                return false;
             }
-            else {
-                initData.subtype = "folder";
+
+            var data = record.data;
+
+            var initData = {
+                id: data.id,
+                path: data.path,
+                type: data.elementType
+            };
+
+            if (initData.type === "object") {
+                if (data.className) {
+                    initData.subtype = data.className;
+                }
+                else {
+                    initData.subtype = "folder";
+                }
             }
-        }
 
-        if (initData.type == "document" || initData.type == "asset") {
-            initData.subtype = data.type;
-        }
+            if (initData.type === "document" || initData.type === "asset") {
+                initData.subtype = data.type;
+            }
 
-        // check for existing element
-        if (!this.elementAlreadyExists(initData.id, initData.type)) {
-            this.store.add(initData);
+            // check for existing element
+            if (!this.elementAlreadyExists(initData.id, initData.type)) {
+                elementsToAdd.push(initData);
+            }
+        }.bind(this));
+
+        if(elementsToAdd.length) {
+            this.store.add(elementsToAdd);
             return true;
         }
 

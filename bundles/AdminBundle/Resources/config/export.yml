@@ -112,6 +112,13 @@ services:
         tags:
             - { name: pimcore.data_object.grid_column_config.operator_factory, id: IsEqual }
 
+    pimcore.data_object.grid_column_config.operator.factory.iterator:
+        class: Pimcore\DataObject\GridColumnConfig\Operator\Factory\DefaultOperatorFactory
+        arguments:
+            $className: Pimcore\DataObject\GridColumnConfig\Operator\Iterator
+        tags:
+        - { name: pimcore.data_object.grid_column_config.operator_factory, id: Iterator }
+
     pimcore.data_object.grid_column_config.operator.factory.geopoint_renderer:
         class: Pimcore\DataObject\GridColumnConfig\Operator\Factory\DefaultOperatorFactory
         arguments:

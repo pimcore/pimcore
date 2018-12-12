@@ -278,7 +278,7 @@ class CommitOrderProcessor implements ICommitOrderProcessor
         //Abort orders with payment pending
         $list = $orderManager->buildOrderList();
         $list->addFieldCollection('PaymentInfo');
-        $list->setCondition('orderState = ? AND o_modification < ?', [AbstractOrder::ORDER_STATE_PAYMENT_PENDING, $timestamp]);
+        $list->setCondition('orderState = ? AND o_modificationDate < ?', [AbstractOrder::ORDER_STATE_PAYMENT_PENDING, $timestamp]);
 
         /** @var AbstractOrder $order */
         foreach ($list as $order) {

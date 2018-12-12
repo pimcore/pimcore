@@ -623,7 +623,7 @@ class Mail extends \Swift_Message
         }
 
         if ($this->loggingIsEnabled()) {
-            if (\Pimcore::inDebugMode(DebugMode::MAIL)) {
+            if (\Pimcore::inDebugMode(DebugMode::MAIL) && !$this->ignoreDebugMode) {
                 $recipients = $this->getDebugMailRecipients($recipients);
             }
 

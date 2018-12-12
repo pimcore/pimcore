@@ -24,7 +24,7 @@ use Pimcore\Model\DataObject;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
 
-class AdvancedManyToManyRelation extends Model\DataObject\ClassDefinition\Data\ManyToManyRelation
+class AdvancedManyToManyRelation extends ManyToManyObjectRelation
 {
     use DataObject\Traits\ElementWithMetadataComparisonTrait;
     /**
@@ -47,15 +47,9 @@ class AdvancedManyToManyRelation extends Model\DataObject\ClassDefinition\Data\M
     public $phpdocType = '\\Pimcore\\Model\\DataObject\\Data\\ElementMetadata[]';
 
     /**
-     * @see DataObject\ClassDefinition\Data::getDataForResource
-     *
-     * @param array $data
-     * @param null|Model\DataObject\AbstractObject $object
-     * @param mixed $params
-     *
-     * @return array
+     * @inheritdoc
      */
-    public function getDataForResource($data, $object = null, $params = [])
+    public function prepareDataForPersistence($data, $object = null, $params = [])
     {
         $return = [];
 
@@ -85,15 +79,9 @@ class AdvancedManyToManyRelation extends Model\DataObject\ClassDefinition\Data\M
     }
 
     /**
-     * @see DataObject\ClassDefinition\Data::getDataFromResource
-     *
-     * @param array $data
-     * @param null|Model\DataObject\AbstractObject $object
-     * @param mixed $params
-     *
-     * @return array
+     * @inheritdoc
      */
-    public function getDataFromResource($data, $object = null, $params = [])
+    public function loadData($data, $object = null, $params = [])
     {
         $list = [];
 
@@ -204,7 +192,7 @@ class AdvancedManyToManyRelation extends Model\DataObject\ClassDefinition\Data\M
     }
 
     /**
-     * @see DataObject\ClassDefinition\Data::getDataForEditmode
+     * @see Data::getDataForEditmode
      *
      * @param array $data
      * @param null|Model\DataObject\AbstractObject $object
@@ -319,7 +307,7 @@ class AdvancedManyToManyRelation extends Model\DataObject\ClassDefinition\Data\M
     }
 
     /**
-     * @see Model\DataObject\ClassDefinition\Data::getDataFromEditmode
+     * @see Data::getDataFromEditmode
      *
      * @param array $data
      * @param null|Model\DataObject\AbstractObject $object
@@ -399,7 +387,7 @@ class AdvancedManyToManyRelation extends Model\DataObject\ClassDefinition\Data\M
     }
 
     /**
-     * @see DataObject\ClassDefinition\Data::getVersionPreview
+     * @see Data::getVersionPreview
      *
      * @param array $data
      * @param null|DataObject\AbstractObject $object

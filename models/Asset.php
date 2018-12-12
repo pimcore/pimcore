@@ -761,18 +761,18 @@ class Asset extends Element\AbstractElement
 
     /**
      * @param bool $setModificationDate
-     * @param bool $callPluginHook
+     * @param bool $saveOnlyVersion
      * @param string $versionNote version note
      *
      * @return null|Version
      *
      * @throws \Exception
      */
-    public function saveVersion($setModificationDate = true, $callPluginHook = true, $versionNote = null)
+    public function saveVersion($setModificationDate = true, $saveOnlyVersion = true, $versionNote = null)
     {
 
         // hook should be also called if "save only new version" is selected
-        if ($callPluginHook) {
+        if ($saveOnlyVersion) {
             \Pimcore::getEventDispatcher()->dispatch(AssetEvents::PRE_UPDATE, new AssetEvent($this, [
                 'saveVersionOnly' => true
             ]));
@@ -794,11 +794,11 @@ class Asset extends Element\AbstractElement
         if (Config::getSystemConfig()->assets->versions->steps
             || Config::getSystemConfig()->assets->versions->days
             || $setModificationDate) {
-            $version = $this->doSaveVersion($versionNote);
+            $version = $this->doSaveVersion($versionNote, $saveOnlyVersion);
         }
 
         // hook should be also called if "save only new version" is selected
-        if ($callPluginHook) {
+        if ($saveOnlyVersion) {
             \Pimcore::getEventDispatcher()->dispatch(AssetEvents::POST_UPDATE, new AssetEvent($this, [
                 'saveVersionOnly' => true
             ]));

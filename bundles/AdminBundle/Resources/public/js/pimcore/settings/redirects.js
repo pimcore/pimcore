@@ -444,32 +444,36 @@ pimcore.settings.redirects = Class.create({
                 },
 
                 onNodeOver : function(target, dd, e, data) {
-                    try {
-                        var record = data.records[0];
-                        var data = record.data;
+                    if (data.records.length == 1) {
+                        try {
+                            var record = data.records[0];
+                            var data = record.data;
 
-                        if(in_array(data.type,["page","link","hardlink"])) {
-                            return Ext.dd.DropZone.prototype.dropAllowed;
-                        } else {
-                            return Ext.dd.DropZone.prototype.dropNotAllowed;
+                            if (in_array(data.type, ["page", "link", "hardlink"])) {
+                                return Ext.dd.DropZone.prototype.dropAllowed;
+                            }
+                        } catch (e) {
+                            console.log(e);
                         }
-                    } catch (e) {
-                        console.log(e);
                     }
+                    return Ext.dd.DropZone.prototype.dropNotAllowed;
+
                 },
 
                 onNodeDrop : function(myRowIndex, target, dd, e, data) {
-                    try {
-                        var record = data.records[0];
-                        var data = record.data;
-                        if (in_array(data.type, ["page", "link", "hardlink"])) {
-                            var rec = this.grid.getStore().getAt(myRowIndex);
-                            rec.set("target", data.path);
-                            this.updateRows();
-                            return true;
+                    if (pimcore.helpers.dragAndDropValidateSingleItem(data)) {
+                        try {
+                            var record = data.records[0];
+                            var data = record.data;
+                            if (in_array(data.type, ["page", "link", "hardlink"])) {
+                                var rec = this.grid.getStore().getAt(myRowIndex);
+                                rec.set("target", data.path);
+                                this.updateRows();
+                                return true;
+                            }
+                        } catch (e) {
+                            console.log(e);
                         }
-                    } catch (e) {
-                        console.log(e);
                     }
                     return false;
 

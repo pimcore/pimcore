@@ -74,17 +74,29 @@ interface ICheckoutManager
     public function isFinished();
 
     /**
-     * Returns if there currently is a active payment
+     * Returns if there currently is an active payment (init or pending)
      *
      * @return bool
      */
     public function hasActivePayment();
 
     /**
+     * Init payment for checkout - only possible if payment provider is configured
+     * creates PaymentInformation with init state, does not change order state
+     *
+     * @return AbstractPaymentInformation
+     *
+     * @throws UnsupportedException
+     */
+    public function initOrderPayment();
+
+    /**
      * Starts payment for checkout - only possible if payment provider is configured
      * sets cart to read only mode since it must not changed during ongoing payment process
      *
      * @return AbstractPaymentInformation
+     *
+     * @throws UnsupportedException
      */
     public function startOrderPayment();
 

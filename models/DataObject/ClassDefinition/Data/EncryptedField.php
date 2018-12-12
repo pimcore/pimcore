@@ -20,6 +20,7 @@ use Defuse\Crypto\Crypto;
 use Defuse\Crypto\Key;
 use Pimcore\Logger;
 use Pimcore\Model;
+use Pimcore\Model\DataObject\ClassDefinition\Data;
 
 /**
  * Class EncryptedField
@@ -28,7 +29,7 @@ use Pimcore\Model;
  *
  * How to generate a key: vendor/bin/generate-defuse-key
  */
-class EncryptedField extends Model\DataObject\ClassDefinition\Data
+class EncryptedField extends Data implements ResourcePersistenceAwareInterface
 {
     /**
      * don't throw an error it encrypted field cannot be decoded (default)
@@ -84,13 +85,13 @@ class EncryptedField extends Model\DataObject\ClassDefinition\Data
     public $phpdocType;
 
     /**
-     * @see Model\DataObject\ClassDefinition\Data::getDataForResource
+     * @see ResourcePersistenceAwareInterface::getDataForResource
      *
      * @param string $data
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
-     * @return array
+     * @return mixed
      */
     public function getDataForResource($data, $object = null, $params = [])
     {
@@ -106,6 +107,8 @@ class EncryptedField extends Model\DataObject\ClassDefinition\Data
                 }
             }
         }
+
+        return null;
     }
 
     /**
@@ -187,13 +190,13 @@ class EncryptedField extends Model\DataObject\ClassDefinition\Data
     }
 
     /**
-     * @see Model\DataObject\ClassDefinition\Data::getDataFromResource
+     * @see ResourcePersistenceAwareInterface::getDataFromResource
      *
      * @param string $data
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
-     * @return Model\DataObject\Data\RgbaColor|null
+     * @return Model\DataObject\Data\EncryptedField|null
      */
     public function getDataFromResource($data, $object = null, $params = [])
     {
@@ -202,26 +205,20 @@ class EncryptedField extends Model\DataObject\ClassDefinition\Data
             $data = $this->decrypt($data, $object, $params);
             $data = $fd->getDataFromResource($data, $object, $params);
 
-            return new Model\DataObject\Data\EncryptedField($this->delegate, $data);
-        }
-    }
+            $field = new Model\DataObject\Data\EncryptedField($this->delegate, $data);
 
-    /**
-     * @see Model\DataObject\ClassDefinition\Data::getDataForQueryResource
-     *
-     * @param string $data
-     * @param null|Model\DataObject\AbstractObject $object
-     * @param mixed $params
-     *
-     * @return array
-     */
-    public function getDataForQueryResource($data, $object = null, $params = [])
-    {
+            if (isset($params['owner'])) {
+                $field->setOwner($params['owner'], $params['fieldname'], $params['language']);
+            }
+
+            return $field;
+        }
+
         return null;
     }
 
     /**
-     * @see Model\DataObject\ClassDefinition\Data::getDataForEditmode
+     * @see Data::getDataForEditmode
      *
      * @param string $data
      * @param null|Model\DataObject\AbstractObject $object
@@ -241,7 +238,7 @@ class EncryptedField extends Model\DataObject\ClassDefinition\Data
     }
 
     /**
-     * @see Model\DataObject\ClassDefinition\Data::getDataFromEditmode
+     * @see Data::getDataFromEditmode
      *
      * @param string $data
      * @param null|Model\DataObject\AbstractObject $object
@@ -276,14 +273,6 @@ class EncryptedField extends Model\DataObject\ClassDefinition\Data
         }
 
         return $data;
-    }
-
-    /**
-     * @return string
-     */
-    public function getQueryColumnType()
-    {
-        return null;
     }
 
     /**

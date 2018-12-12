@@ -19,8 +19,9 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Db;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
+use Pimcore\Model\DataObject\ClassDefinition\Data;
 
-class Date extends Model\DataObject\ClassDefinition\Data
+class Date extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface
 {
     /**
      * Static type of this element
@@ -61,7 +62,7 @@ class Date extends Model\DataObject\ClassDefinition\Data
     public $useCurrentDate;
 
     /**
-     * @see DataObject\ClassDefinition\Data::getDataForResource
+     * @see ResourcePersistenceAwareInterface::getDataForResource
      *
      * @param \Zend_Date|\DateTime $data
      * @param null|DataObject\AbstractObject $object
@@ -82,7 +83,7 @@ class Date extends Model\DataObject\ClassDefinition\Data
     }
 
     /**
-     * @see DataObject\ClassDefinition\Data::getDataFromResource
+     * @see ResourcePersistenceAwareInterface::getDataFromResource
      *
      * @param int $data
      * @param null|Model\DataObject\AbstractObject $object
@@ -107,7 +108,7 @@ class Date extends Model\DataObject\ClassDefinition\Data
     }
 
     /**
-     * @see DataObject\ClassDefinition\Data::getDataForQueryResource
+     * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      *
      * @param \Zend_Date|\DateTime $data
      * @param null|DataObject\AbstractObject $object
@@ -121,7 +122,7 @@ class Date extends Model\DataObject\ClassDefinition\Data
     }
 
     /**
-     * @see DataObject\ClassDefinition\Data::getDataForEditmode
+     * @see Data::getDataForEditmode
      *
      * @param \Zend_Date\DateTime $data
      * @param null|DataObject\AbstractObject $object
@@ -154,7 +155,7 @@ class Date extends Model\DataObject\ClassDefinition\Data
     }
 
     /**
-     * @see Model\DataObject\ClassDefinition\Data::getDataFromEditmode
+     * @see Data::getDataFromEditmode
      *
      * @param int $data
      * @param null|DataObject\AbstractObject $object
@@ -204,7 +205,7 @@ class Date extends Model\DataObject\ClassDefinition\Data
     }
 
     /**
-     * @see DataObject\ClassDefinition\Data::getVersionPreview
+     * @see Data::getVersionPreview
      *
      * @param \Zend_Date|\DateTime $data
      * @param null|DataObject\AbstractObject $object

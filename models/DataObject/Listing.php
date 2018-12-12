@@ -48,32 +48,6 @@ class Listing extends Model\Listing\AbstractListing implements \Zend_Paginator_A
     public $objectTypes = [AbstractObject::OBJECT_TYPE_OBJECT, AbstractObject::OBJECT_TYPE_FOLDER];
 
     /**
-     * @var array
-     */
-    public $validOrderKeys = [
-        'o_creationDate',
-        'o_modificationDate',
-        'o_id',
-        'o_key',
-        'o_index'
-    ];
-
-    /**
-     * @param string $key
-     *
-     * @return bool
-     */
-    public function isValidOrderKey($key)
-    {
-        return true;
-        //TODO: ???
-        /*if(in_array($key,$this->validOrderKeys)) {
-              return true;
-          }
-          return false;*/
-    }
-
-    /**
      * @return array
      */
     public function getObjects()
