@@ -3092,21 +3092,6 @@ pimcore.helpers.registerAssetDnDSingleUpload = function (element, parent, parent
     }.bind(this), true);
 };
 
-pimcore.helpers.findCaseInsensitiveValue = function (collection, needle) {
-    var match = false;
-    needle = needle.toLowerCase();
-    if (collection.length > 0) {
-        Ext.each(collection, function(item) {
-            if(item.toLowerCase() === needle) {
-                match = true;
-                return false;
-            }
-        });
-    }
-
-    return match;
-};
-
 pimcore.helpers.dragAndDropValidateSingleItem = function (data) {
     if(data.records.length > 1) {
         Ext.MessageBox.alert(t('error'), t('you_can_only_drop_one_element_here'));
