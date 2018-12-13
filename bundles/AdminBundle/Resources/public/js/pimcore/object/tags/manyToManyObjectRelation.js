@@ -299,7 +299,7 @@ pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.
         ];
 
         for (i = 0; i < visibleFields.length; i++) {
-            if (!empty(visibleFields[i])) {
+            if (!empty(this.fieldConfig.visibleFieldDefinitions) && !empty(visibleFields[i])) {
                 var layout = this.fieldConfig.visibleFieldDefinitions[visibleFields[i]];
 
                 var field = {
