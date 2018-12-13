@@ -84,7 +84,7 @@ CREATE TABLE `classes` (
 
 DROP TABLE IF EXISTS `custom_layouts` ;
 CREATE TABLE `custom_layouts` (
-	`id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
+	`id` varchar(64) NOT NULL,
 	`classId` VARCHAR(50) NOT NULL,
 	`name` VARCHAR(190) NULL DEFAULT NULL,
 	`description` TEXT NULL,

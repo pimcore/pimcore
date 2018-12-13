@@ -1474,7 +1474,7 @@ class AssetController extends ElementControllerBase implements EventedController
 
         $config = Asset\Video\Thumbnail\Config::getPreviewConfig();
         $thumbnail = $asset->getThumbnail($config, ['mp4']);
-        $fsFile = $asset->getVideoThumbnailSavePath() . '/' . preg_replace('@' . preg_quote($asset->getPath(), '@') . '@', '', $thumbnail['formats']['mp4']);
+        $fsFile = $asset->getVideoThumbnailSavePath() . '/' . preg_replace('@' . preg_quote($asset->getPath(), '@') . '@', '', urldecode($thumbnail['formats']['mp4']));
 
         if (file_exists($fsFile)) {
             $response = new BinaryFileResponse($fsFile);

@@ -28,6 +28,8 @@ pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.
         }
 
         var visibleFields = Ext.isString(this.fieldConfig.visibleFields) ? this.fieldConfig.visibleFields.split(",") : [];
+        this.visibleFields = visibleFields;
+
         var fields = [
             "id",
             "path",
@@ -36,7 +38,6 @@ pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.
         ];
 
         if (visibleFields) {
-            this.visibleFields = visibleFields;
             for (i = 0; i < visibleFields.length; i++) {
                 fields.push(visibleFields[i]);
             }
@@ -294,11 +295,11 @@ pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.
         var columns = [
             {text: 'ID', dataIndex: 'id', width: 50, hidden: !!visibleFields.length},
             {text: t("reference"), dataIndex: 'fullpath', flex: 200, renderer:this.fullPathRenderCheck.bind(this), hidden: !!visibleFields.length},
-            {text: t("classname"), dataIndex: 'classname', width: 100, hidden: !!visibleFields.length}
+            {text: t("class"), dataIndex: 'classname', width: 100, hidden: !!visibleFields.length}
         ];
 
         for (i = 0; i < visibleFields.length; i++) {
-            if (!empty(visibleFields[i])) {
+            if (!empty(this.fieldConfig.visibleFieldDefinitions) && !empty(visibleFields[i])) {
                 var layout = this.fieldConfig.visibleFieldDefinitions[visibleFields[i]];
 
                 var field = {
@@ -486,7 +487,7 @@ pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.
                                 };
 
                                 if (!this.objectAlreadyExists(initData.id)) {
-                                    toBeRequested.add(this.loadObjectData(initData, this.fieldConfig.visibleFields.split(",")));
+                                    toBeRequested.add(this.loadObjectData(initData, this.fieldConfig.visibleFields));
                                 }
                             }
                         }

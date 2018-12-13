@@ -18,13 +18,16 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
+use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\Element;
 use Pimcore\Tool\Text;
 
-class Wysiwyg extends Model\DataObject\ClassDefinition\Data
+class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface
 {
     use Model\DataObject\ClassDefinition\Data\Extension\Text;
     use Model\DataObject\Traits\SimpleComparisonTrait;
+    use Extension\ColumnType;
+    use Extension\QueryColumnType;
 
     /**
      * Static type of this element
@@ -130,7 +133,7 @@ class Wysiwyg extends Model\DataObject\ClassDefinition\Data
     }
 
     /**
-     * @see DataObject\ClassDefinition\Data::getDataForResource
+     * @see ResourcePersistenceAwareInterface::getDataForResource
      *
      * @param string $data
      * @param null|Model\DataObject\AbstractObject $object
@@ -144,7 +147,7 @@ class Wysiwyg extends Model\DataObject\ClassDefinition\Data
     }
 
     /**
-     * @see DataObject\ClassDefinition\Data::getDataFromResource
+     * @see ResourcePersistenceAwareInterface::getDataFromResource
      *
      * @param string $data
      * @param null|Model\DataObject\AbstractObject $object
@@ -158,7 +161,7 @@ class Wysiwyg extends Model\DataObject\ClassDefinition\Data
     }
 
     /**
-     * @see DataObject\ClassDefinition\Data::getDataForQueryResource
+     * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      *
      * @param string $data
      * @param null|Model\DataObject\AbstractObject $object
@@ -181,7 +184,7 @@ class Wysiwyg extends Model\DataObject\ClassDefinition\Data
     }
 
     /**
-     * @see DataObject\ClassDefinition\Data::getDataForEditmode
+     * @see Data::getDataForEditmode
      *
      * @param string $data
      * @param null|Model\DataObject\AbstractObject $object
@@ -195,7 +198,7 @@ class Wysiwyg extends Model\DataObject\ClassDefinition\Data
     }
 
     /**
-     * @see Model\DataObject\ClassDefinition\Data::getDataFromEditmode
+     * @see Data::getDataFromEditmode
      *
      * @param string $data
      * @param null|Model\DataObject\AbstractObject $object

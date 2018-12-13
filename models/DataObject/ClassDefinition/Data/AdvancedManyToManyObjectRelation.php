@@ -21,7 +21,7 @@ use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\Element;
 
-class AdvancedManyToManyObjectRelation extends Model\DataObject\ClassDefinition\Data\ManyToManyObjectRelation
+class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
 {
     use DataObject\Traits\ElementWithMetadataComparisonTrait;
 
@@ -55,15 +55,9 @@ class AdvancedManyToManyObjectRelation extends Model\DataObject\ClassDefinition\
     public $phpdocType = '\\Pimcore\\Model\\DataObject\\Data\\ObjectMetadata[]';
 
     /**
-     * @see DataObject\ClassDefinition\Data::getDataForResource
-     *
-     * @param array $data
-     * @param null|Model\DataObject\AbstractObject $object
-     * @param mixed $params
-     *
-     * @return array
+     * @inheritdoc
      */
-    public function getDataForResource($data, $object = null, $params = [])
+    public function prepareDataForPersistence($data, $object = null, $params = [])
     {
         $return = [];
 
@@ -93,15 +87,9 @@ class AdvancedManyToManyObjectRelation extends Model\DataObject\ClassDefinition\
     }
 
     /**
-     * @see DataObject\ClassDefinition\Data::getDataFromResource
-     *
-     * @param array $data
-     * @param null|Model\DataObject\AbstractObject $object
-     * @param mixed $params
-     *
-     * @return array
+     * @inheritdoc
      */
-    public function getDataFromResource($data, $object = null, $params = [])
+    public function loadData($data, $object = null, $params = [])
     {
         $objects = [];
 
@@ -143,7 +131,6 @@ class AdvancedManyToManyObjectRelation extends Model\DataObject\ClassDefinition\
      */
     public function getDataForQueryResource($data, $object = null, $params = [])
     {
-
         //return null when data is not set
         if (!$data) {
             return null;
@@ -168,7 +155,7 @@ class AdvancedManyToManyObjectRelation extends Model\DataObject\ClassDefinition\
     }
 
     /**
-     * @see DataObject\ClassDefinition\Data::getDataForEditmode
+     * @see Data::getDataForEditmode
      *
      * @param array $data
      * @param null|Model\DataObject\AbstractObject $object
@@ -203,7 +190,7 @@ class AdvancedManyToManyObjectRelation extends Model\DataObject\ClassDefinition\
     }
 
     /**
-     * @see Model\DataObject\ClassDefinition\Data::getDataFromEditmode
+     * @see Data::getDataFromEditmode
      *
      * @param array $data
      * @param null|Model\DataObject\AbstractObject $object
@@ -282,7 +269,7 @@ class AdvancedManyToManyObjectRelation extends Model\DataObject\ClassDefinition\
     }
 
     /**
-     * @see DataObject\ClassDefinition\Data::getVersionPreview
+     * @see Data::getVersionPreview
      *
      * @param array $data
      * @param null|DataObject\AbstractObject $object
@@ -292,13 +279,30 @@ class AdvancedManyToManyObjectRelation extends Model\DataObject\ClassDefinition\
      */
     public function getVersionPreview($data, $object = null, $params = [])
     {
+        $items = [];
         if (is_array($data) && count($data) > 0) {
             foreach ($data as $metaObject) {
                 $o = $metaObject->getObject();
-                $pathes[] = $o->getRealFullPath();
+                $item = $o->getRealFullPath();
+
+                if(sizeof($metaObject->getData())) {
+                    $subItems = [];
+                    foreach($metaObject->getData() as $key => $value) {
+                        if(!$value) {
+                            continue;
+                        }
+                        $subItems[] = $key . ': ' . $value;
+                    }
+
+                    if(sizeof($subItems)) {
+                        $item .= ' <br/><span class="preview-metadata">[' . implode(' | ' , $subItems) . ']</span>';
+                    }
+                }
+
+                $items[] = $item;
             }
 
-            return implode('<br />', $pathes);
+            return implode('<br />', $items);
         }
     }
 
@@ -1018,6 +1022,8 @@ class AdvancedManyToManyObjectRelation extends Model\DataObject\ClassDefinition\
 
             return $result;
         }
+
+        return null;
     }
 
     /**

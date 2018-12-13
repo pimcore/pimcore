@@ -18,9 +18,13 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
+use Pimcore\Model\DataObject\ClassDefinition\Data;
 
-class ExternalImage extends Model\DataObject\ClassDefinition\Data
+class ExternalImage extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface
 {
+    use Extension\ColumnType;
+    use Extension\QueryColumnType;
+
     /**
      * Static type of this element
      *
@@ -113,7 +117,7 @@ class ExternalImage extends Model\DataObject\ClassDefinition\Data
     }
 
     /**
-     * @see DataObject\ClassDefinition\Data::getDataForResource
+     * @see ResourcePersistenceAwareInterface::getDataForResource
      *
      * @param string $data
      * @param null|Model\DataObject\AbstractObject $object
@@ -131,7 +135,7 @@ class ExternalImage extends Model\DataObject\ClassDefinition\Data
     }
 
     /**
-     * @see DataObject\ClassDefinition\Data::getDataFromResource
+     * @see ResourcePersistenceAwareInterface::getDataFromResource
      *
      * @param string $data
      * @param null|Model\DataObject\AbstractObject $object
@@ -141,11 +145,17 @@ class ExternalImage extends Model\DataObject\ClassDefinition\Data
      */
     public function getDataFromResource($data, $object = null, $params = [])
     {
-        return new Model\DataObject\Data\ExternalImage($data);
+        $externalImage = new Model\DataObject\Data\ExternalImage($data);
+
+        if (isset($params['owner'])) {
+            $externalImage->setOwner($params['owner'], $params['fieldname'], $params['language']);
+        }
+
+        return $externalImage;
     }
 
     /**
-     * @see DataObject\ClassDefinition\Data::getDataForQueryResource
+     * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      *
      * @param string $data
      * @param null|Model\DataObject\AbstractObject $object
@@ -159,7 +169,7 @@ class ExternalImage extends Model\DataObject\ClassDefinition\Data
     }
 
     /**
-     * @see DataObject\ClassDefinition\Data::getDataForEditmode
+     * @see Data::getDataForEditmode
      *
      * @param string $data
      * @param null|Model\DataObject\AbstractObject $object
@@ -189,7 +199,7 @@ class ExternalImage extends Model\DataObject\ClassDefinition\Data
     }
 
     /**
-     * @see Model\DataObject\ClassDefinition\Data::getDataFromEditmode
+     * @see Data::getDataFromEditmode
      *
      * @param string $data
      * @param null|Model\DataObject\AbstractObject $object
@@ -215,7 +225,7 @@ class ExternalImage extends Model\DataObject\ClassDefinition\Data
     }
 
     /**
-     * @see DataObject\ClassDefinition\Data::getVersionPreview
+     * @see Data::getVersionPreview
      *
      * @param string $data
      * @param null|DataObject\AbstractObject $object

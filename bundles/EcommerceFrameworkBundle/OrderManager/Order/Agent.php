@@ -32,9 +32,9 @@ use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Fieldcollection;
 use Pimcore\Model\DataObject\Fieldcollection\Data\PaymentInfo;
 use Pimcore\Model\DataObject\Objectbrick\Data as ObjectbrickData;
-use Pimcore\Model\DataObject\OnlineShopOrder\PaymentProvider;
 use Pimcore\Model\Element\Note;
 use Pimcore\Model\Element\Note\Listing as NoteListing;
+use Symfony\Component\Lock\Exception\NotSupportedException;
 
 class Agent implements IOrderAgent
 {
@@ -353,13 +353,57 @@ class Agent implements IOrderAgent
         $currentPaymentInformation = null;
         if ($paymentInformation) {
             foreach ($paymentInformation as $paymentInfo) {
-                if ($paymentInfo->getPaymentState() == $order::ORDER_STATE_PAYMENT_PENDING) {
+                if ($paymentInfo->getPaymentState() == $order::ORDER_STATE_PAYMENT_PENDING || $paymentInfo->getPaymentState() == $order::ORDER_STATE_PAYMENT_INIT) {
                     return $paymentInfo;
                 }
             }
         }
 
         return null;
+    }
+
+    /**
+     * @param Order $order
+     * @param string $paymentState
+     *
+     * @return PaymentInfo
+     *
+     * @throws UnsupportedException
+     */
+    protected function createNewOrderInformation(Order $order, string $paymentState)
+    {
+        $paymentInformationCollection = $order->getPaymentInfo();
+        if (empty($paymentInformationCollection)) {
+            $paymentInformationCollection = new Fieldcollection();
+            $order->setPaymentInfo($paymentInformationCollection);
+        }
+
+        $currentPaymentInformation = new PaymentInfo();
+        $currentPaymentInformation->setPaymentStart(new \DateTime());
+        $currentPaymentInformation->setPaymentState($paymentState);
+        $currentPaymentInformation->setInternalPaymentId($this->generateInternalPaymentId($paymentInformationCollection->getCount() + 1));
+
+        $paymentInformationCollection->add($currentPaymentInformation);
+
+        return $currentPaymentInformation;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function initPayment()
+    {
+        $currentPaymentInformation = $this->getCurrentPendingPaymentInfo();
+
+        if (!empty($currentPaymentInformation)) {
+            throw new NotSupportedException('There is an existing Payment Information with State ' . $currentPaymentInformation->getPaymentState());
+        }
+
+        $order = $this->getOrder();
+        $currentPaymentInformation = $this->createNewOrderInformation($order, order::ORDER_STATE_PAYMENT_INIT);
+        $order->save(['versionNote' => 'Agent::initPayment - save order to add new PaymentInformation.']);
+
+        return $currentPaymentInformation;
     }
 
     /**
@@ -375,6 +419,8 @@ class Agent implements IOrderAgent
         $order = $this->getOrder();
         $currentInternalPaymentId = $this->generateInternalPaymentId();
 
+        $orderSaveNeeded = false;
+
         //create new payment information when
         // a) no payment information is available or
         // b) internal payment id does not fit anymore (which is a hint that order has changed)
@@ -387,21 +433,22 @@ class Agent implements IOrderAgent
             $currentPaymentInformation->setMessage($currentPaymentInformation->getMessage() . ' - cancelled due to change of order fingerprint');
 
             $currentPaymentInformation = null;
+
+            $orderSaveNeeded = true;
         }
 
         if (empty($currentPaymentInformation)) {
-            $paymentInformationCollection = $order->getPaymentInfo();
-            if (empty($paymentInformationCollection)) {
-                $paymentInformationCollection = new Fieldcollection();
-                $order->setPaymentInfo($paymentInformationCollection);
-            }
+            $currentPaymentInformation = $this->createNewOrderInformation($order, $order::ORDER_STATE_PAYMENT_PENDING);
+            $orderSaveNeeded = true;
+        }
 
-            $currentPaymentInformation = new PaymentInfo();
-            $currentPaymentInformation->setPaymentStart(new \DateTime());
+        if ($currentPaymentInformation->getPaymentState() == $order::ORDER_STATE_PAYMENT_INIT) {
             $currentPaymentInformation->setPaymentState($order::ORDER_STATE_PAYMENT_PENDING);
-            $currentPaymentInformation->setInternalPaymentId($this->generateInternalPaymentId($paymentInformationCollection->getCount() + 1));
+            $orderSaveNeeded = true;
+        }
 
-            $paymentInformationCollection->add($currentPaymentInformation);
+        if ($orderSaveNeeded) {
+            $order->save(['versionNote' => 'Agent::startPayment - save order to update PaymentInformation.']);
         }
 
         return $currentPaymentInformation;

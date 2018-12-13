@@ -18,10 +18,11 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
+use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\Element;
 use Pimcore\Tool;
 
-class Classificationstore extends Model\DataObject\ClassDefinition\Data
+class Classificationstore extends Data implements CustomResourcePersistingInterface
 {
     use Element\ChildsCompatibilityTrait;
 
@@ -115,7 +116,7 @@ class Classificationstore extends Model\DataObject\ClassDefinition\Data
     public $allowedGroupIds;
 
     /**
-     * @see DataObject\ClassDefinition\Data::getDataForEditmode
+     * @see Data::getDataForEditmode
      *
      * @param string $data
      * @param null|Model\DataObject\AbstractObject $object
@@ -273,7 +274,7 @@ class Classificationstore extends Model\DataObject\ClassDefinition\Data
     }
 
     /**
-     * @see Model\DataObject\ClassDefinition\Data::getDataFromEditmode
+     * @see Data::getDataFromEditmode
      *
      * @param string $containerData
      * @param null|Model\DataObject\AbstractObject $object
@@ -350,7 +351,7 @@ class Classificationstore extends Model\DataObject\ClassDefinition\Data
     }
 
     /**
-     * @see DataObject\ClassDefinition\Data::getVersionPreview
+     * @see Data::getVersionPreview
      *
      * @param $data
      * @param null|DataObject\AbstractObject $object
@@ -727,8 +728,9 @@ class Classificationstore extends Model\DataObject\ClassDefinition\Data
 
     /**
      * @param $object
+     * @param array $params
      */
-    public function delete($object)
+    public function delete($object, $params = [])
     {
         $classificationStore = $this->getDataFromObjectParam($object);
 

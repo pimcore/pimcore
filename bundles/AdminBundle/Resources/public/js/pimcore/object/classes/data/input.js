@@ -65,6 +65,11 @@ pimcore.object.classes.data.input = Class.create(pimcore.object.classes.data.dat
                 fieldLabel: t("width"),
                 name: "width",
                 value: datax.width
+            },{
+                xtype: "checkbox",
+                fieldLabel: t("show_charcount"),
+                name: "showCharCount",
+                value: datax.showCharCount
             }
             ];
 

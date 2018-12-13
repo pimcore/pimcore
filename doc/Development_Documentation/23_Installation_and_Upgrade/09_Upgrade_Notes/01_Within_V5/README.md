@@ -2,7 +2,9 @@
 
 
 ## Version 5.6.0
-- Removed method \Pimcore\Model\DataObject\ClassDefinition\Data::setFieldtype($fieldtype)
+- Removed method `\Pimcore\Model\DataObject\ClassDefinition\Data::setFieldtype($fieldtype)`
+- `\Pimcore\Model\Translation\Website::getByKey()` and `\Pimcore\Model\Translation\Admin::getByKey()` are not throwing an exception anymore if an item doesn't exist, instead they are returning `null`
+- If a custom object data-type extends from a core data-type it has to be compatible with the new interfaces (`CustomResourcePersistingInterface`, `QueryResourcePersistenceAwareInterface` and `ResourcePersistenceAwareInterface`)
 
 #### Data Objects: renamed relational data-types
 For better understanding we've renamed all relational data-types to a more meaningful name.  
@@ -24,6 +26,7 @@ the JS classes in `pimcore.object.tags` and `pimcore.object.classes.data`.
 | Multihref Advanced | `MultihrefMetadata` | `multihrefMetadata` | **Advanced Many-To-Many Relation** | `AdvancedManyToManyRelation` | `advancedManyToManyRelation` | 
 | Objects | `Objects` | `objects` | **Many-To-Many Object Relation** | `ManyToManyObjectRelation` | `manyToManyObjectRelation` | 
 | Objects with Metadata | `ObjectsMetadata` | `objectsMetadata` | **Advanced Many-To-Many Object Relation** | `AdvancedManyToManyObjectRelation` | `advancedManyToManyObjectRelation` | 
+| Objects (Non Owner) | `Nonownerobjects` | `nonownerobjects` | **Reverse Many-To-Many Object Relation** | `ReverseManyToManyObjectRelation` | `reverseManyToManyObjectRelation` | 
 
 
 #### Documents: renamed relational editables
@@ -41,6 +44,13 @@ the JS classes in `pimcore.document.tags`.
 | `$this->href()` | `Href` | `href` | `$this->relation()` | `Relation` | `relation` | 
 | `$this->multihref()` | `Multihref` | `multihref` | `$this->relations()` | `Relations` | `relations` | 
 
+#### E-Commerce Framework - Added methods to interfaces `IOrderAgent`, `ICheckoutManager` and `ICartManager`
+
+This only affects you, when you created custom implementations of the interfaces `IOrderAgent`, `ICheckoutManager` or
+`ICartManager` and did not extend the default implementations. Otherwise no action is needed. 
+- `IOrderAgent`: method `public function initPayment();` was added. 
+- `ICheckoutManager`: method `public function initOrderPayment();` was added. 
+- `ICartManager`: method `public function getOrCreateCartByName($name);` was added.  
 
 ## Version 5.5.4
 

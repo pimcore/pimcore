@@ -48,6 +48,7 @@ class AliasMapper extends AbstractAutoloader
         'Pimcore\Model\DataObject\ClassDefinition\Data\MultihrefMetadata' => \Pimcore\Model\DataObject\ClassDefinition\Data\AdvancedManyToManyRelation::class,
         'Pimcore\Model\DataObject\ClassDefinition\Data\Objects' => \Pimcore\Model\DataObject\ClassDefinition\Data\ManyToManyObjectRelation::class,
         'Pimcore\Model\DataObject\ClassDefinition\Data\ObjectsMetadata' => \Pimcore\Model\DataObject\ClassDefinition\Data\AdvancedManyToManyObjectRelation::class,
+        'Pimcore\Model\DataObject\ClassDefinition\Data\Nonownerobjects' => \Pimcore\Model\DataObject\ClassDefinition\Data\ReverseManyToManyObjectRelation::class,
         'Pimcore\Model\Document\Tag\Href' => \Pimcore\Model\Document\Tag\Relation::class,
         'Pimcore\Model\Document\Tag\Multihref' => \Pimcore\Model\Document\Tag\Relations::class,
     ];
@@ -66,10 +67,14 @@ class AliasMapper extends AbstractAutoloader
         }
 
         // original was requested, load it and create alias afterwards
-        $alias = array_search($class, $this->mapping);
-        if ($alias !== false) {
-            if ($this->composerAutoloader->loadClass($class)) {
-                class_alias($class, $alias);
+        $aliases = array_keys($this->mapping, $class);
+        if (count($aliases)) {
+            $this->composerAutoloader->loadClass($class);
+            // the return of composer autoloader obviously doesn't work, be better check manually if the class really exists
+            if ($this->classExists($class, false)) {
+                foreach ($aliases as $alias) {
+                    class_alias($class, $alias);
+                }
             }
         }
     }

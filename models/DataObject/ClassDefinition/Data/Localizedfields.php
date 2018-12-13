@@ -19,10 +19,11 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
+use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\Element;
 use Pimcore\Tool;
 
-class Localizedfields extends Model\DataObject\ClassDefinition\Data
+class Localizedfields extends Data implements CustomResourcePersistingInterface
 {
     use Element\ChildsCompatibilityTrait;
 
@@ -103,13 +104,13 @@ class Localizedfields extends Model\DataObject\ClassDefinition\Data
     public $fieldDefinitionsCache;
 
     /**
-     * @see DataObject\ClassDefinition\Data::getDataForEditmode
+     * @see Data::getDataForEditmode
      *
      * @param string $data
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
-     * @return string
+     * @return array
      */
     public function getDataForEditmode($data, $object = null, $params = [])
     {
@@ -238,13 +239,13 @@ class Localizedfields extends Model\DataObject\ClassDefinition\Data
     }
 
     /**
-     * @see Model\DataObject\ClassDefinition\Data::getDataFromEditmode
+     * @see Data::getDataFromEditmode
      *
-     * @param string $data
+     * @param array $data
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
-     * @return string
+     * @return DataObject\Localizedfield
      */
     public function getDataFromEditmode($data, $object = null, $params = [])
     {
@@ -300,7 +301,7 @@ class Localizedfields extends Model\DataObject\ClassDefinition\Data
     }
 
     /**
-     * @see DataObject\ClassDefinition\Data::getVersionPreview
+     * @see Data::getVersionPreview
      *
      * @param string $data
      * @param null|DataObject\AbstractObject $object

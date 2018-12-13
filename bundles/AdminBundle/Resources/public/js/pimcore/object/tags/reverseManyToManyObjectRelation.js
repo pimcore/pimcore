@@ -11,18 +11,49 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-pimcore.registerNS("pimcore.object.tags.nonownerobjects");
-pimcore.object.tags.nonownerobjects = Class.create(pimcore.object.tags.manyToManyObjectRelation, {
+pimcore.registerNS("pimcore.object.tags.reverseManyToManyObjectRelation");
+pimcore.object.tags.reverseManyToManyObjectRelation = Class.create(pimcore.object.tags.manyToManyObjectRelation, {
 
+    initialize: function (data, fieldConfig) {
+        this.data = [];
+        this.fieldConfig = fieldConfig;
+        if (data) {
+            this.data = data;
+        }
 
-    removeObject: function (index, item) {
+        var fields = [
+            "id",
+            "path",
+            "maintype",
+            "classname",
+            "published"
+        ];
+
+        this.store = new Ext.data.JsonStore({
+            data: this.data,
+            listeners: {
+                add: function () {
+                    this.dataChanged = true;
+                }.bind(this),
+                remove: function () {
+                    this.dataChanged = true;
+                }.bind(this),
+                clear: function () {
+                    this.dataChanged = true;
+                }.bind(this)
+            },
+            fields: fields
+        });
+    },
+
+    removeObject: function (index) {
 
         if (pimcore.globalmanager.exists("object_" + this.getStore().getAt(index).data.id) == false) {
 
             Ext.Ajax.request({
                 url: "/admin/object/get",
                 params: {id: this.getStore().getAt(index).data.id},
-                success: function(item, index, response) {
+                success: function(index, response) {
                     this.data = Ext.decode(response.responseText);
                     if (this.data.editlock) {
                         var lockDate = new Date(this.data.editlock.date * 1000);
@@ -35,10 +66,6 @@ pimcore.object.tags.nonownerobjects = Class.create(pimcore.object.tags.manyToMan
                                 function (lock, buttonValue) {
                                     if (buttonValue == "yes") {
                                         this.getStore().removeAt(index);
-                                        if (item != null) {
-                                            item.parentMenu.destroy();
-                                        }
-
                                     }
                                 }.bind(this, arguments));
 
@@ -46,15 +73,16 @@ pimcore.object.tags.nonownerobjects = Class.create(pimcore.object.tags.manyToMan
                         Ext.Ajax.request({
                             url: "/admin/element/lock-element",
                             method: 'PUT',
-                            params: {id: this.getStore().getAt(index).data.id, type: 'object'}
+                            params: {
+                                id: this.getStore().getAt(index).data.id,
+                                type: 'object'
+                            }
                         });
+
                         this.getStore().removeAt(index);
-                        if (item != null) {
-                            item.parentMenu.destroy();
-                        }
                     }
 
-                }.bind(this, item, index)
+                }.bind(this, index)
             });
         } else {
 
@@ -72,7 +100,7 @@ pimcore.object.tags.nonownerobjects = Class.create(pimcore.object.tags.manyToMan
     },
 
     actionColumnRemove: function (grid, rowIndex) {
-        var f = this.removeObject.bind(grid, rowIndex, null);
+        var f = this.removeObject.bind(grid, rowIndex);
         f();
     },
 
@@ -105,6 +133,8 @@ pimcore.object.tags.nonownerobjects = Class.create(pimcore.object.tags.manyToMan
 
         this.component = new Ext.grid.GridPanel({
             store: this.store,
+            border: true,
+            style: "margin-bottom: 10px",
             selModel: Ext.create('Ext.selection.RowModel', {}),
             columns: {
                 defaults: {
@@ -114,7 +144,7 @@ pimcore.object.tags.nonownerobjects = Class.create(pimcore.object.tags.manyToMan
                     {text: 'ID', dataIndex: 'id', flex: 50},
                     {text: t("reference"), dataIndex: 'path', flex: 200, renderer:this.fullPathRenderCheck.bind(this)
                     },
-                    {text: t("type"), dataIndex: 'type', flex: 100},
+                    {text: t("class"), dataIndex: 'classname', flex: 100},
                     {
                         xtype: 'actioncolumn',
                         menuText: t('open'),
@@ -123,8 +153,8 @@ pimcore.object.tags.nonownerobjects = Class.create(pimcore.object.tags.manyToMan
                             {
                                 tooltip: t('open'),
                                 icon: "/bundles/pimcoreadmin/img/flat-color-icons/open_file.svg",
-                                handler: function (grid, rowIndex) {
-                                    var data = grid.getStore().getAt(rowIndex);
+                                handler: function (el, rowIndex) {
+                                    var data = this.store.getAt(rowIndex);
                                     pimcore.helpers.openObject(data.data.id, "object");
                                 }.bind(this)
                             }
@@ -209,9 +239,8 @@ pimcore.object.tags.nonownerobjects = Class.create(pimcore.object.tags.manyToMan
                     //return e.getTarget(this.grid.getView().rowSelector);
                 }.bind(this),
                 onNodeOver: function (overHtmlNode, ddSource, e, data) {
-
                     try {
-                        var record = data = data.records[0].data;
+                        var record = data.records[0].data;
                         var fromTree = this.isFromTree(ddSource);
                         if (data.records.length === 1 && record.elementType === "object" && this.dndAllowed(record, fromTree)) {
                             return Ext.dd.DropZone.prototype.dropAllowed;
@@ -409,3 +438,6 @@ pimcore.object.tags.nonownerobjects = Class.create(pimcore.object.tags.manyToMan
     }
 
 });
+
+// @TODO BC layer, to be removed in v6.0
+pimcore.object.tags.nonownerobjects = pimcore.object.tags.reverseManyToManyObjectRelation;

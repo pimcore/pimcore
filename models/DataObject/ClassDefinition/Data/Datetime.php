@@ -18,9 +18,13 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
 use Pimcore\Db;
 use Pimcore\Model;
+use Pimcore\Model\DataObject\ClassDefinition\Data;
 
-class Datetime extends Model\DataObject\ClassDefinition\Data
+class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface
 {
+    use Extension\ColumnType;
+    use Extension\QueryColumnType;
+
     /**
      * Static type of this element
      *
@@ -60,7 +64,7 @@ class Datetime extends Model\DataObject\ClassDefinition\Data
     public $useCurrentDate;
 
     /**
-     * @see Model\DataObject\ClassDefinition\Data::getDataForResource
+     * @see ResourcePersistenceAwareInterface::getDataForResource
      *
      * @param \Zend_Date|\DateTime $data
      * @param null|Model\DataObject\AbstractObject $object
@@ -81,7 +85,7 @@ class Datetime extends Model\DataObject\ClassDefinition\Data
     }
 
     /**
-     * @see Model\DataObject\ClassDefinition\Data::getDataFromResource
+     * @see ResourcePersistenceAwareInterface::getDataFromResource
      *
      * @param int $data
      * @param null|Model\DataObject\AbstractObject $object
@@ -106,7 +110,7 @@ class Datetime extends Model\DataObject\ClassDefinition\Data
     }
 
     /**
-     * @see Model\DataObject\ClassDefinition\Data::getDataForQueryResource
+     * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      *
      * @param \Zend_Date|\DateTime $data
      * @param null|Model\DataObject\AbstractObject $object
@@ -120,7 +124,7 @@ class Datetime extends Model\DataObject\ClassDefinition\Data
     }
 
     /**
-     * @see Model\DataObject\ClassDefinition\Data::getDataForEditmode
+     * @see Data::getDataForEditmode
      *
      * @param \Zend_Date|\DateTime $data
      * @param null|Model\DataObject\AbstractObject $object
@@ -153,7 +157,7 @@ class Datetime extends Model\DataObject\ClassDefinition\Data
     }
 
     /**
-     * @see Model\DataObject\ClassDefinition\Data::getDataFromEditmode
+     * @see Data::getDataFromEditmode
      *
      * @param int $data
      * @param null|Model\DataObject\AbstractObject $object
@@ -203,7 +207,7 @@ class Datetime extends Model\DataObject\ClassDefinition\Data
     }
 
     /**
-     * @see Model\DataObject\ClassDefinition\Data::getVersionPreview
+     * @see Data::getVersionPreview
      *
      * @param \Zend_Date|\DateTime $data
      * @param null|Model\DataObject\AbstractObject $object

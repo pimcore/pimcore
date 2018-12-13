@@ -191,17 +191,26 @@ class Config extends Model\AbstractModel
      */
     public static function getPreviewConfig($hdpi = false)
     {
-        $thumbnail = new self();
-        $thumbnail->setName('pimcore-system-treepreview');
-        $thumbnail->addItem('scaleByWidth', [
-            'width' => 400
-        ]);
-        $thumbnail->addItem('setBackgroundImage', [
-            'path' => '/bundles/pimcoreadmin/img/tree-preview-transparent-background.png',
-            'mode' => 'cropTopLeft'
-        ]);
-        $thumbnail->setQuality(60);
-        $thumbnail->setFormat('PJPEG');
+        $customPreviewImageThumbnail = \Pimcore::getContainer()->getParameter('pimcore.config')['assets']['preview_image_thumbnail'];
+        $thumbnail = null;
+
+        if ($customPreviewImageThumbnail) {
+            $thumbnail = self::getByName($customPreviewImageThumbnail);
+        }
+
+        if (!$thumbnail) {
+            $thumbnail = new self();
+            $thumbnail->setName('pimcore-system-treepreview');
+            $thumbnail->addItem('scaleByWidth', [
+                'width' => 400
+            ]);
+            $thumbnail->addItem('setBackgroundImage', [
+                'path' => '/bundles/pimcoreadmin/img/tree-preview-transparent-background.png',
+                'mode' => 'cropTopLeft'
+            ]);
+            $thumbnail->setQuality(60);
+            $thumbnail->setFormat('PJPEG');
+        }
 
         if ($hdpi) {
             $thumbnail->setHighResolution(2);

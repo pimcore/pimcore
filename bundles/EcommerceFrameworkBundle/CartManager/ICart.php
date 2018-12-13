@@ -16,7 +16,6 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\CartManager;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractSetProductEntry;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\ICheckoutable;
-use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Token;
 
 /**
  * Interface for cart implementations of online shop framework
@@ -310,7 +309,7 @@ interface ICart
     public function addVoucherToken($token);
 
     /**
-     * @param Token $token
+     * @param string $token
      *
      * @return bool
      */

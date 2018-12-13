@@ -473,6 +473,17 @@ class Requirements
             'state' => $facedetectAvailable ? Check::STATE_OK : Check::STATE_WARNING
         ]);
 
+        try {
+            $graphvizAvailable = \Pimcore\Tool\Console::getExecutable('dot');
+        } catch (\Exception $e) {
+            $graphvizAvailable = false;
+        }
+
+        $checks[] = new Check([
+            'name' => 'Graphviz',
+            'state' => $graphvizAvailable ? Check::STATE_OK : Check::STATE_WARNING
+        ]);
+
         return $checks;
     }
 

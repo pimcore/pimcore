@@ -19,12 +19,16 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
+use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
 use Pimcore\Tool\Serialize;
 
-class Link extends Model\DataObject\ClassDefinition\Data
+class Link extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface
 {
+    use Extension\ColumnType;
+    use Extension\QueryColumnType;
+
     /**
      * Static type of this element
      *
@@ -54,7 +58,7 @@ class Link extends Model\DataObject\ClassDefinition\Data
     public $phpdocType = '\\Pimcore\\Model\\DataObject\\Data\\Link';
 
     /**
-     * @see DataObject\ClassDefinition\Data::getDataForResource
+     * @see ResourcePersistenceAwareInterface::getDataForResource
      *
      * @param DataObject\Data\Link $data
      * @param null|Model\DataObject\AbstractObject $object
@@ -64,11 +68,10 @@ class Link extends Model\DataObject\ClassDefinition\Data
      */
     public function getDataForResource($data, $object = null, $params = [])
     {
-        if ($data instanceof DataObject\Data\Link and isset($data->object)) {
-            unset($data->object);
-        }
+        if ($data instanceof DataObject\Data\Link) {
+            $data = clone $data;
+            $data->setOwner(null, '');
 
-        if ($data) {
             try {
                 $this->checkValidity($data, true);
             } catch (\Exception $e) {
@@ -81,7 +84,7 @@ class Link extends Model\DataObject\ClassDefinition\Data
     }
 
     /**
-     * @see DataObject\ClassDefinition\Data::getDataFromResource
+     * @see ResourcePersistenceAwareInterface::getDataFromResource
      *
      * @param string $data
      * @param null|Model\DataObject\AbstractObject $object
@@ -94,8 +97,8 @@ class Link extends Model\DataObject\ClassDefinition\Data
         $link = Serialize::unserialize($data);
 
         if ($link instanceof DataObject\Data\Link) {
-            if ($link->isEmpty()) {
-                return false;
+            if (isset($params['owner'])) {
+                $link->setOwner($params['owner'], $params['fieldname'], $params['language']);
             }
 
             try {
@@ -110,9 +113,9 @@ class Link extends Model\DataObject\ClassDefinition\Data
     }
 
     /**
-     * @see DataObject\ClassDefinition\Data::getDataForQueryResource
+     * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      *
-     * @param string $data
+     * @param DataObject\Data\Link $data
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
@@ -120,22 +123,22 @@ class Link extends Model\DataObject\ClassDefinition\Data
      */
     public function getDataForQueryResource($data, $object = null, $params = [])
     {
-        return Serialize::serialize($data);
+        return $this->getDataForResource($data, $object, $params);
     }
 
     /**
-     * @see DataObject\ClassDefinition\Data::getDataForEditmode
+     * @see Data::getDataForEditmode
      *
      * @param string $data
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
-     * @return string
+     * @return array|null
      */
     public function getDataForEditmode($data, $object = null, $params = [])
     {
         if (!$data instanceof DataObject\Data\Link) {
-            return false;
+            return null;
         }
         $data->path = $data->getPath();
 
@@ -147,7 +150,7 @@ class Link extends Model\DataObject\ClassDefinition\Data
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
-     * @return string
+     * @return array|null
      */
     public function getDataForGrid($data, $object = null, $params = [])
     {
@@ -155,13 +158,13 @@ class Link extends Model\DataObject\ClassDefinition\Data
     }
 
     /**
-     * @see Model\DataObject\ClassDefinition\Data::getDataFromEditmode
+     * @see Data::getDataFromEditmode
      *
      * @param string $data
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
-     * @return string
+     * @return DataObject\Data\Link|null
      */
     public function getDataFromEditmode($data, $object = null, $params = [])
     {
@@ -169,7 +172,7 @@ class Link extends Model\DataObject\ClassDefinition\Data
         $link->setValues($data);
 
         if ($link->isEmpty()) {
-            return false;
+            return null;
         }
 
         return $link;
@@ -188,7 +191,7 @@ class Link extends Model\DataObject\ClassDefinition\Data
     }
 
     /**
-     * @see DataObject\ClassDefinition\Data::getVersionPreview
+     * @see Data::getVersionPreview
      *
      * @param string $data
      * @param null|DataObject\AbstractObject $object

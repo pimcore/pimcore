@@ -399,4 +399,34 @@ CSS;
 
         return $fileInfo;
     }
+
+    /**
+     * parses an email string in the following name/mail list annotation: 'Name 1 <address1@mail.com>, Name 2 <address2@mail.com>, ...'
+     *
+     * @param $emailString
+     *
+     * @return array
+     */
+    public static function parseEmailAddressField($emailString)
+    {
+        $cleanedEmails = [];
+        $emailArray = preg_split('/,|;/', $emailString);
+        if ($emailArray) {
+            foreach ($emailArray as $emailStringEntry) {
+                $entryAddress = $emailStringEntry;
+                $entryName = null;
+                $matches = [];
+                if (preg_match('/(.*)<(.*)>/', $entryAddress, $matches)) {
+                    $entryAddress = trim($matches[2]);
+                    $entryName = trim($matches[1]);
+                }
+
+                if ($entryAddress) {
+                    $cleanedEmails[] = ['email' => $entryAddress, 'name' => $entryName];
+                }
+            }
+        }
+
+        return $cleanedEmails;
+    }
 }

@@ -21,6 +21,9 @@ use Pimcore\Db;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
+use Pimcore\Model\DataObject\ClassDefinition\Data\CustomResourcePersistingInterface;
+use Pimcore\Model\DataObject\ClassDefinition\Data\QueryResourcePersistenceAwareInterface;
+use Pimcore\Model\DataObject\ClassDefinition\Data\ResourcePersistenceAwareInterface;
 use Pimcore\Tool;
 
 /**
@@ -131,7 +134,10 @@ class Dao extends Model\Dao\AbstractDao
             }
 
             foreach ($fieldDefinitions as $fd) {
-                if (method_exists($fd, 'save')) {
+                if ($fd instanceof CustomResourcePersistingInterface || method_exists($fd, 'save')) {
+                    if (!$fd instanceof CustomResourcePersistingInterface) {
+                        Tool::triggerMissingInterfaceDeprecation(get_class($fd), 'save', CustomResourcePersistingInterface::class);
+                    }
                     // for fieldtypes which have their own save algorithm eg. relational data types, ...
                     $context = $this->model->getContext() ? $this->model->getContext() : [];
                     if ($context['containerType'] == 'fieldcollection' || $context['containerType'] == 'objectbrick') {
@@ -144,17 +150,23 @@ class Dao extends Model\Dao\AbstractDao
                     ];
 
                     $fd->save($this->model, $childParams);
-                } else {
+                }
+                if ($fd instanceof ResourcePersistenceAwareInterface || !method_exists($fd, 'save')) {
+                    if (!$fd instanceof ResourcePersistenceAwareInterface) {
+                        Tool::triggerMissingInterfaceDeprecation(get_class($fd), 'getDataForResource', ResourcePersistenceAwareInterface::class);
+                    }
                     if (is_array($fd->getColumnType())) {
                         $insertDataArray = $fd->getDataForResource(
                             $this->model->getLocalizedValue($fd->getName(), $language, true),
-                            $object
+                            $object,
+                            $this->getFieldDefinitionParams($fd->getName(), $language)
                         );
                         $insertData = array_merge($insertData, $insertDataArray);
                     } else {
                         $insertData[$fd->getName()] = $fd->getDataForResource(
                             $this->model->getLocalizedValue($fd->getName(), $language, true),
-                            $object
+                            $object,
+                            $this->getFieldDefinitionParams($fd->getName(), $language)
                         );
                     }
                 }
@@ -240,13 +252,20 @@ class Dao extends Model\Dao\AbstractDao
                 }
 
                 foreach ($fieldDefinitions as $fd) {
-                    if ($fd->getQueryColumnType()) {
+                    if ($fd instanceof QueryResourcePersistenceAwareInterface || method_exists($fd, 'getDataForQueryResource')) {
+                        if (!$fd instanceof QueryResourcePersistenceAwareInterface) {
+                            Tool::triggerMissingInterfaceDeprecation(get_class($fd), 'getDataForQueryResource', QueryResourcePersistenceAwareInterface::class);
+                        }
                         $key = $fd->getName();
 
                         // exclude untouchables if value is not an array - this means data has not been loaded
                         if (!(in_array($key, $untouchable) and !is_array($this->model->$key))) {
                             $localizedValue = $this->model->getLocalizedValue($key, $language);
-                            $insertData = $fd->getDataForQueryResource($localizedValue, $object);
+                            $insertData = $fd->getDataForQueryResource(
+                                $localizedValue,
+                                $object,
+                                $this->getFieldDefinitionParams($key, $language)
+                            );
                             $isEmpty = $fd->isEmpty($localizedValue);
 
                             if (is_array($insertData)) {
@@ -386,7 +405,10 @@ class Dao extends Model\Dao\AbstractDao
 
             if (is_array($childDefinitions)) {
                 foreach ($childDefinitions as $fd) {
-                    if (method_exists($fd, 'delete')) {
+                    if ($fd instanceof CustomResourcePersistingInterface || method_exists($fd, 'delete')) {
+                        if (!$fd instanceof CustomResourcePersistingInterface) {
+                            Tool::triggerMissingInterfaceDeprecation(get_class($fd), 'delete', CustomResourcePersistingInterface::class);
+                        }
                         $params = [];
                         $params['context'] = $this->model->getContext() ? $this->model->getContext() : [];
                         if ($params['context']['containerType'] == 'fieldcollection' || $params['context']['containerType'] == 'objectbrick') {
@@ -508,7 +530,10 @@ class Dao extends Model\Dao\AbstractDao
                 ['object' => $object, 'suppressEnrichment' => true]
             ) as $key => $fd) {
                 if ($fd) {
-                    if (method_exists($fd, 'load')) {
+                    if ($fd instanceof CustomResourcePersistingInterface || method_exists($fd, 'load')) {
+                        if (!$fd instanceof CustomResourcePersistingInterface) {
+                            Tool::triggerMissingInterfaceDeprecation(get_class($fd), 'load', CustomResourcePersistingInterface::class);
+                        }
                         // datafield has it's own loader
                         $params['language'] = $row['language'];
                         $params['object'] = $object;
@@ -520,21 +545,21 @@ class Dao extends Model\Dao\AbstractDao
                         if ($value === 0 || !empty($value)) {
                             $this->model->setLocalizedValue($key, $value, $row['language'], false);
                         }
-                    } else {
+                    }
+                    if ($fd instanceof ResourcePersistenceAwareInterface || method_exists($fd, 'getDataFromResource')) {
+                        if (!$fd instanceof ResourcePersistenceAwareInterface) {
+                            Tool::triggerMissingInterfaceDeprecation(get_class($fd), 'getDataFromResource', ResourcePersistenceAwareInterface::class);
+                        }
                         if (is_array($fd->getColumnType())) {
                             $multidata = [];
                             foreach ($fd->getColumnType() as $fkey => $fvalue) {
                                 $multidata[$key.'__'.$fkey] = $row[$key.'__'.$fkey];
                             }
-                            $value = $fd->getDataFromResource($multidata);
+                            $value = $fd->getDataFromResource($multidata, null, $this->getFieldDefinitionParams($key, $row['language']));
                             $this->model->setLocalizedValue($key, $value, $row['language'], false);
                         } else {
-                            $value = $fd->getDataFromResource($row[$key]);
+                            $value = $fd->getDataFromResource($row[$key], null, $this->getFieldDefinitionParams($key, $row['language']));
                             $this->model->setLocalizedValue($key, $value, $row['language'], false);
-                        }
-
-                        if ($value instanceof DataObject\OwnerAwareFieldInterface) {
-                            $value->setOwner($this->model, $key, $row['language']);
                         }
                     }
                 }
@@ -795,5 +820,20 @@ QUERY;
         }
 
         $this->tableDefinitions = null;
+    }
+
+    /**
+     * @param string $fieldname
+     * @param string $language
+     *
+     * @return array
+     */
+    private function getFieldDefinitionParams(string $fieldname, string $language)
+    {
+        return [
+            'owner' => $this->model,
+            'fieldname' => $fieldname,
+            'language' => $language,
+        ];
     }
 }

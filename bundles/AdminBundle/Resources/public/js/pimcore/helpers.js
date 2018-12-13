@@ -1943,7 +1943,7 @@ pimcore.helpers.editmode.openLinkEditPanel = function (data, callback) {
             },
 
             onNodeOver: function (target, dd, e, data) {
-                if (data.records.length === 1 && data.records[0].data.type === "folder") {
+                if (data.records.length === 1 && data.records[0].data.type !== "folder") {
                     return Ext.dd.DropZone.prototype.dropAllowed;
                 }
             }.bind(this),
@@ -1955,10 +1955,10 @@ pimcore.helpers.editmode.openLinkEditPanel = function (data, callback) {
                 }
 
                 data = data.records[0].data;
-                if (data.type != "folder" && (data.elementType == "asset" || data.elementType == "document" || data.elementType == "object")) {
-                    internalTypeField.setValue(record.data.elementType);
+                if (data.type !== "folder") {
+                    internalTypeField.setValue(data.elementType);
                     linkTypeField.setValue('internal');
-                    fieldPath.setValue(record.data.path);
+                    fieldPath.setValue(data.path);
                     return true;
                 }
                 return false;
@@ -2919,11 +2919,13 @@ pimcore.helpers.clearDataCache = function() {
 
 pimcore.helpers.showQuickSearch = function () {
 
-    // close all windows
+    // close all windows, tooltips and previews
     // we use each() because .hideAll() doesn't hide the modal (seems to be an ExtJS bug)
     Ext.WindowManager.each(function (win) {
         win.close();
     });
+    pimcore.helpers.treeNodeThumbnailPreviewHide();
+    jQuery("#pimcore_tooltip").hide();
 
     var quicksearchContainer = Ext.get('pimcore_quicksearch');
     quicksearchContainer.show();
@@ -3100,5 +3102,6 @@ pimcore.helpers.dragAndDropValidateSingleItem = function (data) {
 
     return true;
 };
+
 
 

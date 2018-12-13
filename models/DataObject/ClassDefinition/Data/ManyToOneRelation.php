@@ -20,12 +20,14 @@ use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
+use Pimcore\Model\DataObject\ClassDefinition\Data\Relations\AbstractRelations;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
 
-class ManyToOneRelation extends Model\DataObject\ClassDefinition\Data\Relations\AbstractRelations
+class ManyToOneRelation extends AbstractRelations implements QueryResourcePersistenceAwareInterface
 {
     use Model\DataObject\ClassDefinition\Data\Extension\Relation;
+    use Extension\QueryColumnType;
 
     /**
      * Static type of this element
@@ -201,15 +203,9 @@ class ManyToOneRelation extends Model\DataObject\ClassDefinition\Data\Relations\
     }
 
     /**
-     * @see DataObject\ClassDefinition\Data::getDataForResource
-     *
-     * @param Asset | Document | DataObject\AbstractObject $data
-     * @param null|Model\DataObject\AbstractObject $object
-     * @param mixed $params
-     *
-     * @return array
+     * @inheritdoc
      */
-    public function getDataForResource($data, $object = null, $params = [])
+    public function prepareDataForPersistence($data, $object = null, $params = [])
     {
         if ($data instanceof Element\ElementInterface) {
             $type = Element\Service::getType($data);
@@ -226,16 +222,9 @@ class ManyToOneRelation extends Model\DataObject\ClassDefinition\Data\Relations\
     }
 
     /**
-     * @see DataObject\ClassDefinition\Data::getDataFromResource
-     *
-     * @param array $data
-     * @param null|Model\DataObject\AbstractObject $object
-     * @param mixed $params
-     * @param bool $notRelationTable
-     *
-     * @return Asset|Document|DataObject\AbstractObject
+     * @inheritdoc
      */
-    public function getDataFromResource($data, $object = null, $params = [], $notRelationTable = false)
+    public function loadData($data, $object = null, $params = [])
     {
         // data from relation table
         $data = is_array($data) ? $data : [];
@@ -249,7 +238,7 @@ class ManyToOneRelation extends Model\DataObject\ClassDefinition\Data\Relations\
     }
 
     /**
-     * @see DataObject\ClassDefinition\Data::getDataForQueryResource
+     * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      *
      * @param Asset|Document|DataObject\AbstractObject $data
      * @param null|Model\DataObject\AbstractObject $object
@@ -259,7 +248,7 @@ class ManyToOneRelation extends Model\DataObject\ClassDefinition\Data\Relations\
      */
     public function getDataForQueryResource($data, $object = null, $params = [])
     {
-        $rData = $this->getDataForResource($data, $object, $params);
+        $rData = $this->prepareDataForPersistence($data, $object, $params);
 
         $return = [];
         $return[$this->getName() . '__id'] = $rData[0]['dest_id'];
@@ -269,13 +258,13 @@ class ManyToOneRelation extends Model\DataObject\ClassDefinition\Data\Relations\
     }
 
     /**
-     * @see DataObject\ClassDefinition\Data::getDataForEditmode
+     * @see Data::getDataForEditmode
      *
      * @param Asset|Document|DataObject\AbstractObject $data
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
-     * @return array
+     * @return array|null
      */
     public function getDataForEditmode($data, $object = null, $params = [])
     {
@@ -291,11 +280,11 @@ class ManyToOneRelation extends Model\DataObject\ClassDefinition\Data\Relations\
             return $r;
         }
 
-        return;
+        return null;
     }
 
     /**
-     * @see Model\DataObject\ClassDefinition\Data::getDataFromEditmode
+     * @see Data::getDataFromEditmode
      *
      * @param array $data
      * @param null|Model\DataObject\AbstractObject $object
@@ -329,7 +318,7 @@ class ManyToOneRelation extends Model\DataObject\ClassDefinition\Data\Relations\
      * @param null $object
      * @param array $params
      *
-     * @return string
+     * @return array|null
      */
     public function getDataForGrid($data, $object = null, $params = [])
     {
@@ -337,7 +326,7 @@ class ManyToOneRelation extends Model\DataObject\ClassDefinition\Data\Relations\
     }
 
     /**
-     * @see DataObject\ClassDefinition\Data::getVersionPreview
+     * @see Data::getVersionPreview
      *
      * @param Document | Asset | DataObject\AbstractObject $data
      * @param null|DataObject\AbstractObject $object

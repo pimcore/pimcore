@@ -111,6 +111,10 @@
 								"value":"cancelled"
 							},
 							{
+								"key": "Payment Init",
+								"value": "paymentInit"
+							},
+							{
 								"key":"Payment Pending",
 								"value":"paymentPending"
 							},

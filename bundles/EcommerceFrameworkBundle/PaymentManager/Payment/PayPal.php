@@ -345,7 +345,7 @@ class PayPal extends AbstractPayment
         // create order total
         $paymentDetails = new \stdClass();
         $paymentDetails->OrderTotal = new \stdClass();
-        $paymentDetails->OrderTotal->_ = $price->getAmount()->asNumeric();
+        $paymentDetails->OrderTotal->_ = $price->getAmount()->asString(2);
         $paymentDetails->OrderTotal->currencyID = $price->getCurrency()->getShortName();
 
         if (!$order) {
@@ -363,8 +363,7 @@ class PayPal extends AbstractPayment
             $article->Number = $item->getProduct()->getOSProductNumber();
             $article->Quantity = $item->getAmount();
             $article->Amount = new \stdClass();
-            $article->Amount->_ = $item->getProduct()->getOSPrice()->getGrossAmount()->asNumeric();
-            $article->Amount->currencyID = $orderCurrency;
+            $article->Amount->_ = $item->getProduct()->getOSPrice()->getGrossAmount()->asString(2);
             $article->Amount->currencyID = $orderCurrency;
 
             $paymentDetails->PaymentDetailsItem[] = $article;

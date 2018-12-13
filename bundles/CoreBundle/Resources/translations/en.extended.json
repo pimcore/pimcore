@@ -4,6 +4,7 @@
   "many_to_many_object_relation": "Many-To-Many Object Relation",
   "advanced_many_to_many_relation": "Advanced Many-To-Many Relation",
   "advanced_many_to_many_object_relation": "Advanced Many-To-Many Object Relation",
+  "reverse_many_to_many_object_relation": "Reverse Many-To-Many Object Relation",
   "admin_interface": "Admin Interface",
   "icon_library": "Icon Library",
   "system_performance_stability_warning": "Please do not perform this action unless you are sure what you are doing.<br /><b style='color:red'>This action can have a major impact onto the stability and performance of the entire system, and may causes an overload or complete crash of the server!</b><br /><br />Are you sure?",
@@ -378,7 +379,6 @@
   "lazy_loading": "lazy loading",
   "lazy_loading_description": "Lazy loading means that related objects are not loaded initially when the object is instantiated. When accessing the object programmatically, relations are only loaded when the according get method is called.",
   "non_owner_description": "Non owner objects represent relations to an other object just in the same way as objects do. The difference is, that a non-owner object field is not the owner of the relation data, it is merely a view on data stored in other objects. Please choose the owner and field name where the data is originally stored.",
-  "nonownerobjects": "Objects (Non Owner)",
   "allow_variants": "Allow variants",
   "show_variants": "Show variants in tree",
   "allowed_class_field": "Allowed class\/field",
@@ -698,5 +698,7 @@
   "operator_group_formatter": "Formatters",
   "operator_group_renderer": "Renderer",
   "operator_renderer_settings": "Renderer Settings",
-  "refresh_preview": "Refresh Preview"
+  "refresh_preview": "Refresh Preview",
+  "show_charcount": "Show Character Count",
+  "max_length": "Max Length"
 }

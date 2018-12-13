@@ -18,11 +18,13 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
+use Pimcore\Model\DataObject\ClassDefinition\Data\Relations\AbstractRelations;
 use Pimcore\Model\Element;
 
-class ManyToManyObjectRelation extends Model\DataObject\ClassDefinition\Data\Relations\AbstractRelations
+class ManyToManyObjectRelation extends AbstractRelations implements QueryResourcePersistenceAwareInterface
 {
     use Model\DataObject\ClassDefinition\Data\Extension\Relation;
+    use Extension\QueryColumnType;
 
     /**
      * Static type of this element
@@ -81,15 +83,9 @@ class ManyToManyObjectRelation extends Model\DataObject\ClassDefinition\Data\Rel
     }
 
     /**
-     * @see DataObject\ClassDefinition\Data::getDataForResource
-     *
-     * @param array $data
-     * @param null|Model\DataObject\AbstractObject $object
-     * @param mixed $params
-     *
-     * @return array
+     * @inheritdoc
      */
-    public function getDataForResource($data, $object = null, $params = [])
+    public function prepareDataForPersistence($data, $object = null, $params = [])
     {
         $return = [];
 
@@ -118,15 +114,9 @@ class ManyToManyObjectRelation extends Model\DataObject\ClassDefinition\Data\Rel
     }
 
     /**
-     * @see DataObject\ClassDefinition\Data::getDataFromResource
-     *
-     * @param array $data
-     * @param null|Model\DataObject\AbstractObject $object
-     * @param mixed $params
-     *
-     * @return array
+     * @inheritdoc
      */
-    public function getDataFromResource($data, $object = null, $params = [])
+    public function loadData($data, $object = null, $params = [])
     {
         $objects = [];
         if (is_array($data) && count($data) > 0) {
@@ -142,15 +132,18 @@ class ManyToManyObjectRelation extends Model\DataObject\ClassDefinition\Data\Rel
     }
 
     /**
-     * @param $data
-     * @param null $object
+     * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
+     *
+     * @param array $data
+     * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
      * @throws \Exception
+     *
+     * @return string|null
      */
     public function getDataForQueryResource($data, $object = null, $params = [])
     {
-
         //return null when data is not set
         if (!$data) {
             return null;
@@ -174,7 +167,7 @@ class ManyToManyObjectRelation extends Model\DataObject\ClassDefinition\Data\Rel
     }
 
     /**
-     * @see DataObject\ClassDefinition\Data::getDataForEditmode
+     * @see Data::getDataForEditmode
      *
      * @param array $data
      * @param null|Model\DataObject\AbstractObject $object
@@ -203,7 +196,7 @@ class ManyToManyObjectRelation extends Model\DataObject\ClassDefinition\Data\Rel
     }
 
     /**
-     * @see Model\DataObject\ClassDefinition\Data::getDataFromEditmode
+     * @see Data::getDataFromEditmode
      *
      * @param array $data
      * @param null|Model\DataObject\AbstractObject $object
@@ -213,7 +206,6 @@ class ManyToManyObjectRelation extends Model\DataObject\ClassDefinition\Data\Rel
      */
     public function getDataFromEditmode($data, $object = null, $params = [])
     {
-
         //if not set, return null
         if ($data === null or $data === false) {
             return null;
@@ -237,7 +229,7 @@ class ManyToManyObjectRelation extends Model\DataObject\ClassDefinition\Data\Rel
      * @param null $object
      * @param mixed $params
      *
-     * @return array
+     * @return array|null
      */
     public function getDataForGrid($data, $object = null, $params = [])
     {
@@ -251,16 +243,18 @@ class ManyToManyObjectRelation extends Model\DataObject\ClassDefinition\Data\Rel
 
             return $pathes;
         }
+
+        return null;
     }
 
     /**
-     * @see DataObject\ClassDefinition\Data::getVersionPreview
+     * @see Data::getVersionPreview
      *
      * @param array $data
      * @param null|DataObject\AbstractObject $object
      * @param mixed $params
      *
-     * @return string
+     * @return string|null
      */
     public function getVersionPreview($data, $object = null, $params = [])
     {
@@ -273,6 +267,8 @@ class ManyToManyObjectRelation extends Model\DataObject\ClassDefinition\Data\Rel
 
             return implode('<br />', $pathes);
         }
+
+        return null;
     }
 
     /**
@@ -680,16 +676,18 @@ class ManyToManyObjectRelation extends Model\DataObject\ClassDefinition\Data\Rel
 
         $classIds = $this->getClasses();
 
-        if (!$classIds) {
-            $classIds;
+        if (empty($classIds)) {
+            return;
         }
 
         $classId = $classIds[0]['classes'];
 
         if (is_numeric($classId)) {
             $class = DataObject\ClassDefinition::getById($classId);
-        } else {
+        } elseif (is_string($classId)) {
             $class = DataObject\ClassDefinition::getByName($classId);
+        } else {
+            return;
         }
 
         $this->visibleFieldDefinitions = [];

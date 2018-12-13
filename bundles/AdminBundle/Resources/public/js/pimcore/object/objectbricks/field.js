@@ -16,7 +16,7 @@ pimcore.object.objectbricks.field = Class.create(pimcore.object.classes.klass, {
 
     allowedInType: 'objectbrick',
     disallowedDataTypes: [
-        "nonownerobjects",
+        "reverseManyToManyObjectRelation",
         "user",
         "fieldcollections",
         "localizedfields",

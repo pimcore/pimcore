@@ -74,16 +74,6 @@ abstract class Data
     public $datatype = 'data';
 
     /**
-     * @var string | array
-     */
-    public $columnType;
-
-    /**
-     * @var string | array
-     */
-    public $queryColumnType;
-
-    /**
      * @var string
      */
     public $fieldtype;
@@ -128,36 +118,6 @@ abstract class Data
         '>=',
         '<='
     ];
-
-    /**
-     * Returns the the data that should be stored in the resource
-     *
-     * @param mixed $data
-     *
-     * @return mixed
-     *
-     * abstract public function getDataForResource($data);
-     */
-
-    /**
-     * Convert the saved data in the resource to the internal eg. Image-Id to Asset\Image object, this is the inverted getDataForResource()
-     *
-     * @param mixed $data
-     *
-     * @return mixed
-     *
-     * abstract public function getDataFromResource($data);
-     */
-
-    /**
-     * Returns the data which should be stored in the query columns
-     *
-     * @param mixed $data
-     *
-     * @return mixed
-     *
-     * abstract public function getDataForQueryResource($data);
-     */
 
     /**
      * Returns the data for the editmode
@@ -399,46 +359,6 @@ abstract class Data
     public function getFieldtype()
     {
         return $this->fieldtype;
-    }
-
-    /**
-     * @return string | array
-     */
-    public function getColumnType()
-    {
-        return $this->columnType;
-    }
-
-    /**
-     * @param string | array $columnType
-     *
-     * @return $this
-     */
-    public function setColumnType($columnType)
-    {
-        $this->columnType = $columnType;
-
-        return $this;
-    }
-
-    /**
-     * @return string | array
-     */
-    public function getQueryColumnType()
-    {
-        return $this->queryColumnType;
-    }
-
-    /**
-     * @param string | array $queryColumnType
-     *
-     * @return $this
-     */
-    public function setQueryColumnType($queryColumnType)
-    {
-        $this->queryColumnType = $queryColumnType;
-
-        return $this;
     }
 
     /**
@@ -1452,5 +1372,80 @@ abstract class Data
                 $object->addO__loadedLazyField($this->getName());
             }
         }
+    }
+
+    /**
+     * @param string $class
+     * @param string $method
+     */
+    protected function triggerDeprecatedWarning(string $class, string $method) {
+        @trigger_error(
+            sprintf(
+                '%s uses method %s from the abstract class. This won\'t work in v6.0, please use the proper interfaces and provided traits.',
+                $class,
+                $method
+            ),
+            E_USER_DEPRECATED
+        );
+    }
+
+    /**
+     * @return string | array
+     */
+    public function getColumnType()
+    {
+        if(property_exists($this, 'columnType')) {
+            return $this->columnType;
+        }
+
+        $this->triggerDeprecatedWarning(get_class($this), __METHOD__);
+
+        return null;
+    }
+
+    /**
+     * @deprecated
+     * @param string | array $columnType
+     * @return $this
+     */
+    public function setColumnType($columnType)
+    {
+        if(property_exists($this, 'columnType')) {
+            $this->columnType = $columnType;
+        }
+
+        $this->triggerDeprecatedWarning(get_class($this), __METHOD__);
+
+        return $this;
+    }
+
+    /**
+     * @return string | array
+     */
+    public function getQueryColumnType()
+    {
+        if(property_exists($this, 'queryColumnType')) {
+            return $this->queryColumnType;
+        }
+
+        $this->triggerDeprecatedWarning(get_class($this), __METHOD__);
+
+        return null;
+    }
+
+    /**
+     * @deprecated
+     * @param string | array $queryColumnType
+     * @return $this
+     */
+    public function setQueryColumnType($queryColumnType)
+    {
+        if(property_exists($this, 'queryColumnType')) {
+            $this->queryColumnType = $queryColumnType;
+        }
+
+        $this->triggerDeprecatedWarning(get_class($this), __METHOD__);
+
+        return $this;
     }
 }
