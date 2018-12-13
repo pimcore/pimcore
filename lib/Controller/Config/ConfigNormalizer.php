@@ -17,7 +17,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Controller\Config;
 
-use Doctrine\Common\Util\Inflector;
+use Doctrine\Common\Inflector\Inflector;
 use Symfony\Component\HttpKernel\KernelInterface;
 
 /**
