@@ -66,13 +66,6 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     public $maxItems;
 
     /**
-     * Type for the column to query
-     *
-     * @var string
-     */
-    public $queryColumnType = 'longtext';
-
-    /**
      * Type for the column
      *
      * @var string
