@@ -218,7 +218,7 @@ class ClassController extends AdminController implements EventedControllerInterf
      */
     public function getCustomLayoutAction(Request $request)
     {
-        $customLayout = DataObject\ClassDefinition\CustomLayout::getById(intval($request->get('id')));
+        $customLayout = DataObject\ClassDefinition\CustomLayout::getById($request->get('id'));
 
         return $this->adminJson(['success' => true, 'data' => $customLayout]);
     }
@@ -262,12 +262,21 @@ class ClassController extends AdminController implements EventedControllerInterf
      */
     public function addCustomLayoutAction(Request $request)
     {
+        $layoutId = $request->get('layoutIdentifier');
+        $existingLayout = DataObject\ClassDefinition\CustomLayout::getById($layoutId);
+        if ($existingLayout) {
+            throw new \Exception('Custom Layout identifier already exists');
+        }
+
         $customLayout = DataObject\ClassDefinition\CustomLayout::create(
-            ['name' => $request->get('name'),
+            [
+                'name' => $request->get('layoutName'),
                 'userOwner' => $this->getAdminUser()->getId(),
-                'classId' => $request->get('classId')]
+                'classId' => $request->get('classId')
+            ]
         );
 
+        $customLayout->setId($layoutId);
         $customLayout->save();
 
         return $this->adminJson(['success' => true, 'id' => $customLayout->getId(), 'name' => $customLayout->getName(),
@@ -298,7 +307,7 @@ class ClassController extends AdminController implements EventedControllerInterf
      */
     public function deleteCustomLayoutAction(Request $request)
     {
-        $customLayout = DataObject\ClassDefinition\CustomLayout::getById(intval($request->get('id')));
+        $customLayout = DataObject\ClassDefinition\CustomLayout::getById($request->get('id'));
         if ($customLayout) {
             $customLayout->delete();
         }
@@ -609,7 +618,7 @@ class ClassController extends AdminController implements EventedControllerInterf
      */
     public function exportCustomLayoutDefinitionAction(Request $request)
     {
-        $id = intval($request->get('id'));
+        $id = $request->get('id');
 
         if ($id) {
             $customLayout = DataObject\ClassDefinition\CustomLayout::getById($id);
@@ -1659,6 +1668,43 @@ class ClassController extends AdminController implements EventedControllerInterf
         $result = [
             'suggestedIdentifier' => $maxId ? $maxId + 1 : 1,
             'existingIds' => $existingIds
+            ];
+
+        return $this->adminJson($result);
+    }
+
+
+    /**
+     * @Route("/suggest-custom-layout-identifier")
+     *
+     * @param Request $request
+     *
+     * @return Response
+     */
+    public function suggestCustomLayoutIdentifierAction(Request $request)
+    {
+        $classId = $request->get('classId');
+
+        $identifier = DataObject\ClassDefinition\CustomLayout::getIdentifier($classId);
+
+        $list = new DataObject\ClassDefinition\CustomLayout\Listing();
+
+        $list = $list->load();
+        $existingIds = [];
+        $existingNames = [];
+
+        /** @var $item DataObject\ClassDefinition\CustomLayout */
+        foreach ($list as $item) {
+            $existingIds[] = $item->getId();
+            if ($item->getClassId() == $classId) {
+                $existingNames[] = $item->getName();
+            }
+        }
+
+        $result = [
+            'suggestedIdentifier' => $identifier,
+            'existingIds' => $existingIds,
+            'existingNames' => $existingNames
             ];
 
         return $this->adminJson($result);

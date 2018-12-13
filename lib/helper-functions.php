@@ -624,12 +624,21 @@ function var_export_pretty($var, $indent = '')
  *
  * @return string
  */
-function to_php_data_file_format($contents)
+function to_php_data_file_format($contents, $comments = null)
 {
     $contents = var_export_pretty($contents);
-    $contents = "<?php \n\nreturn " . $contents . ";\n";
 
-    return $contents;
+    $export = "<?php ";
+
+    if (!empty($comments)) {
+        $export .= "\n\n";
+        $export .= $comments;
+        $export .= "\n";
+    }
+
+    $export .= "\n\nreturn ".$contents.";\n";
+
+    return $export;
 }
 
 /**

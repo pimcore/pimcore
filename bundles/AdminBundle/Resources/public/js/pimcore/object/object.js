@@ -451,7 +451,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
                 var menu = [];
                 for (var i = 0; i < this.data.validLayouts.length; i++) {
                     var menuLabel = ts(this.data.validLayouts[i].name);
-                    if (Number(this.data.currentLayoutId) == this.data.validLayouts[i].id) {
+                    if (this.data.currentLayoutId == this.data.validLayouts[i].id) {
                         menuLabel = "<b>" + menuLabel + "</b>";
                     }
                     menu.push({

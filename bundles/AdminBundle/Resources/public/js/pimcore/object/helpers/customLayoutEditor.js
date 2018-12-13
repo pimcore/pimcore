@@ -265,7 +265,7 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
                     xtype: "button",
                     text: t("add_layout"),
                     iconCls: "pimcore_icon_add",
-                    handler: this.addLayout.bind(this)
+                    handler: this.suggestIdentifier.bind(this)
                 },
                 {
                     xtype: "button",
@@ -626,6 +626,20 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
         return newNode;
     },
 
+    suggestIdentifier: function() {
+        Ext.Ajax.request({
+            url: "/admin/class/suggest-custom-layout-identifier",
+            params: {
+                classId: this.klass.id,
+            },
+            success: function (response) {
+                var layouts = Ext.decode(response.responseText);
+                this.addLayout(layouts);
+            }.bind(this)
+        });
+
+    },
+
     addLayoutChild: function (record, type, initData, addListener) {
 
         var nodeLabel = t(type);
@@ -749,7 +763,9 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
     save: function () {
         var id = this.layoutChangeCombo.getValue();
 
-        if (id > 0) {
+        var regresult = this.data["name"].match(/[a-zA-Z][a-zA-Z0-9]+/);
+
+        if (this.data["name"].length > 2 && this.data["name"].length < 64 && regresult == this.data["name"]) {
             this.saveCurrentNode();
 
             delete this.data.layoutDefinitions;
@@ -770,6 +786,8 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
                     failure: this.saveOnError.bind(this)
                 });
             }
+        } else {
+            Ext.Msg.alert(' ', t('invalid_name'));
         }
     },
 
@@ -792,45 +810,118 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
         pimcore.helpers.showNotification(t("error"), t("saving_failed"), "error");
     },
 
-    addLayout: function () {
-        Ext.MessageBox.prompt(t('add_layout'), t('enter_the_name_of_the_new_item'), this.addLayoutComplete.bind(this),
-            null, null, "");
+    addLayout: function (layouts) {
+        var suggestedIdentifier = layouts["suggestedIdentifier"];
+        var nameField = new Ext.form.field.Text(
+            {
+                fieldLabel: t('name'),
+                labelWidth: 200
+            }
+        );
+
+        var identifierField = new Ext.form.field.Text({
+            fieldLabel: t('unique_identifier'),
+            labelWidth: 200,
+            maxLength: 20,
+            value: suggestedIdentifier
+        });
+
+        this.win = new Ext.Window({
+            title: t('add_layout'),
+            width: 400,
+            height: 250,
+            draggable: false,
+            border: false,
+            modal: true,
+            bodyStyle: "padding: 10px;",
+            resizable: true,
+            buttonAlign: 'center',
+            items: [
+                nameField,
+                identifierField, {
+                    xtype: 'panel',
+                    html: t('identifier_warning')
+                }
+            ],
+            buttons: [
+                {
+                    xtype: 'button',
+                    text: t('cancel'),
+                    iconCls: 'pimcore_icon_cancel',
+                    handler: function () {
+                        this.win.close();
+
+                    }.bind(this)
+                },
+                {
+                    xtype: 'button',
+                    text: t('OK'),
+                    iconCls: 'pimcore_icon_save',
+                    handler: function ( nameField, identifierField, layouts, button) {
+                        if (this.addLayoutComplete(nameField.getValue(), identifierField.getValue(), layouts)) {
+                            this.win.close();
+                        }
+                    }.bind(this, nameField, identifierField, layouts)
+                }
+            ]
+        })
+        this.win.show();
+        nameField.focus();
     },
 
-    addLayoutComplete: function (button, value, object) {
-        if (button == "ok" && value.length > 2 // && regresult == value
-            && !in_array(value.toLowerCase(), this.forbiddennames)) {
-            Ext.Ajax.request({
-                url: "/admin/class/add-custom-layout",
-                method: 'POST',
-                params: {
-                    name: value,
-                    classId: this.klass.id
-                },
-                success: function (response) {
+    addLayoutComplete: function (layoutName, layoutIdentifier, layouts) {
 
-                    var data = Ext.decode(response.responseText);
-                    if(data && data.success) {
-                        this.setCurrentNode("root");
-                        this.editPanel.removeAll();
-                        this.classDefinitionPanel.enable();
-                        this.enableButtons();
-                        this.layoutComboStore.reload();
-                        this.currentLayoutId = data.id;
-                        this.layoutChangeCombo.setValue(data.id);
-                        this.initLayoutFields(true, response);
-                    } else {
-                        Ext.Msg.alert(t('error'), t('saving_failed'));
-                    }
-                }.bind(this)
-            });
+        var layoutNameRegresult = layoutName.match(/[a-zA-Z][a-zA-Z0-9]+/);
+
+        if (layoutName.length <= 2 || layoutNameRegresult != layoutName) {
+            Ext.Msg.alert(' ', t('invalid_name'));
+            return false;
         }
-        else if (button == "cancel") {
-            return;
+
+        if (in_arrayi(layoutName, layouts["existingNames"])) {
+            Ext.Msg.alert(' ', t('name_already_in_use'));
+            return false;
         }
-        else {
-            Ext.Msg.alert(' ', t('invalid_class_name'));
+
+        var layoutIdentifierRegresult = layoutIdentifier.match(/[a-zA-Z0-9]+/);
+
+        if (layoutIdentifier.length < 1 || layoutIdentifierRegresult != layoutIdentifier) {
+            Ext.Msg.alert(' ', t('invalid_identifier'));
+            return false;
         }
+
+        if (in_arrayi(layoutIdentifier, layouts["existingIds"])) {
+            Ext.Msg.alert(' ', t('identifier_already_exists'));
+            return false;
+        }
+
+        Ext.Ajax.request({
+            url: "/admin/class/add-custom-layout",
+            method: 'POST',
+            params: {
+                layoutName: layoutName,
+                layoutIdentifier: layoutIdentifier,
+                classId: this.klass.id
+            },
+            success: function (response) {
+
+                var data = Ext.decode(response.responseText);
+                if(data && data.success) {
+                    this.setCurrentNode("root");
+                    this.editPanel.removeAll();
+                    this.classDefinitionPanel.enable();
+                    this.enableButtons();
+                    this.layoutComboStore.reload();
+                    this.currentLayoutId = data.id;
+                    this.layoutChangeCombo.setValue(data.id);
+                    this.initLayoutFields(true, response);
+                } else {
+                    Ext.Msg.alert(t('error'), t('saving_failed'));
+                }
+            }.bind(this)
+        });
+
+        return true;
     },
 
 
@@ -843,31 +934,29 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
     deleteLayout: function () {
         var id = this.layoutChangeCombo.getValue();
 
-        if (id > 0) {
-            Ext.Msg.confirm(t('delete'), t('delete_message'), function(btn){
-                if (btn == 'yes'){
-                    Ext.Ajax.request({
-                        url: "/admin/class/delete-custom-layout",
-                        method: 'DELETE',
-                        params: {
-                            id: id
-                        }
-                    });
+        Ext.Msg.confirm(t('delete'), t('delete_message'), function(btn){
+            if (btn == 'yes'){
+                Ext.Ajax.request({
+                    url: "/admin/class/delete-custom-layout",
+                    method: 'DELETE',
+                    params: {
+                        id: id
+                    }
+                });
 
-                    this.layoutComboStore.reload();
-                    this.currentLayoutId = 0;
-                    this.layoutChangeCombo.setValue(this.currentLayoutId);
+                this.layoutComboStore.reload();
+                this.currentLayoutId = 0;
+                this.layoutChangeCombo.setValue(this.currentLayoutId);
 
-                    this.editPanel.removeAll();
-                    this.clearSelectionPanel();
-                    this.classDefinitionPanel.disable();
-                    this.saveButton.disable();
-                    this.importButton.disable();
-                    this.exportButton.disable();
-                    this.rootPanel = null;
-                }
-            }.bind(this));
-        }
+                this.editPanel.removeAll();
+                this.clearSelectionPanel();
+                this.classDefinitionPanel.disable();
+                this.saveButton.disable();
+                this.importButton.disable();
+                this.exportButton.disable();
+                this.rootPanel = null;
+            }
+        }.bind(this));
     },
 
     upload: function() {

@@ -441,24 +441,25 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                 $user = Tool\Admin::getCurrentUser();
 
                 if (!is_null($currentLayoutId)) {
-                    if ($currentLayoutId == 0 && !$user->isAdmin()) {
+                    if ($currentLayoutId == "0" && !$user->isAdmin()) {
                         $first = reset($validLayouts);
                         $currentLayoutId = $first->getId();
                     }
                 }
 
-                if ($currentLayoutId > 0) {
+                if ($currentLayoutId == -1 && $user->isAdmin()) {
+                    $layout = DataObject\Service::getSuperLayoutDefinition($object);
+                    $objectData['layout'] = $layout;
+                } elseif (!empty($currentLayoutId)) {
                     // check if user has sufficient rights
-                    if ($validLayouts && $validLayouts[$currentLayoutId]) {
+                    if (is_array($validLayouts) && $validLayouts[$currentLayoutId]) {
                         $customLayout = DataObject\ClassDefinition\CustomLayout::getById($currentLayoutId);
+
                         $customLayoutDefinition = $customLayout->getLayoutDefinitions();
                         $objectData['layout'] = $customLayoutDefinition;
                     } else {
                         $currentLayoutId = 0;
                     }
-                } elseif ($currentLayoutId == -1 && $user->isAdmin()) {
-                    $layout = DataObject\Service::getSuperLayoutDefinition($object);
-                    $objectData['layout'] = $layout;
                 }
 
                 $objectData['currentLayoutId'] = $currentLayoutId;
