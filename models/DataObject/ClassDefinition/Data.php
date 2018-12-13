@@ -18,17 +18,10 @@ namespace Pimcore\Model\DataObject\ClassDefinition;
 
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
-use Pimcore\Model\DataObject\ClassDefinition\Data\Extension;
 
 abstract class Data
 {
     use DataObject\ClassDefinition\Helper\VarExport;
-
-    /**
-     * @TODO BC-layer (both ColumnType and QueryColumnType) - to be removed in 6.0
-     */
-    use Extension\ColumnType;
-    use Extension\QueryColumnType;
 
     /**
      * @var string
@@ -1379,5 +1372,80 @@ abstract class Data
                 $object->addO__loadedLazyField($this->getName());
             }
         }
+    }
+
+    /**
+     * @param string $class
+     * @param string $method
+     */
+    protected function triggerDeprecatedWarning(string $class, string $method) {
+        @trigger_error(
+            sprintf(
+                '%s uses method %s from the abstract class. This won\'t work in v6.0, please use the proper interfaces and provided traits.',
+                $class,
+                $method
+            ),
+            E_USER_DEPRECATED
+        );
+    }
+
+    /**
+     * @return string | array
+     */
+    public function getColumnType()
+    {
+        if(property_exists($this, 'columnType')) {
+            return $this->columnType;
+        }
+
+        $this->triggerDeprecatedWarning(get_class($this), __METHOD__);
+
+        return null;
+    }
+
+    /**
+     * @deprecated
+     * @param string | array $columnType
+     * @return $this
+     */
+    public function setColumnType($columnType)
+    {
+        if(property_exists($this, 'columnType')) {
+            $this->columnType = $columnType;
+        }
+
+        $this->triggerDeprecatedWarning(get_class($this), __METHOD__);
+
+        return $this;
+    }
+
+    /**
+     * @return string | array
+     */
+    public function getQueryColumnType()
+    {
+        if(property_exists($this, 'queryColumnType')) {
+            return $this->queryColumnType;
+        }
+
+        $this->triggerDeprecatedWarning(get_class($this), __METHOD__);
+
+        return null;
+    }
+
+    /**
+     * @deprecated
+     * @param string | array $queryColumnType
+     * @return $this
+     */
+    public function setQueryColumnType($queryColumnType)
+    {
+        if(property_exists($this, 'queryColumnType')) {
+            $this->queryColumnType = $queryColumnType;
+        }
+
+        $this->triggerDeprecatedWarning(get_class($this), __METHOD__);
+
+        return $this;
     }
 }
