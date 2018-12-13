@@ -18,10 +18,17 @@ namespace Pimcore\Model\DataObject\ClassDefinition;
 
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
+use Pimcore\Model\DataObject\ClassDefinition\Data\Extension;
 
 abstract class Data
 {
     use DataObject\ClassDefinition\Helper\VarExport;
+
+    /**
+     * @TODO BC-layer (both ColumnType and QueryColumnType) - to be removed in 6.0
+     */
+    use Extension\ColumnType;
+    use Extension\QueryColumnType;
 
     /**
      * @var string

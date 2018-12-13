@@ -306,7 +306,7 @@ class Dao extends Model\Dao\AbstractDao
                     continue;
                 }
 
-                if ($fd instanceof QueryResourcePersistenceAwareInterface || $fd->getDataForQueryResource()) {
+                if ($fd instanceof QueryResourcePersistenceAwareInterface || method_exists($fd, 'getDataForQueryResource')) {
                     if (!$fd instanceof QueryResourcePersistenceAwareInterface) {
                         Tool::triggerDeprecatedMethodWarning(get_class($fd), 'getDataForQueryResource', QueryResourcePersistenceAwareInterface::class);
                     }
