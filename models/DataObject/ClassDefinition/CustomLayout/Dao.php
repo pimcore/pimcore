@@ -109,7 +109,12 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function save($isUpdate = true)
     {
-        if (!$this->model->getId() || !$isUpdate) {
+        if (!$this->model->getId()) {
+            $maxId = $this->db->fetchOne('SELECT MAX(CAST(id AS SIGNED)) FROM custom_layouts;');
+            $this->model->setId($maxId ? $maxId + 1 : 1);
+        }
+
+        if (!$isUpdate) {
             return $this->create();
         } else {
             return $this->update();
