@@ -19,7 +19,8 @@ services:
     # LOCALE
     #
 
-    Pimcore\Localization\LocaleService: ~
+    Pimcore\Localization\LocaleServiceInterface:
+        class: Pimcore\Localization\LocaleService
 
     # formatting service for dates, times and numbers
     Pimcore\Localization\IntlFormatter: ~
