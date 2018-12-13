@@ -45,6 +45,10 @@ body {
 	background: #ffe5e5;
 }
 
+.preview .preview-metadata {
+	color: #a0a0a0;
+}
+
 .system {
     font-family: "courier new";
 }
