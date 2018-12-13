@@ -18,7 +18,6 @@
 namespace Pimcore\Model\DataObject\ClassDefinition;
 
 use Pimcore\Cache;
-use Pimcore\Db;
 use Pimcore\Event\DataObjectCustomLayoutEvents;
 use Pimcore\Event\Model\DataObject\CustomLayoutEvent;
 use Pimcore\Logger;
@@ -164,12 +163,6 @@ class CustomLayout extends Model\AbstractModel
      */
     public function save()
     {
-        if (!$this->getId()) {
-            $db = Db::get();
-            $maxId = $db->fetchOne('SELECT MAX(CAST(id AS SIGNED)) FROM custom_layouts;');
-            $this->setId($maxId ? $maxId + 1 : 1);
-        }
-
         $isUpdate = $this->exists();
 
         if ($isUpdate) {
