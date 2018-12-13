@@ -1673,7 +1673,6 @@ class ClassController extends AdminController implements EventedControllerInterf
         return $this->adminJson($result);
     }
 
-
     /**
      * @Route("/suggest-custom-layout-identifier")
      *

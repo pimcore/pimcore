@@ -16,7 +16,6 @@
 
 namespace Pimcore\Model\DataObject\ClassDefinition\CustomLayout;
 
-use Pimcore\File;
 use Pimcore\Model;
 use Pimcore\Tool\Serialize;
 
@@ -91,6 +90,7 @@ class Dao extends Model\Dao\AbstractDao
      * Get latest identifier
      *
      * @param int $classId
+     *
      * @return int
      */
     public function getLatestIdentifier($classId)

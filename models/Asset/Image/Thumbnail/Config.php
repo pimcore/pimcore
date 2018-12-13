@@ -194,11 +194,11 @@ class Config extends Model\AbstractModel
         $customPreviewImageThumbnail = \Pimcore::getContainer()->getParameter('pimcore.config')['assets']['preview_image_thumbnail'];
         $thumbnail = null;
 
-        if($customPreviewImageThumbnail) {
+        if ($customPreviewImageThumbnail) {
             $thumbnail = self::getByName($customPreviewImageThumbnail);
         }
 
-        if(!$thumbnail) {
+        if (!$thumbnail) {
             $thumbnail = new self();
             $thumbnail->setName('pimcore-system-treepreview');
             $thumbnail->addItem('scaleByWidth', [

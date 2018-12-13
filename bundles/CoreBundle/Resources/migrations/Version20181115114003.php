@@ -20,7 +20,7 @@ class Version20181115114003 extends AbstractPimcoreMigration
      */
     public function up(Schema $schema)
     {
-        $this->addSql("ALTER TABLE `custom_layouts` ALTER `id` DROP DEFAULT; ALTER TABLE `custom_layouts` CHANGE COLUMN `id` `id` VARCHAR(64) NOT NULL FIRST;");
+        $this->addSql('ALTER TABLE `custom_layouts` ALTER `id` DROP DEFAULT; ALTER TABLE `custom_layouts` CHANGE COLUMN `id` `id` VARCHAR(64) NOT NULL FIRST;');
 
         $customLayouts = new DataObject\ClassDefinition\CustomLayout\Listing();
         $customLayouts = $customLayouts->load();
@@ -78,7 +78,6 @@ class Version20181115114003 extends AbstractPimcoreMigration
             \Pimcore\File::putPhpFile($definitionFile, $data);
 
             return $definitionFile;
-
         } catch (\Exception $e) {
             return false;
         }
@@ -142,7 +141,6 @@ class Version20181115114003 extends AbstractPimcoreMigration
      */
     public function down(Schema $schema)
     {
-        $this->addSql("ALTER TABLE `custom_layouts` CHANGE COLUMN `id` `id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT;");
-
+        $this->addSql('ALTER TABLE `custom_layouts` CHANGE COLUMN `id` `id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT;');
     }
 }

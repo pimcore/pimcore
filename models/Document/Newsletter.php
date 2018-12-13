@@ -124,6 +124,7 @@ class Newsletter extends Model\Document\PageSnippet
      * Returns the "from" email address as array
      *
      * @deprecated use \Pimcore\Helper\Mail::parseEmailAddressField instead
+     *
      * @return array
      */
     public function getFromAsArray()

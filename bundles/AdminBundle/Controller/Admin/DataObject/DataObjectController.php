@@ -441,7 +441,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                 $user = Tool\Admin::getCurrentUser();
 
                 if (!is_null($currentLayoutId)) {
-                    if ($currentLayoutId == "0" && !$user->isAdmin()) {
+                    if ($currentLayoutId == '0' && !$user->isAdmin()) {
                         $first = reset($validLayouts);
                         $currentLayoutId = $first->getId();
                     }

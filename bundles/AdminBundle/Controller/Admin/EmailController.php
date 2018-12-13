@@ -347,9 +347,9 @@ class EmailController extends AdminController
 
         $mail = new Mail();
 
-        if($from = $request->get('from')) {
+        if ($from = $request->get('from')) {
             $addressArray = \Pimcore\Helper\Mail::parseEmailAddressField($from);
-            if($addressArray) {
+            if ($addressArray) {
                 //use the first address only
                 list($cleanedFromAddress) = $addressArray;
                 $mail->setFrom($cleanedFromAddress['email'], $cleanedFromAddress['name']);
@@ -357,7 +357,7 @@ class EmailController extends AdminController
         }
 
         $toAddresses = \Pimcore\Helper\Mail::parseEmailAddressField($request->get('to'));
-        foreach($toAddresses as $cleanedToAddress) {
+        foreach ($toAddresses as $cleanedToAddress) {
             $mail->addTo($cleanedToAddress['email'], $cleanedToAddress['name']);
         }
 

@@ -155,6 +155,7 @@ class CustomLayout extends Model\AbstractModel
     {
         $class = new self();
         $class->setValues($values);
+
         return $class;
     }
 
@@ -189,7 +190,6 @@ class CustomLayout extends Model\AbstractModel
         }
     }
 
-
     private function saveCustomLayoutFile($saveDefinitionFile = true)
     {
         // save definition as a php file
@@ -209,7 +209,6 @@ class CustomLayout extends Model\AbstractModel
         self::cleanupForExport($clone->layoutDefinitions);
 
         if ($saveDefinitionFile) {
-
             $data = to_php_data_file_format($clone, $infoDocBlock);
 
             \Pimcore\File::putPhpFile($definitionFile, $data);
@@ -226,7 +225,6 @@ class CustomLayout extends Model\AbstractModel
 
         return $file;
     }
-
 
     /**
      * @param $data
@@ -280,15 +278,16 @@ class CustomLayout extends Model\AbstractModel
 
     /**
      * @param mixed $classId
+     *
      * @return int|null
      */
     public static function getIdentifier($classId)
     {
         try {
-                $customLayout = new self();
-                $identifier = $customLayout->getDao()->getLatestIdentifier($classId);
+            $customLayout = new self();
+            $identifier = $customLayout->getDao()->getLatestIdentifier($classId);
 
-                return $identifier;
+            return $identifier;
         } catch (\Exception $e) {
             Logger::error($e);
 
