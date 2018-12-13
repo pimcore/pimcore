@@ -149,7 +149,7 @@ class Dao extends Model\DataObject\AbstractObject\Dao
         foreach ($fieldDefinitions as $key => $value) {
             if ($value instanceof CustomResourcePersistingInterface || method_exists($value, 'load')) {
                 if (!$value instanceof CustomResourcePersistingInterface) {
-                    Tool::triggerDeprecatedMethodWarning(get_class($value), 'load', CustomResourcePersistingInterface::class);
+                    Tool::triggerMissingInterfaceDeprecation(get_class($value), 'load', CustomResourcePersistingInterface::class);
                 }
                 // datafield has it's own loader
                 $value = $value->load($this->model);
@@ -159,7 +159,7 @@ class Dao extends Model\DataObject\AbstractObject\Dao
             }
             if ($value instanceof ResourcePersistenceAwareInterface || method_exists($value, 'getDataFromResource')) {
                 if (!$value instanceof ResourcePersistenceAwareInterface) {
-                    Tool::triggerDeprecatedMethodWarning(get_class($value), 'getDataFromResource', ResourcePersistenceAwareInterface::class);
+                    Tool::triggerMissingInterfaceDeprecation(get_class($value), 'getDataFromResource', ResourcePersistenceAwareInterface::class);
                 }
                 // if a datafield requires more than one field
                 if (is_array($value->getColumnType())) {
@@ -230,7 +230,7 @@ class Dao extends Model\DataObject\AbstractObject\Dao
 
             if ($fd instanceof CustomResourcePersistingInterface || method_exists($fd, 'save')) {
                 if (!$fd instanceof CustomResourcePersistingInterface) {
-                    Tool::triggerDeprecatedMethodWarning(get_class($fd), 'save', CustomResourcePersistingInterface::class);
+                    Tool::triggerMissingInterfaceDeprecation(get_class($fd), 'save', CustomResourcePersistingInterface::class);
                 }
                 // for fieldtypes which have their own save algorithm eg. fieldcollections, relational data-types, ...
                 $saveParams = ['isUntouchable' => in_array($fd->getName(), $untouchable),
@@ -245,7 +245,7 @@ class Dao extends Model\DataObject\AbstractObject\Dao
             }
             if ($fd instanceof ResourcePersistenceAwareInterface || (!method_exists($fd, 'save') && $fd->getColumnType())) {
                 if (!$fd instanceof ResourcePersistenceAwareInterface) {
-                    Tool::triggerDeprecatedMethodWarning(get_class($fd), 'getDataForResource', ResourcePersistenceAwareInterface::class);
+                    Tool::triggerMissingInterfaceDeprecation(get_class($fd), 'getDataForResource', ResourcePersistenceAwareInterface::class);
                 }
                 // pimcore saves the values with getDataForResource
                 if (is_array($fd->getColumnType())) {
@@ -285,7 +285,7 @@ class Dao extends Model\DataObject\AbstractObject\Dao
         foreach ($fieldDefinitions as $key => $fd) {
             if ($fd instanceof QueryResourcePersistenceAwareInterface || method_exists($fd, 'getDataForQueryResource')) {
                 if (!$fd instanceof QueryResourcePersistenceAwareInterface) {
-                    Tool::triggerDeprecatedMethodWarning(get_class($fd), 'getDataForQueryResource', QueryResourcePersistenceAwareInterface::class);
+                    Tool::triggerMissingInterfaceDeprecation(get_class($fd), 'getDataForQueryResource', QueryResourcePersistenceAwareInterface::class);
                 }
                 //exclude untouchables if value is not an array - this means data has not been loaded
                 if (!(in_array($key, $untouchable) and !is_array($this->model->getObjectVar($key)))) {
@@ -390,7 +390,7 @@ class Dao extends Model\DataObject\AbstractObject\Dao
         foreach ($this->model->getClass()->getFieldDefinitions() as $fd) {
             if ($fd instanceof CustomResourcePersistingInterface || method_exists($fd, 'delete')) {
                 if (!$fd instanceof CustomResourcePersistingInterface) {
-                    Tool::triggerDeprecatedMethodWarning(get_class($fd), 'delete', CustomResourcePersistingInterface::class);
+                    Tool::triggerMissingInterfaceDeprecation(get_class($fd), 'delete', CustomResourcePersistingInterface::class);
                 }
                 $fd->delete($this->model);
             }

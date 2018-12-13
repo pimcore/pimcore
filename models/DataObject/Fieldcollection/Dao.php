@@ -78,7 +78,7 @@ class Dao extends Model\Dao\AbstractDao
                 foreach ($fieldDefinitions as $key => $fd) {
                     if ($fd instanceof CustomResourcePersistingInterface || method_exists($fd, 'load')) {
                         if (!$fd instanceof CustomResourcePersistingInterface) {
-                            Tool::triggerDeprecatedMethodWarning(get_class($fd), 'load', CustomResourcePersistingInterface::class);
+                            Tool::triggerMissingInterfaceDeprecation(get_class($fd), 'load', CustomResourcePersistingInterface::class);
                         }
                         // datafield has it's own loader
                         $value = $fd->load(
@@ -102,7 +102,7 @@ class Dao extends Model\Dao\AbstractDao
                     }
                     if ($fd instanceof ResourcePersistenceAwareInterface || !method_exists($fd, 'load')) {
                         if (!$fd instanceof ResourcePersistenceAwareInterface) {
-                            Tool::triggerDeprecatedMethodWarning(get_class($fd), 'getDataFromResource', ResourcePersistenceAwareInterface::class);
+                            Tool::triggerMissingInterfaceDeprecation(get_class($fd), 'getDataFromResource', ResourcePersistenceAwareInterface::class);
                         }
                         if (is_array($fd->getColumnType())) {
                             $multidata = [];
@@ -195,7 +195,7 @@ class Dao extends Model\Dao\AbstractDao
 
                     if ($fd instanceof CustomResourcePersistingInterface || method_exists($fd, 'delete')) {
                         if (!$fd instanceof CustomResourcePersistingInterface) {
-                            Tool::triggerDeprecatedMethodWarning(get_class($fd), 'delete', CustomResourcePersistingInterface::class);
+                            Tool::triggerMissingInterfaceDeprecation(get_class($fd), 'delete', CustomResourcePersistingInterface::class);
                         }
                         $fd->delete(
                             $object,

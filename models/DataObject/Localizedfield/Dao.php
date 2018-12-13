@@ -136,7 +136,7 @@ class Dao extends Model\Dao\AbstractDao
             foreach ($fieldDefinitions as $fd) {
                 if ($fd instanceof CustomResourcePersistingInterface || method_exists($fd, 'save')) {
                     if (!$fd instanceof CustomResourcePersistingInterface) {
-                        Tool::triggerDeprecatedMethodWarning(get_class($fd), 'save', CustomResourcePersistingInterface::class);
+                        Tool::triggerMissingInterfaceDeprecation(get_class($fd), 'save', CustomResourcePersistingInterface::class);
                     }
                     // for fieldtypes which have their own save algorithm eg. relational data types, ...
                     $context = $this->model->getContext() ? $this->model->getContext() : [];
@@ -153,7 +153,7 @@ class Dao extends Model\Dao\AbstractDao
                 }
                 if ($fd instanceof ResourcePersistenceAwareInterface || !method_exists($fd, 'save')) {
                     if (!$fd instanceof ResourcePersistenceAwareInterface) {
-                        Tool::triggerDeprecatedMethodWarning(get_class($fd), 'getDataForResource', ResourcePersistenceAwareInterface::class);
+                        Tool::triggerMissingInterfaceDeprecation(get_class($fd), 'getDataForResource', ResourcePersistenceAwareInterface::class);
                     }
                     if (is_array($fd->getColumnType())) {
                         $insertDataArray = $fd->getDataForResource(
@@ -254,7 +254,7 @@ class Dao extends Model\Dao\AbstractDao
                 foreach ($fieldDefinitions as $fd) {
                     if ($fd instanceof QueryResourcePersistenceAwareInterface || method_exists($fd, 'getDataForQueryResource')) {
                         if (!$fd instanceof QueryResourcePersistenceAwareInterface) {
-                            Tool::triggerDeprecatedMethodWarning(get_class($fd), 'getDataForQueryResource', QueryResourcePersistenceAwareInterface::class);
+                            Tool::triggerMissingInterfaceDeprecation(get_class($fd), 'getDataForQueryResource', QueryResourcePersistenceAwareInterface::class);
                         }
                         $key = $fd->getName();
 
@@ -407,7 +407,7 @@ class Dao extends Model\Dao\AbstractDao
                 foreach ($childDefinitions as $fd) {
                     if ($fd instanceof CustomResourcePersistingInterface || method_exists($fd, 'delete')) {
                         if (!$fd instanceof CustomResourcePersistingInterface) {
-                            Tool::triggerDeprecatedMethodWarning(get_class($fd), 'delete', CustomResourcePersistingInterface::class);
+                            Tool::triggerMissingInterfaceDeprecation(get_class($fd), 'delete', CustomResourcePersistingInterface::class);
                         }
                         $params = [];
                         $params['context'] = $this->model->getContext() ? $this->model->getContext() : [];
@@ -532,7 +532,7 @@ class Dao extends Model\Dao\AbstractDao
                 if ($fd) {
                     if ($fd instanceof CustomResourcePersistingInterface || method_exists($fd, 'load')) {
                         if (!$fd instanceof CustomResourcePersistingInterface) {
-                            Tool::triggerDeprecatedMethodWarning(get_class($fd), 'load', CustomResourcePersistingInterface::class);
+                            Tool::triggerMissingInterfaceDeprecation(get_class($fd), 'load', CustomResourcePersistingInterface::class);
                         }
                         // datafield has it's own loader
                         $params['language'] = $row['language'];
@@ -548,7 +548,7 @@ class Dao extends Model\Dao\AbstractDao
                     }
                     if ($fd instanceof ResourcePersistenceAwareInterface || method_exists($fd, 'getDataFromResource')) {
                         if (!$fd instanceof ResourcePersistenceAwareInterface) {
-                            Tool::triggerDeprecatedMethodWarning(get_class($fd), 'getDataFromResource', ResourcePersistenceAwareInterface::class);
+                            Tool::triggerMissingInterfaceDeprecation(get_class($fd), 'getDataFromResource', ResourcePersistenceAwareInterface::class);
                         }
                         if (is_array($fd->getColumnType())) {
                             $multidata = [];

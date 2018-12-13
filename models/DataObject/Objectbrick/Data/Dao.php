@@ -100,7 +100,7 @@ class Dao extends Model\Dao\AbstractDao
 
             if ($fd instanceof CustomResourcePersistingInterface || method_exists($fd, 'save')) {
                 if (!$fd instanceof CustomResourcePersistingInterface) {
-                    Tool::triggerDeprecatedMethodWarning(get_class($fd), 'save', CustomResourcePersistingInterface::class);
+                    Tool::triggerMissingInterfaceDeprecation(get_class($fd), 'save', CustomResourcePersistingInterface::class);
                 }
                 if ((!isset($params['newParent']) || !$params['newParent']) && isset($params['isUpdate']) && $params['isUpdate'] && !DataObject\AbstractObject::isDirtyDetectionDisabled() && $this->model instanceof DataObject\DirtyIndicatorInterface) {
                     // ownerNameList contains the dirty stuff
@@ -121,7 +121,7 @@ class Dao extends Model\Dao\AbstractDao
             }
             if ($fd instanceof ResourcePersistenceAwareInterface || (!method_exists($fd, 'save') && $fd->getColumnType())) {
                 if (!$fd instanceof ResourcePersistenceAwareInterface) {
-                    Tool::triggerDeprecatedMethodWarning(get_class($fd), 'getDataForResource', ResourcePersistenceAwareInterface::class);
+                    Tool::triggerMissingInterfaceDeprecation(get_class($fd), 'getDataForResource', ResourcePersistenceAwareInterface::class);
                 }
                 if (is_array($fd->getColumnType())) {
                     $insertDataArray = $fd->getDataForResource($this->model->$getter(), $object, [
@@ -167,7 +167,7 @@ class Dao extends Model\Dao\AbstractDao
         foreach ($fieldDefinitions as $key => $fd) {
             if ($fd instanceof QueryResourcePersistenceAwareInterface || method_exists($fd, 'getDataForQueryResource')) {
                 if (!$fd instanceof QueryResourcePersistenceAwareInterface) {
-                    Tool::triggerDeprecatedMethodWarning(get_class($fd), 'getDataForQueryResource', QueryResourcePersistenceAwareInterface::class);
+                    Tool::triggerMissingInterfaceDeprecation(get_class($fd), 'getDataForQueryResource', QueryResourcePersistenceAwareInterface::class);
                 }
                 //exclude untouchables if value is not an array - this means data has not been loaded
 
@@ -308,7 +308,7 @@ class Dao extends Model\Dao\AbstractDao
 
                 if ($fd instanceof QueryResourcePersistenceAwareInterface || method_exists($fd, 'getDataForQueryResource')) {
                     if (!$fd instanceof QueryResourcePersistenceAwareInterface) {
-                        Tool::triggerDeprecatedMethodWarning(get_class($fd), 'getDataForQueryResource', QueryResourcePersistenceAwareInterface::class);
+                        Tool::triggerMissingInterfaceDeprecation(get_class($fd), 'getDataForQueryResource', QueryResourcePersistenceAwareInterface::class);
                     }
                     //exclude untouchables if value is not an array - this means data has not been loaded
                     //get changed fields for inheritance
@@ -328,7 +328,7 @@ class Dao extends Model\Dao\AbstractDao
 
                     if ($fd instanceof CustomResourcePersistingInterface || method_exists($fd, 'delete')) {
                         if (!$fd instanceof CustomResourcePersistingInterface) {
-                            Tool::triggerDeprecatedMethodWarning(get_class($fd), 'delete', CustomResourcePersistingInterface::class);
+                            Tool::triggerMissingInterfaceDeprecation(get_class($fd), 'delete', CustomResourcePersistingInterface::class);
                         }
                         $fd->delete($object);
                     }
