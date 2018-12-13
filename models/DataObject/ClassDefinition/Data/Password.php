@@ -22,6 +22,9 @@ use Pimcore\Model\DataObject\ClassDefinition\Data;
 
 class Password extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface
 {
+    use Extension\ColumnType;
+    use Extension\QueryColumnType;
+
     const HASH_FUNCTION_PASSWORD_HASH = 'password_hash';
 
     /**

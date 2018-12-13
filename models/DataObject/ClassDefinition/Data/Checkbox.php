@@ -23,6 +23,8 @@ use Pimcore\Model\DataObject\ClassDefinition\Data;
 class Checkbox extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface
 {
     use Model\DataObject\Traits\SimpleComparisonTrait;
+    use Extension\ColumnType;
+    use Extension\QueryColumnType;
 
     /**
      * Static type of this element

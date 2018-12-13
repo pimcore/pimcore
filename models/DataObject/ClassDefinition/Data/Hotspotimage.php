@@ -25,6 +25,9 @@ use Pimcore\Tool\Serialize;
 
 class Hotspotimage extends Model\DataObject\ClassDefinition\Data\Image
 {
+    use Extension\ColumnType;
+    use Extension\QueryColumnType;
+
     /**
      * Static type of this element
      *

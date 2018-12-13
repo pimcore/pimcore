@@ -22,6 +22,9 @@ use Pimcore\Tool\Serialize;
 
 class RgbaColor extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface
 {
+    use Extension\ColumnType;
+    use Extension\QueryColumnType;
+
     /**
      * Static type of this element
      *
@@ -198,22 +201,6 @@ class RgbaColor extends Data implements ResourcePersistenceAwareInterface, Query
     public function getDataFromGridEditor($data, $object = null, $params = [])
     {
         return $this->getDataFromEditmode($data, $object, $params);
-    }
-
-    /**
-     * @return array
-     */
-    public function getQueryColumnType()
-    {
-        return $this->queryColumnType;
-    }
-
-    /**
-     * @return array
-     */
-    public function getColumnType()
-    {
-        return $this->columnType;
     }
 
     /**

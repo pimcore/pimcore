@@ -23,6 +23,8 @@ use Pimcore\Model\DataObject\ClassDefinition\Data;
 class BooleanSelect extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface
 {
     use Model\DataObject\Traits\SimpleComparisonTrait;
+    use Extension\ColumnType;
+    use Extension\QueryColumnType;
 
     /** storage value for yes */
     const YES_VALUE = 1;

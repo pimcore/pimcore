@@ -27,6 +27,7 @@ use Pimcore\Tool\Serialize;
 class Block extends Data implements CustomResourcePersistingInterface, ResourcePersistenceAwareInterface
 {
     use Element\ChildsCompatibilityTrait;
+    use Extension\ColumnType;
 
     /**
      * Static type of this element

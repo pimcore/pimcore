@@ -74,16 +74,6 @@ abstract class Data
     public $datatype = 'data';
 
     /**
-     * @var string | array
-     */
-    public $columnType;
-
-    /**
-     * @var string | array
-     */
-    public $queryColumnType;
-
-    /**
      * @var string
      */
     public $fieldtype;
@@ -369,46 +359,6 @@ abstract class Data
     public function getFieldtype()
     {
         return $this->fieldtype;
-    }
-
-    /**
-     * @return string | array
-     */
-    public function getColumnType()
-    {
-        return $this->columnType;
-    }
-
-    /**
-     * @param string | array $columnType
-     *
-     * @return $this
-     */
-    public function setColumnType($columnType)
-    {
-        $this->columnType = $columnType;
-
-        return $this;
-    }
-
-    /**
-     * @return string | array
-     */
-    public function getQueryColumnType()
-    {
-        return $this->queryColumnType;
-    }
-
-    /**
-     * @param string | array $queryColumnType
-     *
-     * @return $this
-     */
-    public function setQueryColumnType($queryColumnType)
-    {
-        $this->queryColumnType = $queryColumnType;
-
-        return $this;
     }
 
     /**
