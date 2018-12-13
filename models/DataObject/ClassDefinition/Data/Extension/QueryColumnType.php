@@ -19,16 +19,15 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data\Extension;
 trait QueryColumnType
 {
     /**
-     * @var string | array
-     */
-    public $queryColumnType;
-
-    /**
      * @return string | array
      */
     public function getQueryColumnType()
     {
-        return $this->queryColumnType;
+        if(property_exists($this, 'queryColumnType')) {
+            return $this->queryColumnType;
+        }
+
+        return null;
     }
 
     /**
@@ -38,7 +37,9 @@ trait QueryColumnType
      */
     public function setQueryColumnType($queryColumnType)
     {
-        $this->queryColumnType = $queryColumnType;
+        if(property_exists($this, 'queryColumnType')) {
+            $this->queryColumnType = $queryColumnType;
+        }
 
         return $this;
     }

@@ -19,16 +19,15 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data\Extension;
 trait ColumnType
 {
     /**
-     * @var string | array
-     */
-    public $columnType;
-
-    /**
      * @return string | array
      */
     public function getColumnType()
     {
-        return $this->columnType;
+        if(property_exists($this, 'columnType')) {
+            return $this->columnType;
+        }
+
+        return null;
     }
 
     /**
@@ -38,7 +37,9 @@ trait ColumnType
      */
     public function setColumnType($columnType)
     {
-        $this->columnType = $columnType;
+        if(property_exists($this, 'columnType')) {
+            $this->columnType = $columnType;
+        }
 
         return $this;
     }
