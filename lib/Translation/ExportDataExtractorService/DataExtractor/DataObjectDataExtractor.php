@@ -206,10 +206,10 @@ class DataObjectDataExtractor extends AbstractElementDataExtractor
                                             );
 
                                             if (!empty($content)) {
-                                                $name = 'block~-~'.$fd->getName(
+                                                $name = $fd->getName(
                                                     )."-".$blockIdx."-localizedfield-".$blockLocalizedFieldDefinition->getName(
                                                     );
-                                                $result->addAttribute(Attribute::TYPE_PROPERTY, $name, $content);
+                                                $result->addAttribute(Attribute::TYPE_BLOCK, $name, $content);
                                             }
                                         }
                                     }
@@ -250,13 +250,13 @@ class DataObjectDataExtractor extends AbstractElementDataExtractor
                     continue;
                 }
 
-                $brickContainerGetter = 'get' . ucfirst($fieldDefinition->getName());
+                $brickContainerGetter = 'get'.ucfirst($fieldDefinition->getName());
                 if (!$brickContainer = $object->$brickContainerGetter()) {
                     continue;
                 }
 
                 foreach ($fieldDefinition->getAllowedTypes() ?: [] as $brickType) {
-                    $brickGetter = 'get' . ucfirst($brickType);
+                    $brickGetter = 'get'.ucfirst($brickType);
 
                     /**
                      * @var DataObject\Objectbrick\Data\AbstractData $brick
