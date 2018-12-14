@@ -403,19 +403,18 @@ class AdvancedManyToManyRelation extends ManyToManyObjectRelation
                 $o = $metaObject->getElement();
                 $item = Element\Service::getElementType($o) . ' ' . $o->getRealFullPath();
 
-                if(sizeof($metaObject->getData())) {
+                if (sizeof($metaObject->getData())) {
                     $subItems = [];
-                    foreach($metaObject->getData() as $key => $value) {
-                        if(!$value) {
+                    foreach ($metaObject->getData() as $key => $value) {
+                        if (!$value) {
                             continue;
                         }
                         $subItems[] = $key . ': ' . $value;
                     }
 
-                    if(sizeof($subItems)) {
-                        $item .= ' <br/><span class="preview-metadata">[' . implode(' | ' , $subItems) . ']</span>';
+                    if (sizeof($subItems)) {
+                        $item .= ' <br/><span class="preview-metadata">[' . implode(' | ', $subItems) . ']</span>';
                     }
-
                 }
 
                 $items[] = $item;
