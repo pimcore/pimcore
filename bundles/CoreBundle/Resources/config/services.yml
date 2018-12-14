@@ -190,6 +190,8 @@ services:
     Pimcore\Translation\ImportDataExtractor\TranslationItemResolver\TranslationItemResolverInterface:
         class: Pimcore\Translation\ImportDataExtractor\TranslationItemResolver\TranslationItemResolver
 
+    Pimcore\Translation\Escaper\Xliff12Escaper: ~
+
     # Override Swiftmailer redirecting plugin
     swiftmailer.plugin.redirecting.abstract:
         abstract: true

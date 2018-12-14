@@ -27,6 +27,7 @@ use Pimcore\Tool\Serialize;
 class Block extends Data implements CustomResourcePersistingInterface, ResourcePersistenceAwareInterface
 {
     use Element\ChildsCompatibilityTrait;
+    use Extension\ColumnType;
 
     /**
      * Static type of this element
@@ -64,13 +65,6 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
      * @var int
      */
     public $maxItems;
-
-    /**
-     * Type for the column to query
-     *
-     * @var string
-     */
-    public $queryColumnType = 'longtext';
 
     /**
      * Type for the column

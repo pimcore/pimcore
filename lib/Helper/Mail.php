@@ -400,8 +400,6 @@ CSS;
         return $fileInfo;
     }
 
-
-
     /**
      * parses an email string in the following name/mail list annotation: 'Name 1 <address1@mail.com>, Name 2 <address2@mail.com>, ...'
      *
@@ -409,12 +407,12 @@ CSS;
      *
      * @return array
      */
-    public static function parseEmailAddressField($emailString) {
-
+    public static function parseEmailAddressField($emailString)
+    {
         $cleanedEmails = [];
         $emailArray = preg_split('/,|;/', $emailString);
-        if($emailArray) {
-            foreach($emailArray as $emailStringEntry) {
+        if ($emailArray) {
+            foreach ($emailArray as $emailStringEntry) {
                 $entryAddress = $emailStringEntry;
                 $entryName = null;
                 $matches = [];
@@ -423,7 +421,7 @@ CSS;
                     $entryName = trim($matches[1]);
                 }
 
-                if($entryAddress) {
+                if ($entryAddress) {
                     $cleanedEmails[] = ['email' => $entryAddress, 'name' => $entryName];
                 }
             }
@@ -431,5 +429,4 @@ CSS;
 
         return $cleanedEmails;
     }
-
 }

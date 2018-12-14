@@ -779,7 +779,7 @@ class Tool
      * @param string $method
      * @param string $interface
      */
-    public static function triggerDeprecatedMethodWarning($class, $method, $interface)
+    public static function triggerMissingInterfaceDeprecation($class, $method, $interface)
     {
         @trigger_error(
             sprintf(

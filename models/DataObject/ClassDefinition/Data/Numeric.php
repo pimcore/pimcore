@@ -22,6 +22,8 @@ use Pimcore\Model\DataObject\ClassDefinition\Data;
 class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface
 {
     use Model\DataObject\Traits\SimpleComparisonTrait;
+    use Extension\ColumnType;
+    use Extension\QueryColumnType;
 
     const DECIMAL_SIZE_DEFAULT = 64;
     const DECIMAL_PRECISION_DEFAULT = 0;

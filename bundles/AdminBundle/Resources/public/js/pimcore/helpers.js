@@ -3104,3 +3104,4 @@ pimcore.helpers.dragAndDropValidateSingleItem = function (data) {
 };
 
 
+

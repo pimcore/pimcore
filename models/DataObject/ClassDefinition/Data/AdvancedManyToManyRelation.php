@@ -397,13 +397,30 @@ class AdvancedManyToManyRelation extends ManyToManyObjectRelation
      */
     public function getVersionPreview($data, $object = null, $params = [])
     {
+        $items = [];
         if (is_array($data) && count($data) > 0) {
             foreach ($data as $metaObject) {
                 $o = $metaObject->getElement();
-                $pathes[] = Element\Service::getElementType($o) . ' ' . $o->getRealFullPath();
+                $item = Element\Service::getElementType($o) . ' ' . $o->getRealFullPath();
+
+                if (sizeof($metaObject->getData())) {
+                    $subItems = [];
+                    foreach ($metaObject->getData() as $key => $value) {
+                        if (!$value) {
+                            continue;
+                        }
+                        $subItems[] = $key . ': ' . $value;
+                    }
+
+                    if (sizeof($subItems)) {
+                        $item .= ' <br/><span class="preview-metadata">[' . implode(' | ', $subItems) . ']</span>';
+                    }
+                }
+
+                $items[] = $item;
             }
 
-            return implode('<br />', $pathes);
+            return implode('<br />', $items);
         }
     }
 

@@ -27,6 +27,7 @@ use Pimcore\Model\Element;
 class ManyToOneRelation extends AbstractRelations implements QueryResourcePersistenceAwareInterface
 {
     use Model\DataObject\ClassDefinition\Data\Extension\Relation;
+    use Extension\QueryColumnType;
 
     /**
      * Static type of this element

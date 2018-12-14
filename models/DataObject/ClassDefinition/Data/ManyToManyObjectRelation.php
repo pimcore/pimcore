@@ -24,6 +24,7 @@ use Pimcore\Model\Element;
 class ManyToManyObjectRelation extends AbstractRelations implements QueryResourcePersistenceAwareInterface
 {
     use Model\DataObject\ClassDefinition\Data\Extension\Relation;
+    use Extension\QueryColumnType;
 
     /**
      * Static type of this element
@@ -675,16 +676,18 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
 
         $classIds = $this->getClasses();
 
-        if (!$classIds) {
-            $classIds;
+        if (empty($classIds)) {
+            return;
         }
 
         $classId = $classIds[0]['classes'];
 
         if (is_numeric($classId)) {
             $class = DataObject\ClassDefinition::getById($classId);
-        } else {
+        } elseif (is_string($classId)) {
             $class = DataObject\ClassDefinition::getByName($classId);
+        } else {
+            return;
         }
 
         $this->visibleFieldDefinitions = [];

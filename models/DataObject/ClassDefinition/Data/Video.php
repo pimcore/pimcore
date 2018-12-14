@@ -24,6 +24,9 @@ use Pimcore\Tool\Serialize;
 
 class Video extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface
 {
+    use Extension\ColumnType;
+    use Extension\QueryColumnType;
+
     /**
      * Static type of this element
      *

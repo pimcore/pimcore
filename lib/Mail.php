@@ -492,7 +492,6 @@ class Mail extends \Swift_Message
 
         if ($document instanceof Model\Document\Email) {
             if (!$this->recipientsCleared) {
-
                 $to = \Pimcore\Helper\Mail::parseEmailAddressField($document->getTo());
                 if (!empty($to)) {
                     foreach ($to as $toEntry) {

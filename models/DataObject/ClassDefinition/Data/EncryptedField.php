@@ -31,6 +31,8 @@ use Pimcore\Model\DataObject\ClassDefinition\Data;
  */
 class EncryptedField extends Data implements ResourcePersistenceAwareInterface
 {
+    use Extension\ColumnType;
+
     /**
      * don't throw an error it encrypted field cannot be decoded (default)
      */
@@ -62,13 +64,6 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface
      * @var Model\DataObject\ClassDefinition\Data
      */
     public $delegate;
-
-    /**
-     * Type for the column to query
-     *
-     * @var array
-     */
-    public $queryColumnType = null;
 
     /**
      * Type for the column
@@ -273,14 +268,6 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface
         }
 
         return $data;
-    }
-
-    /**
-     * @return string
-     */
-    public function getColumnType()
-    {
-        return 'LONGBLOB';
     }
 
     /**
@@ -616,16 +603,6 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface
     public function setDelegate($delegate)
     {
         $this->delegate = $delegate;
-    }
-
-    /**
-     * @param string | array $columnType
-     *
-     * @return $this
-     */
-    public function setColumnType($columnType)
-    {
-        $this->columnType = 'LONGBLOB';
     }
 
     /**

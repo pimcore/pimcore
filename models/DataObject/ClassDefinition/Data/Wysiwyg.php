@@ -26,6 +26,8 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
 {
     use Model\DataObject\ClassDefinition\Data\Extension\Text;
     use Model\DataObject\Traits\SimpleComparisonTrait;
+    use Extension\ColumnType;
+    use Extension\QueryColumnType;
 
     /**
      * Static type of this element

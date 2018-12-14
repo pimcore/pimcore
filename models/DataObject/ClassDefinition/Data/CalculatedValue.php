@@ -22,6 +22,8 @@ use Pimcore\Model\DataObject\ClassDefinition\Data;
 
 class CalculatedValue extends Data implements QueryResourcePersistenceAwareInterface
 {
+    use Extension\QueryColumnType;
+
     /**
      * Static type of this element
      *
@@ -253,14 +255,6 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
     public function getQueryColumnType()
     {
         return $this->queryColumnType . '(' . $this->getColumnLength() . ')';
-    }
-
-    /**
-     * @return null
-     */
-    public function getColumnType()
-    {
-        return null;
     }
 
     /**

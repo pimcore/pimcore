@@ -23,6 +23,9 @@ use Pimcore\Model\Element;
 
 class Image extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface
 {
+    use Extension\ColumnType;
+    use Extension\QueryColumnType;
+
     /**
      * Static type of this element
      *

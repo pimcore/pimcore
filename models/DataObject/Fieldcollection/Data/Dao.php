@@ -50,7 +50,7 @@ class Dao extends Model\Dao\AbstractDao
 
                 if ($fd instanceof CustomResourcePersistingInterface || method_exists($fd, 'save')) {
                     if (!$fd instanceof CustomResourcePersistingInterface) {
-                        Tool::triggerDeprecatedMethodWarning(get_class($fd), 'save', CustomResourcePersistingInterface::class);
+                        Tool::triggerMissingInterfaceDeprecation(get_class($fd), 'save', CustomResourcePersistingInterface::class);
                     }
                     if (!$fd instanceof Model\DataObject\ClassDefinition\Data\Localizedfields && $fd->supportsDirtyDetection() && !$saveRelationalData) {
                         continue;
@@ -74,7 +74,7 @@ class Dao extends Model\Dao\AbstractDao
                 }
                 if ($fd instanceof ResourcePersistenceAwareInterface || (!method_exists($fd, 'save') && $fd->getColumnType())) {
                     if (!$fd instanceof ResourcePersistenceAwareInterface) {
-                        Tool::triggerDeprecatedMethodWarning(get_class($fd), 'getDataForResource', ResourcePersistenceAwareInterface::class);
+                        Tool::triggerMissingInterfaceDeprecation(get_class($fd), 'getDataForResource', ResourcePersistenceAwareInterface::class);
                     }
                     if (is_array($fd->getColumnType())) {
                         $insertDataArray = $fd->getDataForResource($this->model->$getter(), $object, [

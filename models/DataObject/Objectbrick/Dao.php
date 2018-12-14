@@ -66,7 +66,7 @@ class Dao extends Model\DataObject\Fieldcollection\Dao
                 foreach ($fieldDefinitions as $key => $fd) {
                     if ($fd instanceof CustomResourcePersistingInterface || method_exists($fd, 'load')) {
                         if (!$fd instanceof CustomResourcePersistingInterface) {
-                            Tool::triggerDeprecatedMethodWarning(get_class($fd), 'load', CustomResourcePersistingInterface::class);
+                            Tool::triggerMissingInterfaceDeprecation(get_class($fd), 'load', CustomResourcePersistingInterface::class);
                         }
                         // datafield has it's own loader
                         $context = [];
@@ -83,7 +83,7 @@ class Dao extends Model\DataObject\Fieldcollection\Dao
                     }
                     if ($fd instanceof ResourcePersistenceAwareInterface || !method_exists($fd, 'load')) {
                         if (!$fd instanceof ResourcePersistenceAwareInterface) {
-                            Tool::triggerDeprecatedMethodWarning(get_class($fd), 'getDataFromResource', ResourcePersistenceAwareInterface::class);
+                            Tool::triggerMissingInterfaceDeprecation(get_class($fd), 'getDataFromResource', ResourcePersistenceAwareInterface::class);
                         }
                         if (is_array($fd->getColumnType())) {
                             $multidata = [];

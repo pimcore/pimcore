@@ -133,6 +133,8 @@ pimcore.object.tags.reverseManyToManyObjectRelation = Class.create(pimcore.objec
 
         this.component = new Ext.grid.GridPanel({
             store: this.store,
+            border: true,
+            style: "margin-bottom: 10px",
             selModel: Ext.create('Ext.selection.RowModel', {}),
             columns: {
                 defaults: {

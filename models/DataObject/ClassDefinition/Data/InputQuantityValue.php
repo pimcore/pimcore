@@ -28,6 +28,12 @@ use Pimcore\Model\DataObject\Data\InputQuantityValue as InputQuantityValueDataOb
  */
 class InputQuantityValue extends QuantityValue
 {
+    use Extension\ColumnType;
+    use Extension\QueryColumnType;
+
+    /**
+     * @var string
+     */
     public $fieldtype = 'inputQuantityValue';
 
     /**

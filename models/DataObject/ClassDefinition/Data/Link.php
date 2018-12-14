@@ -26,6 +26,9 @@ use Pimcore\Tool\Serialize;
 
 class Link extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface
 {
+    use Extension\ColumnType;
+    use Extension\QueryColumnType;
+
     /**
      * Static type of this element
      *
