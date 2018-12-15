@@ -168,29 +168,28 @@ class DataObjectDataExtractor extends AbstractElementDataExtractor
         foreach ($fieldDefinitions as $fd) {
             if ($fd instanceof DataObject\ClassDefinition\Data\Block) {
 
-                /** @var  $blockLocalizedFieldDefinition DataObject\ClassDefinition\Data\Localizedfields */
+                /** @var $blockLocalizedFieldDefinition DataObject\ClassDefinition\Data\Localizedfields */
                 $blockLocalizedFieldDefinition = $fd->getFielddefinition('localizedfields');
                 if ($blockLocalizedFieldDefinition) {
                     $blockLocalizedFieldsDefinitions = $blockLocalizedFieldDefinition->getFieldDefinitions();
 
-                    /** @var  $blockItems array */
+                    /** @var $blockItems array */
                     $blocks = $object->{'get'.ucfirst($fd->getName())}();
 
                     if ($blocks) {
-                        /** @var  $blockItem DataObject\Data\BlockElement */
-
+                        /** @var $blockItem DataObject\Data\BlockElement */
                         $blockIdx = -1;
                         foreach ($blocks as $blockItems) {
                             $blockIdx++;
                             if ($blockItems) {
-                                /** @var  $blockItem DataObject\Data\BlockElement */
+                                /** @var $blockItem DataObject\Data\BlockElement */
                                 foreach ($blockItems as $blockItem) {
                                     if ($blockItem->getType() == 'localizedfields') {
 
                                         /** @var DataObject\Localizedfield $blockItemData */
                                         $blockItemData = $blockItem->getData();
 
-                                        /** @var  $blockLocalizedFieldDefinition DataObject\ClassDefinition\Data */
+                                        /** @var $blockLocalizedFieldDefinition DataObject\ClassDefinition\Data */
                                         foreach ($blockLocalizedFieldsDefinitions as $blockLocalizedFieldDefinition) {
                                             // check allowed datatypes
                                             if (!in_array(
@@ -207,7 +206,7 @@ class DataObjectDataExtractor extends AbstractElementDataExtractor
 
                                             if (!empty($content)) {
                                                 $name = $fd->getName(
-                                                    )."-".$blockIdx."-localizedfield-".$blockLocalizedFieldDefinition->getName(
+                                                    ).'-'.$blockIdx.'-localizedfield-'.$blockLocalizedFieldDefinition->getName(
                                                     );
                                                 $result->addAttribute(Attribute::TYPE_BLOCK, $name, $content);
                                             }
@@ -220,7 +219,6 @@ class DataObjectDataExtractor extends AbstractElementDataExtractor
                 }
             }
         }
-
 
         return $this;
     }

@@ -166,14 +166,15 @@ abstract class AbstractElasticSearch implements IProductList
 
     /**
      * @param array $searchAggregation
+     *
      * @return $this
      */
     public function setSearchAggregation(array $searchAggregation)
     {
         $this->searchAggregation = $searchAggregation;
+
         return $this;
     }
-
 
     public function __construct(IElasticSearchConfig $tenantConfig)
     {
