@@ -273,7 +273,7 @@ class EnhancedEcommerce extends AbstractAnalyticsTracker implements
     {
         return [
             'id' => $transaction->getId(),                           // order ID - required
-            'affilation' => $transaction->getAffiliation() ?: '',            // affiliation or store name
+            'affiliation' => $transaction->getAffiliation() ?: '',            // affiliation or store name
             'revenue' => round($transaction->getTotal(), 2),     // total - required
             'tax' => round($transaction->getTax(), 2),       // tax
             'coupon' => $transaction->getCoupon(), // voucher code - optional
