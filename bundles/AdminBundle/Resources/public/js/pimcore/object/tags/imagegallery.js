@@ -96,6 +96,7 @@ pimcore.object.tags.imageGallery = Class.create(pimcore.object.tags.abstract, {
 
             var fieldConfig = this.getDefaultFieldConfig();
             var hotspotImage = new pimcore.object.tags.hotspotimage(data, fieldConfig, this.hotspotConfig);
+            hotspotImage.updateContext(this.context);
             var dragableComponent = this.wrap(hotspotImage);
             items.push(dragableComponent);
         }
@@ -116,6 +117,7 @@ pimcore.object.tags.imageGallery = Class.create(pimcore.object.tags.abstract, {
             var itemData = this.data[i];
             var fieldConfig = this.getDefaultFieldConfig();
             var hotspotImage = new pimcore.object.tags.hotspotimage(itemData, fieldConfig, this.hotspotConfig);
+            hotspotImage.updateContext(this.context);
             var dragableComponent = this.wrap(hotspotImage);
             items.push(dragableComponent);
 
@@ -271,6 +273,7 @@ pimcore.object.tags.imageGallery = Class.create(pimcore.object.tags.abstract, {
                     fieldConfig.title = record.data.path;
 
                     var hotspotImage = new pimcore.object.tags.hotspotimage(data, fieldConfig, this.hotspotConfig);
+                    hotspotImage.updateContext(this.context);
                     var itemCount = this.component.items.length;
 
                     var dragableComponent = this.wrap(hotspotImage);
@@ -357,6 +360,7 @@ pimcore.object.tags.imageGallery = Class.create(pimcore.object.tags.abstract, {
         }
 
         var hotspotImage = new pimcore.object.tags.hotspotimage({}, this.getDefaultFieldConfig(), this.hotspotConfig);
+        hotspotImage.updateContext(this.context);
         var itemCount = this.component.items.length;
         var dragableComponent = this.wrap(hotspotImage);
         this.component.insert(pos + 1, dragableComponent);
@@ -367,6 +371,7 @@ pimcore.object.tags.imageGallery = Class.create(pimcore.object.tags.abstract, {
         if (item) {
             this.dirty = true;
             var hotspotImage = new pimcore.object.tags.hotspotimage({id: item.id}, this.getDefaultFieldConfig(), this.hotspotConfig);
+            hotspotImage.updateContext(this.context);
             var itemCount = this.component.items.length;
             var dragableComponent = this.wrap(hotspotImage);
             this.component.insert(this.component.items.length - 1, dragableComponent);
