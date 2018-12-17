@@ -2055,19 +2055,19 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                         ]];
                     }
                 }
-            }
 
-            // add id-rewrite steps
-            if ($request->get('type') == 'recursive-update-references') {
-                for ($i = 0; $i < (count($childIds) + 1); $i++) {
-                    $pasteJobs[] = [[
-                        'url' => '/admin/object/copy-rewrite-ids',
-                        'method' => 'PUT',
-                        'params' => [
-                            'transactionId' => $transactionId,
-                            '_dc' => uniqid()
-                        ]
-                    ]];
+                // add id-rewrite steps
+                if ($request->get('type') == 'recursive-update-references') {
+                    for ($i = 0; $i < (count($childIds) + 1); $i++) {
+                        $pasteJobs[] = [[
+                            'url' => '/admin/object/copy-rewrite-ids',
+                            'method' => 'PUT',
+                            'params' => [
+                                'transactionId' => $transactionId,
+                                '_dc' => uniqid()
+                            ]
+                        ]];
+                    }
                 }
             }
         } elseif ($request->get('type') == 'child' || $request->get('type') == 'replace') {
