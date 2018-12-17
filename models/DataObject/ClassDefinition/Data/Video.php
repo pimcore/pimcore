@@ -493,9 +493,9 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
                                 $video->setData($asset);
                             } else {
                                 if ($idMapper && $idMapper->ignoreMappingFailures()) {
-                                    $idMapper->recordMappingFailure('object', $relatedObject->getId(), 'asset', $value['data']);
+                                    $idMapper->recordMappingFailure('object', $relatedObject->getId(), 'asset', $data['data']);
                                 } else {
-                                    throw new \Exception('cannot get object video data from web service import - referencing unknown asset with [ '.$value['data'].' ]');
+                                    throw new \Exception('cannot get object video data from web service import - referencing unknown asset with [ '.$data['data'].' ]');
                                 }
                             }
                         }
@@ -507,9 +507,9 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
                                 $video->setPoster($poster);
                             } else {
                                 if ($idMapper && $idMapper->ignoreMappingFailures()) {
-                                    $idMapper->recordMappingFailure('object', $relatedObject->getId(), 'asset', $value['poster']);
+                                    $idMapper->recordMappingFailure('object', $relatedObject->getId(), 'asset', $data['poster']);
                                 } else {
-                                    throw new \Exception('cannot get object video data from web service import - referencing unknown asset with [ '.$value['poster'].' ]');
+                                    throw new \Exception('cannot get object video data from web service import - referencing unknown asset with [ '.$data['poster'].' ]');
                                 }
                             }
                         }

@@ -1378,7 +1378,8 @@ abstract class Data
      * @param string $class
      * @param string $method
      */
-    protected function triggerDeprecatedWarning(string $class, string $method) {
+    protected function triggerDeprecatedWarning(string $class, string $method)
+    {
         @trigger_error(
             sprintf(
                 '%s uses method %s from the abstract class. This won\'t work in v6.0, please use the proper interfaces and provided traits.',
@@ -1394,7 +1395,7 @@ abstract class Data
      */
     public function getColumnType()
     {
-        if(property_exists($this, 'columnType')) {
+        if (property_exists($this, 'columnType')) {
             return $this->columnType;
         }
 
@@ -1405,12 +1406,14 @@ abstract class Data
 
     /**
      * @deprecated
+     *
      * @param string | array $columnType
+     *
      * @return $this
      */
     public function setColumnType($columnType)
     {
-        if(property_exists($this, 'columnType')) {
+        if (property_exists($this, 'columnType')) {
             $this->columnType = $columnType;
         }
 
@@ -1424,7 +1427,7 @@ abstract class Data
      */
     public function getQueryColumnType()
     {
-        if(property_exists($this, 'queryColumnType')) {
+        if (property_exists($this, 'queryColumnType')) {
             return $this->queryColumnType;
         }
 
@@ -1435,12 +1438,14 @@ abstract class Data
 
     /**
      * @deprecated
+     *
      * @param string | array $queryColumnType
+     *
      * @return $this
      */
     public function setQueryColumnType($queryColumnType)
     {
-        if(property_exists($this, 'queryColumnType')) {
+        if (property_exists($this, 'queryColumnType')) {
             $this->queryColumnType = $queryColumnType;
         }
 

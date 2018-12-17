@@ -23,7 +23,7 @@ trait ColumnType
      */
     public function getColumnType()
     {
-        if(property_exists($this, 'columnType')) {
+        if (property_exists($this, 'columnType')) {
             return $this->columnType;
         }
 

@@ -23,7 +23,7 @@ trait QueryColumnType
      */
     public function getQueryColumnType()
     {
-        if(property_exists($this, 'queryColumnType')) {
+        if (property_exists($this, 'queryColumnType')) {
             return $this->queryColumnType;
         }
 

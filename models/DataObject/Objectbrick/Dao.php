@@ -81,7 +81,7 @@ class Dao extends Model\DataObject\Fieldcollection\Dao
                             $brick->setValue($key, $value);
                         }
                     }
-                    if ($fd instanceof ResourcePersistenceAwareInterface || !method_exists($fd, 'load')) {
+                    if ($fd instanceof ResourcePersistenceAwareInterface || method_exists($fd, 'getDataFromResource')) {
                         if (!$fd instanceof ResourcePersistenceAwareInterface) {
                             Tool::triggerMissingInterfaceDeprecation(get_class($fd), 'getDataFromResource', ResourcePersistenceAwareInterface::class);
                         }
