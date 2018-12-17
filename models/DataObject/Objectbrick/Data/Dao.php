@@ -119,7 +119,7 @@ class Dao extends Model\Dao\AbstractDao
                         ]
                     ]));
             }
-            if ($fd instanceof ResourcePersistenceAwareInterface || (!method_exists($fd, 'save') && $fd->getColumnType())) {
+            if ($fd instanceof ResourcePersistenceAwareInterface || method_exists($fd, 'getDataForResource')) {
                 if (!$fd instanceof ResourcePersistenceAwareInterface) {
                     Tool::triggerMissingInterfaceDeprecation(get_class($fd), 'getDataForResource', ResourcePersistenceAwareInterface::class);
                 }
