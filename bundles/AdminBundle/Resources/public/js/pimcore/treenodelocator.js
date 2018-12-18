@@ -529,8 +529,7 @@ pimcore.treenodelocator = function()
         /**
          * Add a loading indicator for given type (document/asset/object) and id.
          */
-        addLoadingIndicator(type, id)
-        {
+        addLoadingIndicator: function (type, id) {
             loadingIndicators.push({type:type, id:id});
             pimcore.helpers.addTreeNodeLoadingIndicator(type, id);
         },
@@ -539,8 +538,7 @@ pimcore.treenodelocator = function()
         /**
          * Clear all loading indicators.
          */
-        clearLoadingIndicators()
-        {
+        clearLoadingIndicators: function () {
             for (var i=0; i<loadingIndicators.length; i++) {
                 pimcore.helpers.removeTreeNodeLoadingIndicator(loadingIndicators[i].type, loadingIndicators[i].id);
             }
