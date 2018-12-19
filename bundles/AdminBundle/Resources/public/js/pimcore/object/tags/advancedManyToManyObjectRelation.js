@@ -708,7 +708,7 @@ pimcore.object.tags.advancedManyToManyObjectRelation = Class.create(pimcore.obje
             bodyStyle: "padding: 10px;",
             buttons: [
                 {
-                    text: t("set"),
+                    text: t("edit"),
                     handler: function() {
                         if(formPanel.isValid()) {
                             this.batchProcess(columnDataIndex.dataIndex, editor, grid);
