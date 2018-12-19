@@ -1389,7 +1389,7 @@ class DataObjectHelperController extends AdminController
             $paramsBag['object2'] = $object2;
             $paramsBag['isImportPreview'] = true;
 
-            $response = $this->render('PimcoreAdminBundle:Admin/DataObject:diffVersions.html.php', $paramsBag);
+            $response = $this->render('PimcoreAdminBundle:Admin/DataObject/DataObject:diffVersions.html.php', $paramsBag);
 
             return $response;
         } catch (\Exception $e) {
