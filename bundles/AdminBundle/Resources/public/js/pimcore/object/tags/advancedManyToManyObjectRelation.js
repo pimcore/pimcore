@@ -133,7 +133,7 @@ pimcore.object.tags.advancedManyToManyObjectRelation = Class.create(pimcore.obje
 
             var cellEditor = null;
             var renderer = null;
-            var listeners = null;
+            var listeners = [];
 
             if (this.fieldConfig.columns[i].type == "number" && !readOnly) {
                 cellEditor = function() {
@@ -190,9 +190,9 @@ pimcore.object.tags.advancedManyToManyObjectRelation = Class.create(pimcore.obje
                     }
                 };
 
-                listeners = {
-                    "mousedown": this.cellMousedown.bind(this, this.fieldConfig.columns[i].key, this.fieldConfig.columns[i].type)
-                };
+                listeners = [
+                    {"mousedown": this.cellMousedown.bind(this, this.fieldConfig.columns[i].key, this.fieldConfig.columns[i].type)}
+                ];
 
                 if (readOnly) {
                     columns.push(Ext.create('Ext.grid.column.Check'), {
@@ -230,6 +230,36 @@ pimcore.object.tags.advancedManyToManyObjectRelation = Class.create(pimcore.obje
 
 
         if (!readOnly) {
+            listeners.push({'afterrender':
+                function() {
+                    var grid = this.component;
+                    var menu = grid.headerCt.getMenu();
+
+                    var batchAllMenu = new Ext.menu.Item({
+                        text: t("batch_change"),
+                        iconCls: "pimcore_icon_table pimcore_icon_overlay_go",
+                        handler: function (grid) {
+                            var columnDataIndex = menu.activeHeader;
+                            this.batchPrepare(columnDataIndex, grid, false, false);
+                        }.bind(this, grid),
+                    });
+
+                    menu.add(batchAllMenu);
+                    menu.on('beforeshow', function (batchAllMenu, grid) {
+                        var menu = grid.headerCt.getMenu();
+                        var columnDataIndex = menu.activeHeader.dataIndex;
+                        var metaIndex = this.fieldConfig.columnKeys.indexOf(columnDataIndex);
+
+                        if(metaIndex < 0) {
+                            batchAllMenu.hide();
+                        } else {
+                            batchAllMenu.show();
+                        }
+
+                    }.bind(this, batchAllMenu, grid));
+                }.bind(this)
+            }); // add listener
+
             columns.push({
                 xtype: 'actioncolumn',
                 menuText: t('up'),
@@ -623,7 +653,100 @@ pimcore.object.tags.advancedManyToManyObjectRelation = Class.create(pimcore.obje
 
     getCellEditValue: function () {
         return this.getValue();
-    }
+    },
+
+    batchPrepare: function(columnDataIndex, grid, onlySelected, append){
+        var columnIndex = columnDataIndex.fullColumnIndex;
+        var editor = grid.getColumns()[columnIndex].getEditor();
+        var metaIndex = this.fieldConfig.columnKeys.indexOf(columnDataIndex.dataIndex);
+        var columnConfig = this.fieldConfig.columns[metaIndex];
+
+        if (columnConfig.type == 'multiselect') { //create edit layout for multiselect field
+            var selectData = [];
+            if (columnConfig.value) {
+                var selectDataRaw = columnConfig.value.split(";");
+                for (var j = 0; j < selectDataRaw.length; j++) {
+                    selectData.push([selectDataRaw[j], ts(selectDataRaw[j])]);
+                }
+            }
+
+            var store = new Ext.data.ArrayStore({
+                fields: [
+                    'id',
+                    'label'
+                ],
+                data: selectData
+            });
+
+            var options = {
+                triggerAction: "all",
+                editable: false,
+                store: store,
+                componentCls: "object_field",
+                height: '100%',
+                valueField: 'id',
+                displayField: 'label'
+            };
+
+            editor = Ext.create('Ext.ux.form.MultiSelect', options);
+        } else if (columnConfig.type == 'bool') { //create edit layout for bool meta field
+            editor = new Ext.form.Checkbox();
+        }
+
+        var editorLabel = Ext.create('Ext.form.Label', {
+          text: grid.getColumns()[columnIndex].text + ':',
+          style: {
+            float: 'left',
+            margin: '0 20px 0 0'
+          }
+        });
+
+        var formPanel = Ext.create('Ext.form.Panel', {
+            xtype: "form",
+            border: false,
+            items: [editorLabel, editor],
+            bodyStyle: "padding: 10px;",
+            buttons: [
+                {
+                    text: t("set"),
+                    handler: function() {
+                        if(formPanel.isValid()) {
+                            this.batchProcess(columnDataIndex.dataIndex, editor, grid);
+                        }
+                    }.bind(this)
+                }
+            ]
+        });
+        var title = t("batch_edit_field") + " " + grid.getColumns()[columnIndex].text;
+        this.batchWin = new Ext.Window({
+            autoScroll: true,
+            modal: false,
+            title: title,
+            items: [formPanel],
+            bodyStyle: "background: #fff;",
+            width: 500,
+            maxHeight: 400
+        });
+        this.batchWin.show();
+        this.batchWin.updateLayout();
+
+    },
+
+    batchProcess: function (dataIndex, editor, grid) {
+
+        var newValue = editor.getValue();
+        var valueType = "primitive";
+        var items = grid.store.data.items;
+
+        for (var i = 0; i < items.length; i++)
+        {
+            var record = grid.store.getAt(i);
+            record.set(dataIndex, newValue);
+        }
+
+        this.batchWin.close();
+    },
+
 });
 
 // @TODO BC layer, to be removed in v6.0
