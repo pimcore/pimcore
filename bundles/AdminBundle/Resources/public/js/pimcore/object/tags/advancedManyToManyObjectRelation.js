@@ -133,7 +133,7 @@ pimcore.object.tags.advancedManyToManyObjectRelation = Class.create(pimcore.obje
 
             var cellEditor = null;
             var renderer = null;
-            var listeners = [];
+            var listeners = null;
 
             if (this.fieldConfig.columns[i].type == "number" && !readOnly) {
                 cellEditor = function() {
@@ -190,9 +190,9 @@ pimcore.object.tags.advancedManyToManyObjectRelation = Class.create(pimcore.obje
                     }
                 };
 
-                listeners = [
-                    {"mousedown": this.cellMousedown.bind(this, this.fieldConfig.columns[i].key, this.fieldConfig.columns[i].type)}
-                ];
+                listeners = {
+                    "mousedown": this.cellMousedown.bind(this, this.fieldConfig.columns[i].key, this.fieldConfig.columns[i].type)
+                };
 
                 if (readOnly) {
                     columns.push(Ext.create('Ext.grid.column.Check'), {
@@ -230,36 +230,6 @@ pimcore.object.tags.advancedManyToManyObjectRelation = Class.create(pimcore.obje
 
 
         if (!readOnly) {
-            listeners.push({'afterrender':
-                function() {
-                    var grid = this.component;
-                    var menu = grid.headerCt.getMenu();
-
-                    var batchAllMenu = new Ext.menu.Item({
-                        text: t("batch_change"),
-                        iconCls: "pimcore_icon_table pimcore_icon_overlay_go",
-                        handler: function (grid) {
-                            var columnDataIndex = menu.activeHeader;
-                            this.batchPrepare(columnDataIndex, grid, false, false);
-                        }.bind(this, grid),
-                    });
-
-                    menu.add(batchAllMenu);
-                    menu.on('beforeshow', function (batchAllMenu, grid) {
-                        var menu = grid.headerCt.getMenu();
-                        var columnDataIndex = menu.activeHeader.dataIndex;
-                        var metaIndex = this.fieldConfig.columnKeys.indexOf(columnDataIndex);
-
-                        if(metaIndex < 0) {
-                            batchAllMenu.hide();
-                        } else {
-                            batchAllMenu.show();
-                        }
-
-                    }.bind(this, batchAllMenu, grid));
-                }.bind(this)
-            }); // add listener
-
             columns.push({
                 xtype: 'actioncolumn',
                 menuText: t('up'),
@@ -482,6 +452,32 @@ pimcore.object.tags.advancedManyToManyObjectRelation = Class.create(pimcore.obje
 
                     }.bind(this)
                 });
+
+                var grid = this.component;
+                var menu = grid.headerCt.getMenu();
+
+                var batchAllMenu = new Ext.menu.Item({
+                    text: t("batch_change"),
+                    iconCls: "pimcore_icon_table pimcore_icon_overlay_go",
+                    handler: function (grid) {
+                        var columnDataIndex = menu.activeHeader;
+                        this.batchPrepare(columnDataIndex, grid, false, false);
+                    }.bind(this, grid)
+                });
+
+                menu.add(batchAllMenu);
+                menu.on('beforeshow', function (batchAllMenu, grid) {
+                    var menu = grid.headerCt.getMenu();
+                    var columnDataIndex = menu.activeHeader.dataIndex;
+                    var metaIndex = this.fieldConfig.columnKeys.indexOf(columnDataIndex);
+
+                    if(metaIndex < 0) {
+                        batchAllMenu.hide();
+                    } else {
+                        batchAllMenu.show();
+                    }
+
+                }.bind(this, batchAllMenu, grid));
             }.bind(this));
         }
 
