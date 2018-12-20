@@ -333,7 +333,7 @@ pimcore.object.tags.advancedManyToManyObjectRelation = Class.create(pimcore.obje
             ddGroup: 'element',
             trackMouseOver: true,
             selModel: {
-                selType: 'checkboxmodel'
+                selType: (this.fieldConfig.enableBatchEdit ? 'checkboxmodel': 'rowmodel')
             },
             columnLines: true,
             stripeRows: true,
@@ -455,42 +455,44 @@ pimcore.object.tags.advancedManyToManyObjectRelation = Class.create(pimcore.obje
                     }.bind(this)
                 });
 
-                var grid = this.component;
-                var menu = grid.headerCt.getMenu();
-
-                var batchAllMenu = new Ext.menu.Item({
-                    text: t("batch_change"),
-                    iconCls: "pimcore_icon_table pimcore_icon_overlay_go",
-                    handler: function (grid) {
-                        var columnDataIndex = menu.activeHeader;
-                        this.batchPrepare(columnDataIndex, grid, false, false);
-                    }.bind(this, grid)
-                });
-
-                menu.add(batchAllMenu);
-
-                var batchSelectedMenu = new Ext.menu.Item({
-                    text: t("batch_change_selected"),
-                    iconCls: "pimcore_icon_structuredTable pimcore_icon_overlay_go",
-                    handler: function (grid) {
-                        menu = grid.headerCt.getMenu();
-                        var columnDataIndex = menu.activeHeader;
-                        this.batchPrepare(columnDataIndex, grid, true, false);
-                    }.bind(this, grid)
-                });
-                menu.add(batchSelectedMenu);
-                menu.on('beforeshow', function (batchAllMenu, grid) {
+                if (this.fieldConfig.enableBatchEdit) {
+                    var grid = this.component;
                     var menu = grid.headerCt.getMenu();
-                    var columnDataIndex = menu.activeHeader.dataIndex;
-                    var metaIndex = this.fieldConfig.columnKeys.indexOf(columnDataIndex);
 
-                    if (metaIndex < 0) {
-                        batchAllMenu.hide();
-                    } else {
-                        batchAllMenu.show();
-                    }
+                    var batchAllMenu = new Ext.menu.Item({
+                        text: t("batch_change"),
+                        iconCls: "pimcore_icon_table pimcore_icon_overlay_go",
+                        handler: function (grid) {
+                            var columnDataIndex = menu.activeHeader;
+                            this.batchPrepare(columnDataIndex, grid, false, false);
+                        }.bind(this, grid)
+                    });
 
-                }.bind(this, batchAllMenu, grid));
+                    menu.add(batchAllMenu);
+
+                    var batchSelectedMenu = new Ext.menu.Item({
+                        text: t("batch_change_selected"),
+                        iconCls: "pimcore_icon_structuredTable pimcore_icon_overlay_go",
+                        handler: function (grid) {
+                            menu = grid.headerCt.getMenu();
+                            var columnDataIndex = menu.activeHeader;
+                            this.batchPrepare(columnDataIndex, grid, true, false);
+                        }.bind(this, grid)
+                    });
+                    menu.add(batchSelectedMenu);
+                    menu.on('beforeshow', function (batchAllMenu, grid) {
+                        var menu = grid.headerCt.getMenu();
+                        var columnDataIndex = menu.activeHeader.dataIndex;
+                        var metaIndex = this.fieldConfig.columnKeys.indexOf(columnDataIndex);
+
+                        if (metaIndex < 0) {
+                            batchAllMenu.hide();
+                        } else {
+                            batchAllMenu.show();
+                        }
+
+                    }.bind(this, batchAllMenu, grid));
+                }
             }.bind(this));
         }
 

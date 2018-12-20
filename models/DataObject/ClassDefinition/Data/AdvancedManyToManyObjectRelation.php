@@ -55,6 +55,11 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
     public $phpdocType = '\\Pimcore\\Model\\DataObject\\Data\\ObjectMetadata[]';
 
     /**
+     * @var bool
+     */
+    public $enableBatchEdit;
+
+    /**
      * @inheritdoc
      */
     public function prepareDataForPersistence($data, $object = null, $params = [])
@@ -810,6 +815,22 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
         }
 
         return $this->columnKeys;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getEnableBatchEdit()
+    {
+        return $this->enableBatchEdit;
+    }
+
+    /**
+     * @param bool $enableBatchEdit
+     */
+    public function setEnableBatchEdit($enableBatchEdit)
+    {
+        $this->enableBatchEdit = $enableBatchEdit;
     }
 
     /**
