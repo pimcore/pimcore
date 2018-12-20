@@ -764,7 +764,7 @@ pimcore.object.tags.advancedManyToManyObjectRelation = Class.create(pimcore.obje
         }
 
         this.batchWin.close();
-    },
+    }
 
 });
 
