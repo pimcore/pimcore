@@ -239,7 +239,7 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
                         if(formPanel.isValid()) {
                             this.batchProcess(jobs, append, editor, fieldInfo, true);
                         }
-                    }.bind(this),
+                    }.bind(this)
                 }
             ]
         });
