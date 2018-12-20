@@ -332,7 +332,9 @@ pimcore.object.tags.advancedManyToManyObjectRelation = Class.create(pimcore.obje
             enableDragDrop: true,
             ddGroup: 'element',
             trackMouseOver: true,
-            selModel: Ext.create('Ext.selection.RowModel', {}),
+            selModel: {
+                selType: 'checkboxmodel'
+            },
             columnLines: true,
             stripeRows: true,
             columns: {
@@ -466,12 +468,23 @@ pimcore.object.tags.advancedManyToManyObjectRelation = Class.create(pimcore.obje
                 });
 
                 menu.add(batchAllMenu);
+
+                var batchSelectedMenu = new Ext.menu.Item({
+                    text: t("batch_change_selected"),
+                    iconCls: "pimcore_icon_structuredTable pimcore_icon_overlay_go",
+                    handler: function (grid) {
+                        menu = grid.headerCt.getMenu();
+                        var columnDataIndex = menu.activeHeader;
+                        this.batchPrepare(columnDataIndex, grid, true, false);
+                    }.bind(this, grid)
+                });
+                menu.add(batchSelectedMenu);
                 menu.on('beforeshow', function (batchAllMenu, grid) {
                     var menu = grid.headerCt.getMenu();
                     var columnDataIndex = menu.activeHeader.dataIndex;
                     var metaIndex = this.fieldConfig.columnKeys.indexOf(columnDataIndex);
 
-                    if(metaIndex < 0) {
+                    if (metaIndex < 0) {
                         batchAllMenu.hide();
                     } else {
                         batchAllMenu.show();
@@ -707,13 +720,14 @@ pimcore.object.tags.advancedManyToManyObjectRelation = Class.create(pimcore.obje
                     text: t("edit"),
                     handler: function() {
                         if(formPanel.isValid()) {
-                            this.batchProcess(columnDataIndex.dataIndex, editor, grid);
+                            this.batchProcess(columnDataIndex.dataIndex, editor, grid, onlySelected);
                         }
                     }.bind(this)
                 }
             ]
         });
-        var title = t("batch_edit_field") + " " + grid.getColumns()[columnIndex].text;
+        var batchTitle = onlySelected ? "batch_edit_field_selected" : "batch_edit_field";
+        var title = t(batchTitle) + " " + grid.getColumns()[columnIndex].text;
         this.batchWin = new Ext.Window({
             autoScroll: true,
             modal: false,
@@ -728,16 +742,23 @@ pimcore.object.tags.advancedManyToManyObjectRelation = Class.create(pimcore.obje
 
     },
 
-    batchProcess: function (dataIndex, editor, grid) {
+    batchProcess: function (dataIndex, editor, grid, onlySelected) {
 
         var newValue = editor.getValue();
         var valueType = "primitive";
-        var items = grid.store.data.items;
 
-        for (var i = 0; i < items.length; i++)
-        {
-            var record = grid.store.getAt(i);
-            record.set(dataIndex, newValue);
+        if (onlySelected) {
+            var selectedRows = grid.getSelectionModel().getSelection();
+            for (var i=0; i<selectedRows.length; i++) {
+                selectedRows[i].set(dataIndex, newValue);
+            }
+        } else {
+            var items = grid.store.data.items;
+            for (var i = 0; i < items.length; i++)
+            {
+                var record = grid.store.getAt(i);
+                record.set(dataIndex, newValue);
+            }
         }
 
         this.batchWin.close();
