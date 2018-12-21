@@ -324,7 +324,7 @@ abstract class Data
     public function setValues($data = [])
     {
         foreach ($data as $key => $value) {
-            $method = 'set' . $key;
+            $method = 'set' . ucfirst($key);
             if (method_exists($this, $method)) {
                 $this->$method($value);
             }
@@ -1405,24 +1405,6 @@ abstract class Data
     }
 
     /**
-     * @deprecated
-     *
-     * @param string | array $columnType
-     *
-     * @return $this
-     */
-    public function setColumnType($columnType)
-    {
-        if (property_exists($this, 'columnType')) {
-            $this->columnType = $columnType;
-        }
-
-        $this->triggerDeprecatedWarning(get_class($this), __METHOD__);
-
-        return $this;
-    }
-
-    /**
      * @return string | array
      */
     public function getQueryColumnType()
@@ -1434,23 +1416,5 @@ abstract class Data
         $this->triggerDeprecatedWarning(get_class($this), __METHOD__);
 
         return null;
-    }
-
-    /**
-     * @deprecated
-     *
-     * @param string | array $queryColumnType
-     *
-     * @return $this
-     */
-    public function setQueryColumnType($queryColumnType)
-    {
-        if (property_exists($this, 'queryColumnType')) {
-            $this->queryColumnType = $queryColumnType;
-        }
-
-        $this->triggerDeprecatedWarning(get_class($this), __METHOD__);
-
-        return $this;
     }
 }
