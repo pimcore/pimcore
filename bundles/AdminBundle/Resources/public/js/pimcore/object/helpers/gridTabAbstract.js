@@ -84,7 +84,7 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
 
         var batchSelectedMenu = new Ext.menu.Item({
             text: t("batch_change_selected"),
-            iconCls: "pimcore_icon_table pimcore_icon_overlay_go",
+            iconCls: "pimcore_icon_structuredTable pimcore_icon_overlay_go",
             handler: function (grid) {
                 menu = grid.headerCt.getMenu();
                 var columnDataIndex = menu.activeHeader;
@@ -106,7 +106,7 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
 
         var batchAppendSelectedMenu = new Ext.menu.Item({
             text: t("batch_append_selected"),
-            iconCls: "pimcore_icon_table pimcore_icon_overlay_go",
+            iconCls: "pimcore_icon_structuredTable pimcore_icon_overlay_go",
             handler: function (grid) {
                 menu = grid.headerCt.getMenu();
                 var columnDataIndex = menu.activeHeader;
@@ -151,7 +151,7 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
             for (var i=0; i<selectedRows.length; i++) {
                 jobs.push(selectedRows[i].get("id"));
             }
-            this.batchOpen(columnIndex,jobs, append);
+            this.batchOpen(columnIndex,jobs, append, true);
 
         } else {
 
@@ -183,7 +183,7 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
                 success: function (columnIndex,response) {
                     var rdata = Ext.decode(response.responseText);
                     if (rdata.success && rdata.jobs) {
-                        this.batchOpen(columnIndex, rdata.jobs, append);
+                        this.batchOpen(columnIndex, rdata.jobs, append, false);
                     }
 
                 }.bind(this,columnIndex)
@@ -192,7 +192,7 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
 
     },
 
-    batchOpen: function (columnIndex, jobs, append) {
+    batchOpen: function (columnIndex, jobs, append, onlySelected) {
 
         columnIndex = columnIndex-1;
 
@@ -243,7 +243,9 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
                 }
             ]
         });
-        var title = append ? t("batch_append_to") + " " + fieldInfo.text : t("batch_edit_field") + " " + fieldInfo.text;
+        var batchTitle = onlySelected ? "batch_edit_field_selected" : "batch_edit_field";
+        var appendTitle = onlySelected ? "batch_append_selected_to" : "batch_append_to";
+        var title = append ? t(appendTitle) + " " + fieldInfo.text : t(batchTitle) + " " + fieldInfo.text;
         this.batchWin = new Ext.Window({
             autoScroll: true,
             modal: false,

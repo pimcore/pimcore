@@ -243,7 +243,8 @@
   "email_log_resend_window_error_message": "An error occurred. The email has not been resent.",
   "error_jobs": "The following jobs failed",
   "batch_change": "Batch edit all",
-  "batch_edit_field": "Batch edit field",
+  "batch_edit_field": "Batch edit all field",
+  "batch_edit_field_selected": "Batch edit selected field",
   "published": "Published",
   "all": "all",
   "items_per_page": "Items per page",
@@ -750,7 +751,8 @@
   "restore_failed": "Restore failed",
   "batch_append_all": "Batch append to all",
   "batch_append_selected": "Batch append to selected",
-  "batch_append_to": "Append data to",
+  "batch_append_to": "Append data to all",
+  "batch_append_selected_to": "Append data to selected",
   "sort_children_by": "Sort Children By",
   "by_key": "Key (Alphabetically)",
   "by_index": "Index (Ordered By Manually)",
@@ -849,5 +851,6 @@
   "permission_missing": "You need the '%s' permission to perform this action",
   "paste_as_language_variant": "Paste as new language variant",
   "select_language_for_new_document": "Select language for New Document",
-  "source_document_language_missing": "Set Language(Properties) in Source Document"
+  "source_document_language_missing": "Set Language(Properties) in Source Document",
+  "enable_batch_edit_columns": "Enable Batch Edit for Columns"
 }

@@ -182,6 +182,12 @@ pimcore.object.classes.data.advancedManyToManyObjectRelation = Class.create(pimc
         this.grids = {};
         this.specificPanel.add(this.getGrid("cols", this.datax.columns, true));
 
+        this.specificPanel.add({
+            xtype: "checkbox",
+            fieldLabel: t("enable_batch_edit_columns"),
+            name: "enableBatchEdit",
+            value: this.datax.enableBatchEdit
+        });
 
         return this.layout;
     },
