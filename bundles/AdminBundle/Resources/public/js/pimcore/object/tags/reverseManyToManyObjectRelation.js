@@ -52,6 +52,7 @@ pimcore.object.tags.reverseManyToManyObjectRelation = Class.create(pimcore.objec
 
             Ext.Ajax.request({
                 url: "/admin/object/get",
+                async: false,
                 params: {id: this.getStore().getAt(index).data.id},
                 success: function(index, response) {
                     this.data = Ext.decode(response.responseText);
