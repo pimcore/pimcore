@@ -1395,11 +1395,11 @@ abstract class Data
      */
     public function getColumnType()
     {
+        $this->triggerDeprecatedWarning(get_class($this), __METHOD__);
+
         if (property_exists($this, 'columnType')) {
             return $this->columnType;
         }
-
-        $this->triggerDeprecatedWarning(get_class($this), __METHOD__);
 
         return null;
     }
@@ -1413,11 +1413,11 @@ abstract class Data
      */
     public function setColumnType($columnType)
     {
+        $this->triggerDeprecatedWarning(get_class($this), __METHOD__);
+
         if (property_exists($this, 'columnType')) {
             $this->columnType = $columnType;
         }
-
-        $this->triggerDeprecatedWarning(get_class($this), __METHOD__);
 
         return $this;
     }
@@ -1427,11 +1427,11 @@ abstract class Data
      */
     public function getQueryColumnType()
     {
+        $this->triggerDeprecatedWarning(get_class($this), __METHOD__);
+
         if (property_exists($this, 'queryColumnType')) {
             return $this->queryColumnType;
         }
-
-        $this->triggerDeprecatedWarning(get_class($this), __METHOD__);
 
         return null;
     }
@@ -1445,11 +1445,11 @@ abstract class Data
      */
     public function setQueryColumnType($queryColumnType)
     {
+        $this->triggerDeprecatedWarning(get_class($this), __METHOD__);
+
         if (property_exists($this, 'queryColumnType')) {
             $this->queryColumnType = $queryColumnType;
         }
-
-        $this->triggerDeprecatedWarning(get_class($this), __METHOD__);
 
         return $this;
     }
