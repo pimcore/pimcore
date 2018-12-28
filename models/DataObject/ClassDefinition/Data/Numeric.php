@@ -25,7 +25,9 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
     use Extension\ColumnType {
         getColumnType as public genericGetColumnType;
     }
-    use Extension\QueryColumnType;
+    use Extension\QueryColumnType {
+        getQueryColumnType as public genericGetQueryColumnType;
+    }
 
     const DECIMAL_SIZE_DEFAULT = 64;
     const DECIMAL_PRECISION_DEFAULT = 0;
@@ -311,7 +313,7 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
             return $this->buildDecimalColumnType();
         }
 
-        return parent::getQueryColumnType();
+        return $this->genericGetQueryColumnType();
     }
 
     public function isDecimalType(): bool
