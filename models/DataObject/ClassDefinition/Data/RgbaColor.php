@@ -30,7 +30,7 @@ class RgbaColor extends Data implements ResourcePersistenceAwareInterface, Query
      *
      * @var string
      */
-    public $fieldtype = 'rgbacolor';
+    public $fieldtype = 'rgbaColor';
 
     /**
      * @var int
