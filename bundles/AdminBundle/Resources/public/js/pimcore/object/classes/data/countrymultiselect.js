@@ -73,14 +73,7 @@ pimcore.object.classes.data.countrymultiselect = Class.create(pimcore.object.cla
             fields: [
                 {name: 'key'},
                 {name: 'value'}
-            ],
-            listeners: {
-                load: function () {
-                    if (datax.restrictTo) {
-                        possibleOptions.setValue(datax.restrictTo);
-                    }
-                }.bind(this)
-            }
+            ]
         });
 
         var options = {
@@ -94,7 +87,14 @@ pimcore.object.classes.data.countrymultiselect = Class.create(pimcore.object.cla
             height: 200,
             width: 300,
             valueField: 'value',
-            displayField: 'key'
+            displayField: 'key',
+            listeners: {
+                afterRender: function () {
+                    if (datax.restrictTo) {
+                        possibleOptions.setValue(datax.restrictTo);
+                    }
+                }.bind(this)
+            }
         };
         if (this.isInCustomLayoutEditor()) {
             options.disabled = true;
