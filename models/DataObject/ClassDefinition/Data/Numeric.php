@@ -22,7 +22,9 @@ use Pimcore\Model\DataObject\ClassDefinition\Data;
 class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface
 {
     use Model\DataObject\Traits\SimpleComparisonTrait;
-    use Extension\ColumnType;
+    use Extension\ColumnType {
+        getColumnType as public genericGetColumnType;
+    }
     use Extension\QueryColumnType;
 
     const DECIMAL_SIZE_DEFAULT = 64;
@@ -293,7 +295,7 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
             return $this->buildDecimalColumnType();
         }
 
-        return parent::getColumnType();
+        return $this->genericGetColumnType();
     }
 
     /**
