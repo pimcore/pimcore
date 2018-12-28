@@ -1171,7 +1171,7 @@ pimcore.helpers.openDocumentByPath = function (path) {
 pimcore.helpers.sanitizeAllowedTypes = function (data, name) {
     if (data[name]) {
         var newList = [];
-        for (i = 0; i < data[name].length; i++) {
+        for (var i = 0; i < data[name].length; i++) {
             newList.push(data[name][i][name]);
         }
         data[name] = newList;
