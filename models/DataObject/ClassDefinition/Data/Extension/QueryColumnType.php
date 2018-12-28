@@ -29,4 +29,17 @@ trait QueryColumnType
 
         return null;
     }
+
+    /**
+     * @param string | array $queryColumnType
+     * @return $this
+     */
+    public function setQueryColumnType($queryColumnType)
+    {
+        if (property_exists($this, 'queryColumnType')) {
+            $this->queryColumnType = $queryColumnType;
+        }
+
+        return $this;
+    }
 }
