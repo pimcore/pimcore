@@ -75,7 +75,7 @@ class Factory
      */
     public function createFilesystemAdapterProxyItemPool($defaultLifetime = 0)
     {
-        $filesystemAdapter = new FilesystemAdapter('', $defaultLifetime, \Pimcore::getKernel()->getCacheDir());
+        $filesystemAdapter = new FilesystemAdapter('', $defaultLifetime, \Pimcore::getKernel()->getCacheDir() . '/pimcore');
 
         return $this->createSymfonyProxyItemPool($filesystemAdapter);
     }
