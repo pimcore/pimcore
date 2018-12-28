@@ -133,7 +133,7 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface
 
             $rawBinary = (isset($params['asString']) && $params['asString']) ? false : true;
 
-            $data = Crypto::encrypt($data, $key, $rawBinary);
+            $data = Crypto::encrypt((string)$data, $key, $rawBinary);
         }
 
         return $data;
@@ -550,7 +550,6 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface
                 if (method_exists($className, '__set_state')) {
                     $delegate = $className::__set_state($data);
                 }
-                $delegate->setFieldtype($this->getDelegateDatatype());
                 $this->delegate = $delegate;
             }
         }
