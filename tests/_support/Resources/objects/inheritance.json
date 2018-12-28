@@ -127,8 +127,6 @@
                         "style":"",
                         "permissions":null,
                         "datatype":"data",
-                        "columnType":null,
-                        "queryColumnType":null,
                         "relationType":false,
                         "invisible":false,
                         "visibleGridView":true,
@@ -245,7 +243,6 @@
                                 "style":"",
                                 "permissions":null,
                                 "datatype":"data",
-                                "columnType":null,
                                 "invisible":false,
                                 "visibleGridView":false,
                                 "visibleSearch":false
