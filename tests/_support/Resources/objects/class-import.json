@@ -151,7 +151,6 @@
 								"style":"border-right:1px solid green;",
 								"permissions":"",
 								"datatype":"data",
-								"columnType":"",
 								"invisible":false,
 								"visibleGridView":true,
 								"visibleSearch":true
@@ -179,7 +178,6 @@
 								"style":"",
 								"permissions":"",
 								"datatype":"data",
-								"columnType":"",
 								"invisible":false,
 								"visibleGridView":false,
 								"visibleSearch":false
@@ -264,7 +262,6 @@
 								"style":"border-right:1px solid green;",
 								"permissions":"",
 								"datatype":"data",
-								"columnType":"",
 								"invisible":false,
 								"visibleGridView":true,
 								"visibleSearch":false
@@ -294,7 +291,6 @@
 								"style":"border-right:1px solid green;",
 								"permissions":"",
 								"datatype":"data",
-								"columnType":"",
 								"invisible":false,
 								"visibleGridView":true,
 								"visibleSearch":true
@@ -340,7 +336,6 @@
 								"style":"",
 								"permissions":"",
 								"datatype":"data",
-								"columnType":"",
 								"invisible":false,
 								"visibleGridView":false,
 								"visibleSearch":false,
@@ -6049,8 +6044,6 @@
 										"label":"rowlabel3"
 									}
 								],
-								"queryColumnType":"",
-								"columnType":"",
 								"phpdocType":"array",
 								"name":"structuredtable",
 								"title":"",
@@ -6089,8 +6082,6 @@
 								"style":"border-right:1px solid green;margin: 0 0 200px 0;",
 								"permissions":"",
 								"datatype":"data",
-								"columnType":"",
-								"queryColumnType":"",
 								"relationType":false,
 								"invisible":false,
 								"visibleGridView":false,
@@ -6139,7 +6130,6 @@
 								"style":"",
 								"permissions":"",
 								"datatype":"data",
-								"columnType":"",
 								"invisible":false,
 								"visibleGridView":false,
 								"visibleSearch":false
@@ -6166,8 +6156,6 @@
 								"style":"",
 								"permissions":"",
 								"datatype":"data",
-								"columnType":"",
-								"queryColumnType":"",
 								"relationType":false,
 								"invisible":false,
 								"visibleGridView":false,
@@ -10622,7 +10610,6 @@
 										"style":"",
 										"permissions":"",
 										"datatype":"data",
-										"columnType":"",
 										"invisible":false,
 										"visibleGridView":false,
 										"visibleSearch":false
@@ -10644,8 +10631,6 @@
 								"style":"",
 								"permissions":"",
 								"datatype":"data",
-								"columnType":"",
-								"queryColumnType":"",
 								"relationType":false,
 								"invisible":false,
 								"visibleGridView":true,
@@ -10667,8 +10652,6 @@
 								"style":"",
 								"permissions":"",
 								"datatype":"data",
-								"columnType":"",
-								"queryColumnType":"",
 								"relationType":false,
 								"invisible":false,
 								"visibleGridView":false,
