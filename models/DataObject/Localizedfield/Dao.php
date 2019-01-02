@@ -725,23 +725,23 @@ QUERY;
 
         $localizedFieldDefinition = $container->getFielddefinition('localizedfields', ['suppressEnrichment' => true]);
         foreach ($localizedFieldDefinition->getFielddefinitions(['suppressEnrichment' => true]) as $value) {
-            if ($value->getColumnType()) {
-                $key = $value->getName();
+            if ($value instanceof ResourcePersistenceAwareInterface || method_exists($value, 'getDataForResource')) {
+                if ($value->getColumnType()) {
+                    $key = $value->getName();
 
-                if (is_array($value->getColumnType())) {
-                    // if a datafield requires more than one field
-                    foreach ($value->getColumnType() as $fkey => $fvalue) {
-                        $this->addModifyColumn($table, $key.'__'.$fkey, $fvalue, '', 'NULL');
-                        $protectedColumns[] = $key.'__'.$fkey;
-                    }
-                } else {
-                    if ($value->getColumnType()) {
+                    if (is_array($value->getColumnType())) {
+                        // if a datafield requires more than one field
+                        foreach ($value->getColumnType() as $fkey => $fvalue) {
+                            $this->addModifyColumn($table, $key . '__' . $fkey, $fvalue, '', 'NULL');
+                            $protectedColumns[] = $key . '__' . $fkey;
+                        }
+                    } elseif ($value->getColumnType()) {
                         $this->addModifyColumn($table, $key, $value->getColumnType(), '', 'NULL');
                         $protectedColumns[] = $key;
                     }
+
+                    $this->addIndexToField($value, $table, 'getColumnType', true, true);
                 }
-                //TODO
-                $this->addIndexToField($value, $table, 'getColumnType', true, true);
             }
         }
 

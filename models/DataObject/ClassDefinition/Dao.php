@@ -106,7 +106,7 @@ class Dao extends Model\Dao\AbstractDao
         $objectView = 'object_' . $this->model->getId();
 
         // create object table if not exists
-        $protectedColums = ['oo_id', 'oo_classId', 'oo_className'];
+        $protectedColumns = ['oo_id', 'oo_classId', 'oo_className'];
         $protectedDatastoreColumns = ['oo_id'];
 
         $this->db->query('CREATE TABLE IF NOT EXISTS `' . $objectTable . "` (
@@ -156,42 +156,42 @@ class Dao extends Model\Dao\AbstractDao
         if (is_array($this->model->getFieldDefinitions()) && count($this->model->getFieldDefinitions())) {
             foreach ($this->model->getFieldDefinitions() as $key => $value) {
 
-                // if a datafield requires more than one column in the query table
-                if (is_array($value->getQueryColumnType())) {
-                    foreach ($value->getQueryColumnType() as $fkey => $fvalue) {
-                        $this->addModifyColumn($objectTable, $key . '__' . $fkey, $fvalue, '', 'NULL');
-                        $protectedColums[] = $key . '__' . $fkey;
+                if ($value instanceof DataObject\ClassDefinition\Data\ResourcePersistenceAwareInterface || method_exists($value, 'getDataForResource')) {
+                    // if a datafield requires more than one column in the datastore table => only for non-relation types
+                    if(!$value->isRelationType()) {
+                        if (is_array($value->getColumnType())) {
+                            foreach ($value->getColumnType() as $fkey => $fvalue) {
+                                $this->addModifyColumn($objectDatastoreTable, $key . '__' . $fkey, $fvalue, '', 'NULL');
+                                $protectedDatastoreColumns[] = $key . '__' . $fkey;
+                            }
+                        } elseif ($value->getColumnType()) {
+                            $this->addModifyColumn($objectDatastoreTable, $key, $value->getColumnType(), '', 'NULL');
+                            $protectedDatastoreColumns[] = $key;
+                        }
                     }
+
+                    $this->addIndexToField($value, $objectDatastoreTable, 'getColumnType', true);
                 }
 
-                // if a datafield requires more than one column in the datastore table => only for non-relation types
-                if (!$value->isRelationType() && is_array($value->getColumnType())) {
-                    foreach ($value->getColumnType() as $fkey => $fvalue) {
-                        $this->addModifyColumn($objectDatastoreTable, $key . '__' . $fkey, $fvalue, '', 'NULL');
-                        $protectedDatastoreColumns[] = $key . '__' . $fkey;
+                if ($value instanceof DataObject\ClassDefinition\Data\QueryResourcePersistenceAwareInterface || method_exists($value, 'getDataForQueryResource')) {
+                    // if a datafield requires more than one column in the query table
+                    if (is_array($value->getQueryColumnType())) {
+                        foreach ($value->getQueryColumnType() as $fkey => $fvalue) {
+                            $this->addModifyColumn($objectTable, $key . '__' . $fkey, $fvalue, '', 'NULL');
+                            $protectedColumns[] = $key . '__' . $fkey;
+                        }
+                    } elseif ($value->getQueryColumnType()) {
+                        $this->addModifyColumn($objectTable, $key, $value->getQueryColumnType(), '', 'NULL');
+                        $protectedColumns[] = $key;
                     }
-                }
 
-                // everything else
-                //                if (!is_array($value->getQueryColumnType()) && !is_array($value->getColumnType())) {
-                if (!is_array($value->getQueryColumnType()) && $value->getQueryColumnType()) {
-                    $this->addModifyColumn($objectTable, $key, $value->getQueryColumnType(), '', 'NULL');
-                    $protectedColums[] = $key;
+                    $this->addIndexToField($value, $objectTable, 'getQueryColumnType');
                 }
-                if (!is_array($value->getColumnType()) && $value->getColumnType() && !$value->isRelationType()) {
-                    $this->addModifyColumn($objectDatastoreTable, $key, $value->getColumnType(), '', 'NULL');
-                    $protectedDatastoreColumns[] = $key;
-                }
-                //                }
-
-                // add indices
-                $this->addIndexToField($value, $objectTable, 'getQueryColumnType');
-                $this->addIndexToField($value, $objectDatastoreTable, 'getColumnType', true);
             }
         }
 
         // remove unused columns in the table
-        $this->removeUnusedColumns($objectTable, $columnsToRemove, $protectedColums);
+        $this->removeUnusedColumns($objectTable, $columnsToRemove, $protectedColumns);
         $this->removeUnusedColumns($objectDatastoreTable, $datastoreColumnsToRemove, $protectedDatastoreColumns);
 
         // remove / cleanup unused relations
