@@ -147,7 +147,6 @@
 						"style":"",
 						"permissions":null,
 						"datatype":"data",
-						"columnType":null,
 						"invisible":false,
 						"visibleGridView":false,
 						"visibleSearch":false

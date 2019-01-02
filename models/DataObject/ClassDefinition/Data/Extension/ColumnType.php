@@ -29,4 +29,17 @@ trait ColumnType
 
         return null;
     }
+
+    /**
+     * @param string | array $columnType
+     * @return $this
+     */
+    public function setColumnType($columnType)
+    {
+        if (property_exists($this, 'columnType')) {
+            $this->columnType = $columnType;
+        }
+
+        return $this;
+    }
 }

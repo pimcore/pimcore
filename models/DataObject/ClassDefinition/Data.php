@@ -1380,9 +1380,16 @@ abstract class Data
      */
     protected function triggerDeprecatedWarning(string $class, string $method)
     {
+        $trace = '';
+        try {
+            throw new \Exception('foo');
+        } catch (\Exception $e) {
+            $trace = $e->getTraceAsString();
+        }
+
         @trigger_error(
             sprintf(
-                '%s uses method %s from the abstract class. This won\'t work in v6.0, please use the proper interfaces and provided traits.',
+                '%s uses method %s from the abstract class. This won\'t work in v6.0, please use the proper interfaces and provided traits.' . "\n\n" . $trace,
                 $class,
                 $method
             ),
