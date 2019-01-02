@@ -212,10 +212,6 @@
 								"style":"border-right:1px solid green;",
 								"permissions":"",
 								"datatype":"data",
-								"columnType":{
-									"id":"int(11)",
-									"type":"enum('document','asset','object')"
-								},
 								"invisible":false,
 								"visibleGridView":true,
 								"visibleSearch":true
