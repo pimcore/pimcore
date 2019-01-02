@@ -160,8 +160,6 @@
                                 "id": "extModel3131-4"
                             }
                         ],
-                        "queryColumnType": "",
-                        "columnType": "",
                         "phpdocType": "\\Pimcore\\Model\\DataObject\\Data\\StructuredTable",
                         "name": "ranges",
                         "title": "Ranges",
