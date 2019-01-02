@@ -493,7 +493,7 @@ pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.
                                 };
 
                                 if (!this.objectAlreadyExists(initData.id)) {
-                                    toBeRequested.add(this.loadObjectData(initData, this.fieldConfig.visibleFields));
+                                    toBeRequested.add(this.loadObjectData(initData, this.visibleFields));
                                 }
                             }
                         }

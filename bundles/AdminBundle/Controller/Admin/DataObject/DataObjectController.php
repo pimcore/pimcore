@@ -549,7 +549,10 @@ class DataObjectController extends ElementControllerBase implements EventedContr
             }
 
             $relations = [];
-            if (!$fielddefinition instanceof ManyToManyObjectRelation || $fielddefinition instanceof ReverseManyToManyObjectRelation) {
+            if (!$fielddefinition instanceof ManyToManyObjectRelation
+                || ($fielddefinition instanceof ManyToManyObjectRelation && !$fielddefinition->getVisibleFields())
+                || $fielddefinition instanceof ReverseManyToManyObjectRelation) {
+
                 $relations = $object->getRelationData($refKey, !$fielddefinition->isRemoteOwner(), $refId);
             }
             if (empty($relations) && !empty($parent)) {
