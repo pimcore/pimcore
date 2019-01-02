@@ -789,7 +789,7 @@ QUERY;
                 // add non existing columns in the table
                 if (is_array($fieldDefinitions) && count($fieldDefinitions)) {
                     foreach ($fieldDefinitions as $value) {
-                        if ($value->getQueryColumnType()) {
+                        if ($value instanceof DataObject\ClassDefinition\Data\QueryResourcePersistenceAwareInterface || method_exists($value, 'getDataForQueryResource')) {
                             $key = $value->getName();
 
                             // if a datafield requires more than one column in the query table
@@ -798,16 +798,13 @@ QUERY;
                                     $this->addModifyColumn($queryTable, $key.'__'.$fkey, $fvalue, '', 'NULL');
                                     $protectedColumns[] = $key.'__'.$fkey;
                                 }
-                            }
-
-                            // everything else
-                            if (!is_array($value->getQueryColumnType()) && $value->getQueryColumnType()) {
+                            } elseif ($value->getQueryColumnType()) {
                                 $this->addModifyColumn($queryTable, $key, $value->getQueryColumnType(), '', 'NULL');
                                 $protectedColumns[] = $key;
                             }
 
                             // add indices
-                            $this->addIndexToField($value, $queryTable);
+                            $this->addIndexToField($value, $queryTable, 'getQueryColumnType');
                         }
                     }
                 }
