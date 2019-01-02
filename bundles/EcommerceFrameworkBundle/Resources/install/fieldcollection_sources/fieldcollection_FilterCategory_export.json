@@ -113,7 +113,6 @@
 						"style":"",
 						"permissions":"",
 						"datatype":"data",
-						"columnType":"",
 						"invisible":false,
 						"visibleGridView":false,
 						"visibleSearch":false
@@ -229,7 +228,6 @@
 						"style":"",
 						"permissions":"",
 						"datatype":"data",
-						"columnType":"",
 						"invisible":false,
 						"visibleGridView":false,
 						"visibleSearch":false
