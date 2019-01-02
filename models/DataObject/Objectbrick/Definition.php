@@ -188,6 +188,8 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
             unset($clone->oldClassDefinitions);
             unset($clone->fieldDefinitions);
 
+            DataObject\ClassDefinition::cleanupForExport($clone->layoutDefinitions);
+
             $exportedClass = var_export($clone, true);
 
             $data = '<?php ';

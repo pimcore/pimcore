@@ -323,13 +323,14 @@ class ClassDefinition extends Model\AbstractModel
             );
         }
 
-        $clone = clone $this;
-        $clone->setDao(null);
-        unset($clone->fieldDefinitions);
-
-        self::cleanupForExport($clone->layoutDefinitions);
 
         if ($saveDefinitionFile) {
+            $clone = clone $this;
+            $clone->setDao(null);
+            unset($clone->fieldDefinitions);
+
+            self::cleanupForExport($clone->layoutDefinitions);
+
             $exportedClass = var_export($clone, true);
 
             $data = '<?php ';
