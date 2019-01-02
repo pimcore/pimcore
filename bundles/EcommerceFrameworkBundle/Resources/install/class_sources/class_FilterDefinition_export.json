@@ -1,5 +1,4 @@
 {
-    "id": "7",
     "description": null,
     "parentClass": "\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\Model\\AbstractFilterDefinition",
     "listingParentClass": null,

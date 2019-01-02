@@ -227,7 +227,7 @@ class Installer extends MigrationInstaller
             $class->setId($classId);
 
             $data = file_get_contents($path);
-            $success = Service::importClassDefinitionFromJson($class, $data);
+            $success = Service::importClassDefinitionFromJson($class, $data, false, true);
 
             if (!$success) {
                 throw new AbortMigrationException(sprintf(
