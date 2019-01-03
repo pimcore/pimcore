@@ -15,6 +15,7 @@
 namespace Pimcore\Bundle\AdminBundle\Controller\Searchadmin;
 
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
+use Pimcore\Bundle\AdminBundle\Helper\GridHelperService;
 use Pimcore\Event\AdminEvents;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
@@ -44,7 +45,7 @@ class SearchController extends AdminController
      * @todo: $conditionClassnameParts could be undefined
      * @todo: $data could be undefined
      */
-    public function findAction(Request $request, EventDispatcherInterface $eventDispatcher)
+    public function findAction(Request $request, EventDispatcherInterface $eventDispatcher, GridHelperService $gridHelperService)
     {
         $allParams = array_merge($request->request->all(), $request->query->all());
 
@@ -144,10 +145,10 @@ class SearchController extends AdminController
 
             //string statements for divided filters
             $conditionFilters = count($unlocalizedFieldsFilters)
-                ? DataObject\Service::getFilterCondition($this->encodeJson($unlocalizedFieldsFilters), $class)
+                ? $gridHelperService->getFilterCondition($this->encodeJson($unlocalizedFieldsFilters), $class)
                 : null;
             $localizedConditionFilters = count($localizedFieldsFilters)
-                ? DataObject\Service::getFilterCondition($this->encodeJson($localizedFieldsFilters), $class)
+                ? $gridHelperService->getFilterCondition($this->encodeJson($localizedFieldsFilters), $class)
                 : null;
 
             $join = '';

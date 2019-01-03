@@ -167,12 +167,16 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
                 }
             }
 
+            var fields = this.getGridConfig().columns;
+            var fieldKeys = Object.keys(fields);
+
             var params = {
                 filter: filters,
                 condition: condition,
                 classId: this.classId,
                 folderId: this.element.id,
                 objecttype: this.objecttype,
+                "fields[]": fieldKeys,
                 language: this.gridLanguage
             };
 
