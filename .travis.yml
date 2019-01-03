@@ -80,6 +80,7 @@ install:
   - if [ $TASK_DOCS == 1 ]; then .ci/setup-docs.sh; fi
 
 before_script:
+  - phpenv config-rm xdebug.ini
   - if [ $TASK_TESTS == 1 ]; then .travis/setup-php.sh; fi
   - if [ $TASK_TESTS == 1 ]; then .travis/setup-functional-tests.sh; fi
 
