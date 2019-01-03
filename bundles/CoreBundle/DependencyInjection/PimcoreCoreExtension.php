@@ -105,7 +105,7 @@ class PimcoreCoreExtension extends ConfigurableExtension implements PrependExten
         $loader->load('analytics.yml');
         $loader->load('sitemaps.yml');
         $loader->load('aliases.yml');
-        $loader->load('optimizer.yml');
+        $loader->load('image_optimizers.yml');
         $loader->load('commands.yml');
 
         $this->configureImplementationLoaders($container, $config);
