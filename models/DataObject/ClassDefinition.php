@@ -323,7 +323,6 @@ class ClassDefinition extends Model\AbstractModel
             );
         }
 
-
         if ($saveDefinitionFile) {
             $clone = clone $this;
             $clone->setDao(null);

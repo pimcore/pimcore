@@ -32,6 +32,7 @@ trait ColumnType
 
     /**
      * @param string | array $columnType
+     *
      * @return $this
      */
     public function setColumnType($columnType)
