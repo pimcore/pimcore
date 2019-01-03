@@ -80,7 +80,7 @@ Replace the `scripts` and `autoload` sections in your `composer.json` with the f
 ```
 rm composer.lock
 rm -rf vendor
-COMPOSER_MEMORY_LIMIT=3G composer require pimcore/pimcore:5.4.*
+COMPOSER_MEMORY_LIMIT=-1 composer require pimcore/pimcore:5.4.*
 ```
 
 If this doesn't help, try to remove the remaining dependencies until you've found the package that causes the issue. 
