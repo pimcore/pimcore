@@ -143,6 +143,29 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     /**
+     * @param string $hash
+     * @return string
+     */
+    public function getBinaryFileIdForHash(string $hash) : ?string {
+        $hash = $this->db->fetchOne('SELECT IFNULL(binaryFileId, id) FROM versions WHERE binaryFileHash = ? AND cid = ? ORDER BY id ASC LIMIT 1', [$hash, $this->model->getCid()]);
+        if(!$hash) {
+            $hash = null;
+        }
+
+        return $hash;
+    }
+
+    /**
+     * @param string|null $hash
+     * @return bool
+     */
+    public function isBinaryHashInUse(?string $hash) : bool {
+        $count = $this->db->fetchOne('SELECT count(*) FROM versions WHERE binaryFileHash = ? AND cid = ?', [$hash, $this->model->getCid()]);
+        $returnValue = ($count > 1);
+        return $returnValue;
+    }
+
+    /**
      * @param $elementTypes
      * @param array $ignoreIds
      *

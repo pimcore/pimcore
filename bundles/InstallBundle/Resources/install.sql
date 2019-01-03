@@ -769,10 +769,14 @@ CREATE TABLE `versions` (
   `public` tinyint(1) unsigned NOT NULL default '0',
   `serialized` tinyint(1) unsigned default '0',
   `versionCount` INT UNSIGNED NOT NULL DEFAULT '0',
+  `binaryFileHash` VARCHAR(128) NULL DEFAULT NULL COLLATE 'ascii_general_ci',
+  `binaryFileId` BIGINT(20) UNSIGNED NULL DEFAULT NULL,
   PRIMARY KEY  (`id`),
   KEY `cid` (`cid`),
   KEY `ctype` (`ctype`),
-  KEY `date` (`date`)
+  KEY `date` (`date`),
+  KEY `binaryFileHash` (`binaryFileHash`),
+  KEY `binaryFileId` (`binaryFileId`)
 ) DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `classificationstore_relations`;

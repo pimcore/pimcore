@@ -88,14 +88,24 @@ class Version extends AbstractModel
     public $stackTrace = '';
 
     /**
-     * @var bool
-     */
-    public static $disabled = false;
-
-    /**
      * @var int
      */
     public $versionCount = 0;
+
+    /**
+     * @var string|null
+     */
+    public $binaryFileHash;
+
+    /**
+     * @var int|null
+     */
+    public $binaryFileId;
+
+    /**
+     * @var bool
+     */
+    public static $disabled = false;
 
     /**
      * @param int $id
@@ -178,7 +188,15 @@ class Version extends AbstractModel
             $dataString = $data;
         }
 
-        $this->id = $this->getDao()->save();
+        $isAssetFile = false;
+        if ($data instanceof Asset && $data->getType() != 'folder' && file_exists($data->getFileSystemPath())) {
+            $isAssetFile = true;
+            $this->binaryFileHash = hash_file('sha3-512', $data->getFileSystemPath());
+            $this->binaryFileId = $this->getDao()->getBinaryFileIdForHash($this->binaryFileHash);
+        }
+
+        $id = $this->getDao()->save();
+        $this->setId($id);
 
         // check if directory exists
         $saveDir = dirname($this->getFilePath());
@@ -193,7 +211,7 @@ class Version extends AbstractModel
             File::put($this->getFilePath(), $dataString);
 
             // assets are kinda special because they can contain massive amount of binary data which isn't serialized, we append it to the data file
-            if ($data instanceof Asset && $data->getType() != 'folder' && file_exists($data->getFileSystemPath())) {
+            if ($isAssetFile && !file_exists($this->getBinaryFilePath())) {
                 $linked = false;
 
                 // we always try to create a hardlink onto the original file, the asset ensures that not the actual
@@ -234,7 +252,7 @@ class Version extends AbstractModel
             }
         }
 
-        if (is_file($this->getBinaryFilePath())) {
+        if (is_file($this->getBinaryFilePath()) && !$this->getDao()->isBinaryHashInUse($this->getBinaryFileHash())) {
             @unlink($this->getBinaryFilePath());
         }
 
@@ -313,13 +331,17 @@ class Version extends AbstractModel
 
     /**
      * Returns the path on the file system
-     *
+     * @param int|null $id
      * @return string
      */
-    protected function getFilePath()
+    protected function getFilePath(?int $id = null)
     {
+        if(!$id) {
+            $id = $this->getId();
+        }
+
         $group = floor($this->getCid() / 10000) * 10000;
-        $path = PIMCORE_VERSION_DIRECTORY . '/' . $this->getCtype() . '/g' . $group . '/' . $this->getCid() . '/' . $this->getId();
+        $path = PIMCORE_VERSION_DIRECTORY . '/' . $this->getCtype() . '/g' . $group . '/' . $this->getCid() . '/' . $id;
         if (!is_dir(dirname($path))) {
             \Pimcore\File::mkdir(dirname($path));
         }
@@ -332,14 +354,13 @@ class Version extends AbstractModel
      */
     protected function getBinaryFilePath()
     {
-
         // compatibility
         $compatibilityPath = $this->getLegacyFilePath() . '.bin';
         if (file_exists($compatibilityPath)) {
             return $compatibilityPath;
         }
 
-        return $this->getFilePath() . '.bin';
+        return $this->getFilePath($this->binaryFileId) . '.bin';
     }
 
     /**
@@ -615,6 +636,38 @@ class Version extends AbstractModel
     public function setVersionCount($versionCount): void
     {
         $this->versionCount = (int) $versionCount;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getBinaryFileHash(): ?string
+    {
+        return $this->binaryFileHash;
+    }
+
+    /**
+     * @param string|null $binaryFileHash
+     */
+    public function setBinaryFileHash(?string $binaryFileHash): void
+    {
+        $this->binaryFileHash = $binaryFileHash;
+    }
+
+    /**
+     * @return int|null
+     */
+    public function getBinaryFileId(): ?int
+    {
+        return $this->binaryFileId;
+    }
+
+    /**
+     * @param int|null $binaryFileId
+     */
+    public function setBinaryFileId(?int $binaryFileId): void
+    {
+        $this->binaryFileId = $binaryFileId;
     }
 
     public function maintenanceCompress()
