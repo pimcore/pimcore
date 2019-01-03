@@ -15,11 +15,29 @@
 namespace Pimcore\Bundle\CoreBundle\Command;
 
 use Pimcore\Console\AbstractCommand;
+use Pimcore\Image\ImageOptimizerInterface;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Finder\Finder;
 
 class ThumbnailsOptimizeImagesCommand extends AbstractCommand
 {
+    /**
+     * @var ImageOptimizerInterface
+     */
+    private $optimizer;
+
+    /**
+     * @param ImageOptimizerInterface $optimizer
+     */
+    public function __construct(ImageOptimizerInterface $optimizer)
+    {
+        parent::__construct();
+
+        $this->optimizer = $optimizer;
+    }
+
+
     protected function configure()
     {
         $this
@@ -33,14 +51,19 @@ class ThumbnailsOptimizeImagesCommand extends AbstractCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $files = rscandir(PIMCORE_TEMPORARY_DIRECTORY . '/image-thumbnails/');
-
+        $finder = new Finder();
         $savedBytesTotal = 0;
 
-        foreach ($files as $file) {
+        /**
+         * @var $file \SplFileInfo
+         */
+        foreach ($finder->files()->in(PIMCORE_TEMPORARY_DIRECTORY . '/image-thumbnails/') as $file) {
+            $file = $file->getRealPath();
+
             if (file_exists($file)) {
                 $originalFilesize = filesize($file);
-                \Pimcore\Image\Optimizer::optimize($file);
+
+                $this->optimizer->optimizeImage($file);
 
                 $savedBytes = ($originalFilesize - filesize($file));
                 $savedBytesTotal += $savedBytes;
