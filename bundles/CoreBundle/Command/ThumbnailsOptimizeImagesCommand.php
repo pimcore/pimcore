@@ -37,7 +37,6 @@ class ThumbnailsOptimizeImagesCommand extends AbstractCommand
         $this->optimizer = $optimizer;
     }
 
-
     protected function configure()
     {
         $this

@@ -331,12 +331,14 @@ class Version extends AbstractModel
 
     /**
      * Returns the path on the file system
+     *
      * @param int|null $id
+     *
      * @return string
      */
     protected function getFilePath(?int $id = null)
     {
-        if(!$id) {
+        if (!$id) {
             $id = $this->getId();
         }
 

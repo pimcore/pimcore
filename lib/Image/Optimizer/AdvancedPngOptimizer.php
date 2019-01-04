@@ -14,7 +14,6 @@
 
 namespace Pimcore\Image\Optimizer;
 
-use Pimcore\Tool\Console;
 use Symfony\Component\HttpFoundation\File\MimeType\MimeTypeGuesser;
 use Symfony\Component\HttpFoundation\File\MimeType\MimeTypeGuesserInterface;
 

@@ -19,13 +19,16 @@ interface OptimizerInterface
     /**
      * @param string $input
      * @param string $output
+     *
      * @return string
+     *
      * @throws
      */
     public function optimizeImage(string $input, string $output): string;
 
     /**
      * @param string $input
+     *
      * @return bool
      */
     public function supports(string $input): bool;

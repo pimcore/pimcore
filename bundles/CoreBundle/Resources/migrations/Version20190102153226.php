@@ -16,9 +16,9 @@ class Version20190102153226 extends AbstractPimcoreMigration
     public function up(Schema $schema)
     {
         $this->addSql("ALTER TABLE `versions`ADD COLUMN `binaryFileHash` VARCHAR(128) NULL DEFAULT NULL COLLATE 'ascii_general_ci' AFTER `versionCount`");
-        $this->addSql("ALTER TABLE `versions`ADD COLUMN `binaryFileId` BIGINT(20) UNSIGNED NULL DEFAULT NULL AFTER `binaryFileHash`");
-        $this->addSql("ALTER TABLE `versions` ADD INDEX `binaryFileHash` (`binaryFileHash`)");
-        $this->addSql("ALTER TABLE `versions` ADD INDEX `binaryFileId` (`binaryFileId`)");
+        $this->addSql('ALTER TABLE `versions`ADD COLUMN `binaryFileId` BIGINT(20) UNSIGNED NULL DEFAULT NULL AFTER `binaryFileHash`');
+        $this->addSql('ALTER TABLE `versions` ADD INDEX `binaryFileHash` (`binaryFileHash`)');
+        $this->addSql('ALTER TABLE `versions` ADD INDEX `binaryFileId` (`binaryFileId`)');
     }
 
     /**
@@ -26,7 +26,7 @@ class Version20190102153226 extends AbstractPimcoreMigration
      */
     public function down(Schema $schema)
     {
-        $this->addSql("ALTER TABLE `versions` DROP COLUMN `binaryFileHash`");
-        $this->addSql("ALTER TABLE `versions` DROP COLUMN `binaryFileId`");
+        $this->addSql('ALTER TABLE `versions` DROP COLUMN `binaryFileHash`');
+        $this->addSql('ALTER TABLE `versions` DROP COLUMN `binaryFileId`');
     }
 }

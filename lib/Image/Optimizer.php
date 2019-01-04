@@ -50,7 +50,6 @@ class Optimizer implements ImageOptimizerInterface
                         'optimizer' => $optimizer,
                     ];
                 } catch (ImageOptimizationFailedException $ex) {
-
                 }
             }
         }
@@ -94,6 +93,7 @@ class Optimizer implements ImageOptimizerInterface
 
     /**
      * @param null $type
+     *
      * @return string
      */
     private function createOutputImage($type = null): string

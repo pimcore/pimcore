@@ -51,6 +51,7 @@ abstract class AbstractCommandOptimizer implements OptimizerInterface
      * @param string $executable
      * @param string $input
      * @param string $output
+     *
      * @return string
      */
     abstract protected function getCommand(string $executable, string $input, string $output): string;
