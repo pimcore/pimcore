@@ -838,5 +838,18 @@
     "notes": "Notes",
     "bool": "Bool",
     "consent": "Consent",
-    "add_marker": "Add marker"
+    "add_marker": "Add marker",
+    "identifier_warning": "Be careful with the unique identifier because table names can contain only up to 64 characters.",
+    "unique_identifier": "Unique identifier",
+    "invalid_identifier": "Invalid identifier",
+    "identifier_already_exists": "Identifier already exists",
+    "content": "Content",
+    "send": "Send",
+    "you_can_only_drop_one_element_here": "You can only drop one element here!",
+    "translation": "Translation",
+    "delete_error_batch": "Following items cannot be deleted, do you wanna proceed with deleting the remaining?",
+    "delete_error": "The item cannot be deleted. Reason:",
+    "batch_edit_field_selected": "Batch edit selected field",
+    "batch_append_selected_to": "Append data to selected",
+    "enable_batch_edit_columns": "Enable Batch Edit for Columns"
 }
