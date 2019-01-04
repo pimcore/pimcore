@@ -4,7 +4,7 @@ Please check the [Upgrade Notes](../README.md) in detail before any update.
 
 ## Upgrading from version 5.4.0 to a newer version
 - Check your version constraint for `pimcore/pimcore` in your `composer.json` and adapt it if necessary
-- Run `COMPOSER_MEMORY_LIMIT=3G composer update`
+- Run `COMPOSER_MEMORY_LIMIT=-1 composer update`
 
 ## Upgrading from version >= 5.0 to <= 5.4.0
 - Use the built-in update functionality:  *Tools* > *Update* or the `bin/console` update command.

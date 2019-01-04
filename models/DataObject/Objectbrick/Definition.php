@@ -188,6 +188,8 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
             unset($clone->oldClassDefinitions);
             unset($clone->fieldDefinitions);
 
+            DataObject\ClassDefinition::cleanupForExport($clone->layoutDefinitions);
+
             $exportedClass = var_export($clone, true);
 
             $data = '<?php ';
@@ -235,17 +237,16 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
         $cd .= "\n\n";
 
         $cd .= '/**' ."\n";
-        $cd .= '* ' . ucfirst($this->getKey()) . " constructor." . "\n";
+        $cd .= '* ' . ucfirst($this->getKey()) . ' constructor.' . "\n";
         $cd .= '* @param DataObject\Concrete $object' . "\n";
         $cd .= '*/' . "\n";
 
         $cd .= 'public function __construct(DataObject\Concrete $object) {' . "\n";
         $cd .= "\t" . 'parent::__construct($object);' . "\n";
         $cd .= "\t" .'$this->markFieldDirty("_self");' . "\n";
-        $cd .= "}" . "\n";
+        $cd .= '}' . "\n";
 
         $cd .= "\n\n";
-
 
         if (is_array($this->getFieldDefinitions()) && count($this->getFieldDefinitions())) {
             foreach ($this->getFieldDefinitions() as $key => $def) {

@@ -218,6 +218,8 @@ class Configuration implements ConfigurationInterface
                                     ->end()
                                 ->end()
                             ->end()
+                        ->end()
+                    ->end()
                     ->arrayNode('versions')
                         ->addDefaultsIfNotSet()
                         ->children()

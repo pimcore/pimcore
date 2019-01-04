@@ -7,28 +7,12 @@ to the Pimcore 4 compatibility bridge or the Symfony Stack.
 
 - Replace your `composer.json` with [this one](https://github.com/pimcore/skeleton/blob/master/composer.json) and re-add your custom dependencies. 
   
-- Run `COMPOSER_MEMORY_LIMIT=3G composer update`
+- Run `COMPOSER_MEMORY_LIMIT=-1 composer update`
 If you encounter errors, please fix them until the command works properly.
 You can use `--no-scripts` to install dependencies and then iterate through errors in subsequent calls to save some time.
 
-- The [Pimcore CLI](https://github.com/pimcore/pimcore-cli) provides a set of commands to ease the migration. It is able
-  to do the following:
-
-  - extract Pimcore 5 build
-  - create several necessary directories
-  - move config files to new locations
-  - move class files to new location
-  - move versions to new location
-  - move logs to new location
-  - move email logs to new location
-  - move assets to new location
-  - move website folder to /legacy/website
-  - move plugins folder to /legacy/plugins
-  - update `system.php` to be ready for Pimcore 5
+- Download the [Pimcore CLI .phar file](https://github.com/pimcore/pimcore-cli) and follow [these instructions](https://github.com/pimcore/pimcore-cli/blob/master/doc/pimcore_5_migration.md).
   
-  Just follow [these instructions](https://github.com/pimcore/pimcore-cli/blob/master/doc/pimcore_5_migration.md).
-  
-- Optionally (if you can't use pimcore-cli from above) a simpler [migration.sh](./migration.sh) script can handle basic file moving for you and can be adapted to your needs
 - Refactor `constants.php` and move it to `app/constants.php`
 - Refactor `startup.php` and move content either to `AppKernel::boot()` or `AppBundle::boot()`
 

@@ -1821,6 +1821,7 @@ span.warning {
     left:0;
     background: url(/bundles/pimcoreadmin/img/flat-color-icons/hourglass.svg) center center no-repeat;
     background-size: 50px 50px;
+    text-align: center;
 }
 
 #pimcore_quicksearch_preview .full-preview.complete {
@@ -1828,8 +1829,7 @@ span.warning {
 }
 
 #pimcore_quicksearch_preview .full-preview img {
-    min-height: 100%;
-    min-width: 100%;
+    max-width: 100%;
 }
 
 #pimcore_quicksearch_preview .data-table {

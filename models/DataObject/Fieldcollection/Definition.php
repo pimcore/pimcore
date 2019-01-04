@@ -289,6 +289,7 @@ class Definition extends Model\AbstractModel
             $clone = clone $this;
             $clone->setDao(null);
             unset($clone->fieldDefinitions);
+            DataObject\ClassDefinition::cleanupForExport($clone->layoutDefinitions);
 
             $exportedClass = var_export($clone, true);
 

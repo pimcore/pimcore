@@ -21,6 +21,9 @@ use Pimcore\Model\DataObject\ClassDefinition\Data\ResourcePersistenceAwareInterf
 
 class IndexFieldSelection extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface
 {
+    use Data\Extension\ColumnType;
+    use Data\Extension\QueryColumnType;
+
     /**
      * Static type of this element
      *

@@ -21,6 +21,9 @@ function t(key, defaultValue) {
         pimcore.globalmanager.add("translations_admin_translated_values", []);
     }
 
+    //make sure 'key' is a string
+    key = String(key);
+
     // remove plus at the start and the end to avoid double translations
     key = key.replace(/^[\+]+(.*)[\+]+$/, function(match, $1, offset, original) {
         return $1;
