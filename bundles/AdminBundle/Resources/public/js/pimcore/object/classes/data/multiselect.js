@@ -195,7 +195,7 @@ pimcore.object.classes.data.multiselect = Class.create(pimcore.object.classes.da
             autoHeight: true
         });
 
-        selectionModel = valueGrid.getSelectionModel();;
+        selectionModel = valueGrid.getSelectionModel();
         valueGrid.on("afterrender", function () {
 
             var dropTargetEl = valueGrid.getEl();

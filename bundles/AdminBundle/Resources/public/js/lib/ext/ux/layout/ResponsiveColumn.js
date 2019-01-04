@@ -162,7 +162,7 @@ function (Responsive) {
                 // No parallel measurement, cannot lay out boxes.
                 if (gotWidth === false) {
                     targetContext.domBlock(me, 'width');
-                    return false;;
+                    return false;
                 }
                 if (!gotWidth) {
                     // gotWidth is undefined, which means we must be width shrink wrap.
