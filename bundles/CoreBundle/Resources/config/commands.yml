@@ -1,5 +1,5 @@
 services:
-    Pimcore\Bundle\CoreBundle\Command\ThumbnailsOptimizeImagesCommand:
+    Pimcore\Bundle\CoreBundle\Command\OptimizeImageThumbnailsCommand:
         arguments:
             - '@Pimcore\Image\Optimizer'
         tags:
