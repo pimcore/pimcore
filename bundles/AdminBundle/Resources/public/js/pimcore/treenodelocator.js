@@ -94,7 +94,7 @@ pimcore.treenodelocator.searchInTree = function (element, id, elementType, tree,
                 try {
                     var lastExpandedNode = pimcore.treenodelocator.getLastExpandedNode(path, tree);
                     if (!lastExpandedNode) {
-                        lastExpandedNode = tree.getRootNode();
+                        lastExpandedNode = tree.getRootNode();;
                     }
                     if (lastExpandedNode) {
                         lastExpandedNode.expand();
