@@ -568,8 +568,8 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                 } else {
                     foreach ($relations as $rel) {
                         if ($fielddefinition instanceof ManyToManyObjectRelation) {
-                            $rel["fullpath"] = $rel["path"];
-                            $rel["classname"] = $rel["subtype"];
+                            $rel['fullpath'] = $rel['path'];
+                            $rel['classname'] = $rel['subtype'];
                             $data[] = $rel;
                         } else {
                             $data[] = [$rel['id'],
