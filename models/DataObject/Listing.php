@@ -60,7 +60,7 @@ class Listing extends Model\Listing\AbstractListing implements \Zend_Paginator_A
     }
 
     /**
-     * @param string $objects
+     * @param array $objects
      *
      * @return $this
      */
