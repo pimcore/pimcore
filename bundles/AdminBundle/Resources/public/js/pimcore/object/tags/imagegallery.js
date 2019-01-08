@@ -278,7 +278,6 @@ pimcore.object.tags.imageGallery = Class.create(pimcore.object.tags.abstract, {
                         var hotspotImage = new pimcore.object.tags.hotspotimage(recordData, fieldConfig, objectField.hotspotConfig);
                         hotspotImage.updateContext(objectField.context);
                         var itemCount = objectField.component.items.length;
-                        console.log(itemCount);
 
                         var dragableComponent = objectField.wrap(hotspotImage);
                         objectField.component.insert(itemCount - 1, dragableComponent);
