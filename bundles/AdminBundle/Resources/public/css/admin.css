@@ -1232,7 +1232,7 @@ span.warning {
 /* custom styles */
 
 .x-tree-view .x-tree-icon.pimcore_tree_node_loading_indicator {
-    background: url(/bundles/pimcoreadmin/img/panel-loader.gif) center center no-repeat !important;;
+    background: url(/bundles/pimcoreadmin/img/panel-loader.gif) center center no-repeat !important;
 }
 
 .pimcore_droptarget_input, .input_drop_target, .input_drop_target input  {
