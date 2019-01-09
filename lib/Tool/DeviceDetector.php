@@ -125,6 +125,30 @@ class DeviceDetector
     {
         $this->wasUsed = $wasUsed;
     }
+    
+    /**
+     * Set the device type manually.
+     * @param $type either 'desktop', 'tablet', or 'phone'.
+     * @return void, exception is thrown if type is unknown.
+    **/
+    public function setDeviceType($type) {
+        $instance = self::$instance;
+        if ($type == 'desktop') {
+            $instance->isDesktop = true;
+            $instance->isPhone = false;
+            $instance->isTablet = false;
+        } elseif ($type == 'tablet') {
+            $instance->isTablet = true;
+            $instance->isDesktop = false;
+            $instance->isPhone = false;
+        } elseif (in_array($type, ['mobile', 'phone'])) {
+            $instance->isPhone = true;
+            $instance->isDesktop = false;
+            $instance->isTablet = false;
+        } else {
+            throw new \Exception(sprintf('Unknown device "%s".', $type));
+        }
+    }    
 
     /**
      * @return string
