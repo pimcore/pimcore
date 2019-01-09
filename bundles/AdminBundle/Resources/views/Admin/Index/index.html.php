@@ -634,6 +634,7 @@ $scripts = array(
     "pimcore/report/custom/report.js",
     "pimcore/report/custom/definitions/sql.js",
     "pimcore/report/custom/definitions/analytics.js",
+    "pimcore/report/custom/toolbarenricher.js",
 
     "pimcore/settings/tagmanagement/panel.js",
     "pimcore/settings/tagmanagement/item.js",

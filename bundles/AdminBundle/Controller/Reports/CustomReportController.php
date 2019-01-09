@@ -38,13 +38,22 @@ class CustomReportController extends ReportsControllerBase implements EventedCon
      */
     public function treeAction(Request $request)
     {
+        $this->checkPermission('reports_config');
         $reports = CustomReport\Config::getReportsList();
+        return $this->adminJson($reports);
+    }
 
-        if ($request->get('portlet')) {
-            return $this->adminJson(['data' => $reports]);
-        } else {
-            return $this->adminJson($reports);
-        }
+    /**
+     * @Route("/portlet-report-list", methods={"GET", "POST"})
+     *
+     * @param Request $request
+     *
+     * @return JsonResponse
+     */
+    public function portletReportListAction(Request $request)
+    {
+        $reports = CustomReport\Config::getReportsList($this->getAdminUser());
+        return $this->adminJson(['data' => $reports]);
     }
 
     /**
@@ -56,6 +65,8 @@ class CustomReportController extends ReportsControllerBase implements EventedCon
      */
     public function addAction(Request $request)
     {
+        $this->checkPermission('reports_config');
+
         $success = false;
 
         $report = CustomReport\Config::getByName($request->get('name'));
@@ -80,6 +91,8 @@ class CustomReportController extends ReportsControllerBase implements EventedCon
      */
     public function deleteAction(Request $request)
     {
+        $this->checkPermission('reports_config');
+
         $report = CustomReport\Config::getByName($request->get('name'));
         $report->delete();
 
@@ -95,6 +108,8 @@ class CustomReportController extends ReportsControllerBase implements EventedCon
      */
     public function cloneAction(Request $request)
     {
+        $this->checkPermission('reports_config');
+
         $newName = $request->get('newName');
         $report = CustomReport\Config::getByName($newName);
         if ($report) {
@@ -143,6 +158,8 @@ class CustomReportController extends ReportsControllerBase implements EventedCon
      */
     public function updateAction(Request $request)
     {
+        $this->checkPermission('reports_config');
+
         $report = CustomReport\Config::getByName($request->get('name'));
         $data = $this->decodeJson($request->get('configuration'));
 
@@ -228,7 +245,7 @@ class CustomReportController extends ReportsControllerBase implements EventedCon
         $reports = [];
 
         $list = new CustomReport\Config\Listing();
-        $items = $list->load();
+        $items = $list->getDao()->loadForGivenUser($this->getAdminUser());
 
         /** @var $report CustomReport\Config */
         foreach ($items as $report) {

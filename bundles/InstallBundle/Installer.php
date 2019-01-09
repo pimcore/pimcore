@@ -698,6 +698,7 @@ class Installer
             ['key' => 'recyclebin'],
             ['key' => 'redirects'],
             ['key' => 'reports'],
+            ['key' => 'reports_config'],
             ['key' => 'robots.txt'],
             ['key' => 'routes'],
             ['key' => 'seemode'],
