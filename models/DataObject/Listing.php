@@ -178,7 +178,7 @@ class Listing extends Model\Listing\AbstractListing implements \Zend_Paginator_A
      * @param int $offset
      * @param int $itemCountPerPage
      *
-     * @return int
+     * @return Model\DataObject[]
      */
     public function getItems($offset, $itemCountPerPage)
     {
