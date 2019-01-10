@@ -301,7 +301,7 @@
     background: url(/bundles/pimcoreadmin/img/flat-color-icons/text.svg) center center no-repeat !important;
 }
 
-.pimcore_icon_mpg, .pimcore_icon_mpeg, .pimcore_icon_divx, .pimcore_icon_avi, .pimcore_icon_mov, .pimcore_icon_wmv, .pimcore_icon_3gp, .pimcore_icon_f4v, .pimcore_icon_flv, .pimcore_icon_mp4, .pimcore_icon_webm, .pimcore_icon_video {
+.pimcore_icon_mpg, .pimcore_icon_mpeg, .pimcore_icon_divx, .pimcore_icon_avi, .pimcore_icon_mov, .pimcore_icon_wmv, .pimcore_icon_3gp, .pimcore_icon_f4v, .pimcore_icon_flv, .pimcore_icon_mp4, .pimcore_icon_webm, .pimcore_icon_video, .pimcore_icon_vob {
     background: url(/bundles/pimcoreadmin/img/flat-color-icons/clapperboard.svg) center center no-repeat !important;
 }
 
@@ -318,6 +318,10 @@
 
 
 .pimcore_icon_help, .pimcore_icon_operator_assetmetadatagetter {
+    background: url(/bundles/pimcoreadmin/img/flat-color-icons/info.svg) center center no-repeat !important;
+}
+
+.pimcore_icon_ico {
     background: url(/bundles/pimcoreadmin/img/flat-color-icons/info.svg) center center no-repeat !important;
 }
 
