@@ -76,7 +76,7 @@ class Objectbrick extends Model\AbstractModel
         } else {
             if (empty($this->items)) {
                 foreach (get_object_vars($this) as $var) {
-                    if ($var instanceof \Pimcore\Model\Objectbrick\Data\AbstractData) {
+                    if ($var instanceof Objectbrick\Data\AbstractData) {
                         $this->items[] = $var;
                     }
                 }
@@ -163,7 +163,7 @@ class Objectbrick extends Model\AbstractModel
         foreach ($getters as $getter) {
             $brick = $this->$getter();
 
-            if ($brick instanceof \Pimcore\Model\Objectbrick\Data\AbstractData) {
+            if ($brick instanceof Objectbrick\Data\AbstractData) {
                 if ($brick->getDoDelete()) {
                     $brick->delete($object);
 
@@ -236,7 +236,7 @@ class Objectbrick extends Model\AbstractModel
         // update all items with the new $object
         if (is_array($this->getItems())) {
             foreach ($this->getItems() as $brick) {
-                if ($brick instanceof \Pimcore\Model\Objectbrick\Data\AbstractData) {
+                if ($brick instanceof Objectbrick\Data\AbstractData) {
                     $brick->setObject($object);
                 }
             }
@@ -252,7 +252,7 @@ class Objectbrick extends Model\AbstractModel
     {
         if (is_array($this->getItems())) {
             foreach ($this->getItems() as $brick) {
-                if ($brick instanceof \Pimcore\Model\Objectbrick\Data\AbstractData) {
+                if ($brick instanceof Objectbrick\Data\AbstractData) {
                     $brick->delete($object);
                 }
             }
