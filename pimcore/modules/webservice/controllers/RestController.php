@@ -42,7 +42,7 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice
     {
         if ($this->getParam("condense")) {
             \Pimcore\Model\Object\ClassDefinition\Data::setDropNullValues(true);
-            Webservice\Data\Object::setDropNullValues(true);
+            Webservice\Data\ConcreteObject::setDropNullValues(true);
         }
 
         $profile = $this->getParam("profiling");
@@ -811,7 +811,7 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice
                 $keys = [];
 
                 foreach ($items as $item) {
-                    /** @var  $item Object\KeyValue\KeyConfig */
+                    /** @var  $item \Pimcore\Model\Object\KeyValue\KeyConfig */
                     $keys[] = $item->getObjectVars();
                 }
                 $definition["keys"] = $keys;
@@ -1519,8 +1519,8 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice
             $wsData->$key = $value;
         }
 
-        if ($wsData instanceof Pimcore\Model\Webservice\Data\Object) {
-            /** @var Pimcore\Model\Webservice\Data\Object key */
+        if ($wsData instanceof Webservice\Data\ConcreteObject) {
+            /** @var Pimcore\Model\Webservice\Data\ConcreteObject key */
             $wsData->key = Element\Service::getValidKey($wsData->key, "object");
         } elseif ($wsData instanceof Pimcore\Model\Webservice\Data\Document) {
             /** @var Pimcore\Model\Webservice\Data\Document key */
