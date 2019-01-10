@@ -128,10 +128,13 @@ class DeviceDetector
 
     /**
      * Set the device type manually. Possible values for type: 'desktop', 'tablet', or 'phone'
+     *
      * @param string $type
+     *
      * @throws \Exception
      */
-    public function setDeviceType(string $type) {
+    public function setDeviceType(string $type)
+    {
         $instance = self::$instance;
         if ($type == 'desktop') {
             $instance->isDesktop = true;
@@ -148,7 +151,7 @@ class DeviceDetector
         } else {
             throw new \Exception(sprintf('Unknown device "%s".', $type));
         }
-    }    
+    }
 
     /**
      * @return string
