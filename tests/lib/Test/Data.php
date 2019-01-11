@@ -868,8 +868,8 @@ class Test_Data
         }
 
         for ($i = 0; $i < count($expected); $i++) {
-            $p1 = $expected[i];
-            $p2 = $properties[i];
+            $p1 = $expected[$i];
+            $p2 = $properties[$i];
             if ($p1["key"] != $p2["key"] || $p1["value"] != $p2["value"] || $p1["metadata"] != $p2["metadata"]) {
                 print("    property does not match\n");
 
