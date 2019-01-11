@@ -17,6 +17,7 @@ namespace Pimcore\Templating\Helper;
 use Pimcore\Cache as CacheManager;
 use Pimcore\Http\Request\Resolver\EditmodeResolver;
 use Symfony\Component\Templating\Helper\Helper;
+use Pimcore\Tool;
 
 class Cache extends Helper
 {
@@ -69,6 +70,10 @@ class Cache extends Helper
     {
         $this->key = 'pimcore_viewcache_' . $name;
         $this->force = $force;
+
+        if (Tool\Frontend::hasWebpSupport()) {
+            $this->key .= 'webp';
+        }
 
         if (!$lifetime) {
             $lifetime = null;
