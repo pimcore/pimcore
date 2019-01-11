@@ -49,7 +49,7 @@ Document::setHideUnpublished(true);
 // Error reporting is enabled in CLI
 @ini_set("display_errors", "On");
 @ini_set("display_startup_errors", "On");
-error_reporting(E_ALL & ~E_NOTICE & ~E_STRICT);
+error_reporting(E_ALL & ~E_NOTICE & ~E_STRICT & ~E_DEPRECATED);
 
 // Pimcore\Console handles maintenance mode through the AbstractCommand
 if (!$pimcoreConsole) {
