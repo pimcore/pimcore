@@ -737,7 +737,7 @@ class Pimcore
 
         // custom error logging in DEBUG mode & DEVMODE
         if (PIMCORE_DEVMODE || PIMCORE_DEBUG) {
-            error_reporting(E_ALL & ~E_NOTICE);
+            error_reporting(E_ALL & ~E_NOTICE & ~E_DEPRECATED);
         }
     }
 
