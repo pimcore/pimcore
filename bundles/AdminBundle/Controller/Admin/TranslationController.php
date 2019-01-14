@@ -379,14 +379,13 @@ class TranslationController extends AdminController
 
             $joins = [];
 
-            if ($sortingSettings['orderKey']) {
-                $sortingSettings['orderKey'] = preg_replace('/^_/', '', $sortingSettings['orderKey'], 1);
-                if (in_array($sortingSettings['orderKey'], $validLanguages)) {
-                    $sortingSettings['orderKey'] = str_replace('_', '', $sortingSettings['orderKey']); //replace all "_" from key
+            if ($orderKey = $sortingSettings['orderKey']) {
+                if (in_array(trim($orderKey, '_'), $validLanguages)) {
+                    $orderKey = trim($orderKey, '_');
                     $joins[] = [
-                        'language' => $sortingSettings['orderKey'],
+                        'language' => $orderKey,
                     ];
-                    $list->setOrderKey($sortingSettings['orderKey']);
+                    $list->setOrderKey($orderKey);
                 } else {
                     $list->setOrderKey($tableName . '.' . $sortingSettings['orderKey'], false);
                 }
