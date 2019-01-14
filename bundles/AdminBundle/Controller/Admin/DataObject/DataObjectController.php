@@ -471,7 +471,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                 'data' => $objectData,
                 'object' => $object,
             ]);
-            
+
             DataObject\Service::enrichLayoutDefinition($objectData['layout'], $object);
             $eventDispatcher->dispatch(AdminEvents::OBJECT_GET_PRE_SEND_DATA, $event);
             $data = $event->getArgument('data');
