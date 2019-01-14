@@ -380,14 +380,14 @@ class TranslationController extends AdminController
             $joins = [];
 
             if ($orderKey = $sortingSettings['orderKey']) {
-                if (in_array(trim($orderKey, "_"), $validLanguages)) {
-                    $orderKey = trim($orderKey, "_");
+                if (in_array(trim($orderKey, '_'), $validLanguages)) {
+                    $orderKey = trim($orderKey, '_');
                     $joins[] = [
                         'language' => $orderKey,
                     ];
                     $list->setOrderKey($orderKey);
                 } else {
-                    $list->setOrderKey($tableName.'.'.$sortingSettings['orderKey'], false);
+                    $list->setOrderKey($tableName . '.' . $sortingSettings['orderKey'], false);
                 }
             }
             if ($sortingSettings['order']) {
