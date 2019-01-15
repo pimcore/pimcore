@@ -215,16 +215,11 @@ class Dao extends Model\Element\Dao
      */
     public function getVersionCountForUpdate(): int
     {
+        $versionCount = (int) $this->db->fetchOne('SELECT o_versionCount FROM objects WHERE o_id = ? FOR UPDATE', $this->model->getId());
+
         if ($this->model instanceof DataObject\Concrete) {
-            $db = Db::get();
-            $versionCount = $db->fetchOne(
-                'SELECT GREATEST(o.o_versionCount, IFNULL(v.versionCount, 0)) FROM objects as o LEFT JOIN versions as v
-                        ON ctype="object" AND v.cid=o.o_id WHERE o.o_id = ? ORDER BY v.id DESC LIMIT 1 FOR UPDATE', $this->model->getId());
-        } else {
-            $versionCount = $this->db->fetchOne(
-                'SELECT o_versionCount FROM objects WHERE o_id = ? FOR UPDATE',
-                $this->model->getId()
-            );
+            $versionCount2 = (int) $this->db->fetchOne("SELECT versionCount FROM versions WHERE cid = ? AND ctype = 'object'", $this->model->getId());
+            $versionCount = max($versionCount, $versionCount2);
         }
 
         return (int) $versionCount;

@@ -286,10 +286,14 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
         $version->setUserId($this->getUserModification());
         $version->setData($this);
         $version->setNote($versionNote);
-        $versionCount = $this->getVersionCountForUpdate();
+
         if ($saveOnlyVersion) {
+            $versionCount = $this->getDao()->getVersionCountForUpdate();
             $versionCount++;
+        } else {
+            $versionCount = $this->getVersionCount();
         }
+
         $version->setVersionCount($versionCount);
         $version->save();
 
