@@ -160,6 +160,7 @@ interface ElementInterface
 
     /**
      * @param int|null $versionCount
+     *
      * @return self
      */
     public function setVersionCount(?int $versionCount): self;
@@ -167,5 +168,5 @@ interface ElementInterface
     /**
      * @return int
      */
-    public function getVersionCount() : int;
+    public function getVersionCount(): int;
 }

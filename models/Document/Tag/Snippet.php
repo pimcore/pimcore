@@ -147,7 +147,7 @@ class Snippet extends Model\Document\Tag
                     $cacheParams['target_group'] = $this->snippet->getUseTargetGroup();
                 }
 
-                if(Frontend::hasWebpSupport()) {
+                if (Frontend::hasWebpSupport()) {
                     $cacheParams['webp'] = true;
                 }
 
