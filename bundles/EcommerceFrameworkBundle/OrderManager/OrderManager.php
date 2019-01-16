@@ -615,6 +615,12 @@ class OrderManager implements IOrderManager
     {
         $key = $this->buildOrderItemKey($item);
 
+        // Prevents key collisions where a regular order product item and a gift product item
+        // could otherwise get the same key
+        if ($isGiftItem) {
+            $key .= "_gift";
+        }
+
         $orderItemList = $this->buildOrderItemList();
         $orderItemList->setCondition('o_parentId = ? AND o_key = ?', [$parent->getId(), $key]);
 
