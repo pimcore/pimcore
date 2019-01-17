@@ -292,7 +292,7 @@ abstract class AbstractRelations extends Data implements CustomResourcePersistin
                     }
                 }
             } else {
-                if ($this->supportsDirtyDetection()) {
+                if ($context['containerType'] !== 'fieldcollection' && $this->supportsDirtyDetection()) {
                     if (!$object->isFieldDirty($this->getName())) {
                         return;
                     }

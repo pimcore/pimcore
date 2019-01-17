@@ -96,7 +96,7 @@ class Dao extends Model\Dao\AbstractDao
                             $collection->setValue($key, $value);
 
                             if ($collection instanceof DataObject\DirtyIndicatorInterface) {
-                                $collection->markFieldDirty($key, true);
+                                $collection->markFieldDirty($key, false);
                             }
                         }
                     }
