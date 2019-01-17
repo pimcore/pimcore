@@ -243,7 +243,10 @@ class Manager
         $this->notesSubscriber->setAdditionalData([]);
 
         if ($saveSubject && $subject instanceof AbstractElement && method_exists($subject, 'save')) {
-            $subject->save();
+            if($subject->getPublished())
+                $subject->save();
+            else
+                $subject->saveVersion();
         }
 
         return $marking;
