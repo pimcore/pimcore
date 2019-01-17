@@ -96,7 +96,7 @@ class Dao extends Model\Dao\AbstractDao
                             $collection->setValue($key, $value);
 
                             if ($collection instanceof DataObject\DirtyIndicatorInterface) {
-                                $collection->markFieldDirty($key, false);
+                                $collection->markFieldDirty($key, true);
                             }
                         }
                     }
@@ -187,8 +187,9 @@ class Dao extends Model\Dao\AbstractDao
                 foreach ($childDefinitions as $fd) {
                     if (!DataObject\AbstractObject::isDirtyDetectionDisabled() && $this->model instanceof DataObject\DirtyIndicatorInterface) {
                         if ($fd instanceof DataObject\ClassDefinition\Data\Relations\AbstractRelations && !$this->model->isFieldDirty(
-                                '_self'
+                                $fd->getName()
                             )) {
+                            $this->model->markFieldDirty($fd->getName(), true);
                             continue;
                         }
                     }
