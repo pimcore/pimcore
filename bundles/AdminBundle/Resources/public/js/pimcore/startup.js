@@ -302,7 +302,7 @@ Ext.onReady(function () {
         }
     });
 
-    if (user.isAllowed("documents")) {
+    if (user.isAllowed("documents") || user.isAllowed("users")) {
         var store = new Ext.data.Store({
             id: 'doctypes',
             model: 'pimcore.model.doctypes',
