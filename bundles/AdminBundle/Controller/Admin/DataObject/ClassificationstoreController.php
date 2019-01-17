@@ -21,11 +21,12 @@ use Pimcore\Model\DataObject\Classificationstore;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
+use Pimcore\Controller\EventedControllerInterface;
 
 /**
  * @Route("/classificationstore")
  */
-class ClassificationstoreController extends AdminController
+class ClassificationstoreController extends AdminController implements EventedControllerInterface
 {
     /**
      * Delete collection with the group-relations
@@ -1481,4 +1482,27 @@ class ClassificationstoreController extends AdminController
 
         return $this->adminJson(['success' => true, 'page' => $page]);
     }
+    
+    /**
+     * @inheritDoc
+     */
+    public function onKernelController(FilterControllerEvent $event)
+    {
+        $isMasterRequest = $event->isMasterRequest();
+        if (!$isMasterRequest) {
+            return;
+        }
+
+        $unrestrictedActions = [];
+        $this->checkActionPermission($event, 'classes', $unrestrictedActions);
+    }
+    
+
+    /**
+     * @param FilterResponseEvent $event
+     */
+    public function onKernelResponse(FilterResponseEvent $event)
+    {
+    }
+
 }
