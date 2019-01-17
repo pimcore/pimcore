@@ -112,7 +112,7 @@ class IncludeRenderer
                     $cacheParams['target_group'] = $include->getUseTargetGroup();
                 }
 
-                if(Frontend::hasWebpSupport()) {
+                if (Frontend::hasWebpSupport()) {
                     $cacheParams['webp'] = true;
                 }
 
