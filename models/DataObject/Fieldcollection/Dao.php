@@ -187,9 +187,8 @@ class Dao extends Model\Dao\AbstractDao
                 foreach ($childDefinitions as $fd) {
                     if (!DataObject\AbstractObject::isDirtyDetectionDisabled() && $this->model instanceof DataObject\DirtyIndicatorInterface) {
                         if ($fd instanceof DataObject\ClassDefinition\Data\Relations\AbstractRelations && !$this->model->isFieldDirty(
-                                $fd->getName()
+                                '_self'
                             )) {
-                            $this->model->markFieldDirty($fd->getName(), true);
                             continue;
                         }
                     }
