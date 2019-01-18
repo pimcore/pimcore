@@ -15,15 +15,15 @@
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin\DataObject;
 
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
+use Pimcore\Controller\EventedControllerInterface;
 use Pimcore\Db;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\Classificationstore;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Annotation\Route;
-use Pimcore\Controller\EventedControllerInterface;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
+use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * @Route("/classificationstore")
@@ -1484,7 +1484,7 @@ class ClassificationstoreController extends AdminController implements EventedCo
 
         return $this->adminJson(['success' => true, 'page' => $page]);
     }
-    
+
     /**
      * @inheritDoc
      */
@@ -1498,7 +1498,6 @@ class ClassificationstoreController extends AdminController implements EventedCo
         $unrestrictedActions = [];
         $this->checkActionPermission($event, 'classes', $unrestrictedActions);
     }
-    
 
     /**
      * @param FilterResponseEvent $event
@@ -1506,5 +1505,4 @@ class ClassificationstoreController extends AdminController implements EventedCo
     public function onKernelResponse(FilterResponseEvent $event)
     {
     }
-
 }
