@@ -198,6 +198,8 @@ class ClassificationstoreController extends AdminController implements EventedCo
      */
     public function collectionsActionGet(Request $request)
     {
+        $this->checkPermission('objects');
+
         $start = 0;
         $limit = $request->get('limit') ? $request->get('limit') : 15;
 
@@ -360,6 +362,8 @@ class ClassificationstoreController extends AdminController implements EventedCo
      */
     public function groupsActionGet(Request $request)
     {
+        $this->checkPermission('objects');
+
         $start = 0;
         $limit = 15;
         $orderKey = 'name';
@@ -916,6 +920,8 @@ class ClassificationstoreController extends AdminController implements EventedCo
      */
     public function addCollectionsAction(Request $request)
     {
+        $this->checkPermission('objects');
+
         $ids = $this->decodeJson($request->get('collectionIds'));
         $oid = $request->get('oid');
         $object = DataObject\AbstractObject::getById($oid);
@@ -1022,6 +1028,8 @@ class ClassificationstoreController extends AdminController implements EventedCo
      */
     public function addGroupsAction(Request $request)
     {
+        $this->checkPermission('objects');
+
         $ids = $this->decodeJson($request->get('groupIds'));
         $oid = $request->get('oid');
         $object = DataObject\AbstractObject::getById($oid);
@@ -1495,7 +1503,7 @@ class ClassificationstoreController extends AdminController implements EventedCo
             return;
         }
 
-        $unrestrictedActions = [];
+        $unrestrictedActions = ["collectionsActionGet", "groupsActionGet", "addGroupsAction", "addCollectionsAction"];
         $this->checkActionPermission($event, 'classes', $unrestrictedActions);
     }
 
