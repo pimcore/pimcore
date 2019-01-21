@@ -331,7 +331,7 @@ class Dao extends Model\Element\Dao
         $versionCount = (int) $this->db->fetchOne('SELECT versionCount FROM assets WHERE id = ? FOR UPDATE', $this->model->getId());
 
         if (!$this->model instanceof Folder) {
-            $versionCount2 = (int) $this->db->fetchOne("SELECT versionCount FROM versions WHERE cid = ? AND ctype = 'asset'", $this->model->getId());
+            $versionCount2 = (int) $this->db->fetchOne("SELECT MAX(versionCount) FROM versions WHERE cid = ? AND ctype = 'asset'", $this->model->getId());
             $versionCount = max($versionCount, $versionCount2);
         }
 

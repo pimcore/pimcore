@@ -218,7 +218,7 @@ class Dao extends Model\Element\Dao
         $versionCount = (int) $this->db->fetchOne('SELECT o_versionCount FROM objects WHERE o_id = ? FOR UPDATE', $this->model->getId());
 
         if ($this->model instanceof DataObject\Concrete) {
-            $versionCount2 = (int) $this->db->fetchOne("SELECT versionCount FROM versions WHERE cid = ? AND ctype = 'object'", $this->model->getId());
+            $versionCount2 = (int) $this->db->fetchOne("SELECT MAX(versionCount) FROM versions WHERE cid = ? AND ctype = 'object'", $this->model->getId());
             $versionCount = max($versionCount, $versionCount2);
         }
 
