@@ -398,7 +398,7 @@ class Installer
             $parts = $partsBuilder->getParts();
 
             $process = new Process($parts);
-            $process->setTimeout(120);
+            $process->setTimeout(0);
             $process->setWorkingDirectory(PIMCORE_PROJECT_ROOT);
             $process->run();
 
