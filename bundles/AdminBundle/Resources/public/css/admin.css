@@ -2041,3 +2041,22 @@ ul.leaflet-draw-actions.leaflet-draw-actions-top.leaflet-draw-actions-bottom li:
 }
 
 /** END workflow engine **/
+
+/** notifications **/
+
+#notification_value {
+    background-color: #fa3e3e;
+    border-radius: 2px;
+    color: #fff;
+    font-size: 10px;
+    line-height: 1.3;
+    min-height: 13px;
+    padding: 1px 3px;
+    background-clip: padding-box;
+    display: inline-block;
+    position: relative;
+    right: -25px;
+    bottom: -15px;
+}
+
+/** END notifications **/

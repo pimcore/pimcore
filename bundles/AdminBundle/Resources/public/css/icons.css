@@ -1325,3 +1325,15 @@
 .pimcore_icon_gridconfig_operator_renderer {
     background: url(/bundles/pimcoreadmin/img/twemoji/1f4dd.svg) center center no-repeat !important;
 }
+
+.pimcore_icon_sms {
+    background-image: url(/bundles/pimcoreadmin/img/flat-color-icons/sms.svg);
+    background-position: center center;
+    background-repeat: no-repeat;
+}
+
+.pimcore_icon_comments {
+    background-image: url(/bundles/pimcoreadmin/img/flat-color-icons/comments.svg);
+    background-position: center center;
+    background-repeat: no-repeat;
+}
