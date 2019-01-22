@@ -36,7 +36,7 @@ pimcore.notification.panel = Class.create({
 
             this.panel = new Ext.Panel({
                 id: "pimcore_notification_panel",
-                title: t("Notifications"),
+                title: t("notifications"),
                 iconCls: "pimcore_icon_comments",
                 border: false,
                 layout: 'border',
@@ -88,7 +88,7 @@ pimcore.notification.panel = Class.create({
             {header: t("sender"), flex: 2, sortable: false, dataIndex: 'sender'},
             {header: t("date"), flex: 3, sortable: true, filter: 'date', dataIndex: 'date'},
             {
-                header: t("element"),
+                header: t("attachment"),
                 xtype: 'actioncolumn',
                 flex: 1,
                 items: [

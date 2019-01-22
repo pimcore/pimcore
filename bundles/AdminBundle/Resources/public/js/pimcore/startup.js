@@ -1003,6 +1003,11 @@ pimcore["intervals"]["ping"] = window.setInterval(function () {
     });
 }, (pimcore.settings.session_gc_maxlifetime - 60) * 1000);
 
+
+pimcore["intervals"]["checkNewNotification"] = window.setInterval(function (elt) {
+    pimcore.notification.helper.updateFromServer();
+}, 30000);
+
 // refreshes the layout
 pimcore.registerNS("pimcore.layout.refresh");
 pimcore.layout.refresh = function () {

@@ -1080,6 +1080,29 @@ pimcore.layout.toolbar = Class.create({
             }
         }
 
+        // notifications
+        if (user.isAllowed("notifications")) {
+            var notificationItems = [{
+                text: t("notifications"),
+                iconCls: "pimcore_icon_comments",
+                handler: this.showNotificationTab.bind(this)
+            }];
+
+            if(user.isAllowed('notifications_send')) {
+                notificationItems.push({
+                    text: t("notifications_send"),
+                    iconCls: "pimcore_icon_sms",
+                    id: "notifications_new",
+                    handler: this.showNotificationModal.bind(this)
+                })
+            }
+
+            this.notificationMenu = new Ext.menu.Menu({
+                items: notificationItems,
+                cls: "pimcore_navigation_flyout"
+            });
+        }
+
 
         if (this.fileMenu) {
             Ext.get("pimcore_menu_file").on("mousedown", this.showSubMenu.bind(this.fileMenu));
@@ -1095,6 +1118,11 @@ pimcore.layout.toolbar = Class.create({
         }
         if (this.searchMenu) {
             Ext.get("pimcore_menu_search").on("mousedown", this.showSubMenu.bind(this.searchMenu));
+        }
+        if (this.notificationMenu) {
+            Ext.get('pimcore_notification').show();
+            Ext.get("pimcore_notification").on("mousedown", this.showSubMenu.bind(this.notificationMenu));
+            pimcore.notification.helper.updateFromServer();
         }
 
         Ext.each(Ext.query(".pimcore_menu_item"), function (el) {
@@ -1678,5 +1706,22 @@ pimcore.layout.toolbar = Class.create({
     bulkExport: function() {
         var exporter = new pimcore.object.bulkexport();
         exporter.export();
+    },
+
+    showNotificationTab: function () {
+        try {
+            pimcore.globalmanager.get("notifications").activate();
+        }
+        catch (e) {
+            pimcore.globalmanager.add("notifications", new pimcore.notification.panel());
+        }
+    },
+
+    showNotificationModal: function () {
+        if (pimcore.globalmanager.get("new_notifications")) {
+            pimcore.globalmanager.get("new_notifications").getWindow().destroy();
+        }
+
+        pimcore.globalmanager.add("new_notifications", new pimcore.notification.modal());
     }
 });

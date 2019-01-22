@@ -36,6 +36,7 @@ class NotificationController extends AdminController
 {
     /**
      * @param UserService $service
+     * @param Translator $translator
      * @return JsonResponse
      * @Route("/recipients")
      * @Method({"GET"})
@@ -47,7 +48,7 @@ class NotificationController extends AdminController
         $data = [];
 
         foreach ($service->findAll($this->getAdminUser()) as $recipient) {
-            $group = $translator->trans('Group');
+            $group = $translator->trans('group');
             $prefix = $recipient->getType() == 'role' ? $group . ' - ' : '';
 
             $data[] = [

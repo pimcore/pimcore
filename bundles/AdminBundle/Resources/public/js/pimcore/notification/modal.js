@@ -67,7 +67,7 @@ pimcore.notification.modal = Class.create({
                 }
             ]
             var elementContainer = Ext.create('Ext.form.FieldContainer', {
-                fieldLabel: t("Attachment Element"),
+                fieldLabel: t("attachment"),
                 labelWidth: 100,
                 layout: 'hbox',
                 items: elementItems,
@@ -82,7 +82,7 @@ pimcore.notification.modal = Class.create({
             {
                 xtype: "combobox",
                 name: "recipientId",
-                fieldLabel: t("Recipient"),
+                fieldLabel: t("recipient"),
                 width: "100%",
                 forceSelection: true,
                 queryMode: "local",
@@ -91,25 +91,25 @@ pimcore.notification.modal = Class.create({
                 valueField: "id",
                 displayField: "text",
                 allowBlank: false,
-                blankText: t("This field is required"),
+                blankText: t("this_field_is_required"),
                 msgTarget: "under"
             },
             {
                 xtype: "textfield",
                 name: "title",
-                fieldLabel: t("Title"),
+                fieldLabel: t("title"),
                 width: "100%",
                 allowBlank: false,
-                blankText: t("This field is required"),
+                blankText: t("this_field_is_required"),
                 msgTarget: "under"
             },
             {
                 xtype: "textareafield",
                 name: "message",
-                fieldLabel: t("Message"),
+                fieldLabel: t("message"),
                 width: "100%",
                 allowBlank: false,
-                blankText: t("This field is required"),
+                blankText: t("this_field_is_required"),
                 msgTarget: "under"
             }, elementContainer];
 
@@ -124,13 +124,13 @@ pimcore.notification.modal = Class.create({
                 autoScroll: true,
                 buttons: [
                     {
-                        text: t("Send"),
+                        text: t("send"),
                         iconCls: "pimcore_icon_accept",
                         formBind: true,
                         handler: this.send.bind(this)
                     },
                     {
-                        text: t("Close"),
+                        text: t("close"),
                         iconCls: "pimcore_icon_cancel",
                         handler: this.close.bind(this)
                     }
@@ -140,7 +140,7 @@ pimcore.notification.modal = Class.create({
             this.window = new Ext.Window({
                 width: 560,
                 iconCls: "pimcore_icon_sms",
-                title: t("Send notification"),
+                title: t("notifications_send"),
                 layout: "fit",
                 closeAction: "close",
                 plain: true,
@@ -268,7 +268,7 @@ pimcore.notification.modal = Class.create({
     },
 
     onSuccess: function (form, result, data) {
-        pimcore.helpers.showNotification(t("success"), t("Notification has been sent"), "success");
+        pimcore.helpers.showNotification(t("success"), t("notification_has_been_sent"), "success");
         this.getWindow().destroy();
     },
 

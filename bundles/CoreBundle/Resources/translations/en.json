@@ -858,7 +858,9 @@
   "sender": "Sender",
   "notifications": "Notifications",
   "notifications_send": "Send Notifications",
-  "Group": "Group",
-  "Attachment Element": "Attachment Element",
-  "Notification has been sent": "Notification has been sent"
+  "group": "Group",
+  "attachment": "Attachment",
+  "notification_has_been_sent": "Notification has been sent",
+  "recipient": "Recipient",
+  "this_field_is_required": "This field is required"
 }

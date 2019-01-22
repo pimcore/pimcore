@@ -150,6 +150,9 @@ $runtimePerspective = \Pimcore\Config::getRuntimePerspective($user);
         </ul>
     </div>
     <div id="pimcore_status">
+        <div href="#" style="display: none" id="pimcore_notification" data-menu-tooltip="<?= $this->translate("notifications") ?>" class="pimcore_icon_comments">
+            <span id="notification_value" style="display:none;"></span>
+        </div>
         <div id="pimcore_status_dev" data-menu-tooltip="DEV MODE" style="display: none;"></div>
         <div id="pimcore_status_debug" data-menu-tooltip="<?= $this->translate("debug_mode_on") ?>" style="display: none;"></div>
         <div id="pimcore_status_email" data-menu-tooltip="<?= $this->translate("mail_settings_incomplete") ?>" style="display: none;"></div>
@@ -690,7 +693,6 @@ $scripts = array(
     //notification
     "pimcore/notification/helper.js",
     "pimcore/notification/panel.js",
-    "pimcore/notification/plugin.js",
     "pimcore/notification/modal.js",
 );
 

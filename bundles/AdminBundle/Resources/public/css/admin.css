@@ -2044,6 +2044,10 @@ ul.leaflet-draw-actions.leaflet-draw-actions-top.leaflet-draw-actions-bottom li:
 
 /** notifications **/
 
+#pimcore_notification {
+    cursor: pointer;
+}
+
 #notification_value {
     background-color: #fa3e3e;
     border-radius: 2px;

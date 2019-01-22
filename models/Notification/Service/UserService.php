@@ -38,7 +38,7 @@ class UserService
         ];
 
         $userFilter = array_merge($filter, [
-            'permissions LIKE ?' => '%notifications%',
+            '(permissions LIKE ? OR admin = 1)' => '%notifications%',
         ]);
 
         $roleFilter = array_merge($filter, [
