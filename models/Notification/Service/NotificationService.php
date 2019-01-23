@@ -17,8 +17,8 @@ declare(strict_types=1);
 namespace Pimcore\Model\Notification\Service;
 
 use Pimcore\Model\Element\ElementInterface;
-use Pimcore\Model\Notification\Listing;
 use Pimcore\Model\Notification;
+use Pimcore\Model\Notification\Listing;
 use Pimcore\Model\User;
 
 class NotificationService
@@ -29,6 +29,7 @@ class NotificationService
      * @param string $title
      * @param string $message
      * @param ElementInterface|null $element
+     *
      * @throws \UnexpectedValueException
      */
     public function sendToUser(
@@ -68,6 +69,7 @@ class NotificationService
      * @param string $title
      * @param string $message
      * @param ElementInterface|null $element
+     *
      * @throws \UnexpectedValueException
      */
     public function sendToGroup(
@@ -108,7 +110,9 @@ class NotificationService
 
     /**
      * @param int $id
+     *
      * @return Notification
+     *
      * @throws \UnexpectedValueException
      */
     public function find(int $id): Notification
@@ -125,6 +129,7 @@ class NotificationService
     /**
      * @param int $id
      * @param int|null $recipientId
+     *
      * @return Notification
      */
     public function findAndMarkAsRead(int $id, ?int $recipientId = null): Notification
@@ -144,6 +149,7 @@ class NotificationService
     /**
      * @param array $filter
      * @param array $options
+     *
      * @return array
      */
     public function findAll(array $filter = [], array $options = []): array
@@ -151,7 +157,7 @@ class NotificationService
         $listing = new Listing();
 
         if (!empty($filter)) {
-            $condition          = implode(' AND ', array_keys($filter));
+            $condition = implode(' AND ', array_keys($filter));
             $conditionVariables = array_values($filter);
             $listing->setCondition($condition, $conditionVariables);
         }
@@ -159,7 +165,7 @@ class NotificationService
         $listing->setOrderKey('creationDate');
         $listing->setOrder('DESC');
         $offset = (int) $options['offset'] ?? 0;
-        $limit  = (int) $options['limit'] ?? 0;
+        $limit = (int) $options['limit'] ?? 0;
 
         $this->beginTransaction();
 
@@ -176,6 +182,7 @@ class NotificationService
     /**
      * @param int $user
      * @param int $interval
+     *
      * @return array
      */
     public function findLastUnread(int $user, int $interval): array
@@ -185,7 +192,7 @@ class NotificationService
             'recipient = ? AND `read` = 0 AND creationDate >= ?',
             [
                 $user,
-                date("Y-m-d H:i:s", time() - $interval)
+                date('Y-m-d H:i:s', time() - $interval)
             ]
         );
         $listing->setOrderKey('creationDate');
@@ -206,20 +213,21 @@ class NotificationService
 
     /**
      * @param Notification $notification
+     *
      * @return array
      */
     public function format(Notification $notification): array
     {
         $data = [
-            'id'                => $notification->getId(),
-            'type'              => $notification->getType(),
-            'title'             => $notification->getTitle(),
-            'message'           => $notification->getMessage(),
-            'sender'            => '',
-            'read'              => (int) $notification->isRead(),
-            'date'              => $notification->getCreationDate(),
+            'id' => $notification->getId(),
+            'type' => $notification->getType(),
+            'title' => $notification->getTitle(),
+            'message' => $notification->getMessage(),
+            'sender' => '',
+            'read' => (int) $notification->isRead(),
+            'date' => $notification->getCreationDate(),
             'linkedElementType' => $notification->getLinkedElementType(),
-            'linkedElementId'   => null,
+            'linkedElementId' => null,
         ];
 
         if ($notification->getLinkedElement()) {
@@ -227,7 +235,7 @@ class NotificationService
         }
 
         $sender = $notification->getSender();
-        $from   = false;
+        $from = false;
 
         if (is_int($sender)) {
             $sender = \Pimcore\Model\User::getById($senderId);
@@ -248,6 +256,7 @@ class NotificationService
 
     /**
      * @param int $user
+     *
      * @return int
      */
     public function countAllUnread(int $user): int

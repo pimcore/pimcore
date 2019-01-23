@@ -16,8 +16,8 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\Notification;
 
-use Pimcore\Model\Listing\AbstractListing;
 use Pimcore\Model;
+use Pimcore\Model\Listing\AbstractListing;
 
 /**
  * @method Listing\Dao getDao()
@@ -36,6 +36,7 @@ class Listing extends AbstractListing
 
     /**
      * @param string $key
+     *
      * @return bool
      */
     public function isValidOrderKey($key)
@@ -45,9 +46,10 @@ class Listing extends AbstractListing
 
     /**
      * @return array
+     *
      * @throws \Doctrine\DBAL\DBALException
      */
-    public function getData() : ?array
+    public function getData(): ?array
     {
         if (null === $this->data) {
             $this->setData($this->getDao()->load());
@@ -58,6 +60,7 @@ class Listing extends AbstractListing
 
     /**
      * @param array $data
+     *
      * @return Listing
      */
     public function setData(array $data): self
@@ -67,7 +70,7 @@ class Listing extends AbstractListing
         return $this;
     }
 
-        /**
+    /**
      * @return int
      */
     public function count(): int
@@ -86,12 +89,14 @@ class Listing extends AbstractListing
     /**
      * @param int $offset
      * @param int $limit
+     *
      * @return Model\Notification[]
      */
     public function getItems(int $offset, int $limit): array
     {
         $this->setOffset($offset);
         $this->setLimit($limit);
+
         return $this->getDao()->load();
     }
 
@@ -105,6 +110,7 @@ class Listing extends AbstractListing
 
     /**
      * @param array $notifications
+     *
      * @return Listing
      */
     public function setNotifications(array $notifications): self

@@ -46,7 +46,7 @@ class Version20181214145532 extends AbstractPimcoreMigration
      */
     public function down(Schema $schema)
     {
-        $this->addSql("DROP TABLE `notifications`;");
+        $this->addSql('DROP TABLE `notifications`;');
         $this->addSql("DELETE FROM users_permission_definitions WHERE `key` = 'notifications' OR `key` = 'notifications_send';");
     }
 }

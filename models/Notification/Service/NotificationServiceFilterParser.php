@@ -17,22 +17,23 @@ declare(strict_types=1);
 namespace Pimcore\Model\Notification\Service;
 
 use Symfony\Component\HttpFoundation\Request;
+
 /**
  * Class ExtJSFilterParser
  */
 class NotificationServiceFilterParser
 {
-    const KEY_FILTER   = 'filter';
-    const KEY_TYPE     = 'type';
+    const KEY_FILTER = 'filter';
+    const KEY_TYPE = 'type';
     const KEY_PROPERTY = 'property';
     const KEY_OPERATOR = 'operator';
-    const KEY_VALUE    = 'value';
+    const KEY_VALUE = 'value';
     const TYPE_STRING = 'string';
-    const TYPE_DATE   = 'date';
+    const TYPE_DATE = 'date';
     const OPERATOR_LIKE = 'like';
-    const OPERATOR_EQ   = 'eq';
-    const OPERATOR_GT   = 'gt';
-    const OPERATOR_LT   = 'lt';
+    const OPERATOR_EQ = 'eq';
+    const OPERATOR_GT = 'gt';
+    const OPERATOR_LT = 'lt';
 
     /**
      * @var Request
@@ -46,14 +47,15 @@ class NotificationServiceFilterParser
 
     /**
      * ExtJSFilterParser constructor.
+     *
      * @param Request $request
      */
     public function __construct(Request $request)
     {
-        $this->request    = $request;
+        $this->request = $request;
         $this->properties = [
             'title' => 'title',
-            'date'  => 'creationDate',
+            'date' => 'creationDate',
         ];
     }
 
@@ -64,7 +66,7 @@ class NotificationServiceFilterParser
     {
         $result = [];
         $filter = $this->request->get(self::KEY_FILTER, '[]');
-        $items  = json_decode($filter, true);
+        $items = json_decode($filter, true);
 
         foreach ($items as $item) {
             $type = $item[self::KEY_TYPE];
@@ -86,14 +88,16 @@ class NotificationServiceFilterParser
 
     /**
      * @param array $item
+     *
      * @return array
+     *
      * @throws \Exception
      */
     private function parseString(array $item): array
     {
-        $result   = null;
+        $result = null;
         $property = $this->getDbProperty($item);
-        $value    = $item[self::KEY_VALUE];
+        $value = $item[self::KEY_VALUE];
 
         switch ($item[self::KEY_OPERATOR]) {
             case self::OPERATOR_LIKE:
@@ -110,14 +114,16 @@ class NotificationServiceFilterParser
 
     /**
      * @param array $item
+     *
      * @return array
+     *
      * @throws \Exception
      */
     private function parseDate(array $item): array
     {
-        $result   = null;
+        $result = null;
         $property = $this->getDbProperty($item);
-        $value    = strtotime($item[self::KEY_VALUE]);
+        $value = strtotime($item[self::KEY_VALUE]);
 
         switch ($item[self::KEY_OPERATOR]) {
             case self::OPERATOR_EQ:
@@ -140,6 +146,7 @@ class NotificationServiceFilterParser
 
     /**
      * @param array $item
+     *
      * @return string
      */
     private function getDbProperty(array $item): string

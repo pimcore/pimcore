@@ -16,13 +16,14 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\Notification\Service;
 
-use Pimcore\Model\User\Role;
 use Pimcore\Model\User;
+use Pimcore\Model\User\Role;
 
 class UserService
 {
     /**
      * @param User $user
+     *
      * @return array
      */
     public function findAll(User $loggedIn): array
@@ -31,9 +32,9 @@ class UserService
         $roles = [];
 
         $filter = [
-            'id > ?'     => 0,
-            'id != ?'    => $loggedIn->getId(),
-            'name != ?'  => 'system',
+            'id > ?' => 0,
+            'id != ?' => $loggedIn->getId(),
+            'name != ?' => 'system',
             'active = ?' => 1,
         ];
 
@@ -45,7 +46,7 @@ class UserService
             'type = ?' => 'role'
         ]);
 
-        $condition          = implode(' AND ', array_keys($userFilter));
+        $condition = implode(' AND ', array_keys($userFilter));
         $conditionVariables = array_values($userFilter);
 
         $listing = new User\Listing();
@@ -56,7 +57,7 @@ class UserService
 
         $users = $listing->getUsers();
 
-        $condition          = implode(' AND ', array_keys($roleFilter));
+        $condition = implode(' AND ', array_keys($roleFilter));
         $conditionVariables = array_values($roleFilter);
 
         $listing = new Role\Listing();

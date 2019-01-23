@@ -21,7 +21,6 @@ use Pimcore\Model\Notification\Service\NotificationService;
 use Pimcore\Model\User;
 use Pimcore\Tests\Test\TestCase;
 use Pimcore\Tests\Util\TestHelper;
-use Pimcore\Tool\ArrayNormalizer;
 
 class NotificationServiceTest extends TestCase
 {

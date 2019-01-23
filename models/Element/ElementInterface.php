@@ -175,7 +175,5 @@ interface ElementInterface
      */
     public function save();
 
-    /**
-     */
     public function delete();
 }

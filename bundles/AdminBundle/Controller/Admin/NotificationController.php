@@ -17,7 +17,6 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
-use Pimcore\Bundle\AdminBundle\Helper\QueryParams;
 use Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse;
 use Pimcore\Model\Element\Service;
 use Pimcore\Model\Notification\Service\NotificationService;
@@ -37,6 +36,7 @@ class NotificationController extends AdminController
     /**
      * @param UserService $service
      * @param Translator $translator
+     *
      * @return JsonResponse
      * @Route("/recipients")
      * @Method({"GET"})
@@ -63,11 +63,12 @@ class NotificationController extends AdminController
     /**
      * @param Request $request
      * @param NotificationService $service
+     *
      * @return JsonResponse
      * @Route("/send")
      * @Method({"POST"})
      */
-    public function sendAction(Request $request, NotificationService $service) : JsonResponse
+    public function sendAction(Request $request, NotificationService $service): JsonResponse
     {
         $this->checkPermission('notifications_send');
 
@@ -92,6 +93,7 @@ class NotificationController extends AdminController
     /**
      * @param Request $request
      * @param NotificationService $service
+     *
      * @return JsonResponse
      * @Route("/find")
      */
@@ -105,13 +107,14 @@ class NotificationController extends AdminController
 
         return $this->adminJson([
             'success' => true,
-            'data'    => $data,
+            'data' => $data,
         ]);
     }
 
     /**
      * @param Request $request
      * @param NotificationService $service
+     *
      * @return JsonResponse
      * @Route("/find-all")
      */
@@ -141,25 +144,26 @@ class NotificationController extends AdminController
 
         return $this->adminJson([
             'success' => true,
-            'total'   => $result['total'],
-            'data'    => $data,
+            'total' => $result['total'],
+            'data' => $data,
         ]);
     }
 
     /**
      * @param Request $request
      * @param NotificationService $service
+     *
      * @return JsonResponse
      * @Route("/find-last-unread")
      */
-    public function findLastUnreadAction(Request $request, NotificationService $service) : JsonResponse
+    public function findLastUnreadAction(Request $request, NotificationService $service): JsonResponse
     {
         $this->checkPermission('notifications');
 
-        $user     = $this->getAdminUser();
+        $user = $this->getAdminUser();
         $interval = (int) $request->get('interval', 10);
-        $result   = $service->findLastUnread((int) $user->getId(), $interval);
-        $unread   = $service->countAllUnread((int) $user->getId());
+        $result = $service->findLastUnread((int) $user->getId(), $interval);
+        $unread = $service->countAllUnread((int) $user->getId());
 
         $data = [];
 
@@ -169,14 +173,16 @@ class NotificationController extends AdminController
 
         return $this->adminJson([
             'success' => true,
-            'total'   => $result['total'],
-            'data'    => $data,
-            'unread'  => $unread,
+            'total' => $result['total'],
+            'data' => $data,
+            'unread' => $unread,
         ]);
     }
+
     /**
      * @param Request $request
      * @param NotificationService $service
+     *
      * @return JsonResponse
      * @Route("/mark-as-read")
      */
@@ -189,9 +195,11 @@ class NotificationController extends AdminController
 
         return $this->adminJson(['success' => true]);
     }
+
     /**
      * @param Request $request
      * @param NotificationService $service
+     *
      * @return JsonResponse
      * @Route("/delete")
      */
@@ -208,6 +216,7 @@ class NotificationController extends AdminController
     /**
      * @param Request $request
      * @param NotificationService $service
+     *
      * @return JsonResponse
      * @Route("/delete-all")
      */

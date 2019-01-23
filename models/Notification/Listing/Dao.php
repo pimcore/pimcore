@@ -38,11 +38,13 @@ class Dao extends AbstractDao
         } catch (\Exception $ex) {
             $count = 0;
         }
+
         return $count;
     }
 
     /**
      * @return array
+     *
      * @throws \Doctrine\DBAL\DBALException
      */
     public function load(): array

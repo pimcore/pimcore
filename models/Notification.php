@@ -83,6 +83,7 @@ class Notification extends AbstractModel
 
     /**
      * @param int $id
+     *
      * @return null|Notification
      */
     public static function getById(int $id): ?Notification
@@ -111,6 +112,7 @@ class Notification extends AbstractModel
 
     /**
      * @param int $id
+     *
      * @return Notification
      */
     public function setId(int $id): self
@@ -130,6 +132,7 @@ class Notification extends AbstractModel
 
     /**
      * @param string $creationDate
+     *
      * @return Notification
      */
     public function setCreationDate(string $creationDate): self
@@ -149,6 +152,7 @@ class Notification extends AbstractModel
 
     /**
      * @param string $modificationDate
+     *
      * @return Notification
      */
     public function setModificationDate(string $modificationDate): self
@@ -168,6 +172,7 @@ class Notification extends AbstractModel
 
     /**
      * @param null|User $sender
+     *
      * @return Notification
      */
     public function setSender(?User $sender): self
@@ -187,6 +192,7 @@ class Notification extends AbstractModel
 
     /**
      * @param null|User $recipient
+     *
      * @return Notification
      */
     public function setRecipient(?User $recipient): self
@@ -206,6 +212,7 @@ class Notification extends AbstractModel
 
     /**
      * @param null|string $title
+     *
      * @return Notification
      */
     public function setTitle(?string $title): self
@@ -225,6 +232,7 @@ class Notification extends AbstractModel
 
     /**
      * @param null|string $title
+     *
      * @return Notification
      */
     public function setType(?string $type): self
@@ -244,6 +252,7 @@ class Notification extends AbstractModel
 
     /**
      * @param null|string $message
+     *
      * @return Notification
      */
     public function setMessage(?string $message): self
@@ -263,11 +272,12 @@ class Notification extends AbstractModel
 
     /**
      * @param null|Element\ElementInterface $linkedElement
+     *
      * @return Notification
      */
     public function setLinkedElement(?Element\ElementInterface $linkedElement): self
     {
-        $this->linkedElement     = $linkedElement;
+        $this->linkedElement = $linkedElement;
         $this->linkedElementType = Element\Service::getElementType($linkedElement);
 
         return $this;
@@ -291,6 +301,7 @@ class Notification extends AbstractModel
 
     /**
      * @param bool $read
+     *
      * @return Notification
      */
     public function setRead(bool $read): self

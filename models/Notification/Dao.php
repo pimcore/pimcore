@@ -30,15 +30,16 @@ class Dao extends AbstractDao
 
     /**
      * @param int $id
+     *
      * @throws \Exception
      */
     public function getById(int $id): void
     {
-        $sql  = sprintf("SELECT * FROM `%s` WHERE id = ?", static::DB_TABLE_NAME);
+        $sql = sprintf('SELECT * FROM `%s` WHERE id = ?', static::DB_TABLE_NAME);
         $data = $this->db->fetchRow($sql, $id);
 
         if ($data === false) {
-            $message = sprintf("Notification with id %d not found", $id);
+            $message = sprintf('Notification with id %d not found', $id);
             throw new \Exception($message);
         }
 
@@ -51,7 +52,7 @@ class Dao extends AbstractDao
     public function save()
     {
         $model = $this->getModel();
-        $model->setModificationDate(date("Y-m-d H:i:s"));
+        $model->setModificationDate(date('Y-m-d H:i:s'));
 
         if ($model->getId() === null) {
             $model->setCreationDate($model->getModificationDate());
@@ -118,21 +119,22 @@ class Dao extends AbstractDao
 
     /**
      * @param Notification $model
+     *
      * @return array
      */
     protected function getData(Notification $model): array
     {
         return [
-            'id'                => $model->getId(),
-            'creationDate'      => $model->getCreationDate(),
-            'modificationDate'  => $model->getModificationDate(),
-            'sender'            => $model->getSender() ? $model->getSender()->getId() : null,
-            'recipient'         => $model->getRecipient() ? $model->getRecipient()->getId() : null,
-            'title'             => $model->getTitle(),
-            'message'           => $model->getMessage(),
-            'linkedElement'     => $model->getLinkedElement() ? $model->getLinkedElement()->getId() : null,
+            'id' => $model->getId(),
+            'creationDate' => $model->getCreationDate(),
+            'modificationDate' => $model->getModificationDate(),
+            'sender' => $model->getSender() ? $model->getSender()->getId() : null,
+            'recipient' => $model->getRecipient() ? $model->getRecipient()->getId() : null,
+            'title' => $model->getTitle(),
+            'message' => $model->getMessage(),
+            'linkedElement' => $model->getLinkedElement() ? $model->getLinkedElement()->getId() : null,
             'linkedElementType' => $model->getLinkedElementType(),
-            'read'              => (int) $model->isRead(),
+            'read' => (int) $model->isRead(),
         ];
     }
 
