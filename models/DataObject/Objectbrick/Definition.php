@@ -493,7 +493,7 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
                     $cd .= 'protected $' . $brickKey . " = null;\n\n";
 
                     $cd .= '/**' . "\n";
-                    $cd .= '* @return \\Pimcore\\Model\\DataObject\\Objectbrick\\Data\\' . $brickKey . "\n";
+                    $cd .= '* @return \\Pimcore\\Model\\DataObject\\Objectbrick\\Data\\' . ucfirst($brickKey) . "\n";
                     $cd .= '*/' . "\n";
                     $cd .= 'public function get' . ucfirst($brickKey) . "() { \n";
 
@@ -510,7 +510,7 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
                     $cd .= "}\n\n";
 
                     $cd .= '/**' . "\n";
-                    $cd .= '* @param \\Pimcore\\Model\\DataObject\\Objectbrick\\Data\\' . $brickKey . ' $' . $brickKey . "\n";
+                    $cd .= '* @param \\Pimcore\\Model\\DataObject\\Objectbrick\\Data\\' . ucfirst($brickKey) . ' $' . $brickKey . "\n";
                     $cd .= '* @return \\'.$namespace.'\\'.$className."\n";
                     $cd .= '*/' . "\n";
                     $cd .= 'public function set' . ucfirst($brickKey) . ' (' . '$' . $brickKey . ") {\n";
