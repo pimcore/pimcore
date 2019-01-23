@@ -27,6 +27,13 @@ interface IMysqlConfig extends IConfig
     public function getTablename();
 
     /**
+     * returns table engine of product index
+     *
+     * @return string
+     */
+    public function getTableEngine();
+
+    /**
      * returns table name of product index reations
      *
      * @return string

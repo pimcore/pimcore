@@ -36,6 +36,14 @@ class DefaultMysql extends AbstractConfig implements IMysqlConfig
     /**
      * @return string
      */
+    public function getTableEngine()
+    {
+        return 'MyISAM';
+    }
+
+    /**
+     * @return string
+     */
     public function getRelationTablename()
     {
         return 'ecommerceframework_productindex_relations';
