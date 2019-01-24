@@ -1516,7 +1516,8 @@ class SettingsController extends AdminController
 
         return $this->adminJson([
             'success' => true,
-            'data' => $config
+            'data' => $config,
+            'onFileSystem' => file_exists(PIMCORE_WEB_ROOT . '/robots.txt')
         ]);
     }
 

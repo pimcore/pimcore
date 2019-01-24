@@ -13,6 +13,8 @@
 
 pimcore.registerNS("pimcore.settings.robotstxt");
 pimcore.settings.robotstxt = Class.create({
+    onFileSystem: false,
+    data: {},
 
     initialize: function(id) {
         this.getTabPanel();
@@ -30,6 +32,7 @@ pimcore.settings.robotstxt = Class.create({
                     var data = Ext.decode(response.responseText);
                     if(data.success) {
                         this.data = data.data;
+                        this.onFileSystem = data.onFileSystem;
 
                         this.loadSites();
                     }
@@ -52,15 +55,25 @@ pimcore.settings.robotstxt = Class.create({
                 items.push(this.getEditPanel(record))
             }.bind(this));
 
+
+            var buttons = [];
+
+            if (this.onFileSystem) {
+                buttons.push(t("robots_txt_exists_on_filesystem"));
+            }
+
+            buttons.push({
+                text: t("save"),
+                iconCls: "pimcore_icon_apply",
+                disabled: this.onFileSystem,
+                handler: this.save.bind(this)
+            });
+
             this.formPanel.add({
                 xtype: 'tabpanel',
                 layout: 'fit',
                 items: items,
-                buttons: [{
-                    text: t("save"),
-                    iconCls: "pimcore_icon_apply",
-                    handler: this.save.bind(this)
-                }]
+                buttons: buttons
             });
 
             this.panel.add(this.formPanel);
@@ -101,14 +114,15 @@ pimcore.settings.robotstxt = Class.create({
         return this.panel;
     },
 
-    getEditPanel: function (siteRecord) {debugger;
+    getEditPanel: function (siteRecord) {
         var editArea = new Ext.form.TextArea({
             xtype: "textarea",
             name: 'data['+siteRecord.get('id')+']',
             value: this.data.hasOwnProperty(siteRecord.get('id')) ? this.data[siteRecord.getId('id')] : '',
             width: "100%",
             height: "100%",
-            style: "font-family: 'Courier New', Courier, monospace;"
+            style: "font-family: 'Courier New', Courier, monospace;",
+            disabled: this.onFileSystem
         });
 
         var editPanel = new Ext.Panel({
