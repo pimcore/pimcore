@@ -141,7 +141,17 @@ class MySql
                 Logger::info($e);
             }
 
-            $this->dbexec('ALTER TABLE `' . $this->tenantConfig->getTablename() . '` ENGINE = ' . $this->tenantConfig->getTableEngine() . ';');
+            $indexTableEngine = 'MyISAM';
+            try {
+                $reflectionConfig = new \ReflectionClass(get_class($this->tenantConfig));
+                if ($reflectionConfig->implementsInterface('Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\IMysqlEngineConfig')) {
+                    $indexTableEngine = $this->tenantConfig->getTableEngine();
+                }
+            } catch (\ReflectionException $exception) {
+                Logger::info($exception);
+            }
+
+            $this->dbexec('ALTER TABLE `' . $this->tenantConfig->getTablename() . '` ENGINE = ' . $indexTableEngine . ';');
             $columnNames = [];
             foreach ($searchIndexColums as $c) {
                 $columnNames[] = $this->db->quoteIdentifier($c);
