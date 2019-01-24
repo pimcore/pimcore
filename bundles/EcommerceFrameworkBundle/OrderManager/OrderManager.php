@@ -613,13 +613,7 @@ class OrderManager implements IOrderManager
      */
     protected function createOrderItem(ICartItem $item, $parent, $isGiftItem = false)
     {
-        $key = $this->buildOrderItemKey($item);
-
-        // Prevents key collisions where a regular order product item and a gift product item
-        // could otherwise get the same key
-        if ($isGiftItem) {
-            $key .= "_gift";
-        }
+        $key = $this->buildOrderItemKey($item, $isGiftItem);
 
         $orderItemList = $this->buildOrderItemList();
         $orderItemList->setCondition('o_parentId = ? AND o_key = ?', [$parent->getId(), $key]);
@@ -709,15 +703,17 @@ class OrderManager implements IOrderManager
      * Build order item key from cart item
      *
      * @param ICartItem $item
+     * @param bool $isGiftItem
      *
      * @return string
      */
-    protected function buildOrderItemKey(ICartItem $item)
+    protected function buildOrderItemKey(ICartItem $item, bool $isGiftitem = false)
     {
         $key = File::getValidFilename(sprintf(
-            '%s_%s',
+            '%s_%s%s',
             $item->getProduct()->getId(),
-            $item->getItemKey()
+            $item->getItemKey(),
+            $isGiftItem ? '_gift' : ''
         ));
 
         return $key;
