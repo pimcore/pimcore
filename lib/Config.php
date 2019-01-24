@@ -325,6 +325,40 @@ class Config
      *
      * @return \Pimcore\Config\Config
      */
+    public static function getRobotsConfig()
+    {
+        if (\Pimcore\Cache\Runtime::isRegistered('pimcore_config_robots')) {
+            $config = \Pimcore\Cache\Runtime::get('pimcore_config_robots');
+        } else {
+            try {
+                $file = self::locateConfigFile('robots.php');
+                $config = static::getConfigInstance($file);
+            } catch (\Exception $e) {
+                $config = new \Pimcore\Config\Config([]);
+            }
+
+            self::setRobotsConfig($config);
+        }
+
+        return $config;
+    }
+
+
+    /**
+     * @static
+     *
+     * @param \Pimcore\Config\Config $config
+     */
+    public static function setRobotsConfig(\Pimcore\Config\Config $config)
+    {
+        \Pimcore\Cache\Runtime::set('pimcore_config_robots', $config);
+    }
+
+    /**
+     * @static
+     *
+     * @return \Pimcore\Config\Config
+     */
     public static function getWeb2PrintConfig()
     {
         if (\Pimcore\Cache\Runtime::isRegistered('pimcore_config_web2print')) {
