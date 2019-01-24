@@ -15,6 +15,7 @@
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\Helper;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\IMysqlConfig;
+use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\IMysqlEngineConfig;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Interpreter\IRelationInterpreter;
 use Pimcore\Cache;
 use Pimcore\Db\Connection;
@@ -142,13 +143,8 @@ class MySql
             }
 
             $indexTableEngine = 'MyISAM';
-            try {
-                $reflectionConfig = new \ReflectionClass(get_class($this->tenantConfig));
-                if ($reflectionConfig->implementsInterface('Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\IMysqlEngineConfig')) {
-                    $indexTableEngine = $this->tenantConfig->getTableEngine();
-                }
-            } catch (\ReflectionException $exception) {
-                Logger::info($exception);
+            if ($this->tenantConfig instanceof IMysqlEngineConfig) {
+                $indexTableEngine = $this->tenantConfig->getTableEngine();
             }
 
             $this->dbexec('ALTER TABLE `' . $this->tenantConfig->getTablename() . '` ENGINE = ' . $indexTableEngine . ';');
