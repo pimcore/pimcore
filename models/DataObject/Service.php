@@ -169,6 +169,9 @@ class Service extends Model\Element\Service
     public function copyAsChild($target, $source)
     {
 
+        $isDirtyDetectionDisabled = Model\DataObject\AbstractObject::isDirtyDetectionDisabled();
+        Model\DataObject\AbstractObject::setDisableDirtyDetection(true);
+
         //load properties
         $source->getProperties();
 
@@ -187,6 +190,8 @@ class Service extends Model\Element\Service
         $new->setLocked(false);
         $new->setCreationDate(time());
         $new->save();
+
+        Model\DataObject\AbstractObject::setDisableDirtyDetection($isDirtyDetectionDisabled);
 
         $this->updateChilds($target, $new);
 
