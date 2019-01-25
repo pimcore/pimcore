@@ -810,6 +810,7 @@ class ClassController extends AdminController implements EventedControllerInterf
         if ($request->query->has('allowedTypes')) {
             $allowedTypes = explode(',', $request->get('allowedTypes'));
         }
+        $object = DataObject\AbstractObject::getById($request->get('object_id'));
 
         $groups = [];
         /** @var $item DataObject\Fieldcollection\Definition */
@@ -833,7 +834,6 @@ class ClassController extends AdminController implements EventedControllerInterf
                 }
                 if ($forObjectEditor) {
                     $itemLayoutDefinitions = $item->getLayoutDefinitions();
-                    $object = DataObject\AbstractObject::getById($request->get('object_id'));
                     DataObject\Service::enrichLayoutDefinition($itemLayoutDefinitions, $object);
                     $layoutDefinitions[$item->getKey()] = $itemLayoutDefinitions;
                 }
@@ -849,7 +849,7 @@ class ClassController extends AdminController implements EventedControllerInterf
             } else {
                 if ($forObjectEditor) {
                     $itemLayoutDefinitions = $item->getLayoutDefinitions();
-                    DataObject\Service::enrichLayoutDefinition($itemLayoutDefinitions, null);
+                    DataObject\Service::enrichLayoutDefinition($itemLayoutDefinitions, $object);
                     $layoutDefinitions[$item->getKey()] = $itemLayoutDefinitions;
                 }
                 $definitions[] = [
