@@ -23,6 +23,7 @@ use Pimcore\Event\FrontendEvents;
 use Pimcore\Event\Model\AssetEvent;
 use Pimcore\File;
 use Pimcore\Logger;
+use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Tool\Mime;
 use Symfony\Component\EventDispatcher\GenericEvent;
 
@@ -1874,7 +1875,7 @@ class Asset extends Element\AbstractElement
      *
      * @return Asset
      */
-    public function setVersionCount(?int $versionCount): self
+    public function setVersionCount(?int $versionCount): ElementInterface
     {
         $this->versionCount = (int) $versionCount;
 

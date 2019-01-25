@@ -471,11 +471,12 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                 'data' => $objectData,
                 'object' => $object,
             ]);
+
+            DataObject\Service::enrichLayoutDefinition($objectData['layout'], $object);
             $eventDispatcher->dispatch(AdminEvents::OBJECT_GET_PRE_SEND_DATA, $event);
             $data = $event->getArgument('data');
 
             $data = $this->filterLocalizedFields($object, $data);
-            DataObject\Service::enrichLayoutDefinition($data['layout'], $object);
 
             DataObject\Service::removeObjectFromSession($object->getId());
 
@@ -568,8 +569,8 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                 } else {
                     foreach ($relations as $rel) {
                         if ($fielddefinition instanceof ManyToManyObjectRelation) {
-                            $rel["fullpath"] = $rel["path"];
-                            $rel["classname"] = $rel["subtype"];
+                            $rel['fullpath'] = $rel['path'];
+                            $rel['classname'] = $rel['subtype'];
                             $data[] = $rel;
                         } else {
                             $data[] = [$rel['id'],

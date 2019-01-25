@@ -314,10 +314,6 @@ class CheckoutManager implements ICheckoutManager
             throw new UnsupportedException('Payment is not activated');
         }
 
-        if (!$this->isFinished()) {
-            throw new UnsupportedException('Checkout is not finished yet.');
-        }
-
         // delegate commit order to commit order processor
         $order = $commitOrderProcessor->handlePaymentResponseAndCommitOrderPayment($paymentResponseParams, $this->getPayment());
         $this->updateEnvironmentAfterOrderCommit($order);

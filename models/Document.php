@@ -23,6 +23,7 @@ use Pimcore\Event\FrontendEvents;
 use Pimcore\Event\Model\DocumentEvent;
 use Pimcore\Logger;
 use Pimcore\Model\Document\Listing;
+use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Tool;
 use Pimcore\Tool\Frontend as FrontendTool;
 use Symfony\Component\EventDispatcher\GenericEvent;
@@ -1461,7 +1462,7 @@ class Document extends Element\AbstractElement
      *
      * @return Document
      */
-    public function setVersionCount(?int $versionCount): self
+    public function setVersionCount(?int $versionCount): ElementInterface
     {
         $this->versionCount = (int) $versionCount;
 

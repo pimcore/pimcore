@@ -17,17 +17,6 @@ pimcore.object.tags.quantityValue = Class.create(pimcore.object.tags.abstract, {
     type: "quantityValue",
 
     initialize: function (data, fieldConfig) {
-        this.defaultValue = null;
-        this.defaultUnit = null;
-        if ((typeof data === "undefined" || data === null) && (fieldConfig.defaultValue || fieldConfig.defaultUnit)) {
-            data = {
-                value: fieldConfig.defaultValue,
-                unit: fieldConfig.defaultUnit,
-            };
-            this.defaultValue = data.value;
-            this.defaultUnit = data.unit;
-        }
-
         this.data = data;
         this.fieldConfig = fieldConfig;
 

@@ -128,6 +128,9 @@ interface ICheckoutManager
      *  - handling payment response and
      *  - commit order payment
      *
+     * Always handles payment and updates payment information - even if order is already committed or checkout is not
+     * finished (anymore)
+     *
      * Use this for committing order when payment is activated
      *
      * Delegates to commit order processor

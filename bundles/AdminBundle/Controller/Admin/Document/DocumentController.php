@@ -1409,7 +1409,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
         }
 
         // check permissions
-        $this->checkActionPermission($event, 'documents', ['docTypesAction']);
+        $this->checkActionPermission($event, 'documents', ['docTypesGetAction']);
 
         $this->_documentService = new Document\Service($this->getAdminUser());
     }

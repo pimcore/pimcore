@@ -259,7 +259,7 @@ class Dao extends Model\Dao\AbstractDao
                         $key = $fd->getName();
 
                         // exclude untouchables if value is not an array - this means data has not been loaded
-                        if (!(in_array($key, $untouchable) and !is_array($this->model->$key))) {
+                        if (!in_array($key, $untouchable)) {
                             $localizedValue = $this->model->getLocalizedValue($key, $language);
                             $insertData = $fd->getDataForQueryResource(
                                 $localizedValue,

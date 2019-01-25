@@ -248,36 +248,40 @@ pimcore.object.tags.imageGallery = Class.create(pimcore.object.tags.abstract, {
                 },
 
                 onNodeOver: function (target, dd, e, data) {
-                    if (data.records.length === 1 && data.records[0].data.type === "image") {
+                    var dropAllowed=true;
+                    data.records.forEach(function (record) {
+                        if (record.data.type !== "image") {
+                            dropAllowed=false;
+                        }
+                    });
+                    if (dropAllowed) {
                         return Ext.dd.DropZone.prototype.dropAllowed;
                     }
                 },
 
                 onNodeDrop: function (target, dd, e, data) {
 
-                    if(!pimcore.helpers.dragAndDropValidateSingleItem(data)) {
-                        return false;
-                    }
+                    var objectField=this;
+                    objectField.dirty = true;
+                    data.records.forEach(function (record) {
+                        if (record.data.type !== "image") {
+                            return;
+                        }
 
-                    this.dirty = true;
-                    var record = data.records[0];
-                    if (record.data.type !== "image") {
-                        return;
-                    }
+                        var recordData = {
+                            id: record.data.id
+                        };
 
-                    var data = {
-                        id: record.data.id
-                    };
+                        var fieldConfig = objectField.getDefaultFieldConfig();
+                        fieldConfig.title = record.data.path;
 
-                    var fieldConfig = this.getDefaultFieldConfig();
-                    fieldConfig.title = record.data.path;
+                        var hotspotImage = new pimcore.object.tags.hotspotimage(recordData, fieldConfig, objectField.hotspotConfig);
+                        hotspotImage.updateContext(objectField.context);
+                        var itemCount = objectField.component.items.length;
 
-                    var hotspotImage = new pimcore.object.tags.hotspotimage(data, fieldConfig, this.hotspotConfig);
-                    hotspotImage.updateContext(this.context);
-                    var itemCount = this.component.items.length;
-
-                    var dragableComponent = this.wrap(hotspotImage);
-                    this.component.insert(itemCount - 1, dragableComponent);
+                        var dragableComponent = objectField.wrap(hotspotImage);
+                        objectField.component.insert(itemCount - 1, dragableComponent);
+                    });
                 }.bind(this)
             });
 

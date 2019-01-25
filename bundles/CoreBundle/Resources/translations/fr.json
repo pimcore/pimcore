@@ -838,5 +838,18 @@
     "notes": "Notes",
     "bool": "Booléen",
     "consent": "Consentement",
-    "add_marker": "Add marker"
+    "add_marker": "Ajouter un marqueur",
+    "identifier_warning": "Soyez prudent avec l'identifiant unique car les noms de table ne peuvent contenir que 64 caractères.",
+    "unique_identifier": "Identifiant unique",
+    "invalid_identifier": "Identifiant invalide",
+    "identifier_already_exists": "L'identifiant existe déjà",
+    "content": "Contenu",
+    "send": "Envoyer",
+    "you_can_only_drop_one_element_here": "Vous ne pouvez déposer qu'un élément ici !",
+    "translation": "Traduction",
+    "delete_error_batch": "Les éléments suivants ne peuvent pas être supprimés, voulez-vous supprimer les éléments restants?",
+    "delete_error": "L'élément ne peut pas être supprimé. Raison :",
+    "batch_edit_field_selected": "Editer par lot le champ sélectionné",
+    "batch_append_selected_to": "Ajouter des données à la sélection",
+    "enable_batch_edit_columns": "Activer la modification par lot pour les colonnes"
 }

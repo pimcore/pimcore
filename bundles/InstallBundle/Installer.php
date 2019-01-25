@@ -398,7 +398,7 @@ class Installer
             $parts = $partsBuilder->getParts();
 
             $process = new Process($parts);
-            $process->setTimeout(120);
+            $process->setTimeout(0);
             $process->setWorkingDirectory(PIMCORE_PROJECT_ROOT);
             $process->run();
 
@@ -715,7 +715,9 @@ class Installer
             ['key' => 'website_settings'],
             ['key' => 'admin_translations'],
             ['key' => 'web2print_settings'],
-            ['key' => 'workflow_details']
+            ['key' => 'workflow_details'],
+            ['key' => 'notifications'],
+            ['key' => 'notifications_send']
         ];
 
         foreach ($userPermissions as $up) {

@@ -302,7 +302,7 @@ Ext.onReady(function () {
         }
     });
 
-    if (user.isAllowed("documents")) {
+    if (user.isAllowed("documents") || user.isAllowed("users")) {
         var store = new Ext.data.Store({
             id: 'doctypes',
             model: 'pimcore.model.doctypes',
@@ -1002,6 +1002,11 @@ pimcore["intervals"]["ping"] = window.setInterval(function () {
         }
     });
 }, (pimcore.settings.session_gc_maxlifetime - 60) * 1000);
+
+
+pimcore["intervals"]["checkNewNotification"] = window.setInterval(function (elt) {
+    pimcore.notification.helper.updateFromServer();
+}, 30000);
 
 // refreshes the layout
 pimcore.registerNS("pimcore.layout.refresh");

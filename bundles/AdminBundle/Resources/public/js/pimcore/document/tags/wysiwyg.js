@@ -80,8 +80,7 @@ pimcore.document.tags.wysiwyg = Class.create(pimcore.document.tag, {
             // is also Basic
             if (!this.options["toolbarGroups"]) {
                 eConfig.toolbarGroups = [
-                    { name: 'clipboard', groups: [ "sourcedialog", 'clipboard', 'undo', "find" ] },
-                    { name: 'basicstyles', groups: [ 'basicstyles', 'list'] },
+                    { name: 'basicstyles', groups: [ 'undo', "find", 'basicstyles', 'list'] },
                     '/',
                     { name: 'paragraph', groups: [ 'align', 'indent'] },
                     { name: 'blocks' },

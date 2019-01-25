@@ -169,7 +169,6 @@ class Dao extends Model\Dao\AbstractDao
                 if (!$fd instanceof QueryResourcePersistenceAwareInterface) {
                     Tool::triggerMissingInterfaceDeprecation(get_class($fd), 'getDataForQueryResource', QueryResourcePersistenceAwareInterface::class);
                 }
-                //exclude untouchables if value is not an array - this means data has not been loaded
 
                 $method = 'get' . $key;
                 $fieldValue = $this->model->$method();

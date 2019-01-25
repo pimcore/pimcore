@@ -1398,7 +1398,7 @@ class AbstractObject extends Model\Element\AbstractElement
      *
      * @return AbstractObject
      */
-    public function setVersionCount(?int $o_versionCount): self
+    public function setVersionCount(?int $o_versionCount): Element\ElementInterface
     {
         $this->o_versionCount = (int) $o_versionCount;
 
