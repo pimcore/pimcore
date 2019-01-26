@@ -77,7 +77,6 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
      */
     public $excludeFromSearchIndex = false;
 
-
     /**
      * @return int
      */
@@ -152,6 +151,7 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
     public function setExcludeFromSearchIndex(bool $excludeFromSearchIndex)
     {
         $this->excludeFromSearchIndex = $excludeFromSearchIndex;
+
         return $this;
     }
 
@@ -217,7 +217,7 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
     public function getDataForSearchIndex($object, $params = [])
     {
         if ($this->isExcludeFromSearchIndex()) {
-            return "";
+            return '';
         } else {
             return parent::getDataForSearchIndex($object, $params);
         }

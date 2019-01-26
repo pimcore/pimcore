@@ -150,7 +150,7 @@ class Textarea extends Data implements ResourcePersistenceAwareInterface, QueryR
     {
         $this->showCharCount = $showCharCount;
     }
-    
+
     /**
      * @return bool
      */
@@ -165,6 +165,7 @@ class Textarea extends Data implements ResourcePersistenceAwareInterface, QueryR
     public function setExcludeFromSearchIndex(bool $excludeFromSearchIndex)
     {
         $this->excludeFromSearchIndex = $excludeFromSearchIndex;
+
         return $this;
     }
 
@@ -276,7 +277,7 @@ class Textarea extends Data implements ResourcePersistenceAwareInterface, QueryR
     public function getDataForSearchIndex($object, $params = [])
     {
         if ($this->isExcludeFromSearchIndex()) {
-            return "";
+            return '';
         } else {
             return parent::getDataForSearchIndex($object, $params);
         }
