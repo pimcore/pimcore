@@ -16,6 +16,7 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Bundle\AdminBundle\Controller\BruteforceProtectedControllerInterface;
+use Pimcore\Bundle\AdminBundle\Security\BruteforceProtectionHandler;
 use Pimcore\Config;
 use Pimcore\Controller\Configuration\TemplatePhp;
 use Pimcore\Controller\EventedControllerInterface;
@@ -116,7 +117,7 @@ class LoginController extends AdminController implements BruteforceProtectedCont
      * @Route("/login/lostpassword")
      * @TemplatePhp()
      */
-    public function lostpasswordAction(Request $request)
+    public function lostpasswordAction(Request $request, BruteforceProtectionHandler $bruteforceProtectionHandler)
     {
         $view = $this->buildLoginPageViewModel();
         $view->success = false;
@@ -171,6 +172,10 @@ class LoginController extends AdminController implements BruteforceProtectedCont
                 } catch (\Exception $e) {
                     $view->error = 'could not send email';
                 }
+            }
+
+            if($view->error) {
+                $bruteforceProtectionHandler->addEntry($request->get('username'), $request);
             }
         }
 
