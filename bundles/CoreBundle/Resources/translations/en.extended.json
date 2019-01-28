@@ -700,5 +700,6 @@
   "operator_renderer_settings": "Renderer Settings",
   "refresh_preview": "Refresh Preview",
   "show_charcount": "Show Character Count",
-  "max_length": "Max Length"
+  "max_length": "Max Length",
+  "exclude_from_search_index": "Exclude from Backend Full-Text Search"
 }

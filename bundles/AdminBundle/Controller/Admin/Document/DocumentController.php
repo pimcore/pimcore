@@ -984,7 +984,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
         $image2->clear();
         $image2->destroy();
 
-        return $this->render('PimcoreAdminBundle:Admin/Document:diff-versions.html.php', $viewParams);
+        return $this->render('PimcoreAdminBundle:Admin/Document/Document:diff-versions.html.php', $viewParams);
     }
 
     /**

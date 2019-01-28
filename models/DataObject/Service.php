@@ -168,7 +168,6 @@ class Service extends Model\Element\Service
      */
     public function copyAsChild($target, $source)
     {
-
         $isDirtyDetectionDisabled = Model\DataObject\AbstractObject::isDirtyDetectionDisabled();
         Model\DataObject\AbstractObject::setDisableDirtyDetection(true);
 
