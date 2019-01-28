@@ -171,8 +171,10 @@ abstract class Kernel extends SymfonyKernel
      */
     public function shutdown()
     {
-        // cleanup runtime cache, doctrine, monolog ... to free some memory and avoid locking issues
-        $this->container->get(\Pimcore\Helper\LongRunningHelper::class)->cleanUp();
+        if (true === $this->booted) {
+            // cleanup runtime cache, doctrine, monolog ... to free some memory and avoid locking issues
+            $this->container->get(\Pimcore\Helper\LongRunningHelper::class)->cleanUp();
+        }
 
         return parent::shutdown();
     }
