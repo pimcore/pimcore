@@ -221,7 +221,7 @@ class Dao extends Model\Dao\AbstractDao
             . ' AND ' . $this->db->quoteInto('src_id = ?', $object->getId()). ')';
 
         if ($saveMode) {
-            if (!$this->model->hasDirtyFields() && $hasLocalizedFields) {
+            if (!DataObject\AbstractObject::isDirtyDetectionDisabled() && !$this->model->hasDirtyFields() && $hasLocalizedFields) {
                 // always empty localized fields
                 $this->db->deleteWhere('object_relations_' . $object->getClassId(), $whereLocalizedFields);
 
