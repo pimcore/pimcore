@@ -1506,24 +1506,17 @@ class SettingsController extends AdminController
     /**
      * @Route("/robots-txt", methods={"GET"})
      *
-     * @param Request $request
-     *
      * @return JsonResponse
      */
-    public function robotsTxtGetAction(Request $request)
+    public function robotsTxtGetAction()
     {
         $this->checkPermission('robots.txt');
 
-        $robotsPath = $this->getRobotsTxtPath($request);
-
-        $data = '';
-        if (is_file($robotsPath)) {
-            $data = file_get_contents($robotsPath);
-        }
+        $config = Config::getRobotsConfig();
 
         return $this->adminJson([
             'success' => true,
-            'data' => $data,
+            'data' => $config,
             'onFileSystem' => file_exists(PIMCORE_WEB_ROOT . '/robots.txt')
         ]);
     }
@@ -1539,30 +1532,19 @@ class SettingsController extends AdminController
     {
         $this->checkPermission('robots.txt');
 
-        $robotsPath = $this->getRobotsTxtPath($request);
-        File::put($robotsPath, $request->get('data'));
+        $values = $request->get('data');
+        if (!is_array($values)) {
+            $values = [];
+        }
+
+        File::putPhpFile(
+            Config::locateConfigFile('robots.php'),
+            to_php_data_file_format($values)
+        );
 
         return $this->adminJson([
             'success' => true
         ]);
-    }
-
-    /**
-     * @param Request $request
-     *
-     * @return string
-     */
-    protected function getRobotsTxtPath(Request $request)
-    {
-        if ($request->get('site')) {
-            $siteSuffix = '-' . $request->get('site');
-        } else {
-            $siteSuffix = '-default';
-        }
-
-        $robotsPath = PIMCORE_CONFIGURATION_DIRECTORY . '/robots' . $siteSuffix . '.txt';
-
-        return $robotsPath;
     }
 
     /**
