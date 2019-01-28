@@ -146,7 +146,7 @@ class PublicServicesController extends FrameworkController
 
         // check for configured robots.txt in pimcore
         $content = '';
-        if (array_key_exists($site, $config)) {
+        if (array_key_exists($siteId, $config)) {
             $content = $config[$siteId];
         }
 

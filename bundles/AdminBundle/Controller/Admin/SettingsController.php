@@ -1513,6 +1513,7 @@ class SettingsController extends AdminController
         $this->checkPermission('robots.txt');
 
         $config = Config::getRobotsConfig();
+        $config = $config->toArray();
 
         return $this->adminJson([
             'success' => true,
