@@ -174,7 +174,7 @@ class LoginController extends AdminController implements BruteforceProtectedCont
                 }
             }
 
-            if($view->error) {
+            if ($view->error) {
                 $bruteforceProtectionHandler->addEntry($request->get('username'), $request);
             }
         }

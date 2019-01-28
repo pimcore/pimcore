@@ -343,7 +343,6 @@ class Config
         return $config;
     }
 
-
     /**
      * @static
      *
