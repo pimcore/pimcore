@@ -43,7 +43,7 @@ class SiteIdProvider
     public function getForRequest(Request $request = null): SiteId
     {
         if ($this->siteResolver->isSiteRequest($request)) {
-            $site = $this->siteResolver->getSite();
+            $site = $this->siteResolver->getSite($request);
             if (!$site) {
                 throw new \RuntimeException('Failed to fetch site for site request');
             }
