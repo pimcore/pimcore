@@ -587,11 +587,8 @@ class Service extends Model\Element\Service
                 }
 
                 foreach ($permission as $p) {
-                    $setting = explode('_', $p);
-                    $c = $setting[0];
-
-                    if ($c == $classId) {
-                        $l = $setting[1];
+                    if (preg_match(sprintf('#^(%s)_(.*)#', $classId), $p, $setting)) {
+                        $l = $setting[2];
 
                         if (is_null($layoutPermissions)) {
                             $layoutPermissions = [];
