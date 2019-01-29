@@ -162,7 +162,7 @@ class CookiePolicyNoticeListener
 
                 $linkContent = '';
                 if (array_key_exists('linkTarget', $translations)) {
-                    $linkContent = '<a href="' . $translations['linkTarget'] . '" data-content="' . $translations['linkText'] . '"></a>';
+                    $linkContent = '<a href="' . $translations['linkTarget'] . '" aria-label="' . $translations['linkText'] . '" data-content="' . $translations['linkText'] . '"></a>';
                 }
                 $template = str_replace('%link%', $linkContent, $template);
 
