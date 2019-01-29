@@ -3103,5 +3103,12 @@ pimcore.helpers.dragAndDropValidateSingleItem = function (data) {
     return true;
 };
 
-
+pimcore.helpers.openProfile = function () {
+    try {
+        pimcore.globalmanager.get("profile").activate();
+    }
+    catch (e) {
+        pimcore.globalmanager.add("profile", new pimcore.settings.profile.panel());
+    }
+};
 
