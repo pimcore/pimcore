@@ -165,6 +165,9 @@ class AssetController extends ElementControllerBase implements EventedController
         //data need to wrapped into a container in order to pass parameter to event listeners by reference so that they can change the values
         $data = $asset->getObjectVars();
         $data['versionDate'] = $asset->getModificationDate();
+        $data['filesizeFormatted'] = $asset->getFileSize(true);
+        $data['filesize'] = $asset->getFileSize();
+        $data['url'] = Tool::getHostUrl(null, $request) . $asset->getRealFullPath();
 
         $event = new GenericEvent($this, [
             'data' => $data,

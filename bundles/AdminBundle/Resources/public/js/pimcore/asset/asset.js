@@ -416,16 +416,18 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
             {
                 name: "id",
                 value: this.data.id
-            },
-            {
+            }, {
                 name: "path",
                 value: this.data.path + this.data.filename
             }, {
-                name: "type",
-                value: this.data.type
+                name: "public_url",
+                value: this.data.url
             }, {
-                name: "mimetype",
-                value: this.data.mimetype
+                name: "type",
+                value: this.data.type + " (MIME: " + this.data.mimetype + ")"
+            }, {
+                name: "size",
+                value: this.data.filesizeFormatted
             }, {
                 name: "modificationdate",
                 type: "date",

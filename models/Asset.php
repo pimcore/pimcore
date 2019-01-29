@@ -1692,44 +1692,23 @@ class Asset extends Element\AbstractElement
     /**
      * Get filesize
      *
-     * @param string $format ('GB','MB','KB','B')
+     * @param bool $formatted
      * @param int $precision
      *
      * @return string
      */
-    public function getFileSize($format = 'noformatting', $precision = 2)
+    public function getFileSize($formatted = false, $precision = 2)
     {
-        $format = strtolower($format);
         $bytes = 0;
         if (is_file($this->getFileSystemPath())) {
             $bytes = filesize($this->getFileSystemPath());
         }
 
-        switch ($format) {
-            case 'gb':
-                $size = (($bytes / 1024) / 1024) / 1024;
-                break;
-
-            case 'mb':
-                $size = (($bytes / 1024) / 1024);
-                break;
-
-            case 'kb':
-                $size = ($bytes / 1024);
-                break;
-
-            case 'b':
-            default:
-                $size = $bytes;
-                $precision = 0;
-                break;
+        if ($formatted) {
+            return formatBytes($bytes, $precision);
         }
 
-        if ($format == 'noformatting') {
-            return $size;
-        }
-
-        return round($size, $precision) . ' ' . $format;
+        return $bytes;
     }
 
     /**
