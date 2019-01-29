@@ -98,9 +98,9 @@ abstract class Mapper
             }
         } elseif (is_array($object)) {
             $tmpArray = [];
-            foreach ($object as $v) {
+            foreach ($object as $k => $v) {
                 $className = self::findWebserviceClass($v, $type);
-                $tmpArray[] = self::map($v, $className, $type);
+                $tmpArray[$k] = self::map($v, $className, $type);
             }
             $object = $tmpArray;
         }
