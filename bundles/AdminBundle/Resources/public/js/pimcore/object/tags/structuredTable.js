@@ -182,6 +182,9 @@ pimcore.object.tags.structuredTable = Class.create(pimcore.object.tags.abstract,
             width: this.fieldConfig.width,
             height: this.fieldConfig.height,
             selModel: Ext.create('Ext.selection.CellModel'),
+            viewConfig: {
+                markDirty: false
+            },
             tbar: [
                 {
                     xtype: "tbtext",

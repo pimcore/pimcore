@@ -188,6 +188,7 @@ pimcore.object.tags.table = Class.create(pimcore.object.tags.abstract, {
             ],
             tbar: tbar,
             viewConfig: {
+                markDirty: false,
                 forceFit: true
             }
         });

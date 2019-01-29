@@ -405,6 +405,7 @@ pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.
             border: true,
             style: "margin-bottom: 10px",
             viewConfig: {
+                markDirty: false,
                 plugins: {
                     ptype: 'gridviewdragdrop',
                     dragroup: 'element'
