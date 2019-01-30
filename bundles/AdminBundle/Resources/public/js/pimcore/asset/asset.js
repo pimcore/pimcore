@@ -149,7 +149,8 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
                     },{
                         text: t('save_only_scheduled_tasks'),
                         iconCls: "pimcore_icon_save",
-                        handler: this.save.bind(this, "scheduler")
+                        handler: this.save.bind(this, "scheduler"),
+                        hidden: !this.isAllowed("settings")
                     }
                     ]
                 });
