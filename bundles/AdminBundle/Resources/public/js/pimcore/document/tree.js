@@ -540,6 +540,12 @@ pimcore.document.tree = Class.create({
                         handler: this.pasteLanguageDocument.bind(this, tree, record, "child")
                     });
 
+                    pasteMenu.push({
+                        text: t("paste_recursive_as_language_variant"),
+                        iconCls: "pimcore_icon_paste",
+                        handler: this.pasteLanguageDocument.bind(this, tree, record, "recursive")
+                    });
+
                     pasteInheritanceMenu.push({
                         text: t("paste_recursive_as_childs"),
                         iconCls: "pimcore_icon_paste",
@@ -560,6 +566,12 @@ pimcore.document.tree = Class.create({
                         text: t("paste_as_language_variant"),
                         iconCls: "pimcore_icon_paste",
                         handler: this.pasteLanguageDocument.bind(this, tree, record, "child", true)
+                    });
+
+                    pasteInheritanceMenu.push({
+                        text: t("paste_recursive_as_language_variant"),
+                        iconCls: "pimcore_icon_paste",
+                        handler: this.pasteLanguageDocument.bind(this, tree, record, "recursive", true)
                     });
                 }
             }
@@ -1050,6 +1062,10 @@ pimcore.document.tree = Class.create({
 
     pasteInfo: function (tree, record, type, enableInheritance, language) {
         pimcore.helpers.addTreeNodeLoadingIndicator("document", this.id);
+
+        if (typeof language !== "string") {
+            language = false;
+        }
 
         if(enableInheritance !== true) {
             enableInheritance = false;

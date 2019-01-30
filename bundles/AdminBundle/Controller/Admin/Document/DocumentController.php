@@ -741,6 +741,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
                     'sourceId' => $request->get('sourceId'),
                     'targetId' => $request->get('targetId'),
                     'type' => 'child',
+                    'language' => $request->get('language'),
                     'enableInheritance' => $request->get('enableInheritance'),
                     'transactionId' => $transactionId,
                     'saveParentId' => true,
@@ -767,6 +768,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
                                 'targetParentId' => $request->get('targetId'),
                                 'sourceParentId' => $request->get('sourceId'),
                                 'type' => 'child',
+                                'language' => $request->get('language'),
                                 'enableInheritance' => $request->get('enableInheritance'),
                                 'transactionId' => $transactionId
                             ]
@@ -895,7 +897,12 @@ class DocumentController extends ElementControllerBase implements EventedControl
                 if ($source != null) {
                     if ($request->get('type') == 'child') {
                         $enableInheritance = ($request->get('enableInheritance') == 'true') ? true : false;
-                        $language = $request->get('language', false);
+
+                        $language = false;
+                        if (Tool::isValidLanguage($request->get('language'))) {
+                            $language = $request->get('language');
+                        }
+
                         $resetIndex = ($request->get('resetIndex') == 'true') ? true : false;
 
                         $newDocument = $this->_documentService->copyAsChild($target, $source, $enableInheritance, $resetIndex, $language);
