@@ -163,12 +163,15 @@ pimcore.notification.helper.deleteAll = function (callback) {
 };
 
 pimcore.notification.helper.updateFromServer = function () {
-    Ext.Ajax.request({
-        url: "/admin/notification/find-last-unread?interval=" + 30,
-        success: function (response) {
-            var data = Ext.decode(response.responseText);
-            pimcore.notification.helper.updateCount(data.unread);
-            pimcore.notification.helper.showNotifications(data.data);
-        }
-    });
+    var user = pimcore.globalmanager.get("user");
+    if (user.isAllowed("notifications")) {
+        Ext.Ajax.request({
+            url: "/admin/notification/find-last-unread?interval=" + 30,
+            success: function (response) {
+                var data = Ext.decode(response.responseText);
+                pimcore.notification.helper.updateCount(data.unread);
+                pimcore.notification.helper.showNotifications(data.data);
+            }
+        });
+    }
 };
