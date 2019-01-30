@@ -15,7 +15,6 @@
 namespace Pimcore\Http;
 
 use Composer\CaBundle\CaBundle;
-use function GuzzleHttp\choose_handler;
 use GuzzleHttp\Client;
 use GuzzleHttp\RequestOptions;
 use Pimcore\Config;
@@ -38,7 +37,7 @@ class ClientFactory
             }
 
             $protocol = 'tcp';
-            if(function_exists('curl_exec')) {
+            if (function_exists('curl_exec')) {
                 // this is a workaround for https://github.com/pimcore/pimcore/issues/3835
                 $protocol = 'http';
             }
