@@ -13,7 +13,7 @@ In terms of product availabilities and stocks, the very similar concept of Avail
 
 A price system is a class implementing `Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPriceSystem` which is defined
 as service and registered with a name in the `pimcore_ecommerce_framework.price_systems` configuration tree. The framework
-already ships with a number of [concrete implementations](https://github.com/pimcore/pimcore/tree/master/pimcore/lib/Pimcore/Bundle/EcommerceFrameworkBundle/PriceSystem)
+already ships with a number of [concrete implementations](https://github.com/pimcore/pimcore/tree/master/bundles/EcommerceFrameworkBundle/PriceSystem)
 which you can use as starting point.
 
 There are 3 places where the configuration of Price Systems takes place: 
