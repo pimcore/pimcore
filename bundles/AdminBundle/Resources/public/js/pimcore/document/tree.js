@@ -80,8 +80,7 @@ pimcore.document.tree = Class.create({
 
     init: function(rootNodeConfig) {
 
-        var itemsPerPage = 100;
-
+        var itemsPerPage = pimcore.settings['document_tree_paging_limit'];
 
         rootNodeConfig.text = t("home");
         rootNodeConfig.id = "" +  rootNodeConfig.id;

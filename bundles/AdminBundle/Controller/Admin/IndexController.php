@@ -272,6 +272,9 @@ class IndexController extends AdminController
             'tile_layer_url_template' => $pimcoreSymfonyConfig['maps']['tile_layer_url_template'],
             'geocoding_url_template' => $pimcoreSymfonyConfig['maps']['geocoding_url_template'],
             'reverse_geocoding_url_template' => $pimcoreSymfonyConfig['maps']['reverse_geocoding_url_template'],
+            'asset_tree_paging_limit' => $pimcoreSymfonyConfig['assets']['tree_paging_limit'],
+            'document_tree_paging_limit' => $pimcoreSymfonyConfig['documents']['tree_paging_limit'],
+            'object_tree_paging_limit' => $pimcoreSymfonyConfig['objects']['tree_paging_limit'],
         ]);
 
         $dashboardHelper = new \Pimcore\Helper\Dashboard($user);
