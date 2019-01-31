@@ -301,7 +301,6 @@ class Version extends AbstractModel
             $data = Serialize::unserialize($data);
             if(get_class($data) == '__PHP_Incomplete_Class'){
                 Logger::err('Version: cannot read version data from file system becaus of incompatible class.');
-                $this->delete();
                 return;
             }
         }
