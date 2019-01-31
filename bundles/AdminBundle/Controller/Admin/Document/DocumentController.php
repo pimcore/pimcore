@@ -1364,6 +1364,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
     {
         $success = false;
         $language = null;
+        $translationLinks = null;
 
         $document = Document::getByPath($request->get('path'));
         if ($document) {
@@ -1371,11 +1372,15 @@ class DocumentController extends ElementControllerBase implements EventedControl
             if ($language) {
                 $success = true;
             }
+
+            //check if document is already linked to other langauges
+            $translationLinks = array_keys($this->_documentService->getTranslations($document));
         }
 
         return $this->adminJson([
             'success' => $success,
-            'language' => $language
+            'language' => $language,
+            'translationLinks' => $translationLinks
         ]);
     }
 

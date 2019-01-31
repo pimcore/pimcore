@@ -878,10 +878,15 @@ pimcore.document.tree = Class.create({
                 var selectContent = "";
 
                 for (var i=0; i<websiteLanguages.length; i++) {
-                    if(data.language != websiteLanguages[i]) {
+                    if(data.language != websiteLanguages[i] && !in_array(websiteLanguages[i], data.translationLinks)) {
                         selectContent = pimcore.available_languages[websiteLanguages[i]] + " [" + websiteLanguages[i] + "]";
                         languagestore.push([websiteLanguages[i], selectContent]);
                     }
+                }
+
+                if (languagestore.length < 1) {
+                    pimcore.helpers.showNotification(t("error"), t("paste_no_new_language_error"), "error");
+                    return false;
                 }
 
                 var pageForm = new Ext.form.FormPanel({
