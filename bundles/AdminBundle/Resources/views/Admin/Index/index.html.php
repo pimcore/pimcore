@@ -229,6 +229,7 @@ $scriptLibs = array(
     "lib/ext-plugins/portlet/Portlet.js",
     "lib/ext-plugins/portlet/PortalColumn.js",
     "lib/ext-plugins/portlet/PortalPanel.js",
+    "lib/ext-plugins/TabMiddleButtonClose.js",
 
     "lib/ckeditor/ckeditor.js",
 

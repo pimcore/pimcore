@@ -610,7 +610,8 @@ Ext.onReady(function () {
                                         showCloseOthers: false,
                                         extraItemsTail: pimcore.helpers.getMainTabMenuItems()
                                     }),
-                                    Ext.create('Ext.ux.TabReorderer', {})
+                                    Ext.create('Ext.ux.TabReorderer', {}),
+                                    Ext.create('Ext.ux.TabMiddleButtonClose', {})
                                 ]
                         })
                         ,
