@@ -6,7 +6,7 @@ CREATE TABLE `application_logs` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `pid` INT(11) NULL DEFAULT NULL,
   `timestamp` datetime NOT NULL,
-  `message` varchar(1024) DEFAULT NULL,
+  `message` TEXT NULL,
   `priority` ENUM('emergency','alert','critical','error','warning','notice','info','debug') DEFAULT NULL,
   `fileobject` varchar(1024) DEFAULT NULL,
   `info` varchar(1024) DEFAULT NULL,
