@@ -947,7 +947,10 @@ class Service extends Model\Element\Service
                         foreach ($filter['value'] as $filterValue) {
                             $fieldConditions[] = $field->getFilterCondition($filterValue, $operator);
                         }
-                        $conditionPartsFilters[] = '(' . implode(' OR ', $fieldConditions) . ')';
+
+                        if(!empty($fieldConditions)) {
+                            $conditionPartsFilters[] = '(' . implode(' OR ', $fieldConditions) . ')';
+                        }
                     } else {
                         $conditionPartsFilters[] = $field->getFilterCondition($filter['value'], $operator);
                     }
