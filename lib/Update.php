@@ -47,44 +47,4 @@ class Update
         //delete tmp data
         recursiveDelete(PIMCORE_SYSTEM_TEMP_DIRECTORY . '/update', true);
     }
-
-    public static function updateMaxmindDb()
-    {
-        $downloadUrl = 'http://geolite.maxmind.com/download/geoip/database/GeoLite2-City.mmdb.gz';
-        $geoDbFile = PIMCORE_CONFIGURATION_DIRECTORY . '/GeoLite2-City.mmdb';
-        $geoDbFileGz = $geoDbFile . '.gz';
-
-        $firstTuesdayOfMonth = strtotime(date('F') . ' 2013 tuesday');
-        $filemtime = 0;
-        if (file_exists($geoDbFile)) {
-            $filemtime = filemtime($geoDbFile);
-        }
-
-        // update if file is older than 30 days, or if it is the first tuesday of the month
-        if ($filemtime < (time() - 30 * 86400) || (date('m/d/Y') == date('m/d/Y', $firstTuesdayOfMonth) && $filemtime < time() - 86400)) {
-            $data = Tool::getHttpData($downloadUrl);
-            if (strlen($data) > 1000000) {
-                File::put($geoDbFileGz, $data);
-
-                @unlink($geoDbFile);
-
-                $sfp = gzopen($geoDbFileGz, 'rb');
-                $fp = fopen($geoDbFile, 'w');
-
-                while ($string = gzread($sfp, 4096)) {
-                    fwrite($fp, $string, strlen($string));
-                }
-                gzclose($sfp);
-                fclose($fp);
-
-                unlink($geoDbFileGz);
-
-                Logger::info('Updated MaxMind GeoIP2 Database in: ' . $geoDbFile);
-            } else {
-                Logger::err('Failed to update MaxMind GeoIP2, size is under about 1M');
-            }
-        } else {
-            Logger::debug('MayMind GeoIP2 Download skipped, everything up to date, last update: ' . date('m/d/Y H:i', $filemtime));
-        }
-    }
 }

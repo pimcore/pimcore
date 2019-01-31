@@ -258,12 +258,4 @@ class Cache
     {
         return static::getHandler()->getForceImmediateWrite();
     }
-
-    /**
-     * @return bool
-     */
-    public static function maintenance()
-    {
-        return static::getHandler()->purge();
-    }
 }

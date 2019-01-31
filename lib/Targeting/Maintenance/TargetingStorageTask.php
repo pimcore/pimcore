@@ -15,42 +15,33 @@ declare(strict_types=1);
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\Targeting\EventListener;
+namespace Pimcore\Targeting\Maintenance;
 
-use Pimcore\Event\System\MaintenanceEvent;
-use Pimcore\Event\SystemEvents;
-use Pimcore\Model\Schedule\Maintenance\Job;
+use Pimcore\Maintenance\TaskInterface;
 use Pimcore\Targeting\Storage\MaintenanceStorageInterface;
 use Pimcore\Targeting\Storage\TargetingStorageInterface;
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
-class MaintenanceListener implements EventSubscriberInterface
+class TargetingStorageTask implements TaskInterface
 {
     /**
      * @var TargetingStorageInterface|MaintenanceStorageInterface
      */
     private $targetingStorage;
 
-    public function __construct(TargetingStorageInterface $targetingStorage)
+    /**
+     * @param MaintenanceStorageInterface|TargetingStorageInterface $targetingStorage
+     */
+    public function __construct($targetingStorage)
     {
         $this->targetingStorage = $targetingStorage;
     }
 
-    public static function getSubscribedEvents()
-    {
-        return [
-            SystemEvents::MAINTENANCE => 'onPimcoreMaintenance'
-        ];
-    }
-
-    public function onPimcoreMaintenance(MaintenanceEvent $event)
+    public function execute()
     {
         if (!$this->targetingStorage instanceof MaintenanceStorageInterface) {
             return;
         }
 
-        $event->getManager()->registerJob(Job::fromClosure('targetingMaintenance', function () {
-            $this->targetingStorage->maintenance();
-        }));
+        $this->targetingStorage->maintenance();
     }
 }

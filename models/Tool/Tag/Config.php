@@ -350,24 +350,4 @@ class Config extends Model\AbstractModel
     {
         $this->disabled = $disabled;
     }
-
-    public static function markExpiredTagsAsDisabled()
-    {
-        $currentTime = new \Carbon\Carbon();
-        $tags = new Config\Listing();
-
-        foreach ($tags->load() as $tag) {
-            foreach ($tag->getItems() as $itemKey => $item) {
-                try {
-                    if ($item['date'] && $currentTime->getTimestamp() > $item['date']) {
-                        //disable tag item if expired
-                        $tag->items[$itemKey]['disabled'] = true;
-                        $tag->save();
-                    }
-                } catch (\Exception $e) {
-                    Logger::debug('Unable to process tag' . $tag->name . ', reason: '.$e->getMessage());
-                }
-            }
-        }
-    }
 }
