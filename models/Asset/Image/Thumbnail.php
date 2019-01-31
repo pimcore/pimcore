@@ -375,7 +375,7 @@ class Thumbnail
      *
      * @return string IMG-element with at least the attributes src, width, height, alt.
      */
-    public function getHTML($options = [], $removeAttributes = [])
+    public function getHtml($options = [], $removeAttributes = [])
     {
         $image = $this->getAsset();
         $attributes = [];
