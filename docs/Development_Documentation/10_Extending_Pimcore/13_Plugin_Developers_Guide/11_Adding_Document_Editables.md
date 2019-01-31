@@ -10,4 +10,4 @@ extend any of the existing `pimcore.document.tags` and must return it's type by 
 the function `getType()`.
 
 This JS file must be included in editmode. You can tell Pimcore to do so by adding
-`<pluginDocumentEditmodeJsPaths>` to the `plugin.xml`. 
+`<pluginDocumentEditmodeJsPaths>` or `<pluginDocumentEditmodeJsPaths-extjs6>` to the `plugin.xml`. 
