@@ -276,7 +276,7 @@ pimcore.object.classes.klass = Class.create({
 
         var parentRestrictions;
         var groups = [];
-        var groupNames = ["text","numeric","date","select","relation","structured","geo","other"];
+        var groupNames = ["text","numeric","date","select","media","relation","geo","crm","structured","other"];
         for (var i = 0; i < dataComps.length; i++) {
             var dataCompName = dataComps[i];
             var dataComp = pimcore.object.classes.data[dataCompName];

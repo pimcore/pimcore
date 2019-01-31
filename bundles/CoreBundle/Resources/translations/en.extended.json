@@ -11,6 +11,7 @@
   "login_screen": "Login Screen",
   "color_description": "Use the HTML hex format, eg. #ffffff",
   "colors": "Colors",
+  "media": "Media",
   "custom_logo": "Custom Logo",
   "custom_login_background_image": "Custom Login Background Image",
   "branding_logo_description": "Used on the login and start screen. We recommend to use a SVG (JPG & PNG are supported as well).",

@@ -907,6 +907,10 @@
     background: url(/bundles/pimcoreadmin/img/flat-color-icons/online_support.svg) center center no-repeat !important;
 }
 
+.pimcore_icon_data_group_media {
+    background: url(/bundles/pimcoreadmin/img/flat-color-icons/image.svg) center center no-repeat !important;
+}
+
 .pimcore_icon_password {
     background: url(/bundles/pimcoreadmin/img/flat-color-icons/lock.svg) center center no-repeat !important;
 }
