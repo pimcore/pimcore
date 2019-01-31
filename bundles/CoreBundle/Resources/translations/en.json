@@ -862,5 +862,7 @@
   "attachment": "Attachment",
   "notification_has_been_sent": "Notification has been sent",
   "recipient": "Recipient",
-  "this_field_is_required": "This field is required"
+  "this_field_is_required": "This field is required",
+  "paste_recursive_as_language_variant": "Paste as new language variant (recursive)",
+  "paste_no_new_language_error": "All system languages already linked to source element."
 }
