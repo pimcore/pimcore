@@ -252,7 +252,6 @@ class Configuration implements ConfigurationInterface
                             ->end()
                     ->end();
 
-
         $classDefinitionsNode = $objectsNode
             ->children()
                 ->arrayNode('class_definitions')

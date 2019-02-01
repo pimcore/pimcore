@@ -948,7 +948,7 @@ class Service extends Model\Element\Service
                             $fieldConditions[] = $field->getFilterCondition($filterValue, $operator);
                         }
 
-                        if(!empty($fieldConditions)) {
+                        if (!empty($fieldConditions)) {
                             $conditionPartsFilters[] = '(' . implode(' OR ', $fieldConditions) . ')';
                         }
                     } else {
