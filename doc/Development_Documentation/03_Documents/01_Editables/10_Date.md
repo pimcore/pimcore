@@ -4,7 +4,8 @@
 
 | Name     | Type   | Description                                                                        |
 |----------|--------|------------------------------------------------------------------------------------|
-| `format` | string | A string which describes how to output the date. (see below)                       |
+| `format` | string | A string which describes how to format the date in editmode                       |
+| `outputFormat` | string | A string which describes how to format the date in frontend, [see possible formats](https://carbon.nesbot.com/docs/)   (new in v5.6.4)                 |
 | `class`  | string | A CSS class that is added to the surrounding container of this element in editmode |
 
 ## Methods
@@ -12,12 +13,6 @@
 | Name          | Return    | Description                                                            |
 |---------------|-----------|------------------------------------------------------------------------|
 | `isEmpty()`   | boolean   | Whether the editable is empty or not                                   |
-
-## List of Supported Formats
-
-The list of all currently supported formats ou can find in [the PHP manual](http://php.net/manual/en/function.strftime.php).
-
-[comment]: #TODOtableOfDates
 
 
 ## Simple Example
@@ -31,14 +26,15 @@ Please read the topic [Localization](../../06_Multi_Language_i18n/README.md).
 <div class="code-section">
 
 ```php
-<?= $this->date("myDate", [
-     "format" => "%d.%m.%Y"
+<?= $this->date("date", [
+    "format" => "d m Y",
+    'outputFormat' => "%d.%m.%Y"
 ]); ?>
 ```
 
 ```twig
 {{ pimcore_date("myDate", {
-    "format": "%d.%m.%Y"
+    "format": "d.m.Y"
     })
 }}
 ```
