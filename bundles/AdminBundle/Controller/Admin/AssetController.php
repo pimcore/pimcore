@@ -415,6 +415,7 @@ class AssetController extends ElementControllerBase implements EventedController
             $context = $context ? $context : [];
             $event = new \Pimcore\Event\Model\Asset\ResolveUploadTargetEvent($parentId, $filename, $context);
             \Pimcore::getEventDispatcher()->dispatch(AssetEvents::RESOLVE_UPLOAD_TARGET, $event);
+            $filename = Element\Service::getValidKey($event->getFilename(), 'asset');
             $parentId = $event->getParentId();
         }
 
