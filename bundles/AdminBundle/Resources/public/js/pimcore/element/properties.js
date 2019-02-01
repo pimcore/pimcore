@@ -34,7 +34,7 @@ pimcore.element.properties = Class.create({
                     {
                         name:"translatedName",
                         convert: function(v, rec){
-                            return ts(rec.name);
+                            return ts(rec.data.name);
                         }
                     }
                 ],
@@ -51,7 +51,7 @@ pimcore.element.properties = Class.create({
 
             var predefinedcombo = new Ext.form.ComboBox({
                 name: "type",
-                displayField:'name',
+                displayField:'translatedName',
                 valueField: "id",
                 store: predefinedPropertiesStore,
                 editable: false,
