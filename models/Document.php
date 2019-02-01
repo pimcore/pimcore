@@ -23,6 +23,7 @@ use Pimcore\Event\FrontendEvents;
 use Pimcore\Event\Model\DocumentEvent;
 use Pimcore\Logger;
 use Pimcore\Model\Document\Listing;
+use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Tool;
 use Pimcore\Tool\Frontend as FrontendTool;
 use Symfony\Component\EventDispatcher\GenericEvent;
@@ -43,41 +44,9 @@ class Document extends Element\AbstractElement
     public static $types = ['folder', 'page', 'snippet', 'link', 'hardlink', 'email', 'newsletter', 'printpage', 'printcontainer'];
 
     /**
-     * Add document type to the $types array. It defines additional document types available in Pimcore.
-     *
-     * @param $type
-     */
-    public static function addDocumentType($type)
-    {
-        if (!in_array($type, self::$types)) {
-            self::$types[] = $type;
-        }
-    }
-
-    /**
      * @var bool
      */
     private static $hidePublished = false;
-
-    /**
-     * Set true if want to hide documents.
-     *
-     * @param bool $flag
-     */
-    public static function setHideUnpublished($flag)
-    {
-        self::$hidePublished = $flag;
-    }
-
-    /**
-     * Checks if unpublished documents should be hidden.
-     *
-     * @return bool
-     */
-    public static function doHideUnpublished()
-    {
-        return self::$hidePublished;
-    }
 
     /**
      * @var array
@@ -89,21 +58,21 @@ class Document extends Element\AbstractElement
      *
      * @var int
      */
-    public $id;
+    protected $id;
 
     /**
      * ID of the parent document, on root document this is null
      *
      * @var int
      */
-    public $parentId;
+    protected $parentId;
 
     /**
      * The parent document.
      *
      * @var Document
      */
-    public $parent;
+    protected $parent;
 
     /**
      * Type of the document as string (enum)
@@ -111,117 +80,120 @@ class Document extends Element\AbstractElement
      *
      * @var string
      */
-    public $type;
+    protected $type;
 
     /**
      * Filename/Key of the document
      *
      * @var string
      */
-    public $key;
+    protected $key;
 
     /**
      * Path to the document, not conaining the key (the full path of the parent document)
      *
      * @var string
      */
-    public $path;
+    protected $path;
 
     /**
      * Sorter index in the tree, can also be used for generating a navigation and so on
      *
      * @var int
      */
-    public $index;
+    protected $index;
 
     /**
      * published or not
      *
      * @var bool
      */
-    public $published = true;
+    protected $published = true;
 
     /**
      * timestamp of creationdate
      *
      * @var int
      */
-    public $creationDate;
+    protected $creationDate;
 
     /**
      * timestamp of modificationdate
      *
      * @var int
      */
-    public $modificationDate;
+    protected $modificationDate;
 
     /**
      * User-ID of the owner
      *
      * @var int
      */
-    public $userOwner;
+    protected $userOwner;
 
     /**
      * User-ID of the user last modified the document
      *
      * @var int
      */
-    public $userModification;
+    protected $userModification;
 
     /**
      * Permissions for the user which requested this document in editmode*
      */
-    public $userPermissions;
+    protected $userPermissions;
 
     /**
      * Dependencies for this document
      *
      * @var Dependency
      */
-    public $dependencies;
+    protected $dependencies;
 
     /**
      * List of Property, concerning the folder
      *
      * @var array
      */
-    public $properties = null;
+    protected $properties = null;
 
     /**
      * Contains a list of child-documents
      *
      * @var array
      */
-    public $childs;
+    protected $childs;
 
     /**
      * Indicator of document has childs or not.
      *
      * @var bool
      */
-    public $hasChilds;
+    protected $hasChilds;
 
     /**
      * Contains a list of sibling documents
      *
      * @var array
      */
-    public $siblings;
+    protected $siblings;
 
     /**
      * Indicator if document has siblings or not
      *
      * @var bool
      */
-    public $hasSiblings;
+    protected $hasSiblings;
 
     /**
      * Check if the document is locked.
      *
      * @var string
      */
-    public $locked = null;
+    protected $locked = null;
+
+    /** @var int */
+    protected $versionCount;
 
     /**
      * get possible types
@@ -255,15 +227,10 @@ class Document extends Element\AbstractElement
 
         try {
             $helperDoc = new Document();
-            // validate path
-            if (Element\Service::isValidPath($path, 'document')) {
-                $helperDoc->getDao()->getByPath($path);
-            }
-
+            $helperDoc->getDao()->getByPath($path);
             $doc = self::getById($helperDoc->getId(), $force);
             \Pimcore\Cache\Runtime::set($cacheKey, $doc);
         } catch (\Exception $e) {
-            Logger::debug($e->getMessage());
             $doc = null;
         }
 
@@ -286,7 +253,6 @@ class Document extends Element\AbstractElement
 
         return true;
     }
-
 
     /**
      * Static helper to get a Document by it's ID
@@ -334,7 +300,7 @@ class Document extends Element\AbstractElement
                     }
                 }
 
-                $document = \Pimcore::getContainer()->get('pimcore.model.factory')->build($className);
+                $document = self::getModelFactory()->build($className);
                 \Pimcore\Cache\Runtime::set($cacheKey, $document);
                 $document->getDao()->getById($id);
                 $document->__setDataVersionTimestamp($document->getModificationDate());
@@ -344,8 +310,6 @@ class Document extends Element\AbstractElement
                 \Pimcore\Cache\Runtime::set($cacheKey, $document);
             }
         } catch (\Exception $e) {
-            Logger::warning($e->getMessage());
-
             return null;
         }
 
@@ -394,7 +358,7 @@ class Document extends Element\AbstractElement
     {
         if (is_array($config)) {
             $listClass = 'Pimcore\\Model\\Document\\Listing';
-            $list = \Pimcore::getContainer()->get('pimcore.model.factory')->build($listClass);
+            $list = self::getModelFactory()->build($listClass);
             $list->setValues($config);
             $list->load();
 
@@ -415,7 +379,7 @@ class Document extends Element\AbstractElement
     {
         if (is_array($config)) {
             $listClass = 'Pimcore\\Model\\Document\\Listing';
-            $list = \Pimcore::getContainer()->get('pimcore.model.factory')->build($listClass);
+            $list = self::getModelFactory()->build($listClass);
             $list->setValues($config);
             $count = $list->getTotalCount();
 
@@ -433,7 +397,7 @@ class Document extends Element\AbstractElement
         // additional parameters (e.g. "versionNote" for the version note)
         $params = [];
         if (func_num_args() && is_array(func_get_arg(0))) {
-            $params =  func_get_arg(0);
+            $params = func_get_arg(0);
         }
 
         $isUpdate = false;
@@ -453,7 +417,7 @@ class Document extends Element\AbstractElement
         // if a transaction fails it gets restarted $maxRetries times, then the exception is thrown out
         // this is especially useful to avoid problems with deadlocks in multi-threaded environments (forked workers, ...)
         $maxRetries = 5;
-        for ($retries=0; $retries < $maxRetries; $retries++) {
+        for ($retries = 0; $retries < $maxRetries; $retries++) {
             $this->beginTransaction();
 
             try {
@@ -492,7 +456,7 @@ class Document extends Element\AbstractElement
                 // we try to start the transaction $maxRetries times again (deadlocks, ...)
                 if ($retries < ($maxRetries - 1)) {
                     $run = $retries + 1;
-                    $waitTime = 100000; // microseconds
+                    $waitTime = rand(1, 5) * 100000; // microseconds
                     Logger::warn('Unable to finish transaction (' . $run . ". run) because of the following reason '" . $e->getMessage() . "'. --> Retrying in " . $waitTime . ' microseconds ... (' . ($run + 1) . ' of ' . $maxRetries . ')');
 
                     usleep($waitTime); // wait specified time until we restart the transaction
@@ -613,8 +577,9 @@ class Document extends Element\AbstractElement
         }
 
         // save dependencies
-        $d = $this->getDependencies();
-        $d->clean();
+        $d = new Dependency();
+        $d->setSourceType('document');
+        $d->setSourceId($this->getId());
 
         foreach ($this->resolveDependencies() as $requirement) {
             if ($requirement['id'] == $this->getId() && $requirement['type'] == 'document') {
@@ -685,13 +650,13 @@ class Document extends Element\AbstractElement
      */
     public function setChildren($children)
     {
-        $this->childs=$children;
+        $this->childs = $children;
         if (is_array($children) and count($children) > 0) {
-            $this->hasChilds=true;
+            $this->hasChilds = true;
         } elseif ($children === null) {
             $this->hasChilds = null;
         } else {
-            $this->hasChilds=false;
+            $this->hasChilds = false;
         }
 
         return $this;
@@ -910,7 +875,7 @@ class Document extends Element\AbstractElement
 
             // TODO using the container directly is discouraged, maybe we find a better way (e.g. moving this into a service)?
             $request = \Pimcore::getContainer()->get('pimcore.http.request_helper')->getRequest();
-            $scheme  = $request->getScheme() . '://';
+            $scheme = $request->getScheme() . '://';
 
             /** @var Site $site */
             if ($site = FrontendTool::getSiteForDocument($this)) {
@@ -1464,5 +1429,65 @@ class Document extends Element\AbstractElement
     public function doRenderWithLegacyStack()
     {
         return false;
+    }
+
+    /**
+     * Add document type to the $types array. It defines additional document types available in Pimcore.
+     *
+     * @param $type
+     */
+    public static function addDocumentType($type)
+    {
+        if (!in_array($type, self::$types)) {
+            self::$types[] = $type;
+        }
+    }
+
+    /**
+     * Set true if want to hide documents.
+     *
+     * @param bool $flag
+     */
+    public static function setHideUnpublished($flag)
+    {
+        self::$hidePublished = $flag;
+    }
+
+    /**
+     * Checks if unpublished documents should be hidden.
+     *
+     * @return bool
+     */
+    public static function doHideUnpublished()
+    {
+        return self::$hidePublished;
+    }
+
+    /**
+     * @param mixed $userPermissions
+     */
+    public function setUserPermissions($userPermissions): void
+    {
+        $this->userPermissions = $userPermissions;
+    }
+
+    /**
+     * @return int
+     */
+    public function getVersionCount(): int
+    {
+        return $this->versionCount ? $this->versionCount : 0;
+    }
+
+    /**
+     * @param int|null $versionCount
+     *
+     * @return Document
+     */
+    public function setVersionCount(?int $versionCount): ElementInterface
+    {
+        $this->versionCount = (int) $versionCount;
+
+        return $this;
     }
 }
