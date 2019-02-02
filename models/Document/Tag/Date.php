@@ -81,7 +81,8 @@ class Date extends Model\Document\Tag
         }
 
         if ($this->date instanceof \DateTimeInterface) {
-            $result =  $this->date->formatLocalized($format);
+            $result = $this->date->formatLocalized($format);
+
             return $result;
         }
     }

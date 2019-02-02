@@ -377,7 +377,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                     $objectData['general'][$key] = $value;
                 }
             }
-            
+
             $objectData['general']['php']['classes'] = array_merge([get_class($object)], array_values(class_parents($object)));
             $objectData['general']['php']['interfaces'] = array_values(class_implements($object));
 
