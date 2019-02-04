@@ -615,7 +615,7 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
         }
     }
 
-    public function doEnrichFieldDefinition($fieldDefinition, $context = [])
+    protected function doEnrichFieldDefinition($fieldDefinition, $context = [])
     {
         if (method_exists($fieldDefinition, 'enrichFieldDefinition')) {
             $context['containerType'] = 'objectbrick';

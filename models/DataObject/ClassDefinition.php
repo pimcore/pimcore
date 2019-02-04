@@ -805,7 +805,7 @@ class ClassDefinition extends Model\AbstractModel
      */
     public function getFieldDefinitions($context = [])
     {
-        if (isset($context['suppressEnrichment']) && $context['suppressEnrichment']) {
+        if (!\Pimcore::inAdmin() || (isset($context['suppressEnrichment']) && $context['suppressEnrichment'])) {
             return $this->fieldDefinitions;
         }
 
@@ -820,7 +820,7 @@ class ClassDefinition extends Model\AbstractModel
         return $enrichedFieldDefinitions;
     }
 
-    public function doEnrichFieldDefinition($fieldDefinition, $context = [])
+    protected function doEnrichFieldDefinition($fieldDefinition, $context = [])
     {
         if (method_exists($fieldDefinition, 'enrichFieldDefinition')) {
             $context['class'] = $this;
@@ -871,7 +871,7 @@ class ClassDefinition extends Model\AbstractModel
     public function getFieldDefinition($key, $context = [])
     {
         if (array_key_exists($key, $this->fieldDefinitions)) {
-            if (isset($context['suppressEnrichment']) && $context['suppressEnrichment']) {
+            if (!\Pimcore::inAdmin() || (isset($context['suppressEnrichment']) && $context['suppressEnrichment'])) {
                 return $this->fieldDefinitions[$key];
             }
             $fieldDefinition = $this->doEnrichFieldDefinition($this->fieldDefinitions[$key], $context);

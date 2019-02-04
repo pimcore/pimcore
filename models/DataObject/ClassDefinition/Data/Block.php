@@ -630,7 +630,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
             $this->fieldDefinitionsCache = $definitions;
         }
 
-        if (isset($context['suppressEnrichment']) && $context['suppressEnrichment']) {
+        if (!\Pimcore::inAdmin() || (isset($context['suppressEnrichment']) && $context['suppressEnrichment'])) {
             return $this->fieldDefinitionsCache;
         }
 
@@ -655,7 +655,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     {
         $fds = $this->getFieldDefinitions();
         if (isset($fds[$name])) {
-            if (isset($context['suppressEnrichment']) && $context['suppressEnrichment']) {
+            if (!\Pimcore::inAdmin() || (isset($context['suppressEnrichment']) && $context['suppressEnrichment'])) {
                 return $fds[$name];
             }
             $fieldDefinition = $this->doEnrichFieldDefinition($fds[$name], $context);
@@ -666,7 +666,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
         return;
     }
 
-    public function doEnrichFieldDefinition($fieldDefinition, $context = [])
+    protected function doEnrichFieldDefinition($fieldDefinition, $context = [])
     {
         if (method_exists($fieldDefinition, 'enrichFieldDefinition')) {
             $context['containerType'] = 'block';

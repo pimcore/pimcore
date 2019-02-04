@@ -805,7 +805,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
         $fds = $this->getFieldDefinitions($context);
         if (isset($fds[$name])) {
             $fieldDefinition = $fds[$name];
-            if (isset($context['suppressEnrichment']) && $context['suppressEnrichment']) {
+            if (!\Pimcore::inAdmin() || (isset($context['suppressEnrichment']) && $context['suppressEnrichment'])) {
                 return $fieldDefinition;
             }
 
@@ -835,7 +835,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
             $this->fieldDefinitionsCache = $definitions;
         }
 
-        if (isset($context['suppressEnrichment']) && $context['suppressEnrichment']) {
+        if (!\Pimcore::inAdmin() || (isset($context['suppressEnrichment']) && $context['suppressEnrichment'])) {
             return $this->fieldDefinitionsCache;
         }
 
@@ -850,7 +850,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
         return $enrichedFieldDefinitions;
     }
 
-    public function doEnrichFieldDefinition($fieldDefinition, $context = [])
+    protected function doEnrichFieldDefinition($fieldDefinition, $context = [])
     {
         if (method_exists($fieldDefinition, 'enrichFieldDefinition')) {
             $context['class'] = $this;
