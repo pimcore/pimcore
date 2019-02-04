@@ -273,6 +273,10 @@ class AbstractObject extends Model\Element\AbstractElement
      */
     public static function getById($id, $force = false)
     {
+        if($id === null) {
+            return null;
+        }
+
         if(!is_numeric($id)) {
             throw new \Exception('id has to be numeric!');
         }
