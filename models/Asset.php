@@ -236,7 +236,7 @@ class Asset extends Element\AbstractElement
     protected static function typeMatch(Asset $asset)
     {
         $staticType = get_called_class();
-        if ($staticType != 'Pimcore\Model\Asset') {
+        if ($staticType != Asset::class) {
             if (!$asset instanceof $staticType) {
                 return false;
             }

@@ -245,7 +245,7 @@ class Document extends Element\AbstractElement
     protected static function typeMatch(Document $document)
     {
         $staticType = get_called_class();
-        if ($staticType != 'Pimcore\Model\Document') {
+        if ($staticType != Document::class) {
             if (!$document instanceof $staticType) {
                 return false;
             }
