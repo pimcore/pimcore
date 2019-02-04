@@ -273,19 +273,10 @@ class AbstractObject extends Model\Element\AbstractElement
      */
     public static function getById($id, $force = false)
     {
-        if($id === null) {
+        if(!is_numeric($id) || $id < 1) {
             return null;
         }
-
-        if(!is_numeric($id)) {
-            throw new \Exception('id has to be numeric!');
-        }
-
         $id = intval($id);
-
-        if ($id < 1) {
-            return null;
-        }
 
         $cacheKey = 'object_' . $id;
 
