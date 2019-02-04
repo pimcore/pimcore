@@ -96,6 +96,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
      */
     public function loadData($data, $object = null, $params = [])
     {
+        $ownerObject = $object;
         $objects = [];
 
         if (is_array($data) && count($data) > 0) {
@@ -112,7 +113,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
                             'object' => $destination
                         ]);
 
-                    $metaData->setOwner($object, $this->getName());
+                    $metaData->setOwner($ownerObject, $this->getName());
 
                     $ownertype = $object['ownertype'] ? $object['ownertype'] : '';
                     $ownername = $object['ownername'] ? $object['ownername'] : '';
