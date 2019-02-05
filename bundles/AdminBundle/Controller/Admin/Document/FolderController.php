@@ -60,8 +60,10 @@ class FolderController extends DocumentControllerBase
         //data need to wrapped into a container in order to pass parameter to event listeners by reference so that they can change the values
         $data = $folder->getObjectVars();
 
-        $data['php']['classes'] = array_merge([get_class($folder)], array_values(class_parents($folder)));
-        $data['php']['interfaces'] = array_values(class_implements($folder));
+        $data['php'] = [
+            'classes' => array_merge([get_class($folder)], array_values(class_parents($folder))),
+            'interfaces' => array_values(class_implements($folder))
+        ];
 
         $event = new GenericEvent($this, [
             'data' => $data,

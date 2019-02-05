@@ -169,8 +169,10 @@ class AssetController extends ElementControllerBase implements EventedController
         $data['filesize'] = $asset->getFileSize();
         $data['url'] = Tool::getHostUrl(null, $request) . $asset->getRealFullPath();
 
-        $data['php']['classes'] = array_merge([get_class($asset)], array_values(class_parents($asset)));
-        $data['php']['interfaces'] = array_values(class_implements($asset));
+        $data['php'] = [
+            'classes' => array_merge([get_class($asset)], array_values(class_parents($asset))),
+            'interfaces' => array_values(class_implements($asset))
+        ];
 
         $event = new GenericEvent($this, [
             'data' => $data,
