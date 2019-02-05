@@ -267,7 +267,6 @@ class AbstractObject extends Model\Element\AbstractElement
      *
      * @param int $id
      * @param bool $force
-     * @throws \Exception
      *
      * @return static
      */

@@ -259,7 +259,6 @@ class Document extends Element\AbstractElement
      *
      * @param int $id
      * @param bool $force
-     * @throws \Exception
      *
      * @return Document|Document\Email|Document\Folder|Document\Hardlink|Document\Link|Document\Page|Document\Printcontainer|Document\Printpage|Document\Snippet|Document\Newsletter
      */
