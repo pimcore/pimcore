@@ -222,9 +222,10 @@ class Listing extends AbstractOrderList implements IOrderList
     }
 
     /**
-     * @param int $classId
+     * @param mixed $classId
      *
      * @return $this
+     * @throws \Exception
      */
     public function joinCustomer($classId)
     {
