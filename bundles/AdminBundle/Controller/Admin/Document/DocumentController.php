@@ -65,6 +65,11 @@ class DocumentController extends ElementControllerBase implements EventedControl
         $data = $document->getObjectVars();
         $data['versionDate'] = $document->getModificationDate();
 
+        $data['php'] = [
+            'classes' => array_merge([get_class($document)], array_values(class_parents($document))),
+            'interfaces' => array_values(class_implements($document))
+        ];
+
         $event = new GenericEvent($this, [
             'data' => $data,
             'document' => $document
