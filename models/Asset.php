@@ -255,7 +255,7 @@ class Asset extends Element\AbstractElement
      */
     public static function getById($id, $force = false)
     {
-        if(!is_numeric($id) || $id < 1) {
+        if (!is_numeric($id) || $id < 1) {
             return null;
         }
         $id = intval($id);
