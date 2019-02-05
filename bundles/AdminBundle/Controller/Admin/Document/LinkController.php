@@ -69,6 +69,9 @@ class LinkController extends DocumentControllerBase
         $data['rawHref'] = $link->getRawHref();
         $data['versionDate'] = $link->getModificationDate();
 
+        $data['php']['classes'] = array_merge([get_class($link)], array_values(class_parents($link)));
+        $data['php']['interfaces'] = array_values(class_implements($link));
+
         $event = new GenericEvent($this, [
             'data' => $data,
             'document' => $link
