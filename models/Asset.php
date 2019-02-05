@@ -229,6 +229,23 @@ class Asset extends Element\AbstractElement
     }
 
     /**
+     * @param Asset $asset
+     *
+     * @return bool
+     */
+    protected static function typeMatch(Asset $asset)
+    {
+        $staticType = get_called_class();
+        if ($staticType != Asset::class) {
+            if (!$asset instanceof $staticType) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
      * Static helper to get an asset by the passed ID
      *
      * @param int $id
@@ -238,17 +255,16 @@ class Asset extends Element\AbstractElement
      */
     public static function getById($id, $force = false)
     {
-        $id = intval($id);
-
-        if ($id < 1) {
+        if (!is_numeric($id) || $id < 1) {
             return null;
         }
+        $id = intval($id);
 
         $cacheKey = 'asset_' . $id;
 
         if (!$force && \Pimcore\Cache\Runtime::isRegistered($cacheKey)) {
             $asset = \Pimcore\Cache\Runtime::get($cacheKey);
-            if ($asset) {
+            if ($asset && static::typeMatch($asset)) {
                 return $asset;
             }
         }
@@ -273,7 +289,7 @@ class Asset extends Element\AbstractElement
             return null;
         }
 
-        if (!$asset) {
+        if (!$asset || !static::typeMatch($asset)) {
             return null;
         }
 
@@ -300,21 +316,23 @@ class Asset extends Element\AbstractElement
                 $tmpFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/asset-create-tmp-file-' . uniqid() . '.' . File::getFileExtension($data['filename']);
                 if (array_key_exists('data', $data)) {
                     File::put($tmpFile, $data['data']);
+                    $mimeType = Mime::detect($tmpFile);
+                    unlink($tmpFile);
                 } else {
                     $streamMeta = stream_get_meta_data($data['stream']);
                     if (file_exists($streamMeta['uri'])) {
                         // stream is a local file, so we don't have to write a tmp file
-                        $tmpFile = $streamMeta['uri'];
+                        $mimeType = Mime::detect($streamMeta['uri']);
                     } else {
                         // write a tmp file because the stream isn't a pointer to the local filesystem
                         rewind($data['stream']);
                         $dest = fopen($tmpFile, 'w+', false, File::getContext());
                         stream_copy_to_stream($data['stream'], $dest);
                         fclose($dest);
+                        $mimeType = Mime::detect($tmpFile);
+                        unlink($tmpFile);
                     }
                 }
-                $mimeType = Mime::detect($tmpFile);
-                unlink($tmpFile);
             } else {
                 $mimeType = Mime::detect($data['sourcePath'], $data['filename']);
                 if (is_file($data['sourcePath'])) {

@@ -272,11 +272,10 @@ class AbstractObject extends Model\Element\AbstractElement
      */
     public static function getById($id, $force = false)
     {
-        $id = intval($id);
-
-        if ($id < 1) {
+        if (!is_numeric($id) || $id < 1) {
             return null;
         }
+        $id = intval($id);
 
         $cacheKey = 'object_' . $id;
 
@@ -417,7 +416,7 @@ class AbstractObject extends Model\Element\AbstractElement
     protected static function typeMatch(AbstractObject $object)
     {
         $staticType = get_called_class();
-        if ($staticType != 'Pimcore\Model\DataObject\Concrete' && $staticType != 'Pimcore\Model\DataObject\AbstractObject') {
+        if ($staticType != Concrete::class && $staticType != AbstractObject::class) {
             if (!$object instanceof $staticType) {
                 return false;
             }

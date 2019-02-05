@@ -238,6 +238,23 @@ class Document extends Element\AbstractElement
     }
 
     /**
+     * @param Document $document
+     *
+     * @return bool
+     */
+    protected static function typeMatch(Document $document)
+    {
+        $staticType = get_called_class();
+        if ($staticType != Document::class) {
+            if (!$document instanceof $staticType) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
      * Static helper to get a Document by it's ID
      *
      * @param int $id
@@ -247,17 +264,16 @@ class Document extends Element\AbstractElement
      */
     public static function getById($id, $force = false)
     {
-        $id = intval($id);
-
-        if ($id < 1) {
+        if (!is_numeric($id) || $id < 1) {
             return null;
         }
+        $id = intval($id);
 
         $cacheKey = 'document_' . $id;
 
         if (!$force && \Pimcore\Cache\Runtime::isRegistered($cacheKey)) {
             $document = \Pimcore\Cache\Runtime::get($cacheKey);
-            if ($document) {
+            if ($document && static::typeMatch($document)) {
                 return $document;
             }
         }
@@ -291,7 +307,7 @@ class Document extends Element\AbstractElement
             return null;
         }
 
-        if (!$document) {
+        if (!$document || !static::typeMatch($document)) {
             return null;
         }
 
