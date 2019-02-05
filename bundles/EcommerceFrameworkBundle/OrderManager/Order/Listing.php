@@ -232,7 +232,7 @@ class Listing extends AbstractOrderList implements IOrderList
 
         if (!array_key_exists('customer', $joins)) {
             $this->getQuery()->join(
-                ['customer' => 'object_' . (int)$classId],
+                ['customer' => 'object_' . $classId],
                 'customer.o_id = order.customer__id',
                 ''
             );
