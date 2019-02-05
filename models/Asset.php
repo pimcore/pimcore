@@ -229,26 +229,43 @@ class Asset extends Element\AbstractElement
     }
 
     /**
+     * @param Asset $asset
+     *
+     * @return bool
+     */
+    protected static function typeMatch(Asset $asset)
+    {
+        $staticType = get_called_class();
+        if ($staticType != Asset::class) {
+            if (!$asset instanceof $staticType) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
      * Static helper to get an asset by the passed ID
      *
      * @param int $id
      * @param bool $force
+     * @throws \Exception
      *
      * @return Asset|Asset\Archive|Asset\Audio|Asset\Document|Asset\Folder|Asset\Image|Asset\Text|Asset\Unknown|Asset\Video
      */
     public static function getById($id, $force = false)
     {
-        $id = intval($id);
-
-        if ($id < 1) {
+        if(!is_numeric($id) || $id < 1) {
             return null;
         }
+        $id = intval($id);
 
         $cacheKey = 'asset_' . $id;
 
         if (!$force && \Pimcore\Cache\Runtime::isRegistered($cacheKey)) {
             $asset = \Pimcore\Cache\Runtime::get($cacheKey);
-            if ($asset) {
+            if ($asset && static::typeMatch($asset)) {
                 return $asset;
             }
         }
@@ -273,7 +290,7 @@ class Asset extends Element\AbstractElement
             return null;
         }
 
-        if (!$asset) {
+        if (!$asset || !static::typeMatch($asset)) {
             return null;
         }
 

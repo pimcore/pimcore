@@ -443,10 +443,14 @@ abstract class PageSnippet extends Model\Document
 
     /**
      * @return Document
+     * @throws \Exception
      */
     public function getContentMasterDocument()
     {
-        return Document::getById($this->getContentMasterDocumentId());
+        if($masterDocumentId = $this->getContentMasterDocumentId()) {
+            return Document::getById($masterDocumentId);
+        }
+        return null;
     }
 
     /**
