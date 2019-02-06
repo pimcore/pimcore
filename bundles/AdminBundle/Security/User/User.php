@@ -77,7 +77,7 @@ class User implements UserInterface, EquatableInterface, GoogleTwoFactorInterfac
 
         foreach ($this->user->getRoles() as $roleId) {
             /** @var PimcoreUser\Role $role */
-            if($role = PimcoreUser\Role::getById($roleId)) {
+            if ($role = PimcoreUser\Role::getById($roleId)) {
                 $roles[] = 'ROLE_' . strtoupper($role->getName());
             }
         }
