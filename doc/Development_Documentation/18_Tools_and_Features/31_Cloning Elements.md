@@ -15,7 +15,14 @@ If you want to get a persistent copy use the `copyAsChild`method of the correspo
 E.g.
 
 ```php
-Pimcore\Model\Asset\Service::copyAsChild($target, $source)
+$assetService = new \Pimcore\Model\Asset\Service();
+$assetService->copyAsChild($target, $source);
+
+$documentService = new \Pimcore\Model\Document\Service();
+$documentService->copyAsChild($target, $source); // additional arguments are available for inheritance, ...
+
+$objectService = new \Pimcore\Model\DataObject\Service();
+$objectService->copyAsChild($target, $source);
 ```
 where `$source`is the source element and `$target` the parent element of the new element.
 This will also create a unique element key (or filename for asset elements).
