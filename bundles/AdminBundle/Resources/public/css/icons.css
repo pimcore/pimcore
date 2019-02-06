@@ -125,6 +125,16 @@
     background: url(/bundles/pimcoreadmin/img/flat-color-icons/engineering.svg) center center no-repeat !important;
 }
 
+.pimcore_icon_overlay_seo:before {
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    bottom: -4px;
+    right: -5px;
+    content: "";
+    background: url(/bundles/pimcoreadmin/img/flat-color-icons/google.svg) center center no-repeat !important;
+}
+
 
 .pimcore_icon_site {
     background: url(/bundles/pimcoreadmin/img/flat-color-icons/home.svg) center center no-repeat !important;

@@ -73,6 +73,12 @@ class PrintpageControllerBase extends DocumentControllerBase
         //Hook for modifying return value - e.g. for changing permissions based on object data
         //data need to wrapped into a container in order to pass parameter to event listeners by reference so that they can change the values
         $data = $page->getObjectVars();
+
+        $data['php'] = [
+            'classes' => array_merge([get_class($page)], array_values(class_parents($page))),
+            'interfaces' => array_values(class_implements($page))
+        ];
+
         $event = new GenericEvent($this, [
             'data' => $data,
             'document' => $page

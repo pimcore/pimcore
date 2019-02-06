@@ -82,6 +82,11 @@ class PageController extends DocumentControllerBase
         $data = $page->getObjectVars();
         $data['versionDate'] = $page->getModificationDate();
 
+        $data['php'] = [
+            'classes' => array_merge([get_class($page)], array_values(class_parents($page))),
+            'interfaces' => array_values(class_implements($page))
+        ];
+
         $event = new GenericEvent($this, [
             'data' => $data,
             'document' => $page
