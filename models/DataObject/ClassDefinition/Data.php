@@ -973,7 +973,7 @@ abstract class Data
         }
 
         if ($this->supportsDirtyDetection()) {
-            $code .= "\t" . '$currentData = $this->get' . ucfirst($this->getName()) . '();' . "\n";
+            $code .= "\t" . '$currentData = $this->get' . ucfirst($this->getName()) . '($language);' . "\n";
             $code .= "\t" . '$isEqual = $fd->isEqual($currentData, $' . $key . ');' . "\n";
         } else {
             $code .= "\t" . '$isEqual = false;' . "\n";
