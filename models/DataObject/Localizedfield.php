@@ -39,20 +39,20 @@ class Localizedfield extends Model\AbstractModel implements DirtyIndicatorInterf
     /**
      * @var array
      */
-    public $items = [];
+    protected $items = [];
 
     /**
      * @var Model\DataObject\Concrete
      */
-    public $object;
+    protected $object;
 
     /**
      * @var Model\DataObject\ClassDefinition
      */
-    public $class;
+    protected $class;
 
     /** @var mixed */
-    public $context;
+    protected $context;
 
     /** @var int */
     protected $objectId;
