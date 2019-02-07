@@ -1,7 +1,7 @@
 # Data Inheritance and Parent Class
   
 Pimcore provides two sorts of inheritance. While data inheritance allows the inheritance of object data along the tree
- hierarchy of objects, can the developer modify the PHP class hierarchy with the parent class setting of object classes. 
+ hierarchy of objects, the developer can modify the PHP class hierarchy with the parent class setting of object classes. 
    
 ## Data Inheritance
 A very important feature in connection with PIM is data inheritance. Data inheritance means, that objects of the same 
@@ -23,6 +23,13 @@ classes is not supported.
 In the Pimcore backend, inherited values are visualized as in the screen below: they are grey and a bit transparent, 
 and have a green marker in the upper left corner. With a click on this corner, one can open the source object of this 
 specific attribute.
+
+> **Important Note regarding changing the inheritance flag**
+> If you toggle the inheritance flag after creating objects, the *object_*_*\_query_* might contain  
+> wrong values even after saving the object again. Pimcore will disable the dirty detection
+> if the class is newer than the object which should fix this issue.
+> However, you can still call AbstractObject::disableDirtyDetection() before saving the object
+> if you want to explicitely fix that.
 
 
 ![Data Inheritance](../../../img/classes-data-inheritance1.png)
@@ -56,6 +63,8 @@ In order to maintain all Pimcore functionalities, it has to be ensured that the 
 above extends `Pimcore\Model\DataObject\Concrete` and that its methods don't override and clash in unexpected ways 
 with existing methods of `Pimcore\Model\DataObject\Concrete` or any magic functions of `Pimcore\Model\DataObject\Concrete`
 or its parent classes.
+
+Starting from Pimcore 5.4.0, it is also possible to use class inheritance and traits for listing data object model.
 </div>
 
 ### Hooks available when using class inheritance

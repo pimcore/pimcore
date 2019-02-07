@@ -9,13 +9,22 @@ $new = Pimcore\Model\Element\Service::cloneMe($source)
 to get a safe copy of the original element (everything that implements ElementInterface).
 Note that this will not update any internal references.
 For example: 
-A href inside the source element pointing to the source element will still reference the source element in the copy.
+A relation inside the source element pointing to the source element will still reference the source element in the copy.
 
 If you want to get a persistent copy use the `copyAsChild`method of the corresponding service.
 E.g.
 
 ```php
-Pimcore\Model\Asset\Service::copyAsChild($target, $source)
+$user = \Pimcore\Model\User::getById(123);
+
+$assetService = new \Pimcore\Model\Asset\Service($user);
+$assetService->copyAsChild($target, $source);
+
+$documentService = new \Pimcore\Model\Document\Service($user);
+$documentService->copyAsChild($target, $source); // additional arguments are available for inheritance, ...
+
+$objectService = new \Pimcore\Model\DataObject\Service($user);
+$objectService->copyAsChild($target, $source);
 ```
 where `$source`is the source element and `$target` the parent element of the new element.
 This will also create a unique element key (or filename for asset elements).

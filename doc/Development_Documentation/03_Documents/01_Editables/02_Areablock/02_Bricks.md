@@ -243,6 +243,8 @@ reasons, but a couple of methods could be useful when implementing your own bric
 | `$info->getRequest()`   | Returns the current request                      |
 | `$info->getView()`      | Returns the ViewModel to be rendered             |
 | `$info->getIndex()`     | Returns the current index inside the areablock   |
+| `$info->getParam($name)`| Retrieve a param passed by `globalParams` or `params` config option  |
+| `$info->getParams()`    | Retrieve all params passed by `globalParams` or `params` config option  |
 
 ## Configuration in Editmode
 
@@ -366,4 +368,4 @@ the compatibility they still need to be implemented the Pimcore 4 way in `websit
 
 ## Examples
 
-You can find many examples in the [demo / quick start package](https://github.com/pimcore/pimcore/tree/master/install-profiles/demo-basic/src/AppBundle/Document/Areabrick).
+You can find many examples in the [demo / quick start package](https://github.com/pimcore/demo-basic/tree/master/src/AppBundle/Document/Areabrick).

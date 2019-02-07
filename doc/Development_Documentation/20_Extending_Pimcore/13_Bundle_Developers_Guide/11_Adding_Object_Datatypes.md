@@ -8,7 +8,7 @@ Following steps are necessary to do so:
   Pimcore Admin Ui. 
    
    For examples have a look at the Pimcore core datatypes at 
-   [github](https://github.com/pimcore/pimcore/tree/master/pimcore/models/DataObject/ClassDefinition/Data). 
+   [github](https://github.com/pimcore/pimcore/tree/master/models/DataObject/ClassDefinition/Data). 
 
    In Pimcore 4 the PHP class had to be in namespace `Pimcore\Model\DataObject\ClassDefinition\Data` to be loaded. This is 
    still possible, but not necessary any more (see below).
@@ -22,7 +22,7 @@ options in class editor.
    `$fieldtype` property of the corresponding PHP class.
      
    For examples have a look at the Pimcore core datatypes at  
-   [github](https://github.com/pimcore/pimcore/tree/master/web/pimcore/static6/js/pimcore/object/classes/data)
+   [github](https://github.com/pimcore/pimcore/tree/master/bundles/AdminBundle/Resources/public/js/pimcore/object/classes/data)
 
 
 3) Create JavaScript class for object editor (object tag):
@@ -33,7 +33,7 @@ is presented and an can be entered within Pimcore objects.
    `$fieldtype` property of the corresponding PHP class.
      
    For examples have a look at the Pimcore core datatypes at  
-   [github](https://github.com/pimcore/pimcore/tree/master/web/pimcore/static6/js/pimcore/object/tags)
+   [github](https://github.com/pimcore/pimcore/tree/master/bundles/AdminBundle/Resources/public/js/pimcore/object/tags)
    
    
 4) Register a datatype in Pimcore

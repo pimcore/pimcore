@@ -17,7 +17,7 @@ Many aspects of Pimcore can be configured through the [Symfony Config](https://s
 tree defined under the `pimcore` extension. These values can be changed through config files in `app/config` (e.g. `app/config/config.yml)`).
 
 Pimcore additionally includes a set of standard configuration files which (in contrast to a standard Symfony project) are
-not located in `app/config` but in the [PimcoreCoreBundle](https://github.com/pimcore/pimcore/tree/master/pimcore/lib/Pimcore/Bundle/CoreBundle/Resources/config/pimcore).
+not located in `app/config` but in the [PimcoreCoreBundle](https://github.com/pimcore/pimcore/tree/master/bundles/CoreBundle/Resources/config/pimcore).
 This gives us the possibility to ship and update default configurations without affecting project code in `app/`. See
 [Auto loading config and routing definitions](../20_Extending_Pimcore/13_Bundle_Developers_Guide/03_Auto_Loading_Config_And_Routing_Definitions.md)
 for details how this works).
@@ -40,8 +40,8 @@ $ bin/console config:dump-reference pimcore
 
 ## Pimcore constants
 
-Pimcore uses several constants for locating certain directories like logging, asses, versions etc. These constants are
-defined in [`/pimcore/config/constants.php`](https://github.com/pimcore/pimcore/blob/master/pimcore/config/constants.php).
+Pimcore uses several constants for locating certain directories like logging, assets, versions etc. These constants are
+defined in [`lib/Bootstrap.php`](https://github.com/pimcore/pimcore/blob/master/lib/Bootstrap.php).
 
 If you need to overwrite these constants, e.g. for using a special directory for assets or versions at an object storage
 at AWS S3 you have multiple ways to do so:
@@ -54,20 +54,22 @@ at AWS S3 you have multiple ways to do so:
   component if it exists. Environment variables defined here will have the same effect as "real" environment variables.
 
 
-An example file (`constants.example.php`) is shipped with Pimcore installation and could look like: 
+The [Pimcore Skeleton](https://github.com/pimcore/skeleton) repository contains an example file,
+[`constants.example.php`](https://github.com/pimcore/skeleton/blob/master/app/constants.example.php).
+The following file is an example to overwrite some locations:
 
 ```php
 <?php
 
 // to use this file you have to rename it to constants.php
-// you can use this file to overwrite the constants defined in /pimcore/config/constants.php
+// you can use this file to overwrite the constants defined in lib/Bootstrap.php
 
 define("PIMCORE_ASSET_DIRECTORY", "/custom/path/to/assets");
 define("PIMCORE_TEMPORARY_DIRECTORY", "/my/tmp/path");
 
 ```
 
-Please see [`/pimcore/config/constants.php`](https://github.com/pimcore/pimcore/blob/master/pimcore/config/constants.php)
+Please see [`lib/Bootstrap.php`](https://github.com/pimcore/pimcore/blob/master/lib/Bootstrap.php)
 for a list of defined constants.
 
 

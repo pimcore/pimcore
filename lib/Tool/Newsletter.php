@@ -1,0 +1,526 @@
+<?php
+/**
+ * Pimcore
+ *
+ * This source file is available under two different licenses:
+ * - GNU General Public License version 3 (GPLv3)
+ * - Pimcore Enterprise License (PEL)
+ * Full copyright and license information is available in
+ * LICENSE.md which is distributed with this source code.
+ *
+ * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ */
+
+namespace Pimcore\Tool;
+
+use Pimcore\Document\Newsletter\SendingParamContainer;
+use Pimcore\Event\DocumentEvents;
+use Pimcore\Logger;
+use Pimcore\Mail;
+use Pimcore\Model;
+use Pimcore\Model\DataObject;
+use Pimcore\Model\Document;
+use Pimcore\Tool;
+use Symfony\Component\EventDispatcher\GenericEvent;
+
+class Newsletter
+{
+    const SENDING_MODE_BATCH = 'batch';
+    const SENDING_MODE_SINGLE = 'single';
+
+    /**
+     * @var DataObject\ClassDefinition
+     */
+    protected $class;
+
+    /**
+     * @param Document\Newsletter $newsletterDocument
+     * @param SendingParamContainer|null $sendingContainer
+     * @param string|null $hostUrl
+     *
+     * @return Mail
+     */
+    public static function prepareMail(Document\Newsletter $newsletterDocument, SendingParamContainer $sendingContainer = null, $hostUrl = null)
+    {
+        $mail = new Mail();
+        $mail->setIgnoreDebugMode(true);
+
+        if (\Pimcore\Config::getSystemConfig()->newsletter->usespecific) {
+            $mail->init('newsletter');
+        }
+
+        if (!Tool::getHostUrl() && $hostUrl) {
+            $mail->setHostUrl($hostUrl);
+        }
+
+        $mail->setDocument($newsletterDocument);
+
+        if ($sendingContainer && $sendingContainer->getParams()) {
+            $mail->setParams($sendingContainer->getParams());
+        }
+
+        $contentHTML = $mail->getBodyHtmlRendered();
+        $contentText = $mail->getBodyTextRendered();
+
+        // render the document and rewrite the links (if analytics is enabled)
+        if ($newsletterDocument->getEnableTrackingParameters()) {
+            if ($contentHTML) {
+                include_once(PIMCORE_PATH . '/lib/simple_html_dom.php');
+
+                $html = str_get_html($contentHTML);
+                if ($html) {
+                    $links = $html->find('a');
+                    foreach ($links as $link) {
+                        if (preg_match('/^(mailto|#)/', trim(strtolower($link->href)))) {
+                            // No tracking for mailto and hash only links
+                            continue;
+                        }
+                        $urlParts = parse_url($link->href);
+                        $glue = '?';
+                        $params = 'utm_source=' . $newsletterDocument->getTrackingParameterSource() .
+                                    '&utm_medium=' . $newsletterDocument->getTrackingParameterMedium() .
+                                    '&utm_campaign=' . $newsletterDocument->getTrackingParameterName();
+                        if (isset($urlParts['query'])) {
+                            $glue = '&';
+                        }
+                        $link->href = preg_replace('/[#].+$/', '', $link->href).$glue.$params;
+                        if (isset($urlParts['fragment'])) {
+                            $link->href .= '#'.$urlParts['fragment'];
+                        }
+                    }
+
+                    $contentHTML = $html->save();
+
+                    $html->clear();
+                    unset($html);
+                }
+
+                $mail->setBodyHtml($contentHTML);
+            }
+        }
+
+        $mail->setBodyHtml($contentHTML);
+        $mail->setBodyText($contentText);
+        $mail->setSubject($mail->getSubjectRendered());
+
+        return $mail;
+    }
+
+    /**
+     * @param Mail $mail
+     * @param SendingParamContainer $sendingContainer
+     */
+    public static function sendNewsletterDocumentBasedMail(Mail $mail, SendingParamContainer $sendingContainer)
+    {
+        $mailAddress = $sendingContainer->getEmail();
+        if (!empty($mailAddress)) {
+            $mail->setTo($mailAddress);
+
+            $mailer = null;
+            //check if newsletter specific mailer is needed
+            if (\Pimcore\Config::getSystemConfig()->newsletter->usespecific) {
+                $mailer = \Pimcore::getContainer()->get('swiftmailer.mailer.newsletter_mailer');
+            }
+
+            $event = new GenericEvent($mail, [
+                'mail' => $mail,
+                'document' => $mail->getDocument(),
+                'sendingContainer' => $sendingContainer,
+                'mailer' => $mailer
+            ]);
+
+            \Pimcore::getEventDispatcher()->dispatch(DocumentEvents::NEWSLETTER_PRE_SEND, $event);
+            $mail->sendWithoutRendering($mailer);
+            \Pimcore::getEventDispatcher()->dispatch(DocumentEvents::NEWSLETTER_POST_SEND, $event);
+
+            Logger::info('Sent newsletter to: ' . self::obfuscateEmail($mailAddress) . ' [' . $mail->getDocument()->getId() . ']');
+        } else {
+            Logger::warn('No E-Mail Address given - cannot send mail. [' . $mail->getDocument()->getId() . ']');
+        }
+    }
+
+    /**
+     * @param $email
+     *
+     * @return mixed
+     */
+    protected static function obfuscateEmail($email)
+    {
+        $email = substr_replace($email, '.xxx', strrpos($email, '.'));
+
+        return $email;
+    }
+
+    /**
+     * @param Model\Tool\Newsletter\Config $newsletter
+     * @param DataObject\Concrete $object
+     * @param null $emailAddress
+     * @param null $hostUrl
+     */
+    public static function sendMail($newsletter, $object, $emailAddress = null, $hostUrl = null)
+    {
+        $params = [
+            'gender' => $object->getGender(),
+            'firstname' => $object->getFirstname(),
+            'lastname' => $object->getLastname(),
+            'email' => $object->getEmail(),
+            'token' => $object->getProperty('token'),
+            'object' => $object
+        ];
+
+        $mail = new Mail();
+        $mail->setIgnoreDebugMode(true);
+
+        if (\Pimcore\Config::getSystemConfig()->newsletter->usespecific) {
+            $mail->init('newsletter');
+        }
+
+        if (!Tool::getHostUrl() && $hostUrl) {
+            $mail->setHostUrl($hostUrl);
+        }
+
+        if ($emailAddress) {
+            $mail->addTo($emailAddress);
+        } else {
+            $mail->addTo($object->getEmail());
+        }
+        $mail->setDocument(Document::getById($newsletter->getDocument()));
+        $mail->setParams($params);
+
+        // render the document and rewrite the links (if analytics is enabled)
+        if ($newsletter->getGoogleAnalytics()) {
+            if ($content = $mail->getBodyHtmlRendered()) {
+                include_once(PIMCORE_PATH . '/lib/simple_html_dom.php');
+
+                $html = str_get_html($content);
+                if ($html) {
+                    $links = $html->find('a');
+                    foreach ($links as $link) {
+                        if (preg_match('/^(mailto)/', trim(strtolower($link->href)))) {
+                            continue;
+                        }
+
+                        $glue = '?';
+                        if (strpos($link->href, '?')) {
+                            $glue = '&';
+                        }
+                        $link->href = $link->href . $glue . 'utm_source=Newsletter&utm_medium=Email&utm_campaign=' . $newsletter->getName();
+                    }
+                    $content = $html->save();
+
+                    $html->clear();
+                    unset($html);
+                }
+
+                $mail->setBodyHtml($content);
+            }
+        }
+
+        $mail->send();
+    }
+
+    /**
+     * @param null $classId
+     *
+     * @throws \Exception
+     */
+    public function __construct($classId = null)
+    {
+        $class = null;
+        if (is_numeric($classId)) {
+            $class = DataObject\ClassDefinition::getById($classId);
+        } else {
+            $class = DataObject\ClassDefinition::getByName($classId);
+        }
+
+        if (!$class) {
+            throw new \Exception('No valid class identifier given (class name or ID)');
+        }
+
+        if ($class instanceof DataObject\ClassDefinition) {
+            $this->setClass($class);
+        }
+    }
+
+    /**
+     * @return string
+     */
+    protected function getClassName()
+    {
+        return '\\Pimcore\\Model\\DataObject\\' . ucfirst($this->getClass()->getName());
+    }
+
+    /**
+     * @param array $params
+     *
+     * @return bool
+     */
+    public function checkParams($params)
+    {
+        if (!array_key_exists('email', $params)) {
+            return false;
+        }
+
+        if (strlen($params['email']) < 6 || !strpos($params['email'], '@') || !strpos($params['email'], '.')) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * @param $params
+     *
+     * @return mixed
+     *
+     * @throws \Exception
+     */
+    public function subscribe($params)
+    {
+        $onlyCreateVersion = false;
+        $className = $this->getClassName();
+        $object = new $className;
+
+        // check for existing e-mail
+        $existingObject = $className::getByEmail($params['email'], 1);
+        if ($existingObject) {
+            // if there's an existing user with this email address, do not overwrite the contents, but create a new
+            // version which will be published as soon as the contact gets verified (token/email)
+            $object = $existingObject;
+            $onlyCreateVersion = true;
+            //throw new \Exception("email address '" . $params["email"] . "' already exists");
+        }
+
+        if (!array_key_exists('email', $params)) {
+            throw new \Exception("key 'email' is a mandatory parameter");
+        }
+
+        $object->setValues($params);
+
+        if (!$object->getParentId()) {
+            $object->setParentId(1);
+        }
+
+        $object->setNewsletterActive(true);
+        $object->setCreationDate(time());
+        $object->setModificationDate(time());
+        $object->setUserModification(0);
+        $object->setUserOwner(0);
+        $object->setPublished(true);
+        $object->setKey(\Pimcore\File::getValidFilename($object->getEmail() . '~' . substr(uniqid(), -3)));
+
+        if (!$onlyCreateVersion) {
+            $object->save();
+        }
+
+        // generate token
+        $token = base64_encode(json_encode([
+            'salt' => md5(microtime()),
+            'email' => $object->getEmail(),
+            'id' => $object->getId()
+        ]));
+        $token = str_replace('=', '~', $token); // base64 can contain = which isn't safe in URL's
+        $object->setProperty('token', 'text', $token);
+
+        if (!$onlyCreateVersion) {
+            $object->save();
+        } else {
+            $object->saveVersion(true, true);
+        }
+
+        $this->addNoteOnObject($object, 'subscribe');
+
+        return $object;
+    }
+
+    /**
+     * @param $object
+     * @param $mailDocument
+     * @param array $params
+     *
+     * @throws \Exception
+     */
+    public function sendConfirmationMail($object, $mailDocument, $params = [])
+    {
+        $defaultParameters = [
+            'gender' => $object->getGender(),
+            'firstname' => $object->getFirstname(),
+            'lastname' => $object->getLastname(),
+            'email' => $object->getEmail(),
+            'token' => $object->getProperty('token'),
+            'object' => $object
+        ];
+
+        $params = array_merge($defaultParameters, $params);
+
+        $mail = new Mail();
+        $mail->addTo($object->getEmail());
+        $mail->setDocument($mailDocument);
+        $mail->setParams($params);
+        $mail->send();
+    }
+
+    /**
+     * @param $token
+     *
+     * @return bool
+     */
+    public function getObjectByToken($token)
+    {
+        $originalToken = $token;
+        $token = str_replace('~', '=', $token); // base64 can contain = which isn't safe in URL's
+
+        $data = json_decode(base64_decode($token), true);
+        if ($data) {
+            if ($object = DataObject::getById($data['id'])) {
+                if ($version = $object->getLatestVersion()) {
+                    $object = $version->getData();
+                }
+
+                if ($object->getProperty('token') == $originalToken) {
+                    if ($object->getEmail() == $data['email']) {
+                        return $object;
+                    }
+                }
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * @param string $token
+     *
+     * @return bool
+     */
+    public function confirm($token)
+    {
+        $object = $this->getObjectByToken($token);
+        if ($object) {
+            if ($version = $object->getLatestVersion()) {
+                $object = $version->getData();
+                $object->setPublished(true);
+            }
+
+            $object->setNewsletterConfirmed(true);
+            $object->save();
+
+            $this->addNoteOnObject($object, 'confirm');
+
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * @param string $token
+     *
+     * @return bool
+     */
+    public function unsubscribeByToken($token)
+    {
+        $object = $this->getObjectByToken($token);
+        if ($object) {
+            return $this->unsubscribe($object);
+        }
+
+        return false;
+    }
+
+    /**
+     * @param string $email
+     *
+     * @return bool
+     */
+    public function unsubscribeByEmail($email)
+    {
+        $className = $this->getClassName();
+        $objects = $className::getByEmail($email);
+        if (count($objects)) {
+            foreach ($objects as $object) {
+                $this->unsubscribe($object);
+            }
+
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * @param $object
+     *
+     * @return bool
+     */
+    public function unsubscribe($object)
+    {
+        if ($object) {
+            $object->setNewsletterActive(false);
+            $object->save();
+
+            $this->addNoteOnObject($object, 'unsubscribe');
+
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * @param $object
+     * @param $title
+     */
+    public function addNoteOnObject($object, $title)
+    {
+        $note = new Model\Element\Note();
+        $note->setElement($object);
+        $note->setDate(time());
+        $note->setType('newsletter');
+        $note->setTitle($title);
+        $note->setUser(0);
+        $note->setData([
+            'ip' => [
+                'type' => 'text',
+                'data' => Tool::getClientIp()
+            ]
+        ]);
+        $note->save();
+    }
+
+    /**
+     * Checks if e-mail address already
+     * exists in the database.
+     *
+     * @param array $params
+     *
+     * @return bool
+     */
+    public function isEmailExists($params)
+    {
+        $className = $this->getClassName();
+        $existingObject = $className::getByEmail($params['email'], 1);
+        if ($existingObject) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * @param DataObject\ClassDefinition $class
+     */
+    public function setClass($class)
+    {
+        $this->class = $class;
+    }
+
+    /**
+     * @return DataObject\ClassDefinition
+     */
+    public function getClass()
+    {
+        return $this->class;
+    }
+}

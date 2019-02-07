@@ -12,6 +12,9 @@ such as: `class`, `target`, `id`, `style`, `accesskey`, `name`, `title` and addi
 | Name     | Type     | Description                                                             |
 |----------|----------|-------------------------------------------------------------------------|
 | `reload` | boolean  | Set to true to reload the page in editmode after changing the state.    |
+| `textPrefix` | string  | Add an icon or something else before Text    |
+| `textSuffix` | string  | Add an icon or something else after Text    |
+| `noText` | boolean  | If you need only the <a> tag without text (or only with an textSuffix/TextPrefix)    |
 
 ## Methods
 
@@ -25,6 +28,7 @@ such as: `class`, `target`, `id`, `style`, `accesskey`, `name`, `title` and addi
 | `getTitle()`      | string      | Get the title of the link            |
 | `getRel()`        | string      | Get the rel text of the link         |
 | `getTabindex()`   | string      | Get the tabindex of the link         |
+| `getClass()`      | string      | Get the class of the link            |
 | `getAccessKey()`  | string      | Get the access key of the link       |
 | `isEmpty()`       | string      | Whether the editable is empty or not |
 

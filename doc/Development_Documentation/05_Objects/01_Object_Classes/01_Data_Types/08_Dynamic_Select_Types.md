@@ -1,7 +1,5 @@
 # Select Types with Dynamic Options
 
-**Experimental, subject to change without notice!!!**
-
 For the select & multiselect datatype you can specify a dynamic options provider class. 
 This allows you to generate a list of valid options on-the-fly instead of using a static list.
 The select datatype also allows you to define the default option at runtime.
@@ -63,12 +61,13 @@ class OptionsProvider implements SelectOptionsProviderInterface
     }
 
     /**
+     * Returns the value which is defined in the 'Default value' field  
      * @param $context array
      * @param $fieldDefinition Data
      * @return mixed
      */
     public function getDefaultValue($context, $fieldDefinition) {
-        return 4;
+        return $fieldDefinition->getDefaultValue();
     }
 
     /**

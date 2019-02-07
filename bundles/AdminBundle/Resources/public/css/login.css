@@ -1,0 +1,249 @@
+/**
+ * Pimcore
+ *
+ * This source file is available under two different licenses:
+ * - GNU General Public License version 3 (GPLv3)
+ * - Pimcore Enterprise License (PEL)
+ * Full copyright and license information is available in
+ * LICENSE.md which is distributed with this source code.
+ *
+ * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ */
+
+* {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+body {
+
+    font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+    -webkit-font-smoothing: antialiased;
+
+    height: 100%;
+    padding: 0;
+    margin: 0;
+    font-size: 14px;
+    color: #222222;
+    background: #fff;
+}
+
+a, a:hover, a:visited, a:active {
+    color: #6428b4;
+    text-decoration: none;
+}
+
+#vcenter {
+    position: absolute;
+    top: 50%;
+    height: 450px;
+    margin-top: -225px;
+    width:100%;
+    z-index: 10;
+}
+
+#hcenter {
+    width: 360px;
+    margin: 0 auto;
+    position: relative;
+}
+
+
+#header {
+    text-align: center;
+    padding: 10px 0 0 0;
+}
+
+#header img {
+    max-height: 80px;
+    max-width: 100%;
+}
+
+#header p {
+    text-transform: uppercase;
+    color:#fff;
+    padding: 5px 0 0 0;
+    margin: 0;
+}
+
+#content {
+    background: #fff;
+    padding: 30px 0 10px 0;
+}
+
+#content .form-fields {
+    width: 100%;
+    padding: 30px 20px 10px 20px;
+}
+
+#content .form-fields input {
+
+    display: block;
+    height: 34px;
+    padding: 6px 12px;
+    font-size: 14px;
+    line-height: 1.42857143;
+
+    width: 100%;
+    margin-bottom: 20px;
+    border:0;
+}
+
+input:-webkit-autofill {
+    -webkit-box-shadow: inset 0 0 0px 9999px white;
+}
+
+#content .error {
+    padding: 10px 20px;
+
+}
+
+#content .body {
+    padding: 10px 20px;
+}
+
+#content .body.info {
+    background: #f0f7fd;
+    color: #3A87AD;
+    border-top: 3px solid #d0e3f0;
+}
+
+#content .body.error {
+    background: #fcf2f2;
+    border-top: 3px solid #dFb5b4;
+    color: #a94442;
+}
+
+#content .body.lostpassword {
+    text-align: right;
+}
+
+#loginform, #twofactorform {
+    border-top: 3px solid #cbcbcb;
+    background: #eaeaec;
+}
+
+#loginform button, #twofactorform button {
+    font-weight: 500;
+    background: #6428b4;
+    display: block;
+    width: 100%;
+
+    color:#fff;
+    margin:0;
+    border:0;
+
+    padding: 6px 12px;
+    font-size: 14px;
+    line-height: 1.42857143;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: middle;
+    cursor: pointer;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+#browserinfo .body {
+    text-align: center;
+}
+
+#browserinfo .links img {
+    height: 50px;
+}
+
+#footer {
+    width: 100%;
+    position: absolute;
+    z-index: 10;
+    bottom: 0;
+    color: #000;
+    text-align: center;
+    font-size: 13px;
+    line-height: 18px;
+    padding: 10px 0;
+}
+
+#footer a {
+    color: #000;
+    text-decoration: none;
+}
+
+.imageservice #content {
+    background: none;
+    padding-top: 0;
+}
+
+.imageservice #content .form-fields {
+    background: none;
+    border:0;
+}
+
+.imageservice a, .imageservice a:hover, .imageservice a:visited, .imageservice a:active {
+    color: #fff;
+}
+
+.imageservice #content .form-fields input {
+    opacity: 0.7;
+}
+
+.imageservice #content .form-fields input:focus {
+    opacity: 1;
+}
+
+.imageservice #loginform button, .imageservice #twofactorform button {
+
+}
+
+.imageservice .lostpassword {
+    font-size: 11px;
+    text-shadow: 0 0 3px #000;
+}
+
+.imageservice #header {
+
+}
+
+.imageservice .body.error {
+    margin: 30px 20px 0 20px;
+}
+
+#background {
+    position: fixed;
+    left: 0;
+    right: 0;
+    z-index: 1;
+    width:100%;
+    height:100%;
+    background-size: cover;
+    background-position: center center;
+}
+
+.imageservice #background:after {
+    position: absolute;
+    width:100%;
+    height:100%;
+    display: block;
+    content: "";
+    background: #000;
+    opacity: 0.4;
+}
+
+#backgroundImageInfo {
+    position: absolute;
+    bottom: 0;
+    right: 20px;
+    z-index: 20;
+    font-size: 13px;
+    line-height: 18px;
+    padding: 10px 0;
+}
+
+#backgroundImageInfo a {
+    color: #fff;
+    font-size:12px;
+}

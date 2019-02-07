@@ -1,0 +1,34 @@
+{% block beforeScriptTag %}{{ blocks.beforeScriptTag|raw }}{% endblock %}
+
+<script>
+    {% autoescape 'js' %}
+    {% block beforeScript %}{{ blocks.beforeScript|raw }}{% endblock %}
+
+    window._paq = window._paq || [];
+
+    {% block beforeTrack %}{{ blocks.beforeTrack|raw }}{% endblock %}
+
+    {% block track %}{{ blocks.track|raw }}{% endblock %}
+
+    {% block afterTrack %}{{ blocks.afterTrack|raw }}{% endblock %}
+
+    (function() {
+        {% block asyncInit %}
+        var u='{{ piwikUrl|trim('/', 'right')|raw }}/';
+        {% endblock %}
+
+        {% block beforeAsync %}{{ blocks.beforeAsync|raw }}{% endblock %}
+
+        {% block async %}
+        var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
+        g.type='text/javascript'; g.async=true; g.defer=true; g.src=u+'piwik.js'; s.parentNode.insertBefore(g,s);
+        {% endblock %}
+
+        {% block afterAsync %}{{ blocks.afterAsync|raw }}{% endblock %}
+    })();
+
+    {% block afterScript %}{{ blocks.afterScript|raw }}{% endblock %}
+    {% endautoescape %}
+</script>
+
+{% block afterScriptTag %}{{ blocks.afterScriptTag|raw }}{% endblock %}

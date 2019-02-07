@@ -1,0 +1,90 @@
+
+<style type="text/css">
+    #pc-cookie-notice {
+        background: #3c3c3c;
+        color: #fff;
+        position: fixed;
+        bottom:0;
+        left:0;
+        width: 100%;
+        box-sizing: border-box;
+        padding: 5px 0 5px;
+        font-family: 'Arial Unicode MS', Arial, Verdana, sans-serif;
+        font-size: 12px;
+        z-index: 10000;
+    }
+
+    #pc-cookie-notice a {
+        color: #fff;
+        text-decoration: underline;
+    }
+
+    #pc-cookie-notice #pc-icon {
+        position: absolute;
+        top: 5px;
+        left: 5px;
+    }
+
+    #pc-cookie-notice #pc-message {
+        width: 100%;
+        padding: 0 55px 0 25px;
+    }
+
+    #pc-cookie-notice #pc-message span:after {
+        content: attr(data-content);
+    }
+
+    #pc-cookie-notice #pc-message a:after {
+        content: attr(data-content);
+    }
+
+    #pc-cookie-notice #pc-button {
+        position: absolute;
+        top: 3px;
+        right: 20px;
+    }
+
+    #pc-cookie-notice #pc-button button {
+        font-weight: bold;
+        background: #008d4c;
+        border-radius: 2px;
+        border:1px solid #000;
+        padding: 1px 5px;
+    }
+
+    #pc-cookie-notice #pc-button button:after {
+        content: attr(data-content);
+    }
+
+    @media (max-width: 750px) {
+        #pc-cookie-notice #pc-icon {
+            display: none;
+        }
+
+        #pc-cookie-notice #pc-message {
+            padding-left: 5px;
+        }
+
+        #pc-cookie-notice #pc-button {
+            right:5px;
+            top:5px;
+        }
+
+        #pc-cookie-notice #pc-button button {
+            padding: 5px 3px;
+        }
+    }
+
+</style>
+
+<div id="pc-cookie-notice">
+    <div id="pc-icon"></div>
+    <div id="pc-message">
+        <span data-content="%text%"></span>
+        %link%
+    </div>
+    <div id="pc-button">
+        <button data-content="%ok%" aria-label="%ok%"></button>
+    </div>
+</div>
+

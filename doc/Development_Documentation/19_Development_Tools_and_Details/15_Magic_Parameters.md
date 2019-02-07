@@ -35,14 +35,15 @@ a reverse proxy.
 Configures the translator to return the given translation key instead of actually translating the message. This can be
 useful to debug translations or to get an overview over used translation keys. Example: http://www.example.com/my/page?pimcore_debug_translations=1
 
-This parameter is only available if activated via configuration and is enabled by default in the `dev` environment which
-is by default automatically chosen when debug mode is active:
+This parameter is only available when debug mode is active or an active admin session is present. 
+It is possible to disable this feature completely or individualize the name of the GET parameter using the 
+following configuration options. 
 
 ```yaml
 pimcore:
     translations:
         debugging:
-            enabled: true
+            enabled: false
             # you could also change the parameter from pimcore_debug_translations to something else
             parameter: my_custom_parameter
 ```

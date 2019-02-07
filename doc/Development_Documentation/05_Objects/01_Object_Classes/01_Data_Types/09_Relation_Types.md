@@ -1,30 +1,26 @@
-# Relation Datatypes
+# Relational Datatypes
 
-## Href, Multihref and Object Data Fields 
+## Many-To-One, Many-To-Many and Many-To-Many Object Relation Data Fields 
 
-Href, multihref and objects are pure relation data types, which means they represent a relation to an other Pimcore 
-element (document, asset, object). The href and multihref data types can store relations to any other Pimcore element. 
+Many-To-One, Many-To-Many and Many-To-Many Objects are pure relation data types, which means they represent a relation to an other Pimcore 
+element (document, asset, object). The Many-To-One and Many-To-Many data types can store relations to any other Pimcore element. 
 In the object field definition there is the possibility to configure which types and subtypes of elements are allowed.
 The configuration screen for restrictions is shown below. 
 
-The difference between href and multihref is, that a href represents a :1 relation, whereas a a multihref can be a :n 
-relation. 
-
-The objects field allows relations to one or more objects, but no other elements. Therefore the restriction settings for 
+The Many-To-Many Object field allows relations to one or more data objects, but no other elements. Therefore the restriction settings for 
 objects are limited to object classes.
 
 
 ![Relation Configuration](../../../img/classes-datatypes-relation1.png)
 
 
-Multihref and objects are grid widgets in the UI. The width and height of the input widget can be configured in the 
-object class settings. For a href only the width can be configured, since it is represented by a single drop area. 
+The width and height of the input widget can be configured in the 
+object class settings. For a Many-To-One relation only the width can be configured, since it is represented by a single drop area. 
 Lazy Loading is explained further below in the section about relations and lazy loading.
 
 
 The input widgets for all three relation data types are represented by drop areas, which allow to drag and drop elements 
-from the tree on the left to the drop target in the object layout. The href constitutes a single drop area, whereas 
-multihref and objects are grid widgets containing rows of data.
+from the tree on the left to the drop target in the object layout.
 
 In addition to the drag and drop feature, elements can be searched and selected directly from the input widget. In case 
 of objects it is even possible to create a new object and select it for the objects widget.
@@ -41,57 +37,52 @@ relation column this can be achieved as follows:
 ```php
 $relationId = 162;
 $list = new \Pimcore\Model\DataObject\Example\Listing();
-$list->setCondition("myHref__id = ".$relationId);
+$list->setCondition("mySingleRelation__id = ".$relationId);
 $objects=$list->load();
  
  
 $relationId = 345;
 $list = new \Pimcore\Model\DataObject\Example\Listing();
-$list->setCondition("myMultihref like '%,".$relationId.",%'");
+$list->setCondition("myManyToManyRelations like '%,".$relationId.",%'");
 $objects=$list->load();
 ```
 
 #### Assigning relations via PHP API
-In order to set a href data field, a single Pimcore element needs to be passed to the setter. With multihref and objects 
-an array of elements is passed to the setter:
+In order to set a Many-To-One data field, a single Pimcore element needs to be passed to the setter. With Many-To-Many 
+and Many-To-Many Objects, an array of elements is passed to the setter:
 
 ```php
 use Pimcore\Model\DataObject;
 use Pimcore\Model\Document;
 use Pimcore\Model\Asset;
-  
-$myHrefElement = Document::getById(23);
  
-$myMultihrefElements[] = Asset::getById(350);
-$myMultihrefElements[] = DataObject::getByPath("/products/testproduct");
+$object = DataObject::getById(12345)
  
-$myObjectsElements[] = DataObject\Product::getById(98);
-$myObjectsElements[] = DataObject\Product::getById(99);
- 
-$object->setHref($myHrefElement);
-$object->setMultihref($myMultihrefElements);
-$object->setObjects($myObjectsElements);
+$object->setMyManyToOneField(Document::getById(23));
+
+$object->setMyManyToManyField([
+    Asset::getById(350),
+    DataObject::getByPath("/products/testproduct")
+]);
+
+$object->setMyManyToManyObjectField([
+    DataObject\Product::getById(98),
+    DataObject\Product::getById(99)
+]);
  
 $object->save();
 ```
 
 #### Deleting relations via PHP API
-In order to remove all elements from this object's multihref field, the setter can be called with null or an array:
+In order to remove all elements from this object's Many-To-Many field, the setter can be called with null or an array:
 
 ```php
-$object->setMultihref([]);
+$object->setMyManyToManyField([]);
  
 //that would have the same result
-$object->setMultihref(null);
+$object->setMyManyToManyField(null);
 ```
 Internally the setter sets the value to an empty array, regardless if an empty array or null is passed to it.
-
-> **Be Careful - Use Getters and Setters!**  
-> `$object->multihref = null;`  
-> Will not work to clear the list of elements in the multihref when lazy loading ist activated. If the value of an object 
-> or multihref data type is null, for Pimcore this means that the data of this field has not been loaded an that it is 
-> not to be touched when saving the object.
-
 
 
 #### Unpublished relations
@@ -106,8 +97,8 @@ DataObject\AbstractObject::setHideUnpublished(true);
 ```
 
 
-##Objects with Metadata 
-This data type is an extension to the objects data type. To each assigned object additional metadata can be saved. 
+## Advanced Many-To-One Object Relation 
+This data type is an extension to the Many-To-One Object data type. To each assigned object additional metadata can be saved. 
 The type of the metadata can be text, number, selection or a boolean value.
 
 A restriction of this data type is that only one allowed class is possible. As a result of this restriction, it is 
@@ -115,13 +106,13 @@ possible to show data fields of the assigned objects.
 Which metadata columns are available and which fields of the assigned objects are shown has to be defined during the 
 class definition.
 
-![Objects Metadata Configuration](../../../img/classes-datatypes-relation5.png)
+![Advanced Many-To-One Object Relation Configuration](../../../img/classes-datatypes-relation5.png)
 
 The shown class definition results in the following object list in the object editor. The first two columns contain 
 `id` and `title` of the assigned object. The other four columns are metadata columns and can be edited within this 
 list.
 
-![Objects Metadata Field](../../../img/classes-datatypes-relation6.png)
+![Advanced Many-To-One Object Relation Field](../../../img/classes-datatypes-relation6.png)
 
 All the other functionality is the same as with the normal objects data type.
 
@@ -186,17 +177,13 @@ $object->save();
 ```
 
 
-## Multihref Advanced
+## Advanced Many-To-Many Relation
 
-***Formerly known as `Multihref with Metadata`***
-
-***Important Note***: Since 5.0.0 referenced elements will be lazy-loaded! 
-
-This datatype is similar to the `Objects with Metadata` datatype in the way that additional information can be 
+This datatype is similar to the `Advanced Many-To-One Object Relation` data-type in the way that additional information can be 
 added to the relation.
 
 The main difference is that all element types (documents, assets and objects) can be added to the relation list. 
-The element types can also be mixed. Essentially, the same rules as for the standard multihref apply.
+The element types can also be mixed. Essentially, the same rules as for the standard Many-To-Many Relation apply.
 
 The API is nearly identical. However, instead of dealing with an `ObjectMetadata` class you have to do the same stuff 
 with `ElementMetadata`.
@@ -218,38 +205,38 @@ $elementMetadata->setNumber(23);
 $references[] = $elementMetadata;
  
 //set the metadata array to your object
-$object->setMetadata($references); // object’s multihref field is called „metadata“
+$object->setMetadata($references); 
 ```
-
-
 
 
 ## Lazy Loading
 Whenever an object is loaded from database or cache, all these related objects are loaded with it. Especially with 
-MultiHrefs and Objects it is easy to produce a huge amount of relations, which makes the object or an object list slow 
+Many-To-Many relations it is easy to produce a huge amount of relations, which makes the object or an object list slow 
 in loading. 
 
-As a solution to this dilemma, multihref and object data types can be classified as `lazy loading` attributes 
+As a solution to this dilemma, Many-To-Many relational data types can be classified as `lazy loading` 
 in the class definition.
 
 ![Lazy Loading](../../../img/classes-datatypes-relation3.png)
 
-Object attributes which are lazy, are only loaded from the `database/cache` when their getter is called. In the 
-example above this would mean, that the multihref data is only loaded when calling `$object->getMultihref();`, 
-otherwise the attribute (`$object->multihref`) remains `null`.
+Attributes which are lazy loaded, are only loaded from the `database/cache` when their getter is called. In the 
+example above this would mean, that the Many-To-Many relational data is only loaded when calling `$object->getMyManyToManyField();`.
 
 
 
 ## Dependencies
 
 There are several object data types which represent a relation to an other Pimcore element. The pure relation types are
-* Href
-* MultiHref
-* Objects
+* Many-To-One Relation
+* Many-To-Many Relation
+* Advanced Many-To-Many Relation
+* Many-To-Many Object Relation
+* Advanced Many-To-One Object Relation
 
 Furthermore, the following data types represent a relation, but they are not reflected in the `object_relation_..` 
 tables, since they are by some means special and not pure relations. (One could argue that the image is, but for now it 
 is not classified as a pure relation type)
+
 * Image
 * Link
 * Wysiwyg

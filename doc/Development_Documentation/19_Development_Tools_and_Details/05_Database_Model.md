@@ -50,7 +50,8 @@ These tables are created during Pimcore install and are always the same.
 | notes | [Notes](../18_Tools_and_Features/05_Notes_and_Events.md) for elements | 
 | notes_data | Additional data for notes | 
 | objects | List of all objects with metadata like id, class name, path, parent, ...|
-| properties | Data from the `properties` tab | 
+| properties | Data from the `properties` tab |
+| qr_codes | Edit QR Code configurations | 
 | quantityvalue_units | Available quantites for quantity value object data type |
 | recyclebin | Stores metadata of deleted elements |
 | redirects | Stores redirects | 
@@ -73,7 +74,6 @@ These tables are created during Pimcore install and are always the same.
 | uuids | stores Unique Identifiers - if enabled |
 | versions | List of object/asset/document versions. Actual data is serialized and written to disk |
 | website_settings | Stores `Website Settings` |
-
 
 # Object Tables 
 These tables are created and modified dynamically during configuration of object data model. 
@@ -153,7 +153,7 @@ Table: object_relations_(id) & object_meta_data_(id)
 * The columns `src_id` and `dest_id` define the relation / the link between the objects. 
 * Column `index` is used to specify the order of the relations
 * Columns `ownertype`, `ownername` and `position` are used when relations are within field collections, localized fields, object bricks, etc.  
-* The data type `Objects With Metadata` stores the extra data in a table `object_meta_data_(id)` - the column `column` 
+* The data type `Advanced Many-To-One Object Relation` stores the extra data in a table `object_meta_data_(id)` - the column `column` 
 specifies the name of the meta item and `data` stores the value
 
 

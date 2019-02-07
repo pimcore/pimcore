@@ -30,7 +30,7 @@ pimcore_admin:
                 #     MY_CLASS_NAME: 
                 #               include: true
                 #               allowDelete: false
-                #               includeRelations:
+                #               includedRelations:
                 #                       - manualSegemens
                 #                       - calculatedSegments
                 #                         
@@ -60,7 +60,7 @@ exports can be attached or external data sources can be included.
 To do so, following steps are necessary: 
 
 1) Create a custom implementation of 
-[`Pimcore\Bundle\AdminBundle\GDPR\DataProvider\DataProviderInterface`](https://github.com/pimcore/pimcore/blob/master/pimcore/lib/Pimcore/Bundle/AdminBundle/GDPR/DataProvider/DataProviderInterface.php#L20). 
+[`Pimcore\Bundle\AdminBundle\GDPR\DataProvider\DataProviderInterface`](https://github.com/pimcore/pimcore/blob/master/bundles/AdminBundle/GDPR/DataProvider/DataProviderInterface.php#L20). 
 The following functions need to be implemented:
 
     * `getSortPriority()` - Returns sort priority for the tabs - higher is sorted first.

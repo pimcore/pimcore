@@ -1,112 +1,116 @@
 # Workflow Management
 
 ## General
-Workflow Management provides a structured, orchestrated set of steps to maintain and improve data quality held within Pimcore 
-elements (assets, documents, objects).
+Pimcore Workflow Management provides configuration of multiple workflows on Pimcore elements (assets, documents, data 
+objects) to support data maintenance processes, element life cycles and various other processes.   
 
-There are several new concepts to know about when using Workflow Management module, each is lightweight and defined within 
-a single configuration file, allowing developers to customize Pimcore even further.
+It is based on the [Symfony workflow component](https://symfony.com/doc/3.4/workflow.html) and extends it 
+with a few Pimcore specific features. So, before using Pimcore Workflow Management it makes sense to know 
+the basics of Symfony workflow component.
+
 
 ### Concepts 
+**Workflow** 
+A workflow is a model of a process an element in Pimcore goes through. It consists of *places*, *transitions*, a 
+*marking store*, *global actions* and a couple of additional configuration options. Each element can be in multiple 
+workflows simultaneously. 
 
-**States**
-A high level overview of where information is in the PIM. Create RAG/Traffic light configurations for quickly showing 
-the state of data.
-* Great for custom reporting and customising availability of information from different perspectives.
+**Workflow Type 'Workflow'**
+Workflow type *workflow* describes the default type of workflows and allows to model a *workflow net* which is a subclass 
+of a *petri net*. It models a process of an element and allows multiple places simultaneously for this element. 
 
-**Statuses**
-The position an element is at within a workflow. Statuses help define lifecycle specific user permissions.
-* control who can view/edit/process information once a product goes Live or an order is paid for.
+**Workflow Type 'State Machine'**
+A state machine is a subset of a workflow and its purpose is to hold a state of your model. The most important restriction
+is that a state machine cannot be in more than one place simultaneously. 
+For further details see also [Symfony docs](https://symfony.com/doc/3.4/workflow/state-machines.html). 
 
-**Actions**
-Tasks or processes that can be performed on elements. Actions define.
-* What happens to information before/after that action happens? i.e. Should the product be synced with a 3rd party system, 
-or an email sent to a customer.
-* Who can perform an action – i.e. only the manager’s role can approve a product smt or ship an order.
-* Which additional information is necessary to complete the action.
+**Place**
+A place is a step in the workflow and describes a characteristic or a status of an element - for example *in progress*, 
+*product attributes defined*, *copyright available*, *element ready for publish*, etc.  
+Depending on the place an element may appear in a specific view (e.g. custom layout for data objects) and may have certain
+special permissions (e.g. finished elements cannot be modified anymore). 
 
-**Transition Definitions**
-These hold together States, Status & Actions into a complete workflow configuration.
-* An order is *"paid"* therefore it can "shipped" or "refunded".
+**Marking Store**
+The marking store stores the current place(s) for each element. Pimcore ships with a couple of stores that can be configured
+in [workflow configuration](./01_Configuration_Details.md). 
 
-![Workflow example - preview](../img/workflow_example_preview.jpg)
+**Transition**
+A transition describes the action to get from one place to another. Transitions are allowed (or not) depending on additional
+criteria (transition guards) and may require additional notes and information entered by user.  
+
+**Transition Guard**
+Define criteria that define if a transition is currently allowed or not. 
+
+**Global Action**
+While transitions are only available when the element is in a certain place, global actions are available at every place. 
+Besides that, they are very similar to transitions. 
+
 
 ## Configuration
-
-Pimcore ships with a sample configuration file at `/app/config/pimcore/workflowmanagement.example.php`. 
-[See that file on GitHub](https://github.com/pimcore/pimcore/blob/master/app/config/pimcore/workflowmanagement.example.php).
-This file should give you getting started in workflow configuration. 
-
-For details of configuration options see comments in that file or [Configuration Details](./01_Configuration_Details.md).
+The workflow configuration takes place in the Symfony configuration tree in the Pimcore namespace. For details of 
+configuration options see inline comments and documentation (call command `bin/console config:dump-reference PimcoreCoreBundle`)
+or [Configuration Details](./01_Configuration_Details.md).
 
 
 ## Events
-WorkflowManagement comes with a number of events to hook into with the Pimcore 
-[event manager](../20_Extending_Pimcore/11_Event_API_and_Event_Manager.md).
 
-#### `workflowmanagement.preAction`
-Fired BEFORE any action happens in the workflow. use this to hook into actions globally and define your own logic. i.e. 
-validation or checks on other system vars
-
-#### `workflowmanagement.postAction`
-Fired AFTER any action happens in the workflow. Use this to hook into actions globally and define your own logic. i.e. 
-trigger an email or maintenance job.
-
-#### `workflowmanagement.preReturnAvailableActions`
-Fired when returning the available actions to a user in the admin panel. use this to further customise what actions are 
-available to a user. i.e. stop them logging time after 5pm ;)
-
-#### Action specific events
-There are also three more events that can be configured for individual actions and statuses to save you having to write 
-logic to check the state / status each time. These are defined as follows under any action in the workflow configuration
-
-```php
-[
-    "name" => "start_progress",                                
-    ...
-    "events" => [
-        "before" => ['\\Website\\WorkflowExampleEventHandler', 'before'],
-        "success" => ['\\Website\\WorkflowExampleEventHandler', 'success'],
-        "failure" => ['\\Website\\WorkflowExampleEventHandler', 'failure']
-    ],
-],
-```
-The workflow manager will automatically attach and unattach these events to the action using the Pimcore 
-[event manager](../20_Extending_Pimcore/11_Event_API_and_Event_Manager.md). 
-
-The actions are also available in the event manager during any action and are identified as follows:
-* `workflowmanagement.action.before`
-* `workflowmanagement.action.success`
-* `workflowmanagement.action.failure`
-
-This way it is possible to create global events in `preAction` that can override custom state and status actions depending 
-on your requirements.
+The Pimcore workflow management fires several events that can be used to customize and extend functionality. For details
+see [Working with PHP API](./09_Working_with_PHP_API.md).
 
 
 ## User Notifications
-Email notifications can be configured to be sent to users when an action succeeds. To do this simply specify an array 
-of user(s) or role(s) that you would like to be notified when an action happens to an element. Roles will send an email 
-to every user with that role.
+Email notifications can be configured to be sent to users when an transition takes place. To do this simply specify an 
+array of user(s) or role(s) that you would like to be notified in options section of the transition definition. 
 
-```php
-[
-    "name" => "start_progress",
-    ...
-    "notificationUsers" => [1,2,10]
-]
+Roles will send an email to every user with that role.
+
+```yml
+...
+    transitions:
+        myTransition:
+            options:
+                notificationSettings:
+                    - 
+                      # A symfony expression can be configured here. All sets of notification which are matching the condition will be used.
+                      condition: "" # optional some condition that should apply for this notification setting to be executed
+                      
+                      # Send a email notification to a list of users (user names) when the transition get's applied
+                      notifyUsers: ['admin']
+                      
+                      # Send a email notification to a list of user roles (role names) when the transition get's applied
+                      notifyRoles: ['projectmanagers', 'admins']
+                      
+                      # Type of mail source. 
+                      mailType: 'template' # this is the default value, One of "template"; "pimcore_document"
+                      
+                      # Path to mail source - either Symfony path to template or fullpath to Pimcore document. 
+                      # Optional use %%_locale%% as placeholder for language.
+                      mailPath: '@PimcoreCore/Workflow/NotificationEmail/notificationEmail.html.twig' #this is the value
+...
 ```
+
+Multiple notification settings with conditions allow sophisticated notifications to be configured for each transition. 
+To customize the e-mail template, following options are available: 
+- Overwrite the template `@PimcoreCore/Workflow/NotificationEmail/notificationEmail.html.twig` or configure your own 
+  template path in settings. Default parameters available in the template are `subjectType`, `subject`, `action`, `workflow`, 
+  `workflowName`, `deeplink`, `note_description`, `translator`, `lang`. If additional parameters are required, overwrite 
+  the service `Pimcore\Workflow\NotificationEmail\NotificationEmailService`.
+
+- Configure a Pimcore Mail Document and use full power of Pimcore Mail Documents, with Controller, Action, Placeholders, 
+  etc. In the mail document same parameters as above are available.    
+  
+- If more custom notifications are necessary, use custom event listeners. 
 
 ## Workflow History
 In the *"Notes & Events"* tab, there is a list with every action used on the object via the Workflow module.
 
 ![Notes & Events - notes from the workflow](../img/notesandevents_object_grid.png)
 
+## Workflow Overview
 
+If workflows are configured for a Pimcore element, an additional tab with workflow details like all configured workflows, 
+their current places and a workflow graph is added to Pimcore element detail page. 
 
-## Usage Example
-Also have a look at our simple [Workflow Tutorial](./03_Workflow_Tutorial.md) to see Workflows in action or have a look
-at the blog post series of our partners at Gather: 
- * [Part 1](https://www.gatherdigital.co.uk/community/post/pimcore-workflow-management-pt1/66)
- * [Part 2](https://www.gatherdigital.co.uk/community/post/pimcore-workflow-management-pt2/67) 
- * [Part 3](https://www.gatherdigital.co.uk/community/post/pimcore-workflow-management-pt3/70)
+![Workflow Overview](../img/workflow-overview.jpg)
 
+> To render the graph, `graphviz` is needed as additional system requirement. 

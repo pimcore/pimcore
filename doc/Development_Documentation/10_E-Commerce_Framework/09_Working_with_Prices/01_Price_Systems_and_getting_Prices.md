@@ -13,7 +13,7 @@ In terms of product availabilities and stocks, the very similar concept of Avail
 
 A price system is a class implementing `Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPriceSystem` which is defined
 as service and registered with a name in the `pimcore_ecommerce_framework.price_systems` configuration tree. The framework
-already ships with a number of [concrete implementations](https://github.com/pimcore/pimcore/tree/master/pimcore/lib/Pimcore/Bundle/EcommerceFrameworkBundle/PriceSystem)
+already ships with a number of [concrete implementations](https://github.com/pimcore/pimcore/tree/master/bundles/EcommerceFrameworkBundle/PriceSystem)
 which you can use as starting point.
 
 There are 3 places where the configuration of Price Systems takes place: 
@@ -81,9 +81,9 @@ pimcore_ecommerce_framework:
 
 ```
 
-> The simplest price system is [`Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\AttributePriceSystem`](https://github.com/pimcore/pimcore/blob/master/pimcore/lib/Pimcore/Bundle/EcommerceFrameworkBundle/PriceSystem/AttributePriceSystem.php) 
+> The simplest price system is [`Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\AttributePriceSystem`](https://github.com/pimcore/pimcore/blob/master/bundles/EcommerceFrameworkBundle/PriceSystem/AttributePriceSystem.php) 
 > which reads the price from an attribute of the product object. For implementing custom price systems have a look at method comments 
-> of [`\Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPriceSystem`](https://github.com/pimcore/pimcore/blob/master/pimcore/lib/Pimcore/Bundle/EcommerceFrameworkBundle/PriceSystem/IPriceSystem.php) 
+> of [`\Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPriceSystem`](https://github.com/pimcore/pimcore/blob/master/bundles/EcommerceFrameworkBundle/PriceSystem/IPriceSystem.php) 
 > and the implementations of the existing price systems. 
 
 

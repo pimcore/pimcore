@@ -12,6 +12,9 @@ Pimcore is built for developers and should empower them to build great digital e
 is NOT an ‘out-of-the-box’ software product like Wordpress, Magento, Akeneo, WooCommerce, Shopify and others. You need a developer to get started. 
 
 ![Pimcore](../img/pimcore_basis.png)
+  
+  
+![Pimcore](../img/pimcore-technology-architecture.svg)
 
 
 # Pimcore in a Nutshell

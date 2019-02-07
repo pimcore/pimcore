@@ -1,7 +1,7 @@
 # Path Formatter  
 
 ### Summary
-* Allows you to show a user friendly "object information' instead of technical path in Pimcore data types such as multihref, objects etc.
+* Allows you to show a user friendly "object information' instead of technical path in Pimcore data types such as Many-To-One, Many-To-Many (Object) etc.
 * Uses Ajax to request nice path info on demand (i.e. after rendering) 
 
 ### Example
@@ -66,7 +66,7 @@ class TheFormatter
                     if (!$title) {
                         $title = "this guy does not have a title, use " . $newPath . " instead";
                     }
-                    if ($fd instanceof Data\Multihref) {
+                    if ($fd instanceof Data\ManyToManyRelation) {
                         $newPath = '<img src="' . $asset . '" style="width: 25px; height: 18px;" />' . $title;
                     } else {
                         $newPath = $title;

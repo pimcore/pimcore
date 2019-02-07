@@ -9,9 +9,8 @@ For production we highly recommend a *nix based system.
 - Nginx
 
 
-### PHP >= 7.0
+### PHP >= 7.1
 Both **mod_php** and **FCGI (FPM)** are supported.  
-Please note that the usage of **PHP 7.1 is strongly recommended** as future versions of Pimcore 5 will require PHP 7.1. 
 
 #### Required Settings and Modules & Extensions
 - `memory_limit` >= 128M
@@ -26,9 +25,7 @@ Please note that the usage of **PHP 7.1 is strongly recommended** as future vers
 - [mbstring](http://php.net/mbstring)
 - [zlib](http://php.net/zlib)
 - [zip](http://php.net/zip)
-- [bz2](http://php.net/bzip2)
 - [intl](http://www.php.net/intl)
-- [openssl](http://php.net/openssl)
 - [opcache](http://php.net/opcache)
 - CLI SAPI (for Cron Jobs)
 - [Composer](https://getcomposer.org/) (added to `$PATH` - see also [Additional Tools Installation](./03_System_Setup_and_Hosting/06_Additional_Tools_Installation.md))
@@ -37,10 +34,13 @@ Please note that the usage of **PHP 7.1 is strongly recommended** as future vers
 - [imagick](http://php.net/imagick) (if not installed *gd* is used instead, but with less supported image types)
 - [curl](http://php.net/curl) (required if Google APIs are used)
 - [phpredis](https://github.com/phpredis/phpredis) (recommended cache backend adapter)
+- [graphviz](https://www.graphviz.org/) (for rendering workflow overview)
 
-### MySQL >= 5.6.4 / MariaDB >= 10.0.0.5
-
-MySQL 5.6 GA or compatible.
+### Database Server
+- MariaDB >= 10.0.0.5
+- MySQL >= 5.6.4 
+- AWS Aurora (MySQL)
+- Percona Server
 
 #### Features
 - InnoDB / XtraDB storage engine
@@ -67,6 +67,18 @@ innodb_large_prefix = 1
 innodb_file_per_table = 1
 ```
 
+### Redis (optional but recommended for caching)
+All versions > 3 are supported
+##### Configuration 
+```
+# select an appropriate value for your data
+maxmemory 768mb
+                   
+# IMPORTANT! Other policies will cause random inconsistencies of your data!
+maxmemory-policy volatile-lru   
+save ""
+```
+
 ### Operating System
 Please ensure you have installed all required packages to ensure proper locale support by PHP.
 On Debian based systems, you can use the following command to install all required packages: 
@@ -91,13 +103,22 @@ On Debian based systems, you can use the following command to install all requir
 - cjpeg ([MozJPEG](https://github.com/mozilla/mozjpeg))
 - exiftool
 - SQIP - SVG Placeholder
+- [facedetect](https://github.com/wavexx/facedetect) 
+- [Graphviz](https://www.graphviz.org/)
 
 Please visit [Additional Tools Installation](03_System_Setup_and_Hosting/06_Additional_Tools_Installation.md) for additional information. 
 
 ## Browser Requirements
-Pimcore supports always the latest 2 versions of all 4 major browsers at the time of a release. 
+Pimcore supports always the latest 2 versions of all 4 major desktop browsers at the time of a release. 
 
 - **Google Chrome  (Recommended)**
 - Mozilla Firefox 
-- Microsoft Internet Explorer / Edge
+- Microsoft Edge
 - Apple Safari
+- Microsoft Internet Explorer (only version 11)   
+**[Note: support for IE will be removed soon!](https://github.com/pimcore/pimcore/issues/2989)**
+
+Click [here](http://browserl.ist/?q=last+2+Chrome+versions%2C+last+2+Firefox+versions%2C+last+2+Edge+versions%2C+last+1+IE+versions%2C+last+2+Safari+versions) 
+to check out the latest 2 versions at the current moment of all supported browsers. 
+Please keep in mind that this doesn't necessarily means that they are supported by the latest available Pimcore release, 
+the crucial factor are the versions available at the time of the release.

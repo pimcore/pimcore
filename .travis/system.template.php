@@ -103,7 +103,7 @@ return [
             "name"  => "pimcore",
             "email" => "pimcore@example.com"
         ],
-        "method" => "mail",
+        "method" => "sendmail",
         "smtp"   => [
             "host" => "",
             "port" => "",
@@ -140,7 +140,7 @@ return [
             "name"  => "",
             "email" => ""
         ],
-        "method"      => null,
+        "method"      => 'sendmail',
         "smtp"        => [
             "host" => "",
             "port" => "",

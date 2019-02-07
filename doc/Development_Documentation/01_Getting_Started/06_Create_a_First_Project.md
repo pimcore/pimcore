@@ -101,7 +101,7 @@ Then we can also put some HTML and template code into it:
 <body>
     <div id="site">
         <div id="logo">
-            <a href="http://www.pimcore.org/"><img src="/pimcore/static6/img/logo-gray.svg" style="width: 200px;" /></a>
+            <a href="http://www.pimcore.org/"><img src="/bundles/pimcoreadmin/img/logo-gray.svg" style="width: 200px;" /></a>
             <hr />
             <div class="claim">
                 THE OPEN-SOURCE ENTERPRISE PLATFORM FOR PIM, CMS, DAM & COMMERCE
@@ -125,7 +125,7 @@ First, click right on *Home* in the *Documents* panel.
 ![Create page](../img/Pimcore_Elements_check_homepage.png)
 
 Now select the tab *Settings* in the newly opened tab.
-Select the name of the controller and the name of the action in the accordingly fields.
+Select the name of the controller and the name of the action in the according fields.
 
 ![Page settings](../img/Pimcore_Elements_homepage_settings.png)
 
@@ -259,7 +259,7 @@ $this->extend('layout.html.php');
 
 <div class="product-info">
     <?php if($this->editmode):
-        echo $this->href('product');
+        echo $this->relation('product');
     else: ?>
 
     <!-- Product information-->
@@ -270,9 +270,9 @@ $this->extend('layout.html.php');
 ```
 
 `$this->editmode` is a standard variable (is always set) to check if the view is called from the Pimcore admin backend and gives you the 
- possibility to to different stuff in editmode and in frontend. 
+ possibility to do different stuff in editmode and in frontend. 
 
-`$this->href('product')` is one of the possible editable placeholders. It can be used to make 1 to 1 relations, a cool 
+`$this->relation('product')` is one of the possible editable placeholders. It can be used to make 1 to 1 relations, a cool 
 alternative for that, would be also the [Renderlet](../03_Documents/01_Editables/28_Renderlet.md) editable.  
 Click [here](../03_Documents/01_Editables/README.md) for a full list of available editables in Pimcore.
 
@@ -284,7 +284,7 @@ The last thing is to show the product in the body of the document you created.
 Let's go back to the documents section. Right click on *Home* then *Add Page* > *Empty Page*.
 In the settings label, choose the `product` action and the `Content` controller, click save and go back to the edit tab.
 
-Now you can see the new editable element (`href`) which we added in the product template above.
+Now you can see the new editable element (`relation`) which we added in the product template above.
 Drag the product object to that editable and press *Save & Publish*.
 
 ![Drag the object to the document](../img/Pimcore_Elements_drag_to_document.png)
@@ -312,12 +312,12 @@ $this->extend('layout.html.php');
 <h1><?= $this->input("headline", ["width" => 540]); ?></h1>
 <div class="product-info">
     <?php if($this->editmode):
-        echo $this->href('product');
+        echo $this->relation('product');
     else: ?>
     <div id="product">
         <?php
         /** @var \Pimcore\Model\DataObject\Product $product */
-        $product = $this->href('product')->getElement();
+        $product = $this->relation('product')->getElement();
         ?>
         <h2><?= $this->escape($product->getName()); ?></h2>
         <div class="content">
@@ -352,13 +352,13 @@ Now, last but not least, we would like to show the product picture:
         /** @var \Pimcore\Model\Asset\Image $picture */
         
     ?>
-        <?= $picture->getThumbnail("content")->getHTML(); ?>
+        <?= $picture->getThumbnail("content")->getHtml(); ?>
     <?php endif; ?>
     <?= $product->getDescription(); ?>
 </div>
 ```
 As you can see, image attribute is an additional class with useful parameter.
-To print out the image in the right size just use the method `getThumbnail()->getHTML()` which returns the `<img>` or `<picture>` (when using media queries in your config) tag with the 
+To print out the image in the right size just use the method `getThumbnail()->getHtml()` which returns the `<img>` or `<picture>` (when using media queries in your config) tag with the 
 correct image path and also sets alt attributes to values based on the asset meta data. 
 
 Now the product page should look like:

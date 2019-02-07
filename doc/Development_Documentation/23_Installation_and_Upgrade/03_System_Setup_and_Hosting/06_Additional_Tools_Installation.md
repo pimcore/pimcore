@@ -6,7 +6,7 @@ The installation of some of the tools is covered in this guide and should work a
 For other Linux distributions you might have to adopt some commands to your platform-specific environment, but we try to use as many statically linked software as possible, that can be used on any x64 Linux platform.  
 
 > It's important that all tools (incl. `composer`) are added to the `$PATH` env. variable, so that Pimcore is able to find the executables. 
-If you're not able to control the `$PATH` variable, you can also [manually configure the paths for each application](https://github.com/pimcore/pimcore/blob/master/app/config/parameters.example.yml).
+If you're not able to control the `$PATH` variable, you can also [manually configure the paths for each application](https://github.com/pimcore/skeleton/blob/master/app/config/parameters.example.yml).
 
 
 ## Composer 
@@ -14,27 +14,17 @@ Please visit the official install guide for Composer: [https://getcomposer.org/]
 
 ## FFMPEG
 
-* Linux 64bit static builds (including qt-faststart): http://johnvansickle.com/ffmpeg/
-* Windows builds: http://ffmpeg.zeranoe.com/builds/
-
-Run all this commands as root
+Please keep in mind that many Linux/GNU distributions ship FFMPEG only with free codecs, 
+so they do not support commonly used video codecs such as mpeg4 and many others.   
 
 ```bash
-cd ~
-wget http://FFMPEG-ARCHIVE-URL-FROM-ABOVE -O ffmpeg.tar.xz
-tar -Jxf ffmpeg*.tar.xz
-rm ffmpeg*.tar.xz
-mv ffmpeg-* /usr/local/ffmpeg
-ln -s /usr/local/ffmpeg/ffmpeg /usr/local/bin/
-ln -s /usr/local/ffmpeg/ffprobe /usr/local/bin/
-ln -s /usr/local/ffmpeg/qt-faststart /usr/local/bin/
-ln -s /usr/local/ffmpeg/qt-faststart /usr/local/bin/qtfaststart
+sudo apt-get install ffmpeg
 ```
 
 ## LibreOffice, pdftotext, Inkscape, ...
 
 ```bash 
-apt-get install libreoffice python-uno libreoffice-math xfonts-75dpi poppler-utils inkscape libxrender1 libfontconfig1 ghostscript
+apt-get install libreoffice libreoffice-script-provider-python libreoffice-math xfonts-75dpi poppler-utils inkscape libxrender1 libfontconfig1 ghostscript
 ```
 
 ## Wkhtmltoimage / Wkhtmltopdf
@@ -110,3 +100,13 @@ ln -s /usr/lib/go/bin/primitive
 ```bash 
 apt-get install libimage-exiftool-perl
 ```
+
+## WebP
+
+Install webp for [WebP-Support](https://pimcore.com/docs/5.x/Development_Documentation/Assets/Working_with_Thumbnails/Image_Thumbnails.html#page_WebP-Support)
+
+```bash 
+apt-get install webp
+```
+
+

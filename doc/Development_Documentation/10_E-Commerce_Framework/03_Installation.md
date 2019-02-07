@@ -23,7 +23,7 @@ Please see [Configuration](./04_Configuration) for further information on availa
 
 ## Configure Product and Product Category Class
 The E-Commerce Framework installation does not create classes for products and product categories. That is because the 
-framework does limit you on specific classes or class structures. Literally every class can act as a product or product 
+framework does not limit you on specific classes or class structures. Literally every class can act as a product or product 
 category class and it is also possible to have several product classes (if necessary). 
 
 The only requirement is, that the classes have to be 'prepared' for being products or product categories. 
@@ -45,7 +45,7 @@ There are two ways of preparing a Pimcore class for product-usage in the E-Comme
 the parent class functionality or the overriding models functionality of Pimcore 
 (see also [Overriding Models](../20_Extending_Pimcore/03_Overriding_Models.md)).
 
-> If using the abstract class, also have a look at its [implementation](https://github.com/pimcore/pimcore/blob/master/pimcore/lib/Pimcore/Bundle/EcommerceFrameworkBundle/Model/AbstractProduct.php). 
+> If using the abstract class, also have a look at its [implementation](https://github.com/pimcore/pimcore/blob/master/bundles/EcommerceFrameworkBundle/Model/AbstractProduct.php). 
 You might need to override a few methods that cannot be implemented by the abstract class and throw an 
 exception depending on the use case you are using it. 
 

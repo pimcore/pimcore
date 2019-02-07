@@ -1,13 +1,12 @@
 # Versioning
 
 ## General
-All contents in Pimcore (documents, assets and objects) are versions. You can have as much versions as you want.
+All contents in Pimcore (documents, assets and objects) are versioned. You can have as many versions as you want.
 On each change a new version of the element is created.
 
 For example, if you would like to find the version history in objects you have to choose **Versions** tab.
 
-There you can see the changes list, also you can find out what is the difference between revisions and you can choose 
-which version should be published.
+There you can see a list of changes, what is the difference between revisions and you can choose which version should be published.
 
 ![Object versions changeslist](../img/versioning_changeslist.png)
 
@@ -48,4 +47,12 @@ When you set `userModification` to `0` Pimcore shows `system` as user in the ver
 $object->setUserModification(0);
 $object->save();
 ```
-
+### Example: How to get a previous version of an object
+```php
+$versions = $currentObject->getVersions();
+$previousVersion = $versions[1];
+$previousObject = $previousVersion->getData();
+ 
+Simple::log("example", "previous value: ".$previousVersion->getData()->getSomeValue());
+Simple::log("example", "current value ".$currentObject->getSomeValue());
+```

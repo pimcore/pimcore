@@ -2,7 +2,7 @@
 
 You can make full use of the [Symfony Security Component](http://symfony.com/doc/3.4/security.html) to handle complex
 authentication/authorization scenarios. However, as the Pimcore administration interface and the REST API already
-use the security component for its puropses, a couple of prerequisites and differences to a standard Symfony application need to be considered. As starting point, please have a look at the [security.yml](https://github.com/pimcore/pimcore/blob/master/pimcore/lib/Pimcore/Bundle/CoreBundle/Resources/config/pimcore/security.yml)
+use the security component for its puropses, a couple of prerequisites and differences to a standard Symfony application need to be considered. As starting point, please have a look at the [security.yml](https://github.com/pimcore/pimcore/blob/master/bundles/CoreBundle/Resources/config/pimcore/security.yml)
 defined in the `CoreBundle` to get an idea what Pimcore already defines.
 
 ## Merged security configurations
@@ -54,12 +54,12 @@ As result of this merging logic, please consider the following caveats:
   
 ## Login example
 
-The [Demo CMS profile](https://github.com/pimcore/pimcore/blob/master/install-profiles/demo-basic) provides a simple login
+The [Demo CMS profile](https://github.com/pimcore/demo-basic) provides a simple login
 example using a `User` Pimcore object and a `form_login` authenticator which allows a site-wide login with public and
 secured areas:
  
-* [security.yml](https://github.com/pimcore/pimcore/blob/master/install-profiles/demo-basic/src/AppBundle/Resources/config/pimcore/security.yml)
-* [SecureController](https://github.com/pimcore/pimcore/blob/master/install-profiles/demo-basic/src/AppBundle/Controller/SecureController.php)
+* [security.yml](https://github.com/pimcore/demo-basic/tree/master/src/AppBundle/Resources/config/pimcore/security.yml)
+* [SecureController](https://github.com/pimcore/demo-basic/tree/master/src/AppBundle/Controller/SecureController.php)
 
 A simplified guide to this setup is illustrated in [Authenticate against Pimcore Objects](./01_Authenticate_Pimcore_Objects.md).
 

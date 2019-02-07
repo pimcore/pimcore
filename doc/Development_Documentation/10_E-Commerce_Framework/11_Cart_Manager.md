@@ -132,10 +132,10 @@ Following elements are configured:
   by factory implementation
 * **Price calculator factory service ID + options and modificators**: The price calculator is a framework for calculation
   and modification (shipping costs, discounts, ...) of prices on cart level. Each modification is implemented in a 
-  [`ICartPriceModificator` class](https://github.com/pimcore/pimcore/blob/master/pimcore/lib/Pimcore/Bundle/EcommerceFrameworkBundle/CartManager/CartPriceModificator/ICartPriceModificator.php). 
-  See [Shipping](https://github.com/pimcore/pimcore/blob/master/pimcore/lib/Pimcore/Bundle/EcommerceFrameworkBundle/CartManager/CartPriceModificator/Shipping.php)
-  or [Discount](https://github.com/pimcore/pimcore/blob/master/pimcore/lib/Pimcore/Bundle/EcommerceFrameworkBundle/CartManager/CartPriceModificator/Discount.php)
-  for examples. This should be self speaking. 
+  [`ICartPriceModificator` class](https://github.com/pimcore/pimcore/blob/master/bundles/EcommerceFrameworkBundle/CartManager/CartPriceModificator/ICartPriceModificator.php). 
+  See [Shipping](https://github.com/pimcore/pimcore/blob/master/bundles/EcommerceFrameworkBundle/CartManager/CartPriceModificator/Shipping.php)
+  or [Discount](https://github.com/pimcore/pimcore/blob/master/bundles/EcommerceFrameworkBundle/CartManager/CartPriceModificator/Discount.php)
+  for examples.
 
 
 
@@ -151,7 +151,7 @@ Use this implementation when no user login is available and storing carts in the
 
 * **Database-Cart** (class name `Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\Cart`): This cart implementation
 stores all cart information in the **database**. In this case, it is important that the currently logged in user is set 
-to the [E-Commerce Framework Environment](https://github.com/pimcore/pimcore/blob/master/pimcore/lib/Pimcore/Bundle/EcommerceFrameworkBundle/IEnvironment.php)
+to the [E-Commerce Framework Environment](https://github.com/pimcore/pimcore/blob/master/bundles/EcommerceFrameworkBundle/IEnvironment.php)
 with the code snippet in the box below. 
 Use this implementation when user logins are available and the carts should be persisted beyond session lifetime. 
 

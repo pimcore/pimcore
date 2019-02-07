@@ -26,7 +26,7 @@ Therefore `\Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\Abs
 `getFilterFrontend()` and `addCondition()` to be implemented. 
 
 Each Filter Type needs to be defined as service and registered on the `pimcore_ecommerce_framework.filter_service` configuration.
-The framework already defines a number of core filter types in [filter_service_filter_types.yml](https://github.com/pimcore/pimcore/blob/master/pimcore/lib/Pimcore/Bundle/EcommerceFrameworkBundle/Resources/config/filter_service_filter_types.yml).
+The framework already defines a number of core filter types in [filter_service_filter_types.yml](https://github.com/pimcore/pimcore/blob/master/bundles/EcommerceFrameworkBundle/Resources/config/filter_service_filter_types.yml).
  
 ```yaml
 pimcore_ecommerce_framework:
@@ -136,6 +136,9 @@ Pimcore documents to set up manual landing pages etc.
 Both is demonstrated at [E-Commerce demo](http://ecommercedemo.pimcore.org/en) and also available as 
 [source code](https://github.com/pimcore/demo-ecommerce). 
 
+In case that a filter contains relational objects (```FilterMultiRelation```, ```FilterRelation```, etc.), 
+the ```getName()``` method of the object is used to render the text in pre-select lists and filters. 
+Implement the ```getNameForFilterDefinition()``` method in your data objects to show customized (HTML) texts, including icons. 
 
 ## 3 - Putting it all together
 Once Filter Types and Filter Definitions are set up, it is quite easy to put it all together and use the *Filter Service* 
@@ -174,6 +177,8 @@ $paginator->setPageRange(10);
 $this->view->paginator = $paginator;
 
 ```
+
+For a sample of a controller see our demo-ecommerce [here](https://github.com/pimcore/demo-ecommerce/blob/master/src/AppBundle/Controller/ShopController.php#L54). 
 
 ### View
 For putting all filters to the frontend use following sample. It is important that this sample is inside a form in order 

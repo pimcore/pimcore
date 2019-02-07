@@ -45,6 +45,17 @@ The value can be updated in a similar way.
         $object->save();
 ```
 
+Get Values of Localized Block Entries:
+
+```php
+        $object = DataObject\BlockClass::getById(48);
+        /** @var  $blockData DataObject\ClassDefinition\Data\Block */
+        $blockItems = $object->getBlockElement1();
+        /** @var  $firstBlockItem DataObject\Data\BlockElement */
+        $firstBlockItem = $blockItems[0];
+        $localizedfields = $firstBlockItem["localizedfields"]->getData();
+        // after that use it as you would to it with `Pimcore\Model\DataObject\LocalizedField::getLocalizedValue`
+```
 
 Create a Block:
 
@@ -59,11 +70,37 @@ Create a Block:
  $data = [
     "input1" => new BlockElement('input1', 'input', 'NewValue1'),
     "input2" => new BlockElement('input2', 'input', 'NewValue2'),
-    "myhref" => new BlockElement('myhref', 'multihref', [$object])
+    "myhref" => new BlockElement('myhref', 'manyToManyRelation', [$object])
     ];
  
  $blockElement = new BlockClass();
  $blockElement->setBlockElement1([$data]);
+```
+
+Create a Block with localized fields:
+```php
+/** 
+ * @var  $localizedfield DataObject\Localizedfield
+ * 
+ * Localizedfield( items )
+ */
+ $object = DataObject::getById(4);
+ 
+ $data = [
+    "input1" => new BlockElement('input1', 'input', 'NewValue1'),
+    "input2" => new BlockElement('input2', 'input', 'NewValue2'),
+    "myhref" => new BlockElement('myhref', 'manyToManyRelation', [$object]),
+    "localizedfields" => new BlockElement('localizedfields', 'localizedfields', new Localizedfield([
+        "de" => [
+            "localizedInput" => "Mein deutscher Text"
+        ],
+        "en" => [
+            "localizedInput" => "My English text"
+        ]
+    ]));
+    ];
+ 
+ 
 ```
 
 

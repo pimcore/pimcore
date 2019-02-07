@@ -6,9 +6,9 @@ sudo: false
 language: php
 
 php:
-  - 7
   - 7.1
   - 7.2
+  - 7.3
 
 services:
   - redis
@@ -22,12 +22,6 @@ matrix:
   include:
     - os: linux
       sudo: required
-      php: 7
-      env:
-          - PIMCORE_TEST_SUITE=rest
-          - PIMCORE_TEST_ENV=http
-    - os: linux
-      sudo: required
       php: 7.1
       env:
           - PIMCORE_TEST_SUITE=rest
@@ -35,6 +29,12 @@ matrix:
     - os: linux
       sudo: required
       php: 7.2
+      env:
+          - PIMCORE_TEST_SUITE=rest
+          - PIMCORE_TEST_ENV=http
+    - os: linux
+      sudo: required
+      php: 7.3
       env:
           - PIMCORE_TEST_SUITE=rest
           - PIMCORE_TEST_ENV=http
@@ -57,7 +57,7 @@ matrix:
 
 cache:
   directories:
-    - vendor
+    - $HOME/.cache/composer
 
 env:
   global:
@@ -80,6 +80,7 @@ install:
   - if [ $TASK_DOCS == 1 ]; then .ci/setup-docs.sh; fi
 
 before_script:
+  - phpenv config-rm xdebug.ini
   - if [ $TASK_TESTS == 1 ]; then .travis/setup-php.sh; fi
   - if [ $TASK_TESTS == 1 ]; then .travis/setup-functional-tests.sh; fi
 

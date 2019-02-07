@@ -4,4 +4,4 @@ Since Pimcore creates lots of temporary files during runtime it's recommended to
 
 If using Git for your project we recommend the following `.gitignore`: 
 
-* <https://github.com/pimcore/pimcore/blob/master/.gitignore>
+* <https://github.com/pimcore/demo-basic/blob/master/.gitignore>

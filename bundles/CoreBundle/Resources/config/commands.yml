@@ -1,0 +1,6 @@
+services:
+    Pimcore\Bundle\CoreBundle\Command\OptimizeImageThumbnailsCommand:
+        arguments:
+            - '@Pimcore\Image\Optimizer'
+        tags:
+            - { name: console.command, command: 'pimcore:thumbnails:optimize-images' }

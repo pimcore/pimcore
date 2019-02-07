@@ -1,4 +1,4 @@
-# Custom Views (ExtJS 6 only)
+# Custom Views
 A custom view is an additional custom tree representing a subset of elements of the corresponding original tree.
 Custom views can be configured for Documents, Assets and Objects. 
 
@@ -10,7 +10,7 @@ Note that the ID is mandatory and must be unique!
 
 ![Custom Views](../../../img/classes-custom-views1.png)
 
-For a sample configuration file have a look at the [sample configuration file](https://github.com/pimcore/pimcore/blob/master/app/config/pimcore/customviews.example.php) 
+For a sample configuration file have a look at the [sample configuration file](https://github.com/pimcore/skeleton/blob/master/app/config/pimcore/customviews.example.php) 
 that ships with Pimcore and its comments. 
 
 ## Advanced Features / Configurations
@@ -24,7 +24,7 @@ The main idea for this configuration is to
 
 ```php
 <?php
-// app/config/pimcore/customviews.example.php
+// /app/config/pimcore/customviews.example.php
  
 return [
     "views" => [
@@ -32,7 +32,7 @@ return [
             "treetype" => "object",
             "name" => "Articles",
             "condition" => NULL,
-            "icon" => "/pimcore/static6/img/flat-color-icons/reading.svg",
+            "icon" => "/bundles/pimcoreadmin/img/flat-color-icons/reading.svg",
             "id" => 1,
             "rootfolder" => "/blog",
             "showroot" => FALSE,
@@ -70,7 +70,7 @@ return [
     "treetype" => "asset",
     "name" => "Panama Impressions",
     "condition" => NULL,
-    "icon" => "/pimcore/static6/img/flat-color-icons/camera_identification.svg",
+    "icon" => "/bundles/pimcoreadmin/img/flat-color-icons/camera_identification.svg",
     "id" => 1,
     "rootfolder" => "/examples/panama",
     "showroot" => FALSE,
@@ -107,7 +107,7 @@ The intention is to
    "treetype" => "document",
    "name" => "Basic Page Examples",
    "condition" => NULL,
-   "icon" => "/pimcore/static6/img/flat-color-icons/reading.svg",
+   "icon" => "/bundles/pimcoreadmin/img/flat-color-icons/reading.svg",
    "id" => 3,
    "rootfolder" => "/en/basic-examples",
    "showroot" => TRUE,

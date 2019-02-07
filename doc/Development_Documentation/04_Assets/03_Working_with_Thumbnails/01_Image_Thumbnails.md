@@ -41,18 +41,10 @@ This path can then be directly used to display the image in a `<img />` or `<pic
 
     <!-- preferred alternative - let Pimcore create the whole image tag -->
     <!-- including high-res alternatives (srcset) or media queries, if configured -->
-    <?= $asset->getThumbnail("myThumbnail")->getHTML(); ?>
+    <?= $asset->getThumbnail("myThumbnail")->getHtml(); ?>
 
 <?php } ?>
 ```
-
-**An Alternative Adapter**
-
-You can use the new adapter: `pimcore/lib/Pimcore/Image/Adapter/ImageMagick.php` instead of the standard `pimcore/lib/Pimcore/Image/Adapter/Imagick.php`.
- 
-The main difference: `ImageMagick` is using `convert` and `composite` CLI tools to manage thumbnails (it gives a better control of the generation process).
-
-@TODO: How to set the new adapter in `config.yml`
 
 ## Explanation of the Transformations
 
@@ -64,7 +56,7 @@ The main difference: `ImageMagick` is using `convert` and `composite` CLI tools 
 | SCALE BY WIDTH | The image is scaled respecting the ratio to the given width, the height is variable depending on the original ratio of the image (portrait, landscape). |   ![Config Width](../../img/thumbnails-config-width.png) | ![Sample Width](../../img/thumbnails-sample-width.png) |
 | CONTAIN | The image is scaled to either the given height or the width, depending on the ratio of the original image. That means that the image is scaled to fit into a "virtual" box with the dimensions given in the configuration.  |   ![Config Contain](../../img/thumbnails-config-contain.png) | ![Sample Contain](../../img/thumbnails-sample-contain.png) |
 | CROP | Cuts out a box of the image starting at the given X,Y coordinates and using the width and height. |   ![Config Crop](../../img/thumbnails-config-crop.png) | ![Sample Crop](../../img/thumbnails-sample-crop.png) |
-| COVER | The image is resized so that it completely covers the given dimensions. Then the overlapping pieces are cropped depending on the given positioning. This is useful if you need a fixed size for a thumbnail but the source images have different ratios. |   ![Config Cover](../../img/thumbnails-config-cover.png) | ![Sample Cover](../../img/thumbnails-sample-cover.png) |
+| COVER | The image is resized so that it completely covers the given dimensions. Then the overlapping pieces are cropped depending on the given positioning or based on the focal point set on the source image. This is useful if you need a fixed size for a thumbnail but the source images have different ratios. |   ![Config Cover](../../img/thumbnails-config-cover.png) | ![Sample Cover](../../img/thumbnails-sample-cover.png) |
 | FRAME | The transformation is the same as CONTAIN the difference is, that the image gets exactly the entered dimensions by adding transparent borders left / right or top / bottom. |   ![Config Frame](../../img/thumbnails-config-frame.png) | ![Sample Frame](../../img/thumbnails-sample-frame.png) |
 | ROTATE | Rotates the image with the given angle. The background is transparent by default. |   ![Config Rotate](../../img/thumbnails-config-rotate.png) | ![Sample Rotate](../../img/thumbnails-sample-rotate.png) |
 | BACKGROUND COLOR | Background color is especially useful if you have transparent PNG as source data or if you're using the FRAME or the ROTATE transformations where you get transparencies. It allows you to give transparencies a color, and gives you the possibility to use them for examples JPEG's which doesn't support transparency.  |   ![Config Background](../../img/thumbnails-config-background.png) | ![Sample Background](../../img/thumbnails-sample-background.png) |
@@ -86,7 +78,7 @@ For thumbnails in action also have a look at our [Live Demo](http://demo.pimcore
 <?php // Use directly on the asset object ?>
 <?php
     $asset = Asset::getByPath("/path/to/image.jpg");
-    echo $asset->getThumbnail("myThumbnail")->getHTML();
+    echo $asset->getThumbnail("myThumbnail")->getHtml();
 ?>
  
 <?php // Use without pre-configured thumbnail ?>
@@ -119,7 +111,7 @@ For thumbnails in action also have a look at our [Live Demo](http://demo.pimcore
 <?php
  
 $asset = Asset::getByPath("/path/to/image.jpg");
-echo $asset->getThumbnail(["width" => 500, "format" => "png"])->getHTML();
+echo $asset->getThumbnail(["width" => 500, "format" => "png"])->getHtml();
  
 ?>
 ```
@@ -136,7 +128,7 @@ $width = $thumbnail->getWidth();
 $height = $thumbnail->getHeight();
  
 // get the html "img" tag for the thumbnail incl. custom class:
-echo $thumbnail->getHTML(["class" => "custom-class"]);
+echo $thumbnail->getHtml(["class" => "custom-class"]);
  
 // get the path to the thumbnail
 $path = $thumbnail->getPath();
@@ -152,17 +144,17 @@ echo $thumbnail; // prints something like /var/tmp/....png
  "width" => 180,
  "height" => 180,
  "cover" => true
-])->getHTML(["class" => "thumbnail", "data-my-name" => "my value"]) ?>
+])->getHtml(["class" => "thumbnail", "data-my-name" => "my value"]) ?>
  
   
 // same with a thumbnail definition
-<?= $asset->getThumbnail("exampleScaleWidth")->getHTML([
+<?= $asset->getThumbnail("exampleScaleWidth")->getHtml([
     "class" => "thumbnail", 
     "data-my-name" => "my value"
 ]) ?>
   
 // disable the automatically added width & height attributes
-<?= $asset->getThumbnail("exampleScaleWidth")->getHTML([], ["width","height"]) ?>
+<?= $asset->getThumbnail("exampleScaleWidth")->getHtml([], ["width","height"]) ?>
 ```
 
 
@@ -273,7 +265,7 @@ Pimcore will then dynamically generate the thumbnails accordingly.
 
 ## Media Queries in Thumbnail Configuration
 If your're using media queries in your thumbnail configuration pimcore automatically generates a `<picture>`  tag 
-instead of an `<img>` tag when calling `$asset->getThumbnail("example")->getHTML()`.
+instead of an `<img>` tag when calling `$asset->getThumbnail("example")->getHtml()`.
 But in some cases it is necessary to get single thumbnails for certain media queries out of the thumbnail object, 
 which is described in the examples below. 
 ```php
@@ -289,7 +281,7 @@ $a->getThumbnail("galleryCarousel")->getHtml();
 $a->getThumbnail("galleryCarousel")->getMedia("940w");
  
 // get <img> tag for media query 320w including @srcset 2x
-$a->getThumbnail("galleryCarousel")->getMedia("320w")->getHTML();
+$a->getThumbnail("galleryCarousel")->getMedia("320w")->getHtml();
  
 // get 2x thumbnail path for media query 320w
 $a->getThumbnail("galleryCarousel")->getMedia("320w", 2);
@@ -303,4 +295,60 @@ See:
 - https://github.com/verlok/picturePolyfill
 - https://github.com/scottjehl/picturefill 
 
+## Focal Point
+Pimcore supports focal points on images, which are considered when images are automatically cropped. 
+At the moment this makes only sense if the transformation `COVER` is used. If a focal point is set on 
+the source image, it is automatically considered and the thumbnail is cropped accordingly to ensure the focus 
+of the image is on the focal point. 
 
+![Defining a focal point on image assets](../../img/asset_focal_point.png)  
+  
+![Focal point context menu entry on document image editable](../../img/document_image_editable_focal_point.png)  
+  
+![Image thumbnails cover transformation considering focal point](../../img/image_thumbnails_cover_focal_point.png)
+
+## WebP Support 
+Pimcore  delivers automatically thumbnails in WebP format when using the `Auto` configuration for the 
+target format and when the client does support WebP (checking by evaluating the `Accept` request header).  
+    
+If you prefer not using WebP, you can disable the support by adding the following config option: 
+```yml
+    assets:
+        image:
+            thumbnails:
+                webp_auto_support: false
+```
+
+#### Note on using WebP with Imagick using delegates
+Please ensure that your delegate definition for WebP encoding includes the `-q` flag, otherwise the quality 
+setting on thumbnails will not be considered and the default value of `75` is being used by `cwebp`.
+
+Working example of a WebP encode delegate (defined in `/etc/ImageMagick-6/delegates.xml`): 
+```xml
+<delegate decode="png" encode="webp" command="&quot;cwebp&quot; -quiet -q %Q &quot;%i&quot; -o &quot;%o&quot;"/>
+``` 
+
+## Adding Custom Callbacks / Transformations / Filters
+
+It is also possible to add some custom code to your thumbnail configurations, 
+this is especially useful for situations when very specific image operations are needed to be applied to the
+resulting thumbnail.
+
+#### Example
+
+```php
+$thumbnailConfig = Asset\Image\Thumbnail\Config::getByName('content');
+$thumbnailConfig->addItemAt(0, function (Imagick $imagick) {
+	/**
+	 * @var \Imagick $i
+	 */
+	$i = $imagick->getResource();
+	$i->sepiaToneImage(80);
+}, []);
+
+
+$asset = Asset::getById(39);
+$asset->clearThumbnails(true);
+$thumb = $asset->getThumbnail($thumbnailConfig);
+$file = $thumb->getFileSystemPath();
+```
