@@ -80,23 +80,30 @@ class Dao extends Model\Dao\AbstractDao
                         if (!$fd instanceof CustomResourcePersistingInterface) {
                             Tool::triggerMissingInterfaceDeprecation(get_class($fd), 'load', CustomResourcePersistingInterface::class);
                         }
-                        // datafield has it's own loader
-                        $value = $fd->load(
-                            $collection,
-                            [
-                                'context' => [
-                                    'object' => $object,
-                                    'containerType' => 'fieldcollection',
-                                    'containerKey' => $type,
-                                    'fieldname' => $this->model->getFieldname(),
-                                    'index' => $result['index']
-                            ]]
-                        );
-                        if ($value === 0 || !empty($value)) {
-                            $collection->setValue($key, $value);
 
-                            if ($collection instanceof DataObject\DirtyIndicatorInterface) {
-                                $collection->markFieldDirty($key, false);
+                        if ($fd instanceof  DataObject\ClassDefinition\Data\Relations\AbstractRelations && !DataObject\Fieldcollection::isLazyLoadingDisabled() && $fd->getLazyLoading())  {
+                            $lazyKey = DataObject\Fieldcollection::generateLazyKey($type, $this->model->getFieldname(), $result['index'], $key);
+                            $this->model->addLazyKey($lazyKey);
+                        } else {
+                            // datafield has it's own loader
+                            $value = $fd->load(
+                                $collection,
+                                [
+                                    'context' => [
+                                        'object' => $object,
+                                        'containerType' => 'fieldcollection',
+                                        'containerKey' => $type,
+                                        'fieldname' => $this->model->getFieldname(),
+                                        'index' => $result['index']
+                                    ]]
+                            );
+
+                            if ($value === 0 || !empty($value)) {
+                                $collection->setValue($key, $value);
+
+                                if ($collection instanceof DataObject\DirtyIndicatorInterface) {
+                                    $collection->markFieldDirty($key, false);
+                                }
                             }
                         }
                     }
@@ -143,6 +150,7 @@ class Dao extends Model\Dao\AbstractDao
         // empty or create all relevant tables
         $fieldDef = $object->getClass()->getFieldDefinition($this->model->getFieldname(), ['suppressEnrichment' => true]);
         $hasLocalizedFields = false;
+
 
         foreach ($fieldDef->getAllowedTypes() as $type) {
             try {
@@ -213,7 +221,7 @@ class Dao extends Model\Dao\AbstractDao
         }
 
         if (!$this->model->isFieldDirty('_self') && !DataObject\AbstractObject::isDirtyDetectionDisabled()) {
-            return false;
+            return [];
         }
         $whereLocalizedFields = "(ownertype = 'localizedfield' AND "
             . $this->db->quoteInto('ownername LIKE ?', '/fieldcollection~'
@@ -225,7 +233,7 @@ class Dao extends Model\Dao\AbstractDao
                 // always empty localized fields
                 $this->db->deleteWhere('object_relations_' . $object->getClassId(), $whereLocalizedFields);
 
-                return false;
+                return ["saveLocalizedRelations" => true];
             }
         }
 
@@ -236,6 +244,6 @@ class Dao extends Model\Dao\AbstractDao
         // empty relation table
         $this->db->deleteWhere('object_relations_' . $object->getClassId(), $where);
 
-        return true;
+        return ["saveFieldcollectionRelations" => true, "saveLocalizedRelations" => true];;
     }
 }

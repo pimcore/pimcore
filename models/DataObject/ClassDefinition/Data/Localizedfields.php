@@ -141,7 +141,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
     }
 
     /**
-     * @param $data
+     * @param $data DataObject\Localizedfield
      * @param $object
      * @param $fieldData
      * @param $metaData
@@ -149,14 +149,36 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
      *
      * @return array
      */
-    private function doGetDataForEditMode($data, $object, &$fieldData, &$metaData, $level = 1, $params)
+    private function doGetDataForEditMode($data, $object, &$fieldData, &$metaData, $level = 1, $params = [])
     {
         $class = $object->getClass();
         $inheritanceAllowed = $class->getAllowInherit();
         $inherited = false;
 
-        foreach ($data->getItems() as $language => $values) {
+        $dataItems = $data->getInternalData(true);
+        foreach ($dataItems as $language => $values) {
             foreach ($this->getFieldDefinitions() as $fd) {
+                if ($fd instanceof Data\Relations\AbstractRelations && !DataObject\Localizedfield::isLazyLoadingDisabled()  && $fd->getLazyLoading() ) {
+                    $lazyKey = $fd->getName() . "_" . $language;
+                    if ($data->hasLazyKey($lazyKey)) {
+                        $params['language'] = $language;
+                        $params['object'] = $object;
+                        if (!isset($params['context'])) {
+                            $params['context'] = [];
+                        }
+                        $params['context']['object'] = $object;
+
+                        $value = $fd->load($data, $params);
+                        if ($value === 0 || !empty($value)) {
+                            $data->setLocalizedValue($fd->getName(), $value, $language, false);
+                            $values[$fd->getName()] = $value;
+                        }
+
+                        $data->removeLazyKey($lazyKey);
+                    }
+                }
+
+
                 $key = $fd->getName();
                 $fdata = isset($values[$fd->getName()]) ? $values[$fd->getName()] : null;
 
@@ -355,7 +377,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
         $lfData = $this->getDataFromObjectParam($object);
 
         if ($lfData instanceof DataObject\Localizedfield) {
-            foreach ($lfData->getItems() as $language => $values) {
+            foreach ($lfData->getInternalData(true) as $language => $values) {
                 foreach ($values as $lData) {
                     if (is_string($lData)) {
                         $dataString .= $lData.' ';
@@ -383,7 +405,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
         if (!$data instanceof DataObject\Localizedfield) {
             $items = [];
         } else {
-            $items = $data->getItems();
+            $items = $data->getInternalData(true);
         }
 
         $user = Tool\Admin::getCurrentUser();
@@ -637,6 +659,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
             $localizedFields->setObject($object, false);
             $context = isset($params['context']) ? $params['context'] : null;
             $localizedFields->setContext($context);
+            $localizedFields->loadLazyData();
             $localizedFields->save($params);
         }
     }
@@ -909,7 +932,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
             return $tags;
         }
 
-        foreach ($data->getItems() as $language => $values) {
+        foreach ($data->getInternalData(true) as $language => $values) {
             foreach ($this->getFieldDefinitions() as $fd) {
                 $tags = $fd->getCacheTags($values[$fd->getName()], $tags);
             }
@@ -931,7 +954,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
             return [];
         }
 
-        foreach ($data->getItems() as $language => $values) {
+        foreach ($data->getInternalData(true) as $language => $values) {
             foreach ($this->getFieldDefinitions() as $fd) {
                 $dependencies = array_merge($dependencies, $fd->resolveDependencies($values[$fd->getName()]));
             }
@@ -1110,10 +1133,10 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
     protected function getDataForValidity($localizedObject, array $languages)
     {
         //TODO verify if in any place in the code \Pimcore\Model\DataObject\ClassDefinition\Data\Localizedfields::checkValidity is used with different parameter then DataObject\Localizedfield
-        if (!$localizedObject->object
-            || $localizedObject->object->getType() != 'variant'
+        if (!$localizedObject->getObject()
+            || $localizedObject->getObject()->getType() != 'variant'
             || !$localizedObject instanceof DataObject\Localizedfield) {
-            return $localizedObject->getItems();
+            return $localizedObject->getInternalData(true);
         }
 
         //prepare data for variants
@@ -1145,7 +1168,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
             return [];
         }
 
-        foreach ($data->getItems() as $language => $values) {
+        foreach ($data->getInternalData(true) as $language => $values) {
             foreach ($this->getFieldDefinitions() as $fd) {
                 $fieldname = $fd->getName();
 
@@ -1192,7 +1215,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
 
         // get existing data
         if ($localFields instanceof DataObject\Localizedfield) {
-            $localData = $localFields->getItems();
+            $localData = $localFields->getInternalData(true);
         }
 
         $mapping = [];
@@ -1354,7 +1377,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
     public function marshal($value, $object = null, $params = [])
     {
         if ($value instanceof DataObject\Localizedfield) {
-            $items = $value->getItems();
+            $items = $value->getInternalData(true);
             if (is_array($items)) {
                 $result = [];
                 foreach ($items as $language => $languageData) {

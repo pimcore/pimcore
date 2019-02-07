@@ -63,7 +63,6 @@
     "composite": "Zusammengesetzt",
     "origin": "Herkunft",
     "high_resolution": "Hohe Auflösung",
-    "lazy_loading_warning": "WARNUNG: Lazy Loading ist innerhalb von Localized Fields, Field Collections und Object Bricks nicht möglich.",
     "create_menu_shortcut": "Abkürzung im Menü anlegen",
     "nice_name": "schöner Name",
     "icon_class": "Icon Klasse",

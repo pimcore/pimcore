@@ -199,9 +199,10 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
 
                 $collectionClass = '\\Pimcore\\Model\\DataObject\\Fieldcollection\\Data\\' . ucfirst($collectionRaw['type']);
                 $collection = \Pimcore::getContainer()->get('pimcore.model.factory')->build($collectionClass);
-                $collection->setValues($collectionData);
+                $collection->setObject($object);
                 $collection->setIndex($count);
                 $collection->setFieldname($this->getName());
+                $collection->setValues($collectionData);
 
                 $values[] = $collection;
 
@@ -623,7 +624,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
         }
 
         $data = $object->getObjectVar($this->getName());
-        if ($this->getLazyLoading() and !in_array($this->getName(), $object->getO__loadedLazyFields())) {
+        if ($this->getLazyLoading()  &&  $object->hasLazyKey($this->getName())) {
             $data = $this->load($object, ['force' => true]);
             if ($data instanceof DataObject\DirtyIndicatorInterface) {
                 $data->resetDirtyMap();
