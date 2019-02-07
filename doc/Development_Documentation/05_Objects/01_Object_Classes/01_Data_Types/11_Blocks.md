@@ -54,9 +54,7 @@ Get Values of Localized Block Entries:
         /** @var  $firstBlockItem DataObject\Data\BlockElement */
         $firstBlockItem = $blockItems[0];
         $localizedfields = $firstBlockItem["localizedfields"]->getData();
-        $localizedItems = $localizedfields->getItems();
-
-        // $localizedItems == array with Localized Data
+        // after that use it as you would to it with `Pimcore\Model\DataObject\LocalizedField::getLocalizedValue`
 ```
 
 Create a Block:
