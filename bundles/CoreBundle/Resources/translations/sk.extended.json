@@ -63,7 +63,6 @@
     "composite": "Kompozitný (Composite)",
     "origin": "Pôvod (Origin)",
     "high_resolution": "Vysoké rozlíšenie",
-    "lazy_loading_warning": "VAROVANIE: Dodatočné načítanie (Lazy loading) NIE JE podporované vo vnútri kontajnérov lokalizovaných polí (Localized Fields), kolekcií polí (Field Collections) a podzáznamov (Object bricks)",
     "create_menu_shortcut": "Vytvoriť skratku v menu",
     "nice_name": "Pekný názov",
     "icon_class": "Class (CSS) ikonky",

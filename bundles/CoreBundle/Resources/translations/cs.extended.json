@@ -63,7 +63,6 @@
     "composite": "Kompozitní (Composite)",
     "origin": "Původ (Origin)",
     "high_resolution": "Vysoké rozlišení",
-    "lazy_loading_warning": "VAROVÁNÍ: Líné načítání (Lazy loading) NENÍ podporováno uvnitř kontejnerů lokalizovaných polí (Localized Fields), kolekcí polí (Field Collections) a podzáznamů (Object Bricks)",
     "create_menu_shortcut": "Vytvořit odkaz v menu",
     "nice_name": "Hezký název",
     "icon_class": "Třída (CSS) pro ikonu",

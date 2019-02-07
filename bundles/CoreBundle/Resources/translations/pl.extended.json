@@ -63,7 +63,6 @@
     "composite": "Złożony",
     "origin": "Oryginalny",
     "high_resolution": "Wysoka rozdzielczość",
-    "lazy_loading_warning": "UWAGA: Lazy Loading NIE współpracuje z Localized Fields, Field Collections i Object Bricks",
     "create_menu_shortcut": "Utwórz skrót w menu",
     "nice_name": "Nazwa użytkownika",
     "icon_class": "Klasa ikon",

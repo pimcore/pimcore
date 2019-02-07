@@ -63,7 +63,6 @@
     "composite": "Composite",
     "origin": "Original",
     "high_resolution": "Haute résolution",
-    "lazy_loading_warning": "AVERTISSEMENT : le Chargement Paresseux n'est pas possible dans les Champs localisés, Ensembles de champs et Objets imbriqués",
     "create_menu_shortcut": "Créer un raccourci dans le menu",
     "nice_name": "Joli nom",
     "icon_class": "Classe de l'icône",

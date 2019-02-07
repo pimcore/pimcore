@@ -952,12 +952,12 @@ class TestDataHelper extends Module
     }
 
     /**
-     * @param Concrete    $object
+     * @param Concrete|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData    $object
      * @param string      $field
      * @param int         $seed
      * @param string|null $language
      */
-    public function fillObjects(Concrete $object, $field, $seed = 1, $language = null)
+    public function fillObjects($object, $field, $seed = 1, $language = null)
     {
         $setter = 'set' . ucfirst($field);
         $objects = $this->getObjectList("o_type = 'object'");
@@ -976,17 +976,18 @@ class TestDataHelper extends Module
     }
 
     /**
-     * @param Concrete      $object
+     * @param Concrete|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData      $object
      * @param string        $field
      * @param Concrete|null $comparisonObject
      * @param int           $seed
      * @param string|null   $language
      */
-    public function assertObjects(Concrete $object, $field, $seed = 1, $language = null)
+    public function assertObjects($object, $field, $seed = 1, $language = null)
     {
         $getter = 'get' . ucfirst($field);
 
         $objects = $this->getObjectList("o_type = 'object'");
+
         if ($language) {
             if ($language === 'de') {
                 $expectedArray = array_slice($objects, 0, 6);
@@ -996,6 +997,7 @@ class TestDataHelper extends Module
             $value = $object->$getter($language);
         } else {
             $expectedArray = array_slice($objects, 0, 4);
+
             $value = $object->$getter();
         }
 
@@ -1156,6 +1158,10 @@ class TestDataHelper extends Module
         $fc->setFieldinput1('field1' . $seed);
         $fc->setFieldinput2('field2' . $seed);
 
+        $emptyObjects = TestHelper::createEmptyObjects("myprefix", true, 10);
+        $emptyLazyObjects = TestHelper::createEmptyObjects("myLazyPrefix", true, 15);
+        $fc->setFieldRelation($emptyObjects);
+        $fc->setFieldLazyRelation($emptyLazyObjects);
         $items = new DataObject\Fieldcollection([$fc], $field);
         $object->$setter($items);
     }
@@ -1190,6 +1196,12 @@ class TestDataHelper extends Module
             $value->getFieldinput2(),
             'expected field2' . $seed . ' but was ' . $value->getFieldInput2()
         );
+
+        $fieldRelation = $value->getFieldRelation();
+        $this->assertEquals(10, count($fieldRelation), "expected 10 items");
+
+        $fieldLazyRelation = $value->getFieldLazyRelation();
+        $this->assertEquals(15, count($fieldLazyRelation), "expected 15 items");
     }
 
     public function assertElementsEqual(ElementInterface $e1, ElementInterface $e2)

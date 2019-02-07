@@ -63,7 +63,6 @@
     "composite": "samestelling",
     "origin": "Bron",
     "high_resolution": "Hoge Resolutie",
-    "lazy_loading_warning": "OPGELET: Lazy Loading is NIET mogelijk binnen Localized Field, Veld collecties, en Object Bouwstenen.",
     "create_menu_shortcut": "Snelkoppeling toevoegen aan menu",
     "nice_name": "Mooie naam",
     "icon_class": "Icon-class",

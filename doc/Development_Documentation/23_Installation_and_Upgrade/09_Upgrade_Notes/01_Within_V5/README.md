@@ -4,6 +4,9 @@
 
 - `Pimcore\Model\DataObject\Localizedfield` properties are now `protected` instead of `public` 
 
+## Version 5.6.4
+- Removed method `Pimcore\Model\DataObject\getItems()`
+
 ## Version 5.6.0
 - Removed method `\Pimcore\Model\DataObject\ClassDefinition\Data::setFieldtype($fieldtype)`
 - `\Pimcore\Model\Translation\Website::getByKey()` and `\Pimcore\Model\Translation\Admin::getByKey()` are not throwing an exception anymore if an item doesn't exist, instead they are returning `null`
