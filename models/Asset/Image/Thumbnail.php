@@ -474,6 +474,9 @@ class Thumbnail
 
         $path = $this->getPath(true);
         $attributes['src'] = $path;
+        if (isset($options['cacheBuster']) && $options['cacheBuster']) {
+            $attributes['src'] = '/cache-buster-' . $image->getModificationDate() . $attributes['src'];
+        }
 
         $thumbConfig = $this->getConfig();
 
@@ -484,6 +487,9 @@ class Thumbnail
                 $thumbConfigRes = clone $thumbConfig;
                 $thumbConfigRes->setHighResolution($highRes);
                 $srcsetEntry = $image->getThumbnail($thumbConfigRes, true) . ' ' . $highRes . 'x';
+                if (isset($options['cacheBuster']) && $options['cacheBuster']) {
+                    $srcsetEntry = '/cache-buster-' . $image->getModificationDate() . $srcsetEntry;
+                }
                 $srcSetValues[] = $srcsetEntry;
             }
             $attributes['srcset'] = implode(', ', $srcSetValues);
