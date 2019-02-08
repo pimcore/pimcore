@@ -369,11 +369,11 @@ class Text
     public static function detectEncoding($text)
     {
         // Detect UTF-8, UTF-16 and UTF-32 by BOM
-        $utf32_big_endian_bom =     chr(0x00) . chr(0x00) . chr(0xFE) . chr(0xFF);
-        $utf32_little_endian_bom =  chr(0xFF) . chr(0xFE) . chr(0x00) . chr(0x00);
-        $utf16_big_endian_bom =     chr(0xFE) . chr(0xFF);
-        $utf16_little_endian_bom =  chr(0xFF) . chr(0xFE);
-        $utf8_bom =                 chr(0xEF) . chr(0xBB) . chr(0xBF);
+        $utf32_big_endian_bom = chr(0x00) . chr(0x00) . chr(0xFE) . chr(0xFF);
+        $utf32_little_endian_bom = chr(0xFF) . chr(0xFE) . chr(0x00) . chr(0x00);
+        $utf16_big_endian_bom = chr(0xFE) . chr(0xFF);
+        $utf16_little_endian_bom = chr(0xFF) . chr(0xFE);
+        $utf8_bom = chr(0xEF) . chr(0xBB) . chr(0xBF);
 
         $first2bytes = substr($text, 0, 2);
         $first3bytes = substr($text, 0, 3);
@@ -381,13 +381,13 @@ class Text
 
         if ($first3bytes === $utf8_bom) {
             return 'UTF-8';
-        } else if ($first4bytes === $utf32_big_endian_bom) {
+        } elseif ($first4bytes === $utf32_big_endian_bom) {
             return 'UTF-32BE';
-        } else if ($first4bytes === $utf32_little_endian_bom) {
+        } elseif ($first4bytes === $utf32_little_endian_bom) {
             return 'UTF-32LE';
-        } else if ($first2bytes === $utf16_big_endian_bom) {
+        } elseif ($first2bytes === $utf16_big_endian_bom) {
             return 'UTF-16BE';
-        } else if ($first2bytes === $utf16_little_endian_bom) {
+        } elseif ($first2bytes === $utf16_little_endian_bom) {
             return 'UTF-16LE';
         }
 
