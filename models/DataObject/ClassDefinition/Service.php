@@ -223,6 +223,8 @@ class Service
 
         $objectBrick->setClassDefinitions($toAssignClassDefinitions);
         $objectBrick->setParentClass($importData['parentClass']);
+        $objectBrick->setTitle($importData['title']);
+        $objectBrick->setGroup($importData['group']);
         $objectBrick->save();
 
         return true;
