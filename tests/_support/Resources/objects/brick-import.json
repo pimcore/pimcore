@@ -5,6 +5,8 @@
 			"fieldname":"mybricks"
 		}
 	],
+  "title":"",
+  "group":"",
 	"parentClass":"",
 	"layoutDefinitions":{
 		"fieldtype":"panel",
