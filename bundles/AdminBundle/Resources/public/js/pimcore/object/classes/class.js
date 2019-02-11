@@ -793,6 +793,12 @@ pimcore.object.classes.klass = Class.create({
                     width: 600,
                     value: this.data.group
                 },
+                {
+                    xtype: "checkbox",
+                    fieldLabel: t("encrypt_data"),
+                    name: "encryption",
+                    checked: this.data.encryption
+                },
                 this.allowInheritance,
                 this.allowVariants,
                 this.showVariants,

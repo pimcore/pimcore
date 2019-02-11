@@ -1037,6 +1037,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface
 
                 //TODO: Shouldn't this moved inside the try block?
                 if ($definition) {
+                    $definition->getDao()->createUpdateTable($class);
                     $fieldDefinition = $definition->getFieldDefinitions();
 
                     foreach ($fieldDefinition as $fd) {
@@ -1047,6 +1048,8 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface
                             }
                         }
                     }
+
+                    $definition->getDao()->classSaved($class);
                 }
             }
         }

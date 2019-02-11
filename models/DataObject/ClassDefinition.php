@@ -95,6 +95,16 @@ class ClassDefinition extends Model\AbstractModel
     /**
      * @var bool
      */
+    protected $encryption = false;
+
+    /**
+     * @var array
+     */
+    protected $encryptedTables = [];
+
+    /**
+     * @var bool
+     */
     public $allowInherit = false;
 
     /**
@@ -315,32 +325,6 @@ class ClassDefinition extends Model\AbstractModel
 
         $infoDocBlock = $this->getInfoDocBlock();
 
-        // save definition as a php file
-        $definitionFile = $this->getDefinitionFile();
-        if (!is_writable(dirname($definitionFile)) || (is_file($definitionFile) && !is_writable($definitionFile))) {
-            throw new \Exception(
-                'Cannot write definition file in: '.$definitionFile.' please check write permission on this directory.'
-            );
-        }
-
-        if ($saveDefinitionFile) {
-            $clone = clone $this;
-            $clone->setDao(null);
-            unset($clone->fieldDefinitions);
-
-            self::cleanupForExport($clone->layoutDefinitions);
-
-            $exportedClass = var_export($clone, true);
-
-            $data = '<?php ';
-            $data .= "\n\n";
-            $data .= $infoDocBlock;
-            $data .= "\n\n";
-
-            $data .= "\nreturn ".$exportedClass.";\n";
-
-            \Pimcore\File::putPhpFile($definitionFile, $data);
-        }
 
         // create class for object
         $extendClass = 'Concrete';
@@ -505,6 +489,36 @@ class ClassDefinition extends Model\AbstractModel
             );
         }
         File::put($classListFile, $cd);
+
+
+
+        // save definition as a php file
+        $definitionFile = $this->getDefinitionFile();
+        if (!is_writable(dirname($definitionFile)) || (is_file($definitionFile) && !is_writable($definitionFile))) {
+            throw new \Exception(
+                'Cannot write definition file in: '.$definitionFile.' please check write permission on this directory.'
+            );
+        }
+
+        if ($saveDefinitionFile) {
+            $clone = clone $this;
+            $clone->setDao(null);
+            unset($clone->fieldDefinitions);
+
+            self::cleanupForExport($clone->layoutDefinitions);
+
+            $exportedClass = var_export($clone, true);
+
+            $data = '<?php ';
+            $data .= "\n\n";
+            $data .= $infoDocBlock;
+            $data .= "\n\n";
+
+            $data .= "\nreturn ".$exportedClass.";\n";
+
+            \Pimcore\File::putPhpFile($definitionFile, $data);
+        }
+
 
         // empty object cache
         try {
@@ -1043,6 +1057,75 @@ class ClassDefinition extends Model\AbstractModel
 
         return $this;
     }
+
+    /**
+     * @return bool
+     */
+    public function getEncryption(): bool
+    {
+        return $this->encryption;
+    }
+
+    /**
+     * @param bool $encryption
+     * @return $this
+     */
+    public function setEncryption(bool $encryption)
+    {
+        $this->encryption = $encryption;
+
+        return $this;
+    }
+
+    /**
+     * @param array $tables
+     */
+    public function addEncryptedTables(array $tables)
+    {
+        $this->encryptedTables = array_merge($this->encryptedTables, $tables);
+        array_unique($this->encryptedTables);
+    }
+
+    /**
+     * @param array $tables
+     */
+    public function removeEncryptedTables(array $tables)
+    {
+        foreach($tables as $table) {
+            if (($key = array_search($table, $this->encryptedTables)) !== false) {
+                unset($this->encryptedTables[$key]);
+            }
+        }
+    }
+
+    /**
+     * @param string $table
+     * @return bool
+     */
+    public function isEncryptedTable(string $table): bool
+    {
+        return (array_search($table, $this->encryptedTables) === false) ? false : true;
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasEncryptedTables(): bool
+    {
+        return (bool) count($this->encryptedTables);
+    }
+
+    /**
+     * @param array $encryptedTables
+     * @return $this
+     */
+    public function setEncryptedTables(array $encryptedTables)
+    {
+        $this->encryptedTables = $encryptedTables;
+
+        return $this;
+    }
+
 
     /**
      * @param bool $allowInherit

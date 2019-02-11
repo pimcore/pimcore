@@ -862,6 +862,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
             foreach ($this->allowedTypes as $allowedType) {
                 $definition = DataObject\Fieldcollection\Definition::getByKey($allowedType);
                 if ($definition) {
+                    $definition->getDao()->createUpdateTable($class);
                     $fieldDefinition = $definition->getFieldDefinitions();
 
                     foreach ($fieldDefinition as $fd) {
@@ -872,6 +873,8 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
                             }
                         }
                     }
+
+                    $definition->getDao()->classSaved($class);
                 }
             }
         }

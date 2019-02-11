@@ -78,7 +78,7 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
      *
      * @param $key
      *
-     * @return mixed
+     * @return self
      */
     public static function getByKey($key)
     {
