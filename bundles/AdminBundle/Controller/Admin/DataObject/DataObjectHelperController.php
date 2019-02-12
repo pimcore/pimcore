@@ -1488,6 +1488,8 @@ class DataObjectHelperController extends AdminController
     public function importGetFileInfoAction(Request $request, ImportService $importService)
     {
         $importConfigId = $request->get('importConfigId');
+        $dialect = $request->get('dialect');
+        $dialect = json_decode($request->get('dialect'));
         $success = true;
         $supportedFieldTypes = ['checkbox', 'country', 'date', 'datetime', 'href', 'image', 'input', 'language', 'table', 'multiselect', 'numeric', 'password', 'select', 'slider', 'textarea', 'wysiwyg', 'objects', 'multihref', 'geopoint', 'geopolygon', 'geobounds', 'link', 'user', 'email', 'gender', 'firstname', 'lastname', 'newsletterActive', 'newsletterConfirmed', 'countrymultiselect', 'objectsMetadata'];
 
@@ -1496,7 +1498,10 @@ class DataObjectHelperController extends AdminController
 
         $originalFile = $file . '_original';
         // determine type
-        $dialect = Tool\Admin::determineCsvDialect($file . '_original');
+        if (empty($dialect)) {
+            $dialect = Tool\Admin::determineCsvDialect($file . '_original');
+        }
+
 
         $count = 0;
         if (($handle = fopen($originalFile, 'r')) !== false) {
@@ -1559,7 +1564,10 @@ class DataObjectHelperController extends AdminController
         } catch (\Exception $e) {
         }
 
-        $dialect->lineterminator = bin2hex($dialect->lineterminator);
+        //ignore if lineterminator is already hex otherwise generate hex for string
+        if (!empty($dialect->lineterminator) && empty(preg_match('/[a-f0-9]{2}/i', $dialect->lineterminator))) {
+            $dialect->lineterminator = bin2hex($dialect->lineterminator);
+        }
 
         $selectedGridColumns = [];
         if ($importConfig) {
