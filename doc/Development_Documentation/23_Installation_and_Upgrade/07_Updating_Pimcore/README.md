@@ -6,6 +6,8 @@ Please check the [Upgrade Notes](../README.md) in detail before any update.
 - Check your version constraint for `pimcore/pimcore` in your `composer.json` and adapt it if necessary
 - Run `COMPOSER_MEMORY_LIMIT=-1 composer update`
 
+Composer update runs Pimcore migrations automatically. To run core migrations manually (e.g. when using composer install), use: `bin/console pimcore:migrations:migrate -s pimcore_core -n`
+
 ## Upgrading from version >= 5.0 to <= 5.4.0
 - Use the built-in update functionality:  *Tools* > *Update* or the `bin/console` update command.
 
