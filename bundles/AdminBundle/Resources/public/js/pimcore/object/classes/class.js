@@ -793,12 +793,6 @@ pimcore.object.classes.klass = Class.create({
                     width: 600,
                     value: this.data.group
                 },
-                {
-                    xtype: "checkbox",
-                    fieldLabel: t("encrypt_data"),
-                    name: "encryption",
-                    checked: this.data.encryption
-                },
                 this.allowInheritance,
                 this.allowVariants,
                 this.showVariants,
@@ -807,6 +801,17 @@ pimcore.object.classes.klass = Class.create({
                     fieldLabel: t("show_applogger_tab"),
                     name: "showAppLoggerTab",
                     checked: this.data.showAppLoggerTab
+                },
+                {
+                    xtype: "checkbox",
+                    fieldLabel: t("encrypt_data"),
+                    name: "encryption",
+                    style: 'margin: 0',
+                    checked: this.data.encryption
+                }, {
+                    xtype: 'container',
+                    html: t('encrypt_data_description'),
+                    style: 'margin-bottom:10px'
                 },
                 {
                     xtype: "displayfield",

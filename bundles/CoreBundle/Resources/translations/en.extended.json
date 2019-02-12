@@ -1,5 +1,6 @@
 {
   "encrypt_data": "Encrypt Data",
+  "encrypt_data_description": "Data-at-Rest/Tablespace Encryption needs to be enabled on your Database Server",
   "many_to_one_relation": "Many-To-One Relation",
   "many_to_many_relation": "Many-To-Many Relation",
   "many_to_many_object_relation": "Many-To-Many Object Relation",
