@@ -325,7 +325,6 @@ class ClassDefinition extends Model\AbstractModel
 
         $infoDocBlock = $this->getInfoDocBlock();
 
-
         // create class for object
         $extendClass = 'Concrete';
         if ($this->getParentClass()) {
@@ -490,8 +489,6 @@ class ClassDefinition extends Model\AbstractModel
         }
         File::put($classListFile, $cd);
 
-
-
         // save definition as a php file
         $definitionFile = $this->getDefinitionFile();
         if (!is_writable(dirname($definitionFile)) || (is_file($definitionFile) && !is_writable($definitionFile))) {
@@ -518,7 +515,6 @@ class ClassDefinition extends Model\AbstractModel
 
             \Pimcore\File::putPhpFile($definitionFile, $data);
         }
-
 
         // empty object cache
         try {
@@ -1068,6 +1064,7 @@ class ClassDefinition extends Model\AbstractModel
 
     /**
      * @param bool $encryption
+     *
      * @return $this
      */
     public function setEncryption(bool $encryption)
@@ -1091,7 +1088,7 @@ class ClassDefinition extends Model\AbstractModel
      */
     public function removeEncryptedTables(array $tables)
     {
-        foreach($tables as $table) {
+        foreach ($tables as $table) {
             if (($key = array_search($table, $this->encryptedTables)) !== false) {
                 unset($this->encryptedTables[$key]);
             }
@@ -1100,6 +1097,7 @@ class ClassDefinition extends Model\AbstractModel
 
     /**
      * @param string $table
+     *
      * @return bool
      */
     public function isEncryptedTable(string $table): bool
@@ -1117,6 +1115,7 @@ class ClassDefinition extends Model\AbstractModel
 
     /**
      * @param array $encryptedTables
+     *
      * @return $this
      */
     public function setEncryptedTables(array $encryptedTables)
@@ -1125,7 +1124,6 @@ class ClassDefinition extends Model\AbstractModel
 
         return $this;
     }
-
 
     /**
      * @param bool $allowInherit

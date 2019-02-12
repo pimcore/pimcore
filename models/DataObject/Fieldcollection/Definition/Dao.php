@@ -123,7 +123,8 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * @param DataObject\ClassDefinition $classDefinition
      */
-    public function classSaved(DataObject\ClassDefinition $classDefinition) {
+    public function classSaved(DataObject\ClassDefinition $classDefinition)
+    {
         $this->handleEncryption($classDefinition, [$this->getTableName($classDefinition)]);
     }
 }

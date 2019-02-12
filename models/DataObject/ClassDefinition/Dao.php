@@ -139,7 +139,6 @@ class Dao extends Model\Dao\AbstractDao
           KEY `ownername` (`ownername`)
         ) DEFAULT CHARSET=utf8mb4;");
 
-
         $this->handleEncryption($this->model, [$objectTable, $objectDatastoreTable, $objectDatastoreTableRelation]);
 
         $existingColumns = $this->getValidTableColumns($objectTable, false); // no caching of table definition

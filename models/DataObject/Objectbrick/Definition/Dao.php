@@ -141,7 +141,8 @@ class Dao extends Model\DataObject\Fieldcollection\Definition\Dao
     /**
      * @param DataObject\ClassDefinition $classDefinition
      */
-    public function classSaved(DataObject\ClassDefinition $classDefinition) {
+    public function classSaved(DataObject\ClassDefinition $classDefinition)
+    {
         $tableStore = $this->getTableName($classDefinition, false);
         $tableQuery = $this->getTableName($classDefinition, true);
 
