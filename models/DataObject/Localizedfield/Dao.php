@@ -418,7 +418,7 @@ class Dao extends Model\Dao\AbstractDao
                         }
                         $params = [];
                         $params['context'] = $this->model->getContext() ? $this->model->getContext() : [];
-                        if ($params['context']['containerType'] == 'fieldcollection' || $params['context']['containerType'] == 'objectbrick') {
+                        if (isset($params['context']['containerType']) && ($params['context']['containerType'] == 'fieldcollection' || $params['context']['containerType'] == 'objectbrick')) {
                             $params['context']['subContainerType'] = 'localizedfield';
                         }
 

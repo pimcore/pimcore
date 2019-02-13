@@ -3,6 +3,8 @@
 namespace Pimcore\Tests\Helper\DataType;
 
 use Codeception\Module;
+use Pimcore\Cache;
+use Pimcore\Cache\Runtime;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\AbstractObject;
@@ -1118,6 +1120,12 @@ class TestDataHelper extends Module
         $brick = new DataObject\Objectbrick\Data\UnittestBrick($object);
         $brick->setBrickInput('brickinput' . $seed);
 
+
+        $emptyObjects = TestHelper::createEmptyObjects("myBrickPrefix", true, 10);
+        $emptyLazyObjects = TestHelper::createEmptyObjects("myLazyBrickPrefix", true, 15);
+        $brick->setBrickRelation($emptyObjects);
+        $brick->setBrickLazyRelation($emptyLazyObjects);
+
         /** @var DataObject\Unittest\Mybricks $objectbricks */
         $objectbricks = $object->$getter();
         $objectbricks->setUnittestBrick($brick);
@@ -1138,11 +1146,32 @@ class TestDataHelper extends Module
         $value = $value->getUnittestBrick();
 
         /** @var DataObject\Objectbrick\Data\UnittestBrick $value */
-        $value = $value->getBrickinput();
+        $inputValue = $value->getBrickinput();
 
-        $expected = 'brickinput' . $seed;
+        $expectedInputValue = 'brickinput' . $seed;
 
-        $this->assertEquals($expected, $value);
+        $this->assertEquals($expectedInputValue, $inputValue);
+
+        $fieldRelation = $value->getBrickRelation();
+        $this->assertEquals(10, count($fieldRelation), "expected 10 items");
+
+        $fieldLazyRelation = $value->getBrickLazyRelation();
+        $this->assertEquals(15, count($fieldLazyRelation), "expected 15 items");
+
+        Cache::clearAll();
+        Runtime::clear();
+        $object = AbstractObject::getById($object->getId());
+        $value = $object->$getter();
+        $value = $value->getItems();
+
+        /** @var DataObject\Fieldcollection\Data\Unittestfieldcollection $value */
+        $value = $value[0];
+        $fieldRelation = $value->getBrickRelation();
+        $this->assertEquals(10, count($fieldRelation), "expected 10 items");
+
+        $fieldLazyRelation = $value->getBrickLazyRelation();
+        $this->assertEquals(15, count($fieldLazyRelation), "expected 15 items");
+
     }
 
     /**
@@ -1197,6 +1226,20 @@ class TestDataHelper extends Module
             'expected field2' . $seed . ' but was ' . $value->getFieldInput2()
         );
 
+        $fieldRelation = $value->getFieldRelation();
+        $this->assertEquals(10, count($fieldRelation), "expected 10 items");
+
+        $fieldLazyRelation = $value->getFieldLazyRelation();
+        $this->assertEquals(15, count($fieldLazyRelation), "expected 15 items");
+
+        Cache::clearAll();
+        Runtime::clear();
+        $object = AbstractObject::getById($object->getId());
+        $value = $object->$getter();
+        $value = $value->getItems();
+
+        /** @var DataObject\Fieldcollection\Data\Unittestfieldcollection $value */
+        $value = $value[0];
         $fieldRelation = $value->getFieldRelation();
         $this->assertEquals(10, count($fieldRelation), "expected 10 items");
 
