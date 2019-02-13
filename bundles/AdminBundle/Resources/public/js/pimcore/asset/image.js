@@ -123,7 +123,7 @@ pimcore.asset.image = Class.create(pimcore.asset.asset, {
     getExifPanel: function () {
         if (!this.exifPanel) {
 
-            if(!this.data["imageInfo"] || (!this.data["imageInfo"]["exif"] && !this.data["imageInfo"]["iptc"])) {
+            if(!this.data["imageInfo"] || (!this.data["imageInfo"]["exif"] && !this.data["imageInfo"]["iptc"] && !this.data["imageInfo"]["xmp"])) {
                 return false;
             }
 
