@@ -1502,7 +1502,6 @@ class DataObjectHelperController extends AdminController
             $dialect = Tool\Admin::determineCsvDialect($file . '_original');
         }
 
-
         $count = 0;
         if (($handle = fopen($originalFile, 'r')) !== false) {
             while (($rowData = fgetcsv($handle, 0, $dialect->delimiter, $dialect->quotechar, $dialect->escapechar)) !== false) {

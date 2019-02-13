@@ -665,7 +665,6 @@ EOT;
 
         fclose($file_pointer);
 
-
         // remove namespace prefixes if possible
         $resultData = [];
         array_walk($data, function ($value, $key) use (&$resultData) {
