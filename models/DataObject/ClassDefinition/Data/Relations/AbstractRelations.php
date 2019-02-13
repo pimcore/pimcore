@@ -275,7 +275,7 @@ abstract class AbstractRelations extends Data implements CustomResourcePersistin
      */
     public function save($object, $params = [])
     {
-        if ($params['isUntouchable']) {
+        if (isset($params['isUntouchable']) && $params['isUntouchable']) {
             return;
         }
 
@@ -347,7 +347,7 @@ abstract class AbstractRelations extends Data implements CustomResourcePersistin
         } elseif ($object instanceof DataObject\Fieldcollection\Data\AbstractData) {
             $relations = $db->fetchAll('SELECT * FROM object_relations_' . $object->getObject()->getClassId() . " WHERE src_id = ? AND fieldname = ? AND ownertype = 'fieldcollection' AND ownername = ? AND position = ?", [$object->getObject()->getId(), $this->getName(), $object->getFieldname(), $object->getIndex()]);
         } elseif ($object instanceof DataObject\Localizedfield) {
-            if (isset($params['context']) && ($params['context']['containerType'] == 'fieldcollection' || $params['context']['containerType'] == 'objectbrick')) {
+            if (isset($params['context']) && isset($params['context']['containerType']) &&  (($params['context']['containerType'] == 'fieldcollection' || $params['context']['containerType'] == 'objectbrick'))) {
                 $context = $params['context'];
                 $fieldname = $context['fieldname'];
                 if ($params['context']['containerType'] == 'fieldcollection') {

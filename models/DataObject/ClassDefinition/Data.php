@@ -738,6 +738,13 @@ abstract class Data
         $code .= '*/' . "\n";
         $code .= 'public function get' . ucfirst($key) . " () {\n";
 
+        if ($this instanceof DataObject\ClassDefinition\Data\Relations\AbstractRelations && $this->getLazyLoading()) {
+            $code .= "\t" . '$model = $this->object->getObjectVar($this->fieldname);' . "\n";
+            $code .= "\t" . 'if ($model) {' . "\n";
+            $code .= "\t\t" . '$model->loadLazyField($this->type, $this->fieldname, "' . $this->getName() . '");' . "\n";
+            $code .= "\t" . '}' . "\n";
+        }
+
         if (method_exists($this, 'preGetData')) {
             $code .= "\t" . '$data = $this->getDefinition()->getFieldDefinition("' . $key . '")->preGetData($this);' . "\n";
         } else {
@@ -827,6 +834,13 @@ abstract class Data
         $code .= '* @return ' . $this->getPhpdocType() . "\n";
         $code .= '*/' . "\n";
         $code .= 'public function get' . ucfirst($key) . " () {\n";
+
+        if ($this instanceof DataObject\ClassDefinition\Data\Relations\AbstractRelations && $this->getLazyLoading()) {
+            $code .= "\t" . '$model = $this->object ? $this->object->getObjectVar($this->fieldname) : null;' . "\n";
+            $code .= "\t" . 'if ($model) {' . "\n";
+            $code .= "\t\t" . '$model->loadLazyField($this->object, $this->type, $this->fieldname, $this->index, "' . $this->getName() . '");' . "\n";
+            $code .= "\t" . '}' . "\n";
+        }
 
         if (method_exists($this, 'preGetData')) {
             $code .= "\t" . '$container = $this;' . "\n";
@@ -1146,7 +1160,7 @@ abstract class Data
             return $params['injectedData'];
         }
 
-        $context = $params && $params['context'] ? $params['context'] : null;
+        $context = is_array($params) && isset($params['context']) ? $params['context'] : null;
 
         if ($context) {
             if ($context['containerType'] == 'fieldcollection' || $context['containerType'] == 'block') {
