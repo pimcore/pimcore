@@ -150,6 +150,15 @@ function array_htmlspecialchars($array)
 }
 
 /**
+ * @param string $needle
+ * @param array $haystack
+ * @return bool
+ */
+function in_arrayi(string $needle, array $haystack) {
+    return in_array(strtolower($needle), array_map('strtolower', $haystack));
+}
+
+/**
  * @param  $node
  *
  * @return array

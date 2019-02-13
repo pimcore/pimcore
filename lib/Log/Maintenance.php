@@ -156,6 +156,13 @@ class Maintenance
         $sql = ' SELECT %s FROM ' .  ApplicationLoggerDb::TABLE_NAME . ' WHERE `timestamp` < DATE_SUB(FROM_UNIXTIME(' . $timestamp . '), INTERVAL ' . $archive_treshold . ' DAY)';
 
         if ($db->fetchOne(sprintf($sql, 'COUNT(*)')) > 1 || true) {
+
+            $archiveEngine = 'MyISAM';
+            $engines = $db->fetchCol('SHOW ENGINES;');
+            if(in_arrayi('archive', $engines)) {
+                $archiveEngine = 'ARCHIVE';
+            }
+
             $db->query('CREATE TABLE IF NOT EXISTS ' . $tablename . " (
                        id BIGINT(20) NOT NULL,
                        `pid` INT(11) NULL DEFAULT NULL,
@@ -169,7 +176,7 @@ class Maintenance
                        relatedobject BIGINT(20),
                        relatedobjecttype ENUM('object', 'document', 'asset'),
                        maintenanceChecked TINYINT(4)
-                    ) ENGINE = ARCHIVE ROW_FORMAT = DEFAULT;");
+                    ) ENGINE=" . $archiveEngine . " ROW_FORMAT=DEFAULT;");
 
             $db->query('INSERT INTO ' . $tablename . ' ' . sprintf($sql, '*'));
             $db->query('DELETE FROM ' . ApplicationLoggerDb::TABLE_NAME . ' WHERE `timestamp` < DATE_SUB(FROM_UNIXTIME(' . $timestamp . '), INTERVAL ' . $archive_treshold . ' DAY);');

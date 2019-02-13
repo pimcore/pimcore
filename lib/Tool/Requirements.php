@@ -71,28 +71,30 @@ class Requirements
         $checks = [];
 
         // storage engines
-        $engines = [];
-        $enginesRaw = $db->fetchAll('SHOW ENGINES;');
-        foreach ($enginesRaw as $engineRaw) {
-            $engines[] = strtolower($engineRaw['Engine']);
-        }
+        $engines = $db->fetchCol('SHOW ENGINES;');
 
         // innodb
         $checks[] = new Check([
             'name' => 'InnoDB Support',
-            'state' => in_array('innodb', $engines) ? Check::STATE_OK : Check::STATE_ERROR
+            'state' => in_arrayi('innodb', $engines) ? Check::STATE_OK : Check::STATE_ERROR
         ]);
 
         // myisam
         $checks[] = new Check([
             'name' => 'MyISAM Support',
-            'state' => in_array('myisam', $engines) ? Check::STATE_OK : Check::STATE_ERROR
+            'state' => in_arrayi('myisam', $engines) ? Check::STATE_OK : Check::STATE_ERROR
+        ]);
+
+        // ARCHIVE
+        $checks[] = new Check([
+            'name' => 'ARCHIVE Support',
+            'state' => in_arrayi('archive', $engines) ? Check::STATE_OK : Check::STATE_WARNING
         ]);
 
         // memory
         $checks[] = new Check([
             'name' => 'MEMORY Support',
-            'state' => in_array('memory', $engines) ? Check::STATE_OK : Check::STATE_ERROR
+            'state' => in_arrayi('memory', $engines) ? Check::STATE_OK : Check::STATE_ERROR
         ]);
 
         // check database charset =>  utf-8 encoding
