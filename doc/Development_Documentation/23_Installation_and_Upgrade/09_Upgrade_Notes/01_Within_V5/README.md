@@ -3,11 +3,6 @@
 ## Version 5.6.4
 
 - `Pimcore\Model\DataObject\Localizedfield` properties are now `protected` instead of `public` 
-
-## Version 5.6.4
-- Removed method `Pimcore\Model\DataObject\getItems()`
-
-## Version 5.6.4
 - Removed method `Pimcore\Model\DataObject\getItems()`
 
 ## Version 5.6.0
