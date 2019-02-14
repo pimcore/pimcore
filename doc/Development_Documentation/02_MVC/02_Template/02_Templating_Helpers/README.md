@@ -106,6 +106,9 @@ of calculation or require a huge amount of objects (like navigations, ...).
 
 `$this->cache(string $name, [int $lifetime = null], [bool $force = false])`
 
+
+
+
 | Name                | Description  |
 |---------------------|--------------|
 | `$name`         | Name of cache item |
@@ -135,6 +138,14 @@ of calculation or require a huge amount of objects (like navigations, ...).
 ```
 
 </div>
+
+To remove an item from the cache created by this helper you have to clear the following keys:
+```
+$key = 'test_cache_key';
+\Pimcore\Cache::remove('pimcore_viewcache_'.$key);
+\Pimcore\Cache::remove('pimcore_viewcache_'.$key.'webp');
+```
+
 
 ### `$this->device()`
 
