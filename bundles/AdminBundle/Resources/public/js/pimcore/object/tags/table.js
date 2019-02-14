@@ -72,7 +72,7 @@ pimcore.object.tags.table = Class.create(pimcore.object.tags.abstract, {
                     for (var i = 0; i < value.length; i++) {
                         table += '<tr>';
                         for (var c = 0; c < value[i].length; c++) {
-                            table += '<td>' + value[i][c] + '</td>';
+                            table += '<td>' + Ext.util.Format.htmlEncode(value[i][c]) + '</td>';
                         }
                         table += '</tr>';
                     }

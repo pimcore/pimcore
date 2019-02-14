@@ -59,7 +59,7 @@ pimcore.object.tags.multiselect = Class.create(pimcore.object.tags.abstract, {
                         }
                     }
 
-                    return singleDisplayValues.join(", ");
+                    return Ext.util.Format.htmlEncode(singleDisplayValues.join(", "));
                 } else {
                     return "";
                 }
