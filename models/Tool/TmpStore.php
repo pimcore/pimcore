@@ -74,7 +74,8 @@ class TmpStore extends Model\AbstractModel
     /**
      * @return int
      */
-    protected static function getDefaultLifetime() {
+    protected static function getDefaultLifetime()
+    {
         return 86400 * 7;
     }
 
@@ -106,9 +107,11 @@ class TmpStore extends Model\AbstractModel
      * @param $data
      * @param null $tag
      * @param null $lifetime
+     *
      * @return mixed
      */
-    public static function set($id, $data, $tag = null, $lifetime = null) {
+    public static function set($id, $data, $tag = null, $lifetime = null)
+    {
         $instance = self::getInstance();
 
         if (!$lifetime) {
