@@ -56,13 +56,14 @@ pimcore.asset.listfolder = Class.create({
             }
         });
 
-        var readerFields = ['id', 'fullpath','type', 'creationDate', 'modificationDate', 'size', 'idPath'];
+        var readerFields = ['id', 'fullpath', 'filename', 'type', 'creationDate', 'modificationDate', 'size', 'idPath'];
 
         this.selectionColumn = new Ext.selection.CheckboxModel();
 
         var typesColumns = [
             {text: t("id"), sortable: true, dataIndex: 'id', editable: false, flex: 40, filter: 'numeric'},
-            {text: t("filename"), sortable: true, dataIndex: 'fullpath', editable: false, flex: 100, filter: 'string', renderer: Ext.util.Format.htmlEncode},
+            {text: t("filename"), sortable: true, dataIndex: 'filename', editable: false, flex: 100, filter: 'string', renderer: Ext.util.Format.htmlEncode},
+            {text: t("fullpath"), sortable: true, dataIndex: 'fullpath', editable: false, flex: 100, filter: 'string', renderer: Ext.util.Format.htmlEncode},
             {text: t("type"), sortable: true, dataIndex: 'type', editable: false, flex: 50, filter: 'string'}
         ];
 
