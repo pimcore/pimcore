@@ -766,7 +766,7 @@ class Asset extends Element\AbstractElement
             // this is important because at the time of creating an asset it's not clear which type (resp. class) it will have
             // the type (image, document, ...) depends on the mime-type
             \Pimcore\Cache\Runtime::set('asset_' . $this->getId(), null);
-            $asset = self::getById($this->getId());
+            $asset = Asset::getById($this->getId());
             \Pimcore\Cache\Runtime::set('asset_' . $this->getId(), $asset);
         }
 
@@ -1735,7 +1735,7 @@ class Asset extends Element\AbstractElement
     public function getParent()
     {
         if ($this->parent === null) {
-            $this->setParent(self::getById($this->getParentId()));
+            $this->setParent(Asset::getById($this->getParentId()));
         }
 
         return $this->parent;
