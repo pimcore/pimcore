@@ -228,7 +228,7 @@ class Concrete extends AbstractObject
 
             $newVersionCount = $this->getVersionCount();
 
-            if ($newVersionCount != $oldVersionCount + 1) {
+            if (($newVersionCount != $oldVersionCount + 1) || ($this instanceof DirtyIndicatorInterface && $this->isFieldDirty("o_parentId"))) {
                 self::disableDirtyDetection();
             }
 
