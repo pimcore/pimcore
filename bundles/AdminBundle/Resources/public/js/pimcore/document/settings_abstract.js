@@ -208,7 +208,9 @@ pimcore.document.settings_abstract = Class.create({
             },
             fields: ["id","module","controller","action","template",{
                name: 'name',
-               convert: function(v, rec) { return rec['data']['group'] +' > '+ rec['data']['name'] }
+               convert: function(v, rec) {
+                   return (rec['data']['group'] ? ' > ' + rec['data']['group'] : '') + rec['data']['name'];
+               }
             }]
 
         });
