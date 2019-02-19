@@ -52,7 +52,8 @@ trait MetaDataTrait
         $metaInfo = [];
 
         if(stream_is_local($this->getStream()) && $exiftool && !$noExif){
-            $output = Tool\Console::exec($exiftool . " -j " . $this->getFileSystemPath());
+            $path = $this->getFileSystemPath();
+            $output = Tool\Console::exec($exiftool . " -j '$path'");
             $metaInfo = $this->flattenArray((array) json_decode($output)[0]);
         } else{
             $xmp = $this->flattenArray($this->getXMPData());
