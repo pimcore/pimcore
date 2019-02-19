@@ -80,7 +80,7 @@ final class DebugMode extends Feature
 
                 if (file_exists($debugModeFile)) {
                     $conf = include $debugModeFile;
-                    if(is_array($conf) && isset($conf['active'])) {
+                    if (is_array($conf) && isset($conf['active'])) {
                         $debug = $conf['active'];
 
                         // enable debug mode only for a comma-separated list of IP addresses/ranges

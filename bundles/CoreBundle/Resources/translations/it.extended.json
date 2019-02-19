@@ -702,5 +702,7 @@
     "max_length": "Max Length",
     "reverse_many_to_many_object_relation": "Reverse Many-To-Many Object Relation",
     "exclude_from_search_index": "Exclude from Backend Full-Text Search",
-    "media": "Media"
+    "media": "Media",
+    "encrypt_data": "Encrypt Data",
+    "encrypt_data_description": "Data-at-Rest/Tablespace Encryption needs to be enabled on your Database Server"
 }
