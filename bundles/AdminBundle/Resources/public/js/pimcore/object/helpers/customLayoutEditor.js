@@ -871,7 +871,7 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
 
     addLayoutComplete: function (layoutName, layoutIdentifier, layouts) {
 
-        var layoutNameRegresult = layoutName.match(/[a-zA-Z][a-zA-Z0-9]+/);
+        var layoutNameRegresult = layoutName.match(/[a-zA-Z ][a-zA-Z0-9 ]+/);
 
         if (layoutName.length <= 2 || layoutNameRegresult != layoutName) {
             Ext.Msg.alert(' ', t('invalid_name'));
