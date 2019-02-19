@@ -64,11 +64,38 @@ abstract class AbstractTokenManager implements ITokenManager
      * @param ICart $cart
      *
      * @return mixed
+     *
+     * @throws VoucherServiceException When validation fails for any reason
      */
     public function checkToken($code, ICart $cart)
     {
+        $this->checkVoucherSeriesIsPublished($code);
         $this->checkAllowOncePerCart($code, $cart);
         $this->checkOnlyToken($cart);
+    }
+
+    /**
+     * Only tokens of published voucher series' may be used.
+     *
+     * @param string $code
+     *
+     * @throws VoucherServiceException When token for $code can't be found, series of token can't be found or if series isn't published.
+     */
+    protected function checkVoucherSeriesIsPublished($code)
+    {
+        /** @var Token $token */
+        $token = Token::getByCode($code);
+        if (!$token) {
+            throw new VoucherServiceException("No token found for code '" . $code . "'");
+        }
+        /** @var OnlineShopVoucherSeries $voucherSeries */
+        $series = OnlineShopVoucherSeries::getById($token->getVoucherSeriesId());
+        if (!$series) {
+            throw new VoucherServiceException("No voucher series found for token '" . $token->getToken() . "' (ID " . $token->getId() . ")");
+        }
+        if (!$series->isPublished()) {
+            throw new VoucherServiceException("Voucher series '" . $series->getName() . "' (ID " . $series->getId() . ") of token '" . $token->getToken() . "' (ID " . $token->getId() . ") isn't published");
+        }
     }
 
     /**
