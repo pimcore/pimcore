@@ -117,8 +117,6 @@ class WebsiteSetting extends AbstractModel
         try {
             $setting->getDao()->getByName($name, $siteId, $language);
         } catch (\Exception $e) {
-            Logger::warning($e->getMessage());
-
             if ($language != $fallbackLanguage) {
                 $result = self::getByName($name, $siteId, $fallbackLanguage, $fallbackLanguage);
 
