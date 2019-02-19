@@ -2386,6 +2386,7 @@ class AssetController extends ElementControllerBase implements EventedController
                         'id' => $asset->getid(),
                         'type' => $asset->getType(),
                         'fullpath' => $asset->getRealFullPath(),
+                        'filename' => $asset->getKey(),
                         'creationDate' => $asset->getCreationDate(),
                         'modificationDate' => $asset->getModificationDate(),
                         'size' => formatBytes($size),
