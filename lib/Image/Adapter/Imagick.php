@@ -456,7 +456,10 @@ class Imagick extends Adapter
             }
 
             $this->resource->readImage($this->imagePath);
-            $this->setColorspaceToRGB();
+
+            if (!$this->isPreserveColor()) {
+                $this->setColorspaceToRGB();
+            }
         }
 
         $width = (int)$width;
