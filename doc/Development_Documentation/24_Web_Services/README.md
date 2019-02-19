@@ -84,15 +84,47 @@ Optional parameter `inheritance` decides whether to enable inheritance or not (d
 ### Create a new Object
 * **Method**: PUT or POST
 * **URL**: `http://YOUR-DOMAIN/webservice/rest/object?apikey=[API-KEY]`
-* **Request body**: JSON-encoded object data in the same format as returned by get object by id for the data segment but 
-with missing id field or id set to 0
+* **Request body**: JSON-encoded data object. Check the example below for the correct structure.
 * **Returns**: JSON-encoded object id
+
+**Example:**
+```json
+{
+	"className": "Product",
+	"key": "Grey t-shirt",
+	"notes": [
+        {
+            "type": "warning",
+            "title": "API test",
+            "description": "<b>Testing the api</b>",
+            "data": []
+        }
+    ]
+}
+```
 
 ### Update existing Object
 * **Method**: PUT or POST
 * **URL**: `http://YOUR-DOMAIN/webservice/rest/object?apikey=[API-KEY]`
-* **Request body**: Same as for create object but with object id
+* **Request body**: JSON-encoded data object. Check the example below for the correct structure.
 * **Returns**: JSON-encoded success value
+
+**Example:**
+```json
+{
+	"className": "Product",
+	"key": "Grey t-shirt",
+	"id": 1,
+	"notes": [
+        {
+            "type": "warning",
+            "title": "API test",
+            "description": "<b>Testing the api</b>",
+            "data": []
+        }
+    ]
+}
+```
 
 ### Check Object exists
 * **Method**: GET or POST
