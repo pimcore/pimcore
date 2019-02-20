@@ -103,7 +103,8 @@ abstract class Processor
 
         try {
             \Pimcore::getEventDispatcher()->dispatch(DocumentEvents::PRINT_PRE_PDF_GENERATION, new DocumentEvent($document, [
-                'processor' => $this
+                'processor' => $this,
+                'jobConfig' => $jobConfigFile->config
             ]));
 
             $pdf = $this->buildPdf($document, $jobConfigFile->config);
