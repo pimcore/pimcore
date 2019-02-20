@@ -11,13 +11,13 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-pimcore.registerNS("pimcore.asset.embedded_meta");
-pimcore.asset.embedded_meta = Class.create({
+pimcore.registerNS("pimcore.asset.embedded_meta_data");
+pimcore.asset.embedded_meta_data = Class.create({
     initialize: function(asset) {
         this.asset = asset;
     },
 
-    getExifPanel: function () {
+    getPanel: function () {
         if (!this.asset.exifPanel) {
 
 
@@ -28,15 +28,13 @@ pimcore.asset.embedded_meta = Class.create({
             }
 
             var newPanel = new Ext.grid.PropertyGrid({
-                flex: 1,
-                border: true,
                 source: data || [],
                 clicksToEdit: 1000
             });
             newPanel.plugins[0].disable();
 
             this.asset.exifPanel = new Ext.Panel({
-                title: t("embedded_meta_info"),
+                title: t("embedded_meta_data"),
                 layout: {
                     type: 'hbox',
                     align: 'stretch'

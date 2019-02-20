@@ -37,7 +37,7 @@ pimcore.asset.image = Class.create(pimcore.asset.asset, {
         this.tagAssignment = new pimcore.element.tag.assignment(this, "asset");
         this.metadata = new pimcore.asset.metadata(this);
         this.workflows = new pimcore.element.workflows(this, "asset");
-        this.exif = new pimcore.asset.embedded_meta(this);
+        this.embeddedMetaData = new pimcore.asset.embedded_meta_data(this);
 
         this.getData();
     },
@@ -53,9 +53,9 @@ pimcore.asset.image = Class.create(pimcore.asset.asset, {
             items.push(this.getEditPanel());
         }
 
-        var exifPanel = this.exif.getExifPanel();
-        if(exifPanel) {
-            items.push(exifPanel);
+        var embeddedMetaDataPanel = this.embeddedMetaData.getPanel();
+        if(embeddedMetaDataPanel) {
+            items.push(embeddedMetaDataPanel);
         }
 
         if (this.isAllowed("publish")) {

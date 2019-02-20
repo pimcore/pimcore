@@ -19,26 +19,26 @@ namespace Pimcore\Model\Asset\MetaData;
 
 use Pimcore\Tool;
 
-trait MetaDataTrait
+trait EmbeddedMetaDataTrait
 {
     /**
      * @param bool $force
      * @return array
      * @throws \Exception
      */
-    public function getEmbeddedMetaData(bool $force){
+    public function getEmbeddedMetaData(bool $force, bool $useExifTool = true){
         if($force){
-            $this->handleEmbeddedMetaData(false);
+            $this->handleEmbeddedMetaData($useExifTool);
         }
-        return $this->getCustomSetting('meta-information') ? : [];
+        return $this->getCustomSetting('embeddedMetaData') ? : [];
     }
 
     /**
      * @throws \Exception
      */
-    public function handleEmbeddedMetaData(bool $noExif = false) {
-        if(!$this->getCustomSetting('readMetaData') || $this->getDataChanged()){
-            $this->readEmbeddedMetaData($noExif);
+    protected function handleEmbeddedMetaData(bool $useExifTool = true) {
+        if(!$this->getCustomSetting('embeddedMetaExtracted') || $this->getDataChanged()){
+            $this->readEmbeddedMetaData($useExifTool);
         }
     }
     
@@ -46,24 +46,24 @@ trait MetaDataTrait
      * @return array
      * @throws \Exception
      */
-    private function readEmbeddedMetaData(bool $noExif = false) : array {
+    protected function readEmbeddedMetaData(bool $useExifTool = true) : array {
 
         $exiftool = \Pimcore\Tool\Console::getExecutable('exiftool');
-        $metaInfo = [];
+        $embeddedMetaData = [];
 
-        if(stream_is_local($this->getStream()) && $exiftool && !$noExif){
-            $path = $this->getFileSystemPath();
-            $output = Tool\Console::exec($exiftool . " -j '$path'");
-            $metaInfo = $this->flattenArray((array) json_decode($output)[0]);
+        if(stream_is_local($this->getStream()) && $exiftool && $useExifTool){
+            $path =  escapeshellarg($this->getFileSystemPath());
+            $output = Tool\Console::exec($exiftool . " -j " . $path);
+            $embeddedMetaData = $this->flattenArray((array) json_decode($output)[0]);
         } else{
             $xmp = $this->flattenArray($this->getXMPData());
             $iptc = $this->flattenArray($this->getIPTCData());
             $exif = $this->flattenArray($this->getEXIFData());
-            $metaInfo = array_merge(array_merge($xmp, $exif), $iptc);
+            $embeddedMetaData = array_merge(array_merge($xmp, $exif), $iptc);
         }
-        $this->setCustomSetting('meta-information', $metaInfo);
-        $this->setCustomSetting('readMetaData', true);
-        return $metaInfo;
+        $this->setCustomSetting('embeddedMetaData', $embeddedMetaData);
+        $this->setCustomSetting('embeddedMetaExtracted', true);
+        return $embeddedMetaData;
     }
 
     /**

@@ -28,7 +28,7 @@ use Symfony\Component\EventDispatcher\GenericEvent;
  */
 class Image extends Model\Asset
 {
-    use Model\Asset\MetaData\MetaDataTrait;
+    use Model\Asset\MetaData\EmbeddedMetaDataTrait;
 
     /**
      * @var string

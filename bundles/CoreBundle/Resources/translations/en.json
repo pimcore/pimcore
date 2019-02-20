@@ -867,6 +867,6 @@
   "paste_no_new_language_error": "All system languages already linked to source element.",
   "reload_column_configuration": "Reload column configuration",
   "reload_column_configuration_notice": "Note: Reloading column configuration will reset selected grid columns",
-  "embedded_meta_info": "Embedded Meta Info",
+  "embedded_meta_data": "Embedded Meta Info",
   "duration": "Duration"
 }
