@@ -84,14 +84,29 @@ Optional parameter `inheritance` decides whether to enable inheritance or not (d
 ### Create a new Object
 * **Method**: PUT or POST
 * **URL**: `http://YOUR-DOMAIN/webservice/rest/object?apikey=[API-KEY]`
-* **Request body**: JSON-encoded data object. Check the example below for the correct structure.
+* **Request body**: JSON-encoded object data in the same format as returned by get object by id for the data segment but 
+with missing id field. Check the example below for the correct structure.
 * **Returns**: JSON-encoded object id
 
 **Example:**
 ```json
 {
 	"className": "Product",
+	"parentId": <SOME_PARENT_ID>,     
 	"key": "Grey t-shirt",
+	"elements": [       
+	    {         
+	        "type": "input",         
+	        "value": "Grey T-Shirt",         
+	        "name": "name",         
+	        "language": null
+        },{
+             "type": "multiselect",         
+             "value": "grey",
+             "name": "color",
+             "language": null
+        }     
+    ],
 	"notes": [
         {
             "type": "warning",
@@ -106,15 +121,30 @@ Optional parameter `inheritance` decides whether to enable inheritance or not (d
 ### Update existing Object
 * **Method**: PUT or POST
 * **URL**: `http://YOUR-DOMAIN/webservice/rest/object?apikey=[API-KEY]`
-* **Request body**: JSON-encoded data object. Check the example below for the correct structure.
+* **Request body**: JSON-encoded object data in the same format as returned by get object by id for the data segment but 
+  with missing id field. Check the example below for the correct structure.
 * **Returns**: JSON-encoded success value
 
 **Example:**
 ```json
 {
 	"className": "Product",
+	"parentId": <SOME_PARENT_ID>, 
+	"id": 8812,    
 	"key": "Grey t-shirt",
-	"id": 1,
+	"elements": [       
+	    {         
+	        "type": "input",         
+	        "value": "Grey T-Shirt",         
+	        "name": "name",         
+	        "language": null
+        },{
+             "type": "multiselect",         
+             "value": "grey",
+             "name": "color",
+             "language": null
+        }     
+    ],
 	"notes": [
         {
             "type": "warning",
