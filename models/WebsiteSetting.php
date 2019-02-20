@@ -14,8 +14,6 @@
 
 namespace Pimcore\Model;
 
-use Pimcore\Logger;
-
 /**
  * @method \Pimcore\Model\WebsiteSetting\Dao getDao()
  * @method void save()
