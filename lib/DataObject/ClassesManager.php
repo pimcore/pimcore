@@ -14,6 +14,8 @@
 
 namespace Pimcore\DataObject;
 
+use Pimcore\Db;
+use Pimcore\Db\Connection;
 use Pimcore\Model\DataObject\ClassDefinition;
 
 /**
@@ -27,11 +29,25 @@ class ClassesManager
     public const DELETED = 'deleted';
 
     /**
+     * @var Db
+     */
+    private $db;
+
+    /**
+     * ClassesManager constructor.
+     * @param Connection $db
+     */
+    public function __construct(Connection $db)
+    {
+        $this->db = $db;
+    }
+
+    /**
      * Delete all classes from db
      */
     public function deleteClasses(): array
     {
-        $classes = \Pimcore\Db::get()->fetchAll('SELECT * FROM classes');
+        $classes = $this->db->fetchAll('SELECT * FROM classes');
         $deleted = [];
 
         foreach ($classes as $class) {

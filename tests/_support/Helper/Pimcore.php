@@ -168,7 +168,7 @@ class Pimcore extends Module\Symfony
             // (re-)initialize DB
             $connected = $this->initializeDb($connection);
             if ($this->config['setup_objects']) {
-                $this->debug('[DB] Initializing objects.');
+                $this->debug('[DB] Initializing objects');
                 $this->kernel->getContainer()->get(ClassesManager::class)->updateClasses();
             }
         } else {
