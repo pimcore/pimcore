@@ -192,6 +192,9 @@ services:
 
     Pimcore\Translation\Escaper\Xliff12Escaper: ~
 
+    Pimcore\DataObject\ClassesManager:
+        public: true
+
     # Override Swiftmailer redirecting plugin
     swiftmailer.plugin.redirecting.abstract:
         abstract: true
