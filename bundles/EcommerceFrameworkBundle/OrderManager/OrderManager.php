@@ -707,7 +707,7 @@ class OrderManager implements IOrderManager
      *
      * @return string
      */
-    protected function buildOrderItemKey(ICartItem $item, bool $isGiftitem = false)
+    protected function buildOrderItemKey(ICartItem $item, bool $isGiftItem = false)
     {
         $key = File::getValidFilename(sprintf(
             '%s_%s%s',
