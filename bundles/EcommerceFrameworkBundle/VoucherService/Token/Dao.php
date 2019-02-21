@@ -83,8 +83,12 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao
         $params[] = $token;
 
         try {
-            $result = $db->fetchOne($query, $params);
-            return $result['usages'] >= $usages;
+            $usages['usages'] = $db->fetchOne($query, $params);
+            if ($usages > $usages) {
+                return $usages['seriesId'];
+            } else {
+                return false;
+            }
             // If an Error occurs the token is defined as used.
         } catch (\Exception $e) {
             return true;
