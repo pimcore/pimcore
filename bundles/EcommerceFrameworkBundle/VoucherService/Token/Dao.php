@@ -78,7 +78,7 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao
     {
         $db = \Pimcore\Db::get();
 
-        $query = 'SELECT usages, seriesId FROM ' . self::TABLE_NAME . ' WHERE token = ? ';
+        $query = 'SELECT usages FROM ' . self::TABLE_NAME . ' WHERE token = ? ';
         $params[] = $token;
 
         try {
