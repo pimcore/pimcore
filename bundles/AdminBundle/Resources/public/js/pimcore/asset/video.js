@@ -130,7 +130,7 @@ pimcore.asset.video = Class.create(pimcore.asset.asset, {
 
             var dimensionPanel = new Ext.create('Ext.grid.property.Grid', {
                 title: t("details"),
-                source: detailsData,//this.data.imageInfo.dimensions, // Todo
+                source: detailsData,
                 autoHeight: true,
 
                 clicksToEdit: 1000,
@@ -146,117 +146,114 @@ pimcore.asset.video = Class.create(pimcore.asset.asset, {
                 width: 300,
                 region: "east",
                 scrollable: 'y',
-                items: [
-                    {
-                        title: t("tools"),
-                        bodyStyle: "padding: 10px;",
-                        items: [{
-                            xtype: "button",
-                            text: t("standard_preview"),
-                            iconCls: "pimcore_icon_image",
-                            width: "100%",
-                            textAlign: "left",
-                            style: "margin-top: 5px",
-                            handler: function () {
-                                if (this.previewMode != 'video') {
-                                    this.initPreviewVideo();
-                                }
-                            }.bind(this)
-                        }, {
-                            xtype: "button",
-                            text: t("360_viewer"),
-                            iconCls: "pimcore_icon_vr",
-                            width: "100%",
-                            textAlign: "left",
-                            style: "margin-top: 5px",
-                            hidden: !(this.data['videoInfo'] && this.data['videoInfo']['previewUrl']),
-                            handler: function () {
-                                this.initPreviewVr();
-                            }.bind(this)
-                        }]
-                    },
-                    dimensionPanel,
-                    {
-                        xtype: "panel",
-                        title: t("select_image_preview"),
-                        height: 400,
-                        bodyStyle: "padding:10px",
-                        itemId: "inner",
-                        hidden: true,
-                        items: [{
-                            xtype: "container",
-                            style: "margin: 10px 0 10px 0;",
-                            height: 200,
-                            id: "pimcore_asset_video_imagepreview_" + this.id,
-                            html: '<img class="pimcore_video_preview_image" align="center" src="/admin/asset/get-video-thumbnail?id='
-                                + this.id + '&width=265&aspectratio=true&_dc=' + date.getTime() + '" />'
-                        }, {
-                            xtype: "button",
-                            text: t("use_current_player_position_as_preview"),
-                            iconCls: "pimcore_icon_video pimcore_icon_overlay_edit",
-                            width: "100%",
-                            handler: function () {
-                                try {
-                                    this.previewImagePanel.getComponent("inner").getComponent("assetPath").setValue("");
-
-                                    var time = window[this.previewFrameId].document.getElementById("video").currentTime;
-                                    var date = new Date();
-                                    var cmp = Ext.getCmp("pimcore_asset_video_imagepreview_" + this.id);
-                                    cmp.update('<img class="pimcore_video_preview_image" align="center" src="/admin/asset/get-video-thumbnail?id='
-                                        + this.id + '&width=265&aspectratio=true&time=' + time + '&settime=true&_dc='
-                                        + date.getTime() + '" />');
-
-                                } catch (e) {
-                                    console.log(e);
-                                }
-                            }.bind(this)
-                        }, {
-                            xtype: "container",
-                            border: false,
-                            style: "padding: 10px 0 10px 0;",
-                            html: t("or_specify_an_asset_image_below") + ":"
-                        }, {
-                            xtype: "textfield",
-                            itemId: "assetPath",
-                            fieldCls: "input_drop_target",
-                            width: "100%",
-                            listeners: {
-                                "render": function (el) {
-                                    new Ext.dd.DropZone(el.getEl(), {
-                                        reference: el,
-                                        ddGroup: "element",
-                                        getTargetFromEvent: function (e) {
-                                            return this.getEl();
-                                        }.bind(el),
-
-                                        onNodeOver: function (target, dd, e, data) {
-                                            if (data.records.length == 1 && data.records[0].data.elementType == "asset") {
-                                                return Ext.dd.DropZone.prototype.dropAllowed;
-                                            }
-                                        },
-
-                                        onNodeDrop: function (el, target, dd, e, data) {
-                                            if (pimcore.helpers.dragAndDropValidateSingleItem(data)) {
-                                                data = data.records[0].data;
-                                                if (data.elementType == "asset") {
-                                                    el.setValue(data.path);
-
-                                                    var date = new Date();
-                                                    var cmp = Ext.getCmp("pimcore_asset_video_imagepreview_" + this.id);
-                                                    cmp.update('<img align="center" src="/admin/asset/get-video-thumbnail?id='
-                                                        + this.id + '&width=265&aspectratio=true&image='
-                                                        + data.id + '&setimage=true&_dc='
-                                                        + date.getTime() + '" />');
-                                                    return true;
-                                                }
-                                            }
-                                            return false;
-                                        }.bind(this, el)
-                                    });
-                                }.bind(this)
+                items: [{
+                    title: t("tools"),
+                    bodyStyle: "padding: 10px;",
+                    items: [{
+                        xtype: "button",
+                        text: t("standard_preview"),
+                        iconCls: "pimcore_icon_image",
+                        width: "100%",
+                        textAlign: "left",
+                        style: "margin-top: 5px",
+                        handler: function () {
+                            if (this.previewMode != 'video') {
+                                this.initPreviewVideo();
                             }
-                        }]
+                        }.bind(this)
+                    }, {
+                        xtype: "button",
+                        text: t("360_viewer"),
+                        iconCls: "pimcore_icon_vr",
+                        width: "100%",
+                        textAlign: "left",
+                        style: "margin-top: 5px",
+                        hidden: !(this.data['videoInfo'] && this.data['videoInfo']['previewUrl']),
+                        handler: function () {
+                            this.initPreviewVr();
+                        }.bind(this)
                     }]
+                }, dimensionPanel, {
+                    xtype: "panel",
+                    title: t("select_image_preview"),
+                    height: 400,
+                    bodyStyle: "padding:10px",
+                    itemId: "inner",
+                    hidden: true,
+                    items: [{
+                        xtype: "container",
+                        style: "margin: 10px 0 10px 0;",
+                        height: 200,
+                        id: "pimcore_asset_video_imagepreview_" + this.id,
+                        html: '<img class="pimcore_video_preview_image" align="center" src="/admin/asset/get-video-thumbnail?id='
+                            + this.id + '&width=265&aspectratio=true&_dc=' + date.getTime() + '" />'
+                    }, {
+                        xtype: "button",
+                        text: t("use_current_player_position_as_preview"),
+                        iconCls: "pimcore_icon_video pimcore_icon_overlay_edit",
+                        width: "100%",
+                        handler: function () {
+                            try {
+                                this.previewImagePanel.getComponent("inner").getComponent("assetPath").setValue("");
+
+                                var time = window[this.previewFrameId].document.getElementById("video").currentTime;
+                                var date = new Date();
+                                var cmp = Ext.getCmp("pimcore_asset_video_imagepreview_" + this.id);
+                                cmp.update('<img class="pimcore_video_preview_image" align="center" src="/admin/asset/get-video-thumbnail?id='
+                                    + this.id + '&width=265&aspectratio=true&time=' + time + '&settime=true&_dc='
+                                    + date.getTime() + '" />');
+
+                            } catch (e) {
+                                console.log(e);
+                            }
+                        }.bind(this)
+                    }, {
+                        xtype: "container",
+                        border: false,
+                        style: "padding: 10px 0 10px 0;",
+                        html: t("or_specify_an_asset_image_below") + ":"
+                    }, {
+                        xtype: "textfield",
+                        itemId: "assetPath",
+                        fieldCls: "input_drop_target",
+                        width: "100%",
+                        listeners: {
+                            "render": function (el) {
+                                new Ext.dd.DropZone(el.getEl(), {
+                                    reference: el,
+                                    ddGroup: "element",
+                                    getTargetFromEvent: function (e) {
+                                        return this.getEl();
+                                    }.bind(el),
+
+                                    onNodeOver: function (target, dd, e, data) {
+                                        if (data.records.length == 1 && data.records[0].data.elementType == "asset") {
+                                            return Ext.dd.DropZone.prototype.dropAllowed;
+                                        }
+                                    },
+
+                                    onNodeDrop: function (el, target, dd, e, data) {
+                                        if (pimcore.helpers.dragAndDropValidateSingleItem(data)) {
+                                            data = data.records[0].data;
+                                            if (data.elementType == "asset") {
+                                                el.setValue(data.path);
+
+                                                var date = new Date();
+                                                var cmp = Ext.getCmp("pimcore_asset_video_imagepreview_" + this.id);
+                                                cmp.update('<img align="center" src="/admin/asset/get-video-thumbnail?id='
+                                                    + this.id + '&width=265&aspectratio=true&image='
+                                                    + data.id + '&setimage=true&_dc='
+                                                    + date.getTime() + '" />');
+                                                return true;
+                                            }
+                                        }
+                                        return false;
+                                    }.bind(this, el)
+                                });
+                            }.bind(this)
+                        }
+                    }]
+                }]
             });
 
             this.previewImagePanel.on("beforedestroy", function () {
