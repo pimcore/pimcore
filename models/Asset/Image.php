@@ -42,33 +42,34 @@ class Image extends Model\Asset
      */
     protected function update($params = [])
     {
-        $this->handleEmbeddedMetaData();
-        $imageDimensionsCalculated = null;
+        if ($this->getDataChanged() || !$this->getCustomSetting('imageDimensionsCalculated') || !$this->getCustomSetting('embeddedMetaDataExtracted')) {
+            // save the current data into a tmp file to calculate the dimensions, otherwise updates wouldn't be updated
+            // because the file is written in parent::update();
+            $tmpFile = $this->getTemporaryFile();
 
-        if ($this->getDataChanged() || !$this->getCustomSetting('imageDimensionsCalculated')) {
-            // getDimensions() might fail, so assume `false` first
-            $imageDimensionsCalculated = false;
+            if ($this->getDataChanged() || !$this->getCustomSetting('imageDimensionsCalculated')) {
+                // getDimensions() might fail, so assume `false` first
+                $imageDimensionsCalculated = false;
 
-            try {
-                // save the current data into a tmp file to calculate the dimensions, otherwise updates wouldn't be updated
-                // because the file is written in parent::update();
-                $tmpFile = $this->getTemporaryFile();
-                $dimensions = $this->getDimensions($tmpFile, true);
-                unlink($tmpFile);
-
-                if ($dimensions && $dimensions['width']) {
-                    $this->setCustomSetting('imageWidth', $dimensions['width']);
-                    $this->setCustomSetting('imageHeight', $dimensions['height']);
-                    $imageDimensionsCalculated = true;
+                try {
+                    $dimensions = $this->getDimensions($tmpFile, true);
+                    if ($dimensions && $dimensions['width']) {
+                        $this->setCustomSetting('imageWidth', $dimensions['width']);
+                        $this->setCustomSetting('imageHeight', $dimensions['height']);
+                        $imageDimensionsCalculated = true;
+                    }
+                } catch (\Exception $e) {
+                    Logger::error('Problem getting the dimensions of the image with ID ' . $this->getId());
                 }
-            } catch (\Exception $e) {
-                Logger::error('Problem getting the dimensions of the image with ID ' . $this->getId());
+
+                // this is to be downward compatible so that the controller can check if the dimensions are already calculated
+                // and also to just do the calculation once, because the calculation can fail, an then the controller tries to
+                // calculate the dimensions on every request an also will create a version, ...
+                $this->setCustomSetting('imageDimensionsCalculated', $imageDimensionsCalculated);
             }
 
-            // this is to be downward compatible so that the controller can check if the dimensions are already calculated
-            // and also to just do the calculation once, because the calculation can fail, an then the controller tries to
-            // calculate the dimensions on every request an also will create a version, ...
-            $this->setCustomSetting('imageDimensionsCalculated', $imageDimensionsCalculated);
+            $this->handleEmbeddedMetaData(true, $tmpFile);
+            unlink($tmpFile);
         }
 
         $this->clearThumbnails();

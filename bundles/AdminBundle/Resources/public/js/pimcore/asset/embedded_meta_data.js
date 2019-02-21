@@ -18,7 +18,7 @@ pimcore.asset.embedded_meta_data = Class.create({
     },
 
     getPanel: function () {
-        if (!this.asset.exifPanel) {
+        if (!this.panel) {
 
 
             var data = this.asset.data.customSettings['meta-information'];
@@ -33,7 +33,7 @@ pimcore.asset.embedded_meta_data = Class.create({
             });
             newPanel.plugins[0].disable();
 
-            this.asset.exifPanel = new Ext.Panel({
+            this.panel = new Ext.Panel({
                 title: t("embedded_meta_data"),
                 layout: {
                     type: 'hbox',
@@ -44,6 +44,6 @@ pimcore.asset.embedded_meta_data = Class.create({
             });
         }
 
-        return this.asset.exifPanel;
+        return this.panel;
     }
 });

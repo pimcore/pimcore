@@ -118,13 +118,13 @@ pimcore.asset.video = Class.create(pimcore.asset.asset, {
             var date = new Date();
 
             var detailsData = [];
-            if(this.data.customSettings.videoWidth){
+            if(this.data.customSettings['videoWidth']) {
                 detailsData[t("width")] = this.data.customSettings.videoWidth;
             }
-            if(this.data.customSettings.videoHeight){
+            if(this.data.customSettings['videoHeight']) {
                 detailsData[t("height")] = this.data.customSettings.videoHeight;
             }
-            if(this.data.customSettings.duration){
+            if(this.data.customSettings['duration']) {
                 detailsData[t("duration")] = this.data.customSettings.duration;
             }
 

@@ -23,6 +23,7 @@ trait EmbeddedMetaDataTrait
 {
     /**
      * @param bool $force
+     * @param bool $useExifTool
      * @return array
      * @throws \Exception
      */
@@ -34,35 +35,45 @@ trait EmbeddedMetaDataTrait
     }
 
     /**
+     * @param bool $useExifTool
+     * @param string|null $filePath
      * @throws \Exception
      */
-    protected function handleEmbeddedMetaData(bool $useExifTool = true) {
-        if(!$this->getCustomSetting('embeddedMetaExtracted') || $this->getDataChanged()){
-            $this->readEmbeddedMetaData($useExifTool);
+    protected function handleEmbeddedMetaData(bool $useExifTool = true, ?string $filePath = null) {
+        if(!$this->getCustomSetting('embeddedMetaDataExtracted') || $this->getDataChanged()){
+            $this->readEmbeddedMetaData($useExifTool, $filePath);
         }
     }
-    
+
     /**
+     * @param bool $useExifTool
+     * @param string|null $filePath
      * @return array
      * @throws \Exception
      */
-    protected function readEmbeddedMetaData(bool $useExifTool = true) : array {
+    protected function readEmbeddedMetaData(bool $useExifTool = true, ?string $filePath = null) : array {
 
         $exiftool = \Pimcore\Tool\Console::getExecutable('exiftool');
         $embeddedMetaData = [];
 
+        if(!$filePath) {
+            $filePath = $this->getFileSystemPath();
+        }
+
         if(stream_is_local($this->getStream()) && $exiftool && $useExifTool){
-            $path =  escapeshellarg($this->getFileSystemPath());
+            $path =  escapeshellarg($filePath);
             $output = Tool\Console::exec($exiftool . " -j " . $path);
             $embeddedMetaData = $this->flattenArray((array) json_decode($output)[0]);
         } else{
-            $xmp = $this->flattenArray($this->getXMPData());
-            $iptc = $this->flattenArray($this->getIPTCData());
-            $exif = $this->flattenArray($this->getEXIFData());
+            $xmp = $this->flattenArray($this->getXMPData($filePath));
+            $iptc = $this->flattenArray($this->getIPTCData($filePath));
+            $exif = $this->flattenArray($this->getEXIFData($filePath));
             $embeddedMetaData = array_merge(array_merge($xmp, $exif), $iptc);
         }
+
         $this->setCustomSetting('embeddedMetaData', $embeddedMetaData);
-        $this->setCustomSetting('embeddedMetaExtracted', true);
+        $this->setCustomSetting('embeddedMetaDataExtracted', true);
+
         return $embeddedMetaData;
     }
 
@@ -80,15 +91,20 @@ trait EmbeddedMetaDataTrait
     }
 
     /**
+     * @param string|null $filePath
      * @return array
      */
-    public function getEXIFData()
+    public function getEXIFData(?string $filePath = null)
     {
+        if(!$filePath) {
+            $filePath = $this->getFileSystemPath();
+        }
+
         $data = [];
 
-        if (function_exists('exif_read_data') && is_file($this->getFileSystemPath())) {
+        if (function_exists('exif_read_data') && is_file($filePath)) {
 
-            $exif = @exif_read_data($this->getFileSystemPath());
+            $exif = @exif_read_data($filePath);
             if (is_array($exif)) {
                 foreach ($exif as $name => $value) {
                     if ((is_string($value) && strlen($value) < 50) || is_numeric($value)) {
@@ -102,8 +118,12 @@ trait EmbeddedMetaDataTrait
     }
 
 
-    public function getXMPData()
+    public function getXMPData(?string $filePath = null)
     {
+        if(!$filePath) {
+            $filePath = $this->getFileSystemPath();
+        }
+
         $data = [];
 
         $chunkSize = 1024;
@@ -115,7 +135,7 @@ trait EmbeddedMetaDataTrait
             throw new \RuntimeException('Chunk size cannot be less than 12 argument #2 (chunkSize)');
         }
 
-        if (($file_pointer = fopen($this->getFileSystemPath(), 'rb')) === false) {
+        if (($file_pointer = fopen($filePath, 'rb')) === false) {
             throw new \RuntimeException('Could not open file for reading');
         }
 
@@ -193,12 +213,16 @@ trait EmbeddedMetaDataTrait
     /**
      * @return array
      */
-    public function getIPTCData()
+    public function getIPTCData(?string $filePath = null)
     {
+        if(!$filePath) {
+            $filePath = $this->getFileSystemPath();
+        }
+
         $data = [];
 
-        if (is_file($this->getFileSystemPath())) {
-            $result = getimagesize($this->getFileSystemPath(), $info);
+        if (is_file($filePath)) {
+            $result = getimagesize($filePath, $info);
             if ($result) {
                 $mapping = [
                     '1#000' => 'EnvelopeRecordVersion',
