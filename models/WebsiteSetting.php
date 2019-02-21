@@ -40,27 +40,27 @@ class WebsiteSetting extends AbstractModel
     protected $language;
 
     /**
-     * @var
+     * @var string
      */
     protected $type;
 
     /**
-     * @var
+     * @var mixed
      */
     protected $data;
 
     /**
-     * @var
+     * @var int
      */
     protected $siteId;
 
     /**
-     * @var
+     * @var int
      */
     protected $creationDate;
 
     /**
-     * @var
+     * @var int
      */
     protected $modificationDate;
 
@@ -97,9 +97,9 @@ class WebsiteSetting extends AbstractModel
 
     /**
      * @param string $name name of the config
-     * @param null $siteId site ID
-     * @param null $language language, if property cannot be found the value of property without language is returned
-     * @param null $fallbackLanguage fallback language
+     * @param int|null $siteId site ID
+     * @param string|null $language language, if property cannot be found the value of property without language is returned
+     * @param string|null $fallbackLanguage fallback language
      *
      * @return null|WebsiteSetting
      */
@@ -179,7 +179,7 @@ class WebsiteSetting extends AbstractModel
     }
 
     /**
-     * @param $creationDate
+     * @param int $creationDate
      *
      * @return $this
      */
@@ -191,7 +191,7 @@ class WebsiteSetting extends AbstractModel
     }
 
     /**
-     * @return mixed
+     * @return int
      */
     public function getCreationDate()
     {
@@ -199,7 +199,7 @@ class WebsiteSetting extends AbstractModel
     }
 
     /**
-     * @param $data
+     * @param mixed $data
      *
      * @return $this
      */
@@ -229,7 +229,7 @@ class WebsiteSetting extends AbstractModel
     }
 
     /**
-     * @param $modificationDate
+     * @param int $modificationDate
      *
      * @return $this
      */
@@ -241,7 +241,7 @@ class WebsiteSetting extends AbstractModel
     }
 
     /**
-     * @return mixed
+     * @return int
      */
     public function getModificationDate()
     {
@@ -249,7 +249,7 @@ class WebsiteSetting extends AbstractModel
     }
 
     /**
-     * @param $siteId
+     * @param int $siteId
      *
      * @return $this
      */
@@ -261,7 +261,7 @@ class WebsiteSetting extends AbstractModel
     }
 
     /**
-     * @return mixed
+     * @return int
      */
     public function getSiteId()
     {
@@ -269,7 +269,7 @@ class WebsiteSetting extends AbstractModel
     }
 
     /**
-     * @param $type
+     * @param string $type
      *
      * @return $this
      */
@@ -281,7 +281,7 @@ class WebsiteSetting extends AbstractModel
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getType()
     {
