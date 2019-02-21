@@ -14,6 +14,9 @@
 
 namespace Pimcore\Model;
 
+use Pimcore\Model\Element\ElementInterface;
+use Pimcore\Model\Element\Service;
+
 /**
  * @method \Pimcore\Model\WebsiteSetting\Dao getDao()
  * @method void save()
@@ -202,6 +205,11 @@ class WebsiteSetting extends AbstractModel
      */
     public function setData($data)
     {
+        if ($data instanceof ElementInterface) {
+            $this->setType(Service::getElementType($data));
+            $data = $data->getId();
+        }
+
         $this->data = $data;
 
         return $this;
@@ -212,6 +220,11 @@ class WebsiteSetting extends AbstractModel
      */
     public function getData()
     {
+        // lazy-load data of type asset, document, object
+        if (in_array($this->getType(), ['document', 'asset', 'object']) && !$this->data instanceof ElementInterface && is_numeric($this->data)) {
+            return Element\Service::getElementById($this->getType(), $this->data);
+        }
+
         return $this->data;
     }
 
