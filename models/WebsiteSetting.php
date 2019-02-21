@@ -27,42 +27,42 @@ class WebsiteSetting extends AbstractModel
     /**
      * @var int
      */
-    public $id;
+    protected $id;
 
     /**
      * @var string
      */
-    public $name;
+    protected $name;
 
     /**
      * @var string
      */
-    public $language;
+    protected $language;
 
     /**
      * @var
      */
-    public $type;
+    protected $type;
 
     /**
      * @var
      */
-    public $data;
+    protected $data;
 
     /**
      * @var
      */
-    public $siteId;
+    protected $siteId;
 
     /**
      * @var
      */
-    public $creationDate;
+    protected $creationDate;
 
     /**
      * @var
      */
-    public $modificationDate;
+    protected $modificationDate;
 
     /**
      * this is a small per request cache to know which website setting is which is, this info is used in self::getByName()
