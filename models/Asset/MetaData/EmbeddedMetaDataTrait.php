@@ -64,6 +64,12 @@ trait EmbeddedMetaDataTrait
             $path =  escapeshellarg($filePath);
             $output = Tool\Console::exec($exiftool . " -j " . $path);
             $embeddedMetaData = $this->flattenArray((array) json_decode($output)[0]);
+
+            foreach(['Directory', 'FileName', 'SourceFile', 'ExifToolVersion'] as $removeKey) {
+                if(isset($embeddedMetaData[$removeKey])) {
+                    unset($embeddedMetaData[$removeKey]);
+                }
+            }
         } else{
             $xmp = $this->flattenArray($this->getXMPData($filePath));
             $iptc = $this->flattenArray($this->getIPTCData($filePath));

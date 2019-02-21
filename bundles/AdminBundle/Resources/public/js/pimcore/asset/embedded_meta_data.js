@@ -21,7 +21,7 @@ pimcore.asset.embedded_meta_data = Class.create({
         if (!this.panel) {
 
 
-            var data = this.asset.data.customSettings['meta-information'];
+            var data = this.asset.data.customSettings['embeddedMetaData'];
 
             if(!data){
                 return null;
@@ -29,16 +29,20 @@ pimcore.asset.embedded_meta_data = Class.create({
 
             var newPanel = new Ext.grid.PropertyGrid({
                 source: data || [],
-                clicksToEdit: 1000
+                clicksToEdit: 1000,
+                viewConfig: {
+                    listeners: {
+                        refresh: function(dataview) {
+                            dataview.panel.getColumns()[0].autoSize();
+                        }
+                    }
+                }
             });
             newPanel.plugins[0].disable();
 
             this.panel = new Ext.Panel({
                 title: t("embedded_meta_data"),
-                layout: {
-                    type: 'hbox',
-                    align: 'stretch'
-                },
+                layout: 'fit',
                 iconCls: "pimcore_icon_exif",
                 items: [newPanel]
             });

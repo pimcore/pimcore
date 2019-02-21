@@ -12,6 +12,7 @@
   "default": "Default",
   "data": "Data",
   "metadata": "Metadata",
+  "custom_metadata": "Custom Metadata",
   "invalid_name": "Invalid name",
   "login_token_invalid_user_error": "Invalid user.",
   "login_token_as_admin_non_admin_user_error": "Only admin users are allowed to login as an admin user.",
