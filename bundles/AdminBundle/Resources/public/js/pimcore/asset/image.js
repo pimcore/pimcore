@@ -182,7 +182,7 @@ pimcore.asset.image = Class.create(pimcore.asset.asset, {
 
             if (this.data.imageInfo.dimensions) {
 
-                var dimensions = [];
+                var dimensions = {};
                 dimensions[t("width")] = this.data.imageInfo.dimensions.width;
                 dimensions[t("height")] = this.data.imageInfo.dimensions.height;
 
