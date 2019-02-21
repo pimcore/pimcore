@@ -940,7 +940,6 @@ class Imagick extends Adapter
                         'width' => $matches[1],
                         'height' => $matches[2]
                     ];
-                    break;
                 }
                 $i++;
             }
