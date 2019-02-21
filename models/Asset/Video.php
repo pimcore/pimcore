@@ -28,6 +28,7 @@ use Symfony\Component\EventDispatcher\GenericEvent;
  */
 class Video extends Model\Asset
 {
+    use Model\Asset\MetaData\EmbeddedMetaDataTrait;
     /**
      * @var string
      */
@@ -40,7 +41,7 @@ class Video extends Model\Asset
      */
     protected function update($params = [])
     {
-
+        $this->handleEmbeddedMetaData();
         // only do this if the file exists and contains data
         if ($this->getDataChanged() || !$this->getCustomSetting('duration')) {
             try {
