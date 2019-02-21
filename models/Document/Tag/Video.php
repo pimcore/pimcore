@@ -382,8 +382,8 @@ class Video extends Model\Document\Tag
                 if ($this->poster && ($poster = Asset::getById($this->poster))) {
                     $image = $poster->getThumbnail($imageThumbnailConf);
                 } else {
-                    if ($asset->getCustomSetting('image_thumbnail_asset')) {
-                        $image = (string) $asset->getImageThumbnail($asset->getCustomSetting('image_thumbnail_asset'));
+                    if ($asset->getCustomSetting('image_thumbnail_asset') && ($customPreviewAsset = Asset::getById($asset->getCustomSetting('image_thumbnail_asset')))) {
+                        $image = (string) $customPreviewAsset->getImageThumbnail($imageThumbnailConf);
                     } else {
                         $image = (string) $asset->getImageThumbnail($imageThumbnailConf);
                     }
