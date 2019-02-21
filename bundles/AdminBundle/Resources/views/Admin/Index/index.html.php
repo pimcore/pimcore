@@ -404,6 +404,7 @@ $scripts = array(
     // assets
     "pimcore/asset/asset.js",
     "pimcore/asset/unknown.js",
+    "pimcore/asset/embedded_meta_data.js",
     "pimcore/asset/image.js",
     "pimcore/asset/document.js",
     "pimcore/asset/video.js",

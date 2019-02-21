@@ -28,6 +28,7 @@ use Symfony\Component\EventDispatcher\GenericEvent;
  */
 class Video extends Model\Asset
 {
+    use Model\Asset\MetaData\EmbeddedMetaDataTrait;
     /**
      * @var string
      */
@@ -40,14 +41,21 @@ class Video extends Model\Asset
      */
     protected function update($params = [])
     {
+        if ($this->getDataChanged() || !$this->getCustomSetting('duration') || !$this->getCustomSetting('embeddedMetaDataExtracted')) {
+            // save the current data into a tmp file to calculate the dimensions, otherwise updates wouldn't be updated
+            // because the file is written in parent::update();
+            $tmpFile = $this->getTemporaryFile();
 
-        // only do this if the file exists and contains data
-        if ($this->getDataChanged() || !$this->getCustomSetting('duration')) {
-            try {
-                $this->setCustomSetting('duration', $this->getDurationFromBackend());
-            } catch (\Exception $e) {
-                Logger::err('Unable to get duration of video: ' . $this->getId());
+            if ($this->getDataChanged() || !$this->getCustomSetting('duration')) {
+                try {
+                    $this->setCustomSetting('duration', $this->getDurationFromBackend($tmpFile));
+                } catch (\Exception $e) {
+                    Logger::err('Unable to get duration of video: ' . $this->getId());
+                }
             }
+
+            $this->handleEmbeddedMetaData(true, $tmpFile);
+            unlink($tmpFile);
         }
 
         $this->clearThumbnails();
@@ -169,15 +177,20 @@ class Video extends Model\Asset
     }
 
     /**
-     * @return null
-     *
+     * @param string|null $filePath
+     * @return string|null
      * @throws \Exception
      */
-    protected function getDurationFromBackend()
+    protected function getDurationFromBackend(?string $filePath = null)
     {
         if (\Pimcore\Video::isAvailable()) {
+
+            if(!$filePath) {
+                $filePath = $this->getFileSystemPath();
+            }
+
             $converter = \Pimcore\Video::getInstance();
-            $converter->load($this->getFileSystemPath());
+            $converter->load($filePath);
 
             return $converter->getDuration();
         }
