@@ -157,7 +157,6 @@ class LinkController extends DocumentControllerBase
                     if ($target) {
                         $data['internal'] = true;
                         $data['internal'] = $target->getId();
-                        $data['internalType'] = $data['internalType'];
                     }
                 }
 
