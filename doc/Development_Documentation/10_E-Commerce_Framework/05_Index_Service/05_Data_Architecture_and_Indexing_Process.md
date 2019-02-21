@@ -29,8 +29,13 @@ php bin/console ecommerce:indexservice:bootstrap --update-index
 php bin/console ecommerce:indexservice:bootstrap --create-or-update-index-structure
 ```
 
-- For further details (e.g. only updating certain product types, apply list conditions) see `--help` section of the 
-`ecommerce:indexservice:bootstrap` command. 
+- By default, Pimcore assumes that the product class is `Pimcore\Model\DataObject\Product`. If you have a 
+different product class name, please use the `--object-list-class` param and provide the listing class name
+that should be used. 
+
+> For further details (e.g. only updating certain product types, apply list conditions) see `--help` section of the 
+>`ecommerce:indexservice:bootstrap` command. 
+
 
 
 
@@ -54,7 +59,7 @@ should not be necessary any more.
 
 ### Console Commands for Optimized Architecture
 
-For updating data in index following commands are available. See `--help` details. 
+For updating data in index following commands are available.
 - For process the preparation queue and update Pimcore objects to the index store table, use following command. 
 **This command should be executed periodically (e.g. all 10 minutes).**
 
@@ -76,6 +81,9 @@ php bin/console ecommerce:indexservice:process-queue update-index
 ```bash
 php bin/console ecommerce:indexservice:bootstrap --update-index
 ```
+> By default, Pimcore assumes that the product class is `Pimcore\Model\DataObject\Product`. If you have a 
+> different product class name, please use the `--object-list-class` param and provide the listing class name
+> that should be used. 
 
 - Invalidate either the preparation queue or the index-update queue. This is usually **only needed during development** when 
   the store table is out of sync. Reset the preparation queue for instance when your product model 
@@ -89,6 +97,8 @@ php bin/console ecommerce:reset-queue update-index
 ```bash
 php bin/console ecommerce:indexservice:bootstrap --create-or-update-index-structure
 ```
+
+> For further details see `--help` section of the commands. 
 
 
 ### Special Aspects for Elastic Search
