@@ -70,12 +70,11 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao
     }
 
     /**
-     * @param string $token
-     * @param int $usages
-     *
+     * @param $token
+     * @param int $allowedUsages
      * @return bool
      */
-    public static function isUsedToken($token, $usages = 1)
+    public static function isUsedToken($token, $allowedUsages = 1)
     {
         $db = \Pimcore\Db::get();
 
@@ -83,12 +82,8 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao
         $params[] = $token;
 
         try {
-            $usages['usages'] = $db->fetchOne($query, $params);
-            if ($usages > $usages) {
-                return $usages['seriesId'];
-            } else {
-                return false;
-            }
+            $tokenUsed = $db->fetchOne($query, $params);
+            return $tokenUsed >= $allowedUsages;
             // If an Error occurs the token is defined as used.
         } catch (\Exception $e) {
             return true;
