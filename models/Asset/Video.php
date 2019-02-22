@@ -178,14 +178,15 @@ class Video extends Model\Asset
 
     /**
      * @param string|null $filePath
+     *
      * @return string|null
+     *
      * @throws \Exception
      */
     protected function getDurationFromBackend(?string $filePath = null)
     {
         if (\Pimcore\Video::isAvailable()) {
-
-            if(!$filePath) {
+            if (!$filePath) {
                 $filePath = $this->getFileSystemPath();
             }
 

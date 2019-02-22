@@ -122,7 +122,7 @@ class AssetController extends ElementControllerBase implements EventedController
 
             $imageInfo['exiftoolAvailable'] = (bool) \Pimcore\Tool\Console::getExecutable('exiftool');
 
-            if(!$asset->getEmbeddedMetaData(false)){
+            if (!$asset->getEmbeddedMetaData(false)) {
                 $asset->getEmbeddedMetaData(true, false); // read Exif, IPTC and XPM like in the old days ...
             }
 

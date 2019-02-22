@@ -24,23 +24,29 @@ trait EmbeddedMetaDataTrait
     /**
      * @param bool $force
      * @param bool $useExifTool
+     *
      * @return array
+     *
      * @throws \Exception
      */
-    public function getEmbeddedMetaData(bool $force, bool $useExifTool = true){
-        if($force){
+    public function getEmbeddedMetaData(bool $force, bool $useExifTool = true)
+    {
+        if ($force) {
             $this->handleEmbeddedMetaData($useExifTool);
         }
-        return $this->getCustomSetting('embeddedMetaData') ? : [];
+
+        return $this->getCustomSetting('embeddedMetaData') ?: [];
     }
 
     /**
      * @param bool $useExifTool
      * @param string|null $filePath
+     *
      * @throws \Exception
      */
-    protected function handleEmbeddedMetaData(bool $useExifTool = true, ?string $filePath = null) {
-        if(!$this->getCustomSetting('embeddedMetaDataExtracted') || $this->getDataChanged()){
+    protected function handleEmbeddedMetaData(bool $useExifTool = true, ?string $filePath = null)
+    {
+        if (!$this->getCustomSetting('embeddedMetaDataExtracted') || $this->getDataChanged()) {
             $this->readEmbeddedMetaData($useExifTool, $filePath);
         }
     }
@@ -48,29 +54,31 @@ trait EmbeddedMetaDataTrait
     /**
      * @param bool $useExifTool
      * @param string|null $filePath
+     *
      * @return array
+     *
      * @throws \Exception
      */
-    protected function readEmbeddedMetaData(bool $useExifTool = true, ?string $filePath = null) : array {
-
+    protected function readEmbeddedMetaData(bool $useExifTool = true, ?string $filePath = null): array
+    {
         $exiftool = \Pimcore\Tool\Console::getExecutable('exiftool');
         $embeddedMetaData = [];
 
-        if(!$filePath) {
+        if (!$filePath) {
             $filePath = $this->getFileSystemPath();
         }
 
-        if(stream_is_local($this->getStream()) && $exiftool && $useExifTool){
-            $path =  escapeshellarg($filePath);
-            $output = Tool\Console::exec($exiftool . " -j " . $path);
+        if (stream_is_local($this->getStream()) && $exiftool && $useExifTool) {
+            $path = escapeshellarg($filePath);
+            $output = Tool\Console::exec($exiftool . ' -j ' . $path);
             $embeddedMetaData = $this->flattenArray((array) json_decode($output)[0]);
 
-            foreach(['Directory', 'FileName', 'SourceFile', 'ExifToolVersion'] as $removeKey) {
-                if(isset($embeddedMetaData[$removeKey])) {
+            foreach (['Directory', 'FileName', 'SourceFile', 'ExifToolVersion'] as $removeKey) {
+                if (isset($embeddedMetaData[$removeKey])) {
                     unset($embeddedMetaData[$removeKey]);
                 }
             }
-        } else{
+        } else {
             $xmp = $this->flattenArray($this->getXMPData($filePath));
             $iptc = $this->flattenArray($this->getIPTCData($filePath));
             $exif = $this->flattenArray($this->getEXIFData($filePath));
@@ -85,31 +93,34 @@ trait EmbeddedMetaDataTrait
 
     /**
      * @param array $tempArray
+     *
      * @return array
      */
-    private function flattenArray(Array $tempArray){
+    private function flattenArray(array $tempArray)
+    {
         array_walk($tempArray, function (&$value) {
             if (is_array($value)) {
                 $value = implode_recursive($value, ' | ');
             }
         });
+
         return $tempArray;
     }
 
     /**
      * @param string|null $filePath
+     *
      * @return array
      */
     public function getEXIFData(?string $filePath = null)
     {
-        if(!$filePath) {
+        if (!$filePath) {
             $filePath = $this->getFileSystemPath();
         }
 
         $data = [];
 
         if (function_exists('exif_read_data') && is_file($filePath)) {
-
             $exif = @exif_read_data($filePath);
             if (is_array($exif)) {
                 foreach ($exif as $name => $value) {
@@ -123,10 +134,9 @@ trait EmbeddedMetaDataTrait
         return $data;
     }
 
-
     public function getXMPData(?string $filePath = null)
     {
-        if(!$filePath) {
+        if (!$filePath) {
             $filePath = $this->getFileSystemPath();
         }
 
@@ -221,7 +231,7 @@ trait EmbeddedMetaDataTrait
      */
     public function getIPTCData(?string $filePath = null)
     {
-        if(!$filePath) {
+        if (!$filePath) {
             $filePath = $this->getFileSystemPath();
         }
 
