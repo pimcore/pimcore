@@ -195,18 +195,6 @@ Ext.onReady(function () {
                         html: t("click_right_for_more_options")
                     });
                 }
-
-
-                if(tmpEl.hasCls("pimcore_tag_snippet") || tmpEl.hasCls("pimcore_tag_renderlet")
-                                    || tmpEl.hasCls("pimcore_tag_inc") ) {
-                    tmpEl.on("mouseenter", function (e) {
-                        pimcore.edithelpers.frameElement(this, Ext.getBody());
-                    });
-
-                    tmpEl.on("mouseleave", function () {
-                        pimcore.edithelpers.unFrameElement();
-                    });
-                }
             }
         }
 
