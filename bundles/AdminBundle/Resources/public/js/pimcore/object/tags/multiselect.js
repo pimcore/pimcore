@@ -26,8 +26,10 @@ pimcore.object.tags.multiselect = Class.create(pimcore.object.tags.abstract, {
     getGridColumnConfig: function(field) {
 
         var displayValues = {};
-        for (var i = 0; i < field.layout.options.length; i++) {
-            displayValues[field.layout.options[i].value] = ts(field.layout.options[i].key);
+        if (field.layout.options) {
+            for (var i = 0; i < field.layout.options.length; i++) {
+                displayValues[field.layout.options[i].value] = ts(field.layout.options[i].key);
+            }
         }
 
         return {text: ts(field.label), width: 150, sortable: false, dataIndex: field.key,
