@@ -72,8 +72,6 @@ class AssetController extends ElementControllerBase implements EventedController
             return $this->adminJson(['success' => false, 'message' => "asset doesn't exist"]);
         }
 
-        $asset->setMetadata(Asset\Service::expandMetadataForEditmode($asset->getMetadata()));
-        $asset->setProperties(Element\Service::minimizePropertiesForEditmode($asset->getProperties()));
         //$asset->getVersions();
         $asset->getScheduledTasks();
         $asset->idPath = Element\Service::getIdPath($asset);
@@ -130,6 +128,8 @@ class AssetController extends ElementControllerBase implements EventedController
         }
 
         $asset->setStream(null);
+        $asset->setMetadata(Asset\Service::expandMetadataForEditmode($asset->getMetadata()));
+        $asset->setProperties(Element\Service::minimizePropertiesForEditmode($asset->getProperties()));
 
         //Hook for modifying return value - e.g. for changing permissions based on object data
         //data need to wrapped into a container in order to pass parameter to event listeners by reference so that they can change the values
