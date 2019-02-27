@@ -25,7 +25,7 @@ use Zend\Paginator\AdapterAggregateInterface;
  * @method Model\Asset[] load()
  * @method int getTotalCount()
  * @method int getCount()
- * @method array loadIdList()
+ * @method int[] loadIdList()
  * @method \Pimcore\Model\Asset\Listing\Dao getDao()
  * @method onCreateQuery(callable $callback)
  */
