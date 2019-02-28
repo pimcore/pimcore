@@ -490,16 +490,6 @@ abstract class AbstractElasticSearch extends Worker\AbstractMockupCacheWorker im
         return $entriesUpdated;
     }
 
-    /**
-     * returns product list implementation valid and configured for this worker/tenant
-     *
-     * @return mixed
-     */
-    public function getProductList()
-    {
-        return new \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\DefaultElasticSearch($this->tenantConfig);
-    }
-
     protected function getStoreTableName()
     {
         return self::STORE_TABLE_NAME;
