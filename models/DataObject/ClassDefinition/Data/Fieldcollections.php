@@ -591,7 +591,9 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
                     foreach ($collectionDef->getFieldDefinitions() as $fd) {
                         try {
                             $getter = 'get' . ucfirst($fd->getName());
-                            $fd->checkValidity($item->$getter());
+                            if (!$fd instanceof CalculatedValue) {
+                                $fd->checkValidity($item->$getter());
+                            }
                         } catch (Model\Element\ValidationException $ve) {
                             $ve->addContext($this->getName() . '-' . $idx);
                             $validationExceptions[] = $ve;
