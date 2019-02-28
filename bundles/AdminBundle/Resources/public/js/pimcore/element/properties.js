@@ -38,7 +38,6 @@ pimcore.element.properties = Class.create({
                         }
                     }
                 ],
-
                 proxy: {
                     type: 'ajax',
                     url: '/admin/element/get-predefined-properties?elementType=' + this.type,
@@ -46,8 +45,12 @@ pimcore.element.properties = Class.create({
                         type: 'json',
                         rootProperty: "properties"
                     }
-                }
-                });
+                },
+                sorters: [{
+                    property: 'translatedName',
+                    direction: 'ASC'
+                }],
+            });
 
             var predefinedcombo = new Ext.form.ComboBox({
                 name: "type",
