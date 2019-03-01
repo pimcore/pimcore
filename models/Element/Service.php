@@ -110,7 +110,7 @@ class Service extends Model\AbstractModel
      * @param $list array | \Pimcore\Model\Listing\AbstractListing
      * @param string $idGetter
      *
-     * @return array
+     * @return int[]
      */
     public static function getIdList($list, $idGetter = 'getId')
     {
