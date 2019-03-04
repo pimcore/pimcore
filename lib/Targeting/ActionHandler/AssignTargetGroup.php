@@ -75,6 +75,11 @@ class AssignTargetGroup implements ActionHandlerInterface
         $this->assignToVisitor($visitorInfo, $targetGroup, $count);
     }
 
+    public function reset(VisitorInfo $visitorInfo)
+    {
+        $success = $this->deleteAssignments($visitorInfo);
+    }
+
     /**
      * Loads stored assignments from storage and applies it to visitor info
      *
@@ -119,6 +124,26 @@ class AssignTargetGroup implements ActionHandlerInterface
         );
 
         return $count;
+    }
+
+    protected function deleteAssignments(VisitorInfo $visitorInfo): bool
+    {
+        $data = array();
+
+        try{
+            $this->storage->set(
+                $visitorInfo,
+                TargetingStorageInterface::SCOPE_VISITOR,
+                self::STORAGE_KEY,
+                $data
+            );
+        }
+        catch (\Exception $e){
+            echo $e;
+            return false;
+        }
+
+        return true;
     }
 
     protected function assignToVisitor(VisitorInfo $visitorInfo, TargetGroup $targetGroup, int $count)
