@@ -139,7 +139,6 @@ class AssignTargetGroup implements ActionHandlerInterface
             );
         }
         catch (\Exception $e){
-            echo $e;
             return false;
         }
 
