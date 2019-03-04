@@ -239,12 +239,6 @@ pimcore:
                                 # Path to mail source - either Symfony path to template or fullpath to Pimcore document. Optional use $$lang$$ as placeholder for language.
                                 mailPath:             '@PimcoreCore/Workflow/NotificationEmail/notificationEmail.html.twig'
 
-                        # Send a email notification to a list of users (user names) when the transition get's applied
-                        notifyUsers:          []
-
-                        # Send a email notification to a list of user roles (role names) when the transition get's applied
-                        notifyRoles:          []
-
                         # Change published state of element while transition (only available for documents and data objects).
                         changePublishedState: no_change # One of "no_change"; "force_unpublished"; "force_published"
 
