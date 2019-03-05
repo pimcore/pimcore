@@ -1,8 +1,11 @@
 # Upgrade Notes for Upgrades within Pimcore 5
 
+## Version 5.7.0
+- `\Pimcore\Model\WebsiteSetting` and `\Pimcore\Model\Property` properties are now `protected` instead of `public`
+
 ## Version 5.6.4
 
-- `Pimcore\Model\DataObject\Localizedfield` properties are now `protected` instead of `public` 
+- `\Pimcore\Model\DataObject\Localizedfield` properties are now `protected` instead of `public` 
 
 ## Version 5.6.0
 - Removed method `\Pimcore\Model\DataObject\ClassDefinition\Data::setFieldtype($fieldtype)`
