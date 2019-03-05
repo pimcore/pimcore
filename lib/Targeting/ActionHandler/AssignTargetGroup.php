@@ -128,17 +128,16 @@ class AssignTargetGroup implements ActionHandlerInterface
 
     protected function deleteAssignments(VisitorInfo $visitorInfo): bool
     {
-        $data = array();
+        $data = [];
 
-        try{
+        try {
             $this->storage->set(
                 $visitorInfo,
                 TargetingStorageInterface::SCOPE_VISITOR,
                 self::STORAGE_KEY,
                 $data
             );
-        }
-        catch (\Exception $e){
+        } catch (\Exception $e) {
             return false;
         }
 
