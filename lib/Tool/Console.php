@@ -45,6 +45,8 @@ class Console
         if (self::$systemEnvironment == null) {
             if (stripos(php_uname('s'), 'windows') !== false) {
                 self::$systemEnvironment = 'windows';
+            } else if (stripos(php_uname('s'), 'darwin') !== false) {
+                self::$systemEnvironment = 'darwin';
             } else {
                 self::$systemEnvironment = 'unix';
             }
@@ -361,6 +363,8 @@ class Console
         // windows systems
         if (self::getSystemEnvironment() == 'windows') {
             return self::execInBackgroundWindows($cmd, $outputFile);
+        } else if (self::getSystemEnvironment() == 'darwin') {
+            return self::execInBackgroundDarwin($cmd, $outputFile);
         } else {
             return self::execInBackgroundUnix($cmd, $outputFile);
         }
@@ -406,6 +410,45 @@ class Console
         $pid = shell_exec($commandWrapped);
 
         Logger::debug('Process started with PID ' . $pid);
+
+        return $pid;
+    }
+
+    /**
+     * @static
+     *
+     * @param string $cmd
+     * @param string $outputFile
+     *
+     * @return int
+     */
+    protected static function execInBackgroundDarwin($cmd, $outputFile)
+    {
+        if (!$outputFile) {
+            $outputFile = '/dev/null';
+        }
+
+        $nice = (string) self::getExecutable('nice');
+        if ($nice) {
+            $nice .= ' -n 19 ';
+        }
+
+        /**
+         * mod_php seems to lose the environment variables if we do not set them manually before the child process is started
+         */
+        if (strpos(php_sapi_name(), 'apache') !== false) {
+            foreach (['PIMCORE_ENVIRONMENT', 'REDIRECT_PIMCORE_ENVIRONMENT'] as $envKey) {
+                if ($envValue = getenv($envKey)) {
+                    putenv($envKey . '='.$envValue);
+                }
+            }
+        }
+
+        $commandWrapped = $nice . $cmd . ' > '. $outputFile .' 2>&1 & echo $!';
+        Logger::debug('Executing command `' . $commandWrapped . '´ on the current shell in background');
+        $pid = shell_exec($commandWrapped);
+
+        Logger::debug('Process started DARWIN with PID ' . $pid);
 
         return $pid;
     }
