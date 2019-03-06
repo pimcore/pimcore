@@ -112,7 +112,7 @@ pimcore.object.classes.data.reverseManyToManyObjectRelation = Class.create(pimco
                     rootProperty: "availableFields"
                 },
                 extraParams: {
-                    types: 'manyToManyObjectRelation',
+                    types: 'manyToManyObjectRelation,advancedManyToManyObjectRelation',
                     name: this.datax.ownerClassName
                 }
             },
