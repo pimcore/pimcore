@@ -570,7 +570,7 @@ class Asset extends Element\AbstractElement
         if ($isUpdate) {
             $updateEvent = new AssetEvent($this);
             if ($differentOldPath) {
-                $updateEvent->setArgument("oldPath", $differentOldPath);
+                $updateEvent->setArgument('oldPath', $differentOldPath);
             }
             \Pimcore::getEventDispatcher()->dispatch(AssetEvents::POST_UPDATE, $updateEvent);
         } else {

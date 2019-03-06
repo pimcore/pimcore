@@ -701,7 +701,7 @@ class AbstractObject extends Model\Element\AbstractElement
         if ($isUpdate) {
             $updateEvent = new DataObjectEvent($this);
             if ($differentOldPath) {
-                $updateEvent->setArgument("oldPath", $differentOldPath);
+                $updateEvent->setArgument('oldPath', $differentOldPath);
             }
             \Pimcore::getEventDispatcher()->dispatch(DataObjectEvents::POST_UPDATE, $updateEvent);
         } else {

@@ -482,7 +482,7 @@ class Document extends Element\AbstractElement
         if ($isUpdate) {
             $updateEvent = new DocumentEvent($this);
             if ($differentOldPath) {
-                $updateEvent->setArgument("oldPath", $differentOldPath);
+                $updateEvent->setArgument('oldPath', $differentOldPath);
             }
             \Pimcore::getEventDispatcher()->dispatch(DocumentEvents::POST_UPDATE, $updateEvent);
         } else {
