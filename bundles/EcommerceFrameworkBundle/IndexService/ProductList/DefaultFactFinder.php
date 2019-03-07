@@ -15,6 +15,7 @@
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList;
 
 use Monolog\Logger;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\InvalidConfigException;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\IConfig;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractCategory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IIndexable;
@@ -484,6 +485,10 @@ class DefaultFactFinder implements IProductList
 
                 case self::VARIANT_MODE_INCLUDE_PARENT_OBJECT:
                     $id = $item['record']['MasterProductID'];
+                    break;
+
+                case self::VARIANT_MODE_VARIANTS_ONLY:
+                    throw new InvalidConfigException("Variant Mode " . $this->getVariantMode() . " not supported.");
                     break;
             }
 

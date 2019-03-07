@@ -547,6 +547,7 @@ class DefaultMysql implements IProductList
         if ($variantMode == null) {
             $variantMode = $this->getVariantMode();
         }
+
         $preCondition = 'active = 1 AND o_virtualProductActive = 1';
         if ($this->inProductList) {
             $preCondition .= ' AND inProductList = 1';
@@ -565,27 +566,28 @@ class DefaultMysql implements IProductList
 
         //variant handling and userspecific conditions
 
-        if ($variantMode == IProductList::VARIANT_MODE_INCLUDE_PARENT_OBJECT) {
+        switch ($variantMode) {
+            case IProductList::VARIANT_MODE_INCLUDE_PARENT_OBJECT:
 
-            //make sure, that only variant objects are considered
-            $condition .= ' AND o_id != o_virtualProductId ';
+                //make sure, that only variant objects are considered
+                $condition .= ' AND o_id != o_virtualProductId ';
+                break;
 
-            if (!$excludeConditions) {
-                $userspecific = $this->buildUserspecificConditions($excludedFieldname);
-                if ($userspecific) {
-                    $condition .= ' AND ' . $userspecific;
-                }
-            }
-        } else {
-            if ($variantMode == IProductList::VARIANT_MODE_HIDE) {
+            case IProductList::VARIANT_MODE_HIDE:
+
                 $condition .= " AND o_type != 'variant'";
-            }
+                break;
 
-            if (!$excludeConditions) {
-                $userspecific = $this->buildUserspecificConditions($excludedFieldname);
-                if ($userspecific) {
-                    $condition .= ' AND ' . $userspecific;
-                }
+            case IProductList::VARIANT_MODE_VARIANTS_ONLY:
+
+                $condition .= " AND o_type = 'variant'";
+                break;
+        }
+
+        if (!$excludeConditions) {
+            $userspecific = $this->buildUserspecificConditions($excludedFieldname);
+            if ($userspecific) {
+                $condition .= ' AND ' . $userspecific;
             }
         }
 
