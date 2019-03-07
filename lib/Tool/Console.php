@@ -45,7 +45,7 @@ class Console
         if (self::$systemEnvironment == null) {
             if (stripos(php_uname('s'), 'windows') !== false) {
                 self::$systemEnvironment = 'windows';
-            } else if (stripos(php_uname('s'), 'darwin') !== false) {
+            } elseif (stripos(php_uname('s'), 'darwin') !== false) {
                 self::$systemEnvironment = 'darwin';
             } else {
                 self::$systemEnvironment = 'unix';
@@ -363,7 +363,7 @@ class Console
         // windows systems
         if (self::getSystemEnvironment() == 'windows') {
             return self::execInBackgroundWindows($cmd, $outputFile);
-        } else if (self::getSystemEnvironment() == 'darwin') {
+        } elseif (self::getSystemEnvironment() == 'darwin') {
             return self::execInBackgroundUnix($cmd, $outputFile, false);
         } else {
             return self::execInBackgroundUnix($cmd, $outputFile);
