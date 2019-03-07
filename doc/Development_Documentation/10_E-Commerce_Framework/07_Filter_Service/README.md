@@ -113,7 +113,7 @@ pimcore_ecommerce_framework:
 
 
 - `Helper`: Is a helper implementation that gets available values for pre select settings in the filter definition objects 
-  based on the [filter group](./05_Index_Service/01_Product_Index_Configuration/README.md) setting in the index attributes 
+  based on the [filter group](../05_Index_Service/01_Product_Index_Configuration/README.md) setting in the index attributes 
   definition. 
 
 
