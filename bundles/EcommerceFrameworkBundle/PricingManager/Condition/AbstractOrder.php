@@ -50,27 +50,27 @@ SELECT 1
 	, orderItem.oo_id as "orderItem"
 	, `order`.orderdate
 
-FROM object_query_%2$d as `order`
+FROM object_query_%2$s as `order`
 
     -- ordered products
-    JOIN object_relations_%2$d as orderItems
+    JOIN object_relations_%2$s as orderItems
         ON( 1
             AND orderItems.fieldname = "items"
             AND orderItems.src_id = `order`.oo_id
         )
 
 	-- order item
-	JOIN object_%1$d as orderItem
+	JOIN object_%1$s as orderItem
 		ON ( 1
     	    AND orderItem.o_id = orderItems.dest_id
 		)
 
 	-- add active price rules
-	JOIN object_collection_PricingRule_%1$d as priceRule
+	JOIN object_collection_PricingRule_%1$s as priceRule
 		ON( 1
 			AND priceRule.o_id = orderItem.oo_id
 			AND priceRule.fieldname = "PricingRules"
-			AND priceRule.ruleId = %3$d
+			AND priceRule.ruleId = %3$s
 		)
 
 WHERE 1

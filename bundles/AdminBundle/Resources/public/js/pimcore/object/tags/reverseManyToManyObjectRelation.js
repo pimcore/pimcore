@@ -219,6 +219,7 @@ pimcore.object.tags.reverseManyToManyObjectRelation = Class.create(pimcore.objec
             autoHeight: autoHeight,
             bodyCssClass: "pimcore_object_tag_objects",
             viewConfig: {
+                markDirty: false,
                 listeners: {
                     refresh: function (gridview) {
                         this.requestNicePathData(this.store.data);

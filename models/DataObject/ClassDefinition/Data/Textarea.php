@@ -54,6 +54,11 @@ class Textarea extends Data implements ResourcePersistenceAwareInterface, QueryR
     public $showCharCount;
 
     /**
+     * @var bool
+     */
+    public $excludeFromSearchIndex = false;
+
+    /**
      * Type for the column to query
      *
      * @var string
@@ -144,6 +149,24 @@ class Textarea extends Data implements ResourcePersistenceAwareInterface, QueryR
     public function setShowCharCount($showCharCount)
     {
         $this->showCharCount = $showCharCount;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isExcludeFromSearchIndex(): bool
+    {
+        return $this->excludeFromSearchIndex;
+    }
+
+    /**
+     * @param bool $excludeFromSearchIndex
+     */
+    public function setExcludeFromSearchIndex(bool $excludeFromSearchIndex)
+    {
+        $this->excludeFromSearchIndex = $excludeFromSearchIndex;
+
+        return $this;
     }
 
     /**
@@ -240,6 +263,23 @@ class Textarea extends Data implements ResourcePersistenceAwareInterface, QueryR
             return $value;
         } else {
             return '';
+        }
+    }
+
+    /**
+     * @see Model\DataObject\ClassDefinition\Data::getDataForSearchIndex
+     *
+     * @param null|Model\DataObject\AbstractObject $object
+     * @param mixed $params
+     *
+     * @return string
+     */
+    public function getDataForSearchIndex($object, $params = [])
+    {
+        if ($this->isExcludeFromSearchIndex()) {
+            return '';
+        } else {
+            return parent::getDataForSearchIndex($object, $params);
         }
     }
 

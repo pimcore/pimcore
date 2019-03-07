@@ -805,7 +805,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
         $fds = $this->getFieldDefinitions($context);
         if (isset($fds[$name])) {
             $fieldDefinition = $fds[$name];
-            if (isset($context['suppressEnrichment']) && $context['suppressEnrichment']) {
+            if (!\Pimcore::inAdmin() || (isset($context['suppressEnrichment']) && $context['suppressEnrichment'])) {
                 return $fieldDefinition;
             }
 
@@ -835,7 +835,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
             $this->fieldDefinitionsCache = $definitions;
         }
 
-        if (isset($context['suppressEnrichment']) && $context['suppressEnrichment']) {
+        if (!\Pimcore::inAdmin() || (isset($context['suppressEnrichment']) && $context['suppressEnrichment'])) {
             return $this->fieldDefinitionsCache;
         }
 
@@ -850,7 +850,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
         return $enrichedFieldDefinitions;
     }
 
-    public function doEnrichFieldDefinition($fieldDefinition, $context = [])
+    protected function doEnrichFieldDefinition($fieldDefinition, $context = [])
     {
         if (method_exists($fieldDefinition, 'enrichFieldDefinition')) {
             $context['class'] = $this;
@@ -983,7 +983,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
     /**
      * @param string $name
      *
-     * @return $this|void
+     * @return $this
      */
     public function setName($name)
     {
@@ -1023,7 +1023,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
     /**
      * @param string $title
      *
-     * @return $this|void
+     * @return $this
      */
     public function setTitle($title)
     {
@@ -1109,9 +1109,8 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
      */
     protected function getDataForValidity($localizedObject, array $languages)
     {
-        //TODO verify if in any place in the code \Pimcore\Model\DataObject\ClassDefinition\Data\Localizedfields::checkValidity is used with different parameter then DataObject\Localizedfield
-        if (!$localizedObject->object
-            || $localizedObject->object->getType() != 'variant'
+        if (!$localizedObject->getObject()
+            || $localizedObject->getObject()->getType() != 'variant'
             || !$localizedObject instanceof DataObject\Localizedfield) {
             return $localizedObject->getItems();
         }
@@ -1183,7 +1182,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
      * @param null $object
      * @param mixed $params
      *
-     * @return null|\Pimcore_Date
+     * @return DataObject\Localizedfield
      */
     public function getDiffDataFromEditmode($data, $object = null, $params = [])
     {

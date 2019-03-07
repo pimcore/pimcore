@@ -591,7 +591,9 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
                     foreach ($collectionDef->getFieldDefinitions() as $fd) {
                         try {
                             $getter = 'get' . ucfirst($fd->getName());
-                            $fd->checkValidity($item->$getter());
+                            if (!$fd instanceof CalculatedValue) {
+                                $fd->checkValidity($item->$getter());
+                            }
                         } catch (Model\Element\ValidationException $ve) {
                             $ve->addContext($this->getName() . '-' . $idx);
                             $validationExceptions[] = $ve;
@@ -862,6 +864,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
             foreach ($this->allowedTypes as $allowedType) {
                 $definition = DataObject\Fieldcollection\Definition::getByKey($allowedType);
                 if ($definition) {
+                    $definition->getDao()->createUpdateTable($class);
                     $fieldDefinition = $definition->getFieldDefinitions();
 
                     foreach ($fieldDefinition as $fd) {
@@ -872,6 +875,8 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
                             }
                         }
                     }
+
+                    $definition->getDao()->classSaved($class);
                 }
             }
         }

@@ -141,7 +141,7 @@ class MySql
                 Logger::info($e);
             }
 
-            $this->dbexec('ALTER TABLE `' . $this->tenantConfig->getTablename() . '` ENGINE = MyISAM;');
+            $this->dbexec('ALTER TABLE `' . $this->tenantConfig->getTablename() . '` ENGINE = InnoDB;');
             $columnNames = [];
             foreach ($searchIndexColums as $c) {
                 $columnNames[] = $this->db->quoteIdentifier($c);

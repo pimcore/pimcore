@@ -80,18 +80,20 @@ final class DebugMode extends Feature
 
                 if (file_exists($debugModeFile)) {
                     $conf = include $debugModeFile;
-                    $debug = $conf['active'];
+                    if (is_array($conf) && isset($conf['active'])) {
+                        $debug = $conf['active'];
 
-                    // enable debug mode only for a comma-separated list of IP addresses/ranges
-                    if ($debug && $conf['ip']) {
-                        $debug = false;
+                        // enable debug mode only for a comma-separated list of IP addresses/ranges
+                        if ($debug && $conf['ip']) {
+                            $debug = false;
 
-                        $clientIp = Tool::getClientIp();
-                        if (null !== $clientIp) {
-                            $debugIpAddresses = explode_and_trim(',', $conf['ip']);
+                            $clientIp = Tool::getClientIp();
+                            if (null !== $clientIp) {
+                                $debugIpAddresses = explode_and_trim(',', $conf['ip']);
 
-                            if (IpUtils::checkIp($clientIp, $debugIpAddresses)) {
-                                $debug = true;
+                                if (IpUtils::checkIp($clientIp, $debugIpAddresses)) {
+                                    $debug = true;
+                                }
                             }
                         }
                     }

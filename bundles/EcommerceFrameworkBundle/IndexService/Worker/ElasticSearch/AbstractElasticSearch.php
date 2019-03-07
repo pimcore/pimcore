@@ -111,6 +111,7 @@ abstract class AbstractElasticSearch extends Worker\AbstractMockupCacheWorker im
         if (is_readable($this->getVersionFile())) {
             $version = (int)trim(file_get_contents($this->getVersionFile()));
         } else {
+            \Pimcore\File::mkdir(dirname($this->getVersionFile()));
             file_put_contents($this->getVersionFile(), $this->getIndexVersion());
         }
         $this->indexVersion = $version;
@@ -490,16 +491,6 @@ abstract class AbstractElasticSearch extends Worker\AbstractMockupCacheWorker im
         return $entriesUpdated;
     }
 
-    /**
-     * returns product list implementation valid and configured for this worker/tenant
-     *
-     * @return mixed
-     */
-    public function getProductList()
-    {
-        return new \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\DefaultElasticSearch($this->tenantConfig);
-    }
-
     protected function getStoreTableName()
     {
         return self::STORE_TABLE_NAME;
@@ -668,8 +659,6 @@ abstract class AbstractElasticSearch extends Worker\AbstractMockupCacheWorker im
             $res = $esClient->delete(['index' => $this->getIndexNameVersion(), 'type' => '_doc', 'id' => $objectId, 'routing' => $storeEntry['o_virtualProductId']]);
             $this->deleteFromStoreTable($objectId);
             $this->deleteFromMockupCache($objectId);
-        } else {
-            Logger::emergency("Could not delete item with id $objectId because the routing value cant be determined");
         }
     }
 

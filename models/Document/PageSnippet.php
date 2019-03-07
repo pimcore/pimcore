@@ -443,10 +443,16 @@ abstract class PageSnippet extends Model\Document
 
     /**
      * @return Document
+     *
+     * @throws \Exception
      */
     public function getContentMasterDocument()
     {
-        return Document::getById($this->getContentMasterDocumentId());
+        if ($masterDocumentId = $this->getContentMasterDocumentId()) {
+            return Document::getById($masterDocumentId);
+        }
+
+        return null;
     }
 
     /**
@@ -614,7 +620,7 @@ abstract class PageSnippet extends Model\Document
         $url = $scheme . $hostname . $this->getFullPath();
 
         $site = \Pimcore\Tool\Frontend::getSiteForDocument($this);
-        if ($site instanceof Site && $site->getMainDomain()) {
+        if ($site instanceof Model\Site && $site->getMainDomain()) {
             $url = $scheme . $site->getMainDomain() . preg_replace('@^' . $site->getRootPath() . '/?@', '/', $this->getRealFullPath());
         }
 

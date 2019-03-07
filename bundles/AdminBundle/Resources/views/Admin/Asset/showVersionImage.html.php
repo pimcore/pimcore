@@ -65,7 +65,7 @@
                             </tr>
                             <tr>
                                 <td>File Size</td>
-                                <td><?php echo $this->asset->getFileSize("kb"); ?> </td>
+                                <td><?php echo $this->asset->getFileSize(true); ?> </td>
                             </tr>
                             <tr>
                                 <td>Mime Type</td>

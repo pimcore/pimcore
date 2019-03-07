@@ -384,8 +384,6 @@ class DefaultMysql implements IProductList
             //nothing to do
         } else {
             throw new \Exception('Not implemented yet - multiple pricing systems are not supported yet');
-            foreach ($priceSystemArrays as $priceSystemName => $priceSystemArray) {
-            }
         }
 
         return $objectRaws;

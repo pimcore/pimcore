@@ -76,6 +76,7 @@ pimcore.object.tags.block = Class.create(pimcore.object.tags.abstract, {
         if(this.data.length < 1) {
             this.component.add(this.getControls());
         } else {
+            Ext.suspendLayouts();
             for (var i=0; i<this.data.length; i++) {
                 this.addBlockElement(
                     i,
@@ -85,6 +86,7 @@ pimcore.object.tags.block = Class.create(pimcore.object.tags.abstract, {
                     this.data[i].data,
                     true);
             }
+            Ext.resumeLayouts();
         }
 
         this.component.updateLayout();

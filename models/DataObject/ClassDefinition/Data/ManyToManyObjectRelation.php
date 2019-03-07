@@ -259,13 +259,14 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
     public function getVersionPreview($data, $object = null, $params = [])
     {
         if (is_array($data) && count($data) > 0) {
+            $paths = [];
             foreach ($data as $o) {
                 if ($o instanceof Element\ElementInterface) {
-                    $pathes[] = $o->getRealFullPath();
+                    $paths[] = $o->getRealFullPath();
                 }
             }
 
-            return implode('<br />', $pathes);
+            return implode('<br />', $paths);
         }
 
         return null;

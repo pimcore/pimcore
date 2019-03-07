@@ -83,14 +83,14 @@ class Dao extends Model\Listing\Dao\AbstractDao
     /**
      * Loads a list of document ids for the specicifies parameters, returns an array of ids
      *
-     * @return array
+     * @return int[]
      */
     public function loadIdList()
     {
         $select = $this->getQuery(['id']);
         $documentIds = $this->db->fetchCol($select, $this->model->getConditionVariables());
 
-        return $documentIds;
+        return array_map('intval', $documentIds);
     }
 
     /**

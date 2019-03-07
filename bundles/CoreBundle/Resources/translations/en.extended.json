@@ -1,4 +1,6 @@
 {
+  "encrypt_data": "Encrypt Data",
+  "encrypt_data_description": "Data-at-Rest/Tablespace Encryption needs to be enabled on your Database Server",
   "many_to_one_relation": "Many-To-One Relation",
   "many_to_many_relation": "Many-To-Many Relation",
   "many_to_many_object_relation": "Many-To-Many Object Relation",
@@ -11,6 +13,7 @@
   "login_screen": "Login Screen",
   "color_description": "Use the HTML hex format, eg. #ffffff",
   "colors": "Colors",
+  "media": "Media",
   "custom_logo": "Custom Logo",
   "custom_login_background_image": "Custom Login Background Image",
   "branding_logo_description": "Used on the login and start screen. We recommend to use a SVG (JPG & PNG are supported as well).",
@@ -700,5 +703,6 @@
   "operator_renderer_settings": "Renderer Settings",
   "refresh_preview": "Refresh Preview",
   "show_charcount": "Show Character Count",
-  "max_length": "Max Length"
+  "max_length": "Max Length",
+  "exclude_from_search_index": "Exclude from Backend Full-Text Search"
 }

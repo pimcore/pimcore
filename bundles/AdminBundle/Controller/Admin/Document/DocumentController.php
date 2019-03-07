@@ -65,6 +65,11 @@ class DocumentController extends ElementControllerBase implements EventedControl
         $data = $document->getObjectVars();
         $data['versionDate'] = $document->getModificationDate();
 
+        $data['php'] = [
+            'classes' => array_merge([get_class($document)], array_values(class_parents($document))),
+            'interfaces' => array_values(class_implements($document))
+        ];
+
         $event = new GenericEvent($this, [
             'data' => $data,
             'document' => $document
@@ -613,7 +618,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
 
         $docTypes = [];
         foreach ($list->getDocTypes() as $type) {
-            $docTypes[] = $type;
+            $docTypes[] = $type->getObjectVars();
         }
 
         return $this->adminJson(['docTypes' => $docTypes]);
@@ -741,6 +746,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
                     'sourceId' => $request->get('sourceId'),
                     'targetId' => $request->get('targetId'),
                     'type' => 'child',
+                    'language' => $request->get('language'),
                     'enableInheritance' => $request->get('enableInheritance'),
                     'transactionId' => $transactionId,
                     'saveParentId' => true,
@@ -767,6 +773,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
                                 'targetParentId' => $request->get('targetId'),
                                 'sourceParentId' => $request->get('sourceId'),
                                 'type' => 'child',
+                                'language' => $request->get('language'),
                                 'enableInheritance' => $request->get('enableInheritance'),
                                 'transactionId' => $transactionId
                             ]
@@ -895,7 +902,12 @@ class DocumentController extends ElementControllerBase implements EventedControl
                 if ($source != null) {
                     if ($request->get('type') == 'child') {
                         $enableInheritance = ($request->get('enableInheritance') == 'true') ? true : false;
-                        $language = $request->get('language', false);
+
+                        $language = false;
+                        if (Tool::isValidLanguage($request->get('language'))) {
+                            $language = $request->get('language');
+                        }
+
                         $resetIndex = ($request->get('resetIndex') == 'true') ? true : false;
 
                         $newDocument = $this->_documentService->copyAsChild($target, $source, $enableInheritance, $resetIndex, $language);
@@ -984,7 +996,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
         $image2->clear();
         $image2->destroy();
 
-        return $this->render('PimcoreAdminBundle:Admin/Document:diff-versions.html.php', $viewParams);
+        return $this->render('PimcoreAdminBundle:Admin/Document/Document:diff-versions.html.php', $viewParams);
     }
 
     /**
@@ -1357,6 +1369,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
     {
         $success = false;
         $language = null;
+        $translationLinks = null;
 
         $document = Document::getByPath($request->get('path'));
         if ($document) {
@@ -1364,11 +1377,15 @@ class DocumentController extends ElementControllerBase implements EventedControl
             if ($language) {
                 $success = true;
             }
+
+            //check if document is already linked to other langauges
+            $translationLinks = array_keys($this->_documentService->getTranslations($document));
         }
 
         return $this->adminJson([
             'success' => $success,
-            'language' => $language
+            'language' => $language,
+            'translationLinks' => $translationLinks
         ]);
     }
 
@@ -1409,7 +1426,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
         }
 
         // check permissions
-        $this->checkActionPermission($event, 'documents', ['docTypesAction']);
+        $this->checkActionPermission($event, 'documents', ['docTypesGetAction']);
 
         $this->_documentService = new Document\Service($this->getAdminUser());
     }

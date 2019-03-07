@@ -6,7 +6,7 @@ CREATE TABLE `application_logs` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `pid` INT(11) NULL DEFAULT NULL,
   `timestamp` datetime NOT NULL,
-  `message` varchar(1024) DEFAULT NULL,
+  `message` TEXT NULL,
   `priority` ENUM('emergency','alert','critical','error','warning','notice','info','debug') DEFAULT NULL,
   `fileobject` varchar(1024) DEFAULT NULL,
   `info` varchar(1024) DEFAULT NULL,
@@ -954,6 +954,23 @@ CREATE TABLE `importconfig_shares` (
 	PRIMARY KEY (`importConfigId`, `sharedWithUserId`),
 	INDEX `data.sharedRoleIds` (`importConfigId`),
 	INDEX `sharedWithUserId` (`sharedWithUserId`)
+)
+DEFAULT CHARSET=utf8mb4;
+;
+
+DROP TABLE IF EXISTS `notifications`;
+CREATE TABLE `notifications` (
+  `id` INT(11)  AUTO_INCREMENT PRIMARY KEY,
+  `type` VARCHAR(20) DEFAULT 'info' NOT NULL,
+  `title` VARCHAR(250) DEFAULT '' NOT NULL,
+  `message` TEXT NOT NULL,
+  `sender` INT(11) NULL,
+  `recipient` INT(11) NOT NULL,
+  `read` TINYINT(1) default '0' NOT NULL,
+  `creationDate` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  `modificationDate` TIMESTAMP NULL,
+  `linkedElementType` ENUM('document', 'asset', 'object') NULL,
+  `linkedElement` INT(11) NULL
 )
 DEFAULT CHARSET=utf8mb4;
 ;

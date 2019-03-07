@@ -259,7 +259,7 @@ class Dao extends Model\Dao\AbstractDao
                         $key = $fd->getName();
 
                         // exclude untouchables if value is not an array - this means data has not been loaded
-                        if (!(in_array($key, $untouchable) and !is_array($this->model->$key))) {
+                        if (!in_array($key, $untouchable)) {
                             $localizedValue = $this->model->getLocalizedValue($key, $language);
                             $insertData = $fd->getDataForQueryResource(
                                 $localizedValue,
@@ -705,6 +705,8 @@ QUERY;
             );
         }
 
+        $this->handleEncryption($this->model->getClass(), [$table]);
+
         $existingColumns = $this->getValidTableColumns($table, false); // no caching of table definition
         $columnsToRemove = $existingColumns;
 
@@ -763,6 +765,8 @@ QUERY;
                       INDEX `language` (`language`)
                     ) DEFAULT CHARSET=utf8mb4;"
                 );
+
+                $this->handleEncryption($this->model->getClass(), [$queryTable]);
 
                 // create object table if not exists
                 $protectedColumns = ['ooo_id', 'language'];

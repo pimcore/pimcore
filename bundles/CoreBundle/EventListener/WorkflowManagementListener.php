@@ -152,18 +152,18 @@ class WorkflowManagementListener implements EventSubscriberInterface
                 'globalActions' => $globalActions
             ];
 
-            if ($element instanceof ConcreteObject) {
-                $marking = $workflow->getMarking($element);
+            $marking = $workflow->getMarking($element);
 
-                if (!sizeof($marking->getPlaces())) {
-                    continue;
-                }
+            if (!sizeof($marking->getPlaces())) {
+                continue;
+            }
 
-                $permissionsRespected = false;
-                foreach ($this->workflowManager->getOrderedPlaceConfigs($workflow, $marking) as $placeConfig) {
-                    if (!$permissionsRespected && !empty($placeConfig->getPermissions($workflow, $element))) {
-                        $data['userPermissions'] = array_merge((array)$data['userPermissions'], $placeConfig->getUserPermissions($workflow, $element));
+            $permissionsRespected = false;
+            foreach ($this->workflowManager->getOrderedPlaceConfigs($workflow, $marking) as $placeConfig) {
+                if (!$permissionsRespected && !empty($placeConfig->getPermissions($workflow, $element))) {
+                    $data['userPermissions'] = array_merge((array)$data['userPermissions'], $placeConfig->getUserPermissions($workflow, $element));
 
+                    if ($element instanceof ConcreteObject) {
                         $workflowLayoutId = $placeConfig->getObjectLayout($workflow, $element);
                         $hasSelectedCustomLayout = $this->requestStack->getMasterRequest() && $this->requestStack->getMasterRequest()->query->has('layoutId') && $this->requestStack->getMasterRequest()->query->get('layoutId') !== '';
 
@@ -185,8 +185,8 @@ class WorkflowManagementListener implements EventSubscriberInterface
                                 }
                             }
                         }
-                        $permissionsRespected = true;
                     }
+                    $permissionsRespected = true;
                 }
             }
         }

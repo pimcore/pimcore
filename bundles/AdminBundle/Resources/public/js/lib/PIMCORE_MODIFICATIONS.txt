@@ -14,6 +14,7 @@ Add plugins:
 
 Remove plugins:
 - About CKEditor
+- Clipboard
 - Content Templates
 - File Browser
 - Flash Dialog

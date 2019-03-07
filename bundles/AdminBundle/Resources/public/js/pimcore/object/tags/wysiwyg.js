@@ -162,8 +162,7 @@ pimcore.object.tags.wysiwyg = Class.create(pimcore.object.tags.abstract, {
         };
 
         eConfig.toolbarGroups = [
-            { name: 'clipboard', groups: [ 'sourcedialog', 'clipboard', 'undo', 'find' ] },
-            { name: 'basicstyles', groups: [ 'basicstyles', 'list'] },
+            { name: 'basicstyles', groups: [ 'undo', 'find', 'basicstyles', 'list'] },
             '/',
             { name: 'paragraph', groups: [ 'align', 'indent'] },
             { name: 'blocks' },

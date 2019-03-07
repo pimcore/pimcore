@@ -20,6 +20,7 @@ namespace Pimcore\Targeting;
 use Doctrine\DBAL\Connection;
 use Pimcore\Debug\Traits\StopwatchTrait;
 use Pimcore\Event\Targeting\TargetingEvent;
+use Pimcore\Event\Targeting\TargetingResolveVisitorInfoEvent;
 use Pimcore\Event\Targeting\TargetingRuleEvent;
 use Pimcore\Event\TargetingEvents;
 use Pimcore\Model\Tool\Targeting\Rule;
@@ -103,10 +104,14 @@ class VisitorInfoResolver
             return $visitorInfo;
         }
 
+        $event = new TargetingResolveVisitorInfoEvent($visitorInfo);
+
         $this->eventDispatcher->dispatch(
             TargetingEvents::PRE_RESOLVE,
-            new TargetingEvent($visitorInfo)
+            $event
         );
+
+        $visitorInfo = $event->getVisitorInfo();
 
         $this->matchTargetingRuleConditions($visitorInfo);
 
