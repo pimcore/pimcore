@@ -27,7 +27,7 @@ use Symfony\Component\Routing\Annotation\Route;
 /**
  * @Route("/custom-report")
  */
-class CustomReportController extends ReportsControllerBase implements EventedControllerInterface
+class CustomReportController extends ReportsControllerBase
 {
     /**
      * @Route("/tree", methods={"GET", "POST"})
@@ -38,13 +38,23 @@ class CustomReportController extends ReportsControllerBase implements EventedCon
      */
     public function treeAction(Request $request)
     {
+        $this->checkPermission('reports_config');
         $reports = CustomReport\Config::getReportsList();
+        return $this->adminJson($reports);
+    }
 
-        if ($request->get('portlet')) {
-            return $this->adminJson(['data' => $reports]);
-        } else {
-            return $this->adminJson($reports);
-        }
+    /**
+     * @Route("/portlet-report-list", methods={"GET", "POST"})
+     *
+     * @param Request $request
+     *
+     * @return JsonResponse
+     */
+    public function portletReportListAction(Request $request)
+    {
+        $this->checkPermission('reports');
+        $reports = CustomReport\Config::getReportsList($this->getAdminUser());
+        return $this->adminJson(['data' => $reports]);
     }
 
     /**
@@ -56,6 +66,8 @@ class CustomReportController extends ReportsControllerBase implements EventedCon
      */
     public function addAction(Request $request)
     {
+        $this->checkPermission('reports_config');
+
         $success = false;
 
         $report = CustomReport\Config::getByName($request->get('name'));
@@ -80,6 +92,8 @@ class CustomReportController extends ReportsControllerBase implements EventedCon
      */
     public function deleteAction(Request $request)
     {
+        $this->checkPermission('reports_config');
+
         $report = CustomReport\Config::getByName($request->get('name'));
         $report->delete();
 
@@ -95,6 +109,8 @@ class CustomReportController extends ReportsControllerBase implements EventedCon
      */
     public function cloneAction(Request $request)
     {
+        $this->checkPermission('reports_config');
+
         $newName = $request->get('newName');
         $report = CustomReport\Config::getByName($newName);
         if ($report) {
@@ -129,6 +145,8 @@ class CustomReportController extends ReportsControllerBase implements EventedCon
      */
     public function getAction(Request $request)
     {
+        $this->checkPermissionsHasOneOf(['reports_config', 'reports']);
+
         $report = CustomReport\Config::getByName($request->get('name'));
 
         return $this->adminJson($report);
@@ -143,6 +161,8 @@ class CustomReportController extends ReportsControllerBase implements EventedCon
      */
     public function updateAction(Request $request)
     {
+        $this->checkPermission('reports_config');
+
         $report = CustomReport\Config::getByName($request->get('name'));
         $data = $this->decodeJson($request->get('configuration'));
 
@@ -171,6 +191,8 @@ class CustomReportController extends ReportsControllerBase implements EventedCon
      */
     public function columnConfigAction(Request $request)
     {
+        $this->checkPermission('reports_config');
+
         $report = CustomReport\Config::getByName($request->get('name'));
         $columnConfiguration = $report->getColumnConfiguration();
         if (!is_array($columnConfiguration)) {
@@ -225,10 +247,12 @@ class CustomReportController extends ReportsControllerBase implements EventedCon
      */
     public function getReportConfigAction(Request $request)
     {
+        $this->checkPermission('reports');
+
         $reports = [];
 
         $list = new CustomReport\Config\Listing();
-        $items = $list->load();
+        $items = $list->getDao()->loadForGivenUser($this->getAdminUser());
 
         /** @var $report CustomReport\Config */
         foreach ($items as $report) {
@@ -258,6 +282,8 @@ class CustomReportController extends ReportsControllerBase implements EventedCon
      */
     public function dataAction(Request $request)
     {
+        $this->checkPermission('reports');
+
         $offset = $request->get('start', 0);
         $limit = $request->get('limit', 40);
         $sortingSettings = \Pimcore\Bundle\AdminBundle\Helper\QueryParams::extractSortingSettings(array_merge($request->request->all(), $request->query->all()));
@@ -293,6 +319,8 @@ class CustomReportController extends ReportsControllerBase implements EventedCon
      */
     public function drillDownOptionsAction(Request $request)
     {
+        $this->checkPermission('reports');
+
         $field = $request->get('field');
         $filters = ($request->get('filter') ? json_decode($request->get('filter'), true) : null);
         $drillDownFilters = $request->get('drillDownFilters', null);
@@ -318,6 +346,8 @@ class CustomReportController extends ReportsControllerBase implements EventedCon
      */
     public function chartAction(Request $request)
     {
+        $this->checkPermission('reports');
+
         $sort = $request->get('sort');
         $dir = $request->get('dir');
         $filters = ($request->get('filter') ? json_decode($request->get('filter'), true) : null);
@@ -346,6 +376,8 @@ class CustomReportController extends ReportsControllerBase implements EventedCon
      */
     public function downloadCsvAction(Request $request)
     {
+        $this->checkPermission('reports');
+
         set_time_limit(300);
 
         $sort = $request->get('sort');
@@ -394,26 +426,5 @@ class CustomReportController extends ReportsControllerBase implements EventedCon
         $response->deleteFileAfterSend(true);
 
         return $response;
-    }
-
-    /**
-     * @param FilterControllerEvent $event
-     */
-    public function onKernelController(FilterControllerEvent $event)
-    {
-        $isMasterRequest = $event->isMasterRequest();
-        if (!$isMasterRequest) {
-            return;
-        }
-
-        $this->checkPermission('reports');
-    }
-
-    /**
-     * @param FilterResponseEvent $event
-     */
-    public function onKernelResponse(FilterResponseEvent $event)
-    {
-        // nothing to do
     }
 }

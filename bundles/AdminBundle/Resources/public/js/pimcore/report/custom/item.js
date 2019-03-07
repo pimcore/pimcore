@@ -275,6 +275,11 @@ pimcore.report.custom.item = Class.create({
             }
         });
 
+        var user = pimcore.globalmanager.get("user");
+        if (user.isAllowed("share_configurations")) {
+            this.panel.add(this.getPermissionPanel());
+        }
+
         this.parentPanel.getEditPanel().add(this.panel);
         this.parentPanel.getEditPanel().setActiveTab(this.panel);
 
@@ -318,6 +323,11 @@ pimcore.report.custom.item = Class.create({
                     name: "reportClass",
                     value: this.data.reportClass,
                     fieldLabel: t("custom_report_class")
+                }, {
+                    xtype: "textfield",
+                    name: "groupIconClass",
+                    value: this.data.groupIconClass,
+                    fieldLabel: t("group_icon_class")
                 }, {
                     xtype: "checkbox",
                     name: "menuShortcut",
@@ -381,6 +391,119 @@ pimcore.report.custom.item = Class.create({
 
 
         return this.chartDefinitionForm;
+    },
+
+    getPermissionPanel: function () {
+
+        var items = [];
+
+        var user = pimcore.globalmanager.get("user");
+
+        if (user.admin) {
+            var shareGlobally = new Ext.form.field.Checkbox(
+                {
+                    fieldLabel: t("share_globally"),
+                    inputValue: true,
+                    name: "shareGlobally",
+                    value: this.data.shareGlobally
+                }
+            );
+
+            items.push(shareGlobally);
+        }
+
+        if (user.isAllowed("share_configurations")) {
+
+            var userStore = new Ext.data.JsonStore({
+                autoDestroy: true,
+                autoLoad: true,
+                proxy: {
+                    type: 'ajax',
+                    url: '/admin/user/get-users-for-sharing',
+                    extraParams: {
+                        include_current_user: true,
+                        permission: 'reports'
+                    },
+                    reader: {
+                        rootProperty: 'data',
+                        idProperty: 'id',
+                    }
+                },
+                fields: ['id', 'label']
+            });
+
+            var userSharingField = Ext.create('Ext.form.field.Tag', {
+                name: "sharedUserIds",
+                width: '100%',
+                height: 100,
+                fieldLabel: t("visible_to_users"),
+                queryDelay: 0,
+                resizable: true,
+                queryMode: 'local',
+                minChars: 1,
+                store: userStore,
+                displayField: 'label',
+                valueField: 'id',
+                forceSelection: true,
+                filterPickList: true,
+                value: this.data.sharedUserIds ? this.data.sharedUserIds : ""
+            });
+            items.push(userSharingField);
+
+            var rolesStore = new Ext.data.JsonStore({
+                autoDestroy: true,
+                autoLoad: true,
+                proxy: {
+                    type: 'ajax',
+                    url: '/admin/user/get-roles-for-sharing',
+                    extraParams: {
+                        permission: 'reports'
+                    },
+                    reader: {
+                        rootProperty: 'data',
+                        idProperty: 'id'
+                    }
+                },
+                fields: ['id', 'label']
+            });
+
+            var rolesSharingField = Ext.create('Ext.form.field.Tag', {
+                name: "sharedRoleIds",
+                width: '100%',
+                height: 100,
+                fieldLabel: t("visible_to_roles"),
+                queryDelay: 0,
+                resizable: true,
+                queryMode: 'local',
+                minChars: 1,
+                store: rolesStore,
+                displayField: 'label',
+                valueField: 'id',
+                forceSelection: true,
+                filterPickList: true,
+                value: this.data.sharedRoleIds ? this.data.sharedRoleIds : ""
+            });
+            items.push(rolesSharingField);
+        }
+
+        if (user.isAllowed("share_configurations")) {
+            items.push(this.userSharingField);
+            items.push(this.rolesSharingField);
+        }
+
+        this.permissionsForm = new Ext.form.FormPanel({
+            border: false,
+            items: [{
+                xtype: 'fieldset',
+                itemId: "permissionFieldSet",
+                title: t("custom_report_permissions"),
+                style: "margin-top: 20px;margin-bottom: 20px",
+                collapsible: false,
+                items: items
+            }]
+        });
+
+        return this.permissionsForm;
     },
 
     updateTypeSpecificCartDefinitionPanel: function (chartType) {
@@ -727,11 +850,19 @@ pimcore.report.custom.item = Class.create({
     },
 
     getValues: function () {
+        var key;
         var allValues = this.generalDefinitionForm.getForm().getFieldValues();
 
         var chartValues = this.chartDefinitionForm.getForm().getFieldValues();
-        for (var key in chartValues) {
+        for (key in chartValues) {
             allValues[key] = chartValues[key];
+        }
+
+        if(this.permissionsForm) {
+            var permissionValues = this.permissionsForm.getForm().getFieldValues();
+            for (key in permissionValues) {
+                allValues[key] = permissionValues[key];
+            }
         }
 
         var columnData = [];

@@ -85,6 +85,32 @@ abstract class AdminController extends Controller implements AdminControllerInte
     }
 
     /**
+     * @param string[] $permissions
+     */
+    protected function checkPermissionsHasOneOf(array $permissions)
+    {
+        $allowed = false;
+        foreach($permissions as $permission) {
+            if($this->getAdminUser()->isAllowed($permission)) {
+                $allowed = true;
+                break;
+            }
+        }
+
+        if (!$this->getAdminUser() || !$allowed) {
+            $this->get('monolog.logger.security')->error(
+                'User {user} attempted to access {permission}, but has no permission to do so',
+                [
+                    'user' => $this->getAdminUser()->getName(),
+                    'permission' => $permission
+                ]
+            );
+
+            throw new AccessDeniedHttpException('Attempt to access ' . $permission . ', but has no permission to do so.');
+        }
+    }
+
+    /**
      * Check permission against all controller actions. Can optionally exclude a list of actions.
      *
      * @param FilterControllerEvent $event
