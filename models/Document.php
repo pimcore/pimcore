@@ -432,6 +432,7 @@ class Document extends Element\AbstractElement
                 // if the old path is different from the new path, update all children
                 $updatedChildren = [];
                 if ($oldPath && $oldPath != $this->getRealFullPath()) {
+                    $differentOldPath = $oldPath;
                     $this->getDao()->updateWorkspaces();
                     $updatedChildren = $this->getDao()->updateChildsPaths($oldPath);
                 }
@@ -479,7 +480,11 @@ class Document extends Element\AbstractElement
         $this->clearDependentCache($additionalTags);
 
         if ($isUpdate) {
-            \Pimcore::getEventDispatcher()->dispatch(DocumentEvents::POST_UPDATE, new DocumentEvent($this));
+            $updateEvent = new DocumentEvent($this);
+            if ($differentOldPath) {
+                $updateEvent->setArgument('oldPath', $differentOldPath);
+            }
+            \Pimcore::getEventDispatcher()->dispatch(DocumentEvents::POST_UPDATE, $updateEvent);
         } else {
             \Pimcore::getEventDispatcher()->dispatch(DocumentEvents::POST_ADD, new DocumentEvent($this));
         }

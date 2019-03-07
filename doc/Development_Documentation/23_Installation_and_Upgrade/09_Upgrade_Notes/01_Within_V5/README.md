@@ -1,15 +1,16 @@
 # Upgrade Notes for Upgrades within Pimcore 5
 
-## Version 5.7
+## Version 5.7.0
+
+- `\Pimcore\Model\WebsiteSetting` and `\Pimcore\Model\Property` properties are now `protected` instead of `public`
 - [Ecommerce] MySql Product List in variant mode `VARIANT_MODE_INCLUDE_PARENT_OBJECT` now does not return parent objects 
   if there are no variants that full fill the criteria (but parent objects would). 
 - [Ecommerce] FilterTypes now have `RequestStack` as constructor param. If you have custom filter types and no autowire 
   you might need to adapt your service definition. 
 
-
 ## Version 5.6.4
 
-- `Pimcore\Model\DataObject\Localizedfield` properties are now `protected` instead of `public` 
+- `\Pimcore\Model\DataObject\Localizedfield` properties are now `protected` instead of `public` 
 
 ## Version 5.6.0
 - Removed method `\Pimcore\Model\DataObject\ClassDefinition\Data::setFieldtype($fieldtype)`

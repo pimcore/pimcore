@@ -49,7 +49,7 @@ class CatalogProduct extends AbstractObjectListCondition implements ICatalogProd
         }
 
         // products from cart
-        if ($environment->getExecutionMode() == IEnvironment::EXECUTION_MODE_CART && $environment->getCart()) {
+        if ($environment->getExecutionMode() === IEnvironment::EXECUTION_MODE_CART && $environment->getCart()) {
             foreach ($environment->getCart()->getItems() as $item) {
                 $productsPool[] = $item->getProduct();
             }
@@ -59,7 +59,7 @@ class CatalogProduct extends AbstractObjectListCondition implements ICatalogProd
         foreach ($productsPool as $currentProduct) {
             // check all valid products
             foreach ($this->getProducts() as $product) {
-                /* @var AbstractProduct $allow */
+                /* @var AbstractProduct $product */
 
                 $currentProductCheck = $currentProduct;
                 while ($currentProductCheck instanceof ICheckoutable) {

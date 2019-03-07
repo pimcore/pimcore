@@ -511,6 +511,7 @@ class Asset extends Element\AbstractElement
                             $error = error_get_last();
                             throw new \Exception('Unable to rename asset ' . $this->getId() . ' on the filesystem: ' . $oldFullPath . ' - Reason: ' . $error['message']);
                         }
+                        $differentOldPath = $oldPath;
                         $this->getDao()->updateWorkspaces();
                         $updatedChildren = $this->getDao()->updateChildsPaths($oldPath);
                     }
@@ -567,7 +568,11 @@ class Asset extends Element\AbstractElement
         $this->setDataChanged(false);
 
         if ($isUpdate) {
-            \Pimcore::getEventDispatcher()->dispatch(AssetEvents::POST_UPDATE, new AssetEvent($this));
+            $updateEvent = new AssetEvent($this);
+            if ($differentOldPath) {
+                $updateEvent->setArgument('oldPath', $differentOldPath);
+            }
+            \Pimcore::getEventDispatcher()->dispatch(AssetEvents::POST_UPDATE, $updateEvent);
         } else {
             \Pimcore::getEventDispatcher()->dispatch(AssetEvents::POST_ADD, new AssetEvent($this));
         }

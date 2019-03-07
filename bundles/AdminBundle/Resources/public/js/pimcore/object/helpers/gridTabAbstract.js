@@ -653,6 +653,7 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
             handler: function (button) {
 
                 this.sqlEditor.setValue("");
+                this.searchField.setValue("");
 
                 // reset base params, because of the condition
                 var proxy = this.store.getProxy();

@@ -869,5 +869,9 @@
   "reload_column_configuration": "Reload column configuration",
   "reload_column_configuration_notice": "Note: Reloading column configuration will reset selected grid columns",
   "embedded_meta_data": "Embedded Meta Info",
-  "duration": "Duration"
+  "duration": "Duration",
+  "group_icon_class": "Group Icon Class",
+  "custom_report_permissions": "Permission",
+  "visible_to_users": "Visible To Users",
+  "visible_to_roles": "Visible To Roles"
 }
