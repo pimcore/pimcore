@@ -52,7 +52,7 @@ class Bracket implements IBracket
     public function check(IEnvironment $environment)
     {
         // A bracket without conditions is not restricted and thus doesn't fail
-        if (sizeof($this->conditions) == 0) {
+        if (empty($this->conditions)) {
             return true;
         }
 
@@ -125,8 +125,9 @@ class Bracket implements IBracket
 
     /**
      * @param string $string
+     * @throws \Pimcore\Bundle\EcommerceFrameworkBundle\Exception\InvalidConfigException
      *
-     * @return $this|ICondition
+     * @return $this
      */
     public function fromJSON($string)
     {
