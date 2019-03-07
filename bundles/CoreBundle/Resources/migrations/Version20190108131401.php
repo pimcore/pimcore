@@ -30,7 +30,7 @@ class Version20190108131401 extends AbstractPimcoreMigration
         $users = $users->load();
 
         foreach($users as $user) {
-            if($user->isAllowed('reports')) {
+            if($user instanceof User && $user->isAllowed('reports')) {
                 $this->writeMessage('Updating user ' . $user->getName());
                 $user->setPermission('reports_config', true);
                 $user->save();
@@ -42,7 +42,7 @@ class Version20190108131401 extends AbstractPimcoreMigration
         $roles = new User\Role\Listing();
         $roles = $roles->load();
         foreach($roles as $role) {
-            if($role->getPermission('reports')) {
+            if($role instanceof User\Role && $role->getPermission('reports')) {
                 $this->writeMessage('Updating user ' . $role->getName());
                 $role->setPermission('reports_config', true);
                 $role->save();
@@ -82,7 +82,7 @@ class Version20190108131401 extends AbstractPimcoreMigration
         $users = $users->load();
 
         foreach($users as $user) {
-            if($user->isAllowed('reports_config')) {
+            if($user instanceof User && $user->isAllowed('reports_config')) {
                 $this->writeMessage('Updating user ' . $user->getName());
                 $user->setPermission('reports_config', false);
                 $user->save();
@@ -94,7 +94,7 @@ class Version20190108131401 extends AbstractPimcoreMigration
         $roles = new User\Role\Listing();
         $roles = $roles->load();
         foreach($roles as $role) {
-            if($role->getPermission('reports_config')) {
+            if($role instanceof User\Role && $role->getPermission('reports_config')) {
                 $this->writeMessage('Updating user ' . $role->getName());
                 $role->setPermission('reports_config', false);
                 $role->save();
