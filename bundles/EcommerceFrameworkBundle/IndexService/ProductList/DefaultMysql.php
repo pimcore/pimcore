@@ -566,6 +566,10 @@ class DefaultMysql implements IProductList
         //variant handling and userspecific conditions
 
         if ($variantMode == IProductList::VARIANT_MODE_INCLUDE_PARENT_OBJECT) {
+
+            //make sure, that only variant objects are considered
+            $condition .= ' AND o_id != o_virtualProductId ';
+
             if (!$excludeConditions) {
                 $userspecific = $this->buildUserspecificConditions($excludedFieldname);
                 if ($userspecific) {
