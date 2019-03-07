@@ -252,10 +252,7 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
                         if (key.getKey() == key.ENTER) {
                             this.searchQuery(field);
                         }
-                    }.bind(this),
-                    afterrender: function () {
-                        this.focus(true,500);
-                    }
+                    }.bind(this)
                 }
             }
         );
