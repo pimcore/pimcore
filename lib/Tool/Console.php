@@ -364,7 +364,7 @@ class Console
         if (self::getSystemEnvironment() == 'windows') {
             return self::execInBackgroundWindows($cmd, $outputFile);
         } else if (self::getSystemEnvironment() == 'darwin') {
-            return self::execInBackgroundDarwin($cmd, $outputFile);
+            return self::execInBackgroundUnix($cmd, $outputFile, false);
         } else {
             return self::execInBackgroundUnix($cmd, $outputFile);
         }
@@ -375,10 +375,11 @@ class Console
      *
      * @param string $cmd
      * @param string $outputFile
+     * @param bool $useNohup
      *
      * @return int
      */
-    protected static function execInBackgroundUnix($cmd, $outputFile)
+    protected static function execInBackgroundUnix($cmd, $outputFile, $useNohup = true)
     {
         if (!$outputFile) {
             $outputFile = '/dev/null';
@@ -389,9 +390,13 @@ class Console
             $nice .= ' -n 19 ';
         }
 
-        $nohup = (string) self::getExecutable('nohup');
-        if ($nohup) {
-            $nohup .= ' ';
+        if ($useNohup) {
+            $nohup = (string) self::getExecutable('nohup');
+            if ($nohup) {
+                $nohup .= ' ';
+            }
+        } else {
+            $nohup = '';
         }
 
         /**
@@ -406,45 +411,6 @@ class Console
         }
 
         $commandWrapped = $nohup . $nice . $cmd . ' > '. $outputFile .' 2>&1 & echo $!';
-        Logger::debug('Executing command `' . $commandWrapped . '´ on the current shell in background');
-        $pid = shell_exec($commandWrapped);
-
-        Logger::debug('Process started with PID ' . $pid);
-
-        return $pid;
-    }
-
-    /**
-     * @static
-     *
-     * @param string $cmd
-     * @param string $outputFile
-     *
-     * @return int
-     */
-    protected static function execInBackgroundDarwin($cmd, $outputFile)
-    {
-        if (!$outputFile) {
-            $outputFile = '/dev/null';
-        }
-
-        $nice = (string) self::getExecutable('nice');
-        if ($nice) {
-            $nice .= ' -n 19 ';
-        }
-
-        /**
-         * mod_php seems to lose the environment variables if we do not set them manually before the child process is started
-         */
-        if (strpos(php_sapi_name(), 'apache') !== false) {
-            foreach (['PIMCORE_ENVIRONMENT', 'REDIRECT_PIMCORE_ENVIRONMENT'] as $envKey) {
-                if ($envValue = getenv($envKey)) {
-                    putenv($envKey . '='.$envValue);
-                }
-            }
-        }
-
-        $commandWrapped = $nice . $cmd . ' > '. $outputFile .' 2>&1 & echo $!';
         Logger::debug('Executing command `' . $commandWrapped . '´ on the current shell in background');
         $pid = shell_exec($commandWrapped);
 
