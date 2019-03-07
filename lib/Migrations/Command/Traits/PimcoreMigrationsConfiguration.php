@@ -20,7 +20,7 @@ namespace Pimcore\Migrations\Command\Traits;
 use Doctrine\DBAL\Migrations\Configuration\Connection\Loader\ConnectionHelperLoader;
 use Doctrine\DBAL\Migrations\OutputWriter;
 use Doctrine\DBAL\Migrations\Tools\Console\Command\AbstractCommand;
-use Pimcore\Db\Connection;
+use Pimcore\Db\ConnectionInterface;
 use Pimcore\Migrations\Configuration\Configuration;
 use Pimcore\Migrations\Configuration\ConfigurationFactory;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
@@ -34,7 +34,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 trait PimcoreMigrationsConfiguration
 {
     /**
-     * @var Connection
+     * @var ConnectionInterface
      */
     protected $connection;
 

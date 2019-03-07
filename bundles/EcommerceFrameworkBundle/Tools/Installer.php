@@ -17,7 +17,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\Tools;
 use Doctrine\DBAL\Migrations\AbortMigrationException;
 use Doctrine\DBAL\Migrations\Version;
 use Doctrine\DBAL\Schema\Schema;
-use Pimcore\Db\Connection;
+use Pimcore\Db\ConnectionInterface;
 use Pimcore\Extension\Bundle\Installer\MigrationInstaller;
 use Pimcore\Migrations\Migration\InstallMigration;
 use Pimcore\Migrations\MigrationManager;
@@ -139,7 +139,7 @@ class Installer extends MigrationInstaller
 
     public function __construct(
         BundleInterface $bundle,
-        Connection $connection,
+        ConnectionInterface $connection,
         MigrationManager $migrationManager
     ) {
         $this->installSourcesPath = __DIR__ . '/../Resources/install';

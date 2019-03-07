@@ -20,7 +20,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Interpreter\IRelationIn
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\IProductList;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IIndexable;
-use Pimcore\Db\Connection;
+use Pimcore\Db\ConnectionInterface;
 use Pimcore\Logger;
 
 /**
@@ -67,9 +67,9 @@ abstract class AbstractElasticSearch extends Worker\AbstractMockupCacheWorker im
 
     /**
      * @param ElasticSearch|IElasticSearchConfig $tenantConfig
-     * @param Connection $db
+     * @param ConnectionInterface $db
      */
-    public function __construct(IElasticSearchConfig $tenantConfig, Connection $db)
+    public function __construct(IElasticSearchConfig $tenantConfig, ConnectionInterface $db)
     {
         parent::__construct($tenantConfig, $db);
 
