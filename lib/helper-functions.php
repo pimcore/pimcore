@@ -455,14 +455,14 @@ function recursiveCopy($source, $destination)
             if ($item->isDir()) {
                 \Pimcore\File::mkdir($destination . DIRECTORY_SEPARATOR . $iterator->getSubPathName());
             } else {
-                copy($item, $destination . DIRECTORY_SEPARATOR . $iterator->getSubPathName());
+                copy($item, $destination . DIRECTORY_SEPARATOR . $iterator->getSubPathName(), \Pimcore\File::getContext());
             }
         }
     } elseif (is_file($source)) {
         if (is_dir(dirname($destination))) {
             \Pimcore\File::mkdir(dirname($destination));
         }
-        copy($source, $destination);
+        copy($source, $destination, \Pimcore\File::getContext());
     }
 
     return true;

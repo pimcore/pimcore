@@ -38,6 +38,11 @@ class Ffmpeg extends Adapter
     protected $arguments = [];
 
     /**
+     * @var array
+     */
+    private $tmpFiles = [];
+
+    /**
      * @return bool
      */
     public function isAvailable()
@@ -72,6 +77,16 @@ class Ffmpeg extends Adapter
      */
     public function load($file)
     {
+        if (!stream_is_local($file)) {
+            // Create local copy of remote file
+            $tmpFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/ffmpeg-tmp-' . uniqid() . '.' . File::getFileExtension($file);
+            recursiveCopy($file, $tmpFile);
+
+            $file = $tmpFile;
+
+            $this->tmpFiles[] = $tmpFile;
+        }
+
         $this->file = $file;
         $this->setProcessId(uniqid());
 
@@ -228,6 +243,10 @@ class Ffmpeg extends Adapter
         if (file_exists($this->getConversionLogFile())) {
             Logger::debug("FFMPEG finished, last message was: \n" . file_get_contents($this->getConversionLogFile()));
             $this->deleteConversionLogFile();
+        }
+
+        foreach ($this->tmpFiles as $tmpFile) {
+            @unlink($tmpFile);
         }
     }
 

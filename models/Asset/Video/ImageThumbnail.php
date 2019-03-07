@@ -176,10 +176,23 @@ class ImageThumbnail
                     Model\Tool\Lock::release($lockKey);
                 }
 
+                $converter->destroy();
+
                 if ($this->getConfig()) {
                     $this->getConfig()->setFilenameSuffix('time-' . $timeOffset);
 
                     try {
+                        // The path can be remote. In that case, the processor will create a local copy of the asset, which is the video itself.
+                        // That is not what is intended, as we are tying to generate a thumbnail based on the already existing video still that
+                        // the converter created earlier. To prevent the processor from doing that, we will create a local copy here if needed
+                        $tmpFile = null;
+                        if (!stream_is_local($path)) {
+                            $tmpFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/video-thumbnail-' . uniqid() . '.png';
+
+                            recursiveCopy($path, $tmpFile);
+                            $path = $tmpFile;
+                        }
+
                         $path = Image\Thumbnail\Processor::process(
                             $this->asset,
                             $this->getConfig(),
@@ -188,6 +201,10 @@ class ImageThumbnail
                             true,
                             $generated
                         );
+
+                        if ($tmpFile) {
+                            @unlink($tmpFile);
+                        }
                     } catch (\Exception $e) {
                         Logger::error("Couldn't create image-thumbnail of video " . $this->asset->getRealFullPath());
                         Logger::error($e);

@@ -193,7 +193,9 @@ class Video extends Model\Asset
             $converter = \Pimcore\Video::getInstance();
             $converter->load($filePath);
 
-            return $converter->getDuration();
+            $duration = $converter->getDuration();
+            $converter->destroy();
+            return $duration;
         }
 
         return null;
@@ -210,7 +212,9 @@ class Video extends Model\Asset
             $converter = \Pimcore\Video::getInstance();
             $converter->load($this->getFileSystemPath());
 
-            return $converter->getDimensions();
+            $dimensions = $converter->getDimensions();
+            $converter->destroy();
+            return $dimensions;
         }
 
         return null;
