@@ -18,10 +18,6 @@ use Pimcore\Db;
 use Pimcore\Db\Connection;
 use Pimcore\Model\DataObject\ClassDefinition;
 
-/**
- * Class ClassDefinitionManager
- * @package Pimcore\DataObject
- */
 class ClassDefinitionManager
 {
     public const SAVED = 'saved';
