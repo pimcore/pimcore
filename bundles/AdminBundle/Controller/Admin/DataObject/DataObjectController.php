@@ -2350,6 +2350,9 @@ class DataObjectController extends ElementControllerBase implements EventedContr
         // it is not allowed to have * behind another *
         $query = preg_replace('#[*]+#', '*', $query);
 
+        // no boolean operators at the end of the query
+        $query = rtrim($query, '+- ');
+
         return $query;
     }
 
