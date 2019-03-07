@@ -22,6 +22,7 @@ also [Elastic Search Docs](https://www.elastic.co/guide/en/elasticsearch/client/
 
 ##### `es_client_params`
 - `hosts`: Array of hosts of the Elastic Search cluster to use. 
+- `indexType`: Necessary for Elastic Search 6 - defines the type name of products in index. 
 
 #### Sample Config
 ```yml 
@@ -37,6 +38,7 @@ pimcore_ecommerce_framework:
                     es_client_params:
                         hosts:
                             - '%elasticsearch.host%'
+                        indexType: 'Product'
 
                     index_settings:
                         number_of_shards: 5
