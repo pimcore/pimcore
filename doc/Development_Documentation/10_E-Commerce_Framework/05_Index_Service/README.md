@@ -23,7 +23,7 @@ listing products.
 
 See the following topics for details: 
 - [Configuration of the *product index*](./01_Product_Index_Configuration/README.md)
-- [Assortment Tenant configuration](./03_Assortment_Tenant_Configuration.md)
-- [Data architecture and indexing process](./05_Data_Architecture_and_Indexing_Process.md)
+- [Assortment Tenant configuration](./01_Product_Index_Configuration/03_Assortment_Tenant_Configuration.md)
+- [Data architecture and indexing process](./01_Product_Index_Configuration/05_Data_Architecture_and_Indexing_Process.md)
 - [Working with Product Lists](07_Product_List.md)
 - [Mockup Objects in Product List Results](09_Mockup_Objects.md)
