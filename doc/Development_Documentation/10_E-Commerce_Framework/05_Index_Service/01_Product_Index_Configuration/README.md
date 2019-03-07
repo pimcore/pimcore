@@ -118,14 +118,14 @@ options are available:
    `Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Interpreter\Interpreter` interface. The same service ID best practices
    as for getters apply to interpreters.
 - `interpreter_options` (optional): options passed to the interpreter. Available options vary by interpreter implementation.
-- `hide_in_fieldlist_datatype` (optional): Hides column in FieldList drop down (see [FilterService](../07_Filter_Service/README.md) 
+- `hide_in_fieldlist_datatype` (optional): Hides column in FieldList drop down (see [FilterService](../../07_Filter_Service/README.md) 
    for more information).
-- `filter_group` (optional): Defines filter group for the FieldList drop down (see [FilterService](../07_Filter_Service/README.md) 
+- `filter_group` (optional): Defines filter group for the FieldList drop down (see [FilterService](../../07_Filter_Service/README.md) 
    for more information).
 
 #### Relations in *Product Index*
 Relations are stored in a special way in *Product Index* and also need to be filtered in a different way in the 
-[Product List](./07_Product_List.md).
+[Product List](../07_Product_List.md).
  
 In order to store relations correctly in the Product Index, relation attributes must have an interpreter defined which 
 implements the interface `Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Interpreter\IRelationInterpreter`. 
@@ -141,7 +141,7 @@ implements the interface `Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\I
    but can use more than one source definition and stores first found value in *Product Index*. 
 - `Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Getter\DefaultBrickGetterSequenceToMultiselect`: Like 
   `DefaultBrickGetterSequence`, but stores all found values as a multi select in the *Product Index*. 
-- `Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Getter\TagsGetter`: Gets [Tags](../../18_Tools_and_Features/09_Tags.md) 
+- `Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Getter\TagsGetter`: Gets [Tags](../../../18_Tools_and_Features/09_Tags.md) 
   of product object and returns them as array. 
 
 
