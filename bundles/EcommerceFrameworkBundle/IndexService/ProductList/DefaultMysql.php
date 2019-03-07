@@ -514,7 +514,7 @@ class DefaultMysql implements IProductList
             $excludedFieldName = null;
         }
         if ($this->conditionPriceFrom === null && $this->conditionPriceTo === null) {
-            return $this->resource->loadGroupByValues($fieldname, $this->buildQueryFromConditions(false, $excludedFieldName, IProductList::VARIANT_MODE_INCLUDE), $countValues);
+            return $this->resource->loadGroupByValues($fieldname, $this->buildQueryFromConditions(false, $excludedFieldName, $this->getVariantMode()), $countValues);
         } else {
             throw new \Exception('Not supported yet');
         }
