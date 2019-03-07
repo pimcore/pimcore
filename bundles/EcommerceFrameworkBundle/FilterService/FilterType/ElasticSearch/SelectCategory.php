@@ -20,6 +20,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractFilterDefinitionType;
 
 class SelectCategory extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\SelectCategory
 {
+
     public function prepareGroupByValues(AbstractFilterDefinitionType $filterDefinition, IProductList $productList)
     {
         $productList->prepareGroupBySystemValues($filterDefinition->getField(), true);
@@ -46,6 +47,7 @@ class SelectCategory extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterServ
             'label' => $filterDefinition->getLabel(),
             'currentValue' => $currentFilter[$filterDefinition->getField()],
             'values' => array_values($values),
+            'document' => $this->request->get('contentDocument'),
             'fieldname' => $filterDefinition->getField(),
             'resultCount' => $productList->count()
         ]);

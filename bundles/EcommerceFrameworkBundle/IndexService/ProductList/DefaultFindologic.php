@@ -15,6 +15,7 @@
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList;
 
 use Monolog\Logger;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\InvalidConfigException;
 use Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\Findologic\SelectCategory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\IConfig;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractCategory;
@@ -380,8 +381,9 @@ class DefaultFindologic implements IProductList
                     $id = $item['id'];
                     break;
 
+                case self::VARIANT_MODE_VARIANTS_ONLY:
                 case self::VARIANT_MODE_INCLUDE_PARENT_OBJECT:
-                    // NOT POSSIBLE
+                    throw new InvalidConfigException("Variant Mode " . $this->getVariantMode() . " not supported.");
                     break;
             }
 

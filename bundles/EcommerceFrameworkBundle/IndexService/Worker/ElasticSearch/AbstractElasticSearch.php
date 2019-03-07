@@ -344,7 +344,8 @@ abstract class AbstractElasticSearch extends Worker\AbstractMockupCacheWorker im
         $esClient = $this->getElasticSearchClient();
 
         $variants = $esClient->search([
-            'index' => $this->getIndexNameVersion(), 'type' => IProductList::PRODUCT_TYPE_VARIANT,
+            'index' => $this->getIndexNameVersion(),
+            'type' => IProductList::PRODUCT_TYPE_VARIANT,
             'body' => [
                 '_source' => false,
                 'query' => [

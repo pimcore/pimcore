@@ -125,6 +125,16 @@ class ElasticSearch extends AbstractConfig implements IMockupConfig, IElasticSea
     }
 
     /**
+     * returns short field name based on full field name
+     *
+     * @param $fullFieldName
+     * @return false|int|string
+     */
+    public function getReverseMappedFieldName($fullFieldName) {
+        return array_search($fullFieldName, $this->fieldMapping);
+    }
+
+    /**
      * @param string $property
      *
      * @return array|string

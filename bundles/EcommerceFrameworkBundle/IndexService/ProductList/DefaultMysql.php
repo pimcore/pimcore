@@ -514,7 +514,7 @@ class DefaultMysql implements IProductList
             $excludedFieldName = null;
         }
         if ($this->conditionPriceFrom === null && $this->conditionPriceTo === null) {
-            return $this->resource->loadGroupByValues($fieldname, $this->buildQueryFromConditions(false, $excludedFieldName, IProductList::VARIANT_MODE_INCLUDE), $countValues);
+            return $this->resource->loadGroupByValues($fieldname, $this->buildQueryFromConditions(false, $excludedFieldName, $this->getVariantMode()), $countValues);
         } else {
             throw new \Exception('Not supported yet');
         }
@@ -547,6 +547,7 @@ class DefaultMysql implements IProductList
         if ($variantMode == null) {
             $variantMode = $this->getVariantMode();
         }
+
         $preCondition = 'active = 1 AND o_virtualProductActive = 1';
         if ($this->inProductList) {
             $preCondition .= ' AND inProductList = 1';
@@ -565,23 +566,28 @@ class DefaultMysql implements IProductList
 
         //variant handling and userspecific conditions
 
-        if ($variantMode == IProductList::VARIANT_MODE_INCLUDE_PARENT_OBJECT) {
-            if (!$excludeConditions) {
-                $userspecific = $this->buildUserspecificConditions($excludedFieldname);
-                if ($userspecific) {
-                    $condition .= ' AND ' . $userspecific;
-                }
-            }
-        } else {
-            if ($variantMode == IProductList::VARIANT_MODE_HIDE) {
-                $condition .= " AND o_type != 'variant'";
-            }
+        switch ($variantMode) {
+            case IProductList::VARIANT_MODE_INCLUDE_PARENT_OBJECT:
 
-            if (!$excludeConditions) {
-                $userspecific = $this->buildUserspecificConditions($excludedFieldname);
-                if ($userspecific) {
-                    $condition .= ' AND ' . $userspecific;
-                }
+                //make sure, that only variant objects are considered
+                $condition .= ' AND o_id != o_virtualProductId ';
+                break;
+
+            case IProductList::VARIANT_MODE_HIDE:
+
+                $condition .= " AND o_type != 'variant'";
+                break;
+
+            case IProductList::VARIANT_MODE_VARIANTS_ONLY:
+
+                $condition .= " AND o_type = 'variant'";
+                break;
+        }
+
+        if (!$excludeConditions) {
+            $userspecific = $this->buildUserspecificConditions($excludedFieldname);
+            if ($userspecific) {
+                $condition .= ' AND ' . $userspecific;
             }
         }
 
