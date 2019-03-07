@@ -10,7 +10,7 @@ use Doctrine\DBAL\DriverManager;
 use Pimcore\Bundle\InstallBundle\Installer;
 use Pimcore\Cache;
 use Pimcore\Config;
-use Pimcore\DataObject\ClassesManager;
+use Pimcore\DataObject\ClassDefinitionManager;
 use Pimcore\Event\TestEvents;
 use Pimcore\Kernel;
 use Pimcore\Model\DataObject;
@@ -169,7 +169,7 @@ class Pimcore extends Module\Symfony
             $connected = $this->initializeDb($connection);
             if ($this->config['setup_objects']) {
                 $this->debug('[DB] Initializing objects');
-                $this->kernel->getContainer()->get(ClassesManager::class)->updateClasses();
+                $this->kernel->getContainer()->get(ClassDefinitionManager::class)->createOrUpdateClassDefinitions();
             }
         } else {
             // just try to connect without initializing the DB

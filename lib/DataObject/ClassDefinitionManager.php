@@ -19,10 +19,10 @@ use Pimcore\Db\Connection;
 use Pimcore\Model\DataObject\ClassDefinition;
 
 /**
- * Class ClassesManager
+ * Class ClassDefinitionManager
  * @package Pimcore\DataObject
  */
-class ClassesManager
+class ClassDefinitionManager
 {
     public const SAVED = 'saved';
     public const CREATED = 'created';
@@ -45,7 +45,7 @@ class ClassesManager
     /**
      * Delete all classes from db
      */
-    public function deleteClasses(): array
+    public function cleanUpDeletedClassDefinitions(): array
     {
         $classes = $this->db->fetchAll('SELECT * FROM classes');
         $deleted = [];
@@ -72,7 +72,7 @@ class ClassesManager
     /**
      * Updates all classes from PIMCORE_CLASS_DIRECTORY
      */
-    public function updateClasses(): array
+    public function createOrUpdateClassDefinitions(): array
     {
         $objectClassesFolder = PIMCORE_CLASS_DIRECTORY;
         $files = glob($objectClassesFolder.'/*.php');

@@ -15,7 +15,7 @@
 namespace Pimcore\Bundle\CoreBundle\Command;
 
 use Pimcore\Console\AbstractCommand;
-use Pimcore\DataObject\ClassesManager;
+use Pimcore\DataObject\ClassDefinitionManager;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition;
 use Symfony\Component\Console\Input\InputInterface;
@@ -25,9 +25,9 @@ use Symfony\Component\Console\Output\OutputInterface;
 class ClassesRebuildCommand extends AbstractCommand
 {
     /**
-     * @var ClassesManager
+     * @var ClassDefinitionManager
      */
-    protected $classesManager;
+    protected $classDefinitionManager;
 
     protected function configure()
     {
@@ -50,11 +50,11 @@ class ClassesRebuildCommand extends AbstractCommand
     }
 
     /**
-     * @param ClassesManager $classesManager
+     * @param ClassDefinitionManager $classDefinitionManager
      * @required
      */
-    public function setClassesManager (ClassesManager $classesManager) {
-        $this->classesManager = $classesManager;
+    public function setClassDefinitionManager (ClassDefinitionManager $classDefinitionManager) {
+        $this->classDefinitionManager = $classDefinitionManager;
     }
 
     /**
@@ -78,7 +78,7 @@ class ClassesRebuildCommand extends AbstractCommand
                     $output->writeln('Delete Classes that don\'t have class-definitions anymore.');
                 }
 
-                foreach ($this->classesManager->deleteClasses() as $deleted) {
+                foreach ($this->classDefinitionManager->cleanUpDeletedClassDefinitions() as $deleted) {
                     if ($output->isVerbose()) {
                         [$class, $id, $action] = $deleted;
                         $output->writeln(sprintf('%s [%s] %s', $class, $id, $action));
@@ -97,7 +97,7 @@ class ClassesRebuildCommand extends AbstractCommand
         }
 
         if ($input->getOption('create-classes')) {
-            foreach($this->classesManager->updateClasses() as $changes) {
+            foreach($this->classDefinitionManager->createOrUpdateClassDefinitions() as $changes) {
                 if ($output->isVerbose()) {
                     [$class, $id, $action] = $changes;
                     $output->writeln(sprintf('%s [%s] %s', $class, $id, $action));
