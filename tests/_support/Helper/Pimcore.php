@@ -10,7 +10,7 @@ use Doctrine\DBAL\DriverManager;
 use Pimcore\Bundle\InstallBundle\Installer;
 use Pimcore\Cache;
 use Pimcore\Config;
-use Pimcore\DataObject\ClassDefinitionManager;
+use Pimcore\Model\DataObject\ClassDefinition\ClassDefinitionManager;
 use Pimcore\Event\TestEvents;
 use Pimcore\Kernel;
 use Pimcore\Model\DataObject;

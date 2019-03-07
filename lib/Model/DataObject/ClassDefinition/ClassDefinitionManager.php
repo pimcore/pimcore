@@ -12,7 +12,7 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\DataObject;
+namespace Pimcore\Model\DataObject\ClassDefinition;
 
 use Pimcore\Db;
 use Pimcore\Db\Connection;
