@@ -850,16 +850,19 @@ pimcore.report.custom.item = Class.create({
     },
 
     getValues: function () {
+        var key;
         var allValues = this.generalDefinitionForm.getForm().getFieldValues();
 
         var chartValues = this.chartDefinitionForm.getForm().getFieldValues();
-        for (var key in chartValues) {
+        for (key in chartValues) {
             allValues[key] = chartValues[key];
         }
 
-        var permissionValues = this.permissionsForm.getForm().getFieldValues();
-        for (var key in permissionValues) {
-            allValues[key] = permissionValues[key];
+        if(this.permissionsForm) {
+            var permissionValues = this.permissionsForm.getForm().getFieldValues();
+            for (key in permissionValues) {
+                allValues[key] = permissionValues[key];
+            }
         }
 
         var columnData = [];
