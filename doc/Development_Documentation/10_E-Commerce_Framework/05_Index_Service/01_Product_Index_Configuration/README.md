@@ -118,9 +118,9 @@ options are available:
    `Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Interpreter\Interpreter` interface. The same service ID best practices
    as for getters apply to interpreters.
 - `interpreter_options` (optional): options passed to the interpreter. Available options vary by interpreter implementation.
-- `hide_in_fieldlist_datatype` (optional): Hides column in FieldList drop down (see [FilterService](../07_Filter_Service.md) 
+- `hide_in_fieldlist_datatype` (optional): Hides column in FieldList drop down (see [FilterService](../07_Filter_Service/README.md) 
    for more information).
-- `filter_group` (optional): Defines filter group for the FieldList drop down (see [FilterService](../07_Filter_Service.md) 
+- `filter_group` (optional): Defines filter group for the FieldList drop down (see [FilterService](../07_Filter_Service/README.md) 
    for more information).
 
 #### Relations in *Product Index*

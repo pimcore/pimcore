@@ -9,7 +9,7 @@ As *multi shop* we understand multiple shops in one shop offering different prod
 processes (which is not part of this article), etc.
 
 These requirements are fully met by the e-commerce framework but have effects on how to setup the product index.
- For a general description of how to setup the product index see our [docs](../10_E-Commerce_Framework/05_Index_Service/01_Product_Index_Configuration.md). 
+ For a general description of how to setup the product index see our [docs](../10_E-Commerce_Framework/05_Index_Service/01_Product_Index_Configuration/README.md). 
 
 
 #### Multi Language 
