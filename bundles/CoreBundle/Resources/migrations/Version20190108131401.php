@@ -24,7 +24,7 @@ class Version20190108131401 extends AbstractPimcoreMigration
         $this->addSql("INSERT IGNORE INTO users_permission_definitions VALUES('reports_config');");
 
 
-        $this->writeMessage('Updating users and adding new permission "reports-config" if necessary ...');
+        $this->writeMessage('Updating users and adding new permission "reports_config" if necessary ...');
 
         $users = new User\Listing();
         $users = $users->load();
@@ -32,19 +32,19 @@ class Version20190108131401 extends AbstractPimcoreMigration
         foreach($users as $user) {
             if($user->isAllowed('reports')) {
                 $this->writeMessage('Updating user ' . $user->getName());
-                $user->setPermission('reports-config', true);
+                $user->setPermission('reports_config', true);
                 $user->save();
             }
         }
 
-        $this->writeMessage('Updating roles and adding new permission "reports-config" if necessary ...');
+        $this->writeMessage('Updating roles and adding new permission "reports_config" if necessary ...');
 
         $roles = new User\Role\Listing();
         $roles = $roles->load();
         foreach($roles as $role) {
             if($role->getPermission('reports')) {
                 $this->writeMessage('Updating user ' . $role->getName());
-                $role->setPermission('reports-config', true);
+                $role->setPermission('reports_config', true);
                 $role->save();
             }
         }
@@ -76,27 +76,27 @@ class Version20190108131401 extends AbstractPimcoreMigration
         $this->addSql("DELETE FROM users_permission_definitions WHERE `key` = 'reports_config';");
 
 
-        $this->writeMessage('Updating users and removing new permission "reports-config" if necessary ...');
+        $this->writeMessage('Updating users and removing new permission "reports_config" if necessary ...');
 
         $users = new User\Listing();
         $users = $users->load();
 
         foreach($users as $user) {
-            if($user->isAllowed('reports-config')) {
+            if($user->isAllowed('reports_config')) {
                 $this->writeMessage('Updating user ' . $user->getName());
-                $user->setPermission('reports-config', false);
+                $user->setPermission('reports_config', false);
                 $user->save();
             }
         }
 
-        $this->writeMessage('Updating roles and removing new permission "reports-config" if necessary ...');
+        $this->writeMessage('Updating roles and removing new permission "reports_config" if necessary ...');
 
         $roles = new User\Role\Listing();
         $roles = $roles->load();
         foreach($roles as $role) {
-            if($role->getPermission('reports-config')) {
+            if($role->getPermission('reports_config')) {
                 $this->writeMessage('Updating user ' . $role->getName());
-                $role->setPermission('reports-config', false);
+                $role->setPermission('reports_config', false);
                 $role->save();
             }
         }
