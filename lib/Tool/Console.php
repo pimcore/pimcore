@@ -448,7 +448,7 @@ class Console
         Logger::debug('Executing command `' . $commandWrapped . '´ on the current shell in background');
         $pid = shell_exec($commandWrapped);
 
-        Logger::debug('Process started DARWIN with PID ' . $pid);
+        Logger::debug('Process started with PID ' . $pid);
 
         return $pid;
     }
