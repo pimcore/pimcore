@@ -14,11 +14,28 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\ElasticSearch;
 
+use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\IProductList;
+
 /**
  * Implementation of product list which works based on the product index of the online shop framework
  */
 class DefaultElasticSearch5 extends AbstractElasticSearch
 {
+
+    protected function getQueryType()
+    {
+        switch ($this->getVariantMode()) {
+            case (IProductList::VARIANT_MODE_INCLUDE_PARENT_OBJECT):
+                return self::PRODUCT_TYPE_OBJECT;
+            case (IProductList::VARIANT_MODE_HIDE):
+                return self::PRODUCT_TYPE_OBJECT;
+            case (IProductList::VARIANT_MODE_VARIANTS_ONLY):
+                return self::PRODUCT_TYPE_VARIANT;
+            case (IProductList::VARIANT_MODE_INCLUDE):
+                return self::PRODUCT_TYPE_OBJECT . ','. self::PRODUCT_TYPE_VARIANT;
+        }
+    }
+
     /**
      * loads all prepared group by values
      *   1 - get general filter (= filter of fields don't need to be considered in group by values or where fieldnameShouldBeExcluded set to false)
@@ -32,7 +49,7 @@ class DefaultElasticSearch5 extends AbstractElasticSearch
         $toExcludeFieldnames = [];
         foreach ($this->preparedGroupByValues as $fieldname => $config) {
             if ($config['fieldnameShouldBeExcluded']) {
-                $toExcludeFieldnames[$fieldname] = $fieldname;
+                $toExcludeFieldnames[$this->getTenantConfig()->getReverseMappedFieldName($fieldname)] = $fieldname;
             }
         }
 
@@ -68,13 +85,13 @@ class DefaultElasticSearch5 extends AbstractElasticSearch
 
         foreach ($this->preparedGroupByValues as $fieldname => $config) {
 
-            //toexclude sind alle, die schon gefiltert wurden + fieldname
+            $shortFieldname = $this->getTenantConfig()->getReverseMappedFieldName($fieldname);
 
             $specificFilters = [];
             //user specific filters
-            $specificFilters = $this->buildFilterConditions($specificFilters, array_merge($filteredFieldnames, [$fieldname => $fieldname]));
+            $specificFilters = $this->buildFilterConditions($specificFilters, array_merge($filteredFieldnames, [$shortFieldname => $shortFieldname]));
             //relation conditions
-            $specificFilters = $this->buildRelationConditions($specificFilters, array_merge($filteredFieldnames, [$fieldname => $fieldname]));
+            $specificFilters = $this->buildRelationConditions($specificFilters, array_merge($filteredFieldnames, [$shortFieldname => $shortFieldname]));
 
             if ($specificFilters) {
                 $aggregations[$fieldname] = [
@@ -89,24 +106,46 @@ class DefaultElasticSearch5 extends AbstractElasticSearch
                         ]
                     ]
                 ];
+
+                //necessary to calculate correct counts of search results for filter values
+                if($this->getVariantMode() == IProductList::VARIANT_MODE_INCLUDE_PARENT_OBJECT) {
+                    $aggregations[$fieldname]['aggs'][$fieldname]['aggs'] = [
+                        'objectCount' => ['cardinality' => ['field' => 'system.o_virtualProductId']]
+                    ];
+                }
+
             } else {
                 $aggregations[$fieldname] = [
                     'terms' => ['field' => $fieldname, 'size' => self::INTEGER_MAX_VALUE, 'order' => ['_term' => 'asc' ]]
                 ];
+
+                //necessary to calculate correct counts of search results for filter values
+                if($this->getVariantMode() == IProductList::VARIANT_MODE_INCLUDE_PARENT_OBJECT) {
+                    $aggregations[$fieldname]['aggs'] = [
+                        'objectCount' => ['cardinality' => ['field' => 'system.o_virtualProductId']]
+                    ];
+                }
             }
         }
 
         if ($aggregations) {
             $params = [];
             $params['index'] = $this->getIndexName();
-            $params['type'] = $this->getQueryType();
             $params['body']['_source'] = false;
-            $params['body']['size'] = 0;    // equals former "search_type=count"
+            $params['body']['size'] = 0;
             $params['body']['from'] = $this->getOffset();
             $params['body']['aggs'] = $aggregations;
 
+            $variantModeForAggregations = $this->getVariantMode();
+            if($this->getVariantMode() == IProductList::VARIANT_MODE_INCLUDE_PARENT_OBJECT) {
+                $params['type'] = IProductList::PRODUCT_TYPE_VARIANT;
+                $variantModeForAggregations = IProductList::VARIANT_MODE_VARIANTS_ONLY;
+            } else {
+                $params['type'] = $this->getQueryType();
+            }
+
             // build query for request
-            $params = $this->buildQuery($params, $boolFilters, $queryFilters);
+            $params = $this->buildQuery($params, $boolFilters, $queryFilters, $variantModeForAggregations);
 
             // send request
             $result = $this->sendRequest($params);
@@ -122,7 +161,13 @@ class DefaultElasticSearch5 extends AbstractElasticSearch
                     $groupByValueResult = [];
                     if ($buckets) {
                         foreach ($buckets as $bucket) {
-                            $groupByValueResult[] = ['value' => $bucket['key'], 'count' => $bucket['doc_count']];
+
+                            if($this->getVariantMode() == self::VARIANT_MODE_INCLUDE_PARENT_OBJECT) {
+                                $groupByValueResult[] = ['value' => $bucket['key'], 'count' => $bucket['objectCount']['value']];
+                            } else {
+                                $groupByValueResult[] = ['value' => $bucket['key'], 'count' => $bucket['doc_count']];
+                            }
+
                         }
                     }
 
@@ -136,18 +181,23 @@ class DefaultElasticSearch5 extends AbstractElasticSearch
         $this->preparedGroupByValuesLoaded = true;
     }
 
+
     /**
      * build the complete query
      *
      * @param array $params
      * @param array $boolFilters
      * @param array $queryFilters
-     *
+     * @param string|null $variantMode
      * @return array
      */
-    protected function buildQuery(array $params, array $boolFilters, array $queryFilters)
+    protected function buildQuery(array $params, array $boolFilters, array $queryFilters, string $variantMode = null)
     {
-        if ($this->getVariantMode() == IProductList::VARIANT_MODE_INCLUDE_PARENT_OBJECT) {
+        if(!$variantMode) {
+            $variantMode = $this->getVariantMode();
+        }
+
+        if ($variantMode == IProductList::VARIANT_MODE_INCLUDE_PARENT_OBJECT) {
             $params['body']['query']['bool']['must']['has_child']['type'] = self::PRODUCT_TYPE_VARIANT;
             $params['body']['query']['bool']['must']['has_child']['score_mode'] = 'avg';
             $params['body']['query']['bool']['must']['has_child']['query']['bool']['must'] = $queryFilters;
