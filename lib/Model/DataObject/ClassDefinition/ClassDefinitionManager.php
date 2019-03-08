@@ -15,7 +15,7 @@
 namespace Pimcore\Model\DataObject\ClassDefinition;
 
 use Pimcore\Db;
-use Pimcore\Db\Connection;
+use Pimcore\Db\ConnectionInterface;
 use Pimcore\Model\DataObject\ClassDefinition;
 
 class ClassDefinitionManager
@@ -30,9 +30,9 @@ class ClassDefinitionManager
     private $db;
 
     /**
-     * @param Connection $db
+     * @param ConnectionInterface $db
      */
-    public function __construct(Connection $db)
+    public function __construct(ConnectionInterface $db)
     {
         $this->db = $db;
     }

@@ -19,8 +19,6 @@ use Doctrine\DBAL\Driver\Connection;
 
 interface ConnectionInterface extends Connection
 {
-    public function connect();
-
     public function executeQuery($query, array $params = [], $types = [], QueryCacheProfile $qcp = null);
 
     public function executeUpdate($query, array $params = [], array $types = []);
