@@ -803,6 +803,17 @@ pimcore.object.classes.klass = Class.create({
                     checked: this.data.showAppLoggerTab
                 },
                 {
+                    xtype: "checkbox",
+                    fieldLabel: t("encrypt_data"),
+                    name: "encryption",
+                    style: 'margin: 0',
+                    checked: this.data.encryption
+                }, {
+                    xtype: 'container',
+                    html: t('encrypt_data_description'),
+                    style: 'margin-bottom:10px'
+                },
+                {
                     xtype: "displayfield",
                     hideLabel: true,
                     width: 600,

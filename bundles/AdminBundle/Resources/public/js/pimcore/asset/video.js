@@ -37,6 +37,7 @@ pimcore.asset.video = Class.create(pimcore.asset.asset, {
         this.tagAssignment = new pimcore.element.tag.assignment(this, "asset");
         this.metadata = new pimcore.asset.metadata(this);
         this.workflows = new pimcore.element.workflows(this, "asset");
+        this.embeddedMetaData = new pimcore.asset.embedded_meta_data(this);
 
         this.getData();
     },
@@ -46,6 +47,11 @@ pimcore.asset.video = Class.create(pimcore.asset.asset, {
         var user = pimcore.globalmanager.get("user");
 
         items.push(this.getEditPanel());
+
+        var embeddedMetaDataPanel = this.embeddedMetaData.getPanel();
+        if(embeddedMetaDataPanel) {
+            items.push(embeddedMetaDataPanel);
+        }
 
         if (this.isAllowed("publish")) {
             items.push(this.metadata.getLayout());
@@ -111,6 +117,31 @@ pimcore.asset.video = Class.create(pimcore.asset.asset, {
 
             var date = new Date();
 
+            var detailsData = [];
+            if(this.data.customSettings['videoWidth']) {
+                detailsData[t("width")] = this.data.customSettings.videoWidth;
+            }
+            if(this.data.customSettings['videoHeight']) {
+                detailsData[t("height")] = this.data.customSettings.videoHeight;
+            }
+            if(this.data.customSettings['duration']) {
+                detailsData[t("duration")] = this.data.customSettings.duration;
+            }
+
+            var dimensionPanel = new Ext.create('Ext.grid.property.Grid', {
+                title: t("details"),
+                source: detailsData,
+                autoHeight: true,
+
+                clicksToEdit: 1000,
+                viewConfig: {
+                    forceFit: true,
+                    scrollOffset: 2
+                }
+            });
+            dimensionPanel.plugins[0].disable();
+            dimensionPanel.getStore().sort("name", "DESC");
+
             this.previewImagePanel = new Ext.Panel({
                 width: 300,
                 region: "east",
@@ -142,7 +173,7 @@ pimcore.asset.video = Class.create(pimcore.asset.asset, {
                             this.initPreviewVr();
                         }.bind(this)
                     }]
-                }, {
+                }, dimensionPanel, {
                     xtype: "panel",
                     title: t("select_image_preview"),
                     height: 400,

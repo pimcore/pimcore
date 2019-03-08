@@ -705,6 +705,8 @@ QUERY;
             );
         }
 
+        $this->handleEncryption($this->model->getClass(), [$table]);
+
         $existingColumns = $this->getValidTableColumns($table, false); // no caching of table definition
         $columnsToRemove = $existingColumns;
 
@@ -763,6 +765,8 @@ QUERY;
                       INDEX `language` (`language`)
                     ) DEFAULT CHARSET=utf8mb4;"
                 );
+
+                $this->handleEncryption($this->model->getClass(), [$queryTable]);
 
                 // create object table if not exists
                 $protectedColumns = ['ooo_id', 'language'];

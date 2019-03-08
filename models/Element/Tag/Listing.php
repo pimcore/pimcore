@@ -20,8 +20,10 @@ namespace Pimcore\Model\Element\Tag;
 use Pimcore\Model;
 
 /**
- * @method \Pimcore\Model\Element\Tag\Listing\Dao getDao()
+ * @method Model\Element\Tag\Listing\Dao getDao()
  * @method Model\Element\Tag[] load()
+ * @method int[] loadIdList()
+ * @method int getTotalCount()
  */
 class Listing extends Model\Listing\AbstractListing
 {

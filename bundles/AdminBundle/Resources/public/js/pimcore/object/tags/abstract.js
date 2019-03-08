@@ -86,7 +86,8 @@ pimcore.object.tags.abstract = Class.create({
             } catch (e) {
                 console.log(e);
             }
-            return value;
+
+            return Ext.util.Format.htmlEncode(value);
 
         }.bind(this, field.key);
 

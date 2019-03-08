@@ -91,7 +91,6 @@ class TaxCalculationService
 
             default:
                 throw new UnsupportedException('Combination Mode [' . $price->getTaxEntryCombinationMode() . '] cannot be recalculated.');
-                break;
         }
 
         $price->setGrossAmount($grossAmount);
@@ -156,7 +155,6 @@ class TaxCalculationService
 
             default:
                 throw new UnsupportedException('Combination Mode [' . $price->getTaxEntryCombinationMode() . '] cannot be recalculated.');
-                break;
 
         }
 

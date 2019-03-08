@@ -511,6 +511,7 @@ class Asset extends Element\AbstractElement
                             $error = error_get_last();
                             throw new \Exception('Unable to rename asset ' . $this->getId() . ' on the filesystem: ' . $oldFullPath . ' - Reason: ' . $error['message']);
                         }
+                        $differentOldPath = $oldPath;
                         $this->getDao()->updateWorkspaces();
                         $updatedChildren = $this->getDao()->updateChildsPaths($oldPath);
                     }
@@ -567,7 +568,11 @@ class Asset extends Element\AbstractElement
         $this->setDataChanged(false);
 
         if ($isUpdate) {
-            \Pimcore::getEventDispatcher()->dispatch(AssetEvents::POST_UPDATE, new AssetEvent($this));
+            $updateEvent = new AssetEvent($this);
+            if ($differentOldPath) {
+                $updateEvent->setArgument('oldPath', $differentOldPath);
+            }
+            \Pimcore::getEventDispatcher()->dispatch(AssetEvents::POST_UPDATE, $updateEvent);
         } else {
             \Pimcore::getEventDispatcher()->dispatch(AssetEvents::POST_ADD, new AssetEvent($this));
         }
@@ -766,7 +771,7 @@ class Asset extends Element\AbstractElement
             // this is important because at the time of creating an asset it's not clear which type (resp. class) it will have
             // the type (image, document, ...) depends on the mime-type
             \Pimcore\Cache\Runtime::set('asset_' . $this->getId(), null);
-            $asset = self::getById($this->getId());
+            $asset = Asset::getById($this->getId());
             \Pimcore\Cache\Runtime::set('asset_' . $this->getId(), $asset);
         }
 
@@ -1735,7 +1740,7 @@ class Asset extends Element\AbstractElement
     public function getParent()
     {
         if ($this->parent === null) {
-            $this->setParent(self::getById($this->getParentId()));
+            $this->setParent(Asset::getById($this->getParentId()));
         }
 
         return $this->parent;

@@ -47,7 +47,7 @@ class PrintpageControllerBase extends DocumentControllerBase
         }
         \Pimcore\Model\Element\Editlock::lock($request->get('id'), 'document');
 
-        $page = Document\Printpage::getById($request->get('id'));
+        $page = Document\PrintAbstract::getById($request->get('id'));
         $page = $this->getLatestVersion($page);
 
         $page->getVersions();
@@ -104,7 +104,7 @@ class PrintpageControllerBase extends DocumentControllerBase
     public function saveAction(Request $request)
     {
         if ($request->get('id')) {
-            $page = Document\Printpage::getById($request->get('id'));
+            $page = Document\PrintAbstract::getById($request->get('id'));
 
             $page = $this->getLatestVersion($page);
             $page->setUserModification($this->getAdminUser()->getId());
@@ -190,7 +190,7 @@ class PrintpageControllerBase extends DocumentControllerBase
         /**
          * @var $document Document\Printpage
          */
-        $document = Document\Printpage::getById(intval($request->get('id')));
+        $document = Document\PrintAbstract::getById(intval($request->get('id')));
         if (empty($document)) {
             throw new \Exception('Document with id ' . $request->get('id') . ' not found.');
         }
@@ -227,7 +227,7 @@ class PrintpageControllerBase extends DocumentControllerBase
      */
     public function pdfDownloadAction(Request $request)
     {
-        $document = Document\Printpage::getById(intval($request->get('id')));
+        $document = Document\PrintAbstract::getById(intval($request->get('id')));
         if (empty($document)) {
             throw new \Exception('Document with id ' . $request->get('id') . ' not found.');
         }
@@ -256,7 +256,7 @@ class PrintpageControllerBase extends DocumentControllerBase
      */
     public function startPdfGenerationAction(Request $request)
     {
-        $document = Document\Printpage::getById(intval($request->get('id')));
+        $document = Document\PrintAbstract::getById(intval($request->get('id')));
         if (empty($document)) {
             throw new \Exception('Document with id ' . $request->get('id') . ' not found.');
         }

@@ -1,6 +1,6 @@
 # System Settings
 
-In system settings (*Settings* > *System Settings*) system wide settings fpr Pimcore can be made. Changes should 
+In system settings (*Settings* > *System Settings*) system wide settings for Pimcore can be made. Changes should 
 be made with care and only by developers. 
 These settings are saved in `var/config/system.php`. 
 
