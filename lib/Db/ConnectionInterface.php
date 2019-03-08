@@ -60,7 +60,7 @@ interface ConnectionInterface extends Connection
 
     public function supportsParameters();
 
-    public function limit($sql, int $count, int $offset = 0);
+    public function limit($sql, $count, $offset = 0);
 
     public function queryIgnoreError($sql, $exclusions = []);
 
