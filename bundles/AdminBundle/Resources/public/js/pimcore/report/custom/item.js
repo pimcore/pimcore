@@ -70,7 +70,8 @@ pimcore.report.custom.item = Class.create({
                 ["", t("none")],
                 ["openDocument", t("open_document_by_id")],
                 ["openAsset", t("open_asset_by_id")],
-                ["openObject", t("open_object_by_id")]
+                ["openObject", t("open_object_by_id")],
+                ["openUrl", t("open_url")]
             ]
         });
 
