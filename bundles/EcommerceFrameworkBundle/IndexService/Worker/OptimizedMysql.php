@@ -16,7 +16,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\OptimizedMysql as OptimizedMysqlConfig;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IIndexable;
-use Pimcore\Db\Connection;
+use Pimcore\Db\ConnectionInterface;
 use Pimcore\Logger;
 
 /**
@@ -34,7 +34,7 @@ class OptimizedMysql extends AbstractMockupCacheWorker implements IBatchProcessi
      */
     protected $mySqlHelper;
 
-    public function __construct(OptimizedMysqlConfig $tenantConfig, Connection $db)
+    public function __construct(OptimizedMysqlConfig $tenantConfig, ConnectionInterface $db)
     {
         parent::__construct($tenantConfig, $db);
 
