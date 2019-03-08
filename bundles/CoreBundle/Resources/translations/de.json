@@ -73,6 +73,7 @@
     "open_document_by_id": "Dokument mit ID öffnen",
     "open_asset_by_id": "Öffne Asset via ID",
     "open_object_by_id": "Objekt mit ID öffnen",
+    "open_url": "URL öffnen",
     "element_not_found": "Element nicht gefunden",
     "import_from_url": "Von URL importieren",
     "do_you_really_want_to_leave_the_editmode": "Wollen sie den Editmodus wirklich verlassen (NEIN!)",
