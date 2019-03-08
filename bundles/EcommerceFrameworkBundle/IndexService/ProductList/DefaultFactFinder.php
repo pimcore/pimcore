@@ -488,7 +488,7 @@ class DefaultFactFinder implements IProductList
                     break;
 
                 case self::VARIANT_MODE_VARIANTS_ONLY:
-                    throw new InvalidConfigException("Variant Mode " . $this->getVariantMode() . " not supported.");
+                    throw new InvalidConfigException('Variant Mode ' . $this->getVariantMode() . ' not supported.');
                     break;
             }
 

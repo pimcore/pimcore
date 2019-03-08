@@ -14,14 +14,11 @@
 
 namespace Pimcore\Bundle\AdminBundle\Controller\Reports;
 
-use Pimcore\Controller\EventedControllerInterface;
 use Pimcore\Model\Tool\CustomReport;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
-use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
-use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
@@ -40,6 +37,7 @@ class CustomReportController extends ReportsControllerBase
     {
         $this->checkPermission('reports_config');
         $reports = CustomReport\Config::getReportsList();
+
         return $this->adminJson($reports);
     }
 
@@ -54,6 +52,7 @@ class CustomReportController extends ReportsControllerBase
     {
         $this->checkPermission('reports');
         $reports = CustomReport\Config::getReportsList($this->getAdminUser());
+
         return $this->adminJson(['data' => $reports]);
     }
 

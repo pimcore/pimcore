@@ -1040,7 +1040,7 @@ class UserController extends AdminController implements EventedControllerInterfa
 
         $conditions = [ 'type = "user"' ];
 
-        if(!$request->get('include_current_user')) {
+        if (!$request->get('include_current_user')) {
             $conditions[] = 'id != ' . $this->getAdminUser()->getId();
         }
 
@@ -1049,9 +1049,8 @@ class UserController extends AdminController implements EventedControllerInterfa
         $list->load();
         $userList = $list->getUsers();
 
-
         foreach ($userList as $user) {
-            if(!$request->get('permission') || $user->isAllowed($request->get('permission'))) {
+            if (!$request->get('permission') || $user->isAllowed($request->get('permission'))) {
                 $users[] = [
                     'id' => $user->getId(),
                     'label' => $user->getUsername()
@@ -1077,13 +1076,12 @@ class UserController extends AdminController implements EventedControllerInterfa
 
         /** @var $role User\Role */
         foreach ($roleList as $role) {
-            if(!$request->get('permission') || in_array($request->get('permission'), $role->getPermissions())) {
+            if (!$request->get('permission') || in_array($request->get('permission'), $role->getPermissions())) {
                 $roles[] = [
                     'id' => $role->getId(),
                     'label' => $role->getName()
                 ];
             }
-
         }
 
         return $this->adminJson(['success' => true, 'total' => count($roles), 'data' => $roles]);

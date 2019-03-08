@@ -690,11 +690,12 @@ abstract class AbstractElasticSearch implements IProductList
      * @param array $boolFilters
      * @param array $queryFilters
      * @param string|null $variantMode
+     *
      * @return array
      */
     protected function buildQuery(array $params, array $boolFilters, array $queryFilters, string $variantMode = null)
     {
-        if(!$variantMode) {
+        if (!$variantMode) {
             $variantMode = $this->getVariantMode();
         }
 
@@ -711,11 +712,11 @@ abstract class AbstractElasticSearch implements IProductList
                 'size' => 100
             ];
         } else {
-            if($variantMode == IProductList::VARIANT_MODE_VARIANTS_ONLY) {
+            if ($variantMode == IProductList::VARIANT_MODE_VARIANTS_ONLY) {
                 $boolFilters[] = [
                     'term' => ['type' => self::PRODUCT_TYPE_VARIANT]
                 ];
-            } else if($variantMode == IProductList::VARIANT_MODE_HIDE) {
+            } elseif ($variantMode == IProductList::VARIANT_MODE_HIDE) {
                 $boolFilters[] = [
                     'term' => ['type' => self::PRODUCT_TYPE_OBJECT]
                 ];
@@ -1053,24 +1054,22 @@ abstract class AbstractElasticSearch implements IProductList
                 ];
 
                 //necessary to calculate correct counts of search results for filter values
-                if($this->getVariantMode() == IProductList::VARIANT_MODE_INCLUDE_PARENT_OBJECT) {
+                if ($this->getVariantMode() == IProductList::VARIANT_MODE_INCLUDE_PARENT_OBJECT) {
                     $aggregations[$fieldname]['aggs'][$fieldname]['aggs'] = [
                         'objectCount' => ['cardinality' => ['field' => 'system.o_virtualProductId']]
                     ];
                 }
-
             } else {
                 $aggregations[$fieldname] = [
                     'terms' => ['field' => $fieldname, 'size' => self::INTEGER_MAX_VALUE, 'order' => ['_key' => 'asc' ]]
                 ];
 
                 //necessary to calculate correct counts of search results for filter values
-                if($this->getVariantMode() == IProductList::VARIANT_MODE_INCLUDE_PARENT_OBJECT) {
+                if ($this->getVariantMode() == IProductList::VARIANT_MODE_INCLUDE_PARENT_OBJECT) {
                     $aggregations[$fieldname]['aggs'] = [
                         'objectCount' => ['cardinality' => ['field' => 'system.o_virtualProductId']]
                     ];
                 }
-
             }
         }
 
@@ -1082,10 +1081,9 @@ abstract class AbstractElasticSearch implements IProductList
             $params['body']['from'] = $this->getOffset();
             $params['body']['aggs'] = $aggregations;
 
-
             // build query for request
             $variantModeForAggregations = $this->getVariantMode();
-            if($this->getVariantMode() == IProductList::VARIANT_MODE_INCLUDE_PARENT_OBJECT) {
+            if ($this->getVariantMode() == IProductList::VARIANT_MODE_INCLUDE_PARENT_OBJECT) {
                 $variantModeForAggregations = IProductList::VARIANT_MODE_VARIANTS_ONLY;
             }
 
@@ -1106,8 +1104,7 @@ abstract class AbstractElasticSearch implements IProductList
                     $groupByValueResult = [];
                     if ($buckets) {
                         foreach ($buckets as $bucket) {
-
-                            if($this->getVariantMode() == self::VARIANT_MODE_INCLUDE_PARENT_OBJECT) {
+                            if ($this->getVariantMode() == self::VARIANT_MODE_INCLUDE_PARENT_OBJECT) {
                                 $groupByValueResult[] = ['value' => $bucket['key'], 'count' => $bucket['objectCount']['value']];
                             } else {
                                 $groupByValueResult[] = ['value' => $bucket['key'], 'count' => $bucket['doc_count']];

@@ -62,7 +62,7 @@ trait ObjectVarTrait
     public function setObjectVar($var, $value, bool $silent = false)
     {
         if (!property_exists($this, $var)) {
-            if($silent) {
+            if ($silent) {
                 return $this;
             }
 

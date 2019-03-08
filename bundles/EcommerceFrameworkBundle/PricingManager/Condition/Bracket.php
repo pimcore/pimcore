@@ -125,6 +125,7 @@ class Bracket implements IBracket
 
     /**
      * @param string $string
+     *
      * @throws \Pimcore\Bundle\EcommerceFrameworkBundle\Exception\InvalidConfigException
      *
      * @return $this

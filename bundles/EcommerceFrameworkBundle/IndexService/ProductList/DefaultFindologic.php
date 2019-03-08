@@ -383,7 +383,7 @@ class DefaultFindologic implements IProductList
 
                 case self::VARIANT_MODE_VARIANTS_ONLY:
                 case self::VARIANT_MODE_INCLUDE_PARENT_OBJECT:
-                    throw new InvalidConfigException("Variant Mode " . $this->getVariantMode() . " not supported.");
+                    throw new InvalidConfigException('Variant Mode ' . $this->getVariantMode() . ' not supported.');
                     break;
             }
 

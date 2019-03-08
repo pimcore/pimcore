@@ -50,24 +50,24 @@ class Dao extends Model\Dao\PhpArrayTable
 
     /**
      * @param Model\User $user
+     *
      * @return Config[]
      */
-    public function loadForGivenUser(Model\User $user) {
-
+    public function loadForGivenUser(Model\User $user)
+    {
         $allConfigs = $this->load();
 
-        if($user->isAdmin()) {
+        if ($user->isAdmin()) {
             return $allConfigs;
         }
 
         $filteredConfigs = [];
-        foreach($allConfigs as $config) {
-
-            if($config->getShareGlobally()) {
+        foreach ($allConfigs as $config) {
+            if ($config->getShareGlobally()) {
                 $filteredConfigs[] = $config;
-            } else if($config->getSharedUserIds() && in_array($user->getId(), $config->getSharedUserIds())) {
+            } elseif ($config->getSharedUserIds() && in_array($user->getId(), $config->getSharedUserIds())) {
                 $filteredConfigs[] = $config;
-            } else if($config->getSharedRoleIds() && array_intersect($user->getRoles(), $config->getSharedRoleIds())) {
+            } elseif ($config->getSharedRoleIds() && array_intersect($user->getRoles(), $config->getSharedRoleIds())) {
                 $filteredConfigs[] = $config;
             }
         }
