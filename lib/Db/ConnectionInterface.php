@@ -19,10 +19,7 @@ use Doctrine\DBAL\Driver\Connection;
 
 interface ConnectionInterface extends Connection
 {
-
     public function connect();
-
-    public function query();
 
     public function executeQuery($query, array $params = [], $types = [], QueryCacheProfile $qcp = null);
 
@@ -74,20 +71,9 @@ interface ConnectionInterface extends Connection
 
     public function delete($tableExpression, array $identifier, array $types = []);
 
-    public function quote($input, $type = null);
-
     public function fetchAll($sql, array $params = [], $types = []);
 
     public function createQueryBuilder();
 
-    public function prepare($statement);
-
-    public function commit();
-
-    public function rollBack();
-
     public function close();
-
-    public function exec($statement);
-
 }
