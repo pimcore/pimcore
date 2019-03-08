@@ -121,10 +121,12 @@ class DataObjectHelperController extends AdminController
         $configListing = [];
 
         $userIds = [$user->getId()];
-        // collect all roles
-        $userIds = array_merge($userIds, $user->getRoles());
-        $userIds = implode(',', $userIds);
         $db = Db::get();
+        // collect all roles
+        foreach ($user->getRoles() ?? [] as $role) {
+            $userIds[] = $db->quote($role);
+        }
+        $userIds = implode(',', $userIds);
 
         $query = 'select distinct c1.id from gridconfigs c1, gridconfig_shares s 
                     where (c1.searchType = ' . $db->quote($searchType) . ' and ((c1.id = s.gridConfigId and s.sharedWithUserId IN (' . $userIds . '))) and c1.classId = ' . $db->quote($classId) . ')
