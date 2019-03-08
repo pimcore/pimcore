@@ -40,11 +40,11 @@ interface ConnectionInterface extends Connection
 
     public function fetchRow($sql, $params = [], $types = []);
 
-    public function fetchCol($sql, array $params = [], array $types = []);
+    public function fetchCol($sql, $params = [], $types = []);
 
-    public function fetchOne($sql, array $params = [], array $types = []);
+    public function fetchOne($sql, $params = [], $types = []);
 
-    public function fetchPairs($sql, array $params = [], array $types = []);
+    public function fetchPairs($sql, array $params = [], $types = []);
 
     public function insertOrUpdate($table, array $data);
 
@@ -62,9 +62,9 @@ interface ConnectionInterface extends Connection
 
     public function limit($sql, int $count, int $offset = 0);
 
-    public function queryIgnoreError($sql, array $exclusions = []);
+    public function queryIgnoreError($sql, $exclusions = []);
 
-    public function setAutoQuoteIdentifiers(bool $autoQuoteIdentifiers);
+    public function setAutoQuoteIdentifiers($autoQuoteIdentifiers);
 
     public function fetchAssoc($statement, array $params = [], array $types = []);
 
