@@ -82,6 +82,7 @@ class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
         $loader->load('voucher_service.yml');
         $loader->load('offer_tool.yml');
         $loader->load('tracking_manager.yml');
+        $loader->load('maintenance.yml');
 
         $this->registerFactoryConfiguration($container, $config['factory']);
         $this->registerEnvironmentConfiguration($container, $config['environment']);
