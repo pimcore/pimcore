@@ -30,7 +30,6 @@ class ClassDefinitionManager
     private $db;
 
     /**
-     * ClassesManager constructor.
      * @param Connection $db
      */
     public function __construct(Connection $db)
