@@ -704,5 +704,6 @@
   "refresh_preview": "Refresh Preview",
   "show_charcount": "Show Character Count",
   "max_length": "Max Length",
+  "reports_config": "Reports Config",
   "exclude_from_search_index": "Exclude from Backend Full-Text Search"
 }

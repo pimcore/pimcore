@@ -350,6 +350,8 @@ modules:
             connect_db: true
             initialize_db: true
             purge_class_directory: true
+            # If true, it will create database structures for all definitions
+            setup_objects: false
 ```
 
 This will set up a functional test which sends a request directly through Symfony's kernel (similar to the PHPUnit setup above). However, Codeception makes it easy to use a full-blown browser for acceptance testing by configuring additional modules such as the [WebDriver](https://codeception.com/docs/modules/WebDriver) module for Selenium testing. 

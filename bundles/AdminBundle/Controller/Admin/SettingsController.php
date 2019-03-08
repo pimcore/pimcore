@@ -19,7 +19,7 @@ use Pimcore\Cache;
 use Pimcore\Cache\Core\CoreHandlerInterface;
 use Pimcore\Cache\Symfony\CacheClearer;
 use Pimcore\Config;
-use Pimcore\Db\Connection;
+use Pimcore\Db\ConnectionInterface;
 use Pimcore\Event\SystemEvents;
 use Pimcore\File;
 use Pimcore\Model;
@@ -685,7 +685,7 @@ class SettingsController extends AdminController
      * @param KernelInterface $kernel
      * @param EventDispatcherInterface $eventDispatcher
      * @param CoreHandlerInterface $cache
-     * @param Connection $db
+     * @param ConnectionInterface $db
      * @param Filesystem $filesystem
      * @param CacheClearer $symfonyCacheClearer
      *
@@ -696,7 +696,7 @@ class SettingsController extends AdminController
         KernelInterface $kernel,
         EventDispatcherInterface $eventDispatcher,
         CoreHandlerInterface $cache,
-        Connection $db,
+        ConnectionInterface $db,
         Filesystem $filesystem,
         CacheClearer $symfonyCacheClearer
     ) {

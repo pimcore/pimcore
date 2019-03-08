@@ -46,6 +46,7 @@ class SelectCategory extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterServ
             'label' => $filterDefinition->getLabel(),
             'currentValue' => $currentFilter[$filterDefinition->getField()],
             'values' => array_values($values),
+            'document' => $this->request->get('contentDocument'),
             'fieldname' => $filterDefinition->getField(),
             'resultCount' => $productList->count()
         ]);

@@ -97,6 +97,7 @@
   "open_document_by_id": "Open Document",
   "open_asset_by_id": "Open Asset",
   "open_object_by_id": "Open Object",
+  "open_url": "Open URL",
   "element_not_found": "Element not found",
   "import_from_url": "Import from URL",
   "do_you_really_want_to_leave_the_editmode": "Do you really want to leave the editmode (NO!)",
@@ -869,5 +870,9 @@
   "reload_column_configuration": "Reload column configuration",
   "reload_column_configuration_notice": "Note: Reloading column configuration will reset selected grid columns",
   "embedded_meta_data": "Embedded Meta Info",
-  "duration": "Duration"
+  "duration": "Duration",
+  "group_icon_class": "Group Icon Class",
+  "custom_report_permissions": "Permission",
+  "visible_to_users": "Visible To Users",
+  "visible_to_roles": "Visible To Roles"
 }

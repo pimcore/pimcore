@@ -27,6 +27,10 @@ Therefore `\Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\Abs
 
 Each Filter Type needs to be defined as service and registered on the `pimcore_ecommerce_framework.filter_service` configuration.
 The framework already defines a number of core filter types in [filter_service_filter_types.yml](https://github.com/pimcore/pimcore/blob/master/bundles/EcommerceFrameworkBundle/Resources/config/filter_service_filter_types.yml).
+
+> FilterTypes are dependent of the used index backend. You need to use different FilterTypes when using MySQL or ElasticSearch etc. 
+> Pimcore ships with FilterTypes implementations for all supported index backends. For details see for example 
+> [Elastic Search Config](./03_Elastic_Search.md).  
  
 ```yaml
 pimcore_ecommerce_framework:
@@ -109,7 +113,7 @@ pimcore_ecommerce_framework:
 
 
 - `Helper`: Is a helper implementation that gets available values for pre select settings in the filter definition objects 
-  based on the [filter group](./05_Index_Service/01_Product_Index_Configuration.md) setting in the index attributes 
+  based on the [filter group](../05_Index_Service/01_Product_Index_Configuration/README.md) setting in the index attributes 
   definition. 
 
 
