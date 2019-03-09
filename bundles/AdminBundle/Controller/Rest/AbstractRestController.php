@@ -16,7 +16,6 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Rest;
 
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse;
-use Pimcore\Db;
 use Pimcore\Event\Webservice\FilterEvent;
 use Pimcore\Event\WebserviceEvents;
 use Pimcore\FeatureToggles\Features\DebugMode;
@@ -319,7 +318,6 @@ abstract class AbstractRestController extends AdminController
 
         return $condition;
     }
-
 
     /**
      * @param FilterEvent $event
