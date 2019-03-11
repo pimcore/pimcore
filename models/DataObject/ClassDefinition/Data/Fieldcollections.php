@@ -317,14 +317,14 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
     }
 
     /**
-     * @param $object
+     * @param DataObject\Concrete $object
      * @param array $params
      *
      * @return null|DataObject\Fieldcollection
      */
     public function load($object, $params = [])
     {
-        if (!$this->getLazyLoading() || (isset($params['force']) && $params['force'])) {
+        if ((!$object->hasLazyKey($this->getName()) && !$this->getLazyLoading()) || (isset($params['force']) && $params['force'])) {
             $container = new DataObject\Fieldcollection(null, $this->getName());
             $container->load($object);
 
@@ -333,6 +333,8 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
             }
 
             return $container;
+        } else {
+            $object->addLazyKey($this->getName());
         }
 
         return null;
