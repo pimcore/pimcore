@@ -73,6 +73,7 @@ class Ffmpeg extends Adapter
     /**
      * @param $file
      * @param array $options
+     *
      * @return $this|mixed
      */
     public function load($file, $options = [])

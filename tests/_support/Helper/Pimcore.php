@@ -10,10 +10,10 @@ use Doctrine\DBAL\DriverManager;
 use Pimcore\Bundle\InstallBundle\Installer;
 use Pimcore\Cache;
 use Pimcore\Config;
-use Pimcore\Model\DataObject\ClassDefinition\ClassDefinitionManager;
 use Pimcore\Event\TestEvents;
 use Pimcore\Kernel;
 use Pimcore\Model\DataObject;
+use Pimcore\Model\DataObject\ClassDefinition\ClassDefinitionManager;
 use Pimcore\Model\Document;
 use Symfony\Component\Filesystem\Filesystem;
 

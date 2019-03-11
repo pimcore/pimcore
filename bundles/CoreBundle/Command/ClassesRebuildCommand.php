@@ -15,9 +15,9 @@
 namespace Pimcore\Bundle\CoreBundle\Command;
 
 use Pimcore\Console\AbstractCommand;
-use Pimcore\Model\DataObject\ClassDefinition\ClassDefinitionManager;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition;
+use Pimcore\Model\DataObject\ClassDefinition\ClassDefinitionManager;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -53,7 +53,8 @@ class ClassesRebuildCommand extends AbstractCommand
      * @param ClassDefinitionManager $classDefinitionManager
      * @required
      */
-    public function setClassDefinitionManager (ClassDefinitionManager $classDefinitionManager) {
+    public function setClassDefinitionManager(ClassDefinitionManager $classDefinitionManager)
+    {
         $this->classDefinitionManager = $classDefinitionManager;
     }
 
@@ -84,7 +85,6 @@ class ClassesRebuildCommand extends AbstractCommand
                         $output->writeln(sprintf('%s [%s] %s', $class, $id, $action));
                     }
                 }
-
             }
         }
 
@@ -97,7 +97,7 @@ class ClassesRebuildCommand extends AbstractCommand
         }
 
         if ($input->getOption('create-classes')) {
-            foreach($this->classDefinitionManager->createOrUpdateClassDefinitions() as $changes) {
+            foreach ($this->classDefinitionManager->createOrUpdateClassDefinitions() as $changes) {
                 if ($output->isVerbose()) {
                     [$class, $id, $action] = $changes;
                     $output->writeln(sprintf('%s [%s] %s', $class, $id, $action));
