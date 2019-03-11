@@ -128,19 +128,4 @@ class ClassDefinition extends Model\Webservice\Data
      */
     public $linkGeneratorReference;
 
-    /**
-     * @param $class
-     * @param $options
-     */
-    public function map($class, $options = null)
-    {
-        $arr = $class->fieldDefinitions;
-        $result = [];
-        foreach ($arr as $item) {
-            $result[] = $item;
-        }
-        $class->fieldDefinitions = $item;
-
-        parent::map($class);
-    }
 }
