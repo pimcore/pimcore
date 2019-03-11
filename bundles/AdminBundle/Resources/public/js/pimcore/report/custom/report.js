@@ -118,13 +118,15 @@ pimcore.report.custom.report = Class.create(pimcore.report.abstract, {
                                 var data = grid.getStore().getAt(rowIndex).getData();
                                 var columnName = colConfig["name"];
                                 var id = data[columnName];
-                                var action = colConfig["columnAction"]
-                                if (action == "openDocument") {
+                                var action = colConfig["columnAction"];
+                                if (action === "openDocument") {
                                     pimcore.helpers.openElement(id, "document");
-                                } else if (action == "openAsset") {
+                                } else if (action === "openAsset") {
                                     pimcore.helpers.openElement(id, "asset");
-                                } else if (action == "openObject") {
+                                } else if (action === "openObject") {
                                     pimcore.helpers.openElement(id, "object");
+                                } else if (action === "openUrl") {
+                                    window.open(id);
                                 }
                             }.bind(this, colConfig)
                         }

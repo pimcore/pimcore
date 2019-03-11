@@ -191,7 +191,7 @@ class Video extends Model\Asset
             }
 
             $converter = \Pimcore\Video::getInstance();
-            $converter->load($filePath);
+            $converter->load($filePath, ['asset' => $this]);
 
             return $converter->getDuration();
         }
@@ -208,7 +208,7 @@ class Video extends Model\Asset
     {
         if (\Pimcore\Video::isAvailable()) {
             $converter = \Pimcore\Video::getInstance();
-            $converter->load($this->getFileSystemPath());
+            $converter->load($this->getFileSystemPath(), ['asset' => $this]);
 
             return $converter->getDimensions();
         }

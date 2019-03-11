@@ -312,9 +312,9 @@ condense parameter is set to true then only non-existing object ids are returned
     * **groupBy**: group by key
 
 
-### Search  Objects
+### Search Objects
 * **Method**: GET
-* **URL**: `http://YOUR-DOMAIN/webservice/rest/object-list?apikey=[API-KEY]&order=DESC&offset=3&orderKey=id&limit=2&objectClass=myClassname&q={"type":%20"folder"}
+* **URL**: `http://YOUR-DOMAIN/webservice/rest/object-list?apikey=[API-KEY]&order=DESC&offset=3&orderKey=id&limit=2&objectClass=myClassname&q={"o_type":%20"folder"}
 * **Returns**: A list of object id/type pairs matching the given criteria.
 * **Parameters**:
     * **q**: ["Query Filter](./01_Query_Filters.md)

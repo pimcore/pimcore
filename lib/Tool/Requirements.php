@@ -14,7 +14,7 @@
 
 namespace Pimcore\Tool;
 
-use Pimcore\Db\Connection;
+use Pimcore\Db\ConnectionInterface;
 use Pimcore\File;
 use Pimcore\Image;
 use Pimcore\Tool\Requirements\Check;
@@ -62,11 +62,11 @@ class Requirements
     }
 
     /**
-     * @param Connection $db
+     * @param ConnectionInterface $db
      *
      * @return Check[]
      */
-    public static function checkMysql(Connection $db)
+    public static function checkMysql(ConnectionInterface $db)
     {
         $checks = [];
 

@@ -97,6 +97,7 @@
   "open_document_by_id": "Open Document",
   "open_asset_by_id": "Open Asset",
   "open_object_by_id": "Open Object",
+  "open_url": "Open URL",
   "element_not_found": "Element not found",
   "import_from_url": "Import from URL",
   "do_you_really_want_to_leave_the_editmode": "Do you really want to leave the editmode (NO!)",
