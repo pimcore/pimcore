@@ -68,7 +68,7 @@ class MiscController extends AdminController
     public function getAvailableControllersAction(Request $request, ControllerDataProvider $provider)
     {
         $bundle = $request->get('moduleName');
-        $controllers = $provider->getControllers($bundle, 'AppBundle');
+        $controllers = $provider->getControllers($bundle, PIMCORE_SYMFONY_DEFAULT_BUNDLE);
 
         $result = array_map(function ($controller) {
             return [
@@ -95,10 +95,14 @@ class MiscController extends AdminController
     {
         $bundle = $request->get('moduleName');
         if (empty($bundle)) {
-            $bundle = 'AppBundle';
+            $bundle = PIMCORE_SYMFONY_DEFAULT_BUNDLE;
         }
 
         $controller = $request->get('controllerName');
+        if (empty($controller)) {
+            $bundle = PIMCORE_SYMFONY_DEFAULT_CONTROLLER;
+        }
+
         $actions = $provider->getActions($controller, $bundle);
 
         $result = array_map(function ($action) {

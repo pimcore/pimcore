@@ -294,8 +294,8 @@ class Tool
         if ($config) {
             // system default
             $routingDefaults = [
-                'controller' => 'Default',
-                'action' => 'default',
+                'controller' => PIMCORE_SYMFONY_DEFAULT_CONTROLLER,
+                'action' => PIMCORE_SYMFONY_DEFAULT_ACTION,
                 'module' => PIMCORE_SYMFONY_DEFAULT_BUNDLE
             ];
 
