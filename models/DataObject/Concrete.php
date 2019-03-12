@@ -27,7 +27,7 @@ use Pimcore\Model;
  * @method \Pimcore\Model\DataObject\Concrete\Dao getDao()
  * @method \Pimcore\Model\Version getLatestVersion()
  */
-class Concrete extends AbstractObject implements Model\DataObject\ClassDefinition\Data\LazyLoadedRelationInterface
+class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
 {
 
     use Model\DataObject\Traits\LazyLoadedRelationTrait;

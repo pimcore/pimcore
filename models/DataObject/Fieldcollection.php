@@ -22,7 +22,7 @@ use Pimcore\Model;
 /**
  * @method \Pimcore\Model\DataObject\Fieldcollection\Dao getDao()
  */
-class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyIndicatorInterface, Model\DataObject\ClassDefinition\Data\LazyLoadedRelationInterface
+class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyIndicatorInterface, LazyLoadedFieldsInterface
 {
     use Model\DataObject\Traits\LazyLoadedRelationTrait;
 

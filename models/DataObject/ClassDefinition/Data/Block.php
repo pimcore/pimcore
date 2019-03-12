@@ -866,25 +866,6 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
         return $data;
     }
 
-//
-//    public function getTableName($container, $params = []) {
-//        $db = Db::get();
-//        $data = null;
-//
-//        if ($container instanceof DataObject\Concrete) {
-//            return "object_store_" . $container->getClassId();
-//        } elseif ($container instanceof DataObject\Fieldcollection\Data\AbstractData) {
-//
-//            //TODO
-//        } elseif ($container instanceof DataObject\Localizedfield) {
-//            //TODO
-//        } elseif ($container instanceof DataObject\Objectbrick\Data\AbstractData) {
-//            //TODO
-//        }
-//
-//
-//    }
-
     /**
      * @param $object
      * @param array $params

@@ -23,7 +23,7 @@ use Pimcore\Model;
 /**
  * @method \Pimcore\Model\DataObject\Objectbrick\Dao getDao()
  */
-class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface, Model\DataObject\ClassDefinition\Data\LazyLoadedRelationInterface
+class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface, LazyLoadedFieldsInterface
 {
     use Model\DataObject\Traits\DirtyIndicatorTrait;
     use Model\DataObject\Traits\LazyLoadedRelationTrait;

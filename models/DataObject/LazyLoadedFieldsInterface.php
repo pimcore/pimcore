@@ -15,9 +15,9 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\Model\DataObject\ClassDefinition\Data;
+namespace Pimcore\Model\DataObject;
 
-interface LazyLoadedRelationInterface
+interface LazyLoadedFieldsInterface
 {
 
     /**

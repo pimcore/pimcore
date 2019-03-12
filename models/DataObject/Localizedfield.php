@@ -23,7 +23,7 @@ use Pimcore\Tool;
 /**
  * @method \Pimcore\Model\DataObject\Localizedfield\Dao getDao()
  */
-class Localizedfield extends Model\AbstractModel implements DirtyIndicatorInterface, Model\DataObject\ClassDefinition\Data\LazyLoadedRelationInterface
+class Localizedfield extends Model\AbstractModel implements DirtyIndicatorInterface, LazyLoadedFieldsInterface
 {
 
     use Model\DataObject\Traits\LazyLoadedRelationTrait;
