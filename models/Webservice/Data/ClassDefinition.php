@@ -127,5 +127,4 @@ class ClassDefinition extends Model\Webservice\Data
      * @var string
      */
     public $linkGeneratorReference;
-
 }

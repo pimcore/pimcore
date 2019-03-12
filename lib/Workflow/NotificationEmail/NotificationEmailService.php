@@ -247,7 +247,6 @@ class NotificationEmailService
             $mailPath, $this->getNotificationEmailParameters($subjectType, $subject, $workflow, $action, $deeplink, $language)
         );
 
-
         //reset inheritance
         AbstractObject::setGetInheritedValues($inheritanceBackup);
 
