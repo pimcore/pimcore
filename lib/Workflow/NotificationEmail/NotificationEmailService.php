@@ -240,12 +240,19 @@ class NotificationEmailService
         $inheritanceBackup = AbstractObject::getGetInheritedValues();
         AbstractObject::setGetInheritedValues(true);
 
+        $translatorLocaleBackup = $this->translator->getLocale();
+        $this->translator->setLocale($language);
+
         $emailTemplate = $this->templatingEngine->render(
             $mailPath, $this->getNotificationEmailParameters($subjectType, $subject, $workflow, $action, $deeplink, $language)
         );
 
+
         //reset inheritance
         AbstractObject::setGetInheritedValues($inheritanceBackup);
+
+        //reset translation locale
+        $this->translator->setLocale($translatorLocaleBackup);
 
         return $emailTemplate;
     }
