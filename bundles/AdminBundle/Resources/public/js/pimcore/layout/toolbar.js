@@ -568,7 +568,7 @@ pimcore.layout.toolbar = Class.create({
                 }
             }
 
-            if (user.isAllowed("reports") && user.isAllowed("system_settings")) {
+            if (user.isAllowed("reports_config")) {
                 if (perspectiveCfg.inToolbar("settings.customReports")) {
                     marketingItems.push({
                         text: t("custom_reports"),

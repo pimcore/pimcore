@@ -72,8 +72,6 @@ class AssetController extends ElementControllerBase implements EventedController
             return $this->adminJson(['success' => false, 'message' => "asset doesn't exist"]);
         }
 
-        $asset->setMetadata(Asset\Service::expandMetadataForEditmode($asset->getMetadata()));
-        $asset->setProperties(Element\Service::minimizePropertiesForEditmode($asset->getProperties()));
         //$asset->getVersions();
         $asset->getScheduledTasks();
         $asset->idPath = Element\Service::getIdPath($asset);
@@ -120,46 +118,18 @@ class AssetController extends ElementControllerBase implements EventedController
                 $imageInfo['dimensions']['height'] = $asset->getHeight();
             }
 
-            $exifData = $asset->getEXIFData();
-            if (!empty($exifData)) {
-                $imageInfo['exif'] = $exifData;
-            }
-
-            $xmpData = $asset->getXMPData();
-            if (!empty($xmpData)) {
-                // flatten to a one-dimensional array
-                array_walk($xmpData, function (&$value) {
-                    if (is_array($value)) {
-                        $value = implode_recursive($value, ' | ');
-                    }
-                });
-                $imageInfo['xmp'] = $xmpData;
-            }
-
-            // check for VR meta-data
-            $mergedMetaData = array_merge($exifData, $xmpData);
-            if (isset($mergedMetaData['ProjectionType']) && $mergedMetaData['ProjectionType'] == 'equirectangular') {
-                $imageInfo['isVrImage'] = true;
-            }
-
-            $iptcData = $asset->getIPTCData();
-            if (!empty($iptcData)) {
-                // flatten data, to be displayed in grid
-                foreach ($iptcData as &$value) {
-                    if (is_array($value)) {
-                        $value = implode(', ', $value);
-                    }
-                }
-
-                $imageInfo['iptc'] = $iptcData;
-            }
-
             $imageInfo['exiftoolAvailable'] = (bool) \Pimcore\Tool\Console::getExecutable('exiftool');
+
+            if (!$asset->getEmbeddedMetaData(false)) {
+                $asset->getEmbeddedMetaData(true, false); // read Exif, IPTC and XPM like in the old days ...
+            }
 
             $asset->imageInfo = $imageInfo;
         }
 
         $asset->setStream(null);
+        $asset->setMetadata(Asset\Service::expandMetadataForEditmode($asset->getMetadata()));
+        $asset->setProperties(Element\Service::minimizePropertiesForEditmode($asset->getProperties()));
 
         //Hook for modifying return value - e.g. for changing permissions based on object data
         //data need to wrapped into a container in order to pass parameter to event listeners by reference so that they can change the values
@@ -2386,6 +2356,7 @@ class AssetController extends ElementControllerBase implements EventedController
                         'id' => $asset->getid(),
                         'type' => $asset->getType(),
                         'fullpath' => $asset->getRealFullPath(),
+                        'filename' => $asset->getKey(),
                         'creationDate' => $asset->getCreationDate(),
                         'modificationDate' => $asset->getModificationDate(),
                         'size' => formatBytes($size),

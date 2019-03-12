@@ -1679,6 +1679,10 @@ class Service extends Model\Element\Service
             $inheritanceEnabled = Model\DataObject\Concrete::getGetInheritedValues();
             Model\DataObject\Concrete::setGetInheritedValues(true);
 
+            if ($object instanceof Model\DataObject\Fieldcollection\Data\AbstractData
+                    || $object instanceof Model\DataObject\Objectbrick\Data\AbstractData) {
+                $object = $object->getObject();
+            }
             $result = call_user_func($className . '::compute', $object, $data);
             Model\DataObject\Concrete::setGetInheritedValues($inheritanceEnabled);
 

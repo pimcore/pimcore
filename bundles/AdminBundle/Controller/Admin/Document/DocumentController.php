@@ -618,7 +618,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
 
         $docTypes = [];
         foreach ($list->getDocTypes() as $type) {
-            $docTypes[] = $type;
+            $docTypes[] = $type->getObjectVars();
         }
 
         return $this->adminJson(['docTypes' => $docTypes]);

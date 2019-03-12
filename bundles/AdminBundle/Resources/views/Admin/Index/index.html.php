@@ -404,6 +404,7 @@ $scripts = array(
     // assets
     "pimcore/asset/asset.js",
     "pimcore/asset/unknown.js",
+    "pimcore/asset/embedded_meta_data.js",
     "pimcore/asset/image.js",
     "pimcore/asset/document.js",
     "pimcore/asset/video.js",
@@ -638,6 +639,7 @@ $scripts = array(
     "pimcore/report/custom/report.js",
     "pimcore/report/custom/definitions/sql.js",
     "pimcore/report/custom/definitions/analytics.js",
+    "pimcore/report/custom/toolbarenricher.js",
 
     "pimcore/settings/tagmanagement/panel.js",
     "pimcore/settings/tagmanagement/item.js",

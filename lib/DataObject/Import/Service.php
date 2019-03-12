@@ -59,7 +59,7 @@ class Service
     private $valueFactories;
 
     public function __construct(
-        Db\Connection $db,
+        Db\ConnectionInterface $db,
         ContainerInterface $resolvers,
         ContainerInterface $operatorFactories,
         ContainerInterface $valueFactories

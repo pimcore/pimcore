@@ -473,7 +473,9 @@
                                 "phpdocType": "\\Pimcore\\Model\\DataObject\\Fieldcollection",
                                 "allowedTypes": [
                                     "FilterSelectFromMultiSelect",
+                                    "FilterCategoryMultiselect",
                                     "FilterCategory",
+                                    "FilterInputField",
                                     "FilterMultiRelation",
                                     "FilterMultiSelect",
                                     "FilterMultiSelectFromMultiSelect",

@@ -1132,7 +1132,7 @@ pimcore.helpers.getClassForIcon = function (icon) {
 
     var content = styleContainer.dom.innerHTML;
     var classname = "pimcore_dynamic_class_for_icon_" + uniqid();
-    content += ("." + classname + " { background: url(" + icon + ") left center no-repeat !important; }\n");
+    content += ("." + classname + " { background: url(" + icon + ") left center no-repeat !important; background-size: 100% 100% !important; }\n");
     styleContainer.dom.innerHTML = content;
 
     return classname;

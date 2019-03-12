@@ -635,6 +635,7 @@ class AbstractObject extends Model\Element\AbstractElement
                 // inheritance helper needs the correct paths of the children in InheritanceHelper::buildTree()
                 $updatedChildren = [];
                 if ($oldPath && $oldPath != $this->getRealFullPath()) {
+                    $differentOldPath = $oldPath;
                     $this->getDao()->updateWorkspaces();
                     $updatedChildren = $this->getDao()->updateChildsPaths($oldPath);
                 }
@@ -698,7 +699,11 @@ class AbstractObject extends Model\Element\AbstractElement
         $this->clearDependentCache($additionalTags);
 
         if ($isUpdate) {
-            \Pimcore::getEventDispatcher()->dispatch(DataObjectEvents::POST_UPDATE, new DataObjectEvent($this));
+            $updateEvent = new DataObjectEvent($this);
+            if ($differentOldPath) {
+                $updateEvent->setArgument('oldPath', $differentOldPath);
+            }
+            \Pimcore::getEventDispatcher()->dispatch(DataObjectEvents::POST_UPDATE, $updateEvent);
         } else {
             self::setDisableDirtyDetection($isDirtyDetectionDisabled);
             \Pimcore::getEventDispatcher()->dispatch(DataObjectEvents::POST_ADD, new DataObjectEvent($this));

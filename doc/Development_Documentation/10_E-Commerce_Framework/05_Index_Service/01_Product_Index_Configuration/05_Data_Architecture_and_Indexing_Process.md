@@ -29,8 +29,13 @@ php bin/console ecommerce:indexservice:bootstrap --update-index
 php bin/console ecommerce:indexservice:bootstrap --create-or-update-index-structure
 ```
 
-- For further details (e.g. only updating certain product types, apply list conditions) see `--help` section of the 
-`ecommerce:indexservice:bootstrap` command. 
+- By default, Pimcore assumes that the product class is `Pimcore\Model\DataObject\Product`. If you have a 
+different product class name, please use the `--object-list-class` param and provide the listing class name
+that should be used. 
+
+> For further details (e.g. only updating certain product types, apply list conditions) see `--help` section of the 
+>`ecommerce:indexservice:bootstrap` command. 
+
 
 
 
@@ -54,7 +59,7 @@ should not be necessary any more.
 
 ### Console Commands for Optimized Architecture
 
-For updating data in index following commands are available. See `--help` details. 
+For updating data in index following commands are available.
 - For process the preparation queue and update Pimcore objects to the index store table, use following command. 
 **This command should be executed periodically (e.g. all 10 minutes).**
 
@@ -76,6 +81,9 @@ php bin/console ecommerce:indexservice:process-queue update-index
 ```bash
 php bin/console ecommerce:indexservice:bootstrap --update-index
 ```
+> By default, Pimcore assumes that the product class is `Pimcore\Model\DataObject\Product`. If you have a 
+> different product class name, please use the `--object-list-class` param and provide the listing class name
+> that should be used. 
 
 - Invalidate either the preparation queue or the index-update queue. This is usually **only needed during development** when 
   the store table is out of sync. Reset the preparation queue for instance when your product model 
@@ -90,29 +98,6 @@ php bin/console ecommerce:reset-queue update-index
 php bin/console ecommerce:indexservice:bootstrap --create-or-update-index-structure
 ```
 
+> For further details see `--help` section of the commands. 
 
-### Special Aspects for Elastic Search
-It is possible that Elastic Search cannot update the mapping, e.g. if data types of attributes change on the fly. 
-For this case, a reindex is necessary. If it is necessary, the E-Commerce Framework automatically switches into a 
-reindex mode. When in reindex mode, all queries go to the current index but in parallel a new index is created based 
-on the data in the store table. The current index is read only and all data changes that take place go directly into 
-the new index. As a result, during reindex the results delivered by Product Lists can contain old data. 
- 
-As soon the reindex is finished, the current index is switched to the newly created index and the old index is deleted.  
 
-### Special Aspects for Findologic Exporter
-Basically findologic worker works as described in the optimized architecture. But there is an additional speciality 
-with the export: 
-
-Executing `php bin/console ecommerce:indexservice:process-queue update-index` does not write the data directly to 
-Findologic, but into an extra table 
-`\Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\DefaultFindologic::EXPORT_TABLE_NAME` 
-(default is `ecommerceframework_productindex_export_findologic`). 
-
-Findologic then can use the endpoint `/ecommerceframework/findologic-export`, which delivers all data directly based on 
-the export table. Valid parameters for this endpoint are:
-- `start`: Pagination start.
-- `count`: Count of delivered entries.
-- `shopKey`: Shop key to identify the shop. 
-- `id`: Filter for Product-ID
-- `type`: Filter for type
