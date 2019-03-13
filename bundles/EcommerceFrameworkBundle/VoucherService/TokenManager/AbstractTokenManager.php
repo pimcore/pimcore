@@ -282,7 +282,9 @@ abstract class AbstractTokenManager implements ITokenManager
     abstract public function getConfiguration();
 
     /**
-     * @return bool
+     * Returns bool false if failed - otherwise an array or a string with the codes
+     *
+     * @return bool | string | array
      */
     abstract public function insertOrUpdateVoucherSeries();
 
