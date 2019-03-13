@@ -99,14 +99,14 @@ class TagRenderer implements LoggerAwareInterface
                 }
 
                 if ($tag instanceof Tag && $tag->getType() === $type) {
-                    $tag->setView($view);
-                    $tag->setEditmode($editmode);
-                    $tag->setOptions($options);
-
                     // call the load() method if it exists to reinitialize the data (eg. from serializing, ...)
                     if (method_exists($tag, 'load')) {
                         $tag->load();
                     }
+
+                    $tag->setView($view);
+                    $tag->setEditmode($editmode);
+                    $tag->setOptions($options);
                 } else {
                     $tag = Tag::factory($type, $name, $document->getId(), $options, null, $view, $editmode);
                     $document->setElement($name, $tag);

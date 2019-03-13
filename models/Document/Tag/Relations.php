@@ -56,18 +56,9 @@ class Relations extends Model\Document\Tag implements \Iterator
         if (empty($this->elements)) {
             $this->elements = [];
             foreach ($this->elementIds as $elementId) {
-                 $el = Element\Service::getElementById($elementId['type'], $elementId['id']);
-
-                 if (
-                     (!$this->getEditmode() and $el instanceof DataObject && DataObject::doHideUnpublished())
-                     ||
-                     (!$this->getEditmode() and $el instanceof Document && Document::doHideUnpublished())
-                ) {
-                    if (Element\Service::isPublished($el)) {
-                        $this->elements[] = $el;
-                    }
-                } else {
-                     $this->elements[] = $el;
+                $el = Element\Service::getElementById($elementId['type'], $elementId['id']);
+                if ($el instanceof Element\ElementInterface) {
+                    $this->elements[] = $el;
                 }
             }
         }
