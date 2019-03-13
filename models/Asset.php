@@ -1883,4 +1883,33 @@ class Asset extends Element\AbstractElement
 
         return $this;
     }
+
+    /**
+     * @inheritdoc
+     */
+    public function resolveDependencies()
+    {
+        $dependencies = parent::resolveDependencies();
+
+        if ($this->hasMetaData) {
+            $metaData = $this->getMetadata();
+
+            foreach ($metaData as $md) {
+                if (isset($md['data']) && $md['data'] instanceof ElementInterface) {
+                    /**
+                     * @var $elementData ElementInterface
+                     */
+                    $elementData = $md['data'];
+                    $elementType = $md['type'];
+                    $key = $elementType . '_' . $elementData->getId();
+                    $dependencies[$key] = [
+                        'id' => $elementData->getId(),
+                        'type' => $elementType
+                    ];
+                }
+            }
+        }
+
+        return $dependencies;
+    }
 }
