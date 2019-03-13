@@ -81,6 +81,11 @@ class DataObjectDataExtractor extends AbstractElementDataExtractor
 
         $object = $translationItem->getElement();
 
+        if($object instanceof DataObject\Folder) {
+            DataObject\AbstractObject::setGetInheritedValues($inheritedBackup);
+            return $result;
+        }
+
         if (!$object instanceof DataObject\Concrete) {
             throw new \Exception('only data objects allowed');
         }
