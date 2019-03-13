@@ -59,10 +59,10 @@ class EmailController extends AdminController
                 }
 
                 $filterTerm = str_replace('%', '*', $filterTerm);
-                $filterTerm = str_replace('@', '#', $filterTerm);
                 $filterTerm = htmlspecialchars($filterTerm, ENT_QUOTES);
 
-                $condition = '( MATCH (`from`,`to`,`cc`,`bcc`,`subject`,`params`) AGAINST (' . $list->quote($filterTerm) . ' IN BOOLEAN MODE) )';
+
+                $condition = '( MATCH (`from`,`to`,`cc`,`bcc`,`subject`,`params`) AGAINST (' . $list->quote('"' . $filterTerm . '"') . ' IN BOOLEAN MODE) )';
 
                 if ($request->get('documentId')) {
                     $condition .= 'AND documentId = ' . (int)$request->get('documentId');
