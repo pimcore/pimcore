@@ -340,7 +340,7 @@ pimcore.document.hardlink = Class.create(pimcore.document.document, {
 
                         data = data.records[0].data;
                         if (data.elementType === "document") {
-                            this.setValue(data.path);
+                            pathField.setValue(data.path);
                             return true;
                         }
                         return false;
