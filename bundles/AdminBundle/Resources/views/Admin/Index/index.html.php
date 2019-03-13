@@ -399,6 +399,7 @@ $scripts = array(
     "pimcore/document/printpage.js",
     "pimcore/document/printcontainer.js",
     "pimcore/document/seopanel.js",
+    "pimcore/document/document_language_overview.js",
     "pimcore/document/customviews/tree.js",
 
     // assets
