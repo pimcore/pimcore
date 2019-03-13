@@ -338,7 +338,7 @@ class Relations extends Model\Document\Tag implements \Iterator
     {
         $this->setElements();
 
-        $el = $this->Current();
+        $el = $this->current();
         if (
             ($el instanceof DataObject && DataObject::doHideUnpublished())
             ||
