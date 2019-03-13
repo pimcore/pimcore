@@ -25,24 +25,12 @@ class ClassDefinitionManager
     public const DELETED = 'deleted';
 
     /**
-     * @var Db
-     */
-    private $db;
-
-    /**
-     * @param ConnectionInterface $db
-     */
-    public function __construct(ConnectionInterface $db)
-    {
-        $this->db = $db;
-    }
-
-    /**
      * Delete all classes from db
      */
     public function cleanUpDeletedClassDefinitions(): array
     {
-        $classes = $this->db->fetchAll('SELECT * FROM classes');
+        $db = \Pimcore\Db::get();
+        $classes = $db->fetchAll('SELECT * FROM classes');
         $deleted = [];
 
         foreach ($classes as $class) {
