@@ -774,8 +774,10 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
         } elseif ($object instanceof DataObject\Localizedfield) {
             $data = $params['data'];
         } elseif ($object instanceof DataObject\Fieldcollection\Data\AbstractData) {
+            parent::loadLazyFieldcollectionField($object);
             $data = $object->getObjectVar($this->getName());
         } elseif ($object instanceof DataObject\Objectbrick\Data\AbstractData) {
+            parent::loadLazyBrickField($object);
             $data = $object->getObjectVar($this->getName());
         }
 
