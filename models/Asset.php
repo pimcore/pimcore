@@ -752,7 +752,9 @@ class Asset extends Element\AbstractElement
         $d->setSourceType('asset');
         $d->setSourceId($this->getId());
 
-        foreach ($this->resolveDependencies() as $requirement) {
+        $dependencies = array_merge($this->resolveMetaDataDependencies(), $this->resolveDependencies());
+
+        foreach ($dependencies as $requirement) {
             if ($requirement['id'] == $this->getId() && $requirement['type'] == 'asset') {
                 // dont't add a reference to yourself
                 continue;
@@ -1882,5 +1884,31 @@ class Asset extends Element\AbstractElement
         $this->versionCount = (int) $versionCount;
 
         return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function resolveMetaDataDependencies()
+    {
+        $dependencies = [];
+
+        if ($this->hasMetaData) {
+            $metaData = $this->getMetadata();
+
+            foreach ($metaData as $md) {
+                if (isset($md['data']) && $md['data'] instanceof ElementInterface) {
+                    $elementData = $md['data'];
+                    $elementType = $md['type'];
+                    $key = $elementType . '_' . $elementData->getId();
+                    $dependencies[$key] = [
+                        'id' => $elementData->getId(),
+                        'type' => $elementType
+                    ];
+                }
+            }
+        }
+
+        return $dependencies;
     }
 }
