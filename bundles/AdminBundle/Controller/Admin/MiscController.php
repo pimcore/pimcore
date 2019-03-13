@@ -67,8 +67,9 @@ class MiscController extends AdminController
      */
     public function getAvailableControllersAction(Request $request, ControllerDataProvider $provider)
     {
+        $routingDefaults = $this->getParameter('pimcore.routing.defaults');
         $bundle = $request->get('moduleName');
-        $controllers = $provider->getControllers($bundle, PIMCORE_SYMFONY_DEFAULT_BUNDLE);
+        $controllers = $provider->getControllers($bundle, $routingDefaults['bundle']);
 
         $result = array_map(function ($controller) {
             return [
@@ -93,14 +94,15 @@ class MiscController extends AdminController
      */
     public function getAvailableActionsAction(Request $request, ControllerDataProvider $provider)
     {
+        $routingDefaults = $this->getParameter('pimcore.routing.defaults');
         $bundle = $request->get('moduleName');
         if (empty($bundle)) {
-            $bundle = PIMCORE_SYMFONY_DEFAULT_BUNDLE;
+            $bundle = $routingDefaults['bundle'];
         }
 
         $controller = $request->get('controllerName');
         if (empty($controller)) {
-            $bundle = PIMCORE_SYMFONY_DEFAULT_CONTROLLER;
+            $bundle = $routingDefaults['controller'];
         }
 
         $actions = $provider->getActions($controller, $bundle);

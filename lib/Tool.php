@@ -293,11 +293,9 @@ class Tool
 
         if ($config) {
             // system default
-            $routingDefaults = [
-                'controller' => PIMCORE_SYMFONY_DEFAULT_CONTROLLER,
-                'action' => PIMCORE_SYMFONY_DEFAULT_ACTION,
-                'module' => PIMCORE_SYMFONY_DEFAULT_BUNDLE
-            ];
+            $container = \Pimcore::getContainer();
+            $routingDefaults = $container->getParameter('pimcore.routing.defaults');
+            $routingDefaults['module'] = $routingDefaults['bundle'];
 
             // get configured settings for defaults
             $systemRoutingDefaults = $config->documents->toArray();
