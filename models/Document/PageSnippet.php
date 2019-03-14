@@ -168,7 +168,7 @@ abstract class PageSnippet extends Model\Document
      */
     public function delete(bool $isNested = false)
     {
-        $this->beginTransaction($isNested);
+        $this->beginTransaction();
 
         try {
             $versions = $this->getVersions();
@@ -181,9 +181,9 @@ abstract class PageSnippet extends Model\Document
 
             parent::delete(true);
 
-            $this->commit($isNested);
+            $this->commit();
         } catch (\Exception $e) {
-            $this->rollBack($isNested);
+            $this->rollBack();
             \Pimcore::getEventDispatcher()->dispatch(DocumentEvents::POST_DELETE_FAILURE, new DocumentEvent($this));
             Logger::error($e);
             throw $e;

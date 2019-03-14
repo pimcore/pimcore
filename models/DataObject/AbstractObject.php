@@ -541,7 +541,7 @@ class AbstractObject extends Model\Element\AbstractElement
     {
         \Pimcore::getEventDispatcher()->dispatch(DataObjectEvents::PRE_DELETE, new DataObjectEvent($this));
 
-        $this->beginTransaction($isNested);
+        $this->beginTransaction();
 
         try {
             // delete children
@@ -567,10 +567,10 @@ class AbstractObject extends Model\Element\AbstractElement
 
             $this->getDao()->delete();
 
-            $this->commit($isNested);
+            $this->commit();
 
         } catch (\Exception $e) {
-            $this->rollBack($isNested);
+            $this->rollBack();
             \Pimcore::getEventDispatcher()->dispatch(DataObjectEvents::POST_DELETE_FAILURE, new DataObjectEvent($this));
             Logger::crit($e);
             throw $e;

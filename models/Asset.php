@@ -969,7 +969,7 @@ class Asset extends Element\AbstractElement
 
         \Pimcore::getEventDispatcher()->dispatch(AssetEvents::PRE_DELETE, new AssetEvent($this));
 
-        $this->beginTransaction($isNested);
+        $this->beginTransaction();
 
         try {
             $this->closeStream();
@@ -1005,7 +1005,7 @@ class Asset extends Element\AbstractElement
             // remove from resource
             $this->getDao()->delete();
 
-            $this->commit($isNested);
+            $this->commit();
 
             // remove file on filesystem
             if(!$isNested) {
@@ -1016,7 +1016,7 @@ class Asset extends Element\AbstractElement
                 }
             }
         } catch (\Exception $e) {
-            $this->rollBack($isNested);
+            $this->rollBack();
             \Pimcore::getEventDispatcher()->dispatch(AssetEvents::POST_DELETE_FAILURE, new AssetEvent($this));
             Logger::crit($e);
             throw $e;

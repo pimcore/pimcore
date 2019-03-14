@@ -242,7 +242,7 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
      */
     public function delete(bool $isNested = false)
     {
-        $this->beginTransaction($isNested);
+        $this->beginTransaction();
 
         try {
             // delete all versions
@@ -254,9 +254,9 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
 
             parent::delete(true);
 
-            $this->commit($isNested);
+            $this->commit();
         } catch (\Exception $e) {
-            $this->rollBack($isNested);
+            $this->rollBack();
             \Pimcore::getEventDispatcher()->dispatch(DataObjectEvents::POST_DELETE_FAILURE, new DataObjectEvent($this));
             Logger::crit($e);
             throw $e;

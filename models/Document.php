@@ -777,7 +777,7 @@ class Document extends Element\AbstractElement
     {
         \Pimcore::getEventDispatcher()->dispatch(DocumentEvents::PRE_DELETE, new DocumentEvent($this));
 
-        $this->beginTransaction($isNested);
+        $this->beginTransaction();
 
         try {
             // remove childs
@@ -807,10 +807,10 @@ class Document extends Element\AbstractElement
 
             $this->getDao()->delete();
 
-            $this->commit($isNested);
+            $this->commit();
 
         } catch (\Exception $e) {
-            $this->rollBack($isNested);
+            $this->rollBack();
             \Pimcore::getEventDispatcher()->dispatch(DocumentEvents::POST_DELETE_FAILURE, new DocumentEvent($this));
             Logger::error($e);
             throw $e;
