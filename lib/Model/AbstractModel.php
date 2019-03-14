@@ -18,9 +18,9 @@ use Pimcore\Logger;
 use Pimcore\Model\DataObject\Traits\ObjectVarTrait;
 
 /**
- * @method void beginTransaction()
- * @method void commit()
- * @method void rollBack()
+ * @method void beginTransaction(bool $isNested = false)
+ * @method void commit(bool $isNested = false)
+ * @method void rollBack(bool $isNested = false)
  * @method void configure()
  * @method array getValidTableColumns(string $table, bool $cache)
  * @method void resetValidTableColumnsCache(string $table)

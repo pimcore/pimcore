@@ -267,17 +267,30 @@ class Concrete extends AbstractObject
         }
     }
 
-    public function delete()
+    /**
+     * @inheritdoc
+     */
+    public function delete(bool $isNested = false)
     {
+        $this->beginTransaction($isNested);
 
-        // delete all versions
-        foreach ($this->getVersions() as $v) {
-            $v->delete();
+        try {
+            // delete all versions
+            foreach ($this->getVersions() as $v) {
+                $v->delete();
+            }
+
+            $this->getDao()->deleteAllTasks();
+
+            parent::delete(true);
+
+            $this->commit($isNested);
+        } catch (\Exception $e) {
+            $this->rollBack($isNested);
+            \Pimcore::getEventDispatcher()->dispatch(DataObjectEvents::POST_DELETE_FAILURE, new DataObjectEvent($this));
+            Logger::crit($e);
+            throw $e;
         }
-
-        $this->getDao()->deleteAllTasks();
-
-        parent::delete();
     }
 
     /**

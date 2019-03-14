@@ -269,9 +269,12 @@ EOT;
         return $svgPath;
     }
 
-    public function delete()
+    /**
+     * @inheritdoc
+     */
+    public function delete(bool $isNested = false)
     {
-        parent::delete();
+        parent::delete($isNested);
         $this->clearThumbnails(true);
     }
 
