@@ -1300,6 +1300,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
                 'dataIndex' => 'text',
                 'cls' => $lang ? "x-column-header_" . strtolower($lang) : null,
                 'width' => 300,
+                'sortable' => false,
             ],
         ];
 
@@ -1323,6 +1324,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
                     'dataIndex' => $language,
                     'cls' => "x-column-header_" . strtolower($language),
                     'width' => 300,
+                    'sortable' => false,
                 ];
             }
         }

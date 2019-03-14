@@ -65,11 +65,12 @@ pimcore.document.document_language_overview = Class.create({
     getTreeGrid: function (rootNodeConfig, columns, languages) {
 
         for(var i=1; i<columns.length; i++) {
-            columns[1].renderer = function(value) {
+            columns[i].renderer = function(value) {
 
                 var classAddon = !value.published && value.itemType == 'document' ? ' class="strikeThrough"' : '';
+                var actionsButton = '<img src="/bundles/pimcoreadmin/img/flat-color-icons/edit.svg" class="x-action-col-icon x-action-col-0" style="position: absolute;" />';
 
-                return '<span title="' + value.fullPath + '"' + classAddon +'>' + value.text + '</span>';
+                return '<span title="' + value.fullPath + '"' + classAddon +' style="margin-left: 25px;">' + value.text + '</span>';
             };
         }
 
@@ -99,6 +100,7 @@ pimcore.document.document_language_overview = Class.create({
                 cls: "pimcore_document_seo_tree",
                 listeners: {
                     "cellcontextmenu": this.onCellContextmenu.bind(this),
+                    "cellclick": this.onCellContextmenu.bind(this),
                     'render': function () {
                         this.getRootNode().expand();
                     }
@@ -110,9 +112,15 @@ pimcore.document.document_language_overview = Class.create({
     },
 
     onCellContextmenu: function (tree, td, cellIndex, record, tr, rowIndex, e, eOpts ) {
+
+        if(cellIndex == 0 && e.type == 'click') {
+            return;
+        }
+
         tree.select();
         var column = tree.config.grid.columns[cellIndex];
         var data = cellIndex == 0 ? record.data : record.data[column.dataIndex];
+
 
         var menu = new Ext.menu.Menu();
         if(data.itemType != 'empty') {
@@ -224,7 +232,7 @@ pimcore.document.document_language_overview = Class.create({
             success: function (response) {
                 var res = Ext.decode(response.responseText);
                 if(!res.success) {
-                    Ext.MessageBox.alert(t("error"), 'not possible');
+                    Ext.MessageBox.alert(t("error"), t("document_translation_parent_not_found"));
                 } else {
 
                     var pageForm = new Ext.form.FormPanel({
