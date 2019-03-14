@@ -1276,6 +1276,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
      * @param Request $request
      *
      * @return JsonResponse
+     * @throws \Exception
      */
     public function languageTreeRootAction(Request $request)
     {
@@ -1286,23 +1287,16 @@ class DocumentController extends ElementControllerBase implements EventedControl
                 'success' => false
             ]);
         }
-
-        $translator = $this->container->get('translator');
-
         $service = new Document\Service();
-
-        $addon = '';
 
         $locales = Tool::getSupportedLocales();
 
-        if($lang = $document->getProperty('language')) {
-            $addon = $locales[$lang] . ' - ';
-        }
+        $lang = $document->getProperty('language');
 
         $columns = [
             [
                 'xtype' => 'treecolumn',
-                'text' => $addon . $translator->trans('language_master', [], 'admin'),
+                'text' => $lang ? $locales[$lang] : '',
                 'dataIndex' => 'text',
                 'cls' => $lang ? "x-column-header_" . strtolower($lang) : null,
                 'width' => 300,
@@ -1311,8 +1305,16 @@ class DocumentController extends ElementControllerBase implements EventedControl
 
         $translations = $service->getTranslations($document);
 
-        foreach($translations as $language => $languageDocumentId) {
+        $combinedTranslations = $translations;
 
+        if($parentDocument = $document->getParent()) {
+            $parentTranslations = $service->getTranslations($parentDocument);
+            foreach($parentTranslations as $language => $languageDocumentId) {
+                $combinedTranslations[$language] = $translations[$language] ?? $languageDocumentId;
+            }
+        }
+
+        foreach($combinedTranslations as $language => $languageDocumentId) {
             $languageDocument = Document::getById($languageDocumentId);
 
             if($languageDocument && $languageDocument->isAllowed('list') && $language != $document->getProperty('language')) {
@@ -1324,7 +1326,6 @@ class DocumentController extends ElementControllerBase implements EventedControl
                 ];
             }
         }
-
 
         return $this->adminJson([
             'root' => $this->getTranslationTreeNodeConfig($document, array_keys($translations), $translations),

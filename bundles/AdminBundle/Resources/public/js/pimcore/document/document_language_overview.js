@@ -98,7 +98,6 @@ pimcore.document.document_language_overview = Class.create({
                 lines: true,
                 cls: "pimcore_document_seo_tree",
                 listeners: {
-                   // "itemclick": this.openEditPanel.bind(this),
                     "cellcontextmenu": this.onCellContextmenu.bind(this),
                     'render': function () {
                         this.getRootNode().expand();
@@ -127,6 +126,26 @@ pimcore.document.document_language_overview = Class.create({
                     }.bind(this)
                 }]);
             }
+
+            if(!data.published && data.permissions.publish) {
+                menu.add([{
+                    text: t("publish"),
+                    iconCls: "pimcore_icon_publish",
+                    handler: function() {
+                        this.publishDocument(tree, data, 'publish');
+                    }.bind(this)
+                }]);
+            }
+
+            if(data.published && data.permissions.unpublish) {
+                menu.add([{
+                    text: t("unpublish"),
+                    iconCls: "pimcore_icon_unpublish",
+                    handler: function() {
+                        this.publishDocument(tree, data, 'unpublish');
+                    }.bind(this)
+                }]);
+            }
         } else {
             menu.add([{
                 text: t("create_translation_inheritance"),
@@ -152,6 +171,47 @@ pimcore.document.document_language_overview = Class.create({
 
         e.stopEvent();
         menu.showAt(e.pageX, e.pageY);
+    },
+
+    publishDocument: function (tree, data, task) {
+        var id = data.id;
+        var type = data.type;
+
+        var parameters = {};
+        parameters.id = id;
+
+        Ext.Ajax.request({
+            url: '/admin/' + type + '/save?task=' + task,
+            method: "PUT",
+            params: parameters,
+            success: function (task, response) {
+                try {
+                    var rdata = Ext.decode(response.responseText);
+                    if (rdata && rdata.success) {
+                        var options = {
+                            elementType: "document",
+                            id: data.id,
+                            published: task != "unpublish"
+                        };
+                        pimcore.elementservice.setElementPublishedState(options);
+                        pimcore.elementservice.setElementToolbarButtons(options);
+                        pimcore.elementservice.reloadVersions(options);
+                        tree.getStore().reload();
+
+                        pimcore.helpers.showNotification(t("success"), t("successful_" + task + "_document"),
+                            "success");
+                    }
+                    else {
+                        pimcore.helpers.showNotification(t("error"), t("error_" + task + "_document"),
+                            "error", t(rdata.message));
+                    }
+                } catch (e) {
+                    pimcore.helpers.showNotification(t("error"), t("error_" + task + "_document"), "error");
+                }
+
+            }.bind(this, task)
+        });
+
     },
 
     createTranslation: function(record, column, inheritance) {
