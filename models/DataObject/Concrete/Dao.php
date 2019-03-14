@@ -191,7 +191,7 @@ class Dao extends Model\DataObject\AbstractObject\Dao
 
         foreach ($fieldDefinitions as $key => $fd) {
             if (method_exists($fd, 'getLazyLoading') && $fd->getLazyLoading()) {
-                if (!in_array($key, $this->model->getLazyLoadedFields())) {
+                if ($this->model->hasLazyKey($key) || $fd instanceof DataObject\ClassDefinition\Data\ReverseManyToManyObjectRelation) {
                     //this is a relation subject to lazy loading - it has not been loaded
                     $untouchable[] = $key;
                 }

@@ -149,7 +149,14 @@ class Dao extends Model\Dao\AbstractDao
                         'language' => $language,
                     ];
 
-                    $fd->save($this->model, $childParams);
+                    if ($fd instanceof DataObject\ClassDefinition\Data\Relations\AbstractRelations) {
+                        if ($this->model->isLanguageDirty($language) || $params["saveLocalizedRelations"]) {
+                            $fd->save($this->model, $childParams);
+                        }
+                    } else {
+                        $fd->save($this->model, $childParams);
+                    }
+
                 }
                 if ($fd instanceof ResourcePersistenceAwareInterface || method_exists($fd, 'getDataForResource')) {
                     if (!$fd instanceof ResourcePersistenceAwareInterface) {
@@ -411,7 +418,7 @@ class Dao extends Model\Dao\AbstractDao
                         }
                         $params = [];
                         $params['context'] = $this->model->getContext() ? $this->model->getContext() : [];
-                        if ($params['context']['containerType'] == 'fieldcollection' || $params['context']['containerType'] == 'objectbrick') {
+                        if (isset($params['context']['containerType']) && ($params['context']['containerType'] == 'fieldcollection' || $params['context']['containerType'] == 'objectbrick')) {
                             $params['context']['subContainerType'] = 'localizedfield';
                         }
 
@@ -541,9 +548,15 @@ class Dao extends Model\Dao\AbstractDao
                             $params['context'] = [];
                         }
                         $params['context']['object'] = $object;
-                        $value = $fd->load($this->model, $params);
-                        if ($value === 0 || !empty($value)) {
-                            $this->model->setLocalizedValue($key, $value, $row['language'], false);
+
+                        if ($fd instanceof  DataObject\ClassDefinition\Data\Relations\AbstractRelations && !DataObject\Localizedfield::isLazyLoadingDisabled() && $fd->getLazyLoading())  {
+                            $lazyKey = $fd->getName() . "_" . $row['language'];
+                            $this->model->addLazyKey($lazyKey);
+                        } else {
+                            $value = $fd->load($this->model, $params);
+                            if ($value === 0 || !empty($value)) {
+                                $this->model->setLocalizedValue($key, $value, $row['language'], false);
+                            }
                         }
                     }
                     if ($fd instanceof ResourcePersistenceAwareInterface || method_exists($fd, 'getDataFromResource')) {

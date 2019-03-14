@@ -565,7 +565,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
         if ($object instanceof DataObject\Concrete) {
             $data = $object->getObjectVar($this->getName());
 
-            if ($this->getLazyLoading() and !in_array($this->getName(), $object->getO__loadedLazyFields())) {
+            if ($this->getLazyLoading()  &&  $object->hasLazyKey($this->getName())) {
                 $data = $this->load($object, ['force' => true]);
 
                 $object->setObjectVar($this->getName(), $data);
@@ -574,8 +574,10 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
         } elseif ($object instanceof DataObject\Localizedfield) {
             $data = $params['data'];
         } elseif ($object instanceof DataObject\Fieldcollection\Data\AbstractData) {
+            parent::loadLazyFieldcollectionField($object);
             $data = $object->getObjectVar($this->getName());
         } elseif ($object instanceof DataObject\Objectbrick\Data\AbstractData) {
+            parent::loadLazyBrickField($object);
             $data = $object->getObjectVar($this->getName());
         }
 

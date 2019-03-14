@@ -1146,7 +1146,7 @@ abstract class Data
             return $params['injectedData'];
         }
 
-        $context = $params && $params['context'] ? $params['context'] : null;
+        $context = is_array($params) && isset($params['context']) ? $params['context'] : null;
 
         if ($context) {
             if ($context['containerType'] == 'fieldcollection' || $context['containerType'] == 'block') {
@@ -1311,7 +1311,7 @@ abstract class Data
      */
     public function unmarshal($data, $object = null, $params = [])
     {
-        if ($params['raw']) {
+        if (isset($params['raw']) && $params['raw']) {
             return $data;
         } else {
             if (is_array($data)) {
@@ -1367,10 +1367,8 @@ abstract class Data
      */
     public function markLazyloadedFieldAsLoaded($object)
     {
-        if ($object instanceof DataObject\Concrete) {
-            if ($this->getLazyLoading() and !in_array($this->getName(), $object->getO__loadedLazyFields())) {
-                $object->addO__loadedLazyField($this->getName());
-            }
+        if ($object instanceof DataObject\LazyLoadedFieldsInterface) {
+                $object->removeLazyKey($this->getName());
         }
     }
 

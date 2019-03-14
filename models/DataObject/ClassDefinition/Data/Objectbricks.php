@@ -226,10 +226,10 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface
                 $data = $relations[0];
             } else {
                 foreach ($relations as $rel) {
-                    if ($fielddefinition instanceof DataObject\ClassDefinition\Data\Objects) {
-                        $data[] = [$rel['id'], $rel['path'], $rel['subtype']];
+                    if ($fielddefinition instanceof DataObject\ClassDefinition\Data\ManyToManyObjectRelation) {
+                        $data[] = ['id' => $rel['id'], 'fullpath' => $rel['path'], 'subtype' => $rel['subtype'], 'published' => ($rel['published']?true:false)];
                     } else {
-                        $data[] = [$rel['id'], $rel['path'], $rel['type'], $rel['subtype']];
+                        $data[] = ['id' => $rel['id'], 'fullpath' => $rel['path'],  'type' => $rel['type'], 'subtype' =>  $rel['subtype'], 'published' => ($rel['published']?true:false)];
                     }
                 }
             }

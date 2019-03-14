@@ -530,7 +530,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
         $data = null;
         if ($object instanceof DataObject\Concrete) {
             $data = $object->getObjectVar($this->getName());
-            if ($this->getLazyLoading() and !in_array($this->getName(), $object->getO__loadedLazyFields())) {
+            if ($this->getLazyLoading()  &&  $object->hasLazyKey($this->getName())) {
                 //$data = $this->getDataFromResource($object->getRelationData($this->getName(),true,null));
                 $data = $this->load($object, ['force' => true]);
 
@@ -540,8 +540,10 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
         } elseif ($object instanceof DataObject\Localizedfield) {
             $data = $params['data'];
         } elseif ($object instanceof DataObject\Fieldcollection\Data\AbstractData) {
+            parent::loadLazyFieldcollectionField($object);
             $data = $object->getObjectVar($this->getName());
         } elseif ($object instanceof DataObject\Objectbrick\Data\AbstractData) {
+            parent::loadLazyBrickField($object);
             $data = $object->getObjectVar($this->getName());
         }
 

@@ -90,7 +90,7 @@
   "composite": "Composite",
   "origin": "Origin",
   "high_resolution": "High Resolution",
-  "lazy_loading_warning": "WARNING: Lazy Loading is NOT possible within Localized Fields, Field Collections and Object Bricks",
+  "lazy_loading_warning_block": "WARNING: Lazy Loading is NOT possible within Blocks",
   "pass_through_params": "Pass Through Params",
   "redirects_type_entire_uri": "Entire URI",
   "redirects_type_path_query": "Path and Query",

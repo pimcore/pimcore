@@ -282,13 +282,6 @@ class Service
                     if ($item instanceof DataObject\ClassDefinition\Data\EncryptedField) {
                         $item->setupDelegate($array);
                     }
-
-                    if ($insideLocalizedField && $item instanceof DataObject\ClassDefinition\Data\Relations\AbstractRelations) {
-                        if ($item->getLazyLoading()) {
-                            Logger::error('WARNING: lazy loading relations not supported inside localizedfields');
-                            $item->setLazyLoading(false);
-                        }
-                    }
                 }
 
                 return $item;

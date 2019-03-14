@@ -3,6 +3,8 @@
 namespace Pimcore\Tests\Helper\DataType;
 
 use Codeception\Module;
+use Pimcore\Cache;
+use Pimcore\Cache\Runtime;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\AbstractObject;
@@ -952,12 +954,12 @@ class TestDataHelper extends Module
     }
 
     /**
-     * @param Concrete    $object
+     * @param Concrete|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData    $object
      * @param string      $field
      * @param int         $seed
      * @param string|null $language
      */
-    public function fillObjects(Concrete $object, $field, $seed = 1, $language = null)
+    public function fillObjects($object, $field, $seed = 1, $language = null)
     {
         $setter = 'set' . ucfirst($field);
         $objects = $this->getObjectList("o_type = 'object'");
@@ -976,17 +978,18 @@ class TestDataHelper extends Module
     }
 
     /**
-     * @param Concrete      $object
+     * @param Concrete|DataObject\Fieldcollection\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData      $object
      * @param string        $field
      * @param Concrete|null $comparisonObject
      * @param int           $seed
      * @param string|null   $language
      */
-    public function assertObjects(Concrete $object, $field, $seed = 1, $language = null)
+    public function assertObjects($object, $field, $seed = 1, $language = null)
     {
         $getter = 'get' . ucfirst($field);
 
         $objects = $this->getObjectList("o_type = 'object'");
+
         if ($language) {
             if ($language === 'de') {
                 $expectedArray = array_slice($objects, 0, 6);
@@ -996,6 +999,7 @@ class TestDataHelper extends Module
             $value = $object->$getter($language);
         } else {
             $expectedArray = array_slice($objects, 0, 4);
+
             $value = $object->$getter();
         }
 
@@ -1116,6 +1120,12 @@ class TestDataHelper extends Module
         $brick = new DataObject\Objectbrick\Data\UnittestBrick($object);
         $brick->setBrickInput('brickinput' . $seed);
 
+
+        $emptyObjects = TestHelper::createEmptyObjects("myBrickPrefix", true, 10);
+        $emptyLazyObjects = TestHelper::createEmptyObjects("myLazyBrickPrefix", true, 15);
+        $brick->setBrickRelation($emptyObjects);
+        $brick->setBrickLazyRelation($emptyLazyObjects);
+
         /** @var DataObject\Unittest\Mybricks $objectbricks */
         $objectbricks = $object->$getter();
         $objectbricks->setUnittestBrick($brick);
@@ -1136,11 +1146,32 @@ class TestDataHelper extends Module
         $value = $value->getUnittestBrick();
 
         /** @var DataObject\Objectbrick\Data\UnittestBrick $value */
-        $value = $value->getBrickinput();
+        $inputValue = $value->getBrickinput();
 
-        $expected = 'brickinput' . $seed;
+        $expectedInputValue = 'brickinput' . $seed;
 
-        $this->assertEquals($expected, $value);
+        $this->assertEquals($expectedInputValue, $inputValue);
+
+        $fieldRelation = $value->getBrickRelation();
+        $this->assertEquals(10, count($fieldRelation), "expected 10 items");
+
+        $fieldLazyRelation = $value->getBrickLazyRelation();
+        $this->assertEquals(15, count($fieldLazyRelation), "expected 15 items");
+
+        Cache::clearAll();
+        Runtime::clear();
+        $object = AbstractObject::getById($object->getId());
+        $value = $object->$getter();
+        $value = $value->getItems();
+
+        /** @var DataObject\Fieldcollection\Data\Unittestfieldcollection $value */
+        $value = $value[0];
+        $fieldRelation = $value->getBrickRelation();
+        $this->assertEquals(10, count($fieldRelation), "expected 10 items");
+
+        $fieldLazyRelation = $value->getBrickLazyRelation();
+        $this->assertEquals(15, count($fieldLazyRelation), "expected 15 items");
+
     }
 
     /**
@@ -1156,6 +1187,10 @@ class TestDataHelper extends Module
         $fc->setFieldinput1('field1' . $seed);
         $fc->setFieldinput2('field2' . $seed);
 
+        $emptyObjects = TestHelper::createEmptyObjects("myprefix", true, 10);
+        $emptyLazyObjects = TestHelper::createEmptyObjects("myLazyPrefix", true, 15);
+        $fc->setFieldRelation($emptyObjects);
+        $fc->setFieldLazyRelation($emptyLazyObjects);
         $items = new DataObject\Fieldcollection([$fc], $field);
         $object->$setter($items);
     }
@@ -1190,6 +1225,26 @@ class TestDataHelper extends Module
             $value->getFieldinput2(),
             'expected field2' . $seed . ' but was ' . $value->getFieldInput2()
         );
+
+        $fieldRelation = $value->getFieldRelation();
+        $this->assertEquals(10, count($fieldRelation), "expected 10 items");
+
+        $fieldLazyRelation = $value->getFieldLazyRelation();
+        $this->assertEquals(15, count($fieldLazyRelation), "expected 15 items");
+
+        Cache::clearAll();
+        Runtime::clear();
+        $object = AbstractObject::getById($object->getId());
+        $value = $object->$getter();
+        $value = $value->getItems();
+
+        /** @var DataObject\Fieldcollection\Data\Unittestfieldcollection $value */
+        $value = $value[0];
+        $fieldRelation = $value->getFieldRelation();
+        $this->assertEquals(10, count($fieldRelation), "expected 10 items");
+
+        $fieldLazyRelation = $value->getFieldLazyRelation();
+        $this->assertEquals(15, count($fieldLazyRelation), "expected 15 items");
     }
 
     public function assertElementsEqual(ElementInterface $e1, ElementInterface $e2)

@@ -866,25 +866,6 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
         return $data;
     }
 
-//
-//    public function getTableName($container, $params = []) {
-//        $db = Db::get();
-//        $data = null;
-//
-//        if ($container instanceof DataObject\Concrete) {
-//            return "object_store_" . $container->getClassId();
-//        } elseif ($container instanceof DataObject\Fieldcollection\Data\AbstractData) {
-//
-//            //TODO
-//        } elseif ($container instanceof DataObject\Localizedfield) {
-//            //TODO
-//        } elseif ($container instanceof DataObject\Objectbrick\Data\AbstractData) {
-//            //TODO
-//        }
-//
-//
-//    }
-
     /**
      * @param $object
      * @param array $params
@@ -972,7 +953,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
         $data = null;
         if ($object instanceof DataObject\Concrete) {
             $data = $object->getObjectVar($this->getName());
-            if ($this->getLazyLoading() and !in_array($this->getName(), $object->getO__loadedLazyFields())) {
+            if ($this->getLazyLoading()  &&  $object->hasLazyKey($this->getName())) {
                 $data = $this->load($object, ['force' => true]);
 
                 $setter = 'set' . ucfirst($this->getName());

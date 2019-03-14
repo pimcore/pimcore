@@ -12,6 +12,7 @@ use Pimcore\Model\Element\AbstractElement;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Property;
 use Pimcore\Tests\Helper\DataType\TestDataHelper;
+use Pimcore\Tool;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
 
@@ -286,7 +287,9 @@ class TestHelper
             $localeService = \Pimcore::getContainer()->get('pimcore.locale');
             $localeBackup = $localeService->getLocale();
 
-            foreach ($data->getItems() as $language => $values) {
+            $validLanguages = Tool::getValidLanguages();
+
+            foreach ($validLanguages as $language) {
                 /** @var ObjectModel\ClassDefinition\Data $nestedFd */
                 foreach ($fd->getFieldDefinitions() as $nestedFd) {
                     $localeService->setLocale($language);
