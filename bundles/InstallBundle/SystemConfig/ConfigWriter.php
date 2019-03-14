@@ -41,8 +41,6 @@ class ConfigWriter
             'versions' => [
                 'steps' => '10'
             ],
-            'default_controller' => '',
-            'default_action' => '',
             'error_pages' => [
                 'default' => '/'
             ],

@@ -294,8 +294,6 @@
   "defaults": "Defaults",
   "wysiwyg": "WYSIWYG",
   "objects": "Objects",
-  "default_controller": "Default controller",
-  "default_action": "Default action",
   "allow_inherit": "Allow inheritance",
   "parent_php_class": "Parent PHP Class",
   "use_traits": "Use (traits)",

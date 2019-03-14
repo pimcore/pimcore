@@ -295,8 +295,6 @@
     "objects": "Záznamy",
     "structured": "Strukturovaný",
     "geo": "Geografický",
-    "default_controller": "Výchozí controller",
-    "default_action": "Výchozí akce",
     "allow_inherit": "Povolit dědičnost",
     "use_traits": "Use (traits)",
     "general_settings": "Obecné nastavení",

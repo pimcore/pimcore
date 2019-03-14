@@ -766,15 +766,6 @@ pimcore.settings.system = Class.create({
                                 minValue: 0
                             },
                             {
-                                fieldLabel: t('default_controller'),
-                                name: 'documents.default_controller',
-                                value: this.getValue("documents.default_controller")
-                            },
-                            {
-                                fieldLabel: t('default_action'),
-                                name: 'documents.default_action',
-                                value: this.getValue("documents.default_action")
-                            }, {
                                 xtype: "displayfield",
                                 hideLabel: true,
                                 style: "margin-top: 10px;",

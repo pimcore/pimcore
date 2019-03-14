@@ -289,23 +289,9 @@ class Tool
      */
     public static function getRoutingDefaults()
     {
-        // system default
         $container = \Pimcore::getContainer();
         $routingDefaults = $container->getParameter('pimcore.routing.defaults');
         $routingDefaults['module'] = $routingDefaults['bundle'];
-
-        $config = Config::getSystemConfig();
-
-        if ($config) {
-            // get configured settings for defaults
-            $systemRoutingDefaults = $config->documents->toArray();
-
-            foreach ($routingDefaults as $key => $value) {
-                if (isset($systemRoutingDefaults['default_' . $key]) && $systemRoutingDefaults['default_' . $key]) {
-                    $routingDefaults[$key] = $systemRoutingDefaults['default_' . $key];
-                }
-            }
-        }
 
         return $routingDefaults;
     }

@@ -41,8 +41,6 @@ return [
             "days"  => null,
             "steps" => 10
         ],
-        "default_controller"      => "Default",
-        "default_action"          => "default",
         "error_pages"             => [
             "default" => "/error"
         ],

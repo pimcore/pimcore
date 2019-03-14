@@ -295,8 +295,6 @@
     "objects": "Objecten",
     "structured": "Gestructureerd",
     "geo": "Geografisch",
-    "default_controller": "Standaard controller",
-    "default_action": "Standaard action",
     "allow_inherit": "Overervering toestaan",
     "use_traits": "Gebruik (eigenschappen)",
     "general_settings": "Instellingen",

@@ -474,8 +474,6 @@ class SettingsController extends AdminController
                     'days' => $values['documents.versions.days'],
                     'steps' => $values['documents.versions.steps']
                 ],
-                'default_controller' => $values['documents.default_controller'],
-                'default_action' => $values['documents.default_action'],
                 'error_pages' => [
                     'default' => $values['documents.error_pages.default']
                 ],
