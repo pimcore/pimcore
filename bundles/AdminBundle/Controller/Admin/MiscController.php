@@ -102,7 +102,7 @@ class MiscController extends AdminController
 
         $controller = $request->get('controllerName');
         if (empty($controller)) {
-            $bundle = $routingDefaults['controller'];
+            $controller = $routingDefaults['controller'];
         }
 
         $actions = $provider->getActions($controller, $bundle);
