@@ -17,7 +17,7 @@
 
 namespace Pimcore\Model\DataObject\Concrete\Dao;
 
-use Pimcore\Db\Connection;
+use Pimcore\Db\ConnectionInterface;
 use Pimcore\Model\DataObject;
 
 class InheritanceHelper
@@ -33,7 +33,7 @@ class InheritanceHelper
     const ID_FIELD = 'oo_id';
 
     /**
-     * @var Connection
+     * @var ConnectionInterface
      */
     protected $db;
 

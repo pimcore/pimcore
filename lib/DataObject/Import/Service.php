@@ -39,7 +39,7 @@ class Service
     const FORBIDDEN_KEYS = ['id', 'fullpath', 'filename', 'published', 'creationDate', 'modificationDate', 'key'];
 
     /**
-     * @var Db\Connection
+     * @var Db\ConnectionInterface
      */
     private $db;
 
