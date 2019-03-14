@@ -70,7 +70,7 @@ pimcore.document.document_language_overview = Class.create({
                 var classAddon = !value.published && value.itemType == 'document' ? ' class="strikeThrough"' : '';
                 var actionsButton = '<img src="/bundles/pimcoreadmin/img/flat-color-icons/edit.svg" class="x-action-col-icon x-action-col-0" style="position: absolute;" />';
 
-                return '<span title="' + value.fullPath + '"' + classAddon +' style="margin-left: 25px;">' + value.text + '</span>';
+                return actionsButton + '<span title="' + value.fullPath + '"' + classAddon +' style="margin-left: 25px;">' + value.text + '</span>';
             };
         }
 
