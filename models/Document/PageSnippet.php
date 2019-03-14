@@ -168,15 +168,26 @@ abstract class PageSnippet extends Model\Document
      */
     public function delete(bool $isNested = false)
     {
-        $versions = $this->getVersions();
-        foreach ($versions as $version) {
-            $version->delete();
+        $this->beginTransaction($isNested);
+
+        try {
+            $versions = $this->getVersions();
+            foreach ($versions as $version) {
+                $version->delete();
+            }
+
+            // remove all tasks
+            $this->getDao()->deleteAllTasks();
+
+            parent::delete(true);
+
+            $this->commit($isNested);
+        } catch (\Exception $e) {
+            $this->rollBack($isNested);
+            \Pimcore::getEventDispatcher()->dispatch(DocumentEvents::POST_DELETE_FAILURE, new DocumentEvent($this));
+            Logger::error($e);
+            throw $e;
         }
-
-        // remove all tasks
-        $this->getDao()->deleteAllTasks();
-
-        parent::delete($isNested);
     }
 
     /**
