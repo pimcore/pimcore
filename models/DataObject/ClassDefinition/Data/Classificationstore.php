@@ -1374,10 +1374,10 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
 
     /**
      * @param bool $disallowAddRemove
-     * 
+     *
      * @return $this
      */
-    public function setDisallowAddRemove(bool $disallowAddRemove)
+    public function setDisallowAddRemove($disallowAddRemove)
     {
         $this->disallowAddRemove = $disallowAddRemove;
 
