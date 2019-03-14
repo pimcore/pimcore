@@ -15,7 +15,6 @@
 namespace Pimcore\Model\DataObject\ClassDefinition;
 
 use Pimcore\Db;
-use Pimcore\Db\ConnectionInterface;
 use Pimcore\Model\DataObject\ClassDefinition;
 
 class ClassDefinitionManager
