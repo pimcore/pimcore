@@ -232,8 +232,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
                     $createValues['action'] = $translationsBaseDocument->getAction();
                     $createValues['module'] = $translationsBaseDocument->getModule();
                 } elseif ($request->get('type') == 'page' || $request->get('type') == 'snippet' || $request->get('type') == 'email') {
-                    $createValues['controller'] = Config::getSystemConfig()->documents->default_controller;
-                    $createValues['action'] = Config::getSystemConfig()->documents->default_action;
+                    $createValues += Tool::getRoutingDefaults();
                 }
 
                 if ($request->get('inheritanceSource')) {

@@ -289,14 +289,14 @@ class Tool
      */
     public static function getRoutingDefaults()
     {
+        // system default
+        $container = \Pimcore::getContainer();
+        $routingDefaults = $container->getParameter('pimcore.routing.defaults');
+        $routingDefaults['module'] = $routingDefaults['bundle'];
+
         $config = Config::getSystemConfig();
 
         if ($config) {
-            // system default
-            $container = \Pimcore::getContainer();
-            $routingDefaults = $container->getParameter('pimcore.routing.defaults');
-            $routingDefaults['module'] = $routingDefaults['bundle'];
-
             // get configured settings for defaults
             $systemRoutingDefaults = $config->documents->toArray();
 
@@ -305,11 +305,9 @@ class Tool
                     $routingDefaults[$key] = $systemRoutingDefaults['default_' . $key];
                 }
             }
-
-            return $routingDefaults;
-        } else {
-            return [];
         }
+
+        return $routingDefaults;
     }
 
     /**
