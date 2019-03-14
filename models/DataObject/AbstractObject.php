@@ -533,17 +533,24 @@ class AbstractObject extends Model\Element\AbstractElement
         return $this;
     }
 
-    public function delete()
+    /**
+     * @param bool $isNested
+     * @throws \Exception
+     */
+    public function delete(bool $isNested = false)
     {
         \Pimcore::getEventDispatcher()->dispatch(DataObjectEvents::PRE_DELETE, new DataObjectEvent($this));
+
+        $this->beginTransaction($isNested);
+
         try {
-            // delete childs
+            // delete children
             if ($this->hasChildren([self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_FOLDER, self::OBJECT_TYPE_VARIANT])) {
                 // delete also unpublished children
                 $unpublishedStatus = self::doHideUnpublished();
                 self::setHideUnpublished(false);
-                foreach ($this->getChildren([self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_FOLDER, self::OBJECT_TYPE_VARIANT], true) as $value) {
-                    $value->delete();
+                foreach ($this->getChildren([self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_FOLDER, self::OBJECT_TYPE_VARIANT], true) as $child) {
+                    $child->delete(true);
                 }
                 self::setHideUnpublished($unpublishedStatus);
             }
@@ -560,16 +567,20 @@ class AbstractObject extends Model\Element\AbstractElement
 
             $this->getDao()->delete();
 
-            // empty object cache
-            $this->clearDependentCache();
+            $this->commit($isNested);
 
-            //clear object from registry
-            \Pimcore\Cache\Runtime::set('object_' . $this->getId(), null);
         } catch (\Exception $e) {
+            $this->rollBack($isNested);
             \Pimcore::getEventDispatcher()->dispatch(DataObjectEvents::POST_DELETE_FAILURE, new DataObjectEvent($this));
             Logger::crit($e);
             throw $e;
         }
+
+        // empty object cache
+        $this->clearDependentCache();
+
+        //clear object from registry
+        \Pimcore\Cache\Runtime::set('object_' . $this->getId(), null);
 
         \Pimcore::getEventDispatcher()->dispatch(DataObjectEvents::POST_DELETE, new DataObjectEvent($this));
     }

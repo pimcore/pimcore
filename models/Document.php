@@ -770,11 +770,15 @@ class Document extends Element\AbstractElement
     }
 
     /**
-     * Deletes the document
+     * @param bool $isNested
+     * @throws \Exception
      */
-    public function delete()
+    public function delete(bool $isNested = false)
     {
         \Pimcore::getEventDispatcher()->dispatch(DocumentEvents::PRE_DELETE, new DocumentEvent($this));
+
+        $this->beginTransaction($isNested);
+
         try {
             // remove childs
             if ($this->hasChildren()) {
@@ -782,7 +786,7 @@ class Document extends Element\AbstractElement
                 $unpublishedStatus = self::doHideUnpublished();
                 self::setHideUnpublished(false);
                 foreach ($this->getChildren(true) as $child) {
-                    $child->delete();
+                    $child->delete(true);
                 }
                 self::setHideUnpublished($unpublishedStatus);
             }
@@ -803,16 +807,20 @@ class Document extends Element\AbstractElement
 
             $this->getDao()->delete();
 
-            // clear cache
-            $this->clearDependentCache();
+            $this->commit($isNested);
 
-            //clear document from registry
-            \Pimcore\Cache\Runtime::set('document_' . $this->getId(), null);
         } catch (\Exception $e) {
+            $this->rollBack($isNested);
             \Pimcore::getEventDispatcher()->dispatch(DocumentEvents::POST_DELETE_FAILURE, new DocumentEvent($this));
             Logger::error($e);
             throw $e;
         }
+
+        // clear cache
+        $this->clearDependentCache();
+
+        //clear document from registry
+        \Pimcore\Cache\Runtime::set('document_' . $this->getId(), null);
 
         \Pimcore::getEventDispatcher()->dispatch(DocumentEvents::POST_DELETE, new DocumentEvent($this));
     }

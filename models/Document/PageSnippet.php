@@ -164,9 +164,9 @@ abstract class PageSnippet extends Model\Document
     }
 
     /**
-     * @see Document::delete
+     * @inheritdoc
      */
-    public function delete()
+    public function delete(bool $isNested = false)
     {
         $versions = $this->getVersions();
         foreach ($versions as $version) {
@@ -176,7 +176,7 @@ abstract class PageSnippet extends Model\Document
         // remove all tasks
         $this->getDao()->deleteAllTasks();
 
-        parent::delete();
+        parent::delete($isNested);
     }
 
     /**
