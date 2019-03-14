@@ -109,7 +109,7 @@ trait PimcoreMigrationsConfiguration
         }
     }
 
-    protected function getConnection(InputInterface $input): Connection
+    protected function getConnection(InputInterface $input): ConnectionInterface
     {
         if ($this->connection) {
             return $this->connection;
@@ -117,7 +117,7 @@ trait PimcoreMigrationsConfiguration
 
         $loader = new ConnectionHelperLoader($this->getHelperSet(), 'connection');
 
-        /** @var Connection $connection */
+        /** @var ConnectionInterface $connection */
         $connection = $loader->chosen();
         if ($connection) {
             return $this->connection = $connection;
