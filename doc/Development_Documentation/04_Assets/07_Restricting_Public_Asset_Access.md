@@ -61,15 +61,25 @@ RewriteRule ^protected/(.*) %{ENV:BASE}/app.php [L]
  
 ```
 
-In the application, there has to be a route and a controller action that handles the request, e.g. like the following:
+In the application, there has to be a route in (app/config/routing.yml) and a controller action that handles the request, e.g. like the following:
+
+```php
+// app/config/routing.yml
+
+// important this has to be the first route in the file!
+asset_protect:
+    path: /protected/{path}
+    defaults: { _controller: MyAssetController:protectedAsset }
+    requirements:
+        path: '.*'
+
+```
+
 
 ```php 
 class MyAssetController extends AbstractController
 {
  
-    /**
-     * @Route("/protected/{path}", requirements={"path"=".*"})
-     */
     public function protectedAssetAction(Request $request) {
  
         $pathToAsset = $request->get("path");
