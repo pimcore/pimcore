@@ -1245,6 +1245,128 @@ class DocumentController extends ElementControllerBase implements EventedControl
         return $this->adminJson($result['data']);
     }
 
+
+
+    /**
+     * @Route("/language-tree", methods={"GET"})
+     *
+     * @param Request $request
+     *
+     * @return JsonResponse
+     */
+    public function languageTreeAction(Request $request)
+    {
+        $document = Document::getById($request->query->get('node'));
+
+        $service = new Document\Service();
+
+        $languages = explode(',', $request->get('languages'));
+
+        $result = [];
+        foreach($document->getChildren() as $child) {
+            $result[] = $this->getTranslationTreeNodeConfig($child, $languages);
+        }
+
+        return $this->adminJson($result);
+    }
+
+    /**
+     * @Route("/language-tree-root", methods={"GET"})
+     *
+     * @param Request $request
+     *
+     * @return JsonResponse
+     * @throws \Exception
+     */
+    public function languageTreeRootAction(Request $request)
+    {
+        $document = Document::getById($request->query->get('id'));
+
+        if(!$document) {
+            return $this->adminJson([
+                'success' => false
+            ]);
+        }
+        $service = new Document\Service();
+
+        $locales = Tool::getSupportedLocales();
+
+        $lang = $document->getProperty('language');
+
+        $columns = [
+            [
+                'xtype' => 'treecolumn',
+                'text' => $lang ? $locales[$lang] : '',
+                'dataIndex' => 'text',
+                'cls' => $lang ? "x-column-header_" . strtolower($lang) : null,
+                'width' => 300,
+                'sortable' => false,
+            ],
+        ];
+
+        $translations = $service->getTranslations($document);
+
+        $combinedTranslations = $translations;
+
+        if($parentDocument = $document->getParent()) {
+            $parentTranslations = $service->getTranslations($parentDocument);
+            foreach($parentTranslations as $language => $languageDocumentId) {
+                $combinedTranslations[$language] = $translations[$language] ?? $languageDocumentId;
+            }
+        }
+
+        foreach($combinedTranslations as $language => $languageDocumentId) {
+            $languageDocument = Document::getById($languageDocumentId);
+
+            if($languageDocument && $languageDocument->isAllowed('list') && $language != $document->getProperty('language')) {
+                $columns[] = [
+                    'text' => $locales[$language],
+                    'dataIndex' => $language,
+                    'cls' => "x-column-header_" . strtolower($language),
+                    'width' => 300,
+                    'sortable' => false,
+                ];
+            }
+        }
+
+        return $this->adminJson([
+            'root' => $this->getTranslationTreeNodeConfig($document, array_keys($translations), $translations),
+            'columns' => $columns,
+            'languages' => array_keys($translations)
+        ]);
+    }
+
+
+    private function getTranslationTreeNodeConfig($document, array $languages, array $translations = null) {
+        $service = new Document\Service();
+
+        $config = $this->getTreeNodeConfig($document);
+
+        $translations = is_null($translations) ? $service->getTranslations($document) : $translations;
+
+        foreach($languages as $language) {
+            if($languageDocument = $translations[$language]) {
+                $languageDocument = Document::getById($languageDocument);
+                $config[$language] = [
+                    'text' => $languageDocument->getKey(),
+                    'id' => $languageDocument->getId(),
+                    'type' => $languageDocument->getType(),
+                    'fullPath' => $languageDocument->getFullPath(),
+                    'published' => $languageDocument->getPublished(),
+                    'itemType' => 'document',
+                    'permissions' => $languageDocument->getUserPermissions()
+                ];
+            } elseif(!$document instanceof Document\Folder) {
+                $config[$language] = [
+                    'text' => '--',
+                    'itemType' => 'empty'
+                ];
+            }
+        }
+
+        return $config;
+    }
+
     /**
      * @Route("/convert", methods={"PUT"})
      *
@@ -1293,22 +1415,25 @@ class DocumentController extends ElementControllerBase implements EventedControl
     public function translationDetermineParentAction(Request $request)
     {
         $success = false;
-        $targetPath = null;
+        $targetDocument = null;
 
         $document = Document::getById($request->get('id'));
         if ($document) {
             $service = new Document\Service;
-            $translations = $service->getTranslations($document->getId() === 1 ? $document : $document->getParent());
+            $document = $document->getId() === 1 ? $document : $document->getParent();
+
+            $translations = $service->getTranslations($document);
             if (isset($translations[$request->get('language')])) {
+
                 $targetDocument = Document::getById($translations[$request->get('language')]);
-                $targetPath = $targetDocument->getRealFullPath();
                 $success = true;
             }
         }
 
         return $this->adminJson([
             'success' => $success,
-            'targetPath' => $targetPath
+            'targetPath' => $targetDocument ? $targetDocument->getRealFullPath() : null,
+            'targetId' => $targetDocument ? $targetDocument->getid() : null
         ]);
     }
 
