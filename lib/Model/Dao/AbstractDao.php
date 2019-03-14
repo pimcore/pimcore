@@ -33,19 +33,27 @@ abstract class AbstractDao implements DaoInterface
         $this->db = Db::get();
     }
 
-    public function beginTransaction()
+    public function beginTransaction(bool $isNested = false)
     {
-        $this->db->beginTransaction();
+        // MySQL/MariaDB do not support nested transaction, so we just ignore the transaction if
+        // the transaction is started within another transaction (e.g. when deleting elements)
+        if($isNested === false) {
+            $this->db->beginTransaction();
+        }
     }
 
-    public function commit()
+    public function commit(bool $isNested = false)
     {
-        $this->db->commit();
+        if($isNested === false) {
+            $this->db->commit();
+        }
     }
 
-    public function rollBack()
+    public function rollBack(bool $isNested = false)
     {
-        $this->db->rollBack();
+        if($isNested === false) {
+            $this->db->rollBack();
+        }
     }
 
     /**

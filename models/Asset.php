@@ -958,9 +958,10 @@ class Asset extends Element\AbstractElement
     }
 
     /**
+     * @param bool $isNested
      * @throws \Exception
      */
-    public function delete()
+    public function delete(bool $isNested = false)
     {
         if ($this->getId() == 1) {
             throw new \Exception('root-node cannot be deleted');
@@ -968,20 +969,16 @@ class Asset extends Element\AbstractElement
 
         \Pimcore::getEventDispatcher()->dispatch(AssetEvents::PRE_DELETE, new AssetEvent($this));
 
+        $this->beginTransaction($isNested);
+
         try {
             $this->closeStream();
 
             // remove childs
             if ($this->hasChildren()) {
                 foreach ($this->getChildren() as $child) {
-                    $child->delete();
+                    $child->delete(true);
                 }
-            }
-
-            // remove file on filesystem
-            $fullPath = $this->getRealFullPath();
-            if ($fullPath != '/..' && !strpos($fullPath, '/../') && $this->getKey() !== '.' && $this->getKey() !== '..') {
-                $this->deletePhysicalFile();
             }
 
             $versions = $this->getVersions();
@@ -1008,16 +1005,28 @@ class Asset extends Element\AbstractElement
             // remove from resource
             $this->getDao()->delete();
 
-            // empty asset cache
-            $this->clearDependentCache();
+            $this->commit($isNested);
 
-            // clear asset from registry
-            \Pimcore\Cache\Runtime::set('asset_' . $this->getId(), null);
+            // remove file on filesystem
+            if(!$isNested) {
+                $fullPath = $this->getRealFullPath();
+                if ($fullPath != '/..' && !strpos($fullPath,
+                        '/../') && $this->getKey() !== '.' && $this->getKey() !== '..') {
+                    $this->deletePhysicalFile();
+                }
+            }
         } catch (\Exception $e) {
+            $this->rollBack($isNested);
             \Pimcore::getEventDispatcher()->dispatch(AssetEvents::POST_DELETE_FAILURE, new AssetEvent($this));
             Logger::crit($e);
             throw $e;
         }
+
+        // empty asset cache
+        $this->clearDependentCache();
+
+        // clear asset from registry
+        \Pimcore\Cache\Runtime::set('asset_' . $this->getId(), null);
 
         \Pimcore::getEventDispatcher()->dispatch(AssetEvents::POST_DELETE, new AssetEvent($this));
     }
