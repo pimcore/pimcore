@@ -118,7 +118,7 @@ pimcore.object.tags.classificationstore = Class.create(pimcore.object.tags.abstr
 
         var tbarItems = [];
 
-        if (!this.fieldConfig.noteditable) {
+        if (!this.fieldConfig.noteditable && !this.fieldConfig.disallowAddRemove) {
             tbarItems.push(
                 {
                     xtype: 'button',
@@ -461,7 +461,7 @@ pimcore.object.tags.classificationstore = Class.create(pimcore.object.tags.abstr
         };
 
         var tools = [];
-        if (!this.fieldConfig.noteditable) {
+        if (!this.fieldConfig.noteditable && !this.fieldConfig.disallowAddRemove) {
             tools.push(
                 {
                     type: 'close',
