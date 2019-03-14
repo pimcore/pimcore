@@ -365,7 +365,7 @@ class Dao extends Model\Dao\AbstractDao
             $src = 'dest_id';
         }
 
-        $relations = $this->db->fetchAll('SELECT r.' . $dest . ' as dest_id, r.' . $dest . ' as id, r.type, o.o_className as subtype, concat(o.o_path ,o.o_key) as path , r.index
+        $relations = $this->db->fetchAll('SELECT r.' . $dest . ' as dest_id, r.' . $dest . ' as id, r.type, o.o_className as subtype, concat(o.o_path ,o.o_key) as path , r.index, o.o_published as published
             FROM objects o, object_relations_' . $classId . " r
             WHERE r.fieldname= ?
             AND r.ownertype = 'objectbrick'
@@ -374,7 +374,7 @@ class Dao extends Model\Dao\AbstractDao
             AND (position = '" . $this->model->getType() . "' OR position IS NULL OR position = '')            
             AND r.type='object'
 
-            UNION SELECT r." . $dest . ' as dest_id, r.' . $dest . ' as id, r.type,  a.type as subtype,  concat(a.path,a.filename) as path, r.index
+            UNION SELECT r." . $dest . ' as dest_id, r.' . $dest . ' as id, r.type,  a.type as subtype,  concat(a.path,a.filename) as path, r.index, "null" as published
             FROM assets a, object_relations_' . $classId . " r
             WHERE r.fieldname= ?
             AND r.ownertype = 'objectbrick'
@@ -383,7 +383,7 @@ class Dao extends Model\Dao\AbstractDao
             AND (position = '" . $this->model->getType() . "' OR position IS NULL OR position = '')            
             AND r.type='asset'
 
-            UNION SELECT r." . $dest . ' as dest_id, r.' . $dest . ' as id, r.type, d.type as subtype, concat(d.path,d.key) as path, r.index
+            UNION SELECT r." . $dest . ' as dest_id, r.' . $dest . ' as id, r.type, d.type as subtype, concat(d.path,d.key) as path, r.index, d.published as published
             FROM documents d, object_relations_' . $classId . " r
             WHERE r.fieldname= ?
             AND r.ownertype = 'objectbrick'
