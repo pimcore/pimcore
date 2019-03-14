@@ -763,11 +763,10 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
     save: function () {
         var id = this.layoutChangeCombo.getValue();
 
+        this.saveCurrentNode();
         var regresult = this.data["name"].match(/[a-zA-Z ][a-zA-Z0-9 ]+/);
 
         if (this.data["name"].length > 2 && this.data["name"].length < 64 && regresult == this.data["name"]) {
-            this.saveCurrentNode();
-
             delete this.data.layoutDefinitions;
 
             var m = Ext.encode(this.getData());
