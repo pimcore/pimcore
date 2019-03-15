@@ -867,7 +867,17 @@
     "paste_no_new_language_error": "Toutes les langues du système sont déjà liées à l'élément source.",
     "reload_column_configuration": "Recharger la configuration de la colonne",
     "reload_column_configuration_notice": "Remarque : le rechargement de la configuration des colonnes réinitialise les colonnes de la grille sélectionnées.",
-    "embedded_meta_data": "Embedded Meta Info",
-    "duration": "Duration",
-    "custom_metadata": "Custom Metadata"
+    "embedded_meta_data": "Méta-Info intégrée",
+    "duration": "Durée",
+    "custom_metadata": "Métadonnées personnalisées",
+    "group_icon_class": "Group Icon Class",
+    "custom_report_permissions": "Permission",
+    "visible_to_users": "Visible To Users",
+    "visible_to_roles": "Visible To Roles",
+    "open_url": "Open URL",
+    "document_language_overview": "Document Language Overview",
+    "language_master": "Master",
+    "create_translation_inheritance": "Create Translation (Inheritance)",
+    "create_translation": "Create Translation",
+    "document_translation_parent_not_found": "Parent document has no translation. Create a translation for the parent first."
 }
