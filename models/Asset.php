@@ -23,6 +23,7 @@ use Pimcore\Event\FrontendEvents;
 use Pimcore\Event\Model\AssetEvent;
 use Pimcore\File;
 use Pimcore\Logger;
+use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Tool\Mime;
 use Symfony\Component\EventDispatcher\GenericEvent;
 
@@ -228,6 +229,23 @@ class Asset extends Element\AbstractElement
     }
 
     /**
+     * @param Asset $asset
+     *
+     * @return bool
+     */
+    protected static function typeMatch(Asset $asset)
+    {
+        $staticType = get_called_class();
+        if ($staticType != Asset::class) {
+            if (!$asset instanceof $staticType) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
      * Static helper to get an asset by the passed ID
      *
      * @param int $id
@@ -237,17 +255,16 @@ class Asset extends Element\AbstractElement
      */
     public static function getById($id, $force = false)
     {
-        $id = intval($id);
-
-        if ($id < 1) {
+        if (!is_numeric($id) || $id < 1) {
             return null;
         }
+        $id = intval($id);
 
         $cacheKey = 'asset_' . $id;
 
         if (!$force && \Pimcore\Cache\Runtime::isRegistered($cacheKey)) {
             $asset = \Pimcore\Cache\Runtime::get($cacheKey);
-            if ($asset) {
+            if ($asset && static::typeMatch($asset)) {
                 return $asset;
             }
         }
@@ -272,7 +289,7 @@ class Asset extends Element\AbstractElement
             return null;
         }
 
-        if (!$asset) {
+        if (!$asset || !static::typeMatch($asset)) {
             return null;
         }
 
@@ -299,21 +316,23 @@ class Asset extends Element\AbstractElement
                 $tmpFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/asset-create-tmp-file-' . uniqid() . '.' . File::getFileExtension($data['filename']);
                 if (array_key_exists('data', $data)) {
                     File::put($tmpFile, $data['data']);
+                    $mimeType = Mime::detect($tmpFile);
+                    unlink($tmpFile);
                 } else {
                     $streamMeta = stream_get_meta_data($data['stream']);
                     if (file_exists($streamMeta['uri'])) {
                         // stream is a local file, so we don't have to write a tmp file
-                        $tmpFile = $streamMeta['uri'];
+                        $mimeType = Mime::detect($streamMeta['uri']);
                     } else {
                         // write a tmp file because the stream isn't a pointer to the local filesystem
                         rewind($data['stream']);
                         $dest = fopen($tmpFile, 'w+', false, File::getContext());
                         stream_copy_to_stream($data['stream'], $dest);
                         fclose($dest);
+                        $mimeType = Mime::detect($tmpFile);
+                        unlink($tmpFile);
                     }
                 }
-                $mimeType = Mime::detect($tmpFile);
-                unlink($tmpFile);
             } else {
                 $mimeType = Mime::detect($data['sourcePath'], $data['filename']);
                 if (is_file($data['sourcePath'])) {
@@ -492,6 +511,7 @@ class Asset extends Element\AbstractElement
                             $error = error_get_last();
                             throw new \Exception('Unable to rename asset ' . $this->getId() . ' on the filesystem: ' . $oldFullPath . ' - Reason: ' . $error['message']);
                         }
+                        $differentOldPath = $oldPath;
                         $this->getDao()->updateWorkspaces();
                         $updatedChildren = $this->getDao()->updateChildsPaths($oldPath);
                     }
@@ -548,7 +568,11 @@ class Asset extends Element\AbstractElement
         $this->setDataChanged(false);
 
         if ($isUpdate) {
-            \Pimcore::getEventDispatcher()->dispatch(AssetEvents::POST_UPDATE, new AssetEvent($this));
+            $updateEvent = new AssetEvent($this);
+            if ($differentOldPath) {
+                $updateEvent->setArgument('oldPath', $differentOldPath);
+            }
+            \Pimcore::getEventDispatcher()->dispatch(AssetEvents::POST_UPDATE, $updateEvent);
         } else {
             \Pimcore::getEventDispatcher()->dispatch(AssetEvents::POST_ADD, new AssetEvent($this));
         }
@@ -595,7 +619,7 @@ class Asset extends Element\AbstractElement
         }
 
         // do not allow PHP and .htaccess files
-        if (preg_match("@\.ph(p[345]?|t|tml|ps)$@i", $this->getFilename()) || $this->getFilename() == '.htaccess') {
+        if (preg_match("@\.ph(p[\d+]?|t|tml|ps)$@i", $this->getFilename()) || $this->getFilename() == '.htaccess') {
             $this->setFilename($this->getFilename() . '.txt');
         }
 
@@ -747,7 +771,7 @@ class Asset extends Element\AbstractElement
             // this is important because at the time of creating an asset it's not clear which type (resp. class) it will have
             // the type (image, document, ...) depends on the mime-type
             \Pimcore\Cache\Runtime::set('asset_' . $this->getId(), null);
-            $asset = self::getById($this->getId());
+            $asset = Asset::getById($this->getId());
             \Pimcore\Cache\Runtime::set('asset_' . $this->getId(), $asset);
         }
 
@@ -934,9 +958,11 @@ class Asset extends Element\AbstractElement
     }
 
     /**
+     * @param bool $isNested
+     *
      * @throws \Exception
      */
-    public function delete()
+    public function delete(bool $isNested = false)
     {
         if ($this->getId() == 1) {
             throw new \Exception('root-node cannot be deleted');
@@ -944,20 +970,16 @@ class Asset extends Element\AbstractElement
 
         \Pimcore::getEventDispatcher()->dispatch(AssetEvents::PRE_DELETE, new AssetEvent($this));
 
+        $this->beginTransaction();
+
         try {
             $this->closeStream();
 
             // remove childs
             if ($this->hasChildren()) {
                 foreach ($this->getChildren() as $child) {
-                    $child->delete();
+                    $child->delete(true);
                 }
-            }
-
-            // remove file on filesystem
-            $fullPath = $this->getRealFullPath();
-            if ($fullPath != '/..' && !strpos($fullPath, '/../') && $this->getKey() !== '.' && $this->getKey() !== '..') {
-                $this->deletePhysicalFile();
             }
 
             $versions = $this->getVersions();
@@ -984,16 +1006,28 @@ class Asset extends Element\AbstractElement
             // remove from resource
             $this->getDao()->delete();
 
-            // empty asset cache
-            $this->clearDependentCache();
+            $this->commit();
 
-            // clear asset from registry
-            \Pimcore\Cache\Runtime::set('asset_' . $this->getId(), null);
+            // remove file on filesystem
+            if (!$isNested) {
+                $fullPath = $this->getRealFullPath();
+                if ($fullPath != '/..' && !strpos($fullPath,
+                        '/../') && $this->getKey() !== '.' && $this->getKey() !== '..') {
+                    $this->deletePhysicalFile();
+                }
+            }
         } catch (\Exception $e) {
+            $this->rollBack();
             \Pimcore::getEventDispatcher()->dispatch(AssetEvents::POST_DELETE_FAILURE, new AssetEvent($this));
             Logger::crit($e);
             throw $e;
         }
+
+        // empty asset cache
+        $this->clearDependentCache();
+
+        // clear asset from registry
+        \Pimcore\Cache\Runtime::set('asset_' . $this->getId(), null);
 
         \Pimcore::getEventDispatcher()->dispatch(AssetEvents::POST_DELETE, new AssetEvent($this));
     }
@@ -1691,44 +1725,23 @@ class Asset extends Element\AbstractElement
     /**
      * Get filesize
      *
-     * @param string $format ('GB','MB','KB','B')
+     * @param bool $formatted
      * @param int $precision
      *
      * @return string
      */
-    public function getFileSize($format = 'noformatting', $precision = 2)
+    public function getFileSize($formatted = false, $precision = 2)
     {
-        $format = strtolower($format);
         $bytes = 0;
         if (is_file($this->getFileSystemPath())) {
             $bytes = filesize($this->getFileSystemPath());
         }
 
-        switch ($format) {
-            case 'gb':
-                $size = (($bytes / 1024) / 1024) / 1024;
-                break;
-
-            case 'mb':
-                $size = (($bytes / 1024) / 1024);
-                break;
-
-            case 'kb':
-                $size = ($bytes / 1024);
-                break;
-
-            case 'b':
-            default:
-                $size = $bytes;
-                $precision = 0;
-                break;
+        if ($formatted) {
+            return formatBytes($bytes, $precision);
         }
 
-        if ($format == 'noformatting') {
-            return $size;
-        }
-
-        return round($size, $precision) . ' ' . $format;
+        return $bytes;
     }
 
     /**
@@ -1737,7 +1750,7 @@ class Asset extends Element\AbstractElement
     public function getParent()
     {
         if ($this->parent === null) {
-            $this->setParent(self::getById($this->getParentId()));
+            $this->setParent(Asset::getById($this->getParentId()));
         }
 
         return $this->parent;
@@ -1874,10 +1887,39 @@ class Asset extends Element\AbstractElement
      *
      * @return Asset
      */
-    public function setVersionCount(?int $versionCount): self
+    public function setVersionCount(?int $versionCount): ElementInterface
     {
         $this->versionCount = (int) $versionCount;
 
         return $this;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function resolveDependencies()
+    {
+        $dependencies = parent::resolveDependencies();
+
+        if ($this->hasMetaData) {
+            $metaData = $this->getMetadata();
+
+            foreach ($metaData as $md) {
+                if (isset($md['data']) && $md['data'] instanceof ElementInterface) {
+                    /**
+                     * @var $elementData ElementInterface
+                     */
+                    $elementData = $md['data'];
+                    $elementType = $md['type'];
+                    $key = $elementType . '_' . $elementData->getId();
+                    $dependencies[$key] = [
+                        'id' => $elementData->getId(),
+                        'type' => $elementType
+                    ];
+                }
+            }
+        }
+
+        return $dependencies;
     }
 }

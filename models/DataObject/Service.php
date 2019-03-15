@@ -168,6 +168,8 @@ class Service extends Model\Element\Service
      */
     public function copyAsChild($target, $source)
     {
+        $isDirtyDetectionDisabled = Model\DataObject\AbstractObject::isDirtyDetectionDisabled();
+        Model\DataObject\AbstractObject::setDisableDirtyDetection(true);
 
         //load properties
         $source->getProperties();
@@ -187,6 +189,8 @@ class Service extends Model\Element\Service
         $new->setLocked(false);
         $new->setCreationDate(time());
         $new->save();
+
+        Model\DataObject\AbstractObject::setDisableDirtyDetection($isDirtyDetectionDisabled);
 
         $this->updateChilds($target, $new);
 
@@ -583,11 +587,8 @@ class Service extends Model\Element\Service
                 }
 
                 foreach ($permission as $p) {
-                    $setting = explode('_', $p);
-                    $c = $setting[0];
-
-                    if ($c == $classId) {
-                        $l = $setting[1];
+                    if (preg_match(sprintf('#^(%s)_(.*)#', $classId), $p, $setting)) {
+                        $l = $setting[2];
 
                         if (is_null($layoutPermissions)) {
                             $layoutPermissions = [];
@@ -1414,6 +1415,10 @@ class Service extends Model\Element\Service
             $inheritanceEnabled = Model\DataObject\Concrete::getGetInheritedValues();
             Model\DataObject\Concrete::setGetInheritedValues(true);
 
+            if ($object instanceof Model\DataObject\Fieldcollection\Data\AbstractData
+                    || $object instanceof Model\DataObject\Objectbrick\Data\AbstractData) {
+                $object = $object->getObject();
+            }
             $result = call_user_func($className . '::compute', $object, $data);
             Model\DataObject\Concrete::setGetInheritedValues($inheritanceEnabled);
 

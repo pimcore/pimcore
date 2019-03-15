@@ -226,6 +226,37 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
         // add filters
         this.gridfilters = gridHelper.getGridFilters();
 
+        this.searchQuery = function(field) {
+            this.store.getProxy().setExtraParam("query", field.getValue());
+            this.pagingtoolbar.moveFirst();
+        }.bind(this);
+
+        this.searchField = new Ext.form.TextField(
+            {
+                name: "query",
+                width: 200,
+                hideLabel: true,
+                enableKeyEvents: true,
+                triggers: {
+                    search: {
+                        weight: 1,
+                        cls: 'x-form-search-trigger',
+                        scope: 'this',
+                        handler: function(field, trigger, e) {
+                            this.searchQuery(field);
+                        }.bind(this)
+                    }
+                },
+                listeners: {
+                    "keydown" : function (field, key) {
+                        if (key.getKey() == key.ENTER) {
+                            this.searchQuery(field);
+                        }
+                    }.bind(this)
+                }
+            }
+        );
+
         this.languageInfo = new Ext.Toolbar.TextItem({
             text: t("grid_current_language") + ": " + (this.gridLanguage == "default" ? t("default") : pimcore.available_languages[this.gridLanguage])
         });
@@ -325,7 +356,7 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
                 }
             },
             cls: 'pimcore_object_grid_panel',
-            tbar: [this.languageInfo, "-", this.toolbarFilterInfo, this.clearFilterButton, "->", this.checkboxOnlyDirectChildren, "-", this.sqlEditor, this.sqlButton, "-", {
+            tbar: [this.searchField, "-", this.languageInfo, "-", this.toolbarFilterInfo, this.clearFilterButton, "->", this.checkboxOnlyDirectChildren, "-", this.sqlEditor, this.sqlButton, "-", {
                 text: t("search_and_move"),
                 iconCls: "pimcore_icon_search pimcore_icon_overlay_go",
                 handler: pimcore.helpers.searchAndMove.bind(this, this.object.id,

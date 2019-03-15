@@ -52,7 +52,8 @@ pimcore.object.tags.select = Class.create(pimcore.object.tags.abstract, {
                 }
             }
 
-            return value;
+            return Ext.util.Format.htmlEncode(value);
+
         }.bind(this, field.key);
 
         return {
@@ -82,7 +83,7 @@ pimcore.object.tags.select = Class.create(pimcore.object.tags.abstract, {
                 }
             }
 
-            return value;
+            return Ext.util.Format.htmlEncode(value);
 
         }.bind(this, field.key);
 

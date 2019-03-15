@@ -26,6 +26,7 @@ use Pimcore\Model\DataObject;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
 use Pimcore\Targeting\Document\DocumentTargetingConfigurator;
+use Pimcore\Tool;
 
 /**
  * @method \Pimcore\Model\Document\Tag\Dao getDao()
@@ -118,8 +119,7 @@ class Renderlet extends Model\Document\Tag
         }
 
         if (!$this->options['controller'] && !$this->options['action']) {
-            $this->options['controller'] = Config::getSystemConfig()->documents->default_controller;
-            $this->options['action'] = Config::getSystemConfig()->documents->default_action;
+            $this->options += Tool::getRoutingDefaults();
         }
 
         if (method_exists($this->o, 'isPublished')) {

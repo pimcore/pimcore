@@ -43,6 +43,10 @@ pimcore.object.classes.data.video = Class.create(pimcore.object.classes.data.dat
         return "pimcore_icon_video";
     },
 
+    getGroup: function () {
+        return "media";
+    },
+
     getLayout: function ($super) {
 
         $super();

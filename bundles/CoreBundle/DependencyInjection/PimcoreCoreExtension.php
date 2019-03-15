@@ -105,6 +105,8 @@ class PimcoreCoreExtension extends ConfigurableExtension implements PrependExten
         $loader->load('analytics.yml');
         $loader->load('sitemaps.yml');
         $loader->load('aliases.yml');
+        $loader->load('image_optimizers.yml');
+        $loader->load('commands.yml');
 
         $this->configureImplementationLoaders($container, $config);
         $this->configureModelFactory($container, $config);
@@ -222,6 +224,10 @@ class PimcoreCoreExtension extends ConfigurableExtension implements PrependExten
 
     private function configureRouting(ContainerBuilder $container, array $config)
     {
+        $container->setParameter(
+            'pimcore.routing.defaults',
+            $config['defaults']
+        );
         $container->setParameter(
             'pimcore.routing.static.locale_params',
             $config['static']['locale_params']

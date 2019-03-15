@@ -27,8 +27,10 @@ use Pimcore\Model;
  * @method \Pimcore\Model\DataObject\Concrete\Dao getDao()
  * @method \Pimcore\Model\Version getLatestVersion()
  */
-class Concrete extends AbstractObject
+class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
 {
+    use Model\DataObject\Traits\LazyLoadedRelationTrait;
+
     /**
      * @var array
      */
@@ -63,11 +65,6 @@ class Concrete extends AbstractObject
      * @var array
      */
     protected $lazyLoadedFields = [];
-
-    /**
-     * @var array
-     */
-    protected $o___loadedLazyFields = [];
 
     /**
      * Contains all scheduled tasks
@@ -112,34 +109,6 @@ class Concrete extends AbstractObject
     public function getLazyLoadedFields()
     {
         return (array) $this->lazyLoadedFields;
-    }
-
-    /**
-     * @param array $o___loadedLazyFields
-     *
-     * @return $this
-     */
-    public function setO__loadedLazyFields(array $o___loadedLazyFields)
-    {
-        $this->o___loadedLazyFields = $o___loadedLazyFields;
-
-        return $this;
-    }
-
-    /**
-     * @return array
-     */
-    public function getO__loadedLazyFields()
-    {
-        return $this->o___loadedLazyFields;
-    }
-
-    /**
-     * @param string $o___loadedLazyField
-     */
-    public function addO__loadedLazyField($o___loadedLazyField)
-    {
-        $this->o___loadedLazyFields[] = $o___loadedLazyField;
     }
 
     /**
@@ -228,7 +197,7 @@ class Concrete extends AbstractObject
 
             $newVersionCount = $this->getVersionCount();
 
-            if ($newVersionCount != $oldVersionCount + 1) {
+            if (($newVersionCount != $oldVersionCount + 1) || ($this instanceof DirtyIndicatorInterface && $this->isFieldDirty('o_parentId'))) {
                 self::disableDirtyDetection();
             }
 
@@ -267,17 +236,30 @@ class Concrete extends AbstractObject
         }
     }
 
-    public function delete()
+    /**
+     * @inheritdoc
+     */
+    public function delete(bool $isNested = false)
     {
+        $this->beginTransaction();
 
-        // delete all versions
-        foreach ($this->getVersions() as $v) {
-            $v->delete();
+        try {
+            // delete all versions
+            foreach ($this->getVersions() as $v) {
+                $v->delete();
+            }
+
+            $this->getDao()->deleteAllTasks();
+
+            parent::delete(true);
+
+            $this->commit();
+        } catch (\Exception $e) {
+            $this->rollBack();
+            \Pimcore::getEventDispatcher()->dispatch(DataObjectEvents::POST_DELETE_FAILURE, new DataObjectEvent($this));
+            Logger::crit($e);
+            throw $e;
         }
-
-        $this->getDao()->deleteAllTasks();
-
-        parent::delete();
     }
 
     /**

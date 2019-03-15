@@ -379,6 +379,11 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                 }
             }
 
+            $objectData['general']['php'] = [
+                'classes' => array_merge([get_class($object)], array_values(class_parents($object))),
+                'interfaces' => array_values(class_implements($object))
+            ];
+
             $objectData['general']['o_locked'] = $object->isLocked();
 
             $this->getDataForObject($object, $objectFromVersion);
@@ -472,11 +477,12 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                 'data' => $objectData,
                 'object' => $object,
             ]);
+
+            DataObject\Service::enrichLayoutDefinition($objectData['layout'], $object);
             $eventDispatcher->dispatch(AdminEvents::OBJECT_GET_PRE_SEND_DATA, $event);
             $data = $event->getArgument('data');
 
             $data = $this->filterLocalizedFields($object, $data);
-            DataObject\Service::enrichLayoutDefinition($data['layout'], $object);
 
             DataObject\Service::removeObjectFromSession($object->getId());
 
@@ -563,12 +569,22 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                 if ($fielddefinition instanceof DataObject\ClassDefinition\Data\ManyToOneRelation) {
                     $data = $relations[0];
                     $data['published'] = (bool) $data['published'];
-                } elseif ($fielddefinition instanceof ManyToManyObjectRelation && !$fielddefinition instanceof ReverseManyToManyObjectRelation) {
+                } elseif (($fielddefinition instanceof ManyToManyObjectRelation && $fielddefinition->getVisibleFields()) && !$fielddefinition instanceof ReverseManyToManyObjectRelation) {
                     $fieldData = $object->$getter();
                     $data = $fielddefinition->getDataForEditmode($fieldData, $object, $objectFromVersion);
                 } else {
                     foreach ($relations as $rel) {
-                        $data[] = [$rel['id'], $rel['path'], $rel['type'], $rel['subtype'], (bool) $rel['published']];
+                        if ($fielddefinition instanceof ManyToManyObjectRelation) {
+                            $rel['fullpath'] = $rel['path'];
+                            $rel['classname'] = $rel['subtype'];
+                            $data[] = $rel;
+                        } else {
+                            $data[] = [$rel['id'],
+                                $rel['path'],
+                                $rel['type'],
+                                $rel['subtype'],
+                                (bool)$rel['published']];
+                        }
                     }
                 }
                 $this->objectData[$key] = $data;
@@ -2144,6 +2160,32 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                 Logger::debug('Saved object id [ ' . $owner->getId() . ' ] by remote modification through [' . $object->getId() . '], Action: added [ ' . $object->getId() . " ] to [ $ownerFieldName ]");
             }
         }
+    }
+
+    /**
+     * @param string $query
+     *
+     * @return string
+     */
+    protected function filterQueryParam(string $query)
+    {
+        if ($query == '*') {
+            $query = '';
+        }
+
+        $query = str_replace('%', '*', $query);
+        $query = str_replace('@', '#', $query);
+        $query = preg_replace("@([^ ])\-@", '$1 ', $query);
+
+        $query = str_replace(['<', '>', '(', ')', '~'], ' ', $query);
+
+        // it is not allowed to have * behind another *
+        $query = preg_replace('#[*]+#', '*', $query);
+
+        // no boolean operators at the end of the query
+        $query = rtrim($query, '+- ');
+
+        return $query;
     }
 
     /**

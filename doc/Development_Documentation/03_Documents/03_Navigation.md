@@ -12,15 +12,16 @@ It builds a navigation container based on the existing document structure. The p
  `buildNavigation()` call to the `Pimcore\Navigation\Builder` service. You can also build the navigation in your controller
  or a service and pass the navigation object to the view.
 
-**Only documents are included** in this structure, directories are ignored, regardless of their navigation properties.
+**Only documents are included** in this structure, Folders are ignored, regardless of their navigation properties.
 
 <div class="code-section">
 
 ```php
 <?php
 // get root node if there is no document defined (for pages which are routed directly through static route)
-if(!$this->document instanceof \Pimcore\Model\Document\Page) {
-    $this->document = \Pimcore\Model\Document\Page::getById(1);
+$document = $this->document; 
+if(!$document instanceof \Pimcore\Model\Document\Page) {
+    $document = \Pimcore\Model\Document\Page::getById(1);
 }
 
 // get the document which should be used to start in navigation | default home

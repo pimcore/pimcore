@@ -107,7 +107,8 @@ class TemplateControllerListener implements EventSubscriberInterface
             $template->setEngine($engine);
             $templateReference = $guesser->guessTemplateName($controller, $request, $engine);
 
-            if ($templateReference->get('bundle') === PIMCORE_SYMFONY_DEFAULT_BUNDLE) {
+            // Only AppBundle should use templates inside app folder
+            if ($templateReference->get('bundle') === 'AppBundle') {
                 $templateReference->set('bundle', '');
             }
 

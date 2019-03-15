@@ -45,6 +45,17 @@ The value can be updated in a similar way.
         $object->save();
 ```
 
+Get Values of Localized Block Entries:
+
+```php
+        $object = DataObject\BlockClass::getById(48);
+        /** @var  $blockData DataObject\ClassDefinition\Data\Block */
+        $blockItems = $object->getBlockElement1();
+        /** @var  $firstBlockItem DataObject\Data\BlockElement */
+        $firstBlockItem = $blockItems[0];
+        $localizedfields = $firstBlockItem["localizedfields"]->getData();
+        // after that use it as you would to it with `Pimcore\Model\DataObject\LocalizedField::getLocalizedValue`
+```
 
 Create a Block:
 

@@ -44,38 +44,95 @@ pimcore.object.helpers.import.csvSettingsTab = Class.create({
         return this.settingsForm;
     },
 
+    updateColumnConfig: function (isReload, dialect) {
+        Ext.Ajax.request({
+            url: "/admin/object-helper/import-get-file-info",
+            params: {
+                impotConfigId: this.callback.config.importConfigId,
+                importId: this.callback.uniqueImportId,
+                method: "post",
+                className: this.callback.className,
+                classId: this.callback.classId,
+                dialect: dialect
+            },
+            success: function (response) {
+                var rdata = Ext.decode(response.responseText);
+                if (rdata && rdata.success) {
+                    Ext.apply(this.callback.config, rdata.config);
+                    this.callback.config.resolverSettings = this.callback.config.resolverSettings || {
+                        skipHeadRow: true
+                    };
+                    this.callback.config.shareSettings = this.callback.config.shareSettings || {};
+                    this.callback.buildDefaultSelection();
+                    this.callback.reloadPanels();
+                    this.callback.tabPanel.setActiveTab(this.callback.columnConfigPanel.getPanel());
+                }
+            }.bind(this)
+        });
+    },
+
     rebuildPanel: function () {
         this.settingsForm.removeAll(true);
 
         this.delimiterField = new Ext.form.TextField({
             fieldLabel: t('delimiter'),
             name: 'delimiter',
-            value: this.config.csvSettings.delimiter
+            value: this.config.csvSettings.delimiter,
+            allowBlank: false,
+            blankText: t("this_field_is_required")
         });
 
         this.escapeCharField = new Ext.form.TextField({
             fieldLabel: t('escapechar'),
             name: 'escapechar',
-            value: this.config.csvSettings.escapechar
+            value: this.config.csvSettings.escapechar,
+            allowBlank: false,
+            blankText: t("this_field_is_required")
         });
 
         this.lineTerminatorField = new Ext.form.TextField({
             fieldLabel: t('lineterminator'),
             name: 'lineterminator',
-            value: this.config.csvSettings.lineterminator
+            value: this.config.csvSettings.lineterminator,
+            allowBlank: false,
+            blankText: t("this_field_is_required")
         });
 
         this.quoteCharField = new Ext.form.TextField({
             fieldLabel: t('quotechar'),
             name: 'quotechar',
-            value: this.config.csvSettings.quotechar
+            value: this.config.csvSettings.quotechar,
+            allowBlank: false,
+            blankText: t("this_field_is_required")
+        });
+
+        this.updateColumnButton = Ext.create('Ext.Button', {
+            text: t('reload_column_configuration'),
+            renderTo: Ext.getBody(),
+            handler: function() {
+                if(this.settingsForm.isValid()) {
+                    this.commitData();
+                    var dialect = Ext.encode(this.config.csvSettings);
+                    this.updateColumnConfig(true, dialect);
+                }
+            }.bind(this)
+        });
+
+        this.updateColumnLabel = Ext.create('Ext.form.Label', {
+          text: t('reload_column_configuration_notice'),
+          style: {
+            'display':'block',
+            'margin-top':'30px'
+          }
         });
 
         this.settingsForm.add(
             this.delimiterField,
             this.escapeCharField,
             this.lineTerminatorField,
-            this.quoteCharField);
+            this.quoteCharField,
+            this.updateColumnButton,
+            this.updateColumnLabel);
     },
 
     commitData: function () {

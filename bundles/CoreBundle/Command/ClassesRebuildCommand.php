@@ -17,12 +17,18 @@ namespace Pimcore\Bundle\CoreBundle\Command;
 use Pimcore\Console\AbstractCommand;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition;
+use Pimcore\Model\DataObject\ClassDefinition\ClassDefinitionManager;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class ClassesRebuildCommand extends AbstractCommand
 {
+    /**
+     * @var ClassDefinitionManager
+     */
+    protected $classDefinitionManager;
+
     protected function configure()
     {
         $this
@@ -44,11 +50,19 @@ class ClassesRebuildCommand extends AbstractCommand
     }
 
     /**
+     * @param ClassDefinitionManager $classDefinitionManager
+     * @required
+     */
+    public function setClassDefinitionManager(ClassDefinitionManager $classDefinitionManager)
+    {
+        $this->classDefinitionManager = $classDefinitionManager;
+    }
+
+    /**
      * @inheritDoc
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $db = \Pimcore\Db::get();
         if ($input->getOption('delete-classes')) {
             $questionResult = true;
 
@@ -65,23 +79,10 @@ class ClassesRebuildCommand extends AbstractCommand
                     $output->writeln('Delete Classes that don\'t have class-definitions anymore.');
                 }
 
-                $classes = $db->fetchAll('SELECT * FROM classes');
-
-                foreach ($classes as $class) {
-                    $id = $class['id'];
-                    $name = $class['name'];
-
-                    $cls = new ClassDefinition();
-                    $cls->setId($id);
-                    $definitionFile = $cls->getDefinitionFile($name);
-
-                    if (!file_exists($definitionFile)) {
-                        if ($output->isVerbose()) {
-                            $output->writeln(sprintf('%s [%s] deleted', $name, $id));
-                        }
-
-                        //ClassDefinition doesn't exist anymore, therefore we delete it
-                        $cls->delete();
+                foreach ($this->classDefinitionManager->cleanUpDeletedClassDefinitions() as $deleted) {
+                    if ($output->isVerbose()) {
+                        [$class, $id, $action] = $deleted;
+                        $output->writeln(sprintf('%s [%s] %s', $class, $id, $action));
                     }
                 }
             }
@@ -96,28 +97,10 @@ class ClassesRebuildCommand extends AbstractCommand
         }
 
         if ($input->getOption('create-classes')) {
-            $objectClassesFolder = PIMCORE_CLASS_DIRECTORY;
-            $files = glob($objectClassesFolder . '/*.php');
-
-            foreach ($files as $file) {
-                $class = include $file;
-
-                if ($class instanceof ClassDefinition) {
-                    $existingClass = ClassDefinition::getByName($class->getName());
-
-                    if ($existingClass instanceof ClassDefinition) {
-                        if ($output->isVerbose()) {
-                            $output->writeln(sprintf('%s [%s] saved', $class->getName(), $class->getId()));
-                        }
-
-                        $existingClass->save(false);
-                    } else {
-                        if ($output->isVerbose()) {
-                            $output->writeln(sprintf('%s [%s] created', $class->getName(), $class->getId()));
-                        }
-
-                        $class->save(false);
-                    }
+            foreach ($this->classDefinitionManager->createOrUpdateClassDefinitions() as $changes) {
+                if ($output->isVerbose()) {
+                    [$class, $id, $action] = $changes;
+                    $output->writeln(sprintf('%s [%s] %s', $class, $id, $action));
                 }
             }
         } else {

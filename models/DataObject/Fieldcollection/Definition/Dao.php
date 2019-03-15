@@ -119,4 +119,12 @@ class Dao extends Model\Dao\AbstractDao
         $this->removeUnusedColumns($table, $columnsToRemove, $protectedColums);
         $this->tableDefinitions = null;
     }
+
+    /**
+     * @param DataObject\ClassDefinition $classDefinition
+     */
+    public function classSaved(DataObject\ClassDefinition $classDefinition)
+    {
+        $this->handleEncryption($classDefinition, [$this->getTableName($classDefinition)]);
+    }
 }

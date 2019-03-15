@@ -28,6 +28,15 @@ services:
     Pimcore\Model\Webservice\Service: ~
 
     #
+    # Notification Services
+    #
+
+    Pimcore\Model\Notification\Service\NotificationService:
+        public: true
+    Pimcore\Model\Notification\Service\NotificationServiceFilterParser: ~
+    Pimcore\Model\Notification\Service\UserService: ~
+
+    #
     # CONTROLLERS
     #
 
@@ -43,13 +52,11 @@ services:
 
     Pimcore\Bundle\AdminBundle\Translation\AdminUserTranslator: ~
 
-
     #
     # REDIRECTS
     #
 
     Pimcore\Routing\Redirect\Csv: ~
-
 
     #
     # GDPR Services

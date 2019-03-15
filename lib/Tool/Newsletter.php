@@ -228,11 +228,13 @@ class Newsletter
     public function __construct($classId = null)
     {
         $class = null;
-        if (is_string($classId)) {
-            $class = DataObject\ClassDefinition::getByName($classId);
-        } elseif (is_int($classId)) {
+        if (is_numeric($classId)) {
             $class = DataObject\ClassDefinition::getById($classId);
-        } elseif ($classId !== null) {
+        } else {
+            $class = DataObject\ClassDefinition::getByName($classId);
+        }
+
+        if (!$class) {
             throw new \Exception('No valid class identifier given (class name or ID)');
         }
 

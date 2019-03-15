@@ -18,6 +18,7 @@
 namespace Pimcore\Model\Asset\Image\Thumbnail;
 
 use Pimcore\File;
+use Pimcore\Image\Optimizer;
 use Pimcore\Logger;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Tool\TmpStore;
@@ -334,7 +335,7 @@ class Processor
                     }
 
                     ksort($arguments);
-                    if (is_callable($transformation['method'])) {
+                    if (!is_string($transformation['method']) && is_callable($transformation['method'])) {
                         $transformation['method']($image);
                     } elseif (method_exists($image, $transformation['method'])) {
                         call_user_func_array([$image, $transformation['method']], $arguments);
@@ -396,7 +397,7 @@ class Processor
             $file = PIMCORE_TEMPORARY_DIRECTORY . '/' . $id;
             if (file_exists($file)) {
                 $originalFilesize = filesize($file);
-                \Pimcore\Image\Optimizer::optimize($file);
+                \Pimcore::getContainer()->get(Optimizer::class)->optimizeImage($file);
                 Logger::debug('Optimized image: ' . $file . ' saved ' . formatBytes($originalFilesize - filesize($file)));
             } else {
                 Logger::debug('Skip optimizing of ' . $file . " because it doesn't exist anymore");

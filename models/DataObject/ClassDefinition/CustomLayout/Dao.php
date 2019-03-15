@@ -30,11 +30,6 @@ class Dao extends Model\Dao\AbstractDao
     protected $model;
 
     /**
-     * @var array
-     */
-    protected $_sqlChangeLog = [];
-
-    /**
      * @param null $id
      *
      * @throws \Exception

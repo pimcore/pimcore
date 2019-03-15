@@ -33,11 +33,17 @@ pimcore.document.settings_abstract = Class.create({
         }
     },
 
-    getContentMasterFields: function () {
+    getContentMasterFields: function (collapsed) {
+
+        if(collapsed !== true) {
+            collapsed = false;
+        }
+
         return {
             xtype:'fieldset',
             title: t('content_master_document'),
             collapsible: true,
+            collapsed: collapsed,
             autoHeight:true,
             labelWidth: 200,
             defaultType: 'textfield',
@@ -145,11 +151,17 @@ pimcore.document.settings_abstract = Class.create({
         };
     },
 
-    getPathAndKeyFields: function () {
+    getPathAndKeyFields: function (collapsed) {
+
+        if(collapsed !== true) {
+            collapsed = false;
+        }
+
         return {
             xtype:'fieldset',
             title: t('path') + ", " + t('key') + " & " + t('id'),
             collapsible: true,
+            collapsed: collapsed,
             autoHeight:true,
             defaultType: 'textfield',
             defaults: {
@@ -179,7 +191,11 @@ pimcore.document.settings_abstract = Class.create({
         };
     },
 
-    getControllerViewFields: function () {
+    getControllerViewFields: function (collapsed) {
+
+        if(collapsed !== true) {
+            collapsed = false;
+        }
 
         var docTypeStore = new Ext.data.Store({
             proxy: {
@@ -192,7 +208,9 @@ pimcore.document.settings_abstract = Class.create({
             },
             fields: ["id","module","controller","action","template",{
                name: 'name',
-               convert: function(v, rec) { return rec['data']['group'] +' > '+ rec['data']['name'] }
+               convert: function(v, rec) {
+                   return (rec['data']['group'] ? t(rec['data']['group']) + ' > ' : '') + t(rec['data']['name']);
+               }
             }]
 
         });
@@ -224,6 +242,7 @@ pimcore.document.settings_abstract = Class.create({
         var fieldSet = new Ext.form.FieldSet({
             title: t('controller') + ", " + t('action') + " & " + t('template'),
             collapsible: true,
+            collapsed: collapsed,
             autoHeight:true,
             defaults: {
                 labelWidth: 320,

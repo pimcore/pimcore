@@ -1037,16 +1037,25 @@ class UserController extends AdminController implements EventedControllerInterfa
 
         // get available user
         $list = new \Pimcore\Model\User\Listing();
-        $list->setCondition('type = "user" and id != ' . $this->getAdminUser()->getId());
+
+        $conditions = [ 'type = "user"' ];
+
+        if (!$request->get('include_current_user')) {
+            $conditions[] = 'id != ' . $this->getAdminUser()->getId();
+        }
+
+        $list->setCondition(implode(' AND ', $conditions));
 
         $list->load();
         $userList = $list->getUsers();
 
         foreach ($userList as $user) {
-            $users[] = [
-                'id' => $user->getId(),
-                'label' => $user->getUsername()
-            ];
+            if (!$request->get('permission') || $user->isAllowed($request->get('permission'))) {
+                $users[] = [
+                    'id' => $user->getId(),
+                    'label' => $user->getUsername()
+                ];
+            }
         }
 
         return $this->adminJson(['success' => true, 'total' => count($users), 'data' => $users]);
@@ -1060,16 +1069,19 @@ class UserController extends AdminController implements EventedControllerInterfa
     {
         $roles = [];
         $list = new \Pimcore\Model\User\Role\Listing();
+
         $list->setCondition('type = "role"');
         $list->load();
         $roleList = $list->getRoles();
 
         /** @var $role User\Role */
         foreach ($roleList as $role) {
-            $roles[] = [
-                'id' => $role->getId(),
-                'label' => $role->getName()
-            ];
+            if (!$request->get('permission') || in_array($request->get('permission'), $role->getPermissions())) {
+                $roles[] = [
+                    'id' => $role->getId(),
+                    'label' => $role->getName()
+                ];
+            }
         }
 
         return $this->adminJson(['success' => true, 'total' => count($roles), 'data' => $roles]);

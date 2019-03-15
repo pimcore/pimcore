@@ -178,6 +178,9 @@ class Configuration implements ConfigurationInterface
                     ->scalarNode('defaultUploadPath')
                         ->defaultValue('_default_upload_bucket')
                         ->end()
+                    ->integerNode('tree_paging_limit')
+                        ->defaultValue(100)
+                        ->end()
                     ->arrayNode('image')
                         ->addDefaultsIfNotSet()
                         ->children()
@@ -218,6 +221,8 @@ class Configuration implements ConfigurationInterface
                                     ->end()
                                 ->end()
                             ->end()
+                        ->end()
+                    ->end()
                     ->arrayNode('versions')
                         ->addDefaultsIfNotSet()
                         ->children()
@@ -240,7 +245,12 @@ class Configuration implements ConfigurationInterface
         $objectsNode = $rootNode
             ->children()
                 ->arrayNode('objects')
-                    ->addDefaultsIfNotSet();
+                    ->addDefaultsIfNotSet()
+                    ->children()
+                        ->integerNode('tree_paging_limit')
+                            ->defaultValue(30)
+                            ->end()
+                    ->end();
 
         $classDefinitionsNode = $objectsNode
             ->children()
@@ -283,6 +293,9 @@ class Configuration implements ConfigurationInterface
 
         $documentsNode
             ->children()
+                ->integerNode('tree_paging_limit')
+                    ->defaultValue(50)
+                ->end()
                 ->arrayNode('editables')
                     ->addDefaultsIfNotSet()
                     ->children()
@@ -337,6 +350,20 @@ class Configuration implements ConfigurationInterface
                 ->arrayNode('routing')
                     ->addDefaultsIfNotSet()
                     ->children()
+                        ->arrayNode('defaults')
+                            ->addDefaultsIfNotSet()
+                            ->children()
+                                ->scalarNode('bundle')
+                                    ->defaultValue('AppBundle')
+                                ->end()
+                                ->scalarNode('controller')
+                                    ->defaultValue('Default')
+                                ->end()
+                                ->scalarNode('action')
+                                    ->defaultValue('default')
+                                ->end()
+                            ->end()
+                        ->end()
                         ->arrayNode('static')
                             ->addDefaultsIfNotSet()
                             ->children()

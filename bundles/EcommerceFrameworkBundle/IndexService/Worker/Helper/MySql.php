@@ -17,7 +17,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\Helper;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\IMysqlConfig;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Interpreter\IRelationInterpreter;
 use Pimcore\Cache;
-use Pimcore\Db\Connection;
+use Pimcore\Db\ConnectionInterface;
 use Pimcore\Logger;
 
 class MySql
@@ -33,11 +33,11 @@ class MySql
     protected $tenantConfig;
 
     /**
-     * @var Connection
+     * @var ConnectionInterface
      */
     protected $db;
 
-    public function __construct(IMysqlConfig $tenantConfig, Connection $db)
+    public function __construct(IMysqlConfig $tenantConfig, ConnectionInterface $db)
     {
         $this->tenantConfig = $tenantConfig;
         $this->db = $db;
@@ -141,7 +141,7 @@ class MySql
                 Logger::info($e);
             }
 
-            $this->dbexec('ALTER TABLE `' . $this->tenantConfig->getTablename() . '` ENGINE = MyISAM;');
+            $this->dbexec('ALTER TABLE `' . $this->tenantConfig->getTablename() . '` ENGINE = InnoDB;');
             $columnNames = [];
             foreach ($searchIndexColums as $c) {
                 $columnNames[] = $this->db->quoteIdentifier($c);

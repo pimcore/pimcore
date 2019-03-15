@@ -257,9 +257,9 @@ class Hardlink extends Document
     }
 
     /**
-     * @see Document::delete
+     * @inheritdoc
      */
-    public function delete()
+    public function delete(bool $isNested = false)
     {
 
         // hardlinks cannot have direct children in "real" world, so we have to empty them before we delete it
@@ -274,7 +274,7 @@ class Hardlink extends Document
             $redirect->delete();
         }
 
-        parent::delete();
+        parent::delete($isNested);
 
         // we re-enable the children functionality by setting them to NULL, if requested they'll be loaded again
         // -> see $this->getChilds() , doesn't make sense when deleting an item but who knows, ... ;-)

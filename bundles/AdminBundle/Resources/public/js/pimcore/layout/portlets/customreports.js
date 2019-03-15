@@ -75,10 +75,7 @@ pimcore.layout.portlets.customreports = Class.create(pimcore.layout.portlets.abs
                 autoLoad: true,
                 proxy: {
                     type: 'ajax',
-                    url: '/admin/reports/custom-report/tree',
-                    extraParams: {
-                        portlet: 1
-                    },
+                    url: '/admin/reports/custom-report/portlet-report-list',
                     reader: {
                         type: 'json',
                         rootProperty: 'data'

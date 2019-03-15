@@ -105,6 +105,7 @@ pimcore.object.tags.manyToManyRelation = Class.create(pimcore.object.tags.abstra
 
             selModel: Ext.create('Ext.selection.RowModel', {}),
             viewConfig: {
+                markDirty: false,
                 plugins: {
                     ptype: 'gridviewdragdrop',
                     dragroup: 'element'

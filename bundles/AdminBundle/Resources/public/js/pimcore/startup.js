@@ -302,7 +302,7 @@ Ext.onReady(function () {
         }
     });
 
-    if (user.isAllowed("documents")) {
+    if (user.isAllowed("documents") || user.isAllowed("users")) {
         var store = new Ext.data.Store({
             id: 'doctypes',
             model: 'pimcore.model.doctypes',
@@ -610,7 +610,8 @@ Ext.onReady(function () {
                                         showCloseOthers: false,
                                         extraItemsTail: pimcore.helpers.getMainTabMenuItems()
                                     }),
-                                    Ext.create('Ext.ux.TabReorderer', {})
+                                    Ext.create('Ext.ux.TabReorderer', {}),
+                                    Ext.create('Ext.ux.TabMiddleButtonClose', {})
                                 ]
                         })
                         ,
@@ -667,12 +668,7 @@ Ext.onReady(function () {
 
                     // open "My Profile" when clicking on avatar
                     Ext.get("pimcore_avatar").on("click", function (ev) {
-                        try {
-                            pimcore.globalmanager.get("profile").activate();
-                        }
-                        catch (e) {
-                            pimcore.globalmanager.add("profile", new pimcore.settings.profile.panel());
-                        }
+                        pimcore.helpers.openProfile();
                     });
                 }
             }
@@ -827,6 +823,10 @@ Ext.onReady(function () {
                 pimcore.settings.profile.twoFactorSettings.prototype.openSetupWindow();
             }
         });
+    }
+
+    if(pimcore.currentuser.isPasswordReset) {
+        pimcore.helpers.openProfile();
     }
 
     // Quick Search
@@ -1002,6 +1002,11 @@ pimcore["intervals"]["ping"] = window.setInterval(function () {
         }
     });
 }, (pimcore.settings.session_gc_maxlifetime - 60) * 1000);
+
+
+pimcore["intervals"]["checkNewNotification"] = window.setInterval(function (elt) {
+    pimcore.notification.helper.updateFromServer();
+}, 30000);
 
 // refreshes the layout
 pimcore.registerNS("pimcore.layout.refresh");

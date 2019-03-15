@@ -337,6 +337,18 @@ class Relations extends Model\Document\Tag implements \Iterator
     public function valid()
     {
         $this->setElements();
+
+        $el = $this->current();
+        if (
+            ($el instanceof DataObject && DataObject::doHideUnpublished())
+            ||
+            ($el instanceof Document && Document::doHideUnpublished())
+        ) {
+            if (!Element\Service::isPublished($el)) {
+                $this->next();
+            }
+        }
+
         $var = $this->current() !== false;
 
         return $var;

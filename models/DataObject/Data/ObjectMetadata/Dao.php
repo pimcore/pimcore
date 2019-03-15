@@ -25,6 +25,8 @@ use Pimcore\Model\DataObject;
  */
 class Dao extends Model\Dao\AbstractDao
 {
+    use DataObject\ClassDefinition\Helper\Dao;
+
     /**
      * @param DataObject\Concrete $object
      * @param $ownertype
@@ -103,9 +105,9 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     /**
-     * @param $class
+     * @param DataObject\ClassDefinition $class
      */
-    public function createOrUpdateTable($class)
+    public function createOrUpdateTable(DataObject\ClassDefinition $class)
     {
         $classId = $class->getId();
         $table = 'object_metadata_' . $classId;
@@ -129,5 +131,7 @@ class Dao extends Model\Dao\AbstractDao
               INDEX `ownername` (`ownername`),
               INDEX `position` (`position`)
 		) DEFAULT CHARSET=utf8mb4;");
+
+        $this->handleEncryption($class, [$table]);
     }
 }

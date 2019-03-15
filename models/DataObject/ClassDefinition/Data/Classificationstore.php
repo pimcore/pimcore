@@ -99,6 +99,11 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     public $hideEmptyData;
 
     /**
+     * @var bool
+     */
+    public $disallowAddRemove;
+
+    /**
      * contains further localized field definitions if there are more than one localized fields in on class
      *
      * @var array
@@ -1355,6 +1360,26 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     public function setHideEmptyData($hideEmptyData)
     {
         $this->hideEmptyData = (bool) $hideEmptyData;
+
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isDisallowAddRemove()
+    {
+        return $this->disallowAddRemove;
+    }
+
+    /**
+     * @param bool $disallowAddRemove
+     *
+     * @return $this
+     */
+    public function setDisallowAddRemove($disallowAddRemove)
+    {
+        $this->disallowAddRemove = $disallowAddRemove;
 
         return $this;
     }
