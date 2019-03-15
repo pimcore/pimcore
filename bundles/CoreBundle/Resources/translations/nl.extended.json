@@ -63,7 +63,6 @@
     "composite": "samestelling",
     "origin": "Bron",
     "high_resolution": "Hoge Resolutie",
-    "lazy_loading_warning": "OPGELET: Lazy Loading is NIET mogelijk binnen Localized Field, Veld collecties, en Object Bouwstenen.",
     "create_menu_shortcut": "Snelkoppeling toevoegen aan menu",
     "nice_name": "Mooie naam",
     "icon_class": "Icon-class",
@@ -273,9 +272,7 @@
     "new_document_type": "Nieuw document type",
     "system_settings": "Systeeminstellingen",
     "timezone": "Tijdzone",
-    "mysql_database": "MySQL Database",
     "host": "Host",
-    "database_name": "Databasenaam",
     "client_id": "Client Id",
     "image_thumbnails": "Afbeelding Thumbnails",
     "thumbnails": "Miniaturen",
@@ -311,7 +308,6 @@
     "loading": "Laden",
     "add_user": "Gebruiker toevoegen",
     "steps": "Stappen",
-    "adapter": "Database adapter",
     "database": "Database",
     "install": "Installeren",
     "uninstall": "Deïnstalleren",
@@ -702,5 +698,7 @@
     "exclude_from_search_index": "Exclude from Backend Full-Text Search",
     "media": "Media",
     "encrypt_data": "Encrypt Data",
-    "encrypt_data_description": "Data-at-Rest/Tablespace Encryption needs to be enabled on your Database Server"
+    "encrypt_data_description": "Data-at-Rest/Tablespace Encryption needs to be enabled on your Database Server",
+    "reports_config": "Reports Config",
+    "lazy_loading_warning_block": "WARNING: Lazy Loading is NOT possible within Blocks"
 }
