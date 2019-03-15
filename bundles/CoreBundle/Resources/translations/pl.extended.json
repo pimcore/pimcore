@@ -63,7 +63,6 @@
     "composite": "Złożony",
     "origin": "Oryginalny",
     "high_resolution": "Wysoka rozdzielczość",
-    "lazy_loading_warning": "UWAGA: Lazy Loading NIE współpracuje z Localized Fields, Field Collections i Object Bricks",
     "create_menu_shortcut": "Utwórz skrót w menu",
     "nice_name": "Nazwa użytkownika",
     "icon_class": "Klasa ikon",
@@ -273,9 +272,7 @@
     "new_document_type": "Nowy typ dokumentu",
     "system_settings": "Ustawienia systemowe",
     "timezone": "Strefa czasu",
-    "mysql_database": "Baza danych MySQL",
     "host": "Serwer",
-    "database_name": "Nazwa bazy danych",
     "client_id": "Identyfikator klienta",
     "image_thumbnails": "Miniatury obrazków",
     "thumbnails": "Miniaturki",
@@ -311,7 +308,6 @@
     "loading": "Ładowanie",
     "add_user": "Dodaj użytkownika",
     "steps": "Zmian",
-    "adapter": "Łącznik bazy danych",
     "database": "Baza danych",
     "install": "Zainstaluj",
     "uninstall": "Odinstaluj",
@@ -702,5 +698,7 @@
     "exclude_from_search_index": "Exclude from Backend Full-Text Search",
     "media": "Media",
     "encrypt_data": "Encrypt Data",
-    "encrypt_data_description": "Data-at-Rest/Tablespace Encryption needs to be enabled on your Database Server"
+    "encrypt_data_description": "Data-at-Rest/Tablespace Encryption needs to be enabled on your Database Server",
+    "reports_config": "Reports Config",
+    "lazy_loading_warning_block": "WARNING: Lazy Loading is NOT possible within Blocks"
 }
