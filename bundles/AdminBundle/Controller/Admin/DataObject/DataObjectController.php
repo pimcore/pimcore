@@ -2163,32 +2163,6 @@ class DataObjectController extends ElementControllerBase implements EventedContr
     }
 
     /**
-     * @param string $query
-     *
-     * @return string
-     */
-    protected function filterQueryParam(string $query)
-    {
-        if ($query == '*') {
-            $query = '';
-        }
-
-        $query = str_replace('%', '*', $query);
-        $query = str_replace('@', '#', $query);
-        $query = preg_replace("@([^ ])\-@", '$1 ', $query);
-
-        $query = str_replace(['<', '>', '(', ')', '~'], ' ', $query);
-
-        // it is not allowed to have * behind another *
-        $query = preg_replace('#[*]+#', '*', $query);
-
-        // no boolean operators at the end of the query
-        $query = rtrim($query, '+- ');
-
-        return $query;
-    }
-
-    /**
      * @param  array $relations
      * @param  array $value
      *
