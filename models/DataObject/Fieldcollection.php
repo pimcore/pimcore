@@ -28,7 +28,6 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyInd
 
     use Model\DataObject\Traits\DirtyIndicatorTrait;
 
-
     /**
      * @var array
      */
@@ -253,13 +252,13 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyInd
      * @param $type
      * @param $fieldname
      * @param $index
+     *
      * @return string
      */
-    public static function generateLazyKey($type, $fcField,  $index, $fieldname)
+    public static function generateLazyKey($type, $fcField, $index, $fieldname)
     {
-        return $type . "_" . $fcField . "_" . $index . "_" . $fieldname;
+        return $type . '_' . $fcField . '_' . $index . '_' . $fieldname;
     }
-
 
     /**
      * @param Concrete $object
@@ -267,15 +266,15 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyInd
      * @param $fcField
      * @param $index
      * @param $field
+     *
      * @throws \Exception
      */
     public function loadLazyField(Concrete $object, $type, $fcField, $index, $field)
     {
         $lazyKey = self::generateLazyKey($type, $fcField, $index, $field);
         if ($this->hasLazyKey($lazyKey)) {
-
             $fcDef = Model\DataObject\Fieldcollection\Definition::getByKey($type);
-            /** @var  $fieldDef Model\DataObject\ClassDefinition\Data\CustomResourcePersistingInterface */
+            /** @var $fieldDef Model\DataObject\ClassDefinition\Data\CustomResourcePersistingInterface */
             $fieldDef = $fcDef->getFieldDefinition($field);
 
             $params = [
@@ -290,7 +289,7 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyInd
             $isDirtyDetectionDisabled = AbstractObject::isDirtyDetectionDisabled();
             AbstractObject::disableDirtyDetection();
 
-            $colGetter = "get" . ucfirst($fcField);
+            $colGetter = 'get' . ucfirst($fcField);
             $collectionContainer = $object->$colGetter();
             $collection = null;
             if ($collectionContainer) {
@@ -306,14 +305,11 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyInd
                 $collection->setObject($object);
             }
 
-
             $data = $fieldDef->load($collection, $params);
             AbstractObject::setDisableDirtyDetection($isDirtyDetectionDisabled);
             $collection->setObjectVar($field, $data);
             $object->setObjectVar($fcField, $collectionContainer);
             $this->removeLazyKey($lazyKey);
         }
-
-
     }
 }

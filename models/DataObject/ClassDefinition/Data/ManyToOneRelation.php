@@ -565,7 +565,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
         if ($object instanceof DataObject\Concrete) {
             $data = $object->getObjectVar($this->getName());
 
-            if ($this->getLazyLoading()  &&  $object->hasLazyKey($this->getName())) {
+            if ($this->getLazyLoading() && $object->hasLazyKey($this->getName())) {
                 $data = $this->load($object, ['force' => true]);
 
                 $object->setObjectVar($this->getName(), $data);

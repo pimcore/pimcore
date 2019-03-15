@@ -535,6 +535,7 @@ class AbstractObject extends Model\Element\AbstractElement
 
     /**
      * @param bool $isNested
+     *
      * @throws \Exception
      */
     public function delete(bool $isNested = false)
@@ -568,7 +569,6 @@ class AbstractObject extends Model\Element\AbstractElement
             $this->getDao()->delete();
 
             $this->commit();
-
         } catch (\Exception $e) {
             $this->rollBack();
             \Pimcore::getEventDispatcher()->dispatch(DataObjectEvents::POST_DELETE_FAILURE, new DataObjectEvent($this));

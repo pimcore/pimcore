@@ -29,9 +29,8 @@ use Pimcore\Model;
  */
 class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
 {
-
     use Model\DataObject\Traits\LazyLoadedRelationTrait;
-    
+
     /**
      * @var array
      */

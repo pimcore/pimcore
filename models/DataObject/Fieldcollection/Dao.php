@@ -81,7 +81,7 @@ class Dao extends Model\Dao\AbstractDao
                             Tool::triggerMissingInterfaceDeprecation(get_class($fd), 'load', CustomResourcePersistingInterface::class);
                         }
 
-                        if ($fd instanceof  DataObject\ClassDefinition\Data\Relations\AbstractRelations && !DataObject\Fieldcollection::isLazyLoadingDisabled() && $fd->getLazyLoading())  {
+                        if ($fd instanceof  DataObject\ClassDefinition\Data\Relations\AbstractRelations && !DataObject\Fieldcollection::isLazyLoadingDisabled() && $fd->getLazyLoading()) {
                             $lazyKey = DataObject\Fieldcollection::generateLazyKey($type, $this->model->getFieldname(), $result['index'], $key);
                             $this->model->addLazyKey($lazyKey);
                         } else {
@@ -150,7 +150,6 @@ class Dao extends Model\Dao\AbstractDao
         // empty or create all relevant tables
         $fieldDef = $object->getClass()->getFieldDefinition($this->model->getFieldname(), ['suppressEnrichment' => true]);
         $hasLocalizedFields = false;
-
 
         foreach ($fieldDef->getAllowedTypes() as $type) {
             try {
@@ -233,7 +232,7 @@ class Dao extends Model\Dao\AbstractDao
                 // always empty localized fields
                 $this->db->deleteWhere('object_relations_' . $object->getClassId(), $whereLocalizedFields);
 
-                return ["saveLocalizedRelations" => true];
+                return ['saveLocalizedRelations' => true];
             }
         }
 
@@ -244,6 +243,6 @@ class Dao extends Model\Dao\AbstractDao
         // empty relation table
         $this->db->deleteWhere('object_relations_' . $object->getClassId(), $where);
 
-        return ["saveFieldcollectionRelations" => true, "saveLocalizedRelations" => true];;
+        return ['saveFieldcollectionRelations' => true, 'saveLocalizedRelations' => true];
     }
 }

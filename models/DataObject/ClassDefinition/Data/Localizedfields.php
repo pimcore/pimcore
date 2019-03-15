@@ -158,8 +158,8 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
         $dataItems = $data->getInternalData(true);
         foreach ($dataItems as $language => $values) {
             foreach ($this->getFieldDefinitions() as $fd) {
-                if ($fd instanceof Data\Relations\AbstractRelations && !DataObject\Localizedfield::isLazyLoadingDisabled()  && $fd->getLazyLoading() ) {
-                    $lazyKey = $fd->getName() . "_" . $language;
+                if ($fd instanceof Data\Relations\AbstractRelations && !DataObject\Localizedfield::isLazyLoadingDisabled() && $fd->getLazyLoading()) {
+                    $lazyKey = $fd->getName() . '_' . $language;
                     if ($data->hasLazyKey($lazyKey)) {
                         $params['language'] = $language;
                         $params['object'] = $object;
@@ -177,7 +177,6 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
                         $data->removeLazyKey($lazyKey);
                     }
                 }
-
 
                 $key = $fd->getName();
                 $fdata = isset($values[$fd->getName()]) ? $values[$fd->getName()] : null;

@@ -1245,8 +1245,6 @@ class DocumentController extends ElementControllerBase implements EventedControl
         return $this->adminJson($result['data']);
     }
 
-
-
     /**
      * @Route("/language-tree", methods={"GET"})
      *
@@ -1263,7 +1261,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
         $languages = explode(',', $request->get('languages'));
 
         $result = [];
-        foreach($document->getChildren() as $child) {
+        foreach ($document->getChildren() as $child) {
             $result[] = $this->getTranslationTreeNodeConfig($child, $languages);
         }
 
@@ -1276,13 +1274,14 @@ class DocumentController extends ElementControllerBase implements EventedControl
      * @param Request $request
      *
      * @return JsonResponse
+     *
      * @throws \Exception
      */
     public function languageTreeRootAction(Request $request)
     {
         $document = Document::getById($request->query->get('id'));
 
-        if(!$document) {
+        if (!$document) {
             return $this->adminJson([
                 'success' => false
             ]);
@@ -1298,7 +1297,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
                 'xtype' => 'treecolumn',
                 'text' => $lang ? $locales[$lang] : '',
                 'dataIndex' => 'text',
-                'cls' => $lang ? "x-column-header_" . strtolower($lang) : null,
+                'cls' => $lang ? 'x-column-header_' . strtolower($lang) : null,
                 'width' => 300,
                 'sortable' => false,
             ],
@@ -1308,21 +1307,21 @@ class DocumentController extends ElementControllerBase implements EventedControl
 
         $combinedTranslations = $translations;
 
-        if($parentDocument = $document->getParent()) {
+        if ($parentDocument = $document->getParent()) {
             $parentTranslations = $service->getTranslations($parentDocument);
-            foreach($parentTranslations as $language => $languageDocumentId) {
+            foreach ($parentTranslations as $language => $languageDocumentId) {
                 $combinedTranslations[$language] = $translations[$language] ?? $languageDocumentId;
             }
         }
 
-        foreach($combinedTranslations as $language => $languageDocumentId) {
+        foreach ($combinedTranslations as $language => $languageDocumentId) {
             $languageDocument = Document::getById($languageDocumentId);
 
-            if($languageDocument && $languageDocument->isAllowed('list') && $language != $document->getProperty('language')) {
+            if ($languageDocument && $languageDocument->isAllowed('list') && $language != $document->getProperty('language')) {
                 $columns[] = [
                     'text' => $locales[$language],
                     'dataIndex' => $language,
-                    'cls' => "x-column-header_" . strtolower($language),
+                    'cls' => 'x-column-header_' . strtolower($language),
                     'width' => 300,
                     'sortable' => false,
                 ];
@@ -1336,16 +1335,16 @@ class DocumentController extends ElementControllerBase implements EventedControl
         ]);
     }
 
-
-    private function getTranslationTreeNodeConfig($document, array $languages, array $translations = null) {
+    private function getTranslationTreeNodeConfig($document, array $languages, array $translations = null)
+    {
         $service = new Document\Service();
 
         $config = $this->getTreeNodeConfig($document);
 
         $translations = is_null($translations) ? $service->getTranslations($document) : $translations;
 
-        foreach($languages as $language) {
-            if($languageDocument = $translations[$language]) {
+        foreach ($languages as $language) {
+            if ($languageDocument = $translations[$language]) {
                 $languageDocument = Document::getById($languageDocument);
                 $config[$language] = [
                     'text' => $languageDocument->getKey(),
@@ -1356,7 +1355,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
                     'itemType' => 'document',
                     'permissions' => $languageDocument->getUserPermissions()
                 ];
-            } elseif(!$document instanceof Document\Folder) {
+            } elseif (!$document instanceof Document\Folder) {
                 $config[$language] = [
                     'text' => '--',
                     'itemType' => 'empty'
@@ -1424,7 +1423,6 @@ class DocumentController extends ElementControllerBase implements EventedControl
 
             $translations = $service->getTranslations($document);
             if (isset($translations[$request->get('language')])) {
-
                 $targetDocument = Document::getById($translations[$request->get('language')]);
                 $success = true;
             }

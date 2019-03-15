@@ -1368,7 +1368,7 @@ abstract class Data
     public function markLazyloadedFieldAsLoaded($object)
     {
         if ($object instanceof DataObject\LazyLoadedFieldsInterface) {
-                $object->removeLazyKey($this->getName());
+            $object->removeLazyKey($this->getName());
         }
     }
 

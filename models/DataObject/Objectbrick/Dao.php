@@ -77,7 +77,7 @@ class Dao extends Model\DataObject\Fieldcollection\Dao
                         $context['fieldname'] = $brick->getFieldname();
                         $params['context'] = $context;
 
-                        if ($fd instanceof  DataObject\ClassDefinition\Data\Relations\AbstractRelations && !DataObject\Objectbrick::isLazyLoadingDisabled() && $fd->getLazyLoading())  {
+                        if ($fd instanceof  DataObject\ClassDefinition\Data\Relations\AbstractRelations && !DataObject\Objectbrick::isLazyLoadingDisabled() && $fd->getLazyLoading()) {
                             $lazyKey = DataObject\Objectbrick::generateLazyKey($type, $brick->getFieldname(), $key);
                             $this->model->addLazyKey($lazyKey);
                         } else {

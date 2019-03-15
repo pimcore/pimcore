@@ -1120,9 +1120,8 @@ class TestDataHelper extends Module
         $brick = new DataObject\Objectbrick\Data\UnittestBrick($object);
         $brick->setBrickInput('brickinput' . $seed);
 
-
-        $emptyObjects = TestHelper::createEmptyObjects("myBrickPrefix", true, 10);
-        $emptyLazyObjects = TestHelper::createEmptyObjects("myLazyBrickPrefix", true, 15);
+        $emptyObjects = TestHelper::createEmptyObjects('myBrickPrefix', true, 10);
+        $emptyLazyObjects = TestHelper::createEmptyObjects('myLazyBrickPrefix', true, 15);
         $brick->setBrickRelation($emptyObjects);
         $brick->setBrickLazyRelation($emptyLazyObjects);
 
@@ -1153,10 +1152,10 @@ class TestDataHelper extends Module
         $this->assertEquals($expectedInputValue, $inputValue);
 
         $fieldRelation = $value->getBrickRelation();
-        $this->assertEquals(10, count($fieldRelation), "expected 10 items");
+        $this->assertEquals(10, count($fieldRelation), 'expected 10 items');
 
         $fieldLazyRelation = $value->getBrickLazyRelation();
-        $this->assertEquals(15, count($fieldLazyRelation), "expected 15 items");
+        $this->assertEquals(15, count($fieldLazyRelation), 'expected 15 items');
 
         Cache::clearAll();
         Runtime::clear();
@@ -1167,11 +1166,10 @@ class TestDataHelper extends Module
         /** @var DataObject\Fieldcollection\Data\Unittestfieldcollection $value */
         $value = $value[0];
         $fieldRelation = $value->getBrickRelation();
-        $this->assertEquals(10, count($fieldRelation), "expected 10 items");
+        $this->assertEquals(10, count($fieldRelation), 'expected 10 items');
 
         $fieldLazyRelation = $value->getBrickLazyRelation();
-        $this->assertEquals(15, count($fieldLazyRelation), "expected 15 items");
-
+        $this->assertEquals(15, count($fieldLazyRelation), 'expected 15 items');
     }
 
     /**
@@ -1187,8 +1185,8 @@ class TestDataHelper extends Module
         $fc->setFieldinput1('field1' . $seed);
         $fc->setFieldinput2('field2' . $seed);
 
-        $emptyObjects = TestHelper::createEmptyObjects("myprefix", true, 10);
-        $emptyLazyObjects = TestHelper::createEmptyObjects("myLazyPrefix", true, 15);
+        $emptyObjects = TestHelper::createEmptyObjects('myprefix', true, 10);
+        $emptyLazyObjects = TestHelper::createEmptyObjects('myLazyPrefix', true, 15);
         $fc->setFieldRelation($emptyObjects);
         $fc->setFieldLazyRelation($emptyLazyObjects);
         $items = new DataObject\Fieldcollection([$fc], $field);
@@ -1227,10 +1225,10 @@ class TestDataHelper extends Module
         );
 
         $fieldRelation = $value->getFieldRelation();
-        $this->assertEquals(10, count($fieldRelation), "expected 10 items");
+        $this->assertEquals(10, count($fieldRelation), 'expected 10 items');
 
         $fieldLazyRelation = $value->getFieldLazyRelation();
-        $this->assertEquals(15, count($fieldLazyRelation), "expected 15 items");
+        $this->assertEquals(15, count($fieldLazyRelation), 'expected 15 items');
 
         Cache::clearAll();
         Runtime::clear();
@@ -1241,10 +1239,10 @@ class TestDataHelper extends Module
         /** @var DataObject\Fieldcollection\Data\Unittestfieldcollection $value */
         $value = $value[0];
         $fieldRelation = $value->getFieldRelation();
-        $this->assertEquals(10, count($fieldRelation), "expected 10 items");
+        $this->assertEquals(10, count($fieldRelation), 'expected 10 items');
 
         $fieldLazyRelation = $value->getFieldLazyRelation();
-        $this->assertEquals(15, count($fieldLazyRelation), "expected 15 items");
+        $this->assertEquals(15, count($fieldLazyRelation), 'expected 15 items');
     }
 
     public function assertElementsEqual(ElementInterface $e1, ElementInterface $e2)

@@ -953,7 +953,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
         $data = null;
         if ($object instanceof DataObject\Concrete) {
             $data = $object->getObjectVar($this->getName());
-            if ($this->getLazyLoading()  &&  $object->hasLazyKey($this->getName())) {
+            if ($this->getLazyLoading() && $object->hasLazyKey($this->getName())) {
                 $data = $this->load($object, ['force' => true]);
 
                 $setter = 'set' . ucfirst($this->getName());

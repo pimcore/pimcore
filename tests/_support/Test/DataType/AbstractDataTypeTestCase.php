@@ -450,7 +450,6 @@ abstract class AbstractDataTypeTestCase extends TestCase
         $this->testDataHelper->assertObjects($this->testObject, 'lmultihrefLazy', $this->seed, 'de');
     }
 
-
     public function testBricks()
     {
         $this->createTestObject([

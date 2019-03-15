@@ -959,6 +959,7 @@ class Asset extends Element\AbstractElement
 
     /**
      * @param bool $isNested
+     *
      * @throws \Exception
      */
     public function delete(bool $isNested = false)
@@ -1008,7 +1009,7 @@ class Asset extends Element\AbstractElement
             $this->commit();
 
             // remove file on filesystem
-            if(!$isNested) {
+            if (!$isNested) {
                 $fullPath = $this->getRealFullPath();
                 if ($fullPath != '/..' && !strpos($fullPath,
                         '/../') && $this->getKey() !== '.' && $this->getKey() !== '..') {

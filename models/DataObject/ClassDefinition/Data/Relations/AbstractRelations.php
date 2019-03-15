@@ -342,12 +342,13 @@ abstract class AbstractRelations extends Data implements CustomResourcePersistin
                 $relations = $db->fetchAll('SELECT * FROM object_relations_' . $object->getClassId() . " WHERE src_id = ? AND fieldname = ? AND ownertype = 'object'", [$object->getId(), $this->getName()]);
             } else {
                 $object->addLazyKey($this->getName());
+
                 return null;
             }
         } elseif ($object instanceof DataObject\Fieldcollection\Data\AbstractData) {
             $relations = $db->fetchAll('SELECT * FROM object_relations_' . $object->getObject()->getClassId() . " WHERE src_id = ? AND fieldname = ? AND ownertype = 'fieldcollection' AND ownername = ? AND position = ?", [$object->getObject()->getId(), $this->getName(), $object->getFieldname(), $object->getIndex()]);
         } elseif ($object instanceof DataObject\Localizedfield) {
-            if (isset($params['context']) && isset($params['context']['containerType']) &&  (($params['context']['containerType'] == 'fieldcollection' || $params['context']['containerType'] == 'objectbrick'))) {
+            if (isset($params['context']) && isset($params['context']['containerType']) && (($params['context']['containerType'] == 'fieldcollection' || $params['context']['containerType'] == 'objectbrick'))) {
                 $context = $params['context'];
                 $fieldname = $context['fieldname'];
                 if ($params['context']['containerType'] == 'fieldcollection') {
@@ -563,11 +564,13 @@ abstract class AbstractRelations extends Data implements CustomResourcePersistin
 
     /**
      * @param DataObject\Fieldcollection\Data\AbstractData $object
+     *
      * @throws \Exception
      */
-    public function loadLazyFieldcollectionField(DataObject\Fieldcollection\Data\AbstractData $abstractData) {
+    public function loadLazyFieldcollectionField(DataObject\Fieldcollection\Data\AbstractData $abstractData)
+    {
         if ($this->getLazyLoading() && $abstractData->getObject()) {
-            /** @var  $model DataObject\Fieldcollection */
+            /** @var $model DataObject\Fieldcollection */
             $model = $abstractData->getObject()->getObjectVar($abstractData->getFieldname());
             if ($model) {
                 $model->loadLazyField($abstractData->getObject(), $abstractData->getType(), $abstractData->getFieldname(), $abstractData->getIndex(), $this->getName());
@@ -577,9 +580,11 @@ abstract class AbstractRelations extends Data implements CustomResourcePersistin
 
     /**
      * @param DataObject\Objectbrick\Data\AbstractData $object
+     *
      * @throws \Exception
      */
-    public function loadLazyBrickField(DataObject\Objectbrick\Data\AbstractData $object) {
+    public function loadLazyBrickField(DataObject\Objectbrick\Data\AbstractData $object)
+    {
         if ($this->getLazyLoading() && $object->getObject()) {
             /** @var $model DataObject\Objectbrick */
             $model = $object->getObject()->getObjectVar($object->getFieldname());
@@ -588,5 +593,4 @@ abstract class AbstractRelations extends Data implements CustomResourcePersistin
             }
         }
     }
-
 }

@@ -150,13 +150,12 @@ class Dao extends Model\Dao\AbstractDao
                     ];
 
                     if ($fd instanceof DataObject\ClassDefinition\Data\Relations\AbstractRelations) {
-                        if ($this->model->isLanguageDirty($language) || $params["saveLocalizedRelations"]) {
+                        if ($this->model->isLanguageDirty($language) || $params['saveLocalizedRelations']) {
                             $fd->save($this->model, $childParams);
                         }
                     } else {
                         $fd->save($this->model, $childParams);
                     }
-
                 }
                 if ($fd instanceof ResourcePersistenceAwareInterface || method_exists($fd, 'getDataForResource')) {
                     if (!$fd instanceof ResourcePersistenceAwareInterface) {
@@ -549,8 +548,8 @@ class Dao extends Model\Dao\AbstractDao
                         }
                         $params['context']['object'] = $object;
 
-                        if ($fd instanceof  DataObject\ClassDefinition\Data\Relations\AbstractRelations && !DataObject\Localizedfield::isLazyLoadingDisabled() && $fd->getLazyLoading())  {
-                            $lazyKey = $fd->getName() . "_" . $row['language'];
+                        if ($fd instanceof  DataObject\ClassDefinition\Data\Relations\AbstractRelations && !DataObject\Localizedfield::isLazyLoadingDisabled() && $fd->getLazyLoading()) {
+                            $lazyKey = $fd->getName() . '_' . $row['language'];
                             $this->model->addLazyKey($lazyKey);
                         } else {
                             $value = $fd->load($this->model, $params);

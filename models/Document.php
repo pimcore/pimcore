@@ -771,6 +771,7 @@ class Document extends Element\AbstractElement
 
     /**
      * @param bool $isNested
+     *
      * @throws \Exception
      */
     public function delete(bool $isNested = false)
@@ -808,7 +809,6 @@ class Document extends Element\AbstractElement
             $this->getDao()->delete();
 
             $this->commit();
-
         } catch (\Exception $e) {
             $this->rollBack();
             \Pimcore::getEventDispatcher()->dispatch(DocumentEvents::POST_DELETE_FAILURE, new DocumentEvent($this));

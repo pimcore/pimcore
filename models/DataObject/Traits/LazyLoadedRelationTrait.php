@@ -17,10 +17,8 @@
 
 namespace Pimcore\Model\DataObject\Traits;
 
-
 trait LazyLoadedRelationTrait
 {
-
     /**
      * @var bool
      */
@@ -34,37 +32,44 @@ trait LazyLoadedRelationTrait
     /**
      * @param $key
      */
-    public function addLazyKey($key) {
+    public function addLazyKey($key)
+    {
         $this->lazyKeys[$key] = 1;
     }
 
     /**
      * @param $key
      */
-    public function removeLazyKey($key) {
+    public function removeLazyKey($key)
+    {
         unset($this->lazyKeys[$key]);
     }
 
     /**
      * @param $key
+     *
      * @return bool
      */
-    public function hasLazyKey($key) {
+    public function hasLazyKey($key)
+    {
         $isset = isset($this->lazyKeys[$key]);
+
         return $isset;
     }
 
     /**
      * @return bool
      */
-    public function hasLazyKeys() {
+    public function hasLazyKeys()
+    {
         return count($this->lazyKeys) > 0;
     }
 
     /**
      * @return array
      */
-    public function getLazyKeys() {
+    public function getLazyKeys()
+    {
         return $this->lazyKeys;
     }
 
@@ -78,6 +83,7 @@ trait LazyLoadedRelationTrait
 
     /**
      * @internal
+     *
      * @param bool $disableLazyLoading
      */
     public static function setDisableLazyLoading(bool $disableLazyLoading)
@@ -102,7 +108,4 @@ trait LazyLoadedRelationTrait
     {
         self::setDisableLazyloading(false);
     }
-
-
-
 }

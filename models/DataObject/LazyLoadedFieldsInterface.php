@@ -19,7 +19,6 @@ namespace Pimcore\Model\DataObject;
 
 interface LazyLoadedFieldsInterface
 {
-
     /**
      * @param $key
      */
@@ -32,10 +31,10 @@ interface LazyLoadedFieldsInterface
 
     /**
      * @param $key
+     *
      * @return bool
      */
     public function hasLazyKey($key);
-
 
     /**
      * @return bool
@@ -46,5 +45,4 @@ interface LazyLoadedFieldsInterface
      * @return array
      */
     public function getLazyKeys();
-
 }

@@ -1383,6 +1383,4 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
 
         return $this;
     }
-
-
 }

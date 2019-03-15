@@ -317,27 +317,31 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
 
     /**
      * @internal
+     *
      * @param $brick
      * @param $brickField
      * @param $field
+     *
      * @return string
      */
-    public static function generateLazyKey($brick, $brickField, $field) {
-        return $brick . "_" . $brickField . '_'. $field;
+    public static function generateLazyKey($brick, $brickField, $field)
+    {
+        return $brick . '_' . $brickField . '_'. $field;
     }
 
     /** @internal
      * @param $brick
      * @param $brickField
      * @param $field
+     *
      * @throws \Exception
      */
-    public function loadLazyField($brick, $brickField, $field) {
+    public function loadLazyField($brick, $brickField, $field)
+    {
         $lazyKey = self::generateLazyKey($brick, $brickField, $field);
         if ($this->hasLazyKey($lazyKey)) {
-
             $brickDef = Model\DataObject\Objectbrick\Definition::getByKey($brick);
-            /** @var  $fieldDef Model\DataObject\ClassDefinition\Data\CustomResourcePersistingInterface */
+            /** @var $fieldDef Model\DataObject\ClassDefinition\Data\CustomResourcePersistingInterface */
             $fieldDef = $brickDef->getFieldDefinition($field);
             $context = [];
             $context['object'] = $this->object;
@@ -352,13 +356,11 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
             $data = $fieldDef->load($this->$brick, $params);
             AbstractObject::setDisableDirtyDetection($isDirtyDetectionDisabled);
 
-            $getter = "get" . ucfirst($brick);
+            $getter = 'get' . ucfirst($brick);
             $brickData = $this->$getter();
 
             $brickData->setObjectVar($field, $data);
             $this->removeLazyKey($lazyKey);
         }
     }
-
-
 }
