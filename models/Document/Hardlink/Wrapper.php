@@ -42,7 +42,7 @@ trait Wrapper
         $this->raiseHardlinkError();
     }
 
-    public function delete()
+    public function delete(bool $isNested = false)
     {
         $this->raiseHardlinkError();
     }
