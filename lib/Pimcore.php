@@ -256,7 +256,8 @@ class Pimcore
     /**
      * Accessing the container this way is discouraged as dependencies should be wired through the container instead of
      * needing to access the container directly. This exists mainly for compatibility with legacy code.
-     *
+     *  
+     * @internal Don't use unless there is no other way of accessing Services. Think twice, in most cases there is another way to access the Service.
      * @return ContainerInterface
      */
     public static function getContainer()
