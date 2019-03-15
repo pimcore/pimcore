@@ -63,7 +63,6 @@
     "composite": "Composite",
     "origin": "Original",
     "high_resolution": "Haute résolution",
-    "lazy_loading_warning": "AVERTISSEMENT : le Chargement Paresseux n'est pas possible dans les Champs localisés, Ensembles de champs et Objets imbriqués",
     "create_menu_shortcut": "Créer un raccourci dans le menu",
     "nice_name": "Joli nom",
     "icon_class": "Classe de l'icône",
@@ -273,9 +272,7 @@
     "new_document_type": "Nouveau type de document",
     "system_settings": "Paramètres système",
     "timezone": "Fuseau horaire",
-    "mysql_database": "Base de données MySQL",
     "host": "Serveur",
-    "database_name": "Nom de la base de donnée",
     "client_id": "Id client",
     "image_thumbnails": "Miniatures d'images",
     "thumbnails": "Vignettes",
@@ -311,7 +308,6 @@
     "loading": "Chargement",
     "add_user": "Ajouter un utilisateur",
     "steps": "Etapes",
-    "adapter": "Adaptateur de la base de donnée",
     "database": "Base de données",
     "install": "Installer",
     "uninstall": "Désinstaller",
@@ -702,5 +698,7 @@
     "exclude_from_search_index": "Exclure de la recherche de texte intégral dans le backend",
     "media": "Médias",
     "encrypt_data": "Crypter les données",
-    "encrypt_data_description": "Data-at-Rest/Tablespace Encryption doit être activé sur votre serveur de base de données"
+    "encrypt_data_description": "Data-at-Rest/Tablespace Encryption doit être activé sur votre serveur de base de données",
+    "reports_config": "Reports Config",
+    "lazy_loading_warning_block": "WARNING: Lazy Loading is NOT possible within Blocks"
 }
