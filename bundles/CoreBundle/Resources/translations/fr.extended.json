@@ -295,8 +295,6 @@
     "objects": "Objets",
     "structured": "Structuré",
     "geo": "Géographique",
-    "default_controller": "Contrôleur par défaut",
-    "default_action": "Action par défaut",
     "allow_inherit": "Autoriser l'héritage",
     "use_traits": "Use (traits)",
     "general_settings": "Paramètres généraux",

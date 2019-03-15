@@ -8,6 +8,17 @@
 - [Ecommerce] FilterTypes now have `RequestStack` as constructor param. If you have custom filter types and no autowire 
   you might need to adapt your service definition. 
 - Removed method `Pimcore\Model\DataObject\getItems()`
+- Constants `PIMCORE_SYMFONY_DEFAULT_BUNDLE`, `PIMCORE_SYMFONY_DEFAULT_CONTROLLER` and `PIMCORE_SYMFONY_DEFAULT_ACTION` are no longer supported.
+  Also the system setting for the default controller & action are removed.
+  Please use the following config instead:
+    ```yaml
+    pimcore:
+        routing:
+            defaults:
+                bundle: AppBundle
+                controller: Default
+                action: default 
+    ```  
 
 ## Version 5.6.4
 
