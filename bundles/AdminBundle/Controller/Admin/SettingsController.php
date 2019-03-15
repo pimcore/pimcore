@@ -368,10 +368,12 @@ class SettingsController extends AdminController
         }
 
         //remove password from values sent to frontend
-        $valueArray['database']['params']['password'] = '##SECRET_PASS##';
+        unset($valueArray['database']);
+        foreach (['email', 'newsletter'] as $type) {
+            $valueArray[$type]['smtp']['auth']['password'] = '#####SUPER-SECRET-VALUE-PLACEHOLDER######';
+        }
 
         // inject debug mode
-
         $debugModeFile = PIMCORE_CONFIGURATION_DIRECTORY . '/debug-mode.php';
         $debugMode = [];
         if (file_exists($debugModeFile)) {
@@ -555,10 +557,12 @@ class SettingsController extends AdminController
             ];
 
             $smtpPassword = $values[$type . '.smtp.auth.password'];
-            if (!empty($smtpPassword)) {
-                $settings[$type]['smtp']['auth']['password'] = $smtpPassword;
-            } else {
-                $settings[$type]['smtp']['auth']['password'] = null;
+            if ($smtpPassword !== '#####SUPER-SECRET-VALUE-PLACEHOLDER######') {
+                if (!empty($smtpPassword)) {
+                    $settings[$type]['smtp']['auth']['password'] = $smtpPassword;
+                } else {
+                    $settings[$type]['smtp']['auth']['password'] = null;
+                }
             }
 
             if (array_key_exists($type . '.debug.emailAddresses', $values)) {
@@ -569,7 +573,7 @@ class SettingsController extends AdminController
         }
         $settings['newsletter']['usespecific'] = $values['newsletter.usespecific'];
 
-        $settings = array_merge($existingValues, $settings);
+        $settings = array_replace_recursive($existingValues, $settings);
 
         $configFile = \Pimcore\Config::locateConfigFile('system.php');
         File::putPhpFile($configFile, to_php_data_file_format($settings));

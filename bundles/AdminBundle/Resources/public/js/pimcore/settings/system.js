@@ -682,55 +682,6 @@ pimcore.settings.system = Class.create({
                     },
                     {
                         xtype: 'fieldset',
-                        title: t('mysql_database'),
-                        collapsible: true,
-                        collapsed: true,
-                        autoHeight: true,
-                        labelWidth: 200,
-                        defaultType: 'textfield',
-                        defaults: {width: 400},
-                        items: [
-                            {
-                                fieldLabel: t('adapter'),
-                                disabled: true,
-                                name: 'database.adapter',
-                                value: this.getValue("database.adapter")
-                            }, {
-                                fieldLabel: t('host'),
-                                disabled: true,
-                                name: 'database.params.host',
-                                value: this.getValue("database.params.host")
-                            },
-                            {
-                                fieldLabel: t('username'),
-                                disabled: true,
-                                name: 'database.params.username',
-                                value: this.getValue("database.params.username")
-                            },
-                            {
-                                fieldLabel: t('password'),
-                                disabled: true,
-                                inputType: "password",
-                                name: 'database.params.password',
-                                value: this.getValue("database.params.password")
-                            },
-                            {
-                                fieldLabel: t('database_name'),
-                                disabled: true,
-                                name: 'database.params.dbname',
-                                value: this.getValue("database.params.dbname")
-                            },
-                            {
-                                fieldLabel: t('port'),
-                                disabled: true,
-                                name: 'database.params.port',
-                                value: this.getValue("database.params.port")
-                            }
-                        ]
-                    }
-                    ,
-                    {
-                        xtype: 'fieldset',
                         title: t('documents'),
                         collapsible: true,
                         collapsed: true,
