@@ -869,5 +869,15 @@
     "reload_column_configuration_notice": "Note: Reloading column configuration will reset selected grid columns",
     "embedded_meta_data": "Embedded Meta Info",
     "duration": "Duration",
-    "custom_metadata": "Custom Metadata"
+    "custom_metadata": "Custom Metadata",
+    "group_icon_class": "Group Icon Class",
+    "custom_report_permissions": "Permission",
+    "visible_to_users": "Visible To Users",
+    "visible_to_roles": "Visible To Roles",
+    "open_url": "Open URL",
+    "document_language_overview": "Document Language Overview",
+    "language_master": "Master",
+    "create_translation_inheritance": "Create Translation (Inheritance)",
+    "create_translation": "Create Translation",
+    "document_translation_parent_not_found": "Parent document has no translation. Create a translation for the parent first."
 }
