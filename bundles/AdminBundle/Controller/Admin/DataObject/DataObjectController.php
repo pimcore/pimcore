@@ -17,6 +17,7 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin\DataObject;
 use Pimcore\Bundle\AdminBundle\Controller\Admin\ElementControllerBase;
 use Pimcore\Controller\Configuration\TemplatePhp;
 use Pimcore\Controller\EventedControllerInterface;
+use Pimcore\Bundle\AdminBundle\Helper\GridHelperService;
 use Pimcore\Db;
 use Pimcore\Event\AdminEvents;
 use Pimcore\Logger;
@@ -1618,7 +1619,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
      *
      * @return JsonResponse
      */
-    public function gridProxyAction(Request $request, EventDispatcherInterface $eventDispatcher)
+    public function gridProxyAction(Request $request, EventDispatcherInterface $eventDispatcher, GridHelperService $gridHelperService)
     {
         $allParams = array_merge($request->request->all(), $request->query->all());
 
@@ -1785,176 +1786,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
             }
         } else {
             // get list of objects
-            $folder = DataObject::getById($allParams['folderId']);
-            $class = DataObject\ClassDefinition::getById($allParams['classId']);
-            $className = $class->getName();
-
-            $colMappings = [
-                'key' => 'o_key',
-                'filename' => 'o_key',
-                'fullpath' => ['o_path', 'o_key'],
-                'id' => 'oo_id',
-                'published' => 'o_published',
-                'modificationDate' => 'o_modificationDate',
-                'creationDate' => 'o_creationDate'
-            ];
-
-            $start = 0;
-            $limit = 20;
-            $orderKey = 'oo_id';
-            $order = 'ASC';
-
-            $fields = [];
-            $bricks = [];
-            if ($allParams['fields']) {
-                $fields = $allParams['fields'];
-
-                foreach ($fields as $f) {
-                    $parts = explode('~', $f);
-                    if (substr($f, 0, 1) == '~') {
-                        $type = $parts[1];
-                    } elseif (count($parts) > 1) {
-                        $brickType = $parts[0];
-
-                        if (strpos($brickType, '?') !== false) {
-                            $brickDescriptor = substr($brickType, 1);
-                            $brickDescriptor = json_decode($brickDescriptor, true);
-                            $brickType = $brickDescriptor['containerKey'];
-                            $bricks[$brickType] = $brickDescriptor;
-                        } else {
-                            $bricks[$parts[0]] = $brickType;
-                        }
-                    }
-                }
-            }
-
-            if ($allParams['limit']) {
-                $limit = $allParams['limit'];
-            }
-            if ($allParams['start']) {
-                $start = $allParams['start'];
-            }
-
-            $sortingSettings = \Pimcore\Bundle\AdminBundle\Helper\QueryParams::extractSortingSettings($allParams);
-
-            $doNotQuote = false;
-
-            if ($sortingSettings['order']) {
-                $order = $sortingSettings['order'];
-            }
-            if (strlen($sortingSettings['orderKey']) > 0) {
-                $orderKey = $sortingSettings['orderKey'];
-                if (!(substr($orderKey, 0, 1) == '~')) {
-                    if (array_key_exists($orderKey, $colMappings)) {
-                        $orderKey = $colMappings[$orderKey];
-                    } elseif ($class->getFieldDefinition($orderKey) instanceof  DataObject\ClassDefinition\Data\QuantityValue) {
-                        $orderKey = 'concat(' . $orderKey . '__unit, ' . $orderKey . '__value)';
-                        $doNotQuote = true;
-                    } elseif ($class->getFieldDefinition($orderKey) instanceof  DataObject\ClassDefinition\Data\RgbaColor) {
-                        $orderKey = 'concat(' . $orderKey . '__rgb, ' . $orderKey . '__a)';
-                        $doNotQuote = true;
-                    } elseif (strpos($orderKey, '~') !== false) {
-                        $orderKeyParts = explode('~', $orderKey);
-
-                        if (strpos($orderKey, '?') !== false) {
-                            $brickDescriptor = substr($orderKeyParts[0], 1);
-                            $brickDescriptor = json_decode($brickDescriptor, true);
-                            $db = Db::get();
-                            $orderKey = $db->quoteIdentifier($brickDescriptor['containerKey'] . '_localized') . '.' . $db->quoteIdentifier($brickDescriptor['brickfield']);
-                            $doNotQuote = true;
-                        } else {
-                            if (count($orderKeyParts) == 2) {
-                                $orderKey = $orderKeyParts[1];
-                            }
-                        }
-                    }
-                }
-            }
-
-            $listClass = '\\Pimcore\\Model\\DataObject\\' . ucfirst($className) . '\\Listing';
-            /**
-             * @var $list DataObject\Listing\Concrete
-             */
-            $list = new $listClass();
-
-            $conditionFilters = [];
-            if ($allParams['only_direct_children'] == 'true') {
-                $conditionFilters[] = 'o_parentId = ' . $folder->getId();
-            } else {
-                $quotedPath = $list->quote($folder->getRealFullPath());
-                $quotedWildcardPath = $list->quote(str_replace('//', '/', $folder->getRealFullPath() . '/') . '%');
-                $conditionFilters[] = '(o_path = ' . $quotedPath . ' OR o_path LIKE ' . $quotedWildcardPath . ')';
-            }
-
-            if (!$this->getAdminUser()->isAdmin()) {
-                $userIds = $this->getAdminUser()->getRoles();
-                $userIds[] = $this->getAdminUser()->getId();
-                $conditionFilters[] .= ' (
-                                                    (select list from users_workspaces_object where userId in (' . implode(',', $userIds) . ') and LOCATE(CONCAT(o_path,o_key),cpath)=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
-                                                    OR
-                                                    (select list from users_workspaces_object where userId in (' . implode(',', $userIds) . ') and LOCATE(cpath,CONCAT(o_path,o_key))=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
-                                                 )';
-            }
-
-            $featureJoins = [];
-            $featureFilters = false;
-
-            // create filter condition
-            if ($allParams['filter']) {
-                $conditionFilters[] = DataObject\Service::getFilterCondition($allParams['filter'], $class);
-                $featureFilters = DataObject\Service::getFeatureFilters($allParams['filter'], $class, $requestedLanguage);
-                if ($featureFilters) {
-                    $featureJoins = array_merge($featureJoins, $featureFilters['joins']);
-                }
-            }
-
-            if ($allParams['condition'] && $this->getAdminUser()->isAdmin()) {
-                $conditionFilters[] = '(' . $allParams['condition'] . ')';
-            }
-
-            if ($allParams['query']) {
-                $query = $this->filterQueryParam($allParams['query']);
-                if (!empty($query)) {
-                    $conditionFilters[] = 'oo_id IN (SELECT id FROM search_backend_data WHERE MATCH (`data`,`properties`) AGAINST (' . $list->quote($query) . ' IN BOOLEAN MODE))';
-                }
-            }
-
-            if (!empty($bricks)) {
-                foreach ($bricks as $b) {
-                    $brickType = $b;
-                    if (is_array($brickType)) {
-                        $brickType = $brickType['containerKey'];
-                    }
-                    $list->addObjectbrick($brickType);
-                }
-            }
-
-            $list->setCondition(implode(' AND ', $conditionFilters));
-            $list->setLimit($limit);
-            $list->setOffset($start);
-
-            if (isset($sortingSettings['isFeature']) && $sortingSettings['isFeature']) {
-                $orderKey = 'cskey_' . $sortingSettings['fieldname'] . '_' . $sortingSettings['groupId'] . '_' . $sortingSettings['keyId'];
-                $list->setOrderKey($orderKey);
-                $list->setGroupBy('o_id');
-
-                $parts = explode('_', $orderKey);
-
-                $fieldname = $parts[1];
-                /** @var $csFieldDefinition DataObject\ClassDefinition\Data\Classificationstore */
-                $csFieldDefinition = $class->getFieldDefinition($fieldname);
-                $sortingSettings['language'] = $csFieldDefinition->isLocalized() ? $requestedLanguage : 'default';
-                $featureJoins[] = $sortingSettings;
-            } else {
-                $list->setOrderKey($orderKey, !$doNotQuote);
-            }
-            $list->setOrder($order);
-
-            if ($class->getShowVariants()) {
-                $list->setObjectTypes([DataObject\AbstractObject::OBJECT_TYPE_OBJECT, DataObject\AbstractObject::OBJECT_TYPE_VARIANT]);
-            }
-
-            DataObject\Service::addGridFeatureJoins($list, $featureJoins, $class, $featureFilters);
+            $list = $gridHelperService->prepareListingForGrid($allParams, $requestedLanguage, $this->getAdminUser());
 
             $beforeListLoadEvent = new GenericEvent($this, [
                 'list' => $list,
@@ -1967,7 +1799,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
 
             $objects = [];
             foreach ($list->getObjects() as $object) {
-                $o = DataObject\Service::gridObjectData($object, $fields, $requestedLanguage);
+                $o = DataObject\Service::gridObjectData($object, $allParams['fields'], $requestedLanguage);
                 // Like for treeGetChildsByIdAction, so we respect isAllowed method which can be extended (object DI) for custom permissions, so relying only users_workspaces_object is insufficient and could lead security breach
                 if ($object->isAllowed('list')) {
                     $objects[] = $o;
@@ -2328,32 +2160,6 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                 Logger::debug('Saved object id [ ' . $owner->getId() . ' ] by remote modification through [' . $object->getId() . '], Action: added [ ' . $object->getId() . " ] to [ $ownerFieldName ]");
             }
         }
-    }
-
-    /**
-     * @param string $query
-     *
-     * @return string
-     */
-    protected function filterQueryParam(string $query)
-    {
-        if ($query == '*') {
-            $query = '';
-        }
-
-        $query = str_replace('%', '*', $query);
-        $query = str_replace('@', '#', $query);
-        $query = preg_replace("@([^ ])\-@", '$1 ', $query);
-
-        $query = str_replace(['<', '>', '(', ')', '~'], ' ', $query);
-
-        // it is not allowed to have * behind another *
-        $query = preg_replace('#[*]+#', '*', $query);
-
-        // no boolean operators at the end of the query
-        $query = rtrim($query, '+- ');
-
-        return $query;
     }
 
     /**

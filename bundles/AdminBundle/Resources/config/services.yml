@@ -76,3 +76,9 @@ services:
 
     Pimcore\Bundle\AdminBundle\GDPR\DataProvider\SentMail: ~
     Pimcore\Bundle\AdminBundle\GDPR\DataProvider\PimcoreUsers: ~
+
+
+    #
+    # Grid Helper Service
+    #
+    Pimcore\Bundle\AdminBundle\Helper\GridHelperService: ~
