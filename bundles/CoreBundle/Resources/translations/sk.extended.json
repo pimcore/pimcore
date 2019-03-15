@@ -63,7 +63,6 @@
     "composite": "Kompozitný (Composite)",
     "origin": "Pôvod (Origin)",
     "high_resolution": "Vysoké rozlíšenie",
-    "lazy_loading_warning": "VAROVANIE: Dodatočné načítanie (Lazy loading) NIE JE podporované vo vnútri kontajnérov lokalizovaných polí (Localized Fields), kolekcií polí (Field Collections) a podzáznamov (Object bricks)",
     "create_menu_shortcut": "Vytvoriť skratku v menu",
     "nice_name": "Pekný názov",
     "icon_class": "Class (CSS) ikonky",
@@ -273,9 +272,7 @@
     "new_document_type": "Nový typ dokumentu",
     "system_settings": "Systémové nastavania",
     "timezone": "Časová zóna",
-    "mysql_database": "MySQL databáza",
     "host": "Host",
-    "database_name": "Názov databázy",
     "client_id": "ID klienta",
     "image_thumbnails": "Náhľady obrázkov",
     "thumbnails": "Náhľady",
@@ -311,7 +308,6 @@
     "loading": "Načítavanie",
     "add_user": "Pridať užívateľa",
     "steps": "Krokov",
-    "adapter": "Databázový adaptér",
     "database": "Databáza",
     "install": "Inštalovať",
     "uninstall": "Odinštalovať",
@@ -702,5 +698,7 @@
     "exclude_from_search_index": "Exclude from Backend Full-Text Search",
     "media": "Media",
     "encrypt_data": "Encrypt Data",
-    "encrypt_data_description": "Data-at-Rest/Tablespace Encryption needs to be enabled on your Database Server"
+    "encrypt_data_description": "Data-at-Rest/Tablespace Encryption needs to be enabled on your Database Server",
+    "reports_config": "Reports Config",
+    "lazy_loading_warning_block": "WARNING: Lazy Loading is NOT possible within Blocks"
 }
