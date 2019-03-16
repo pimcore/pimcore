@@ -20,7 +20,6 @@ namespace Pimcore\Model\DataObject;
 use Pimcore\Cache\Runtime;
 use Pimcore\DataObject\GridColumnConfig\ConfigElementInterface;
 use Pimcore\DataObject\GridColumnConfig\Service as GridColumnConfigService;
-use Pimcore\Db\ZendCompatibility\QueryBuilder;
 use Pimcore\Event\DataObjectEvents;
 use Pimcore\Event\Model\DataObjectEvent;
 use Pimcore\Logger;

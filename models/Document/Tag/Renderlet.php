@@ -17,7 +17,6 @@
 
 namespace Pimcore\Model\Document\Tag;
 
-use Pimcore\Config;
 use Pimcore\FeatureToggles\Features\DebugMode;
 use Pimcore\Logger;
 use Pimcore\Model;

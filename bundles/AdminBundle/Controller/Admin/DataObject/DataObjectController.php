@@ -15,9 +15,9 @@
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin\DataObject;
 
 use Pimcore\Bundle\AdminBundle\Controller\Admin\ElementControllerBase;
+use Pimcore\Bundle\AdminBundle\Helper\GridHelperService;
 use Pimcore\Controller\Configuration\TemplatePhp;
 use Pimcore\Controller\EventedControllerInterface;
-use Pimcore\Bundle\AdminBundle\Helper\GridHelperService;
 use Pimcore\Db;
 use Pimcore\Event\AdminEvents;
 use Pimcore\Logger;
