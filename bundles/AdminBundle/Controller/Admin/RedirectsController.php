@@ -21,6 +21,7 @@ use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse;
 use Pimcore\Model\Document;
 use Pimcore\Model\Redirect;
+use Pimcore\Logger;
 use Pimcore\Routing\Redirect\Csv;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
@@ -213,5 +214,34 @@ class RedirectsController extends AdminController
             'success' => true,
             'data' => $result
         ]);
+    }
+
+    /**
+     * @Route("/cleanup", methods={"DELETE"})
+     *
+     * @param Request $request
+     *
+     * @return JsonResponse
+     */
+    public function cleanupAction(Request $request)
+    {
+        $this->checkPermission('redirects');
+
+        try {
+            $now = time();
+            $expiredRedirects = new Redirect\Listing();
+            $expiredRedirects->setCondition("expiry IS NOT NULL AND expiry < $now");
+            $expiredRedirects = $expiredRedirects->load();
+
+            foreach ($expiredRedirects as $expiredRedirect) {
+                $expiredRedirect->delete();
+            }
+
+            return $this->adminJson(['success' => true]);
+        } catch (\Exception $e) {
+            Logger::error($e->getMessage());
+            return $this->adminJson(['success' => false]);
+        }
+
     }
 }

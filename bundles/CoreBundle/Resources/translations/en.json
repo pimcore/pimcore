@@ -879,5 +879,9 @@
   "group_icon_class": "Group Icon Class",
   "custom_report_permissions": "Permission",
   "visible_to_users": "Visible To Users",
-  "visible_to_roles": "Visible To Roles"
+  "visible_to_roles": "Visible To Roles",
+  "redirects_expired_cleanup": "Cleanup Expired Redirects",
+  "redirects_cleanup_warning": "Do you really want to cleanup expired redirects?",
+  "redirects_cleanup_error": "An error occurred while cleanup of expired redirects"
+
 }
