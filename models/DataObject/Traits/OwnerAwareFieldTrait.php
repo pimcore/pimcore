@@ -58,13 +58,4 @@ trait OwnerAwareFieldTrait
             $this->_owner->markLanguageAsDirty($this->_language);
         }
     }
-
-    public function __sleep()
-    {
-        $vars = get_object_vars($this);
-        unset($vars['_owner']);
-        $properties = array_keys($vars);
-
-        return $properties;
-    }
 }
