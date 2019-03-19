@@ -36,7 +36,7 @@ class NumberRange extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService
 
         $currentFilter[$field] = $value;
 
-        if (!empty($value)) {
+        if (!empty($value) && ($value['from'] !== null || $value['to'] !== null)) {
             $range = [];
             if (strlen($value['from']) > 0) {
                 $range['gte'] = $value['from'];
