@@ -334,32 +334,10 @@ pimcore.treenodelocator = function()
 
             // Find out if we have to move forward or backward in paging:
             var direction = 0;
-            var firstFolderChild = null;
-            var lastFolderChild = null;
-            var firstelementChild = null;
-            var lastelementChild = null;
-
-            for (i = 0; i < childCount; i++) {
-                var childNode = childNodes[i];
-                if (globalState.elementType == "document" || (globalState.elementType == "object" && sortBy == "index")) {
-                    lastelementChild = childNode;
-                    if (!firstelementChild) {
-                        firstelementChild = childNode;
-                    }
-                } else {
-                    if (childNode.data.type == "folder") {
-                        lastFolderChild = childNode;
-                        if (!firstFolderChild) {
-                            firstFolderChild = childNode;
-                        }
-                    }
-                    if (childNode.data.type != "folder") {
-                        lastelementChild = childNode;
-                        if (!firstelementChild) {
-                            firstelementChild = childNode;
-                        }
-                    }
-                }
+            var firstelementChild = childNodes[0];
+            var lastelementChild = childNodes[childCount-1];
+            if (!firstelementChild) {
+                firstelementChild = childNode;
             }
             
             if (pagingState.elementType == "document") {
@@ -379,8 +357,6 @@ pimcore.treenodelocator = function()
                     direction = self.getDirectionForElementsSortedByKey(
                         pagingState.elementKey,
                         pagingState.elementType,
-                        firstFolderChild,
-                        lastFolderChild,
                         firstelementChild,
                         lastelementChild
                     );
@@ -488,25 +464,15 @@ pimcore.treenodelocator = function()
         /**
          * Returns the direction (-1/+1/0) for elements sorted by key.
          */
-        getDirectionForElementsSortedByKey: function (elementKey, elementType, firstFolderChild, lastFolderChild, firstElementChild, lastElementChild) {
+        getDirectionForElementsSortedByKey: function (elementKey, elementType, firstElementChild, lastElementChild) {
             var direction = 0;
-            if (elementType == "folder") {
-                if (firstFolderChild && elementKey.toUpperCase() < firstFolderChild.data.text.toUpperCase()) {
-                    direction = -1;
-                } else if (lastFolderChild && elementKey.toUpperCase() > lastFolderChild.data.text.toUpperCase()) {
-                    direction = 1;
-                } else if (firstElementChild) {
-                    direction = -1;
-                }
-            } else {
-                if (lastFolderChild) {
-                    direction = 1;
-                } else if (firstElementChild && elementKey.toUpperCase() < firstElementChild.data.text.toUpperCase()) {
-                    direction = -1;
-                } else if (lastElementChild && elementKey.toUpperCase() > lastElementChild.data.text.toUpperCase()) {
-                    direction = 1;
-                }
+
+            if (firstElementChild && elementKey.toUpperCase() < firstElementChild.data.text.toUpperCase()) {
+                direction = -1;
+            } else if (lastElementChild && elementKey.toUpperCase() > lastElementChild.data.text.toUpperCase()) {
+                direction = 1;
             }
+
             return direction;
         },
         
