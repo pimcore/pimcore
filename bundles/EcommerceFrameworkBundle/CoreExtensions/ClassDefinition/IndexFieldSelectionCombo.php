@@ -14,6 +14,7 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\CoreExtensions\ClassDefinition;
 
+use Pimcore\Bundle\EcommerceFrameworkBundle\DependencyInjection\PimcoreEcommerceFrameworkExtension;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\IProductList;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Select;
@@ -38,23 +39,26 @@ class IndexFieldSelectionCombo extends Select
 
     protected function buildOptions(): array
     {
-        $indexService = Factory::getInstance()->getIndexService();
-        $indexColumns = $indexService->getIndexAttributes(true);
-
         $options = [];
 
-        foreach ($indexColumns as $c) {
-            $options[] = [
-                'key' => $c,
-                'value' => $c
-            ];
-        }
+        if(\Pimcore::getContainer()->has(PimcoreEcommerceFrameworkExtension::SERVICE_ID_FACTORY)) {
+            $indexService = Factory::getInstance()->getIndexService();
+            $indexColumns = $indexService->getIndexAttributes(true);
 
-        if ($this->getSpecificPriceField()) {
-            $options[] = [
-                'key' => IProductList::ORDERKEY_PRICE,
-                'value' => IProductList::ORDERKEY_PRICE
-            ];
+            foreach ($indexColumns as $c) {
+                $options[] = [
+                    'key' => $c,
+                    'value' => $c
+                ];
+            }
+
+            if ($this->getSpecificPriceField()) {
+                $options[] = [
+                    'key' => IProductList::ORDERKEY_PRICE,
+                    'value' => IProductList::ORDERKEY_PRICE
+                ];
+            }
+
         }
 
         return $options;
