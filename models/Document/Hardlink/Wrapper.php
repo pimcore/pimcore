@@ -19,6 +19,9 @@ namespace Pimcore\Model\Document\Hardlink;
 
 use Pimcore\Model\Document;
 
+/**
+ * @method Document\Dao getDao()
+ */
 trait Wrapper
 {
     /**
@@ -62,7 +65,7 @@ trait Wrapper
             }
 
             if ($this->getSourceDocument()) {
-                // if we have a source document, that means that this document is not directly linked, it's a
+                // if we have a source document, it means that this document is not directly linked, it's a
                 // child of a hardlink that uses "childFromSource", so in this case we use the source properties
                 // this is especially important for the navigation, otherwise all children will have the same
                 // navigation_name as the source hardlink, which doesn't make sense at all
@@ -73,17 +76,19 @@ trait Wrapper
             $hardLinkSourceProperties = $hardLink->getProperties();
             foreach ($hardLinkSourceProperties as $key => $prop) {
                 $prop = clone $prop;
-                $prop->setInherited(true);
 
                 // if the property doesn't exist in the source-properties just add it
                 if (!array_key_exists($key, $sourceProperties)) {
                     $hardLinkProperties[$key] = $prop;
                 } else {
                     // if the property does exist in the source properties but it is inherited, then overwrite it with the hardlink property
-                    if ($sourceProperties[$key]->isInherited()) {
+                    // or if the property is set directly on the hardlink itself
+                    if ($sourceProperties[$key]->isInherited() || !$prop->isInherited()) {
                         $hardLinkProperties[$key] = $prop;
                     }
                 }
+
+                $prop->setInherited(true);
             }
 
             $properties = array_merge($sourceProperties, $hardLinkProperties);
@@ -102,7 +107,7 @@ trait Wrapper
                 || $hardLink->getSourceDocument()->getRealFullPath() === $result->getRealFullPath()
             ) {
                 $c = Service::wrap($result);
-                if ($c) {
+                if ($c instanceof Document\Hardlink\Wrapper\WrapperInterface) {
                     $c->setHardLinkSource($hardLink);
                     $c->setPath(preg_replace('@^' . preg_quote($hardLink->getSourceDocument()->getRealPath()) . '@',
                         $hardLink->getRealPath(), $c->getRealPath()));
@@ -129,7 +134,7 @@ trait Wrapper
             if ($hardLink->getChildrenFromSource() && $hardLink->getSourceDocument() && !\Pimcore::inAdmin()) {
                 foreach (parent::getChildren() as $c) {
                     $c = Service::wrap($c);
-                    if ($c) {
+                    if ($c instanceof Document\Hardlink\Wrapper\WrapperInterface) {
                         $c->setHardLinkSource($hardLink);
                         $c->setPath(preg_replace('@^' . preg_quote($hardLink->getSourceDocument()->getRealFullpath()) . '@', $hardLink->getRealFullpath(), $c->getRealPath()));
 
