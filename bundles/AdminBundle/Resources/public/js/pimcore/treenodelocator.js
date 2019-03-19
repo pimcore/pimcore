@@ -336,9 +336,6 @@ pimcore.treenodelocator = function()
             var direction = 0;
             var firstelementChild = childNodes[0];
             var lastelementChild = childNodes[childCount-1];
-            if (!firstelementChild) {
-                firstelementChild = childNode;
-            }
             
             if (pagingState.elementType == "document") {
                 direction = self.getDirectionForElementsSortedByIndex(
