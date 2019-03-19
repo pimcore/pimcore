@@ -623,6 +623,10 @@ class Asset extends Element\AbstractElement
             $this->setFilename($this->getFilename() . '.txt');
         }
 
+        if(mb_strlen($this->getFilename()) > 255) {
+            throw new \Exception('Filenames longer than 255 characters are not allowed');
+        }
+
         if (Asset\Service::pathExists($this->getRealFullPath())) {
             $duplicate = Asset::getByPath($this->getRealFullPath());
             if ($duplicate instanceof Asset and $duplicate->getId() != $this->getId()) {
