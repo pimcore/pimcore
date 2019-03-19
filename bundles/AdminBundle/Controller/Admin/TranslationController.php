@@ -58,13 +58,15 @@ class TranslationController extends AdminController
             $dialect = json_decode($dialect);
         }
 
+        if (!empty($tmpFile)) {
+            $tmpFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/' . $tmpFile;
+        } else {
+            $tmpFile = $_FILES['Filedata']['tmp_name'];
+        }
+
         $this->checkPermission(($admin ? 'admin_' : '') . 'translations');
 
         $merge = $request->get('merge');
-
-        if (empty($tmpFile)) {
-            $tmpFile = $_FILES['Filedata']['tmp_name'];
-        }
 
         $overwrite = $merge ? false : true;
 
@@ -136,7 +138,7 @@ class TranslationController extends AdminController
         return $this->adminJson([
             'success' => true,
             'config' => [
-                'tmpFile' => $importFile,
+                'tmpFile' => $filename,
                 'csvSettings' => $dialect,
             ]
         ]);
