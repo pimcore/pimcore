@@ -879,5 +879,6 @@
   "group_icon_class": "Group Icon Class",
   "custom_report_permissions": "Permission",
   "visible_to_users": "Visible To Users",
-  "visible_to_roles": "Visible To Roles"
+  "visible_to_roles": "Visible To Roles",
+  "paste_recursive_as_language_variant_updating_references": "Paste language (recursive), updating references"
 }
