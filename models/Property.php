@@ -28,42 +28,42 @@ class Property extends AbstractModel
     /**
      * @var string
      */
-    protected $name;
+    public $name;
 
     /**
      * @var mixed
      */
-    protected $data;
+    public $data;
 
     /**
      * @var string
      */
-    protected $type;
+    public $type;
 
     /**
      * @var string
      */
-    protected $ctype;
+    public $ctype;
 
     /**
      * @var string
      */
-    protected $cpath;
+    public $cpath;
 
     /**
      * @var int
      */
-    protected $cid;
+    public $cid;
 
     /**
      * @var bool
      */
-    protected $inheritable;
+    public $inheritable;
 
     /**
      * @var bool
      */
-    protected $inherited = false;
+    public $inherited = false;
 
     /**
      * Takes data from editmode and convert it to internal objects

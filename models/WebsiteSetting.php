@@ -14,9 +14,6 @@
 
 namespace Pimcore\Model;
 
-use Pimcore\Model\Element\ElementInterface;
-use Pimcore\Model\Element\Service;
-
 /**
  * @method \Pimcore\Model\WebsiteSetting\Dao getDao()
  * @method void save()
@@ -27,42 +24,42 @@ class WebsiteSetting extends AbstractModel
     /**
      * @var int
      */
-    protected $id;
+    public $id;
 
     /**
      * @var string
      */
-    protected $name;
+    public $name;
 
     /**
      * @var string
      */
-    protected $language;
+    public $language;
 
     /**
-     * @var string
+     * @var
      */
-    protected $type;
+    public $type;
 
     /**
-     * @var mixed
+     * @var
      */
-    protected $data;
+    public $data;
 
     /**
-     * @var int
+     * @var
      */
-    protected $siteId;
+    public $siteId;
 
     /**
-     * @var int
+     * @var
      */
-    protected $creationDate;
+    public $creationDate;
 
     /**
-     * @var int
+     * @var
      */
-    protected $modificationDate;
+    public $modificationDate;
 
     /**
      * this is a small per request cache to know which website setting is which is, this info is used in self::getByName()
@@ -97,9 +94,9 @@ class WebsiteSetting extends AbstractModel
 
     /**
      * @param string $name name of the config
-     * @param int|null $siteId site ID
-     * @param string|null $language language, if property cannot be found the value of property without language is returned
-     * @param string|null $fallbackLanguage fallback language
+     * @param null $siteId site ID
+     * @param null $language language, if property cannot be found the value of property without language is returned
+     * @param null $fallbackLanguage fallback language
      *
      * @return null|WebsiteSetting
      */
@@ -179,7 +176,7 @@ class WebsiteSetting extends AbstractModel
     }
 
     /**
-     * @param int $creationDate
+     * @param $creationDate
      *
      * @return $this
      */
@@ -191,7 +188,7 @@ class WebsiteSetting extends AbstractModel
     }
 
     /**
-     * @return int
+     * @return mixed
      */
     public function getCreationDate()
     {
@@ -199,17 +196,12 @@ class WebsiteSetting extends AbstractModel
     }
 
     /**
-     * @param mixed $data
+     * @param $data
      *
      * @return $this
      */
     public function setData($data)
     {
-        if ($data instanceof ElementInterface) {
-            $this->setType(Service::getElementType($data));
-            $data = $data->getId();
-        }
-
         $this->data = $data;
 
         return $this;
@@ -220,16 +212,11 @@ class WebsiteSetting extends AbstractModel
      */
     public function getData()
     {
-        // lazy-load data of type asset, document, object
-        if (in_array($this->getType(), ['document', 'asset', 'object']) && !$this->data instanceof ElementInterface && is_numeric($this->data)) {
-            return Element\Service::getElementById($this->getType(), $this->data);
-        }
-
         return $this->data;
     }
 
     /**
-     * @param int $modificationDate
+     * @param $modificationDate
      *
      * @return $this
      */
@@ -241,7 +228,7 @@ class WebsiteSetting extends AbstractModel
     }
 
     /**
-     * @return int
+     * @return mixed
      */
     public function getModificationDate()
     {
@@ -249,7 +236,7 @@ class WebsiteSetting extends AbstractModel
     }
 
     /**
-     * @param int $siteId
+     * @param $siteId
      *
      * @return $this
      */
@@ -261,7 +248,7 @@ class WebsiteSetting extends AbstractModel
     }
 
     /**
-     * @return int
+     * @return mixed
      */
     public function getSiteId()
     {
@@ -269,7 +256,7 @@ class WebsiteSetting extends AbstractModel
     }
 
     /**
-     * @param string $type
+     * @param $type
      *
      * @return $this
      */
@@ -281,7 +268,7 @@ class WebsiteSetting extends AbstractModel
     }
 
     /**
-     * @return string
+     * @return mixed
      */
     public function getType()
     {

@@ -85,9 +85,9 @@ abstract class Data
     }
 
     /**
-     * @param array $value
+     * @param $value
      *
-     * @return \Pimcore\Model\Property[]
+     * @return array
      */
     private function mapProperties($value)
     {
@@ -99,8 +99,7 @@ abstract class Data
                     $newProperty = new Model\Property();
                     $vars = get_object_vars($property);
                     foreach ($vars as $varName => $varValue) {
-                        $method = 'set' . ucfirst($varName);
-                        $newProperty->$method($property->$varName);
+                        $newProperty->$varName = $property->$varName;
                     }
                     $result[] = $newProperty;
                 } else {
@@ -124,7 +123,7 @@ abstract class Data
     {
         $keys = get_object_vars($this);
         foreach ($keys as $key => $value) {
-            $method = 'set' . ucfirst($key);
+            $method = 'set' . $key;
             if (method_exists($object, $method)) {
                 if ($object instanceof Element\ElementInterface && $key == 'properties') {
                     $value = $this->mapProperties($value);

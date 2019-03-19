@@ -40,7 +40,7 @@ class TestHelper
     }
 
     /**
-     * @param \Pimcore\Model\Property[] $properties
+     * @param  array $properties
      *
      * @return array
      *
@@ -54,22 +54,22 @@ class TestHelper
 
         if (is_array($properties)) {
             foreach ($properties as $key => $value) {
-                if (in_array($value->getType(), ['document', 'asset', 'object'])) {
-                    if ($value->getData() instanceof ElementInterface) {
-                        $propertiesStringArray['property_' . $key . '_' . $value->getType()] = 'property_' . $key . '_' . $value->getType() . ':' . $value->getData()->getId();
+                if ($value->type == 'asset' || $value->type == 'object' || $value->type == 'document') {
+                    if ($value->data instanceof ElementInterface) {
+                        $propertiesStringArray['property_' . $key . '_' . $value->type] = 'property_' . $key . '_' . $value->type . ':' . $value->data->getId();
                     } else {
-                        $propertiesStringArray['property_' . $key . '_' . $value->getType()] = 'property_' . $key . '_' . $value->getType() . ': null';
+                        $propertiesStringArray['property_' . $key . '_' . $value->type] = 'property_' . $key . '_' . $value->type . ': null';
                     }
-                } elseif ($value->getType() === 'date') {
-                    if ($value->getData() instanceof \DateTimeInterface) {
-                        $propertiesStringArray['property_' . $key . '_' . $value->getType()] = 'property_' . $key . '_' . $value->getType() . ':' . $value->getData()->getTimestamp();
+                } elseif ($value->type == 'date') {
+                    if ($value->data instanceof \DateTimeInterface) {
+                        $propertiesStringArray['property_' . $key . '_' . $value->type] = 'property_' . $key . '_' . $value->type . ':' . $value->data->getTimestamp();
                     }
-                } elseif ($value->getType() === 'bool') {
-                    $propertiesStringArray['property_' . $key . '_' . $value->getType()] = 'property_' . $key . '_' . $value->getType() . ':' . (bool)$value->getData();
-                } elseif (in_array($value->getType(), ['text', 'select'])) {
-                    $propertiesStringArray['property_' . $key . '_' . $value->getType()] = 'property_' . $key . '_' . $value->getType() . ':' . $value->getData();
+                } elseif ($value->type == 'bool') {
+                    $propertiesStringArray['property_' . $key . '_' . $value->type] = 'property_' . $key . '_' . $value->type . ':' . (bool)$value->data;
+                } elseif ($value->type == 'text' || $value->type == 'select') {
+                    $propertiesStringArray['property_' . $key . '_' . $value->type] = 'property_' . $key . '_' . $value->type . ':' . $value->data;
                 } else {
-                    throw new \Exception('Unknown property of type [ ' . $value->getType() . ' ]');
+                    throw new \Exception('Unknown property of type [ ' . $value->type . ' ]');
                 }
             }
         }
