@@ -157,6 +157,7 @@ class Localizedfield extends Model\AbstractModel implements DirtyIndicatorInterf
      * Note: this is for pimcore/pimcore use only.
      *
      * @internal
+     *
      * @param loadLazyFields
      *
      * @return array
