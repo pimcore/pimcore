@@ -857,11 +857,13 @@ Ext.onReady(function () {
             }
         },
         listeners: {
-            "beforeload": function () {
+            "beforeload": function (store) {
                 var previewEl = Ext.get('pimcore_quicksearch_preview');
                 if(previewEl) {
                     previewEl.setHtml('');
                 }
+
+                store.getProxy().abort();
             }
         },
         fields: ["id", 'type', "subtype", "className", "fullpath"]
