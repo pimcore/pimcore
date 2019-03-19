@@ -93,18 +93,18 @@ pimcore_ecommerce_framework:
                 attributes:
                     name:
                         locale: '%%locale%%'
-                        type: string
+                        type: text
                         options:
                             mapping:
-                                type: string
+                                type: text
                                 store: true
                                 index: not_analyzed
                                 fields:
                                     analyzed:
-                                        type: string
+                                        type: text
                                         analyzer: german
                                     analyzed_ngram:
-                                        type: string
+                                        type: text
                                         analyzer: my_ngram_analyzer
 ``` 
 

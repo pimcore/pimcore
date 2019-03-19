@@ -258,6 +258,7 @@ class Pimcore
      * needing to access the container directly. This exists mainly for compatibility with legacy code.
      *
      * @internal
+     *
      * @return ContainerInterface
      */
     public static function getContainer()

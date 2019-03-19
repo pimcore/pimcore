@@ -210,8 +210,8 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
         }
 
         return [
-            $this->getName() . '__value' => $this->getDefaultValue(),
-            $this->getName() . '__unit' => $this->getDefaultUnit()
+            $this->getName() . '__value' => null,
+            $this->getName() . '__unit' => null
         ];
     }
 

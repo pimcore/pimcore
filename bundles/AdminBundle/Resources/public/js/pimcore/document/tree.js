@@ -545,6 +545,12 @@ pimcore.document.tree = Class.create({
                         handler: this.pasteLanguageDocument.bind(this, tree, record, "recursive")
                     });
 
+                    pasteMenu.push({
+                        text: t("paste_recursive_as_language_variant_updating_references"),
+                        iconCls: "pimcore_icon_paste",
+                        handler: this.pasteLanguageDocument.bind(this, tree, record, "recursive-update-references")
+                    });
+
                     pasteInheritanceMenu.push({
                         text: t("paste_recursive_as_childs"),
                         iconCls: "pimcore_icon_paste",
@@ -571,6 +577,12 @@ pimcore.document.tree = Class.create({
                         text: t("paste_recursive_as_language_variant"),
                         iconCls: "pimcore_icon_paste",
                         handler: this.pasteLanguageDocument.bind(this, tree, record, "recursive", true)
+                    });
+
+                    pasteInheritanceMenu.push({
+                        text: t("paste_recursive_as_language_variant_updating_references"),
+                        iconCls: "pimcore_icon_paste",
+                        handler: this.pasteLanguageDocument.bind(this, tree, record, "recursive-update-references", true)
                     });
                 }
             }

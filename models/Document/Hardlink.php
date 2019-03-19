@@ -207,6 +207,9 @@ class Hardlink extends Document
             } elseif ($this->getSourceDocument()) {
                 $sourceProperties = $this->getSourceDocument()->getDao()->getProperties(false, true);
                 foreach ($sourceProperties as &$prop) {
+                    /**
+                     * @var Model\Property $prop
+                     */
                     $prop = clone $prop; // because of cache
                     $prop->setInherited(true);
                 }

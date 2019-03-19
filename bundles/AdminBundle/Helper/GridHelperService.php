@@ -24,17 +24,16 @@ use Pimcore\Db;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
-use Pimcore\Model\Element;
 use Pimcore\Model\DataObject\ClassDefinition;
 use Pimcore\Model\DataObject\Objectbrick;
 
 class GridHelperService
 {
-
     /**
      * @param string $filterJson
      * @param ClassDefinition $class
      * @param string $requestedLanguage
+     *
      * @return array
      */
     public function getFeatureFilters(string $filterJson, ClassDefinition $class, string $requestedLanguage): array
@@ -295,9 +294,9 @@ class GridHelperService
         return $conditionFilters;
     }
 
-
     /**
      * @param array $fieldsParameter
+     *
      * @return array
      */
     protected function extractBricks(array $fields): array
@@ -377,10 +376,8 @@ class GridHelperService
         }
     }
 
-
-
-    public function prepareListingForGrid(array $requestParams, string $requestedLanguage, $adminUser): DataObject\Listing\Concrete {
-
+    public function prepareListingForGrid(array $requestParams, string $requestedLanguage, $adminUser): DataObject\Listing\Concrete
+    {
         $folder = Model\DataObject::getById($requestParams['folderId']);
         $class = ClassDefinition::getById($requestParams['classId']);
         $className = $class->getName();
@@ -390,8 +387,6 @@ class GridHelperService
          * @var $list DataObject\Listing\Concrete
          */
         $list = new $listClass();
-
-
 
         $colMappings = [
             'key' => 'o_key',
@@ -456,7 +451,6 @@ class GridHelperService
                 }
             }
         }
-
 
         $conditionFilters = [];
         if ($requestParams['only_direct_children'] == 'true') {
@@ -532,16 +526,15 @@ class GridHelperService
         $list->setOrder($order);
 
         //parameters specified in the objects grid
-        if($requestParams['ids']) {
+        if ($requestParams['ids']) {
             $quotedIds = [];
             foreach ($requestParams['ids'] as $id) {
                 $quotedIds[] = $list->quote($id);
             }
             if (!empty($quotedIds)) {
                 //add a condition if id numbers are specified
-                $list->addConditionParam("oo_id IN (" . implode(',', $quotedIds) . ')');
+                $list->addConditionParam('oo_id IN (' . implode(',', $quotedIds) . ')');
             }
-
         }
 
         if ($class->getShowVariants()) {
