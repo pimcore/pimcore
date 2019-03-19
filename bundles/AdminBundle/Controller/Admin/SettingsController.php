@@ -1742,10 +1742,11 @@ class SettingsController extends AdminController
                         case 'object':
                             if (isset($data['data'])) {
                                 $path = $data['data'];
+                                $element = null;
                                 if ($path != null) {
                                     $element = Element\Service::getElementByPath($setting->getType(), $path);
                                 }
-                                $data['data'] = $element ? $element->getId() : null;
+                                $data['data'] = $element;
                             }
                             break;
                     }
@@ -1765,7 +1766,7 @@ class SettingsController extends AdminController
 
                     $setting->save();
 
-                    return $this->adminJson(['data' => $setting, 'success' => true]);
+                    return $this->adminJson(['data' => $setting->getObjectVars(), 'success' => true]);
                 }
             } else {
                 // get list of routes
@@ -1849,13 +1850,13 @@ class SettingsController extends AdminController
             case 'document':
             case 'asset':
             case 'object':
-                $element = Element\Service::getElementById($item->getType(), $item->getData());
+                $element = $item->getData();
                 if ($element) {
                     $resultItem['data'] = $element->getRealFullPath();
                 }
                 break;
             default:
-                $resultItem['data'] = $item->getData('data');
+                $resultItem['data'] = $item->getData();
                 break;
         }
 
