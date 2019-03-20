@@ -19,9 +19,9 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse;
+use Pimcore\Logger;
 use Pimcore\Model\Document;
 use Pimcore\Model\Redirect;
-use Pimcore\Logger;
 use Pimcore\Routing\Redirect\Csv;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
@@ -240,8 +240,8 @@ class RedirectsController extends AdminController
             return $this->adminJson(['success' => true]);
         } catch (\Exception $e) {
             Logger::error($e->getMessage());
+
             return $this->adminJson(['success' => false]);
         }
-
     }
 }

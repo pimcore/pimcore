@@ -623,7 +623,7 @@ class Asset extends Element\AbstractElement
             $this->setFilename($this->getFilename() . '.txt');
         }
 
-        if(mb_strlen($this->getFilename()) > 255) {
+        if (mb_strlen($this->getFilename()) > 255) {
             throw new \Exception('Filenames longer than 255 characters are not allowed');
         }
 
