@@ -80,18 +80,11 @@ class Video extends Model\Asset
             // clear the thumbnail custom settings
             $this->setCustomSetting('thumbnails', null);
 
-            // video thumbnails and image previews
-            $files = glob(PIMCORE_TEMPORARY_DIRECTORY . '/video-image-cache/video_' . $this->getId() . '__*');
-            if (is_array($files)) {
-                foreach ($files as $file) {
-                    unlink($file);
-                }
-            }
-
             $imageFiles = glob($this->getImageThumbnailSavePath() . '/image-thumb__' . $this->getId() . '__*');
             $videoFiles = glob($this->getVideoThumbnailSavePath() . '/video-thumb__' . $this->getId() . '__*');
+            $imageCacheFiles = glob($this->getImageThumbnailSavePath() . '/video-image-cache__' . $this->getId() . '__thumbnail_*');
 
-            $files = array_merge($imageFiles, $videoFiles);
+            $files = array_merge($imageFiles, $videoFiles, $imageCacheFiles);
             foreach ($files as $file) {
                 recursiveDelete($file);
             }

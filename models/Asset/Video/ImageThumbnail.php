@@ -157,7 +157,7 @@ class ImageThumbnail
 
                 $converter = \Pimcore\Video::getInstance();
                 $converter->load($this->asset->getFileSystemPath());
-                $path = PIMCORE_TEMPORARY_DIRECTORY . '/video-image-cache/video_' . $this->asset->getId() . '__thumbnail_' . $timeOffset . '.png';
+                $path = $this->asset->getImageThumbnailSavePath() . '/video-image-cache__' . $this->asset->getId() . '__thumbnail_' . $timeOffset . '.png';
 
                 if (!is_dir(dirname($path))) {
                     File::mkdir(dirname($path));
