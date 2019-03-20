@@ -236,13 +236,8 @@ class Asset extends Element\AbstractElement
     protected static function typeMatch(Asset $asset)
     {
         $staticType = get_called_class();
-        if ($staticType != Asset::class) {
-            if (!$asset instanceof $staticType) {
-                return false;
-            }
-        }
 
-        return true;
+        return ($staticType === Asset::class) || ($asset instanceof $staticType) || is_subclass_of($staticType, Asset::class);
     }
 
     /**
