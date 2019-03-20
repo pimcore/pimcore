@@ -349,7 +349,7 @@ class Asset extends Element\AbstractElement
             }
         }
 
-        $asset = new $class();
+        $asset = self::getModelFactory()->build($class);
         $asset->setParentId($parentId);
         $asset->setValues($data);
 
