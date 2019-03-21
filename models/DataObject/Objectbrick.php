@@ -326,7 +326,7 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
      */
     public static function generateLazyKey($brick, $brickField, $field)
     {
-        return $brick . '_' . $brickField . '_'. $field;
+        return $brick . LazyLoadedFieldsInterface::LAZY_KEY_SEPARATOR . $brickField . LazyLoadedFieldsInterface::LAZY_KEY_SEPARATOR . $field;
     }
 
     /** @internal
