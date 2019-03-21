@@ -228,7 +228,7 @@ class Document extends Element\AbstractElement
         try {
             $helperDoc = new Document();
             $helperDoc->getDao()->getByPath($path);
-            $doc = self::getById($helperDoc->getId(), $force);
+            $doc = static::getById($helperDoc->getId(), $force);
             \Pimcore\Cache\Runtime::set($cacheKey, $doc);
         } catch (\Exception $e) {
             $doc = null;

@@ -338,7 +338,7 @@ class AbstractObject extends Model\Element\AbstractElement
             $object = new self();
             $object->getDao()->getByPath($path);
 
-            return self::getById($object->getId(), $force);
+            return static::getById($object->getId(), $force);
         } catch (\Exception $e) {
             return null;
         }
