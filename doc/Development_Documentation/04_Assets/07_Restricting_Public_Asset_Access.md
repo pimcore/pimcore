@@ -29,6 +29,7 @@ important, that this rule is placed **in front of** the rewrite rule for asset d
 ...
 RewriteRule ^protected/.* - [F,L]
 RewriteRule ^var/.*/protected(.*) - [F,L]
+RewriteRule ^cache-buster\-[\d]+/protected(.*) - [F,L]
 
 # ASSETS: check if request method is GET (because of WebDAV) and if the requested file (asset) exists on the filesystem, if both match, deliver the asset directly
 ...
@@ -57,6 +58,7 @@ important, that this rule is placed **in front of** the rewrite rule for asset d
 ...
 RewriteRule ^protected/(.*) %{ENV:BASE}/app.php [L]
 RewriteRule ^var/.*/protected(.*) - [F,L]
+RewriteRule ^cache-buster\-[\d]+/protected(.*) - [F,L]
 
 # ASSETS: check if request method is GET (because of WebDAV) and if the requested file (asset) exists on the filesystem, if both match, deliver the asset directly
 ...
