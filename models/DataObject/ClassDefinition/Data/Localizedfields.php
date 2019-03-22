@@ -1375,7 +1375,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
     public function marshal($value, $object = null, $params = [])
     {
         if ($value instanceof DataObject\Localizedfield) {
-            $items = $value->getItems();
+            $items = $value->getInternalData();
             if (is_array($items)) {
                 $result = [];
                 foreach ($items as $language => $languageData) {
