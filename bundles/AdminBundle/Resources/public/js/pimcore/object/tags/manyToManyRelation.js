@@ -38,12 +38,13 @@ pimcore.object.tags.manyToManyRelation = Class.create(pimcore.object.tags.abstra
                     'path',
                     'type',
                     'subtype',
-                    'published'
+                    'published',
+                    'rowId'
                 ]
             });
         }
 
-        this.store = new Ext.data.ArrayStore({
+        this.store = new Ext.data.JsonStore({
             data: this.data,
             listeners: {
                 add: function () {

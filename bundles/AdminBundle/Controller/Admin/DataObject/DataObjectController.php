@@ -577,13 +577,17 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                         if ($fielddefinition instanceof ManyToManyObjectRelation) {
                             $rel['fullpath'] = $rel['path'];
                             $rel['classname'] = $rel['subtype'];
+                            $rel['rowId'] = $rel['id'] . '$$' . $rel['type'];
                             $data[] = $rel;
                         } else {
-                            $data[] = [$rel['id'],
-                                $rel['path'],
-                                $rel['type'],
-                                $rel['subtype'],
-                                (bool)$rel['published']];
+                            $data[] = [
+                                'id' => $rel['id'],
+                                'path' => $rel['path'],
+                                'type' => $rel['type'],
+                                'subtype' => $rel['subtype'],
+                                'published' => (bool)$rel['published'],
+                                'rowId' => $rel['id'] . '$$' . $rel['type']
+                            ];
                         }
                     }
                 }
