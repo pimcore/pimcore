@@ -780,11 +780,27 @@ pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.
         return this.dataChanged;
     },
 
-    requestNicePathData: function (targets) {
+    requestNicePathData: function (targets, isInitialLoad) {
         if (!this.object) {
             return;
         }
+
         targets = this.normalizeTargetData(targets);
+
+        var fields = [];
+        var context = this.getContext();
+        var loadEditModeData = false;
+        if(isInitialLoad && this.fieldConfig.enableAdminAsyncLoad && context['containerType'] == 'object') {
+            loadEditModeData = true;
+
+            if(this.visibleFields) {
+                fields = fields.concat(this.visibleFields);
+            }
+
+            if(this.fieldConfig.columnKeys) {
+                fields = fields.concat(this.fieldConfig.columnKeys);
+            }
+        }
 
         pimcore.helpers.requestNicePathData(
             {
@@ -792,13 +808,17 @@ pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.
                 id: this.object.id
             },
             targets,
-            {},
+            {
+                loadEditModeData: loadEditModeData
+            },
             this.fieldConfig,
-            this.getContext(),
+            context,
             pimcore.helpers.requestNicePathDataGridDecorator.bind(this, this.component.getView()),
             pimcore.helpers.getNicePathHandlerStore.bind(this, this.store, {
                 idProperty: this.idProperty,
-                pathProperty: this.pathProperty
+                pathProperty: this.pathProperty,
+                loadEditModeData: loadEditModeData,
+                fields: fields
             }, this.component.getView())
         );
     },
@@ -812,6 +832,7 @@ pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.
             var type = record.data.type;
             record.data.type = "object";
             record.data.subtype = type;
+            record.data.path = record.data.fullpath;
         }, this);
 
         return targets;
@@ -834,7 +855,10 @@ pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.
                 if (rdata.success) {
                     var rec = this.store.getById(item.id);
                     for (key in rdata.fields) {
-                        rec.set(key, rdata.fields[key]);
+                        //add all key exept fullpath to not overwrite possible nice path
+                        if(key !== 'fullpath') {
+                            rec.set(key, rdata.fields[key]);
+                        }
                     }
                 }
             }.bind(this)

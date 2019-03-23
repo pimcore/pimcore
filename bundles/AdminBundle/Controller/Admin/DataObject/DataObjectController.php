@@ -536,8 +536,6 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                 !$objectFromVersion
                 && $fielddefinition instanceof DataObject\ClassDefinition\Data\Relations\AbstractRelations
                 && $fielddefinition->getLazyLoading()
-                && !$fielddefinition instanceof DataObject\ClassDefinition\Data\AdvancedManyToManyObjectRelation
-                && !$fielddefinition instanceof DataObject\ClassDefinition\Data\AdvancedManyToManyRelation
             )
             || $fielddefinition instanceof ReverseManyToManyObjectRelation
         ) {
@@ -555,12 +553,8 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                 $refKey = $key;
             }
 
-            $relations = [];
-            if (!$fielddefinition instanceof ManyToManyObjectRelation
-                || ($fielddefinition instanceof ManyToManyObjectRelation && !$fielddefinition->getVisibleFields())
-                || $fielddefinition instanceof ReverseManyToManyObjectRelation) {
-                $relations = $object->getRelationData($refKey, !$fielddefinition->isRemoteOwner(), $refId);
-            }
+            $relations = $object->getRelationData($refKey, !$fielddefinition->isRemoteOwner(), $refId);
+
             if (empty($relations) && !empty($parent)) {
                 $this->getDataForField($parent, $key, $fielddefinition, $objectFromVersion, $level + 1);
             } else {
@@ -568,11 +562,11 @@ class DataObjectController extends ElementControllerBase implements EventedContr
 
                 if ($fielddefinition instanceof DataObject\ClassDefinition\Data\ManyToOneRelation) {
                     $data = $relations[0];
-                    $data['published'] = (bool) $data['published'];
-                } elseif (($fielddefinition instanceof ManyToManyObjectRelation && $fielddefinition->getVisibleFields()) && !$fielddefinition instanceof ReverseManyToManyObjectRelation) {
-                    $fieldData = $object->$getter();
-                    $data = $fielddefinition->getDataForEditmode($fieldData, $object, $objectFromVersion);
-                } else {
+                    $data['published'] = (bool)$data['published'];
+                } else if(
+                    ($fielddefinition instanceof DataObject\ClassDefinition\Data\AdminAsyncLoadInterface && $fielddefinition->getEnableAdminAsyncLoad())
+                    || ($fielddefinition instanceof ManyToManyObjectRelation && !$fielddefinition->getVisibleFields())
+                ) {
                     foreach ($relations as $rel) {
                         if ($fielddefinition instanceof ManyToManyObjectRelation) {
                             $rel['fullpath'] = $rel['path'];
@@ -590,6 +584,9 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                             ];
                         }
                     }
+                } else {
+                    $fieldData = $object->$getter();
+                    $data = $fielddefinition->getDataForEditmode($fieldData, $object, $objectFromVersion);
                 }
                 $this->objectData[$key] = $data;
                 $this->metaData[$key]['objectid'] = $object->getId();

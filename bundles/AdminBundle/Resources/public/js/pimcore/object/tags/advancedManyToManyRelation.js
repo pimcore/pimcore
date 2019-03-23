@@ -871,9 +871,15 @@ pimcore.object.tags.advancedManyToManyRelation = Class.create(pimcore.object.tag
 
     },
 
-    requestNicePathData: function(targets) {
+    requestNicePathData: function(targets, isInitialLoad) {
         if (!this.object) {
             return;
+        }
+
+        var context = this.getContext();
+        var loadEditModeData = false;
+        if(isInitialLoad && this.fieldConfig.enableAdminAsyncLoad && context['containerType'] == 'object') {
+            loadEditModeData = true;
         }
         pimcore.helpers.requestNicePathData(
             {
@@ -882,14 +888,17 @@ pimcore.object.tags.advancedManyToManyRelation = Class.create(pimcore.object.tag
             },
             targets,
             {
-                idProperty: this.idProperty
+                idProperty: this.idProperty,
+                loadEditModeData: loadEditModeData
             },
             this.fieldConfig,
-            this.getContext(),
+            context,
             pimcore.helpers.requestNicePathDataGridDecorator.bind(this, this.component.getView()),
             pimcore.helpers.getNicePathHandlerStore.bind(this, this.store, {
                 idProperty: this.idProperty,
-                pathProperty: this.pathProperty
+                pathProperty: this.pathProperty,
+                loadEditModeData: loadEditModeData,
+                fields: this.fieldConfig.columnKeys
             }, this.component.getView())
         );
     },

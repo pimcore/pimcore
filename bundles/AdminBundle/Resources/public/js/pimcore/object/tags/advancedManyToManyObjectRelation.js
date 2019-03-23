@@ -435,6 +435,7 @@ pimcore.object.tags.advancedManyToManyObjectRelation = Class.create(pimcore.obje
                                     var initData = {
                                         id: data.id,
                                         metadata: '',
+                                        fullpath: data.path,
                                         inheritedFields: {}
                                     };
 
