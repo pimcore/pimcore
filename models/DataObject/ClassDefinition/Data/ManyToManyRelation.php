@@ -23,7 +23,7 @@ use Pimcore\Model\DataObject\ClassDefinition\Data\Relations\AbstractRelations;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
 
-class ManyToManyRelation extends AbstractRelations implements QueryResourcePersistenceAwareInterface
+class ManyToManyRelation extends AbstractRelations implements QueryResourcePersistenceAwareInterface, AdminAsyncLoadInterface
 {
     use Model\DataObject\ClassDefinition\Data\Extension\Relation;
     use Extension\QueryColumnType;
@@ -1045,5 +1045,13 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
         }
 
         return;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getEnableAdminAsyncLoad()
+    {
+        return true;
     }
 }

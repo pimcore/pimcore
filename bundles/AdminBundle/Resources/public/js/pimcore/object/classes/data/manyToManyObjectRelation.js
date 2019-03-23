@@ -204,6 +204,14 @@ pimcore.object.classes.data.manyToManyObjectRelation = Class.create(pimcore.obje
         });
         this.specificPanel.add(this.fieldSelect);
 
+        if(this.context == 'class') {
+            this.specificPanel.add({
+                xtype: "checkbox",
+                fieldLabel: t("enable_admin_async_load"),
+                name: "enableAdminAsyncLoad",
+                value: this.datax.enableAdminAsyncLoad
+            });
+        }
 
         return this.layout;
     },

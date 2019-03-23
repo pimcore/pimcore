@@ -288,4 +288,9 @@ class ReverseManyToManyObjectRelation extends ManyToManyObjectRelation
     {
         return null;
     }
+
+    public function getEnableAdminAsyncLoad()
+    {
+        return true;
+    }
 }
