@@ -515,7 +515,7 @@ pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.
         return this.component;
     },
 
-    getEditToolbarItems: function () {
+        getEditToolbarItems: function (readOnly) {
         var toolbarItems = [
             {
                 xtype: "tbspacer",
@@ -526,20 +526,23 @@ pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.
             {
                 xtype: "tbtext",
                 text: "<b>" + this.fieldConfig.title + "</b>"
-            },
-            "->",
-            {
-                xtype: "button",
-                iconCls: "pimcore_icon_delete",
-                handler: this.empty.bind(this)
-            },
-            {
-                xtype: "button",
-                iconCls: "pimcore_icon_search",
-                handler: this.openSearchEditor.bind(this)
-            },
-            this.getCreateControl()
-        ];
+            }];
+
+        if (!readOnly) {
+            toolbarItems = toolbarItems.concat([
+                "->",
+                {
+                    xtype: "button",
+                    iconCls: "pimcore_icon_delete",
+                    handler: this.empty.bind(this)
+                },
+                {
+                    xtype: "button",
+                    iconCls: "pimcore_icon_search",
+                    handler: this.openSearchEditor.bind(this)
+                },
+                this.getCreateControl()]);
+        }
 
         return toolbarItems;
     },
@@ -686,7 +689,7 @@ pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.
     addDataFromSelector: function (items) {
 
         if (items.length > 0) {
-            toBeRequested = new Ext.util.Collection();
+            var toBeRequested = new Ext.util.Collection();
 
             for (var i = 0; i < items.length; i++) {
                 var fields = this.visibleFields;

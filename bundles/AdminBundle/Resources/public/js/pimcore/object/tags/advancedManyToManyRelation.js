@@ -92,8 +92,7 @@ pimcore.object.tags.advancedManyToManyRelation = Class.create(pimcore.object.tag
 
         var columns = [];
         columns.push({text: 'ID', dataIndex: 'id', width: 50});
-        columns.push({text: t('reference'), dataIndex: 'path', flex: 1, renderer:this.fullPathRenderCheck.bind(this)
-        });
+        columns.push({text: t('reference'), dataIndex: 'path', flex: 1, renderer:this.fullPathRenderCheck.bind(this)});
 
         var visibleFieldsCount = columns.length;
 
@@ -590,32 +589,6 @@ pimcore.object.tags.advancedManyToManyRelation = Class.create(pimcore.object.tag
         }
         return isAllowed;
 
-    },
-
-    loadObjectData: function(item, fields) {
-
-        var newItem = this.store.add(item);
-
-        Ext.Ajax.request({
-            url: "/admin/object-helper/load-object-data",
-            params: {
-                id: item.id,
-                'fields[]': fields
-            },
-            success: function (response) {
-                var rdata = Ext.decode(response.responseText);
-                var key;
-
-                if(rdata.success) {
-                    var rec = this.store.getById(item.id);
-                    for(key in rdata.fields) {
-                        rec.set(key, rdata.fields[key]);
-                    }
-                }
-            }.bind(this)
-        });
-
-        return newItem;
     },
 
     empty: function () {
