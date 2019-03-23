@@ -343,8 +343,8 @@ pimcore.object.tags.advancedManyToManyRelation = Class.create(pimcore.object.tag
                 },
                 markDirty: false,
                 listeners: {
-                    refresh: function (gridview) {
-                        this.requestNicePathData(this.store.data);
+                    afterrender: function (gridview) {
+                        this.requestNicePathData(this.store.data, true);
                     }.bind(this),
                     drop: function () {
                         // this is necessary to avoid endless recursion when long lists are sorted via d&d

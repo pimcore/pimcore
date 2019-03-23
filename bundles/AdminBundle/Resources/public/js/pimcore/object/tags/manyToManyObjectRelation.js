@@ -420,8 +420,8 @@ pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.
                             this.object.toolbar.items.items[0].focus();
                         }
                     }.bind(this),
-                    refresh: function (gridview) {
-                        this.requestNicePathData(this.store.data);
+                    afterrender: function (gridview) {
+                        this.requestNicePathData(this.store.data, true);
                     }.bind(this)
                 }
             },
