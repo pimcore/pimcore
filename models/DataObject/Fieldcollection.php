@@ -257,7 +257,7 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyInd
      */
     public static function generateLazyKey($type, $fcField, $index, $fieldname)
     {
-        return $type . '_' . $fcField . '_' . $index . '_' . $fieldname;
+        return $type . LazyLoadedFieldsInterface::LAZY_KEY_SEPARATOR . $fcField . LazyLoadedFieldsInterface::LAZY_KEY_SEPARATOR . $index . LazyLoadedFieldsInterface::LAZY_KEY_SEPARATOR . $fieldname;
     }
 
     /**
