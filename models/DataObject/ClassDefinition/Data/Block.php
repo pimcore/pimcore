@@ -893,7 +893,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
                 $data = $db->fetchOne($query);
                 $data = $this->getDataFromResource($data, $container, $params);
             } else {
-                return null;
+                $container->addLazyKey($this->getName());
             }
         } elseif ($container instanceof DataObject\Localizedfield) {
             $context = $params['context'];
