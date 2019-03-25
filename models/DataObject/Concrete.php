@@ -100,7 +100,9 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
      */
     public function addLazyLoadedField($fieldName)
     {
-        $this->lazyLoadedFields[] = $fieldName;
+        if (!in_array($fieldName, $this->lazyLoadedFields)) {
+            $this->lazyLoadedFields[] = $fieldName;
+        }
     }
 
     /**
