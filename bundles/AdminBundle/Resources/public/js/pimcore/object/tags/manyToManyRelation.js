@@ -398,7 +398,7 @@ pimcore.object.tags.manyToManyRelation = Class.create(pimcore.object.tags.abstra
                     var toBeRequested = new Ext.util.Collection();
                     toBeRequested.add(this.store.add({
                         id: data["id"],
-                        path: data["fullpath"],
+                        fullpath: data["fullpath"],
                         type: "asset",
                         subtype: data["type"]
                     }));
