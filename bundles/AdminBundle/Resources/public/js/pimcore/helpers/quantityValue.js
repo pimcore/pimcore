@@ -22,7 +22,11 @@ pimcore.helpers.quantityValue.initUnitStore = function(callback, filters) {
         var newListener = function () {
             pimcore.helpers.quantityValue.storeLoaded = true;
             pimcore.helpers.quantityValue.storeLoading = false;
-            pimcore.helpers.quantityValue.getData(callback, filters);
+            try {
+                pimcore.helpers.quantityValue.getData(callback, filters);
+            } catch (e) {
+                console.log("An error occured while fetching quantity value data.");
+            }
         }.bind(this);
 
         if (!pimcore.helpers.quantityValue.store) {
