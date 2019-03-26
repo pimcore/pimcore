@@ -690,23 +690,9 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
             $data = $object->getObjectVar($this->getName());
         }
 
-        if ($this->getLazyLoading()) {
-            // note, in case of advanced many to many relations we don't want to force the loading of the element
-            // instead, ask the database directly
-            return Element\Service::filterUnpublishedAdvancedElements($data);
-
-        } else if (DataObject\AbstractObject::doHideUnpublished() and is_array($data)) {
-            $publishedList = [];
-            foreach ($data as $listElement) {
-                if (Element\Service::isPublished($listElement->getObject())) {
-                    $publishedList[] = $listElement;
-                }
-            }
-
-            return $publishedList;
-        }
-
-        return $data;
+        // note, in case of advanced many to many relations we don't want to force the loading of the element
+        // instead, ask the database directly
+        return Element\Service::filterUnpublishedAdvancedElements($data);
     }
 
 
