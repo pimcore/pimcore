@@ -107,7 +107,6 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
             }
 
             foreach ($data as $element) {
-                $destination = null;
                 $source = DataObject::getById($element['src_id']);
 
                 if ($element['type'] && $element['dest_id']) {
@@ -781,7 +780,11 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
             $data = $object->getObjectVar($this->getName());
         }
 
-        if (DataObject\AbstractObject::doHideUnpublished() and is_array($data)) {
+        if ($this->getLazyLoading()) {
+            // note, in case of advanced many to many relations we don't want to force the loading of the element
+            // instead, ask the database directly
+            return Element\Service::filterUnpublishedAdvancedElements($data);
+        } else if (DataObject\AbstractObject::doHideUnpublished() and is_array($data)) {
             $publishedList = [];
             /** @var $listElement DataObject\Data\ElementMetadata */
             foreach ($data as $listElement) {
