@@ -14,10 +14,11 @@
 pimcore.registerNS("pimcore.object.helpers.import.csvSettingsTab");
 pimcore.object.helpers.import.csvSettingsTab = Class.create({
 
-    initialize: function (config, callback) {
+    initialize: function (config, showReload, callback) {
         this.config = config;
         this.config.csvSettings = this.config.csvSettings || {};
         this.callback = callback;
+        this.showReload = (!showReload ? showReload : true);
     },
 
     getPanel: function () {
@@ -106,33 +107,37 @@ pimcore.object.helpers.import.csvSettingsTab = Class.create({
             blankText: t("this_field_is_required")
         });
 
-        this.updateColumnButton = Ext.create('Ext.Button', {
-            text: t('reload_column_configuration'),
-            renderTo: Ext.getBody(),
-            handler: function() {
-                if(this.settingsForm.isValid()) {
-                    this.commitData();
-                    var dialect = Ext.encode(this.config.csvSettings);
-                    this.updateColumnConfig(true, dialect);
-                }
-            }.bind(this)
-        });
-
-        this.updateColumnLabel = Ext.create('Ext.form.Label', {
-          text: t('reload_column_configuration_notice'),
-          style: {
-            'display':'block',
-            'margin-top':'30px'
-          }
-        });
-
         this.settingsForm.add(
             this.delimiterField,
             this.escapeCharField,
             this.lineTerminatorField,
-            this.quoteCharField,
-            this.updateColumnButton,
-            this.updateColumnLabel);
+            this.quoteCharField);
+
+        if (this.showReload) {
+            this.updateColumnButton = Ext.create('Ext.Button', {
+                text: t('reload_column_configuration'),
+                renderTo: Ext.getBody(),
+                handler: function() {
+                    if(this.settingsForm.isValid()) {
+                        this.commitData();
+                        var dialect = Ext.encode(this.config.csvSettings);
+                        this.updateColumnConfig(true, dialect);
+                    }
+                }.bind(this)
+            });
+
+            this.updateColumnLabel = Ext.create('Ext.form.Label', {
+                text: t('reload_column_configuration_notice'),
+                style: {
+                    'display':'block',
+                    'margin-top':'30px'
+                }
+            });
+
+            this.settingsForm.add(
+                this.updateColumnButton,
+                this.updateColumnLabel);
+        }
     },
 
     commitData: function () {
