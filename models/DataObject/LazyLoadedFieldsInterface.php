@@ -19,7 +19,7 @@ namespace Pimcore\Model\DataObject;
 
 interface LazyLoadedFieldsInterface
 {
-    const LAZY_KEY_SEPARATOR = "~~";
+    const LAZY_KEY_SEPARATOR = '~~';
 
     /**
      * @param $key
