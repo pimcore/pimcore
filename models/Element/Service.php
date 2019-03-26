@@ -321,7 +321,7 @@ class Service extends Model\AbstractModel
             return $publishedList;
         }
 
-        return $data;
+        return is_array($data) ? $data : [];
     }
 
     /**
