@@ -372,6 +372,12 @@ pimcore.object.classes.data.advancedManyToManyRelation = Class.create(pimcore.ob
                 name: "enableAdminAsyncLoad",
                 value: this.datax.enableAdminAsyncLoad
             });
+            this.specificPanel.add({
+                xtype: "displayfield",
+                hideLabel: true,
+                value: t('async_loading_warning_block'),
+                cls: "pimcore_extra_label_bottom"
+            });
         }
 
 

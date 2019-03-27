@@ -188,12 +188,21 @@ pimcore.object.classes.data.advancedManyToManyObjectRelation = Class.create(pimc
             name: "enableBatchEdit",
             value: this.datax.enableBatchEdit
         });
+
+        console.log(this);
+
         if(this.context == 'class') {
             this.specificPanel.add({
                 xtype: "checkbox",
                 fieldLabel: t("enable_admin_async_load"),
                 name: "enableAdminAsyncLoad",
                 value: this.datax.enableAdminAsyncLoad
+            });
+            this.specificPanel.add({
+                xtype: "displayfield",
+                hideLabel: true,
+                value: t('async_loading_warning_block'),
+                cls: "pimcore_extra_label_bottom"
             });
         }
 
