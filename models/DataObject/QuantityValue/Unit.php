@@ -49,7 +49,7 @@ class Unit extends Model\AbstractModel
     public $longname;
 
     /**
-     * @var string
+     * @var Unit
      */
     public $baseunit;
 
@@ -132,6 +132,14 @@ class Unit extends Model\AbstractModel
         if (isset($table[$id])) {
             return $table[$id];
         }
+    }
+
+    public function setValue($key, $value)
+    {
+        if($key === 'baseunit') {
+            $value = self::getById($value);
+        }
+        return parent::setValue($key, $value);
     }
 
     /**

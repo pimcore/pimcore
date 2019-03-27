@@ -87,13 +87,46 @@ pimcore.object.quantityValue.unitsettings = Class.create({
             {type: "string", dataIndex: "reference"}
         ];
 
+        var baseUnitStore = Ext.create('Ext.data.JsonStore', {
+            proxy: {
+                type: 'ajax',
+                async: false,
+                url: this.dataUrl,
+                reader: {
+                    type: 'json',
+                    rootProperty: 'data'
+                }
+
+            }
+        });
+        baseUnitStore.load();
+
+        var baseUnitEditor = {
+            xtype: 'combobox',
+            queryMode: 'local',
+            valueField: 'id',
+            displayField: 'abbreviation',
+            forceSelection: true,
+            store: baseUnitStore
+        };
+
         var typesColumns = [
             {flex: 1, dataIndex: 'id', text: t("id"), hidden: true, editor: new Ext.form.TextField({}), filter: 'string'},
             {flex: 1, dataIndex: 'abbreviation', text: t("abbreviation"), editor: new Ext.form.TextField({}), filter: 'string'},
             {flex: 2, dataIndex: 'longname', text: t("longname"), editor: new Ext.form.TextField({}), filter: 'string'},
             {flex: 1, dataIndex: 'group', text: t("group"), editor: new Ext.form.TextField({}), filter: 'string', hidden: true},
-            {flex: 1, dataIndex: 'baseunit', text: t("baseunit"), editor: new Ext.form.TextField({}), hidden: true},
-            {flex: 1, dataIndex: 'factor', text: t("conversionFactor"), editor: new Ext.form.NumberField({decimalPrecision: 10}), filter: 'numeric', hidden: true},
+            {flex: 1, dataIndex: 'baseunit', text: t("baseunit"), editor: baseUnitEditor, renderer: function(value){
+                if(!value) {
+                    return null;
+                }
+
+                var baseUnit = baseUnitStore.getById(value);
+                if(!baseUnit) {
+                    return value;
+                }
+                return baseUnit.get('abbreviation');
+            }},
+            {flex: 1, dataIndex: 'factor', text: t("conversionFactor"), editor: new Ext.form.NumberField({decimalPrecision: 10}), filter: 'numeric'},
             {flex: 1, dataIndex: 'conversionOffset', text: t("conversionOffset"), editor: new Ext.form.NumberField({decimalPrecision: 10}), filter: 'numeric', hidden: true},
             {flex: 1, dataIndex: 'reference', text: t("reference"), editor: new Ext.form.TextField({}), hidden: true, filter: 'string'}
         ];

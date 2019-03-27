@@ -105,6 +105,26 @@ class QuantityValue implements OwnerAwareFieldInterface
     }
 
     /**
+     * @param Unit $toUnit
+     *
+     * @return QuantityValue
+     * @throws \Exception
+     */
+    public function convert(Unit $toUnit) {
+        $fromUnit = $this->getUnit();
+        if(!$fromUnit instanceof Unit) {
+            throw new \Exception('Quantity value has no unit');
+        }
+
+        if($fromUnit->getBaseunit()->getId() !== $toUnit->getBaseunit()->getId()) {
+            throw new \Exception($fromUnit.' must have same base unit as '.$toUnit.' to be able to convert values');
+        }
+
+        $convertedValue = $this->getValue()*$fromUnit->getFactor()/$toUnit->getFactor();
+        return new QuantityValue($convertedValue, $toUnit->getId());
+    }
+
+    /**
      * @return string
      *
      * @throws \Exception
