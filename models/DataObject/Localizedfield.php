@@ -169,7 +169,7 @@ class Localizedfield extends Model\AbstractModel implements DirtyIndicatorInterf
             AbstractObject::disableDirtyDetection();
 
             foreach ($this->getLazyKeys() as $lazyKey => $needsLoading) {
-                $parts = explode('_', $lazyKey);
+                $parts = explode(LazyLoadedFieldsInterface::LAZY_KEY_SEPARATOR, $lazyKey);
                 $name = $parts[0];
                 $language = $parts[1];
                 /** @var $fieldDefinition Model\DataObject\ClassDefinition\Data\CustomResourcePersistingInterface */
@@ -301,7 +301,7 @@ class Localizedfield extends Model\AbstractModel implements DirtyIndicatorInterf
 
     private function loadLazyField(Model\DataObject\ClassDefinition\Data $fieldDefinition, $name, $language)
     {
-        $lazyKey = $name . '_' . $language;
+        $lazyKey = $name . LazyLoadedFieldsInterface::LAZY_KEY_SEPARATOR . $language;
         if ($this->hasLazyKey($lazyKey)) {
             $params['language'] = $language;
             $params['object'] = $this->getObject();
@@ -496,7 +496,7 @@ class Localizedfield extends Model\AbstractModel implements DirtyIndicatorInterf
             $this->markLanguageAsDirty($language);
         }
         $this->items[$language][$name] = $value;
-        $lazyKey = $name . '_' . $language;
+        $lazyKey = $name . LazyLoadedFieldsInterface::LAZY_KEY_SEPARATOR . $language;
         $this->removeLazyKey($lazyKey);
 
         return $this;

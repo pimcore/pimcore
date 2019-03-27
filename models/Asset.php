@@ -222,7 +222,7 @@ class Asset extends Element\AbstractElement
             $asset = new Asset();
             $asset->getDao()->getByPath($path);
 
-            return self::getById($asset->getId(), $force);
+            return static::getById($asset->getId(), $force);
         } catch (\Exception $e) {
             return null;
         }

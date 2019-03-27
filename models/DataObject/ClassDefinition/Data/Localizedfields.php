@@ -159,7 +159,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
         foreach ($dataItems as $language => $values) {
             foreach ($this->getFieldDefinitions() as $fd) {
                 if ($fd instanceof Data\Relations\AbstractRelations && !DataObject\Localizedfield::isLazyLoadingDisabled() && $fd->getLazyLoading()) {
-                    $lazyKey = $fd->getName() . '_' . $language;
+                    $lazyKey = $fd->getName() . DataObject\LazyLoadedFieldsInterface::LAZY_KEY_SEPARATOR . $language;
                     if ($data->hasLazyKey($lazyKey)) {
                         $params['language'] = $language;
                         $params['object'] = $object;

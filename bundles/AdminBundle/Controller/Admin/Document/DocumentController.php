@@ -950,7 +950,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
     {
         // return with error if prerequisites do not match
         if (!HtmlToImage::isSupported() || !class_exists('Imagick')) {
-            return $this->render('PimcoreAdminBundle:Admin/Document:diff-versions-unsupported.html.php');
+            return $this->render('PimcoreAdminBundle:Admin/Document/Document:diff-versions-unsupported.html.php');
         }
 
         $versionFrom = Version::getById($from);
