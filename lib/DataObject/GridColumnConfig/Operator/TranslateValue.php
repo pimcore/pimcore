@@ -41,8 +41,8 @@ class TranslateValue extends AbstractOperator
         $childs = $this->getChilds();
         if ($childs[0]) {
             $value = $childs[0]->getLabeledValue($element);
-            if ($value->value) {
-                $value->value = $this->translator->trans($this->prefix . $value->value, []);
+            if (strval($value->value) != '') {
+                $value->value = $this->translator->trans($this->prefix . strval($value->value), []);
             }
 
             return $value;
