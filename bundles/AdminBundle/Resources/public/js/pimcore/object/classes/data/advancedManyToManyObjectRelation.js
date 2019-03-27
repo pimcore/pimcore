@@ -189,8 +189,6 @@ pimcore.object.classes.data.advancedManyToManyObjectRelation = Class.create(pimc
             value: this.datax.enableBatchEdit
         });
 
-        console.log(this);
-
         if(this.context == 'class') {
             this.specificPanel.add({
                 xtype: "checkbox",
