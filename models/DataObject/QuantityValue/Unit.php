@@ -49,7 +49,7 @@ class Unit extends Model\AbstractModel
     public $longname;
 
     /**
-     * @var Unit
+     * @var int
      */
     public $baseunit;
 
@@ -134,14 +134,6 @@ class Unit extends Model\AbstractModel
         }
     }
 
-    public function setValue($key, $value)
-    {
-        if($key === 'baseunit') {
-            $value = self::getById($value);
-        }
-        return parent::setValue($key, $value);
-    }
-
     /**
      * @param array $values
      *
@@ -189,12 +181,18 @@ class Unit extends Model\AbstractModel
 
     public function setBaseunit($baseunit)
     {
+        if($baseunit instanceof self) {
+            $baseunit = $baseunit->getId();
+        }
         $this->baseunit = $baseunit;
     }
 
     public function getBaseunit()
     {
-        return $this->baseunit;
+        if($this->baseunit) {
+            return self::getById($this->baseunit);
+        }
+        return null;
     }
 
     public function setFactor($factor)
