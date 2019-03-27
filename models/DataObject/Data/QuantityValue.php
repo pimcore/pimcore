@@ -120,19 +120,21 @@ class QuantityValue implements OwnerAwareFieldInterface
         if($fromBaseUnit === null) {
             $fromBaseUnit = $fromUnit;
             $fromUnit->setFactor(1);
+            $fromUnit->setConversionOffset(0);
         }
 
         $toBaseUnit = $toUnit->getBaseunit();
         if($toBaseUnit === null) {
             $toBaseUnit = $toUnit;
             $toUnit->setFactor(1);
+            $toUnit->setConversionOffset(0);
         }
 
         if($fromBaseUnit === null || $toBaseUnit === null || $fromBaseUnit->getId() !== $toBaseUnit->getId()) {
             throw new \Exception($fromUnit.' must have same base unit as '.$toUnit.' to be able to convert values');
         }
 
-        $convertedValue = $this->getValue()*$fromUnit->getFactor()/$toUnit->getFactor();
+        $convertedValue = ($this->getValue()*$fromUnit->getFactor() - $fromUnit->getConversionOffset()) / $toUnit->getFactor() + $toUnit->getConversionOffset();
         return new QuantityValue($convertedValue, $toUnit->getId());
     }
 
