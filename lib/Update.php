@@ -54,7 +54,7 @@ class Update
         $geoDbFile = PIMCORE_CONFIGURATION_DIRECTORY . '/GeoLite2-City.mmdb';
         $geoDbFileGz = $geoDbFile . '.gz';
 
-        $firstTuesdayOfMonth = strtotime(date('F') . ' 2013 tuesday');
+        $firstTuesdayOfMonth = strtotime(date('F Y') . ' tuesday');
         $filemtime = 0;
         if (file_exists($geoDbFile)) {
             $filemtime = filemtime($geoDbFile);

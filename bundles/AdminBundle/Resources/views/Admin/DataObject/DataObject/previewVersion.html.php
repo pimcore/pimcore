@@ -190,7 +190,7 @@ $fields = $this->object->getClass()->getFieldDefinitions();
 
                         $value = $fieldItem->{"get" . ucfirst($fieldKey->name)}();  ?>
                         <tr<?php if ($c % 2) { ?> class="odd"<?php } ?>>
-                            <td><?= ucfirst($fieldItem->getType()) . " - " . $fieldKey->title ?> (<?= $language; ?>)</td>
+                            <td><?= ucfirst($fieldItem->getType()) . " - " . $fieldKey->title ?></td>
                             <td><?= $fieldKey->name ?></td>
                             <td><?= $fieldKey->getVersionPreview($value) ?></td>
                         </tr>

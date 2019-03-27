@@ -169,4 +169,11 @@ interface ElementInterface
      * @return int
      */
     public function getVersionCount(): int;
+
+    /**
+     * @return $this
+     */
+    public function save();
+
+    public function delete();
 }

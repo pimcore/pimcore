@@ -31,12 +31,22 @@ class Action extends Helper
      */
     private $targetingConfigurator;
 
+    /**
+     * @var array
+     */
+    private $routingDefaults = [];
+
     public function __construct(
         ActionRenderer $actionRenderer,
         DocumentTargetingConfigurator $targetingConfigurator
     ) {
         $this->actionRenderer = $actionRenderer;
         $this->targetingConfigurator = $targetingConfigurator;
+    }
+
+    public function setRoutingDefaults(array $routingDefaults)
+    {
+        $this->routingDefaults = $routingDefaults;
     }
 
     /**
@@ -68,7 +78,7 @@ class Action extends Helper
         }
 
         if (!$module) {
-            $module = 'AppBundle';
+            $module = $this->routingDefaults['bundle'];
         }
 
         $uri = $this->actionRenderer->createControllerReference(

@@ -167,12 +167,16 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
                 }
             }
 
+            var fields = this.getGridConfig().columns;
+            var fieldKeys = Object.keys(fields);
+
             var params = {
                 filter: filters,
                 condition: condition,
                 classId: this.classId,
                 folderId: this.element.id,
                 objecttype: this.objecttype,
+                "fields[]": fieldKeys,
                 language: this.gridLanguage
             };
 
@@ -653,6 +657,7 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
             handler: function (button) {
 
                 this.sqlEditor.setValue("");
+                this.searchField.setValue("");
 
                 // reset base params, because of the condition
                 var proxy = this.store.getProxy();

@@ -72,12 +72,24 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
             $data = clone $data;
             $data->setOwner(null, '');
 
+            if ($data->getLinktype() == 'internal' && !$data->getPath()) {
+                $data->setLinktype(null);
+                $data->setInternalType(null);
+                if ($data->isEmpty()) {
+                    return null;
+                }
+            }
+
             try {
                 $this->checkValidity($data, true);
             } catch (\Exception $e) {
                 $data->setInternalType(null);
                 $data->setInternal(null);
             }
+        }
+
+        if (is_null($data)) {
+            return null;
         }
 
         return Serialize::serialize($data);

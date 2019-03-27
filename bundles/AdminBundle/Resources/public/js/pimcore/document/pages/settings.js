@@ -51,7 +51,7 @@ pimcore.document.pages.settings = Class.create(pimcore.document.settings_abstrac
             }.bind(this);
 
             this.metaDataPanel = new Ext.form.FieldSet({
-                title: t("html_tags") + " (&lt;meta ...\\/&gt; &lt;link ...\\/&gt; ...)",
+                title: t("html_tags") + " (&lt;meta .../&gt; &lt;link .../&gt; ...)",
                 collapsible: false,
                 autoHeight:true,
                 width: 700,
@@ -122,10 +122,10 @@ pimcore.document.pages.settings = Class.create(pimcore.document.settings_abstrac
 
             // create layout
             this.layout = new Ext.FormPanel({
-                title: t('settings'),
+                title: t('SEO') + ' &amp; ' + t('settings'),
                 border: false,
                 autoScroll: true,
-                iconCls: "pimcore_icon_settings",
+                iconCls: "pimcore_icon_settings pimcore_icon_overlay_seo",
                 bodyStyle:'padding:0 10px 0 10px;',
                 items: [
                     {
@@ -261,9 +261,9 @@ pimcore.document.pages.settings = Class.create(pimcore.document.settings_abstrac
                             })
                         ]
                     },
-                    this.getControllerViewFields(),
-                    this.getPathAndKeyFields(),
-                    this.getContentMasterFields()
+                    this.getControllerViewFields(true),
+                    this.getPathAndKeyFields(true),
+                    this.getContentMasterFields(true)
                 ]
             });
         }

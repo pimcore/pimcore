@@ -388,12 +388,14 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
                     {
                         text: t('save_only_new_version'),
                         iconCls: "pimcore_icon_save",
-                        handler: this.save.bind(this, "version")
+                        handler: this.save.bind(this, "version"),
+                        hidden: !this.isAllowed("save")
                     },
                     {
                         text: t('save_only_scheduled_tasks'),
                         iconCls: "pimcore_icon_save",
-                        handler: this.save.bind(this, "scheduler", "scheduler")
+                        handler: this.save.bind(this, "scheduler", "scheduler"),
+                        hidden: !this.isAllowed("settings")
                     }
                 ]
             });

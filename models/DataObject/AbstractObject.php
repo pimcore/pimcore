@@ -272,11 +272,10 @@ class AbstractObject extends Model\Element\AbstractElement
      */
     public static function getById($id, $force = false)
     {
-        $id = intval($id);
-
-        if ($id < 1) {
+        if (!is_numeric($id) || $id < 1) {
             return null;
         }
+        $id = intval($id);
 
         $cacheKey = 'object_' . $id;
 
@@ -339,7 +338,7 @@ class AbstractObject extends Model\Element\AbstractElement
             $object = new self();
             $object->getDao()->getByPath($path);
 
-            return self::getById($object->getId(), $force);
+            return static::getById($object->getId(), $force);
         } catch (\Exception $e) {
             return null;
         }
@@ -417,7 +416,7 @@ class AbstractObject extends Model\Element\AbstractElement
     protected static function typeMatch(AbstractObject $object)
     {
         $staticType = get_called_class();
-        if ($staticType != 'Pimcore\Model\DataObject\Concrete' && $staticType != 'Pimcore\Model\DataObject\AbstractObject') {
+        if ($staticType != Concrete::class && $staticType != AbstractObject::class) {
             if (!$object instanceof $staticType) {
                 return false;
             }
@@ -534,17 +533,25 @@ class AbstractObject extends Model\Element\AbstractElement
         return $this;
     }
 
-    public function delete()
+    /**
+     * @param bool $isNested
+     *
+     * @throws \Exception
+     */
+    public function delete(bool $isNested = false)
     {
         \Pimcore::getEventDispatcher()->dispatch(DataObjectEvents::PRE_DELETE, new DataObjectEvent($this));
+
+        $this->beginTransaction();
+
         try {
-            // delete childs
+            // delete children
             if ($this->hasChildren([self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_FOLDER, self::OBJECT_TYPE_VARIANT])) {
                 // delete also unpublished children
                 $unpublishedStatus = self::doHideUnpublished();
                 self::setHideUnpublished(false);
-                foreach ($this->getChildren([self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_FOLDER, self::OBJECT_TYPE_VARIANT], true) as $value) {
-                    $value->delete();
+                foreach ($this->getChildren([self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_FOLDER, self::OBJECT_TYPE_VARIANT], true) as $child) {
+                    $child->delete(true);
                 }
                 self::setHideUnpublished($unpublishedStatus);
             }
@@ -561,16 +568,19 @@ class AbstractObject extends Model\Element\AbstractElement
 
             $this->getDao()->delete();
 
-            // empty object cache
-            $this->clearDependentCache();
-
-            //clear object from registry
-            \Pimcore\Cache\Runtime::set('object_' . $this->getId(), null);
+            $this->commit();
         } catch (\Exception $e) {
+            $this->rollBack();
             \Pimcore::getEventDispatcher()->dispatch(DataObjectEvents::POST_DELETE_FAILURE, new DataObjectEvent($this));
             Logger::crit($e);
             throw $e;
         }
+
+        // empty object cache
+        $this->clearDependentCache();
+
+        //clear object from registry
+        \Pimcore\Cache\Runtime::set('object_' . $this->getId(), null);
 
         \Pimcore::getEventDispatcher()->dispatch(DataObjectEvents::POST_DELETE, new DataObjectEvent($this));
     }
@@ -636,6 +646,7 @@ class AbstractObject extends Model\Element\AbstractElement
                 // inheritance helper needs the correct paths of the children in InheritanceHelper::buildTree()
                 $updatedChildren = [];
                 if ($oldPath && $oldPath != $this->getRealFullPath()) {
+                    $differentOldPath = $oldPath;
                     $this->getDao()->updateWorkspaces();
                     $updatedChildren = $this->getDao()->updateChildsPaths($oldPath);
                 }
@@ -699,7 +710,11 @@ class AbstractObject extends Model\Element\AbstractElement
         $this->clearDependentCache($additionalTags);
 
         if ($isUpdate) {
-            \Pimcore::getEventDispatcher()->dispatch(DataObjectEvents::POST_UPDATE, new DataObjectEvent($this));
+            $updateEvent = new DataObjectEvent($this);
+            if ($differentOldPath) {
+                $updateEvent->setArgument('oldPath', $differentOldPath);
+            }
+            \Pimcore::getEventDispatcher()->dispatch(DataObjectEvents::POST_UPDATE, $updateEvent);
         } else {
             self::setDisableDirtyDetection($isDirtyDetectionDisabled);
             \Pimcore::getEventDispatcher()->dispatch(DataObjectEvents::POST_ADD, new DataObjectEvent($this));

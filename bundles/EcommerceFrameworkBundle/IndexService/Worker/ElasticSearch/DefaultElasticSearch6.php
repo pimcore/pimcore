@@ -14,9 +14,20 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\ElasticSearch;
 
+use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\IProductList;
+
 /**
  *  Use this for ES Version >= 6
  */
 class DefaultElasticSearch6 extends AbstractElasticSearch
 {
+    /**
+     * returns product list implementation valid and configured for this worker/tenant
+     *
+     * @return IProductList
+     */
+    public function getProductList()
+    {
+        return new \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\ElasticSearch\DefaultElasticSearch6($this->tenantConfig);
+    }
 }

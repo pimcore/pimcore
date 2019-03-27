@@ -1,6 +1,4 @@
-# Grid Column Configuration Operators (Experimental)
-
-> This is an experimental feature and subject to change without notice.
+# Grid Column Configuration Operators
 
 Grid Configuration Operators allow you to add special columns to your grid which first are somehow assembled or converted using operators listed below.
 

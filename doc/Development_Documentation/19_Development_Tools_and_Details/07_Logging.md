@@ -1,15 +1,13 @@
 # Logging
 
-There are several different kinds of logs in Pimcore. All of them are located under `/var/logs/`.
+There are several different kinds of logs in Pimcore. All of them are located under `/var/logs/` and get rotated
+as well as compressed automatically on every day (7 days retention) by the maintenance command. 
  
 ## <env>.log
 This is definitely one of the most important logs and also the default logging location. 
 
 Pimcore uses Symfony default monolog logging with following channels: `pimcore`, `pimcore_api`, `session`. 
 For details see [Symfonys monolog docs](http://symfony.com/doc/3.4/logging.html).
-
-The log file will be rotated and compressed if it gets larger than 200 MB. The archived logs 
-will be kept for 30 days.
 
 ## php.log
 By default Pimcore writes PHP-Engine Log Messages to the file `php.log`.

@@ -96,6 +96,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
      */
     public function loadData($data, $object = null, $params = [])
     {
+        $ownerObject = $object;
         $objects = [];
 
         if (is_array($data) && count($data) > 0) {
@@ -112,7 +113,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
                             'object' => $destination
                         ]);
 
-                    $metaData->setOwner($object, $this->getName());
+                    $metaData->setOwner($ownerObject, $this->getName());
 
                     $ownertype = $object['ownertype'] ? $object['ownertype'] : '';
                     $ownername = $object['ownername'] ? $object['ownername'] : '';
@@ -614,6 +615,18 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
         } else {
             $sql = $db->quoteInto('o_id = ?', $objectId) . ' AND ' . $db->quoteInto('fieldname = ?', $this->getName())
                 . ' AND ' . $db->quoteInto('position = ?', $position);
+
+            if ($params && $params['context']) {
+                if ($params['context']['fieldname']) {
+                    $sql .= ' AND '.$db->quoteInto('ownername = ?', $params['context']['fieldname']);
+                }
+
+                if (!DataObject\AbstractObject::isDirtyDetectionDisabled() && $object instanceof DataObject\DirtyIndicatorInterface) {
+                    if ($params['context']['containerType']) {
+                        $sql .= ' AND '.$db->quoteInto('ownertype = ?', $params['context']['containerType']);
+                    }
+                }
+            }
         }
 
         $db->deleteWhere($table, $sql);
@@ -647,7 +660,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
         $data = null;
         if ($object instanceof DataObject\Concrete) {
             $data = $object->getObjectVar($this->getName());
-            if ($this->getLazyLoading() and !in_array($this->getName(), $object->getO__loadedLazyFields())) {
+            if ($this->getLazyLoading() && $object->hasLazyKey($this->getName())) {
                 //$data = $this->getDataFromResource($object->getRelationData($this->getName(),true,null));
                 $data = $this->load($object, ['force' => true]);
 
@@ -657,8 +670,10 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
         } elseif ($object instanceof DataObject\Localizedfield) {
             $data = $params['data'];
         } elseif ($object instanceof DataObject\Fieldcollection\Data\AbstractData) {
+            parent::loadLazyFieldcollectionField($object);
             $data = $object->getObjectVar($this->getName());
         } elseif ($object instanceof DataObject\Objectbrick\Data\AbstractData) {
+            parent::loadLazyBrickField($object);
             $data = $object->getObjectVar($this->getName());
         }
 
@@ -716,10 +731,23 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
                 );
             }
         } else {
-            $db->delete('object_metadata_' . $object->getClassId(), [
+            $deleteConditions = [
                 'o_id' => $object->getId(),
                 'fieldname' => $this->getName()
-            ]);
+            ];
+            if ($params && $params['context']) {
+                if ($params['context']['fieldname']) {
+                    $deleteConditions['ownername'] = $params['context']['fieldname'];
+                }
+
+                if (!DataObject\AbstractObject::isDirtyDetectionDisabled() && $object instanceof DataObject\DirtyIndicatorInterface) {
+                    if ($params['context']['containerType']) {
+                        $deleteConditions['ownertype'] = $params['context']['containerType'];
+                    }
+                }
+            }
+
+            $db->delete('object_metadata_' . $object->getClassId(), $deleteConditions);
         }
     }
 

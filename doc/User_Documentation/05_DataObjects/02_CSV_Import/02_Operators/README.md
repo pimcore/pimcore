@@ -1,6 +1,4 @@
-# Operator Overview (Experimental)
-
-> This is an experimental feature and subject to change without notice.
+# Operator Overview
 
 ## General
 

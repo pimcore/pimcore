@@ -242,11 +242,11 @@ class Manager
 
         $this->notesSubscriber->setAdditionalData([]);
 
-        if ($saveSubject && $subject instanceof AbstractElement && method_exists($subject, 'save')) {
-            if ($subject->getPublished()) {
-                $subject->save();
-            } else {
+        if ($saveSubject && $subject instanceof AbstractElement) {
+            if (method_exists($subject, 'getPublished') && !$subject->getPublished()) {
                 $subject->saveVersion();
+            } else {
+                $subject->save();
             }
         }
 
@@ -294,7 +294,7 @@ class Manager
         $this->eventDispatcher->dispatch(WorkflowEvents::POST_GLOBAL_ACTION, $event);
         $this->notesSubscriber->setAdditionalData([]);
 
-        if ($saveSubject && $subject instanceof AbstractElement && method_exists($subject, 'save')) {
+        if ($saveSubject && $subject instanceof AbstractElement) {
             $subject->save();
         }
 

@@ -55,14 +55,14 @@ class Folder extends AbstractObject
     }
 
     /**
-     * @throws \Exception
+     * @inheritdoc
      */
-    public function delete()
+    public function delete(bool $isNested = false)
     {
         if ($this->getId() == 1) {
             throw new \Exception('root-node cannot be deleted');
         }
 
-        parent::delete();
+        parent::delete($isNested);
     }
 }

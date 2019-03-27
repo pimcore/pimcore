@@ -18,7 +18,7 @@ declare(strict_types=1);
 namespace Pimcore\Migrations\Configuration;
 
 use Doctrine\DBAL\Migrations\OutputWriter;
-use Pimcore\Db\Connection;
+use Pimcore\Db\ConnectionInterface;
 use Pimcore\Event\TestEvents;
 use Pimcore\Extension\Bundle\Installer\MigrationInstallerInterface;
 use Pimcore\Extension\Bundle\PimcoreBundleInterface;
@@ -73,7 +73,7 @@ class ConfigurationFactory implements EventSubscriberInterface
 
     public function getForSet(
         string $set,
-        Connection $connection,
+        ConnectionInterface $connection,
         OutputWriter $outputWriter = null
     ) {
         $migrationSet = $this->getMigrationSet($set);
@@ -87,7 +87,7 @@ class ConfigurationFactory implements EventSubscriberInterface
 
     public function getForBundle(
         BundleInterface $bundle,
-        Connection $connection,
+        ConnectionInterface $connection,
         OutputWriter $outputWriter = null
     ): Configuration {
         $migrationSet = $this->getMigrationSetForBundle($bundle);
@@ -108,7 +108,7 @@ class ConfigurationFactory implements EventSubscriberInterface
 
     protected function getConfiguration(
         MigrationSetConfiguration $migrationSet,
-        Connection $connection,
+        ConnectionInterface $connection,
         OutputWriter $outputWriter = null
     ): Configuration {
         if (isset($this->configurations[$migrationSet->getIdentifier()])) {

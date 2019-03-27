@@ -38,7 +38,7 @@
 namespace Pimcore\Db\ZendCompatibility;
 
 use Exception;
-use Pimcore\Db\Connection;
+use Pimcore\Db\ConnectionInterface;
 
 class QueryBuilder
 {
@@ -101,9 +101,7 @@ class QueryBuilder
     @msx';
 
     /**
-     * \Doctrine\DBAL\Connection object.
-     *
-     * @var Connection
+     * @var ConnectionInterface
      */
     protected $_adapter;
 
@@ -182,11 +180,9 @@ class QueryBuilder
     protected $paramTypes = [];
 
     /**
-     * Class constructor
-     *
-     * @param \Doctrine\DBAL\Connection $adapter
+     * @param ConnectionInterface $adapter
      */
-    public function __construct(\Doctrine\DBAL\Connection $adapter)
+    public function __construct(ConnectionInterface $adapter)
     {
         $this->_adapter = $adapter;
         $this->_parts = self::$_partsInit;
@@ -903,10 +899,7 @@ class QueryBuilder
     }
 
     /**
-     * Gets the \Doctrine\DBAL\Connection for this
-     * particular QueryBuilder object.
-     *
-     * @return Connection|\Doctrine\DBAL\Connection
+     * @return ConnectionInterface
      */
     public function getAdapter()
     {

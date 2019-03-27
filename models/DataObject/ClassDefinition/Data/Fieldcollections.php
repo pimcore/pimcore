@@ -199,9 +199,10 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
 
                 $collectionClass = '\\Pimcore\\Model\\DataObject\\Fieldcollection\\Data\\' . ucfirst($collectionRaw['type']);
                 $collection = \Pimcore::getContainer()->get('pimcore.model.factory')->build($collectionClass);
-                $collection->setValues($collectionData);
+                $collection->setObject($object);
                 $collection->setIndex($count);
                 $collection->setFieldname($this->getName());
+                $collection->setValues($collectionData);
 
                 $values[] = $collection;
 
@@ -316,14 +317,14 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
     }
 
     /**
-     * @param $object
+     * @param DataObject\Concrete $object
      * @param array $params
      *
      * @return null|DataObject\Fieldcollection
      */
     public function load($object, $params = [])
     {
-        if (!$this->getLazyLoading() || (isset($params['force']) && $params['force'])) {
+        if ((!$object->hasLazyKey($this->getName()) && !$this->getLazyLoading()) || (isset($params['force']) && $params['force'])) {
             $container = new DataObject\Fieldcollection(null, $this->getName());
             $container->load($object);
 
@@ -332,6 +333,8 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
             }
 
             return $container;
+        } else {
+            $object->addLazyKey($this->getName());
         }
 
         return null;
@@ -591,7 +594,9 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
                     foreach ($collectionDef->getFieldDefinitions() as $fd) {
                         try {
                             $getter = 'get' . ucfirst($fd->getName());
-                            $fd->checkValidity($item->$getter());
+                            if (!$fd instanceof CalculatedValue) {
+                                $fd->checkValidity($item->$getter());
+                            }
                         } catch (Model\Element\ValidationException $ve) {
                             $ve->addContext($this->getName() . '-' . $idx);
                             $validationExceptions[] = $ve;
@@ -623,7 +628,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
         }
 
         $data = $object->getObjectVar($this->getName());
-        if ($this->getLazyLoading() and !in_array($this->getName(), $object->getO__loadedLazyFields())) {
+        if ($this->getLazyLoading() && $object->hasLazyKey($this->getName())) {
             $data = $this->load($object, ['force' => true]);
             if ($data instanceof DataObject\DirtyIndicatorInterface) {
                 $data->resetDirtyMap();
@@ -862,6 +867,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
             foreach ($this->allowedTypes as $allowedType) {
                 $definition = DataObject\Fieldcollection\Definition::getByKey($allowedType);
                 if ($definition) {
+                    $definition->getDao()->createUpdateTable($class);
                     $fieldDefinition = $definition->getFieldDefinitions();
 
                     foreach ($fieldDefinition as $fd) {
@@ -872,6 +878,8 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
                             }
                         }
                     }
+
+                    $definition->getDao()->classSaved($class);
                 }
             }
         }

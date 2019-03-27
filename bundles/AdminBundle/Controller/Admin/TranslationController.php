@@ -51,23 +51,38 @@ class TranslationController extends AdminController
     public function importAction(Request $request)
     {
         $admin = $request->get('admin');
+        $dialect = $request->get('csvSettings', null);
+        $tmpFile = $request->get('importFile');
+
+        if ($dialect) {
+            $dialect = json_decode($dialect);
+        }
+
+        if (!empty($tmpFile)) {
+            $tmpFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/' . $tmpFile;
+        } else {
+            $tmpFile = $_FILES['Filedata']['tmp_name'];
+        }
 
         $this->checkPermission(($admin ? 'admin_' : '') . 'translations');
 
         $merge = $request->get('merge');
 
-        $tmpFile = $_FILES['Filedata']['tmp_name'];
-
         $overwrite = $merge ? false : true;
 
         if ($admin) {
-            $delta = Translation\Admin::importTranslationsFromFile($tmpFile, $overwrite, Tool\Admin::getLanguages());
+            $delta = Translation\Admin::importTranslationsFromFile($tmpFile, $overwrite, Tool\Admin::getLanguages(), $dialect);
         } else {
             $delta = Translation\Website::importTranslationsFromFile(
                 $tmpFile,
                 $overwrite,
-                $this->getAdminUser()->getAllowedLanguagesForEditingWebsiteTranslations()
+                $this->getAdminUser()->getAllowedLanguagesForEditingWebsiteTranslations(),
+                $dialect
             );
+        }
+
+        if (is_file($tmpFile)) {
+            @unlink($tmpFile);
         }
 
         $result = [
@@ -94,6 +109,39 @@ class TranslationController extends AdminController
         $response->headers->set('Content-Type', 'text/html');
 
         return $response;
+    }
+
+    /**
+     * @Route("/upload-import", methods={"POST"})
+     *
+     * @param Request $request
+     *
+     * @return JsonResponse
+     */
+    public function uploadImportFileAction(Request $request)
+    {
+        $tmpData = file_get_contents($_FILES['Filedata']['tmp_name']);
+
+        //store data for further usage
+        $filename = uniqid('import_translations-');
+        $importFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/' . $filename;
+        File::put($importFile, $tmpData);
+
+        // determine csv settings
+        $dialect = Tool\Admin::determineCsvDialect($importFile);
+
+        //ignore if line terminator is already hex otherwise generate hex for string
+        if (!empty($dialect->lineterminator) && empty(preg_match('/[a-f0-9]{2}/i', $dialect->lineterminator))) {
+            $dialect->lineterminator = bin2hex($dialect->lineterminator);
+        }
+
+        return $this->adminJson([
+            'success' => true,
+            'config' => [
+                'tmpFile' => $filename,
+                'csvSettings' => $dialect,
+            ]
+        ]);
     }
 
     /**

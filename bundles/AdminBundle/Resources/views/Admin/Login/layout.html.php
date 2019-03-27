@@ -65,8 +65,7 @@
 <?php $view->slots()->output('_content') ?>
 
 <div id="footer">
-    &copy; 2009-<?= date("Y") ?> <a href="http://www.pimcore.org/">pimcore GmbH</a>, a proud member of the
-    <a href="http://www.elements.at/">elements group</a>
+    &copy; 2009-<?= date("Y") ?> <a href="http://www.pimcore.org/">pimcore GmbH</a>
 </div>
 
 <?php if (!$config->general->loginscreencustomimage) { ?>

@@ -99,7 +99,7 @@ pimcore.object.classes.data.advancedManyToManyObjectRelation = Class.create(pimc
             {
                 xtype: "displayfield",
                 hideLabel: true,
-                value: t('lazy_loading_warning'),
+                value: t('lazy_loading_warning_block'),
                 cls: "pimcore_extra_label_bottom",
                 style: "color:red; font-weight: bold;"
             },

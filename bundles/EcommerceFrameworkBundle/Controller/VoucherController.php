@@ -151,10 +151,10 @@ class VoucherController extends FrontendController
                 $translator = $this->get('translator');
                 $params = ['id' => $request->get('id')]; //$request->query->all();
 
-                if ($result == true) {
-                    $params['success'] = $translator->trans('bundle_ecommerce_voucherservice_msg-success-generation', [], 'admin');
-                } else {
+                if ($result === false) {
                     $params['error'] = $translator->trans('bundle_ecommerce_voucherservice_msg-error-generation', [], 'admin');
+                } else {
+                    $params['success'] = $translator->trans('bundle_ecommerce_voucherservice_msg-success-generation', [], 'admin');
                 }
 
                 return $this->redirectToRoute(

@@ -90,10 +90,11 @@ abstract class Adapter
 
     /**
      * @param $file
+     * @param array $options
      *
      * @return mixed
      */
-    abstract public function load($file);
+    abstract public function load($file, $options = []);
 
     /**
      * @return mixed

@@ -610,7 +610,8 @@ Ext.onReady(function () {
                                         showCloseOthers: false,
                                         extraItemsTail: pimcore.helpers.getMainTabMenuItems()
                                     }),
-                                    Ext.create('Ext.ux.TabReorderer', {})
+                                    Ext.create('Ext.ux.TabReorderer', {}),
+                                    Ext.create('Ext.ux.TabMiddleButtonClose', {})
                                 ]
                         })
                         ,
@@ -667,12 +668,7 @@ Ext.onReady(function () {
 
                     // open "My Profile" when clicking on avatar
                     Ext.get("pimcore_avatar").on("click", function (ev) {
-                        try {
-                            pimcore.globalmanager.get("profile").activate();
-                        }
-                        catch (e) {
-                            pimcore.globalmanager.add("profile", new pimcore.settings.profile.panel());
-                        }
+                        pimcore.helpers.openProfile();
                     });
                 }
             }
@@ -829,6 +825,10 @@ Ext.onReady(function () {
         });
     }
 
+    if(pimcore.currentuser.isPasswordReset) {
+        pimcore.helpers.openProfile();
+    }
+
     // Quick Search
     var quicksearchMap = new Ext.util.KeyMap({
         target: document,
@@ -857,11 +857,13 @@ Ext.onReady(function () {
             }
         },
         listeners: {
-            "beforeload": function () {
+            "beforeload": function (store) {
                 var previewEl = Ext.get('pimcore_quicksearch_preview');
                 if(previewEl) {
                     previewEl.setHtml('');
                 }
+
+                store.getProxy().abort();
             }
         },
         fields: ["id", 'type', "subtype", "className", "fullpath"]
@@ -1002,6 +1004,11 @@ pimcore["intervals"]["ping"] = window.setInterval(function () {
         }
     });
 }, (pimcore.settings.session_gc_maxlifetime - 60) * 1000);
+
+
+pimcore["intervals"]["checkNewNotification"] = window.setInterval(function (elt) {
+    pimcore.notification.helper.updateFromServer();
+}, 30000);
 
 // refreshes the layout
 pimcore.registerNS("pimcore.layout.refresh");

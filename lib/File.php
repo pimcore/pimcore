@@ -55,14 +55,15 @@ class File
      *
      * @param  $tmpFilename
      * @param null $language
+     * @param string $replacement
      *
      * @return string
      */
-    public static function getValidFilename($tmpFilename, $language = null)
+    public static function getValidFilename($tmpFilename, $language = null, $replacement = '-')
     {
         $tmpFilename = \Pimcore\Tool\Transliteration::toASCII($tmpFilename, $language);
         $tmpFilename = strtolower($tmpFilename);
-        $tmpFilename = preg_replace('/[^a-z0-9\-\.~_]+/', '-', $tmpFilename);
+        $tmpFilename = preg_replace('/[^a-z0-9\-\.~_]+/', $replacement, $tmpFilename);
 
         // keys shouldn't start with a "." (=hidden file) *nix operating systems
         // keys shouldn't end with a "." - Windows issue: filesystem API trims automatically . at the end of a folder name (no warning ... et al)
