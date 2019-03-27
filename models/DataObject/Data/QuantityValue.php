@@ -116,7 +116,19 @@ class QuantityValue implements OwnerAwareFieldInterface
             throw new \Exception('Quantity value has no unit');
         }
 
-        if($fromUnit->getBaseunit()->getId() !== $toUnit->getBaseunit()->getId()) {
+        $fromBaseUnit = $fromUnit->getBaseunit();
+        if($fromBaseUnit === null) {
+            $fromBaseUnit = $fromUnit;
+            $fromUnit->setFactor(1);
+        }
+
+        $toBaseUnit = $toUnit->getBaseunit();
+        if($toBaseUnit === null) {
+            $toBaseUnit = $toUnit;
+            $toUnit->setFactor(1);
+        }
+
+        if($fromBaseUnit === null || $toBaseUnit === null || $fromBaseUnit->getId() !== $toBaseUnit->getId()) {
             throw new \Exception($fromUnit.' must have same base unit as '.$toUnit.' to be able to convert values');
         }
 
