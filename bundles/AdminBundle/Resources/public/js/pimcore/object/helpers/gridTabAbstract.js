@@ -502,6 +502,13 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
 
         var fields = this.getGridConfig().columns;
         var fieldKeys = Object.keys(fields);
+        
+        var limit = pimcore.helpers.grid.getDefaultPageSize(-1);
+        var start = 0;
+        if(this.store.lastOptions) {
+            limit = this.store.lastOptions.limit;
+            start = this.store.lastOptions.start;
+        }
 
         //create the ids array which contains chosen rows to export
         ids = [];
@@ -521,7 +528,9 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
             language: this.gridLanguage,
             "ids[]": ids,
             "fields[]": fieldKeys,
-            settings: settings
+            settings: settings,
+            limit: limit,
+            start: start
         };
 
 
