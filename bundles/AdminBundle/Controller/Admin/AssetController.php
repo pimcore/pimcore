@@ -630,6 +630,7 @@ class AssetController extends ElementControllerBase implements EventedController
             $folderThumbs = [];
             $children = new Asset\Listing();
             $children->setCondition('path LIKE ?', [$asset->getRealFullPath() . '/%']);
+            $children->addConditionParam('type IN (\'image\', \'video\', \'document\')', 'AND');
             $children->setLimit(35);
 
             foreach ($children as $child) {
