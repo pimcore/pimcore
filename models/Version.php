@@ -313,7 +313,6 @@ class Version extends AbstractModel
             foreach ($fds as $fd) {
                 if (method_exists($fd, 'getLazyLoading') && $fd->getLazyLoading()) {
                     if (!$fd instanceof ReverseManyToManyObjectRelation) {
-                        $data->addLazyLoadedField($fd->getName());
                         $data->addLazyKey($fd->getName());
                     }
                 }
