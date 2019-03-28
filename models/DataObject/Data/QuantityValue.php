@@ -118,6 +118,7 @@ class QuantityValue implements OwnerAwareFieldInterface
 
         $fromBaseUnit = $fromUnit->getBaseunit();
         if($fromBaseUnit === null) {
+            $fromUnit = clone $fromUnit;
             $fromBaseUnit = $fromUnit;
             $fromUnit->setFactor(1);
             $fromUnit->setConversionOffset(0);
@@ -125,6 +126,7 @@ class QuantityValue implements OwnerAwareFieldInterface
 
         $toBaseUnit = $toUnit->getBaseunit();
         if($toBaseUnit === null) {
+            $toUnit = clone $toUnit;
             $toBaseUnit = $toUnit;
             $toUnit->setFactor(1);
             $toUnit->setConversionOffset(0);
