@@ -177,6 +177,7 @@ pimcore.object.quantityValue.unitsettings = Class.create({
             listeners: {
                 update: function() {
                     pimcore.helpers.quantityValue.getClassDefinitionStore().reload();
+                    baseUnitStore.reload();
                     if (pimcore.helpers.quantityValue.store) {
                         // remote call could be avoided by updating the store directly
                         pimcore.helpers.quantityValue.store.reload();
