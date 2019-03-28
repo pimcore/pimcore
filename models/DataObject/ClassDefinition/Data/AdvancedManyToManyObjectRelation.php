@@ -146,7 +146,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
                             $ownername,
                             $position
                         );
-                        //p_r($metaData); die;
+
                         $list[] = $metaData;
                     }
                 }
