@@ -2681,6 +2681,7 @@ pimcore.helpers.csvExportWarning = function (callback) {
         ]
     });
 
+
     var delimiter = new Ext.form.TextField({
         fieldLabel: t('delimiter'),
         name: 'delimiter',
@@ -2697,9 +2698,23 @@ pimcore.helpers.csvExportWarning = function (callback) {
         ]
     });
 
+    var exportAll = new Ext.form.Checkbox({
+        fieldLabel: t('export_all'),
+        name: 'ignoreLimit',
+        inputValue: true,
+        labelWidth: 200
+    });
+
+    var exportSettingsContainer = new Ext.form.FieldSet({
+        title: t('export_settings'),
+        items: [
+            exportAll
+        ]
+    });
+
     var formPanel = new Ext.form.FormPanel({
         bodyStyle: 'padding:10px',
-        items: [objectSettingsContainer, csvSettingsContainer]
+        items: [objectSettingsContainer, csvSettingsContainer,exportSettingsContainer]
     });
 
 
@@ -2707,7 +2722,7 @@ pimcore.helpers.csvExportWarning = function (callback) {
         modal: true,
         title: t('export_csv'),
         width: 600,
-        height: 450,
+        height: 550,
         bodyStyle: "padding: 10px; background:#fff;",
         buttonAlign: "center",
         shadow: false,
