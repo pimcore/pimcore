@@ -94,9 +94,8 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
     /**
      * @inheritdoc
      */
-    public function loadData($data, $object = null, $params = [])
+    public function loadData($data, $container = null, $params = [])
     {
-        $ownerObject = $object;
         $list = [];
 
         if (is_array($data) && count($data) > 0) {
@@ -114,6 +113,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
 
             foreach ($data as $relation) {
                 if ($relation['dest_id']) {
+                    $source = DataObject::getById($relation['src_id']);
                     $destinationId = $relation['dest_id'];
 
                     if (!in_array($destinationId, $existingTargets)) {
@@ -121,31 +121,34 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
                         continue;
                     }
 
-                    /** @var $metaData DataObject\Data\ObjectMetadata */
-                    $metaData = \Pimcore::getContainer()->get('pimcore.model.factory')
-                        ->build('Pimcore\Model\DataObject\Data\ObjectMetadata', [
-                            'fieldname' => $this->getName(),
-                            'columns' => $this->getColumnKeys(),
-                            'object' => null
-                        ]);
+                    if ($source instanceof DataObject\Concrete) {
+                        /** @var $metaData DataObject\Data\ObjectMetadata */
+                        $metaData = \Pimcore::getContainer()->get('pimcore.model.factory')
+                            ->build('Pimcore\Model\DataObject\Data\ObjectMetadata', [
+                                'fieldname' => $this->getName(),
+                                'columns' => $this->getColumnKeys(),
+                                'object' => null
+                            ]);
 
-                    $metaData->setOwner($ownerObject, $this->getName());
-                    $metaData->setObjectId($destinationId);
 
-                    $ownertype = $relation['ownertype'] ? $relation['ownertype'] : '';
-                    $ownername = $relation['ownername'] ? $relation['ownername'] : '';
-                    $position = $relation['position'] ? $relation['position'] : '0';
+                        $metaData->setOwner($container, $this->getName());
+                        $metaData->setObjectId($destinationId);
 
-                    $metaData->load(
-                        $ownerObject,
-                        $relation['dest_id'],
-                        $this->getName(),
-                        $ownertype,
-                        $ownername,
-                        $position
-                    );
+                        $ownertype = $relation['ownertype'] ? $relation['ownertype'] : '';
+                        $ownername = $relation['ownername'] ? $relation['ownername'] : '';
+                        $position = $relation['position'] ? $relation['position'] : '0';
 
-                    $list[] = $metaData;
+                        $metaData->load(
+                            $source,
+                            $relation['dest_id'],
+                            $this->getName(),
+                            $ownertype,
+                            $ownername,
+                            $position
+                        );
+                        //p_r($metaData); die;
+                        $list[] = $metaData;
+                    }
                 }
             }
         }
