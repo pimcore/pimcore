@@ -191,7 +191,6 @@ pimcore.settings.email.log = Class.create({
                 dataIndex: 'emailLogExistsText',
                 menuText: t('text'),
                 text: t('text'),
-                hidden: true,
                 items : [{
                     icon: '/bundles/pimcoreadmin/img/flat-color-icons/text.svg',
                     handler: function(grid, rowIndex){
