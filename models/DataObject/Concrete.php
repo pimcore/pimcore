@@ -62,11 +62,6 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
     protected $o_versions = null;
 
     /**
-     * @var array
-     */
-    protected $lazyLoadedFields = [];
-
-    /**
      * Contains all scheduled tasks
      *
      * @var array
@@ -95,21 +90,6 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
         // nothing to do here
     }
 
-    /**
-     * @param  string $fieldName
-     */
-    public function addLazyLoadedField($fieldName)
-    {
-        $this->lazyLoadedFields[] = $fieldName;
-    }
-
-    /**
-     * @return array
-     */
-    public function getLazyLoadedFields()
-    {
-        return (array) $this->lazyLoadedFields;
-    }
 
     /**
      * @param $isUpdate
@@ -710,12 +690,28 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
         return $this;
     }
 
+    /**
+     * @inheritdoc
+     */
+    protected function getLazyLoadedFieldNames(): array
+    {
+        $lazyLoadedFieldNames = [];
+        $fields = $this->getClass()->getFieldDefinitions(['suppressEnrichment' => true]);
+        foreach($fields as $field) {
+            if(method_exists($field, 'getLazyLoading') && $field->getLazyLoading()) {
+                $lazyLoadedFieldNames[] = $field->getName();
+            }
+        }
+
+        return $lazyLoadedFieldNames;
+    }
+
     public function __sleep()
     {
         $parentVars = parent::__sleep();
 
         $finalVars = [];
-        $lazyLoadedFields = $this->getLazyLoadedFields();
+        $lazyLoadedFields = $this->getLazyLoadedFieldNames();
 
         foreach ($parentVars as $key) {
             if (in_array($key, $lazyLoadedFields)) {

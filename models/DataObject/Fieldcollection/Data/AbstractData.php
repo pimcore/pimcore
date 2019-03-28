@@ -144,4 +144,37 @@ abstract class AbstractData extends Model\AbstractModel
     {
         return $this->{'set'.ucfirst($fieldName)}($value, $language);
     }
+
+    /**
+     * @inheritdoc
+     */
+    protected function getLazyLoadedFieldNames(): array
+    {
+        $lazyLoadedFieldNames = [];
+        $fields = $this->getDefinition()->getFieldDefinitions(['suppressEnrichment' => true]);
+        foreach($fields as $field) {
+            if(method_exists($field, 'getLazyLoading') && $field->getLazyLoading()) {
+                $lazyLoadedFieldNames[] = $field->getName();
+            }
+        }
+
+        return $lazyLoadedFieldNames;
+    }
+
+    /**
+     * @return array
+     */
+    public function __sleep()
+    {
+        $finalVars = [];
+        $blockedVars = $this->getLazyLoadedFieldNames();
+        $vars = get_object_vars($this);
+        foreach ($vars as $key => $value) {
+            if (!in_array($key, $blockedVars)) {
+                $finalVars[] = $key;
+            }
+        }
+
+        return $finalVars;
+    }
 }

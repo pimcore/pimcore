@@ -60,22 +60,6 @@ trait LazyLoadedRelationTrait
     /**
      * @return bool
      */
-    public function hasLazyKeys()
-    {
-        return count($this->lazyKeys) > 0;
-    }
-
-    /**
-     * @return array
-     */
-    public function getLazyKeys()
-    {
-        return $this->lazyKeys;
-    }
-
-    /**
-     * @return bool
-     */
     public static function isLazyLoadingDisabled()
     {
         return self::$disableLazyLoading;
