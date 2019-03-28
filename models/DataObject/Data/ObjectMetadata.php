@@ -121,7 +121,7 @@ class ObjectMetadata extends Model\AbstractModel implements DataObject\OwnerAwar
 
     /**
      * @param DataObject\Concrete $source
-     * @param $destination
+     * @param $destinationId
      * @param $fieldname
      * @param $ownertype
      * @param $ownername

@@ -69,7 +69,7 @@ class Dao extends Model\Dao\AbstractDao
 
     /**
      * @param DataObject\Concrete $source
-     * @param $destination
+     * @param $destinationId
      * @param $fieldname
      * @param $ownertype
      * @param $ownername
