@@ -1226,12 +1226,12 @@ class AbstractObject extends Model\Element\AbstractElement
 
         if (isset($this->_fulldump)) {
             // this is if we want to make a full dump of the object (eg. for a new version), including childs for recyclebin
-            $blockedVars = ['o_userPermissions', 'o_dependencies', 'o_hasChilds', 'o_versions', 'o_class', 'scheduledTasks', 'o_parent', 'omitMandatoryCheck', 'o_dirtyFields'];
+            $blockedVars = ['o_userPermissions', 'o_dependencies', 'o_hasChilds', 'o_versions', 'o_class', 'scheduledTasks', 'o_parent', 'omitMandatoryCheck', 'o_dirtyFields', 'lazyKeys'];
             $finalVars[] = '_fulldump';
             $this->removeInheritedProperties();
         } else {
             // this is if we want to cache the object
-            $blockedVars = ['o_userPermissions', 'o_dependencies', 'o_childs', 'o_hasChilds', 'o_versions', 'o_class', 'scheduledTasks', 'o_properties', 'o_parent', 'o___loadedLazyFields', 'omitMandatoryCheck'];
+            $blockedVars = ['o_userPermissions', 'o_dependencies', 'o_childs', 'o_hasChilds', 'o_versions', 'o_class', 'scheduledTasks', 'o_properties', 'o_parent', 'o___loadedLazyFields', 'omitMandatoryCheck', 'lazyKeys'];
         }
 
         foreach ($parentVars as $key) {
