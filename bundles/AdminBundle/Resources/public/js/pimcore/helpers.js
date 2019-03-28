@@ -2714,7 +2714,7 @@ pimcore.helpers.csvExportWarning = function (callback) {
 
     var formPanel = new Ext.form.FormPanel({
         bodyStyle: 'padding:10px',
-        items: [objectSettingsContainer, csvSettingsContainer,exportSettingsContainer]
+        items: [objectSettingsContainer, csvSettingsContainer, exportSettingsContainer]
     });
 
 
