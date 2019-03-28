@@ -403,6 +403,13 @@ class GridHelperService
         $orderKey = 'oo_id';
         $order = 'ASC';
 
+        $settings = (isset($requestParams['settings'])) ? json_decode($requestParams['settings'],true) : [];
+        $ignoreLimit = false;
+        if(isset($settings['ignoreLimit'])) {
+        	$ignoreLimit = boolval($settings['ignoreLimit']);
+        }
+
+
         $fields = [];
         $bricks = [];
         if ($requestParams['fields']) {
@@ -412,6 +419,9 @@ class GridHelperService
 
         if ($requestParams['limit']) {
             $limit = $requestParams['limit'];
+        }
+        if($ignoreLimit) {
+        	$limit = null;
         }
         if ($requestParams['start']) {
             $start = $requestParams['start'];
