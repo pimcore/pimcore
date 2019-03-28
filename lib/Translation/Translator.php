@@ -233,11 +233,13 @@ class Translator implements TranslatorInterface, TranslatorBagInterface
                         }
 
                         $jsonTranslations = json_decode(file_get_contents($jsonPath), true);
-                        $defaultCatalog = $this->getCatalogue($locale);
+                        if (is_array($jsonTranslations)) {
+                            $defaultCatalog = $this->getCatalogue($locale);
 
-                        foreach ($jsonTranslations as $translationKey => $translationValue) {
-                            if (!$defaultCatalog->has($translationKey, 'admin')) {
-                                $data[$translationKey] = $translationValue;
+                            foreach ($jsonTranslations as $translationKey => $translationValue) {
+                                if (!$defaultCatalog->has($translationKey, 'admin')) {
+                                    $data[$translationKey] = $translationValue;
+                                }
                             }
                         }
                     }
