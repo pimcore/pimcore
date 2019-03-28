@@ -647,6 +647,8 @@
     "resolver_strategy": "Resolver Strategy",
     "resolver_settings": "Resolver Settings",
     "csv_settings": "CSV Einstellungen",
+    "export_settings": "Export Einstellungen",
+    "export_all": "Alle Datensätze exportieren",
     "skipheadrow": "Ignoriere Kopfzeile",
     "csv_file_preview": "CSV Datei Vorschau",
     "save_as": "Speichern als",
