@@ -571,7 +571,8 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                     $data['published'] = (bool) $data['published'];
                 } elseif (($fielddefinition instanceof ManyToManyObjectRelation && $fielddefinition->getVisibleFields()) && !$fielddefinition instanceof ReverseManyToManyObjectRelation) {
                     $fieldData = $object->$getter();
-                    $data = $fielddefinition->getDataForEditmode($fieldData, $object, $objectFromVersion);
+                    $data = $fielddefinition->getDataForEditmode($fieldData, $object,
+                        ["objectFromVersion" => $objectFromVersion]);
                 } else {
                     foreach ($relations as $rel) {
                         if ($fielddefinition instanceof ManyToManyObjectRelation || $fielddefinition instanceof DataObject\ClassDefinition\Data\ManyToManyRelation) {
@@ -598,9 +599,9 @@ class DataObjectController extends ElementControllerBase implements EventedContr
             if ($fielddefinition instanceof DataObject\ClassDefinition\Data\CalculatedValue) {
                 $fieldData = new DataObject\Data\CalculatedValue($fielddefinition->getName());
                 $fieldData->setContextualData('object', null, null, null);
-                $value = $fielddefinition->getDataForEditmode($fieldData, $object, $objectFromVersion);
+                $value = $fielddefinition->getDataForEditmode($fieldData, $object, ["objectFromVersion" => $objectFromVersion]);
             } else {
-                $value = $fielddefinition->getDataForEditmode($fieldData, $object, $objectFromVersion);
+                $value = $fielddefinition->getDataForEditmode($fieldData, $object, ["objectFromVersion" => $objectFromVersion]);
             }
 
             // following some exceptions for special data types (localizedfields, objectbricks)
