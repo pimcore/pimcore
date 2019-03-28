@@ -1,5 +1,10 @@
 # Upgrade Notes for Upgrades within Pimcore 5
 
+## Version 5.7.2 
+- Signature of `\Pimcore\Model\DataObject\LazyLoadedFieldsInterface` has changed
+- `\Pimcore\Model\DataObject\Concrete` the following methods `addLazyLoadedField($fieldName)` and `getLazyLoadedFields()` were removed
+- `\Pimcore\Model\DataObject\Localizedfield::getFieldDefinitionFromContext()` was renamed to `getFieldDefinition()`
+
 ## Version 5.7.0
 
 - `\Pimcore\Model\WebsiteSetting` and `\Pimcore\Model\Property` properties are now `protected` instead of `public`

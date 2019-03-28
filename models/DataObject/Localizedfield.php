@@ -158,7 +158,7 @@ class Localizedfield extends Model\AbstractModel implements DirtyIndicatorInterf
      *
      * @internal
      *
-     * @param loadLazyFields
+     * @param $loadLazyFields
      *
      * @return array
      */
