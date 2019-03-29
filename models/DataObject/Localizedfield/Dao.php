@@ -439,7 +439,7 @@ class Dao extends Model\Dao\AbstractDao
 
         $db = Db::get();
 
-        if ($this->model->allLanguagesAreDirty() || $container instanceof DataObject\Objectbrick\Definition || $container instanceof DataObject\Fieldcollection\Definition) {
+        if ($this->model->allLanguagesAreDirty()) {
             $dirtyLanguageCondition = '';
         } elseif ($this->model->hasDirtyLanguages()) {
             $languageList = [];
