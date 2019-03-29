@@ -1200,7 +1200,8 @@ class AssetController extends ElementControllerBase implements EventedController
             $thumbnail = Asset\Image\Thumbnail\Config::getPreviewConfig((bool) $request->get('hdpi'));
         }
 
-        if ($request->get('cropPercent')) {
+        $cropPercent = $request->get('cropPercent');
+        if ($cropPercent && filter_var($cropPercent, FILTER_VALIDATE_BOOLEAN)) {
             $thumbnail->addItemAt(0, 'cropPercent', [
                 'width' => $request->get('cropWidth'),
                 'height' => $request->get('cropHeight'),
