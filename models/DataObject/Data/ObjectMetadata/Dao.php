@@ -74,7 +74,6 @@ class Dao extends Model\Dao\AbstractDao
      * @param $ownertype
      * @param $ownername
      * @param $position
-     * @param $type
      *
      * @return null|Model\Dao\\Pimcore\Model\DataObject\AbstractObject
      */
