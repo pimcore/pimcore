@@ -79,7 +79,6 @@ class Dao extends Model\DataObject\Fieldcollection\Dao
 
                         if ($fd instanceof  DataObject\ClassDefinition\Data\Relations\AbstractRelations && !DataObject\Objectbrick::isLazyLoadingDisabled() && $fd->getLazyLoading()) {
                             $lazyKey = DataObject\Objectbrick::generateLazyKey($type, $brick->getFieldname(), $key);
-                            $this->model->addLazyKey($lazyKey);
                         } else {
                             $value = $fd->load($brick, $params);
                             if ($value === 0 || !empty($value)) {

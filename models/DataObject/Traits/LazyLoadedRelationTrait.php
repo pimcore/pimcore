@@ -27,33 +27,23 @@ trait LazyLoadedRelationTrait
     /**
      * @var array
      */
-    protected $lazyKeys = [];
+    protected $loadedLazyKeys = [];
 
     /**
-     * @param $key
+     * @param string $key
      */
-    public function addLazyKey($key)
+    public function markLazyKeyAsLoaded(string $key)
     {
-        $this->lazyKeys[$key] = 1;
+        $this->loadedLazyKeys[$key] = 1;
     }
 
     /**
-     * @param $key
-     */
-    public function removeLazyKey($key)
-    {
-        unset($this->lazyKeys[$key]);
-    }
-
-    /**
-     * @param $key
-     *
+     * @param string $key
      * @return bool
      */
-    public function hasLazyKey($key)
+    public function isLazyKeyLoaded(string $key) : bool
     {
-        $isset = isset($this->lazyKeys[$key]);
-
+        $isset = isset($this->loadedLazyKeys[$key]);
         return $isset;
     }
 

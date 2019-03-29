@@ -339,7 +339,7 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
     public function loadLazyField($brick, $brickField, $field)
     {
         $lazyKey = self::generateLazyKey($brick, $brickField, $field);
-        if ($this->hasLazyKey($lazyKey)) {
+        if (!$this->isLazyKeyLoaded($lazyKey)) {
             $brickDef = Model\DataObject\Objectbrick\Definition::getByKey($brick);
             /** @var $fieldDef Model\DataObject\ClassDefinition\Data\CustomResourcePersistingInterface */
             $fieldDef = $brickDef->getFieldDefinition($field);
@@ -360,7 +360,24 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
             $brickData = $this->$getter();
 
             $brickData->setObjectVar($field, $data);
-            $this->removeLazyKey($lazyKey);
+            $this->markLazyKeyAsLoaded($lazyKey);
         }
+    }
+
+    /**
+     * @return array
+     */
+    public function __sleep()
+    {
+        $finalVars = [];
+        $blockedVars = ['loadedLazyKeys'];
+        $vars = get_object_vars($this);
+        foreach ($vars as $key => $value) {
+            if (!in_array($key, $blockedVars)) {
+                $finalVars[] = $key;
+            }
+        }
+
+        return $finalVars;
     }
 }

@@ -272,7 +272,7 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyInd
     public function loadLazyField(Concrete $object, $type, $fcField, $index, $field)
     {
         $lazyKey = self::generateLazyKey($type, $fcField, $index, $field);
-        if ($this->hasLazyKey($lazyKey)) {
+        if (!$this->isLazyKeyLoaded($lazyKey)) {
             $fcDef = Model\DataObject\Fieldcollection\Definition::getByKey($type);
             /** @var $fieldDef Model\DataObject\ClassDefinition\Data\CustomResourcePersistingInterface */
             $fieldDef = $fcDef->getFieldDefinition($field);
@@ -309,7 +309,24 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyInd
             AbstractObject::setDisableDirtyDetection($isDirtyDetectionDisabled);
             $collection->setObjectVar($field, $data);
             $object->setObjectVar($fcField, $collectionContainer);
-            $this->removeLazyKey($lazyKey);
+            $this->markLazyKeyAsLoaded($lazyKey);
         }
+    }
+
+    /**
+     * @return array
+     */
+    public function __sleep()
+    {
+        $finalVars = [];
+        $blockedVars = ['loadedLazyKeys'];
+        $vars = get_object_vars($this);
+        foreach ($vars as $key => $value) {
+            if (!in_array($key, $blockedVars)) {
+                $finalVars[] = $key;
+            }
+        }
+
+        return $finalVars;
     }
 }

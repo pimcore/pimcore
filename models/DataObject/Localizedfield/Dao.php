@@ -550,7 +550,6 @@ class Dao extends Model\Dao\AbstractDao
 
                         if ($fd instanceof  DataObject\ClassDefinition\Data\Relations\AbstractRelations && !DataObject\Localizedfield::isLazyLoadingDisabled() && $fd->getLazyLoading()) {
                             $lazyKey = $fd->getName() . DataObject\LazyLoadedFieldsInterface::LAZY_KEY_SEPARATOR . $row['language'];
-                            $this->model->addLazyKey($lazyKey);
                         } else {
                             $value = $fd->load($this->model, $params);
                             if ($value === 0 || !empty($value)) {

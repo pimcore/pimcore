@@ -31,20 +31,4 @@ interface LazyLoadedFieldsInterface
      * @return bool
      */
     public function isLazyKeyLoaded(string $key) : bool;
-
-    /**
-     * @param string $key
-     */
-    //public function addLazyKey(string $key);
-
-    /**
-     * @param string $key
-     */
-    //public function removeLazyKey(string $key);
-
-    /**
-     * @param string $key
-     * @return bool
-     */
-    //public function hasLazyKey(string $key);
 }

@@ -83,7 +83,6 @@ class Dao extends Model\Dao\AbstractDao
 
                         if ($fd instanceof  DataObject\ClassDefinition\Data\Relations\AbstractRelations && !DataObject\Fieldcollection::isLazyLoadingDisabled() && $fd->getLazyLoading()) {
                             $lazyKey = DataObject\Fieldcollection::generateLazyKey($type, $this->model->getFieldname(), $result['index'], $key);
-                            $this->model->addLazyKey($lazyKey);
                         } else {
                             // datafield has it's own loader
                             $value = $fd->load(
