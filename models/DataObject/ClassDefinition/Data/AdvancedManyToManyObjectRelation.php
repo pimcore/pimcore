@@ -124,7 +124,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
                     if ($source instanceof DataObject\Concrete) {
                         /** @var $metaData DataObject\Data\ObjectMetadata */
                         $metaData = \Pimcore::getContainer()->get('pimcore.model.factory')
-                            ->build('Pimcore\Model\DataObject\Data\ObjectMetadata', [
+                            ->build(DataObject\Data\ObjectMetadata::class, [
                                 'fieldname' => $this->getName(),
                                 'columns' => $this->getColumnKeys(),
                                 'object' => null
