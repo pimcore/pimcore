@@ -691,9 +691,10 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
     }
 
     /**
+     * @internal
      * @inheritdoc
      */
-    protected function getLazyLoadedFieldNames(): array
+    public function getLazyLoadedFieldNames(): array
     {
         $lazyLoadedFieldNames = [];
         $fields = $this->getClass()->getFieldDefinitions(['suppressEnrichment' => true]);

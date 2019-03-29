@@ -70,6 +70,11 @@ class Localizedfield extends Model\AbstractModel implements DirtyIndicatorInterf
     protected $o_dirtyLanguages;
 
     /**
+     * @var bool
+     */
+    protected $_loadedAllLazyData = false;
+
+    /**
      * @param bool $getFallbackValues
      */
     public static function setGetFallbackValues($getFallbackValues)
@@ -166,7 +171,7 @@ class Localizedfield extends Model\AbstractModel implements DirtyIndicatorInterf
     {
         $loadLazyFieldNames = $this->getLazyLoadedFieldNames();
 
-        if ($loadLazyFields && !empty($loadLazyFieldNames)) {
+        if ($loadLazyFields && !empty($loadLazyFieldNames) && !$this->_loadedAllLazyData) {
             $isDirtyDetectionDisabled = AbstractObject::isDirtyDetectionDisabled();
             AbstractObject::disableDirtyDetection();
 
@@ -178,6 +183,7 @@ class Localizedfield extends Model\AbstractModel implements DirtyIndicatorInterf
             }
 
             AbstractObject::setDisableDirtyDetection($isDirtyDetectionDisabled);
+            $this->_loadedAllLazyData = true;
         }
 
         return $this->items;
@@ -320,7 +326,7 @@ class Localizedfield extends Model\AbstractModel implements DirtyIndicatorInterf
              */
             $container = $object->getClass()->getFieldDefinition($containerKey);
         } else {
-            $container = $this->getObject()->getClass();
+            $container = $this->getObject()->getClass()->getFieldDefinition('localizedfields');
         }
 
         return $container->getFieldDefinitions($params);
