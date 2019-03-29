@@ -184,6 +184,12 @@ CSS;
         if ($text) {
             $emailLog->setBodyText($text->getBody());
         }
+        else {
+            // Mail was probably sent as plain text only.
+            if ($text = $mail->getBodyText()) {
+                $emailLog->setBodyText($text);
+            }
+        }
 
         foreach (['To', 'Cc', 'Bcc', 'ReplyTo'] as $key) {
             $addresses = isset($recipients[$key]) ? $recipients[$key] : null;
