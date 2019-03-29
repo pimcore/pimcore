@@ -240,9 +240,11 @@ abstract class AbstractData extends Model\AbstractModel
     public function __sleep()
     {
         $finalVars = [];
+        $parentVars = parent::__sleep();
+
         $blockedVars = $this->getLazyLoadedFieldNames();
-        $vars = get_object_vars($this);
-        foreach ($vars as $key => $value) {
+
+        foreach ($parentVars as $key) {
             if (!in_array($key, $blockedVars)) {
                 $finalVars[] = $key;
             }
