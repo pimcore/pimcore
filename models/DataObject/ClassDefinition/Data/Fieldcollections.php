@@ -324,7 +324,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
      */
     public function load($object, $params = [])
     {
-        if (($this->getLazyLoading() && !$object->isLazyKeyLoaded($this->getName())) || (isset($params['force']) && $params['force'])) {
+        if (!$this->getLazyLoading() || (isset($params['force']) && $params['force'])) {
             $container = new DataObject\Fieldcollection(null, $this->getName());
             $container->load($object);
 
