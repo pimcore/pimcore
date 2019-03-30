@@ -183,8 +183,7 @@ CSS;
         $text = $mail->getBodyTextMimePart();
         if ($text) {
             $emailLog->setBodyText($text->getBody());
-        }
-        else {
+        } else {
             // Mail was probably sent as plain text only.
             if ($text = $mail->getBodyText()) {
                 $emailLog->setBodyText($text);
