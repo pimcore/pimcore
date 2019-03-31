@@ -78,13 +78,11 @@ class RedirectingPlugin extends \Swift_Plugins_RedirectingPlugin
      */
     public function sendPerformed(\Swift_Events_SendEvent $evt)
     {
-        $message = $evt->getMessage();
-
-        $this->restoreSenderAndReceivers($message);
-
         parent::sendPerformed($evt);
 
+        $message = $evt->getMessage();
         if ($message instanceof Mail && $message->doRedirectMailsToDebugMailAddresses()) {
+            $this->setSenderAndReceiversParams($message);
             $this->removeDebugInformation($message);
         }
     }
@@ -142,20 +140,17 @@ class RedirectingPlugin extends \Swift_Plugins_RedirectingPlugin
     }
 
     /**
-     * Restores the sender and receiver information of the mail and adds parameters to show it was redirected.
+     * Sets the sender and receiver information of the mail to keep the log searchable for the original data.
      *
      * @param Mail $message
      */
-    protected function restoreSenderAndReceivers($message) {
+    protected function setSenderAndReceiversParams($message) {
         $originalData = $message->getOriginalData();
 
         $message->setParam('Debug-Redirected', 'true');
         foreach (array('From', 'To', 'Cc', 'Bcc', 'ReplyTo') as $k) {
             // Add parameters to show this was redirected
-            $message->setParam('Debug-Redirected-' . $k, $message->{"get$k"}());
-            if (isset($originalData[$k])) {
-                $message->{"set$k"}($originalData[$k]);
-            }
+            $message->setParam('Debug-Original-' . $k, $originalData[$k]);
         }
     }
 
