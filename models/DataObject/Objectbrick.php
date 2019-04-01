@@ -369,7 +369,12 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
      * @return bool
      */
     public function isAllLazyKeysMarkedAsLoaded() : bool {
-        return $this->getObject()->isAllLazyKeysMarkedAsLoaded();
+        $object = $this->getObject();
+        if($object instanceof Concrete) {
+            return $this->getObject()->isAllLazyKeysMarkedAsLoaded();
+        }
+
+        return true;
     }
 
     /**

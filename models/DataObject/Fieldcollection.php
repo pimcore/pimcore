@@ -317,8 +317,13 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyInd
      * @return Concrete|null
      */
     protected function getObject() : ?Concrete {
+        $this->rewind();
         $item = $this->current();
-        return $item->getObject();
+        if($item instanceof Model\DataObject\Fieldcollection\Data\AbstractData) {
+            return $item->getObject();
+        }
+
+        return null;
     }
 
     /**
@@ -326,7 +331,12 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyInd
      * @return bool
      */
     public function isAllLazyKeysMarkedAsLoaded() : bool {
-        return $this->getObject()->isAllLazyKeysMarkedAsLoaded();
+        $object = $this->getObject();
+        if($object instanceof Concrete) {
+            return $this->getObject()->isAllLazyKeysMarkedAsLoaded();
+        }
+
+        return true;
     }
 
     /**
