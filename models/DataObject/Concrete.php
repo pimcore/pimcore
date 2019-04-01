@@ -724,6 +724,10 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
         return $this->allLazyKeysMarkedAsLoaded;
     }
 
+    public function markAllLazyLoadedKeysAsLoaded() {
+        $this->allLazyKeysMarkedAsLoaded = true;
+    }
+
     public function __sleep()
     {
         $parentVars = parent::__sleep();
