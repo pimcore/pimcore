@@ -2016,7 +2016,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                 $targetParent = DataObject::getById($request->get('targetParentId'));
             }
 
-            $targetPath = preg_replace('@^' . $sourceParent->getRealFullPath() . '@', $targetParent . '/', $source->getRealPath());
+            $targetPath = preg_replace('@^' . preg_quote($sourceParent->getRealFullPath(), '@') . '@', $targetParent . '/', $source->getRealPath());
             $target = DataObject::getByPath($targetPath);
         } else {
             $target = DataObject::getById($targetId);
