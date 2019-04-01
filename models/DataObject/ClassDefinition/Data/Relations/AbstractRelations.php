@@ -574,8 +574,7 @@ abstract class AbstractRelations extends Data implements CustomResourcePersistin
                 $container->loadLazyField($item->getObject(), $item->getType(), $item->getFieldname(), $item->getIndex(), $this->getName());
             } else {
                 // if container is not available we assume that it is a newly set item
-                $key = DataObject\Fieldcollection::generateLazyKey($item->getType(), $item->getFieldname(), $item->getIndex(), $this->getName());
-                $item->markLazyKeyAsLoaded($key);
+                $item->markLazyKeyAsLoaded($this->getName());
             }
         }
     }
@@ -593,8 +592,7 @@ abstract class AbstractRelations extends Data implements CustomResourcePersistin
             if ($container) {
                 $container->loadLazyField($item->getType(), $item->getFieldname(), $this->getName());
             } else {
-                $key = DataObject\Objectbrick::generateLazyKey($item->getType(), $item->getFieldname(), $this->getName());
-                $item->markLazyKeyAsLoaded($key);
+                $item->markLazyKeyAsLoaded($this->getName());
             }
         }
     }

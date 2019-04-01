@@ -23,7 +23,7 @@ use Pimcore\Model;
 /**
  * @method \Pimcore\Model\DataObject\Objectbrick\Dao getDao()
  */
-class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface, LazyLoadedFieldsInterface
+class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
 {
     use Model\DataObject\Traits\DirtyIndicatorTrait;
 
@@ -314,30 +314,6 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
         return $this->{'set'.ucfirst($fieldName)}($value);
     }
 
-    /**
-     * @internal
-     *
-     * @param $brick
-     * @param $brickField
-     * @param $field
-     *
-     * @return string
-     */
-    public static function generateLazyKey($brick, $brickField, $field)
-    {
-        return $brick . LazyLoadedFieldsInterface::LAZY_KEY_SEPARATOR . $brickField . LazyLoadedFieldsInterface::LAZY_KEY_SEPARATOR . $field;
-    }
-
-    /**
-     * @param $key
-     * @return Model\DataObject\Fieldcollection\Data\AbstractData
-     */
-    protected function getItemForLazyKey($key) : ?Model\DataObject\Objectbrick\Data\AbstractData {
-        list($brick, $brickField, $field) = explode(LazyLoadedFieldsInterface::LAZY_KEY_SEPARATOR, $key);
-        $item = $this->get($brick);
-        return $item;
-    }
-
     /** @internal
      * @param $brick
      * @param $brickField
@@ -347,8 +323,8 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
      */
     public function loadLazyField($brick, $brickField, $field)
     {
-        $lazyKey = self::generateLazyKey($brick, $brickField, $field);
-        if (!$this->isLazyKeyLoaded($lazyKey)) {
+        $item = $this->get($brick);
+        if ($item && !$item->isLazyKeyLoaded($field)) {
             $brickDef = Model\DataObject\Objectbrick\Definition::getByKey($brick);
             /** @var $fieldDef Model\DataObject\ClassDefinition\Data\CustomResourcePersistingInterface */
             $fieldDef = $brickDef->getFieldDefinition($field);
@@ -365,47 +341,8 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
             $data = $fieldDef->load($this->$brick, $params);
             AbstractObject::setDisableDirtyDetection($isDirtyDetectionDisabled);
 
-            $getter = 'get' . ucfirst($brick);
-            $brickData = $this->$getter();
-
-            $brickData->setObjectVar($field, $data);
-            $this->markLazyKeyAsLoaded($lazyKey);
+            $item->setObjectVar($field, $data);
+            $item->markLazyKeyAsLoaded($field);
         }
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function markLazyKeyAsLoaded(string $key)
-    {
-        $item = $this->getItemForLazyKey($key);
-        if($item) {
-            $item->markLazyKeyAsLoaded($key);
-        }
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function isLazyKeyLoaded(string $key) : bool
-    {
-        $item = $this->getItemForLazyKey($key);
-        if($item) {
-            return $item->isLazyKeyLoaded($key);
-        }
-
-        return true;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function isAllLazyKeysMarkedAsLoaded() : bool {
-        $object = $this->getObject();
-        if($object instanceof Concrete) {
-            return $this->getObject()->isAllLazyKeysMarkedAsLoaded();
-        }
-
-        return true;
     }
 }
