@@ -81,7 +81,7 @@ class Dao extends Model\Dao\AbstractDao
                             Tool::triggerMissingInterfaceDeprecation(get_class($fd), 'load', CustomResourcePersistingInterface::class);
                         }
 
-                        if ($fd instanceof  DataObject\ClassDefinition\Data\Relations\AbstractRelations && !DataObject\Fieldcollection::isLazyLoadingDisabled() && $fd->getLazyLoading()) {
+                        if ($fd instanceof  DataObject\ClassDefinition\Data\Relations\AbstractRelations && !DataObject\Concrete::isLazyLoadingDisabled() && $fd->getLazyLoading()) {
                             $lazyKey = DataObject\Fieldcollection::generateLazyKey($type, $this->model->getFieldname(), $result['index'], $key);
                         } else {
                             // datafield has it's own loader

@@ -18,12 +18,15 @@
 namespace Pimcore\Model\DataObject\Fieldcollection\Data;
 
 use Pimcore\Model;
+use Pimcore\Model\DataObject\Concrete;
 
 /**
- * @method \Pimcore\Model\DataObject\Fieldcollection\Data\Dao getDao()
+ * @method Dao getDao()
  */
-abstract class AbstractData extends Model\AbstractModel
+abstract class AbstractData extends Model\AbstractModel implements Model\DataObject\LazyLoadedFieldsInterface
 {
+    use Model\DataObject\Traits\LazyLoadedRelationTrait;
+
     /**
      * @var int
      */
@@ -159,6 +162,18 @@ abstract class AbstractData extends Model\AbstractModel
         }
 
         return $lazyLoadedFieldNames;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function isAllLazyKeysMarkedAsLoaded() : bool {
+        $object = $this->getObject();
+        if($object instanceof Concrete) {
+            return $this->getObject()->isAllLazyKeysMarkedAsLoaded();
+        }
+
+        return true;
     }
 
     /**

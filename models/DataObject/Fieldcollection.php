@@ -24,8 +24,6 @@ use Pimcore\Model;
  */
 class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyIndicatorInterface, LazyLoadedFieldsInterface
 {
-    use Model\DataObject\Traits\LazyLoadedRelationTrait;
-
     use Model\DataObject\Traits\DirtyIndicatorTrait;
 
     /**
@@ -261,6 +259,16 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyInd
     }
 
     /**
+     * @param $key
+     * @return Model\DataObject\Fieldcollection\Data\AbstractData
+     */
+    protected function getItemForLazyKey($key) : ?Model\DataObject\Fieldcollection\Data\AbstractData {
+        list($type, $fcField, $index, $fieldname) = explode(LazyLoadedFieldsInterface::LAZY_KEY_SEPARATOR, $key);
+        $item = $this->get($index);
+        return $item;
+    }
+
+    /**
      * @param Concrete $object
      * @param $type
      * @param $fcField
@@ -324,6 +332,30 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyInd
         }
 
         return null;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function markLazyKeyAsLoaded(string $key)
+    {
+        $item = $this->getItemForLazyKey($key);
+        if($item) {
+            $item->markLazyKeyAsLoaded($key);
+        }
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function isLazyKeyLoaded(string $key) : bool
+    {
+        $item = $this->getItemForLazyKey($key);
+        if($item) {
+            return $item->isLazyKeyLoaded($key);
+        }
+
+        return true;
     }
 
     /**

@@ -20,11 +20,6 @@ namespace Pimcore\Model\DataObject\Traits;
 trait LazyLoadedRelationTrait
 {
     /**
-     * @var bool
-     */
-    protected static $disableLazyLoading = false;
-
-    /**
      * @var array
      */
     protected $loadedLazyKeys = [];
@@ -49,41 +44,5 @@ trait LazyLoadedRelationTrait
 
         $isset = isset($this->loadedLazyKeys[$key]);
         return $isset;
-    }
-
-    /**
-     * @return bool
-     */
-    public static function isLazyLoadingDisabled()
-    {
-        return self::$disableLazyLoading;
-    }
-
-    /**
-     * @internal
-     *
-     * @param bool $disableLazyLoading
-     */
-    public static function setDisableLazyLoading(bool $disableLazyLoading)
-    {
-        self::$disableLazyLoading = $disableLazyLoading;
-    }
-
-    /**
-     * @internal
-     * Disables lazy loading
-     */
-    public static function disableLazyLoading()
-    {
-        self::setDisableLazyloading(true);
-    }
-
-    /**
-     * @internal
-     * Enables the lazy loading
-     */
-    public static function enableLazyloading()
-    {
-        self::setDisableLazyloading(false);
     }
 }

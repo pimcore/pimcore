@@ -378,7 +378,7 @@ class Localizedfield extends Model\AbstractModel implements DirtyIndicatorInterf
             return $data;
         }
 
-        if ($fieldDefinition instanceof  Model\DataObject\ClassDefinition\Data\Relations\AbstractRelations && !self::isLazyLoadingDisabled() && $fieldDefinition->getLazyLoading()) /* TODO only do this if this->moadel->isLazyloading */ {
+        if ($fieldDefinition instanceof  Model\DataObject\ClassDefinition\Data\Relations\AbstractRelations && !Concrete::isLazyLoadingDisabled() && $fieldDefinition->getLazyLoading()) /* TODO only do this if this->moadel->isLazyloading */ {
             $this->loadLazyField($fieldDefinition, $name, $language);
         }
 

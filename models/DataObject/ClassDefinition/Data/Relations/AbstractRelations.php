@@ -565,13 +565,17 @@ abstract class AbstractRelations extends Data implements CustomResourcePersistin
      *
      * @throws \Exception
      */
-    public function loadLazyFieldcollectionField(DataObject\Fieldcollection\Data\AbstractData $abstractData)
+    public function loadLazyFieldcollectionField(DataObject\Fieldcollection\Data\AbstractData $item)
     {
-        if ($this->getLazyLoading() && $abstractData->getObject()) {
+        if ($this->getLazyLoading() && $item->getObject()) {
             /** @var $model DataObject\Fieldcollection */
-            $model = $abstractData->getObject()->getObjectVar($abstractData->getFieldname());
-            if ($model) {
-                $model->loadLazyField($abstractData->getObject(), $abstractData->getType(), $abstractData->getFieldname(), $abstractData->getIndex(), $this->getName());
+            $container = $item->getObject()->getObjectVar($item->getFieldname());
+            if ($container) {
+                $container->loadLazyField($item->getObject(), $item->getType(), $item->getFieldname(), $item->getIndex(), $this->getName());
+            } else {
+                // if container is not available we assume that it is a newly set item
+                $key = DataObject\Fieldcollection::generateLazyKey($item->getType(), $item->getFieldname(), $item->getIndex(), $this->getName());
+                $item->markLazyKeyAsLoaded($key);
             }
         }
     }
