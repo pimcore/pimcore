@@ -369,23 +369,4 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyInd
 
         return true;
     }
-
-    /**
-     * @return array
-     */
-    public function __sleep()
-    {
-        $finalVars = [];
-        $parentVars = parent::__sleep();
-
-        $blockedVars = ['loadedLazyKeys'];
-
-        foreach ($parentVars as $key) {
-            if (!in_array($key, $blockedVars)) {
-                $finalVars[] = $key;
-            }
-        }
-
-        return $finalVars;
-    }
 }
