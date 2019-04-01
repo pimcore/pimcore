@@ -334,7 +334,7 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
      */
     protected function getItemForLazyKey($key) : ?Model\DataObject\Objectbrick\Data\AbstractData {
         list($brick, $brickField, $field) = explode(LazyLoadedFieldsInterface::LAZY_KEY_SEPARATOR, $key);
-        $item = $this->get($brickField);
+        $item = $this->get($brick);
         return $item;
     }
 

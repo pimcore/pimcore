@@ -568,7 +568,7 @@ abstract class AbstractRelations extends Data implements CustomResourcePersistin
     public function loadLazyFieldcollectionField(DataObject\Fieldcollection\Data\AbstractData $item)
     {
         if ($this->getLazyLoading() && $item->getObject()) {
-            /** @var $model DataObject\Fieldcollection */
+            /** @var $container DataObject\Fieldcollection */
             $container = $item->getObject()->getObjectVar($item->getFieldname());
             if ($container) {
                 $container->loadLazyField($item->getObject(), $item->getType(), $item->getFieldname(), $item->getIndex(), $this->getName());
@@ -588,7 +588,7 @@ abstract class AbstractRelations extends Data implements CustomResourcePersistin
     public function loadLazyBrickField(DataObject\Objectbrick\Data\AbstractData $item)
     {
         if ($this->getLazyLoading() && $item->getObject()) {
-            /** @var $model DataObject\Objectbrick */
+            /** @var $container DataObject\Objectbrick */
             $container = $item->getObject()->getObjectVar($item->getFieldname());
             if ($container) {
                 $container->loadLazyField($item->getType(), $item->getFieldname(), $this->getName());
