@@ -322,9 +322,10 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyInd
     }
 
     /**
+     * @internal
      * @return bool
      */
-    protected function isAllLazyKeysMarkedAsLoaded() : bool {
+    public function isAllLazyKeysMarkedAsLoaded() : bool {
         return $this->getObject()->isAllLazyKeysMarkedAsLoaded();
     }
 
