@@ -19,12 +19,15 @@ namespace Pimcore\Model\DataObject\Objectbrick\Data;
 
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
+use Pimcore\Model\DataObject\Concrete;
 
 /**
- * @method \Pimcore\Model\DataObject\Objectbrick\Data\Dao getDao()
+ * @method Dao getDao()
  */
-abstract class AbstractData extends Model\AbstractModel
+abstract class AbstractData extends Model\AbstractModel implements Model\DataObject\LazyLoadedFieldsInterface
 {
+    use Model\DataObject\Traits\LazyLoadedRelationTrait;
+
     /**
      * @var string
      */
@@ -235,28 +238,37 @@ abstract class AbstractData extends Model\AbstractModel
     }
 
     /**
+     * @inheritDoc
+     */
+    public function isAllLazyKeysMarkedAsLoaded() : bool {
+        $object = $this->getObject();
+        if($object instanceof Concrete) {
+            return $this->getObject()->isAllLazyKeysMarkedAsLoaded();
+        }
+
+        return true;
+    }
+
+    /**
      * @return array
      */
     public function __sleep()
     {
         $parentVars = parent::__sleep();
+        $blockedVars = ['loadedLazyKeys'];
+        $finalVars = [];
 
         if (!isset($this->getObject()->_fulldump)) {
-            /**
-             * Remove all lazy loaded fields if item gets serialized for the cache (not for versions)
-             */
-            $finalVars = [];
-            $blockedVars = $this->getLazyLoadedFieldNames();
-
-            foreach ($parentVars as $key) {
-                if (!in_array($key, $blockedVars)) {
-                    $finalVars[] = $key;
-                }
-            }
-
-            return $finalVars;
-        } else {
-            return $parentVars;
+            //Remove all lazy loaded fields if item gets serialized for the cache (not for versions)
+            $blockedVars = array_merge($this->getLazyLoadedFieldNames(), $blockedVars);
         }
+
+        foreach ($parentVars as $key) {
+            if (!in_array($key, $blockedVars)) {
+                $finalVars[] = $key;
+            }
+        }
+
+        return $finalVars;
     }
 }

@@ -26,7 +26,6 @@ use Pimcore\Model;
 class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface, LazyLoadedFieldsInterface
 {
     use Model\DataObject\Traits\DirtyIndicatorTrait;
-    use Model\DataObject\Traits\LazyLoadedRelationTrait;
 
     /**
      * @var array
@@ -329,6 +328,16 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
         return $brick . LazyLoadedFieldsInterface::LAZY_KEY_SEPARATOR . $brickField . LazyLoadedFieldsInterface::LAZY_KEY_SEPARATOR . $field;
     }
 
+    /**
+     * @param $key
+     * @return Model\DataObject\Fieldcollection\Data\AbstractData
+     */
+    protected function getItemForLazyKey($key) : ?Model\DataObject\Objectbrick\Data\AbstractData {
+        list($brick, $brickField, $field) = explode(LazyLoadedFieldsInterface::LAZY_KEY_SEPARATOR, $key);
+        $item = $this->get($brickField);
+        return $item;
+    }
+
     /** @internal
      * @param $brick
      * @param $brickField
@@ -367,6 +376,30 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
     /**
      * @inheritDoc
      */
+    public function markLazyKeyAsLoaded(string $key)
+    {
+        $item = $this->getItemForLazyKey($key);
+        if($item) {
+            $item->markLazyKeyAsLoaded($key);
+        }
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function isLazyKeyLoaded(string $key) : bool
+    {
+        $item = $this->getItemForLazyKey($key);
+        if($item) {
+            return $item->isLazyKeyLoaded($key);
+        }
+
+        return true;
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function isAllLazyKeysMarkedAsLoaded() : bool {
         $object = $this->getObject();
         if($object instanceof Concrete) {
@@ -374,24 +407,5 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
         }
 
         return true;
-    }
-
-    /**
-     * @return array
-     */
-    public function __sleep()
-    {
-        $finalVars = [];
-        $parentVars = parent::__sleep();
-
-        $blockedVars = ['loadedLazyKeys'];
-
-        foreach ($parentVars as $key) {
-            if (!in_array($key, $blockedVars)) {
-                $finalVars[] = $key;
-            }
-        }
-
-        return $finalVars;
     }
 }
