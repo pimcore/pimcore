@@ -314,6 +314,21 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyInd
     }
 
     /**
+     * @return Concrete|null
+     */
+    protected function getObject() : ?Concrete {
+        $item = $this->current();
+        return $item->getObject();
+    }
+
+    /**
+     * @return bool
+     */
+    protected function isAllLazyKeysMarkedAsLoaded() : bool {
+        return $this->getObject()->isAllLazyKeysMarkedAsLoaded();
+    }
+
+    /**
      * @return array
      */
     public function __sleep()
@@ -321,7 +336,7 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyInd
         $finalVars = [];
         $parentVars = parent::__sleep();
 
-        $blockedVars = ['loadedLazyKeys'];
+        $blockedVars = ['loadedLazyKeys', 'allLazyKeysMarkedAsLoaded'];
 
         foreach ($parentVars as $key) {
             if (!in_array($key, $blockedVars)) {

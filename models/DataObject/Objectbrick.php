@@ -227,7 +227,7 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
     }
 
     /**
-     * @return AbstractObject
+     * @return Concrete
      */
     public function getObject()
     {
@@ -365,6 +365,13 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
     }
 
     /**
+     * @return bool
+     */
+    protected function isAllLazyKeysMarkedAsLoaded() : bool {
+        return $this->getObject()->isAllLazyKeysMarkedAsLoaded();
+    }
+
+    /**
      * @return array
      */
     public function __sleep()
@@ -372,7 +379,7 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
         $finalVars = [];
         $parentVars = parent::__sleep();
 
-        $blockedVars = ['loadedLazyKeys'];
+        $blockedVars = ['loadedLazyKeys', 'allLazyKeysMarkedAsLoaded'];
 
         foreach ($parentVars as $key) {
             if (!in_array($key, $blockedVars)) {

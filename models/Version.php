@@ -307,18 +307,7 @@ class Version extends AbstractModel
         }
 
         if ($data instanceof Concrete) {
-            /** @var $class ClassDefinition */
-            $class = $data->getClass();
-            $fds = $class->getFieldDefinitions();
-            foreach ($fds as $fd) {
-                if (method_exists($fd, 'getLazyLoading') && $fd->getLazyLoading()) {
-                    if (!$fd instanceof ReverseManyToManyObjectRelation) {
-                        $data->markLazyKeyAsLoaded($fd->getName());
-                    }
-                }
-
-                //@TODO: needs to be done also for field-collections and lazy loaded relations within bricks and collections
-            }
+            $data->markAllLazyLoadedKeysAsLoaded();
         }
 
         if ($data instanceof Asset && file_exists($this->getBinaryFilePath())) {

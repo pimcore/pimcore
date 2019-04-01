@@ -536,17 +536,27 @@ class Localizedfield extends Model\AbstractModel implements DirtyIndicatorInterf
     }
 
     /**
+     * @return bool
+     */
+    protected function isAllLazyKeysMarkedAsLoaded() : bool {
+        return $this->getObject()->isAllLazyKeysMarkedAsLoaded();
+    }
+
+    /**
      * @return array
      */
     public function __sleep()
     {
-        /**
-         * This is actually not perfect, but currently we don't have an alternative
-         */
-        $lazyLoadedFields = $this->getLazyLoadedFieldNames();
-        foreach($lazyLoadedFields as $fieldName) {
-            foreach(Tool::getValidLanguages() as $language) {
-                unset($this->items[$language][$fieldName]);
+        if (!isset($this->getObject()->_fulldump)) {
+            /**
+             * Remove all lazy loaded fields if item gets serialized for the cache (not for versions)
+             * This is actually not perfect, but currently we don't have an alternative
+             */
+            $lazyLoadedFields = $this->getLazyLoadedFieldNames();
+            foreach ($lazyLoadedFields as $fieldName) {
+                foreach (Tool::getValidLanguages() as $language) {
+                    unset($this->items[$language][$fieldName]);
+                }
             }
         }
 

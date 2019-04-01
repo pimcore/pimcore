@@ -712,15 +712,16 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
         $parentVars = parent::__sleep();
 
         $finalVars = [];
-        $lazyLoadedFields = $this->getLazyLoadedFieldNames();
+        $blockedVars = ['loadedLazyKeys', 'allLazyKeysMarkedAsLoaded'];
+
+        if (!isset($this->_fulldump)) {
+            // do not dump lazy loaded fields for caching
+            $lazyLoadedFields = $this->getLazyLoadedFieldNames();
+            $blockedVars = array_merge($lazyLoadedFields, $blockedVars);
+        }
 
         foreach ($parentVars as $key) {
-            if (in_array($key, $lazyLoadedFields)) {
-                // prevent lazyloading properties to go into the cache, only to version and recyclebin, ... (_fulldump)
-                if (isset($this->_fulldump)) {
-                    $finalVars[] = $key;
-                }
-            } else {
+            if (!in_array($key, $blockedVars)) {
                 $finalVars[] = $key;
             }
         }

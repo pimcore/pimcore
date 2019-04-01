@@ -166,17 +166,24 @@ abstract class AbstractData extends Model\AbstractModel
      */
     public function __sleep()
     {
-        $finalVars = [];
         $parentVars = parent::__sleep();
 
-        $blockedVars = $this->getLazyLoadedFieldNames();
+        if (!isset($this->getObject()->_fulldump)) {
+            /**
+             * Remove all lazy loaded fields if item gets serialized for the cache (not for versions)
+             */
+            $finalVars = [];
+            $blockedVars = $this->getLazyLoadedFieldNames();
 
-        foreach ($parentVars as $key) {
-            if (!in_array($key, $blockedVars)) {
-                $finalVars[] = $key;
+            foreach ($parentVars as $key) {
+                if (!in_array($key, $blockedVars)) {
+                    $finalVars[] = $key;
+                }
             }
-        }
 
-        return $finalVars;
+            return $finalVars;
+        } else {
+            return $parentVars;
+        }
     }
 }
