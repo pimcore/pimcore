@@ -536,8 +536,7 @@ class Localizedfield extends Model\AbstractModel implements DirtyIndicatorInterf
     }
 
     /**
-     * @internal
-     * @return bool
+     * @inheritDoc
      */
     public function isAllLazyKeysMarkedAsLoaded() : bool {
         $object = $this->getObject();

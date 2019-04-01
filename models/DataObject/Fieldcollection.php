@@ -327,8 +327,7 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyInd
     }
 
     /**
-     * @internal
-     * @return bool
+     * @inheritDoc
      */
     public function isAllLazyKeysMarkedAsLoaded() : bool {
         $object = $this->getObject();
@@ -347,7 +346,7 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyInd
         $finalVars = [];
         $parentVars = parent::__sleep();
 
-        $blockedVars = ['loadedLazyKeys', 'allLazyKeysMarkedAsLoaded'];
+        $blockedVars = ['loadedLazyKeys'];
 
         foreach ($parentVars as $key) {
             if (!in_array($key, $blockedVars)) {

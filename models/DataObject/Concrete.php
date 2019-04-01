@@ -74,6 +74,11 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
     protected $omitMandatoryCheck = false;
 
     /**
+     * @var bool
+     */
+    protected $allLazyKeysMarkedAsLoaded = false;
+
+    /**
      * returns the class ID of the current object class
      *
      * @return int
@@ -705,6 +710,18 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
         }
 
         return $lazyLoadedFieldNames;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function isAllLazyKeysMarkedAsLoaded() : bool {
+
+        if(!$this->getId()) {
+            return true;
+        }
+
+        return $this->allLazyKeysMarkedAsLoaded;
     }
 
     public function __sleep()

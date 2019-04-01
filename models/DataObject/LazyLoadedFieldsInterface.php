@@ -31,4 +31,10 @@ interface LazyLoadedFieldsInterface
      * @return bool
      */
     public function isLazyKeyLoaded(string $key) : bool;
+
+    /**
+     * @internal
+     * @return bool
+     */
+    public function isAllLazyKeysMarkedAsLoaded() : bool;
 }

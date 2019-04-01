@@ -365,8 +365,7 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
     }
 
     /**
-     * @internal
-     * @return bool
+     * @inheritDoc
      */
     public function isAllLazyKeysMarkedAsLoaded() : bool {
         $object = $this->getObject();
@@ -385,7 +384,7 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
         $finalVars = [];
         $parentVars = parent::__sleep();
 
-        $blockedVars = ['loadedLazyKeys', 'allLazyKeysMarkedAsLoaded'];
+        $blockedVars = ['loadedLazyKeys'];
 
         foreach ($parentVars as $key) {
             if (!in_array($key, $blockedVars)) {
