@@ -307,11 +307,10 @@ class Localizedfield extends Model\AbstractModel implements DirtyIndicatorInterf
 
     /**
      * @param array $context
-     * @param array $params
      * @return ClassDefinition\Data[]
      * @throws \Exception
      */
-    protected function getFieldDefinitions($context = [], $params = []) {
+    protected function getFieldDefinitions($context = []) {
         if ($context && $context['containerType'] == 'fieldcollection') {
             $containerKey = $context['containerKey'];
             $container = Model\DataObject\Fieldcollection\Definition::getByKey($containerKey);
@@ -329,7 +328,7 @@ class Localizedfield extends Model\AbstractModel implements DirtyIndicatorInterf
             $container = $this->getObject()->getClass()->getFieldDefinition('localizedfields');
         }
 
-        return $container->getFieldDefinitions($params);
+        return $container->getFieldDefinitions($context);
     }
 
     private function loadLazyField(Model\DataObject\ClassDefinition\Data $fieldDefinition, $name, $language)
@@ -672,7 +671,9 @@ class Localizedfield extends Model\AbstractModel implements DirtyIndicatorInterf
     protected function getLazyLoadedFieldNames(): array
     {
         $lazyLoadedFieldNames = [];
-        $fields = $this->getFieldDefinitions(['suppressEnrichment' => true]);
+        $context = $this->getContext();
+        $context['suppressEnrichment'] = true;
+        $fields = $this->getFieldDefinitions($context);
         foreach($fields as $field) {
             if(method_exists($field, 'getLazyLoading') && $field->getLazyLoading()) {
                 $lazyLoadedFieldNames[] = $field->getName();
