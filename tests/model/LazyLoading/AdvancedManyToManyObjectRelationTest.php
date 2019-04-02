@@ -6,6 +6,7 @@ namespace Pimcore\Tests\Model\LazyLoading;
 use Pimcore\Cache;
 use Pimcore\Model\DataObject\ClassDefinition;
 use Pimcore\Model\DataObject\Data\BlockElement;
+use Pimcore\Model\DataObject\Data\ObjectMetadata;
 use Pimcore\Model\DataObject\Fieldcollection;
 use Pimcore\Model\DataObject\Fieldcollection\Definition;
 use Pimcore\Model\DataObject\LazyLoading;
@@ -16,14 +17,34 @@ use Pimcore\Model\DataObject\Service;
 use Pimcore\Tests\Test\ModelTestCase;
 use Pimcore\Tests\Util\TestHelper;
 
-class ManyToManyObjectRelationTest extends AbstractLazyLoadingTest
+class AdvancedManyToManyObjectRelationTest extends AbstractLazyLoadingTest
 {
+
+    protected function loadMetadataRelations($fieldname) {
+        $relations = $this->loadRelations();
+
+        $metaDataList = [];
+        foreach($relations as $relation) {
+            $objectMetadata = new ObjectMetadata($fieldname, ['metadata'],  $relation);
+            $objectMetadata->setMetaData("some-metadata");
+            $metaDataList[] = $objectMetadata;
+        }
+
+        return $metaDataList;
+    }
+
+    protected function checkSerialization(LazyLoading $object, string $messagePrefix, bool $contentShouldBeIncluded = false) {
+        //TODO $contentShouldBeIncluded for parent call needs always to be set to false once #4132 is merged
+        parent::checkSerialization($object, $messagePrefix, $contentShouldBeIncluded);
+        $serializedString = serialize($object);
+        $this->checkSerializedStringForNeedle($serializedString, 'some-metadata', $contentShouldBeIncluded, $messagePrefix);
+    }
 
     public function testClassAttributes() {
         //prepare data object
 
         $object = $this->createDataObject();
-        $object->setObjects($this->loadRelations()->load());
+        $object->setAdvancedObjects($this->loadMetadataRelations("advancedObjects"));
         $object->save();
         $parentId = $object->getId();
         $childId = $this->createChildDataObject($object)->getId();
@@ -44,7 +65,7 @@ class ManyToManyObjectRelationTest extends AbstractLazyLoadingTest
             $this->checkSerialization($object, $messagePrefix);
 
             //load relation and check if relation loads correctly
-            $relationObjects = $object->getObjects();
+            $relationObjects = $object->getAdvancedObjects();
             $this->assertEquals(self::RELATION_COUNT, count($relationObjects), $messagePrefix . "relations not loaded properly");
 
             //serialize data object and check for (not) wanted content in serialized string
@@ -57,7 +78,7 @@ class ManyToManyObjectRelationTest extends AbstractLazyLoadingTest
     public function testLocalizedClassAttributes() {
         //prepare data object
         $object = $this->createDataObject();
-        $object->setLobjects($this->loadRelations()->load());
+        $object->setLadvancedObjects($this->loadMetadataRelations("ladvancedObjects"));
         $object->save();
         $parentId = $object->getId();
         $childId = $this->createChildDataObject($object)->getId();
@@ -77,7 +98,7 @@ class ManyToManyObjectRelationTest extends AbstractLazyLoadingTest
             $this->checkSerialization($object, $messagePrefix);
 
             //load relation and check if relation loads correctly
-            $relationObjects = $object->getLobjects();
+            $relationObjects = $object->getLadvancedObjects();
             $this->assertEquals(self::RELATION_COUNT, count($relationObjects), $messagePrefix . "relations not loaded properly");
 
             //serialize data object and check for (not) wanted content in serialized string
@@ -90,7 +111,7 @@ class ManyToManyObjectRelationTest extends AbstractLazyLoadingTest
         //prepare data object
         $object = $this->createDataObject();
         $data = [
-            "blockobjects" => new BlockElement('blockobjects', 'manyToManyObjectRelation', $this->loadRelations()->load()),
+            "blockadvancedObjects" => new BlockElement('blockadvancedObjects', 'advancedManyToManyObjectRelation', $this->loadMetadataRelations('blockadvancedObjects')),
         ];
         $object->setTestBlock([$data]);
         $object->save();
@@ -116,7 +137,7 @@ class ManyToManyObjectRelationTest extends AbstractLazyLoadingTest
 
             //load relation and check if relation loads correctly
             $blockItems = $object->getTestBlock();
-            $relationObjects = $blockItems[0]["blockobjects"]->getData();
+            $relationObjects = $blockItems[0]["blockadvancedObjects"]->getData();
             $this->assertEquals(self::RELATION_COUNT, count($relationObjects), $messagePrefix . "relations not loaded properly");
 
             //serialize data object and check for (not) wanted content in serialized string
@@ -128,7 +149,7 @@ class ManyToManyObjectRelationTest extends AbstractLazyLoadingTest
         //prepare data object
         $object = $this->createDataObject();
         $data = [
-            "blockobjectsLazyloaded" => new BlockElement('blockobjectsLazyloaded', 'manyToManyObjectRelation', $this->loadRelations()->load()),
+            "blockadvancedObjectsLazyLoaded" => new BlockElement('blockadvancedObjectsLazyLoaded', 'advancedManyToManyObjectRelation', $this->loadMetadataRelations('blockadvancedObjectsLazyLoaded')),
         ];
         $object->setTestBlockLazyloaded([$data]);
         $object->save();
@@ -151,7 +172,7 @@ class ManyToManyObjectRelationTest extends AbstractLazyLoadingTest
 
             //load relation and check if relation loads correctly
             $blockItems = $object->getTestBlockLazyloaded();
-            $relationObjects = $blockItems[0]["blockobjectsLazyloaded"]->getData();
+            $relationObjects = $blockItems[0]["blockadvancedObjectsLazyLoaded"]->getData();
             $this->assertEquals(self::RELATION_COUNT, count($relationObjects), $messagePrefix . "relations not loaded properly");
 
             //serialize data object and check for (not) wanted content in serialized string
@@ -166,7 +187,7 @@ class ManyToManyObjectRelationTest extends AbstractLazyLoadingTest
 
         $items = new Fieldcollection();
         $item = new Fieldcollection\Data\LazyLoadingTest();
-        $item->setObjects($this->loadRelations()->load());
+        $item->setAdvancedObjects($this->loadMetadataRelations('advancedObjects'));
         $items->add($item);
         $object->setFieldcollection($items);
         $object->save();
@@ -191,7 +212,7 @@ class ManyToManyObjectRelationTest extends AbstractLazyLoadingTest
             $collection = $object->getFieldcollection();
             if($objectType == 'parent') {
                 $item = $collection->get(0);
-                $relationObjects = $item->getObjects();
+                $relationObjects = $item->getAdvancedObjects();
                 $this->assertEquals(self::RELATION_COUNT, count($relationObjects), $messagePrefix . "relations not loaded properly");
             }
 
@@ -207,7 +228,7 @@ class ManyToManyObjectRelationTest extends AbstractLazyLoadingTest
 
         $items = new Fieldcollection();
         $item = new Fieldcollection\Data\LazyLoadingLocalizedTest();
-        $item->setLObjects($this->loadRelations()->load());
+        $item->setLadvancedObjects($this->loadMetadataRelations('ladvancedObjects'));
         $items->add($item);
         $object->setFieldcollection($items);
         $object->save();
@@ -232,7 +253,7 @@ class ManyToManyObjectRelationTest extends AbstractLazyLoadingTest
             $collection = $object->getFieldcollection();
             if($objectType == 'parent') {
                 $item = $collection->get(0);
-                $relationObjects = $item->getLObjects();
+                $relationObjects = $item->getLAdvancedObjects();
                 $this->assertEquals(self::RELATION_COUNT, count($relationObjects), $messagePrefix . "relations not loaded properly");
             }
 
@@ -245,7 +266,7 @@ class ManyToManyObjectRelationTest extends AbstractLazyLoadingTest
         //prepare data object
         $object = $this->createDataObject();
         $brick = new LazyLoadingTest($object);
-        $brick->setObjects($this->loadRelations()->load());
+        $brick->setAdvancedObjects($this->loadMetadataRelations('advancedObjects'));
         $object->getBricks()->setLazyLoadingTest($brick);
         $object->save();
         $parentId = $object->getId();
@@ -267,7 +288,7 @@ class ManyToManyObjectRelationTest extends AbstractLazyLoadingTest
 
             //load relation and check if relation loads correctly
             $brick = $object->getBricks()->getLazyLoadingTest();
-            $relationObjects = $brick->getObjects();
+            $relationObjects = $brick->getAdvancedObjects();
             $this->assertEquals(self::RELATION_COUNT, count($relationObjects), $messagePrefix . "relations not loaded properly");
 
             //serialize data object and check for (not) wanted content in serialized string
@@ -279,7 +300,7 @@ class ManyToManyObjectRelationTest extends AbstractLazyLoadingTest
         //prepare data object
         $object = $this->createDataObject();
         $brick = new LazyLoadingLocalizedTest($object);
-        $brick->getLocalizedfields()->setLocalizedValue('lobjects', $this->loadRelations()->load());
+        $brick->getLocalizedfields()->setLocalizedValue('ladvancedObjects', $this->loadMetadataRelations('ladvancedObjects'));
         $object->getBricks()->setLazyLoadingLocalizedTest($brick);
         $object->save();
         $parentId = $object->getId();
@@ -301,7 +322,7 @@ class ManyToManyObjectRelationTest extends AbstractLazyLoadingTest
 
             //load relation and check if relation loads correctly
             $brick = $object->getBricks()->getLazyLoadingLocalizedTest();
-            $relationObjects = $brick->getLocalizedFields()->getLocalizedValue('lobjects');
+            $relationObjects = $brick->getLocalizedFields()->getLocalizedValue('ladvancedObjects');
             $this->assertEquals(self::RELATION_COUNT, count($relationObjects), $messagePrefix . "relations not loaded properly");
 
             //serialize data object and check for (not) wanted content in serialized string
