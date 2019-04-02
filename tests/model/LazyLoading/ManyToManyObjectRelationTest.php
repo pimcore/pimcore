@@ -192,7 +192,7 @@ class ManyToManyObjectRelationTest extends ModelTestCase
 
         $object = $this->createDataObject();
         $data = [
-            "blockobjects" => new BlockElement('blockobjects', 'manyToManyObjects', $listing->load()),
+            "blockobjects" => new BlockElement('blockobjects', 'manyToManyObjectRelation', $listing->load()),
         ];
         $object->setTestBlock([$data]);
         $object->save();
@@ -210,8 +210,11 @@ class ManyToManyObjectRelationTest extends ModelTestCase
             //reload data object from database
             $object = LazyLoading::getById($id, true);
 
+            // inherited data isn't assigned to a property, it's only returned by the getter and therefore doesn't get serialized
+            $contentShouldBeIncluded = ($objectType === 'inherited') ? false : true;
+
             //serialize data object and check for (not) wanted content in serialized string
-            $this->checkSerialization($object, $messagePrefix, true);
+            $this->checkSerialization($object, $messagePrefix, $contentShouldBeIncluded);
 
             //load relation and check if relation loads correctly
             $blockItems = $object->getTestBlock();
@@ -219,7 +222,7 @@ class ManyToManyObjectRelationTest extends ModelTestCase
             $this->assertEquals($relationCount, count($relationObjects), $messagePrefix . "relations not loaded properly");
 
             //serialize data object and check for (not) wanted content in serialized string
-            $this->checkSerialization($object, $messagePrefix, true);
+            $this->checkSerialization($object, $messagePrefix, $contentShouldBeIncluded);
         }
     }
 
