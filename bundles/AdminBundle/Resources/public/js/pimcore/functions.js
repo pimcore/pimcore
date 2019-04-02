@@ -690,6 +690,12 @@ function mergeObject(p, c) {
 };
 
 
+function replace_html_event_attributes(value) {
+    return value.replace(/ on[^=]+=/, function (attributeName) {
+        return ' data-' + trim(attributeName);
+    });
+};
+
 function strip_tags(str, allowed_tags) {
     // http://kevin.vanzonneveld.net
     // +   original by: Kevin van Zonneveld (http://kevin.vanzonneveld.net)

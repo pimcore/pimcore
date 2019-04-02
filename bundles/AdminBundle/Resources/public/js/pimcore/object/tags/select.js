@@ -52,7 +52,7 @@ pimcore.object.tags.select = Class.create(pimcore.object.tags.abstract, {
                 }
             }
 
-            return strip_tags(value, 'div,span,b,strong,em,i,small,sup,sub');
+            return replace_html_event_attributes(strip_tags(value, 'div,span,b,strong,em,i,small,sup,sub'));
         }.bind(this, field.key);
 
         return {
@@ -82,7 +82,7 @@ pimcore.object.tags.select = Class.create(pimcore.object.tags.abstract, {
                 }
             }
 
-            return strip_tags(value, 'div,span,b,strong,em,i,small,sup,sub');
+            return replace_html_event_attributes(strip_tags(value, 'div,span,b,strong,em,i,small,sup,sub'));
         }.bind(this, field.key);
 
         return {
