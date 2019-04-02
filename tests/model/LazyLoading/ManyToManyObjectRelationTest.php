@@ -299,12 +299,10 @@ class ManyToManyObjectRelationTest extends ModelTestCase
 
             //load relation and check if relation loads correctly
             $collection = $object->getFieldcollection();
-            $item = $collection->get(0);
-            $relationObjects = $item->getObjects();
             if($objectType == 'parent') {
+                $item = $collection->get(0);
+                $relationObjects = $item->getObjects();
                 $this->assertEquals($relationCount, count($relationObjects), $messagePrefix . "relations not loaded properly");
-            } else {
-                $this->assertEquals($relationCount, 0, $messagePrefix . "relations not loaded properly");
             }
 
             //serialize data object and check for (not) wanted content in serialized string
@@ -346,12 +344,10 @@ class ManyToManyObjectRelationTest extends ModelTestCase
 
             //load relation and check if relation loads correctly
             $collection = $object->getFieldcollection();
-            $item = $collection->get(0);
-            $relationObjects = $item->getLObjects();
             if($objectType == 'parent') {
+                $item = $collection->get(0);
+                $relationObjects = $item->getLObjects();
                 $this->assertEquals($relationCount, count($relationObjects), $messagePrefix . "relations not loaded properly");
-            } else {
-                $this->assertEquals($relationCount, 0, $messagePrefix . "relations not loaded properly");
             }
 
             //serialize data object and check for (not) wanted content in serialized string
