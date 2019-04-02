@@ -299,8 +299,8 @@ class Version extends AbstractModel
 
         if ($this->getSerialized()) {
             $data = Serialize::unserialize($data);
-            if (get_class($data) == '__PHP_Incomplete_Class') {
-                Logger::err('Version: cannot read version data from file system becaus of incompatible class.');
+            if ($data instanceof \__PHP_Incomplete_Class) {
+                Logger::err('Version: cannot read version data from file system because of incompatible class.');
 
                 return;
             }
