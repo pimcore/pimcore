@@ -1004,22 +1004,18 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
 
     /**
      * @param string $name
-     *
-     * @return $this|void
+     * @return $this|Data
+     * @throws \Exception
      */
     public function setName($name)
     {
+        if($name !== 'localizedfields') {
+            throw new \Exception('Localizedfields can only be named `localizedfields`, no other names are allowed');
+        }
+
         $this->name = $name;
 
         return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getName()
-    {
-        return $this->name;
     }
 
     /**
@@ -1040,26 +1036,6 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
     public function getRegion()
     {
         return $this->region;
-    }
-
-    /**
-     * @param string $title
-     *
-     * @return $this|void
-     */
-    public function setTitle($title)
-    {
-        $this->title = $title;
-
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getTitle()
-    {
-        return $this->title;
     }
 
     /**
