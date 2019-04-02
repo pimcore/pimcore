@@ -314,10 +314,12 @@ class Localizedfield extends Model\AbstractModel implements DirtyIndicatorInterf
     protected function getFieldDefinitions($context = [], $params = []) {
         if ($context && $context['containerType'] == 'fieldcollection') {
             $containerKey = $context['containerKey'];
-            $container = Model\DataObject\Fieldcollection\Definition::getByKey($containerKey);
+            $fcDef = Model\DataObject\Fieldcollection\Definition::getByKey($containerKey);
+            $container = $fcDef->getFieldDefinition("localizedfields");
         } elseif ($context && $context['containerType'] == 'objectbrick') {
             $containerKey = $context['containerKey'];
-            $container = Model\DataObject\Objectbrick\Definition::getByKey($containerKey);
+            $brickDef = Model\DataObject\Objectbrick\Definition::getByKey($containerKey);
+            $container = $brickDef->getFieldDefinition("localizedfields");
         } elseif ($context && $context['containerType'] == 'block') {
             $containerKey = $context['containerKey'];
             $object = $this->getObject();
@@ -327,10 +329,6 @@ class Localizedfield extends Model\AbstractModel implements DirtyIndicatorInterf
             $container = $object->getClass()->getFieldDefinition($containerKey);
         } else {
             $container = $this->getObject()->getClass()->getFieldDefinition('localizedfields');
-        }
-
-        if ($container instanceof Model\DataObject\Objectbrick\Definition) {
-            $container = $container->getFieldDefinition("localizedfields");
         }
 
         return $container->getFieldDefinitions($params);
