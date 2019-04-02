@@ -4,19 +4,12 @@ namespace Pimcore\Tests\Model\LazyLoading;
 
 
 use Pimcore\Cache;
-use Pimcore\Model\DataObject\ClassDefinition;
 use Pimcore\Model\DataObject\Data\BlockElement;
 use Pimcore\Model\DataObject\Data\ElementMetadata;
-use Pimcore\Model\DataObject\Data\ObjectMetadata;
 use Pimcore\Model\DataObject\Fieldcollection;
-use Pimcore\Model\DataObject\Fieldcollection\Definition;
 use Pimcore\Model\DataObject\LazyLoading;
 use Pimcore\Model\DataObject\Objectbrick\Data\LazyLoadingLocalizedTest;
 use Pimcore\Model\DataObject\Objectbrick\Data\LazyLoadingTest;
-use Pimcore\Model\DataObject\RelationTest;
-use Pimcore\Model\DataObject\Service;
-use Pimcore\Tests\Test\ModelTestCase;
-use Pimcore\Tests\Util\TestHelper;
 
 class AdvancedManyToManyRelationTest extends AbstractLazyLoadingTest
 {
