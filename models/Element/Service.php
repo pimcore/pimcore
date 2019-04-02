@@ -624,6 +624,11 @@ class Service extends Model\AbstractModel
      */
     public static function renewReferences($data, $initial = true, $key = null)
     {
+        if ($data instanceof \__PHP_Incomplete_Class) {
+            Logger::err(sprintf('Renew References: Cannot read data (%s) of incomplete class.', is_null($key) ? 'not available' : $key));
+            return null;
+        }
+
         if (is_array($data)) {
             foreach ($data as $dataKey => &$value) {
                 $value = self::renewReferences($value, false, $dataKey);
