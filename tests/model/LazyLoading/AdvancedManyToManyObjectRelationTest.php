@@ -118,7 +118,7 @@ class AdvancedManyToManyObjectRelationTest extends AbstractLazyLoadingTest
             //reload data object from database
             $object = LazyLoading::getById($id, true);
 
-            $contentShouldBeIncluded = true;
+            $contentShouldBeIncluded = ($objectType === 'inherited') ? false : true;
 
             //serialize data object and check for (not) wanted content in serialized string
             $this->checkSerialization($object, $messagePrefix, $contentShouldBeIncluded);
