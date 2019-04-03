@@ -119,8 +119,7 @@ class AdvancedManyToManyObjectRelationTest extends AbstractLazyLoadingTest
             //reload data object from database
             $object = LazyLoading::getById($id, true);
 
-            // inherited data isn't assigned to a property, it's only returned by the getter and therefore doesn't get serialized
-            $contentShouldBeIncluded = ($objectType === 'inherited') ? false : true;
+            $contentShouldBeIncluded = false;
 
             //serialize data object and check for (not) wanted content in serialized string
             $this->checkSerialization($object, $messagePrefix, $contentShouldBeIncluded);
