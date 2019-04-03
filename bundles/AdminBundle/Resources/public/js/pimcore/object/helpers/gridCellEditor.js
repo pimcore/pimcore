@@ -40,7 +40,7 @@ Ext.define('pimcore.object.helpers.gridCellEditor', {
         var fieldInfo = Ext.clone(this.config.fieldInfo);
 
         //make sure that no relation data is loaded async
-        fieldInfo.layout.enableAdminAsyncLoad = false;
+        fieldInfo.layout.optimizedAdminLoading = false;
 
         if(!fieldInfo || !fieldInfo.layout) {
             return;

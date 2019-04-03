@@ -292,7 +292,7 @@ class ReverseManyToManyObjectRelation extends ManyToManyObjectRelation
     /**
      * @return bool
      */
-    public function getEnableAdminAsyncLoad() : bool
+    public function isOptimizedAdminLoading() : bool
     {
         return true;
     }

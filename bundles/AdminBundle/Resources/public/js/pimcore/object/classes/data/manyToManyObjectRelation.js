@@ -208,8 +208,8 @@ pimcore.object.classes.data.manyToManyObjectRelation = Class.create(pimcore.obje
             this.specificPanel.add({
                 xtype: "checkbox",
                 fieldLabel: t("enable_admin_async_load"),
-                name: "enableAdminAsyncLoad",
-                value: this.datax.enableAdminAsyncLoad
+                name: "optimizedAdminLoading",
+                value: this.datax.optimizedAdminLoading
             });
             this.specificPanel.add({
                 xtype: "displayfield",

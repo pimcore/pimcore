@@ -565,7 +565,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                     $data = $relations[0];
                     $data['published'] = (bool)$data['published'];
                 } else if(
-                    ($fielddefinition instanceof DataObject\ClassDefinition\Data\AdminAsyncLoadInterface && $fielddefinition->getEnableAdminAsyncLoad())
+                    ($fielddefinition instanceof DataObject\ClassDefinition\Data\OptimizedAdminLoadingInterface && $fielddefinition->isOptimizedAdminLoading())
                     || ($fielddefinition instanceof ManyToManyObjectRelation && !$fielddefinition->getVisibleFields())
                 ) {
                     foreach ($relations as $rel) {

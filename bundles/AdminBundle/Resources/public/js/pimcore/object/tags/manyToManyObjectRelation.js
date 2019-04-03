@@ -793,7 +793,7 @@ pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.
         var fields = [];
         var context = this.getContext();
         var loadEditModeData = false;
-        if(isInitialLoad && this.fieldConfig.enableAdminAsyncLoad && context['containerType'] == 'object') {
+        if(isInitialLoad && this.fieldConfig.optimizedAdminLoading && context['containerType'] == 'object') {
             loadEditModeData = true;
 
             if(this.visibleFields) {

@@ -49,7 +49,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
     /**
      * @var bool
      */
-    public $enableAdminAsyncLoad = false;
+    public $optimizedAdminLoading = false;
 
     /**
      * @inheritdoc
@@ -1180,16 +1180,16 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
     /**
      * @return bool
      */
-    public function getEnableAdminAsyncLoad() : bool
+    public function isOptimizedAdminLoading() : bool
     {
-        return (bool) $this->enableAdminAsyncLoad;
+        return (bool) $this->optimizedAdminLoading;
     }
 
     /**
-     * @param bool $enableAdminAsyncLoad
+     * @param bool $optimizedAdminLoading
      */
-    public function setEnableAdminAsyncLoad($enableAdminAsyncLoad)
+    public function setOptimizedAdminLoading($optimizedAdminLoading)
     {
-        $this->enableAdminAsyncLoad = $enableAdminAsyncLoad;
+        $this->optimizedAdminLoading = $optimizedAdminLoading;
     }
 }
