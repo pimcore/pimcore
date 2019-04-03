@@ -17,7 +17,18 @@ bootstrap file to ensure the Pimcore startup process has everything it needs. St
 to your project:
 
 ```
-$ composer require --dev 'symfony/phpunit-bridge:^3.4'
+$ composer require --dev 'symfony/phpunit-bridge:*'
+```
+
+With ``symfony/phpunit-bridge``` comes ```vendor/bin/simple-phpunit``` which uses its own PHPUnit version. For ```simple-phpunit``` to use the right version, you need to exclude ```phpunit``` from the autoloader's classmap and afterwards update the autoloader with ```composer dump-autoload -o```
+```
+  "autoload": {
+    ...
+
+    "exclude-from-classmap": [
+      "vendor/phpunit"
+    ]
+  }
 ```
 
 Next, add a PHPUnit config file named `phpunit.xml.dist` in the root directory of your project. The config file below
@@ -26,8 +37,8 @@ expects your tests in a `tests/` directory and processes files in `src/` when ca
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/6.5/phpunit.xsd"
-         bootstrap="../../vendor/autoload.php"
+         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/7.4/phpunit.xsd"
+         bootstrap="vendor/autoload.php"
          colors="true">
     <testsuite name="default">
         <directory suffix="Test.php">tests</directory>
@@ -38,6 +49,10 @@ expects your tests in a `tests/` directory and processes files in `src/` when ca
             <directory suffix=".php">src</directory>
         </whitelist>
     </filter>
+
+    <php>
+        <env name="SYMFONY_PHPUNIT_VERSION" value="7.4" />
+    </php>
 </phpunit>
 ``` 
 
@@ -101,7 +116,7 @@ with Symfony's PHPUnit wrapper:
 ```
 $ vendor/bin/simple-phpunit
 
-PHPUnit 6.5.6 by Sebastian Bergmann and contributors.
+PHPUnit 7.4.5 by Sebastian Bergmann and contributors.
 
 Testing default
 ........                                                            8 / 8 (100%)
@@ -120,7 +135,7 @@ to a custom bootstrap file and to add environment variables needed to bootstrap 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/6.5/phpunit.xsd"
+         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/7.4/phpunit.xsd"
          bootstrap="tests/bootstrap.php"
          colors="true">
     <testsuite name="default">
@@ -135,6 +150,7 @@ to a custom bootstrap file and to add environment variables needed to bootstrap 
 
     <php>
         <!-- adjust as needed -->
+        <env name="SYMFONY_PHPUNIT_VERSION" value="7.4" />
         <env name="PIMCORE_PROJECT_ROOT" value="." />
         <env name="KERNEL_DIR" value="app" />
         <env name="KERNEL_CLASS" value="AppKernel" />
@@ -224,7 +240,7 @@ set. The example below just passes the DB connection as env variable:
 
 ```
 $ PIMCORE_TEST_DB_DSN="mysql://username:password@localhost/pimcore" vendor/bin/simple-phpunit
-PHPUnit 6.5.6 by Sebastian Bergmann and contributors.
+PHPUnit 7.4.5 by Sebastian Bergmann and contributors.
 
 Testing default
 ..........                                                        10 / 10 (100%)
@@ -473,7 +489,7 @@ by configuring the DB DSN before running codeception:
 $ PIMCORE_TEST_DB_DSN="mysql://username:password@localhost/pimcore" vendor/bin/codecept run -c tests/codeception.dist.yml
 
 Codeception PHP Testing Framework v2.3.8
-Powered by PHPUnit 6.5.6 by Sebastian Bergmann and contributors.
+Powered by PHPUnit 7.4.5 by Sebastian Bergmann and contributors.
 
   [DB] Initializing DB pimcore5_test
   [DB] Dropping DB pimcore5_test
