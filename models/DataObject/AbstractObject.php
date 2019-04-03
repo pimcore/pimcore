@@ -1233,7 +1233,7 @@ class AbstractObject extends Model\Element\AbstractElement
             $this->removeInheritedProperties();
         } else {
             // this is if we want to cache the object
-            $blockedVars = array_merge($blockedVars, ['o_childs','o_properties']);
+            $blockedVars = array_merge($blockedVars, ['o_childs', 'o_properties']);
         }
 
         foreach ($parentVars as $key) {

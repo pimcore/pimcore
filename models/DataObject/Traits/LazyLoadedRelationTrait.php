@@ -34,15 +34,17 @@ trait LazyLoadedRelationTrait
 
     /**
      * @param string $key
+     *
      * @return bool
      */
-    public function isLazyKeyLoaded(string $key) : bool
+    public function isLazyKeyLoaded(string $key): bool
     {
-        if($this->isAllLazyKeysMarkedAsLoaded()) {
+        if ($this->isAllLazyKeysMarkedAsLoaded()) {
             return true;
         }
 
         $isset = isset($this->loadedLazyKeys[$key]);
+
         return $isset;
     }
 }

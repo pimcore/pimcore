@@ -144,11 +144,12 @@ class RedirectingPlugin extends \Swift_Plugins_RedirectingPlugin
      *
      * @param Mail $message
      */
-    protected function setSenderAndReceiversParams($message) {
+    protected function setSenderAndReceiversParams($message)
+    {
         $originalData = $message->getOriginalData();
 
         $message->setParam('Debug-Redirected', 'true');
-        foreach (array('From', 'To', 'Cc', 'Bcc', 'ReplyTo') as $k) {
+        foreach (['From', 'To', 'Cc', 'Bcc', 'ReplyTo'] as $k) {
             // Add parameters to show this was redirected
             $message->setParam('Debug-Original-' . $k, $originalData[$k]);
         }

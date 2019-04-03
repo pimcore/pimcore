@@ -288,10 +288,11 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyInd
     /**
      * @return Concrete|null
      */
-    protected function getObject() : ?Concrete {
+    protected function getObject(): ?Concrete
+    {
         $this->rewind();
         $item = $this->current();
-        if($item instanceof Model\DataObject\Fieldcollection\Data\AbstractData) {
+        if ($item instanceof Model\DataObject\Fieldcollection\Data\AbstractData) {
             return $item->getObject();
         }
 

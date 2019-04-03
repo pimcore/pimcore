@@ -28,13 +28,15 @@ interface LazyLoadedFieldsInterface
 
     /**
      * @param string $key
+     *
      * @return bool
      */
-    public function isLazyKeyLoaded(string $key) : bool;
+    public function isLazyKeyLoaded(string $key): bool;
 
     /**
      * @internal
+     *
      * @return bool
      */
-    public function isAllLazyKeysMarkedAsLoaded() : bool;
+    public function isAllLazyKeysMarkedAsLoaded(): bool;
 }

@@ -176,7 +176,7 @@ class Localizedfield extends Model\AbstractModel implements DirtyIndicatorInterf
             AbstractObject::disableDirtyDetection();
 
             foreach ($loadLazyFieldNames as $name) {
-                foreach(Tool::getValidLanguages() as $language) {
+                foreach (Tool::getValidLanguages() as $language) {
                     $fieldDefinition = $this->getFieldDefinition($name, $this->getContext());
                     $this->loadLazyField($fieldDefinition, $name, $language);
                 }
@@ -308,18 +308,21 @@ class Localizedfield extends Model\AbstractModel implements DirtyIndicatorInterf
     /**
      * @param array $context
      * @param array $params
+     *
      * @return ClassDefinition\Data[]
+     *
      * @throws \Exception
      */
-    protected function getFieldDefinitions($context = [], $params = []) {
+    protected function getFieldDefinitions($context = [], $params = [])
+    {
         if ($context && $context['containerType'] == 'fieldcollection') {
             $containerKey = $context['containerKey'];
             $fcDef = Model\DataObject\Fieldcollection\Definition::getByKey($containerKey);
-            $container = $fcDef->getFieldDefinition("localizedfields");
+            $container = $fcDef->getFieldDefinition('localizedfields');
         } elseif ($context && $context['containerType'] == 'objectbrick') {
             $containerKey = $context['containerKey'];
             $brickDef = Model\DataObject\Objectbrick\Definition::getByKey($containerKey);
-            $container = $brickDef->getFieldDefinition("localizedfields");
+            $container = $brickDef->getFieldDefinition('localizedfields');
         } elseif ($context && $context['containerType'] == 'block') {
             $containerKey = $context['containerKey'];
             $object = $this->getObject();
@@ -540,9 +543,10 @@ class Localizedfield extends Model\AbstractModel implements DirtyIndicatorInterf
     /**
      * @inheritDoc
      */
-    public function isAllLazyKeysMarkedAsLoaded() : bool {
+    public function isAllLazyKeysMarkedAsLoaded(): bool
+    {
         $object = $this->getObject();
-        if($object instanceof Concrete) {
+        if ($object instanceof Concrete) {
             return $this->getObject()->isAllLazyKeysMarkedAsLoaded();
         }
 
@@ -675,8 +679,8 @@ class Localizedfield extends Model\AbstractModel implements DirtyIndicatorInterf
     {
         $lazyLoadedFieldNames = [];
         $fields = $this->getFieldDefinitions($this->getContext(), ['suppressEnrichment' => true]);
-        foreach($fields as $field) {
-            if(method_exists($field, 'getLazyLoading') && $field->getLazyLoading()) {
+        foreach ($fields as $field) {
+            if (method_exists($field, 'getLazyLoading') && $field->getLazyLoading()) {
                 $lazyLoadedFieldNames[] = $field->getName();
             }
         }

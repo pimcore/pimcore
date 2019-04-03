@@ -83,12 +83,12 @@ class Dao extends Model\Dao\AbstractDao
 
                         $doLoad = true;
                         if ($fd instanceof DataObject\ClassDefinition\Data\Relations\AbstractRelations) {
-                            if(!DataObject\Concrete::isLazyLoadingDisabled() && $fd->getLazyLoading()) {
+                            if (!DataObject\Concrete::isLazyLoadingDisabled() && $fd->getLazyLoading()) {
                                 $doLoad = false;
                             }
                         }
 
-                        if($doLoad) {
+                        if ($doLoad) {
                             // datafield has it's own loader
                             $value = $fd->load(
                                 $collection,

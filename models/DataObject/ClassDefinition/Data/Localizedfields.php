@@ -1004,12 +1004,14 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
 
     /**
      * @param string $name
+     *
      * @return $this|Data
+     *
      * @throws \Exception
      */
     public function setName($name)
     {
-        if($name !== 'localizedfields') {
+        if ($name !== 'localizedfields') {
             throw new \Exception('Localizedfields can only be named `localizedfields`, no other names are allowed');
         }
 

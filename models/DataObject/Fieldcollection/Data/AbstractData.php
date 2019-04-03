@@ -155,8 +155,8 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
     {
         $lazyLoadedFieldNames = [];
         $fields = $this->getDefinition()->getFieldDefinitions(['suppressEnrichment' => true]);
-        foreach($fields as $field) {
-            if(method_exists($field, 'getLazyLoading') && $field->getLazyLoading()) {
+        foreach ($fields as $field) {
+            if (method_exists($field, 'getLazyLoading') && $field->getLazyLoading()) {
                 $lazyLoadedFieldNames[] = $field->getName();
             }
         }
@@ -167,9 +167,10 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
     /**
      * @inheritDoc
      */
-    public function isAllLazyKeysMarkedAsLoaded() : bool {
+    public function isAllLazyKeysMarkedAsLoaded(): bool
+    {
         $object = $this->getObject();
-        if($object instanceof Concrete) {
+        if ($object instanceof Concrete) {
             return $this->getObject()->isAllLazyKeysMarkedAsLoaded();
         }
 

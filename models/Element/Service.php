@@ -626,6 +626,7 @@ class Service extends Model\AbstractModel
     {
         if ($data instanceof \__PHP_Incomplete_Class) {
             Logger::err(sprintf('Renew References: Cannot read data (%s) of incomplete class.', is_null($key) ? 'not available' : $key));
+
             return null;
         }
 

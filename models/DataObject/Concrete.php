@@ -95,7 +95,6 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
         // nothing to do here
     }
 
-
     /**
      * @param $isUpdate
      * @param array $params additional parameters (e.g. "versionNote" for the version note)
@@ -703,8 +702,8 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
     {
         $lazyLoadedFieldNames = [];
         $fields = $this->getClass()->getFieldDefinitions(['suppressEnrichment' => true]);
-        foreach($fields as $field) {
-            if(method_exists($field, 'getLazyLoading') && $field->getLazyLoading()) {
+        foreach ($fields as $field) {
+            if (method_exists($field, 'getLazyLoading') && $field->getLazyLoading()) {
                 $lazyLoadedFieldNames[] = $field->getName();
             }
         }
@@ -715,16 +714,17 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
     /**
      * @inheritDoc
      */
-    public function isAllLazyKeysMarkedAsLoaded() : bool {
-
-        if(!$this->getId()) {
+    public function isAllLazyKeysMarkedAsLoaded(): bool
+    {
+        if (!$this->getId()) {
             return true;
         }
 
         return $this->allLazyKeysMarkedAsLoaded;
     }
 
-    public function markAllLazyLoadedKeysAsLoaded() {
+    public function markAllLazyLoadedKeysAsLoaded()
+    {
         $this->allLazyKeysMarkedAsLoaded = true;
     }
 
@@ -770,7 +770,6 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
         parent::__clone();
     }
 
-
     /**
      * @var bool
      */
@@ -796,6 +795,7 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
 
     /**
      * @internal
+     *
      * @return bool
      */
     public static function isLazyLoadingDisabled()
