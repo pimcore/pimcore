@@ -28,8 +28,7 @@ class AdvancedManyToManyObjectRelationTest extends AbstractLazyLoadingTest
 
     protected function checkSerialization(LazyLoading $object, string $messagePrefix, bool $contentShouldBeIncluded = false)
     {
-        //TODO $contentShouldBeIncluded for parent call needs always to be set to false once #4132 is merged
-        parent::checkSerialization($object, $messagePrefix, $contentShouldBeIncluded);
+        parent::checkSerialization($object, $messagePrefix, false);
         $serializedString = serialize($object);
         $this->checkSerializedStringForNeedle($serializedString, 'some-metadata', $contentShouldBeIncluded, $messagePrefix);
     }
@@ -119,7 +118,6 @@ class AdvancedManyToManyObjectRelationTest extends AbstractLazyLoadingTest
             //reload data object from database
             $object = LazyLoading::getById($id, true);
 
-            // inherited data isn't assigned to a property, it's only returned by the getter and therefore doesn't get serialized
             $contentShouldBeIncluded = ($objectType === 'inherited') ? false : true;
 
             //serialize data object and check for (not) wanted content in serialized string
