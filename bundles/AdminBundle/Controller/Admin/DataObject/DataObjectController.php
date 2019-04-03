@@ -413,7 +413,6 @@ class DataObjectController extends ElementControllerBase implements EventedContr
             }
 
             if ($object instanceof DataObject\Concrete) {
-                $objectData['lazyLoadedFields'] = $object->getLazyLoadedFields();
                 $objectData['general']['linkGeneratorReference'] = $object->getClass()->getLinkGeneratorReference();
             }
 

@@ -22,29 +22,19 @@ interface LazyLoadedFieldsInterface
     const LAZY_KEY_SEPARATOR = '~~';
 
     /**
-     * @param $key
+     * @param string $key
      */
-    public function addLazyKey($key);
+    public function markLazyKeyAsLoaded(string $key);
 
     /**
-     * @param $key
-     */
-    public function removeLazyKey($key);
-
-    /**
-     * @param $key
-     *
+     * @param string $key
      * @return bool
      */
-    public function hasLazyKey($key);
+    public function isLazyKeyLoaded(string $key) : bool;
 
     /**
+     * @internal
      * @return bool
      */
-    public function hasLazyKeys();
-
-    /**
-     * @return array
-     */
-    public function getLazyKeys();
+    public function isAllLazyKeysMarkedAsLoaded() : bool;
 }

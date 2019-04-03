@@ -70,6 +70,11 @@ class Localizedfield extends Model\AbstractModel implements DirtyIndicatorInterf
     protected $o_dirtyLanguages;
 
     /**
+     * @var bool
+     */
+    protected $_loadedAllLazyData = false;
+
+    /**
      * @param bool $getFallbackValues
      */
     public static function setGetFallbackValues($getFallbackValues)
@@ -158,26 +163,27 @@ class Localizedfield extends Model\AbstractModel implements DirtyIndicatorInterf
      *
      * @internal
      *
-     * @param loadLazyFields
+     * @param $loadLazyFields
      *
      * @return array
      */
     public function getInternalData($loadLazyFields = false)
     {
-        if ($loadLazyFields && $this->hasLazyKeys()) {
+        $loadLazyFieldNames = $this->getLazyLoadedFieldNames();
+
+        if ($loadLazyFields && !empty($loadLazyFieldNames) && !$this->_loadedAllLazyData) {
             $isDirtyDetectionDisabled = AbstractObject::isDirtyDetectionDisabled();
             AbstractObject::disableDirtyDetection();
 
-            foreach ($this->getLazyKeys() as $lazyKey => $needsLoading) {
-                $parts = explode(LazyLoadedFieldsInterface::LAZY_KEY_SEPARATOR, $lazyKey);
-                $name = $parts[0];
-                $language = $parts[1];
-                /** @var $fieldDefinition Model\DataObject\ClassDefinition\Data\CustomResourcePersistingInterface */
-                $fieldDefinition = $this->getFieldDefinitionFromContext($name, $this->getContext());
-                $this->loadLazyField($fieldDefinition, $name, $language);
+            foreach ($loadLazyFieldNames as $name) {
+                foreach(Tool::getValidLanguages() as $language) {
+                    $fieldDefinition = $this->getFieldDefinition($name, $this->getContext());
+                    $this->loadLazyField($fieldDefinition, $name, $language);
+                }
             }
 
             AbstractObject::setDisableDirtyDetection($isDirtyDetectionDisabled);
+            $this->_loadedAllLazyData = true;
         }
 
         return $this->items;
@@ -277,7 +283,7 @@ class Localizedfield extends Model\AbstractModel implements DirtyIndicatorInterf
         return array_key_exists($language, $this->items);
     }
 
-    public function getFieldDefinitionFromContext($name, $context = [])
+    public function getFieldDefinition($name, $context = [])
     {
         if ($context && $context['containerType'] == 'fieldcollection') {
             $containerKey = $context['containerKey'];
@@ -299,10 +305,39 @@ class Localizedfield extends Model\AbstractModel implements DirtyIndicatorInterf
         return $fieldDefinition;
     }
 
+    /**
+     * @param array $context
+     * @param array $params
+     * @return ClassDefinition\Data[]
+     * @throws \Exception
+     */
+    protected function getFieldDefinitions($context = [], $params = []) {
+        if ($context && $context['containerType'] == 'fieldcollection') {
+            $containerKey = $context['containerKey'];
+            $fcDef = Model\DataObject\Fieldcollection\Definition::getByKey($containerKey);
+            $container = $fcDef->getFieldDefinition("localizedfields");
+        } elseif ($context && $context['containerType'] == 'objectbrick') {
+            $containerKey = $context['containerKey'];
+            $brickDef = Model\DataObject\Objectbrick\Definition::getByKey($containerKey);
+            $container = $brickDef->getFieldDefinition("localizedfields");
+        } elseif ($context && $context['containerType'] == 'block') {
+            $containerKey = $context['containerKey'];
+            $object = $this->getObject();
+            /**
+             * @var Model\DataObject\ClassDefinition\Data\Block $container
+             */
+            $container = $object->getClass()->getFieldDefinition($containerKey);
+        } else {
+            $container = $this->getObject()->getClass()->getFieldDefinition('localizedfields');
+        }
+
+        return $container->getFieldDefinitions($params);
+    }
+
     private function loadLazyField(Model\DataObject\ClassDefinition\Data $fieldDefinition, $name, $language)
     {
         $lazyKey = $name . LazyLoadedFieldsInterface::LAZY_KEY_SEPARATOR . $language;
-        if ($this->hasLazyKey($lazyKey)) {
+        if (!$this->isLazyKeyLoaded($lazyKey)) {
             $params['language'] = $language;
             $params['object'] = $this->getObject();
             $params['context'] = $this->getContext();
@@ -318,7 +353,7 @@ class Localizedfield extends Model\AbstractModel implements DirtyIndicatorInterf
 
             AbstractObject::setDisableDirtyDetection($isDirtyDetectionDisabled);
 
-            $this->removeLazyKey($lazyKey);
+            $this->markLazyKeyAsLoaded($lazyKey);
         }
     }
 
@@ -335,7 +370,7 @@ class Localizedfield extends Model\AbstractModel implements DirtyIndicatorInterf
         $language = $this->getLanguage($language);
 
         $context = $this->getContext();
-        $fieldDefinition = $this->getFieldDefinitionFromContext($name, $context);
+        $fieldDefinition = $this->getFieldDefinition($name, $context);
 
         if ($fieldDefinition instanceof Model\DataObject\ClassDefinition\Data\CalculatedValue) {
             $valueData = new Model\DataObject\Data\CalculatedValue($fieldDefinition->getName());
@@ -345,7 +380,7 @@ class Localizedfield extends Model\AbstractModel implements DirtyIndicatorInterf
             return $data;
         }
 
-        if ($fieldDefinition instanceof  Model\DataObject\ClassDefinition\Data\Relations\AbstractRelations && !self::isLazyLoadingDisabled() && $fieldDefinition->getLazyLoading()) /* TODO only do this if this->moadel->isLazyloading */ {
+        if ($fieldDefinition instanceof  Model\DataObject\ClassDefinition\Data\Relations\AbstractRelations && !Concrete::isLazyLoadingDisabled() && $fieldDefinition->getLazyLoading()) /* TODO only do this if this->moadel->isLazyloading */ {
             $this->loadLazyField($fieldDefinition, $name, $language);
         }
 
@@ -497,9 +532,21 @@ class Localizedfield extends Model\AbstractModel implements DirtyIndicatorInterf
         }
         $this->items[$language][$name] = $value;
         $lazyKey = $name . LazyLoadedFieldsInterface::LAZY_KEY_SEPARATOR . $language;
-        $this->removeLazyKey($lazyKey);
+        $this->markLazyKeyAsLoaded($lazyKey);
 
         return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function isAllLazyKeysMarkedAsLoaded() : bool {
+        $object = $this->getObject();
+        if($object instanceof Concrete) {
+            return $this->getObject()->isAllLazyKeysMarkedAsLoaded();
+        }
+
+        return true;
     }
 
     /**
@@ -507,7 +554,20 @@ class Localizedfield extends Model\AbstractModel implements DirtyIndicatorInterf
      */
     public function __sleep()
     {
-        return ['items', 'context', 'objectId', 'lazyKeys'];
+        if (!isset($this->getObject()->_fulldump)) {
+            /**
+             * Remove all lazy loaded fields if item gets serialized for the cache (not for versions)
+             * This is actually not perfect, but currently we don't have an alternative
+             */
+            $lazyLoadedFields = $this->getLazyLoadedFieldNames();
+            foreach ($lazyLoadedFields as $fieldName) {
+                foreach (Tool::getValidLanguages() as $language) {
+                    unset($this->items[$language][$fieldName]);
+                }
+            }
+        }
+
+        return ['items', 'context', 'objectId'];
     }
 
     /**
@@ -606,5 +666,21 @@ class Localizedfield extends Model\AbstractModel implements DirtyIndicatorInterf
         if (!$this->o_dirtyLanguages) {
             $this->o_dirtyLanguages = null;
         }
+    }
+
+    /**
+     * @inheritdoc
+     */
+    protected function getLazyLoadedFieldNames(): array
+    {
+        $lazyLoadedFieldNames = [];
+        $fields = $this->getFieldDefinitions($this->getContext(), ['suppressEnrichment' => true]);
+        foreach($fields as $field) {
+            if(method_exists($field, 'getLazyLoading') && $field->getLazyLoading()) {
+                $lazyLoadedFieldNames[] = $field->getName();
+            }
+        }
+
+        return $lazyLoadedFieldNames;
     }
 }

@@ -18,12 +18,15 @@
 namespace Pimcore\Model\DataObject\Fieldcollection\Data;
 
 use Pimcore\Model;
+use Pimcore\Model\DataObject\Concrete;
 
 /**
- * @method \Pimcore\Model\DataObject\Fieldcollection\Data\Dao getDao()
+ * @method Dao getDao()
  */
-abstract class AbstractData extends Model\AbstractModel
+abstract class AbstractData extends Model\AbstractModel implements Model\DataObject\LazyLoadedFieldsInterface
 {
+    use Model\DataObject\Traits\LazyLoadedRelationTrait;
+
     /**
      * @var int
      */
@@ -143,5 +146,56 @@ abstract class AbstractData extends Model\AbstractModel
     public function set($fieldName, $value, $language = null)
     {
         return $this->{'set'.ucfirst($fieldName)}($value, $language);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    protected function getLazyLoadedFieldNames(): array
+    {
+        $lazyLoadedFieldNames = [];
+        $fields = $this->getDefinition()->getFieldDefinitions(['suppressEnrichment' => true]);
+        foreach($fields as $field) {
+            if(method_exists($field, 'getLazyLoading') && $field->getLazyLoading()) {
+                $lazyLoadedFieldNames[] = $field->getName();
+            }
+        }
+
+        return $lazyLoadedFieldNames;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function isAllLazyKeysMarkedAsLoaded() : bool {
+        $object = $this->getObject();
+        if($object instanceof Concrete) {
+            return $this->getObject()->isAllLazyKeysMarkedAsLoaded();
+        }
+
+        return true;
+    }
+
+    /**
+     * @return array
+     */
+    public function __sleep()
+    {
+        $parentVars = parent::__sleep();
+        $blockedVars = ['loadedLazyKeys'];
+        $finalVars = [];
+
+        if (!isset($this->getObject()->_fulldump)) {
+            //Remove all lazy loaded fields if item gets serialized for the cache (not for versions)
+            $blockedVars = array_merge($this->getLazyLoadedFieldNames(), $blockedVars);
+        }
+
+        foreach ($parentVars as $key) {
+            if (!in_array($key, $blockedVars)) {
+                $finalVars[] = $key;
+            }
+        }
+
+        return $finalVars;
     }
 }

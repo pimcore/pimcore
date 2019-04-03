@@ -307,17 +307,7 @@ class Version extends AbstractModel
         }
 
         if ($data instanceof Concrete) {
-            /** @var $class ClassDefinition */
-            $class = $data->getClass();
-            $fds = $class->getFieldDefinitions();
-            foreach ($fds as $fd) {
-                if (method_exists($fd, 'getLazyLoading') && $fd->getLazyLoading()) {
-                    if (!$fd instanceof ReverseManyToManyObjectRelation) {
-                        $data->addLazyLoadedField($fd->getName());
-                        $data->removeLazyKey($fd->getName());
-                    }
-                }
-            }
+            $data->markAllLazyLoadedKeysAsLoaded();
         }
 
         if ($data instanceof Asset && file_exists($this->getBinaryFilePath())) {

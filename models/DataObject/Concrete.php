@@ -62,11 +62,6 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
     protected $o_versions = null;
 
     /**
-     * @var array
-     */
-    protected $lazyLoadedFields = [];
-
-    /**
      * Contains all scheduled tasks
      *
      * @var array
@@ -77,6 +72,11 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
      * @var bool
      */
     protected $omitMandatoryCheck = false;
+
+    /**
+     * @var bool
+     */
+    protected $allLazyKeysMarkedAsLoaded = false;
 
     /**
      * returns the class ID of the current object class
@@ -95,23 +95,6 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
         // nothing to do here
     }
 
-    /**
-     * @param  string $fieldName
-     */
-    public function addLazyLoadedField($fieldName)
-    {
-        if (!in_array($fieldName, $this->lazyLoadedFields)) {
-            $this->lazyLoadedFields[] = $fieldName;
-        }
-    }
-
-    /**
-     * @return array
-     */
-    public function getLazyLoadedFields()
-    {
-        return (array) $this->lazyLoadedFields;
-    }
 
     /**
      * @param $isUpdate
@@ -712,20 +695,54 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
         return $this;
     }
 
+    /**
+     * @internal
+     * @inheritdoc
+     */
+    public function getLazyLoadedFieldNames(): array
+    {
+        $lazyLoadedFieldNames = [];
+        $fields = $this->getClass()->getFieldDefinitions(['suppressEnrichment' => true]);
+        foreach($fields as $field) {
+            if(method_exists($field, 'getLazyLoading') && $field->getLazyLoading()) {
+                $lazyLoadedFieldNames[] = $field->getName();
+            }
+        }
+
+        return $lazyLoadedFieldNames;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function isAllLazyKeysMarkedAsLoaded() : bool {
+
+        if(!$this->getId()) {
+            return true;
+        }
+
+        return $this->allLazyKeysMarkedAsLoaded;
+    }
+
+    public function markAllLazyLoadedKeysAsLoaded() {
+        $this->allLazyKeysMarkedAsLoaded = true;
+    }
+
     public function __sleep()
     {
         $parentVars = parent::__sleep();
 
         $finalVars = [];
-        $lazyLoadedFields = $this->getLazyLoadedFields();
+        $blockedVars = ['loadedLazyKeys', 'allLazyKeysMarkedAsLoaded'];
+
+        if (!isset($this->_fulldump)) {
+            // do not dump lazy loaded fields for caching
+            $lazyLoadedFields = $this->getLazyLoadedFieldNames();
+            $blockedVars = array_merge($lazyLoadedFields, $blockedVars);
+        }
 
         foreach ($parentVars as $key) {
-            if (in_array($key, $lazyLoadedFields)) {
-                // prevent lazyloading properties to go into the cache, only to version and recyclebin, ... (_fulldump)
-                if (isset($this->_fulldump)) {
-                    $finalVars[] = $key;
-                }
-            } else {
+            if (!in_array($key, $blockedVars)) {
                 $finalVars[] = $key;
             }
         }
@@ -751,5 +768,38 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
     public function __clone()
     {
         parent::__clone();
+    }
+
+
+    /**
+     * @var bool
+     */
+    protected static $disableLazyLoading = false;
+
+    /**
+     * @internal
+     * Disables lazy loading
+     */
+    public static function disableLazyLoading()
+    {
+        self::$disableLazyLoading = true;
+    }
+
+    /**
+     * @internal
+     * Enables the lazy loading
+     */
+    public static function enableLazyloading()
+    {
+        self::$disableLazyLoading = false;
+    }
+
+    /**
+     * @internal
+     * @return bool
+     */
+    public static function isLazyLoadingDisabled()
+    {
+        return self::$disableLazyLoading;
     }
 }
