@@ -23,5 +23,5 @@ interface AdminAsyncLoadInterface
     /**
      * @return bool
      */
-    public function getEnableAdminAsyncLoad();
+    public function getEnableAdminAsyncLoad() : bool;
 }
