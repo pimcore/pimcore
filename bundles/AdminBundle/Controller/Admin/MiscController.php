@@ -20,6 +20,7 @@ use Pimcore\Controller\Configuration\TemplatePhp;
 use Pimcore\Db;
 use Pimcore\File;
 use Pimcore\Tool;
+use Pimcore\Translation\Translator;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -169,7 +170,8 @@ class MiscController extends AdminController
             }
         }
 
-        $response = new Response('pimcore.system_i18n = ' . $this->encodeJson($translations) . ';');
+        $caseInsensitive = $translator instanceof Translator && $translator->getCaseInsensitive() ? "true" : "false";
+        $response = new Response('pimcore.system_i18n = ' . $this->encodeJson($translations) . ';pimcore.system_i18n_case_insensitive='. $caseInsensitive);
         $response->headers->set('Content-Type', 'text/javascript');
 
         return $response;

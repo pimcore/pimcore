@@ -29,13 +29,23 @@ function t(key, defaultValue) {
         return $1;
     });
 
-    if (pimcore && pimcore.system_i18n && pimcore.system_i18n[key]) {
-        pimcore.globalmanager.get("translations_admin_translated_values").push(pimcore.system_i18n[key]);
-        return pimcore.system_i18n[key];
-    } else {
+    var originalKey = key;
+    if(pimcore.system_i18n_case_insensitive && key){
+        key = key.toLocaleLowerCase();
+    }
+
+    if (pimcore && pimcore.system_i18n && (pimcore.system_i18n[key] || pimcore.system_i18n[originalKey])) {
+        var trans = pimcore.system_i18n[originalKey] ? pimcore.system_i18n[originalKey] : pimcore.system_i18n[key];
+        pimcore.globalmanager.get("translations_admin_translated_values").push(trans);
+        return trans;
+    }
+
+    var transKeys = Object.keys(pimcore.system_i18n);
+    if(pimcore && pimcore.system_i18n && transKeys.indexOf(key) === -1 && transKeys.indexOf(originalKey) === -1){
         if(!defaultValue && !in_array(key, alreadyTranslated)) {
             if(pimcore.globalmanager.exists("translations_admin_missing")) {
-                if (!in_array(key, pimcore.globalmanager.get("translations_admin_added"))) {
+                if (!in_array(key, pimcore.globalmanager.get("translations_admin_added")) &&
+                    !in_array(key, pimcore.globalmanager.get("translations_admin_missing"))) {
                     pimcore.globalmanager.get("translations_admin_missing").push(key);
                 }
             }
@@ -47,7 +57,7 @@ function t(key, defaultValue) {
     }  else if (defaultValue) {
         return defaultValue;
     } else {
-        return key;
+        return originalKey;
     }
 }
 
