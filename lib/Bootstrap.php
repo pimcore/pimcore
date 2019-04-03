@@ -123,14 +123,14 @@ class Bootstrap
         $loader = include __DIR__ . '/../../../../vendor/autoload.php';
         self::defineConstants();
 
-        if (is_integer(PIMCORE_PHP_ERROR_REPORTING)) {
+        if (defined(PIMCORE_PHP_ERROR_REPORTING)) {
             error_reporting(PIMCORE_PHP_ERROR_REPORTING);
         }
 
         \Pimcore::setAutoloader($loader);
         self::autoload();
 
-        if ('syslog' === PIMCORE_PHP_ERROR_LOG || is_writable(dirname(PIMCORE_PHP_ERROR_LOG))) {
+        if (defined('PIMCORE_PHP_ERROR_LOG')) {
             ini_set('error_log', PIMCORE_PHP_ERROR_LOG);
             ini_set('log_errors', '1');
         }
