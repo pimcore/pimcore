@@ -413,7 +413,6 @@ class DataObjectController extends ElementControllerBase implements EventedContr
             }
 
             if ($object instanceof DataObject\Concrete) {
-                $objectData['lazyLoadedFields'] = $object->getLazyLoadedFields();
                 $objectData['general']['linkGeneratorReference'] = $object->getClass()->getLinkGeneratorReference();
             }
 
@@ -536,6 +535,8 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                 !$objectFromVersion
                 && $fielddefinition instanceof DataObject\ClassDefinition\Data\Relations\AbstractRelations
                 && $fielddefinition->getLazyLoading()
+                && !$fielddefinition instanceof DataObject\ClassDefinition\Data\AdvancedManyToManyObjectRelation
+                && !$fielddefinition instanceof DataObject\ClassDefinition\Data\AdvancedManyToManyRelation
             )
             || $fielddefinition instanceof ReverseManyToManyObjectRelation
         ) {
@@ -568,7 +569,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                     || ($fielddefinition instanceof ManyToManyObjectRelation && !$fielddefinition->getVisibleFields())
                 ) {
                     foreach ($relations as $rel) {
-                        if ($fielddefinition instanceof ManyToManyObjectRelation) {
+                        if ($fielddefinition instanceof ManyToManyObjectRelation || $fielddefinition instanceof DataObject\ClassDefinition\Data\ManyToManyRelation) {
                             $rel['fullpath'] = $rel['path'];
                             $rel['classname'] = $rel['subtype'];
                             $rel['rowId'] = $rel['id'] . '$$' . $rel['type'];
@@ -586,7 +587,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                     }
                 } else {
                     $fieldData = $object->$getter();
-                    $data = $fielddefinition->getDataForEditmode($fieldData, $object, $objectFromVersion);
+                    $data = $fielddefinition->getDataForEditmode($fieldData, $object, ['objectFromVersion' => $objectFromVersion]);
                 }
                 $this->objectData[$key] = $data;
                 $this->metaData[$key]['objectid'] = $object->getId();
@@ -599,9 +600,9 @@ class DataObjectController extends ElementControllerBase implements EventedContr
             if ($fielddefinition instanceof DataObject\ClassDefinition\Data\CalculatedValue) {
                 $fieldData = new DataObject\Data\CalculatedValue($fielddefinition->getName());
                 $fieldData->setContextualData('object', null, null, null);
-                $value = $fielddefinition->getDataForEditmode($fieldData, $object, $objectFromVersion);
+                $value = $fielddefinition->getDataForEditmode($fieldData, $object, ['objectFromVersion' => $objectFromVersion]);
             } else {
-                $value = $fielddefinition->getDataForEditmode($fieldData, $object, $objectFromVersion);
+                $value = $fielddefinition->getDataForEditmode($fieldData, $object, ['objectFromVersion' => $objectFromVersion]);
             }
 
             // following some exceptions for special data types (localizedfields, objectbricks)
@@ -2016,7 +2017,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                 $targetParent = DataObject::getById($request->get('targetParentId'));
             }
 
-            $targetPath = preg_replace('@^' . $sourceParent->getRealFullPath() . '@', $targetParent . '/', $source->getRealPath());
+            $targetPath = preg_replace('@^' . preg_quote($sourceParent->getRealFullPath(), '@') . '@', $targetParent . '/', $source->getRealPath());
             $target = DataObject::getByPath($targetPath);
         } else {
             $target = DataObject::getById($targetId);

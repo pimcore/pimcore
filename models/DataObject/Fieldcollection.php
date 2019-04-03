@@ -22,10 +22,8 @@ use Pimcore\Model;
 /**
  * @method \Pimcore\Model\DataObject\Fieldcollection\Dao getDao()
  */
-class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyIndicatorInterface, LazyLoadedFieldsInterface
+class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyIndicatorInterface
 {
-    use Model\DataObject\Traits\LazyLoadedRelationTrait;
-
     use Model\DataObject\Traits\DirtyIndicatorTrait;
 
     /**
@@ -249,18 +247,6 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyInd
     }
 
     /**
-     * @param $type
-     * @param $fieldname
-     * @param $index
-     *
-     * @return string
-     */
-    public static function generateLazyKey($type, $fcField, $index, $fieldname)
-    {
-        return $type . '_' . $fcField . '_' . $index . '_' . $fieldname;
-    }
-
-    /**
      * @param Concrete $object
      * @param $type
      * @param $fcField
@@ -271,8 +257,11 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyInd
      */
     public function loadLazyField(Concrete $object, $type, $fcField, $index, $field)
     {
-        $lazyKey = self::generateLazyKey($type, $fcField, $index, $field);
-        if ($this->hasLazyKey($lazyKey)) {
+        /**
+         * @var Model\DataObject\Fieldcollection\Data\AbstractData $item
+         */
+        $item = $this->get($index);
+        if ($item && !$item->isLazyKeyLoaded($field)) {
             $fcDef = Model\DataObject\Fieldcollection\Definition::getByKey($type);
             /** @var $fieldDef Model\DataObject\ClassDefinition\Data\CustomResourcePersistingInterface */
             $fieldDef = $fcDef->getFieldDefinition($field);
@@ -289,27 +278,24 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyInd
             $isDirtyDetectionDisabled = AbstractObject::isDirtyDetectionDisabled();
             AbstractObject::disableDirtyDetection();
 
-            $colGetter = 'get' . ucfirst($fcField);
-            $collectionContainer = $object->$colGetter();
-            $collection = null;
-            if ($collectionContainer) {
-                $collection = $collectionContainer->get($index);
-            }
-
-            if (!$collection) {
-                $collectionClass = '\\Pimcore\\Model\\DataObject\\Fieldcollection\\Data\\' . ucfirst($type);
-                $modelFactory = \Pimcore::getContainer()->get('pimcore.model.factory');
-                $collection = $modelFactory->build($collectionClass);
-                $collection->setIndex($index);
-                $collection->setFieldname($fcField);
-                $collection->setObject($object);
-            }
-
-            $data = $fieldDef->load($collection, $params);
+            $data = $fieldDef->load($item, $params);
             AbstractObject::setDisableDirtyDetection($isDirtyDetectionDisabled);
-            $collection->setObjectVar($field, $data);
-            $object->setObjectVar($fcField, $collectionContainer);
-            $this->removeLazyKey($lazyKey);
+            $item->setObjectVar($field, $data);
+            $item->markLazyKeyAsLoaded($field);
         }
+    }
+
+    /**
+     * @return Concrete|null
+     */
+    protected function getObject(): ?Concrete
+    {
+        $this->rewind();
+        $item = $this->current();
+        if ($item instanceof Model\DataObject\Fieldcollection\Data\AbstractData) {
+            return $item->getObject();
+        }
+
+        return null;
     }
 }

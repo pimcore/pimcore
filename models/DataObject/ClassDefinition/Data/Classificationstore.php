@@ -1222,7 +1222,8 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
                     continue;
                 }
                 $definition = \Pimcore\Model\DataObject\Classificationstore\Service::getFieldDefinitionFromKeyConfig($keyGroupRelation);
-                $definition->setTooltip($definition->getName() . ' - ' . $keyGroupRelation->getDescription());
+                $fallbackTooltip = $definition->getName() . ' - ' . $keyGroupRelation->getDescription();
+                $definition->setTooltip($definition->getTooltip() ?: $fallbackTooltip);
 
                 if (method_exists($definition, '__wakeup')) {
                     $definition->__wakeup();

@@ -113,7 +113,7 @@ pimcore.object.tags.advancedManyToManyObjectRelation = Class.create(pimcore.obje
 
                 var fc = pimcore.object.tags[layout.fieldtype].prototype.getGridColumnConfig(field);
 
-                fc.width = 100;
+                fc.flex = 1;
                 fc.hidden = false;
                 fc.layout = field;
                 fc.editor = null;

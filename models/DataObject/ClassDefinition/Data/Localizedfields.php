@@ -158,9 +158,9 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
         $dataItems = $data->getInternalData(true);
         foreach ($dataItems as $language => $values) {
             foreach ($this->getFieldDefinitions() as $fd) {
-                if ($fd instanceof Data\Relations\AbstractRelations && !DataObject\Localizedfield::isLazyLoadingDisabled() && $fd->getLazyLoading()) {
-                    $lazyKey = $fd->getName() . '_' . $language;
-                    if ($data->hasLazyKey($lazyKey)) {
+                if ($fd instanceof Data\Relations\AbstractRelations && !DataObject\Concrete::isLazyLoadingDisabled() && $fd->getLazyLoading()) {
+                    $lazyKey = $fd->getName() . DataObject\LazyLoadedFieldsInterface::LAZY_KEY_SEPARATOR . $language;
+                    if (!$data->isLazyKeyLoaded($lazyKey)) {
                         $params['language'] = $language;
                         $params['object'] = $object;
                         if (!isset($params['context'])) {
@@ -174,7 +174,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
                             $values[$fd->getName()] = $value;
                         }
 
-                        $data->removeLazyKey($lazyKey);
+                        $data->markLazyKeyAsLoaded($lazyKey);
                     }
                 }
 
@@ -1005,21 +1005,19 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
     /**
      * @param string $name
      *
-     * @return $this|void
+     * @return $this|Data
+     *
+     * @throws \Exception
      */
     public function setName($name)
     {
+        if ($name !== 'localizedfields') {
+            throw new \Exception('Localizedfields can only be named `localizedfields`, no other names are allowed');
+        }
+
         $this->name = $name;
 
         return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getName()
-    {
-        return $this->name;
     }
 
     /**
@@ -1040,26 +1038,6 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
     public function getRegion()
     {
         return $this->region;
-    }
-
-    /**
-     * @param string $title
-     *
-     * @return $this|void
-     */
-    public function setTitle($title)
-    {
-        $this->title = $title;
-
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getTitle()
-    {
-        return $this->title;
     }
 
     /**
@@ -1375,7 +1353,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
     public function marshal($value, $object = null, $params = [])
     {
         if ($value instanceof DataObject\Localizedfield) {
-            $items = $value->getItems();
+            $items = $value->getInternalData();
             if (is_array($items)) {
                 $result = [];
                 foreach ($items as $language => $languageData) {

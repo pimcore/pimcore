@@ -699,6 +699,6 @@
     "media": "Médias",
     "encrypt_data": "Crypter les données",
     "encrypt_data_description": "Data-at-Rest/Tablespace Encryption doit être activé sur votre serveur de base de données",
-    "reports_config": "Reports Config",
-    "lazy_loading_warning_block": "WARNING: Lazy Loading is NOT possible within Blocks"
+    "reports_config": "Rapports Config",
+    "lazy_loading_warning_block": "AVERTISSEMENT: le chargement paresseux n'est PAS possible dans les Blocs"
 }

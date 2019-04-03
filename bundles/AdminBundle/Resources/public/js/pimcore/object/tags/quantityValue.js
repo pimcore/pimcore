@@ -55,8 +55,6 @@ pimcore.object.tags.quantityValue = Class.create(pimcore.object.tags.abstract, {
 
         var input = {};
 
-        var valueInvalid = false;
-
         if (this.data && !isNaN(this.data.value)) {
             input.value = this.data.value;
         } else {
@@ -64,7 +62,6 @@ pimcore.object.tags.quantityValue = Class.create(pimcore.object.tags.abstract, {
             if (this.data) {
                 this.data.value = null;
             }
-            valueInvalid = true;
         }
 
         if (this.fieldConfig.width) {
@@ -117,7 +114,7 @@ pimcore.object.tags.quantityValue = Class.create(pimcore.object.tags.abstract, {
             items: [this.inputField, this.unitField],
             componentCls: "object_field",
             isDirty: function() {
-                return this.inputField.isDirty() || this.unitField.isDirty() || valueInvalid
+                return this.inputField.isDirty() || this.unitField.isDirty()
             }.bind(this)
         });
 

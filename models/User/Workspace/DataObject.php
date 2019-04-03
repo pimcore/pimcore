@@ -48,27 +48,6 @@ class DataObject extends AbstractWorkspace
     public $layouts = null;
 
     /**
-     * @var bool
-     */
-    public $sortBy = false;
-
-    /**
-     * @return bool
-     */
-    public function isSortBy(): bool
-    {
-        return $this->sortBy;
-    }
-
-    /**
-     * @param bool $sortBy
-     */
-    public function setSortBy(bool $sortBy)
-    {
-        $this->sortBy = $sortBy;
-    }
-
-    /**
      * @param $save
      *
      * @return $this

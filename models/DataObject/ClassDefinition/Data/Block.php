@@ -892,8 +892,6 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
                 $query = 'select ' . $db->quoteIdentifier($field) . ' from object_store_' . $container->getClassId() . ' where oo_id  = ' . $container->getId();
                 $data = $db->fetchOne($query);
                 $data = $this->getDataFromResource($data, $container, $params);
-            } else {
-                return null;
             }
         } elseif ($container instanceof DataObject\Localizedfield) {
             $context = $params['context'];
@@ -953,7 +951,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
         $data = null;
         if ($object instanceof DataObject\Concrete) {
             $data = $object->getObjectVar($this->getName());
-            if ($this->getLazyLoading() && $object->hasLazyKey($this->getName())) {
+            if ($this->getLazyLoading() && !$object->isLazyKeyLoaded($this->getName())) {
                 $data = $this->load($object, ['force' => true]);
 
                 $setter = 'set' . ucfirst($this->getName());

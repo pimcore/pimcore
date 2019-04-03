@@ -150,7 +150,12 @@ class Dao extends Model\Dao\AbstractDao
                     ];
 
                     if ($fd instanceof DataObject\ClassDefinition\Data\Relations\AbstractRelations) {
-                        if ($this->model->isLanguageDirty($language) || $params['saveLocalizedRelations']) {
+                        if ((isset($params['saveRelationalData'])
+                                && $params['saveRelationalData']['saveLocalizedRelations']
+                                && $container instanceof DataObject\Fieldcollection\Definition
+                                && !$container instanceof DataObject\Objectbrick\Definition
+                            )
+                            || ($this->model->isLanguageDirty($language) || $params['saveRelationalData']['saveLocalizedRelations'])) {
                             $fd->save($this->model, $childParams);
                         }
                     } else {
@@ -439,7 +444,10 @@ class Dao extends Model\Dao\AbstractDao
 
         $db = Db::get();
 
-        if ($this->model->allLanguagesAreDirty() || $container instanceof DataObject\Objectbrick\Definition || $container instanceof DataObject\Fieldcollection\Definition) {
+        if ($this->model->allLanguagesAreDirty() ||
+            ($container instanceof DataObject\Fieldcollection\Definition
+            && !$container instanceof DataObject\Objectbrick\Definition)
+            ) {
             $dirtyLanguageCondition = '';
         } elseif ($this->model->hasDirtyLanguages()) {
             $languageList = [];
@@ -548,9 +556,8 @@ class Dao extends Model\Dao\AbstractDao
                         }
                         $params['context']['object'] = $object;
 
-                        if ($fd instanceof  DataObject\ClassDefinition\Data\Relations\AbstractRelations && !DataObject\Localizedfield::isLazyLoadingDisabled() && $fd->getLazyLoading()) {
-                            $lazyKey = $fd->getName() . '_' . $row['language'];
-                            $this->model->addLazyKey($lazyKey);
+                        if ($fd instanceof  DataObject\ClassDefinition\Data\Relations\AbstractRelations && !DataObject\Concrete::isLazyLoadingDisabled() && $fd->getLazyLoading()) {
+                            $lazyKey = $fd->getName() . DataObject\LazyLoadedFieldsInterface::LAZY_KEY_SEPARATOR . $row['language'];
                         } else {
                             $value = $fd->load($this->model, $params);
                             if ($value === 0 || !empty($value)) {
