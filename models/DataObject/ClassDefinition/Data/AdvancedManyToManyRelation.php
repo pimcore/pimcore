@@ -49,7 +49,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
     /**
      * @var bool
      */
-    public $enableAdminAsyncLoad;
+    public $enableAdminAsyncLoad = false;
 
     /**
      * @inheritdoc
@@ -1182,7 +1182,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
      */
     public function getEnableAdminAsyncLoad() : bool
     {
-        return $this->enableAdminAsyncLoad;
+        return (bool) $this->enableAdminAsyncLoad;
     }
 
     /**
@@ -1192,6 +1192,4 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
     {
         $this->enableAdminAsyncLoad = $enableAdminAsyncLoad;
     }
-
-
 }
