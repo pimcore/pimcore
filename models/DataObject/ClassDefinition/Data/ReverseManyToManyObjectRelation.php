@@ -288,4 +288,12 @@ class ReverseManyToManyObjectRelation extends ManyToManyObjectRelation
     {
         return null;
     }
+
+    /**
+     * @return bool
+     */
+    public function isOptimizedAdminLoading() : bool
+    {
+        return true;
+    }
 }

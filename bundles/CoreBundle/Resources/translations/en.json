@@ -883,6 +883,7 @@
   "paste_recursive_as_language_variant_updating_references": "Paste language (recursive), updating references",
   "redirects_expired_cleanup": "Cleanup Expired Redirects",
   "redirects_cleanup_warning": "Do you really want to cleanup expired redirects?",
-  "redirects_cleanup_error": "An error occurred while cleanup of expired redirects"
-
+  "redirects_cleanup_error": "An error occurred while cleanup of expired redirects",
+  "enable_admin_async_load": "Enable Async Load in Admin",
+  "async_loading_warning_block":  "WARNING: Async Loading is NOT possible within Localized Fields and Blocks"
 }

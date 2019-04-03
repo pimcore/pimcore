@@ -365,6 +365,21 @@ pimcore.object.classes.data.advancedManyToManyRelation = Class.create(pimcore.ob
         this.grids = {};
         this.specificPanel.add(this.getGrid("cols", this.datax.columns, true));
 
+        if(this.context == 'class') {
+            this.specificPanel.add({
+                xtype: "checkbox",
+                fieldLabel: t("enable_admin_async_load"),
+                name: "optimizedAdminLoading",
+                value: this.datax.optimizedAdminLoading
+            });
+            this.specificPanel.add({
+                xtype: "displayfield",
+                hideLabel: true,
+                value: t('async_loading_warning_block'),
+                cls: "pimcore_extra_label_bottom"
+            });
+        }
+
 
         return this.layout;
     },

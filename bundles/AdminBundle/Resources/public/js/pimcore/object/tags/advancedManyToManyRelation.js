@@ -43,6 +43,7 @@ pimcore.object.tags.advancedManyToManyRelation = Class.create(pimcore.object.tag
             fields.push(this.fieldConfig.columns[i].key);
         }
 
+        fields.push("rowId");
 
         var modelName = 'ObjectsMultihrefMetadataEntry';
         if(!Ext.ClassManager.isCreated(modelName) ) {
@@ -91,8 +92,7 @@ pimcore.object.tags.advancedManyToManyRelation = Class.create(pimcore.object.tag
 
         var columns = [];
         columns.push({text: 'ID', dataIndex: 'id', width: 50});
-        columns.push({text: t('reference'), dataIndex: 'path', flex: 1, renderer:this.fullPathRenderCheck.bind(this)
-        });
+        columns.push({text: t('reference'), dataIndex: 'path', flex: 1, renderer:this.fullPathRenderCheck.bind(this)});
 
         var visibleFieldsCount = columns.length;
 
@@ -342,8 +342,8 @@ pimcore.object.tags.advancedManyToManyRelation = Class.create(pimcore.object.tag
                 },
                 markDirty: false,
                 listeners: {
-                    refresh: function (gridview) {
-                        this.requestNicePathData(this.store.data);
+                    afterrender: function (gridview) {
+                        this.requestNicePathData(this.store.data, true);
                     }.bind(this),
                     drop: function () {
                         // this is necessary to avoid endless recursion when long lists are sorted via d&d
@@ -589,32 +589,6 @@ pimcore.object.tags.advancedManyToManyRelation = Class.create(pimcore.object.tag
         }
         return isAllowed;
 
-    },
-
-    loadObjectData: function(item, fields) {
-
-        var newItem = this.store.add(item);
-
-        Ext.Ajax.request({
-            url: "/admin/object-helper/load-object-data",
-            params: {
-                id: item.id,
-                'fields[]': fields
-            },
-            success: function (response) {
-                var rdata = Ext.decode(response.responseText);
-                var key;
-
-                if(rdata.success) {
-                    var rec = this.store.getById(item.id);
-                    for(key in rdata.fields) {
-                        rec.set(key, rdata.fields[key]);
-                    }
-                }
-            }.bind(this)
-        });
-
-        return newItem;
     },
 
     empty: function () {
@@ -870,9 +844,15 @@ pimcore.object.tags.advancedManyToManyRelation = Class.create(pimcore.object.tag
 
     },
 
-    requestNicePathData: function(targets) {
+    requestNicePathData: function(targets, isInitialLoad) {
         if (!this.object) {
             return;
+        }
+
+        var context = this.getContext();
+        var loadEditModeData = false;
+        if(isInitialLoad && this.fieldConfig.optimizedAdminLoading && context['containerType'] == 'object') {
+            loadEditModeData = true;
         }
         pimcore.helpers.requestNicePathData(
             {
@@ -881,14 +861,17 @@ pimcore.object.tags.advancedManyToManyRelation = Class.create(pimcore.object.tag
             },
             targets,
             {
-                idProperty: this.idProperty
+                idProperty: this.idProperty,
+                loadEditModeData: loadEditModeData
             },
             this.fieldConfig,
-            this.getContext(),
+            context,
             pimcore.helpers.requestNicePathDataGridDecorator.bind(this, this.component.getView()),
             pimcore.helpers.getNicePathHandlerStore.bind(this, this.store, {
                 idProperty: this.idProperty,
-                pathProperty: this.pathProperty
+                pathProperty: this.pathProperty,
+                loadEditModeData: loadEditModeData,
+                fields: this.fieldConfig.columnKeys
             }, this.component.getView())
         );
     },

@@ -21,7 +21,7 @@ use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Relations\AbstractRelations;
 use Pimcore\Model\Element;
 
-class ManyToManyObjectRelation extends AbstractRelations implements QueryResourcePersistenceAwareInterface
+class ManyToManyObjectRelation extends AbstractRelations implements QueryResourcePersistenceAwareInterface, OptimizedAdminLoadingInterface
 {
     use Model\DataObject\ClassDefinition\Data\Extension\Relation;
     use Extension\QueryColumnType;
@@ -73,6 +73,11 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
      * @var
      */
     public $visibleFields;
+
+    /**
+     * @var bool
+     */
+    public $optimizedAdminLoading = false;
 
     /**
      * @return bool
@@ -924,4 +929,21 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
     {
         return $this->visibleFields;
     }
+
+    /**
+     * @return bool
+     */
+    public function isOptimizedAdminLoading() : bool
+    {
+        return (bool) $this->optimizedAdminLoading;
+    }
+
+    /**
+     * @param bool $optimizedAdminLoading
+     */
+    public function setOptimizedAdminLoading($optimizedAdminLoading)
+    {
+        $this->optimizedAdminLoading = $optimizedAdminLoading;
+    }
+
 }

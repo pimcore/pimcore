@@ -527,6 +527,31 @@ class ElementController extends AdminController
             }
         }
 
+
+        if($request->get('loadEditModeData') == 'true') {
+
+            $idProperty = $request->get('idProperty', 'id');
+
+            $methodName = 'get' . ucfirst($fieldname);
+            if ($ownerType == 'object' && method_exists($source, $methodName)) {
+                $data = $source->$methodName();
+                $editModeData = $fd->getDataForEditmode($data, $source);
+
+                if(is_array($editModeData)) {
+                    foreach($editModeData as $relationObjectAttribute) {
+                        $relationObjectAttribute['$$nicepath'] = $result[$relationObjectAttribute[$idProperty]];
+                        $result[$relationObjectAttribute[$idProperty]] = $relationObjectAttribute;
+                    }
+                } else {
+                    $editModeData['$$nicepath'] = $result[$editModeData[$idProperty]];
+                    $result[$editModeData[$idProperty]] = $editModeData;
+                }
+
+            } else {
+                Logger::error('Loading edit mode data is not supported for ownertype: ' . $ownerType);
+            }
+        }
+
         return $this->adminJson(['success' => true, 'data' => $result]);
     }
 

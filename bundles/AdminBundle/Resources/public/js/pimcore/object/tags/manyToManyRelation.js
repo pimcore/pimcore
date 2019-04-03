@@ -38,7 +38,8 @@ pimcore.object.tags.manyToManyRelation = Class.create(pimcore.object.tags.abstra
                     'fullpath',
                     'type',
                     'subtype',
-                    'published'
+                    'published',
+                    'rowId'
                 ]
             });
         }

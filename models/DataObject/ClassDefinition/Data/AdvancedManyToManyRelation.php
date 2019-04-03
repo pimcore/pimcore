@@ -47,6 +47,11 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
     public $phpdocType = '\\Pimcore\\Model\\DataObject\\Data\\ElementMetadata[]';
 
     /**
+     * @var bool
+     */
+    public $optimizedAdminLoading = false;
+
+    /**
      * @inheritdoc
      */
     public function prepareDataForPersistence($data, $object = null, $params = [])
@@ -295,6 +300,9 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
                     $getter = 'get' . ucfirst($c['key']);
                     $itemData[$c['key']] = $metaObject->$getter();
                 }
+
+                $itemData['rowId'] = $itemData['id'] . '$$' . $itemData['type'];
+
                 $return[] = $itemData;
             }
             if (empty($return)) {
@@ -1167,5 +1175,21 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
         $id = $element->getId();
 
         return $elementType . $id;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isOptimizedAdminLoading() : bool
+    {
+        return (bool) $this->optimizedAdminLoading;
+    }
+
+    /**
+     * @param bool $optimizedAdminLoading
+     */
+    public function setOptimizedAdminLoading($optimizedAdminLoading)
+    {
+        $this->optimizedAdminLoading = $optimizedAdminLoading;
     }
 }

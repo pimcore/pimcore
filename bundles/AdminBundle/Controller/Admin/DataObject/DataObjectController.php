@@ -554,12 +554,8 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                 $refKey = $key;
             }
 
-            $relations = [];
-            if (!$fielddefinition instanceof ManyToManyObjectRelation
-                || ($fielddefinition instanceof ManyToManyObjectRelation && !$fielddefinition->getVisibleFields())
-                || $fielddefinition instanceof ReverseManyToManyObjectRelation) {
-                $relations = $object->getRelationData($refKey, !$fielddefinition->isRemoteOwner(), $refId);
-            }
+            $relations = $object->getRelationData($refKey, !$fielddefinition->isRemoteOwner(), $refId);
+
             if (empty($relations) && !empty($parent)) {
                 $this->getDataForField($parent, $key, $fielddefinition, $objectFromVersion, $level + 1);
             } else {
@@ -567,25 +563,31 @@ class DataObjectController extends ElementControllerBase implements EventedContr
 
                 if ($fielddefinition instanceof DataObject\ClassDefinition\Data\ManyToOneRelation) {
                     $data = $relations[0];
-                    $data['published'] = (bool) $data['published'];
-                } elseif (($fielddefinition instanceof ManyToManyObjectRelation && $fielddefinition->getVisibleFields()) && !$fielddefinition instanceof ReverseManyToManyObjectRelation) {
-                    $fieldData = $object->$getter();
-                    $data = $fielddefinition->getDataForEditmode($fieldData, $object,
-                        ['objectFromVersion' => $objectFromVersion]);
-                } else {
+                    $data['published'] = (bool)$data['published'];
+                } else if(
+                    ($fielddefinition instanceof DataObject\ClassDefinition\Data\OptimizedAdminLoadingInterface && $fielddefinition->isOptimizedAdminLoading())
+                    || ($fielddefinition instanceof ManyToManyObjectRelation && !$fielddefinition->getVisibleFields())
+                ) {
                     foreach ($relations as $rel) {
                         if ($fielddefinition instanceof ManyToManyObjectRelation || $fielddefinition instanceof DataObject\ClassDefinition\Data\ManyToManyRelation) {
                             $rel['fullpath'] = $rel['path'];
                             $rel['classname'] = $rel['subtype'];
+                            $rel['rowId'] = $rel['id'] . '$$' . $rel['type'];
                             $data[] = $rel;
                         } else {
-                            $data[] = [$rel['id'],
-                                $rel['path'],
-                                $rel['type'],
-                                $rel['subtype'],
-                                (bool)$rel['published']];
+                            $data[] = [
+                                'id' => $rel['id'],
+                                'path' => $rel['path'],
+                                'type' => $rel['type'],
+                                'subtype' => $rel['subtype'],
+                                'published' => (bool)$rel['published'],
+                                'rowId' => $rel['id'] . '$$' . $rel['type']
+                            ];
                         }
                     }
+                } else {
+                    $fieldData = $object->$getter();
+                    $data = $fielddefinition->getDataForEditmode($fieldData, $object, ['objectFromVersion' => $objectFromVersion]);
                 }
                 $this->objectData[$key] = $data;
                 $this->metaData[$key]['objectid'] = $object->getId();
