@@ -17,6 +17,7 @@
 
 namespace Pimcore\Model\Element;
 
+use Pimcore\Db;
 use Pimcore\Db\ZendCompatibility\QueryBuilder;
 use Pimcore\Event\SystemEvents;
 use Pimcore\File;
@@ -236,6 +237,91 @@ class Service extends Model\AbstractModel
         }
 
         return false;
+    }
+
+
+    /**
+     * @param $data
+     * @return array
+     * @throws \Exception
+     */
+    public static function filterUnpublishedAdvancedElements($data)
+    {
+        if (DataObject\AbstractObject::doHideUnpublished() and is_array($data)) {
+
+            $publishedList = [];
+            $mapping = [];
+            foreach ($data as $advancedElement) {
+                if (!$advancedElement instanceof DataObject\Data\ObjectMetadata
+                    && !$advancedElement instanceof DataObject\Data\ElementMetadata) {
+                    throw new \Exception("only supported for advanced many-to-many (+object) relations");
+                }
+
+                $elementId = null;
+                if ($advancedElement instanceof DataObject\Data\ObjectMetadata) {
+                    $elementId = $advancedElement->getObjectId();
+                    $elementType = "object";
+                } else {
+                    $elementId = $advancedElement->getElementId();
+                    $elementType = $advancedElement->getElementType();
+                }
+
+                if (!$elementId) {
+                    continue;
+                }
+                if ($elementType == "asset") {
+                    // there is no published flag for assets
+                    continue;
+                }
+                $mapping[$elementType][$elementId] = true;
+            }
+
+            $db = Db::get();
+            $publishedMapping = [];
+
+            // now do the query;
+            foreach ($mapping as $elementType => $idList) {
+                $idList = array_keys($mapping[$elementType]);
+                switch ($elementType) {
+                    case "document":
+                        $idColumn = "id";
+                        $publishedColumn = "published";
+                        break;
+                    case "object":
+                        $idColumn = "o_id";
+                        $publishedColumn = "o_published";
+                        break;
+                    default:
+                        throw new \Exception("unknown type");
+                }
+                $query = "SELECT " . $idColumn . " FROM " . $elementType . "s WHERE " . $publishedColumn . "=1 AND " . $idColumn . " IN (" . implode(",", $idList) . ");";
+                $publishedIds = $db->fetchCol($query);
+                $publishedMapping[$elementType] = $publishedIds;
+            }
+
+            foreach ($data as $advancedElement) {
+                $elementId = null;
+                if ($advancedElement instanceof DataObject\Data\ObjectMetadata) {
+                    $elementId = $advancedElement->getObjectId();
+                    $elementType = "object";
+                } else {
+                    $elementId = $advancedElement->getElementId();
+                    $elementType = $advancedElement->getElementType();
+                }
+
+                if ($elementType == "asset") {
+                    $publishedList[] = $advancedElement;
+                }
+
+                if (isset($publishedMapping[$elementType]) && in_array($elementId, $publishedMapping[$elementType])) {
+                    $publishedList[] = $advancedElement;
+                }
+            }
+
+            return $publishedList;
+        }
+
+        return is_array($data) ? $data : [];
     }
 
     /**
@@ -593,10 +679,10 @@ class Service extends Model\AbstractModel
         }
 
         // get workspaces
-        $workspaces = $user->{'getWorkspaces'.ucfirst($type)}();
+        $workspaces = $user->{'getWorkspaces' . ucfirst($type)}();
         foreach ($user->getRoles() as $roleId) {
             $role = Model\User\Role::getById($roleId);
-            $workspaces = array_merge($workspaces, $role->{'getWorkspaces'.ucfirst($type)}());
+            $workspaces = array_merge($workspaces, $role->{'getWorkspaces' . ucfirst($type)}());
         }
 
         $forbidden = [];
@@ -1052,7 +1138,8 @@ class Service extends Model\AbstractModel
     public static function cloneMe(ElementInterface $element)
     {
         $deepCopy = new \DeepCopy\DeepCopy();
-        $deepCopy->addFilter(new \DeepCopy\Filter\KeepFilter(), new class($element) implements \DeepCopy\Matcher\Matcher {
+        $deepCopy->addFilter(new \DeepCopy\Filter\KeepFilter(), new class($element) implements \DeepCopy\Matcher\Matcher
+        {
             /**
              * The element to be cloned
              *

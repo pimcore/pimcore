@@ -107,7 +107,6 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
             }
 
             foreach ($data as $element) {
-                $destination = null;
                 $source = DataObject::getById($element['src_id']);
 
                 if ($element['type'] && $element['dest_id']) {
@@ -656,7 +655,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
     {
         if (!DataObject\AbstractObject::isDirtyDetectionDisabled() && $object instanceof DataObject\DirtyIndicatorInterface) {
             if ($object instanceof DataObject\Localizedfield) {
-                if ($object->getObject() instanceof  DataObject\DirtyIndicatorInterface) {
+                if ($object->getObject() instanceof DataObject\DirtyIndicatorInterface) {
                     if (!$object->hasDirtyFields()) {
                         return;
                     }
@@ -721,12 +720,12 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
 
             if ($params && $params['context']) {
                 if ($params['context']['fieldname']) {
-                    $sql .= ' AND '.$db->quoteInto('ownername = ?', $params['context']['fieldname']);
+                    $sql .= ' AND ' . $db->quoteInto('ownername = ?', $params['context']['fieldname']);
                 }
 
                 if (!DataObject\AbstractObject::isDirtyDetectionDisabled() && $object instanceof DataObject\DirtyIndicatorInterface) {
                     if ($params['context']['containerType']) {
-                        $sql .= ' AND '.$db->quoteInto('ownertype = ?', $params['context']['containerType']);
+                        $sql .= ' AND ' . $db->quoteInto('ownertype = ?', $params['context']['containerType']);
                     }
                 }
             }
@@ -781,19 +780,9 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
             $data = $object->getObjectVar($this->getName());
         }
 
-        if (DataObject\AbstractObject::doHideUnpublished() and is_array($data)) {
-            $publishedList = [];
-            /** @var $listElement DataObject\Data\ElementMetadata */
-            foreach ($data as $listElement) {
-                if (Element\Service::isPublished($listElement->getElement())) {
-                    $publishedList[] = $listElement;
-                }
-            }
-
-            return $publishedList;
-        }
-
-        return is_array($data) ? $data : [];
+        // note, in case of advanced many to many relations we don't want to force the loading of the element
+        // instead, ask the database directly
+        return Element\Service::filterUnpublishedAdvancedElements($data);
     }
 
     /**
@@ -821,7 +810,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
                 $db->deleteWhere(
                     'object_metadata_' . $object->getClassId(),
                     $db->quoteInto('o_id = ?', $object->getId()) . " AND ownertype = 'localizedfield' AND "
-                    . $db->quoteInto('ownername LIKE ?', '/' . $params['context']['containerType'] .'~' . $containerName . '/' . $index . '/%')
+                    . $db->quoteInto('ownername LIKE ?', '/' . $params['context']['containerType'] . '~' . $containerName . '/' . $index . '/%')
                     . ' AND ' . $db->quoteInto('fieldname = ?', $this->getName())
                 );
             }
