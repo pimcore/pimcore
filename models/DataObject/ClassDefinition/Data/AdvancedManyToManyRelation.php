@@ -1180,7 +1180,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
     /**
      * @return bool
      */
-    public function getEnableAdminAsyncLoad()
+    public function getEnableAdminAsyncLoad() : bool
     {
         return $this->enableAdminAsyncLoad;
     }

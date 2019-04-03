@@ -1050,7 +1050,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
     /**
      * @return bool
      */
-    public function getEnableAdminAsyncLoad()
+    public function getEnableAdminAsyncLoad() : bool
     {
         return true;
     }

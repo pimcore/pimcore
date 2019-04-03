@@ -933,7 +933,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
     /**
      * @return bool
      */
-    public function getEnableAdminAsyncLoad()
+    public function getEnableAdminAsyncLoad() : bool
     {
         return $this->enableAdminAsyncLoad;
     }
@@ -941,7 +941,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
     /**
      * @param bool $enableAdminAsyncLoad
      */
-    public function setEnableAdminAsyncLoad($enableAdminAsyncLoad)
+    public function setEnableAdminAsyncLoad(bool $enableAdminAsyncLoad)
     {
         $this->enableAdminAsyncLoad = $enableAdminAsyncLoad;
     }
