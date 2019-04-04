@@ -123,7 +123,7 @@ class Bootstrap
         $loader = include __DIR__ . '/../../../../vendor/autoload.php';
         self::defineConstants();
 
-        if (defined(PIMCORE_PHP_ERROR_REPORTING)) {
+        if (defined('PIMCORE_PHP_ERROR_REPORTING')) {
             error_reporting(PIMCORE_PHP_ERROR_REPORTING);
         }
 
