@@ -130,7 +130,6 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
                                 'object' => null
                             ]);
 
-
                         $metaData->setOwner($container, $this->getName());
                         $metaData->setObjectId($destinationId);
 
@@ -709,9 +708,6 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
         // instead, ask the database directly
         return Element\Service::filterUnpublishedAdvancedElements($data);
     }
-
-
-
 
     /**
      * @param Element\AbstractElement $object

@@ -70,10 +70,12 @@ class ObjectMetadata extends Model\AbstractModel implements DataObject\OwnerAwar
 
         if (!$object) {
             $this->setObjectId(null);
+
             return;
         }
 
         $this->objectId = $object->getId();
+
         return $this;
     }
 
@@ -154,7 +156,6 @@ class ObjectMetadata extends Model\AbstractModel implements DataObject\OwnerAwar
     {
         return $this->fieldname;
     }
-
 
     /**
      * @return DataObject\Concrete

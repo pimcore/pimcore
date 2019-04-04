@@ -17,13 +17,13 @@
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
-
 interface OptimizedAdminLoadingInterface
 {
     /**
      * e.g. load relations directly from relations table and if necessary additional data
      * (like object attributes or meta data) asynchrously when the UI is ready
+     *
      * @return bool
      */
-    public function isOptimizedAdminLoading() : bool;
+    public function isOptimizedAdminLoading(): bool;
 }

@@ -239,28 +239,28 @@ class Service extends Model\AbstractModel
         return false;
     }
 
-
     /**
      * @param $data
+     *
      * @return array
+     *
      * @throws \Exception
      */
     public static function filterUnpublishedAdvancedElements($data)
     {
         if (DataObject\AbstractObject::doHideUnpublished() and is_array($data)) {
-
             $publishedList = [];
             $mapping = [];
             foreach ($data as $advancedElement) {
                 if (!$advancedElement instanceof DataObject\Data\ObjectMetadata
                     && !$advancedElement instanceof DataObject\Data\ElementMetadata) {
-                    throw new \Exception("only supported for advanced many-to-many (+object) relations");
+                    throw new \Exception('only supported for advanced many-to-many (+object) relations');
                 }
 
                 $elementId = null;
                 if ($advancedElement instanceof DataObject\Data\ObjectMetadata) {
                     $elementId = $advancedElement->getObjectId();
-                    $elementType = "object";
+                    $elementType = 'object';
                 } else {
                     $elementId = $advancedElement->getElementId();
                     $elementType = $advancedElement->getElementType();
@@ -269,7 +269,7 @@ class Service extends Model\AbstractModel
                 if (!$elementId) {
                     continue;
                 }
-                if ($elementType == "asset") {
+                if ($elementType == 'asset') {
                     // there is no published flag for assets
                     continue;
                 }
@@ -283,18 +283,18 @@ class Service extends Model\AbstractModel
             foreach ($mapping as $elementType => $idList) {
                 $idList = array_keys($mapping[$elementType]);
                 switch ($elementType) {
-                    case "document":
-                        $idColumn = "id";
-                        $publishedColumn = "published";
+                    case 'document':
+                        $idColumn = 'id';
+                        $publishedColumn = 'published';
                         break;
-                    case "object":
-                        $idColumn = "o_id";
-                        $publishedColumn = "o_published";
+                    case 'object':
+                        $idColumn = 'o_id';
+                        $publishedColumn = 'o_published';
                         break;
                     default:
-                        throw new \Exception("unknown type");
+                        throw new \Exception('unknown type');
                 }
-                $query = "SELECT " . $idColumn . " FROM " . $elementType . "s WHERE " . $publishedColumn . "=1 AND " . $idColumn . " IN (" . implode(",", $idList) . ");";
+                $query = 'SELECT ' . $idColumn . ' FROM ' . $elementType . 's WHERE ' . $publishedColumn . '=1 AND ' . $idColumn . ' IN (' . implode(',', $idList) . ');';
                 $publishedIds = $db->fetchCol($query);
                 $publishedMapping[$elementType] = $publishedIds;
             }
@@ -303,13 +303,13 @@ class Service extends Model\AbstractModel
                 $elementId = null;
                 if ($advancedElement instanceof DataObject\Data\ObjectMetadata) {
                     $elementId = $advancedElement->getObjectId();
-                    $elementType = "object";
+                    $elementType = 'object';
                 } else {
                     $elementId = $advancedElement->getElementId();
                     $elementType = $advancedElement->getElementType();
                 }
 
-                if ($elementType == "asset") {
+                if ($elementType == 'asset') {
                     $publishedList[] = $advancedElement;
                 }
 
@@ -1138,8 +1138,7 @@ class Service extends Model\AbstractModel
     public static function cloneMe(ElementInterface $element)
     {
         $deepCopy = new \DeepCopy\DeepCopy();
-        $deepCopy->addFilter(new \DeepCopy\Filter\KeepFilter(), new class($element) implements \DeepCopy\Matcher\Matcher
-        {
+        $deepCopy->addFilter(new \DeepCopy\Filter\KeepFilter(), new class($element) implements \DeepCopy\Matcher\Matcher {
             /**
              * The element to be cloned
              *

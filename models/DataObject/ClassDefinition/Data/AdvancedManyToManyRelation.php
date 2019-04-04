@@ -1180,7 +1180,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
     /**
      * @return bool
      */
-    public function isOptimizedAdminLoading() : bool
+    public function isOptimizedAdminLoading(): bool
     {
         return (bool) $this->optimizedAdminLoading;
     }

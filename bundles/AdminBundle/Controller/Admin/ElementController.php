@@ -527,9 +527,7 @@ class ElementController extends AdminController
             }
         }
 
-
-        if($request->get('loadEditModeData') == 'true') {
-
+        if ($request->get('loadEditModeData') == 'true') {
             $idProperty = $request->get('idProperty', 'id');
 
             $methodName = 'get' . ucfirst($fieldname);
@@ -537,8 +535,8 @@ class ElementController extends AdminController
                 $data = $source->$methodName();
                 $editModeData = $fd->getDataForEditmode($data, $source);
 
-                if(is_array($editModeData)) {
-                    foreach($editModeData as $relationObjectAttribute) {
+                if (is_array($editModeData)) {
+                    foreach ($editModeData as $relationObjectAttribute) {
                         $relationObjectAttribute['$$nicepath'] = $result[$relationObjectAttribute[$idProperty]];
                         $result[$relationObjectAttribute[$idProperty]] = $relationObjectAttribute;
                     }
@@ -546,7 +544,6 @@ class ElementController extends AdminController
                     $editModeData['$$nicepath'] = $result[$editModeData[$idProperty]];
                     $result[$editModeData[$idProperty]] = $editModeData;
                 }
-
             } else {
                 Logger::error('Loading edit mode data is not supported for ownertype: ' . $ownerType);
             }

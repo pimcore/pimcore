@@ -933,7 +933,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
     /**
      * @return bool
      */
-    public function isOptimizedAdminLoading() : bool
+    public function isOptimizedAdminLoading(): bool
     {
         return (bool) $this->optimizedAdminLoading;
     }
@@ -945,5 +945,4 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
     {
         $this->optimizedAdminLoading = $optimizedAdminLoading;
     }
-
 }
