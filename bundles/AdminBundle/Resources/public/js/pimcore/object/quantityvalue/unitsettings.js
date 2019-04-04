@@ -87,19 +87,9 @@ pimcore.object.quantityValue.unitsettings = Class.create({
             {type: "string", dataIndex: "reference"}
         ];
 
-        var baseUnitStore = Ext.create('Ext.data.JsonStore', {
-            proxy: {
-                type: 'ajax',
-                async: false,
-                url: this.dataUrl,
-                reader: {
-                    type: 'json',
-                    rootProperty: 'data'
-                }
-
-            }
-        });
-        baseUnitStore.load();
+        if (!pimcore.helpers.quantityValue.store) {
+            new pimcore.object.tags.quantityValue(null, {});
+        }
 
         var baseUnitEditor = {
             xtype: 'combobox',
@@ -107,7 +97,7 @@ pimcore.object.quantityValue.unitsettings = Class.create({
             valueField: 'id',
             displayField: 'abbreviation',
             forceSelection: true,
-            store: baseUnitStore
+            store: pimcore.helpers.quantityValue.store
         };
 
         var typesColumns = [
@@ -117,12 +107,12 @@ pimcore.object.quantityValue.unitsettings = Class.create({
             {flex: 1, dataIndex: 'group', text: t("group"), editor: new Ext.form.TextField({}), filter: 'string', hidden: true},
             {flex: 1, dataIndex: 'baseunit', text: t("baseunit"), editor: baseUnitEditor, renderer: function(value){
                 if(!value) {
-                    return null;
+                    return '('+t('empty')+')';
                 }
 
-                var baseUnit = baseUnitStore.getById(value);
+                var baseUnit = pimcore.helpers.quantityValue.store.getById(value);
                 if(!baseUnit) {
-                    return value;
+                    return '('+t('empty')+')';
                 }
                 return baseUnit.get('abbreviation');
             }},
@@ -177,7 +167,6 @@ pimcore.object.quantityValue.unitsettings = Class.create({
             listeners: {
                 update: function() {
                     pimcore.helpers.quantityValue.getClassDefinitionStore().reload();
-                    baseUnitStore.reload();
                     if (pimcore.helpers.quantityValue.store) {
                         // remote call could be avoided by updating the store directly
                         pimcore.helpers.quantityValue.store.reload();
