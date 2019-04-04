@@ -178,7 +178,7 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
                 objecttype: this.objecttype,
                 "fields[]": fieldKeys,
                 language: this.gridLanguage,
-                limit: this.store.pageSize
+                limit: this.store.getPageSize()
             };
 
 
