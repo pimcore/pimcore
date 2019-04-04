@@ -107,6 +107,9 @@ class QuantityValueController extends AdminController
                 $data = json_decode($request->get('data'), true);
                 $unit = Unit::getById($data['id']);
                 if (!empty($unit)) {
+                    if($data['baseunit'] === -1) {
+                        $data['baseunit'] = null;
+                    }
                     $unit->setValues($data);
                     $unit->save();
 
@@ -116,6 +119,9 @@ class QuantityValueController extends AdminController
                 }
             } elseif ($request->get('xaction') == 'create') {
                 $data = json_decode($request->get('data'), true);
+                if($data['baseunit'] === -1) {
+                    $data['baseunit'] = null;
+                }
                 unset($data['id']);
                 $unit = new Unit();
                 $unit->setValues($data);
