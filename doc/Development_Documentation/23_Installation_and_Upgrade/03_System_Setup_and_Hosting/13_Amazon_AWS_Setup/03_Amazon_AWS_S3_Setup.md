@@ -151,7 +151,7 @@ class S3Listener
 
 ## Customize the Storage Locations of Pimcore
 
-Create a new file named `/constants.php` in your document root and put the following code in it.
+Create a new file named `/constants.php` in `/app/constants.php` and put the following code in it.
 
 Again, please have a look at the comments in the code.
  
