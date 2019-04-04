@@ -271,39 +271,14 @@ class EmailController extends AdminController
                 $mail->setBodyText($text);
             }
 
-            $fromArray = \Pimcore\Helper\Mail::parseEmailAddressField($emailLog->getFrom());
-            if (!empty($fromArray)) {
-                list($from) = $fromArray;
-                if ($from) {
-                    $mail->setFrom($from['email'], $from['name']);
-                }
-            }
-
-            $to = \Pimcore\Helper\Mail::parseEmailAddressField($emailLog->getTo());
-            if (!empty($to)) {
-                foreach ($to as $toEntry) {
-                    $mail->addTo($toEntry['email'], $toEntry['name']);
-                }
-            }
-
-            $cc = \Pimcore\Helper\Mail::parseEmailAddressField($emailLog->getCc());
-            if (!empty($cc)) {
-                foreach ($cc as $ccEntry) {
-                    $mail->addCc($ccEntry['email'], $ccEntry['name']);
-                }
-            }
-
-            $bcc = \Pimcore\Helper\Mail::parseEmailAddressField($emailLog->getBcc());
-            if (!empty($bcc)) {
-                foreach ($bcc as $bccEntry) {
-                    $mail->addBcc($bccEntry['email'], $bccEntry['name']);
-                }
-            }
-
-            $replyTo = \Pimcore\Helper\Mail::parseEmailAddressField($emailLog->getReplyTo());
-            if (!empty($replyTo)) {
-                foreach ($replyTo as $replyToEntry) {
-                    $mail->addReplyTo($replyToEntry['email'], $replyToEntry['name']);
+            foreach(['From', 'To', 'Cc', 'Bcc', 'ReplyTo'] as $field) {
+                $values = \Pimcore\Helper\Mail::parseEmailAddressField($emailLog->getFrom());
+                if (!empty($values)) {
+                    list($value) = $values;
+                    if ($value) {
+                        $prefix = ($field === 'From') ? 'set' : 'add';
+                        $mail->{$prefix . $field}($value['email'], $value['name']);
+                    }
                 }
             }
 
