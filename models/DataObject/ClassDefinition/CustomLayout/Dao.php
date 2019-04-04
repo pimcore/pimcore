@@ -52,6 +52,17 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     /**
+     * @param null $name
+     * @return int|null
+     */
+    public function getIdByName($name = null)
+    {
+        $name = $this->db->fetchOne('SELECT id FROM custom_layouts WHERE name = ?', $name);
+
+        return $name;
+    }
+
+    /**
      * @param null $id
      *
      * @return string
@@ -61,6 +72,18 @@ class Dao extends Model\Dao\AbstractDao
         $name = $this->db->fetchOne('SELECT name FROM custom_layouts WHERE id = ?', $id);
 
         return $name;
+    }
+
+    /**
+     * @return int|mixed
+     */
+    public function getNewId()
+    {
+        $maxId = $this->db->fetchOne('SELECT MAX(CAST(id AS SIGNED)) FROM custom_layouts;');
+        $newId = $maxId ? $maxId + 1 : 1;
+        $this->model->setId($newId);
+
+        return $newId;
     }
 
     /**
