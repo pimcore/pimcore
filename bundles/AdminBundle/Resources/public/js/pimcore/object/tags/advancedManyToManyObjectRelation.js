@@ -525,6 +525,19 @@ pimcore.object.tags.advancedManyToManyObjectRelation = Class.create(pimcore.obje
             toolbarItems = toolbarItems.concat([
                 "->",
                 {
+                    xtype: 'textfield',
+                    fieldLabel: t("filter"),
+                    enableKeyEvents: true,
+                    listeners:
+                        {
+                            keyup: {
+                                fn: this.filterStore.bind(this),
+                                element: "el"
+                            }
+                        }
+                },
+                "-",
+                {
                     xtype: "button",
                     iconCls: "pimcore_icon_delete",
                     handler: this.empty.bind(this)
@@ -592,6 +605,37 @@ pimcore.object.tags.advancedManyToManyObjectRelation = Class.create(pimcore.obje
         if (colType == "bool") {
             record.set(key, !record.data[key]);
         }
+    },
+
+    filterStore: function (e) {
+        var filterField = Ext.get(e.target);
+        console.log(this.fieldConfig);
+        var visibleFields = Ext.Object.getKeys(this.fieldConfig.visibleFieldDefinitions);
+        var metaDataFields = this.fieldConfig.columnKeys;
+        var searchColumns = Ext.Array.merge(visibleFields,metaDataFields);
+
+        searchColumns.push("fullpath");
+        searchColumns.push("id");
+
+        var q = filterField.getValue().trim();
+
+        var searchFilter = new Ext.util.Filter({
+            filterFn: function (item) {
+                for (var column in item.data) {
+                    var value = item.data[column];
+                    if (searchColumns.indexOf(column) < 0){
+                        continue;
+                    }
+                    value = String(value);
+                    if (value.includes(q)) {
+                        return true;
+                    }
+                }
+                return false;
+            }
+        });
+        this.store.clearFilter();
+        this.store.filter(searchFilter)
     },
 
     loadObjectData: function (item, fields) {
