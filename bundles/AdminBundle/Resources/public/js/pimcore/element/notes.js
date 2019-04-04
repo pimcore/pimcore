@@ -120,8 +120,8 @@ pimcore.element.notes = Class.create({
                         return "";
                     }
                 },
-                {text: t("title"), sortable: true, dataIndex: 'title', filter: 'string', flex: 200},
-                {text: t("description"), sortable: true, dataIndex: 'description', filter: 'string'},
+                {text: t("title"), sortable: true, dataIndex: 'title', filter: 'string', flex: 200, renderer: Ext.util.Format.htmlEncode},
+                {text: t("description"), sortable: true, dataIndex: 'description', filter: 'string', renderer: Ext.util.Format.htmlEncode},
                 {text: t("fields"), sortable: false, dataIndex: 'data', renderer: function(v) {
                     if(v) {
                         return v.length;
