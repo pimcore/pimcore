@@ -41,6 +41,8 @@ services:
     #
 
     Pimcore\Templating\Helper\Action:
+        calls:
+            - [setRoutingDefaults, ['%pimcore.routing.defaults%']]
         tags:
             - { name: templating.helper, alias: action }
 

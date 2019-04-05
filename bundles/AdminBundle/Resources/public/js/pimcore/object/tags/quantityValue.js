@@ -17,6 +17,17 @@ pimcore.object.tags.quantityValue = Class.create(pimcore.object.tags.abstract, {
     type: "quantityValue",
 
     initialize: function (data, fieldConfig) {
+        this.defaultValue = null;
+        this.defaultUnit = null;
+        if ((typeof data === "undefined" || data === null) && (fieldConfig.defaultValue || fieldConfig.defaultUnit)) {
+            data = {
+                value: fieldConfig.defaultValue,
+                unit: fieldConfig.defaultUnit,
+            };
+            this.defaultValue = data.value;
+            this.defaultUnit = data.unit;
+        }
+
         this.data = data;
         this.fieldConfig = fieldConfig;
 
@@ -44,8 +55,6 @@ pimcore.object.tags.quantityValue = Class.create(pimcore.object.tags.abstract, {
 
         var input = {};
 
-        var valueInvalid = false;
-
         if (this.data && !isNaN(this.data.value)) {
             input.value = this.data.value;
         } else {
@@ -53,7 +62,6 @@ pimcore.object.tags.quantityValue = Class.create(pimcore.object.tags.abstract, {
             if (this.data) {
                 this.data.value = null;
             }
-            valueInvalid = true;
         }
 
         if (this.fieldConfig.width) {
@@ -106,7 +114,7 @@ pimcore.object.tags.quantityValue = Class.create(pimcore.object.tags.abstract, {
             items: [this.inputField, this.unitField],
             componentCls: "object_field",
             isDirty: function() {
-                return this.inputField.isDirty() || this.unitField.isDirty() || valueInvalid
+                return this.inputField.isDirty() || this.unitField.isDirty()
             }.bind(this)
         });
 

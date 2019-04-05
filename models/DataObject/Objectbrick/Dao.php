@@ -68,17 +68,29 @@ class Dao extends Model\DataObject\Fieldcollection\Dao
                         if (!$fd instanceof CustomResourcePersistingInterface) {
                             Tool::triggerMissingInterfaceDeprecation(get_class($fd), 'load', CustomResourcePersistingInterface::class);
                         }
-                        // datafield has it's own loader
-                        $context = [];
-                        $context['object'] = $object;
-                        $context['containerType'] = 'objectbrick';
-                        $context['containerKey'] = $brick->getType();
-                        $context['brickField'] = $key;
-                        $context['fieldname'] = $brick->getFieldname();
-                        $params['context'] = $context;
-                        $value = $fd->load($brick, $params);
-                        if ($value === 0 || !empty($value)) {
-                            $brick->setValue($key, $value);
+
+                        $doLoad = true;
+
+                        if ($fd instanceof  DataObject\ClassDefinition\Data\Relations\AbstractRelations) {
+                            if (!DataObject\Concrete::isLazyLoadingDisabled() && $fd->getLazyLoading()) {
+                                $doLoad = false;
+                            }
+                        }
+
+                        if ($doLoad) {
+                            // datafield has it's own loader
+                            $context = [];
+                            $context['object'] = $object;
+                            $context['containerType'] = 'objectbrick';
+                            $context['containerKey'] = $brick->getType();
+                            $context['brickField'] = $key;
+                            $context['fieldname'] = $brick->getFieldname();
+                            $params['context'] = $context;
+
+                            $value = $fd->load($brick, $params);
+                            if ($value === 0 || !empty($value)) {
+                                $brick->setValue($key, $value);
+                            }
                         }
                     }
                     if ($fd instanceof ResourcePersistenceAwareInterface || method_exists($fd, 'getDataFromResource')) {

@@ -21,7 +21,7 @@ class Db
     /**
      * @static
      *
-     * @return \Pimcore\Db\Connection
+     * @return \Pimcore\Db\ConnectionInterface
      */
     public static function getConnection()
     {
@@ -29,7 +29,7 @@ class Db
     }
 
     /**
-     * @return Db\Connection
+     * @return Db\ConnectionInterface
      */
     public static function reset()
     {
@@ -41,12 +41,12 @@ class Db
     /**
      * @static
      *
-     * @return \Pimcore\Db\Connection
+     * @return \Pimcore\Db\ConnectionInterface
      */
     public static function get()
     {
         /**
-         * @var \Pimcore\Db\Connection $db
+         * @var \Pimcore\Db\ConnectionInterface $db
          */
         $db = \Pimcore::getContainer()->get('database_connection');
 

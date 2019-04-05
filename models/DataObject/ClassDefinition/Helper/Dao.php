@@ -135,4 +135,42 @@ trait Dao
             }
         }
     }
+
+    /**
+     * @param DataObject\ClassDefinition $classDefinition
+     * @param array $tables
+     */
+    protected function handleEncryption(DataObject\ClassDefinition $classDefinition, array $tables)
+    {
+        if ($classDefinition->getEncryption()) {
+            $this->encryptTables($tables);
+            $classDefinition->addEncryptedTables($tables);
+        } elseif ($classDefinition->hasEncryptedTables()) {
+            $this->decryptTables($classDefinition, $tables);
+            $classDefinition->removeEncryptedTables($tables);
+        }
+    }
+
+    /**
+     * @param array $tables
+     */
+    protected function encryptTables(array $tables)
+    {
+        foreach ($tables as $table) {
+            $this->db->query('ALTER TABLE ' . $this->db->quoteIdentifier($table) . ' ENCRYPTED=YES;');
+        }
+    }
+
+    /**
+     * @param DataObject\ClassDefinition $classDefinition
+     * @param array $tables
+     */
+    protected function decryptTables(DataObject\ClassDefinition $classDefinition, array $tables)
+    {
+        foreach ($tables as $table) {
+            if ($classDefinition->isEncryptedTable($table)) {
+                $this->db->query('ALTER TABLE ' . $this->db->quoteIdentifier($table) . ' ENCRYPTED=NO;');
+            }
+        }
+    }
 }

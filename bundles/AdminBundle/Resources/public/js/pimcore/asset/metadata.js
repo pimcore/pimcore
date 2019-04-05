@@ -138,7 +138,7 @@ pimcore.asset.metadata = Class.create({
 
 
             this.grid = Ext.create('Ext.grid.Panel', {
-                title: t("metadata"),
+                title: t("custom_metadata"),
                 autoScroll: true,
                 region: "center",
                 iconCls: "pimcore_icon_metadata",

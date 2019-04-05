@@ -58,12 +58,16 @@ class LongRunningHelper
 
     protected function cleanupDoctrine()
     {
-        foreach ($this->connectionRegistry->getConnections() as $name => $connection) {
-            if (!($connection instanceof Connection)) {
-                throw new \LogicException('Expected only instances of Connection');
-            }
+        try {
+            foreach ($this->connectionRegistry->getConnections() as $name => $connection) {
+                if (!($connection instanceof Connection)) {
+                    throw new \LogicException('Expected only instances of Connection');
+                }
 
-            $connection->close();
+                $connection->close();
+            }
+        } catch (\Exception $e) {
+            // connection couldn't be established, this is e.g. the case when Pimcore isn't installed yet
         }
     }
 

@@ -36,7 +36,13 @@ class ClientFactory
                 $authorization = $systemConfig['httpclient']['proxy_user'] . ':' . $systemConfig['httpclient']['proxy_pass'] . '@';
             }
 
-            $proxyUri = 'tcp://' . $authorization . $systemConfig['httpclient']['proxy_host'] . ':' . $systemConfig['httpclient']['proxy_port'];
+            $protocol = 'tcp';
+            if (function_exists('curl_exec')) {
+                // this is a workaround for https://github.com/pimcore/pimcore/issues/3835
+                $protocol = 'http';
+            }
+
+            $proxyUri = $protocol . '://' . $authorization . $systemConfig['httpclient']['proxy_host'] . ':' . $systemConfig['httpclient']['proxy_port'];
 
             $guzzleConfig[RequestOptions::PROXY] = $proxyUri;
         }

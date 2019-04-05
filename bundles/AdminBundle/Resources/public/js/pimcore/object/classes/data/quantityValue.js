@@ -87,6 +87,12 @@ pimcore.object.classes.data.quantityValue = Class.create(pimcore.object.classes.
                 width: 275
             },
             {
+                xtype: "panel",
+                bodyStyle: "padding-top: 3px",
+                style: "margin-bottom: 10px",
+                html: '<span class="object_field_setting_warning">' + t('default_value_warning') + '</span>'
+            },
+            {
                 xtype: 'multiselect',
                 queryDelay: 0,
                 triggerAction: 'all',

@@ -99,6 +99,11 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     public $hideEmptyData;
 
     /**
+     * @var bool
+     */
+    public $disallowAddRemove;
+
+    /**
      * contains further localized field definitions if there are more than one localized fields in on class
      *
      * @var array
@@ -1217,7 +1222,8 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
                     continue;
                 }
                 $definition = \Pimcore\Model\DataObject\Classificationstore\Service::getFieldDefinitionFromKeyConfig($keyGroupRelation);
-                $definition->setTooltip($definition->getName() . ' - ' . $keyGroupRelation->getDescription());
+                $fallbackTooltip = $definition->getName() . ' - ' . $keyGroupRelation->getDescription();
+                $definition->setTooltip($definition->getTooltip() ?: $fallbackTooltip);
 
                 if (method_exists($definition, '__wakeup')) {
                     $definition->__wakeup();
@@ -1355,6 +1361,26 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     public function setHideEmptyData($hideEmptyData)
     {
         $this->hideEmptyData = (bool) $hideEmptyData;
+
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isDisallowAddRemove()
+    {
+        return $this->disallowAddRemove;
+    }
+
+    /**
+     * @param bool $disallowAddRemove
+     *
+     * @return $this
+     */
+    public function setDisallowAddRemove($disallowAddRemove)
+    {
+        $this->disallowAddRemove = $disallowAddRemove;
 
         return $this;
     }

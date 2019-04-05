@@ -245,4 +245,57 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyInd
 
         return $var;
     }
+
+    /**
+     * @param Concrete $object
+     * @param $type
+     * @param $fcField
+     * @param $index
+     * @param $field
+     *
+     * @throws \Exception
+     */
+    public function loadLazyField(Concrete $object, $type, $fcField, $index, $field)
+    {
+        /**
+         * @var Model\DataObject\Fieldcollection\Data\AbstractData $item
+         */
+        $item = $this->get($index);
+        if ($item && !$item->isLazyKeyLoaded($field)) {
+            $fcDef = Model\DataObject\Fieldcollection\Definition::getByKey($type);
+            /** @var $fieldDef Model\DataObject\ClassDefinition\Data\CustomResourcePersistingInterface */
+            $fieldDef = $fcDef->getFieldDefinition($field);
+
+            $params = [
+                'context' => [
+                    'object' => $object,
+                    'containerType' => 'fieldcollection',
+                    'containerKey' => $type,
+                    'fieldname' => $fcField,
+                    'index' => $index
+                ]];
+
+            $isDirtyDetectionDisabled = AbstractObject::isDirtyDetectionDisabled();
+            AbstractObject::disableDirtyDetection();
+
+            $data = $fieldDef->load($item, $params);
+            AbstractObject::setDisableDirtyDetection($isDirtyDetectionDisabled);
+            $item->setObjectVar($field, $data);
+            $item->markLazyKeyAsLoaded($field);
+        }
+    }
+
+    /**
+     * @return Concrete|null
+     */
+    protected function getObject(): ?Concrete
+    {
+        $this->rewind();
+        $item = $this->current();
+        if ($item instanceof Model\DataObject\Fieldcollection\Data\AbstractData) {
+            return $item->getObject();
+        }
+
+        return null;
+    }
 }

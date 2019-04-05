@@ -73,6 +73,11 @@ class SnippetController extends DocumentControllerBase
         $data = $snippet->getObjectVars();
         $data['versionDate'] = $snippet->getModificationDate();
 
+        $data['php'] = [
+            'classes' => array_merge([get_class($snippet)], array_values(class_parents($snippet))),
+            'interfaces' => array_values(class_implements($snippet))
+        ];
+
         $event = new GenericEvent($this, [
             'data' => $data,
             'document' => $snippet

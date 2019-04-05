@@ -119,6 +119,28 @@ class CustomLayout extends Model\AbstractModel
     }
 
     /**
+     * @param string $name
+     *
+     * @return null|CustomLayout|mixed
+     */
+    public static function getByName(string $name)
+    {
+        try {
+            $customLayout = new self();
+            $id = $customLayout->getDao()->getIdByName($name);
+            if ($id) {
+                return self::getById($id);
+            } else {
+                throw new \Exception('There is no customlayout with the name: ' . $name);
+            }
+        } catch (\Exception $e) {
+            Logger::error($e);
+        }
+
+        return null;
+    }
+
+    /**
      * @param string $field
      *
      * @return \Pimcore\Model\DataObject\ClassDefinition\Data | null
@@ -155,6 +177,10 @@ class CustomLayout extends Model\AbstractModel
     {
         $class = new self();
         $class->setValues($values);
+
+        if (!$class->getId()) {
+            $class->getDao()->getNewId();
+        }
 
         return $class;
     }

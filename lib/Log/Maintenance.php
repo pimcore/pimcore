@@ -42,20 +42,18 @@ class Maintenance
             if ($lastTimeItem) {
                 $lastTime = $lastTimeItem->getData();
             } else {
-                $lastTime = time() - 86400;
+                $lastTime = time();
             }
 
             if (file_exists($log) && date('Y-m-d', $lastTime) != date('Y-m-d')) {
                 // archive log (will be cleaned up by maintenance)
                 $archiveFilename = preg_replace('/\.log$/', '', $log) . '-archive-' . date('Y-m-d', $lastTime) . '.log';
                 rename($log, $archiveFilename);
+                TmpStore::delete($tmpStoreTimeId);
+            }
 
-                if ($lastTimeItem) {
-                    $lastTimeItem->setData(time());
-                    $lastTimeItem->update(86400 * 7);
-                } else {
-                    TmpStore::add($tmpStoreTimeId, time(), null, 86400 * 7);
-                }
+            if (!$lastTimeItem) {
+                TmpStore::add($tmpStoreTimeId, time(), null, 86400 * 7);
             }
         }
 
@@ -156,6 +154,12 @@ class Maintenance
         $sql = ' SELECT %s FROM ' .  ApplicationLoggerDb::TABLE_NAME . ' WHERE `timestamp` < DATE_SUB(FROM_UNIXTIME(' . $timestamp . '), INTERVAL ' . $archive_treshold . ' DAY)';
 
         if ($db->fetchOne(sprintf($sql, 'COUNT(*)')) > 1 || true) {
+            $archiveEngine = 'MyISAM';
+            $engines = $db->fetchCol('SHOW ENGINES;');
+            if (in_arrayi('archive', $engines)) {
+                $archiveEngine = 'ARCHIVE';
+            }
+
             $db->query('CREATE TABLE IF NOT EXISTS ' . $tablename . " (
                        id BIGINT(20) NOT NULL,
                        `pid` INT(11) NULL DEFAULT NULL,
@@ -169,7 +173,7 @@ class Maintenance
                        relatedobject BIGINT(20),
                        relatedobjecttype ENUM('object', 'document', 'asset'),
                        maintenanceChecked TINYINT(4)
-                    ) ENGINE = ARCHIVE ROW_FORMAT = DEFAULT;");
+                    ) ENGINE=" . $archiveEngine . ' ROW_FORMAT=DEFAULT;');
 
             $db->query('INSERT INTO ' . $tablename . ' ' . sprintf($sql, '*'));
             $db->query('DELETE FROM ' . ApplicationLoggerDb::TABLE_NAME . ' WHERE `timestamp` < DATE_SUB(FROM_UNIXTIME(' . $timestamp . '), INTERVAL ' . $archive_treshold . ' DAY);');

@@ -35,7 +35,7 @@ class IndexUpdateListener implements EventSubscriberInterface
     {
         $object = $event->getObject();
 
-        if ($object instanceof IIndexable) {
+        if ($object instanceof IIndexable && (!$event->hasArgument('saveVersionOnly') || !$event->getArgument('saveVersionOnly'))) {
             $indexService = Factory::getInstance()->getIndexService();
             $indexService->updateIndex($object);
         }

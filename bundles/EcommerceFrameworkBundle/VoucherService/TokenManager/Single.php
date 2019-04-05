@@ -126,7 +126,7 @@ class Single extends AbstractTokenManager implements IExportableTokenManager
     }
 
     /**
-     * @return bool
+     * @return bool | string - bool if failed - string if successfully created
      */
     public function insertOrUpdateVoucherSeries()
     {
@@ -138,7 +138,7 @@ class Single extends AbstractTokenManager implements IExportableTokenManager
 
             $db->query($query, [trim($this->configuration->getToken()), $this->getFinalTokenLength(), $this->getSeriesId(), trim($this->configuration->getToken()), $this->getFinalTokenLength()]);
 
-            return true;
+            return trim($this->configuration->getToken());
         } catch (\Exception $e) {
             return false;
         }

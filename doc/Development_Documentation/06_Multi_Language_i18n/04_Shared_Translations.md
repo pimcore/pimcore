@@ -32,6 +32,8 @@ pimcore:
   
 #### Example in Templates / Views
 
+<div class="code-section">
+
 ```php
 <div>
     <?php // there is an helper provided by Pimcore which is compatible with Pimcore 4, but interfaces the Symfony Translator component ?>
@@ -45,6 +47,16 @@ pimcore:
     <a href="/legal"><?= $this->translator()->trans("legal_notice") ?></a>
 </div>
 ```
+
+
+```twig 
+<div>
+    <address>&copy; {{ 'Copyright'|trans }}</address>
+    <a href="/imprint">{{ 'Imprint'|trans }}</a>
+</div>
+```
+
+</div>
 
 #### Example in a Controller
  

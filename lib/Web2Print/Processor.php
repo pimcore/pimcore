@@ -103,7 +103,8 @@ abstract class Processor
 
         try {
             \Pimcore::getEventDispatcher()->dispatch(DocumentEvents::PRINT_PRE_PDF_GENERATION, new DocumentEvent($document, [
-                'processor' => $this
+                'processor' => $this,
+                'jobConfig' => $jobConfigFile->config
             ]));
 
             $pdf = $this->buildPdf($document, $jobConfigFile->config);
@@ -170,7 +171,7 @@ abstract class Processor
      */
     protected function getPrintDocument($documentId)
     {
-        $document = Document\Printpage::getById($documentId);
+        $document = Document\PrintAbstract::getById($documentId);
         if (empty($document)) {
             throw new \Exception('PrintDocument with ' . $documentId . ' not found.');
         }
@@ -229,7 +230,7 @@ abstract class Processor
      */
     public function cancelGeneration($documentId)
     {
-        $document = Document\Printpage::getById($documentId);
+        $document = Document\PrintAbstract::getById($documentId);
         if (empty($document)) {
             throw new \Exception('Document with id ' . $documentId . ' not found.');
         }

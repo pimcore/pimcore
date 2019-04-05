@@ -47,6 +47,11 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
     public $phpdocType = '\\Pimcore\\Model\\DataObject\\Data\\ElementMetadata[]';
 
     /**
+     * @var bool
+     */
+    public $optimizedAdminLoading = false;
+
+    /**
      * @inheritdoc
      */
     public function prepareDataForPersistence($data, $object = null, $params = [])
@@ -107,7 +112,6 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
             }
 
             foreach ($data as $element) {
-                $destination = null;
                 $source = DataObject::getById($element['src_id']);
 
                 if ($element['type'] && $element['dest_id']) {
@@ -296,6 +300,9 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
                     $getter = 'get' . ucfirst($c['key']);
                     $itemData[$c['key']] = $metaObject->$getter();
                 }
+
+                $itemData['rowId'] = $itemData['id'] . '$$' . $itemData['type'];
+
                 $return[] = $itemData;
             }
             if (empty($return)) {
@@ -656,7 +663,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
     {
         if (!DataObject\AbstractObject::isDirtyDetectionDisabled() && $object instanceof DataObject\DirtyIndicatorInterface) {
             if ($object instanceof DataObject\Localizedfield) {
-                if ($object->getObject() instanceof  DataObject\DirtyIndicatorInterface) {
+                if ($object->getObject() instanceof DataObject\DirtyIndicatorInterface) {
                     if (!$object->hasDirtyFields()) {
                         return;
                     }
@@ -721,12 +728,12 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
 
             if ($params && $params['context']) {
                 if ($params['context']['fieldname']) {
-                    $sql .= ' AND '.$db->quoteInto('ownername = ?', $params['context']['fieldname']);
+                    $sql .= ' AND ' . $db->quoteInto('ownername = ?', $params['context']['fieldname']);
                 }
 
                 if (!DataObject\AbstractObject::isDirtyDetectionDisabled() && $object instanceof DataObject\DirtyIndicatorInterface) {
                     if ($params['context']['containerType']) {
-                        $sql .= ' AND '.$db->quoteInto('ownertype = ?', $params['context']['containerType']);
+                        $sql .= ' AND ' . $db->quoteInto('ownertype = ?', $params['context']['containerType']);
                     }
                 }
             }
@@ -764,7 +771,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
         $data = null;
         if ($object instanceof DataObject\Concrete) {
             $data = $object->getObjectVar($this->getName());
-            if ($this->getLazyLoading() and !in_array($this->getName(), $object->getO__loadedLazyFields())) {
+            if ($this->getLazyLoading() && !$object->isLazyKeyLoaded($this->getName())) {
                 //$data = $this->getDataFromResource($object->getRelationData($this->getName(),true,null));
                 $data = $this->load($object, ['force' => true]);
 
@@ -774,24 +781,16 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
         } elseif ($object instanceof DataObject\Localizedfield) {
             $data = $params['data'];
         } elseif ($object instanceof DataObject\Fieldcollection\Data\AbstractData) {
+            parent::loadLazyFieldcollectionField($object);
             $data = $object->getObjectVar($this->getName());
         } elseif ($object instanceof DataObject\Objectbrick\Data\AbstractData) {
+            parent::loadLazyBrickField($object);
             $data = $object->getObjectVar($this->getName());
         }
 
-        if (DataObject\AbstractObject::doHideUnpublished() and is_array($data)) {
-            $publishedList = [];
-            /** @var $listElement DataObject\Data\ElementMetadata */
-            foreach ($data as $listElement) {
-                if (Element\Service::isPublished($listElement->getElement())) {
-                    $publishedList[] = $listElement;
-                }
-            }
-
-            return $publishedList;
-        }
-
-        return is_array($data) ? $data : [];
+        // note, in case of advanced many to many relations we don't want to force the loading of the element
+        // instead, ask the database directly
+        return Element\Service::filterUnpublishedAdvancedElements($data);
     }
 
     /**
@@ -819,7 +818,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
                 $db->deleteWhere(
                     'object_metadata_' . $object->getClassId(),
                     $db->quoteInto('o_id = ?', $object->getId()) . " AND ownertype = 'localizedfield' AND "
-                    . $db->quoteInto('ownername LIKE ?', '/' . $params['context']['containerType'] .'~' . $containerName . '/' . $index . '/%')
+                    . $db->quoteInto('ownername LIKE ?', '/' . $params['context']['containerType'] . '~' . $containerName . '/' . $index . '/%')
                     . ' AND ' . $db->quoteInto('fieldname = ?', $this->getName())
                 );
             }
@@ -1176,5 +1175,21 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
         $id = $element->getId();
 
         return $elementType . $id;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isOptimizedAdminLoading(): bool
+    {
+        return (bool) $this->optimizedAdminLoading;
+    }
+
+    /**
+     * @param bool $optimizedAdminLoading
+     */
+    public function setOptimizedAdminLoading($optimizedAdminLoading)
+    {
+        $this->optimizedAdminLoading = $optimizedAdminLoading;
     }
 }

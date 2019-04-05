@@ -228,13 +228,30 @@ class Document extends Element\AbstractElement
         try {
             $helperDoc = new Document();
             $helperDoc->getDao()->getByPath($path);
-            $doc = self::getById($helperDoc->getId(), $force);
+            $doc = static::getById($helperDoc->getId(), $force);
             \Pimcore\Cache\Runtime::set($cacheKey, $doc);
         } catch (\Exception $e) {
             $doc = null;
         }
 
         return $doc;
+    }
+
+    /**
+     * @param Document $document
+     *
+     * @return bool
+     */
+    protected static function typeMatch(Document $document)
+    {
+        $staticType = get_called_class();
+        if ($staticType != Document::class) {
+            if (!$document instanceof $staticType) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     /**
@@ -247,17 +264,16 @@ class Document extends Element\AbstractElement
      */
     public static function getById($id, $force = false)
     {
-        $id = intval($id);
-
-        if ($id < 1) {
+        if (!is_numeric($id) || $id < 1) {
             return null;
         }
+        $id = intval($id);
 
         $cacheKey = 'document_' . $id;
 
         if (!$force && \Pimcore\Cache\Runtime::isRegistered($cacheKey)) {
             $document = \Pimcore\Cache\Runtime::get($cacheKey);
-            if ($document) {
+            if ($document && static::typeMatch($document)) {
                 return $document;
             }
         }
@@ -291,7 +307,7 @@ class Document extends Element\AbstractElement
             return null;
         }
 
-        if (!$document) {
+        if (!$document || !static::typeMatch($document)) {
             return null;
         }
 
@@ -416,6 +432,7 @@ class Document extends Element\AbstractElement
                 // if the old path is different from the new path, update all children
                 $updatedChildren = [];
                 if ($oldPath && $oldPath != $this->getRealFullPath()) {
+                    $differentOldPath = $oldPath;
                     $this->getDao()->updateWorkspaces();
                     $updatedChildren = $this->getDao()->updateChildsPaths($oldPath);
                 }
@@ -463,7 +480,11 @@ class Document extends Element\AbstractElement
         $this->clearDependentCache($additionalTags);
 
         if ($isUpdate) {
-            \Pimcore::getEventDispatcher()->dispatch(DocumentEvents::POST_UPDATE, new DocumentEvent($this));
+            $updateEvent = new DocumentEvent($this);
+            if ($differentOldPath) {
+                $updateEvent->setArgument('oldPath', $differentOldPath);
+            }
+            \Pimcore::getEventDispatcher()->dispatch(DocumentEvents::POST_UPDATE, $updateEvent);
         } else {
             \Pimcore::getEventDispatcher()->dispatch(DocumentEvents::POST_ADD, new DocumentEvent($this));
         }
@@ -749,11 +770,16 @@ class Document extends Element\AbstractElement
     }
 
     /**
-     * Deletes the document
+     * @param bool $isNested
+     *
+     * @throws \Exception
      */
-    public function delete()
+    public function delete(bool $isNested = false)
     {
         \Pimcore::getEventDispatcher()->dispatch(DocumentEvents::PRE_DELETE, new DocumentEvent($this));
+
+        $this->beginTransaction();
+
         try {
             // remove childs
             if ($this->hasChildren()) {
@@ -761,7 +787,7 @@ class Document extends Element\AbstractElement
                 $unpublishedStatus = self::doHideUnpublished();
                 self::setHideUnpublished(false);
                 foreach ($this->getChildren(true) as $child) {
-                    $child->delete();
+                    $child->delete(true);
                 }
                 self::setHideUnpublished($unpublishedStatus);
             }
@@ -782,16 +808,19 @@ class Document extends Element\AbstractElement
 
             $this->getDao()->delete();
 
-            // clear cache
-            $this->clearDependentCache();
-
-            //clear document from registry
-            \Pimcore\Cache\Runtime::set('document_' . $this->getId(), null);
+            $this->commit();
         } catch (\Exception $e) {
+            $this->rollBack();
             \Pimcore::getEventDispatcher()->dispatch(DocumentEvents::POST_DELETE_FAILURE, new DocumentEvent($this));
             Logger::error($e);
             throw $e;
         }
+
+        // clear cache
+        $this->clearDependentCache();
+
+        //clear document from registry
+        \Pimcore\Cache\Runtime::set('document_' . $this->getId(), null);
 
         \Pimcore::getEventDispatcher()->dispatch(DocumentEvents::POST_DELETE, new DocumentEvent($this));
     }
@@ -1324,15 +1353,15 @@ class Document extends Element\AbstractElement
     {
         $finalVars = [];
         $parentVars = parent::__sleep();
+        $blockedVars = ['dependencies', 'userPermissions', 'hasChilds', 'versions', 'scheduledTasks', 'parent'];
 
         if (isset($this->_fulldump)) {
             // this is if we want to make a full dump of the object (eg. for a new version), including childs for recyclebin
-            $blockedVars = ['dependencies', 'userPermissions', 'hasChilds', 'versions', 'scheduledTasks', 'parent'];
             $finalVars[] = '_fulldump';
             $this->removeInheritedProperties();
         } else {
             // this is if we want to cache the object
-            $blockedVars = ['dependencies', 'userPermissions', 'childs', 'hasChilds', 'versions', 'scheduledTasks', 'properties', 'parent'];
+            $blockedVars = array_merge($blockedVars, ['childs', 'properties']);
         }
 
         foreach ($parentVars as $key) {

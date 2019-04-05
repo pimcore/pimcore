@@ -1132,7 +1132,7 @@ pimcore.helpers.getClassForIcon = function (icon) {
 
     var content = styleContainer.dom.innerHTML;
     var classname = "pimcore_dynamic_class_for_icon_" + uniqid();
-    content += ("." + classname + " { background: url(" + icon + ") left center no-repeat !important; }\n");
+    content += ("." + classname + " { background: url(" + icon + ") left center no-repeat !important; background-size: 100% 100% !important; }\n");
     styleContainer.dom.innerHTML = content;
 
     return classname;
@@ -2363,11 +2363,9 @@ pimcore.helpers.showAbout = function () {
     html += '<br><img src="/bundles/pimcoreadmin/img/logo-gray.svg" style="width: 300px;"><br>';
     html += '<br><b>Version: ' + pimcore.settings.version + '</b>';
     html += '<br><b>Git Hash: ' + pimcore.settings.build + '</b>';
-    html += '<br><br>&copy; by pimcore GmbH, Salzburg, Austria (<a href="https://pimcore.com/" target="_blank">pimcore.com</a>)';
-    html += '<br>a proud member of the <a href="http://elements.at" target="_blank">elements group</a>';
+    html += '<br><br>&copy; by pimcore GmbH (<a href="https://pimcore.com/" target="_blank">pimcore.com</a>)';
     html += '<br><br><a href="https://github.com/pimcore/pimcore/blob/master/LICENSE.md" target="_blank">License</a> | ';
-    html += '<a href="https://pimcore.com/en/about/contact" target="_blank">Contact</a> | ';
-    html += '<a href="https://pimcore.com/en/about/team" target="_blank">Team</a>';
+    html += '<a href="https://pimcore.com/en/about/contact" target="_blank">Contact</a>';
     html += '<img src="/bundles/pimcoreadmin/img/austria-heart.svg" style="position:absolute;top:172px;right:45px;width:32px;">';
     html += '</div>';
 
@@ -2549,6 +2547,10 @@ pimcore.helpers.initMenuTooltips = function () {
 };
 
 pimcore.helpers.requestNicePathDataGridDecorator = function (gridView, targets) {
+
+    if(targets && targets.count() > 0) {
+        gridView.mask();
+    }
     targets.each(function (record) {
         var el = gridView.getRow(record);
         if (el) {
@@ -2560,7 +2562,7 @@ pimcore.helpers.requestNicePathDataGridDecorator = function (gridView, targets) 
 };
 
 pimcore.helpers.requestNicePathData = function (source, targets, config, fieldConfig, context, decorator, responseHandler) {
-    if (typeof targets === "undefined" || !fieldConfig.pathFormatterClass) {
+    if (!config.loadEditModeData && (typeof targets === "undefined" || !fieldConfig.pathFormatterClass)) {
         return;
     }
 
@@ -2592,8 +2594,9 @@ pimcore.helpers.requestNicePathData = function (source, targets, config, fieldCo
         params: {
             source: Ext.encode(source),
             targets: elementData,
-            context: Ext.encode(context)
-
+            context: Ext.encode(context),
+            loadEditModeData: config.loadEditModeData,
+            idProperty: config.idProperty
         },
         success: function (response) {
             try {
@@ -2623,28 +2626,32 @@ pimcore.helpers.getNicePathHandlerStore = function (store, config, gridView, res
     store.ignoreDataChanged = true;
     store.each(function (record, id) {
         var recordId = record.data[config.idProperty];
+
         if (typeof responseData[recordId] != "undefined") {
-            record.set(config.pathProperty, responseData[recordId], {dirty: false});
+
+            if(config.loadEditModeData) {
+                for(var i = 0; i < config.fields.length; i++) {
+                    record.set(config.fields[i], responseData[recordId][config.fields[i]], {dirty: false});
+                }
+                if(responseData[recordId]['$$nicepath']) {
+                    record.set(config.pathProperty, responseData[recordId]['$$nicepath'], {dirty: false});
+                }
+            } else {
+                record.set(config.pathProperty, responseData[recordId], {dirty: false});
+            }
 
             var el = gridView.getRow(record);
             if (el) {
                 el = Ext.fly(el);
                 el.removeCls("grid_nicepath_requested");
             }
+
         }
     }, this);
     store.ignoreDataChanged = false;
 
+    gridView.unmask();
     gridView.updateLayout();
-
-};
-
-pimcore.helpers.isValidPassword = function (pass) {
-    var passRegExp = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9])(?!.*\s).{10,}$/;
-    if (!pass.match(passRegExp)) {
-        return false;
-    }
-    return true;
 };
 
 pimcore.helpers.csvExportWarning = function (callback) {
@@ -3103,5 +3110,12 @@ pimcore.helpers.dragAndDropValidateSingleItem = function (data) {
     return true;
 };
 
-
+pimcore.helpers.openProfile = function () {
+    try {
+        pimcore.globalmanager.get("profile").activate();
+    }
+    catch (e) {
+        pimcore.globalmanager.add("profile", new pimcore.settings.profile.panel());
+    }
+};
 

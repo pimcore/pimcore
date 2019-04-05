@@ -25,6 +25,8 @@ use Pimcore\Model\DataObject;
  */
 class Dao extends Model\Dao\AbstractDao
 {
+    use DataObject\ClassDefinition\Helper\Dao;
+
     /**
      * @param DataObject\Concrete $object
      * @param $ownertype
@@ -67,26 +69,22 @@ class Dao extends Model\Dao\AbstractDao
 
     /**
      * @param DataObject\Concrete $source
-     * @param $destination
+     * @param $destinationId
      * @param $fieldname
      * @param $ownertype
      * @param $ownername
      * @param $position
-     * @param $type
      *
      * @return null|Model\Dao\\Pimcore\Model\DataObject\AbstractObject
      */
-    public function load(DataObject\Concrete $source, $destination, $fieldname, $ownertype, $ownername, $position, $type = 'object')
+    public function load(DataObject\Concrete $source, $destinationId, $fieldname, $ownertype, $ownername, $position)
     {
-        if ($type == 'object') {
-            $typeQuery = " AND (type = 'object' or type = '')";
-        } else {
-            $typeQuery = ' AND type = ' . $this->db->quote($type);
-        }
+        $typeQuery = " AND (type = 'object' or type = '')";
 
-        $dataRaw = $this->db->fetchAll('SELECT * FROM ' . $this->getTablename($source) . ' WHERE o_id = ? AND dest_id = ? AND fieldname = ? AND ownertype = ? AND ownername = ? and position = ? ' . $typeQuery, [$source->getId(), $destination->getId(), $fieldname, $ownertype, $ownername, $position]);
+        $query = 'SELECT * FROM ' . $this->getTablename($source) . ' WHERE o_id = ? AND dest_id = ? AND fieldname = ? AND ownertype = ? AND ownername = ? and position = ? ' . $typeQuery;
+        $dataRaw = $this->db->fetchAll($query, [$source->getId(), $destinationId, $fieldname, $ownertype, $ownername, $position]);
         if (!empty($dataRaw)) {
-            $this->model->setElement($destination);
+            $this->model->setObjectId($destinationId);
             $this->model->setFieldname($fieldname);
             $columns = $this->model->getColumns();
             foreach ($dataRaw as $row) {
@@ -103,9 +101,9 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     /**
-     * @param $class
+     * @param DataObject\ClassDefinition $class
      */
-    public function createOrUpdateTable($class)
+    public function createOrUpdateTable(DataObject\ClassDefinition $class)
     {
         $classId = $class->getId();
         $table = 'object_metadata_' . $classId;
@@ -129,5 +127,7 @@ class Dao extends Model\Dao\AbstractDao
               INDEX `ownername` (`ownername`),
               INDEX `position` (`position`)
 		) DEFAULT CHARSET=utf8mb4;");
+
+        $this->handleEncryption($class, [$table]);
     }
 }

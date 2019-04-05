@@ -188,7 +188,7 @@ pimcore.object.classes.data.advancedManyToManyRelation = Class.create(pimcore.ob
             {
                 xtype: "displayfield",
                 hideLabel: true,
-                value: t('lazy_loading_warning'),
+                value: t('lazy_loading_warning_block'),
                 cls: "pimcore_extra_label_bottom",
                 style: "color:red; font-weight: bold;"
             },
@@ -364,6 +364,21 @@ pimcore.object.classes.data.advancedManyToManyRelation = Class.create(pimcore.ob
         this.stores = {};
         this.grids = {};
         this.specificPanel.add(this.getGrid("cols", this.datax.columns, true));
+
+        if(this.context == 'class') {
+            this.specificPanel.add({
+                xtype: "checkbox",
+                boxLabel: t("enable_admin_async_load"),
+                name: "optimizedAdminLoading",
+                value: this.datax.optimizedAdminLoading
+            });
+            this.specificPanel.add({
+                xtype: "displayfield",
+                hideLabel: true,
+                value: t('async_loading_warning_block'),
+                cls: "pimcore_extra_label_bottom"
+            });
+        }
 
 
         return this.layout;

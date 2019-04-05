@@ -30,6 +30,8 @@ class DocumentMetaDataListener implements EventSubscriberInterface
 {
     use PimcoreContextAwareTrait;
 
+    const FORCE_INJECTION = '_pimcore_force_document_meta_data_injection';
+
     /**
      * @var DocumentResolverService
      */
@@ -70,7 +72,7 @@ class DocumentMetaDataListener implements EventSubscriberInterface
         $request = $event->getRequest();
 
         // just add meta data on master request
-        if (!$event->isMasterRequest()) {
+        if (!$event->isMasterRequest() && !$event->getRequest()->attributes->get(self::FORCE_INJECTION)) {
             return;
         }
 

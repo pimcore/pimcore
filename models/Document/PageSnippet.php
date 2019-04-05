@@ -164,19 +164,30 @@ abstract class PageSnippet extends Model\Document
     }
 
     /**
-     * @see Document::delete
+     * @inheritdoc
      */
-    public function delete()
+    public function delete(bool $isNested = false)
     {
-        $versions = $this->getVersions();
-        foreach ($versions as $version) {
-            $version->delete();
+        $this->beginTransaction();
+
+        try {
+            $versions = $this->getVersions();
+            foreach ($versions as $version) {
+                $version->delete();
+            }
+
+            // remove all tasks
+            $this->getDao()->deleteAllTasks();
+
+            parent::delete(true);
+
+            $this->commit();
+        } catch (\Exception $e) {
+            $this->rollBack();
+            \Pimcore::getEventDispatcher()->dispatch(DocumentEvents::POST_DELETE_FAILURE, new DocumentEvent($this));
+            Logger::error($e);
+            throw $e;
         }
-
-        // remove all tasks
-        $this->getDao()->deleteAllTasks();
-
-        parent::delete();
     }
 
     /**
@@ -443,10 +454,16 @@ abstract class PageSnippet extends Model\Document
 
     /**
      * @return Document
+     *
+     * @throws \Exception
      */
     public function getContentMasterDocument()
     {
-        return Document::getById($this->getContentMasterDocumentId());
+        if ($masterDocumentId = $this->getContentMasterDocumentId()) {
+            return Document::getById($masterDocumentId);
+        }
+
+        return null;
     }
 
     /**
@@ -614,7 +631,7 @@ abstract class PageSnippet extends Model\Document
         $url = $scheme . $hostname . $this->getFullPath();
 
         $site = \Pimcore\Tool\Frontend::getSiteForDocument($this);
-        if ($site instanceof Site && $site->getMainDomain()) {
+        if ($site instanceof Model\Site && $site->getMainDomain()) {
             $url = $scheme . $site->getMainDomain() . preg_replace('@^' . $site->getRootPath() . '/?@', '/', $this->getRealFullPath());
         }
 

@@ -78,7 +78,10 @@ services:
         public: true
         tags: ['controller.service_arguments']
 
-    Pimcore\Controller\Config\ConfigNormalizer: ~
+    Pimcore\Controller\Config\ConfigNormalizer:
+        calls:
+            - [setRoutingDefaults, ['%pimcore.routing.defaults%']]
+
 
     Pimcore\Controller\Config\ControllerDataProvider:
         public : true
@@ -191,6 +194,9 @@ services:
         class: Pimcore\Translation\ImportDataExtractor\TranslationItemResolver\TranslationItemResolver
 
     Pimcore\Translation\Escaper\Xliff12Escaper: ~
+
+    Pimcore\Model\DataObject\ClassDefinition\ClassDefinitionManager:
+        public: true
 
     # Override Swiftmailer redirecting plugin
     swiftmailer.plugin.redirecting.abstract:
