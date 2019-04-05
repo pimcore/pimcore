@@ -489,6 +489,7 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
 
         var filters = "";
         var condition = "";
+        var searchQuery = this.searchField.getValue();
 
         if(this.sqlButton.pressed) {
             condition = this.sqlEditor.getValue();
@@ -522,6 +523,7 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
             "ids[]": ids,
             "fields[]": fieldKeys,
             settings: settings,
+            query: searchQuery,
             export: true
         };
 
