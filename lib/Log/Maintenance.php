@@ -42,20 +42,18 @@ class Maintenance
             if ($lastTimeItem) {
                 $lastTime = $lastTimeItem->getData();
             } else {
-                $lastTime = time() - 86400;
+                $lastTime = time();
             }
 
             if (file_exists($log) && date('Y-m-d', $lastTime) != date('Y-m-d')) {
                 // archive log (will be cleaned up by maintenance)
                 $archiveFilename = preg_replace('/\.log$/', '', $log) . '-archive-' . date('Y-m-d', $lastTime) . '.log';
                 rename($log, $archiveFilename);
+                TmpStore::delete($tmpStoreTimeId);
+            }
 
-                if ($lastTimeItem) {
-                    $lastTimeItem->setData(time());
-                    $lastTimeItem->update(86400 * 7);
-                } else {
-                    TmpStore::add($tmpStoreTimeId, time(), null, 86400 * 7);
-                }
+            if (!$lastTimeItem) {
+                TmpStore::add($tmpStoreTimeId, time(), null, 86400 * 7);
             }
         }
 
