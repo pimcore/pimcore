@@ -711,8 +711,6 @@
   "resolver_strategy": "Resolver Strategy",
   "resolver_settings": "Resolver Settings",
   "csv_settings": "CSV Settings",
-  "export_settings": "Export Settings",
-  "export_all": "Export all datasets",
   "skipheadrow": "Skip head row",
   "csv_file_preview": "CSV File Preview",
   "save_as": "Save as",

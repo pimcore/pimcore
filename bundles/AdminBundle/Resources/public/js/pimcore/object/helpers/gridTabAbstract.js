@@ -521,7 +521,8 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
             language: this.gridLanguage,
             "ids[]": ids,
             "fields[]": fieldKeys,
-            settings: settings
+            settings: settings,
+            export: true
         };
 
 
