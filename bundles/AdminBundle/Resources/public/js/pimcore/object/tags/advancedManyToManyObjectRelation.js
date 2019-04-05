@@ -508,56 +508,6 @@ pimcore.object.tags.advancedManyToManyObjectRelation = Class.create(pimcore.obje
         return this.createLayout(true);
     },
 
-    getEditToolbarItems: function (readOnly) {
-        var toolbarItems = [
-            {
-                xtype: "tbspacer",
-                width: 20,
-                height: 16,
-                cls: "pimcore_icon_droptarget"
-            },
-            {
-                xtype: "tbtext",
-                text: "<b>" + this.fieldConfig.title + "</b>"
-            }];
-
-        toolbarItems = toolbarItems.concat(["->"]);
-
-        if (this.fieldConfig.enableFilter) {
-            toolbarItems = toolbarItems.concat([
-                {
-                    xtype: 'textfield',
-                    fieldLabel: t("filter"),
-                    listeners:
-                        {
-                            keyup: {
-                                fn: this.filterStore.bind(this),
-                                element: "el"
-                            }
-                        }
-                },
-                "-"
-            ]);
-        }
-
-        if (!readOnly) {
-            toolbarItems = toolbarItems.concat([
-                {
-                    xtype: "button",
-                    iconCls: "pimcore_icon_delete",
-                    handler: this.empty.bind(this)
-                },
-                {
-                    xtype: "button",
-                    iconCls: "pimcore_icon_search",
-                    handler: this.openSearchEditor.bind(this)
-                },
-                this.getCreateControl()]);
-        }
-
-        return toolbarItems;
-    },
-
     dndAllowed: function (data, fromTree) {
         // check if data is a treenode, if not allow drop because of the reordering
         if (!fromTree) {
