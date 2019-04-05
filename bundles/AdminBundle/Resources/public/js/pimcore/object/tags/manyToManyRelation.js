@@ -35,15 +35,16 @@ pimcore.object.tags.manyToManyRelation = Class.create(pimcore.object.tags.abstra
                 idProperty: this.idProperty,
                 fields: [
                     'id',
-                    'path',
+                    'fullpath',
                     'type',
                     'subtype',
-                    'published'
+                    'published',
+                    'rowId'
                 ]
             });
         }
 
-        this.store = new Ext.data.ArrayStore({
+        this.store = new Ext.data.JsonStore({
             data: this.data,
             listeners: {
                 add: function () {
@@ -105,6 +106,7 @@ pimcore.object.tags.manyToManyRelation = Class.create(pimcore.object.tags.abstra
 
             selModel: Ext.create('Ext.selection.RowModel', {}),
             viewConfig: {
+                markDirty: false,
                 plugins: {
                     ptype: 'gridviewdragdrop',
                     dragroup: 'element'
@@ -121,7 +123,7 @@ pimcore.object.tags.manyToManyRelation = Class.create(pimcore.object.tags.abstra
                 },
                 items: [
                     {text: 'ID', dataIndex: 'id', width: 50},
-                    {text: t("reference"), dataIndex: 'path', flex: 200, renderer:this.fullPathRenderCheck.bind(this)
+                    {text: t("reference"), dataIndex: 'fullpath', flex: 200, renderer:this.fullPathRenderCheck.bind(this)
                     },
                     {text: t("type"), dataIndex: 'type', width: 100},
                     {text: t("subtype"), dataIndex: 'subtype', width: 100},
@@ -254,7 +256,7 @@ pimcore.object.tags.manyToManyRelation = Class.create(pimcore.object.tags.abstra
                                     } else {
                                         var initData = {
                                             id: data.id,
-                                            path: data.path,
+                                            fullpath: data.path,
                                             type: data.elementType,
                                             published: data.published
                                         };
@@ -349,7 +351,7 @@ pimcore.object.tags.manyToManyRelation = Class.create(pimcore.object.tags.abstra
             store: this.store,
             columns: [
                 {text: 'ID', dataIndex: 'id', width: 50, sortable: false},
-                {text: t("reference"), dataIndex: 'path', width: 200, sortable: false, renderer:this.fullPathRenderCheck.bind(this)},
+                {text: t("reference"), dataIndex: 'fullpath', width: 200, sortable: false, renderer:this.fullPathRenderCheck.bind(this)},
                 {text: t("type"), dataIndex: 'type', width: 100, sortable: false},
                 {text: t("subtype"), dataIndex: 'subtype', width: 100, sortable: false},
                 {
@@ -373,7 +375,7 @@ pimcore.object.tags.manyToManyRelation = Class.create(pimcore.object.tags.abstra
             width: this.fieldConfig.width,
             height: this.fieldConfig.height,
             cls: "multihref_field",
-            autoExpandColumn: 'path',
+            autoExpandColumn: 'fullpath',
             border: true,
             style: "margin-bottom: 10px",
             title: this.fieldConfig.title,
@@ -397,7 +399,7 @@ pimcore.object.tags.manyToManyRelation = Class.create(pimcore.object.tags.abstra
                     var toBeRequested = new Ext.util.Collection();
                     toBeRequested.add(this.store.add({
                         id: data["id"],
-                        path: data["fullpath"],
+                        fullpath: data["fullpath"],
                         type: "asset",
                         subtype: data["type"]
                     }));
@@ -539,7 +541,7 @@ pimcore.object.tags.manyToManyRelation = Class.create(pimcore.object.tags.abstra
 
                     toBeRequested.add(this.store.add({
                         id: items[i].id,
-                        path: items[i].fullpath,
+                        fullpath: items[i].fullpath,
                         type: items[i].type,
                         subtype: subtype,
                         published: items[i].published

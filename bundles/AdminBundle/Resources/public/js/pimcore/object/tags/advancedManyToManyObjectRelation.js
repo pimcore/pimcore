@@ -113,7 +113,7 @@ pimcore.object.tags.advancedManyToManyObjectRelation = Class.create(pimcore.obje
 
                 var fc = pimcore.object.tags[layout.fieldtype].prototype.getGridColumnConfig(field);
 
-                fc.width = 100;
+                fc.flex = 1;
                 fc.hidden = false;
                 fc.layout = field;
                 fc.editor = null;
@@ -195,12 +195,12 @@ pimcore.object.tags.advancedManyToManyObjectRelation = Class.create(pimcore.obje
                 };
 
                 if (readOnly) {
-                    columns.push(Ext.create('Ext.grid.column.Check'), {
+                    columns.push(Ext.create('Ext.grid.column.Check', {
                         text: ts(this.fieldConfig.columns[i].label),
                         dataIndex: this.fieldConfig.columns[i].key,
                         width: width,
                         renderer: renderer
-                    });
+                    }));
                     continue;
                 }
 
@@ -347,8 +347,8 @@ pimcore.object.tags.advancedManyToManyObjectRelation = Class.create(pimcore.obje
                 },
                 markDirty: false,
                 listeners: {
-                    refresh: function (gridview) {
-                        this.requestNicePathData(this.store.data);
+                    afterrender: function (gridview) {
+                        this.requestNicePathData(this.store.data, true);
                     }.bind(this),
                     drop: function () {
                         // this is necessary to avoid endless recursion when long lists are sorted via d&d
@@ -435,6 +435,7 @@ pimcore.object.tags.advancedManyToManyObjectRelation = Class.create(pimcore.obje
                                     var initData = {
                                         id: data.id,
                                         metadata: '',
+                                        fullpath: data.path,
                                         inheritedFields: {}
                                     };
 
@@ -536,20 +537,6 @@ pimcore.object.tags.advancedManyToManyObjectRelation = Class.create(pimcore.obje
         return isAllowedClass;
     },
 
-    addDataFromSelector: function (items) {
-
-        if (items.length > 0) {
-            toBeRequested = new Ext.util.Collection();
-
-            for (var i = 0; i < items.length; i++) {
-                if (!this.objectAlreadyExists(items[i].id)) {
-                    toBeRequested.add(this.loadObjectData(items[i], this.visibleFields));
-                }
-            }
-            this.requestNicePathData(toBeRequested);
-        }
-    },
-
     cellMousedown: function (key, colType, grid, cell, rowIndex, cellIndex, e) {
 
         // this is used for the boolean field type
@@ -560,48 +547,6 @@ pimcore.object.tags.advancedManyToManyObjectRelation = Class.create(pimcore.obje
         if (colType == "bool") {
             record.set(key, !record.data[key]);
         }
-    },
-
-    loadObjectData: function (item, fields) {
-
-        var newItem = this.store.add(item);
-
-        Ext.Ajax.request({
-            url: "/admin/object-helper/load-object-data",
-            params: {
-                id: item.id,
-                'fields[]': fields
-            },
-            success: function (response) {
-                var rdata = Ext.decode(response.responseText);
-                var key;
-
-                if (rdata.success) {
-                    var rec = this.store.getById(item.id);
-                    for (key in rdata.fields) {
-                        rec.set(key, rdata.fields[key]);
-                    }
-                }
-            }.bind(this)
-        });
-
-        return newItem;
-    },
-
-    normalizeTargetData: function (targets) {
-        if (!targets) {
-            return targets;
-        }
-
-        targets.each(function (record) {
-            var type = record.data.type;
-            record.data.type = "object";
-            record.data.subtype = type;
-            record.data.path = record.data.fullpath;
-        }, this);
-
-        return targets;
-
     },
 
     getGridColumnConfig: function(field) {

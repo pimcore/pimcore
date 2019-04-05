@@ -306,4 +306,14 @@ class DefaultElasticSearch5 extends AbstractElasticSearch
             $this->saveToMockupCache($objectId, $data);
         }
     }
+
+    /**
+     * returns product list implementation valid and configured for this worker/tenant
+     *
+     * @return IProductList
+     */
+    public function getProductList()
+    {
+        return new \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\DefaultElasticSearch($this->tenantConfig);
+    }
 }

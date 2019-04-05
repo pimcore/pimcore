@@ -99,7 +99,7 @@ pimcore.object.classes.data.advancedManyToManyObjectRelation = Class.create(pimc
             {
                 xtype: "displayfield",
                 hideLabel: true,
-                value: t('lazy_loading_warning'),
+                value: t('lazy_loading_warning_block'),
                 cls: "pimcore_extra_label_bottom",
                 style: "color:red; font-weight: bold;"
             },
@@ -184,7 +184,7 @@ pimcore.object.classes.data.advancedManyToManyObjectRelation = Class.create(pimc
 
         this.specificPanel.add({
             xtype: "checkbox",
-            fieldLabel: t("enable_batch_edit_columns"),
+            boxLabel: t("enable_batch_edit_columns"),
             name: "enableBatchEdit",
             value: this.datax.enableBatchEdit
         });
@@ -195,6 +195,21 @@ pimcore.object.classes.data.advancedManyToManyObjectRelation = Class.create(pimc
             name: "enableFilter",
             value: this.datax.enableFilter
         });
+      
+        if(this.context == 'class') {
+            this.specificPanel.add({
+                xtype: "checkbox",
+                boxLabel: t("enable_admin_async_load"),
+                name: "optimizedAdminLoading",
+                value: this.datax.optimizedAdminLoading
+            });
+            this.specificPanel.add({
+                xtype: "displayfield",
+                hideLabel: true,
+                value: t('async_loading_warning_block'),
+                cls: "pimcore_extra_label_bottom"
+            });
+        }
 
         return this.layout;
     },

@@ -744,6 +744,7 @@ XML;
         <reqtype>DOA</reqtype>
         <amount>%4$d</amount>
         <currency>%5$s</currency>
+        <sign>%6$s</sign>
       </request>
     </transaction>
   </body>
@@ -756,7 +757,8 @@ XML;
             $reference,
             $transactionId,
             $amount,
-            $currency
+            $currency,
+            $this->sign
         );
 
         return $this->xmlRequest($this->endpoint['xmlProcessor'], $xml);

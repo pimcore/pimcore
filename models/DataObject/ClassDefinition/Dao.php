@@ -33,11 +33,6 @@ class Dao extends Model\Dao\AbstractDao
     protected $model;
 
     /**
-     * @var array
-     */
-    protected $_sqlChangeLog = [];
-
-    /**
      * @var mixed
      */
     protected $tableDefinitions = null;
@@ -143,6 +138,8 @@ class Dao extends Model\Dao\AbstractDao
           KEY `type` (`type`),
           KEY `ownername` (`ownername`)
         ) DEFAULT CHARSET=utf8mb4;");
+
+        $this->handleEncryption($this->model, [$objectTable, $objectDatastoreTable, $objectDatastoreTableRelation]);
 
         $existingColumns = $this->getValidTableColumns($objectTable, false); // no caching of table definition
         $existingDatastoreColumns = $this->getValidTableColumns($objectDatastoreTable, false); // no caching of table definition

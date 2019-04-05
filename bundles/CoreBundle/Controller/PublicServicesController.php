@@ -14,6 +14,7 @@
 
 namespace Pimcore\Bundle\CoreBundle\Controller;
 
+use Pimcore\Config;
 use Pimcore\Logger;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Site;
@@ -132,9 +133,11 @@ class PublicServicesController extends FrameworkController
         } catch (\Exception $e) {
         }
 
-        $siteSuffix = '-default';
+        $config = Config::getRobotsConfig()->toArray();
+
+        $siteId = 'default';
         if ($site instanceof Site) {
-            $siteSuffix = '-' . $site->getId();
+            $siteId = $site->getId();
         }
 
         // send correct headers
@@ -143,9 +146,8 @@ class PublicServicesController extends FrameworkController
 
         // check for configured robots.txt in pimcore
         $content = '';
-        $robotsPath = PIMCORE_CONFIGURATION_DIRECTORY . '/robots' . $siteSuffix . '.txt';
-        if (is_file($robotsPath)) {
-            $content = file_get_contents($robotsPath);
+        if (array_key_exists($siteId, $config)) {
+            $content = $config[$siteId];
         }
 
         if (empty($content)) {

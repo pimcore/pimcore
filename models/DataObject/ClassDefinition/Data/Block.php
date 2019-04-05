@@ -630,7 +630,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
             $this->fieldDefinitionsCache = $definitions;
         }
 
-        if (isset($context['suppressEnrichment']) && $context['suppressEnrichment']) {
+        if (!\Pimcore::inAdmin() || (isset($context['suppressEnrichment']) && $context['suppressEnrichment'])) {
             return $this->fieldDefinitionsCache;
         }
 
@@ -655,7 +655,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     {
         $fds = $this->getFieldDefinitions();
         if (isset($fds[$name])) {
-            if (isset($context['suppressEnrichment']) && $context['suppressEnrichment']) {
+            if (!\Pimcore::inAdmin() || (isset($context['suppressEnrichment']) && $context['suppressEnrichment'])) {
                 return $fds[$name];
             }
             $fieldDefinition = $this->doEnrichFieldDefinition($fds[$name], $context);
@@ -666,7 +666,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
         return;
     }
 
-    public function doEnrichFieldDefinition($fieldDefinition, $context = [])
+    protected function doEnrichFieldDefinition($fieldDefinition, $context = [])
     {
         if (method_exists($fieldDefinition, 'enrichFieldDefinition')) {
             $context['containerType'] = 'block';
@@ -866,25 +866,6 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
         return $data;
     }
 
-//
-//    public function getTableName($container, $params = []) {
-//        $db = Db::get();
-//        $data = null;
-//
-//        if ($container instanceof DataObject\Concrete) {
-//            return "object_store_" . $container->getClassId();
-//        } elseif ($container instanceof DataObject\Fieldcollection\Data\AbstractData) {
-//
-//            //TODO
-//        } elseif ($container instanceof DataObject\Localizedfield) {
-//            //TODO
-//        } elseif ($container instanceof DataObject\Objectbrick\Data\AbstractData) {
-//            //TODO
-//        }
-//
-//
-//    }
-
     /**
      * @param $object
      * @param array $params
@@ -911,8 +892,6 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
                 $query = 'select ' . $db->quoteIdentifier($field) . ' from object_store_' . $container->getClassId() . ' where oo_id  = ' . $container->getId();
                 $data = $db->fetchOne($query);
                 $data = $this->getDataFromResource($data, $container, $params);
-            } else {
-                return null;
             }
         } elseif ($container instanceof DataObject\Localizedfield) {
             $context = $params['context'];
@@ -972,7 +951,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
         $data = null;
         if ($object instanceof DataObject\Concrete) {
             $data = $object->getObjectVar($this->getName());
-            if ($this->getLazyLoading() and !in_array($this->getName(), $object->getO__loadedLazyFields())) {
+            if ($this->getLazyLoading() && !$object->isLazyKeyLoaded($this->getName())) {
                 $data = $this->load($object, ['force' => true]);
 
                 $setter = 'set' . ucfirst($this->getName());

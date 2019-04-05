@@ -43,6 +43,10 @@ pimcore.object.classes.data.image = Class.create(pimcore.object.classes.data.dat
         return "pimcore_icon_image";
     },
 
+    getGroup: function () {
+        return "media";
+    },
+
     getLayout: function ($super) {
 
         $super();

@@ -14,8 +14,6 @@
 
 namespace Pimcore\Model;
 
-use Pimcore\Logger;
-
 /**
  * @method \Pimcore\Model\WebsiteSetting\Dao getDao()
  * @method void save()
@@ -117,8 +115,6 @@ class WebsiteSetting extends AbstractModel
         try {
             $setting->getDao()->getByName($name, $siteId, $language);
         } catch (\Exception $e) {
-            Logger::warning($e->getMessage());
-
             if ($language != $fallbackLanguage) {
                 $result = self::getByName($name, $siteId, $fallbackLanguage, $fallbackLanguage);
 

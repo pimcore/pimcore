@@ -275,7 +275,7 @@ abstract class AbstractRelations extends Data implements CustomResourcePersistin
      */
     public function save($object, $params = [])
     {
-        if ($params['isUntouchable']) {
+        if (isset($params['isUntouchable']) && $params['isUntouchable']) {
             return;
         }
 
@@ -346,7 +346,7 @@ abstract class AbstractRelations extends Data implements CustomResourcePersistin
         } elseif ($object instanceof DataObject\Fieldcollection\Data\AbstractData) {
             $relations = $db->fetchAll('SELECT * FROM object_relations_' . $object->getObject()->getClassId() . " WHERE src_id = ? AND fieldname = ? AND ownertype = 'fieldcollection' AND ownername = ? AND position = ?", [$object->getObject()->getId(), $this->getName(), $object->getFieldname(), $object->getIndex()]);
         } elseif ($object instanceof DataObject\Localizedfield) {
-            if (isset($params['context']) && ($params['context']['containerType'] == 'fieldcollection' || $params['context']['containerType'] == 'objectbrick')) {
+            if (isset($params['context']) && isset($params['context']['containerType']) && (($params['context']['containerType'] == 'fieldcollection' || $params['context']['containerType'] == 'objectbrick'))) {
                 $context = $params['context'];
                 $fieldname = $context['fieldname'];
                 if ($params['context']['containerType'] == 'fieldcollection') {
@@ -558,5 +558,42 @@ abstract class AbstractRelations extends Data implements CustomResourcePersistin
     public function supportsDirtyDetection()
     {
         return true;
+    }
+
+    /**
+     * @param DataObject\Fieldcollection\Data\AbstractData $object
+     *
+     * @throws \Exception
+     */
+    public function loadLazyFieldcollectionField(DataObject\Fieldcollection\Data\AbstractData $item)
+    {
+        if ($this->getLazyLoading() && $item->getObject()) {
+            /** @var $container DataObject\Fieldcollection */
+            $container = $item->getObject()->getObjectVar($item->getFieldname());
+            if ($container) {
+                $container->loadLazyField($item->getObject(), $item->getType(), $item->getFieldname(), $item->getIndex(), $this->getName());
+            } else {
+                // if container is not available we assume that it is a newly set item
+                $item->markLazyKeyAsLoaded($this->getName());
+            }
+        }
+    }
+
+    /**
+     * @param DataObject\Objectbrick\Data\AbstractData $object
+     *
+     * @throws \Exception
+     */
+    public function loadLazyBrickField(DataObject\Objectbrick\Data\AbstractData $item)
+    {
+        if ($this->getLazyLoading() && $item->getObject()) {
+            /** @var $container DataObject\Objectbrick */
+            $container = $item->getObject()->getObjectVar($item->getFieldname());
+            if ($container) {
+                $container->loadLazyField($item->getType(), $item->getFieldname(), $this->getName());
+            } else {
+                $item->markLazyKeyAsLoaded($this->getName());
+            }
+        }
     }
 }

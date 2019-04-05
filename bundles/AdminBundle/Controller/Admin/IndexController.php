@@ -20,7 +20,7 @@ use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse;
 use Pimcore\Config;
 use Pimcore\Controller\Configuration\TemplatePhp;
-use Pimcore\Db\Connection;
+use Pimcore\Db\ConnectionInterface;
 use Pimcore\Event\Admin\IndexSettingsEvent;
 use Pimcore\Event\AdminEvents;
 use Pimcore\FeatureToggles\Features\DevMode;
@@ -110,14 +110,14 @@ class IndexController extends AdminController
      * @Route("/index/statistics", name="pimcore_admin_index_statistics", methods={"GET"})
      *
      * @param Request $request
-     * @param Connection $db
+     * @param ConnectionInterface $db
      * @param KernelInterface $db
      *
      * @return JsonResponse
      *
      * @throws \Exception
      */
-    public function statisticsAction(Request $request, Connection $db, KernelInterface $kernel)
+    public function statisticsAction(Request $request, ConnectionInterface $db, KernelInterface $kernel)
     {
 
         // DB
@@ -272,6 +272,9 @@ class IndexController extends AdminController
             'tile_layer_url_template' => $pimcoreSymfonyConfig['maps']['tile_layer_url_template'],
             'geocoding_url_template' => $pimcoreSymfonyConfig['maps']['geocoding_url_template'],
             'reverse_geocoding_url_template' => $pimcoreSymfonyConfig['maps']['reverse_geocoding_url_template'],
+            'asset_tree_paging_limit' => $pimcoreSymfonyConfig['assets']['tree_paging_limit'],
+            'document_tree_paging_limit' => $pimcoreSymfonyConfig['documents']['tree_paging_limit'],
+            'object_tree_paging_limit' => $pimcoreSymfonyConfig['objects']['tree_paging_limit'],
         ]);
 
         $dashboardHelper = new \Pimcore\Helper\Dashboard($user);

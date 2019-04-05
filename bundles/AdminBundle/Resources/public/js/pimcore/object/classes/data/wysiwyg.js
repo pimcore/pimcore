@@ -83,7 +83,13 @@ pimcore.object.classes.data.wysiwyg = Class.create(pimcore.object.classes.data.d
                 value: datax.toolbarConfig,
                 width:400,
                 height:150
+            }, {
+                xtype: "checkbox",
+                fieldLabel: t("exclude_from_search_index"),
+                name: "excludeFromSearchIndex",
+                checked: datax.excludeFromSearchIndex
             }
+
         ];
     },
 

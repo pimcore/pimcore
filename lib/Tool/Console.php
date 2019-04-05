@@ -45,6 +45,8 @@ class Console
         if (self::$systemEnvironment == null) {
             if (stripos(php_uname('s'), 'windows') !== false) {
                 self::$systemEnvironment = 'windows';
+            } elseif (stripos(php_uname('s'), 'darwin') !== false) {
+                self::$systemEnvironment = 'darwin';
             } else {
                 self::$systemEnvironment = 'unix';
             }
@@ -361,6 +363,8 @@ class Console
         // windows systems
         if (self::getSystemEnvironment() == 'windows') {
             return self::execInBackgroundWindows($cmd, $outputFile);
+        } elseif (self::getSystemEnvironment() == 'darwin') {
+            return self::execInBackgroundUnix($cmd, $outputFile, false);
         } else {
             return self::execInBackgroundUnix($cmd, $outputFile);
         }
@@ -371,10 +375,11 @@ class Console
      *
      * @param string $cmd
      * @param string $outputFile
+     * @param bool $useNohup
      *
      * @return int
      */
-    protected static function execInBackgroundUnix($cmd, $outputFile)
+    protected static function execInBackgroundUnix($cmd, $outputFile, $useNohup = true)
     {
         if (!$outputFile) {
             $outputFile = '/dev/null';
@@ -385,9 +390,13 @@ class Console
             $nice .= ' -n 19 ';
         }
 
-        $nohup = (string) self::getExecutable('nohup');
-        if ($nohup) {
-            $nohup .= ' ';
+        if ($useNohup) {
+            $nohup = (string) self::getExecutable('nohup');
+            if ($nohup) {
+                $nohup .= ' ';
+            }
+        } else {
+            $nohup = '';
         }
 
         /**

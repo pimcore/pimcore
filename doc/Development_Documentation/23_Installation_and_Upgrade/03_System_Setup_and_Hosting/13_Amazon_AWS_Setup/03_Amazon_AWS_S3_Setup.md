@@ -113,7 +113,7 @@ class S3Listener
         if(!$path) {
             if(!file_exists($fileSystemPath)) {
                 // the thumbnail doesn't exist yet, so we need to create it on request -> Thumbnail controller plugin
-                $path = str_replace(PIMCORE_TEMPORARY_DIRECTORY, "", $fileSystemPath);
+                $path = str_replace(PIMCORE_TEMPORARY_DIRECTORY."/image-thumbnails", "", $fileSystemPath);
             } else {
                 $path = str_replace(PIMCORE_TEMPORARY_DIRECTORY . "/", $this->s3TmpUrlPrefix . "/", $fileSystemPath);
             }

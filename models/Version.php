@@ -22,7 +22,6 @@ use Pimcore\Event\Model\VersionEvent;
 use Pimcore\Event\VersionEvents;
 use Pimcore\File;
 use Pimcore\Logger;
-use Pimcore\Model\DataObject\ClassDefinition\Data\ReverseManyToManyObjectRelation;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Tool\Serialize;
@@ -299,20 +298,15 @@ class Version extends AbstractModel
 
         if ($this->getSerialized()) {
             $data = Serialize::unserialize($data);
+            if ($data instanceof \__PHP_Incomplete_Class) {
+                Logger::err('Version: cannot read version data from file system because of incompatible class.');
+
+                return;
+            }
         }
 
         if ($data instanceof Concrete) {
-            /** @var $class ClassDefinition */
-            $class = $data->getClass();
-            $fds = $class->getFieldDefinitions();
-            foreach ($fds as $fd) {
-                if (method_exists($fd, 'getLazyLoading') && $fd->getLazyLoading()) {
-                    if (!$fd instanceof ReverseManyToManyObjectRelation) {
-                        $data->addLazyLoadedField($fd->getName());
-                        $data->addO__loadedLazyField($fd->getName());
-                    }
-                }
-            }
+            $data->markAllLazyLoadedKeysAsLoaded();
         }
 
         if ($data instanceof Asset && file_exists($this->getBinaryFilePath())) {

@@ -178,6 +178,9 @@ class Configuration implements ConfigurationInterface
                     ->scalarNode('defaultUploadPath')
                         ->defaultValue('_default_upload_bucket')
                         ->end()
+                    ->integerNode('tree_paging_limit')
+                        ->defaultValue(100)
+                        ->end()
                     ->arrayNode('image')
                         ->addDefaultsIfNotSet()
                         ->children()
@@ -242,7 +245,12 @@ class Configuration implements ConfigurationInterface
         $objectsNode = $rootNode
             ->children()
                 ->arrayNode('objects')
-                    ->addDefaultsIfNotSet();
+                    ->addDefaultsIfNotSet()
+                    ->children()
+                        ->integerNode('tree_paging_limit')
+                            ->defaultValue(30)
+                            ->end()
+                    ->end();
 
         $classDefinitionsNode = $objectsNode
             ->children()
@@ -285,6 +293,9 @@ class Configuration implements ConfigurationInterface
 
         $documentsNode
             ->children()
+                ->integerNode('tree_paging_limit')
+                    ->defaultValue(50)
+                ->end()
                 ->arrayNode('editables')
                     ->addDefaultsIfNotSet()
                     ->children()
@@ -339,6 +350,20 @@ class Configuration implements ConfigurationInterface
                 ->arrayNode('routing')
                     ->addDefaultsIfNotSet()
                     ->children()
+                        ->arrayNode('defaults')
+                            ->addDefaultsIfNotSet()
+                            ->children()
+                                ->scalarNode('bundle')
+                                    ->defaultValue('AppBundle')
+                                ->end()
+                                ->scalarNode('controller')
+                                    ->defaultValue('Default')
+                                ->end()
+                                ->scalarNode('action')
+                                    ->defaultValue('default')
+                                ->end()
+                            ->end()
+                        ->end()
                         ->arrayNode('static')
                             ->addDefaultsIfNotSet()
                             ->children()
@@ -936,12 +961,6 @@ class Configuration implements ConfigurationInterface
                                     ->end()
                                     ->prototype('scalar')
                                         ->cannotBeEmpty()
-                                        ->validate()
-                                            ->ifTrue(function ($v) {
-                                                return !class_exists($v);
-                                            })
-                                            ->thenInvalid('The supported class %s does not exist.')
-                                        ->end()
                                     ->end()
                                     ->info('List of supported entity classes. Take a look at the Symfony docs for more details.')
                                     ->example(['\Pimcore\Model\DataObject\Product'])

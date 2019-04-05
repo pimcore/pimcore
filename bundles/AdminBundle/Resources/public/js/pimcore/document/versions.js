@@ -93,7 +93,7 @@ pimcore.document.versions = Class.create({
                         var versionCount = cellValues.get('versionCount');
                         var index = cellValues.get('index');
 
-                        if (index === 0 && d == this.document.data.versionDate && versionCount == this.document.data.versionCount) {
+                        if (this.document.data.published && index === 0 && d == this.document.data.versionDate && versionCount == this.document.data.versionCount) {
                             metaData.tdCls = "pimcore_icon_publish";
                         }
                         return "";

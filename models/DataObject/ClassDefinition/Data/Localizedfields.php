@@ -141,7 +141,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
     }
 
     /**
-     * @param $data
+     * @param $data DataObject\Localizedfield
      * @param $object
      * @param $fieldData
      * @param $metaData
@@ -149,14 +149,35 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
      *
      * @return array
      */
-    private function doGetDataForEditMode($data, $object, &$fieldData, &$metaData, $level = 1, $params)
+    private function doGetDataForEditMode($data, $object, &$fieldData, &$metaData, $level = 1, $params = [])
     {
         $class = $object->getClass();
         $inheritanceAllowed = $class->getAllowInherit();
         $inherited = false;
 
-        foreach ($data->getItems() as $language => $values) {
+        $dataItems = $data->getInternalData(true);
+        foreach ($dataItems as $language => $values) {
             foreach ($this->getFieldDefinitions() as $fd) {
+                if ($fd instanceof Data\Relations\AbstractRelations && !DataObject\Concrete::isLazyLoadingDisabled() && $fd->getLazyLoading()) {
+                    $lazyKey = $fd->getName() . DataObject\LazyLoadedFieldsInterface::LAZY_KEY_SEPARATOR . $language;
+                    if (!$data->isLazyKeyLoaded($lazyKey)) {
+                        $params['language'] = $language;
+                        $params['object'] = $object;
+                        if (!isset($params['context'])) {
+                            $params['context'] = [];
+                        }
+                        $params['context']['object'] = $object;
+
+                        $value = $fd->load($data, $params);
+                        if ($value === 0 || !empty($value)) {
+                            $data->setLocalizedValue($fd->getName(), $value, $language, false);
+                            $values[$fd->getName()] = $value;
+                        }
+
+                        $data->markLazyKeyAsLoaded($lazyKey);
+                    }
+                }
+
                 $key = $fd->getName();
                 $fdata = isset($values[$fd->getName()]) ? $values[$fd->getName()] : null;
 
@@ -355,7 +376,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
         $lfData = $this->getDataFromObjectParam($object);
 
         if ($lfData instanceof DataObject\Localizedfield) {
-            foreach ($lfData->getItems() as $language => $values) {
+            foreach ($lfData->getInternalData(true) as $language => $values) {
                 foreach ($values as $lData) {
                     if (is_string($lData)) {
                         $dataString .= $lData.' ';
@@ -383,7 +404,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
         if (!$data instanceof DataObject\Localizedfield) {
             $items = [];
         } else {
-            $items = $data->getItems();
+            $items = $data->getInternalData(true);
         }
 
         $user = Tool\Admin::getCurrentUser();
@@ -637,6 +658,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
             $localizedFields->setObject($object, false);
             $context = isset($params['context']) ? $params['context'] : null;
             $localizedFields->setContext($context);
+            $localizedFields->loadLazyData();
             $localizedFields->save($params);
         }
     }
@@ -805,7 +827,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
         $fds = $this->getFieldDefinitions($context);
         if (isset($fds[$name])) {
             $fieldDefinition = $fds[$name];
-            if (isset($context['suppressEnrichment']) && $context['suppressEnrichment']) {
+            if (!\Pimcore::inAdmin() || (isset($context['suppressEnrichment']) && $context['suppressEnrichment'])) {
                 return $fieldDefinition;
             }
 
@@ -835,7 +857,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
             $this->fieldDefinitionsCache = $definitions;
         }
 
-        if (isset($context['suppressEnrichment']) && $context['suppressEnrichment']) {
+        if (!\Pimcore::inAdmin() || (isset($context['suppressEnrichment']) && $context['suppressEnrichment'])) {
             return $this->fieldDefinitionsCache;
         }
 
@@ -850,7 +872,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
         return $enrichedFieldDefinitions;
     }
 
-    public function doEnrichFieldDefinition($fieldDefinition, $context = [])
+    protected function doEnrichFieldDefinition($fieldDefinition, $context = [])
     {
         if (method_exists($fieldDefinition, 'enrichFieldDefinition')) {
             $context['class'] = $this;
@@ -909,7 +931,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
             return $tags;
         }
 
-        foreach ($data->getItems() as $language => $values) {
+        foreach ($data->getInternalData(true) as $language => $values) {
             foreach ($this->getFieldDefinitions() as $fd) {
                 $tags = $fd->getCacheTags($values[$fd->getName()], $tags);
             }
@@ -931,7 +953,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
             return [];
         }
 
-        foreach ($data->getItems() as $language => $values) {
+        foreach ($data->getInternalData(true) as $language => $values) {
             foreach ($this->getFieldDefinitions() as $fd) {
                 $dependencies = array_merge($dependencies, $fd->resolveDependencies($values[$fd->getName()]));
             }
@@ -983,21 +1005,19 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
     /**
      * @param string $name
      *
-     * @return $this|void
+     * @return $this|Data
+     *
+     * @throws \Exception
      */
     public function setName($name)
     {
+        if ($name !== 'localizedfields') {
+            throw new \Exception('Localizedfields can only be named `localizedfields`, no other names are allowed');
+        }
+
         $this->name = $name;
 
         return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getName()
-    {
-        return $this->name;
     }
 
     /**
@@ -1018,26 +1038,6 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
     public function getRegion()
     {
         return $this->region;
-    }
-
-    /**
-     * @param string $title
-     *
-     * @return $this|void
-     */
-    public function setTitle($title)
-    {
-        $this->title = $title;
-
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getTitle()
-    {
-        return $this->title;
     }
 
     /**
@@ -1109,11 +1109,10 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
      */
     protected function getDataForValidity($localizedObject, array $languages)
     {
-        //TODO verify if in any place in the code \Pimcore\Model\DataObject\ClassDefinition\Data\Localizedfields::checkValidity is used with different parameter then DataObject\Localizedfield
-        if (!$localizedObject->object
-            || $localizedObject->object->getType() != 'variant'
+        if (!$localizedObject->getObject()
+            || $localizedObject->getObject()->getType() != 'variant'
             || !$localizedObject instanceof DataObject\Localizedfield) {
-            return $localizedObject->getItems();
+            return $localizedObject->getInternalData(true);
         }
 
         //prepare data for variants
@@ -1145,7 +1144,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
             return [];
         }
 
-        foreach ($data->getItems() as $language => $values) {
+        foreach ($data->getInternalData(true) as $language => $values) {
             foreach ($this->getFieldDefinitions() as $fd) {
                 $fieldname = $fd->getName();
 
@@ -1183,7 +1182,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
      * @param null $object
      * @param mixed $params
      *
-     * @return null|\Pimcore_Date
+     * @return DataObject\Localizedfield
      */
     public function getDiffDataFromEditmode($data, $object = null, $params = [])
     {
@@ -1192,7 +1191,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
 
         // get existing data
         if ($localFields instanceof DataObject\Localizedfield) {
-            $localData = $localFields->getItems();
+            $localData = $localFields->getInternalData(true);
         }
 
         $mapping = [];
@@ -1354,7 +1353,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
     public function marshal($value, $object = null, $params = [])
     {
         if ($value instanceof DataObject\Localizedfield) {
-            $items = $value->getItems();
+            $items = $value->getInternalData();
             if (is_array($items)) {
                 $result = [];
                 foreach ($items as $language => $languageData) {

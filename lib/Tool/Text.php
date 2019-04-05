@@ -368,14 +368,31 @@ class Text
      */
     public static function detectEncoding($text)
     {
+        // Detect UTF-8, UTF-16 and UTF-32 by BOM
+        $utf32_big_endian_bom = chr(0x00) . chr(0x00) . chr(0xFE) . chr(0xFF);
+        $utf32_little_endian_bom = chr(0xFF) . chr(0xFE) . chr(0x00) . chr(0x00);
+        $utf16_big_endian_bom = chr(0xFE) . chr(0xFF);
+        $utf16_little_endian_bom = chr(0xFF) . chr(0xFE);
+        $utf8_bom = chr(0xEF) . chr(0xBB) . chr(0xBF);
+
+        $first2bytes = substr($text, 0, 2);
+        $first3bytes = substr($text, 0, 3);
+        $first4bytes = substr($text, 0, 3);
+
+        if ($first3bytes === $utf8_bom) {
+            return 'UTF-8';
+        } elseif ($first4bytes === $utf32_big_endian_bom) {
+            return 'UTF-32BE';
+        } elseif ($first4bytes === $utf32_little_endian_bom) {
+            return 'UTF-32LE';
+        } elseif ($first2bytes === $utf16_big_endian_bom) {
+            return 'UTF-16BE';
+        } elseif ($first2bytes === $utf16_little_endian_bom) {
+            return 'UTF-16LE';
+        }
+
         if (function_exists('mb_detect_encoding')) {
             $encoding = mb_detect_encoding($text, [
-                'UTF-32',
-                'UTF-32BE',
-                'UTF-32LE',
-                'UTF-16',
-                'UTF-16BE',
-                'UTF-16LE',
                 'UTF-8',
                 'UTF-7',
                 'UTF7-IMAP',
