@@ -53,6 +53,7 @@ class Dao extends Model\Dao\AbstractDao
 
     /**
      * @param null $name
+     *
      * @return int|null
      */
     public function getIdByName($name = null)
