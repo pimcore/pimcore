@@ -205,6 +205,7 @@ pimcore.object.classes.data.advancedManyToManyObjectRelation = Class.create(pimc
             fields.push('type');
             fields.push('value');
             fields.push('width');
+            fields.push('sortable');
         }
 
         this.stores[title] = new Ext.data.JsonStore({
@@ -286,7 +287,8 @@ pimcore.object.classes.data.advancedManyToManyObjectRelation = Class.create(pimc
                 editor: new Ext.form.TextField({})});
             typesColumns.push({text: t("width"), width: 80, sortable: true, dataIndex: 'width',
                 editor: new Ext.form.NumberField({})});
-
+            typesColumns.push({header: t("sortable"), width: 80, sortable: true, dataIndex: 'sortable',
+                xtype: 'checkcolumn', stopSelection: false});
 
         }
 

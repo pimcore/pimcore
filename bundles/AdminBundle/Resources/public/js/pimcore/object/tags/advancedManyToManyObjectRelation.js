@@ -217,7 +217,7 @@ pimcore.object.tags.advancedManyToManyObjectRelation = Class.create(pimcore.obje
                 dataIndex: this.fieldConfig.columns[i].key,
                 renderer: renderer,
                 listeners: listeners,
-                sortable: true,
+                sortable: this.fieldConfig.columns[i].sortable || false,
                 width: width
             };
 
