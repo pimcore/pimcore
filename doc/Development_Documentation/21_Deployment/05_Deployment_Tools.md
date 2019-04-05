@@ -62,6 +62,7 @@ To get a list of all available commands use `./bin/console list`.
 | pimcore:cache:warming                                | Warm up caches                                                                                  |
 | pimcore:classificationstore:delete-store                     | Delete Classification Store                                                                     |
 | pimcore:definition:import:class                      | Import Class definition from a JSON export                                                      |
+| pimcore:definition:import:customlayout               | Import Customlayout definition from a JSON export                                               |
 | pimcore:definition:import:fieldcollection            | Import FieldCollection definition from a JSON export                                            |
 | pimcore:definition:import:objectbrick                | Import ObjectBrick definition from a JSON export                                                |
 | pimcore:deployment:classes-rebuild                   | Rebuilds classes and db structure based on updated `var/classes/definition_*.php` files |
