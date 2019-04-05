@@ -242,7 +242,7 @@ pimcore.object.tags.manyToOneRelation = Class.create(pimcore.object.tags.abstrac
             this.data.subtype = data.type;
             this.data.path = data.path;
             this.dataChanged = true;
-            this.dataChanged = true;
+
             this.component.removeCls("strikeThrough");
             if (data.published === false) {
                 this.component.addCls("strikeThrough");
@@ -486,6 +486,16 @@ pimcore.object.tags.manyToOneRelation = Class.create(pimcore.object.tags.abstrac
 
     getCellEditValue: function () {
         return this.getValue();
+    },
+
+    isDirty:function () {
+        if (this.component) {
+            if (!this.component.rendered) {
+                return false;
+            } else {
+                return this.dataChanged;
+            }
+        }
     }
 });
 
