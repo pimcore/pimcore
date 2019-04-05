@@ -1810,15 +1810,15 @@ class Asset extends Element\AbstractElement
     {
         $finalVars = [];
         $parentVars = parent::__sleep();
+        $blockedVars = ['_temporaryFiles', 'scheduledTasks', 'dependencies', 'userPermissions', 'hasChilds', 'versions', 'parent', 'stream'];
 
         if (isset($this->_fulldump)) {
             // this is if we want to make a full dump of the asset (eg. for a new version), including childs for recyclebin
-            $blockedVars = ['_temporaryFiles', 'scheduledTasks', 'dependencies', 'userPermissions', 'hasChilds', 'versions', 'parent', 'stream'];
             $finalVars[] = '_fulldump';
             $this->removeInheritedProperties();
         } else {
             // this is if we want to cache the asset
-            $blockedVars = ['_temporaryFiles', 'scheduledTasks', 'dependencies', 'userPermissions', 'hasChilds', 'versions', 'childs', 'properties', 'stream', 'parent'];
+            $blockedVars = array_merge($blockedVars, ['childs', 'properties']);
         }
 
         foreach ($parentVars as $key) {

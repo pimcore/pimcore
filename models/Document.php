@@ -1353,15 +1353,15 @@ class Document extends Element\AbstractElement
     {
         $finalVars = [];
         $parentVars = parent::__sleep();
+        $blockedVars = ['dependencies', 'userPermissions', 'hasChilds', 'versions', 'scheduledTasks', 'parent'];
 
         if (isset($this->_fulldump)) {
             // this is if we want to make a full dump of the object (eg. for a new version), including childs for recyclebin
-            $blockedVars = ['dependencies', 'userPermissions', 'hasChilds', 'versions', 'scheduledTasks', 'parent'];
             $finalVars[] = '_fulldump';
             $this->removeInheritedProperties();
         } else {
             // this is if we want to cache the object
-            $blockedVars = ['dependencies', 'userPermissions', 'childs', 'hasChilds', 'versions', 'scheduledTasks', 'properties', 'parent'];
+            $blockedVars = array_merge($blockedVars, ['childs', 'properties']);
         }
 
         foreach ($parentVars as $key) {
