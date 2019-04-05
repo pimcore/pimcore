@@ -34,7 +34,7 @@ CREATE TABLE `assets` (
   `modificationDate` INT(11) UNSIGNED DEFAULT NULL,
   `userOwner` int(11) unsigned DEFAULT NULL,
   `userModification` int(11) unsigned DEFAULT NULL,
-  `customSettings` text,
+  `customSettings` longtext,
   `hasMetaData` tinyint(1) NOT NULL DEFAULT '0',
   `versionCount` INT UNSIGNED NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
