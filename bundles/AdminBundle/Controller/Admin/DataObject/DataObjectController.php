@@ -568,11 +568,12 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                     ($fielddefinition instanceof DataObject\ClassDefinition\Data\OptimizedAdminLoadingInterface && $fielddefinition->isOptimizedAdminLoading())
                     || ($fielddefinition instanceof ManyToManyObjectRelation && !$fielddefinition->getVisibleFields())
                 ) {
-                    foreach ($relations as $rel) {
+                    foreach ($relations as $rkey => $rel) {
+                        $index = $rkey + 1;
                         if ($fielddefinition instanceof ManyToManyObjectRelation || $fielddefinition instanceof DataObject\ClassDefinition\Data\ManyToManyRelation) {
                             $rel['fullpath'] = $rel['path'];
                             $rel['classname'] = $rel['subtype'];
-                            $rel['rowId'] = $rel['id'] . '$$' . $rel['type'];
+                            $rel['rowId'] = $rel['id'] . '$$' . $index . '$$' . $rel['type'];
                             $data[] = $rel;
                         } else {
                             $data[] = [
@@ -581,7 +582,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                                 'type' => $rel['type'],
                                 'subtype' => $rel['subtype'],
                                 'published' => (bool)$rel['published'],
-                                'rowId' => $rel['id'] . '$$' . $rel['type']
+                                'rowId' => $rel['id'] . '$$' . $index . '$$' . $rel['type']
                             ];
                         }
                     }

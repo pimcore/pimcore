@@ -693,7 +693,7 @@ pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.
 
             for (var i = 0; i < items.length; i++) {
                 var fields = this.visibleFields;
-                if (!this.objectAlreadyExists(items[i].id)) {
+                if (this.fieldConfig.allowMultipleAssignments || !this.objectAlreadyExists(items[i].id)) {
                     toBeRequested.add(this.loadObjectData(items[i], fields));
                 }
             }
@@ -856,7 +856,7 @@ pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.
                 var key;
 
                 if (rdata.success) {
-                    var rec = this.store.getById(item.id);
+                    var rec = newItem[0];
                     for (key in rdata.fields) {
                         //add all key exept fullpath to not overwrite possible nice path
                         if(key !== 'fullpath') {

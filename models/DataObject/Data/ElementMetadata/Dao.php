@@ -26,16 +26,17 @@ class Dao extends DataObject\Data\ObjectMetadata\Dao
 {
     /**
      * @param DataObject\Concrete $source
-     * @param $destination
+     * @param $destinationId
      * @param $fieldname
      * @param $ownertype
      * @param $ownername
      * @param $position
-     * @param $type
+     * @param $index
+     * @param $destinationType
      *
      * @return null|DataObject\AbstractObject
      */
-    public function load(DataObject\Concrete $source, $destinationId, $fieldname, $ownertype, $ownername, $position, $destinationType = 'object')
+    public function load(DataObject\Concrete $source, $destinationId, $fieldname, $ownertype, $ownername, $position, $index, $destinationType = 'object')
     {
         if ($destinationType == 'object') {
             $typeQuery = " AND (type = 'object' or type = '')";
@@ -44,7 +45,7 @@ class Dao extends DataObject\Data\ObjectMetadata\Dao
         }
 
         $dataRaw = $this->db->fetchAll('SELECT * FROM ' .
-            $this->getTablename($source) . ' WHERE ' . $this->getTablename($source) .'.o_id = ? AND dest_id = ? AND fieldname = ? AND ownertype = ? AND ownername = ? and position = ? ' . $typeQuery, [$source->getId(), $destinationId, $fieldname, $ownertype, $ownername, $position]);
+            $this->getTablename($source) . ' WHERE ' . $this->getTablename($source) .'.o_id = ? AND dest_id = ? AND fieldname = ? AND ownertype = ? AND ownername = ? and position = ? and `index` = ? ' . $typeQuery, [$source->getId(), $destinationId, $fieldname, $ownertype, $ownername, $position, $index]);
         if (!empty($dataRaw)) {
             $this->model->setElementTypeAndId($destinationType, $destinationId);
             $this->model->setFieldname($fieldname);
