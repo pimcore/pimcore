@@ -852,5 +852,6 @@
   "paste_as_language_variant": "Paste as new language variant",
   "select_language_for_new_document": "Select language for New Document",
   "source_document_language_missing": "Set Language(Properties) in Source Document",
-  "enable_batch_edit_columns": "Enable Batch Edit for Columns"
+  "enable_batch_edit_columns": "Enable Batch Edit for Columns",
+  "enable_filter": "Enable filter"
 }

@@ -75,6 +75,11 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
     public $visibleFields;
 
     /**
+     * @var bool
+     */
+    public $enableFilter;
+
+    /**
      * @return bool
      */
     public function getObjectsAllowed()
@@ -922,5 +927,23 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
     public function getVisibleFields()
     {
         return $this->visibleFields;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getEnableFilter()
+    {
+        return $this->enableFilter;
+    }
+
+    /**
+     * @param bool $enableFilter
+     * @return ManyToManyObjectRelation
+     */
+    public function setEnableFilter($enableFilter)
+    {
+        $this->enableFilter = $enableFilter;
+        return $this;
     }
 }

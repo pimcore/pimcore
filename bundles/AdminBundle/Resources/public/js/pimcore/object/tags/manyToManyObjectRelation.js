@@ -515,6 +515,7 @@ pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.
     },
 
     getEditToolbarItems: function () {
+
         var toolbarItems = [
             {
                 xtype: "tbspacer",
@@ -525,8 +526,28 @@ pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.
             {
                 xtype: "tbtext",
                 text: "<b>" + this.fieldConfig.title + "</b>"
-            },
-            "->",
+            }];
+
+        toolbarItems = toolbarItems.concat(["->"]);
+
+        if (this.fieldConfig.enableFilter) {
+            toolbarItems = toolbarItems.concat([
+                {
+                    xtype: 'textfield',
+                    fieldLabel: t("filter"),
+                    listeners:
+                        {
+                            keyup: {
+                                fn: this.filterStore.bind(this),
+                                element: "el"
+                            }
+                        }
+                },
+                "-"
+            ]);
+        }
+
+        toolbarItems = toolbarItems.concat([
             {
                 xtype: "button",
                 iconCls: "pimcore_icon_delete",
@@ -538,7 +559,7 @@ pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.
                 handler: this.openSearchEditor.bind(this)
             },
             this.getCreateControl()
-        ];
+        ]);
 
         return toolbarItems;
     },
@@ -840,6 +861,44 @@ pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.
         });
 
         return newItem;
+    },
+
+    filterStore: function (e) {
+        var visibleFieldDefinitions = this.fieldConfig.visibleFieldDefinitions || {};
+        var visibleFields = Ext.Object.getKeys(visibleFieldDefinitions);
+        var metaDataFields = this.fieldConfig.columnKeys || [];
+        var searchColumns = Ext.Array.merge(visibleFields, metaDataFields);
+
+        /* always search in fullpath and id */
+        searchColumns.push("fullpath");
+        searchColumns.push("id");
+
+        searchColumns = Ext.Array.unique(searchColumns);
+
+        var q = Ext.get(e.target).getValue().toLowerCase();
+        var searchFilter = new Ext.util.Filter({
+            filterFn: function (item) {
+                for (var column in item.data) {
+                    var value = item.data[column];
+                    /* skip none-search columns and null values */
+                    if (searchColumns.indexOf(column) < 0 || !value) {
+                        continue;
+                    }
+                    /* links */
+                    if (!!visibleFieldDefinitions[column] && visibleFieldDefinitions[column].fieldtype === "link") {
+                        value = [value.text, value.title, value.path].join(" ");
+                    }
+                    /* numbers, texts */
+                    value = String(value).toLowerCase();
+                    if (value.indexOf(q) >= 0) {
+                        return true;
+                    }
+                }
+                return false;
+            }
+        });
+        this.store.clearFilter();
+        this.store.filter(searchFilter)
     }
 });
 
