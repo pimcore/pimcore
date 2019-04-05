@@ -812,6 +812,7 @@ pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.
             },
             targets,
             {
+                idProperty: this.idProperty,
                 loadEditModeData: loadEditModeData
             },
             this.fieldConfig,

@@ -213,7 +213,8 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
 
         // add data
         if (is_array($data) && count($data) > 0) {
-            foreach ($data as $metaObject) {
+            foreach ($data as $mkey => $metaObject) {
+                $index = $mkey + 1;
                 $object = $metaObject->getObject();
                 if ($object instanceof DataObject\Concrete) {
                     $columnData = DataObject\Service::gridObjectData($object, $gridFields, null, ['purpose' => 'editmode']);
@@ -221,6 +222,9 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
                         $getter = 'get' . ucfirst($c['key']);
                         $columnData[$c['key']] = $metaObject->$getter();
                     }
+
+                    $columnData['rowId'] = $columnData['id'] . '$$' . $index . '$$' . $columnData['type'];
+
                     $return[] = $columnData;
                 }
             }
