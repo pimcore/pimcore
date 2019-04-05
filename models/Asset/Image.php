@@ -69,7 +69,6 @@ class Image extends Model\Asset
             }
 
             $this->handleEmbeddedMetaData(true, $tmpFile);
-            unlink($tmpFile);
         }
 
         $this->clearThumbnails();

@@ -194,8 +194,15 @@ class Asset extends Element\AbstractElement
      */
     protected $_dataChanged = false;
 
-    /** @var int */
+    /**
+     * @var int
+     */
     protected $versionCount;
+
+    /**
+     * @var string[]
+     */
+    protected $_temporaryFiles = [];
 
     /**
      *
@@ -1482,6 +1489,8 @@ class Asset extends Element\AbstractElement
 
         @chmod($destinationPath, File::getDefaultMode());
 
+        $this->_temporaryFiles[] = $destinationPath;
+
         return $destinationPath;
     }
 
@@ -1804,12 +1813,12 @@ class Asset extends Element\AbstractElement
 
         if (isset($this->_fulldump)) {
             // this is if we want to make a full dump of the asset (eg. for a new version), including childs for recyclebin
-            $blockedVars = ['scheduledTasks', 'dependencies', 'userPermissions', 'hasChilds', 'versions', 'parent', 'stream'];
+            $blockedVars = ['_temporaryFiles', 'scheduledTasks', 'dependencies', 'userPermissions', 'hasChilds', 'versions', 'parent', 'stream'];
             $finalVars[] = '_fulldump';
             $this->removeInheritedProperties();
         } else {
             // this is if we want to cache the asset
-            $blockedVars = ['scheduledTasks', 'dependencies', 'userPermissions', 'hasChilds', 'versions', 'childs', 'properties', 'stream', 'parent'];
+            $blockedVars = ['_temporaryFiles', 'scheduledTasks', 'dependencies', 'userPermissions', 'hasChilds', 'versions', 'childs', 'properties', 'stream', 'parent'];
         }
 
         foreach ($parentVars as $key) {
@@ -1873,9 +1882,15 @@ class Asset extends Element\AbstractElement
 
     public function __destruct()
     {
-
         // close open streams
         $this->closeStream();
+
+        // delete temporary files
+        foreach($this->_temporaryFiles as $tempFile) {
+            if(file_exists($tempFile)) {
+                @unlink($tempFile);
+            }
+        }
     }
 
     /**
