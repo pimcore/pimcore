@@ -628,23 +628,31 @@ class Imagick extends Adapter
      * @param null|string $mode
      *
      * @return $this
+     * 
+     * @throws \ImagickException
      */
     public function setBackgroundImage($image, $mode = null)
     {
         $this->preModify();
 
         $image = ltrim($image, '/');
-        $image = PIMCORE_PROJECT_ROOT . '/' . $image;
+        $image = PIMCORE_WEB_ROOT . '/' . $image;
 
         if (is_file($image)) {
             $newImage = new \Imagick();
-            $newImage->readimage($image);
 
-            if ($mode == 'cropTopLeft') {
-                $newImage->cropImage($this->getWidth(), $this->getHeight(), 0, 0);
+            if ($mode == 'asTexture') {
+                $newImage->newImage($this->getWidth(), $this->getHeight(), new \ImagickPixel());
+                $texture = new \Imagick($image);
+                $newImage = $newImage->textureImage($texture);
             } else {
-                // default behavior (fit)
-                $newImage->resizeimage($this->getWidth(), $this->getHeight(), \Imagick::FILTER_UNDEFINED, 1, false);
+                $newImage->readimage($image);
+                if ($mode == 'cropTopLeft') {
+                    $newImage->cropImage($this->getWidth(), $this->getHeight(), 0, 0);
+                } else {
+                    // default behavior (fit)
+                    $newImage->resizeimage($this->getWidth(), $this->getHeight(), \Imagick::FILTER_UNDEFINED, 1, false);
+                }
             }
 
             $newImage->compositeImage($this->resource, \Imagick::COMPOSITE_DEFAULT, 0, 0);
