@@ -139,6 +139,8 @@ class Ffmpeg extends Adapter
             $process->start();
 
             $logHandle = fopen($this->getConversionLogFile(), 'a');
+            fwrite($logHandle, 'Command: ' . $cmd . "\n\n\n");
+
             $process->wait(function ($type, $buffer) use ($logHandle) {
                 fwrite($logHandle, $buffer);
             });
@@ -150,7 +152,10 @@ class Ffmpeg extends Adapter
                 $success = true;
             } else {
                 // create an error log file
-                copy($this->getConversionLogFile(), str_replace('.log', '.error.log', $this->getConversionLogFile()));
+                if(file_exists($this->getConversionLogFile()) && filesize($this->getConversionLogFile())) {
+                    copy($this->getConversionLogFile(),
+                        str_replace('.log', '.error.log', $this->getConversionLogFile()));
+                }
             }
         } else {
             throw new \Exception('There is no destination file for video converter');
