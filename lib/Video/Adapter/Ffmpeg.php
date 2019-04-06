@@ -152,7 +152,7 @@ class Ffmpeg extends Adapter
                 $success = true;
             } else {
                 // create an error log file
-                if(file_exists($this->getConversionLogFile()) && filesize($this->getConversionLogFile())) {
+                if (file_exists($this->getConversionLogFile()) && filesize($this->getConversionLogFile())) {
                     copy($this->getConversionLogFile(),
                         str_replace('.log', '.error.log', $this->getConversionLogFile()));
                 }

@@ -628,7 +628,7 @@ class Imagick extends Adapter
      * @param null|string $mode
      *
      * @return $this
-     * 
+     *
      * @throws \ImagickException
      */
     public function setBackgroundImage($image, $mode = null)

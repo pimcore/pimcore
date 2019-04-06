@@ -1886,8 +1886,8 @@ class Asset extends Element\AbstractElement
         $this->closeStream();
 
         // delete temporary files
-        foreach($this->_temporaryFiles as $tempFile) {
-            if(file_exists($tempFile)) {
+        foreach ($this->_temporaryFiles as $tempFile) {
+            if (file_exists($tempFile)) {
                 @unlink($tempFile);
             }
         }

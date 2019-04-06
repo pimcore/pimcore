@@ -15,7 +15,7 @@ class Version20190405112707 extends AbstractPimcoreMigration
      */
     public function up(Schema $schema)
     {
-        $this->addSql("ALTER TABLE `assets` CHANGE COLUMN `customSettings` `customSettings` longtext");
+        $this->addSql('ALTER TABLE `assets` CHANGE COLUMN `customSettings` `customSettings` longtext');
     }
 
     /**
@@ -23,6 +23,6 @@ class Version20190405112707 extends AbstractPimcoreMigration
      */
     public function down(Schema $schema)
     {
-        $this->addSql("ALTER TABLE `assets` CHANGE COLUMN `customSettings` `customSettings` text");
+        $this->addSql('ALTER TABLE `assets` CHANGE COLUMN `customSettings` `customSettings` text');
     }
 }
