@@ -440,7 +440,9 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
                 tooltip: t('reload'),
                 iconCls: "pimcore_icon_reload",
                 scale: "medium",
-                handler: this.reload.bind(this, this.data.currentLayoutId)
+                handler: this.reload.bind(this, {
+                    layoutId: this.data.currentLayoutId
+                })
             };
 
             if (this.data["validLayouts"] && this.data.validLayouts.length > 1) {
@@ -455,7 +457,9 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
                     menu.push({
                         text: menuLabel,
                         iconCls: "pimcore_icon_reload",
-                        handler: this.reload.bind(this, this.data.validLayouts[i].id)
+                        handler: this.reload.bind(this, {
+                            layoutId: this.data.validLayouts[i].id
+                        })
                     });
                 }
                 reloadConfig.menu = menu;
@@ -801,17 +805,17 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
         return this.data.userPermissions[key];
     },
 
-    reload: function (layoutId) {
-
+    reload: function (params) {
+        params = params || {};
         var uiState = null;
-        if(this.data.currentLayoutId === layoutId) {
+        if(this.data.currentLayoutId === params['layoutId'] && !params['ignoreUiState']) {
             uiState = this.getUiState(this.tab);
         }
 
         this.tab.on("close", function () {
             var currentTabIndex = this.tab.ownerCt.items.indexOf(this.tab);
             var options = {
-                layoutId: layoutId,
+                layoutId: params['layoutId'],
                 tabIndex: currentTabIndex,
                 uiState: uiState
             };
