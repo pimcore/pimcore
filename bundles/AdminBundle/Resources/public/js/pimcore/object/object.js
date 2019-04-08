@@ -211,12 +211,9 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
             this.tabPanel.setActiveItem(tabId);
             pimcore.plugin.broker.fireEvent("postOpenObject", this, "object");
 
-            var uiStates = localStorage.getItem('pimcore_uiState_'+this.id);
-            if(uiStates) {
-                uiStates = JSON.parse(uiStates);
+            if(this.options && this.options['uiStates']) {
+                var uiStates = JSON.parse(this.options['uiStates']);
                 this.setUiState(this.tab, uiStates);
-                // prevent restoration of UI state on subsequent loading of given object
-                localStorage.removeItem('pimcore_uiState_'+this.id);
             }
         }.bind(this, tabId));
 
@@ -806,14 +803,18 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
     },
 
     reload: function (layoutId) {
-        var uiStates = this.getUiState(this.tab);
-        localStorage.setItem('pimcore_uiState_'+this.id, JSON.stringify(uiStates));
+
+        var uiStates = null;
+        if(this.data.currentLayoutId === layoutId) {
+            uiStates = JSON.stringify(this.getUiState(this.tab));
+        }
 
         this.tab.on("close", function () {
             var currentTabIndex = this.tab.ownerCt.items.indexOf(this.tab);
             var options = {
                 layoutId: layoutId,
-                tabIndex: currentTabIndex
+                tabIndex: currentTabIndex,
+                uiStates: uiStates
             };
 
             window.setTimeout(function (id) {
