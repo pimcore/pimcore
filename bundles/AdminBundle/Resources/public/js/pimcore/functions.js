@@ -40,7 +40,7 @@ function t(key, defaultValue) {
         return trans;
     }
 
-    var transKeys = Object.keys(pimcore.system_i18n);
+    var transKeys = pimcore && pimcore.system_i18n ? Object.keys(pimcore.system_i18n) : {};
     if(pimcore && pimcore.system_i18n && transKeys.indexOf(key) === -1 && transKeys.indexOf(originalKey) === -1){
         if(!defaultValue && !in_array(key, alreadyTranslated)) {
             if(pimcore.globalmanager.exists("translations_admin_missing")) {
