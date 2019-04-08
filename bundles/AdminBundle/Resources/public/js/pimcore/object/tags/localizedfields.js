@@ -197,6 +197,7 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
                 }
 
                 this.tabPanel = new Ext.Panel(panelConf);
+                this.tabPanel.excludeFromUiStateRestore = true;
 
                 this.availablePanels[currentLanguage] = this.tabPanel;
                 wrapperConfig.items.push(this.tabPanel);

@@ -889,7 +889,9 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
 
         if (extJsObject.hasOwnProperty('items')) {
             extJsObject.items.each(function (item, index) {
-                states.children[index] = this.getUiState(item);
+                if(!item.hasOwnProperty('excludeFromUiStateRestore')) {
+                    states.children[index] = this.getUiState(item);
+                }
             }.bind(this));
         }
         return states;
