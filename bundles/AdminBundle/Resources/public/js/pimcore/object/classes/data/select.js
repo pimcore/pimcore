@@ -123,7 +123,13 @@ pimcore.object.classes.data.select = Class.create(pimcore.object.classes.data.da
             columnLines: true,
             columns: [
                 {
-                    text: t("display_name"), sortable: true, dataIndex: 'key', editor: new Ext.form.TextField({}),
+                    text: t("display_name"),
+                    sortable: true,
+                    dataIndex: 'key',
+                    editor: new Ext.form.TextField({}),
+                    renderer: function (value) {
+                        return replace_html_event_attributes(strip_tags(value, 'div,span,b,strong,em,i,small,sup,sub'));
+                    },
                     width: 200
                 },
                 {
