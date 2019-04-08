@@ -67,6 +67,11 @@ class LoginController extends AdminController implements BruteforceProtectedCont
      */
     public function loginAction(Request $request)
     {
+        $customAdminEntry = $this->checkCustomEntryPoint();
+        if (isset($customAdminEntry) && $customAdminEntry !== $request->cookies->get('pimcore_custom_admin')) {
+            return new Response("You don't have permission to access the page 🦄", 403);
+        }
+
         if ($request->get('_route') === 'pimcore_admin_login_fallback') {
             return $this->redirectToRoute('pimcore_admin_login', $request->query->all(), Response::HTTP_MOVED_PERMANENTLY);
         }
@@ -253,5 +258,16 @@ class LoginController extends AdminController implements BruteforceProtectedCont
      */
     public function twoFactorAuthenticationVerifyAction(Request $request)
     {
+    }
+
+    /**
+     * check custom admin entry point enabled in config
+     * @return bool
+     */
+    public function checkCustomEntryPoint()
+    {
+        $customAdminPathIdentifier = \Pimcore::getContainer()->getParameter('pimcore.config')['custom_admin_path_identifier'];
+
+        return $customAdminPathIdentifier;
     }
 }
