@@ -211,9 +211,9 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
             this.tabPanel.setActiveItem(tabId);
             pimcore.plugin.broker.fireEvent("postOpenObject", this, "object");
 
-            if(this.options && this.options['uiStates']) {
-                var uiStates = JSON.parse(this.options['uiStates']);
-                this.setUiState(this.tab, uiStates);
+            if(this.options && this.options['uiState']) {
+                var uiState = JSON.parse(this.options['uiState']);
+                this.setUiState(this.tab, uiState);
             }
         }.bind(this, tabId));
 
@@ -804,9 +804,9 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
 
     reload: function (layoutId) {
 
-        var uiStates = null;
+        var uiState = null;
         if(this.data.currentLayoutId === layoutId) {
-            uiStates = JSON.stringify(this.getUiState(this.tab));
+            uiState = JSON.stringify(this.getUiState(this.tab));
         }
 
         this.tab.on("close", function () {
@@ -814,7 +814,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
             var options = {
                 layoutId: layoutId,
                 tabIndex: currentTabIndex,
-                uiStates: uiStates
+                uiState: uiState
             };
 
             window.setTimeout(function (id) {
