@@ -677,7 +677,7 @@ pimcore.object.tags.manyToManyRelation = Class.create(pimcore.object.tags.abstra
 
         var context = this.getContext();
         var loadEditModeData = false;
-        if(isInitialLoad && this.fieldConfig.optimizedAdminLoading && context['containerType'] == 'object') {
+        if(isInitialLoad && context['containerType'] == 'object') {
             loadEditModeData = true;
         }
         pimcore.helpers.requestNicePathData(
