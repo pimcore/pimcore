@@ -282,14 +282,7 @@ pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.
     }
     ,
 
-    getLayoutEdit: function () {
-
-        if (intval(this.fieldConfig.height) < 15) {
-            this.fieldConfig.height = null;
-        }
-
-        var cls = 'object_field';
-
+    getVisibleColumns: function () {
         var visibleFields = this.visibleFields;
 
         var columns = [
@@ -325,7 +318,18 @@ pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.
             }
         }
 
+        return columns;
+    },
 
+    getLayoutEdit: function () {
+
+        if (intval(this.fieldConfig.height) < 15) {
+            this.fieldConfig.height = null;
+        }
+
+        var cls = 'object_field';
+
+        var columns = this.getVisibleColumns();
         var toolbarItems = this.getEditToolbarItems();
 
         columns.push({
@@ -426,7 +430,12 @@ pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.
                 }
             },
             selModel: Ext.create('Ext.selection.RowModel', {}),
-            columns: columns,
+            columns: {
+                defaults: {
+                    sortable: false
+                },
+                items: columns
+            },
             componentCls: cls,
             autoExpandColumn: 'path',
             width: this.fieldConfig.width,
@@ -562,29 +571,32 @@ pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.
             autoHeight = true;
         }
 
+        var columns = this.getVisibleColumns();
+        columns.push({
+            xtype: 'actioncolumn',
+            menuText: t('open'),
+            width: 40,
+            sortable: false,
+            items: [
+                {
+                    tooltip: t('open'),
+                    icon: "/bundles/pimcoreadmin/img/flat-color-icons/open_file.svg",
+                    handler: function (grid, rowIndex) {
+                        var data = grid.getStore().getAt(rowIndex);
+                        pimcore.helpers.openObject(data.data.id, "object");
+                    }.bind(this)
+                }
+            ]
+        });
+
         this.component = Ext.create('Ext.grid.Panel', {
             store: this.store,
-            columns: [
-                {text: 'ID', dataIndex: 'id', width: 50, sortable: false},
-                {text: t("reference"), dataIndex: 'fullpath', width: 200, sortable: false, renderer:this.fullPathRenderCheck.bind(this)},
-                {text: t("type"), dataIndex: 'classname', width: 100, sortable: false},
-                {
-                    xtype: 'actioncolumn',
-                    menuText: t('open'),
-                    width: 40,
-                    sortable: false,
-                    items: [
-                        {
-                            tooltip: t('open'),
-                            icon: "/bundles/pimcoreadmin/img/flat-color-icons/open_file.svg",
-                            handler: function (grid, rowIndex) {
-                                var data = grid.getStore().getAt(rowIndex);
-                                pimcore.helpers.openObject(data.data.id, "object");
-                            }.bind(this)
-                        }
-                    ]
-                }
-            ],
+            columns: {
+                defaults: {
+                    sortable: false
+                },
+                items: columns
+            },
             width: this.fieldConfig.width,
             height: this.fieldConfig.height,
             autoHeight: autoHeight,

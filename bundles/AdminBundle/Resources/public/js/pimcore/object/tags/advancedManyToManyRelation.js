@@ -205,7 +205,6 @@ pimcore.object.tags.advancedManyToManyRelation = Class.create(pimcore.object.tag
                 dataIndex: this.fieldConfig.columns[i].key,
                 renderer: renderer,
                 listeners: listeners,
-                sortable: true,
                 width: width
             };
 
@@ -333,6 +332,9 @@ pimcore.object.tags.advancedManyToManyRelation = Class.create(pimcore.object.tag
             columnLines: true,
             stripeRows: true,
             columns : {
+                defaults: {
+                    sortable: false
+                },
                 items: columns
             },
             viewConfig: {
