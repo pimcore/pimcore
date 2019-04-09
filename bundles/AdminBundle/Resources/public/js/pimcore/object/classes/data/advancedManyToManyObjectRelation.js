@@ -189,13 +189,6 @@ pimcore.object.classes.data.advancedManyToManyObjectRelation = Class.create(pimc
             value: this.datax.enableBatchEdit
         });
 
-        this.specificPanel.add({
-            xtype: "checkbox",
-            fieldLabel: t("enable_filter"),
-            name: "enableFilter",
-            value: this.datax.enableFilter
-        });
-      
         if(this.context == 'class') {
             this.specificPanel.add({
                 xtype: "checkbox",

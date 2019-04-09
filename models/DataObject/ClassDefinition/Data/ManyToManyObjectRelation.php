@@ -77,11 +77,6 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
     /**
      * @var bool
      */
-    public $enableFilter = false;
-  
-    /**
-     * @var bool
-     */
     public $optimizedAdminLoading = false;
 
     /**
@@ -935,23 +930,6 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
         return $this->visibleFields;
     }
 
-    /**
-     * @return bool
-     */
-    public function getEnableFilter()
-    {
-        return $this->enableFilter;
-    }
-
-    /**
-     * @param bool $enableFilter
-     * @return ManyToManyObjectRelation
-     */
-    public function setEnableFilter($enableFilter)
-    {
-        $this->enableFilter = $enableFilter;
-        return $this;
-    }
   
     /**
      * @return bool

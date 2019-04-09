@@ -219,13 +219,6 @@ pimcore.object.classes.data.manyToManyObjectRelation = Class.create(pimcore.obje
             });
         }
 
-        this.specificPanel.add({
-            xtype: "checkbox",
-            fieldLabel: t("enable_filter"),
-            name: "enableFilter",
-            value: this.datax.enableFilter
-        });
-
         return this.layout;
     },
 
