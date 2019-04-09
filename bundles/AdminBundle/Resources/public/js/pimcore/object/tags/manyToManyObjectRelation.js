@@ -515,7 +515,7 @@ pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.
         return this.component;
     },
 
-  getEditToolbarItems: function (readOnly) {
+    getEditToolbarItems: function (readOnly) {
         var toolbarItems = [
             {
                 xtype: "tbspacer",
@@ -528,24 +528,36 @@ pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.
                 text: "<b>" + this.fieldConfig.title + "</b>"
             }];
 
-        toolbarItems = toolbarItems.concat(["->"]);
 
-        if (this.fieldConfig.enableFilter) {
-            toolbarItems = toolbarItems.concat([
-                {
-                    xtype: 'textfield',
-                    fieldLabel: t("filter"),
-                    listeners:
-                        {
-                            keyup: {
-                                fn: this.filterStore.bind(this),
-                                element: "el"
+        toolbarItems = toolbarItems.concat([
+            "->",
+            {
+                xtype: 'textfield',
+                hidden: true,
+                cls: 'objects_grid_filter_input',
+                width: '250px',
+                listeners:
+                    {
+                        keyup: {
+                            fn: this.filterStore.bind(this),
+                            element: "el"
+                        },
+                        blur: function (filterField) {
+                            /* do not hide filter if filter is active */
+                            if (filterField.getValue().length !== 0) {
+                                return;
                             }
-                        }
-                },
-                "-"
-            ]);
-        }
+                            this.hideFilterInput(filterField);
+                        }.bind(this)
+                    }
+            },
+            {
+                xtype: "button",
+                iconCls: "pimcore_icon_filter",
+                cls: "objects_grid_filter_btn",
+                handler: this.showFilterInput.bind(this)
+            }
+        ]);
 
         if (!readOnly) {
             toolbarItems = toolbarItems.concat([
@@ -888,6 +900,19 @@ pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.
         return newItem;
     },
 
+    showFilterInput: function (btn) {
+        var filterField = btn.previousSibling("field[cls~=objects_grid_filter_input]");
+        filterField.show();
+        filterField.focus();
+        btn.hide();
+    },
+
+    hideFilterInput: function (filterField) {
+        var filterBtn = filterField.nextSibling("button[cls~=objects_grid_filter_btn]");
+        filterBtn.show();
+        filterField.hide();
+    },
+
     filterStore: function (e) {
         var visibleFieldDefinitions = this.fieldConfig.visibleFieldDefinitions || {};
         var visibleFields = Ext.Object.getKeys(visibleFieldDefinitions);
@@ -923,7 +948,7 @@ pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.
             }
         });
         this.store.clearFilter();
-        this.store.filter(searchFilter)
+        this.store.filter(searchFilter);
     }
 });
 
