@@ -28,6 +28,7 @@ use Pimcore\Model\DataObject;
 use Pimcore\Model\Dependency;
 use Pimcore\Model\Document;
 use Pimcore\Tool;
+use ReflectionProperty;
 use Symfony\Component\EventDispatcher\GenericEvent;
 
 /**
@@ -1157,7 +1158,7 @@ class Service extends Model\AbstractModel
             /**
              * {@inheritdoc}
              */
-            public function matches($object, $property)
+            public function matches(object $object, ReflectionProperty $property): bool
             {
                 try {
                     $reflectionProperty = new \ReflectionProperty($object, $property);
