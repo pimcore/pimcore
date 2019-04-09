@@ -30,7 +30,7 @@ class CustomAdminEntryPointCheckListener implements EventSubscriberInterface
 
     protected $customAdminPathIdentifier;
 
-    public function __construct(string $customAdminPathIdentifier)
+    public function __construct(?string $customAdminPathIdentifier)
     {
         $this->customAdminPathIdentifier = $customAdminPathIdentifier;
     }
