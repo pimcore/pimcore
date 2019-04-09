@@ -278,6 +278,9 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
 
         $context = isset($params['context']) ? $params['context'] : null;
         $localizedFields->setContext($context);
+        if($object) {
+            $localizedFields->setObject($object);
+        }
 
         if (is_array($data)) {
             foreach ($data as $language => $fields) {

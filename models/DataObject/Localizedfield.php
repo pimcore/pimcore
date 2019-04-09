@@ -324,12 +324,12 @@ class Localizedfield extends Model\AbstractModel implements DirtyIndicatorInterf
             $brickDef = Model\DataObject\Objectbrick\Definition::getByKey($containerKey);
             $container = $brickDef->getFieldDefinition('localizedfields');
         } elseif ($context && $context['containerType'] == 'block') {
-            $containerKey = $context['containerKey'];
+            $containerKey = $context['fieldname'];
             $object = $this->getObject();
             /**
              * @var Model\DataObject\ClassDefinition\Data\Block $container
              */
-            $container = $object->getClass()->getFieldDefinition($containerKey);
+            $container = $object->getClass()->getFieldDefinition($containerKey)->getFieldDefinition('localizedfields');
         } else {
             $container = $this->getObject()->getClass()->getFieldDefinition('localizedfields');
         }
