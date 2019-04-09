@@ -60,6 +60,7 @@ pimcore.element.tag.tree = Class.create({
         if (!this.tree) {
 
             var store = Ext.create('Ext.data.TreeStore', {
+                autoLoad: false,
                 proxy: {
                     type: 'ajax',
                     url: '/admin/tags/tree-get-children-by-id',
@@ -146,8 +147,7 @@ pimcore.element.tag.tree = Class.create({
                 root: {
                     id: '0',
                     text: t('element_tag_all_tags'),
-                    iconCls: 'pimcore_icon_folder',
-                    expanded: true
+                    iconCls: 'pimcore_icon_folder'
                 },
                 rootVisible: true,
                 listeners: {
@@ -158,6 +158,10 @@ pimcore.element.tag.tree = Class.create({
                     }
                 }
 
+            });
+
+            this.tree.on("render", function () {
+                this.getRootNode().expand();
             });
         }
 
