@@ -5,7 +5,7 @@ Pimcore `/admin` login entry point can be restricted/changed by using pimcore co
 Add custom admin identifier in your `app/config/config.yml`:
 ```yml
 
-pimcore: 
+pimcore_admin: 
   custom_admin_path_identifier: min20CharCustomToken
   
 ``` 

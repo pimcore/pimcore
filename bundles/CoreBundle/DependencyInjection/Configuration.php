@@ -121,15 +121,6 @@ class Configuration implements ConfigurationInterface
                         ->end()
                     ->end()
                 ->end()
-                ->scalarNode('custom_admin_path_identifier')
-                    ->cannotBeEmpty()
-                    ->validate()
-                        ->ifTrue(function ($v) {
-                            return strlen($v) < 20;
-                        })
-                        ->thenInvalid('custom_admin_path_identifier should be at least 20 characters long.')
-                    ->end()
-                ->end()
             ->end();
 
         $this->addObjectsNode($rootNode);

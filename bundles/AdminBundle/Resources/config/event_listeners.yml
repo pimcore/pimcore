@@ -45,6 +45,9 @@ services:
 
     Pimcore\Bundle\AdminBundle\EventListener\HttpCacheListener: ~
 
+    Pimcore\Bundle\AdminBundle\EventListener\CustomAdminEntryPointCheckListener:
+        arguments: ['%pimcore_admin.custom_admin_path_identifier%']
+
     Pimcore\Bundle\AdminBundle\EventListener\UserPerspectiveListener:
         calls:
             - [setLogger, ['@logger']]
