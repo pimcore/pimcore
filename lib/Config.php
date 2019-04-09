@@ -227,7 +227,7 @@ class Config
                         case 'document':
                         case 'asset':
                         case 'object':
-                            $s = Model\Element\Service::getElementById($item->getType(), $item->getData());
+                            $s = $item->getData();
                             break;
                         case 'bool':
                             $s = (bool) $item->getData();
