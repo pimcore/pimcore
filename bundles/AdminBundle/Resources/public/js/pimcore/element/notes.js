@@ -51,7 +51,7 @@ pimcore.element.notes = Class.create({
                 '/admin/element/note-list?',
                 ['id', 'type', 'title', 'description',"user","date","data","cpath","cid","ctype"],
                 itemsPerPage,
-                {autoLoad: false}
+                {autoLoad: false, remoteFilter: false}
             );
 
             // only when used in element context
@@ -192,6 +192,9 @@ pimcore.element.notes = Class.create({
                 listeners: {
                     rowdblclick : function(grid, record, tr, rowIndex, e, eOpts ) {
                         this.showDetailedData(grid, rowIndex, event);
+                    }.bind(this),
+                    beforerender: function () {
+                        this.store.setRemoteFilter(true);
                     }.bind(this)
 
                 }
