@@ -96,10 +96,6 @@ $relationObject = $relation->getObject();
 DataObject\AbstractObject::setHideUnpublished(true);
 ```
 
-### Many-To-Many Object Relation
-If enabled in the class definition field settings a filter will be displayed. The filter currently supports filtering texts, numbers and links.
-![Many-To-One Object Filter](../../../img/classes-datatypes-relation7.jpg)
-
 ## Advanced Many-To-One Object Relation 
 This data type is an extension to the Many-To-One Object data type. To each assigned object additional metadata can be saved. 
 The type of the metadata can be text, number, selection or a boolean value.
