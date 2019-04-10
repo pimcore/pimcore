@@ -223,7 +223,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
                         $columnData[$c['key']] = $metaObject->$getter();
                     }
 
-                    $columnData['rowId'] = $columnData['id'] . '$$' . $index . '$$' . $columnData['type'];
+                    $columnData['rowId'] = $columnData['id'] . self::RELATION_ID_SEPARATOR . $index . self::RELATION_ID_SEPARATOR . $columnData['type'];
 
                     $return[] = $columnData;
                 }

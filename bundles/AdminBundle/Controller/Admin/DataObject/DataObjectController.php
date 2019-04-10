@@ -24,6 +24,7 @@ use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data\ManyToManyObjectRelation;
+use Pimcore\Model\DataObject\ClassDefinition\Data\Relations\AbstractRelations;
 use Pimcore\Model\DataObject\ClassDefinition\Data\ReverseManyToManyObjectRelation;
 use Pimcore\Model\Element;
 use Pimcore\Tool;
@@ -573,7 +574,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                         if ($fielddefinition instanceof ManyToManyObjectRelation || $fielddefinition instanceof DataObject\ClassDefinition\Data\ManyToManyRelation) {
                             $rel['fullpath'] = $rel['path'];
                             $rel['classname'] = $rel['subtype'];
-                            $rel['rowId'] = $rel['id'] . '$$' . $index . '$$' . $rel['type'];
+                            $rel['rowId'] = $rel['id'] . AbstractRelations::RELATION_ID_SEPARATOR . $index . AbstractRelations::RELATION_ID_SEPARATOR . $rel['type'];
                             $data[] = $rel;
                         } else {
                             $data[] = [
@@ -582,7 +583,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                                 'type' => $rel['type'],
                                 'subtype' => $rel['subtype'],
                                 'published' => (bool)$rel['published'],
-                                'rowId' => $rel['id'] . '$$' . $index . '$$' . $rel['type']
+                                'rowId' => $rel['id'] . AbstractRelations::RELATION_ID_SEPARATOR . $index . AbstractRelations::RELATION_ID_SEPARATOR . $rel['type']
                             ];
                         }
                     }
