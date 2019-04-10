@@ -758,11 +758,12 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
                 $objectConcrete = $object;
             }
 
+            $counter = 1;
             foreach ($multihrefMetadata as $mkey => $meta) {
-                $index = $mkey + 1;
                 $ownerName = isset($relation['ownername']) ? $relation['ownername'] : null;
                 $ownerType = isset($relation['ownertype']) ? $relation['ownertype'] : null;
-                $meta->save($objectConcrete, $ownerType, $ownerName, $position, $index);
+                $meta->save($objectConcrete, $ownerType, $ownerName, $position, $counter);
+                $counter++;
             }
         }
 
