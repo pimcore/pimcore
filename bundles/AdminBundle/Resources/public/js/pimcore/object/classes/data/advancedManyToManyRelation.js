@@ -365,6 +365,13 @@ pimcore.object.classes.data.advancedManyToManyRelation = Class.create(pimcore.ob
         this.grids = {};
         this.specificPanel.add(this.getGrid("cols", this.datax.columns, true));
 
+        this.specificPanel.add({
+            xtype: "checkbox",
+            boxLabel: t("allow_multiple_assignments"),
+            name: "allowMultipleAssignments",
+            value: this.datax.allowMultipleAssignments
+        });
+
         if(this.context == 'class') {
             this.specificPanel.add({
                 xtype: "checkbox",

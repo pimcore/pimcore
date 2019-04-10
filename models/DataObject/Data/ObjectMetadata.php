@@ -115,10 +115,11 @@ class ObjectMetadata extends Model\AbstractModel implements DataObject\OwnerAwar
      * @param string $ownertype
      * @param $ownername
      * @param $position
+     * @param $index
      */
-    public function save($object, $ownertype = 'object', $ownername, $position)
+    public function save($object, $ownertype = 'object', $ownername, $position, $index)
     {
-        $this->getDao()->save($object, $ownertype, $ownername, $position);
+        $this->getDao()->save($object, $ownertype, $ownername, $position, $index);
     }
 
     /**
@@ -128,12 +129,13 @@ class ObjectMetadata extends Model\AbstractModel implements DataObject\OwnerAwar
      * @param $ownertype
      * @param $ownername
      * @param $position
+     * @param $index
      *
      * @return mixed
      */
-    public function load(DataObject\Concrete $source, $destinationId, $fieldname, $ownertype, $ownername, $position)
+    public function load(DataObject\Concrete $source, $destinationId, $fieldname, $ownertype, $ownername, $position, $index)
     {
-        return $this->getDao()->load($source, $destinationId, $fieldname, $ownertype, $ownername, $position);
+        return $this->getDao()->load($source, $destinationId, $fieldname, $ownertype, $ownername, $position, $index);
     }
 
     /**

@@ -17,6 +17,7 @@ pimcore.object.tags.manyToManyRelation = Class.create(pimcore.object.tags.abstra
     type: "manyToManyRelation",
     dataChanged: false,
     idProperty: "rowId",
+    pathProperty: "fullpath",
     allowBatchAppend: true,
 
     initialize: function (data, fieldConfig) {
@@ -180,7 +181,7 @@ pimcore.object.tags.manyToManyRelation = Class.create(pimcore.object.tags.abstra
                 },
                 listeners: {
                     refresh: function (gridview) {
-                        this.requestNicePathData(this.store.data);
+                        this.requestNicePathData(this.store.data, true);
                     }.bind(this)
                 }
             },
@@ -681,9 +682,15 @@ pimcore.object.tags.manyToManyRelation = Class.create(pimcore.object.tags.abstra
         return this.dataChanged;
     },
 
-    requestNicePathData: function (targets) {
+    requestNicePathData: function(targets, isInitialLoad) {
         if (!this.object) {
             return;
+        }
+
+        var context = this.getContext();
+        var loadEditModeData = false;
+        if(isInitialLoad && context['containerType'] == 'object') {
+            loadEditModeData = true;
         }
         pimcore.helpers.requestNicePathData(
             {
@@ -691,11 +698,19 @@ pimcore.object.tags.manyToManyRelation = Class.create(pimcore.object.tags.abstra
                 id: this.object.id
             },
             targets,
-            {},
+            {
+                idProperty: this.idProperty,
+                loadEditModeData: loadEditModeData
+            },
             this.fieldConfig,
-            this.getContext(),
+            context,
             pimcore.helpers.requestNicePathDataGridDecorator.bind(this, this.component.getView()),
-            pimcore.helpers.getNicePathHandlerStore.bind(this, this.store, {}, this.component.getView())
+            pimcore.helpers.getNicePathHandlerStore.bind(this, this.store, {
+                idProperty: this.idProperty,
+                pathProperty: this.pathProperty,
+                loadEditModeData: loadEditModeData,
+                fields: this.fieldConfig.columnKeys
+            }, this.component.getView())
         );
     },
 
