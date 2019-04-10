@@ -202,11 +202,11 @@ class MultipleAssigmentTest extends ModelTestCase
 
         foreach($listing as $i => $item) {
 
-            $objectMetadata = new ObjectMetadata('multipleManyToMany', ['meta'], $item);
+            $objectMetadata = new ElementMetadata('multipleManyToMany', ['meta'], $item);
             $objectMetadata->setMeta("multiple-some-metadata $i");
             $metaDataList[] = $objectMetadata;
 
-            $objectMetadata = new ObjectMetadata('multipleManyToMany', ['meta'], $item);
+            $objectMetadata = new ElementMetadata('multipleManyToMany', ['meta'], $item);
             $objectMetadata->setMeta("multiple-some-more-metadata $i");
             $metaDataList[] = $objectMetadata;
 
@@ -254,11 +254,11 @@ class MultipleAssigmentTest extends ModelTestCase
 
         foreach ($listing as $i => $item) {
 
-            $objectMetadata = new ObjectMetadata('multipleManyToMany', ['meta'], $item);
+            $objectMetadata = new ObjectMetadata('multipleManyToManyObject', ['meta'], $item);
             $objectMetadata->setMeta("multiple-some-metadata $i");
             $metaDataList[] = $objectMetadata;
 
-            $objectMetadata = new ObjectMetadata('multipleManyToMany', ['meta'], $item);
+            $objectMetadata = new ObjectMetadata('multipleManyToManyObject', ['meta'], $item);
             $objectMetadata->setMeta("multiple-some-more-metadata $i");
             $metaDataList[] = $objectMetadata;
 
