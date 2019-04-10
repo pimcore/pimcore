@@ -746,7 +746,6 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
     configureSplitView: function () {
 
         var existingSettings = this.getCurrentSplitViewSettings();
-        var enabled = existingSettings ? existingSettings["enabled"] : false;
 
         var nrOfLanguages = this.frontendLanguages.length;
 
@@ -793,14 +792,6 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
                 data: data
             }
         );
-
-        this.splitViewEnabled = new Ext.form.field.Checkbox({
-            style: "padding-left: 10px",
-            fieldLabel: t("enable_split_view"),
-            labelWidth: 200,
-            name: "splitViewEnabled",
-            checked: enabled
-        });
 
         var gridPanel = new Ext.grid.GridPanel({
             store: store,
@@ -912,7 +903,7 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
             autoScroll: true,
             closeAction: 'close',
             modal: true,
-            items: [this.splitViewEnabled, gridPanel],
+            items: [gridPanel],
             title: t("split_view_settings"),
             bbar: ["->",
                 {
@@ -920,6 +911,13 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
                     iconCls: "pimcore_icon_apply",
                     text: t('apply'),
                     handler: this.applySplitViewSettings.bind(this, store)
+                },
+                {
+                    text: t("cancel"),
+                    handler: function() {
+                        this.splitViewSettingsWindow.close();
+                    }.bind(this),
+                    iconCls: "pimcore_icon_cancel"
                 }
             ]
         });
@@ -930,7 +928,7 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
     doApplySplitViewSettings: function(store) {
         var localStorageKey = this.getLocalStorageKey();
         var localStorageData = {
-            "enabled": this.splitViewEnabled.getValue(),
+            "enabled": true,
             "side": {}
         };
         store.each(function (record, id) {
