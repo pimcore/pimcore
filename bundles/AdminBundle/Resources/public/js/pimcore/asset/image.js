@@ -258,7 +258,7 @@ pimcore.asset.image = Class.create(pimcore.asset.asset, {
             details.push(this.downloadBox);
 
             var thumbnailsStore = new Ext.data.JsonStore({
-                autoLoad: true,
+                autoLoad: false,
                 autoDestroy: true,
                 proxy: {
                     type: 'ajax',
