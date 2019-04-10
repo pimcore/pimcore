@@ -102,7 +102,7 @@ class SessionCart extends AbstractCart implements ICart
 
         return $this;
     }
-    
+
     /**
      * @inheritDoc
      */
@@ -113,7 +113,7 @@ class SessionCart extends AbstractCart implements ICart
         $this->subItemCount = null;
         $this->itemAmount = null;
         $this->subItemAmount = null;
-        
+
         return parent::modified();
     }
 

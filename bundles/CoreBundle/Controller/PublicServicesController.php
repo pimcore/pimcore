@@ -204,7 +204,6 @@ class PublicServicesController extends FrameworkController
         }
     }
 
-
     /**
      * @param Request $request
      *
@@ -217,7 +216,7 @@ class PublicServicesController extends FrameworkController
 
         $customAdminPathIdentifier = $this->getParameter('pimcore_admin.custom_admin_path_identifier');
         if (isset($customAdminPathIdentifier) && $request->cookies->get('pimcore_custom_admin') != $customAdminPathIdentifier) {
-            $redirect->headers->setCookie(new Cookie('pimcore_custom_admin', $customAdminPathIdentifier, strtotime("+1 year"), '/', null, false, true));
+            $redirect->headers->setCookie(new Cookie('pimcore_custom_admin', $customAdminPathIdentifier, strtotime('+1 year'), '/', null, false, true));
         }
 
         return $redirect;
