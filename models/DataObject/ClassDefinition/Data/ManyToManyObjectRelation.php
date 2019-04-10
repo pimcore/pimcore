@@ -930,7 +930,6 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
         return $this->visibleFields;
     }
 
-  
     /**
      * @return bool
      */
