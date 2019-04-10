@@ -435,6 +435,7 @@
     "columns": "Spalten",
     "children_grid": "Kinder Tabelle",
     "only_children": "Nur direkte Kindelemente",
+    "only_unreferenced": "Nur nicht referenzierte",
     "cut": "Ausschneiden",
     "paste_cut_element": "Ausgeschnittenes Element einfügen",
     "memorize_tabs": "Geöffnete Tabs merken",
