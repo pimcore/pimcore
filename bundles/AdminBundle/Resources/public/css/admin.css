@@ -1983,7 +1983,7 @@ ul.leaflet-draw-actions.leaflet-draw-actions-top.leaflet-draw-actions-bottom li:
     color: #919191;
 }
 
-.objects_grid_filter_input > div:before {
+.relations_grid_filter_input > div:before {
     position: absolute;
     content: " ";
     top: 0;

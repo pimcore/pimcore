@@ -12,7 +12,7 @@
  */
 
 pimcore.registerNS("pimcore.object.tags.manyToManyObjectRelation");
-pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.abstract, {
+pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.abstractRelations, {
 
     type: "manyToManyObjectRelation",
     dataChanged: false,
@@ -526,38 +526,11 @@ pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.
             {
                 xtype: "tbtext",
                 text: "<b>" + this.fieldConfig.title + "</b>"
-            }];
-
-
-        toolbarItems = toolbarItems.concat([
-            "->",
-            {
-                xtype: 'textfield',
-                hidden: true,
-                cls: 'objects_grid_filter_input',
-                width: '250px',
-                listeners:
-                    {
-                        keyup: {
-                            fn: this.filterStore.bind(this),
-                            element: "el"
-                        },
-                        blur: function (filterField) {
-                            /* do not hide filter if filter is active */
-                            if (filterField.getValue().length !== 0) {
-                                return;
-                            }
-                            this.hideFilterInput(filterField);
-                        }.bind(this)
-                    }
             },
-            {
-                xtype: "button",
-                iconCls: "pimcore_icon_filter",
-                cls: "objects_grid_filter_btn",
-                handler: this.showFilterInput.bind(this)
-            }
-        ]);
+            "->"
+        ];
+
+        toolbarItems = toolbarItems.concat(this.getFilterEditToolbarItems());
 
         if (!readOnly) {
             toolbarItems = toolbarItems.concat([
@@ -900,56 +873,6 @@ pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.
         return newItem;
     },
 
-    showFilterInput: function (btn) {
-        var filterField = btn.previousSibling("field[cls~=objects_grid_filter_input]");
-        filterField.show();
-        filterField.focus();
-        btn.hide();
-    },
-
-    hideFilterInput: function (filterField) {
-        var filterBtn = filterField.nextSibling("button[cls~=objects_grid_filter_btn]");
-        filterBtn.show();
-        filterField.hide();
-    },
-
-    filterStore: function (e) {
-        var visibleFieldDefinitions = this.fieldConfig.visibleFieldDefinitions || {};
-        var visibleFields = Ext.Object.getKeys(visibleFieldDefinitions);
-        var metaDataFields = this.fieldConfig.columnKeys || [];
-        var searchColumns = Ext.Array.merge(visibleFields, metaDataFields);
-
-        /* always search in fullpath and id */
-        searchColumns.push("fullpath");
-        searchColumns.push("id");
-
-        searchColumns = Ext.Array.unique(searchColumns);
-
-        var q = Ext.get(e.target).getValue().toLowerCase();
-        var searchFilter = new Ext.util.Filter({
-            filterFn: function (item) {
-                for (var column in item.data) {
-                    var value = item.data[column];
-                    /* skip none-search columns and null values */
-                    if (searchColumns.indexOf(column) < 0 || !value) {
-                        continue;
-                    }
-                    /* links */
-                    if (!!visibleFieldDefinitions[column] && visibleFieldDefinitions[column].fieldtype === "link") {
-                        value = [value.text, value.title, value.path].join(" ");
-                    }
-                    /* numbers, texts */
-                    value = String(value).toLowerCase();
-                    if (value.indexOf(q) >= 0) {
-                        return true;
-                    }
-                }
-                return false;
-            }
-        });
-        this.store.clearFilter();
-        this.store.filter(searchFilter);
-    }
 });
 
 // @TODO BC layer, to be removed in v6.0
