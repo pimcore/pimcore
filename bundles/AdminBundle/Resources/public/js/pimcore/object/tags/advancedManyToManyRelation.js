@@ -12,7 +12,7 @@
  */
 
 pimcore.registerNS("pimcore.object.tags.advancedManyToManyRelation");
-pimcore.object.tags.advancedManyToManyRelation = Class.create(pimcore.object.tags.abstract, {
+pimcore.object.tags.advancedManyToManyRelation = Class.create(pimcore.object.tags.abstractRelations, {
 
     type: "advancedManyToManyRelation",
     dataChanged:false,
@@ -493,11 +493,14 @@ pimcore.object.tags.advancedManyToManyRelation = Class.create(pimcore.object.tag
             {
                 xtype: "tbtext",
                 text: "<b>" + this.fieldConfig.title + "</b>"
-            }];
+            },
+            "->"
+        ];
+
+        toolbarItems = toolbarItems.concat(this.getFilterEditToolbarItems());
 
         if (!readOnly) {
             toolbarItems = toolbarItems.concat([
-                "->",
                 {
                     xtype: "button",
                     iconCls: "pimcore_icon_delete",

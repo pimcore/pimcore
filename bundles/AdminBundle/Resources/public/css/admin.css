@@ -1983,6 +1983,16 @@ ul.leaflet-draw-actions.leaflet-draw-actions-top.leaflet-draw-actions-bottom li:
     color: #919191;
 }
 
+.relations_grid_filter_input > div:before {
+    position: absolute;
+    content: " ";
+    top: 0;
+    right: .5rem;
+    background: url(/bundles/pimcoreadmin/img/flat-color-icons/filled_filter.svg) center center no-repeat !important;
+    height: 100%;
+    width: 1rem;
+}
+
     /** workflow engine **/
 
 .pimcore-workflow-place-indicator-wrapper {
