@@ -185,7 +185,8 @@ pimcore.settings.staticroutes = Class.create({
                             var currentRecord = this.grid.getSelection();
                             el.getStore().reload({
                                 params:{
-                                    controllerName:currentRecord[0].data.controller
+                                    controllerName:currentRecord[0].data.controller,
+                                    moduleName: currentRecord[0].data.module
                                 },
                                 callback: function() {
                                     el.expand();
