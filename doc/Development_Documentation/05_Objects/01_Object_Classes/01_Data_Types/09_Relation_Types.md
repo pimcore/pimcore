@@ -96,6 +96,7 @@ $relationObject = $relation->getObject();
 DataObject\AbstractObject::setHideUnpublished(true);
 ```
 
+
 ## Advanced Many-To-One Object Relation 
 This data type is an extension to the Many-To-One Object data type. To each assigned object additional metadata can be saved. 
 The type of the metadata can be text, number, selection or a boolean value.
