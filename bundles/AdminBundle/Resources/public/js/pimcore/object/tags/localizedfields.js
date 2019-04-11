@@ -392,7 +392,6 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
                 wrapperConfig.items = [this.tabPanel];
             }
 
-            wrapperConfig.title = "xyz";
             wrapperConfig.border = true;
             wrapperConfig.style = "margin-bottom: 10px";
             wrapperConfig.cls = "object_localizedfields_panel";
@@ -745,7 +744,11 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
         var localStorageKey = this.getLocalStorageKey();
         localStorageData = JSON.stringify(existingSettings);
         localStorage.setItem(localStorageKey, localStorageData);
-        this.object.reload({ignoreUiState: true});
+        var params = {ignoreUiState: true};
+        if (this.object.data.currentLayoutId) {
+            params["layoutId"] = this.object.data.currentLayoutId;
+        }
+        this.object.reload(params);
     },
 
     configureSplitView: function () {
@@ -952,7 +955,11 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
 
         localStorage.setItem(localStorageKey, localStorageData);
         this.splitViewSettingsWindow.close();
-        this.object.reload({ignoreUiState: true});
+        var params = {ignoreUiState: true};
+        if (this.object.data.currentLayoutId) {
+            params["layoutId"] = this.object.data.currentLayoutId;
+        }
+        this.object.reload(params);
     },
 
     applySplitViewSettings: function (store) {
