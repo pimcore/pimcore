@@ -9,6 +9,11 @@ pimcore:
 
         # Prototype
         name:
+            # Placeholder values in this workflow configuration (locale: "%%locale%%") will be replaced by the given placeholder value (eg. "de_AT")
+            placeholders:
+                # Example:
+                placeholders:
+                    %%locale%%:          de_AT
 
             # Can be used to enable or disable the workflow.
             enabled:              true
