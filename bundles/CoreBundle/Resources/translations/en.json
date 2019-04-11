@@ -486,7 +486,6 @@
   "columns": "Columns",
   "children_grid": "Children Grid",
   "only_children": "just direct children",
-  "only_unreferenced": "only unreferenced",
   "cut": "Cut",
   "paste_cut_element": "Paste cut-out element",
   "memorize_tabs": "Memorize open tabs",
