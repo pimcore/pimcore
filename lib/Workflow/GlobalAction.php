@@ -37,11 +37,15 @@ class GlobalAction implements NotesAwareInterface
      */
     private $expressionService;
 
-    public function __construct(string $name, array $options, ExpressionService $expressionService)
+    /** @var string */
+    private $workflowName;
+
+    public function __construct(string $name, array $options, ExpressionService $expressionService, string $workflowName)
     {
         $this->name = $name;
         $this->options = $options;
         $this->expressionService = $expressionService;
+        $this->workflowName = $workflowName;
     }
 
     /**
@@ -91,5 +95,10 @@ class GlobalAction implements NotesAwareInterface
         }
 
         return $this->expressionService->evaluateExpression($workflow, $subject, $this->getGuard());
+    }
+
+    public function getWorkflowName(): string
+    {
+        return $this->workflowName;
     }
 }

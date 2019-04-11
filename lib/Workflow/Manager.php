@@ -81,7 +81,7 @@ class Manager
     public function addPlaceConfig(string $workflowName, string $place, array $placeConfig)
     {
         $this->placeConfigs[$workflowName] = $this->placeConfigs[$workflowName] ?? [];
-        $this->placeConfigs[$workflowName][$place] = new PlaceConfig($place, $placeConfig, $this->expressionService);
+        $this->placeConfigs[$workflowName][$place] = new PlaceConfig($place, $placeConfig, $this->expressionService, $workflowName);
 
         return $this;
     }
