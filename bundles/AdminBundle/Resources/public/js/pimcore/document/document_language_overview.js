@@ -268,6 +268,7 @@ pimcore.document.document_language_overview = Class.create({
                     });
 
                     var win = new Ext.Window({
+                        modal: true,
                         width: 600,
                         bodyStyle: "padding:10px",
                         items: [pageForm],
