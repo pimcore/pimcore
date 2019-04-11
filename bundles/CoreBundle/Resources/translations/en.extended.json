@@ -702,5 +702,6 @@
   "reports_config": "Reports Config",
   "exclude_from_search_index": "Exclude from Backend Full-Text Search",
   "left": "left",
-  "right": "right"
+  "right": "right",
+  "provide_split_view": "Provide Split View"
 }
