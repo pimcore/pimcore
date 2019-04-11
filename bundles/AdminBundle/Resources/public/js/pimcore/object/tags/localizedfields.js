@@ -369,13 +369,18 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
                     panelConf.items.push(item);
                 }
 
-                if (this.fieldConfig.title) {
-                    tbarItems.push(
-                        {
-                            xtype: "tbtext",
-                            text: this.fieldConfig.title
-                        });
+                if(this.fieldConfig.title) {
+                    if(this.fieldConfig.provideSplitView) {
+                        tbarItems.push(
+                            {
+                                xtype: "tbtext",
+                                text: this.fieldConfig.title
+                            });
+                    } else {
+                        wrapperConfig.title = this.fieldConfig.title;
+                    }
                 }
+
 
                 if (configureSplitViewButton) {
                     if (tbarItems) {
