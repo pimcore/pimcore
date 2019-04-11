@@ -95,7 +95,7 @@ class Manager
     public function addGlobalAction(string $workflowName, string $action, array $actionConfig)
     {
         $this->globalActions[$workflowName] = $this->globalActions[$workflowName] ?? [];
-        $this->globalActions[$workflowName][$action] = new GlobalAction($action, $actionConfig, $this->expressionService);
+        $this->globalActions[$workflowName][$action] = new GlobalAction($action, $actionConfig, $this->expressionService, $workflowName);
 
         return $this;
     }
