@@ -15,7 +15,7 @@ declare(strict_types=1);
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\Bundle\EcommerceFrameworkBundle\DependencyInjection\Config\Processor;
+namespace Pimcore\Bundle\CoreBundle\DependencyInjection\Config\Processor;
 
 class PlaceholderProcessor
 {

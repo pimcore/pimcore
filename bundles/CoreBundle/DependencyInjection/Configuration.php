@@ -14,7 +14,7 @@
 
 namespace Pimcore\Bundle\CoreBundle\DependencyInjection;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\DependencyInjection\Config\Processor\PlaceholderProcessor;
+use Pimcore\Bundle\CoreBundle\DependencyInjection\Config\Processor\PlaceholderProcessor;
 use Pimcore\Cache\Pool\Redis;
 use Pimcore\Storage\Redis\ConnectionFactory;
 use Pimcore\Targeting\Storage\CookieStorage;
