@@ -111,8 +111,7 @@ class StatusInfo
          * @var PlaceConfig $place
          */
         foreach ($places as $place) {
-            $uniqueLabel = $place->getLabel().'__'.$place->getPlace();
-            $uniquePlaces[$uniqueLabel] = $place;
+            $uniquePlaces[$place->getPlace()] = $place;
         }
 
         return array_values($uniquePlaces);
