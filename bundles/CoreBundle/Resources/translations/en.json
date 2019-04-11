@@ -886,5 +886,6 @@
   "redirects_cleanup_error": "An error occurred while cleanup of expired redirects",
   "allow_multiple_assignments": "Allow Multiple Assignments",
   "enable_admin_async_load": "Enable Async Load in Admin",
-  "async_loading_warning_block":  "WARNING: Async Loading is NOT possible within Localized Fields and Blocks"
+  "async_loading_warning_block":  "WARNING: Async Loading is NOT possible within Localized Fields and Blocks",
+  "all_translations": "All Translations"
 }
