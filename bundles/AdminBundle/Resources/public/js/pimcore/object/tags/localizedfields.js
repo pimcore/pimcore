@@ -213,7 +213,6 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
                     this.fieldConfig.title,  '->', disableSplitViewButton, configureSplitViewButton
                 ],
                 height: 'auto',
-                renderTo: Ext.getBody(),
                 layout: {
                     type: 'hbox',
                     padding: 5
@@ -393,6 +392,7 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
                 wrapperConfig.items = [this.tabPanel];
             }
 
+            wrapperConfig.title = "xyz";
             wrapperConfig.border = true;
             wrapperConfig.style = "margin-bottom: 10px";
             wrapperConfig.cls = "object_localizedfields_panel";
