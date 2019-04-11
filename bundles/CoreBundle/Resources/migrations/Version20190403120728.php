@@ -39,7 +39,7 @@ class Version20190403120728 extends AbstractPimcoreMigration
                 $this->addSql('ALTER TABLE `' . $metaTable . '` ADD PRIMARY KEY (`o_id`, `dest_id`, `type`, `fieldname`, `column`, `ownertype`, `ownername`, `position`, `index`)');
 
                 //update index in metadata tables from relations tables
-                $relTable = explode('_',$metaTable);
+                $relTable = explode('_', $metaTable);
                 $relTable = 'object_relations_' . $relTable[2];
 
                 $this->addSql('UPDATE `' . $metaTable . '` mt
@@ -54,7 +54,7 @@ class Version20190403120728 extends AbstractPimcoreMigration
                         SET mt.index = rl.index');
             }
         } catch (\Exception $e) {
-            $this->writeMessage("An error occurred while performing migrations: " . $e->getMessage());
+            $this->writeMessage('An error occurred while performing migrations: ' . $e->getMessage());
         }
     }
 
@@ -82,8 +82,7 @@ class Version20190403120728 extends AbstractPimcoreMigration
                 $this->addSql('ALTER TABLE `' . $metaTable . '` ADD PRIMARY KEY (`o_id`, `dest_id`, `type`, `fieldname`, `column`, `ownertype`, `ownername`, `position`)');
             }
         } catch (\Exception $e) {
-            $this->writeMessage("An error occurred while performing migrations: " . $e->getMessage());
+            $this->writeMessage('An error occurred while performing migrations: ' . $e->getMessage());
         }
-
     }
 }

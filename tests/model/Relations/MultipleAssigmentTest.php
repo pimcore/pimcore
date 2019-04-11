@@ -1,13 +1,13 @@
 <?php
-namespace Pimcore\Tests\Model\Relations;
 
+namespace Pimcore\Tests\Model\Relations;
 
 use Pimcore\Cache;
 use Pimcore\Model\DataObject\ClassDefinition;
 use Pimcore\Model\DataObject\Data\ElementMetadata;
 use Pimcore\Model\DataObject\Data\ObjectMetadata;
-use Pimcore\Model\DataObject\RelationTest;
 use Pimcore\Model\DataObject\MultipleAssignments;
+use Pimcore\Model\DataObject\RelationTest;
 use Pimcore\Model\DataObject\Service;
 use Pimcore\Tests\Test\ModelTestCase;
 use Pimcore\Tests\Util\TestHelper;
@@ -34,7 +34,6 @@ class MultipleAssigmentTest extends ModelTestCase
         }
     }
 
-
     public function tearDown()
     {
         TestHelper::cleanUp();
@@ -52,7 +51,6 @@ class MultipleAssigmentTest extends ModelTestCase
             $class = $this->tester->setupClass($name, $file);
         }
 
-
         $name = 'MultipleAssignments';
         $file = 'relations/class_MultipleAssignments_export.json';
         $class = ClassDefinition::getByName($name);
@@ -61,10 +59,10 @@ class MultipleAssigmentTest extends ModelTestCase
             /** @var ClassDefinition $class */
             $class = $this->tester->setupClass($name, $file);
         }
-
     }
 
-    public function testMultipleAssignmentsOnSingleManyToMany() {
+    public function testMultipleAssignmentsOnSingleManyToMany()
+    {
         $listing = new RelationTest\Listing();
         $listing->setLimit(5);
 
@@ -73,11 +71,9 @@ class MultipleAssigmentTest extends ModelTestCase
         $object->setKey('test1');
         $object->setPublished(true);
 
-
         $metaDataList = [];
 
-        foreach($listing as $i => $item) {
-
+        foreach ($listing as $i => $item) {
             $objectMetadata = new ElementMetadata('onlyOneManyToMany', ['meta'], $item);
             $objectMetadata->setMeta("single-some-metadata $i");
             $metaDataList[] = $objectMetadata;
@@ -85,7 +81,6 @@ class MultipleAssigmentTest extends ModelTestCase
             $objectMetadata = new ElementMetadata('onlyOneManyToMany', ['meta'], $item);
             $objectMetadata->setMeta("single-some-more-metadata $i");
             $metaDataList[] = $objectMetadata;
-
         }
 
         $object->setOnlyOneManyToMany($metaDataList);
@@ -93,8 +88,7 @@ class MultipleAssigmentTest extends ModelTestCase
         $object->save();
 
         $metaDataList = $object->getOnlyOneManyToMany();
-        $this->checkMultipleAssignmentsOnSingleManyToMany($metaDataList, "after saving");
-
+        $this->checkMultipleAssignmentsOnSingleManyToMany($metaDataList, 'after saving');
 
         $id = $object->getId();
 
@@ -106,24 +100,24 @@ class MultipleAssigmentTest extends ModelTestCase
         $object = MultipleAssignments::getById($id, true);
 
         $metaDataList = $object->getOnlyOneManyToMany();
-        $this->checkMultipleAssignmentsOnSingleManyToMany($metaDataList, "after loading");
+        $this->checkMultipleAssignmentsOnSingleManyToMany($metaDataList, 'after loading');
 
         $serializedData = serialize($object);
         $deserializedObject = unserialize($serializedData);
         $metaDataList = $deserializedObject->getOnlyOneManyToMany();
-        $this->checkMultipleAssignmentsOnSingleManyToMany($metaDataList, "after serialize/unserialize");
-
+        $this->checkMultipleAssignmentsOnSingleManyToMany($metaDataList, 'after serialize/unserialize');
     }
 
-    protected function checkMultipleAssignmentsOnSingleManyToMany(array $metaDataList, $positionMessage = '') {
+    protected function checkMultipleAssignmentsOnSingleManyToMany(array $metaDataList, $positionMessage = '')
+    {
         $this->assertEquals(5, count($metaDataList), "Relation count $positionMessage.");
-        foreach($metaDataList as $i => $metadata) {
+        foreach ($metaDataList as $i => $metadata) {
             $this->assertEquals("single-some-metadata $i", $metadata->getMeta(), "Metadata $positionMessage.");
         }
     }
 
-
-    public function testMultipleAssignmentsOnSingleManyToManyObject() {
+    public function testMultipleAssignmentsOnSingleManyToManyObject()
+    {
         $listing = new RelationTest\Listing();
         $listing->setLimit(5);
 
@@ -132,11 +126,9 @@ class MultipleAssigmentTest extends ModelTestCase
         $object->setKey('test1');
         $object->setPublished(true);
 
-
         $metaDataList = [];
 
-        foreach($listing as $i => $item) {
-
+        foreach ($listing as $i => $item) {
             $objectMetadata = new ObjectMetadata('onlyOneManyToManyObject', ['meta'], $item);
             $objectMetadata->setMeta("single-some-metadata $i");
             $metaDataList[] = $objectMetadata;
@@ -144,7 +136,6 @@ class MultipleAssigmentTest extends ModelTestCase
             $objectMetadata = new ObjectMetadata('onlyOneManyToManyObject', ['meta'], $item);
             $objectMetadata->setMeta("single-some-more-metadata $i");
             $metaDataList[] = $objectMetadata;
-
         }
 
         $object->setOnlyOneManyToManyObject($metaDataList);
@@ -152,8 +143,7 @@ class MultipleAssigmentTest extends ModelTestCase
         $object->save();
 
         $metaDataList = $object->getOnlyOneManyToManyObject();
-        $this->checkMultipleAssignmentsOnSingleManyToMany($metaDataList, "after saving");
-
+        $this->checkMultipleAssignmentsOnSingleManyToMany($metaDataList, 'after saving');
 
         $id = $object->getId();
 
@@ -165,21 +155,20 @@ class MultipleAssigmentTest extends ModelTestCase
         $object = MultipleAssignments::getById($id, true);
 
         $metaDataList = $object->getOnlyOneManyToManyObject();
-        $this->checkMultipleAssignmentsOnSingleManyToMany($metaDataList, "after loading");
+        $this->checkMultipleAssignmentsOnSingleManyToMany($metaDataList, 'after loading');
 
         $serializedData = serialize($object);
         $deserializedObject = unserialize($serializedData);
         $metaDataList = $deserializedObject->getOnlyOneManyToManyObject();
-        $this->checkMultipleAssignmentsOnSingleManyToMany($metaDataList, "after serialize/unserialize");
-
+        $this->checkMultipleAssignmentsOnSingleManyToMany($metaDataList, 'after serialize/unserialize');
     }
 
-
-    protected function checkMultipleAssignmentsOnMultipleManyToMany(array $metaDataList, $positionMessage = '') {
+    protected function checkMultipleAssignmentsOnMultipleManyToMany(array $metaDataList, $positionMessage = '')
+    {
         $this->assertEquals(10, count($metaDataList), "Relation count $positionMessage.");
         $number = 0;
-        foreach($metaDataList as $i => $metadata) {
-            if($i % 2) {
+        foreach ($metaDataList as $i => $metadata) {
+            if ($i % 2) {
                 $this->assertEquals("multiple-some-more-metadata $number", $metadata->getMeta(), "Metadata $positionMessage.");
                 $number++;
             } else {
@@ -188,7 +177,8 @@ class MultipleAssigmentTest extends ModelTestCase
         }
     }
 
-    public function testMultipleAssignmentsMultipleManyToMany() {
+    public function testMultipleAssignmentsMultipleManyToMany()
+    {
         $listing = new RelationTest\Listing();
         $listing->setLimit(5);
 
@@ -197,11 +187,9 @@ class MultipleAssigmentTest extends ModelTestCase
         $object->setKey('test1');
         $object->setPublished(true);
 
-
         $metaDataList = [];
 
-        foreach($listing as $i => $item) {
-
+        foreach ($listing as $i => $item) {
             $objectMetadata = new ElementMetadata('multipleManyToMany', ['meta'], $item);
             $objectMetadata->setMeta("multiple-some-metadata $i");
             $metaDataList[] = $objectMetadata;
@@ -209,7 +197,6 @@ class MultipleAssigmentTest extends ModelTestCase
             $objectMetadata = new ElementMetadata('multipleManyToMany', ['meta'], $item);
             $objectMetadata->setMeta("multiple-some-more-metadata $i");
             $metaDataList[] = $objectMetadata;
-
         }
 
         $object->setMultipleManyToMany($metaDataList);
@@ -217,8 +204,7 @@ class MultipleAssigmentTest extends ModelTestCase
         $object->save();
 
         $metaDataList = $object->getMultipleManyToMany();
-        $this->checkMultipleAssignmentsOnMultipleManyToMany($metaDataList, "after saving");
-
+        $this->checkMultipleAssignmentsOnMultipleManyToMany($metaDataList, 'after saving');
 
         $id = $object->getId();
 
@@ -230,13 +216,12 @@ class MultipleAssigmentTest extends ModelTestCase
         $object = MultipleAssignments::getById($id, true);
 
         $metaDataList = $object->getMultipleManyToMany();
-        $this->checkMultipleAssignmentsOnMultipleManyToMany($metaDataList, "after loading");
+        $this->checkMultipleAssignmentsOnMultipleManyToMany($metaDataList, 'after loading');
 
         $serializedData = serialize($object);
         $deserializedObject = unserialize($serializedData);
         $metaDataList = $deserializedObject->getMultipleManyToMany();
-        $this->checkMultipleAssignmentsOnMultipleManyToMany($metaDataList, "after serialize/unserialize");
-
+        $this->checkMultipleAssignmentsOnMultipleManyToMany($metaDataList, 'after serialize/unserialize');
     }
 
     public function testMultipleAssignmentsMultipleManyToManyObject()
@@ -249,11 +234,9 @@ class MultipleAssigmentTest extends ModelTestCase
         $object->setKey('test1');
         $object->setPublished(true);
 
-
         $metaDataList = [];
 
         foreach ($listing as $i => $item) {
-
             $objectMetadata = new ObjectMetadata('multipleManyToManyObject', ['meta'], $item);
             $objectMetadata->setMeta("multiple-some-metadata $i");
             $metaDataList[] = $objectMetadata;
@@ -261,7 +244,6 @@ class MultipleAssigmentTest extends ModelTestCase
             $objectMetadata = new ObjectMetadata('multipleManyToManyObject', ['meta'], $item);
             $objectMetadata->setMeta("multiple-some-more-metadata $i");
             $metaDataList[] = $objectMetadata;
-
         }
 
         $object->setMultipleManyToManyObject($metaDataList);
@@ -269,8 +251,7 @@ class MultipleAssigmentTest extends ModelTestCase
         $object->save();
 
         $metaDataList = $object->getMultipleManyToManyObject();
-        $this->checkMultipleAssignmentsOnMultipleManyToMany($metaDataList, "after saving");
-
+        $this->checkMultipleAssignmentsOnMultipleManyToMany($metaDataList, 'after saving');
 
         $id = $object->getId();
 
@@ -282,12 +263,11 @@ class MultipleAssigmentTest extends ModelTestCase
         $object = MultipleAssignments::getById($id, true);
 
         $metaDataList = $object->getMultipleManyToManyObject();
-        $this->checkMultipleAssignmentsOnMultipleManyToMany($metaDataList, "after loading");
+        $this->checkMultipleAssignmentsOnMultipleManyToMany($metaDataList, 'after loading');
 
         $serializedData = serialize($object);
         $deserializedObject = unserialize($serializedData);
         $metaDataList = $deserializedObject->getMultipleManyToManyObject();
-        $this->checkMultipleAssignmentsOnMultipleManyToMany($metaDataList, "after serialize/unserialize");
+        $this->checkMultipleAssignmentsOnMultipleManyToMany($metaDataList, 'after serialize/unserialize');
     }
-
 }

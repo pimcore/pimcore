@@ -122,7 +122,7 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
 
                     if (is_array($value) and ($fd instanceof ClassDefinition\Data\ManyToManyRelation or $fd instanceof ClassDefinition\Data\ManyToManyObjectRelation)) {
                         //don't save relations twice, if multiple assignments not allowed
-                        if(!method_exists($fd, 'getAllowMultipleAssignments') || !$fd->getAllowMultipleAssignments()) {
+                        if (!method_exists($fd, 'getAllowMultipleAssignments') || !$fd->getAllowMultipleAssignments()) {
                             $value = array_unique($value);
                         }
                         $this->$setter($value);
