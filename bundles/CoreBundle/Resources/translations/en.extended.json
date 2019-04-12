@@ -703,5 +703,8 @@
   "exclude_from_search_index": "Exclude from Backend Full-Text Search",
   "left": "left",
   "right": "right",
-  "provide_split_view": "Provide Split View"
+  "provide_split_view": "Provide Split View",
+  "allow_multiple_assignments": "Allow Multiple Assignments",
+  "enable_admin_async_load": "Enable Async Load in Admin",
+  "async_loading_warning_block":  "WARNING: Async Loading is NOT possible within Localized Fields and Blocks"
 }
