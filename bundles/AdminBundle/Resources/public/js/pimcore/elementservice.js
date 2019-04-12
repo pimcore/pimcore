@@ -708,6 +708,7 @@ pimcore.elementservice.addObjectComplete = function(options, response) {
             if (rdata.id && rdata.type) {
                 if (rdata.type == "object") {
                     pimcore.helpers.openObject(rdata.id, rdata.type);
+                    pimcore.plugin.broker.fireEvent("postAddObject", rdata.id);
                 }
             }
         }  else {

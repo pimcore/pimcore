@@ -57,6 +57,7 @@ corresponding method to the javascript plugin class.
 | postOpenObject | after object is opened, object and type are passed as parameters |
 | preSaveObject | before object is saved, object and type are passed as parameters |
 | postSaveObject | after object is saved, object is passed as parameter |
+| postAddObject | after the object is successfully created, object id is passed as parameter |
 | prepareAssetTreeContextMenu | before context menu is opened, menu, tree class and asset record are passed as parameters |
 | prepareObjectTreeContextMenu | before context menu is opened, menu, tree class and object record are passed as parameters |
 | prepareDocumentTreeContextMenu | before context menu is opened, menu, tree and document record are passed as parameters |
