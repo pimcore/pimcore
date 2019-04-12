@@ -29,7 +29,6 @@ use Symfony\Component\Config\Definition\ConfigurationInterface;
 
 class Configuration implements ConfigurationInterface
 {
-
     /**
      * @var PlaceholderProcessor
      */
@@ -926,6 +925,7 @@ class Configuration implements ConfigurationInterface
                                         ->always()
                                         ->then(function ($placeholders) {
                                             $this->placeholders = $placeholders;
+
                                             return $placeholders;
                                         })
                                     ->end()
@@ -966,6 +966,7 @@ class Configuration implements ConfigurationInterface
                                                     if (!empty($this->placeholders)) {
                                                         $arguments = $this->placeholderProcessor->mergePlaceholders($arguments, $this->placeholders);
                                                     }
+
                                                     return $arguments;
                                                 })
                                             ->end()
@@ -1089,6 +1090,7 @@ class Configuration implements ConfigurationInterface
                                                     $places[$name] = $this->placeholderProcessor->mergePlaceholders($place, $this->placeholders);
                                                 }
                                             }
+
                                             return $places;
                                         })
                                     ->end()
