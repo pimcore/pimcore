@@ -114,7 +114,7 @@ pimcore.asset.listfolder = Class.create({
             name: "onlyUnreferenced",
             style: "margin-bottom: 5px; margin-left: 5px",
             checked: this.onlyUnreferenced,
-            boxLabel: t("only_unused"),
+            boxLabel: t("only_unreferenced"),
             listeners: {
                 "change" : function (field, checked) {
                     this.store.getProxy().setExtraParam("only_unreferenced", checked);
