@@ -505,8 +505,11 @@ class GridHelperService
         }
 
         $list->setCondition(implode(' AND ', $conditionFilters));
-        $list->setLimit($limit);
-        $list->setOffset($start);
+	    if(!$requestParams['export'] && empty($requestParams['ids']))
+	    {
+		    $list->setLimit($limit);
+		    $list->setOffset($start);
+	    }
 
         if (isset($sortingSettings['isFeature']) && $sortingSettings['isFeature']) {
             $orderKey = 'cskey_' . $sortingSettings['fieldname'] . '_' . $sortingSettings['groupId'] . '_' . $sortingSettings['keyId'];
