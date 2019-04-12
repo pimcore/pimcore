@@ -235,6 +235,7 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
             }
 
             var splitView = Ext.create('Ext.panel.Panel', splitViewConfig);
+            splitView.excludeFromUiStateRestore = true;
 
             this.component = splitView;
         } else {
@@ -744,7 +745,7 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
         var localStorageKey = this.getLocalStorageKey();
         localStorageData = JSON.stringify(existingSettings);
         localStorage.setItem(localStorageKey, localStorageData);
-        var params = {ignoreUiState: true};
+        var params = {};
         if (this.object.data.currentLayoutId) {
             params["layoutId"] = this.object.data.currentLayoutId;
         }
@@ -955,7 +956,7 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
 
         localStorage.setItem(localStorageKey, localStorageData);
         this.splitViewSettingsWindow.close();
-        var params = {ignoreUiState: true};
+        var params = {};
         if (this.object.data.currentLayoutId) {
             params["layoutId"] = this.object.data.currentLayoutId;
         }
