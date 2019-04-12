@@ -1354,3 +1354,9 @@
     background-position: center center;
     background-repeat: no-repeat;
 }
+
+.pimcore_icon_side_by_side {
+    background: url(/bundles/pimcoreadmin/img/flat-color-icons/side-by-side.svg) center center no-repeat !important;
+}
+
+

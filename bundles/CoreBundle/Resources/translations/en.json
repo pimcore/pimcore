@@ -888,5 +888,10 @@
   "allow_multiple_assignments": "Allow Multiple Assignments",
   "enable_admin_async_load": "Enable Async Load in Admin",
   "async_loading_warning_block":  "WARNING: Async Loading is NOT possible within Localized Fields and Blocks",
+  "split_view_settings": "Split View Settings",
+  "enable_split_view": "Enable Split View",
+  "disable_split_view": "Disable Split View",
+  "split_view_object_dirty_title": "Please confirm",
+  "split_view_object_dirty_msg": "There are unsaved modifications. You will lose all changes. Are you sure?",
   "all_translations": "All Translations"
 }
