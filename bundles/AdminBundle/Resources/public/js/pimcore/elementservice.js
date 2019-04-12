@@ -689,6 +689,7 @@ pimcore.elementservice.addDocumentComplete = function (options, response) {
 
             if(in_array(response["type"], ["page","snippet","email","newsletter","link","hardlink","printpage","printcontainer"])) {
                 pimcore.helpers.openDocument(response.id, response.type);
+                pimcore.plugin.broker.fireEvent("postAddDocumentTree", response.id);
             }
         }  else {
             pimcore.helpers.showNotification(t("error"), t("failed_to_create_new_item"), "error",
@@ -708,6 +709,7 @@ pimcore.elementservice.addObjectComplete = function(options, response) {
             if (rdata.id && rdata.type) {
                 if (rdata.type == "object") {
                     pimcore.helpers.openObject(rdata.id, rdata.type);
+                    pimcore.plugin.broker.fireEvent("postAddObjectTree", rdata.id);
                 }
             }
         }  else {
