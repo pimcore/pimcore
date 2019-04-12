@@ -575,6 +575,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                             $rel['rowId'] = $rel['id'] . AbstractRelations::RELATION_ID_SEPARATOR . $index . AbstractRelations::RELATION_ID_SEPARATOR . $rel['type'];
                             $data[] = $rel;
                         } else {
+                            //TODO can this removed? seems to be dead code
                             $data[] = [
                                 'id' => $rel['id'],
                                 'path' => $rel['path'],
