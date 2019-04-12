@@ -565,7 +565,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                     $data['published'] = (bool)$data['published'];
                 } elseif (
                     ($fielddefinition instanceof DataObject\ClassDefinition\Data\OptimizedAdminLoadingInterface && $fielddefinition->isOptimizedAdminLoading())
-                    || ($fielddefinition instanceof ManyToManyObjectRelation && !$fielddefinition->getVisibleFields())
+                    || ($fielddefinition instanceof ManyToManyObjectRelation && !$fielddefinition->getVisibleFields() && !$fielddefinition instanceof DataObject\ClassDefinition\Data\AdvancedManyToManyObjectRelation)
                 ) {
                     foreach ($relations as $rkey => $rel) {
                         $index = $rkey + 1;
