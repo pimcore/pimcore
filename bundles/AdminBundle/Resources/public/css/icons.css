@@ -1110,6 +1110,9 @@
     background: url(/bundles/pimcoreadmin/img/flat-color-icons/empty_filter.svg) center center no-repeat !important;
 }
 
+.pimcore_icon_filter {
+    background: url(/bundles/pimcoreadmin/img/flat-color-icons/filled_filter.svg) center center no-repeat !important;
+}
 
 .pimcore_icon_pdf {
     background: url(/bundles/pimcoreadmin/img/flat-color-icons/pdf.svg) center center no-repeat !important;

@@ -283,7 +283,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
 
         $context = isset($params['context']) ? $params['context'] : null;
         $localizedFields->setContext($context);
-        if($object) {
+        if ($object) {
             $localizedFields->setObject($object);
         }
 

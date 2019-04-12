@@ -15,6 +15,7 @@ pimcore.registerNS("pimcore.asset.listfolder");
 pimcore.asset.listfolder = Class.create({
 
     onlyDirectChildren: false,
+    onlyUnreferenced: false,
 
     initialize: function (element) {
         this.element = element;
@@ -101,11 +102,24 @@ pimcore.asset.listfolder = Class.create({
             boxLabel: t("only_children"),
             listeners: {
                 "change" : function (field, checked) {
-                    this.grid.filters.clearFilters();
-
                     this.store.getProxy().setExtraParam("only_direct_children", checked);
-
                     this.onlyDirectChildren = checked;
+
+                    this.pagingtoolbar.moveFirst();
+                }.bind(this)
+            }
+        });
+
+        this.checkboxOnlyUnreferenced = new Ext.form.Checkbox({
+            name: "onlyUnreferenced",
+            style: "margin-bottom: 5px; margin-left: 5px",
+            checked: this.onlyUnreferenced,
+            boxLabel: t("only_unused"),
+            listeners: {
+                "change" : function (field, checked) {
+                    this.store.getProxy().setExtraParam("only_unreferenced", checked);
+                    this.onlyUnreferenced = checked;
+
                     this.pagingtoolbar.moveFirst();
                 }.bind(this)
             }
@@ -130,6 +144,7 @@ pimcore.asset.listfolder = Class.create({
             listeners: {
                 activate: function() {
                     this.store.getProxy().setExtraParam("only_direct_children", this.onlyDirectChildren);
+                    this.store.getProxy().setExtraParam("only_unreferenced", this.onlyUnreferenced);
                     this.store.load();
                 }.bind(this),
                 rowdblclick: function(grid, record, tr, rowIndex, e, eOpts ) {
@@ -141,6 +156,8 @@ pimcore.asset.listfolder = Class.create({
             tbar: [
                 "->"
                 ,this.checkboxOnlyDirectChildren
+                , "-"
+                ,this.checkboxOnlyUnreferenced
                 , "-"
                 ,{
                     text: t("download_selected_as_zip"),

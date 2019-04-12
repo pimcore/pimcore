@@ -16,7 +16,7 @@ pimcore.object.tags.advancedManyToManyObjectRelation = Class.create(pimcore.obje
 
     type: "advancedManyToManyObjectRelation",
     dataChanged: false,
-    idProperty: "id",
+    idProperty: "rowId",
     pathProperty: "fullpath",
     allowBatchAppend: true,
 
@@ -49,6 +49,7 @@ pimcore.object.tags.advancedManyToManyObjectRelation = Class.create(pimcore.obje
         this.visibleFields = visibleFields;
 
         fields.push("id");
+        fields.push("index");
         fields.push("inheritedFields");
         fields.push("metadata");
 
@@ -60,6 +61,15 @@ pimcore.object.tags.advancedManyToManyObjectRelation = Class.create(pimcore.obje
 
         for (i = 0; i < this.fieldConfig.columns.length; i++) {
             fields.push(this.fieldConfig.columns[i].key);
+        }
+
+        var modelName = 'ObjectsMultipleRelations';
+        if (!Ext.ClassManager.isCreated(modelName)) {
+            Ext.define(modelName, {
+                extend: 'Ext.data.Model',
+                idProperty: this.idProperty,
+                fields: fields
+            });
         }
 
         this.store = new Ext.data.JsonStore({
@@ -81,7 +91,7 @@ pimcore.object.tags.advancedManyToManyObjectRelation = Class.create(pimcore.obje
                     this.dataChanged = true;
                 }.bind(this)
             },
-            fields: fields
+            model: modelName
         });
     },
 
@@ -217,7 +227,6 @@ pimcore.object.tags.advancedManyToManyObjectRelation = Class.create(pimcore.obje
                 dataIndex: this.fieldConfig.columns[i].key,
                 renderer: renderer,
                 listeners: listeners,
-                sortable: true,
                 width: width
             };
 
@@ -338,6 +347,9 @@ pimcore.object.tags.advancedManyToManyObjectRelation = Class.create(pimcore.obje
             columnLines: true,
             stripeRows: true,
             columns: {
+                defaults: {
+                    sortable: false
+                },
                 items: columns
             },
             viewConfig: {
@@ -439,7 +451,7 @@ pimcore.object.tags.advancedManyToManyObjectRelation = Class.create(pimcore.obje
                                         inheritedFields: {}
                                     };
 
-                                    if (!this.objectAlreadyExists(initData.id)) {
+                                    if (this.fieldConfig.allowMultipleAssignments || !this.objectAlreadyExists(initData.id)) {
                                         toBeRequested.add(this.loadObjectData(initData, this.visibleFields));
                                     }
                                 }

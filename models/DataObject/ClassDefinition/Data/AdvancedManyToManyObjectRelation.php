@@ -60,6 +60,11 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
     public $enableBatchEdit;
 
     /**
+     * @var bool
+     */
+    public $allowMultipleAssignments;
+
+    /**
      * @inheritdoc
      */
     public function prepareDataForPersistence($data, $object = null, $params = [])
@@ -111,7 +116,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
                 'SELECT o_id FROM objects WHERE o_id IN ('.implode(',', $targets).')'
             );
 
-            foreach ($data as $relation) {
+            foreach ($data as $key => $relation) {
                 if ($relation['dest_id']) {
                     $source = DataObject::getById($relation['src_id']);
                     $destinationId = $relation['dest_id'];
@@ -136,6 +141,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
                         $ownertype = $relation['ownertype'] ? $relation['ownertype'] : '';
                         $ownername = $relation['ownername'] ? $relation['ownername'] : '';
                         $position = $relation['position'] ? $relation['position'] : '0';
+                        $index = $key + 1;
 
                         $metaData->load(
                             $source,
@@ -143,7 +149,8 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
                             $this->getName(),
                             $ownertype,
                             $ownername,
-                            $position
+                            $position,
+                            $index
                         );
 
                         $list[] = $metaData;
@@ -206,7 +213,8 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
 
         // add data
         if (is_array($data) && count($data) > 0) {
-            foreach ($data as $metaObject) {
+            foreach ($data as $mkey => $metaObject) {
+                $index = $mkey + 1;
                 $object = $metaObject->getObject();
                 if ($object instanceof DataObject\Concrete) {
                     $columnData = DataObject\Service::gridObjectData($object, $gridFields, null, ['purpose' => 'editmode']);
@@ -214,6 +222,9 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
                         $getter = 'get' . ucfirst($c['key']);
                         $columnData[$c['key']] = $metaObject->$getter();
                     }
+
+                    $columnData['rowId'] = $columnData['id'] . self::RELATION_ID_SEPARATOR . $index . self::RELATION_ID_SEPARATOR . $columnData['type'];
+
                     $return[] = $columnData;
                 }
             }
@@ -666,10 +677,13 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
                 $objectConcrete = $object;
             }
 
-            foreach ($objectsMetadata as $meta) {
+            $counter = 1;
+            foreach ($objectsMetadata as $mkey => $meta) {
                 $ownerName = isset($relation['ownername']) ? $relation['ownername'] : null;
                 $ownerType = isset($relation['ownertype']) ? $relation['ownertype'] : null;
-                $meta->save($objectConcrete, $ownerType, $ownerName, $position);
+                $meta->save($objectConcrete, $ownerType, $ownerName, $position, $counter);
+
+                $counter++;
             }
         }
 
@@ -1149,6 +1163,22 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
         }
 
         return $data;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getAllowMultipleAssignments()
+    {
+        return $this->allowMultipleAssignments;
+    }
+
+    /**
+     * @param bool $allowMultipleAssignments
+     */
+    public function setAllowMultipleAssignments($allowMultipleAssignments)
+    {
+        $this->allowMultipleAssignments = $allowMultipleAssignments;
     }
 
     /**

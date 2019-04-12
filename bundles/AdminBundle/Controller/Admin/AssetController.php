@@ -2268,6 +2268,10 @@ class AssetController extends ElementControllerBase implements EventedController
                 $conditionFilters[] = 'path LIKE ' . ($folder->getRealFullPath() == '/' ? "'/%'" : $list->quote($folder->getRealFullPath() . '/%'));
             }
 
+            if ($allParams['only_unreferenced'] == 'true') {
+                $conditionFilters[] = 'id NOT IN (SELECT targetid FROM dependencies WHERE targettype=\'asset\')';
+            }
+
             $conditionFilters[] = "type != 'folder'";
             $filterJson = $allParams['filter'];
             if ($filterJson) {
