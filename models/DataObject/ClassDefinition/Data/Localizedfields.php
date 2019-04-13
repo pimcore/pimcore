@@ -1367,8 +1367,6 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
         $this->provideSplitView = $provideSplitView;
     }
 
-
-
     /** Encode value for packing it into a single column.
      * @param mixed $value
      * @param Model\DataObject\AbstractObject $object
