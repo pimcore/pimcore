@@ -548,7 +548,7 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
                 });
             });
 
-            if(me.data["translations"].length) {
+            if(Object.keys(me.data["translations"]).length) {
                 //add menu for All Translations
                 translationsMenu.push({
                     text: t("all_translations"),
