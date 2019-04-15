@@ -217,13 +217,12 @@ pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
             width: this.fieldConfig.width,
             height: this.fieldConfig.height,
             border: true,
-
             componentCls: "object_field",
             tbar: toolbar
         };
 
         if (!this.additionalConfig.condensed) {
-            conf.style = "padding-bottom: 10px;";
+            // conf.style = "padding-bottom: 10px;";
         }
 
         this.component = new Ext.Panel(conf);
@@ -295,11 +294,11 @@ pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
         var height = null;
 
         if (this.panel) {
-            this.originalWidth = this.panel.getWidth();
-            this.originalHeight = this.panel.getHeight();
+            this.originalWidth = this.panel.initialConfig.width;
+            this.originalHeight = this.panel.initialConfig.height;
 
-            width = this.panel.getWidth() - 10;
-            height = this.panel.getHeight() - 10;
+            width = this.originalWidth - 10;
+            height = this.originalHeight - 10;
         } else {
             width = body.getWidth() - 10;
             height = body.getHeight() - 10;
