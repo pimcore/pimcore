@@ -42,16 +42,17 @@ class Version20190403120728 extends AbstractPimcoreMigration
                 $relTable = explode('_', $metaTable);
                 $relTable = 'object_relations_' . $relTable[2];
 
+                // Don't use INNER JOIN to update table as we could hita MySQL Issue with it.
+                // Details: https://github.com/pimcore/pimcore/issues/4233
                 $this->addSql('UPDATE `' . $metaTable . '` mt
-                        INNER JOIN `' . $relTable . '` rl
-                        ON  mt.o_id = rl.src_id
+                      SET mt.index = (SELECT rl.index FROM `' . $relTable . '` rl
+                        WHERE  mt.o_id = rl.src_id
                             AND mt.dest_id = rl.dest_id
                             AND mt.type = rl.type
                             AND mt.fieldname = rl.fieldname
                             AND mt.ownertype = rl.ownertype
                             AND mt.ownername = rl.ownername
-                            AND mt.position = rl.position
-                        SET mt.index = rl.index');
+                            AND mt.position = rl.position)');
             }
         } catch (\Exception $e) {
             $this->writeMessage('An error occurred while performing migrations: ' . $e->getMessage());
