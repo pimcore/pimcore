@@ -116,32 +116,47 @@ pimcore.settings.email.log = Class.create({
                 text: t('email_log_from'),
                 sortable: false,
                 dataIndex: 'from',
-                flex: 120
+                flex: 120,
+                renderer: function (s) {
+                    return Ext.util.Format.htmlEncode(s);
+                }
             },
             {
                 text: t('email_reply_to'),
                 sortable: false,
                 dataIndex: 'replyTo',
                 flex: 120,
-                hidden: true
+                hidden: true,
+                renderer: function (s) {
+                    return Ext.util.Format.htmlEncode(s);
+                }
             },
             {
                 text: t('email_log_to'),
                 sortable: false,
                 dataIndex: 'to',
-                flex: 120
+                flex: 120,
+                renderer: function (s) {
+                    return Ext.util.Format.htmlEncode(s);
+                }
             },
             {
                 text: t('email_log_cc'),
                 sortable: false,
                 dataIndex: 'cc',
-                flex: 120
+                flex: 120,
+                renderer: function (s) {
+                    return Ext.util.Format.htmlEncode(s);
+                }
             },
             {
                 text: t('email_log_bcc'),
                 sortable: false,
                 dataIndex: 'bcc',
-                flex: 120
+                flex: 120,
+                renderer: function (s) {
+                    return Ext.util.Format.htmlEncode(s);
+                }
             },
             {
                 text: t('email_log_subject'),
