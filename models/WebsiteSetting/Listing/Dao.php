@@ -30,7 +30,7 @@ class Dao extends Model\Dao\PhpArrayTable
     /**
      * Loads a list of static routes for the specified parameters, returns an array of Staticroute elements
      *
-     * @return array
+     * @return \Pimcore\Model\WebsiteSetting[]
      */
     public function load()
     {
