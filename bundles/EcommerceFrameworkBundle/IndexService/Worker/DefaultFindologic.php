@@ -149,7 +149,7 @@ class DefaultFindologic extends AbstractMockupCacheWorker implements IWorker, IB
         // add default data
         foreach ($data['data'] as $field => $value) {
             // skip empty values
-            if ((string)$value === '') {
+            if ((string)$value === '' || (is_array($value) && empty($value))) {
                 continue;
             }
             $value = is_string($value) ? htmlspecialchars(strip_tags($value)) : $value;
@@ -214,12 +214,16 @@ class DefaultFindologic extends AbstractMockupCacheWorker implements IWorker, IB
                         break;
 
                     default:
-                        if (!is_array($value)) {
-                            $attribute = $attributes->addChild('attribute');
+                        $attribute = $attributes->addChild('attribute');
+                        $attribute->addChild('key', $field);
+                        $values = $attribute->addChild('values');
 
-                            $attribute->addChild('key', $field);
-                            $values = $attribute->addChild('values');
+                        if (!is_array($value)) {
                             $addChildWithCDATA($values, 'value', $value);
+                        } else {
+                            foreach ($value as $_item) {
+                                $values->addChild('value', $_item);
+                            }
                         }
                 }
             }
