@@ -499,7 +499,8 @@ pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.
                                 var initData = {
                                     id: data.id,
                                     metadata: '',
-                                    inheritedFields: {}
+                                    inheritedFields: {},
+                                    fullpath: data.path
                                 };
 
                                 if (!this.objectAlreadyExists(initData.id)) {
