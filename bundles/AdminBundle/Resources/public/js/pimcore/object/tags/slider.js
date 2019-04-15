@@ -20,7 +20,7 @@ pimcore.object.tags.slider = Class.create(pimcore.object.tags.abstract, {
 
         this.data = "";
 
-        if (data) {
+        if (data != null) {
             this.data = data;
         } else if (typeof data === "undefined" && fieldConfig.defaultValue) {
             this.data = fieldConfig.defaultValue;
@@ -46,7 +46,7 @@ pimcore.object.tags.slider = Class.create(pimcore.object.tags.abstract, {
             componentCls: "object_field"
         };
 
-        if (this.data) {
+        if (this.data != null) {
             slider.value = this.data;
         }
 
