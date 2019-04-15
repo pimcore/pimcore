@@ -1,15 +1,18 @@
 <?php
 
-namespace App\Migrations;
+namespace Pimcore\Bundle\CoreBundle\Migrations;
 
 use Doctrine\DBAL\Schema\Schema;
 use Pimcore\Migrations\Migration\AbstractPimcoreMigration;
 
-/**
- * Auto-generated Migration: Please modify to your needs!
- */
+
 class Version20181128074035 extends AbstractPimcoreMigration
 {
+    public function doesSqlMigrations(): bool
+    {
+        return true;
+    }
+
     /**
      * @param Schema $schema
      */
@@ -26,7 +29,7 @@ class Version20181128074035 extends AbstractPimcoreMigration
             'mail1@mail.com, mail@mail.com (Name)'
         */
         $emailLogListing = new \Pimcore\Model\Tool\Email\Log\Listing();
-        $fieldNames = ['To', 'Bcc', 'Cc', 'ReplyTo'];
+        $fieldNames = ['From','To', 'Bcc', 'Cc', 'ReplyTo'];
 
         $i = 0;
         foreach($emailLogListing->load() as $emailLogEntry) {
@@ -36,20 +39,6 @@ class Version20181128074035 extends AbstractPimcoreMigration
             if($i % 100 == 0) {
                 \Pimcore::collectGarbage();
             }
-
-            $fromArray = $this->buildArrayFromOldFormat($emailLogEntry->getFrom());
-            if (!empty($fromArray)) {
-                list($from) = $fromArray;
-                if ($from) {
-                    if($from['name']) {
-                        $emailLogEntry->setFrom($from['name'] . ' ' . '<' . $from['email'] . '>');
-                        $save = true;
-                    } else {
-                        $emailLogEntry->setFrom($from['email']);
-                    }
-                }
-            }
-
 
             foreach($fieldNames as $fieldName) {
                 $save = $save | $this->migrateEmailField($fieldName, $emailLogEntry);
@@ -61,8 +50,8 @@ class Version20181128074035 extends AbstractPimcoreMigration
         }
     }
 
-    public function down(Schema $schema) {
-
+    public function down(Schema $schema)
+    {
         /*
          * possible cases:
          *
@@ -76,7 +65,7 @@ class Version20181128074035 extends AbstractPimcoreMigration
 
         $emailLogListing = new \Pimcore\Model\Tool\Email\Log\Listing();
 
-        $fieldNames = ['To', 'Bcc', 'Cc', 'ReplyTo'];
+        $fieldNames = ['From','To', 'Bcc', 'Cc', 'ReplyTo'];
 
         $i = 0;
         foreach($emailLogListing->load() as $emailLogEntry) {
@@ -86,20 +75,6 @@ class Version20181128074035 extends AbstractPimcoreMigration
             $i++;
             if($i % 100 == 0) {
                 \Pimcore::collectGarbage();
-            }
-
-
-            $fromArray = \Pimcore\Helper\Mail::parseEmailAddressField($emailLogEntry->getFrom());
-            if (!empty($fromArray)) {
-                list($from) = $fromArray;
-                if ($from) {
-                    if($from['name']) {
-                        $emailLogEntry->setFrom($from['email'] . ' ' . '(' . $from['name'] . ')');
-                        $save = true;
-                    } else {
-                        $emailLogEntry->setFrom($from['email']);
-                    }
-                }
             }
 
             foreach($fieldNames as $fieldName) {
@@ -113,8 +88,8 @@ class Version20181128074035 extends AbstractPimcoreMigration
     }
 
 
-    private function migrateEmailField($fieldName, $emailLogEntry) {
-
+    private function migrateEmailField($fieldName, $emailLogEntry)
+    {
         $save = false;
         $getter = 'get' . $fieldName;
         $setter = 'set' . $fieldName;
@@ -189,12 +164,13 @@ class Version20181128074035 extends AbstractPimcoreMigration
         $tmp = explode(',', trim($data));
 
         foreach ($tmp as $entry) {
-            $entry = trim($entry);
-            $tmp2 = explode(' ', $entry);
-            $dataArray[] = [
-                'email' => trim($tmp2[0]),
-                'name' => str_replace(['(', ')'], '', $tmp2[1])
-            ];
+            if (!preg_match('/(.*)\<(.*)\>/', $entry)) {
+                $tmp2 = explode(' ', trim($entry));
+                $dataArray[] = [
+                    'email' => trim($tmp2[0]),
+                    'name' => str_replace(['(', ')'], '', $tmp2[1])
+                ];
+            }
         }
 
         return $dataArray;
