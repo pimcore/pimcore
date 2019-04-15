@@ -282,22 +282,16 @@ class EmailController extends AdminController
                 $mail->setBodyText($text);
             }
 
-            $mail->setFrom($emailLog->getFrom());
-
-            foreach ($emailLog->getToAsArray() as $entry) {
-                $mail->addTo($entry['email'], $entry['name']);
-            }
-
-            foreach ($emailLog->getCcAsArray() as $entry) {
-                $mail->addCc($entry['email'], $entry['name']);
-            }
-
-            foreach ($emailLog->getBccAsArray() as $entry) {
-                $mail->addBcc($entry['email']);
-            }
-
-            foreach ($emailLog->getReplyToAsArray() as $entry) {
-                $mail->addReplyTo($entry['email']);
+            foreach(['From', 'To', 'Cc', 'Bcc', 'ReplyTo'] as $field) {
+                $getter = 'get' . $field;
+                $values = \Pimcore\Helper\Mail::parseEmailAddressField($emailLog->{$getter}());
+                if (!empty($values)) {
+                    list($value) = $values;
+                    if ($value) {
+                        $prefix = ($field === 'From') ? 'set' : 'add';
+                        $mail->{$prefix . $field}($value['email'], $value['name']);
+                    }
+                }
             }
 
             $mail->setSubject($emailLog->getSubject());
