@@ -348,7 +348,10 @@ class Processor
             $format = $image->getContentOptimizedFormat();
         }
 
-        $image->save($fsPath, $format, $config->getQuality());
+        $tmpFsPath = preg_replace('@\.([\w]+)$@', uniqid('.tmp-', true) . '.$1', $fsPath);
+        $image->save($tmpFsPath, $format, $config->getQuality());
+        @rename($tmpFsPath, $fsPath); // atomic rename to avoid race conditions
+
         $generated = true;
 
         if ($contentOptimizedFormat) {
