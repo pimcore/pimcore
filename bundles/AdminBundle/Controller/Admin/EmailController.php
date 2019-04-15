@@ -272,7 +272,8 @@ class EmailController extends AdminController
             }
 
             foreach(['From', 'To', 'Cc', 'Bcc', 'ReplyTo'] as $field) {
-                $values = \Pimcore\Helper\Mail::parseEmailAddressField($emailLog->getFrom());
+                $getter = 'get' . $field;
+                $values = \Pimcore\Helper\Mail::parseEmailAddressField($emailLog->{$getter}());
                 if (!empty($values)) {
                     list($value) = $values;
                     if ($value) {
