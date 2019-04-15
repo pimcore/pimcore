@@ -26,6 +26,8 @@ use Pimcore\Model\Element;
 
 abstract class AbstractRelations extends Data implements CustomResourcePersistingInterface
 {
+    const RELATION_ID_SEPARATOR = '$$';
+
     /**
      * @var bool
      */

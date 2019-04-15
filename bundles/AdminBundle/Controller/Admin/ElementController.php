@@ -530,6 +530,9 @@ class ElementController extends AdminController
         if ($request->get('loadEditModeData') == 'true') {
             $idProperty = $request->get('idProperty', 'id');
 
+            $inheritanceBackup = DataObject\AbstractObject::getGetInheritedValues();
+            DataObject\AbstractObject::setGetInheritedValues(true);
+
             $methodName = 'get' . ucfirst($fieldname);
             if ($ownerType == 'object' && method_exists($source, $methodName)) {
                 $data = $source->$methodName();
@@ -547,6 +550,8 @@ class ElementController extends AdminController
             } else {
                 Logger::error('Loading edit mode data is not supported for ownertype: ' . $ownerType);
             }
+
+            DataObject\AbstractObject::setGetInheritedValues($inheritanceBackup);
         }
 
         return $this->adminJson(['success' => true, 'data' => $result]);

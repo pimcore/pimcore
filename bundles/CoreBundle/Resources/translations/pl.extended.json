@@ -700,5 +700,8 @@
     "encrypt_data": "Encrypt Data",
     "encrypt_data_description": "Data-at-Rest/Tablespace Encryption needs to be enabled on your Database Server",
     "reports_config": "Reports Config",
-    "lazy_loading_warning_block": "WARNING: Lazy Loading is NOT possible within Blocks"
+    "lazy_loading_warning_block": "WARNING: Lazy Loading is NOT possible within Blocks",
+    "left": "left",
+    "right": "right",
+    "provide_split_view": "Provide Split View"
 }

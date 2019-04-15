@@ -195,7 +195,7 @@
     "label_first_cell": "Überschrift erste Zelle",
     "cache_disable_cookies": "Ausschlusscookie (kommagetrennt)",
     "only_for_ip": "Nur für IP (Optional)",
-    "please_dont_forget_to_reload_pimcore_after_modifications": "Bitte vergessen Sie nicht pimcore nach Ihren Modifikationen neu zu laden",
+    "please_dont_forget_to_reload_pimcore_after_modifications": "Bitte vergessen Sie nicht pimcore nach Ihren Modifikationen neu zu laden.",
     "enable": "Einschalten",
     "disable": "Abschalten",
     "configure": "Konfigurieren",
@@ -654,7 +654,7 @@
     "errors_from_the_last_7_days": "Errors from the last 7 days",
     "microsoft_word_export_notice": "<ul><li>Es ist nicht möglich, diesen Export erneut zu importieren</li><li>Das Exportdatei-Format ist HTML, dieses kann mit Word geöffnet werden kann</li><li>Dieser Export enthält nicht die vollständigen Layout-Informationen (nur grundlegende Textformatierung)</li><li>Die Sprachauswahl wird verwendet, um die Sprache für die lokalisierten Felder des Objekts festzulegen (nur lokalisierte Felder werden exportiert!)</li></ul>",
     "multiselect_render_type": "Render Type",
-    "please_dont_forget_to_reload_pimcore": "<b>Please don't forget to reload pimcore after your modification!</b>",
+    "please_dont_forget_to_reload_pimcore": "<b>Bitte vergessen Sie nicht pimcore nach Ihren Modifikationen neu zu laden!</b>",
     "2fa_required": "Two Factor Authentication required",
     "2fa_reset_secret": "Reset 2FA Secret",
     "2fa_reset_done": "The 2FA secret was reset, the user can generate a new one after login (My Profile section).",
@@ -700,5 +700,8 @@
     "encrypt_data": "Encrypt Data",
     "encrypt_data_description": "Data-at-Rest/Tablespace Encryption needs to be enabled on your Database Server",
     "reports_config": "Reports Config",
-    "lazy_loading_warning_block": "WARNING: Lazy Loading is NOT possible within Blocks"
+    "lazy_loading_warning_block": "WARNING: Lazy Loading is NOT possible within Blocks",
+    "left": "left",
+    "right": "right",
+    "provide_split_view": "Provide Split View"
 }

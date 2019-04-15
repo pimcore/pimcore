@@ -12,7 +12,7 @@
  */
 
 pimcore.registerNS("pimcore.object.tags.manyToManyObjectRelation");
-pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.abstract, {
+pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.abstractRelations, {
 
     type: "manyToManyObjectRelation",
     dataChanged: false,
@@ -283,7 +283,7 @@ pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.
     ,
 
     getVisibleColumns: function () {
-        var visibleFields = this.visibleFields;
+        var visibleFields = this.visibleFields || [];
 
         var columns = [
             {text: 'ID', dataIndex: 'id', width: 50, hidden: !!visibleFields.length},
@@ -524,7 +524,7 @@ pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.
         return this.component;
     },
 
-        getEditToolbarItems: function (readOnly) {
+    getEditToolbarItems: function (readOnly) {
         var toolbarItems = [
             {
                 xtype: "tbspacer",
@@ -535,11 +535,14 @@ pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.
             {
                 xtype: "tbtext",
                 text: "<b>" + this.fieldConfig.title + "</b>"
-            }];
+            },
+            "->"
+        ];
+
+        toolbarItems = toolbarItems.concat(this.getFilterEditToolbarItems());
 
         if (!readOnly) {
             toolbarItems = toolbarItems.concat([
-                "->",
                 {
                     xtype: "button",
                     iconCls: "pimcore_icon_delete",
@@ -705,7 +708,7 @@ pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.
 
             for (var i = 0; i < items.length; i++) {
                 var fields = this.visibleFields;
-                if (!this.objectAlreadyExists(items[i].id)) {
+                if (this.fieldConfig.allowMultipleAssignments || !this.objectAlreadyExists(items[i].id)) {
                     toBeRequested.add(this.loadObjectData(items[i], fields));
                 }
             }
@@ -824,6 +827,7 @@ pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.
             },
             targets,
             {
+                idProperty: this.idProperty,
                 loadEditModeData: loadEditModeData
             },
             this.fieldConfig,
@@ -868,7 +872,7 @@ pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.
                 var key;
 
                 if (rdata.success) {
-                    var rec = this.store.getById(item.id);
+                    var rec = newItem[0];
                     for (key in rdata.fields) {
                         //add all key exept fullpath to not overwrite possible nice path
                         if(key !== 'fullpath') {
@@ -880,7 +884,8 @@ pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.
         });
 
         return newItem;
-    }
+    },
+
 });
 
 // @TODO BC layer, to be removed in v6.0

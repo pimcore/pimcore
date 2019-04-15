@@ -32,11 +32,12 @@ class Dao extends Model\Dao\AbstractDao
      * @param $ownertype
      * @param $ownername
      * @param $position
+     * @param $index
      * @param $type
      *
      * @throws \Exception
      */
-    public function save(DataObject\Concrete $object, $ownertype, $ownername, $position, $type = 'object')
+    public function save(DataObject\Concrete $object, $ownertype, $ownername, $position, $index, $type = 'object')
     {
         $table = $this->getTablename($object);
 
@@ -45,6 +46,7 @@ class Dao extends Model\Dao\AbstractDao
             'fieldname' => $this->model->getFieldname(),
             'ownertype' => $ownertype,
             'ownername' => $ownername ? $ownername : '',
+            'index' => $index ? $index : '0',
             'position' => $position ? $position : '0',
             'type' => $type ? $type : 'object'];
 
@@ -74,15 +76,16 @@ class Dao extends Model\Dao\AbstractDao
      * @param $ownertype
      * @param $ownername
      * @param $position
+     * @param $index
      *
      * @return null|Model\Dao\\Pimcore\Model\DataObject\AbstractObject
      */
-    public function load(DataObject\Concrete $source, $destinationId, $fieldname, $ownertype, $ownername, $position)
+    public function load(DataObject\Concrete $source, $destinationId, $fieldname, $ownertype, $ownername, $position, $index)
     {
         $typeQuery = " AND (type = 'object' or type = '')";
 
-        $query = 'SELECT * FROM ' . $this->getTablename($source) . ' WHERE o_id = ? AND dest_id = ? AND fieldname = ? AND ownertype = ? AND ownername = ? and position = ? ' . $typeQuery;
-        $dataRaw = $this->db->fetchAll($query, [$source->getId(), $destinationId, $fieldname, $ownertype, $ownername, $position]);
+        $query = 'SELECT * FROM ' . $this->getTablename($source) . ' WHERE o_id = ? AND dest_id = ? AND fieldname = ? AND ownertype = ? AND ownername = ? and position = ? and `index` = ? ' . $typeQuery;
+        $dataRaw = $this->db->fetchAll($query, [$source->getId(), $destinationId, $fieldname, $ownertype, $ownername, $position, $index]);
         if (!empty($dataRaw)) {
             $this->model->setObjectId($destinationId);
             $this->model->setFieldname($fieldname);
@@ -118,14 +121,16 @@ class Dao extends Model\Dao\AbstractDao
               `ownertype` ENUM('object','fieldcollection','localizedfield','objectbrick') NOT NULL DEFAULT 'object',
               `ownername` VARCHAR(70) NOT NULL DEFAULT '',
               `position` VARCHAR(70) NOT NULL DEFAULT '0',
-              PRIMARY KEY (`o_id`, `dest_id`, `type`, `fieldname`, `column`, `ownertype`, `ownername`, `position`),
+              `index` int(11) unsigned NOT NULL DEFAULT '0',
+              PRIMARY KEY (`o_id`, `dest_id`, `type`, `fieldname`, `column`, `ownertype`, `ownername`, `position`, `index`),
               INDEX `o_id` (`o_id`),
               INDEX `dest_id` (`dest_id`),
               INDEX `fieldname` (`fieldname`),
               INDEX `column` (`column`),
               INDEX `ownertype` (`ownertype`),
               INDEX `ownername` (`ownername`),
-              INDEX `position` (`position`)
+              INDEX `position` (`position`),
+              INDEX `index` (`index`)
 		) DEFAULT CHARSET=utf8mb4;");
 
         $this->handleEncryption($class, [$table]);

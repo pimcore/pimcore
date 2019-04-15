@@ -4,6 +4,9 @@ If you're already on Pimcore 5 and you'd like to update to >= 5.4, we recommend 
 updater (cli or web) even if it does offer the update to 5.4. The following guide brings you much faster onto 
 the newer version and is less error prone.  
 
+> **IMPORTANT NOTICE!**  
+If your're running PHP 7.1 please update to PHP 7.2 prior the upgrade, this is due to a PHP bug (https://bugs.php.net/bug.php?id=74586)
+
 ## 1. Check your current build number ...
 ... with the following command
 ```bash

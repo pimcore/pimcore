@@ -273,7 +273,7 @@ pimcore.document.settings_abstract = Class.create({
                     name: "module",
                     disableKeyFilter: true,
                     store: new Ext.data.Store({
-                        autoLoad: true,
+                        autoLoad: false,
                         autoDestroy: true,
                         proxy: {
                             type: 'ajax',
@@ -302,7 +302,7 @@ pimcore.document.settings_abstract = Class.create({
                     disableKeyFilter: true,
                     store: new Ext.data.Store({
                         autoDestroy: true,
-                        autoLoad: true,
+                        autoLoad: false,
                         proxy: {
                             type: 'ajax',
                             url: "/admin/misc/get-available-controllers",
@@ -336,7 +336,7 @@ pimcore.document.settings_abstract = Class.create({
                     disableKeyFilter: true,
                     store: new Ext.data.Store({
                         autoDestroy: true,
-                        autoLoad: true,
+                        autoLoad: false,
                         proxy: {
                             type: 'ajax',
                             url: "/admin/misc/get-available-actions",
@@ -370,7 +370,7 @@ pimcore.document.settings_abstract = Class.create({
                     queryMode: "local",
                     store: new Ext.data.Store({
                         autoDestroy: true,
-                        autoLoad: true,
+                        autoLoad: false,
                         proxy: {
                             type: 'ajax',
                             url: "/admin/misc/get-available-templates",

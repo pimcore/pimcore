@@ -30,7 +30,7 @@ class AbstractLazyLoadingTest extends ModelTestCase
     protected function setUpTestClasses()
     {
         $name = 'RelationTest';
-        $file = 'lazyloading/class_RelationTest_export.json';
+        $file = 'relations/class_RelationTest_export.json';
         $class = ClassDefinition::getByName($name);
 
         if (!$class) {

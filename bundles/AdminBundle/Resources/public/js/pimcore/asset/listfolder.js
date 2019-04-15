@@ -102,11 +102,8 @@ pimcore.asset.listfolder = Class.create({
             boxLabel: t("only_children"),
             listeners: {
                 "change" : function (field, checked) {
-                    this.grid.filters.clearFilters();
+                    this.store.getProxy().setExtraParam("only_direct_children", checked);
                     this.onlyDirectChildren = checked;
-
-                    this.store.getProxy().setExtraParam("only_direct_children", this.onlyDirectChildren);
-                    this.store.getProxy().setExtraParam("only_unreferenced", this.onlyUnreferenced);
 
                     this.pagingtoolbar.moveFirst();
                 }.bind(this)
@@ -120,11 +117,8 @@ pimcore.asset.listfolder = Class.create({
             boxLabel: t("only_unreferenced"),
             listeners: {
                 "change" : function (field, checked) {
-                    this.grid.filters.clearFilters();
+                    this.store.getProxy().setExtraParam("only_unreferenced", checked);
                     this.onlyUnreferenced = checked;
-
-                    this.store.getProxy().setExtraParam("only_direct_children", this.onlyDirectChildren);
-                    this.store.getProxy().setExtraParam("only_unreferenced", this.onlyUnreferenced);
 
                     this.pagingtoolbar.moveFirst();
                 }.bind(this)

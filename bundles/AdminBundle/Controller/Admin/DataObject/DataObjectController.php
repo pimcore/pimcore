@@ -24,6 +24,7 @@ use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data\ManyToManyObjectRelation;
+use Pimcore\Model\DataObject\ClassDefinition\Data\Relations\AbstractRelations;
 use Pimcore\Model\DataObject\ClassDefinition\Data\ReverseManyToManyObjectRelation;
 use Pimcore\Model\Element;
 use Pimcore\Tool;
@@ -535,8 +536,6 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                 !$objectFromVersion
                 && $fielddefinition instanceof DataObject\ClassDefinition\Data\Relations\AbstractRelations
                 && $fielddefinition->getLazyLoading()
-                && !$fielddefinition instanceof DataObject\ClassDefinition\Data\AdvancedManyToManyObjectRelation
-                && !$fielddefinition instanceof DataObject\ClassDefinition\Data\AdvancedManyToManyRelation
             )
             || $fielddefinition instanceof ReverseManyToManyObjectRelation
         ) {
@@ -566,22 +565,24 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                     $data['published'] = (bool)$data['published'];
                 } elseif (
                     ($fielddefinition instanceof DataObject\ClassDefinition\Data\OptimizedAdminLoadingInterface && $fielddefinition->isOptimizedAdminLoading())
-                    || ($fielddefinition instanceof ManyToManyObjectRelation && !$fielddefinition->getVisibleFields())
+                    || ($fielddefinition instanceof ManyToManyObjectRelation && !$fielddefinition->getVisibleFields() && !$fielddefinition instanceof DataObject\ClassDefinition\Data\AdvancedManyToManyObjectRelation)
                 ) {
-                    foreach ($relations as $rel) {
+                    foreach ($relations as $rkey => $rel) {
+                        $index = $rkey + 1;
                         if ($fielddefinition instanceof ManyToManyObjectRelation || $fielddefinition instanceof DataObject\ClassDefinition\Data\ManyToManyRelation) {
                             $rel['fullpath'] = $rel['path'];
                             $rel['classname'] = $rel['subtype'];
-                            $rel['rowId'] = $rel['id'] . '$$' . $rel['type'];
+                            $rel['rowId'] = $rel['id'] . AbstractRelations::RELATION_ID_SEPARATOR . $index . AbstractRelations::RELATION_ID_SEPARATOR . $rel['type'];
                             $data[] = $rel;
                         } else {
+                            //TODO can this removed? seems to be dead code
                             $data[] = [
                                 'id' => $rel['id'],
                                 'path' => $rel['path'],
                                 'type' => $rel['type'],
                                 'subtype' => $rel['subtype'],
                                 'published' => (bool)$rel['published'],
-                                'rowId' => $rel['id'] . '$$' . $rel['type']
+                                'rowId' => $rel['id'] . AbstractRelations::RELATION_ID_SEPARATOR . $index . AbstractRelations::RELATION_ID_SEPARATOR . $rel['type']
                             ];
                         }
                     }

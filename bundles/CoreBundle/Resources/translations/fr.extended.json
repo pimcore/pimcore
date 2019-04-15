@@ -700,5 +700,8 @@
     "encrypt_data": "Crypter les données",
     "encrypt_data_description": "Data-at-Rest/Tablespace Encryption doit être activé sur votre serveur de base de données",
     "reports_config": "Rapports Config",
-    "lazy_loading_warning_block": "AVERTISSEMENT: le chargement paresseux n'est PAS possible dans les Blocs"
+    "lazy_loading_warning_block": "AVERTISSEMENT: le chargement paresseux n'est PAS possible dans les Blocs",
+    "left": "left",
+    "right": "right",
+    "provide_split_view": "Provide Split View"
 }

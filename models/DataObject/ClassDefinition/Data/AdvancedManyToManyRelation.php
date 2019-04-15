@@ -52,6 +52,11 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
     public $optimizedAdminLoading = false;
 
     /**
+     * @var bool
+     */
+    public $allowMultipleAssignments;
+
+    /**
      * @inheritdoc
      */
     public function prepareDataForPersistence($data, $object = null, $params = [])
@@ -140,6 +145,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
                     $ownertype = $element['ownertype'] ? $element['ownertype'] : '';
                     $ownername = $element['ownername'] ? $element['ownername'] : '';
                     $position = $element['position'] ? $element['position'] : '0';
+                    $index = $element['index'] ? $element['index'] : '0';
 
                     $metaData->load(
                         $source,
@@ -148,6 +154,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
                         $ownertype,
                         $ownername,
                         $position,
+                        $index,
                         $destinationType
                     );
                     $objects[] = $metaData;
@@ -259,9 +266,10 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
             }
 
             /** @var $metaObject DataObject\Data\ElementMetadata */
-            foreach ($data as $metaObject) {
+            foreach ($data as $key => $metaObject) {
                 $targetType = $metaObject->getElementType();
                 $targetId = $metaObject->getElementId();
+                $index = $key + 1;
 
                 if (!isset($existingTargets[$targetType]) || !isset($existingTargets[$targetType][$targetId])) {
                     Logger::error('element ' . $targetType . ' ' . $targetId . ' does not exist anymore');
@@ -301,7 +309,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
                     $itemData[$c['key']] = $metaObject->$getter();
                 }
 
-                $itemData['rowId'] = $itemData['id'] . '$$' . $itemData['type'];
+                $itemData['rowId'] = $itemData['id'] . self::RELATION_ID_SEPARATOR . $index . self::RELATION_ID_SEPARATOR . $itemData['type'];
 
                 $return[] = $itemData;
             }
@@ -750,10 +758,12 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
                 $objectConcrete = $object;
             }
 
-            foreach ($multihrefMetadata as $meta) {
+            $counter = 1;
+            foreach ($multihrefMetadata as $mkey => $meta) {
                 $ownerName = isset($relation['ownername']) ? $relation['ownername'] : null;
                 $ownerType = isset($relation['ownertype']) ? $relation['ownertype'] : null;
-                $meta->save($objectConcrete, $ownerType, $ownerName, $position);
+                $meta->save($objectConcrete, $ownerType, $ownerName, $position, $counter);
+                $counter++;
             }
         }
 
@@ -1191,5 +1201,21 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
     public function setOptimizedAdminLoading($optimizedAdminLoading)
     {
         $this->optimizedAdminLoading = $optimizedAdminLoading;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getAllowMultipleAssignments()
+    {
+        return $this->allowMultipleAssignments;
+    }
+
+    /**
+     * @param bool $allowMultipleAssignments
+     */
+    public function setAllowMultipleAssignments($allowMultipleAssignments)
+    {
+        $this->allowMultipleAssignments = $allowMultipleAssignments;
     }
 }
