@@ -162,6 +162,8 @@ class File
             return true;
         }
 
+        $return = true;
+
         if (!$mode) {
             $mode = self::$defaultMode;
         }
@@ -180,8 +182,8 @@ class File
                 if(!is_dir($currentPath)) {
                     if (!@mkdir($currentPath, $mode, false) && !is_dir($currentPath)) {
                         // the directory was not created by either this or a concurrent process ...
-                        throw new \RuntimeException(sprintf('The directory \'%s\' could not be created.',
-                            $currentPath));
+                        $return = false;
+                        break;
                     }
                 }
 
