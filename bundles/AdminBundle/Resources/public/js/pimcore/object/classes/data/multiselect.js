@@ -72,12 +72,8 @@ pimcore.object.classes.data.multiselect = Class.create(pimcore.object.classes.da
         }
 
         var valueStore = new Ext.data.JsonStore({
-            fields: ["key", "value"],
+            fields: ["key", {name: "value", allowBlank: false}],
             data: datax.options
-        });
-
-        var cellEditing = Ext.create('Ext.grid.plugin.CellEditing', {
-            clicksToEdit: 1
         });
         
         var valueGrid;
@@ -92,7 +88,11 @@ pimcore.object.classes.data.multiselect = Class.create(pimcore.object.classes.da
                     }
                 ]
             },
-            plugins: [cellEditing],
+            plugins: [Ext.create('Ext.grid.plugin.RowEditing', {
+                clicksToEdit: 1,
+                errorSummary: false,
+                autoCancel: true
+            })],
             tbar: [{
                 xtype: "tbtext",
                 text: t("selection_options")
@@ -143,7 +143,9 @@ pimcore.object.classes.data.multiselect = Class.create(pimcore.object.classes.da
                     text: t("value"),
                     sortable: true,
                     dataIndex: 'value',
-                    editor: new Ext.form.TextField({}),
+                    editor: new Ext.form.TextField({
+                        allowBlank: false
+                    }),
                     width: 200
                 },
                 {
