@@ -1706,6 +1706,9 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                                         }
                                     }
 
+                                    $activeGroups = $classificationStoreData->getActiveGroups() ? $classificationStoreData->getActiveGroups() : [];
+                                    $activeGroups[$groupId] = true;
+                                    $classificationStoreData->setActiveGroups($activeGroups);
                                     $classificationStoreData->setLocalizedKeyValue($groupId, $keyid, $value, $csLanguage);
                                 }
                             }

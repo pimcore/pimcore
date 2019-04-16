@@ -261,38 +261,47 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
      */
     public function saveVersion($setModificationDate = true, $saveOnlyVersion = true, $versionNote = null)
     {
-        if ($setModificationDate) {
-            $this->setModificationDate(time());
-        }
+        try {
+            if ($setModificationDate) {
+                $this->setModificationDate(time());
+            }
 
-        // hook should be also called if "save only new version" is selected
-        if ($saveOnlyVersion) {
-            \Pimcore::getEventDispatcher()->dispatch(DataObjectEvents::PRE_UPDATE, new DataObjectEvent($this, [
-                'saveVersionOnly' => true
+            // hook should be also called if "save only new version" is selected
+            if ($saveOnlyVersion) {
+                \Pimcore::getEventDispatcher()->dispatch(DataObjectEvents::PRE_UPDATE, new DataObjectEvent($this, [
+                    'saveVersionOnly' => true
+                ]));
+            }
+
+            // scheduled tasks are saved always, they are not versioned!
+            $this->saveScheduledTasks();
+
+            $version = null;
+
+            // only create a new version if there is at least 1 allowed
+            // or if saveVersion() was called directly (it's a newer version of the object)
+            if (Config::getSystemConfig()->objects->versions->steps
+                || Config::getSystemConfig()->objects->versions->days
+                || $setModificationDate) {
+                $version = $this->doSaveVersion($versionNote, $saveOnlyVersion);
+            }
+
+            // hook should be also called if "save only new version" is selected
+            if ($saveOnlyVersion) {
+                \Pimcore::getEventDispatcher()->dispatch(DataObjectEvents::POST_UPDATE, new DataObjectEvent($this, [
+                    'saveVersionOnly' => true
+                ]));
+            }
+
+            return $version;
+        } catch (\Exception $e) {
+            \Pimcore::getEventDispatcher()->dispatch(DataObjectEvents::POST_UPDATE_FAILURE, new DataObjectEvent($this, [
+                'saveVersionOnly' => true,
+                'exception' => $e
             ]));
+
+            throw $e;
         }
-
-        // scheduled tasks are saved always, they are not versioned!
-        $this->saveScheduledTasks();
-
-        $version = null;
-
-        // only create a new version if there is at least 1 allowed
-        // or if saveVersion() was called directly (it's a newer version of the object)
-        if (Config::getSystemConfig()->objects->versions->steps
-            || Config::getSystemConfig()->objects->versions->days
-            || $setModificationDate) {
-            $version = $this->doSaveVersion($versionNote, $saveOnlyVersion);
-        }
-
-        // hook should be also called if "save only new version" is selected
-        if ($saveOnlyVersion) {
-            \Pimcore::getEventDispatcher()->dispatch(DataObjectEvents::POST_UPDATE, new DataObjectEvent($this, [
-                'saveVersionOnly' => true
-            ]));
-        }
-
-        return $version;
     }
 
     /**

@@ -5,7 +5,6 @@ namespace Pimcore\Bundle\CoreBundle\Migrations;
 use Doctrine\DBAL\Schema\Schema;
 use Pimcore\Migrations\Migration\AbstractPimcoreMigration;
 
-
 class Version20181128074035 extends AbstractPimcoreMigration
 {
     public function doesSqlMigrations(): bool
@@ -29,22 +28,22 @@ class Version20181128074035 extends AbstractPimcoreMigration
             'mail1@mail.com, mail@mail.com (Name)'
         */
         $emailLogListing = new \Pimcore\Model\Tool\Email\Log\Listing();
-        $fieldNames = ['From','To', 'Bcc', 'Cc', 'ReplyTo'];
+        $fieldNames = ['From', 'To', 'Bcc', 'Cc', 'ReplyTo'];
 
         $i = 0;
-        foreach($emailLogListing->load() as $emailLogEntry) {
+        foreach ($emailLogListing->load() as $emailLogEntry) {
             $save = false;
 
             $i++;
-            if($i % 100 == 0) {
+            if ($i % 100 == 0) {
                 \Pimcore::collectGarbage();
             }
 
-            foreach($fieldNames as $fieldName) {
+            foreach ($fieldNames as $fieldName) {
                 $save = $save | $this->migrateEmailField($fieldName, $emailLogEntry);
             }
 
-            if($save) {
+            if ($save) {
                 $emailLogEntry->save();
             }
         }
@@ -65,28 +64,26 @@ class Version20181128074035 extends AbstractPimcoreMigration
 
         $emailLogListing = new \Pimcore\Model\Tool\Email\Log\Listing();
 
-        $fieldNames = ['From','To', 'Bcc', 'Cc', 'ReplyTo'];
+        $fieldNames = ['From', 'To', 'Bcc', 'Cc', 'ReplyTo'];
 
         $i = 0;
-        foreach($emailLogListing->load() as $emailLogEntry) {
+        foreach ($emailLogListing->load() as $emailLogEntry) {
             $save = false;
 
-
             $i++;
-            if($i % 100 == 0) {
+            if ($i % 100 == 0) {
                 \Pimcore::collectGarbage();
             }
 
-            foreach($fieldNames as $fieldName) {
+            foreach ($fieldNames as $fieldName) {
                 $save = $save | $this->downgradeEmailField($fieldName, $emailLogEntry);
             }
 
-            if($save) {
+            if ($save) {
                 $emailLogEntry->save();
             }
         }
     }
-
 
     private function migrateEmailField($fieldName, $emailLogEntry)
     {
@@ -95,12 +92,11 @@ class Version20181128074035 extends AbstractPimcoreMigration
         $setter = 'set' . $fieldName;
 
         $oldArray = $this->buildArrayFromOldFormat($emailLogEntry->{$getter}());
-        if($oldArray) {
-
+        if ($oldArray) {
             $newArray = [];
-            foreach($oldArray as $oldEntry) {
+            foreach ($oldArray as $oldEntry) {
                 $newEntry = '';
-                if($oldEntry['name']) {
+                if ($oldEntry['name']) {
                     $newEntry = $oldEntry['name'] . ' ' . '<' . $oldEntry['email'] . '>';
                     $save = true;
                 } else {
@@ -115,21 +111,19 @@ class Version20181128074035 extends AbstractPimcoreMigration
         return $save;
     }
 
-
-    private function downgradeEmailField($fieldName, $emailLogEntry) {
-
+    private function downgradeEmailField($fieldName, $emailLogEntry)
+    {
         $save = false;
 
         $getter = 'get' . $fieldName;
         $setter = 'set' . $fieldName;
 
         $oldArray = \Pimcore\Helper\Mail::parseEmailAddressField($emailLogEntry->{$getter}());
-        if($oldArray) {
-
+        if ($oldArray) {
             $newArray = [];
-            foreach($oldArray as $oldEntry) {
+            foreach ($oldArray as $oldEntry) {
                 $newEntry = '';
-                if($oldEntry['name']) {
+                if ($oldEntry['name']) {
                     $newEntry = $oldEntry['email'] . ' ' . '(' . $oldEntry['name'] . ')';
                     $save = true;
                 } else {
@@ -143,9 +137,6 @@ class Version20181128074035 extends AbstractPimcoreMigration
 
         return $save;
     }
-
-
-
 
     /**
      * old format helper: mail@mail.com (Name)

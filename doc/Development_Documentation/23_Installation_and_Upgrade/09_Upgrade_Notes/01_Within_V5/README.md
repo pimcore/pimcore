@@ -4,6 +4,8 @@
 - Add PathFormatter interface, static path formatters are now deprecated and will be removed with Version 6.0. You can read
  more about that [here](../../../05_Objects/01_Object_Classes/05_Class_Settings/14_Path_Formatter.md).
 - Removed method \Pimcore\Model\DataObject\ClassDefinition\Data::setFieldtype($fieldtype)
+- Interface of `Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\IConfig:getCategories()` changed - `$subObjectId = null` 
+  was added as second parameter. If you have your custom `getCategories` implementation you need to adapt your method signature. 
 
 ## Version 5.7.2 
 - Signature of `\Pimcore\Model\DataObject\LazyLoadedFieldsInterface` has changed
