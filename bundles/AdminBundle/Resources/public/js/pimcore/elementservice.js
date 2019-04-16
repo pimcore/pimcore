@@ -193,7 +193,9 @@ pimcore.elementservice.deleteElementFromServer = function (r, options, button) {
                 }
             }.bind(this),
             failure: function (id, message) {
-                this.deleteWindow.close();
+                if (this.deleteWindow) {
+                    this.deleteWindow.close();
+                }
 
                 pimcore.helpers.showNotification(t("error"), t("error_deleting_item"), "error", t(message));
                 for (var index = 0; index < affectedNodes.length; index++) {
