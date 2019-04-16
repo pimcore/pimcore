@@ -468,123 +468,130 @@ class Asset extends Element\AbstractElement
      */
     public function save()
     {
-        // additional parameters (e.g. "versionNote" for the version note)
-        $params = [];
-        if (func_num_args() && is_array(func_get_arg(0))) {
-            $params = func_get_arg(0);
-        }
+        try {
+            // additional parameters (e.g. "versionNote" for the version note)
+            $params = [];
+            if (func_num_args() && is_array(func_get_arg(0))) {
+                $params = func_get_arg(0);
+            }
 
-        $isUpdate = false;
+            $isUpdate = false;
 
-        $preEvent = new AssetEvent($this, $params);
+            $preEvent = new AssetEvent($this, $params);
 
-        if ($this->getId()) {
-            $isUpdate = true;
-            \Pimcore::getEventDispatcher()->dispatch(AssetEvents::PRE_UPDATE, $preEvent);
-        } else {
-            \Pimcore::getEventDispatcher()->dispatch(AssetEvents::PRE_ADD, $preEvent);
-        }
+            if ($this->getId()) {
+                $isUpdate = true;
+                \Pimcore::getEventDispatcher()->dispatch(AssetEvents::PRE_UPDATE, $preEvent);
+            } else {
+                \Pimcore::getEventDispatcher()->dispatch(AssetEvents::PRE_ADD, $preEvent);
+            }
 
-        $params = $preEvent->getArguments();
+            $params = $preEvent->getArguments();
 
-        $this->correctPath();
+            $this->correctPath();
 
-        // we wrap the save actions in a loop here, so that we can restart the database transactions in the case it fails
-        // if a transaction fails it gets restarted $maxRetries times, then the exception is thrown out
-        // this is especially useful to avoid problems with deadlocks in multi-threaded environments (forked workers, ...)
-        $maxRetries = 5;
-        for ($retries = 0; $retries < $maxRetries; $retries++) {
-            $this->beginTransaction();
+            // we wrap the save actions in a loop here, so that we can restart the database transactions in the case it fails
+            // if a transaction fails it gets restarted $maxRetries times, then the exception is thrown out
+            // this is especially useful to avoid problems with deadlocks in multi-threaded environments (forked workers, ...)
+            $maxRetries = 5;
+            for ($retries = 0; $retries < $maxRetries; $retries++) {
+                $this->beginTransaction();
 
-            try {
-                if (!$isUpdate) {
-                    $this->getDao()->create();
-                }
-
-                // get the old path from the database before the update is done
-                $oldPath = null;
-                if ($isUpdate) {
-                    $oldPath = $this->getDao()->getCurrentFullPath();
-                }
-
-                $this->update($params);
-
-                // if the old path is different from the new path, update all children
-                $updatedChildren = [];
-                if ($oldPath && $oldPath != $this->getRealFullPath()) {
-                    $oldFullPath = PIMCORE_ASSET_DIRECTORY . $oldPath;
-                    if (is_file($oldFullPath) || is_dir($oldFullPath)) {
-                        if (!@File::rename(PIMCORE_ASSET_DIRECTORY . $oldPath, $this->getFileSystemPath())) {
-                            $error = error_get_last();
-                            throw new \Exception('Unable to rename asset ' . $this->getId() . ' on the filesystem: ' . $oldFullPath . ' - Reason: ' . $error['message']);
-                        }
-                        $differentOldPath = $oldPath;
-                        $this->getDao()->updateWorkspaces();
-                        $updatedChildren = $this->getDao()->updateChildsPaths($oldPath);
-                    }
-                }
-
-                // lastly create a new version if necessary
-                // this has to be after the registry update and the DB update, otherwise this would cause problem in the
-                // $this->__wakeUp() method which is called by $version->save(); (path correction for version restore)
-                if ($this->getType() != 'folder') {
-                    $this->saveVersion(false, false, isset($params['versionNote']) ? $params['versionNote'] : null);
-                }
-
-                $this->commit();
-
-                break; // transaction was successfully completed, so we cancel the loop here -> no restart required
-            } catch (\Exception $e) {
                 try {
-                    $this->rollBack();
-                } catch (\Exception $er) {
-                    // PDO adapter throws exceptions if rollback fails
-                    Logger::error($er);
-                }
-
-                // we try to start the transaction $maxRetries times again (deadlocks, ...)
-                if ($retries < ($maxRetries - 1)) {
-                    $run = $retries + 1;
-                    $waitTime = rand(1, 5) * 100000; // microseconds
-                    Logger::warn('Unable to finish transaction (' . $run . ". run) because of the following reason '" . $e->getMessage() . "'. --> Retrying in " . $waitTime . ' microseconds ... (' . ($run + 1) . ' of ' . $maxRetries . ')');
-
-                    usleep($waitTime); // wait specified time until we restart the transaction
-                } else {
-                    if ($isUpdate) {
-                        \Pimcore::getEventDispatcher()->dispatch(AssetEvents::POST_UPDATE_FAILURE, new AssetEvent($this));
-                    } else {
-                        \Pimcore::getEventDispatcher()->dispatch(AssetEvents::POST_ADD_FAILURE, new AssetEvent($this));
+                    if (!$isUpdate) {
+                        $this->getDao()->create();
                     }
-                    // if the transaction still fail after $maxRetries retries, we throw out the exception
-                    throw $e;
+
+                    // get the old path from the database before the update is done
+                    $oldPath = null;
+                    if ($isUpdate) {
+                        $oldPath = $this->getDao()->getCurrentFullPath();
+                    }
+
+                    $this->update($params);
+
+                    // if the old path is different from the new path, update all children
+                    $updatedChildren = [];
+                    if ($oldPath && $oldPath != $this->getRealFullPath()) {
+                        $oldFullPath = PIMCORE_ASSET_DIRECTORY . $oldPath;
+                        if (is_file($oldFullPath) || is_dir($oldFullPath)) {
+                            if (!@File::rename(PIMCORE_ASSET_DIRECTORY . $oldPath, $this->getFileSystemPath())) {
+                                $error = error_get_last();
+                                throw new \Exception('Unable to rename asset ' . $this->getId() . ' on the filesystem: ' . $oldFullPath . ' - Reason: ' . $error['message']);
+                            }
+                            $differentOldPath = $oldPath;
+                            $this->getDao()->updateWorkspaces();
+                            $updatedChildren = $this->getDao()->updateChildsPaths($oldPath);
+                        }
+                    }
+
+                    // lastly create a new version if necessary
+                    // this has to be after the registry update and the DB update, otherwise this would cause problem in the
+                    // $this->__wakeUp() method which is called by $version->save(); (path correction for version restore)
+                    if ($this->getType() != 'folder') {
+                        $this->saveVersion(false, false, isset($params['versionNote']) ? $params['versionNote'] : null);
+                    }
+
+                    $this->commit();
+
+                    break; // transaction was successfully completed, so we cancel the loop here -> no restart required
+                } catch (\Exception $e) {
+                    try {
+                        $this->rollBack();
+                    } catch (\Exception $er) {
+                        // PDO adapter throws exceptions if rollback fails
+                        Logger::error($er);
+                    }
+
+                    // we try to start the transaction $maxRetries times again (deadlocks, ...)
+                    if ($retries < ($maxRetries - 1)) {
+                        $run = $retries + 1;
+                        $waitTime = rand(1, 5) * 100000; // microseconds
+                        Logger::warn('Unable to finish transaction (' . $run . ". run) because of the following reason '" . $e->getMessage() . "'. --> Retrying in " . $waitTime . ' microseconds ... (' . ($run + 1) . ' of ' . $maxRetries . ')');
+
+                        usleep($waitTime); // wait specified time until we restart the transaction
+                    } else {
+                        // if the transaction still fail after $maxRetries retries, we throw out the exception
+                        throw $e;
+                    }
                 }
             }
-        }
 
-        $additionalTags = [];
-        if (isset($updatedChildren) && is_array($updatedChildren)) {
-            foreach ($updatedChildren as $assetId) {
-                $tag = 'asset_' . $assetId;
-                $additionalTags[] = $tag;
+            $additionalTags = [];
+            if (isset($updatedChildren) && is_array($updatedChildren)) {
+                foreach ($updatedChildren as $assetId) {
+                    $tag = 'asset_' . $assetId;
+                    $additionalTags[] = $tag;
 
-                // remove the child also from registry (internal cache) to avoid path inconsistencies during long running scripts, such as CLI
-                \Pimcore\Cache\Runtime::set($tag, null);
+                    // remove the child also from registry (internal cache) to avoid path inconsistencies during long running scripts, such as CLI
+                    \Pimcore\Cache\Runtime::set($tag, null);
+                }
             }
-        }
-        $this->clearDependentCache($additionalTags);
-        $this->setDataChanged(false);
+            $this->clearDependentCache($additionalTags);
+            $this->setDataChanged(false);
 
-        if ($isUpdate) {
-            $updateEvent = new AssetEvent($this);
-            if ($differentOldPath) {
-                $updateEvent->setArgument('oldPath', $differentOldPath);
+            if ($isUpdate) {
+                $updateEvent = new AssetEvent($this);
+                if ($differentOldPath) {
+                    $updateEvent->setArgument('oldPath', $differentOldPath);
+                }
+                \Pimcore::getEventDispatcher()->dispatch(AssetEvents::POST_UPDATE, $updateEvent);
+            } else {
+                \Pimcore::getEventDispatcher()->dispatch(AssetEvents::POST_ADD, new AssetEvent($this));
             }
-            \Pimcore::getEventDispatcher()->dispatch(AssetEvents::POST_UPDATE, $updateEvent);
-        } else {
-            \Pimcore::getEventDispatcher()->dispatch(AssetEvents::POST_ADD, new AssetEvent($this));
-        }
 
-        return $this;
+            return $this;
+        } catch (\Exception $e) {
+            $failureEvent = new AssetEvent($this);
+            $failureEvent->setArgument('exception', $e);
+            if ($isUpdate) {
+                \Pimcore::getEventDispatcher()->dispatch(AssetEvents::POST_UPDATE_FAILURE, $failureEvent);
+            } else {
+                \Pimcore::getEventDispatcher()->dispatch(AssetEvents::POST_ADD_FAILURE, $failureEvent);
+            }
+
+            throw $e;
+        }
     }
 
     /**
