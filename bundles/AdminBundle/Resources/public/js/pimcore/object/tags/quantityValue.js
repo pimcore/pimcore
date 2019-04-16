@@ -44,7 +44,7 @@ pimcore.object.tags.quantityValue = Class.create(pimcore.object.tags.abstract, {
         var storeData = data.data;
         storeData.unshift({'id': -1, 'abbreviation' : "(" + t("empty") + ")"});
 
-        if (Ext.getCmp(this.component.id) !== undefined) {
+        if (!!this.component && Ext.getCmp(this.component.id) !== undefined) {
             this.store.loadData(storeData);
             if (this.unitField) {
                 this.unitField.reset();
