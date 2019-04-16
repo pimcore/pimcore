@@ -818,7 +818,9 @@ class Document extends Element\AbstractElement
             $this->commit();
         } catch (\Exception $e) {
             $this->rollBack();
-            \Pimcore::getEventDispatcher()->dispatch(DocumentEvents::POST_DELETE_FAILURE, new DocumentEvent($this));
+            $failureEvent = new DocumentEvent($this);
+            $failureEvent->setArgument('exception', $e);
+            \Pimcore::getEventDispatcher()->dispatch(DocumentEvents::POST_DELETE_FAILURE, $failureEvent);
             Logger::error($e);
             throw $e;
         }

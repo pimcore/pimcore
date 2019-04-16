@@ -1036,7 +1036,9 @@ class Asset extends Element\AbstractElement
             }
         } catch (\Exception $e) {
             $this->rollBack();
-            \Pimcore::getEventDispatcher()->dispatch(AssetEvents::POST_DELETE_FAILURE, new AssetEvent($this));
+            $failureEvent = new AssetEvent($this);
+            $failureEvent->setArgument('exception', $e);
+            \Pimcore::getEventDispatcher()->dispatch(AssetEvents::POST_DELETE_FAILURE, $failureEvent);
             Logger::crit($e);
             throw $e;
         }
