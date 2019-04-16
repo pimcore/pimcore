@@ -162,13 +162,7 @@ pimcore.elementservice.deleteElementFromServer = function (r, options, button) {
                     var node = affectedNodes[index];
                     try {
                         if (node) {
-                            if(node.parentNode.id != 1) {
-                                parentNode = node.parentNode.parentNode;
-                            } else {
-                                parentNode = node.parentNode;
-                            }
-                            refreshParentNodes[parentNode.id] = parentNode.id;
-                            node.remove();
+                            refreshParentNodes[node.parentNode.id] = node.parentNode.id;
                         }
                     } catch (e) {
                         console.log(e);
@@ -181,8 +175,8 @@ pimcore.elementservice.deleteElementFromServer = function (r, options, button) {
                     }
                 }
 
-                for (parentNode in refreshParentNodes) {
-                    pimcore.elementservice.refreshNodeAllTrees(elementType, parentNode);
+                for (var parentNodeId in refreshParentNodes) {
+                    pimcore.elementservice.refreshNodeAllTrees(elementType, parentNodeId);
                 }
 
                 if(this.deleteWindow) {
