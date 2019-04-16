@@ -27,21 +27,8 @@ class UnitConversionService
         if($baseUnit === null) {
             $baseUnit = clone $toUnit;
         }
+        $converterServiceName = $baseUnit->getConverter();
 
-        $baseUnitConverterServiceName = $baseUnit->getConverter();
-        if($baseUnitConverterServiceName) {
-            $baseUnitConverterService = $this->container->get($baseUnitConverterServiceName);
-        } else {
-            $baseUnitConverterService = $this->container->get(QuantityValueConverterInterface::class);
-        }
-
-        if(!$baseUnitConverterService instanceof QuantityValueConverterInterface) {
-            throw new \Exception('Converter class needs to implement '.QuantityValueConverterInterface::class);
-        }
-
-        $baseQuantityValue = $baseUnitConverterService->convert($quantityValue, $baseUnit);
-
-        $converterServiceName = $toUnit->getConverter();
         if($converterServiceName) {
             $converterService = $this->container->get($converterServiceName);
         } else {
@@ -52,6 +39,6 @@ class UnitConversionService
             throw new \Exception('Converter class needs to implement '.QuantityValueConverterInterface::class);
         }
 
-        return $converterService->convert($baseQuantityValue, $toUnit);
+        return $converterService->convert($quantityValue, $toUnit);
     }
 }
