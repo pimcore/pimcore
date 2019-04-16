@@ -812,41 +812,50 @@ class Asset extends Element\AbstractElement
      */
     public function saveVersion($setModificationDate = true, $saveOnlyVersion = true, $versionNote = null)
     {
+        try {
+            // hook should be also called if "save only new version" is selected
+            if ($saveOnlyVersion) {
+                \Pimcore::getEventDispatcher()->dispatch(AssetEvents::PRE_UPDATE, new AssetEvent($this, [
+                    'saveVersionOnly' => true
+                ]));
+            }
 
-        // hook should be also called if "save only new version" is selected
-        if ($saveOnlyVersion) {
-            \Pimcore::getEventDispatcher()->dispatch(AssetEvents::PRE_UPDATE, new AssetEvent($this, [
-                'saveVersionOnly' => true
+            // set date
+            if ($setModificationDate) {
+                $this->setModificationDate(time());
+            }
+
+            // scheduled tasks are saved always, they are not versioned!
+            $this->saveScheduledTasks();
+
+            // create version
+            $version = null;
+
+            // only create a new version if there is at least 1 allowed
+            // or if saveVersion() was called directly (it's a newer version of the asset)
+            if (Config::getSystemConfig()->assets->versions->steps
+                || Config::getSystemConfig()->assets->versions->days
+                || $setModificationDate) {
+                $version = $this->doSaveVersion($versionNote, $saveOnlyVersion);
+            }
+
+            // hook should be also called if "save only new version" is selected
+            if ($saveOnlyVersion) {
+                \Pimcore::getEventDispatcher()->dispatch(AssetEvents::POST_UPDATE, new AssetEvent($this, [
+                    'saveVersionOnly' => true
+                ]));
+            }
+
+            return $version;
+        } catch (\Exception $e) {
+            \Pimcore::getEventDispatcher()->dispatch(AssetEvents::POST_UPDATE_FAILURE, new AssetEvent($this, [
+                'saveVersionOnly' => true,
+                'exception' => $e
             ]));
+
+            throw $e;
         }
 
-        // set date
-        if ($setModificationDate) {
-            $this->setModificationDate(time());
-        }
-
-        // scheduled tasks are saved always, they are not versioned!
-        $this->saveScheduledTasks();
-
-        // create version
-        $version = null;
-
-        // only create a new version if there is at least 1 allowed
-        // or if saveVersion() was called directly (it's a newer version of the asset)
-        if (Config::getSystemConfig()->assets->versions->steps
-            || Config::getSystemConfig()->assets->versions->days
-            || $setModificationDate) {
-            $version = $this->doSaveVersion($versionNote, $saveOnlyVersion);
-        }
-
-        // hook should be also called if "save only new version" is selected
-        if ($saveOnlyVersion) {
-            \Pimcore::getEventDispatcher()->dispatch(AssetEvents::POST_UPDATE, new AssetEvent($this, [
-                'saveVersionOnly' => true
-            ]));
-        }
-
-        return $version;
     }
 
     /**
