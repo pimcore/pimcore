@@ -31,6 +31,9 @@ final class DocumentEvents
     const POST_ADD = 'pimcore.document.postAdd';
 
     /**
+     * Arguments:
+     *  - exception | exception object
+     *
      * @Event("Pimcore\Event\Model\DocumentEvent")
      *
      * @var string
@@ -61,6 +64,7 @@ final class DocumentEvents
     /**
      * Arguments:
      *  - saveVersionOnly | is set if method saveVersion() was called instead of save()
+     *  - exception | exception object
      *
      * @Event("Pimcore\Event\Model\DocumentEvent")
      *
@@ -90,6 +94,9 @@ final class DocumentEvents
     const POST_DELETE = 'pimcore.document.postDelete';
 
     /**
+     * Arguments:
+     *  - exception | exception object
+     *
      * @Event("Pimcore\Event\Model\DocumentEvent")
      *
      * @var string
