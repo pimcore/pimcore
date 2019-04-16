@@ -157,12 +157,12 @@ pimcore.elementservice.deleteElementFromServer = function (r, options, button) {
         
         var pj = new pimcore.tool.paralleljobs({
             success: function (id, successHandler) {
-
+                var refreshParentNodes = [];
                 for (var index = 0; index < affectedNodes.length; index++) {
                     var node = affectedNodes[index];
                     try {
                         if (node) {
-                            node.remove();
+                            refreshParentNodes[node.parentNode.id] = node.parentNode.id;
                         }
                     } catch (e) {
                         console.log(e);
@@ -173,6 +173,10 @@ pimcore.elementservice.deleteElementFromServer = function (r, options, button) {
                             });
                         }
                     }
+                }
+
+                for (var parentNodeId in refreshParentNodes) {
+                    pimcore.elementservice.refreshNodeAllTrees(elementType, parentNodeId);
                 }
 
                 if(this.deleteWindow) {
