@@ -214,12 +214,20 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
 
         var propertyVisibility = klass.get("propertyVisibility");
 
+        var existingFilters;
+        if (this.store) {
+            existingFilters = this.store.getFilters();
+        }
+
         this.store = gridHelper.getStore(this.noBatchColumns, this.batchAppendColumns);
         if (this.sortinfo) {
             this.store.sort(this.sortinfo.field, this.sortinfo.direction);
         }
         this.store.getProxy().setExtraParam("only_direct_children", this.onlyDirectChildren);
         this.store.setPageSize(itemsPerPage);
+        if (existingFilters) {
+            this.store.setFilters(existingFilters.items);
+        }
 
         var gridColumns = gridHelper.getGridColumns();
 
