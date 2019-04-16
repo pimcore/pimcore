@@ -366,7 +366,7 @@ class Thumbnail
 
     /**
      * Get generated HTML for displaying the thumbnail image in a HTML document. (XHTML compatible).
-     * Attributes can be added as a parameter. Attributes containing illigal characters are ignored.
+     * Attributes can be added as a parameter. Attributes containing illegal characters are ignored.
      * Width and Height attribute can be overridden. SRC-attribute not.
      * Values of attributes are escaped.
      *
