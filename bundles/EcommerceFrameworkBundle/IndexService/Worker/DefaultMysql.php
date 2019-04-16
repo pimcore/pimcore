@@ -94,7 +94,7 @@ class DefaultMysql extends AbstractWorker implements IWorker
                 AbstractObject::setGetInheritedValues(true);
                 $hidePublishedMemory = AbstractObject::doHideUnpublished();
                 AbstractObject::setHideUnpublished(false);
-                $categories = $this->tenantConfig->getCategories($object);
+                $categories = $this->tenantConfig->getCategories($object, $subObjectId);
                 $categoryIds = [];
                 $parentCategoryIds = [];
                 if ($categories) {
