@@ -68,6 +68,9 @@ class Unit extends Model\AbstractModel
      */
     public $conversionOffset;
 
+    /** @var string */
+    public $converter;
+
     /**
      * @param string $abbreviation
      *
@@ -265,5 +268,21 @@ class Unit extends Model\AbstractModel
     public function setConversionOffset($conversionOffset)
     {
         $this->conversionOffset = $conversionOffset;
+    }
+
+    /**
+     * @return string
+     */
+    public function getConverter(): string
+    {
+        return $this->converter;
+    }
+
+    /**
+     * @param string $converter
+     */
+    public function setConverter($converter)
+    {
+        $this->converter = (string)$converter;
     }
 }

@@ -14,6 +14,7 @@ class Version20190408084129 extends AbstractPimcoreMigration
     {
         $this->addSql("ALTER TABLE `quantityvalue_units`
             CHANGE `baseunit` `baseunit` INT(11) UNSIGNED,
+            ADD `converter` VARCHAR(255),
             ADD CONSTRAINT `fk_baseunit`
             FOREIGN KEY (`baseunit`)
             REFERENCES `quantityvalue_units`(`id`)
@@ -28,6 +29,7 @@ class Version20190408084129 extends AbstractPimcoreMigration
     {
         $this->addSql("ALTER TABLE `quantityvalue_units`
             DROP FOREIGN KEY `fk_baseunit`,
+            DROP `converter`,
             CHANGE `baseunit` `baseunit` VARCHAR(10)");
     }
 }
