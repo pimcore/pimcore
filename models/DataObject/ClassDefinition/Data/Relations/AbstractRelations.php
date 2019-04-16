@@ -453,7 +453,7 @@ abstract class AbstractRelations extends Data implements CustomResourcePersistin
     /**
      * @return null|string
      */
-    public function getPathFormatterClass()
+    public function getPathFormatterClass(): ?string
     {
         return $this->pathFormatterClass;
     }
