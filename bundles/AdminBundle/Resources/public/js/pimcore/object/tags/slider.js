@@ -18,11 +18,9 @@ pimcore.object.tags.slider = Class.create(pimcore.object.tags.abstract, {
 
     initialize: function (data, fieldConfig) {
 
-        this.data = "";
+        this.data = data;
 
-        if (data != null) {
-            this.data = data;
-        } else if (typeof data === "undefined" && fieldConfig.defaultValue) {
+        if (typeof data === "undefined" && fieldConfig.defaultValue) {
             this.data = fieldConfig.defaultValue;
         }
 
@@ -55,7 +53,7 @@ pimcore.object.tags.slider = Class.create(pimcore.object.tags.abstract, {
         }
         if (this.fieldConfig.height) {
             slider.height = this.fieldConfig.height;
-        } else {
+        } else if(this.fieldConfig.vertical) {
             slider.height = 200;
         }
 
@@ -80,7 +78,7 @@ pimcore.object.tags.slider = Class.create(pimcore.object.tags.abstract, {
 
         this.component = new Ext.Slider(slider);
 
-        this.component.on("afterrender", this.showValueInLabel.bind(this));
+        this.component.on("afterrender", this.showValueInLabel.bind(this, true));
         this.component.on("dragend", this.showValueInLabel.bind(this));
         this.component.on("change", this.showValueInLabel.bind(this));
 
@@ -91,13 +89,23 @@ pimcore.object.tags.slider = Class.create(pimcore.object.tags.abstract, {
         return this.component;
     },
 
-    showValueInLabel: function () {
+    showValueInLabel: function (isInitial) {
         var labelEl = this.component.labelEl;
 
         if (!this.labelText) {
             this.labelText = labelEl.dom.innerHTML;
         }
-        var el = labelEl.update(this.labelText + " (" + this.component.getValue() + ")");
+
+        var value = this.data;
+        if(isInitial !== true) {
+            value = this.component.getValue();
+        }
+
+        if(value === null) {
+            value = t('NULL');
+        }
+
+        labelEl.update(this.labelText + " (" + value  + ")");
     },
 
     getLayoutShow: function () {
