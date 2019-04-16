@@ -101,7 +101,7 @@ pimcore.object.classes.data.multiselect = Class.create(pimcore.object.classes.da
                 handler: function () {
                     var u = {
                         key: "",
-                        value: ""
+                        value: valueStore.getCount()
                     };
 
                     var selectedRow = selectionModel.getSelected();
