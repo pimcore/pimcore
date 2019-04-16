@@ -195,8 +195,7 @@ pimcore.object.classes.data.select = Class.create(pimcore.object.classes.data.da
             plugins: [
                 Ext.create('Ext.grid.plugin.RowEditing', {
                     clicksToEdit: 1,
-                    errorSummary: false,
-                    autoCancel: true
+                    errorSummary: false
                 })]
         });
 

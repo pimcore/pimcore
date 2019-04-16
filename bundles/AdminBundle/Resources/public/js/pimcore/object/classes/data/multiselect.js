@@ -90,8 +90,7 @@ pimcore.object.classes.data.multiselect = Class.create(pimcore.object.classes.da
             },
             plugins: [Ext.create('Ext.grid.plugin.RowEditing', {
                 clicksToEdit: 1,
-                errorSummary: false,
-                autoCancel: true
+                errorSummary: false
             })],
             tbar: [{
                 xtype: "tbtext",
