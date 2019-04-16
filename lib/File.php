@@ -158,12 +158,41 @@ class File
      */
     public static function mkdir($path, $mode = null, $recursive = true)
     {
+        if(is_dir($path)) {
+            return true;
+        }
+
+        $return = true;
+
         if (!$mode) {
             $mode = self::$defaultMode;
         }
 
         $oldMask = umask(0);
-        $return = @mkdir($path, $mode, $recursive, self::getContext());
+
+        if($recursive) {
+            // we cannot use just mkdir() with recursive=true because of possible race conditions, see also
+            // https://github.com/pimcore/pimcore/issues/4011
+
+            $parts = preg_split('@(?<![\:\\\\/]|^)[\\\\/]@', $path);
+            $currentPath = '';
+            foreach($parts as $part) {
+                $currentPath .= $part;
+
+                if(!is_dir($currentPath)) {
+                    if (!@mkdir($currentPath, $mode, false) && !is_dir($currentPath)) {
+                        // the directory was not created by either this or a concurrent process ...
+                        $return = false;
+                        break;
+                    }
+                }
+
+                $currentPath .= '/';
+            }
+        } else {
+            $return = @mkdir($path, $mode, false, self::getContext());
+        }
+
         umask($oldMask);
 
         return $return;
