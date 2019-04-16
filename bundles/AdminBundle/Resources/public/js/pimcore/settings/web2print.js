@@ -88,7 +88,8 @@ pimcore.settings.web2print = Class.create({
                         store: [
                             ["8.0", "8.0"],
                             ["8.1", "8.1"],
-                            ["9.0", "9.0"]
+                            ["9.0", "9.0"],
+                            ["10.0", "10.0"]
                         ],
                         mode: "local",
                         triggerAction: "all"
