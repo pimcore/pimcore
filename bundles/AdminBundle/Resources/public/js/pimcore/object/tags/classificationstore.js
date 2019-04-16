@@ -97,6 +97,7 @@ pimcore.object.tags.classificationstore = Class.create(pimcore.object.tags.abstr
         this.fieldConfig.fieldtype = "panel";
 
         var wrapperConfig = {
+            bodyCls: "pimcore_object_tag_classification_store",
             border: true,
             style: "margin-bottom: 10px",
             layout: "fit"
