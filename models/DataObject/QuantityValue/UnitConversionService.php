@@ -25,7 +25,7 @@ class UnitConversionService
         $baseUnit = $toUnit->getBaseunit();
 
         if($baseUnit === null) {
-            $baseUnit = clone $toUnit;
+            $baseUnit = $toUnit;
         }
         $converterServiceName = $baseUnit->getConverter();
 

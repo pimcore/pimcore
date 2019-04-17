@@ -75,6 +75,8 @@ pimcore.object.tags.quantityValue = Class.create(pimcore.object.tags.abstract, {
             input.decimalPrecision = this.fieldConfig["decimalPrecision"];
         }
 
+        this.inputField = new Ext.form.field.Number(input);
+
         var labelWidth = 100;
         if (this.fieldConfig.labelWidth) {
             labelWidth = this.fieldConfig.labelWidth;
@@ -95,7 +97,25 @@ pimcore.object.tags.quantityValue = Class.create(pimcore.object.tags.abstract, {
             store: this.store,
             valueField: 'id',
             displayField: 'abbreviation',
-            queryMode: 'local'
+            queryMode: 'local',
+            listeners: {
+                change: function( combo, newValue, oldValue) {
+                    Ext.Ajax.request({
+                        url: "/admin/quantity-value/convert",
+                        params: {
+                            value: this.inputField.value,
+                            fromUnit: oldValue,
+                            toUnit: newValue
+                        },
+                        success: function (response) {
+                            response = Ext.decode(response.responseText);
+                            if (response && response.success) {
+                                this.inputField.setValue(response.value);
+                            }
+                        }.bind(this)
+                    });
+                }.bind(this)
+            }
         };
 
         if(this.data && this.data.unit != null && !isNaN(this.data.unit)) {
@@ -105,8 +125,6 @@ pimcore.object.tags.quantityValue = Class.create(pimcore.object.tags.abstract, {
         }
 
         this.unitField = new Ext.form.ComboBox(options);
-
-        this.inputField = new Ext.form.field.Number(input);
 
         this.component = new Ext.form.FieldContainer({
             layout: 'hbox',
