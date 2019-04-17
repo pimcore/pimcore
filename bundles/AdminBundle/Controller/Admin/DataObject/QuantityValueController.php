@@ -214,7 +214,11 @@ class QuantityValueController extends AdminController
 
         /** @var UnitConversionService $converter */
         $converter = $this->container->get(UnitConversionService::class);
-        $convertedValue = $converter->convert(new QuantityValue($request->get('value'), $fromUnit), $toUnit);
+        try {
+            $convertedValue = $converter->convert(new QuantityValue($request->get('value'), $fromUnit), $toUnit);
+        } catch (\Exception $e) {
+            return $this->adminJson(['success' => false]);
+        }
         return $this->adminJson(['value' => $convertedValue->getValue(), 'success' => true]);
     }
 }
