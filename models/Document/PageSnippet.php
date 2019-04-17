@@ -169,8 +169,6 @@ abstract class PageSnippet extends Model\Document
 
             throw $e;
         }
-
-
     }
 
     /**

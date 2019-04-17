@@ -855,7 +855,6 @@ class Asset extends Element\AbstractElement
 
             throw $e;
         }
-
     }
 
     /**

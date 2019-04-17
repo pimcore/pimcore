@@ -253,6 +253,7 @@ class Slider extends Data implements ResourcePersistenceAwareInterface, QueryRes
         if ($data != null) {
             $data = (float) $data;
         }
+
         return $data;
     }
 
@@ -270,6 +271,7 @@ class Slider extends Data implements ResourcePersistenceAwareInterface, QueryRes
         if ($data != null) {
             $data = (float) $data;
         }
+
         return $data;
     }
 
