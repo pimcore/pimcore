@@ -865,11 +865,11 @@ CREATE TABLE `quantityvalue_units` (
   `group` varchar(50) DEFAULT NULL,
   `abbreviation` varchar(20) NOT NULL,
   `longname` varchar(250) DEFAULT NULL,
-  `baseunit` `baseunit` INT(11) UNSIGNED DEFAULT NULL,
+  `baseunit` INT(11) UNSIGNED DEFAULT NULL,
   `factor` double DEFAULT NULL,
   `conversionOffset` DOUBLE NULL DEFAULT NULL,
   `reference` varchar(50) DEFAULT NULL,
-  `converter` VARCHAR(255) DEFAULT NULL
+  `converter` VARCHAR(255) DEFAULT NULL,
   PRIMARY KEY (`id`),
   CONSTRAINT `fk_baseunit`
     FOREIGN KEY (`baseunit`)
