@@ -53,6 +53,7 @@ class QuantityValue implements OwnerAwareFieldInterface
 
         if ($unitId instanceof Unit) {
             $this->unit = $unitId;
+            $this->unitId = $unitId->getId();
         } elseif($unitId) {
             $this->unit = Unit::getById($this->unitId);
         }
