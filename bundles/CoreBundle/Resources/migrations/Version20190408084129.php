@@ -13,8 +13,8 @@ class Version20190408084129 extends AbstractPimcoreMigration
     public function up(Schema $schema)
     {
         $this->addSql("ALTER TABLE `quantityvalue_units`
-            CHANGE `baseunit` `baseunit` INT(11) UNSIGNED,
-            ADD `converter` VARCHAR(255),
+            CHANGE `baseunit` `baseunit` INT(11) UNSIGNED DEFAULT NULL,
+            ADD `converter` VARCHAR(255) DEFAULT NULL,
             ADD CONSTRAINT `fk_baseunit`
             FOREIGN KEY (`baseunit`)
             REFERENCES `quantityvalue_units`(`id`)
