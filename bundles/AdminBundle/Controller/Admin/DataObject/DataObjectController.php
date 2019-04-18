@@ -569,22 +569,10 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                 ) {
                     foreach ($relations as $rkey => $rel) {
                         $index = $rkey + 1;
-                        if ($fielddefinition instanceof ManyToManyObjectRelation || $fielddefinition instanceof DataObject\ClassDefinition\Data\ManyToManyRelation) {
-                            $rel['fullpath'] = $rel['path'];
-                            $rel['classname'] = $rel['subtype'];
-                            $rel['rowId'] = $rel['id'] . AbstractRelations::RELATION_ID_SEPARATOR . $index . AbstractRelations::RELATION_ID_SEPARATOR . $rel['type'];
-                            $data[] = $rel;
-                        } else {
-                            //TODO can this removed? seems to be dead code
-                            $data[] = [
-                                'id' => $rel['id'],
-                                'path' => $rel['path'],
-                                'type' => $rel['type'],
-                                'subtype' => $rel['subtype'],
-                                'published' => (bool)$rel['published'],
-                                'rowId' => $rel['id'] . AbstractRelations::RELATION_ID_SEPARATOR . $index . AbstractRelations::RELATION_ID_SEPARATOR . $rel['type']
-                            ];
-                        }
+                        $rel['fullpath'] = $rel['path'];
+                        $rel['classname'] = $rel['subtype'];
+                        $rel['rowId'] = $rel['id'] . AbstractRelations::RELATION_ID_SEPARATOR . $index . AbstractRelations::RELATION_ID_SEPARATOR . $rel['type'];
+                        $data[] = $rel;
                     }
                 } else {
                     $fieldData = $object->$getter();
