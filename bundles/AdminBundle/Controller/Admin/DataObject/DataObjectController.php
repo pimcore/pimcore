@@ -631,30 +631,6 @@ class DataObjectController extends ElementControllerBase implements EventedContr
     }
 
     /**
-     * @param $object
-     * @param $key
-     *
-     * @return mixed
-     */
-    private function getParentValue($object, $key)
-    {
-        $parent = DataObject\Service::hasInheritableParentObject($object);
-        $getter = 'get' . ucfirst($key);
-        if ($parent) {
-            $value = $parent->$getter();
-            if ($value) {
-                $result = new \stdClass();
-                $result->value = $value;
-                $result->id = $parent->getId();
-
-                return $result;
-            } else {
-                return $this->getParentValue($parent, $key);
-            }
-        }
-    }
-
-    /**
      * @param $layout
      * @param $allowedView
      * @param $allowedEdit
