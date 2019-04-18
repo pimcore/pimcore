@@ -390,4 +390,19 @@ class ReverseManyToManyObjectRelation extends ManyToManyObjectRelation
             $classId = $this->getOwnerClassId();
         }
     }
+
+    /**
+     * @param DataObject\Concrete $object
+     * @param array $params
+     *
+     * @throws \Exception
+     */
+    public function save($object, $params = [])
+    {
+        $db = Db::get();
+
+        $db->deleteWhere('object_relations_' . $this->getOwnerClassId(), 'dest_id='.$db->quote($object->getId()).' AND fieldname='.$db->quote($this->getOwnerFieldName()).' AND ownertype = \'object\'');
+
+        return parent::save($object, $params);
+    }
 }
