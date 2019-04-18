@@ -70,15 +70,15 @@ pimcore.asset.listfolder = Class.create({
 
 
         typesColumns.push({text: t("creationDate"), width: 150, sortable: true, dataIndex: 'creationDate', editable: false, filter: 'date',
-            renderer: function(d) {
-                var date = new Date(d * 1000);
-                return Ext.Date.format(date, "Y-m-d H:i:s");
-            }});
+                                                                                renderer: function(d) {
+            var date = new Date(d * 1000);
+            return Ext.Date.format(date, "Y-m-d H:i:s");
+        }});
         typesColumns.push({text: t("modificationDate"), width: 150, sortable: true, dataIndex: 'modificationDate', editable: false, filter: 'date',
-            renderer: function(d) {
-                var date = new Date(d * 1000);
-                return Ext.Date.format(date, "Y-m-d H:i:s");
-            }});
+        renderer: function(d) {
+            var date = new Date(d * 1000);
+            return Ext.Date.format(date, "Y-m-d H:i:s");
+        }});
 
         typesColumns.push(
             {text: t("size"), sortable: false, dataIndex: 'size', editable: false, filter: 'string'}
