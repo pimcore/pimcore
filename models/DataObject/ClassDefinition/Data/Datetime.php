@@ -76,7 +76,7 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
     {
         if ($data) {
             $result = $data->getTimestamp();
-            if ($this->getColumnType() == 'datetime') {
+            if ($this->getColumnType() === 'datetime') {
                 $result = date('Y-m-d H:i:s', $result);
             }
 
@@ -96,7 +96,7 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
     public function getDataFromResource($data, $object = null, $params = [])
     {
         if ($data) {
-            if ($this->getColumnType() == 'datetime') {
+            if ($this->getColumnType() === 'datetime') {
                 $data = strtotime($data);
                 if ($data === false) {
                     return null;
@@ -218,9 +218,10 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
     public function getVersionPreview($data, $object = null, $params = [])
     {
         if ($data instanceof \Zend_Date) {
-            return $data->toString('Y-m-d H:i', 'php');
-        } elseif ($data instanceof \DateTimeInterface) {
-            return $data->format('Y-m-d H:i');
+            return $data->toString('Y-m-d H:i:s', 'php');
+        }
+        if ($data instanceof \DateTimeInterface) {
+            return $data->format('Y-m-d H:i:s');
         }
     }
 
@@ -238,9 +239,10 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
     {
         $data = $this->getDataFromObjectParam($object, $params);
         if ($data instanceof \Zend_Date) {
-            return $data->toString('Y-m-d H:i', 'php');
-        } elseif ($data instanceof \DateTimeInterface) {
-            return $data->format('Y-m-d H:i');
+            return $data->toString('Y-m-d H:i:s', 'php');
+        }
+        if ($data instanceof \DateTimeInterface) {
+            return $data->format('Y-m-d H:i:s');
         }
 
         return null;
@@ -310,16 +312,14 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
     }
 
     /**
-     * @return Date
+     * @return int
      */
     public function getDefaultValue()
     {
         if ($this->defaultValue !== null) {
             return $this->defaultValue;
-        //return new Date($this->defaultValue);
-        } else {
-            return 0;
         }
+        return 0;
     }
 
     /**
@@ -329,7 +329,7 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
      */
     public function setDefaultValue($defaultValue)
     {
-        if (strlen(strval($defaultValue)) > 0) {
+        if ((string)$defaultValue !== '') {
             if (is_numeric($defaultValue)) {
                 $this->defaultValue = (int)$defaultValue;
             } else {
@@ -368,16 +368,15 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
      * @param null $object
      * @param mixed $params
      *
-     * @return null|Date
+     * @return null|\DateTime|\Pimcore\Date
      */
     public function getDiffDataFromEditmode($data, $object = null, $params = [])
     {
-        $thedata = $data[0]['data'];
-        if ($thedata) {
-            return $this->getDateFromTimestamp($thedata);
-        } else {
-            return null;
+        if ($data[0]['data']) {
+            return $this->getDateFromTimestamp($data[0]['data']);
         }
+
+        return null;
     }
 
     /** See parent class.
@@ -422,25 +421,25 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
     {
         $timestamp = $value;
 
-        if ($this->getColumnType() == 'datetime') {
+        if ($this->getColumnType() === 'datetime') {
             $value = date('Y-m-d', $value);
         }
 
-        if ($operator == '=') {
+        if ($operator === '=') {
             $db = Db::get();
 
-            if ($this->getColumnType() == 'datetime') {
+            if ($this->getColumnType() === 'datetime') {
                 $brickPrefix = $params['brickType'] ? $db->quoteIdentifier($params['brickType']) . '.' : '';
                 $condition = 'DATE(' . $brickPrefix . '`' . $params['name'] . '`) = '. $db->quote($value);
 
                 return $condition;
-            } else {
-                $maxTime = $timestamp + (86400 - 1); //specifies the top point of the range used in the condition
-                $filterField = $params['name'] ? $params['name'] : $this->getName();
-                $condition = '`' . $filterField . '` BETWEEN ' . $db->quote($value) . ' AND ' . $db->quote($maxTime);
-
-                return $condition;
             }
+
+            $maxTime = $timestamp + (86400 - 1); //specifies the top point of the range used in the condition
+            $filterField = $params['name'] ? $params['name'] : $this->getName();
+            $condition = '`' . $filterField . '` BETWEEN ' . $db->quote($value) . ' AND ' . $db->quote($maxTime);
+
+            return $condition;
         }
 
         return parent::getFilterConditionExt($value, $operator, $params);

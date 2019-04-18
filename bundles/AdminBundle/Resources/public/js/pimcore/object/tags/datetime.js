@@ -50,7 +50,7 @@ pimcore.object.tags.datetime = Class.create(pimcore.object.tags.abstract, {
                         if (value) {
                             var timestamp = intval(value) * 1000;
                             var date = new Date(timestamp);
-                            return Ext.Date.format(date, "Y-m-d H:i");
+                            return Ext.Date.format(date, "Y-m-d H:i:s");
                         }
                         return "";
                     }.bind(this, field.key)};
@@ -68,9 +68,9 @@ pimcore.object.tags.datetime = Class.create(pimcore.object.tags.abstract, {
         };
 
         var time = {
-            format:"H:i",
+            format:"H:i:s",
             emptyText:"",
-            width:90
+            width:120
         };
 
         if (this.data) {
@@ -115,14 +115,14 @@ pimcore.object.tags.datetime = Class.create(pimcore.object.tags.abstract, {
 
             if (this.timefield.getValue()) {
                 var timeValue = this.timefield.getValue();
-                timeValue = Ext.Date.format(timeValue, "H:i");
+                timeValue = Ext.Date.format(timeValue, "H:i:s");
                 dateString += " " +  timeValue;
             }
             else {
                 dateString += " 00:00";
             }
 
-            var date = Ext.Date.parseDate(dateString, "Y-m-d H:i").getTime();
+            var date = Ext.Date.parseDate(dateString, "Y-m-d H:i:s").getTime();
             return date;
         }
         return false;
