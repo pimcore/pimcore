@@ -345,8 +345,11 @@ class ReverseManyToManyObjectRelation extends ManyToManyObjectRelation
      */
     public function prepareDataForPersistence($data, $object = null, $params = [])
     {
-        $return = [];
+        $db = Db::get();
 
+        $db->deleteWhere('object_relations_' . $this->getOwnerClassId(), 'dest_id='.$db->quote($object->getId()).' AND fieldname='.$db->quote($this->getOwnerFieldName()).' AND ownertype = \'object\'');
+
+        $return = [];
         if (is_array($data) && count($data) > 0) {
             $counter = 1;
             foreach ($data as $object) {
@@ -357,6 +360,8 @@ class ReverseManyToManyObjectRelation extends ManyToManyObjectRelation
                         'fieldname' => $this->getOwnerFieldName(),
                         'index' => $counter
                     ];
+
+                    $object->saveVersion(true, false, $params['versionNote'] ?? null);
                 }
                 $counter++;
             }
@@ -389,39 +394,5 @@ class ReverseManyToManyObjectRelation extends ManyToManyObjectRelation
 
             $classId = $this->getOwnerClassId();
         }
-    }
-
-    /**
-     * @param DataObject\Concrete $object
-     * @param array $params
-     *
-     * @throws \Exception
-     */
-    public function save($object, $params = [])
-    {
-        if (isset($params['isUntouchable']) && $params['isUntouchable']) {
-            return;
-        }
-
-        if (!isset($params['context'])) {
-            $params['context'] = null;
-        }
-        $context = $params['context'];
-
-        if (!DataObject\AbstractObject::isDirtyDetectionDisabled() && $object instanceof DataObject\DirtyIndicatorInterface) {
-            if ($context['containerType'] !== 'fieldcollection' && $this->supportsDirtyDetection()) {
-                if (!$object->isFieldDirty($this->getName())) {
-                    return;
-                }
-            }
-        }
-
-        $db = Db::get();
-
-        $db->deleteWhere('object_relations_' . $this->getOwnerClassId(), 'dest_id='.$db->quote($object->getId()).' AND fieldname='.$db->quote($this->getOwnerFieldName()).' AND ownertype = \'object\'');
-
-        $returnValue = parent::save($object, $params);
-
-        return $returnValue;
     }
 }
