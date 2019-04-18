@@ -889,7 +889,6 @@
     "async_loading_warning_block": "WARNING: Async Loading is NOT possible within Localized Fields and Blocks",
     "allow_multiple_assignments": "Allow Multiple Assignments",
     "all_translations": "All Translations",
-    "only_unreferenced": "only unreferenced",
     "split_view_settings": "Split View Settings",
     "enable_split_view": "Enable Split View",
     "disable_split_view": "Disable Split View",
