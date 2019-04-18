@@ -2098,10 +2098,7 @@ class DataObjectHelperController extends AdminController
     {
         $o = [];
         foreach ($object->getClass()->getFieldDefinitions() as $key => $value) {
-            //exclude remote owner fields
-            if (!($value instanceof DataObject\ClassDefinition\Data\Relations\AbstractRelations and $value->isRemoteOwner())) {
-                $o[$key] = $value->getForCsvExport($object);
-            }
+            $o[$key] = $value->getForCsvExport($object);
         }
 
         $o['id (system)'] = $object->getId();

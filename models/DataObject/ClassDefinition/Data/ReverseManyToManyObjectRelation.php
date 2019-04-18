@@ -36,14 +36,6 @@ class ReverseManyToManyObjectRelation extends ManyToManyObjectRelation
     public static $remoteOwner = true;
 
     /**
-     * @return bool
-     */
-    public function isRemoteOwner()
-    {
-        return self::$remoteOwner;
-    }
-
-    /**
      * @var string
      */
     public $ownerClassName;
@@ -210,21 +202,6 @@ class ReverseManyToManyObjectRelation extends ManyToManyObjectRelation
     }
 
     /**
-     * converts object data to a simple string value or CSV Export
-     *
-     * @abstract
-     *
-     * @param DataObject\AbstractObject $object
-     * @param array $params
-     *
-     * @return string
-     */
-    public function getForCsvExport($object, $params = [])
-    {
-        return '';
-    }
-
-    /**
      * fills object field data values from CSV Import String
      *
      * @abstract
@@ -295,5 +272,102 @@ class ReverseManyToManyObjectRelation extends ManyToManyObjectRelation
     public function isOptimizedAdminLoading(): bool
     {
         return true;
+    }
+
+    /**
+     * @param DataObject\Concrete $object
+     * @param array $params
+     *
+     * @return null
+     */
+    public function load($object, $params = [])
+    {
+        $refKey = $this->getOwnerFieldName();
+        $refId = $this->getOwnerClassId();
+        $relationData = $object->getRelationData($refKey, false, $refId);
+
+        $objects = [];
+        foreach($relationData as $relation) {
+            $objects[] = DataObject\Concrete::getById($relation['id']);
+        }
+
+        return $objects;
+    }
+
+    /**
+     * @param DataObject\Concrete $object
+     * @param                     $data
+     * @param array               $params
+     *
+     * @return array|null
+     * @throws \InvalidArgumentException
+     */
+    public function preSetData($object, $data, $params = [])
+    {
+        $ownerFieldName = $this->getOwnerFieldName();
+        /** @var DataObject\Concrete $item */
+        foreach ((array)$data as $item) {
+            if(!$this->allowObjectRelation($item)) {
+                throw new \InvalidArgumentException('Object is not an instance of an allowed class');
+            }
+
+            $reverseObjects = $item->get($ownerFieldName);
+            $reverseObjects[] = $item;
+
+            $item->set($ownerFieldName, $reverseObjects);
+        }
+
+        return parent::preSetData($object, $data, $params);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function prepareDataForPersistence($data, $object = null, $params = [])
+    {
+        $return = [];
+
+        if (is_array($data) && count($data) > 0) {
+            $counter = 1;
+            foreach ($data as $object) {
+                if ($object instanceof DataObject\Concrete) {
+                    $return[] = [
+                        'src_id' => $object->getId(),
+                        'type' => 'object',
+                        'fieldname' => $this->getOwnerFieldName(),
+                        'index' => $counter
+                    ];
+                }
+                $counter++;
+            }
+
+            return $return;
+        } elseif (is_array($data) and count($data) === 0) {
+            //give empty array if data was not null
+            return [];
+        } else {
+            //return null if data was null - this indicates data was not loaded
+            return null;
+        }
+    }
+
+    /** Enrich relation with type-specific data.
+     * @param $object
+     * @param $params
+     * @param $classId
+     * @param array $relation
+     */
+    protected function enrichRelation($object, $params, &$classId, &$relation = [])
+    {
+        if (!$relation) {
+            $relation = [];
+        }
+
+        if ($object instanceof DataObject\Concrete) {
+            $relation['dest_id'] = $object->getId();
+            $relation['ownertype'] = 'object';
+
+            $classId = $this->getOwnerClassId();
+        }
     }
 }
