@@ -220,7 +220,7 @@ pimcore.asset.listfolder = Class.create({
                     }
                 }));
             }
-
+            
             menu.add(new Ext.menu.Item({
                 text: t('delete'),
                 iconCls: "pimcore_icon_delete",
