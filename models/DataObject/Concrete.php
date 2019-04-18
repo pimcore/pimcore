@@ -695,7 +695,12 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
             AbstractObject::disableDirtyDetection();
         }
         try {
-            parent::save();
+            $params = [];
+            if (func_num_args() && is_array(func_get_arg(0))) {
+                $params = func_get_arg(0);
+            }
+
+            parent::save($params);
             if ($this instanceof DirtyIndicatorInterface) {
                 $this->resetDirtyMap();
             }
