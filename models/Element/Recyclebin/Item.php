@@ -131,8 +131,8 @@ class Item extends Model\AbstractModel
             // create an empty object first and clone it
             // see https://github.com/pimcore/pimcore/issues/4219
             Model\Version::disable();
-            $class = get_class($element);
-            $dummy = new $class();
+            $className = get_class($element);
+            $dummy = \Pimcore::getContainer()->get('pimcore.model.factory')->build($className);
             $dummy->setId($element->getId());
             $dummy->setPath($element->getPath());
             $dummy->setKey($element->getKey());
