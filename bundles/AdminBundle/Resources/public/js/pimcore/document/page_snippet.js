@@ -223,7 +223,7 @@ pimcore.document.page_snippet = Class.create(pimcore.document.document, {
                     iconCls: "pimcore_icon_open_window",
                     scale: "medium",
                     handler: function () {
-                        window.open(this.data.url);
+                        window.open(this.data.path + this.data.key);
                     }.bind(this)
                 });
 
