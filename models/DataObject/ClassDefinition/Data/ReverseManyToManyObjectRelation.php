@@ -361,7 +361,7 @@ class ReverseManyToManyObjectRelation extends ManyToManyObjectRelation
                         'index' => $counter
                     ];
 
-                    $object->saveVersion(true, false, $params['versionNote'] ?? null);
+                    $object->saveVersion(false, false, $params['versionNote'] ?? null);
                 }
                 $counter++;
             }
