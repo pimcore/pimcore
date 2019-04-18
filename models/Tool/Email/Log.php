@@ -483,6 +483,7 @@ class Log extends Model\AbstractModel
      * Returns the "to" recipients as array
      *
      * @deprecated directly use \Pimcore\Helper\Mail::parseEmailAddressField instead
+     *
      * @return array
      */
     public function getToAsArray()
@@ -516,6 +517,7 @@ class Log extends Model\AbstractModel
      * Returns the carbon copy recipients as array
      *
      * @deprecated directly use \Pimcore\Helper\Mail::parseEmailAddressField instead
+     *
      * @return array
      */
     public function getCcAsArray()
@@ -549,6 +551,7 @@ class Log extends Model\AbstractModel
      * Returns the blind carbon copy recipients as array
      *
      * @deprecated directly use \Pimcore\Helper\Mail::parseEmailAddressField instead
+     *
      * @return array
      */
     public function getBccAsArray()
@@ -604,6 +607,7 @@ class Log extends Model\AbstractModel
      * Returns the "replyTo" email addresses as array
      *
      * @deprecated directly use \Pimcore\Helper\Mail::parseEmailAddressField instead
+     *
      * @return array
      */
     public function getReplyToAsArray()

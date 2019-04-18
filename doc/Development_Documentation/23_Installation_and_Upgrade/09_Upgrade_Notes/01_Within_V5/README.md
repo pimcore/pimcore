@@ -1,5 +1,9 @@
 # Upgrade Notes for Upgrades within Pimcore 5
 
+## Version 5.8.0
+- Interface of `Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\IConfig:getCategories()` changed - `$subObjectId = null` 
+  was added as second parameter. If you have your custom `getCategories` implementation you need to adapt your method signature. 
+
 ## Version 5.7.2 
 - Signature of `\Pimcore\Model\DataObject\LazyLoadedFieldsInterface` has changed
 - `\Pimcore\Model\DataObject\Concrete` the following methods `addLazyLoadedField($fieldName)` and `getLazyLoadedFields()` were removed

@@ -282,7 +282,7 @@ class EmailController extends AdminController
                 $mail->setBodyText($text);
             }
 
-            foreach(['From', 'To', 'Cc', 'Bcc', 'ReplyTo'] as $field) {
+            foreach (['From', 'To', 'Cc', 'Bcc', 'ReplyTo'] as $field) {
                 $getter = 'get' . $field;
                 $values = \Pimcore\Helper\Mail::parseEmailAddressField($emailLog->{$getter}());
                 if (!empty($values)) {

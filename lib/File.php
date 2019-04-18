@@ -158,7 +158,7 @@ class File
      */
     public static function mkdir($path, $mode = null, $recursive = true)
     {
-        if(is_dir($path)) {
+        if (is_dir($path)) {
             return true;
         }
 
@@ -170,16 +170,16 @@ class File
 
         $oldMask = umask(0);
 
-        if($recursive) {
+        if ($recursive) {
             // we cannot use just mkdir() with recursive=true because of possible race conditions, see also
             // https://github.com/pimcore/pimcore/issues/4011
 
             $parts = preg_split('@(?<![\:\\\\/]|^)[\\\\/]@', $path);
             $currentPath = '';
-            foreach($parts as $part) {
+            foreach ($parts as $part) {
                 $currentPath .= $part;
 
-                if(!is_dir($currentPath)) {
+                if (!is_dir($currentPath)) {
                     if (!@mkdir($currentPath, $mode, false) && !is_dir($currentPath)) {
                         // the directory was not created by either this or a concurrent process ...
                         $return = false;
