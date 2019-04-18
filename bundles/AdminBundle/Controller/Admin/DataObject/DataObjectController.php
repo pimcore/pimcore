@@ -1202,17 +1202,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                             }
                         }
 
-                        if (method_exists($fd, 'isRemoteOwner') and $fd->isRemoteOwner()) {
-                            $remoteClass = DataObject\ClassDefinition::getByName($fd->getOwnerClassName());
-                            $relations = $object->getRelationData($fd->getOwnerFieldName(), false, $remoteClass->getId());
-                            $toAdd = $this->detectAddedRemoteOwnerRelations($relations, $value);
-                            $toDelete = $this->detectDeletedRemoteOwnerRelations($relations, $value);
-                            if (count($toAdd) > 0 or count($toDelete) > 0) {
-                                $this->processRemoteOwnerRelations($object, $toDelete, $toAdd, $fd->getOwnerFieldName());
-                            }
-                        } else {
-                            $object->setValue($key, $fd->getDataFromEditmode($value, $object));
-                        }
+                        $object->setValue($key, $fd->getDataFromEditmode($value, $object));
                     }
                 }
             }
@@ -2120,98 +2110,6 @@ class DataObjectController extends ElementControllerBase implements EventedContr
         $urlParts = parse_url($url);
 
         return $this->redirect($urlParts['path'] . '?pimcore_object_preview=' . $id . '&_dc=' . time() . (isset($urlParts['query']) ? '&' . $urlParts['query'] : ''));
-    }
-
-    /**
-     * @param  DataObject\Concrete $object
-     * @param  array $toDelete
-     * @param  array $toAdd
-     * @param  string $ownerFieldName
-     */
-    protected function processRemoteOwnerRelations($object, $toDelete, $toAdd, $ownerFieldName)
-    {
-        $getter = 'get' . ucfirst($ownerFieldName);
-        $setter = 'set' . ucfirst($ownerFieldName);
-
-        foreach ($toDelete as $id) {
-            $owner = DataObject::getById($id);
-            //TODO: lock ?!
-            if (method_exists($owner, $getter)) {
-                $currentData = $owner->$getter();
-                if (is_array($currentData)) {
-                    for ($i = 0; $i < count($currentData); $i++) {
-                        if ($currentData[$i]->getId() == $object->getId()) {
-                            unset($currentData[$i]);
-                            $owner->$setter($currentData);
-                            $owner->setUserModification($this->getAdminUser()->getId());
-                            $owner->save();
-                            Logger::debug('Saved object id [ ' . $owner->getId() . ' ] by remote modification through [' . $object->getId() . '], Action: deleted [ ' . $object->getId() . " ] from [ $ownerFieldName]");
-                            break;
-                        }
-                    }
-                }
-            }
-        }
-
-        foreach ($toAdd as $id) {
-            $owner = DataObject::getById($id);
-            //TODO: lock ?!
-            if (method_exists($owner, $getter)) {
-                $currentData = $owner->$getter();
-                $currentData[] = $object;
-
-                $owner->$setter($currentData);
-                $owner->setUserModification($this->getAdminUser()->getId());
-                $owner->save();
-                Logger::debug('Saved object id [ ' . $owner->getId() . ' ] by remote modification through [' . $object->getId() . '], Action: added [ ' . $object->getId() . " ] to [ $ownerFieldName ]");
-            }
-        }
-    }
-
-    /**
-     * @param  array $relations
-     * @param  array $value
-     *
-     * @return array
-     */
-    protected function detectDeletedRemoteOwnerRelations($relations, $value)
-    {
-        $originals = [];
-        $changed = [];
-        foreach ($relations as $r) {
-            $originals[] = $r['dest_id'];
-        }
-        if (is_array($value)) {
-            foreach ($value as $row) {
-                $changed[] = $row['id'];
-            }
-        }
-        $diff = array_diff($originals, $changed);
-
-        return $diff;
-    }
-
-    /**
-     * @param  array $relations
-     * @param  array $value
-     *
-     * @return array
-     */
-    protected function detectAddedRemoteOwnerRelations($relations, $value)
-    {
-        $originals = [];
-        $changed = [];
-        foreach ($relations as $r) {
-            $originals[] = $r['dest_id'];
-        }
-        if (is_array($value)) {
-            foreach ($value as $row) {
-                $changed[] = $row['id'];
-            }
-        }
-        $diff = array_diff($changed, $originals);
-
-        return $diff;
     }
 
     /**
