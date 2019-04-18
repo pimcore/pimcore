@@ -1557,8 +1557,8 @@ class DataObjectController extends ElementControllerBase implements EventedContr
      * @TemplatePhp()
      *
      * @param Request $request
-     * @param from
-     * @param to
+     * @param $from
+     * @param $to
      *
      * @return array
      *
