@@ -50,9 +50,20 @@ class DataObjectController extends ElementControllerBase implements EventedContr
     protected $_objectService;
 
     /**
+     * @var
+     */
+    private $objectData;
+
+    /**
+     * @var
+     */
+    private $metaData;
+
+    /**
      * @Route("/tree-get-childs-by-id", methods={"GET"})
      *
      * @param Request $request
+     * @param EventDispatcherInterface $eventDispatcher
      *
      * @return JsonResponse
      */
@@ -100,7 +111,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
 
             // custom views start
             if ($request->get('view')) {
-                $cv = \Pimcore\Model\Element\Service::getCustomViewById($request->get('view'));
+                $cv = Element\Service::getCustomViewById($request->get('view'));
 
                 if ($cv['classes']) {
                     $cvConditions = [];
@@ -338,8 +349,11 @@ class DataObjectController extends ElementControllerBase implements EventedContr
      * @Route("/get", methods={"GET"})
      *
      * @param Request $request
+     * @param EventDispatcherInterface $eventDispatcher
      *
      * @return JsonResponse
+     *
+     * @throws \Exception
      */
     public function getAction(Request $request, EventDispatcherInterface $eventDispatcher)
     {
@@ -493,16 +507,6 @@ class DataObjectController extends ElementControllerBase implements EventedContr
             return $this->adminJson(['success' => false, 'message' => 'missing_permission']);
         }
     }
-
-    /**
-     * @var
-     */
-    private $objectData;
-
-    /**
-     * @var
-     */
-    private $metaData;
 
     /**
      * @param DataObject\Concrete $object
@@ -666,8 +670,8 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                     }
                 }
                 if (!($haveAllowedViewDefault && count($allowedView) == 0)) {
-                    $layout->{'permissionView'} = \Pimcore\Tool\Admin::reorderWebsiteLanguages(
-                        \Pimcore\Tool\Admin::getCurrentUser(),
+                    $layout->{'permissionView'} = Tool\Admin::reorderWebsiteLanguages(
+                        Tool\Admin::getCurrentUser(),
                         array_keys($allowedView),
                         true
                     );
@@ -682,8 +686,8 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                 }
 
                 if (!($haveAllowedEditDefault && count($allowedEdit) == 0)) {
-                    $layout->{'permissionEdit'} = \Pimcore\Tool\Admin::reorderWebsiteLanguages(
-                        \Pimcore\Tool\Admin::getCurrentUser(),
+                    $layout->{'permissionEdit'} = Tool\Admin::reorderWebsiteLanguages(
+                        Tool\Admin::getCurrentUser(),
                         array_keys($allowedEdit),
                         true
                     );
@@ -742,6 +746,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
      * @Route("/get-folder", methods={"GET"})
      *
      * @param Request $request
+     * @param EventDispatcherInterface $eventDispatcher
      *
      * @return JsonResponse
      */
@@ -948,6 +953,8 @@ class DataObjectController extends ElementControllerBase implements EventedContr
      * @param Request $request
      *
      * @return JsonResponse
+     *
+     * @throws \Exception
      */
     public function deleteAction(Request $request)
     {
@@ -984,6 +991,8 @@ class DataObjectController extends ElementControllerBase implements EventedContr
             // return true, even when the object doesn't exist, this can be the case when using batch delete incl. children
             return $this->adminJson(['success' => true]);
         }
+
+        return $this->adminJson(['success' => false]);
     }
 
     /**
@@ -992,6 +1001,8 @@ class DataObjectController extends ElementControllerBase implements EventedContr
      * @param Request $request
      *
      * @return JsonResponse
+     *
+     * @throws \Exception
      */
     public function changeChildrenSortByAction(Request $request)
     {
@@ -1113,6 +1124,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
 
     /**
      * @param DataObject\AbstractObject $updatedObject
+     * @param $newIndex
      */
     protected function updateIndexesOfObjectSiblings(DataObject\AbstractObject $updatedObject, $newIndex)
     {
@@ -1391,7 +1403,9 @@ class DataObjectController extends ElementControllerBase implements EventedContr
      * @param $originalModificationDate
      * @param $data
      *
-     * @return JsonResponse
+     * @return bool
+     *
+     * @throws \Exception
      */
     protected function performFieldcollectionModificationCheck(Request $request, DataObject\Concrete $object, $originalModificationDate, $data)
     {
@@ -1607,6 +1621,8 @@ class DataObjectController extends ElementControllerBase implements EventedContr
      * @Route("/grid-proxy", methods={"GET", "POST", "PUT"})
      *
      * @param Request $request
+     * @param EventDispatcherInterface $eventDispatcher
+     * @param GridHelperService $gridHelperService
      *
      * @return JsonResponse
      */
@@ -1946,6 +1962,8 @@ class DataObjectController extends ElementControllerBase implements EventedContr
      * @param Request $request
      *
      * @return JsonResponse
+     *
+     * @throws \Exception
      */
     public function copyRewriteIdsAction(Request $request)
     {
