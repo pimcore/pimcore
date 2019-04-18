@@ -17,6 +17,7 @@
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
+use Pimcore\Db;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
@@ -158,7 +159,7 @@ class ReverseManyToManyObjectRelation extends ManyToManyObjectRelation
      *
      * Checks if an object is an allowed relation
      *
-     * @param Model\DataObject\AbstractObject $object
+     * @param DataObject\Concrete $object
      *
      * @return bool
      */
@@ -166,14 +167,13 @@ class ReverseManyToManyObjectRelation extends ManyToManyObjectRelation
     {
         //only relations of owner type are allowed
         $ownerClass = DataObject\ClassDefinition::getByName($this->getOwnerClassName());
-        if ($ownerClass->getId() > 0 and $ownerClass->getId() == $object->getClassId()) {
+        if ($ownerClass->getId() > 0 && $ownerClass->getId() === $object->getClassId()) {
             $fd = $ownerClass->getFieldDefinition($this->getOwnerFieldName());
-            if ($fd instanceof DataObject\ClassDefinition\Data\Objects) {
-                return $fd->allowObjectRelation($object);
+            if ($fd instanceof DataObject\ClassDefinition\Data\Relations\AbstractRelations) {
+                return true;
             }
-        } else {
-            return false;
         }
+        return false;
     }
 
     /**
@@ -186,15 +186,14 @@ class ReverseManyToManyObjectRelation extends ManyToManyObjectRelation
      */
     public function checkValidity($data, $omitMandatoryCheck = false)
     {
-        //TODO
-        if (!$omitMandatoryCheck and $this->getMandatory() and empty($data)) {
+        if (!$omitMandatoryCheck && $this->getMandatory() && empty($data)) {
             throw new Model\Element\ValidationException('Empty mandatory field [ '.$this->getName().' ]');
         }
 
         if (is_array($data)) {
             foreach ($data as $o) {
                 $allowClass = $this->allowObjectRelation($o);
-                if (!$allowClass or !($o instanceof DataObject\Concrete)) {
+                if (!$allowClass || !($o instanceof DataObject\Concrete)) {
                     throw new Model\Element\ValidationException('Invalid non owner object relation to object ['.$o->getId().']', null, null);
                 }
             }
@@ -282,16 +281,37 @@ class ReverseManyToManyObjectRelation extends ManyToManyObjectRelation
      */
     public function load($object, $params = [])
     {
-        $refKey = $this->getOwnerFieldName();
-        $refId = $this->getOwnerClassId();
-        $relationData = $object->getRelationData($refKey, false, $refId);
+        $db = Db::get();
+        $data = null;
 
-        $objects = [];
-        foreach($relationData as $relation) {
-            $objects[] = DataObject\Concrete::getById($relation['id']);
+        if (!method_exists($this, 'getLazyLoading') or !$this->getLazyLoading() or (array_key_exists('force', $params) && $params['force'])) {
+            $relations = $db->fetchAll('SELECT * FROM object_relations_' . $this->getOwnerClassId() . " WHERE dest_id = ? AND fieldname = ? AND ownertype = 'object'", [$object->getId(), $this->getOwnerFieldName()]);
+        } else {
+            return null;
         }
 
-        return $objects;
+        $relations = array_map(function ($relation) {
+            $relation['dest_id'] = $relation['src_id'];
+            unset($relation['src_id']);
+            return $relation;
+        }, $relations);
+
+        // using PHP sorting to order the relations, because "ORDER BY index ASC" in the queries above will cause a
+        // filesort in MySQL which is extremely slow especially when there are millions of relations in the database
+        usort($relations, function ($a, $b) {
+            if ($a['index'] == $b['index']) {
+                return 0;
+            }
+
+            return ($a['index'] < $b['index']) ? -1 : 1;
+        });
+
+        $data = $this->loadData($relations, $object, $params);
+        if ($object instanceof DataObject\DirtyIndicatorInterface) {
+            $object->markFieldDirty($this->getName(), false);
+        }
+
+        return $data;
     }
 
     /**
@@ -342,7 +362,7 @@ class ReverseManyToManyObjectRelation extends ManyToManyObjectRelation
             }
 
             return $return;
-        } elseif (is_array($data) and count($data) === 0) {
+        } elseif (is_array($data) && count($data) === 0) {
             //give empty array if data was not null
             return [];
         } else {

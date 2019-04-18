@@ -95,7 +95,7 @@ abstract class AbstractRelations extends Data implements CustomResourcePersistin
      */
     public function isRemoteOwner()
     {
-        return self::$remoteOwner;
+        return static::$remoteOwner;
     }
 
     /**
