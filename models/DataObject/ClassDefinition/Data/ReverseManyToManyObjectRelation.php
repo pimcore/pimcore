@@ -361,7 +361,8 @@ class ReverseManyToManyObjectRelation extends ManyToManyObjectRelation
                         'index' => $counter
                     ];
 
-                    $object->saveVersion(false, false, $params['versionNote'] ?? null);
+                    $object->saveVersion(true, false, $params['versionNote'] ?? null);
+                    // todo: set o_modification_timestamp of $object
                 }
                 $counter++;
             }
