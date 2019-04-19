@@ -80,6 +80,30 @@ abstract class AbstractListing extends AbstractModel
     protected $conditionParams = [];
 
     /**
+     * @var array
+     */
+    protected $conditionVariableTypes = [];
+
+    /**
+     * @return array
+     */
+    public function getConditionVariableTypes(): array
+    {
+        if(!$this->conditionVariables) {
+            $this->getCondition();
+        }
+        return $this->conditionVariableTypes;
+    }
+
+    /**
+     * @param array $conditionVariableTypes
+     */
+    public function setConditionVariableTypes(array $conditionVariableTypes): void
+    {
+        $this->conditionVariableTypes = $conditionVariableTypes;
+    }
+
+    /**
      * @param  $key
      *
      * @return bool
@@ -250,6 +274,7 @@ abstract class AbstractListing extends AbstractModel
     public function getCondition()
     {
         $conditionString = '';
+        $conditionVariableTypes = [];
         $conditionParams = $this->getConditionParams();
         $db = \Pimcore\Db::get();
 
@@ -279,6 +304,18 @@ abstract class AbstractListing extends AbstractModel
         $params = array_merge((array) $this->getConditionVariablesFromSetCondition(), $params);
 
         $this->setConditionVariables($params);
+
+        foreach ($params as $pkey => $param) {
+            if (is_array($param)) {
+                if (isset($param[0]) && is_string($param[0])) {
+                    $conditionVariableTypes[$pkey] = \Doctrine\DBAL\Connection::PARAM_STR_ARRAY;
+                } else {
+                    $conditionVariableTypes[$pkey] = \Doctrine\DBAL\Connection::PARAM_INT_ARRAY;
+                }
+            }
+        }
+
+        $this->setConditionVariableTypes($conditionVariableTypes);
 
         $condition = $this->condition . $conditionString;
 
