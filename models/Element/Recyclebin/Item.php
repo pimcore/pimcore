@@ -19,6 +19,7 @@ namespace Pimcore\Model\Element\Recyclebin;
 
 use Pimcore\Cache;
 use Pimcore\File;
+use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
@@ -106,6 +107,7 @@ class Item extends Model\AbstractModel
      */
     public function restore($user = null)
     {
+        $dummy = null;
         $raw = file_get_contents($this->getStoreageFile());
         $element = Serialize::unserialize($raw);
 
@@ -125,6 +127,20 @@ class Item extends Model\AbstractModel
             if ($indentElement) {
                 $element->setKey($element->getKey().'_restore');
             }
+
+            // create an empty object first and clone it
+            // see https://github.com/pimcore/pimcore/issues/4219
+            Model\Version::disable();
+            $className = get_class($element);
+            $dummy = \Pimcore::getContainer()->get('pimcore.model.factory')->build($className);
+            $dummy->setId($element->getId());
+            $dummy->setPath($element->getPath());
+            $dummy->setKey($element->getKey());
+            if ($element instanceof DataObject\Concrete) {
+                $dummy->setOmitMandatoryCheck(true);
+            }
+            $dummy->save(["isRecycleBinRestore" => true]);
+            Model\Version::enable();
         }
 
         if (\Pimcore\Tool\Admin::getCurrentUser()) {
@@ -134,7 +150,15 @@ class Item extends Model\AbstractModel
             }
         }
 
-        $this->restoreChilds($element);
+        try {
+            $this->restoreChilds($element);
+        } catch (\Exception $e) {
+            Logger::error($e);
+            if ($dummy) {
+                $dummy->delete();
+            }
+            throw $e;
+        }
         $this->delete();
     }
 
