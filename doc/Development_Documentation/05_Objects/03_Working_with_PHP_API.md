@@ -92,7 +92,7 @@ $entries->addConditionParam("city = ?", "New York", "AND"); // concatenator can 
 //use array bindings for prepared statements (since version 5.8.0)
 $entries->setCondition("city IN (?)", [["New York", "Chicago"]]);
 // or
-$entries->setCondition("city IN (:cities)", ["cities" => ["New York", "Chicago"]]); // With PDO_Mysql you can use named parameters
+$entries->setCondition("city IN (:cities)", ["cities" => ["New York", "Chicago"]]); // named parameters
 
 //if necessary you can of course custom build your query
 $entries->setCondition("name LIKE " . $entries->quote("%bernie%")); // make sure that you quote variables in conditions!
