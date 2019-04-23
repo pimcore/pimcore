@@ -155,7 +155,7 @@ $entries->load();
 foreach($entries as $entry) {...}
  
  
-// using named placeholders (recommended) - only with PDO Mysql Adapter
+// using named placeholders (recommended)
 $entries = new DataObject\Myclassname\Listing();
 $entries->setCondition("name LIKE :name AND date > :date", ["name" => "%bernie%", "date" => time()]);
 $entries->load();
@@ -167,7 +167,7 @@ Following code will only search the EN value of the field `name`.
 <?php
 
 $entries = new \Pimcore\Model\DataObject\Myclassname\Listing();
-$entries->setLocale("en"); // string or instance of Zend_Locale
+$entries->setLocale("en");
 $entries->setCondition("name LIKE :name", ["name" => "%term%"]); // name is a field inside a localized field container
 ```
 
