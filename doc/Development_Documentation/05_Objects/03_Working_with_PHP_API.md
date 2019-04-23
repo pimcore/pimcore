@@ -88,7 +88,12 @@ $entries->setCondition("name LIKE ?", ["%bernie%"]); // use prepared statements!
 $entries->setCondition("name LIKE :name", ["name" => "%bernie%"]); // With PDO_Mysql you can use named parameters
 // to add param to the condition (until build 181 this cannot be used with setCondition in the same listing, you should use setCondition OR addConditionParam but not both)
 $entries->addConditionParam("city = ?", "New York", "AND"); // concatenator can be AND or OR
-   
+
+//use array bindings for prepared statements (since version 5.8.0)
+$entries->setCondition("city IN (?)", [["New York", "Chicago"]]);
+// or
+$entries->setCondition("city IN (:cities)", ["cities" => ["New York", "Chicago"]]); // named parameters
+
 //if necessary you can of course custom build your query
 $entries->setCondition("name LIKE " . $entries->quote("%bernie%")); // make sure that you quote variables in conditions!
 foreach ($entries as $entry) {
