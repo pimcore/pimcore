@@ -94,7 +94,7 @@ pimcore.object.classes.data.select = Class.create(pimcore.object.classes.data.da
                 handler: function () {
                     var u = {
                         key: "",
-                        value: valueStore.getCount()
+                        value: ""
                     };
 
                     var selectedRow = this.selectionModel.getSelected();
@@ -192,7 +192,20 @@ pimcore.object.classes.data.select = Class.create(pimcore.object.classes.data.da
             autoHeight: true,
             plugins: [
                 Ext.create('Ext.grid.plugin.CellEditing', {
-                    clicksToEdit: 1
+                    clicksToEdit: 1,
+                    listeners: {
+                        edit: function(editor, e) {
+                            if(!e.record.get('value')) {
+                                e.record.set('value', e.record.get('key'));
+                            }
+                        },
+                        beforeedit: function(editor, e) {
+                            if(e.field === 'value') {
+                                return !!e.value;
+                            }
+                            return true;
+                        }
+                    }
                 })]
         });
 
