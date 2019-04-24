@@ -273,7 +273,7 @@ class Unit extends Model\AbstractModel
     /**
      * @return string
      */
-    public function getConverter(): string
+    public function getConverter()
     {
         return $this->converter;
     }
