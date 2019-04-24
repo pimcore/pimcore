@@ -223,19 +223,15 @@ pimcore.document.settings_abstract = Class.create({
         var updateComboBoxes = function (el) {
             var moduleEl =  Ext.getCmp("pimcore_document_settings_module_" + this.document.id);
             var controllerEl =  Ext.getCmp("pimcore_document_settings_controller_" + this.document.id);
-            controllerEl.getStore().reload({
-                params: {
-                    moduleName: moduleEl.getValue()
-                }
-            });
+            controllerEl.getStore().getProxy().extraParams.moduleName =  moduleEl.getValue();
+            controllerEl.getStore().reload();
 
             var actionEl =  Ext.getCmp("pimcore_document_settings_action_" + this.document.id);
-            actionEl.getStore().reload({
-                params: {
-                    moduleName: moduleEl.getValue(),
-                    controllerName: controllerEl.getValue()
-                }
-            });
+            actionEl.getStore().getProxy().extraParams = {
+                moduleName: moduleEl.getValue(),
+                controllerName: controllerEl.getValue()
+            };
+            actionEl.getStore().reload();
 
         }.bind(this);
 
@@ -298,7 +294,6 @@ pimcore.document.settings_abstract = Class.create({
                     displayField: 'name',
                     valueField: 'name',
                     name: "controller",
-                    queryMode: "local",
                     disableKeyFilter: true,
                     store: new Ext.data.Store({
                         autoDestroy: true,
@@ -353,7 +348,6 @@ pimcore.document.settings_abstract = Class.create({
                     }),
                     triggerAction: "all",
                     id: "pimcore_document_settings_action_" + this.document.id,
-                    queryMode: "local",
                     value: this.document.data.action,
                     matchFieldWidth: false,
                     listConfig: {
