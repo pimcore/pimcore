@@ -19,7 +19,7 @@ use Pimcore\Maintenance\TaskInterface;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\Document;
-use Pimcore\Model\Element\ElementInterface;
+use Pimcore\Model\Element;
 use Pimcore\Model\Version;
 use Psr\Log\LoggerInterface;
 
@@ -117,7 +117,7 @@ final class VersionsCleanupTask implements TaskInterface
                         $element = DataObject::getById($version->getCid());
                     }
 
-                    if ($element instanceof ElementInterface) {
+                    if ($element instanceof Element\ElementInterface) {
                         $this->logger->debug('currently checking Element-ID: ' . $element->getId() . ' Element-Type: ' . Element\Service::getElementType($element) . ' in cycle: ' . $counter . '/' . $totalCount);
 
                         if ($element->getModificationDate() >= $version->getDate()) {
