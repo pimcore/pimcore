@@ -108,6 +108,9 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
         $validationExceptions = [];
 
         foreach ($fieldDefintions as $fd) {
+            if($this instanceof DirtyIndicatorInterface && !$this->isFieldDirty($fd->getName())) {
+                continue;
+            }
             try {
                 $getter = 'get' . ucfirst($fd->getName());
                 $setter = 'set' . ucfirst($fd->getName());
