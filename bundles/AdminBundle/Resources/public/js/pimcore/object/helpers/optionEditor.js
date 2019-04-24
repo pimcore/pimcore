@@ -79,6 +79,10 @@ pimcore.object.helpers.optionEditor = Class.create({
                                 var key = pair[0];
                                 var value = pair[1];
 
+                                if(!value) {
+                                    value = key;
+                                }
+
                                 var u = {
                                     key: key,
                                     value: value
