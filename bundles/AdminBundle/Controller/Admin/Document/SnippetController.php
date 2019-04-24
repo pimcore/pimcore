@@ -18,9 +18,11 @@ use Pimcore\Event\AdminEvents;
 use Pimcore\Logger;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
+use Pimcore\Tool\Session;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
@@ -106,7 +108,31 @@ class SnippetController extends DocumentControllerBase
         try {
             if ($request->get('id')) {
                 $snippet = Document\Snippet::getById($request->get('id'));
-                $snippet = $this->getLatestVersion($snippet);
+
+                // check if there's a document in session which should be used as data-source
+                // see also PageController::clearEditableDataAction() | this is necessary to reset all fields and to get rid of
+                // outdated and unused data elements in this document (eg. entries of area-blocks)
+                $snippetSession = Session::useSession(function (AttributeBagInterface $session) use ($snippet) {
+                    $documentKey = 'document_' . $snippet->getId();
+                    $useForSaveKey = 'document_' . $snippet->getId() . '_useForSave';
+
+                    if ($session->has($documentKey) && $session->has($useForSaveKey)) {
+                        if ($session->get($useForSaveKey)) {
+                            // only use the page from the session once
+                            $session->remove($useForSaveKey);
+
+                            return $session->get($documentKey);
+                        }
+                    }
+
+                    return null;
+                }, 'pimcore_documents');
+
+                if ($snippetSession) {
+                    $snippet = $snippetSession;
+                } else {
+                    $snippet = $this->getLatestVersion($snippet);
+                }
 
                 $snippet->setUserModification($this->getAdminUser()->getId());
 
