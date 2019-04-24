@@ -37,9 +37,9 @@ application view scripts. In your layout script, in the `<head>` section, you wi
 
 ```php 
 <?php // setting links in a view script:
-$this->headLink()->appendStylesheet('/styles/basic.css')
-                 ->headLink(['rel' => 'icon', 'href' => '/img/favicon.ico'], 'PREPEND')
-                 ->prependStylesheet('/styles/moz.css', 'screen', true,  ['id' => 'my_stylesheet']);
+$this->headLink()->appendStylesheet('/styles/basic.css'); 
+$this->headLink(['rel' => 'icon', 'href' => '/img/favicon.ico'], 'PREPEND')
+     ->prependStylesheet('/styles/moz.css', 'screen', true,  ['id' => 'my_stylesheet']);
 ?>
 <?php // rendering the links: ?>
 <?= $this->headLink() ?>
