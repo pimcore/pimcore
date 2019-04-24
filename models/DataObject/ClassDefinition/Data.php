@@ -652,6 +652,10 @@ abstract class Data
         $allowedReturnTypes = [];
         foreach(explode('|', $docTypes) as $docType) {
             $docType = trim($docType);
+            if(strpos($docType, '?') === 0) {
+                $allowedReturnTypes[] = 'null';
+                $docType = substr($docType, 1);
+            }
             if(substr($docType, -2) === '[]') {
                 $allowedReturnTypes[] = 'array';
             } else {
