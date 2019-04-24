@@ -53,6 +53,9 @@ abstract class Data
      */
     public $index;
 
+    /** @var string */
+    public $phpdocType;
+
     /**
      * @var bool
      */
@@ -653,8 +656,24 @@ abstract class Data
 
         // insert this line if inheritance from parent objects is allowed
         if ($class instanceof DataObject\ClassDefinition && $class->getAllowInherit() && $this->supportsInheritance()) {
+            $docTypes = (string)$this->getPhpdocType();
+            $allowedReturnTypes = [];
+            foreach(explode('|', $docTypes) as $docType) {
+                $docType = trim($docType);
+                if(substr($docType, -2) === '[]') {
+                    $allowedReturnTypes[] = 'array';
+                } else {
+                    $allowedReturnTypes[] = $docType;
+                }
+            }
+
+            $typeCast = '';
+            if(count($allowedReturnTypes) === 1 && in_array($allowedReturnTypes[0], ['string', 'int', 'integer', 'bool', 'boolean', 'float', 'double', 'real', 'array'])) {
+                $typeCast = '('.$allowedReturnTypes[0].')';
+            }
+
             $code .= "\t" . 'if(\Pimcore\Model\DataObject::doGetInheritedValues() && $this->getClass()->getFieldDefinition("' . $key . '")->isEmpty($data)) {' . "\n";
-            $code .= "\t\t" . 'return $this->getValueFromParent("' . $key . '");' . "\n";
+            $code .= "\t\t" . 'return '.$typeCast.'$this->getValueFromParent("' . $key . '");' . "\n";
             $code .= "\t" . '}' . "\n";
         }
 
