@@ -148,7 +148,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
             $childsList->setLimit($limit);
             $childsList->setOffset($offset);
             $childsList->setOrderKey(
-                sprintf('objects.o_%s ASC', $object->getChildrenSortBy()),
+                sprintf("CAST(objects.o_%s AS CHAR CHARACTER SET utf8) COLLATE utf8_general_ci ASC", $object->getChildrenSortBy()),
                 false
             );
             $childsList->setObjectTypes($objectTypes);

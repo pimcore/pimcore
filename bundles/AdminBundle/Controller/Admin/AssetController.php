@@ -224,7 +224,7 @@ class AssetController extends ElementControllerBase implements EventedController
 
             $childsList->setLimit($limit);
             $childsList->setOffset($offset);
-            $childsList->setOrderKey("FIELD(assets.type, 'folder') DESC, assets.filename ASC", false);
+            $childsList->setOrderKey("FIELD(assets.type, 'folder') DESC, CAST(assets.filename AS CHAR CHARACTER SET utf8) COLLATE utf8_general_ci ASC", false);
 
             \Pimcore\Model\Element\Service::addTreeFilterJoins($cv, $childsList);
 
