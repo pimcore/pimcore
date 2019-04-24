@@ -300,15 +300,24 @@ class Dao extends Model\Element\Dao
     }
 
     /**
-     * Quick test if there are childs
+     * Quick test if there are children
      *
      * @param array $objectTypes
+     * @param bool $unpublished
      *
      * @return bool
      */
-    public function hasChildren($objectTypes = [DataObject::OBJECT_TYPE_OBJECT, DataObject::OBJECT_TYPE_FOLDER])
+    public function hasChildren($objectTypes = [DataObject::OBJECT_TYPE_OBJECT, DataObject::OBJECT_TYPE_FOLDER], $unpublished = false)
     {
-        $c = $this->db->fetchOne("SELECT o_id FROM objects WHERE o_parentId = ? AND o_type IN ('" . implode("','", $objectTypes) . "') LIMIT 1", $this->model->getId());
+
+        $sql = "SELECT o_id FROM objects WHERE o_parentId = ?";
+
+        if (DataObject\AbstractObject::doHideUnpublished() && !$unpublished) {
+            $sql .= " AND o_published = 1";
+        }
+        $sql .=  " AND o_type IN ('" . implode("','", $objectTypes) . "') LIMIT 1";
+
+        $c = $this->db->fetchOne($sql, $this->model->getId());
 
         return (bool)$c;
     }

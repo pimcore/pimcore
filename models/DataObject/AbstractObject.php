@@ -55,7 +55,7 @@ class AbstractObject extends Model\Element\AbstractElement
     /**
      * @var bool
      */
-    private static $hidePublished = false;
+    private static $hideUnpublished = false;
 
     /**
      * @var bool
@@ -74,17 +74,17 @@ class AbstractObject extends Model\Element\AbstractElement
      */
     public static function getHideUnpublished()
     {
-        return self::$hidePublished;
+        return self::$hideUnpublished;
     }
 
     /**
      * @static
      *
-     * @param  $hidePublished
+     * @param  $hideUnpublished
      */
-    public static function setHideUnpublished($hidePublished)
+    public static function setHideUnpublished($hideUnpublished)
     {
-        self::$hidePublished = $hidePublished;
+        self::$hideUnpublished = $hideUnpublished;
     }
 
     /**
@@ -94,7 +94,7 @@ class AbstractObject extends Model\Element\AbstractElement
      */
     public static function doHideUnpublished()
     {
-        return self::$hidePublished;
+        return self::$hideUnpublished;
     }
 
     /**
@@ -449,21 +449,24 @@ class AbstractObject extends Model\Element\AbstractElement
     }
 
     /**
+     * Quick test if there are children
+     *
      * @param array $objectTypes
+     * @param bool $unpublished
      *
      * @return bool
      */
-    public function hasChildren($objectTypes = [self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_FOLDER])
+    public function hasChildren($objectTypes = [self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_FOLDER], $unpublished = false)
     {
         if (is_bool($this->o_hasChilds)) {
             if (($this->o_hasChilds and empty($this->o_childs)) or (!$this->o_hasChilds and !empty($this->o_childs))) {
-                return $this->getDao()->hasChildren($objectTypes);
+                return $this->getDao()->hasChildren($objectTypes, $unpublished);
             } else {
                 return $this->o_hasChilds;
             }
         }
 
-        return $this->getDao()->hasChildren($objectTypes);
+        return $this->getDao()->hasChildren($objectTypes, $unpublished);
     }
 
     /**
