@@ -204,6 +204,20 @@ pimcore.object.classes.data.select = Class.create(pimcore.object.classes.data.da
                                 return !!e.value;
                             }
                             return true;
+                        },
+                        validateedit: function(editor, e) {
+                            if(e.field !== 'value') {
+                                return true;
+                            }
+
+                            // Iterate to all store data
+                            for(var i=0; i < valueStore.data.length; i++) {
+                                var existingRecord = valueStore.getAt(i);
+                                if(i != e.rowIdx && existingRecord.get('value') === e.value) {
+                                    return false;
+                                }
+                            }
+                            return true;
                         }
                     }
                 })]

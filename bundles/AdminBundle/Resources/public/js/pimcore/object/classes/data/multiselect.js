@@ -89,7 +89,34 @@ pimcore.object.classes.data.multiselect = Class.create(pimcore.object.classes.da
                 ]
             },
             plugins: [Ext.create('Ext.grid.plugin.CellEditing', {
-                clicksToEdit: 1
+                clicksToEdit: 1,
+                listeners: {
+                    edit: function(editor, e) {
+                        if(!e.record.get('value')) {
+                            e.record.set('value', e.record.get('key'));
+                        }
+                    },
+                    beforeedit: function(editor, e) {
+                        if(e.field === 'value') {
+                            return !!e.value;
+                        }
+                        return true;
+                    },
+                    validateedit: function(editor, e) {
+                        if(e.field !== 'value') {
+                            return true;
+                        }
+
+                        // Iterate to all store data
+                        for(var i=0; i < valueStore.data.length; i++) {
+                            var existingRecord = valueStore.getAt(i);
+                            if(i != e.rowIdx && existingRecord.get('value') === e.value) {
+                                return false;
+                            }
+                        }
+                        return true;
+                    }
+                }
             })],
             tbar: [{
                 xtype: "tbtext",
@@ -100,7 +127,7 @@ pimcore.object.classes.data.multiselect = Class.create(pimcore.object.classes.da
                 handler: function () {
                     var u = {
                         key: "",
-                        value: valueStore.getCount()
+                        value: ""
                     };
 
                     var selectedRow = selectionModel.getSelected();
