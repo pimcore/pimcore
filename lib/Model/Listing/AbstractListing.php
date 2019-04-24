@@ -89,9 +89,10 @@ abstract class AbstractListing extends AbstractModel
      */
     public function getConditionVariableTypes(): array
     {
-        if(!$this->conditionVariables) {
+        if (!$this->conditionVariables) {
             $this->getCondition();
         }
+
         return $this->conditionVariableTypes;
     }
 

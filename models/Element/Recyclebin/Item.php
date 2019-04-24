@@ -139,7 +139,7 @@ class Item extends Model\AbstractModel
             if ($element instanceof DataObject\Concrete) {
                 $dummy->setOmitMandatoryCheck(true);
             }
-            $dummy->save(["isRecycleBinRestore" => true]);
+            $dummy->save(['isRecycleBinRestore' => true]);
             Model\Version::enable();
         }
 
