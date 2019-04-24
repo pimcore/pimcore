@@ -71,7 +71,7 @@ You can also convert values between units. Therefore you have to define base uni
 All units with the same base unit can be converted to each other.
 
 Example:
-You have physical length units meter (m), millimeters (mm) and inches ("). Then your quantity value unit configuration could like:
+You have physical length units meter (m), millimeters (mm) and inches ("). Then your quantity value unit configuration could look like:
 
 | Name       | Abbreviation | Baseunit | Factor |
 |------------|--------------|----------|--------|
@@ -79,7 +79,7 @@ You have physical length units meter (m), millimeters (mm) and inches ("). Then 
 | Millimeter | mm           | m        |  0.001 |
 | Inch       | "            | m        | 0.0254 |
 
-When you now have a quantity value field in your data objects and change the unit to a unit which has the same base unit as the unit before the value gets automatically converted.
+When you now have a quantity value field in your data objects and change the unit to a unit which has the same base unit as the unit before the value gets automatically converted. For example when you have 2 m and change the unit to "mm" then the value will automatically change to 2000.
 
 You can also trigger conversion programmatically:
 ```php
@@ -91,19 +91,19 @@ $convertedValue = $converter->convert($originalValue, Unit::getByAbbreviation('m
 
 Units without base unit are expected to be a base unit itself. That is why in above example configuration meter has no base unit - but of course you can set it to meter to be more explicit.
 
-In quantity value unit configuration there is also the column offset. This is for unit conversions where addition / subtraction is needed. For example 
+In quantity value unit configuration there is also the column "offset". This is for unit conversions where addition / subtraction is needed. For example 
 
 | Name               | Abbreviation | Baseunit | Factor | Offset |
 |--------------------|--------------|----------|--------|--------|
 | Degrees Celcius    | °C           |          |        |        |
 | Degrees Fahrenheit | °F           | °C       | 1.8    |  32    |
 
-These conversion parameters result of the formula `°F = °C * 1.8 + 32`
+These conversion parameters result from the formula `°F = °C * 1.8 + 32`
 
 #### Dynamic unit conversion
 
 When conversion factors / offsets change over time (e.g. money currencies) or you want to use an external API you have two opportunities:
-1. You could periodically update the current factors / offsets in quantity value configuration
-1. You can create a converter service class
+1. You could periodically update the factors / offsets in quantity value unit configuration
+2. You can create a converter service class
 
-If you prefer the latter you have to create a class which implements  `\Pimcore\Model\DataObject\QuantityValue\QuantityValueConverterInterface` and define a service for this class in your `services.yml`. The service name can then be entered in quantity value unit configuration's column "Converter service".
+If you prefer the latter you have to create a class which implements  `\Pimcore\Model\DataObject\QuantityValue\QuantityValueConverterInterface` and define a service for this class in your `services.yml`. The service name can then be entered in quantity value unit configuration's column "Converter service" for the base unit.
