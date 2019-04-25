@@ -474,43 +474,46 @@ class ElementController extends AdminController
         if ($source['type'] != 'object') {
             throw new \Exception('currently only objects as source elements are supported');
         }
-
         $result = [];
-
         $id = $source['id'];
         $source = DataObject\Concrete::getById($id);
-
-        if (!$source instanceof DataObject\Concrete) {
-            throw new \Exception(sprintf('Object with ID %s does not exist', $id));
-        }
-
         if ($request->get('context')) {
             $context = $this->decodeJson($request->get('context'));
         } else {
             $context = [];
         }
-
-        $targets = [];
-
-        if ($request->get('targets')) {
-            $targets = $this->decodeJson($request->get('targets'));
+        $ownerType = $context['containerType'];
+        $fieldname = $context['fieldname'];
+        if ($ownerType == 'object') {
+            $fd = $source->getClass()->getFieldDefinition($fieldname);
+        } elseif ($ownerType == 'localizedfield') {
+            $fd = $source->getClass()->getFieldDefinition('localizedfields')->getFieldDefinition($fieldname);
+        } elseif ($ownerType == 'objectbrick') {
+            $fdBrick = DataObject\Objectbrick\Definition::getByKey($context['containerKey']);
+            $fd = $fdBrick->getFieldDefinition($fieldname);
+        } elseif ($ownerType == 'fieldcollection') {
+            $containerKey = $context['containerKey'];
+            $fdCollection = DataObject\Fieldcollection\Definition::getByKey($containerKey);
+            if ($context['subContainerType'] == 'localizedfield') {
+                $fdLocalizedFields = $fdCollection->getFieldDefinition('localizedfields');
+                $fd = $fdLocalizedFields->getFieldDefinition($fieldname);
+            } else {
+                $fd = $fdCollection->getFieldDefinition($fieldname);
+            }
         }
+
+        $targets = $this->decodeJson($request->get('targets'));
 
         $result = $this->convertResultWithPathFormatter($source, $context, $result, $targets);
 
-        if ($request->get('loadEditModeData') == 'true') {
+        if($request->get('loadEditModeData') == 'true') {
             $idProperty = $request->get('idProperty', 'id');
-
-            $inheritanceBackup = DataObject\AbstractObject::getGetInheritedValues();
-            DataObject\AbstractObject::setGetInheritedValues(true);
-
             $methodName = 'get' . ucfirst($fieldname);
             if ($ownerType == 'object' && method_exists($source, $methodName)) {
                 $data = $source->$methodName();
                 $editModeData = $fd->getDataForEditmode($data, $source);
-
-                if (is_array($editModeData)) {
-                    foreach ($editModeData as $relationObjectAttribute) {
+                if(is_array($editModeData)) {
+                    foreach($editModeData as $relationObjectAttribute) {
                         $relationObjectAttribute['$$nicepath'] = $result[$relationObjectAttribute[$idProperty]];
                         $result[$relationObjectAttribute[$idProperty]] = $relationObjectAttribute;
                     }
@@ -521,8 +524,6 @@ class ElementController extends AdminController
             } else {
                 Logger::error('Loading edit mode data is not supported for ownertype: ' . $ownerType);
             }
-
-            DataObject\AbstractObject::setGetInheritedValues($inheritanceBackup);
         }
 
         return $this->adminJson(['success' => true, 'data' => $result]);
