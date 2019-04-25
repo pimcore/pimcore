@@ -19,13 +19,16 @@ pimcore.object.tags.quantityValue = Class.create(pimcore.object.tags.abstract, {
     initialize: function (data, fieldConfig) {
         this.defaultValue = null;
         this.defaultUnit = null;
-        if ((typeof data === "undefined" || data === null) && (fieldConfig.defaultValue || fieldConfig.defaultUnit)) {
+        this.autoConvert = false;
+        if ((typeof data === "undefined" || data === null) && (fieldConfig.defaultValue || fieldConfig.defaultUnit || fieldConfig.autoConvert)) {
             data = {
                 value: fieldConfig.defaultValue,
                 unit: fieldConfig.defaultUnit,
+                autoConvert: fieldConfig.autoConvert
             };
             this.defaultValue = data.value;
             this.defaultUnit = data.unit;
+            this.autoConvert = data.autoConvert;
         }
 
         this.data = data;
@@ -100,20 +103,22 @@ pimcore.object.tags.quantityValue = Class.create(pimcore.object.tags.abstract, {
             queryMode: 'local',
             listeners: {
                 change: function( combo, newValue, oldValue) {
-                    Ext.Ajax.request({
-                        url: "/admin/quantity-value/convert",
-                        params: {
-                            value: this.inputField.value,
-                            fromUnit: oldValue,
-                            toUnit: newValue
-                        },
-                        success: function (response) {
-                            response = Ext.decode(response.responseText);
-                            if (response && response.success) {
-                                this.inputField.setValue(response.value);
-                            }
-                        }.bind(this)
-                    });
+                    if(this.fieldConfig.autoConvert) {
+                        Ext.Ajax.request({
+                            url: "/admin/quantity-value/convert",
+                            params: {
+                                value: this.inputField.value,
+                                fromUnit: oldValue,
+                                toUnit: newValue
+                            },
+                            success: function (response) {
+                                response = Ext.decode(response.responseText);
+                                if (response && response.success) {
+                                    this.inputField.setValue(response.value);
+                                }
+                            }.bind(this)
+                        });
+                    }
                 }.bind(this)
             }
         };
