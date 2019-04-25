@@ -313,6 +313,8 @@ abstract class AbstractListing extends AbstractModel
                 } else {
                     $conditionVariableTypes[$pkey] = \Doctrine\DBAL\Connection::PARAM_INT_ARRAY;
                 }
+            } else {
+                $conditionVariableTypes[$pkey] = \PDO::PARAM_STR;
             }
         }
 
