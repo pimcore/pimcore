@@ -14,11 +14,13 @@ In this example, we want to display the asset metadata title of the target asset
 
 ### Configuration via class editor
 
-![Formatter Class](../../../img/formatter_class.png)
-
-You can use Dependency Injection to get the Path Formatter.
+Dependency Injection is the preferred way of using a Path Formatter:
 
 ![Formatter Class DI](../../../img/formatter_class_di.png)
+
+There is still a BC layer to use class-names instead, but this is deprecated and will be removed with Pimcore 6.0.
+
+![Formatter Class](../../../img/formatter_class.png)
 
 ### Sample Formatter Class
 
