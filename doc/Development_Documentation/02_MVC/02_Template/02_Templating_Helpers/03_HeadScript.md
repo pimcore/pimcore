@@ -86,7 +86,7 @@ $this->headScript()->prependFile('/js/jquery.js');
 
 When you're finally ready to output all scripts in your layout script, simply echo the helper:
 
-`<?= echo $this->headScript() ?>`
+`<?= $this->headScript() ?>`
 
 ### Capturing Scripts Using the HeadScript Helper
 
