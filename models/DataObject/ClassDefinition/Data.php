@@ -648,26 +648,6 @@ abstract class Data
         $code .= "\t\t" . 'return $preValue;' . "\n";
         $code .= "\t" . '}' . "\n";
 
-        $docTypes = (string)$this->getPhpdocType();
-        $allowedReturnTypes = [];
-        foreach(explode('|', $docTypes) as $docType) {
-            $docType = trim($docType);
-            if(strpos($docType, '?') === 0) {
-                $allowedReturnTypes[] = 'null';
-                $docType = substr($docType, 1);
-            }
-            if(substr($docType, -2) === '[]') {
-                $allowedReturnTypes[] = 'array';
-            } else {
-                $allowedReturnTypes[] = $docType;
-            }
-        }
-
-        $typeCast = '';
-        if(count($allowedReturnTypes) === 1 && in_array($allowedReturnTypes[0], ['string', 'int', 'integer', 'bool', 'boolean', 'float', 'double', 'real', 'array'])) {
-            $typeCast = '('.$allowedReturnTypes[0].')';
-        }
-
         if (method_exists($this, 'preGetData')) {
             $code .= "\t" . '$data = $this->getClass()->getFieldDefinition("' . $key . '")->preGetData($this);' . "\n";
         } else {
@@ -677,15 +657,18 @@ abstract class Data
         // insert this line if inheritance from parent objects is allowed
         if ($class instanceof DataObject\ClassDefinition && $class->getAllowInherit() && $this->supportsInheritance()) {
             $code .= "\t" . 'if(\Pimcore\Model\DataObject::doGetInheritedValues() && $this->getClass()->getFieldDefinition("' . $key . '")->isEmpty($data)) {' . "\n";
-            $code .= "\t\t" . 'return '.$typeCast.'$this->getValueFromParent("' . $key . '");' . "\n";
+            $code .= "\t\t" . '$parentValue = $this->getValueFromParent("' . $key . '");' . "\n";
+            $code .= "\t\t" . 'if($parentValue !== null) {' . "\n";
+            $code .= "\t\t\t" . 'return $parentValue;' . "\n";
+            $code .= "\t\t" . '}' . "\n";
             $code .= "\t" . '}' . "\n";
         }
 
         $code .= "\t" . 'if ($data instanceof \\Pimcore\\Model\\DataObject\\Data\\EncryptedField) {' . "\n";
-        $code .= "\t\t" . '    return '.$typeCast.'$data->getPlain();' . "\n";
+        $code .= "\t\t" . '    return $data->getPlain();' . "\n";
         $code .= "\t" . '}' . "\n";
 
-        $code .= "\treturn " . $typeCast.'$data' . ";\n";
+        $code .= "\treturn " . '$data' . ";\n";
         $code .= "}\n\n";
 
         return $code;
@@ -769,7 +752,10 @@ abstract class Data
 
         if ($this->supportsInheritance()) {
             $code .= "\t" . 'if(\Pimcore\Model\DataObject::doGetInheritedValues($this->getObject()) && $this->getDefinition()->getFieldDefinition("' . $key . '")->isEmpty($data)) {' . "\n";
-            $code .= "\t\t" . 'return $this->getValueFromParent("' . $key . '");' . "\n";
+            $code .= "\t\t" . '$parentValue = $this->getValueFromParent("' . $key . '");' . "\n";
+            $code .= "\t\t" . 'if($parentValue !== null) {' . "\n";
+            $code .= "\t\t\t" . 'return $parentValue;' . "\n";
+            $code .= "\t\t" . '}' . "\n";
             $code .= "\t" . '}' . "\n";
         }
 
