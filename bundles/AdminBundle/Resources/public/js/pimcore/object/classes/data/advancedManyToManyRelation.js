@@ -195,7 +195,7 @@ pimcore.object.classes.data.advancedManyToManyRelation = Class.create(pimcore.ob
             {
                 xtype: 'textfield',
                 width: 600,
-                fieldLabel: t("path_formatter_class"),
+                fieldLabel: t("path_formatter_service"),
                 name: 'pathFormatterClass',
                 value: this.datax.pathFormatterClass
             },
