@@ -948,7 +948,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
             $deletedItems = [];
             foreach ($objects as $object) {
                 $deletedItems[] = $object->getRealFullPath();
-                if ($object->isAllowed('delete')) {
+                if ($object->isAllowed('delete') && !$object->isLocked()) {
                     $object->delete();
                 }
             }
@@ -959,6 +959,8 @@ class DataObjectController extends ElementControllerBase implements EventedContr
             if ($object) {
                 if (!$object->isAllowed('delete')) {
                     return $this->adminJson(['success' => false, 'message' => 'missing_permission']);
+                } else if ($object->isLocked()) {
+                    return $this->adminJson(['success' => false, 'message' => 'prevented deleting object, because it is locked: ID: ' . $object->getId()]);
                 } else {
                     $object->delete();
                 }
