@@ -676,7 +676,6 @@ abstract class Data
 
         // insert this line if inheritance from parent objects is allowed
         if ($class instanceof DataObject\ClassDefinition && $class->getAllowInherit() && $this->supportsInheritance()) {
-
             $code .= "\t" . 'if(\Pimcore\Model\DataObject::doGetInheritedValues() && $this->getClass()->getFieldDefinition("' . $key . '")->isEmpty($data)) {' . "\n";
             $code .= "\t\t" . 'return '.$typeCast.'$this->getValueFromParent("' . $key . '");' . "\n";
             $code .= "\t" . '}' . "\n";

@@ -328,10 +328,6 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
             $container = new DataObject\Fieldcollection(null, $this->getName());
             $container->load($object);
 
-            if ($container->isEmpty()) {
-                return null;
-            }
-
             return $container;
         }
 
