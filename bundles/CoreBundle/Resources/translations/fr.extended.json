@@ -554,7 +554,6 @@
     "preserve_color": "Préserver la couleur (profil, espace)",
     "thumbnail_preserve_info_text": "'Préserver les méta-données' et 'préserver la couleur' ne fonctionne que pour les transitions sans compositions (cadre, couleur de fond, ...) et les modifications de couleurs (gris, sépia, ...)",
     "full_page_cache": "Vider le cache page entière",
-    "path_formatter_class": "Classe de formatage",
     "separated": "séparé",
     "additional_path_variable": "Variable $PATH supplémentaire",
     "log_refresh_label": "Actualiser chaque",
@@ -701,7 +700,11 @@
     "encrypt_data_description": "Data-at-Rest/Tablespace Encryption doit être activé sur votre serveur de base de données",
     "reports_config": "Rapports Config",
     "lazy_loading_warning_block": "AVERTISSEMENT: le chargement paresseux n'est PAS possible dans les Blocs",
-    "left": "left",
-    "right": "right",
-    "provide_split_view": "Provide Split View"
+    "left": "gauche",
+    "right": "droite",
+    "provide_split_view": "Fournir une vue partagée",
+    "allow_multiple_assignments": "Allow Multiple Assignments",
+    "enable_admin_async_load": "Enable Async Load in Admin",
+    "async_loading_warning_block": "WARNING: Async Loading is NOT possible within Localized Fields and Blocks",
+    "path_formatter_service": "Formatter Service / Class"
 }
