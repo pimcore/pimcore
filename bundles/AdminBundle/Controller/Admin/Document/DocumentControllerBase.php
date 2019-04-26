@@ -204,6 +204,39 @@ abstract class DocumentControllerBase extends AdminController implements Evented
     }
 
     /**
+     * @param Model\Document $doc
+     *
+     * @return Model\Document|null $sessionDocument
+     */
+    protected function getFromSession($doc)
+    {
+        $sessionDocument = null;
+
+        if($doc instanceof Model\Document) {
+            // check if there's a document in session which should be used as data-source
+            // see also PageController::clearEditableDataAction() | this is necessary to reset all fields and to get rid of
+            // outdated and unused data elements in this document (eg. entries of area-blocks)
+            $sessionDocument = Session::useSession(function (AttributeBagInterface $session) use ($doc) {
+                $documentKey = 'document_' . $doc->getId();
+                $useForSaveKey = 'document_' . $doc->getId() . '_useForSave';
+
+                if ($session->has($documentKey) && $session->has($useForSaveKey)) {
+                    if ($session->get($useForSaveKey)) {
+                        // only use the page from the session once
+                        $session->remove($useForSaveKey);
+
+                        return $session->get($documentKey);
+                    }
+                }
+
+                return null;
+            }, 'pimcore_documents');
+        }
+
+        return $sessionDocument;
+    }
+
+    /**
      * @Route("/remove-from-session", methods={"DELETE"})
      *
      * @param Request $request
