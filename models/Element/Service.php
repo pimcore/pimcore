@@ -489,59 +489,6 @@ class Service extends Model\AbstractModel
         $sanityCheck->save();
     }
 
-    public static function runSanityCheck()
-    {
-        $sanityCheck = Sanitycheck::getNext();
-        $count = 0;
-        while ($sanityCheck) {
-            $count++;
-            if ($count % 10 == 0) {
-                \Pimcore::collectGarbage();
-            }
-
-            $element = self::getElementById($sanityCheck->getType(), $sanityCheck->getId());
-            if ($element) {
-                try {
-                    self::performSanityCheck($element);
-                } catch (\Exception $e) {
-                    Logger::error('Element\\Service: sanity check for element with id [ ' . $element->getId() . ' ] and type [ ' . self::getType($element) . ' ] failed');
-                }
-                $sanityCheck->delete();
-            } else {
-                $sanityCheck->delete();
-            }
-            $sanityCheck = Sanitycheck::getNext();
-
-            // reduce load on server
-            Logger::debug('Now timeout for 3 seconds');
-            sleep(3);
-        }
-    }
-
-    /**
-     * @static
-     *
-     * @param ElementInterface $element
-     *
-     * @todo: I think ElementInterface is the wrong type here, it has no getter latestVersion
-     */
-    protected static function performSanityCheck($element)
-    {
-        if ($latestVersion = $element->getLatestVersion()) {
-            if ($latestVersion->getDate() > $element->getModificationDate()) {
-                return;
-            }
-        }
-
-        $element->setUserModification(0);
-        $element->save();
-
-        if ($version = $element->getLatestVersion(true)) {
-            $version->setNote('Sanitycheck');
-            $version->save();
-        }
-    }
-
     /**
      * @static
      *

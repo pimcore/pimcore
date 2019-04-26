@@ -330,7 +330,7 @@ class Version extends AbstractModel
      *
      * @return string
      */
-    protected function getFilePath(?int $id = null)
+    public function getFilePath(?int $id = null)
     {
         if (!$id) {
             $id = $this->getId();
@@ -348,7 +348,7 @@ class Version extends AbstractModel
     /**
      * @return string
      */
-    protected function getBinaryFilePath()
+    public function getBinaryFilePath()
     {
         // compatibility
         $compatibilityPath = $this->getLegacyFilePath() . '.bin';
@@ -362,7 +362,7 @@ class Version extends AbstractModel
     /**
      * @return string
      */
-    protected function getLegacyFilePath()
+    public function getLegacyFilePath()
     {
         return PIMCORE_VERSION_DIRECTORY . '/' . $this->getCtype() . '/' . $this->getId();
     }
@@ -664,151 +664,5 @@ class Version extends AbstractModel
     public function setBinaryFileId(?int $binaryFileId): void
     {
         $this->binaryFileId = $binaryFileId;
-    }
-
-    public function maintenanceCompress()
-    {
-        $perIteration = 100;
-        $alreadyCompressedCounter = 0;
-        $overallCounter = 0;
-
-        $list = new Version\Listing();
-        $list->setCondition('date < ' . (time() - 86400 * 30));
-        $list->setOrderKey('date');
-        $list->setOrder('DESC');
-        $list->setLimit($perIteration);
-
-        $total = $list->getTotalCount();
-        $iterations = ceil($total / $perIteration);
-
-        for ($i = 0; $i < $iterations; $i++) {
-            Logger::debug('iteration ' . ($i + 1) . ' of ' . $iterations);
-
-            $list->setOffset($i * $perIteration);
-
-            $versions = $list->load();
-
-            foreach ($versions as $version) {
-                $overallCounter++;
-
-                if (file_exists($version->getFilePath())) {
-                    gzcompressfile($version->getFilePath(), 9);
-                    @unlink($version->getFilePath());
-
-                    $alreadyCompressedCounter = 0;
-
-                    Logger::debug('version compressed:' . $version->getFilePath());
-                    Logger::debug('Waiting 1 sec to not kill the server...');
-                    sleep(1);
-                } else {
-                    $alreadyCompressedCounter++;
-                }
-            }
-
-            \Pimcore::collectGarbage();
-
-            // check here how many already compressed versions we've found so far, if over 100 skip here
-            // this is necessary to keep the load on the system low
-            // is would be very unusual that older versions are not already compressed, so we assume that only new
-            // versions need to be compressed, that's not perfect but a compromise we can (hopefully) live with.
-            if ($alreadyCompressedCounter > 100) {
-                Logger::debug('Over ' . $alreadyCompressedCounter . " versions were already compressed before, it doesn't seem that there are still uncompressed versions in the past, skip...");
-
-                return;
-            }
-        }
-    }
-
-    public function maintenanceCleanUp()
-    {
-        $conf['document'] = Config::getSystemConfig()->documents->versions;
-        $conf['asset'] = Config::getSystemConfig()->assets->versions;
-        $conf['object'] = Config::getSystemConfig()->objects->versions;
-
-        $elementTypes = [];
-
-        foreach ($conf as $elementType => $tConf) {
-            if (intval($tConf->days) > 0) {
-                $versioningType = 'days';
-                $value = intval($tConf->days);
-            } else {
-                $versioningType = 'steps';
-                $value = intval($tConf->steps);
-            }
-
-            if ($versioningType) {
-                $elementTypes[] = [
-                    'elementType' => $elementType,
-                    $versioningType => $value
-                ];
-            }
-        }
-
-        $ignoredIds = [];
-
-        while (true) {
-            $versions = $this->getDao()->maintenanceGetOutdatedVersions($elementTypes, $ignoredIds);
-            if (count($versions) == 0) {
-                break;
-            }
-            $counter = 0;
-
-            Logger::debug('versions to check: ' . count($versions));
-            if (is_array($versions) && !empty($versions)) {
-                $totalCount = count($versions);
-                foreach ($versions as $index => $id) {
-                    try {
-                        $version = Version::getById($id);
-                    } catch (\Exception $e) {
-                        $ignoredIds[] = $id;
-                        Logger::debug('Version with ' . $id . " not found\n");
-                        continue;
-                    }
-                    $counter++;
-
-                    // do not delete public versions
-                    if ($version->getPublic()) {
-                        $ignoredIds[] = $version->getId();
-                        continue;
-                    }
-
-                    // do not delete versions referenced in the scheduler
-                    if ($this->getDao()->isVersionUsedInScheduler($version)) {
-                        $ignoredIds[] = $version->getId();
-                        continue;
-                    }
-
-                    if ($version->getCtype() == 'document') {
-                        $element = Document::getById($version->getCid());
-                    } elseif ($version->getCtype() == 'asset') {
-                        $element = Asset::getById($version->getCid());
-                    } elseif ($version->getCtype() == 'object') {
-                        $element = DataObject::getById($version->getCid());
-                    }
-
-                    if ($element instanceof ElementInterface) {
-                        Logger::debug('currently checking Element-ID: ' . $element->getId() . ' Element-Type: ' . Element\Service::getElementType($element) . ' in cycle: ' . $counter . '/' . $totalCount);
-
-                        if ($element->getModificationDate() >= $version->getDate()) {
-                            // delete version if it is outdated
-                            Logger::debug('delete version: ' . $version->getId() . ' because it is outdated');
-                            $version->delete();
-                        } else {
-                            $ignoredIds[] = $version->getId();
-                            Logger::debug('do not delete version (' . $version->getId() . ") because version's date is newer than the actual modification date of the element. Element-ID: " . $element->getId() . ' Element-Type: ' . Element\Service::getElementType($element));
-                        }
-                    } else {
-                        // delete version if the corresponding element doesn't exist anymore
-                        Logger::debug('delete version (' . $version->getId() . ") because the corresponding element doesn't exist anymore");
-                        $version->delete();
-                    }
-
-                    // call the garbage collector if memory consumption is > 100MB
-                    if (memory_get_usage() > 100000000) {
-                        \Pimcore::collectGarbage();
-                    }
-                }
-            }
-        }
     }
 }

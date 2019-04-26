@@ -12,39 +12,34 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\Tool;
+namespace Pimcore\Maintenance\Tasks;
 
 use Pimcore\Config;
+use Pimcore\Maintenance\TaskInterface;
 
-class Housekeeping
+final class HousekeepingTask implements TaskInterface
 {
     /**
-     * @param int $lastAccessGreaterThanDays
+     * {@inheritdoc}
      */
-    public static function cleanupTmpFiles($lastAccessGreaterThanDays = 90)
+    public function execute()
     {
-        self::deleteFilesInFolderOlderThanDays(PIMCORE_TEMPORARY_DIRECTORY, $lastAccessGreaterThanDays);
-    }
+        $this->deleteFilesInFolderOlderThanDays(PIMCORE_TEMPORARY_DIRECTORY, 90);
 
-    /**
-     * @param int $olderThanDays
-     */
-    public static function cleanupSymfonyProfilingData($olderThanDays = 4)
-    {
         $environments = Config::getEnvironmentConfig()->getProfilerHousekeepingEnvironments();
 
         foreach ($environments as $environment) {
             $profilerDir = sprintf('%s/cache/%s/profiler', PIMCORE_PRIVATE_VAR, $environment);
 
-            self::deleteFilesInFolderOlderThanDays($profilerDir, $olderThanDays);
+            $this->deleteFilesInFolderOlderThanDays($profilerDir, 4);
         }
     }
 
-    /**
+     /**
      * @param $folder
      * @param $days
      */
-    protected static function deleteFilesInFolderOlderThanDays($folder, $days)
+    protected function deleteFilesInFolderOlderThanDays($folder, $days)
     {
         if (!is_dir($folder)) {
             return;

@@ -17,20 +17,39 @@ namespace Pimcore\Bundle\CoreBundle\Command;
 use Pimcore\Console\AbstractCommand;
 use Pimcore\Event\System\MaintenanceEvent;
 use Pimcore\Event\SystemEvents;
-use Pimcore\Logger;
+use Pimcore\Maintenance\CallableTask;
+use Pimcore\Maintenance\ExecutorInterface;
 use Pimcore\Model\Schedule;
 use Pimcore\Model\Schedule\Maintenance\Job;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class MaintenanceCommand extends AbstractCommand
 {
-    protected $systemTasks = [
-        'scheduledtasks', 'cleanupcache', 'logmaintenance', 'sanitycheck', 'cleanuplogfiles', 'versioncleanup',
-        'versioncompress', 'redirectcleanup', 'cleanupbrokenviews', 'downloadmaxminddb',
-        'tmpstorecleanup', 'imageoptimize'
-    ];
+    /**
+     * @var ExecutorInterface
+     */
+    private $maintenanceExecutor;
+
+    /**
+     * @var LoggerInterface
+     */
+    private $logger;
+
+    /**
+     * @param ExecutorInterface $maintenanceExecutor
+     * @param LoggerInterface $logger
+     */
+    public function __construct(ExecutorInterface $maintenanceExecutor, LoggerInterface $logger)
+    {
+        $this->maintenanceExecutor = $maintenanceExecutor;
+        $this->logger = $logger;
+
+        parent::__construct();
+    }
+
 
     protected function configure()
     {
@@ -39,8 +58,8 @@ class MaintenanceCommand extends AbstractCommand
         $help = $description . '. Valid jobs are: ' . "\n\n";
         $help .= '  <comment>*</comment> any bundle class name handling maintenance (e.g. <comment>PimcoreEcommerceFrameworkBundle</comment>)' . "\n";
 
-        foreach ($this->systemTasks as $systemTask) {
-            $help .= '  <comment>*</comment> ' . $systemTask . "\n";
+        foreach ($this->maintenanceExecutor->getTaskNames() as $taskName) {
+            $help .= '  <comment>*</comment> ' . $taskName . "\n";
         }
 
         $this
@@ -82,32 +101,33 @@ class MaintenanceCommand extends AbstractCommand
         $manager->setExcludedJobs($excludedJobs);
         $manager->setForce((bool) $input->getOption('force'));
 
-        // register scheduled tasks
-        $manager->registerJob(Job::fromMethodCall('scheduledtasks', new Schedule\Task\Executor(), 'execute'));
-        $manager->registerJob(Job::fromMethodCall('logmaintenance', new \Pimcore\Log\Maintenance(), 'mail'));
-        $manager->registerJob(Job::fromMethodCall('cleanuplogfiles', new \Pimcore\Log\Maintenance(), 'cleanupLogFiles'));
-        $manager->registerJob(Job::fromMethodCall('httperrorlog', new \Pimcore\Log\Maintenance(), 'httpErrorLogCleanup'));
-        $manager->registerJob(Job::fromMethodCall('checkErrorLogsDb', new \Pimcore\Log\Maintenance(), 'checkErrorLogsDb'));
-        $manager->registerJob(Job::fromMethodCall('archiveLogEntries', new \Pimcore\Log\Maintenance(), 'archiveLogEntries'));
-        $manager->registerJob(Job::fromMethodCall('sanitycheck', '\\Pimcore\\Model\\Element\\Service', 'runSanityCheck'));
-        $manager->registerJob(Job::fromMethodCall('versioncleanup', new \Pimcore\Model\Version(), 'maintenanceCleanUp'));
-        $manager->registerJob(Job::fromMethodCall('versioncompress', new \Pimcore\Model\Version(), 'maintenanceCompress'));
-        $manager->registerJob(Job::fromMethodCall('redirectcleanup', '\\Pimcore\\Model\\Redirect', 'maintenanceCleanUp'));
-        $manager->registerJob(Job::fromMethodCall('cleanupbrokenviews', '\\Pimcore\\Db', 'cleanupBrokenViews'));
-        $manager->registerJob(Job::fromMethodCall('downloadmaxminddb', '\\Pimcore\\Update', 'updateMaxmindDb'));
-        $manager->registerJob(Job::fromMethodCall('cleanupcache', '\\Pimcore\\Cache', 'maintenance'));
-        $manager->registerJob(Job::fromMethodCall('tmpstorecleanup', '\\Pimcore\\Model\\Tool\\TmpStore', 'cleanup'));
-        $manager->registerJob(Job::fromMethodCall('imageoptimize', '\\Pimcore\\Model\\Asset\\Image\\Thumbnail\\Processor', 'processOptimizeQueue'));
-        $manager->registerJob(Job::fromMethodCall('cleanupTmpFiles', '\\Pimcore\\Tool\\Housekeeping', 'cleanupTmpFiles'));
-        $manager->registerJob(Job::fromMethodCall('cleanupSymfonyProfilingData', '\\Pimcore\\Tool\\Housekeeping', 'cleanupSymfonyProfilingData'));
-        $manager->registerJob(Job::fromMethodCall('markexpiredtagsdisabled', '\\Pimcore\\Model\\Tool\\Tag\\Config', 'markExpiredTagsAsDisabled'));
-
         $event = new MaintenanceEvent($manager);
         \Pimcore::getEventDispatcher()->dispatch(SystemEvents::MAINTENANCE, $event);
 
-        $manager->run();
+        foreach ($manager->getJobs() as $job) {
+            @trigger_error(
+                sprintf('Job with ID %s is registered using the deprecated %s Event, please use a service tag instead', $job->getId(), SystemEvents::MAINTENANCE),
+                E_USER_DEPRECATED
+            );
 
-        Logger::info('All maintenance-jobs finished!');
+            $trackerReflector = new \ReflectionClass(Job::class);
+            $callableProperty = $trackerReflector->getProperty('callable');
+            $callableProperty->setAccessible(true);
+
+            $argumentsProperty = $trackerReflector->getProperty('arguments');
+            $argumentsProperty->setAccessible(true);
+
+            $callable = $callableProperty->getValue($job);
+            $arguments = $argumentsProperty->getValue($job);
+
+            if (is_callable($callable)) {
+                $this->maintenanceExecutor->registerTask($job->getId(), CallableTask::fromCallable($callable, $arguments ?? []));
+            }
+        }
+
+        $this->maintenanceExecutor->executeMaintenance($validJobs, $excludedJobs, (bool) $input->getOption('force'));
+
+        $this->logger->info('All maintenance-jobs finished!');
     }
 
     /**
