@@ -46,7 +46,7 @@ class Document extends Element\AbstractElement
     /**
      * @var bool
      */
-    private static $hidePublished = false;
+    private static $hideUnpublished = false;
 
     /**
      * @var array
@@ -691,20 +691,21 @@ class Document extends Element\AbstractElement
 
     /**
      * Returns true if the document has at least one child
+     * @param $unpublished
      *
      * @return bool
      */
-    public function hasChildren()
+    public function hasChildren($unpublished = false)
     {
         if (is_bool($this->hasChilds)) {
             if (($this->hasChilds and empty($this->childs)) or (!$this->hasChilds and !empty($this->childs))) {
-                return $this->getDao()->hasChildren();
+                return $this->getDao()->hasChildren($unpublished);
             } else {
                 return $this->hasChilds;
             }
         }
 
-        return $this->getDao()->hasChildren();
+        return $this->getDao()->hasChildren($unpublished);
     }
 
     /**
@@ -1462,11 +1463,11 @@ class Document extends Element\AbstractElement
     /**
      * Set true if want to hide documents.
      *
-     * @param bool $flag
+     * @param bool $hideUnpublished
      */
-    public static function setHideUnpublished($flag)
+    public static function setHideUnpublished($hideUnpublished)
     {
-        self::$hidePublished = $flag;
+        self::$hideUnpublished = $hideUnpublished;
     }
 
     /**
@@ -1476,7 +1477,7 @@ class Document extends Element\AbstractElement
      */
     public static function doHideUnpublished()
     {
-        return self::$hidePublished;
+        return self::$hideUnpublished;
     }
 
     /**

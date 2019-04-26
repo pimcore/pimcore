@@ -349,13 +349,22 @@ class Dao extends Model\Element\Dao
     }
 
     /**
-     * Checks if there are children.
+     * Quick check if there are children.
+     * @param bool $unpublished
      *
      * @return bool
      */
-    public function hasChildren()
+    public function hasChildren($unpublished = false)
     {
-        $c = $this->db->fetchOne('SELECT id FROM documents WHERE parentId = ? LIMIT 1', $this->model->getId());
+        $sql = 'SELECT id FROM documents WHERE parentId = ?';
+
+        if (Model\Document::doHideUnpublished() && !$unpublished) {
+            $sql .= ' AND published = 1';
+        }
+
+        $sql .= ' LIMIT 1';
+
+        $c = $this->db->fetchOne($sql , $this->model->getId());
 
         return (bool)$c;
     }
