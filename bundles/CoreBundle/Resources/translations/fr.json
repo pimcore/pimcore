@@ -884,14 +884,11 @@
     "redirects_expired_cleanup": "Nettoyage des redirections expirées",
     "redirects_cleanup_warning": "Voulez-vous vraiment nettoyer les redirections expirées ?",
     "redirects_cleanup_error": "Une erreur s'est produite lors du nettoyage des redirections expirées",
-    "enable_admin_async_load": "Activer le chargement asynchrone dans l'admin",
-    "async_loading_warning_block": "AVERTISSEMENT : le chargement asynchrone n'est PAS possible dans les Champs et les Blocs Localisés",
-    "allow_multiple_assignments": "Allow Multiple Assignments",
-    "all_translations": "All Translations",
-    "only_unreferenced": "only unreferenced",
-    "split_view_settings": "Split View Settings",
-    "enable_split_view": "Enable Split View",
-    "disable_split_view": "Disable Split View",
-    "split_view_object_dirty_title": "Please confirm",
-    "split_view_object_dirty_msg": "There are unsaved modifications. You will lose all changes. Are you sure?"
+    "all_translations": "Toutes les traductions",
+    "only_unreferenced": "seulement non référencé",
+    "split_view_settings": "Paramètres de vue fractionnée",
+    "enable_split_view": "Activer la vue partagée",
+    "disable_split_view": "Désactiver la vue partagée",
+    "split_view_object_dirty_title": "Veuillez confirmer",
+    "split_view_object_dirty_msg": "Il y a des modifications non sauvegardées. Vous allez perdre tous les changements. Êtes-vous sûr ?"
 }
