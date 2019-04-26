@@ -106,7 +106,14 @@ class SnippetController extends DocumentControllerBase
         try {
             if ($request->get('id')) {
                 $snippet = Document\Snippet::getById($request->get('id'));
-                $snippet = $this->getLatestVersion($snippet);
+
+                $snippetSession  = $this->getFromSession($snippet);
+
+                if ($snippetSession) {
+                    $snippet = $snippetSession;
+                } else {
+                    $snippet = $this->getLatestVersion($snippet);
+                }
 
                 $snippet->setUserModification($this->getAdminUser()->getId());
 
