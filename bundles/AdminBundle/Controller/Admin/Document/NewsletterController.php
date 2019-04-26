@@ -346,7 +346,7 @@ class NewsletterController extends DocumentControllerBase
         $addressSourceAdapterName = $request->get('addressAdapterName');
         $adapterParams = json_decode($request->get('adapterParams'), true);
 
-        $serviceLocator = \Pimcore::getContainer()->get('pimcore.newsletter.address_source_adapter.factories');
+        $serviceLocator = $this->get('pimcore.newsletter.address_source_adapter.factories');
 
         if (!$serviceLocator->has($addressSourceAdapterName)) {
             $msg = sprintf('Cannot send newsletters because Address Source Adapter with identifier %s could not be found', $addressSourceAdapterName);
