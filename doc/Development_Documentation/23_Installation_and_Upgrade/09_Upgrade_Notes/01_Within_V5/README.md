@@ -1,6 +1,8 @@
 # Upgrade Notes for Upgrades within Pimcore 5
 
 ## Version 5.8.0
+- Add PathFormatter interface, static path formatters are now deprecated and will be removed with Version 6.0. You can read
+ more about that [here](../../../05_Objects/01_Object_Classes/05_Class_Settings/14_Path_Formatter.md).
 - Interface of `Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\IConfig:getCategories()` changed - `$subObjectId = null` 
   was added as second parameter. If you have your custom `getCategories` implementation you need to adapt your method signature.
 - `AbstractObject::hasChildren()` and `Document::hasChildren()` from now on only return the published items by default, similar
