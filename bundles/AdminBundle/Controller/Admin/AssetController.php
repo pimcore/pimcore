@@ -570,7 +570,7 @@ class AssetController extends ElementControllerBase implements EventedController
                  * @var $asset Asset
                  */
                 $deletedItems[] = $asset->getRealFullPath();
-                if ($asset->isAllowed('delete')) {
+                if ($asset->isAllowed('delete') && !$asset->isLocked()) {
                     $asset->delete();
                 }
             }
@@ -579,9 +579,12 @@ class AssetController extends ElementControllerBase implements EventedController
         } elseif ($request->get('id')) {
             $asset = Asset::getById($request->get('id'));
 
-            if ($asset->isAllowed('delete')) {
+            if (!$asset->isAllowed('delete')) {
+                return $this->adminJson(['success' => false, 'message' => 'missing_permission']);
+            } else if ($asset->isLocked()) {
+                return $this->adminJson(['success' => false, 'message' => 'prevented deleting asset, because it is locked: ID: ' . $asset->getId()]);
+            } else {
                 $asset->delete();
-
                 return $this->adminJson(['success' => true]);
             }
         }

@@ -479,6 +479,7 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
             }
 
             menu.add(new Ext.menu.Item({
+                hidden: data.data.locked,
                 text: t('delete'),
                 iconCls: "pimcore_icon_delete",
                 handler: function (data) {
