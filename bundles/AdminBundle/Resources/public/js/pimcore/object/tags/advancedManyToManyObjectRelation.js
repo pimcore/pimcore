@@ -493,18 +493,20 @@ pimcore.object.tags.advancedManyToManyObjectRelation = Class.create(pimcore.obje
                         }.bind(this, grid)
                     });
                     menu.add(batchSelectedMenu);
-                    menu.on('beforeshow', function (batchAllMenu, grid) {
+                    menu.on('beforeshow', function (batchAllMenu, batchSelectedMenu, grid) {
                         var menu = grid.headerCt.getMenu();
                         var columnDataIndex = menu.activeHeader.dataIndex;
                         var metaIndex = this.fieldConfig.columnKeys.indexOf(columnDataIndex);
 
                         if (metaIndex < 0) {
+                            batchSelectedMenu.hide();
                             batchAllMenu.hide();
                         } else {
+                            batchSelectedMenu.show();
                             batchAllMenu.show();
                         }
 
-                    }.bind(this, batchAllMenu, grid));
+                    }.bind(this, batchAllMenu, batchSelectedMenu, grid));
                 }
             }.bind(this));
         }
