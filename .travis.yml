@@ -9,6 +9,7 @@ php:
   - 5.6.29
   - 7
   - 7.1
+  - 7.2
 
 addons:
   hosts:
@@ -23,7 +24,7 @@ matrix:
   include:
     - os: linux
       sudo: false
-      php: 7.1
+      php: 7.2
       services: ~
       addons: ~
       env:

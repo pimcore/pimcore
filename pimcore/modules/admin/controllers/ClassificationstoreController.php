@@ -12,7 +12,6 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-use Pimcore\Model\Object;
 use Pimcore\Model\Object\Classificationstore;
 use Pimcore\Db;
 
@@ -136,7 +135,7 @@ class Admin_ClassificationstoreController extends \Pimcore\Controller\Action\Adm
     {
         $nodeId = $this->getParam("node");
 
-        $list = new Object\Classificationstore\GroupConfig\Listing();
+        $list = new \Pimcore\Model\Object\Classificationstore\GroupConfig\Listing();
         $list->setCondition("parentId = ?", $nodeId);
         $list = $list->load();
 
@@ -227,7 +226,7 @@ class Admin_ClassificationstoreController extends \Pimcore\Controller\Action\Adm
 
             $allowedCollectionIds = [];
             if ($this->getParam("oid")) {
-                $object = Object\Concrete::getById($this->getParam("oid"));
+                $object = \Pimcore\Model\Object\Concrete::getById($this->getParam("oid"));
                 $class = $object->getClass();
                 $fd = $class->getFieldDefinition($this->getParam("fieldname"));
                 $allowedGroupIds = $fd->getAllowedGroupIds();
@@ -408,7 +407,7 @@ class Admin_ClassificationstoreController extends \Pimcore\Controller\Action\Adm
             }
 
             if ($this->getParam("oid")) {
-                $object = Object\Concrete::getById($this->getParam("oid"));
+                $object = \Pimcore\Model\Object\Concrete::getById($this->getParam("oid"));
                 $class = $object->getClass();
                 $fd = $class->getFieldDefinition($this->getParam("fieldname"));
                 $allowedGroupIds = $fd->getAllowedGroupIds();
@@ -588,9 +587,9 @@ class Admin_ClassificationstoreController extends \Pimcore\Controller\Action\Adm
         $storeId = $this->getParam("storeId");
 
         $mapping = [
-            "groupName" => Object\Classificationstore\GroupConfig\Dao::TABLE_NAME_GROUPS .".name",
-            "keyName" => Object\Classificationstore\KeyConfig\Dao::TABLE_NAME_KEYS .".name",
-            "keyDescription" => Object\Classificationstore\KeyConfig\Dao::TABLE_NAME_KEYS. ".description"];
+            "groupName" => \Pimcore\Model\Object\Classificationstore\GroupConfig\Dao::TABLE_NAME_GROUPS .".name",
+            "keyName" => \Pimcore\Model\Object\Classificationstore\KeyConfig\Dao::TABLE_NAME_KEYS .".name",
+            "keyDescription" => \Pimcore\Model\Object\Classificationstore\KeyConfig\Dao::TABLE_NAME_KEYS. ".description"];
 
         $start = 0;
         $limit = 15;
@@ -839,7 +838,7 @@ class Admin_ClassificationstoreController extends \Pimcore\Controller\Action\Adm
             $allowedGroupIds = null;
 
             if ($this->getParam("oid")) {
-                $object = Object\Concrete::getById($this->getParam("oid"));
+                $object = \Pimcore\Model\Object\Concrete::getById($this->getParam("oid"));
                 $class = $object->getClass();
                 $fd = $class->getFieldDefinition($this->getParam("fieldname"));
                 $allowedGroupIds = $fd->getAllowedGroupIds();

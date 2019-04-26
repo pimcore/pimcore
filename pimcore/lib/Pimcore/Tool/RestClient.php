@@ -18,7 +18,6 @@ use Pimcore\Tool\RestClient\Exception;
 use Pimcore\Tool;
 use Pimcore\Model;
 use Pimcore\Model\User;
-use Pimcore\Model\Object;
 use Pimcore\Model\Document;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Webservice;
@@ -474,7 +473,7 @@ class RestClient
             if (!$decode) {
                 $result[] = $wsDocument;
             } else {
-                $object = new Object\AbstractObject();
+                $object = new \Pimcore\Model\Object\AbstractObject();
                 $wsDocument->reverseMap($object);
                 $result[] = $object;
             }
@@ -608,7 +607,7 @@ class RestClient
         }
 
         if ($wsDocument->type == "folder") {
-            $object = new Object\Folder();
+            $object = new \Pimcore\Model\Object\Folder();
             $wsDocument->reverseMap($object);
 
             return $object;
@@ -617,7 +616,7 @@ class RestClient
 
             $object = \Pimcore::getDiContainer()->make($classname);
 
-            if ($object instanceof Object\Concrete) {
+            if ($object instanceof \Pimcore\Model\Object\Concrete) {
                 $curTime = microtime(true);
                 $wsDocument->reverseMap($object, $this->getDisableMappingExceptions(), $idMapper);
                 $timeConsumed = round(microtime(true) - $curTime, 3) * 1000;
@@ -937,7 +936,7 @@ class RestClient
 
         $wsDocument = $this->fillWebserviceData("\\Pimcore\\Model\\Webservice\\Data\\ClassDefinition\\In", $responseData);
 
-        $class = new Object\ClassDefinition();
+        $class = new \Pimcore\Model\Object\ClassDefinition();
         $wsDocument->reverseMap($class);
 
         return $class;
@@ -961,7 +960,7 @@ class RestClient
             return $wsDocument;
         }
 
-        $class = new Object\ClassDefinition();
+        $class = new \Pimcore\Model\Object\ClassDefinition();
         $wsDocument->reverseMap($class);
 
         return $class;

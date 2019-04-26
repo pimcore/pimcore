@@ -20,7 +20,6 @@ use Pimcore\Model;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
 use Pimcore\Model\Asset;
-use Pimcore\Model\Object;
 use Pimcore\Logger;
 
 /**
@@ -286,8 +285,8 @@ class Href extends Model\Document\Tag
                     }
                 }
             } elseif ($this->type == "object") {
-                $this->element = Object\AbstractObject::getById($this->id);
-                if (!$this->element instanceof Object\AbstractObject) {
+                $this->element = \Pimcore\Model\Object\AbstractObject::getById($this->id);
+                if (!$this->element instanceof \Pimcore\Model\Object\AbstractObject) {
                     if ($idMapper && $idMapper->ignoreMappingFailures()) {
                         $idMapper->recordMappingFailure("document", $this->getDocumentId(), $data->type, $data->id);
                     } else {

@@ -20,7 +20,6 @@ use Pimcore\Model;
 use Pimcore\Config;
 use Pimcore\Model\Document;
 use Pimcore\Model\Asset;
-use Pimcore\Model\Object;
 use Pimcore\Model\Element;
 use Pimcore\Logger;
 
@@ -40,7 +39,7 @@ class Renderlet extends Model\Document\Tag
     /**
      * Contains the object
      *
-     * @var Document | Asset | Object\AbstractObject
+     * @var Document | Asset | \Pimcore\Model\Object\AbstractObject
      */
     public $o;
 
@@ -301,8 +300,8 @@ class Renderlet extends Model\Document\Tag
                         }
                     }
                 } elseif ($this->type == "object") {
-                    $this->o = Object::getById($id);
-                    if (!$this->o instanceof Object\AbstractObject) {
+                    $this->o = \Pimcore\Model\Object\AbstractObject::getById($id);
+                    if (!$this->o instanceof \Pimcore\Model\Object\AbstractObject) {
                         if ($idMapper && $idMapper->ignoreMappingFailures()) {
                             $idMapper->recordMappingFailure($this->getDocumentId(), $this->type, $this->id);
                         } else {
@@ -387,7 +386,7 @@ class Renderlet extends Model\Document\Tag
     }
 
     /**
-     * @param Asset|Document|Object $o
+     * @param Asset|Document|Model\Object $o
      * @return Document\Tag\Renderlet
      */
     public function setO($o)
@@ -398,7 +397,7 @@ class Renderlet extends Model\Document\Tag
     }
 
     /**
-     * @return Asset|Document|Object
+     * @return Asset|Document|Model\Object
      */
     public function getO()
     {

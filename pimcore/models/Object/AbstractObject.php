@@ -262,7 +262,7 @@ class AbstractObject extends Model\Element\AbstractElement
 
         try {
             if ($force || !($object = Cache::load($cacheKey))) {
-                $object = new Model\Object();
+                $object = new Model\Object\AbstractObject();
                 $typeInfo = $object->getDao()->getTypeById($id);
 
                 if ($typeInfo["o_type"] == "object" || $typeInfo["o_type"] == "variant" || $typeInfo["o_type"] == "folder") {

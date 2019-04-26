@@ -21,7 +21,6 @@ use Pimcore\Tool;
 use Pimcore\Model\Webservice;
 use Pimcore\Model\Element;
 use Pimcore\Model\Asset;
-use Pimcore\Model\Object;
 use Pimcore\Model\Document;
 
 class Service
@@ -128,11 +127,11 @@ class Service
         if ($element instanceof Asset) {
             $element->setFilename($apiElement->filename);
             $element->setData(base64_decode($apiElement->data));
-        } elseif ($element instanceof Object\Concrete) {
+        } elseif ($element instanceof \Pimcore\Model\Object\Concrete) {
             $element->setKey($apiElement->key);
             $element->setClassName($apiElement->className);
-            $class = Object\ClassDefinition::getByName($apiElement->className);
-            if (!$class instanceof Object\ClassDefinition) {
+            $class = \Pimcore\Model\Object\ClassDefinition::getByName($apiElement->className);
+            if (!$class instanceof \Pimcore\Model\Object\ClassDefinition) {
                 throw new \Exception("Unknown object class [ " . $apiElement->className . " ] ");
             }
             $element->setClassId($class->getId());

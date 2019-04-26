@@ -17,7 +17,6 @@
 namespace Pimcore\Model\Object\ClassDefinition\Data;
 
 use Pimcore\Model;
-use Pimcore\Model\Object;
 
 class Date extends Model\Object\ClassDefinition\Data
 {
@@ -63,9 +62,9 @@ class Date extends Model\Object\ClassDefinition\Data
     public $useCurrentDate;
 
     /**
-     * @see Object\ClassDefinition\Data::getDataForResource
+     * @see Model\Object\ClassDefinition\Data::getDataForResource
      * @param \Zend_Date|\DateTime $data
-     * @param null|Object\AbstractObject $object
+     * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
      * @return integer
      */
@@ -77,7 +76,7 @@ class Date extends Model\Object\ClassDefinition\Data
     }
 
     /**
-     * @see Object\ClassDefinition\Data::getDataFromResource
+     * @see Model\Object\ClassDefinition\Data::getDataFromResource
      * @param integer $data
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
@@ -93,9 +92,9 @@ class Date extends Model\Object\ClassDefinition\Data
     }
 
     /**
-     * @see Object\ClassDefinition\Data::getDataForQueryResource
+     * @see Model\Object\ClassDefinition\Data::getDataForQueryResource
      * @param \Zend_Date|\DateTime $data
-     * @param null|Object\AbstractObject $object
+     * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
      * @return integer
      */
@@ -107,9 +106,9 @@ class Date extends Model\Object\ClassDefinition\Data
     }
 
     /**
-     * @see Object\ClassDefinition\Data::getDataForEditmode
+     * @see Model\Object\ClassDefinition\Data::getDataForEditmode
      * @param \Zend_Date\DateTime $data
-     * @param null|Object\AbstractObject $object
+     * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
      * @return string
      */
@@ -139,7 +138,7 @@ class Date extends Model\Object\ClassDefinition\Data
     /**
      * @see Model\Object\ClassDefinition\Data::getDataFromEditmode
      * @param integer $data
-     * @param null|Object\AbstractObject $object
+     * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
      * @return \Zend_Date|\DateTime
      */
@@ -168,9 +167,9 @@ class Date extends Model\Object\ClassDefinition\Data
     }
 
     /**
-     * @see Object\ClassDefinition\Data::getVersionPreview
+     * @see Model\Object\ClassDefinition\Data::getVersionPreview
      * @param \Zend_Date|\DateTime $data
-     * @param null|Object\AbstractObject $object
+     * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
      * @return string
      */
@@ -217,7 +216,7 @@ class Date extends Model\Object\ClassDefinition\Data
     /**
      * converts object data to a simple string value or CSV Export
      * @abstract
-     * @param Object\AbstractObject $object
+     * @param Model\Object\AbstractObject $object
      * @param array $params
      * @return string
      */
@@ -237,7 +236,7 @@ class Date extends Model\Object\ClassDefinition\Data
      * @param string $importValue
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
-     * @return null|\Pimcore\Date|Object\ClassDefinition\Data
+     * @return null|\Pimcore\Date|Model\Object\ClassDefinition\Data
      */
     public function getFromCsvImport($importValue, $object = null, $params = [])
     {
@@ -261,7 +260,7 @@ class Date extends Model\Object\ClassDefinition\Data
 
     /**
      * converts data to be exposed via webservices
-     * @param Object\Concrete $object
+     * @param Model\Object\Concrete $object
      * @param mixed $params
      * @return mixed
      */

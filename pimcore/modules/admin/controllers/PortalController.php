@@ -14,7 +14,6 @@
 
 use Pimcore\Model\Document;
 use Pimcore\Model\Asset;
-use Pimcore\Model\Object;
 use Pimcore\Model\Site;
 use Pimcore\Logger;
 
@@ -294,7 +293,7 @@ class Admin_PortalController extends \Pimcore\Controller\Action\Admin
 
     public function portletModifiedObjectsAction()
     {
-        $list = Object::getList([
+        $list = \Pimcore\Model\Object\AbstractObject::getList([
             "limit" => 10,
             "order" => "DESC",
             "orderKey" => "o_modificationDate",

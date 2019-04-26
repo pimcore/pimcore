@@ -17,7 +17,6 @@
 namespace Pimcore\Model\Object\AbstractObject;
 
 use Pimcore\Model;
-use Pimcore\Model\Object;
 use Pimcore\Logger;
 
 /**
@@ -160,7 +159,7 @@ class Dao extends Model\Element\Dao
      */
     public function updateChildsPaths($oldPath)
     {
-        if ($this->hasChilds([Object::OBJECT_TYPE_OBJECT, Object::OBJECT_TYPE_FOLDER, Object::OBJECT_TYPE_VARIANT])) {
+        if ($this->hasChilds([\Pimcore\Model\Object\AbstractObject::OBJECT_TYPE_OBJECT, \Pimcore\Model\Object\AbstractObject::OBJECT_TYPE_FOLDER, \Pimcore\Model\Object\AbstractObject::OBJECT_TYPE_VARIANT])) {
             //get objects to empty their cache
             $objects = $this->db->fetchCol("SELECT o_id FROM objects WHERE o_path LIKE ?", $oldPath . "%");
 
@@ -276,7 +275,7 @@ class Dao extends Model\Element\Dao
      * @param array $objectTypes
      * @return bool
      */
-    public function hasChilds($objectTypes = [Object::OBJECT_TYPE_OBJECT, Object::OBJECT_TYPE_FOLDER])
+    public function hasChilds($objectTypes = [\Pimcore\Model\Object\AbstractObject::OBJECT_TYPE_OBJECT, \Pimcore\Model\Object\AbstractObject::OBJECT_TYPE_FOLDER])
     {
         return $this->hasChildren($objectTypes);
     }
@@ -287,7 +286,7 @@ class Dao extends Model\Element\Dao
      * @param array $objectTypes
      * @return boolean
      */
-    public function hasChildren($objectTypes = [Object::OBJECT_TYPE_OBJECT, Object::OBJECT_TYPE_FOLDER])
+    public function hasChildren($objectTypes = [\Pimcore\Model\Object\AbstractObject::OBJECT_TYPE_OBJECT, \Pimcore\Model\Object\AbstractObject::OBJECT_TYPE_FOLDER])
     {
         $c = $this->db->fetchOne("SELECT o_id FROM objects WHERE o_parentId = ? AND o_type IN ('" . implode("','", $objectTypes) . "')", $this->model->getId());
 
@@ -300,7 +299,7 @@ class Dao extends Model\Element\Dao
      * @param array $objectTypes
      * @return boolean
      */
-    public function hasSiblings($objectTypes = [Object::OBJECT_TYPE_OBJECT, Object::OBJECT_TYPE_FOLDER])
+    public function hasSiblings($objectTypes = [\Pimcore\Model\Object\AbstractObject::OBJECT_TYPE_OBJECT, \Pimcore\Model\Object\AbstractObject::OBJECT_TYPE_FOLDER])
     {
         $c = $this->db->fetchOne("SELECT o_id FROM objects WHERE o_parentId = ? and o_id != ? AND o_type IN ('" . implode("','", $objectTypes) . "')", [$this->model->getParentId(), $this->model->getId()]);
 
@@ -314,7 +313,7 @@ class Dao extends Model\Element\Dao
      * @param Model\User $user
      * @return integer
      */
-    public function getChildAmount($objectTypes = [Object::OBJECT_TYPE_OBJECT, Object::OBJECT_TYPE_FOLDER], $user = null)
+    public function getChildAmount($objectTypes = [\Pimcore\Model\Object\AbstractObject::OBJECT_TYPE_OBJECT, \Pimcore\Model\Object\AbstractObject::OBJECT_TYPE_FOLDER], $user = null)
     {
         if ($user and !$user->isAdmin()) {
             $userIds = $user->getRoles();
@@ -390,7 +389,7 @@ class Dao extends Model\Element\Dao
 
             $classes = [];
             foreach ($classIds as $classId) {
-                $classes[] = Object\ClassDefinition::getById($classId);
+                $classes[] = \Pimcore\Model\Object\ClassDefinition::getById($classId);
             }
 
             return $classes;

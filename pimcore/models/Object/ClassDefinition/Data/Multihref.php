@@ -20,7 +20,6 @@ use Pimcore\Model;
 use Pimcore\Model\Element;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Document;
-use Pimcore\Model\Object;
 
 class Multihref extends Model\Object\ClassDefinition\Data\Relations\AbstractRelations
 {
@@ -206,7 +205,7 @@ class Multihref extends Model\Object\ClassDefinition\Data\Relations\AbstractRela
 
 
     /**
-     * @see Object\ClassDefinition\Data::getDataForResource
+     * @see Model\Object\ClassDefinition\Data::getDataForResource
      * @param array $data
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
@@ -242,7 +241,7 @@ class Multihref extends Model\Object\ClassDefinition\Data\Relations\AbstractRela
     }
 
     /**
-     * @see Object\ClassDefinition\Data::getDataFromResource
+     * @see Model\Object\ClassDefinition\Data::getDataFromResource
      * @param array $data
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
@@ -254,7 +253,7 @@ class Multihref extends Model\Object\ClassDefinition\Data\Relations\AbstractRela
         if (is_array($data) && count($data) > 0) {
             foreach ($data as $element) {
                 if ($element["type"] == "object") {
-                    $e = Object::getById($element["dest_id"]);
+                    $e = \Pimcore\Model\Object\AbstractObject::getById($element["dest_id"]);
                 } elseif ($element["type"] == "asset") {
                     $e = Asset::getById($element["dest_id"]);
                 } elseif ($element["type"] == "document") {
@@ -303,7 +302,7 @@ class Multihref extends Model\Object\ClassDefinition\Data\Relations\AbstractRela
     }
 
     /**
-     * @see Object\ClassDefinition\Data::getDataForEditmode
+     * @see Model\Object\ClassDefinition\Data::getDataForEditmode
      * @param array $data
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
@@ -315,9 +314,9 @@ class Multihref extends Model\Object\ClassDefinition\Data\Relations\AbstractRela
 
         if (is_array($data) && count($data) > 0) {
             foreach ($data as $element) {
-                if ($element instanceof Object\Concrete) {
+                if ($element instanceof \Pimcore\Model\Object\Concrete) {
                     $return[] = [$element->getId(), $element->getRealFullPath(), "object", $element->getClassName()];
-                } elseif ($element instanceof Object\AbstractObject) {
+                } elseif ($element instanceof \Pimcore\Model\Object\AbstractObject) {
                     $return[] = [$element->getId(), $element->getRealFullPath(), "object", "folder"];
                 } elseif ($element instanceof Asset) {
                     $return[] = [$element->getId(), $element->getRealFullPath(), "asset", $element->getType()];
@@ -354,7 +353,7 @@ class Multihref extends Model\Object\ClassDefinition\Data\Relations\AbstractRela
         if (is_array($data) && count($data) > 0) {
             foreach ($data as $element) {
                 if ($element["type"] == "object") {
-                    $e = Object::getById($element["id"]);
+                    $e = \Pimcore\Model\Object\AbstractObject::getById($element["id"]);
                 } elseif ($element["type"] == "asset") {
                     $e = Asset::getById($element["id"]);
                 } elseif ($element["type"] == "document") {
@@ -393,9 +392,9 @@ class Multihref extends Model\Object\ClassDefinition\Data\Relations\AbstractRela
     }
 
     /**
-     * @see Object\ClassDefinition\Data::getVersionPreview
+     * @see Model\Object\ClassDefinition\Data::getVersionPreview
      * @param array $data
-     * @param null|Object\AbstractObject $object
+     * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
      * @return string
      *
@@ -472,7 +471,7 @@ class Multihref extends Model\Object\ClassDefinition\Data\Relations\AbstractRela
                     $allow = $this->allowDocumentRelation($d);
                 } elseif ($d instanceof Asset) {
                     $allow = $this->allowAssetRelation($d);
-                } elseif ($d instanceof Object\AbstractObject) {
+                } elseif ($d instanceof \Pimcore\Model\Object\AbstractObject) {
                     $allow = $this->allowObjectRelation($d);
                 } elseif (empty($d)) {
                     $allow = true;
@@ -493,7 +492,7 @@ class Multihref extends Model\Object\ClassDefinition\Data\Relations\AbstractRela
     /**
      * converts object data to a simple string value or CSV Export
      * @abstract
-     * @param Object\AbstractObject $object
+     * @param Model\Object\AbstractObject $object
      * @param array $params
      * @return string
      */
@@ -520,7 +519,7 @@ class Multihref extends Model\Object\ClassDefinition\Data\Relations\AbstractRela
      * @param string $importValue
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
-     * @return Object\ClassDefinition\Data
+     * @return Model\Object\ClassDefinition\Data
      */
     public function getFromCsvImport($importValue, $object = null, $params = [])
     {
@@ -539,7 +538,7 @@ class Multihref extends Model\Object\ClassDefinition\Data\Relations\AbstractRela
                     $value[] = $el;
                 } elseif ($el = Document::getByPath($element)) {
                     $value[] = $el;
-                } elseif ($el = Object::getByPath($element)) {
+                } elseif ($el = \Pimcore\Model\Object\AbstractObject::getByPath($element)) {
                     $value[] = $el;
                 }
             }
@@ -680,7 +679,7 @@ class Multihref extends Model\Object\ClassDefinition\Data\Relations\AbstractRela
     public function preGetData($object, $params = [])
     {
         $data = null;
-        if ($object instanceof Object\Concrete) {
+        if ($object instanceof \Pimcore\Model\Object\Concrete) {
             $data = $object->{$this->getName()};
             if ($this->getLazyLoading() and !in_array($this->getName(), $object->getO__loadedLazyFields())) {
                 //$data = $this->getDataFromResource($object->getRelationData($this->getName(), true, null));
@@ -691,15 +690,15 @@ class Multihref extends Model\Object\ClassDefinition\Data\Relations\AbstractRela
                     $object->$setter($data);
                 }
             }
-        } elseif ($object instanceof Object\Localizedfield) {
+        } elseif ($object instanceof \Pimcore\Model\Object\Localizedfield) {
             $data = $params["data"];
-        } elseif ($object instanceof Object\Fieldcollection\Data\AbstractData) {
+        } elseif ($object instanceof \Pimcore\Model\Object\Fieldcollection\Data\AbstractData) {
             $data = $object->{$this->getName()};
-        } elseif ($object instanceof Object\Objectbrick\Data\AbstractData) {
+        } elseif ($object instanceof \Pimcore\Model\Object\Objectbrick\Data\AbstractData) {
             $data = $object->{$this->getName()};
         }
 
-        if (Object::doHideUnpublished() and is_array($data)) {
+        if (\Pimcore\Model\Object\AbstractObject::doHideUnpublished() and is_array($data)) {
             $publishedList = [];
             foreach ($data as $listElement) {
                 if (Element\Service::isPublished($listElement)) {
@@ -725,7 +724,7 @@ class Multihref extends Model\Object\ClassDefinition\Data\Relations\AbstractRela
             $data = [];
         }
 
-        if ($object instanceof Object\Concrete) {
+        if ($object instanceof \Pimcore\Model\Object\Concrete) {
             if ($this->getLazyLoading() and !in_array($this->getName(), $object->getO__loadedLazyFields())) {
                 $object->addO__loadedLazyField($this->getName());
             }
@@ -857,9 +856,9 @@ class Multihref extends Model\Object\ClassDefinition\Data\Relations\AbstractRela
     }
 
     /**
-     * @param Object\ClassDefinition\Data $masterDefinition
+     * @param Model\Object\ClassDefinition\Data $masterDefinition
      */
-    public function synchronizeWithMasterDefinition(Object\ClassDefinition\Data $masterDefinition)
+    public function synchronizeWithMasterDefinition(\Pimcore\Model\Object\ClassDefinition\Data $masterDefinition)
     {
         $this->maxItems = $masterDefinition->maxItems;
         $this->assetUploadPath = $masterDefinition->assetUploadPath;

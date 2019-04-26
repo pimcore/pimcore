@@ -17,7 +17,6 @@
 namespace Pimcore\Model\Object\ClassDefinition;
 
 use Pimcore\Model;
-use Pimcore\Model\Object;
 use Pimcore\Cache;
 use Pimcore\Logger;
 
@@ -100,7 +99,7 @@ class CustomLayout extends Model\AbstractModel
                 $customLayout = new self();
                 $customLayout->getDao()->getById($id);
 
-                Object\Service::synchronizeCustomLayout($customLayout);
+                \Pimcore\Model\Object\Service::synchronizeCustomLayout($customLayout);
                 \Zend_Registry::set($cacheKey, $customLayout);
             } catch (\Exception $e) {
                 Logger::error($e);

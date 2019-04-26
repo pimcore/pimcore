@@ -17,7 +17,6 @@
 namespace Pimcore\Model\Object\Objectbrick\Data;
 
 use Pimcore\Model;
-use Pimcore\Model\Object;
 use Pimcore\Logger;
 
 /**
@@ -28,28 +27,28 @@ class Dao extends Model\Dao\AbstractDao
 
 
     /**
-     * @var Object\Concrete\Dao\InheritanceHelper
+     * @var Model\Object\Concrete\Dao\InheritanceHelper
      */
     protected $inheritanceHelper = null;
 
 
     /**
-     * @param Object\Concrete $object
+     * @param Model\Object\Concrete $object
      * @throws \Exception
      */
-    public function save(Object\Concrete $object)
+    public function save(\Pimcore\Model\Object\Concrete $object)
     {
 
         // HACK: set the pimcore admin mode to false to get the inherited values from parent if this source one is empty
-        $inheritedValues = Object\AbstractObject::doGetInheritedValues();
+        $inheritedValues = \Pimcore\Model\Object\AbstractObject::doGetInheritedValues();
 
         $storetable = $this->model->getDefinition()->getTableName($object->getClass(), false);
         $querytable = $this->model->getDefinition()->getTableName($object->getClass(), true);
 
 
-        $this->inheritanceHelper = new Object\Concrete\Dao\InheritanceHelper($object->getClassId(), "o_id", $storetable, $querytable);
+        $this->inheritanceHelper = new \Pimcore\Model\Object\Concrete\Dao\InheritanceHelper($object->getClassId(), "o_id", $storetable, $querytable);
 
-        Object\AbstractObject::setGetInheritedValues(false);
+        \Pimcore\Model\Object\AbstractObject::setGetInheritedValues(false);
 
         $fieldDefinitions = $this->model->getDefinition()->getFieldDefinitions();
 
@@ -106,7 +105,7 @@ class Dao extends Model\Dao\AbstractDao
             $parentForInheritance = $object->getNextParentForInheritance();
             if ($parentForInheritance) {
                 // we don't use the getter (built in functionality to get inherited values) because we need to avoid race conditions
-                // we cannot Object\AbstractObject::setGetInheritedValues(true); and then $this->model->$method();
+                // we cannot Model\Object\AbstractObject::setGetInheritedValues(true); and then $this->model->$method();
                 // so we select the data from the parent object using FOR UPDATE, which causes a lock on this row
                 // so the data of the parent cannot be changed while this transaction is on progress
                 $parentData = $this->db->fetchRow("SELECT * FROM " . $querytable . " WHERE o_id = ? FOR UPDATE", $parentForInheritance->getId());
@@ -146,7 +145,7 @@ class Dao extends Model\Dao\AbstractDao
 
                 if ($inheritanceEnabled) {
                     //get changed fields for inheritance
-                    if ($fd instanceof Object\ClassDefinition\Data\CalculatedValue) {
+                    if ($fd instanceof \Pimcore\Model\Object\ClassDefinition\Data\CalculatedValue) {
                         // nothing to do, see https://github.com/pimcore/pimcore/issues/727
                         continue;
                     } elseif ($fd->isRelationType()) {
@@ -201,13 +200,13 @@ class Dao extends Model\Dao\AbstractDao
         $this->inheritanceHelper->resetFieldsToCheck();
 
         // HACK: see a few lines above!
-        Object\AbstractObject::setGetInheritedValues($inheritedValues);
+        \Pimcore\Model\Object\AbstractObject::setGetInheritedValues($inheritedValues);
     }
 
     /**
-     * @param Object\Concrete $object
+     * @param Model\Object\Concrete $object
      */
-    public function delete(Object\Concrete $object)
+    public function delete(\Pimcore\Model\Object\Concrete $object)
     {
         // update data for store table
         $storeTable = $this->model->getDefinition()->getTableName($object->getClass(), false);
@@ -222,7 +221,7 @@ class Dao extends Model\Dao\AbstractDao
         //update data for relations table
         $this->db->delete("object_relations_" . $object->getClassId(), "src_id = " . $object->getId() . " AND ownertype = 'objectbrick' AND ownername = '" . $this->model->getFieldname() . "' AND position = '" . $this->model->getType() . "'");
 
-        $this->inheritanceHelper = new Object\Concrete\Dao\InheritanceHelper($object->getClassId(), "o_id", $storeTable, $queryTable);
+        $this->inheritanceHelper = new \Pimcore\Model\Object\Concrete\Dao\InheritanceHelper($object->getClassId(), "o_id", $storeTable, $queryTable);
         $this->inheritanceHelper->resetFieldsToCheck();
 
         $objectVars = get_object_vars($this->model);
@@ -234,7 +233,7 @@ class Dao extends Model\Dao\AbstractDao
                 if ($fd->getQueryColumnType()) {
                     //exclude untouchables if value is not an array - this means data has not been loaded
                     //get changed fields for inheritance
-                    if ($fd instanceof  Object\ClassDefinition\Data\CalculatedValue) {
+                    if ($fd instanceof  \Pimcore\Model\Object\ClassDefinition\Data\CalculatedValue) {
                         continue;
                     }
 

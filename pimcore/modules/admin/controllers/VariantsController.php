@@ -12,7 +12,6 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-use Pimcore\Model\Object;
 use Pimcore\Model\Element;
 
 class Admin_VariantsController extends \Pimcore\Controller\Action\Admin
@@ -21,7 +20,7 @@ class Admin_VariantsController extends \Pimcore\Controller\Action\Admin
     {
         $id = $this->getParam("id");
         $key = $this->getParam("key");
-        $object = Object\Concrete::getById($id);
+        $object = \Pimcore\Model\Object\Concrete::getById($id);
 
         try {
             if (!empty($object)) {
@@ -48,7 +47,7 @@ class Admin_VariantsController extends \Pimcore\Controller\Action\Admin
             $data = \Zend_Json::decode($this->getParam("data"));
 
             // save
-            $object = Object::getById($data["id"]);
+            $object = \Pimcore\Model\Object\AbstractObject::getById($data["id"]);
 
             if ($object->isAllowed("publish")) {
                 $objectData = [];
@@ -64,7 +63,7 @@ class Admin_VariantsController extends \Pimcore\Controller\Action\Admin
                         $keyValuePairs = $object->$getter();
 
                         if (!$keyValuePairs) {
-                            $keyValuePairs = new Object\Data\KeyValue();
+                            $keyValuePairs = new \Pimcore\Model\Object\Data\KeyValue();
                             $keyValuePairs->setObjectId($object->getId());
                             $keyValuePairs->setClass($object->getClass());
                         }
@@ -74,7 +73,7 @@ class Admin_VariantsController extends \Pimcore\Controller\Action\Admin
                     } elseif (count($parts) > 1) {
                         $brickType = $parts[0];
                         $brickKey = $parts[1];
-                        $brickField = Object\Service::getFieldForBrickType($object->getClass(), $brickType);
+                        $brickField = \Pimcore\Model\Object\Service::getFieldForBrickType($object->getClass(), $brickType);
 
                         $fieldGetter = "get" . ucfirst($brickField);
                         $brickGetter = "get" . ucfirst($brickType);
@@ -97,7 +96,7 @@ class Admin_VariantsController extends \Pimcore\Controller\Action\Admin
 
                 try {
                     $object->save();
-                    $this->_helper->json(["data" => Object\Service::gridObjectData($object, $this->getParam("fields")), "success" => true]);
+                    $this->_helper->json(["data" => \Pimcore\Model\Object\Service::gridObjectData($object, $this->getParam("fields")), "success" => true]);
                 } catch (\Exception $e) {
                     $this->_helper->json(["success" => false, "message" => $e->getMessage()]);
                 }
@@ -105,7 +104,7 @@ class Admin_VariantsController extends \Pimcore\Controller\Action\Admin
                 throw new \Exception("Permission denied");
             }
         } else {
-            $parentObject = Object\Concrete::getById($this->getParam("objectId"));
+            $parentObject = \Pimcore\Model\Object\Concrete::getById($this->getParam("objectId"));
 
             if (empty($parentObject)) {
                 throw new \Exception("No Object found with id " . $this->getParam("objectId"));
@@ -168,7 +167,7 @@ class Admin_VariantsController extends \Pimcore\Controller\Action\Admin
                 $conditionFilters = ["o_parentId = " . $parentObject->getId()];
                 // create filter condition
                 if ($this->getParam("filter")) {
-                    $conditionFilters[] =  Object\Service::getFilterCondition($this->getParam("filter"), $class);
+                    $conditionFilters[] =  \Pimcore\Model\Object\Service::getFilterCondition($this->getParam("filter"), $class);
                 }
                 if ($this->getParam("condition")) {
                     $conditionFilters[] = "(" . $this->getParam("condition") . ")";
@@ -185,14 +184,14 @@ class Admin_VariantsController extends \Pimcore\Controller\Action\Admin
                 $list->setOffset($start);
                 $list->setOrder($order);
                 $list->setOrderKey($orderKey);
-                $list->setObjectTypes([Object\AbstractObject::OBJECT_TYPE_VARIANT]);
+                $list->setObjectTypes([\Pimcore\Model\Object\AbstractObject::OBJECT_TYPE_VARIANT]);
 
                 $list->load();
 
                 $objects = [];
                 foreach ($list->getObjects() as $object) {
                     if ($object->isAllowed("view")) {
-                        $o = Object\Service::gridObjectData($object, $fields);
+                        $o = \Pimcore\Model\Object\Service::gridObjectData($object, $fields);
                         $objects[] = $o;
                     }
                 }

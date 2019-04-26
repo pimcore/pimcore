@@ -17,7 +17,6 @@
 use Pimcore\Logger;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Document;
-use Pimcore\Model\Object;
 use Pimcore\Model\Element;
 use Pimcore\Model\Webservice;
 use Pimcore\Tool;
@@ -42,8 +41,8 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice
     public function init()
     {
         if ($this->getParam("condense")) {
-            Object\ClassDefinition\Data::setDropNullValues(true);
-            Webservice\Data\Object::setDropNullValues(true);
+            \Pimcore\Model\Object\ClassDefinition\Data::setDropNullValues(true);
+            Webservice\Data\ConcreteObject::setDropNullValues(true);
         }
 
         $profile = $this->getParam("profiling");
@@ -174,7 +173,7 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice
                         $startTs = microtime(true);
                     }
 
-                    $object = Object::getById($id);
+                    $object = \Pimcore\Model\Object\AbstractObject::getById($id);
                     if (!$object) {
                         $this->encoder->encode(["success" => false,
                             "msg" => "Object does not exist",
@@ -195,7 +194,7 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice
                         $startTs = microtime(true);
                     }
 
-                    if ($object instanceof Object\Folder) {
+                    if ($object instanceof \Pimcore\Model\Object\Folder) {
                         $object = $this->service->getObjectFolderById($id);
                     } else {
                         $object = $this->service->getObjectConcreteById($id);
@@ -246,7 +245,7 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice
                  *
                  *
                  */
-                $object = Object::getById($id);
+                $object = \Pimcore\Model\Object\AbstractObject::getById($id);
                 if ($object) {
                     $this->checkPermission($object, "delete");
                 }
@@ -334,7 +333,7 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice
                      *                      "id": 66
                      *                    }
                      */
-                    $obj = Object::getById($data["id"]);
+                    $obj = \Pimcore\Model\Object\AbstractObject::getById($data["id"]);
                     if ($obj) {
                         $this->checkPermission($obj, "update");
                     }
@@ -427,7 +426,7 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice
                     }
                     $wsData = self::fillWebserviceData($class, $data);
 
-                    $obj = new Object();
+                    $obj = new \Pimcore\Model\Object\AbstractObject();
                     $obj->setId($wsData->parentId);
                     $this->checkPermission($obj, "create");
 
@@ -565,7 +564,7 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice
     {
         $this->checkUserPermission("classes");
         try {
-            $fc = Object\Objectbrick\Definition::getByKey($this->getParam("id"));
+            $fc = \Pimcore\Model\Object\Objectbrick\Definition::getByKey($this->getParam("id"));
             $this->_helper->json(["success" => true, "data" => $fc]);
         } catch (\Exception $e) {
             Logger::error($e);
@@ -583,7 +582,7 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice
     {
         $this->checkUserPermission("classes");
         try {
-            $fc = Object\Fieldcollection\Definition::getByKey($this->getParam("id"));
+            $fc = \Pimcore\Model\Object\Fieldcollection\Definition::getByKey($this->getParam("id"));
             $this->_helper->json(["success" => true, "data" => $fc]);
         } catch (\Exception $e) {
             Logger::error($e);
@@ -788,7 +787,7 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice
 
                 $definition = [];
 
-                $list = new Object\KeyValue\GroupConfig\Listing();
+                $list = new \Pimcore\Model\Object\KeyValue\GroupConfig\Listing();
                 if ($condition) {
                     $list->setCondition($condition);
                 }
@@ -802,7 +801,7 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice
                 }
                 $definition["groups"] = $groups;
 
-                $list = new Object\KeyValue\KeyConfig\Listing();
+                $list = new \Pimcore\Model\Object\KeyValue\KeyConfig\Listing();
                 if ($condition) {
                     $list->setCondition($condition);
                 }
@@ -812,7 +811,7 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice
                 $keys = [];
 
                 foreach ($items as $item) {
-                    /** @var  $item Object\KeyValue\KeyConfig */
+                    /** @var  $item \Pimcore\Model\Object\KeyValue\KeyConfig */
                     $keys[] = $item->getObjectVars();
                 }
                 $definition["keys"] = $keys;
@@ -1110,7 +1109,7 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice
         $condition = urldecode($this->getParam("condition"));
         $groupBy = $this->getParam("groupBy");
         $objectClass = $this->getParam("objectClass");
-        $params = ["objectTypes" => [Object\AbstractObject::OBJECT_TYPE_FOLDER, Object\AbstractObject::OBJECT_TYPE_OBJECT, Object\AbstractObject::OBJECT_TYPE_VARIANT]];
+        $params = ["objectTypes" => [\Pimcore\Model\Object\AbstractObject::OBJECT_TYPE_FOLDER, \Pimcore\Model\Object\AbstractObject::OBJECT_TYPE_OBJECT, \Pimcore\Model\Object\AbstractObject::OBJECT_TYPE_VARIANT]];
 
         if (!empty($condition)) {
             $params["condition"] = $condition;
@@ -1196,7 +1195,7 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice
     {
         $this->checkUserPermission("classes");
 
-        $list = new Object\ClassDefinition\Listing();
+        $list = new \Pimcore\Model\Object\ClassDefinition\Listing();
         $classes = $list->load();
         $result = [];
 
@@ -1265,7 +1264,7 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice
                 $element = Asset::getById($id);
             } elseif ($type === "object") {
                 $this->checkUserPermission("objects");
-                $element = Object::getById($id);
+                $element = \Pimcore\Model\Object\AbstractObject::getById($id);
             } else {
                 $this->encoder->encode(["success" => false]);
 
@@ -1457,7 +1456,7 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice
     {
         $this->checkUserPermission("classes");
 
-        $list = new Object\Objectbrick\Definition\Listing();
+        $list = new \Pimcore\Model\Object\Objectbrick\Definition\Listing();
         $bricks = $list->load();
 
         $result = [];
@@ -1479,7 +1478,7 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice
     {
         $this->checkUserPermission("classes");
 
-        $list = new Object\Fieldcollection\Definition\Listing();
+        $list = new \Pimcore\Model\Object\Fieldcollection\Definition\Listing();
         $fieldCollections = $list->load();
 
         $result = [];
@@ -1520,8 +1519,8 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice
             $wsData->$key = $value;
         }
 
-        if ($wsData instanceof Pimcore\Model\Webservice\Data\Object) {
-            /** @var Pimcore\Model\Webservice\Data\Object key */
+        if ($wsData instanceof Webservice\Data\ConcreteObject) {
+            /** @var Pimcore\Model\Webservice\Data\ConcreteObject key */
             $wsData->key = Element\Service::getValidKey($wsData->key, "object");
         } elseif ($wsData instanceof Pimcore\Model\Webservice\Data\Document) {
             /** @var Pimcore\Model\Webservice\Data\Document key */
@@ -1844,7 +1843,7 @@ class Webservice_RestController extends \Pimcore\Controller\Action\Webservice
             if ($this->isGet()) {
                 $condition = urldecode($this->getParam("condition"));
 
-                $list = new Object\QuantityValue\Unit\Listing();
+                $list = new \Pimcore\Model\Object\QuantityValue\Unit\Listing();
                 if ($condition) {
                     $list->setCondition($condition);
                 }

@@ -17,7 +17,6 @@
 namespace Pimcore\Model\Object\ClassDefinition\Data;
 
 use Pimcore\Model;
-use Pimcore\Model\Object;
 
 class Checkbox extends Model\Object\ClassDefinition\Data
 {
@@ -77,9 +76,9 @@ class Checkbox extends Model\Object\ClassDefinition\Data
 
 
     /**
-     * @see Object\ClassDefinition\Data::getDataForResource
+     * @see Model\Object\ClassDefinition\Data::getDataForResource
      * @param boolean $data
-     * @param null|Object\AbstractObject $object
+     * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
      * @return int
      */
@@ -94,7 +93,7 @@ class Checkbox extends Model\Object\ClassDefinition\Data
     }
 
     /**
-     * @see Object\ClassDefinition\Data::getDataFromResource
+     * @see Model\Object\ClassDefinition\Data::getDataFromResource
      * @param boolean $data
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
@@ -110,9 +109,9 @@ class Checkbox extends Model\Object\ClassDefinition\Data
     }
 
     /**
-     * @see Object\ClassDefinition\Data::getDataForQueryResource
+     * @see Model\Object\ClassDefinition\Data::getDataForQueryResource
      * @param boolean $data
-     * @param null|Object\AbstractObject $object
+     * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
      * @return boolean
      */
@@ -122,9 +121,9 @@ class Checkbox extends Model\Object\ClassDefinition\Data
     }
 
     /**
-     * @see Object\ClassDefinition\Data::getDataForEditmode
+     * @see Model\Object\ClassDefinition\Data::getDataForEditmode
      * @param boolean $data
-     * @param null|Object\AbstractObject $object
+     * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
      * @return boolean
      */
@@ -134,9 +133,9 @@ class Checkbox extends Model\Object\ClassDefinition\Data
     }
 
     /**
-     * @see Object\ClassDefinition\Data::getDataFromEditmode
+     * @see Model\Object\ClassDefinition\Data::getDataFromEditmode
      * @param boolean $data
-     * @param null|Object\AbstractObject $object
+     * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
      * @return boolean
      */
@@ -150,9 +149,9 @@ class Checkbox extends Model\Object\ClassDefinition\Data
     }
 
     /**
-     * @see Object\ClassDefinition\Data::getVersionPreview
+     * @see Model\Object\ClassDefinition\Data::getVersionPreview
      * @param boolean $data
-     * @param null|Object\AbstractObject $object
+     * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
      * @return boolean
      */
@@ -183,7 +182,7 @@ class Checkbox extends Model\Object\ClassDefinition\Data
     /**
      * converts object data to a simple string value or CSV Export
      * @abstract
-     * @param Object\AbstractObject $object
+     * @param Model\Object\AbstractObject $object
      * @param array $params
      * @return string
      */
@@ -200,7 +199,7 @@ class Checkbox extends Model\Object\ClassDefinition\Data
      * @param string $importValue
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
-     * @return Object\ClassDefinition\Data
+     * @return Model\Object\ClassDefinition\Data
      */
     public function getFromCsvImport($importValue, $object = null, $params = [])
     {
@@ -208,7 +207,7 @@ class Checkbox extends Model\Object\ClassDefinition\Data
     }
 
     /**
-     * @param Object\AbstractObject $object
+     * @param Model\Object\AbstractObject $object
      * @param array $params
      * @return bool
      */
@@ -244,9 +243,9 @@ class Checkbox extends Model\Object\ClassDefinition\Data
     }
 
     /**
-     * @param Object\ClassDefinition\Data $masterDefinition
+     * @param Model\Object\ClassDefinition\Data $masterDefinition
      */
-    public function synchronizeWithMasterDefinition(Object\ClassDefinition\Data $masterDefinition)
+    public function synchronizeWithMasterDefinition(\Pimcore\Model\Object\ClassDefinition\Data $masterDefinition)
     {
         $this->defaultValue = $masterDefinition->defaultValue;
     }

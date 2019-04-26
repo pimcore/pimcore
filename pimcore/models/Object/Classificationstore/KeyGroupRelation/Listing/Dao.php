@@ -17,7 +17,6 @@
 namespace Pimcore\Model\Object\Classificationstore\KeyGroupRelation\Listing;
 
 use Pimcore\Model;
-use Pimcore\Model\Object;
 
 /**
  * @property \Pimcore\Model\Object\Classificationstore\KeyGroupRelation\Listing $model
@@ -38,30 +37,30 @@ class Dao extends Model\Listing\Dao\AbstractDao
         } else {
             $condition = " where ";
         }
-        $condition .= Object\Classificationstore\KeyGroupRelation\Dao::TABLE_NAME_RELATIONS
-            . ".keyId = " . Object\Classificationstore\KeyConfig\Dao::TABLE_NAME_KEYS . ".id";
+        $condition .= \Pimcore\Model\Object\Classificationstore\KeyGroupRelation\Dao::TABLE_NAME_RELATIONS
+            . ".keyId = " . \Pimcore\Model\Object\Classificationstore\KeyConfig\Dao::TABLE_NAME_KEYS . ".id";
 
         $resourceGroupName = $this->model->getResolveGroupName();
 
         if ($resourceGroupName) {
-            $condition .= " and " . Object\Classificationstore\GroupConfig\Dao::TABLE_NAME_GROUPS . ".id = "
-                . Object\Classificationstore\KeyGroupRelation\Dao::TABLE_NAME_RELATIONS . ".groupId";
+            $condition .= " and " . \Pimcore\Model\Object\Classificationstore\GroupConfig\Dao::TABLE_NAME_GROUPS . ".id = "
+                . \Pimcore\Model\Object\Classificationstore\KeyGroupRelation\Dao::TABLE_NAME_RELATIONS . ".groupId";
         }
 
-        $sql = "SELECT " . Object\Classificationstore\KeyGroupRelation\Dao::TABLE_NAME_RELATIONS . ".*,"
-            . Object\Classificationstore\KeyConfig\Dao::TABLE_NAME_KEYS . ".*";
+        $sql = "SELECT " . \Pimcore\Model\Object\Classificationstore\KeyGroupRelation\Dao::TABLE_NAME_RELATIONS . ".*,"
+            . \Pimcore\Model\Object\Classificationstore\KeyConfig\Dao::TABLE_NAME_KEYS . ".*";
 
 
         if ($resourceGroupName) {
-            $sql .= ", " . Object\Classificationstore\GroupConfig\Dao::TABLE_NAME_GROUPS . ".name as groupName";
+            $sql .= ", " . \Pimcore\Model\Object\Classificationstore\GroupConfig\Dao::TABLE_NAME_GROUPS . ".name as groupName";
         }
 
 
-        $sql .=  " FROM " . Object\Classificationstore\KeyGroupRelation\Dao::TABLE_NAME_RELATIONS
-            . "," . Object\Classificationstore\KeyConfig\Dao::TABLE_NAME_KEYS;
+        $sql .=  " FROM " . \Pimcore\Model\Object\Classificationstore\KeyGroupRelation\Dao::TABLE_NAME_RELATIONS
+            . "," . \Pimcore\Model\Object\Classificationstore\KeyConfig\Dao::TABLE_NAME_KEYS;
 
         if ($resourceGroupName) {
-            $sql .= ", " . Object\Classificationstore\GroupConfig\Dao::TABLE_NAME_GROUPS;
+            $sql .= ", " . \Pimcore\Model\Object\Classificationstore\GroupConfig\Dao::TABLE_NAME_GROUPS;
         }
 
 
@@ -72,7 +71,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
 
         $configData = [];
         foreach ($data as $dataItem) {
-            $entry = new Object\Classificationstore\KeyGroupRelation();
+            $entry = new \Pimcore\Model\Object\Classificationstore\KeyGroupRelation();
             $resource = $entry->getDao();
             $resource->assignVariablesToModel($dataItem);
 
@@ -89,7 +88,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
      */
     public function getDataArray()
     {
-        $configsData = $this->db->fetchAll("SELECT * FROM " . Object\Classificationstore\KeyGroupRelation\Dao::TABLE_NAME_RELATIONS . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
+        $configsData = $this->db->fetchAll("SELECT * FROM " . \Pimcore\Model\Object\Classificationstore\KeyGroupRelation\Dao::TABLE_NAME_RELATIONS . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
 
         return $configsData;
     }
@@ -100,7 +99,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
     public function getTotalCount()
     {
         try {
-            $amount = (int) $this->db->fetchOne("SELECT COUNT(*) as amount FROM " . Object\Classificationstore\KeyGroupRelation\Dao::TABLE_NAME_RELATIONS . " ". $this->getCondition(), $this->model->getConditionVariables());
+            $amount = (int) $this->db->fetchOne("SELECT COUNT(*) as amount FROM " . \Pimcore\Model\Object\Classificationstore\KeyGroupRelation\Dao::TABLE_NAME_RELATIONS . " ". $this->getCondition(), $this->model->getConditionVariables());
         } catch (\Exception $e) {
         }
 

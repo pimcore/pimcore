@@ -17,7 +17,6 @@
 namespace Pimcore\Model\Object\ClassDefinition\Data;
 
 use Pimcore\Model;
-use Pimcore\Model\Object;
 use Pimcore\Model\Asset;
 
 class Video extends Model\Object\ClassDefinition\Data
@@ -102,7 +101,7 @@ class Video extends Model\Object\ClassDefinition\Data
     }
 
     /**
-     * @see Object\ClassDefinition\Data::getDataForResource
+     * @see Model\Object\ClassDefinition\Data::getDataForResource
      * @param Asset $data
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
@@ -128,7 +127,7 @@ class Video extends Model\Object\ClassDefinition\Data
     }
 
     /**
-     * @see Object\ClassDefinition\Data::getDataFromResource
+     * @see Model\Object\ClassDefinition\Data::getDataFromResource
      * @param integer $data
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
@@ -152,7 +151,7 @@ class Video extends Model\Object\ClassDefinition\Data
             }
 
             if ($raw["data"]) {
-                $video = new Object\Data\Video();
+                $video = new \Pimcore\Model\Object\Data\Video();
                 $video->setData($raw["data"]);
                 $video->setType($raw["type"]);
                 $video->setPoster($raw["poster"]);
@@ -167,7 +166,7 @@ class Video extends Model\Object\ClassDefinition\Data
     }
 
     /**
-     * @see Object\ClassDefinition\Data::getDataForQueryResource
+     * @see Model\Object\ClassDefinition\Data::getDataForQueryResource
      * @param Asset $data
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
@@ -179,7 +178,7 @@ class Video extends Model\Object\ClassDefinition\Data
     }
 
     /**
-     * @see Object\ClassDefinition\Data::getDataForEditmode
+     * @see Model\Object\ClassDefinition\Data::getDataForEditmode
      * @param Asset $data
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
@@ -229,7 +228,7 @@ class Video extends Model\Object\ClassDefinition\Data
         }
 
         if (!empty($data["data"])) {
-            $video = new Object\Data\Video();
+            $video = new \Pimcore\Model\Object\Data\Video();
             $video->setData($data["data"]);
             $video->setType($data["type"]);
             $video->setPoster($data["poster"]);
@@ -254,9 +253,9 @@ class Video extends Model\Object\ClassDefinition\Data
     }
 
     /**
-     * @see Object\ClassDefinition\Data::getVersionPreview
+     * @see Model\Object\ClassDefinition\Data::getVersionPreview
      * @param Asset\Image $data
-     * @param null|Object\AbstractObject $object
+     * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
      * @return string
      */
@@ -272,7 +271,7 @@ class Video extends Model\Object\ClassDefinition\Data
     /**
      * converts object data to a simple string value or CSV Export
      * @abstract
-     * @param Object\AbstractObject $object
+     * @param Model\Object\AbstractObject $object
      * @param array $params
      * @return string
      */
@@ -304,7 +303,7 @@ class Video extends Model\Object\ClassDefinition\Data
         if ($importValue && strpos($importValue, "~")) {
             list($type, $data) = explode("~", $importValue);
             if ($type && $data) {
-                $video = new Object\Data\Video();
+                $video = new \Pimcore\Model\Object\Data\Video();
                 $video->setType($type);
                 if ($type == "asset") {
                     if ($asset = Asset::getById($data)) {
@@ -329,7 +328,7 @@ class Video extends Model\Object\ClassDefinition\Data
     public function getDataForSearchIndex($object, $params = [])
     {
         $data = $this->getDataFromObjectParam($object, $params);
-        if ($data instanceof Object\Data\Video) {
+        if ($data instanceof \Pimcore\Model\Object\Data\Video) {
             $value = $data->getTitle() . " " . $data->getDescription();
 
             return $value;
@@ -489,7 +488,7 @@ class Video extends Model\Object\ClassDefinition\Data
      */
     public function marshal($value, $object = null, $params = [])
     {
-        if ($value instanceof Object\Data\Video) {
+        if ($value instanceof \Pimcore\Model\Object\Data\Video) {
             $result = [];
             $result["type"] = $value->getType();
             if ($value->getTitle()) {
@@ -534,7 +533,7 @@ class Video extends Model\Object\ClassDefinition\Data
     public function unmarshal($value, $object = null, $params = [])
     {
         if (is_array($value)) {
-            $video = new Object\Data\Video();
+            $video = new \Pimcore\Model\Object\Data\Video();
             $video->setType($value["type"]);
             $video->setTitle($value["title"]);
             $video->setDescription($value["description"]);

@@ -18,7 +18,6 @@ namespace Pimcore\Model\Object\ClassDefinition\Data;
 
 use Pimcore\Logger;
 use Pimcore\Model;
-use Pimcore\Model\Object;
 use Pimcore\Tool;
 use Pimcore\Model\Element;
 
@@ -110,7 +109,7 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
 
 
     /**
-     * @see Object\ClassDefinition\Data::getDataForEditmode
+     * @see Model\Object\ClassDefinition\Data::getDataForEditmode
      * @param string $data
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
@@ -121,7 +120,7 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
         $fieldData = [];
         $metaData = [];
 
-        if (!$data instanceof Object\Localizedfield) {
+        if (!$data instanceof \Pimcore\Model\Object\Localizedfield) {
             return [];
         }
 
@@ -132,7 +131,7 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
             foreach ($data as $key => &$value) {
                 $fieldDefinition = $this->getFielddefinition($key);
                 if ($fieldDefinition instanceof CalculatedValue) {
-                    $childData = new Object\Data\CalculatedValue($fieldDefinition->getName());
+                    $childData = new \Pimcore\Model\Object\Data\CalculatedValue($fieldDefinition->getName());
                     $childData->setContextualData("localizedfield", $this->getName(), null, $language);
                     $value = $fieldDefinition->getDataForEditmode($childData, $object, $params);
                 } else {
@@ -185,7 +184,7 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
 
         if ($inheritanceAllowed) {
             // check if there is a parent with the same type
-            $parent = Object\Service::hasInheritableParentObject($object);
+            $parent = \Pimcore\Model\Object\Service::hasInheritableParentObject($object);
             if ($parent) {
                 // same type, iterate over all language and all fields and check if there is something missing
                 $validLanguages = Tool::getValidLanguages();
@@ -231,8 +230,8 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
     {
         $localizedFields = $this->getDataFromObjectParam($object, $params);
 
-        if (!$localizedFields instanceof Object\Localizedfield) {
-            $localizedFields = new Object\Localizedfield();
+        if (!$localizedFields instanceof \Pimcore\Model\Object\Localizedfield) {
+            $localizedFields = new \Pimcore\Model\Object\Localizedfield();
         }
 
         $context = isset($params["context"]) ? $params["context"] : null;
@@ -271,9 +270,9 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
     }
 
     /**
-     * @see Object\ClassDefinition\Data::getVersionPreview
+     * @see Model\Object\ClassDefinition\Data::getVersionPreview
      * @param string $data
-     * @param null|Object\AbstractObject $object
+     * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
      * @return string
      */
@@ -287,7 +286,7 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
     /**
      * converts object data to a simple string value or CSV Export
      * @abstract
-     * @param Object\AbstractObject $object
+     * @param Model\Object\AbstractObject $object
      * @param array $params
      * @return string
      */
@@ -317,7 +316,7 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
         $dataString = "";
         $lfData = $this->getDataFromObjectParam($object);
 
-        if ($lfData instanceof Object\Localizedfield) {
+        if ($lfData instanceof \Pimcore\Model\Object\Localizedfield) {
             foreach ($lfData->getItems() as $language => $values) {
                 foreach ($values as $lData) {
                     if (is_string($lData)) {
@@ -342,7 +341,7 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
 
         $items = null;
 
-        if (!$data instanceof Object\Localizedfield) {
+        if (!$data instanceof \Pimcore\Model\Object\Localizedfield) {
             $items = [];
         } else {
             $items = $data->getItems();
@@ -358,7 +357,7 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
 
         $languagesAllowed = null;
         if ($user && !$user->isAdmin()) {
-            $languagesAllowed = Object\Service::getLanguagePermissions($object, $user, "lView");
+            $languagesAllowed = \Pimcore\Model\Object\Service::getLanguagePermissions($object, $user, "lView");
 
             if ($languagesAllowed) {
                 $languagesAllowed = array_keys($languagesAllowed);
@@ -400,7 +399,7 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
      * @param null $object
      * @param mixed $params
      * @param null $idMapper
-     * @return mixed|null|Object\Localizedfield
+     * @return mixed|null|Model\Object\Localizedfield
      * @throws \Exception
      */
     public function getFromWebserviceImport($value, $object = null, $params = [], $idMapper = null)
@@ -418,10 +417,10 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
 
             $localizedFields = $object->getLocalizedFields();
             if (!$localizedFields) {
-                $localizedFields = new Object\Localizedfield();
+                $localizedFields = new \Pimcore\Model\Object\Localizedfield();
             }
 
-            if ($object instanceof Object\Concrete) {
+            if ($object instanceof \Pimcore\Model\Object\Concrete) {
                 $localizedFields->setObject($object);
             }
 
@@ -430,7 +429,7 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
 
             $languagesAllowed = null;
             if ($user && !$user->isAdmin()) {
-                $languagesAllowed = Object\Service::getLanguagePermissions($object, $user, "lEdit");
+                $languagesAllowed = \Pimcore\Model\Object\Service::getLanguagePermissions($object, $user, "lEdit");
 
                 if ($languagesAllowed) {
                     $languagesAllowed = array_keys($languagesAllowed);
@@ -458,7 +457,7 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
                     throw new \Exception("Invalid import data in field [ $field->name ] for language [ $field->language ] in localized fields [ ".$this->getName()." ]");
                 }
                 $fd = $this->getFielddefinition($field->name);
-                if (!$fd instanceof Object\ClassDefinition\Data) {
+                if (!$fd instanceof \Pimcore\Model\Object\ClassDefinition\Data) {
                     if ($idMapper && $idMapper->ignoreMappingFailures()) {
                         continue;
                     }
@@ -570,8 +569,8 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
     public function save($object, $params = [])
     {
         $localizedFields = $this->getDataFromObjectParam($object, $params);
-        if ($localizedFields instanceof Object\Localizedfield) {
-            if ($object instanceof Object\Fieldcollection\Data\AbstractData) {
+        if ($localizedFields instanceof \Pimcore\Model\Object\Localizedfield) {
+            if ($object instanceof \Pimcore\Model\Object\Fieldcollection\Data\AbstractData) {
                 $object = $object->getObject();
             }
             $localizedFields->setObject($object);
@@ -584,15 +583,15 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
     /**
      * @param $object
      * @param array $params
-     * @return Object\Localizedfield
+     * @return Model\Object\Localizedfield
      */
     public function load($object, $params = [])
     {
-        if ($object instanceof Object\Fieldcollection\Data\AbstractData) {
+        if ($object instanceof \Pimcore\Model\Object\Fieldcollection\Data\AbstractData) {
             $object = $object->getObject();
         }
 
-        $localizedFields = new Object\Localizedfield();
+        $localizedFields = new \Pimcore\Model\Object\Localizedfield();
         $localizedFields->setObject($object);
         $context = isset($params["context"]) ? $params["context"] : null;
         $localizedFields->setContext($context);
@@ -609,7 +608,7 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
     {
         $localizedFields = $this->getDataFromObjectParam($object, $params);
 
-        if ($localizedFields instanceof Object\Localizedfield) {
+        if ($localizedFields instanceof \Pimcore\Model\Object\Localizedfield) {
             $localizedFields->setObject($object);
             $context = isset($params["context"]) ? $params["context"] : null;
             $localizedFields->setContext($context);
@@ -624,7 +623,7 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
      */
     public function classSaved($class, $params = [])
     {
-        $localizedFields = new Object\Localizedfield();
+        $localizedFields = new \Pimcore\Model\Object\Localizedfield();
         $localizedFields->setClass($class);
         $context = isset($params["context"]) ? $params["context"] : null;
         $localizedFields->setContext($context);
@@ -640,20 +639,20 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
     /**
      * @param $container
      * @param array $params
-     * @return Object\Localizedfield
+     * @return Model\Object\Localizedfield
      * @throws \Exception
      */
     public function preGetData($container, $params = [])
     {
-        if (!$container instanceof Object\Concrete && !$container instanceof Object\Fieldcollection\Data\AbstractData) {
+        if (!$container instanceof \Pimcore\Model\Object\Concrete && !$container instanceof \Pimcore\Model\Object\Fieldcollection\Data\AbstractData) {
             throw new \Exception("Localized Fields are only valid in Objects and Fieldcollections");
         }
 
-        if (!$container->localizedfields instanceof Object\Localizedfield) {
-            $lf = new Object\Localizedfield();
+        if (!$container->localizedfields instanceof \Pimcore\Model\Object\Localizedfield) {
+            $lf = new \Pimcore\Model\Object\Localizedfield();
 
             $object = $container;
-            if ($container instanceof  Object\Fieldcollection\Data\AbstractData) {
+            if ($container instanceof \Pimcore\Model\Object\Fieldcollection\Data\AbstractData) {
                 $object = $container->getObject();
 
                 $context = [
@@ -683,7 +682,7 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
         foreach ($this->getFieldDefinitions() as $fd) {
 
             /**
-             * @var $fd Object\ClassDefinition\Data
+             * @var $fd Model\Object\ClassDefinition\Data
              */
             $code .= $fd->getGetterCodeLocalizedfields($class);
         }
@@ -703,7 +702,7 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
         foreach ($this->getFieldDefinitions() as $fd) {
 
             /**
-             * @var $fd Object\ClassDefinition\Data
+             * @var $fd Model\Object\ClassDefinition\Data
              */
             $code .= $fd->getSetterCodeLocalizedfields($class);
         }
@@ -733,7 +732,7 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
         if (empty($this->fieldDefinitionsCache)) {
             $definitions = $this->doGetFieldDefinitions();
             foreach ($this->getReferencedFields() as $rf) {
-                if ($rf instanceof Object\ClassDefinition\Data\Localizedfields) {
+                if ($rf instanceof \Pimcore\Model\Object\ClassDefinition\Data\Localizedfields) {
                     $definitions = array_merge($definitions, $this->doGetFieldDefinitions($rf->getChilds()));
                 }
             }
@@ -761,7 +760,7 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
             }
         }
 
-        if ($def instanceof Object\ClassDefinition\Layout) {
+        if ($def instanceof \Pimcore\Model\Object\ClassDefinition\Layout) {
             if ($def->hasChilds()) {
                 foreach ($def->getChilds() as $child) {
                     $fields = array_merge($fields, $this->doGetFieldDefinitions($child, $fields));
@@ -769,7 +768,7 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
             }
         }
 
-        if ($def instanceof Object\ClassDefinition\Data) {
+        if ($def instanceof \Pimcore\Model\Object\ClassDefinition\Data) {
             $fields[$def->getName()] = $def;
         }
 
@@ -788,7 +787,7 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
     {
         $tags = is_array($tags) ? $tags : [];
 
-        if (!$data instanceof Object\Localizedfield) {
+        if (!$data instanceof \Pimcore\Model\Object\Localizedfield) {
             return $tags;
         }
 
@@ -809,7 +808,7 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
     {
         $dependencies = [];
 
-        if (!$data instanceof Object\Localizedfield) {
+        if (!$data instanceof \Pimcore\Model\Object\Localizedfield) {
             return [];
         }
 
@@ -965,7 +964,7 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
     }
 
     /**
-     * @param Object\Localizedfield|mixed $localizedObject
+     * @param Model\Object\Localizedfield|mixed $localizedObject
      * @param array $languages
      * @return array
      */
@@ -974,7 +973,7 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
         //TODO verify if in any place in the code \Pimcore\Model\Object\ClassDefinition\Data\Localizedfields::checkValidity is used with different parameter then Object\Localizedfield
         if (!$localizedObject->object
             || $localizedObject->object->getType() != 'variant'
-            || !$localizedObject instanceof Object\Localizedfield) {
+            || !$localizedObject instanceof \Pimcore\Model\Object\Localizedfield) {
             return $localizedObject->getItems();
         }
 
@@ -1003,7 +1002,7 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
 
         $myname = $this->getName();
 
-        if (!$data instanceof Object\Localizedfield) {
+        if (!$data instanceof \Pimcore\Model\Object\Localizedfield) {
             return [];
         }
 
@@ -1053,7 +1052,7 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
         $localData = [];
 
         // get existing data
-        if ($localFields instanceof Object\Localizedfield) {
+        if ($localFields instanceof \Pimcore\Model\Object\Localizedfield) {
             $localData = $localFields->getItems();
         }
 
@@ -1090,7 +1089,7 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
             }
         }
 
-        $localizedFields = new Object\Localizedfield($localData);
+        $localizedFields = new \Pimcore\Model\Object\Localizedfield($localData);
         $localizedFields->setObject($object);
 
         return $localizedFields;
@@ -1212,7 +1211,7 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
      */
     public function marshal($value, $object = null, $params = [])
     {
-        if ($value instanceof  Object\Localizedfield) {
+        if ($value instanceof  \Pimcore\Model\Object\Localizedfield) {
             $items = $value->getItems();
             if (is_array($items)) {
                 $result = [];
@@ -1249,7 +1248,7 @@ class Localizedfields extends Model\Object\ClassDefinition\Data
      */
     public function unmarshal($value, $object = null, $params = [])
     {
-        $lf = new Object\Localizedfield();
+        $lf = new \Pimcore\Model\Object\Localizedfield();
         $lf->setObject($object);
         if (is_array($value)) {
             $items = [];

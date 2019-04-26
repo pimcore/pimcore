@@ -15,7 +15,6 @@
 use Pimcore\Model;
 use Pimcore\Model\Document;
 use Pimcore\Model\Asset;
-use Pimcore\Model\Object;
 use Pimcore\Logger;
 
 class Admin_ClassController extends \Pimcore\Controller\Action\Admin
@@ -63,7 +62,7 @@ class Admin_ClassController extends \Pimcore\Controller\Action\Admin
         }
 
 
-        $classesList = new Object\ClassDefinition\Listing();
+        $classesList = new \Pimcore\Model\Object\ClassDefinition\Listing();
         $classesList->setOrderKey("name");
         $classesList->setOrder("asc");
         $classes = $classesList->load();
@@ -160,7 +159,7 @@ class Admin_ClassController extends \Pimcore\Controller\Action\Admin
 
     public function getAction()
     {
-        $class = Object\ClassDefinition::getById(intval($this->getParam("id")));
+        $class = \Pimcore\Model\Object\ClassDefinition::getById(intval($this->getParam("id")));
         $class->setFieldDefinitions(null);
 
         $this->_helper->json($class);
@@ -168,14 +167,14 @@ class Admin_ClassController extends \Pimcore\Controller\Action\Admin
 
     public function getCustomLayoutAction()
     {
-        $customLayout = Object\ClassDefinition\CustomLayout::getById(intval($this->getParam("id")));
+        $customLayout = \Pimcore\Model\Object\ClassDefinition\CustomLayout::getById(intval($this->getParam("id")));
 
         $this->_helper->json(["success" => true, "data" => $customLayout]);
     }
 
     public function addAction()
     {
-        $class = Object\ClassDefinition::create(['name' => $this->correctClassname($this->getParam("name")),
+        $class = \Pimcore\Model\Object\ClassDefinition::create(['name' => $this->correctClassname($this->getParam("name")),
                 'userOwner' => $this->user->getId()]
         );
 
@@ -186,7 +185,7 @@ class Admin_ClassController extends \Pimcore\Controller\Action\Admin
 
     public function addCustomLayoutAction()
     {
-        $customLayout = Object\ClassDefinition\CustomLayout::create(['name' => $this->getParam("name"),
+        $customLayout = \Pimcore\Model\Object\ClassDefinition\CustomLayout::create(['name' => $this->getParam("name"),
                 'userOwner' => $this->user->getId(),
                 "classId" => $this->getParam("classId")]
         );
@@ -201,7 +200,7 @@ class Admin_ClassController extends \Pimcore\Controller\Action\Admin
 
     public function deleteAction()
     {
-        $class = Object\ClassDefinition::getById(intval($this->getParam("id")));
+        $class = \Pimcore\Model\Object\ClassDefinition::getById(intval($this->getParam("id")));
         $class->delete();
 
         $this->removeViewRenderer();
@@ -209,7 +208,7 @@ class Admin_ClassController extends \Pimcore\Controller\Action\Admin
 
     public function deleteCustomLayoutAction()
     {
-        $customLayout = Object\ClassDefinition\CustomLayout::getById(intval($this->getParam("id")));
+        $customLayout = \Pimcore\Model\Object\ClassDefinition\CustomLayout::getById(intval($this->getParam("id")));
         if ($customLayout) {
             $customLayout->delete();
         }
@@ -220,8 +219,8 @@ class Admin_ClassController extends \Pimcore\Controller\Action\Admin
 
     public function saveCustomLayoutAction()
     {
-        $customLayout = Object\ClassDefinition\CustomLayout::getById($this->getParam("id"));
-        $class = Object\ClassDefinition::getById($customLayout->getClassId());
+        $customLayout = \Pimcore\Model\Object\ClassDefinition\CustomLayout::getById($this->getParam("id"));
+        $class = \Pimcore\Model\Object\ClassDefinition::getById($customLayout->getClassId());
 
         $configuration = \Zend_Json::decode($this->getParam("configuration"));
         $values = \Zend_Json::decode($this->getParam("values"));
@@ -237,7 +236,7 @@ class Admin_ClassController extends \Pimcore\Controller\Action\Admin
         $configuration["name"] = "pimcore_root";
 
         try {
-            $layout = Object\ClassDefinition\Service::generateLayoutTreeFromArray($configuration, true);
+            $layout = \Pimcore\Model\Object\ClassDefinition\Service::generateLayoutTreeFromArray($configuration, true);
             $customLayout->setLayoutDefinitions($layout);
             $customLayout->setName($values["name"]);
             $customLayout->setDescription($values["description"]);
@@ -253,7 +252,7 @@ class Admin_ClassController extends \Pimcore\Controller\Action\Admin
 
     public function saveAction()
     {
-        $class = Object\ClassDefinition::getById(intval($this->getParam("id")));
+        $class = \Pimcore\Model\Object\ClassDefinition::getById(intval($this->getParam("id")));
 
         $configuration = \Zend_Json::decode($this->getParam("configuration"));
         $values = \Zend_Json::decode($this->getParam("values"));
@@ -281,7 +280,7 @@ class Admin_ClassController extends \Pimcore\Controller\Action\Admin
         $class->setValues($values);
 
         try {
-            $layout = Object\ClassDefinition\Service::generateLayoutTreeFromArray($configuration, true);
+            $layout = \Pimcore\Model\Object\ClassDefinition\Service::generateLayoutTreeFromArray($configuration, true);
 
             $class->setLayoutDefinitions($layout);
 
@@ -329,10 +328,10 @@ class Admin_ClassController extends \Pimcore\Controller\Action\Admin
 
     public function importClassAction()
     {
-        $class = Object\ClassDefinition::getById(intval($this->getParam("id")));
+        $class = \Pimcore\Model\Object\ClassDefinition::getById(intval($this->getParam("id")));
         $json = file_get_contents($_FILES["Filedata"]["tmp_name"]);
 
-        $success = Object\ClassDefinition\Service::importClassDefinitionFromJson($class, $json);
+        $success = \Pimcore\Model\Object\ClassDefinition\Service::importClassDefinitionFromJson($class, $json);
 
         $this->removeViewRenderer();
 
@@ -354,10 +353,10 @@ class Admin_ClassController extends \Pimcore\Controller\Action\Admin
 
 
         $customLayoutId = $this->getParam("id");
-        $customLayout = Object\ClassDefinition\CustomLayout::getById($customLayoutId);
+        $customLayout = \Pimcore\Model\Object\ClassDefinition\CustomLayout::getById($customLayoutId);
         if ($customLayout) {
             try {
-                $layout = Object\ClassDefinition\Service::generateLayoutTreeFromArray($importData["layoutDefinitions"], true);
+                $layout = \Pimcore\Model\Object\ClassDefinition\Service::generateLayoutTreeFromArray($importData["layoutDefinitions"], true);
                 $customLayout->setLayoutDefinitions($layout);
                 $customLayout->setDescription($importData["description"]);
                 $customLayout->save();
@@ -381,7 +380,7 @@ class Admin_ClassController extends \Pimcore\Controller\Action\Admin
     public function getCustomLayoutDefinitionsAction()
     {
         $classId = $this->getParam("classId");
-        $list = new Object\ClassDefinition\CustomLayout\Listing();
+        $list = new \Pimcore\Model\Object\ClassDefinition\CustomLayout\Listing();
 
         $list->setCondition("classId = " . $list->quote($classId));
         $list = $list->load();
@@ -403,7 +402,7 @@ class Admin_ClassController extends \Pimcore\Controller\Action\Admin
         $resultList = [];
         $mapping = [];
 
-        $customLayouts = new Object\ClassDefinition\CustomLayout\Listing();
+        $customLayouts = new \Pimcore\Model\Object\ClassDefinition\CustomLayout\Listing();
         $customLayouts->setOrder("ASC");
         $customLayouts->setOrderKey("name");
         $customLayouts = $customLayouts->load();
@@ -411,7 +410,7 @@ class Admin_ClassController extends \Pimcore\Controller\Action\Admin
             $mapping[$layout->getClassId()][] = $layout;
         }
 
-        $classList = new Object\ClassDefinition\Listing();
+        $classList = new \Pimcore\Model\Object\ClassDefinition\Listing();
         $classList->setOrder("ASC");
         $classList->setOrderKey("name");
         $classList = $classList->load();
@@ -443,14 +442,14 @@ class Admin_ClassController extends \Pimcore\Controller\Action\Admin
         $this->removeViewRenderer();
 
         $id = intval($this->getParam("id"));
-        $class = Object\ClassDefinition::getById($id);
+        $class = \Pimcore\Model\Object\ClassDefinition::getById($id);
 
-        if (!$class instanceof Object\ClassDefinition) {
+        if (!$class instanceof \Pimcore\Model\Object\ClassDefinition) {
             $errorMessage = ": Class with id [ " . $id . " not found. ]";
             Logger::error($errorMessage);
             echo $errorMessage;
         } else {
-            $json = Object\ClassDefinition\Service::generateClassDefinitionJson($class);
+            $json = \Pimcore\Model\Object\ClassDefinition\Service::generateClassDefinitionJson($class);
             header("Content-type: application/json");
             header("Content-Disposition: attachment; filename=\"class_" . $class->getName() . "_export.json\"");
             echo $json;
@@ -464,7 +463,7 @@ class Admin_ClassController extends \Pimcore\Controller\Action\Admin
         $id = intval($this->getParam("id"));
 
         if ($id) {
-            $customLayout = Object\ClassDefinition\CustomLayout::getById($id);
+            $customLayout = \Pimcore\Model\Object\ClassDefinition\CustomLayout::getById($id);
             if ($customLayout) {
                 $name = $customLayout->getName();
                 unset($customLayout->id);
@@ -499,7 +498,7 @@ class Admin_ClassController extends \Pimcore\Controller\Action\Admin
 
     public function fieldcollectionGetAction()
     {
-        $fc = Object\Fieldcollection\Definition::getByKey($this->getParam("id"));
+        $fc = \Pimcore\Model\Object\Fieldcollection\Definition::getByKey($this->getParam("id"));
         $this->_helper->json($fc);
     }
 
@@ -510,7 +509,7 @@ class Admin_ClassController extends \Pimcore\Controller\Action\Admin
 
             if ($this->getParam("task") == "add") {
                 // check for existing fieldcollection with same name with different lower/upper cases
-                $list = new Object\Fieldcollection\Definition\Listing();
+                $list = new \Pimcore\Model\Object\Fieldcollection\Definition\Listing();
                 $list = $list->load();
 
                 foreach ($list as $item) {
@@ -520,7 +519,7 @@ class Admin_ClassController extends \Pimcore\Controller\Action\Admin
                 }
             }
 
-            $fc = new Object\Fieldcollection\Definition();
+            $fc = new \Pimcore\Model\Object\Fieldcollection\Definition();
             $fc->setKey($key);
 
             if ($this->getParam("values")) {
@@ -534,7 +533,7 @@ class Admin_ClassController extends \Pimcore\Controller\Action\Admin
                 $configuration["datatype"] = "layout";
                 $configuration["fieldtype"] = "panel";
 
-                $layout = Object\ClassDefinition\Service::generateLayoutTreeFromArray($configuration, true);
+                $layout = \Pimcore\Model\Object\ClassDefinition\Service::generateLayoutTreeFromArray($configuration, true);
                 $fc->setLayoutDefinitions($layout);
             }
 
@@ -549,11 +548,11 @@ class Admin_ClassController extends \Pimcore\Controller\Action\Admin
 
     public function importFieldcollectionAction()
     {
-        $fieldCollection = Object\Fieldcollection\Definition::getByKey($this->getParam("id"));
+        $fieldCollection = \Pimcore\Model\Object\Fieldcollection\Definition::getByKey($this->getParam("id"));
 
         $data = file_get_contents($_FILES["Filedata"]["tmp_name"]);
 
-        $success = Object\ClassDefinition\Service::importFieldCollectionFromJson($fieldCollection, $data);
+        $success = \Pimcore\Model\Object\ClassDefinition\Service::importFieldCollectionFromJson($fieldCollection, $data);
 
         $this->removeViewRenderer();
 
@@ -569,14 +568,14 @@ class Admin_ClassController extends \Pimcore\Controller\Action\Admin
     public function exportFieldcollectionAction()
     {
         $this->removeViewRenderer();
-        $fieldCollection = Object\Fieldcollection\Definition::getByKey($this->getParam("id"));
+        $fieldCollection = \Pimcore\Model\Object\Fieldcollection\Definition::getByKey($this->getParam("id"));
         $key = $fieldCollection->getKey();
-        if (!$fieldCollection instanceof Object\Fieldcollection\Definition) {
+        if (!$fieldCollection instanceof \Pimcore\Model\Object\Fieldcollection\Definition) {
             $errorMessage = ": Field-Collection with id [ " . $this->getParam("id") . " not found. ]";
             Logger::error($errorMessage);
             echo $errorMessage;
         } else {
-            $json = Object\ClassDefinition\Service::generateFieldCollectionJson($fieldCollection);
+            $json = \Pimcore\Model\Object\ClassDefinition\Service::generateFieldCollectionJson($fieldCollection);
             header("Content-type: application/json");
             header("Content-Disposition: attachment; filename=\"fieldcollection_" . $key . "_export.json\"");
             echo $json;
@@ -585,7 +584,7 @@ class Admin_ClassController extends \Pimcore\Controller\Action\Admin
 
     public function fieldcollectionDeleteAction()
     {
-        $fc = Object\Fieldcollection\Definition::getByKey($this->getParam("id"));
+        $fc = \Pimcore\Model\Object\Fieldcollection\Definition::getByKey($this->getParam("id"));
         $fc->delete();
 
         $this->_helper->json(["success" => true]);
@@ -593,7 +592,7 @@ class Admin_ClassController extends \Pimcore\Controller\Action\Admin
 
     public function fieldcollectionTreeAction()
     {
-        $list = new Object\Fieldcollection\Definition\Listing();
+        $list = new \Pimcore\Model\Object\Fieldcollection\Definition\Listing();
         $list = $list->load();
 
         $items = [];
@@ -613,7 +612,7 @@ class Admin_ClassController extends \Pimcore\Controller\Action\Admin
         $user = \Pimcore\Tool\Admin::getCurrentUser();
         $currentLayoutId = $this->getParam("layoutId");
 
-        $list = new Object\Fieldcollection\Definition\Listing();
+        $list = new \Pimcore\Model\Object\Fieldcollection\Definition\Listing();
         $list = $list->load();
 
         if ($this->hasParam("allowedTypes")) {
@@ -631,12 +630,12 @@ class Admin_ClassController extends \Pimcore\Controller\Action\Admin
                         "containerKey" => $type->getKey()
                     ];
 
-                    $object = Object\AbstractObject::getById($this->getParam("object_id"));
+                    $object = \Pimcore\Model\Object\AbstractObject::getById($this->getParam("object_id"));
 
-                    Object\Service::enrichLayoutDefinition($layoutDefinitions, $object, $context);
+                    \Pimcore\Model\Object\Service::enrichLayoutDefinition($layoutDefinitions, $object, $context);
 
                     if ($currentLayoutId == -1 && $user->isAdmin()) {
-                        Object\Service::createSuperLayout($layoutDefinitions);
+                        \Pimcore\Model\Object\Service::createSuperLayout($layoutDefinitions);
                     }
                 }
             }
@@ -652,10 +651,10 @@ class Admin_ClassController extends \Pimcore\Controller\Action\Admin
 
     public function getClassDefinitionForColumnConfigAction()
     {
-        $class = Object\ClassDefinition::getById(intval($this->getParam("id")));
+        $class = \Pimcore\Model\Object\ClassDefinition::getById(intval($this->getParam("id")));
         $objectId = intval($this->getParam("oid"));
 
-        $filteredDefinitions = Object\Service::getCustomLayoutDefinitionForGridColumnConfig($class, $objectId);
+        $filteredDefinitions = \Pimcore\Model\Object\Service::getCustomLayoutDefinitionForGridColumnConfig($class, $objectId);
 
         $layoutDefinitions = isset($filteredDefinitions["layoutDefinition"]) ? $filteredDefinitions["layoutDefinition"] : false;
         $filteredFieldDefinition = isset($filteredDefinitions["fieldDefinition"]) ? $filteredDefinitions["fieldDefinition"] : false;
@@ -669,7 +668,7 @@ class Admin_ClassController extends \Pimcore\Controller\Action\Admin
         $result['objectColumns']['nodeType'] = "object";
 
         // array("id", "fullpath", "published", "creationDate", "modificationDate", "filename", "classname");
-        $systemColumnNames = Object\Concrete::$systemColumnNames;
+        $systemColumnNames = \Pimcore\Model\Object\Concrete::$systemColumnNames;
         $systemColumns = [];
         foreach ($systemColumnNames as $systemColumn) {
             $systemColumns[] = ["title" => $systemColumn, "name" => $systemColumn, "datatype" => "data", "fieldtype" => "system"];
@@ -679,7 +678,7 @@ class Admin_ClassController extends \Pimcore\Controller\Action\Admin
         $result['systemColumns']['childs'] = $systemColumns;
 
 
-        $list = new Object\Objectbrick\Definition\Listing();
+        $list = new \Pimcore\Model\Object\Objectbrick\Definition\Listing();
         $list = $list->load();
 
         foreach ($list as $brickDefinition) {
@@ -712,7 +711,7 @@ class Admin_ClassController extends \Pimcore\Controller\Action\Admin
 
     public function objectbrickGetAction()
     {
-        $fc = Object\Objectbrick\Definition::getByKey($this->getParam("id"));
+        $fc = \Pimcore\Model\Object\Objectbrick\Definition::getByKey($this->getParam("id"));
         $this->_helper->json($fc);
     }
 
@@ -723,7 +722,7 @@ class Admin_ClassController extends \Pimcore\Controller\Action\Admin
 
             if ($this->getParam("task") == "add") {
                 // check for existing brick with same name with different lower/upper cases
-                $list = new Object\Objectbrick\Definition\Listing();
+                $list = new \Pimcore\Model\Object\Objectbrick\Definition\Listing();
                 $list = $list->load();
 
                 foreach ($list as $item) {
@@ -734,7 +733,7 @@ class Admin_ClassController extends \Pimcore\Controller\Action\Admin
             }
 
             // now we create a new definition
-            $fc = new Object\Objectbrick\Definition();
+            $fc = new \Pimcore\Model\Object\Objectbrick\Definition();
             $fc->setKey($key);
 
             if ($this->getParam("values")) {
@@ -750,7 +749,7 @@ class Admin_ClassController extends \Pimcore\Controller\Action\Admin
                 $configuration["datatype"] = "layout";
                 $configuration["fieldtype"] = "panel";
 
-                $layout = Object\ClassDefinition\Service::generateLayoutTreeFromArray($configuration, true);
+                $layout = \Pimcore\Model\Object\ClassDefinition\Service::generateLayoutTreeFromArray($configuration, true);
                 $fc->setLayoutDefinitions($layout);
             }
 
@@ -765,10 +764,10 @@ class Admin_ClassController extends \Pimcore\Controller\Action\Admin
 
     public function importObjectbrickAction()
     {
-        $objectBrick = Object\Objectbrick\Definition::getByKey($this->getParam("id"));
+        $objectBrick = \Pimcore\Model\Object\Objectbrick\Definition::getByKey($this->getParam("id"));
 
         $data = file_get_contents($_FILES["Filedata"]["tmp_name"]);
-        $success = Object\ClassDefinition\Service::importObjectBrickFromJson($objectBrick, $data);
+        $success = \Pimcore\Model\Object\ClassDefinition\Service::importObjectBrickFromJson($objectBrick, $data);
 
         $this->removeViewRenderer();
 
@@ -784,14 +783,14 @@ class Admin_ClassController extends \Pimcore\Controller\Action\Admin
     public function exportObjectbrickAction()
     {
         $this->removeViewRenderer();
-        $objectBrick = Object\Objectbrick\Definition::getByKey($this->getParam("id"));
+        $objectBrick = \Pimcore\Model\Object\Objectbrick\Definition::getByKey($this->getParam("id"));
         $key = $objectBrick->getKey();
-        if (!$objectBrick instanceof Object\Objectbrick\Definition) {
-            $errorMessage = ": Object-Brick with id [ " . $this->getParam("id") . " not found. ]";
+        if (!$objectBrick instanceof \Pimcore\Model\Object\Objectbrick\Definition) {
+            $errorMessage = ": \Pimcore\Model\Object-Brick with id [ " . $this->getParam("id") . " not found. ]";
             Logger::error($errorMessage);
             echo $errorMessage;
         } else {
-            $xml = Object\ClassDefinition\Service::generateObjectBrickJson($objectBrick);
+            $xml = \Pimcore\Model\Object\ClassDefinition\Service::generateObjectBrickJson($objectBrick);
             header("Content-type: application/json");
             header("Content-Disposition: attachment; filename=\"objectbrick_" . $key . "_export.json\"");
             echo $xml;
@@ -800,7 +799,7 @@ class Admin_ClassController extends \Pimcore\Controller\Action\Admin
 
     public function objectbrickDeleteAction()
     {
-        $fc = Object\Objectbrick\Definition::getByKey($this->getParam("id"));
+        $fc = \Pimcore\Model\Object\Objectbrick\Definition::getByKey($this->getParam("id"));
         $fc->delete();
 
         $this->_helper->json(["success" => true]);
@@ -808,7 +807,7 @@ class Admin_ClassController extends \Pimcore\Controller\Action\Admin
 
     public function objectbrickTreeAction()
     {
-        $list = new Object\Objectbrick\Definition\Listing();
+        $list = new \Pimcore\Model\Object\Objectbrick\Definition\Listing();
         $list = $list->load();
 
         $items = [];
@@ -825,7 +824,7 @@ class Admin_ClassController extends \Pimcore\Controller\Action\Admin
 
     public function objectbrickListAction()
     {
-        $list = new Object\Objectbrick\Definition\Listing();
+        $list = new \Pimcore\Model\Object\Objectbrick\Definition\Listing();
         $list = $list->load();
 
         if ($this->hasParam("class_id") && $this->hasParam("field_name")) {
@@ -849,7 +848,7 @@ class Admin_ClassController extends \Pimcore\Controller\Action\Admin
 
                 $user = $this->getUser();
                 if ($currentLayoutId == -1 && $user->isAdmin()) {
-                    Object\Service::createSuperLayout($layout);
+                    \Pimcore\Model\Object\Service::createSuperLayout($layout);
                     $objectData["layout"] = $layout;
                 }
 
@@ -858,9 +857,9 @@ class Admin_ClassController extends \Pimcore\Controller\Action\Admin
                     "containerType" => "objectbrick",
                     "containerKey" => $type->getKey()
                 ];
-                $object = Object\AbstractObject::getById($this->getParam("object_id"));
+                $object = \Pimcore\Model\Object\AbstractObject::getById($this->getParam("object_id"));
 
-                Object\Service::enrichLayoutDefinition($layout, $object, $context);
+                \Pimcore\Model\Object\Service::enrichLayoutDefinition($layout, $object, $context);
                 $type->setLayoutDefinitions($layout);
             }
 
@@ -949,31 +948,31 @@ class Admin_ClassController extends \Pimcore\Controller\Action\Admin
             unset($item["id"]);
 
             if ($type == "class" && $item["name"] == $name) {
-                $class = Object\ClassDefinition::getByName($name);
+                $class = \Pimcore\Model\Object\ClassDefinition::getByName($name);
                 if (!$class) {
-                    $class = new Object\ClassDefinition();
+                    $class = new \Pimcore\Model\Object\ClassDefinition();
                     $class->setName($name);
                 }
-                $success = Object\ClassDefinition\Service::importClassDefinitionFromJson($class, json_encode($item), true);
+                $success = \Pimcore\Model\Object\ClassDefinition\Service::importClassDefinitionFromJson($class, json_encode($item), true);
                 $this->_helper->json(["success" => $success !== false]);
             } elseif ($type == "objectbrick" && $item["key"] == $name) {
                 try {
-                    $brick = Object\Objectbrick\Definition::getByKey($name);
+                    $brick = \Pimcore\Model\Object\Objectbrick\Definition::getByKey($name);
                 } catch (\Exception $e) {
-                    $brick = new Object\Objectbrick\Definition();
+                    $brick = new \Pimcore\Model\Object\Objectbrick\Definition();
                     $brick->setKey($name);
                 }
 
-                $success = Object\ClassDefinition\Service::importObjectBrickFromJson($brick, json_encode($item), true);
+                $success = \Pimcore\Model\Object\ClassDefinition\Service::importObjectBrickFromJson($brick, json_encode($item), true);
                 $this->_helper->json(["success" => $success !== false]);
             } elseif ($type == "fieldcollection" && $item["key"] == $name) {
                 try {
-                    $fieldCollection = Object\Fieldcollection\Definition::getByKey($name);
+                    $fieldCollection = \Pimcore\Model\Object\Fieldcollection\Definition::getByKey($name);
                 } catch (\Exception $e) {
-                    $fieldCollection = new Object\Fieldcollection\Definition();
+                    $fieldCollection = new \Pimcore\Model\Object\Fieldcollection\Definition();
                     $fieldCollection->setKey($name);
                 }
-                $success = Object\ClassDefinition\Service::importFieldCollectionFromJson($fieldCollection, json_encode($item), true);
+                $success = \Pimcore\Model\Object\ClassDefinition\Service::importFieldCollectionFromJson($fieldCollection, json_encode($item), true);
                 $this->_helper->json(["success" => $success !== false]);
             } elseif ($type == "customlayout") {
                 $layoutData = unserialize($data["name"]);
@@ -981,7 +980,7 @@ class Admin_ClassController extends \Pimcore\Controller\Action\Admin
                 $layoutName = $layoutData["name"];
 
                 if ($item["name"] == $layoutName && $item["className"] == $className) {
-                    $class = Object\ClassDefinition::getByName($className);
+                    $class = \Pimcore\Model\Object\ClassDefinition::getByName($className);
                     if (!$class) {
                         throw new \Exception("Class does not exist");
                     }
@@ -989,7 +988,7 @@ class Admin_ClassController extends \Pimcore\Controller\Action\Admin
                     $classId = $class->getId();
 
 
-                    $layoutList = new Object\ClassDefinition\CustomLayout\Listing();
+                    $layoutList = new \Pimcore\Model\Object\ClassDefinition\CustomLayout\Listing();
                     $db = \Pimcore\Db::get();
                     $layoutList->setCondition("name = " . $db->quote($layoutName) . " AND classId = " . $classId);
                     $layoutList = $layoutList->load();
@@ -1000,14 +999,14 @@ class Admin_ClassController extends \Pimcore\Controller\Action\Admin
                     }
 
                     if (!$layoutDefinition) {
-                        $layoutDefinition = new Object\ClassDefinition\CustomLayout();
+                        $layoutDefinition = new \Pimcore\Model\Object\ClassDefinition\CustomLayout();
                         $layoutDefinition->setName($layoutName);
                         $layoutDefinition->setClassId($classId);
                     }
 
                     try {
                         $layoutDefinition->setDescription($item["description"]);
-                        $layoutDef = Object\ClassDefinition\Service::generateLayoutTreeFromArray($item["layoutDefinitions"], true);
+                        $layoutDef = \Pimcore\Model\Object\ClassDefinition\Service::generateLayoutTreeFromArray($item["layoutDefinitions"], true);
                         $layoutDefinition->setLayoutDefinitions($layoutDef);
                         $layoutDefinition->save();
                     } catch (\Exception $e) {
@@ -1031,18 +1030,18 @@ class Admin_ClassController extends \Pimcore\Controller\Action\Admin
         $result = [];
         $this->removeViewRenderer();
 
-        $fieldCollections = new Object\Fieldcollection\Definition\Listing();
+        $fieldCollections = new \Pimcore\Model\Object\Fieldcollection\Definition\Listing();
         $fieldCollections = $fieldCollections->load();
 
         foreach ($fieldCollections as $fieldCollection) {
             $key = $fieldCollection->key;
-            $fieldCollectionJson = json_decode(Object\ClassDefinition\Service::generateFieldCollectionJson($fieldCollection));
+            $fieldCollectionJson = json_decode(\Pimcore\Model\Object\ClassDefinition\Service::generateFieldCollectionJson($fieldCollection));
             $fieldCollectionJson->key = $key;
             $result["fieldcollection"][] = $fieldCollectionJson;
         }
 
 
-        $classes = new Object\ClassDefinition\Listing();
+        $classes = new \Pimcore\Model\Object\ClassDefinition\Listing();
         $classes->setOrder("ASC");
         $classes->setOrderKey("id");
         $classes = $classes->load();
@@ -1053,22 +1052,22 @@ class Admin_ClassController extends \Pimcore\Controller\Action\Admin
             $result["class"][] = $data;
         }
 
-        $objectBricks = new Object\Objectbrick\Definition\Listing();
+        $objectBricks = new \Pimcore\Model\Object\Objectbrick\Definition\Listing();
         $objectBricks = $objectBricks->load();
 
         foreach ($objectBricks as $objectBrick) {
             $key = $objectBrick->key;
-            $objectBrickJson = json_decode(Object\ClassDefinition\Service::generateObjectBrickJson($objectBrick));
+            $objectBrickJson = json_decode(\Pimcore\Model\Object\ClassDefinition\Service::generateObjectBrickJson($objectBrick));
             $objectBrickJson->key = $key;
             $result["objectbrick"][] = $objectBrickJson;
         }
 
-        $customLayouts = new Object\ClassDefinition\CustomLayout\Listing();
+        $customLayouts = new \Pimcore\Model\Object\ClassDefinition\CustomLayout\Listing();
         $customLayouts = $customLayouts->load();
         foreach ($customLayouts as $customLayout) {
             /** @var  $customLayout Object\ClassDefinition\CustomLayout */
             $classId = $customLayout->getClassId();
-            $class = Object\ClassDefinition::getById($classId);
+            $class = \Pimcore\Model\Object\ClassDefinition::getById($classId);
             $customLayout->className = $class->getName();
             $result["customlayout"][] = $customLayout;
         }

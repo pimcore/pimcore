@@ -24,7 +24,7 @@ class Install_IndexController extends \Pimcore\Controller\Action
         @ini_set("max_execution_time", $maxExecutionTime);
         set_time_limit($maxExecutionTime);
 
-        error_reporting(E_ALL & ~E_NOTICE & ~E_STRICT);
+        error_reporting(E_ALL & ~E_NOTICE & ~E_STRICT & ~E_DEPRECATED);
         @ini_set("display_errors", "On");
         $front = \Zend_Controller_Front::getInstance();
         $front->throwExceptions(true);

@@ -16,7 +16,6 @@ namespace Pimcore\WorkflowManagement\Workflow;
 
 use Pimcore\Model\Element\AbstractElement;
 use Pimcore\Model\Element\Service;
-use Pimcore\Model\Object;
 use Pimcore\Model\Object\Concrete as ConcreteObject;
 use Pimcore\Model\Document;
 use Pimcore\Model\Asset;

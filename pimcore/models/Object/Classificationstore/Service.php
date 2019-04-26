@@ -17,7 +17,6 @@
 namespace Pimcore\Model\Object\Classificationstore;
 
 use Pimcore\Model;
-use Pimcore\Model\Object;
 use Pimcore\Tool;
 
 class Service
@@ -25,7 +24,7 @@ class Service
 
     /**
      * @param $keyConfig
-     * @return Object\ClassDefinition\Data
+     * @return Model\Object\ClassDefinition\Data
      */
     public static function getFieldDefinitionFromKeyConfig($keyConfig)
     {
@@ -40,7 +39,7 @@ class Service
     /**
      * @param $definition
      * @param $type
-     * @return Object\ClassDefinition\Data
+     * @return Model\Object\ClassDefinition\Data
      */
     public static function getFieldDefinitionFromJson($definition, $type)
     {

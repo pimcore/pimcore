@@ -13,7 +13,6 @@
  */
 
 use Pimcore\Db;
-use Pimcore\Model\Object;
 use Pimcore\Model\Object\KeyValue;
 use Pimcore\Logger;
 
@@ -382,7 +381,7 @@ class Admin_KeyValueController extends \Pimcore\Controller\Action\Admin
         $tmpFile = file_get_contents($_FILES["Filedata"]["tmp_name"]);
         $conf = new \Zend_Config_Xml($tmpFile);
         $importData = $conf->toArray();
-        Object\KeyValue\Helper::import($importData);
+        \Pimcore\Model\Object\KeyValue\Helper::import($importData);
 
         $this->_helper->json(["success" => true], false);
 
@@ -407,7 +406,7 @@ class Admin_KeyValueController extends \Pimcore\Controller\Action\Admin
 
     public function testmagicAction()
     {
-        $obj = Object\Concrete::getById(61071);
+        $obj = \Pimcore\Model\Object\Concrete::getById(61071);
         $pairs = $obj->getKeyValuePairs();
 
         $value = $pairs->getab123();

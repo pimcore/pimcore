@@ -17,7 +17,6 @@
 namespace Pimcore\Model\Object\ClassDefinition\Data;
 
 use Pimcore\Model;
-use Pimcore\Model\Object;
 use Pimcore\Model\Webservice;
 use Pimcore\Tool;
 use Pimcore\Logger;
@@ -69,7 +68,7 @@ class Objectbricks extends Model\Object\ClassDefinition\Data
     }
 
     /**
-     * @see Object\ClassDefinition\Data::getDataForEditmode
+     * @see Model\Object\ClassDefinition\Data::getDataForEditmode
      * @param string $data
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
@@ -80,7 +79,7 @@ class Objectbricks extends Model\Object\ClassDefinition\Data
     {
         $editmodeData = [];
 
-        if ($data instanceof Object\Objectbrick) {
+        if ($data instanceof \Pimcore\Model\Object\Objectbrick) {
             $allowedBrickTypes = $data->getAllowedBrickTypes();
 
             foreach ($allowedBrickTypes as $allowedBrickType) {
@@ -103,7 +102,7 @@ class Objectbricks extends Model\Object\ClassDefinition\Data
      */
     private function doGetDataForEditmode($getter, $data, $params, $allowedBrickType, $objectFromVersion, $level = 0)
     {
-        $parent = Object\Service::hasInheritableParentObject($data->getObject());
+        $parent = \Pimcore\Model\Object\Service::hasInheritableParentObject($data->getObject());
         $item = $data->$getter();
         if (!$item && !empty($parent)) {
             $data = $parent->{"get" . ucfirst($this->getName())}();
@@ -111,12 +110,12 @@ class Objectbricks extends Model\Object\ClassDefinition\Data
             return $this->doGetDataForEditmode($getter, $data, $params, $allowedBrickType, $objectFromVersion, $level + 1);
         }
 
-        if (!$item instanceof Object\Objectbrick\Data\AbstractData) {
+        if (!$item instanceof \Pimcore\Model\Object\Objectbrick\Data\AbstractData) {
             return null;
         }
 
         try {
-            $collectionDef = Object\Objectbrick\Definition::getByKey($item->getType());
+            $collectionDef = \Pimcore\Model\Object\Objectbrick\Definition::getByKey($item->getType());
         } catch (\Exception $e) {
             return null;
         }
@@ -142,7 +141,7 @@ class Objectbricks extends Model\Object\ClassDefinition\Data
 
         if ($calculatedChilds) {
             foreach ($calculatedChilds as $fd) {
-                $fieldData = new Object\Data\CalculatedValue($fd->getName());
+                $fieldData = new \Pimcore\Model\Object\Data\CalculatedValue($fd->getName());
                 $fieldData->setContextualData("objectbrick", $this->getName(), $allowedBrickType, $fd->getName(), null, null, $fd);
                 $fieldData = $fd->getDataForEditmode($fieldData, $data->getObject(), $params);
                 $brickData[$fd->getName()] = $fieldData;
@@ -175,14 +174,14 @@ class Objectbricks extends Model\Object\ClassDefinition\Data
     private function getDataForField($item, $key, $fielddefinition, $level, $baseObject, $getter, $objectFromVersion)
     {
         $result = new \stdClass();
-        $parent = Object\Service::hasInheritableParentObject($baseObject);
+        $parent = \Pimcore\Model\Object\Service::hasInheritableParentObject($baseObject);
         $valueGetter = "get" . ucfirst($key);
 
         // relations but not for objectsMetadata, because they have additional data which cannot be loaded directly from the DB
         if (!$objectFromVersion && method_exists($fielddefinition, "getLazyLoading")
             && $fielddefinition->getLazyLoading()
-            && !$fielddefinition instanceof Object\ClassDefinition\Data\ObjectsMetadata
-            && !$fielddefinition instanceof Object\ClassDefinition\Data\Block) {
+            && !$fielddefinition instanceof \Pimcore\Model\Object\ClassDefinition\Data\ObjectsMetadata
+            && !$fielddefinition instanceof \Pimcore\Model\Object\ClassDefinition\Data\Block) {
 
             //lazy loading data is fetched from DB differently, so that not every relation object is instantiated
             if ($fielddefinition->isRemoteOwner()) {
@@ -204,11 +203,11 @@ class Objectbricks extends Model\Object\ClassDefinition\Data
             }
             $data = [];
 
-            if ($fielddefinition instanceof Object\ClassDefinition\Data\Href) {
+            if ($fielddefinition instanceof \Pimcore\Model\Object\ClassDefinition\Data\Href) {
                 $data = $relations[0];
             } else {
                 foreach ($relations as $rel) {
-                    if ($fielddefinition instanceof Object\ClassDefinition\Data\Objects) {
+                    if ($fielddefinition instanceof \Pimcore\Model\Object\ClassDefinition\Data\Objects) {
                         $data[] = [$rel["id"], $rel["path"], $rel["subtype"]];
                     } else {
                         $data[] = [$rel["id"], $rel["path"], $rel["type"], $rel["subtype"]];
@@ -225,10 +224,10 @@ class Objectbricks extends Model\Object\ClassDefinition\Data
                 $editmodeValue = $fielddefinition->getDataForEditmode($fieldValue, $baseObject);
             }
             if ($fielddefinition->isEmpty($fieldValue) && !empty($parent)) {
-                $backup = Object\AbstractObject::getGetInheritedValues();
-                Object\AbstractObject::setGetInheritedValues(true);
+                $backup = \Pimcore\Model\Object\AbstractObject::getGetInheritedValues();
+                \Pimcore\Model\Object\AbstractObject::setGetInheritedValues(true);
                 $parentItem = $parent->{"get" . ucfirst($this->getName())}()->$getter();
-                Object\AbstractObject::setGetInheritedValues($backup);
+                \Pimcore\Model\Object\AbstractObject::setGetInheritedValues($backup);
                 if (!empty($parentItem)) {
                     return $this->getDataForField($parentItem, $key, $fielddefinition, $level + 1, $parent, $getter, $objectFromVersion);
                 }
@@ -262,7 +261,7 @@ class Objectbricks extends Model\Object\ClassDefinition\Data
         if (is_array($data)) {
             foreach ($data as $collectionRaw) {
                 $collectionData = [];
-                $collectionDef = Object\Objectbrick\Definition::getByKey($collectionRaw["type"]);
+                $collectionDef = \Pimcore\Model\Object\Objectbrick\Definition::getByKey($collectionRaw["type"]);
 
                 $getter = "get" . ucfirst($collectionRaw["type"]);
                 $brick = $container->$getter();
@@ -293,9 +292,9 @@ class Objectbricks extends Model\Object\ClassDefinition\Data
     }
 
     /**
-     * @see Object\ClassDefinition\Data::getVersionPreview
+     * @see Model\Object\ClassDefinition\Data::getVersionPreview
      * @param string $data
-     * @param null|Object\AbstractObject $object
+     * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
      * @return string
      */
@@ -307,7 +306,7 @@ class Objectbricks extends Model\Object\ClassDefinition\Data
     /**
      * converts object data to a simple string value or CSV Export
      * @abstract
-     * @param Object\AbstractObject $object
+     * @param Model\Object\AbstractObject $object
      * @param array $params
      * @return string
      */
@@ -337,15 +336,15 @@ class Objectbricks extends Model\Object\ClassDefinition\Data
         $dataString = "";
         $obData = $this->getDataFromObjectParam($object, $params);
 
-        if ($obData instanceof Object\Objectbrick) {
+        if ($obData instanceof \Pimcore\Model\Object\Objectbrick) {
             $items = $obData->getItems();
             foreach ($items as $item) {
-                if (!$item instanceof Object\Objectbrick\Data\AbstractData) {
+                if (!$item instanceof \Pimcore\Model\Object\Objectbrick\Data\AbstractData) {
                     continue;
                 }
 
                 try {
-                    $collectionDef = Object\Objectbrick\Definition::getByKey($item->getType());
+                    $collectionDef = \Pimcore\Model\Object\Objectbrick\Definition::getByKey($item->getType());
                 } catch (\Exception $e) {
                     continue;
                 }
@@ -366,7 +365,7 @@ class Objectbricks extends Model\Object\ClassDefinition\Data
     public function save($object, $params = [])
     {
         $container = $this->getDataFromObjectParam($object);
-        if ($container instanceof Object\Objectbrick) {
+        if ($container instanceof \Pimcore\Model\Object\Objectbrick) {
             $container->save($object);
         }
     }
@@ -422,7 +421,7 @@ class Objectbricks extends Model\Object\ClassDefinition\Data
         if (is_array($allowedTypes)) {
             for ($i = 0; $i < count($allowedTypes); $i++) {
                 try {
-                    Object\Objectbrick\Definition::getByKey($allowedTypes[$i]);
+                    \Pimcore\Model\Object\Objectbrick\Definition::getByKey($allowedTypes[$i]);
                 } catch (\Exception $e) {
                     Logger::warn("Removed unknown allowed type [ $allowedTypes[$i] ] from allowed types of object brick");
                     unset($allowedTypes[$i]);
@@ -446,9 +445,9 @@ class Objectbricks extends Model\Object\ClassDefinition\Data
         $data = $this->getDataFromObjectParam($object, $params);
         $wsData = [];
 
-        if ($data instanceof Object\Objectbrick) {
+        if ($data instanceof \Pimcore\Model\Object\Objectbrick) {
             foreach ($data as $item) {
-                if (!$item instanceof Object\Objectbrick\Data\AbstractData) {
+                if (!$item instanceof \Pimcore\Model\Object\Objectbrick\Data\AbstractData) {
                     continue;
                 }
 
@@ -457,7 +456,7 @@ class Objectbricks extends Model\Object\ClassDefinition\Data
                 $wsDataItem->type = $item->getType();
 
                 try {
-                    $collectionDef = Object\Objectbrick\Definition::getByKey($item->getType());
+                    $collectionDef = \Pimcore\Model\Object\Objectbrick\Definition::getByKey($item->getType());
                 } catch (\Exception $e) {
                     continue;
                 }
@@ -510,7 +509,7 @@ class Objectbricks extends Model\Object\ClassDefinition\Data
 
                         $brick = $collectionRaw->type;
                         $collectionData = [];
-                        $collectionDef = Object\Objectbrick\Definition::getByKey($brick);
+                        $collectionDef = \Pimcore\Model\Object\Objectbrick\Definition::getByKey($brick);
 
                         if (!$collectionDef) {
                             throw new \Exception("Unknown objectbrick in webservice import [" . $brick . "]");
@@ -560,7 +559,7 @@ class Objectbricks extends Model\Object\ClassDefinition\Data
      */
     public function preSetData($object, $value, $params = [])
     {
-        if ($value instanceof Object\Objectbrick) {
+        if ($value instanceof \Pimcore\Model\Object\Objectbrick) {
             $value->setFieldname($this->getName());
         }
 
@@ -576,15 +575,15 @@ class Objectbricks extends Model\Object\ClassDefinition\Data
     {
         $dependencies = [];
 
-        if ($data instanceof Object\Objectbrick) {
+        if ($data instanceof \Pimcore\Model\Object\Objectbrick) {
             $items = $data->getItems();
             foreach ($items as $item) {
-                if (!$item instanceof Object\Objectbrick\Data\AbstractData) {
+                if (!$item instanceof \Pimcore\Model\Object\Objectbrick\Data\AbstractData) {
                     continue;
                 }
 
                 try {
-                    $collectionDef = Object\Objectbrick\Definition::getByKey($item->getType());
+                    $collectionDef = \Pimcore\Model\Object\Objectbrick\Definition::getByKey($item->getType());
                 } catch (\Exception $e) {
                     continue;
                 }
@@ -611,15 +610,15 @@ class Objectbricks extends Model\Object\ClassDefinition\Data
     {
         $tags = is_array($tags) ? $tags : [];
 
-        if ($data instanceof Object\Objectbrick) {
+        if ($data instanceof \Pimcore\Model\Object\Objectbrick) {
             $items = $data->getItems();
             foreach ($items as $item) {
-                if (!$item instanceof Object\Objectbrick\Data\AbstractData) {
+                if (!$item instanceof \Pimcore\Model\Object\Objectbrick\Data\AbstractData) {
                     continue;
                 }
 
                 try {
-                    $collectionDef = Object\Objectbrick\Definition::getByKey($item->getType());
+                    $collectionDef = \Pimcore\Model\Object\Objectbrick\Definition::getByKey($item->getType());
                 } catch (\Exception $e) {
                     continue;
                 }
@@ -690,19 +689,19 @@ class Objectbricks extends Model\Object\ClassDefinition\Data
     public function checkValidity($data, $omitMandatoryCheck = false)
     {
         if (!$omitMandatoryCheck) {
-            if ($data instanceof Object\Objectbrick) {
+            if ($data instanceof \Pimcore\Model\Object\Objectbrick) {
                 $items = $data->getItems();
                 foreach ($items as $item) {
                     if ($item->getDoDelete()) {
                         continue;
                     }
 
-                    if (!$item instanceof Object\Objectbrick\Data\AbstractData) {
+                    if (!$item instanceof \Pimcore\Model\Object\Objectbrick\Data\AbstractData) {
                         continue;
                     }
 
                     try {
-                        $collectionDef = Object\Objectbrick\Definition::getByKey($item->getType());
+                        $collectionDef = \Pimcore\Model\Object\Objectbrick\Definition::getByKey($item->getType());
                     } catch (\Exception $e) {
                         continue;
                     }
@@ -724,7 +723,7 @@ class Objectbricks extends Model\Object\ClassDefinition\Data
 
     /**
      * @param $data
-     * @param Object\Concrete $object
+     * @param Model\Object\Concrete $object
      * @param mixed $params
      * @return string
      */
@@ -761,7 +760,7 @@ class Objectbricks extends Model\Object\ClassDefinition\Data
      */
     private function doGetDiffDataForEditmode($data, $getter, $objectFromVersion, $level = 0)
     {
-        $parent = Object\Service::hasInheritableParentObject($data->getObject());
+        $parent = \Pimcore\Model\Object\Service::hasInheritableParentObject($data->getObject());
         $item = $data->$getter();
 
         if (!$item && !empty($parent)) {
@@ -770,12 +769,12 @@ class Objectbricks extends Model\Object\ClassDefinition\Data
             return $this->doGetDiffDataForEditmode($data, $getter, $objectFromVersion, $level + 1);
         }
 
-        if (!$item instanceof Object\Objectbrick\Data\AbstractData) {
+        if (!$item instanceof \Pimcore\Model\Object\Objectbrick\Data\AbstractData) {
             return null;
         }
 
         try {
-            $collectionDef = Object\Objectbrick\Definition::getByKey($item->getType());
+            $collectionDef = \Pimcore\Model\Object\Objectbrick\Definition::getByKey($item->getType());
         } catch (\Exception $e) {
             return null;
         }
@@ -824,7 +823,7 @@ class Objectbricks extends Model\Object\ClassDefinition\Data
     {
         $editmodeData = [];
 
-        if ($data instanceof Object\Objectbrick) {
+        if ($data instanceof \Pimcore\Model\Object\Objectbrick) {
             $getters = $data->getBrickGetters();
 
             foreach ($getters as $getter) {
@@ -873,7 +872,7 @@ class Objectbricks extends Model\Object\ClassDefinition\Data
             $fieldname = $subdata["name"];
             $fielddata = [$subdata["subdata"]];
 
-            $collectionDef = Object\Objectbrick\Definition::getByKey($brickname);
+            $collectionDef = \Pimcore\Model\Object\Objectbrick\Definition::getByKey($brickname);
 
             $fd = $collectionDef->getFieldDefinition($fieldname);
             if ($fd && $fd->isDiffChangeAllowed($object, $params)) {
@@ -918,15 +917,15 @@ class Objectbricks extends Model\Object\ClassDefinition\Data
     {
         $data = $this->getDataFromObjectParam($object, $params);
 
-        if ($data instanceof Object\Objectbrick) {
+        if ($data instanceof \Pimcore\Model\Object\Objectbrick) {
             $items = $data->getItems();
             foreach ($items as $item) {
-                if (!$item instanceof Object\Objectbrick\Data\AbstractData) {
+                if (!$item instanceof \Pimcore\Model\Object\Objectbrick\Data\AbstractData) {
                     continue;
                 }
 
                 try {
-                    $collectionDef = Object\Objectbrick\Definition::getByKey($item->getType());
+                    $collectionDef = \Pimcore\Model\Object\Objectbrick\Definition::getByKey($item->getType());
                 } catch (\Exception $e) {
                     continue;
                 }
@@ -945,9 +944,9 @@ class Objectbricks extends Model\Object\ClassDefinition\Data
     }
 
     /**
-     * @param Object\ClassDefinition\Data $masterDefinition
+     * @param Model\Object\ClassDefinition\Data $masterDefinition
      */
-    public function synchronizeWithMasterDefinition(Object\ClassDefinition\Data $masterDefinition)
+    public function synchronizeWithMasterDefinition(\Pimcore\Model\Object\ClassDefinition\Data $masterDefinition)
     {
         $this->allowedTypes = $masterDefinition->allowedTypes;
         $this->maxItems = $masterDefinition->maxItems;
@@ -964,7 +963,7 @@ class Objectbricks extends Model\Object\ClassDefinition\Data
         if (is_array($this->allowedTypes)) {
             foreach ($this->allowedTypes as $allowedType) {
                 try {
-                    $definition = Object\Objectbrick\Definition::getByKey($allowedType);
+                    $definition = \Pimcore\Model\Object\Objectbrick\Definition::getByKey($allowedType);
                 } catch (\Exception $e) {
                     Logger::info("Unknown allowed type [ $allowedType ] ignored.");
                 }
@@ -990,7 +989,7 @@ class Objectbricks extends Model\Object\ClassDefinition\Data
     public static function collectCalculatedValueItems($container, &$list = [])
     {
         if (is_array($container)) {
-            /** @var  $childDef Object\ClassDefinition\Data */
+            /** @var  $childDef Model\Object\ClassDefinition\Data */
             foreach ($container as $childDef) {
                 if ($childDef instanceof Model\Object\ClassDefinition\Data\CalculatedValue) {
                     $list[] = $childDef;

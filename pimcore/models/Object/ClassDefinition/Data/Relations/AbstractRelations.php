@@ -17,7 +17,6 @@
 namespace Pimcore\Model\Object\ClassDefinition\Data\Relations;
 
 use Pimcore\Model;
-use Pimcore\Model\Object;
 use Pimcore\Model\Element;
 use Pimcore\Db;
 use Pimcore\Tool\Admin;
@@ -110,7 +109,7 @@ abstract class AbstractRelations extends Model\Object\ClassDefinition\Data
             $allowed = false;
         } elseif ($this->getObjectsAllowed() and is_array($allowedClasses) and count($allowedClasses) > 0) {
             //check for allowed classes
-            if ($object instanceof Object\Concrete) {
+            if ($object instanceof \Pimcore\Model\Object\Concrete) {
                 $classname = $object->getClassName();
                 foreach ($allowedClasses as $c) {
                     $allowedClassnames[] = $c['classes'];
@@ -125,7 +124,7 @@ abstract class AbstractRelations extends Model\Object\ClassDefinition\Data
             //don't check if no allowed classes set
         }
 
-        if ($object instanceof Object\AbstractObject) {
+        if ($object instanceof \Pimcore\Model\Object\AbstractObject) {
             Logger::debug("checked object relation to target object [" . $object->getId() . "] in field [" . $this->getName() . "], allowed:" . $allowed);
         } else {
             Logger::debug("checked object relation to target in field [" . $this->getName() . "], not allowed, target ist not an object");
@@ -231,19 +230,19 @@ abstract class AbstractRelations extends Model\Object\ClassDefinition\Data
             $relation = [];
         }
 
-        if ($object instanceof Object\Concrete) {
+        if ($object instanceof \Pimcore\Model\Object\Concrete) {
             $relation["src_id"] = $object->getId();
             $relation["ownertype"] = "object";
 
             $classId = $object->getClassId();
-        } elseif ($object instanceof Object\Fieldcollection\Data\AbstractData) {
+        } elseif ($object instanceof \Pimcore\Model\Object\Fieldcollection\Data\AbstractData) {
             $relation["src_id"] = $object->getObject()->getId(); // use the id from the object, not from the field collection
             $relation["ownertype"] = "fieldcollection";
             $relation["ownername"] = $object->getFieldname();
             $relation["position"] = $object->getIndex();
 
             $classId = $object->getObject()->getClassId();
-        } elseif ($object instanceof Object\Localizedfield) {
+        } elseif ($object instanceof \Pimcore\Model\Object\Localizedfield) {
             $relation["src_id"] = $object->getObject()->getId();
             $relation["ownertype"] = "localizedfield";
             $relation["ownername"] = "localizedfield";
@@ -257,7 +256,7 @@ abstract class AbstractRelations extends Model\Object\ClassDefinition\Data
             $relation["position"] = $params["language"];
 
             $classId = $object->getObject()->getClassId();
-        } elseif ($object instanceof Object\Objectbrick\Data\AbstractData) {
+        } elseif ($object instanceof \Pimcore\Model\Object\Objectbrick\Data\AbstractData) {
             $relation["src_id"] = $object->getObject()->getId();
             $relation["ownertype"] = "objectbrick";
             $relation["ownername"] = $object->getFieldname();
@@ -311,15 +310,15 @@ abstract class AbstractRelations extends Model\Object\ClassDefinition\Data
         $db = Db::get();
         $data = null;
 
-        if ($object instanceof Object\Concrete) {
+        if ($object instanceof \Pimcore\Model\Object\Concrete) {
             if (!method_exists($this, "getLazyLoading") or !$this->getLazyLoading() or (array_key_exists("force", $params) && $params["force"])) {
                 $relations = $db->fetchAll("SELECT * FROM object_relations_" . $object->getClassId() . " WHERE src_id = ? AND fieldname = ? AND ownertype = 'object'", [$object->getId(), $this->getName()]);
             } else {
                 return null;
             }
-        } elseif ($object instanceof Object\Fieldcollection\Data\AbstractData) {
+        } elseif ($object instanceof \Pimcore\Model\Object\Fieldcollection\Data\AbstractData) {
             $relations = $db->fetchAll("SELECT * FROM object_relations_" . $object->getObject()->getClassId() . " WHERE src_id = ? AND fieldname = ? AND ownertype = 'fieldcollection' AND ownername = ? AND position = ?", [$object->getObject()->getId(), $this->getName(), $object->getFieldname(), $object->getIndex()]);
-        } elseif ($object instanceof Object\Localizedfield) {
+        } elseif ($object instanceof \Pimcore\Model\Object\Localizedfield) {
             if (isset($params["context"])&& $params["context"]["containerType"] == "fieldcollection") {
                 $context = $params["context"];
                 $fieldname = $context["fieldname"];
@@ -330,7 +329,7 @@ abstract class AbstractRelations extends Model\Object\ClassDefinition\Data
             } else {
                 $relations = $db->fetchAll("SELECT * FROM object_relations_" . $object->getObject()->getClassId() . " WHERE src_id = ? AND fieldname = ? AND ownertype = 'localizedfield' AND ownername = 'localizedfield' AND position = ?", [$object->getObject()->getId(), $this->getName(), $params["language"]]);
             }
-        } elseif ($object instanceof Object\Objectbrick\Data\AbstractData) {
+        } elseif ($object instanceof \Pimcore\Model\Object\Objectbrick\Data\AbstractData) {
             $relations = $db->fetchAll("SELECT * FROM object_relations_" . $object->getObject()->getClassId() . " WHERE src_id = ? AND fieldname = ? AND ownertype = 'objectbrick' AND ownername = ? AND position = ?", [$object->getObject()->getId(), $this->getName(), $object->getFieldname(), $object->getType()]);
 
             // THIS IS KIND A HACK: it's necessary because of this bug PIMCORE-1454 and therefore cannot be removed

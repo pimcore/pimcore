@@ -15,7 +15,6 @@
 use Pimcore\Model\Asset;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
-use Pimcore\Model\Object;
 use Pimcore\Model\Search\Backend\Data;
 
 class Searchadmin_SearchController extends \Pimcore\Controller\Action\Admin
@@ -152,7 +151,7 @@ class Searchadmin_SearchController extends \Pimcore\Controller\Action\Admin
 
         // filtering for objects
         if ($allParams["filter"] && $allParams["class"]) {
-            $class = Object\ClassDefinition::getByName($allParams["class"]);
+            $class = \Pimcore\Model\Object\ClassDefinition::getByName($allParams["class"]);
 
             // add Localized Fields filtering
             $params = \Zend_Json::decode($allParams['filter']);
@@ -161,7 +160,7 @@ class Searchadmin_SearchController extends \Pimcore\Controller\Action\Admin
 
             foreach ($params as $paramConditionObject) {
                 //this loop divides filter parameters to localized and unlocalized groups
-                $definitionExists = in_array('o_' . $paramConditionObject['property'], Object\Service::getSystemFields())
+                $definitionExists = in_array('o_' . $paramConditionObject['property'], \Pimcore\Model\Object\Service::getSystemFields())
                     || $class->getFieldDefinition($paramConditionObject['property']);
                 if ($definitionExists) { //TODO: for sure, we can add additional condition like getLocalizedFieldDefinition()->getFieldDefiniton(...
                     $unlocalizedFieldsFilters[] = $paramConditionObject;
@@ -174,10 +173,10 @@ class Searchadmin_SearchController extends \Pimcore\Controller\Action\Admin
 
             //string statements for divided filters
             $conditionFilters = count($unlocalizedFieldsFilters)
-                ? Object\Service::getFilterCondition(\Zend_Json::encode($unlocalizedFieldsFilters), $class)
+                ? \Pimcore\Model\Object\Service::getFilterCondition(\Zend_Json::encode($unlocalizedFieldsFilters), $class)
                 : null;
             $localizedConditionFilters = count($localizedFieldsFilters)
-                ?  Object\Service::getFilterCondition(\Zend_Json::encode($localizedFieldsFilters), $class)
+                ?  \Pimcore\Model\Object\Service::getFilterCondition(\Zend_Json::encode($localizedFieldsFilters), $class)
                 : null;
 
             $join = "";
@@ -297,8 +296,8 @@ class Searchadmin_SearchController extends \Pimcore\Controller\Action\Admin
         foreach ($hits as $hit) {
             $element = Element\Service::getElementById($hit->getId()->getType(), $hit->getId()->getId());
             if ($element->isAllowed("list")) {
-                if ($element instanceof Object\AbstractObject) {
-                    $data = Object\Service::gridObjectData($element, $fields);
+                if ($element instanceof \Pimcore\Model\Object\AbstractObject) {
+                    $data = \Pimcore\Model\Object\Service::gridObjectData($element, $fields);
                 } elseif ($element instanceof Document) {
                     $data = Document\Service::gridDocumentData($element);
                 } elseif ($element instanceof Asset) {

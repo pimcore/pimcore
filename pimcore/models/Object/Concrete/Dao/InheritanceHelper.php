@@ -17,7 +17,6 @@
 namespace Pimcore\Model\Object\Concrete\Dao;
 
 use Pimcore\Model;
-use Pimcore\Model\Object;
 
 class InheritanceHelper
 {
@@ -364,7 +363,7 @@ class InheritanceHelper
         $objects = [];
 
         if (!$parentIdGroups) {
-            $object = Object::getById($currentParentId);
+            $object = \Pimcore\Model\Object\AbstractObject::getById($currentParentId);
             $query = "SELECT b.o_id AS id $fields, b.o_type AS type, b.o_classId AS classId, b.o_parentId AS parentId, o_path, o_key FROM objects b LEFT JOIN " . $this->storetable . " a ON b.o_id = a." . $this->idField . " WHERE o_path LIKE ".\Pimcore\Db::get()->quote($object->getRealFullPath().'/%') . " GROUP BY b.o_id ORDER BY LENGTH(o_path) ASC";
 
             if (self::$useRuntimeCache) {

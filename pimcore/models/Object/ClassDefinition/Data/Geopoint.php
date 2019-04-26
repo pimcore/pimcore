@@ -17,7 +17,6 @@
 namespace Pimcore\Model\Object\ClassDefinition\Data;
 
 use Pimcore\Model;
-use Pimcore\Model\Object;
 
 class Geopoint extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo
 {
@@ -58,7 +57,7 @@ class Geopoint extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo
 
 
     /**
-     * @see Object\ClassDefinition\Data::getDataForResource
+     * @see Model\Object\ClassDefinition\Data::getDataForResource
      * @param string $data
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
@@ -66,7 +65,7 @@ class Geopoint extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo
      */
     public function getDataForResource($data, $object = null, $params = [])
     {
-        if ($data instanceof Object\Data\Geopoint) {
+        if ($data instanceof \Pimcore\Model\Object\Data\Geopoint) {
             return [
                 $this->getName() . "__longitude" => $data->getLongitude(),
                 $this->getName() . "__latitude" => $data->getLatitude()
@@ -80,7 +79,7 @@ class Geopoint extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo
     }
 
     /**
-     * @see Object\ClassDefinition\Data::getDataFromResource
+     * @see Model\Object\ClassDefinition\Data::getDataFromResource
      * @param string $data
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
@@ -89,14 +88,14 @@ class Geopoint extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo
     public function getDataFromResource($data, $object = null, $params = [])
     {
         if ($data[$this->getName() . "__longitude"] && $data[$this->getName() . "__latitude"]) {
-            return new Object\Data\Geopoint($data[$this->getName() . "__longitude"], $data[$this->getName() . "__latitude"]);
+            return new \Pimcore\Model\Object\Data\Geopoint($data[$this->getName() . "__longitude"], $data[$this->getName() . "__latitude"]);
         }
 
         return;
     }
 
     /**
-     * @see Object\ClassDefinition\Data::getDataForQueryResource
+     * @see Model\Object\ClassDefinition\Data::getDataForQueryResource
      * @param string $data
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
@@ -108,7 +107,7 @@ class Geopoint extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo
     }
 
     /**
-     * @see Object\ClassDefinition\Data::getDataForEditmode
+     * @see Model\Object\ClassDefinition\Data::getDataForEditmode
      * @param string $data
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
@@ -116,7 +115,7 @@ class Geopoint extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo
      */
     public function getDataForEditmode($data, $object = null, $params = [])
     {
-        if ($data instanceof Object\Data\Geopoint) {
+        if ($data instanceof \Pimcore\Model\Object\Data\Geopoint) {
             return [
                 "longitude" => $data->getLongitude(),
                 "latitude" => $data->getLatitude()
@@ -136,22 +135,22 @@ class Geopoint extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo
     public function getDataFromEditmode($data, $object = null, $params = [])
     {
         if (is_array($data) && ($data["longitude"] || $data["latitude"])) {
-            return new Object\Data\Geopoint($data["longitude"], $data["latitude"]);
+            return new \Pimcore\Model\Object\Data\Geopoint($data["longitude"], $data["latitude"]);
         }
 
         return;
     }
 
     /**
-     * @see Object\ClassDefinition\Data::getVersionPreview
+     * @see Model\Object\ClassDefinition\Data::getVersionPreview
      * @param string $data
-     * @param null|Object\AbstractObject $object
+     * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
      * @return string
      */
     public function getVersionPreview($data, $object = null, $params = [])
     {
-        if ($data instanceof Object\Data\Geopoint) {
+        if ($data instanceof \Pimcore\Model\Object\Data\Geopoint) {
             return $data->getLongitude() . "," . $data->getLatitude();
         }
 
@@ -163,14 +162,14 @@ class Geopoint extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo
     /**
      * converts object data to a simple string value or CSV Export
      * @abstract
-     * @param Object\AbstractObject $object
+     * @param Model\Object\AbstractObject $object
      * @param array $params
      * @return string
      */
     public function getForCsvExport($object, $params = [])
     {
         $data = $this->getDataFromObjectParam($object, $params);
-        if ($data instanceof Object\Data\Geopoint) {
+        if ($data instanceof \Pimcore\Model\Object\Data\Geopoint) {
             //TODO latitude and longitude should be switched - but doing this we will loose compatitbilty to old export files
             return $data->getLatitude() . "," . $data->getLongitude();
         } else {
@@ -182,7 +181,7 @@ class Geopoint extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo
      * @param string $importValue
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
-     * @return null|Object\ClassDefinition\Data|Object\Data\Geopoint
+     * @return null|Model\Object\ClassDefinition\Data|Model\Object\Data\Geopoint
      */
     public function getFromCsvImport($importValue, $object = null, $params = [])
     {
@@ -191,7 +190,7 @@ class Geopoint extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo
         $value = null;
         if ($coords[1] && $coords[0]) {
             //TODO latitude and longitude should be switched - but doing this we will loose compatitbilty to old export files
-            $value = new Object\Data\Geopoint($coords[1], $coords[0]);
+            $value = new \Pimcore\Model\Object\Data\Geopoint($coords[1], $coords[0]);
         }
 
         return $value;
@@ -217,7 +216,7 @@ class Geopoint extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo
     {
         $data = $this->getDataFromObjectParam($object, $params);
 
-        if ($data instanceof Object\Data\Geopoint) {
+        if ($data instanceof \Pimcore\Model\Object\Data\Geopoint) {
             return [
                 "longitude" => $data->getLongitude(),
                 "latitude" => $data->getLatitude()
@@ -242,7 +241,7 @@ class Geopoint extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo
         } else {
             $value = (array) $value;
             if ($value["longitude"] !== null && $value["latitude"] !== null) {
-                return new Object\Data\Geopoint($value["longitude"], $value["latitude"]);
+                return new \Pimcore\Model\Object\Data\Geopoint($value["longitude"], $value["latitude"]);
             } else {
                 throw new \Exception("cannot get values from web service import - invalid data");
             }
@@ -267,7 +266,7 @@ class Geopoint extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo
      */
     public function marshal($value, $object = null, $params = [])
     {
-        if ($value instanceof Object\Data\Geopoint) {
+        if ($value instanceof \Pimcore\Model\Object\Data\Geopoint) {
             return [
                 "value" => $value->getLatitude(),
                 "value2" => $value->getLongitude()
@@ -284,7 +283,7 @@ class Geopoint extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo
     public function unmarshal($value, $object = null, $params = [])
     {
         if (is_array($value)) {
-            $data = new Object\Data\Geopoint($value["value2"], $value["value"]);
+            $data = new \Pimcore\Model\Object\Data\Geopoint($value["value2"], $value["value"]);
 
             return $data;
         }

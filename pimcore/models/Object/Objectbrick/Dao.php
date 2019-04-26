@@ -17,7 +17,6 @@
 namespace Pimcore\Model\Object\Objectbrick;
 
 use Pimcore\Model;
-use Pimcore\Model\Object;
 
 /**
  * @property \Pimcore\Model\Object\Objectbrick $model
@@ -26,18 +25,18 @@ class Dao extends Model\Object\Fieldcollection\Dao
 {
 
     /**
-     * @param Object\Concrete $object
+     * @param Model\Object\Concrete $object
      * @param array $params
      * @return array
      */
-    public function load(Object\Concrete $object, $params = [])
+    public function load(\Pimcore\Model\Object\Concrete $object, $params = [])
     {
         $fieldDef = $object->getClass()->getFieldDefinition($this->model->getFieldname());
         $values = [];
 
         foreach ($fieldDef->getAllowedTypes() as $type) {
             try {
-                $definition = Object\Objectbrick\Definition::getByKey($type);
+                $definition = \Pimcore\Model\Object\Objectbrick\Definition::getByKey($type);
             } catch (\Exception $e) {
                 continue;
             }
@@ -102,15 +101,15 @@ class Dao extends Model\Object\Fieldcollection\Dao
 
     /**
      * @throws \Exception
-     * @param Object\Concrete $object
+     * @param Model\Object\Concrete $object
      */
-    public function delete(Object\Concrete $object)
+    public function delete(\Pimcore\Model\Object\Concrete $object)
     {
         // this is to clean up also the inherited values
         $fieldDef = $object->getClass()->getFieldDefinition($this->model->getFieldname());
         foreach ($fieldDef->getAllowedTypes() as $type) {
             try {
-                $definition = Object\Objectbrick\Definition::getByKey($type);
+                $definition = \Pimcore\Model\Object\Objectbrick\Definition::getByKey($type);
             } catch (\Exception $e) {
                 continue;
             }

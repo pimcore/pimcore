@@ -15,7 +15,6 @@
 use Pimcore\Tool;
 use Pimcore\File;
 use Pimcore\Model\Translation;
-use Pimcore\Model\Object;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
 use Pimcore\Model;
@@ -571,11 +570,11 @@ class Admin_TranslationController extends \Pimcore\Controller\Action\Admin
                     $listClass = "\\Pimcore\\Model\\" . ucfirst($element["type"]) . "\\Listing";
                     $list = new $listClass();
                     $list->setUnpublished(true);
-                    if ($el instanceof Object\AbstractObject) {
+                    if ($el instanceof \Pimcore\Model\Object\AbstractObject) {
                         // inlcude variants
-                        $list->setObjectTypes([Object\AbstractObject::OBJECT_TYPE_VARIANT, Object\AbstractObject::OBJECT_TYPE_OBJECT, Object\AbstractObject::OBJECT_TYPE_FOLDER]);
+                        $list->setObjectTypes([\Pimcore\Model\Object\AbstractObject::OBJECT_TYPE_VARIANT, \Pimcore\Model\Object\AbstractObject::OBJECT_TYPE_OBJECT, \Pimcore\Model\Object\AbstractObject::OBJECT_TYPE_FOLDER]);
                     }
-                    $list->setCondition(($el instanceof Object\AbstractObject ? "o_" : "") . "path LIKE ?", [$el->getRealFullPath() . ($el->getRealFullPath() != "/" ? "/" : "") . "%"]);
+                    $list->setCondition(($el instanceof \Pimcore\Model\Object\AbstractObject ? "o_" : "") . "path LIKE ?", [$el->getRealFullPath() . ($el->getRealFullPath() != "/" ? "/" : "") . "%"]);
                     $idList = $list->loadIdList();
 
                     foreach ($idList as $id) {
@@ -702,7 +701,7 @@ class Admin_TranslationController extends \Pimcore\Controller\Action\Admin
                         }
                     }
                 }
-            } elseif ($element instanceof Object\Concrete) {
+            } elseif ($element instanceof \Pimcore\Model\Object\Concrete) {
                 if ($fd = $element->getClass()->getFieldDefinition("localizedfields")) {
                     $definitions = $fd->getFielddefinitions();
 
@@ -875,7 +874,7 @@ class Admin_TranslationController extends \Pimcore\Controller\Action\Admin
                             $element->$setter($content);
                         }
                     }
-                } elseif ($element instanceof Object\Concrete) {
+                } elseif ($element instanceof \Pimcore\Model\Object\Concrete) {
                     if ($fieldType == "localizedfield") {
                         $setter = "set" . ucfirst($name);
                         if (method_exists($element, $setter)) {
@@ -896,7 +895,7 @@ class Admin_TranslationController extends \Pimcore\Controller\Action\Admin
 
             try {
                 // allow to save objects although there are mandatory fields
-                if ($element instanceof Object\AbstractObject) {
+                if ($element instanceof \Pimcore\Model\Object\AbstractObject) {
                     $element->setOmitMandatoryCheck(true);
                 }
 
@@ -1172,7 +1171,7 @@ class Admin_TranslationController extends \Pimcore\Controller\Action\Admin
 
                         $output .= $html;
                     }
-                } elseif ($element instanceof Object\Concrete) {
+                } elseif ($element instanceof \Pimcore\Model\Object\Concrete) {
                     $hasContent = false;
 
                     if ($fd = $element->getClass()->getFieldDefinition("localizedfields")) {

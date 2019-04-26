@@ -12,7 +12,6 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-use Pimcore\Model\Object;
 use Pimcore\Model\Document;
 
 // determines if we're in Pimcore\Console mode
@@ -38,9 +37,9 @@ $front->setResponse(new \Zend_Controller_Response_Cli());
 //Activate Inheritance for cli-scripts
 \Pimcore::unsetAdminMode();
 Document::setHideUnpublished(true);
-Object\AbstractObject::setHideUnpublished(true);
-Object\AbstractObject::setGetInheritedValues(true);
-Object\Localizedfield::setGetFallbackValues(true);
+\Pimcore\Model\Object\AbstractObject::setHideUnpublished(true);
+\Pimcore\Model\Object\AbstractObject::setGetInheritedValues(true);
+\Pimcore\Model\Object\Localizedfield::setGetFallbackValues(true);
 
 // CLI has no memory/time limits
 @ini_set('memory_limit', -1);
@@ -50,7 +49,7 @@ Object\Localizedfield::setGetFallbackValues(true);
 // Error reporting is enabled in CLI
 @ini_set("display_errors", "On");
 @ini_set("display_startup_errors", "On");
-error_reporting(E_ALL & ~E_NOTICE & ~E_STRICT);
+error_reporting(E_ALL & ~E_NOTICE & ~E_STRICT & ~E_DEPRECATED);
 
 // Pimcore\Console handles maintenance mode through the AbstractCommand
 if (!$pimcoreConsole) {

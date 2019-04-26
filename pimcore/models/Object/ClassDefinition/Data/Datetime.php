@@ -64,7 +64,7 @@ class Datetime extends Model\Object\ClassDefinition\Data
 
 
     /**
-     * @see Object\ClassDefinition\Data::getDataForResource
+     * @see Model\Object\ClassDefinition\Data::getDataForResource
      * @param \Zend_Date|\DateTime $data
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
@@ -78,7 +78,7 @@ class Datetime extends Model\Object\ClassDefinition\Data
     }
 
     /**
-     * @see Object\ClassDefinition\Data::getDataFromResource
+     * @see Model\Object\ClassDefinition\Data::getDataFromResource
      * @param integer $data
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
@@ -92,7 +92,7 @@ class Datetime extends Model\Object\ClassDefinition\Data
     }
 
     /**
-     * @see Object\ClassDefinition\Data::getDataForQueryResource
+     * @see Model\Object\ClassDefinition\Data::getDataForQueryResource
      * @param \Zend_Date|\DateTime $data
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
@@ -106,7 +106,7 @@ class Datetime extends Model\Object\ClassDefinition\Data
     }
 
     /**
-     * @see Object\ClassDefinition\Data::getDataForEditmode
+     * @see Model\Object\ClassDefinition\Data::getDataForEditmode
      * @param \Zend_Date|\DateTime $data
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
@@ -167,9 +167,9 @@ class Datetime extends Model\Object\ClassDefinition\Data
     }
 
     /**
-     * @see Object\ClassDefinition\Data::getVersionPreview
+     * @see Model\Object\ClassDefinition\Data::getVersionPreview
      * @param \Zend_Date|\DateTime $data
-     * @param null|Object\AbstractObject $object
+     * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
      * @return string
      */

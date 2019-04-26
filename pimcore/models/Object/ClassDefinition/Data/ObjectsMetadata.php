@@ -17,7 +17,6 @@
 namespace Pimcore\Model\Object\ClassDefinition\Data;
 
 use Pimcore\Model;
-use Pimcore\Model\Object;
 use Pimcore\Model\Element;
 use Pimcore\Tool;
 use Pimcore\Db;
@@ -55,7 +54,7 @@ class ObjectsMetadata extends Model\Object\ClassDefinition\Data\Objects
     public $phpdocType = "\\Pimcore\\Model\\Object\\Data\\ObjectMetadata[]";
 
     /**
-     * @see Object\ClassDefinition\Data::getDataForResource
+     * @see Model\Object\ClassDefinition\Data::getDataForResource
      * @param array $data
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
@@ -69,7 +68,7 @@ class ObjectsMetadata extends Model\Object\ClassDefinition\Data\Objects
             $counter = 1;
             foreach ($data as $metaObject) {
                 $object = $metaObject->getObject();
-                if ($object instanceof Object\Concrete) {
+                if ($object instanceof \Pimcore\Model\Object\Concrete) {
                     $return[] = [
                         "dest_id" => $object->getId(),
                         "type" => "object",
@@ -91,7 +90,7 @@ class ObjectsMetadata extends Model\Object\ClassDefinition\Data\Objects
     }
 
     /**
-     * @see Object\ClassDefinition\Data::getDataFromResource
+     * @see Model\Object\ClassDefinition\Data::getDataFromResource
      * @param array $data
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
@@ -103,10 +102,10 @@ class ObjectsMetadata extends Model\Object\ClassDefinition\Data\Objects
 
         if (is_array($data) && count($data) > 0) {
             foreach ($data as $object) {
-                $source = Object::getById($object["src_id"]);
-                $destination = Object::getById($object["dest_id"]);
+                $source = \Pimcore\Model\Object\AbstractObject::getById($object["src_id"]);
+                $destination = \Pimcore\Model\Object\AbstractObject::getById($object["dest_id"]);
 
-                if ($source instanceof Object\Concrete && $destination instanceof Object\Concrete && $destination->getClassId() == $this->getAllowedClassId()) {
+                if ($source instanceof \Pimcore\Model\Object\Concrete && $destination instanceof \Pimcore\Model\Object\Concrete && $destination->getClassId() == $this->getAllowedClassId()) {
                     $metaData = \Pimcore::getDiContainer()->make('Pimcore\Model\Object\Data\ObjectMetadata', [
                         "fieldname" => $this->getName(),
                         "columns" => $this->getColumnKeys(),
@@ -145,7 +144,7 @@ class ObjectsMetadata extends Model\Object\ClassDefinition\Data\Objects
         if (is_array($data) && count($data) > 0) {
             foreach ($data as $metaObject) {
                 $object = $metaObject->getObject();
-                if ($object instanceof Object\Concrete) {
+                if ($object instanceof \Pimcore\Model\Object\Concrete) {
                     $ids[] = $object->getId();
                 }
             }
@@ -160,7 +159,7 @@ class ObjectsMetadata extends Model\Object\ClassDefinition\Data\Objects
 
 
     /**
-     * @see Object\ClassDefinition\Data::getDataForEditmode
+     * @see Model\Object\ClassDefinition\Data::getDataForEditmode
      * @param array $data
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
@@ -178,8 +177,8 @@ class ObjectsMetadata extends Model\Object\ClassDefinition\Data\Objects
         if (is_array($data) && count($data) > 0) {
             foreach ($data as $metaObject) {
                 $object = $metaObject->getObject();
-                if ($object instanceof Object\Concrete) {
-                    $columnData = Object\Service::gridObjectData($object, $gridFields);
+                if ($object instanceof \Pimcore\Model\Object\Concrete) {
+                    $columnData = \Pimcore\Model\Object\Service::gridObjectData($object, $gridFields);
                     foreach ($this->getColumns() as $c) {
                         $getter = "get" . ucfirst($c['key']);
                         $columnData[$c['key']] = $metaObject->$getter();
@@ -209,7 +208,7 @@ class ObjectsMetadata extends Model\Object\ClassDefinition\Data\Objects
         $objectsMetadata = [];
         if (is_array($data) && count($data) > 0) {
             foreach ($data as $object) {
-                $o = Object::getById($object["id"]);
+                $o = \Pimcore\Model\Object\AbstractObject::getById($object["id"]);
                 if ($o && $o->getClassId() == $this->getAllowedClassId()) {
                     $metaData = \Pimcore::getDiContainer()->make('Pimcore\Model\Object\Data\ObjectMetadata', [
                         "fieldname" => $this->getName(),
@@ -264,9 +263,9 @@ class ObjectsMetadata extends Model\Object\ClassDefinition\Data\Objects
     }
 
     /**
-     * @see Object\ClassDefinition\Data::getVersionPreview
+     * @see Model\Object\ClassDefinition\Data::getVersionPreview
      * @param array $data
-     * @param null|Object\AbstractObject $object
+     * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
      * @return string
      */
@@ -297,13 +296,13 @@ class ObjectsMetadata extends Model\Object\ClassDefinition\Data\Objects
 
         if (is_array($data)) {
             foreach ($data as $objectMetadata) {
-                if (!($objectMetadata instanceof Object\Data\ObjectMetadata)) {
+                if (!($objectMetadata instanceof \Pimcore\Model\Object\Data\ObjectMetadata)) {
                     throw new Element\ValidationException("Expected Object\\Data\\ObjectMetadata");
                 }
 
                 $o = $objectMetadata->getObject();
-                if ($o->getClassId() != $this->getAllowedClassId() || !($o instanceof Object\Concrete)) {
-                    if ($o instanceof Object\Concrete) {
+                if ($o->getClassId() != $this->getAllowedClassId() || !($o instanceof \Pimcore\Model\Object\Concrete)) {
+                    if ($o instanceof \Pimcore\Model\Object\Concrete) {
                         $id = $o->getId();
                     } else {
                         $id = "??";
@@ -317,7 +316,7 @@ class ObjectsMetadata extends Model\Object\ClassDefinition\Data\Objects
     /**
      * converts object data to a simple string value or CSV Export
      * @abstract
-     * @param Object\AbstractObject $object
+     * @param Model\Object\AbstractObject $object
      * @param array $params
      * @return string
      */
@@ -351,7 +350,7 @@ class ObjectsMetadata extends Model\Object\ClassDefinition\Data\Objects
 
         $value = [];
         foreach ($values as $element) {
-            if ($el = Object::getByPath($element)) {
+            if ($el = \Pimcore\Model\Object\AbstractObject::getByPath($element)) {
                 $metaObject = \Pimcore::getDiContainer()->make('Pimcore\Model\Object\Data\ObjectMetadata', [
                     "fieldname" => $this->getName(),
                     "columns" => $this->getColumnKeys(),
@@ -404,7 +403,7 @@ class ObjectsMetadata extends Model\Object\ClassDefinition\Data\Objects
         if (is_array($data) && count($data) > 0) {
             foreach ($data as $metaObject) {
                 $o = $metaObject->getObject();
-                if ($o instanceof Object\AbstractObject) {
+                if ($o instanceof \Pimcore\Model\Object\AbstractObject) {
                     $dependencies["object_" . $o->getId()] = [
                         "id" => $o->getId(),
                         "type" => "object"
@@ -417,7 +416,7 @@ class ObjectsMetadata extends Model\Object\ClassDefinition\Data\Objects
     }
 
     /**
-     * @param Object\AbstractObject $object
+     * @param Model\Object\AbstractObject $object
      * @param mixed $params
      * @return array|mixed|null
      */
@@ -472,10 +471,10 @@ class ObjectsMetadata extends Model\Object\ClassDefinition\Data\Objects
 
                 $dest = null;
                 if ($id) {
-                    $dest = Object::getById($id);
+                    $dest = \Pimcore\Model\Object\AbstractObject::getById($id);
                 }
 
-                if ($dest instanceof Object\AbstractObject) {
+                if ($dest instanceof \Pimcore\Model\Object\AbstractObject) {
                     $metaObject = \Pimcore::getDiContainer()->make('Pimcore\Model\Object\Data\ObjectMetadata', [
                         "fieldname" => $this->getName(),
                         "columns" => $this->getColumnKeys(),
@@ -515,19 +514,19 @@ class ObjectsMetadata extends Model\Object\ClassDefinition\Data\Objects
         $classId = null;
         $objectId = null;
 
-        if ($object instanceof Object\Concrete) {
+        if ($object instanceof \Pimcore\Model\Object\Concrete) {
             $objectId = $object->getId();
-        } elseif ($object instanceof Object\Fieldcollection\Data\AbstractData) {
+        } elseif ($object instanceof \Pimcore\Model\Object\Fieldcollection\Data\AbstractData) {
             $objectId = $object->getObject()->getId();
-        } elseif ($object instanceof Object\Localizedfield) {
+        } elseif ($object instanceof \Pimcore\Model\Object\Localizedfield) {
             $objectId = $object->getObject()->getId();
-        } elseif ($object instanceof Object\Objectbrick\Data\AbstractData) {
+        } elseif ($object instanceof \Pimcore\Model\Object\Objectbrick\Data\AbstractData) {
             $objectId = $object->getObject()->getId();
         }
 
-        if ($object instanceof Object\Localizedfield) {
+        if ($object instanceof \Pimcore\Model\Object\Localizedfield) {
             $classId = $object->getClass()->getId();
-        } elseif ($object instanceof Object\Objectbrick\Data\AbstractData || $object instanceof Object\Fieldcollection\Data\AbstractData) {
+        } elseif ($object instanceof \Pimcore\Model\Object\Objectbrick\Data\AbstractData || $object instanceof \Pimcore\Model\Object\Fieldcollection\Data\AbstractData) {
             $classId = $object->getObject()->getClassId();
         } else {
             $classId = $object->getClassId();
@@ -557,8 +556,8 @@ class ObjectsMetadata extends Model\Object\ClassDefinition\Data\Objects
         $db->delete($table, $sql);
 
         if (!empty($objectsMetadata)) {
-            if ($object instanceof Object\Localizedfield || $object instanceof Object\Objectbrick\Data\AbstractData
-                || $object instanceof Object\Fieldcollection\Data\AbstractData) {
+            if ($object instanceof \Pimcore\Model\Object\Localizedfield || $object instanceof \Pimcore\Model\Object\Objectbrick\Data\AbstractData
+                || $object instanceof \Pimcore\Model\Object\Fieldcollection\Data\AbstractData) {
                 $objectConcrete = $object->getObject();
             } else {
                 $objectConcrete = $object;
@@ -582,7 +581,7 @@ class ObjectsMetadata extends Model\Object\ClassDefinition\Data\Objects
     public function preGetData($object, $params = [])
     {
         $data = null;
-        if ($object instanceof Object\Concrete) {
+        if ($object instanceof \Pimcore\Model\Object\Concrete) {
             $data = $object->{$this->getName()};
             if ($this->getLazyLoading() and !in_array($this->getName(), $object->getO__loadedLazyFields())) {
                 //$data = $this->getDataFromResource($object->getRelationData($this->getName(),true,null));
@@ -593,15 +592,15 @@ class ObjectsMetadata extends Model\Object\ClassDefinition\Data\Objects
                     $object->$setter($data);
                 }
             }
-        } elseif ($object instanceof Object\Localizedfield) {
+        } elseif ($object instanceof \Pimcore\Model\Object\Localizedfield) {
             $data = $params["data"];
-        } elseif ($object instanceof Object\Fieldcollection\Data\AbstractData) {
+        } elseif ($object instanceof \Pimcore\Model\Object\Fieldcollection\Data\AbstractData) {
             $data = $object->{$this->getName()};
-        } elseif ($object instanceof Object\Objectbrick\Data\AbstractData) {
+        } elseif ($object instanceof \Pimcore\Model\Object\Objectbrick\Data\AbstractData) {
             $data = $object->{$this->getName()};
         }
 
-        if (Object\AbstractObject::doHideUnpublished() and is_array($data)) {
+        if (\Pimcore\Model\Object\AbstractObject::doHideUnpublished() and is_array($data)) {
             $publishedList = [];
             foreach ($data as $listElement) {
                 if (Element\Service::isPublished($listElement->getObject())) {
@@ -790,9 +789,9 @@ class ObjectsMetadata extends Model\Object\ClassDefinition\Data\Objects
     }
 
     /**
-     * @param Object\ClassDefinition\Data $masterDefinition
+     * @param Model\Object\ClassDefinition\Data $masterDefinition
      */
-    public function synchronizeWithMasterDefinition(Object\ClassDefinition\Data $masterDefinition)
+    public function synchronizeWithMasterDefinition(\Pimcore\Model\Object\ClassDefinition\Data $masterDefinition)
     {
         $this->allowedClassId = $masterDefinition->allowedClassId;
         $this->visibleFields = $masterDefinition->visibleFields;
@@ -800,7 +799,7 @@ class ObjectsMetadata extends Model\Object\ClassDefinition\Data\Objects
     }
 
     /** Override point for Enriching the layout definition before the layout is returned to the admin interface.
-     * @param $object Object\Concrete
+     * @param $object Model\Object\Concrete
      * @param array $context additional contextual data
      */
     public function enrichLayoutDefinition($object, $context = [])
@@ -811,7 +810,7 @@ class ObjectsMetadata extends Model\Object\ClassDefinition\Data\Objects
             return;
         }
 
-        $class = Object\ClassDefinition::getById($classId);
+        $class = \Pimcore\Model\Object\ClassDefinition::getById($classId);
 
         if (!$this->visibleFields) {
             return;
@@ -833,7 +832,7 @@ class ObjectsMetadata extends Model\Object\ClassDefinition\Data\Objects
                         $this->visibleFieldDefinitions[$field]["title"] = $fd->getTitle();
                         $this->visibleFieldDefinitions[$field]["fieldtype"] = $fd->getFieldType();
 
-                        if ($fd instanceof Object\ClassDefinition\Data\Select) {
+                        if ($fd instanceof \Pimcore\Model\Object\ClassDefinition\Data\Select) {
                             $this->visibleFieldDefinitions[$field]["options"] = $fd->getOptions();
                         }
 
@@ -852,7 +851,7 @@ class ObjectsMetadata extends Model\Object\ClassDefinition\Data\Objects
                 $this->visibleFieldDefinitions[$field]["fieldtype"] = $fd->getFieldType();
                 $this->visibleFieldDefinitions[$field]["noteditable"] = true;
 
-                if ($fd instanceof Object\ClassDefinition\Data\Select) {
+                if ($fd instanceof \Pimcore\Model\Object\ClassDefinition\Data\Select) {
                     $this->visibleFieldDefinitions[$field]["options"] = $fd->getOptions();
                 }
             }
@@ -869,7 +868,7 @@ class ObjectsMetadata extends Model\Object\ClassDefinition\Data\Objects
     {
         if (is_array($value)) {
             $result = [];
-            /** @var  $elementMetadata Object\Data\ObjectMetadata */
+            /** @var  $elementMetadata Model\Object\Data\ObjectMetadata */
             foreach ($value as $elementMetadata) {
                 $element = $elementMetadata->getElement();
 
@@ -912,7 +911,7 @@ class ObjectsMetadata extends Model\Object\ClassDefinition\Data\Objects
                     $fieldname = $elementMetadata["fieldname"];
                     $data = $elementMetadata["data"];
 
-                    $item = new Object\Data\ObjectMetadata($fieldname, $columns, $target);
+                    $item = new \Pimcore\Model\Object\Data\ObjectMetadata($fieldname, $columns, $target);
                     $item->data = $data;
                     $result[] = $item;
                 }

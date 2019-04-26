@@ -17,7 +17,6 @@
 namespace Pimcore\Model\Object\Data;
 
 use Pimcore\Model;
-use Pimcore\Model\Object;
 
 /**
  * @method \Pimcore\Model\Object\Data\ObjectMetadata\Dao getDao()
@@ -26,7 +25,7 @@ class ObjectMetadata extends Model\AbstractModel
 {
 
     /**
-     * @var Object\Concrete
+     * @var Model\Object\Concrete
      */
     protected $object;
 
@@ -98,7 +97,7 @@ class ObjectMetadata extends Model\AbstractModel
     }
 
     /**
-     * @param Object\Concrete $source
+     * @param Model\Object\Concrete $source
      * @param $destination
      * @param $fieldname
      * @param $ownertype
@@ -106,7 +105,7 @@ class ObjectMetadata extends Model\AbstractModel
      * @param $position
      * @return mixed
      */
-    public function load(Object\Concrete $source, $destination, $fieldname, $ownertype, $ownername, $position)
+    public function load(\Pimcore\Model\Object\Concrete $source, $destination, $fieldname, $ownertype, $ownername, $position)
     {
         return $this->getDao()->load($source, $destination, $fieldname, $ownertype, $ownername, $position);
     }
@@ -142,7 +141,7 @@ class ObjectMetadata extends Model\AbstractModel
     }
 
     /**
-     * @return Object\Concrete
+     * @return Model\Object\Concrete
      */
     public function getObject()
     {
@@ -160,7 +159,7 @@ class ObjectMetadata extends Model\AbstractModel
     }
 
     /**
-     * @return Object\Concrete
+     * @return Model\Object\Concrete
      */
     public function getElement()
     {

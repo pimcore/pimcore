@@ -14,7 +14,6 @@
 
 use Pimcore\Tool;
 use Pimcore\File;
-use Pimcore\Model\Object;
 use Pimcore\Model\Element;
 use Pimcore\Model;
 use Pimcore\Logger;
@@ -36,26 +35,26 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
             $this->checkPermission("objects");
         }
 
-        $this->_objectService = new Object\Service($this->getUser());
+        $this->_objectService = new \Pimcore\Model\Object\Service($this->getUser());
     }
 
     public function treeGetChildsByIdAction()
     {
-        $object = Object\AbstractObject::getById($this->getParam("node"));
+        $object = \Pimcore\Model\Object\AbstractObject::getById($this->getParam("node"));
         $objectTypes = null;
         $objects = [];
         $cv = false;
         $offset = 0;
         $total = 0;
-        if ($object instanceof Object\Concrete) {
+        if ($object instanceof \Pimcore\Model\Object\Concrete) {
             $class = $object->getClass();
             if ($class->getShowVariants()) {
-                $objectTypes = [Object\AbstractObject::OBJECT_TYPE_FOLDER, Object\AbstractObject::OBJECT_TYPE_OBJECT, Object\AbstractObject::OBJECT_TYPE_VARIANT];
+                $objectTypes = [\Pimcore\Model\Object\AbstractObject::OBJECT_TYPE_FOLDER, \Pimcore\Model\Object\AbstractObject::OBJECT_TYPE_OBJECT, \Pimcore\Model\Object\AbstractObject::OBJECT_TYPE_VARIANT];
             }
         }
 
         if (!$objectTypes) {
-            $objectTypes = [Object\AbstractObject::OBJECT_TYPE_OBJECT, Object\AbstractObject::OBJECT_TYPE_FOLDER];
+            $objectTypes = [\Pimcore\Model\Object\AbstractObject::OBJECT_TYPE_OBJECT, \Pimcore\Model\Object\AbstractObject::OBJECT_TYPE_FOLDER];
         }
 
         if ($object->hasChilds($objectTypes)) {
@@ -66,7 +65,7 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
             $offset = intval($this->getParam("start"));
 
 
-            $childsList = new Object\Listing();
+            $childsList = new \Pimcore\Model\Object\Listing();
             $condition = "objects.o_parentId = '" . $object->getId() . "'";
 
             // custom views start
@@ -120,8 +119,8 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
             //pagination for custom view
             $total = $cv
                 ? $childsList->count()
-                : $object->getChildAmount([Object\AbstractObject::OBJECT_TYPE_OBJECT, Object\AbstractObject::OBJECT_TYPE_FOLDER,
-                    Object\AbstractObject::OBJECT_TYPE_VARIANT], $this->getUser());
+                : $object->getChildAmount([\Pimcore\Model\Object\AbstractObject::OBJECT_TYPE_OBJECT, \Pimcore\Model\Object\AbstractObject::OBJECT_TYPE_FOLDER,
+                    \Pimcore\Model\Object\AbstractObject::OBJECT_TYPE_VARIANT], $this->getUser());
         }
 
         //Hook for modifying return value - e.g. for changing permissions based on object data
@@ -162,9 +161,9 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
             "lockOwner" => $child->getLocked() ? true : false
         ];
 
-        $allowedTypes = [Object\AbstractObject::OBJECT_TYPE_OBJECT, Object\AbstractObject::OBJECT_TYPE_FOLDER];
-        if ($child instanceof Object\Concrete && $child->getClass()->getShowVariants()) {
-            $allowedTypes[] = Object\AbstractObject::OBJECT_TYPE_VARIANT;
+        $allowedTypes = [\Pimcore\Model\Object\AbstractObject::OBJECT_TYPE_OBJECT, \Pimcore\Model\Object\AbstractObject::OBJECT_TYPE_FOLDER];
+        if ($child instanceof \Pimcore\Model\Object\Concrete && $child->getClass()->getShowVariants()) {
+            $allowedTypes[] = \Pimcore\Model\Object\AbstractObject::OBJECT_TYPE_VARIANT;
         }
 
         $hasChildren = $child->hasChildren($allowedTypes);
@@ -257,11 +256,11 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
 
         $data = [];
 
-        $targetObject = Object::getById($id);
+        $targetObject = \Pimcore\Model\Object\AbstractObject::getById($id);
         $object = $targetObject;
 
         while ($parent = $object->getParent()) {
-            $list = new Object\Listing();
+            $list = new \Pimcore\Model\Object\Listing();
             $list->setCondition("o_parentId = ?", $parent->getId());
             $list->setUnpublished(true);
             $total = $list->getTotalCount();
@@ -298,7 +297,7 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
         }
         Element\Editlock::lock($this->getParam("id"), "object");
 
-        $object = Object::getById(intval($this->getParam("id")));
+        $object = \Pimcore\Model\Object\AbstractObject::getById(intval($this->getParam("id")));
         $object = clone $object;
 
         // set the latest available version for editmode
@@ -349,7 +348,7 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
             }
 
 
-            if ($object instanceof Object\Concrete) {
+            if ($object instanceof \Pimcore\Model\Object\Concrete) {
                 $objectData["lazyLoadedFields"] = $object->getLazyLoadedFields();
             }
 
@@ -358,7 +357,7 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
 
             $currentLayoutId = $this->getParam("layoutId", null);
 
-            $validLayouts = Object\Service::getValidLayouts($object);
+            $validLayouts = \Pimcore\Model\Object\Service::getValidLayouts($object);
 
             //master layout has id 0 so we check for is_null()
             if (is_null($currentLayoutId) && !empty($validLayouts)) {
@@ -384,14 +383,14 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
                 if ($currentLayoutId > 0) {
                     // check if user has sufficient rights
                     if ($validLayouts && $validLayouts[$currentLayoutId]) {
-                        $customLayout = Object\ClassDefinition\CustomLayout::getById($currentLayoutId);
+                        $customLayout = \Pimcore\Model\Object\ClassDefinition\CustomLayout::getById($currentLayoutId);
                         $customLayoutDefinition = $customLayout->getLayoutDefinitions();
                         $objectData["layout"] = $customLayoutDefinition;
                     } else {
                         $currentLayoutId = 0;
                     }
                 } elseif ($currentLayoutId == -1 && $user->isAdmin()) {
-                    $layout = Object\Service::getSuperLayoutDefinition($object);
+                    $layout = \Pimcore\Model\Object\Service::getSuperLayoutDefinition($object);
                     $objectData["layout"] = $layout;
                 }
 
@@ -399,7 +398,7 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
             }
 
             $objectData = $this->filterLocalizedFields($object, $objectData);
-            Object\Service::enrichLayoutDefinition($objectData["layout"], $object);
+            \Pimcore\Model\Object\Service::enrichLayoutDefinition($objectData["layout"], $object);
 
 
             //Hook for modifying return value - e.g. for changing permissions based on object data
@@ -431,7 +430,7 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
      * @param Object\Concrete $object
      * @param bool $objectFromVersion
      */
-    private function getDataForObject(Object\Concrete $object, $objectFromVersion = false)
+    private function getDataForObject(\Pimcore\Model\Object\Concrete $object, $objectFromVersion = false)
     {
         foreach ($object->getClass()->getFieldDefinitions() as $key => $def) {
             $this->getDataForField($object, $key, $def, $objectFromVersion);
@@ -449,19 +448,19 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
      */
     private function getDataForField($object, $key, $fielddefinition, $objectFromVersion, $level = 0)
     {
-        $parent = Object\Service::hasInheritableParentObject($object);
+        $parent = \Pimcore\Model\Object\Service::hasInheritableParentObject($object);
         $getter = "get" . ucfirst($key);
 
         // relations but not for objectsMetadata, because they have additional data which cannot be loaded directly from the DB
         // nonownerobjects should go in there anyway (regardless if it a version or not), so that the values can be loaded
         if (
             (!$objectFromVersion
-                && $fielddefinition instanceof Object\ClassDefinition\Data\Relations\AbstractRelations
+                && $fielddefinition instanceof \Pimcore\Model\Object\ClassDefinition\Data\Relations\AbstractRelations
                 && $fielddefinition->getLazyLoading()
-                && !$fielddefinition instanceof Object\ClassDefinition\Data\ObjectsMetadata
-                && !$fielddefinition instanceof Object\ClassDefinition\Data\MultihrefMetadata
+                && !$fielddefinition instanceof \Pimcore\Model\Object\ClassDefinition\Data\ObjectsMetadata
+                && !$fielddefinition instanceof \Pimcore\Model\Object\ClassDefinition\Data\MultihrefMetadata
             )
-            || $fielddefinition instanceof Object\ClassDefinition\Data\Nonownerobjects
+            || $fielddefinition instanceof \Pimcore\Model\Object\ClassDefinition\Data\Nonownerobjects
         ) {
 
             //lazy loading data is fetched from DB differently, so that not every relation object is instantiated
@@ -469,7 +468,7 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
 
             if ($fielddefinition->isRemoteOwner()) {
                 $refKey = $fielddefinition->getOwnerFieldName();
-                $refClass = Object\ClassDefinition::getByName($fielddefinition->getOwnerClassName());
+                $refClass = \Pimcore\Model\Object\ClassDefinition::getByName($fielddefinition->getOwnerClassName());
                 if ($refClass) {
                     $refId = $refClass->getId();
                 }
@@ -482,11 +481,11 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
             } else {
                 $data = [];
 
-                if ($fielddefinition instanceof Object\ClassDefinition\Data\Href) {
+                if ($fielddefinition instanceof \Pimcore\Model\Object\ClassDefinition\Data\Href) {
                     $data = $relations[0];
                 } else {
                     foreach ($relations as $rel) {
-                        if ($fielddefinition instanceof Object\ClassDefinition\Data\Objects) {
+                        if ($fielddefinition instanceof \Pimcore\Model\Object\ClassDefinition\Data\Objects) {
                             $data[] = [$rel["id"], $rel["path"], $rel["subtype"]];
                         } else {
                             $data[] = [$rel["id"], $rel["path"], $rel["type"], $rel["subtype"]];
@@ -501,8 +500,8 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
             $fieldData = $object->$getter();
             $isInheritedValue = false;
 
-            if ($fielddefinition instanceof Object\ClassDefinition\Data\CalculatedValue) {
-                $fieldData = new Object\Data\CalculatedValue($fielddefinition->getName());
+            if ($fielddefinition instanceof \Pimcore\Model\Object\ClassDefinition\Data\CalculatedValue) {
+                $fieldData = new \Pimcore\Model\Object\Data\CalculatedValue($fielddefinition->getName());
                 $fieldData->setContextualData("object", null, null, null);
                 $value = $fielddefinition->getDataForEditmode($fieldData, $object, $objectFromVersion);
             } else {
@@ -510,11 +509,11 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
             }
 
             // following some exceptions for special data types (localizedfields, objectbricks)
-            if ($value && ($fieldData instanceof Object\Localizedfield || $fieldData instanceof Object\Classificationstore)) {
+            if ($value && ($fieldData instanceof \Pimcore\Model\Object\Localizedfield || $fieldData instanceof \Pimcore\Model\Object\Classificationstore)) {
                 // make sure that the localized field participates in the inheritance detection process
                 $isInheritedValue = $value["inherited"];
             }
-            if ($fielddefinition instanceof Object\ClassDefinition\Data\Objectbricks && is_array($value)) {
+            if ($fielddefinition instanceof \Pimcore\Model\Object\ClassDefinition\Data\Objectbricks && is_array($value)) {
                 // make sure that the objectbricks participate in the inheritance detection process
                 foreach ($value as $singleBrickData) {
                     if ($singleBrickData["inherited"]) {
@@ -549,7 +548,7 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
      */
     private function getParentValue($object, $key)
     {
-        $parent = Object\Service::hasInheritableParentObject($object);
+        $parent = \Pimcore\Model\Object\Service::hasInheritableParentObject($object);
         $getter = "get" . ucfirst($key);
         if ($parent) {
             $value = $parent->$getter();
@@ -569,10 +568,10 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
      * @param Object\ClassDefinition\Data $fielddefinition
      * @return bool
      */
-    private function isInheritableField(Object\ClassDefinition\Data $fielddefinition)
+    private function isInheritableField(\Pimcore\Model\Object\ClassDefinition\Data $fielddefinition)
     {
-        if ($fielddefinition instanceof Object\ClassDefinition\Data\Fieldcollections
-            //            || $fielddefinition instanceof Object\ClassDefinition\Data\Localizedfields
+        if ($fielddefinition instanceof \Pimcore\Model\Object\ClassDefinition\Data\Fieldcollections
+            //            || $fielddefinition instanceof \Pimcore\Model\Object\ClassDefinition\Data\Localizedfields
         ) {
             return false;
         }
@@ -582,8 +581,8 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
 
     public function lockAction()
     {
-        $object = Object::getById($this->getParam("id"));
-        if ($object instanceof Object\AbstractObject) {
+        $object = \Pimcore\Model\Object\AbstractObject::getById($this->getParam("id"));
+        if ($object instanceof \Pimcore\Model\Object\AbstractObject) {
             $object->setLocked((bool)$this->getParam("locked"));
             //TODO: if latest version published - publish
             //if latest version not published just save new version
@@ -621,9 +620,9 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
      * @param $objectData
      * @return mixed
      */
-    public function filterLocalizedFields(Object\AbstractObject $object, $objectData)
+    public function filterLocalizedFields(\Pimcore\Model\Object\AbstractObject $object, $objectData)
     {
-        if (!($object instanceof Object\Concrete)) {
+        if (!($object instanceof \Pimcore\Model\Object\Concrete)) {
             return $objectData;
         }
 
@@ -634,8 +633,8 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
 
         $fieldDefinitions = $object->getClass()->getFieldDefinitions();
         if ($fieldDefinitions) {
-            $languageAllowedView = Object\Service::getLanguagePermissions($object, $user, "lView");
-            $languageAllowedEdit = Object\Service::getLanguagePermissions($object, $user, "lEdit");
+            $languageAllowedView = \Pimcore\Model\Object\Service::getLanguagePermissions($object, $user, "lView");
+            $languageAllowedEdit = \Pimcore\Model\Object\Service::getLanguagePermissions($object, $user, "lEdit");
 
             foreach ($fieldDefinitions as $key => $fd) {
                 if ($fd->getFieldtype() == "localizedfields") {
@@ -662,7 +661,7 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
         }
         Element\Editlock::lock($this->getParam("id"), "object");
 
-        $object = Object::getById(intval($this->getParam("id")));
+        $object = \Pimcore\Model\Object\AbstractObject::getById(intval($this->getParam("id")));
         if ($object->isAllowed("view")) {
             $objectData = [];
 
@@ -727,21 +726,21 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
         $success = false;
 
         $className = "Pimcore\\Model\\Object\\" . ucfirst($this->getParam("className"));
-        $parent = Object::getById($this->getParam("parentId"));
+        $parent = \Pimcore\Model\Object\AbstractObject::getById($this->getParam("parentId"));
 
         $message = "";
         if ($parent->isAllowed("create")) {
             $intendedPath = $parent->getRealFullPath() . "/" . $this->getParam("key");
 
-            if (!Object\Service::pathExists($intendedPath)) {
+            if (!\Pimcore\Model\Object\Service::pathExists($intendedPath)) {
                 $object = \Pimcore::getDiContainer()->make($className);
-                if ($object instanceof Object\Concrete) {
+                if ($object instanceof \Pimcore\Model\Object\Concrete) {
                     $object->setOmitMandatoryCheck(true); // allow to save the object although there are mandatory fields
                 }
 
                 if ($this->getParam("variantViaTree")) {
                     $parentId = $this->getParam("parentId");
-                    $parent = Object::getById($parentId);
+                    $parent = \Pimcore\Model\Object\AbstractObject::getById($parentId);
                     $object->setClassId($parent->getClass()->getId());
                 } else {
                     $object->setClassId($this->getParam("classId"));
@@ -755,8 +754,8 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
                 $object->setUserModification($this->getUser()->getId());
                 $object->setPublished(false);
 
-                if ($this->getParam("objecttype") == Object\AbstractObject::OBJECT_TYPE_OBJECT
-                    || $this->getParam("objecttype") == Object\AbstractObject::OBJECT_TYPE_VARIANT) {
+                if ($this->getParam("objecttype") == \Pimcore\Model\Object\AbstractObject::OBJECT_TYPE_OBJECT
+                    || $this->getParam("objecttype") == \Pimcore\Model\Object\AbstractObject::OBJECT_TYPE_VARIANT) {
                     $object->setType($this->getParam("objecttype"));
                 }
 
@@ -794,10 +793,10 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
     {
         $success = false;
 
-        $parent = Object::getById($this->getParam("parentId"));
+        $parent = \Pimcore\Model\Object\AbstractObject::getById($this->getParam("parentId"));
         if ($parent->isAllowed("create")) {
-            if (!Object\Service::pathExists($parent->getRealFullPath() . "/" . $this->getParam("key"))) {
-                $folder = Object\Folder::create([
+            if (!\Pimcore\Model\Object\Service::pathExists($parent->getRealFullPath() . "/" . $this->getParam("key"))) {
+                $folder = \Pimcore\Model\Object\Folder::create([
                     "o_parentId" => $this->getParam("parentId"),
                     "o_creationDate" => time(),
                     "o_userOwner" => $this->user->getId(),
@@ -827,9 +826,9 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
     public function deleteAction()
     {
         if ($this->getParam("type") == "childs") {
-            $parentObject = Object::getById($this->getParam("id"));
+            $parentObject = \Pimcore\Model\Object\AbstractObject::getById($this->getParam("id"));
 
-            $list = new Object\Listing();
+            $list = new \Pimcore\Model\Object\Listing();
             $list->setCondition("o_path LIKE " . $list->quote($parentObject->getRealFullPath() . "/%"));
             $list->setLimit(intval($this->getParam("amount")));
             $list->setOrderKey("LENGTH(o_path)", false);
@@ -847,7 +846,7 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
 
             $this->_helper->json(["success" => true, "deleted" => $deletedItems]);
         } elseif ($this->getParam("id")) {
-            $object = Object::getById($this->getParam("id"));
+            $object = \Pimcore\Model\Object\AbstractObject::getById($this->getParam("id"));
             if ($object) {
                 if (!$object->isAllowed("delete")) {
                     $this->_helper->json(["success" => false, "message" => "missing_permission"]);
@@ -874,7 +873,7 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
 
         foreach ($ids as $id) {
             try {
-                $object = Object::getById($id);
+                $object = \Pimcore\Model\Object\AbstractObject::getById($id);
                 if (!$object) {
                     continue;
                 }
@@ -886,7 +885,7 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
 
 
             // check for children
-            if ($object instanceof Object\AbstractObject) {
+            if ($object instanceof \Pimcore\Model\Object\AbstractObject) {
                 $recycleJobs[] = [[
                     "url" => "/admin/recyclebin/add",
                     "params" => [
@@ -903,7 +902,7 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
                 $childs = 0;
                 if ($hasChilds) {
                     // get amount of childs
-                    $list = new Object\Listing();
+                    $list = new \Pimcore\Model\Object\Listing();
                     $list->setCondition("o_path LIKE " . $list->quote($object->getRealFullPath() . "/%"));
                     $childs = $list->getTotalCount();
 
@@ -937,7 +936,7 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
         // get the element key in case of just one
         $elementKey = false;
         if (count($ids) === 1) {
-            $elementKey = Object::getById($id)->getKey();
+            $elementKey = \Pimcore\Model\Object\AbstractObject::getById($id)->getKey();
         }
 
         $deleteJobs = array_merge($recycleJobs, $deleteJobs);
@@ -956,14 +955,14 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
         $success = false;
         $allowUpdate = true;
 
-        $object = Object::getById($this->getParam("id"));
-        if ($object instanceof Object\Concrete) {
+        $object = \Pimcore\Model\Object\AbstractObject::getById($this->getParam("id"));
+        if ($object instanceof \Pimcore\Model\Object\Concrete) {
             $object->setOmitMandatoryCheck(true);
         }
 
         // this prevents the user from renaming, relocating (actions in the tree) if the newest version isn't the published one
         // the reason is that otherwise the content of the newer not published version will be overwritten
-        if ($object instanceof Object\Concrete) {
+        if ($object instanceof \Pimcore\Model\Object\Concrete) {
             $latestVersion = $object->getLatestVersion();
             if ($latestVersion && $latestVersion->getData()->getModificationDate() != $object->getModificationDate()) {
                 $this->_helper->json(["success" => false, "message" => "You can't relocate if there's a newer not published version"]);
@@ -981,7 +980,7 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
             }
 
             if ($values["parentId"]) {
-                $parent = Object::getById($values["parentId"]);
+                $parent = \Pimcore\Model\Object\AbstractObject::getById($values["parentId"]);
 
                 //check if parent is changed
                 if ($object->getParentId() != $parent->getId()) {
@@ -989,7 +988,7 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
                         throw new \Exception("Prevented moving object - no create permission on new parent ");
                     }
 
-                    $objectWithSamePath = Object::getByPath($parent->getRealFullPath() . "/" . $object->getKey());
+                    $objectWithSamePath = \Pimcore\Model\Object\AbstractObject::getByPath($parent->getRealFullPath() . "/" . $object->getKey());
 
                     if ($objectWithSamePath != null) {
                         $allowUpdate = false;
@@ -1043,7 +1042,7 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
     public function saveAction()
     {
         try {
-            $object = Object::getById($this->getParam("id"));
+            $object = \Pimcore\Model\Object\AbstractObject::getById($this->getParam("id"));
             $originalModificationDate = $object->getModificationDate();
 
             // set the latest available version for editmode
@@ -1056,10 +1055,10 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
                 foreach ($data as $key => $value) {
                     $fd = $object->getClass()->getFieldDefinition($key);
                     if ($fd) {
-                        if ($fd instanceof Object\ClassDefinition\Data\Localizedfields) {
+                        if ($fd instanceof \Pimcore\Model\Object\ClassDefinition\Data\Localizedfields) {
                             $user = Tool\Admin::getCurrentUser();
                             if (!$user->getAdmin()) {
-                                $allowedLanguages = Object\Service::getLanguagePermissions($object, $user, "lEdit");
+                                $allowedLanguages = \Pimcore\Model\Object\Service::getLanguagePermissions($object, $user, "lEdit");
                                 if (!is_null($allowedLanguages)) {
                                     $allowedLanguages = array_keys($allowedLanguages);
                                     $submittedLanguages = array_keys($data[$key]);
@@ -1073,7 +1072,7 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
                         }
 
                         if (method_exists($fd, "isRemoteOwner") and $fd->isRemoteOwner()) {
-                            $remoteClass = Object\ClassDefinition::getByName($fd->getOwnerClassName());
+                            $remoteClass = \Pimcore\Model\Object\ClassDefinition::getByName($fd->getOwnerClassName());
                             $relations = $object->getRelationData($fd->getOwnerFieldName(), false, $remoteClass->getId());
                             $toAdd = $this->detectAddedRemoteOwnerRelations($relations, $value);
                             $toDelete = $this->detectDeletedRemoteOwnerRelations($relations, $value);
@@ -1181,21 +1180,21 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
      * @param $originalModificationDate
      * @param $data
      */
-    public function performFieldcollectionModificationCheck(Object\Concrete $object, $originalModificationDate, $data)
+    public function performFieldcollectionModificationCheck(\Pimcore\Model\Object\Concrete $object, $originalModificationDate, $data)
     {
         $modificationDate = $this->getParam("modificationDate");
         if ($modificationDate != $originalModificationDate) {
             $fielddefinitions = $object->getClass()->getFieldDefinitions();
             foreach ($fielddefinitions as $fd) {
-                if ($fd instanceof Object\ClassDefinition\Data\Fieldcollections) {
+                if ($fd instanceof \Pimcore\Model\Object\ClassDefinition\Data\Fieldcollections) {
                     if (isset($data[$fd->getName()])) {
                         $allowedTypes = $fd->getAllowedTypes();
                         foreach ($allowedTypes as $type) {
                             /** @var  $fdDef Object\Fieldcollection\Definition */
-                            $fdDef = Object\Fieldcollection\Definition::getByKey($type);
+                            $fdDef = \Pimcore\Model\Object\Fieldcollection\Definition::getByKey($type);
                             $childDefinitions = $fdDef->getFieldDefinitions();
                             foreach ($childDefinitions as $childDef) {
-                                if ($childDef instanceof Object\ClassDefinition\Data\Localizedfields) {
+                                if ($childDef instanceof \Pimcore\Model\Object\ClassDefinition\Data\Localizedfields) {
                                     $this->_helper->json(["success" => false, "message" => "Could be that someone messed around with the fieldcollection in the meantime. Please reload and try again"]);
                                     ;
                                 }
@@ -1210,7 +1209,7 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
 
     public function saveFolderAction()
     {
-        $object = Object::getById($this->getParam("id"));
+        $object = \Pimcore\Model\Object\AbstractObject::getById($this->getParam("id"));
 
         if ($object->isAllowed("publish")) {
             try {
@@ -1280,7 +1279,7 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
         $version = Model\Version::getById($this->getParam("id"));
         $object = $version->loadData();
 
-        $currentObject = Object::getById($object->getId());
+        $currentObject = \Pimcore\Model\Object\AbstractObject::getById($object->getId());
         if ($currentObject->isAllowed("publish")) {
             $object->setPublished(true);
             $object->setUserModification($this->getUser()->getId());
@@ -1366,7 +1365,7 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
                     $data = \Zend_Json::decode($this->getParam("data"));
 
                     // save
-                    $object = Object::getById($data["id"]);
+                    $object = \Pimcore\Model\Object\AbstractObject::getById($data["id"]);
                     /** @var Object\ClassDefinition $class */
                     $class = $object->getClass();
 
@@ -1403,9 +1402,9 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
                                     /** @var  $classificationStoreData Object\Classificationstore */
                                     $classificationStoreData = $object->$getter();
 
-                                    $keyConfig = Object\Classificationstore\KeyConfig::getById($keyid);
+                                    $keyConfig = \Pimcore\Model\Object\Classificationstore\KeyConfig::getById($keyid);
                                     if ($keyConfig) {
-                                        $fieldDefintion = $keyDef = Object\Classificationstore\Service::getFieldDefinitionFromJson(
+                                        $fieldDefintion = $keyDef = \Pimcore\Model\Object\Classificationstore\Service::getFieldDefinitionFromJson(
                                             json_decode($keyConfig->getDefinition()), $keyConfig->getType());
                                         if ($fieldDefintion && method_exists($fieldDefintion, "getDataFromGridEditor")) {
                                             $value = $fieldDefintion->getDataFromGridEditor($value, $object, []);
@@ -1420,7 +1419,7 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
                                 $keyValuePairs = $object->$getter();
 
                                 if (!$keyValuePairs) {
-                                    $keyValuePairs = new Object\Data\KeyValue();
+                                    $keyValuePairs = new \Pimcore\Model\Object\Data\KeyValue();
                                     $keyValuePairs->setObjectId($object->getId());
                                     $keyValuePairs->setClass($object->getClass());
                                 }
@@ -1431,7 +1430,7 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
                         } elseif (count($parts) > 1) {
                             $brickType = $parts[0];
                             $brickKey = $parts[1];
-                            $brickField = Object\Service::getFieldForBrickType($object->getClass(), $brickType);
+                            $brickField = \Pimcore\Model\Object\Service::getFieldForBrickType($object->getClass(), $brickType);
 
                             $fieldGetter = "get" . ucfirst($brickField);
                             $brickGetter = "get" . ucfirst($brickType);
@@ -1458,7 +1457,7 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
                                 if (!$fd) {
                                     // try to get via localized fields
                                     $localized = $class->getFieldDefinition("localizedfields");
-                                    if ($localized instanceof Object\ClassDefinition\Data\Localizedfields) {
+                                    if ($localized instanceof \Pimcore\Model\Object\ClassDefinition\Data\Localizedfields) {
                                         $field = $localized->getFieldDefinition($key);
                                         if ($field) {
                                             $currentLocale = (string) \Zend_Registry::get("Zend_Locale");
@@ -1483,15 +1482,15 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
 
                     $object->setUserModification($this->getUser()->getId());
                     $object->save();
-                    $this->_helper->json(["data" => Object\Service::gridObjectData($object, $this->getParam("fields"), $requestedLanguage), "success" => true]);
+                    $this->_helper->json(["data" => \Pimcore\Model\Object\Service::gridObjectData($object, $this->getParam("fields"), $requestedLanguage), "success" => true]);
                 } catch (\Exception $e) {
                     $this->_helper->json(["success" => false, "message" => $e->getMessage()]);
                 }
             }
         } else {
             // get list of objects
-            $folder = Object::getById($this->getParam("folderId"));
-            $class = Object\ClassDefinition::getById($this->getParam("classId"));
+            $folder = \Pimcore\Model\Object\AbstractObject::getById($this->getParam("folderId"));
+            $class = \Pimcore\Model\Object\ClassDefinition::getById($this->getParam("classId"));
             $className = $class->getName();
 
             $colMappings = [
@@ -1549,7 +1548,7 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
                 if (!(substr($orderKey, 0, 1) == "~")) {
                     if (array_key_exists($orderKey, $colMappings)) {
                         $orderKey = $colMappings[$orderKey];
-                    } elseif ($class->getFieldDefinition($orderKey) instanceof  Object\ClassDefinition\Data\QuantityValue) {
+                    } elseif ($class->getFieldDefinition($orderKey) instanceof  \Pimcore\Model\Object\ClassDefinition\Data\QuantityValue) {
                         $orderKey = "concat(" . $orderKey . "__unit, " . $orderKey . "__value)";
                         $doNotQuote = true;
                     } elseif (strpos($orderKey, "~") !== false) {
@@ -1592,8 +1591,8 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
 
             // create filter condition
             if ($this->getParam("filter")) {
-                $conditionFilters[] = Object\Service::getFilterCondition($this->getParam("filter"), $class);
-                $featureFilters = Object\Service::getFeatureFilters($this->getParam("filter"), $class);
+                $conditionFilters[] = \Pimcore\Model\Object\Service::getFilterCondition($this->getParam("filter"), $class);
+                $featureFilters = \Pimcore\Model\Object\Service::getFeatureFilters($this->getParam("filter"), $class);
                 if ($featureFilters) {
                     $featureJoins = array_merge($featureJoins, $featureFilters["joins"]);
                 }
@@ -1626,16 +1625,16 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
             $list->setOrder($order);
 
             if ($class->getShowVariants()) {
-                $list->setObjectTypes([Object\AbstractObject::OBJECT_TYPE_OBJECT, Object\AbstractObject::OBJECT_TYPE_VARIANT]);
+                $list->setObjectTypes([\Pimcore\Model\Object\AbstractObject::OBJECT_TYPE_OBJECT, \Pimcore\Model\Object\AbstractObject::OBJECT_TYPE_VARIANT]);
             }
 
-            Object\Service::addGridFeatureJoins($list, $featureJoins, $class, $featureFilters, $requestedLanguage);
+            \Pimcore\Model\Object\Service::addGridFeatureJoins($list, $featureJoins, $class, $featureFilters, $requestedLanguage);
 
             $list->load();
 
             $objects = [];
             foreach ($list->getObjects() as $object) {
-                $o = Object\Service::gridObjectData($object, $fields, $requestedLanguage);
+                $o = \Pimcore\Model\Object\Service::gridObjectData($object, $fields, $requestedLanguage);
                 $objects[] = $o;
             }
             $this->_helper->json(["data" => $objects, "success" => true, "total" => $list->getTotalCount()]);
@@ -1655,7 +1654,7 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
         }
 
         $localized = $class->getFieldDefinition('localizedfields');
-        if ($localized instanceof Object\ClassDefinition\Data\Localizedfields) {
+        if ($localized instanceof \Pimcore\Model\Object\ClassDefinition\Data\Localizedfields) {
             $fieldDefinition = $localized->getFielddefinition($key);
         }
 
@@ -1670,7 +1669,7 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
      */
     protected function getFieldDefinitionFromBrick($brickType, $key)
     {
-        $brickDefinition = Object\Objectbrick\Definition::getByKey($brickType);
+        $brickDefinition = \Pimcore\Model\Object\Objectbrick\Definition::getByKey($brickType);
         if ($brickDefinition) {
             $fieldDefinition = $brickDefinition->getFieldDefinition($key);
         }
@@ -1688,7 +1687,7 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
         }, "pimcore_copy");
 
         if ($this->getParam("type") == "recursive" || $this->getParam("type") == "recursive-update-references") {
-            $object = Object::getById($this->getParam("sourceId"));
+            $object = \Pimcore\Model\Object\AbstractObject::getById($this->getParam("sourceId"));
 
             // first of all the new parent
             $pasteJobs[] = [[
@@ -1702,13 +1701,13 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
                 ]
             ]];
 
-            if ($object->hasChilds([Object\AbstractObject::OBJECT_TYPE_OBJECT, Object\AbstractObject::OBJECT_TYPE_FOLDER, Object\AbstractObject::OBJECT_TYPE_VARIANT])) {
+            if ($object->hasChilds([\Pimcore\Model\Object\AbstractObject::OBJECT_TYPE_OBJECT, \Pimcore\Model\Object\AbstractObject::OBJECT_TYPE_FOLDER, \Pimcore\Model\Object\AbstractObject::OBJECT_TYPE_VARIANT])) {
                 // get amount of childs
-                $list = new Object\Listing();
+                $list = new \Pimcore\Model\Object\Listing();
                 $list->setCondition("o_path LIKE " . $list->quote($object->getRealFullPath() . "/%"));
                 $list->setOrderKey("LENGTH(o_path)", false);
                 $list->setOrder("ASC");
-                $list->setObjectTypes([Object\AbstractObject::OBJECT_TYPE_OBJECT, Object\AbstractObject::OBJECT_TYPE_FOLDER, Object\AbstractObject::OBJECT_TYPE_VARIANT]);
+                $list->setObjectTypes([\Pimcore\Model\Object\AbstractObject::OBJECT_TYPE_OBJECT, \Pimcore\Model\Object\AbstractObject::OBJECT_TYPE_FOLDER, \Pimcore\Model\Object\AbstractObject::OBJECT_TYPE_VARIANT]);
                 $childIds = $list->loadIdList();
 
                 if (count($childIds) > 0) {
@@ -1771,12 +1770,12 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
         }
 
         $id = array_shift($idStore["rewrite-stack"]);
-        $object = Object::getById($id);
+        $object = \Pimcore\Model\Object\AbstractObject::getById($id);
 
         // create rewriteIds() config parameter
         $rewriteConfig = ["object" => $idStore["idMapping"]];
 
-        $object = Object\Service::rewriteIds($object, $rewriteConfig);
+        $object = \Pimcore\Model\Object\Service::rewriteIds($object, $rewriteConfig);
 
         $object->setUserModification($this->getUser()->getId());
         $object->save();
@@ -1798,28 +1797,28 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
         $success = false;
         $message = "";
         $sourceId = intval($this->getParam("sourceId"));
-        $source = Object::getById($sourceId);
+        $source = \Pimcore\Model\Object\AbstractObject::getById($sourceId);
         $session = Tool\Session::get("pimcore_copy");
 
         $targetId = intval($this->getParam("targetId"));
         if ($this->getParam("targetParentId")) {
-            $sourceParent = Object::getById($this->getParam("sourceParentId"));
+            $sourceParent = \Pimcore\Model\Object\AbstractObject::getById($this->getParam("sourceParentId"));
 
             // this is because the key can get the prefix "_copy" if the target does already exists
             if ($session->{$this->getParam("transactionId")}["parentId"]) {
-                $targetParent = Object::getById($session->{$this->getParam("transactionId")}["parentId"]);
+                $targetParent = \Pimcore\Model\Object\AbstractObject::getById($session->{$this->getParam("transactionId")}["parentId"]);
             } else {
-                $targetParent = Object::getById($this->getParam("targetParentId"));
+                $targetParent = \Pimcore\Model\Object\AbstractObject::getById($this->getParam("targetParentId"));
             }
 
             $targetPath = preg_replace("@^" . $sourceParent->getRealFullPath() . "@", $targetParent . "/", $source->getRealPath());
-            $target = Object::getByPath($targetPath);
+            $target = \Pimcore\Model\Object\AbstractObject::getByPath($targetPath);
         } else {
-            $target = Object::getById($targetId);
+            $target = \Pimcore\Model\Object\AbstractObject::getById($targetId);
         }
 
         if ($target->isAllowed("create")) {
-            $source = Object::getById($sourceId);
+            $source = \Pimcore\Model\Object\AbstractObject::getById($sourceId);
             if ($source != null) {
                 try {
                     if ($this->getParam("type") == "child") {
@@ -1889,7 +1888,7 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
     }
 
     /**
-     * @param  Object\Concrete $object
+     * @param  \Pimcore\Model\Object\Concrete $object
      * @param  array $toDelete
      * @param  array $toAdd
      * @param  string $ownerFieldName
@@ -1900,7 +1899,7 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
         $setter = "set" . ucfirst($ownerFieldName);
 
         foreach ($toDelete as $id) {
-            $owner = Object::getById($id);
+            $owner = \Pimcore\Model\Object\AbstractObject::getById($id);
             //TODO: lock ?!
             if (method_exists($owner, $getter)) {
                 $currentData = $owner->$getter();
@@ -1921,7 +1920,7 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
 
 
         foreach ($toAdd as $id) {
-            $owner = Object::getById($id);
+            $owner = \Pimcore\Model\Object\AbstractObject::getById($id);
             //TODO: lock ?!
             if (method_exists($owner, $getter)) {
                 $currentData = $owner->$getter();
@@ -1980,16 +1979,16 @@ class Admin_ObjectController extends \Pimcore\Controller\Action\Admin\Element
     }
 
     /**
-     * @param  Object\Concrete $object
+     * @param  \Pimcore\Model\Object\Concrete $object
      * @return Object\Concrete
      */
-    protected function getLatestVersion(Object\Concrete $object)
+    protected function getLatestVersion(\Pimcore\Model\Object\Concrete $object)
     {
         $modificationDate = $object->getModificationDate();
         $latestVersion = $object->getLatestVersion();
         if ($latestVersion) {
             $latestObj = $latestVersion->loadData();
-            if ($latestObj instanceof Object\Concrete) {
+            if ($latestObj instanceof \Pimcore\Model\Object\Concrete) {
                 $object = $latestObj;
                 $object->setModificationDate($modificationDate); // set de modification-date from published version to compare it in js-frontend
             }

@@ -17,7 +17,6 @@
 namespace Pimcore\Model\Object\Data;
 
 use Pimcore\Model;
-use Pimcore\Model\Object;
 
 /**
  * @deprecated will be removed entirely in Pimcore 5
@@ -27,7 +26,7 @@ class KeyValue extends Model\AbstractModel
 {
 
     /**
-     * @var Object\ClassDefinition
+     * @var Model\Object\ClassDefinition
      */
     public $class;
 
@@ -54,10 +53,10 @@ class KeyValue extends Model\AbstractModel
     }
 
     /**
-     * @param Object\ClassDefinition $class
+     * @param Model\Object\ClassDefinition $class
      * @return $this
      */
-    public function setClass(Object\ClassDefinition $class)
+    public function setClass(\Pimcore\Model\Object\ClassDefinition $class)
     {
         $this->class = $class;
 
@@ -65,7 +64,7 @@ class KeyValue extends Model\AbstractModel
     }
 
     /**
-     * @return Object\ClassDefinition
+     * @return Model\Object\ClassDefinition
      */
     public function getClass()
     {
@@ -141,7 +140,7 @@ class KeyValue extends Model\AbstractModel
     public function getKeyvaluepairsByGroup($groupName)
     {
         $data = [];
-        $group = Object\KeyValue\GroupConfig::getByName($groupName);
+        $group = \Pimcore\Model\Object\KeyValue\GroupConfig::getByName($groupName);
         if (!empty($group)) {
             $properties = $this->getProperties();
             foreach ((array)$properties as $property) {
@@ -161,7 +160,7 @@ class KeyValue extends Model\AbstractModel
     public function getProperties($forEditMode = false)
     {
         $result = [];
-        $object = Object::getById($this->objectId);
+        $object = \Pimcore\Model\Object\AbstractObject::getById($this->objectId);
         if (!$object) {
             throw new \Exception('Object with Id '. $this->objectId .' not found');
         }
@@ -171,14 +170,14 @@ class KeyValue extends Model\AbstractModel
         foreach ($this->arr as $pair) {
             $pair["inherited"] = false;
             $pair["source"] = $object->getId();
-            $pair["groupId"] = Object\KeyValue\KeyConfig::getById($pair['key'])->getGroup();
+            $pair["groupId"] = \Pimcore\Model\Object\KeyValue\KeyConfig::getById($pair['key'])->getGroup();
             $result[] = $pair;
             $internalKeys[] = $pair["key"];
         }
 
         $blacklist = $internalKeys;
 
-        $parent = Object\Service::hasInheritableParentObject($object);
+        $parent = \Pimcore\Model\Object\Service::hasInheritableParentObject($object);
         while ($parent) {
             $kv = $parent->getKeyvaluepairs();
             $parentProperties = $kv ? $kv->getInternalProperties() : [];
@@ -234,7 +233,7 @@ class KeyValue extends Model\AbstractModel
                     $parentPair["source"] = $parent->getId();
                     $parentPair["altSource"] = $parent->getId();
                     $parentPair["altValue"] = $parentPair["value"];
-                    $parentPair["groupId"] = Object\KeyValue\KeyConfig::getById($parentPair['key'])->getGroup();
+                    $parentPair["groupId"] = \Pimcore\Model\Object\KeyValue\KeyConfig::getById($parentPair['key'])->getGroup();
                     $result[] = $parentPair;
                 }
             }
@@ -244,7 +243,7 @@ class KeyValue extends Model\AbstractModel
                 $blacklist[] = $parentKeyId;
             }
 
-            $parent = Object\Service::hasInheritableParentObject($parent);
+            $parent = \Pimcore\Model\Object\Service::hasInheritableParentObject($parent);
         }
 
         return $result;
@@ -258,7 +257,7 @@ class KeyValue extends Model\AbstractModel
      */
     public function getKeyId($propName, $groupId = null)
     {
-        $keyConfig = Object\KeyValue\KeyConfig::getByName($propName, $groupId);
+        $keyConfig = \Pimcore\Model\Object\KeyValue\KeyConfig::getByName($propName, $groupId);
 
         if (!$keyConfig) {
             throw new \Exception("key does not exist");
@@ -284,7 +283,7 @@ class KeyValue extends Model\AbstractModel
         $propsWithInheritance = $this->getProperties();
         foreach ($propsWithInheritance as $pair) {
             if ($pair["key"] == $keyId) {
-                $result[] = new Object\Data\KeyValue\Entry($pair["value"], $pair["translated"], $pair["metadata"]);
+                $result[] = new \Pimcore\Model\Object\Data\KeyValue\Entry($pair["value"], $pair["translated"], $pair["metadata"]);
             }
         }
         $count = count($result);
@@ -302,7 +301,7 @@ class KeyValue extends Model\AbstractModel
      * @param $value the value
      * @param bool $fromGrid if true then the data is coming from the grid, we have to check if the value needs
      *                  to be translated
-     * @return Object\Data\KeyValue the resulting object
+     * @return Model\Object\Data\KeyValue the resulting object
      */
     public function setPropertyWithId($keyId, $value, $fromGrid = false)
     {
@@ -338,9 +337,9 @@ class KeyValue extends Model\AbstractModel
     private function getTranslatedValue($keyId, $value)
     {
         $translatedValue = "";
-        $keyConfig = Object\KeyValue\KeyConfig::getById($keyId);
+        $keyConfig = \Pimcore\Model\Object\KeyValue\KeyConfig::getById($keyId);
         $translatorID = $keyConfig->getTranslator();
-        $translatorConfig = Object\KeyValue\TranslatorConfig::getById($translatorID);
+        $translatorConfig = \Pimcore\Model\Object\KeyValue\TranslatorConfig::getById($translatorID);
         $className = $translatorConfig->getTranslator();
         if (\Pimcore\Tool::classExists($className)) {
             $translator = new $className();
@@ -375,12 +374,12 @@ class KeyValue extends Model\AbstractModel
         $sub = substr($name, 0, 14);
         if (substr($name, 0, 16) == "getWithGroupName") {
             $key = substr($name, 16, strlen($name)-16);
-            $groupConfig = Object\KeyValue\GroupConfig::getByName($arguments[0]);
+            $groupConfig = \Pimcore\Model\Object\KeyValue\GroupConfig::getByName($arguments[0]);
 
             return $this->getProperty($key, $groupConfig->getId());
         } elseif (substr($name, 0, 14) == "getWithGroupId") {
             $key = substr($name, 14, strlen($name)-14);
-            $groupConfig = Object\KeyValue\GroupConfig::getById($arguments[0]);
+            $groupConfig = \Pimcore\Model\Object\KeyValue\GroupConfig::getById($arguments[0]);
 
             return $this->getProperty($key, $groupConfig->getId());
         } elseif (substr($name, 0, 3) == "get") {
@@ -405,7 +404,7 @@ class KeyValue extends Model\AbstractModel
         $result = [];
         foreach ($this->getProperties() as $property) {
             if ($property['key'] == $keyId) {
-                $result[] = new Object\Data\KeyValue\Entry($property["value"], $property["translated"], $property["metadata"]);
+                $result[] = new \Pimcore\Model\Object\Data\KeyValue\Entry($property["value"], $property["translated"], $property["metadata"]);
             }
         }
 

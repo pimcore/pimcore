@@ -14,7 +14,6 @@
 
 use Pimcore\File;
 use Pimcore\Logger;
-use Pimcore\Model\Object;
 use Pimcore\Model\Element;
 use Pimcore\Tool;
 
@@ -22,12 +21,12 @@ class Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
 {
     public function loadObjectDataAction()
     {
-        $object = Object\AbstractObject::getById($this->getParam("id"));
+        $object = \Pimcore\Model\Object\AbstractObject::getById($this->getParam("id"));
         $result = [];
         if ($object) {
             $result['success'] = true;
             $fields = $this->getParam("fields");
-            $result['fields'] = Object\Service::gridObjectData($object, $fields);
+            $result['fields'] = \Pimcore\Model\Object\Service::gridObjectData($object, $fields);
         } else {
             $result['success'] = false;
         }
@@ -38,9 +37,9 @@ class Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
     public function gridGetColumnConfigAction()
     {
         if ($this->getParam("id")) {
-            $class = Object\ClassDefinition::getById($this->getParam("id"));
+            $class = \Pimcore\Model\Object\ClassDefinition::getById($this->getParam("id"));
         } elseif ($this->getParam("name")) {
-            $class = Object\ClassDefinition::getByName($this->getParam("name"));
+            $class = \Pimcore\Model\Object\ClassDefinition::getByName($this->getParam("name"));
         }
 
         $gridType = "search";
@@ -51,7 +50,7 @@ class Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
         $objectId = $this->getParam("objectId");
 
         if ($objectId) {
-            $fields = Object\Service::getCustomGridFieldDefinitions($class->getId(), $objectId);
+            $fields = \Pimcore\Model\Object\Service::getCustomGridFieldDefinitions($class->getId(), $objectId);
         }
 
         if (!$fields) {
@@ -91,9 +90,9 @@ class Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
         $localizedFields = [];
         $objectbrickFields = [];
         foreach ($fields as $key => $field) {
-            if ($field instanceof Object\ClassDefinition\Data\Localizedfields) {
+            if ($field instanceof \Pimcore\Model\Object\ClassDefinition\Data\Localizedfields) {
                 $localizedFields[] = $field;
-            } elseif ($field instanceof Object\ClassDefinition\Data\Objectbricks) {
+            } elseif ($field instanceof \Pimcore\Model\Object\ClassDefinition\Data\Objectbricks) {
                 $objectbrickFields[] = $field;
             }
         }
@@ -125,7 +124,7 @@ class Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
             $includeBricks = !$this->getParam("no_brick_columns");
 
             foreach ($fields as $key => $field) {
-                if ($field instanceof Object\ClassDefinition\Data\Localizedfields) {
+                if ($field instanceof \Pimcore\Model\Object\ClassDefinition\Data\Localizedfields) {
                     foreach ($field->getFieldDefinitions() as $fd) {
                         if (empty($types) || in_array($fd->getFieldType(), $types)) {
                             $fieldConfig = $this->getFieldGridConfig($fd, $gridType, $count);
@@ -135,7 +134,7 @@ class Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
                             }
                         }
                     }
-                } elseif ($field instanceof Object\ClassDefinition\Data\Objectbricks && $includeBricks) {
+                } elseif ($field instanceof \Pimcore\Model\Object\ClassDefinition\Data\Objectbricks && $includeBricks) {
                     if (in_array($field->getFieldType(), $types)) {
                         $fieldConfig = $this->getFieldGridConfig($field, $gridType, $count);
                         if (!empty($fieldConfig)) {
@@ -146,7 +145,7 @@ class Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
                         $allowedTypes = $field->getAllowedTypes();
                         if (!empty($allowedTypes)) {
                             foreach ($allowedTypes as $t) {
-                                $brickClass = Object\Objectbrick\Definition::getByKey($t);
+                                $brickClass = \Pimcore\Model\Object\Objectbrick\Definition::getByKey($t);
                                 $brickFields = $brickClass->getFieldDefinitions();
                                 if (!empty($brickFields)) {
                                     foreach ($brickFields as $bf) {
@@ -195,7 +194,7 @@ class Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
                             $keyId = $groupAndKeyId[1];
 
                             if ($type == "classificationstore") {
-                                $keyDef = Object\Classificationstore\KeyConfig::getById($keyId);
+                                $keyDef = \Pimcore\Model\Object\Classificationstore\KeyConfig::getById($keyId);
                                 if ($keyDef) {
                                     $keyFieldDef = json_decode($keyDef->getDefinition(), true);
                                     if ($keyFieldDef) {
@@ -213,7 +212,7 @@ class Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
                             $brick = $keyParts[0];
                             $key = $keyParts[1];
 
-                            $brickClass = Object\Objectbrick\Definition::getByKey($brick);
+                            $brickClass = \Pimcore\Model\Object\Objectbrick\Definition::getByKey($brick);
                             $fd = $brickClass->getFieldDefinition($key);
                             if (!empty($fd)) {
                                 $fieldConfig = $this->getFieldGridConfig($fd, $gridType, $sc['position'], true, $brick . "~");
@@ -288,7 +287,7 @@ class Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
 
     public function gridDeleteColumnConfigAction()
     {
-        $object = Object::getById($this->getParam("id"));
+        $object = \Pimcore\Model\Object\AbstractObject::getById($this->getParam("id"));
 
 
         if ($object->isAllowed("list")) {
@@ -323,7 +322,7 @@ class Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
 
     public function gridSaveColumnConfigAction()
     {
-        $object = Object::getById($this->getParam("id"));
+        $object = \Pimcore\Model\Object\AbstractObject::getById($this->getParam("id"));
 
 
         if ($object->isAllowed("list")) {
@@ -398,7 +397,7 @@ class Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
         }
 
         if (!$field->getInvisible() && ($force || $visible)) {
-            Object\Service::enrichLayoutDefinition($field);
+            \Pimcore\Model\Object\Service::enrichLayoutDefinition($field);
 
             return [
                 "key" => $key,
@@ -471,7 +470,7 @@ class Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
         }
 
         // get class data
-        $class = Object\ClassDefinition::getById($this->getParam("classId"));
+        $class = \Pimcore\Model\Object\ClassDefinition::getById($this->getParam("classId"));
         $fields = $class->getFieldDefinitions();
 
         $availableFields = [];
@@ -546,7 +545,7 @@ class Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
         $job = $this->getParam("job");
         $id = $this->getParam("id");
         $mappingRaw = \Zend_Json::decode($this->getParam("mapping"));
-        $class = Object\ClassDefinition::getById($this->getParam("classId"));
+        $class = \Pimcore\Model\Object\ClassDefinition::getById($this->getParam("classId"));
         $skipFirstRow = $this->getParam("skipHeadRow") == "true";
         $fields = $class->getFieldDefinitions();
 
@@ -592,7 +591,7 @@ class Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
 
         // create new object
         $className = "Pimcore\\Model\\Object\\" . ucfirst($this->getParam("className"));
-        $parent = Object::getById($this->getParam("parentId"));
+        $parent = \Pimcore\Model\Object\AbstractObject::getById($this->getParam("parentId"));
 
         $objectKey = "object_" . $job;
         if ($this->getParam("filename") == "id") {
@@ -610,15 +609,15 @@ class Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
             $intendedPath = $parent->getRealFullPath() . "/" . $objectKey;
 
             if ($overwrite) {
-                $object = Object::getByPath($intendedPath);
-                if (!$object instanceof Object\Concrete) {
+                $object = \Pimcore\Model\Object\AbstractObject::getByPath($intendedPath);
+                if (!$object instanceof \Pimcore\Model\Object\Concrete) {
                     //create new object
                     $object = \Pimcore::getDiContainer()->make($className);
-                } elseif ($object instanceof Object\Concrete and !($object instanceof $className)) {
+                } elseif ($object instanceof \Pimcore\Model\Object\Concrete and !($object instanceof $className)) {
                     //delete the old object it is of a different class
                     $object->delete();
                     $object = \Pimcore::getDiContainer()->make($className);
-                } elseif ($object instanceof Object\Folder) {
+                } elseif ($object instanceof \Pimcore\Model\Object\Folder) {
                     //delete the folder
                     $object->delete();
                     $object = \Pimcore::getDiContainer()->make($className);
@@ -627,7 +626,7 @@ class Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
                 }
             } else {
                 $counter = 1;
-                while (Object::getByPath($intendedPath) != null) {
+                while (\Pimcore\Model\Object\AbstractObject::getByPath($intendedPath) != null) {
                     $objectKey .= "_" . $counter;
                     $intendedPath = $parent->getRealFullPath() . "/" . $objectKey;
                     $counter++;
@@ -741,7 +740,7 @@ class Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
         $requestedLanguage = $this->extractLanguage();
 
         $folder = Pimcore\Model\Object\AbstractObject::getById($this->getParam("folderId"));
-        $class = Object\ClassDefinition::getById($this->getParam("classId"));
+        $class = \Pimcore\Model\Object\ClassDefinition::getById($this->getParam("classId"));
 
         $className = $class->getName();
 
@@ -756,8 +755,8 @@ class Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
         $featureJoins = [];
 
         if ($this->getParam("filter")) {
-            $conditionFilters[] = Object\Service::getFilterCondition($this->getParam("filter"), $class);
-            $featureFilters = Object\Service::getFeatureFilters($this->getParam("filter"), $class);
+            $conditionFilters[] = \Pimcore\Model\Object\Service::getFilterCondition($this->getParam("filter"), $class);
+            $featureFilters = \Pimcore\Model\Object\Service::getFeatureFilters($this->getParam("filter"), $class);
             if ($featureFilters) {
                 $featureJoins = array_merge($featureJoins, $featureFilters["joins"]);
             }
@@ -783,8 +782,8 @@ class Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
 
         $objectType = $this->getParam("objecttype");
         if ($objectType) {
-            if ($objectType == Object\AbstractObject::OBJECT_TYPE_OBJECT && $class->getShowVariants()) {
-                $list->setObjectTypes([Object\AbstractObject::OBJECT_TYPE_OBJECT, Object\AbstractObject::OBJECT_TYPE_VARIANT]);
+            if ($objectType == \Pimcore\Model\Object\AbstractObject::OBJECT_TYPE_OBJECT && $class->getShowVariants()) {
+                $list->setObjectTypes([\Pimcore\Model\Object\AbstractObject::OBJECT_TYPE_OBJECT, \Pimcore\Model\Object\AbstractObject::OBJECT_TYPE_VARIANT]);
             } else {
                 $list->setObjectTypes([$objectType]);
             }
@@ -799,7 +798,7 @@ class Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
         }
 
         $list->setLocale($requestedLanguage);
-        Object\Service::addGridFeatureJoins($list, $featureJoins, $class, $featureFilters, $requestedLanguage);
+        \Pimcore\Model\Object\Service::addGridFeatureJoins($list, $featureJoins, $class, $featureFilters, $requestedLanguage);
 
         return [$list, $fields, $requestedLanguage];
     }
@@ -832,7 +831,7 @@ class Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
         $fileHandle = \Pimcore\File::getValidFilename($this->getParam("fileHandle"));
         $ids = $this->getParam("ids");
 
-        $class = Object\ClassDefinition::getById($this->getParam("classId"));
+        $class = \Pimcore\Model\Object\ClassDefinition::getById($this->getParam("classId"));
         $className = $class->getName();
         $listClass = "\\Pimcore\\Model\\Object\\" . ucfirst($className) . "\\Listing";
 
@@ -885,8 +884,8 @@ class Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
                 $groupId = $groupKeyId[0];
                 $keyId = $groupKeyId[1];
 
-                $groupConfig = Object\Classificationstore\GroupConfig::getById($groupId);
-                $keyConfig = Object\Classificationstore\KeyConfig::getById($keyId);
+                $groupConfig = \Pimcore\Model\Object\Classificationstore\GroupConfig::getById($groupId);
+                $keyConfig = \Pimcore\Model\Object\Classificationstore\KeyConfig::getById($keyId);
 
                 $field = $fieldname . "~" . $groupConfig->getName() . "~" . $keyConfig->getName();
             }
@@ -909,7 +908,7 @@ class Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
         $objects = [];
         Logger::debug("objects in list:" . count($list->getObjects()));
         //add inherited values to objects
-        Object\AbstractObject::setGetInheritedValues(true);
+        \Pimcore\Model\Object\AbstractObject::setGetInheritedValues(true);
         foreach ($list->getObjects() as $object) {
             if ($fields) {
                 $objectData = [];
@@ -926,7 +925,7 @@ class Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
                 /**
                  * @extjs - TODO remove this, when old ext support is removed
                  */
-                if ($object instanceof Object\Concrete) {
+                if ($object instanceof \Pimcore\Model\Object\Concrete) {
                     $o = $this->csvObjectData($object);
                     $objects[] = $o;
                 }
@@ -1024,7 +1023,7 @@ class Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
                     // brick
                     $brickType = $fieldParts[0];
                     $brickKey = $fieldParts[1];
-                    $key = Object\Service::getFieldForBrickType($object->getClass(), $brickType);
+                    $key = \Pimcore\Model\Object\Service::getFieldForBrickType($object->getClass(), $brickType);
 
                     $brickClass = Pimcore\Model\Object\Objectbrick\Definition::getByKey($brickType);
                     $fieldDefinition = $brickClass->getFieldDefinition($brickKey);
@@ -1067,7 +1066,7 @@ class Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
         $o = [];
         foreach ($object->getClass()->getFieldDefinitions() as $key => $value) {
             //exclude remote owner fields
-            if (!($value instanceof Object\ClassDefinition\Data\Relations\AbstractRelations and $value->isRemoteOwner())) {
+            if (!($value instanceof \Pimcore\Model\Object\ClassDefinition\Data\Relations\AbstractRelations and $value->isRemoteOwner())) {
                 $o[$key] = $value->getForCsvExport($object);
             }
         }
@@ -1089,13 +1088,13 @@ class Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
             $this->setLanguage($this->getParam("language"), true);
         }
 
-        $folder = Object::getById($this->getParam("folderId"));
-        $class = Object\ClassDefinition::getById($this->getParam("classId"));
+        $folder = \Pimcore\Model\Object\AbstractObject::getById($this->getParam("folderId"));
+        $class = \Pimcore\Model\Object\ClassDefinition::getById($this->getParam("classId"));
 
         $conditionFilters = ["o_path = ? OR o_path LIKE '" . str_replace("//", "/", $folder->getRealFullPath() . "/") . "%'"];
 
         if ($this->getParam("filter")) {
-            $conditionFilters[] = Object\Service::getFilterCondition($this->getParam("filter"), $class);
+            $conditionFilters[] = \Pimcore\Model\Object\Service::getFilterCondition($this->getParam("filter"), $class);
         }
         if ($this->getParam("condition")) {
             $conditionFilters[] = " (" . $this->getParam("condition") . ")";
@@ -1122,11 +1121,11 @@ class Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
         $success = true;
 
         try {
-            $object = Object::getById($this->getParam("job"));
+            $object = \Pimcore\Model\Object\AbstractObject::getById($this->getParam("job"));
 
             if ($object) {
                 $className = $object->getClassName();
-                $class = Object\ClassDefinition::getByName($className);
+                $class = \Pimcore\Model\Object\ClassDefinition::getByName($className);
                 $value = $this->getParam("value");
                 if ($this->getParam("valueType") == "object") {
                     $value = \Zend_Json::decode($value);
@@ -1171,7 +1170,7 @@ class Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
                         $keyValuePairs = $object->$getter();
 
                         if (!$keyValuePairs) {
-                            $keyValuePairs = new Object\Data\KeyValue();
+                            $keyValuePairs = new \Pimcore\Model\Object\Data\KeyValue();
                             $keyValuePairs->setObjectId($object->getId());
                             $keyValuePairs->setClass($object->getClass());
                         }
@@ -1183,7 +1182,7 @@ class Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
                     // check for bricks
                     $brickType = $parts[0];
                     $brickKey = $parts[1];
-                    $brickField = Object\Service::getFieldForBrickType($object->getClass(), $brickType);
+                    $brickField = \Pimcore\Model\Object\Service::getFieldForBrickType($object->getClass(), $brickType);
 
                     $fieldGetter = "get" . ucfirst($brickField);
                     $brickGetter = "get" . ucfirst($brickType);
@@ -1197,7 +1196,7 @@ class Admin_ObjectHelperController extends \Pimcore\Controller\Action\Admin
                         $object->$fieldGetter()->$brickSetter($brick);
                     }
 
-                    $brickClass = Object\Objectbrick\Definition::getByKey($brickType);
+                    $brickClass = \Pimcore\Model\Object\Objectbrick\Definition::getByKey($brickType);
                     $field = $brickClass->getFieldDefinition($brickKey);
                     $brick->$valueSetter($field->getDataFromEditmode($value, $object));
                 } else {

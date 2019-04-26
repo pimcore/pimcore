@@ -21,7 +21,6 @@ use Pimcore\File;
 use Pimcore\Tool\Serialize;
 use Pimcore\Model\Document;
 use Pimcore\Model\Asset;
-use Pimcore\Model\Object;
 use Pimcore\Model\Element;
 
 /**
@@ -115,8 +114,8 @@ class Item extends Model\AbstractModel
             if ($indentElement) {
                 $element->setFilename($element->getFilename()."_restore");
             }
-        } elseif ($element instanceof Object\AbstractObject) {
-            $indentElement = Object::getByPath($element->getRealFullPath());
+        } elseif ($element instanceof \Pimcore\Model\Object\AbstractObject) {
+            $indentElement = \Pimcore\Model\Object\AbstractObject::getByPath($element->getRealFullPath());
             if ($indentElement) {
                 $element->setKey($element->getKey()."_restore");
             }
@@ -226,9 +225,9 @@ class Item extends Model\AbstractModel
         \Pimcore\Cache::addClearedTag($element->getCacheTag());
 
         if (method_exists($element, "getChilds")) {
-            if ($element instanceof Object\AbstractObject) {
+            if ($element instanceof \Pimcore\Model\Object\AbstractObject) {
                 // because we also want variants
-                $childs = $element->getChilds([Object::OBJECT_TYPE_FOLDER, Object::OBJECT_TYPE_VARIANT, Object::OBJECT_TYPE_OBJECT]);
+                $childs = $element->getChilds([\Pimcore\Model\Object\AbstractObject::OBJECT_TYPE_FOLDER, \Pimcore\Model\Object\AbstractObject::OBJECT_TYPE_VARIANT, \Pimcore\Model\Object\AbstractObject::OBJECT_TYPE_OBJECT]);
             } else {
                 $childs = $element->getChilds();
             }
@@ -257,14 +256,14 @@ class Item extends Model\AbstractModel
 
         $restoreBinaryData($element, $this);
 
-        if ($element instanceof Object\Concrete) {
+        if ($element instanceof \Pimcore\Model\Object\Concrete) {
             $element->setOmitMandatoryCheck(true);
         }
 
         $element->save();
 
         if (method_exists($element, "getChilds")) {
-            if ($element instanceof Object\AbstractObject) {
+            if ($element instanceof \Pimcore\Model\Object\AbstractObject) {
                 // don't use the getter because this will return an empty array (variants are excluded by default)
                 $childs = $element->o_childs;
             } else {

@@ -17,7 +17,6 @@
 namespace Pimcore\Model\Object\ClassDefinition;
 
 use Pimcore\Model;
-use Pimcore\Model\Object;
 use Pimcore\Model\Webservice;
 
 class Service
@@ -25,7 +24,7 @@ class Service
 
     /**
      * @static
-     * @param  Object\ClassDefinition $class
+     * @param  \Pimcore\Model\Object\ClassDefinition $class
      * @return string
      */
     public static function generateClassDefinitionJson($class)
@@ -140,7 +139,7 @@ class Service
         // this will allow to import the brick on a different instance with identical class names but different class IDs
         if (is_array($objectBrick->classDefinitions)) {
             foreach ($objectBrick->classDefinitions as &$cd) {
-                $class = Object\ClassDefinition::getById($cd["classname"]);
+                $class = \Pimcore\Model\Object\ClassDefinition::getById($cd["classname"]);
                 if ($class) {
                     $cd["classname"] = $class->getName();
                 }
@@ -168,12 +167,12 @@ class Service
         if (is_array($importData["classDefinitions"])) {
             foreach ($importData["classDefinitions"] as &$cd) {
                 if (is_numeric($cd["classname"])) {
-                    $class = Object\ClassDefinition::getById($cd["classname"]);
+                    $class = \Pimcore\Model\Object\ClassDefinition::getById($cd["classname"]);
                     if ($class) {
                         $toAssignClassDefinitions[] = $cd;
                     }
                 } else {
-                    $class = Object\ClassDefinition::getByName($cd["classname"]);
+                    $class = \Pimcore\Model\Object\ClassDefinition::getByName($cd["classname"]);
                     if ($class) {
                         $cd["classname"] = $class->getId();
                         $toAssignClassDefinitions[] = $cd;

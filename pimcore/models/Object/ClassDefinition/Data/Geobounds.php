@@ -9,7 +9,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  * @category   Pimcore
- * @package    Object|Class
+ * @package    \Pimcore\Model\Object|Class
  * @copyright  Copyright (c) 2009-2016 pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
@@ -17,7 +17,6 @@
 namespace Pimcore\Model\Object\ClassDefinition\Data;
 
 use Pimcore\Model;
-use Pimcore\Model\Object;
 use Pimcore\Tool\Serialize;
 
 class Geobounds extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo
@@ -64,15 +63,15 @@ class Geobounds extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo
 
 
     /**
-     * @see Object\ClassDefinition\Data::getDataForResource
-     * @param Object\Data\Geobounds $data
+     * @see Model\Object\ClassDefinition\Data::getDataForResource
+     * @param Model\Object\Data\Geobounds $data
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
      * @return string
      */
     public function getDataForResource($data, $object = null, $params = [])
     {
-        if ($data instanceof Object\Data\Geobounds) {
+        if ($data instanceof \Pimcore\Model\Object\Data\Geobounds) {
             return [
                 $this->getName() . "__NElongitude" => $data->getNorthEast()->getLongitude(),
                 $this->getName() . "__NElatitude" => $data->getNorthEast()->getLatitude(),
@@ -90,7 +89,7 @@ class Geobounds extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo
     }
 
     /**
-     * @see Object\ClassDefinition\Data::getDataFromResource
+     * @see Model\Object\ClassDefinition\Data::getDataFromResource
      * @param array $data
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
@@ -99,18 +98,18 @@ class Geobounds extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo
     public function getDataFromResource($data, $object = null, $params = [])
     {
         if ($data[$this->getName() . "__NElongitude"] && $data[$this->getName() . "__NElatitude"] && $data[$this->getName() . "__SWlongitude"] && $data[$this->getName() . "__SWlatitude"]) {
-            $ne = new Object\Data\Geopoint($data[$this->getName() . "__NElongitude"], $data[$this->getName() . "__NElatitude"]);
-            $sw = new Object\Data\Geopoint($data[$this->getName() . "__SWlongitude"], $data[$this->getName() . "__SWlatitude"]);
+            $ne = new \Pimcore\Model\Object\Data\Geopoint($data[$this->getName() . "__NElongitude"], $data[$this->getName() . "__NElatitude"]);
+            $sw = new \Pimcore\Model\Object\Data\Geopoint($data[$this->getName() . "__SWlongitude"], $data[$this->getName() . "__SWlatitude"]);
 
-            return new Object\Data\Geobounds($ne, $sw);
+            return new \Pimcore\Model\Object\Data\Geobounds($ne, $sw);
         }
 
         return;
     }
 
     /**
-     * @see Object\ClassDefinition\Data::getDataForQueryResource
-     * @param Object\Data\Geobounds $data
+     * @see Model\Object\ClassDefinition\Data::getDataForQueryResource
+     * @param Model\Object\Data\Geobounds $data
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
      * @return string
@@ -121,15 +120,15 @@ class Geobounds extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo
     }
 
     /**
-     * @see Object\ClassDefinition\Data::getDataForEditmode
-     * @param Object\Data\Geobounds $data
+     * @see Model\Object\ClassDefinition\Data::getDataForEditmode
+     * @param Model\Object\Data\Geobounds $data
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
      * @return array
      */
     public function getDataForEditmode($data, $object = null, $params = [])
     {
-        if ($data instanceof Object\Data\Geobounds) {
+        if ($data instanceof \Pimcore\Model\Object\Data\Geobounds) {
             return [
                 "NElongitude" => $data->getNorthEast()->getLongitude(),
                 "NElatitude" => $data->getNorthEast()->getLatitude(),
@@ -157,30 +156,30 @@ class Geobounds extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo
      * @param array $data
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
-     * @return Object\Data\Geobounds
+     * @return Model\Object\Data\Geobounds
      */
     public function getDataFromEditmode($data, $object = null, $params = [])
     {
         if ($data["NElongitude"] !== null && $data["NElatitude"] !== null && $data["SWlongitude"] !== null && $data["SWlatitude"] !== null) {
-            $ne = new Object\Data\Geopoint($data["NElongitude"], $data["NElatitude"]);
-            $sw = new Object\Data\Geopoint($data["SWlongitude"], $data["SWlatitude"]);
+            $ne = new \Pimcore\Model\Object\Data\Geopoint($data["NElongitude"], $data["NElatitude"]);
+            $sw = new \Pimcore\Model\Object\Data\Geopoint($data["SWlongitude"], $data["SWlatitude"]);
 
-            return new Object\Data\Geobounds($ne, $sw);
+            return new \Pimcore\Model\Object\Data\Geobounds($ne, $sw);
         }
 
         return;
     }
 
     /**
-     * @see Object\ClassDefinition\Data::getVersionPreview
-     * @param Object\Data\Geobounds $data
-     * @param null|Object\AbstractObject $object
+     * @see Model\Object\ClassDefinition\Data::getVersionPreview
+     * @param Model\Object\Data\Geobounds $data
+     * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
      * @return string
      */
     public function getVersionPreview($data, $object = null, $params = [])
     {
-        if ($data instanceof Object\Data\Geobounds) {
+        if ($data instanceof \Pimcore\Model\Object\Data\Geobounds) {
             return $data->getNorthEast()->getLongitude() . "," . $data->getNorthEast()->getLatitude() . " " . $data->getSouthWest()->getLongitude() . "," . $data->getSouthWest()->getLatitude();
         }
 
@@ -192,14 +191,14 @@ class Geobounds extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo
     /**
      * converts object data to a simple string value or CSV Export
      * @abstract
-     * @param Object\AbstractObject $object
+     * @param Model\Object\AbstractObject $object
      * @param array $params
      * @return string
      */
     public function getForCsvExport($object, $params = [])
     {
         $data = $this->getDataFromObjectParam($object, $params);
-        if ($data instanceof Object\Data\Geobounds) {
+        if ($data instanceof \Pimcore\Model\Object\Data\Geobounds) {
             return  $data->getNorthEast()->getLongitude().",".$data->getNorthEast()->getLatitude()."|".$data->getSouthWest()->getLongitude().",".$data->getSouthWest()->getLatitude();
         } else {
             return null;
@@ -210,7 +209,7 @@ class Geobounds extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo
      * @param string $importValue
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
-     * @return null|Object\ClassDefinition\Data|Object\Data\Geobounds
+     * @return null|Model\Object\ClassDefinition\Data|Model\Object\Data\Geobounds
      */
     public function getFromCsvImport($importValue, $object = null, $params = [])
     {
@@ -220,7 +219,7 @@ class Geobounds extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo
             $northEast = explode(",", $points[0]);
             $southWest = explode(",", $points[1]);
             if ($northEast[0] && $northEast[1] && $southWest[0] && $southWest[1]) {
-                $value = new Object\Data\Geobounds(new Object\Data\Geopoint($northEast[0], $northEast[1]), new Object\Data\Geopoint($southWest[0], $southWest[1]));
+                $value = new \Pimcore\Model\Object\Data\Geobounds(\Pimcore\Model\Object\Data\Geopoint($northEast[0], $northEast[1]), \Pimcore\Model\Object\Data\Geopoint($southWest[0], $southWest[1]));
             }
         }
 
@@ -246,7 +245,7 @@ class Geobounds extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo
     public function getForWebserviceExport($object, $params = [])
     {
         $data = $this->getDataFromObjectParam($object, $params);
-        if ($data instanceof Object\Data\Geobounds) {
+        if ($data instanceof \Pimcore\Model\Object\Data\Geobounds) {
             return [
                 "NElongitude" => $data->getNorthEast()->getLongitude(),
                 "NElatitude" => $data->getNorthEast()->getLatitude(),
@@ -273,10 +272,10 @@ class Geobounds extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo
         } else {
             $value = (array) $value;
             if ($value["NElongitude"] !== null && $value["NElatitude"] !== null && $value["SWlongitude"] !== null && $value["SWlatitude"] !== null) {
-                $ne = new Object\Data\Geopoint($value["NElongitude"], $value["NElatitude"]);
-                $sw = new Object\Data\Geopoint($value["SWlongitude"], $value["SWlatitude"]);
+                $ne = new \Pimcore\Model\Object\Data\Geopoint($value["NElongitude"], $value["NElatitude"]);
+                $sw = new \Pimcore\Model\Object\Data\Geopoint($value["SWlongitude"], $value["SWlatitude"]);
 
-                return new Object\Data\Geobounds($ne, $sw);
+                return new \Pimcore\Model\Object\Data\Geobounds($ne, $sw);
             } else {
                 throw new \Exception("cannot get values from web service import - invalid data");
             }

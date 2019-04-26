@@ -17,7 +17,6 @@
 namespace Pimcore\Model\Object\Objectbrick;
 
 use Pimcore\Model;
-use Pimcore\Model\Object;
 use Pimcore\File;
 
 /**
@@ -133,7 +132,7 @@ class Definition extends Model\Object\Fieldcollection\Definition
 
         \Pimcore\File::put($definitionFile, $data);
 
-        $extendClass = "Object\\Objectbrick\\Data\\AbstractData";
+        $extendClass = "\\Pimcore\\Model\\Object\\Objectbrick\\Data\\AbstractData";
         if ($this->getParentClass()) {
             $extendClass = $this->getParentClass();
             $extendClass = "\\" . ltrim($extendClass, "\\");
@@ -147,7 +146,7 @@ class Definition extends Model\Object\Fieldcollection\Definition
         $cd .= "\n\n";
         $cd .= "namespace Pimcore\\Model\\Object\\Objectbrick\\Data;";
         $cd .= "\n\n";
-        $cd .= "use Pimcore\\Model\\Object;";
+        $cd .= "//use Pimcore\\Model\\Object;";
         $cd .= "\n\n";
 
         $cd .= "class " . ucfirst($this->getKey()) . " extends " . $extendClass . "  {";
@@ -167,7 +166,7 @@ class Definition extends Model\Object\Fieldcollection\Definition
             foreach ($this->getFieldDefinitions() as $key => $def) {
 
                 /**
-                 * @var $def Object\ClassDefinition\Data
+                 * @var $def Model\Object\ClassDefinition\Data
                  */
                 $cd .= $def->getGetterCodeObjectbrick($this);
                 $cd .= $def->getSetterCodeObjectbrick($this);
@@ -197,14 +196,14 @@ class Definition extends Model\Object\Fieldcollection\Definition
         if ($oldObject && !empty($oldObject->classDefinitions)) {
             foreach ($oldObject->classDefinitions as $cl) {
                 $this->oldClassDefinitions[$cl['classname']] = $cl['classname'];
-                $class = Object\ClassDefinition::getById($cl['classname']);
+                $class = \Pimcore\Model\Object\ClassDefinition::getById($cl['classname']);
                 if ($class) {
                     $path = $this->getContainerClassFolder($class->getName());
                     @unlink($path . "/" . ucfirst($cl['fieldname'] . ".php"));
 
 
                     foreach ($class->getFieldDefinitions() as $fieldDef) {
-                        if ($fieldDef instanceof Object\ClassDefinition\Data\Objectbricks) {
+                        if ($fieldDef instanceof \Pimcore\Model\Object\ClassDefinition\Data\Objectbricks) {
                             $allowedTypes = $fieldDef->getAllowedTypes();
                             $idx = array_search($this->getKey(), $allowedTypes);
                             if ($idx !== false) {
@@ -231,7 +230,7 @@ class Definition extends Model\Object\Fieldcollection\Definition
                 unset($this->oldClassDefinitions[$cl['classname']]);
 
                 if (!$processedClasses[$cl['classname']]) {
-                    $class = Object\ClassDefinition::getById($cl['classname']);
+                    $class = \Pimcore\Model\Object\ClassDefinition::getById($cl['classname']);
                     $this->getDao()->createUpdateTable($class);
                     $processedClasses[$cl['classname']] = true;
                 }
@@ -240,12 +239,12 @@ class Definition extends Model\Object\Fieldcollection\Definition
 
         if (!empty($this->oldClassDefinitions)) {
             foreach ($this->oldClassDefinitions as $cl) {
-                $class = Object\ClassDefinition::getById($cl);
+                $class = \Pimcore\Model\Object\ClassDefinition::getById($cl);
                 if ($class) {
                     $this->getDao()->delete($class);
 
                     foreach ($class->getFieldDefinitions() as $fieldDef) {
-                        if ($fieldDef instanceof Object\ClassDefinition\Data\Objectbricks) {
+                        if ($fieldDef instanceof \Pimcore\Model\Object\ClassDefinition\Data\Objectbricks) {
                             $allowedTypes = $fieldDef->getAllowedTypes();
                             $idx = array_search($this->getKey(), $allowedTypes);
                             if ($idx !== false) {
@@ -274,7 +273,7 @@ class Definition extends Model\Object\Fieldcollection\Definition
             foreach ($this->classDefinitions as $cl) {
                 $containerDefinition[$cl['classname']][$cl['fieldname']][] = $this->key;
 
-                $class = Object\ClassDefinition::getById($cl['classname']);
+                $class = \Pimcore\Model\Object\ClassDefinition::getById($cl['classname']);
 
                 $fd = $class->getFieldDefinition($cl['fieldname']);
                 if (!$fd) {
@@ -289,7 +288,7 @@ class Definition extends Model\Object\Fieldcollection\Definition
             }
         }
 
-        $list = new Object\Objectbrick\Definition\Listing();
+        $list = new \Pimcore\Model\Object\Objectbrick\Definition\Listing();
         $list = $list->load();
         foreach ($list as $def) {
             if ($this->key != $def->getKey()) {
@@ -304,7 +303,7 @@ class Definition extends Model\Object\Fieldcollection\Definition
 
 
         foreach ($containerDefinition as $classId => $cd) {
-            $class = Object\ClassDefinition::getById($classId);
+            $class = \Pimcore\Model\Object\ClassDefinition::getById($classId);
 
             if (!$class) {
                 continue;
@@ -413,13 +412,13 @@ class Definition extends Model\Object\Fieldcollection\Definition
                 unset($this->oldClassDefinitions[$cl['classname']]);
 
                 if (!$processedClasses[$cl['classname']]) {
-                    $class = Object\ClassDefinition::getById($cl['classname']);
+                    $class = \Pimcore\Model\Object\ClassDefinition::getById($cl['classname']);
                     $this->getDao()->delete($class);
                     $processedClasses[$cl['classname']] = true;
 
 
                     foreach ($class->getFieldDefinitions() as $fieldDef) {
-                        if ($fieldDef instanceof Object\ClassDefinition\Data\Objectbricks) {
+                        if ($fieldDef instanceof \Pimcore\Model\Object\ClassDefinition\Data\Objectbricks) {
                             $allowedTypes = $fieldDef->getAllowedTypes();
                             $idx = array_search($this->getKey(), $allowedTypes);
                             if ($idx !== false) {
@@ -435,12 +434,12 @@ class Definition extends Model\Object\Fieldcollection\Definition
         }
 
         // update classes
-        $classList = new Object\ClassDefinition\Listing();
+        $classList = new \Pimcore\Model\Object\ClassDefinition\Listing();
         $classes = $classList->load();
         if (is_array($classes)) {
             foreach ($classes as $class) {
                 foreach ($class->getFieldDefinitions() as $fieldDef) {
-                    if ($fieldDef instanceof Object\ClassDefinition\Data\Objectbricks) {
+                    if ($fieldDef instanceof \Pimcore\Model\Object\ClassDefinition\Data\Objectbricks) {
                         if (in_array($this->getKey(), $fieldDef->getAllowedTypes())) {
                             break;
                         }

@@ -17,7 +17,6 @@
 namespace Pimcore\Model\Object\Listing\Concrete;
 
 use Pimcore\Model;
-use Pimcore\Model\Object;
 use Pimcore\Tool;
 
 /**
@@ -118,8 +117,8 @@ class Dao extends Model\Object\Listing\Dao
         if (($Mysqli || $pdoMySQL) && $this->firstException) {
             $this->firstException = false;
 
-            $localizedFields = new Object\Localizedfield();
-            $localizedFields->setClass(Object\ClassDefinition::getById($this->model->getClassId()));
+            $localizedFields = new \Pimcore\Model\Object\Localizedfield();
+            $localizedFields->setClass(\Pimcore\Model\Object\ClassDefinition::getById($this->model->getClassId()));
             $localizedFields->createUpdateTable();
 
             return $this->loadIdList();

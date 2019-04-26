@@ -17,7 +17,6 @@
 namespace Pimcore\Model\Object\ClassDefinition\Data;
 
 use Pimcore\Model;
-use Pimcore\Model\Object;
 
 class Select extends Model\Object\ClassDefinition\Data
 {
@@ -173,7 +172,7 @@ class Select extends Model\Object\ClassDefinition\Data
     }
 
     /**
-     * @see Object\ClassDefinition\Data::getDataForResource
+     * @see Model\Object\ClassDefinition\Data::getDataForResource
      * @param string $data
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
@@ -185,7 +184,7 @@ class Select extends Model\Object\ClassDefinition\Data
     }
 
     /**
-     * @see Object\ClassDefinition\Data::getDataFromResource
+     * @see Model\Object\ClassDefinition\Data::getDataFromResource
      * @param string $data
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
@@ -197,7 +196,7 @@ class Select extends Model\Object\ClassDefinition\Data
     }
 
     /**
-     * @see Object\ClassDefinition\Data::getDataForQueryResource
+     * @see Model\Object\ClassDefinition\Data::getDataForQueryResource
      * @param string $data
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
@@ -210,7 +209,7 @@ class Select extends Model\Object\ClassDefinition\Data
 
 
     /**
-     * @see Object\ClassDefinition\Data::getDataForEditmode
+     * @see Model\Object\ClassDefinition\Data::getDataForEditmode
      * @param string $data
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
@@ -234,9 +233,9 @@ class Select extends Model\Object\ClassDefinition\Data
     }
 
     /**
-     * @see Object\ClassDefinition\Data::getVersionPreview
+     * @see Model\Object\ClassDefinition\Data::getVersionPreview
      * @param string $data
-     * @param null|Object\AbstractObject $object
+     * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
      * @return string
      */
@@ -312,9 +311,9 @@ class Select extends Model\Object\ClassDefinition\Data
     }
 
     /**
-     * @param Object\ClassDefinition\Data $masterDefinition
+     * @param Model\Object\ClassDefinition\Data $masterDefinition
      */
-    public function synchronizeWithMasterDefinition(Object\ClassDefinition\Data $masterDefinition)
+    public function synchronizeWithMasterDefinition(\Pimcore\Model\Object\ClassDefinition\Data $masterDefinition)
     {
         $this->options = $masterDefinition->options;
         $this->columnLength = $masterDefinition->columnLength;

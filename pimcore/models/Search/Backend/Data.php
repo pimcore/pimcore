@@ -16,7 +16,6 @@ namespace Pimcore\Model\Search\Backend;
 
 use Pimcore\Model\Asset;
 use Pimcore\Model\Document;
-use Pimcore\Model\Object;
 use Pimcore\Model\Element;
 use Pimcore\Logger;
 use ForceUTF8\Encoding;
@@ -355,7 +354,7 @@ class Data extends \Pimcore\Model\AbstractModel
         $this->userOwner = $element->getUserOwner();
 
         $this->type = $element->getType();
-        if ($element instanceof Object\Concrete) {
+        if ($element instanceof \Pimcore\Model\Object\Concrete) {
             $this->subtype = $element->getClassName();
         } else {
             $this->subtype = $this->type;
@@ -446,18 +445,18 @@ class Data extends \Pimcore\Model\AbstractModel
             }
 
             $this->published = true;
-        } elseif ($element instanceof Object\AbstractObject) {
-            if ($element instanceof Object\Concrete) {
-                $getInheritedValues = Object\AbstractObject::doGetInheritedValues();
-                Object\AbstractObject::setGetInheritedValues(true);
+        } elseif ($element instanceof \Pimcore\Model\Object\AbstractObject) {
+            if ($element instanceof \Pimcore\Model\Object\Concrete) {
+                $getInheritedValues = \Pimcore\Model\Object\AbstractObject::doGetInheritedValues();
+                \Pimcore\Model\Object\AbstractObject::setGetInheritedValues(true);
 
                 $this->published = $element->isPublished();
                 foreach ($element->getClass()->getFieldDefinitions() as $key => $value) {
                     $this->data .= $value->getDataForSearchIndex($element)." ";
                 }
 
-                Object\AbstractObject::setGetInheritedValues($getInheritedValues);
-            } elseif ($element instanceof Object\Folder) {
+                \Pimcore\Model\Object\AbstractObject::setGetInheritedValues($getInheritedValues);
+            } elseif ($element instanceof \Pimcore\Model\Object\Folder) {
                 $this->data=$element->getKey();
                 $this->published = true;
             }

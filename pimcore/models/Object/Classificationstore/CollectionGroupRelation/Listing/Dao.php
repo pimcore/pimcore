@@ -17,7 +17,6 @@
 namespace Pimcore\Model\Object\Classificationstore\CollectionGroupRelation\Listing;
 
 use Pimcore\Model;
-use Pimcore\Model\Object;
 
 /**
  * @property \Pimcore\Model\Object\Classificationstore\CollectionGroupRelation\Listing $model
@@ -38,18 +37,18 @@ class Dao extends Model\Listing\Dao\AbstractDao
         } else {
             $condition = " where ";
         }
-        $condition .= Object\Classificationstore\CollectionGroupRelation\Dao::TABLE_NAME_RELATIONS
-            . ".groupId = " . Object\Classificationstore\GroupConfig\Dao::TABLE_NAME_GROUPS . ".id";
+        $condition .= \Pimcore\Model\Object\Classificationstore\CollectionGroupRelation\Dao::TABLE_NAME_RELATIONS
+            . ".groupId = " . \Pimcore\Model\Object\Classificationstore\GroupConfig\Dao::TABLE_NAME_GROUPS . ".id";
 
-        $sql = "SELECT * FROM " . Object\Classificationstore\CollectionGroupRelation\Dao::TABLE_NAME_RELATIONS
-            . "," . Object\Classificationstore\GroupConfig\Dao::TABLE_NAME_GROUPS
+        $sql = "SELECT * FROM " . \Pimcore\Model\Object\Classificationstore\CollectionGroupRelation\Dao::TABLE_NAME_RELATIONS
+            . "," . \Pimcore\Model\Object\Classificationstore\GroupConfig\Dao::TABLE_NAME_GROUPS
             . $condition . $this->getOrder() . $this->getOffsetLimit();
 
         $data = $this->db->fetchAll($sql, $this->model->getConditionVariables());
 
         $configData = [];
         foreach ($data as $dataItem) {
-            $entry = new Object\Classificationstore\CollectionGroupRelation();
+            $entry = new \Pimcore\Model\Object\Classificationstore\CollectionGroupRelation();
             $resource = $entry->getDao();
             $resource->assignVariablesToModel($dataItem);
 
@@ -66,7 +65,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
      */
     public function getDataArray()
     {
-        $configsData = $this->db->fetchAll("SELECT * FROM " . Object\Classificationstore\CollectionGroupRelation\Dao::TABLE_NAME_RELATIONS . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
+        $configsData = $this->db->fetchAll("SELECT * FROM " . \Pimcore\Model\Object\Classificationstore\CollectionGroupRelation\Dao::TABLE_NAME_RELATIONS . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
 
         return $configsData;
     }
@@ -77,7 +76,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
     public function getTotalCount()
     {
         try {
-            $amount = (int) $this->db->fetchOne("SELECT COUNT(*) as amount FROM " . Object\Classificationstore\CollectionGroupRelation\Dao::TABLE_NAME_RELATIONS . " ". $this->getCondition(), $this->model->getConditionVariables());
+            $amount = (int) $this->db->fetchOne("SELECT COUNT(*) as amount FROM " . \Pimcore\Model\Object\Classificationstore\CollectionGroupRelation\Dao::TABLE_NAME_RELATIONS . " ". $this->getCondition(), $this->model->getConditionVariables());
         } catch (\Exception $e) {
         }
 

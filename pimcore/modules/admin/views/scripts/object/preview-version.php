@@ -10,8 +10,7 @@
 
 <?php
 
-    use Pimcore\Model\Object;
-
+    
     $fields = $this->object->getClass()->getFieldDefinitions();
 
 ?>
@@ -44,7 +43,7 @@
 
 <?php $c = 0; ?>
 <?php foreach ($fields as $fieldName => $definition) { ?>
-    <?php if($definition instanceof Object\ClassDefinition\Data\Localizedfields) { ?>
+    <?php if($definition instanceof \Pimcore\Model\Object\ClassDefinition\Data\Localizedfields) { ?>
         <?php foreach(\Pimcore\Tool::getValidLanguages() as $language) { ?>
             <?php foreach ($definition->getFieldDefinitions() as $lfd) { ?>
                 <tr<?php if ($c % 2) { ?> class="odd"<?php } ?>>
@@ -62,10 +61,10 @@
                 $c++;
             } ?>
     <?php } ?>
-    <?php } else if($definition instanceof Object\ClassDefinition\Data\Objectbricks){ ?>
+    <?php } else if($definition instanceof \Pimcore\Model\Object\ClassDefinition\Data\Objectbricks){ ?>
             <?php foreach($definition->getAllowedTypes() as $asAllowedType) { ?>
                 <?php
-                $collectionDef = Object\Objectbrick\Definition::getByKey($asAllowedType);
+                $collectionDef = \Pimcore\Model\Object\Objectbrick\Definition::getByKey($asAllowedType);
 
                 foreach ($collectionDef->getFieldDefinitions() as $lfd) { ?>
                     <?php
@@ -90,7 +89,7 @@
                     $c++;
                 } ?>
             <?php } ?>
-    <?php } else if($definition instanceof Object\ClassDefinition\Data\Classificationstore){
+    <?php } else if($definition instanceof \Pimcore\Model\Object\ClassDefinition\Data\Classificationstore){
         /** @var $storedata Object\Classificationstore */
         $storedata = $definition->getVersionPreview($this->object->getValueForFieldName($fieldName));
 
@@ -123,7 +122,7 @@
 
             foreach ($keyGroupRelations as $keyGroupRelation) {
 
-                $keyDef = Object\Classificationstore\Service::getFieldDefinitionFromJson(json_decode($keyGroupRelation->getDefinition()), $keyGroupRelation->getType());
+                $keyDef = \Pimcore\Model\Object\Classificationstore\Service::getFieldDefinitionFromJson(json_decode($keyGroupRelation->getDefinition()), $keyGroupRelation->getType());
                 if (!$keyDef) {
                     continue;
                 }

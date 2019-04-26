@@ -17,7 +17,6 @@
 namespace Pimcore\Model\Object\ClassDefinition\Data;
 
 use Pimcore\Model;
-use Pimcore\Model\Object;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
@@ -121,15 +120,15 @@ class Hotspotimage extends Model\Object\ClassDefinition\Data\Image
 
 
     /**
-     * @see Object\ClassDefinition\Data::getDataForResource
-     * @param Object\Data\Hotspotimage $data
+     * @see Model\Object\ClassDefinition\Data::getDataForResource
+     * @param Model\Object\Data\Hotspotimage $data
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
      * @return integer|null
      */
     public function getDataForResource($data, $object = null, $params = [])
     {
-        if ($data instanceof Object\Data\Hotspotimage) {
+        if ($data instanceof \Pimcore\Model\Object\Data\Hotspotimage) {
             $imageId = null;
             if ($data->getImage()) {
                 $imageId = $data->getImage()->getId();
@@ -156,8 +155,8 @@ class Hotspotimage extends Model\Object\ClassDefinition\Data\Image
     }
 
     /**
-     * @see Object\ClassDefinition\Data::getDataFromResource
-     * @param Object\Data\Hotspotimage $data
+     * @see Model\Object\ClassDefinition\Data::getDataFromResource
+     * @param Model\Object\Data\Hotspotimage $data
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
      * @return Asset
@@ -205,7 +204,7 @@ class Hotspotimage extends Model\Object\ClassDefinition\Data\Image
             $hotspots = $rewritePath($hotspots);
             $marker = $rewritePath($marker);
 
-            $value = new Object\Data\Hotspotimage($imageId, $hotspots, $marker, $crop);
+            $value = new \Pimcore\Model\Object\Data\Hotspotimage($imageId, $hotspots, $marker, $crop);
 
             return $value;
         }
@@ -214,8 +213,8 @@ class Hotspotimage extends Model\Object\ClassDefinition\Data\Image
     }
 
     /**
-     * @see Object\ClassDefinition\Data::getDataForQueryResource
-     * @param Object\Data\Hotspotimage $data
+     * @see Model\Object\ClassDefinition\Data::getDataForQueryResource
+     * @param Model\Object\Data\Hotspotimage $data
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
      * @return integer|null
@@ -226,15 +225,15 @@ class Hotspotimage extends Model\Object\ClassDefinition\Data\Image
     }
 
     /**
-     * @see Object\ClassDefinition\Data::getDataForEditmode
-     * @param Object\Data\Hotspotimage $data
+     * @see Model\Object\ClassDefinition\Data::getDataForEditmode
+     * @param Model\Object\Data\Hotspotimage $data
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
      * @return integer
      */
     public function getDataForEditmode($data, $object = null, $params = [])
     {
-        if ($data instanceof Object\Data\Hotspotimage) {
+        if ($data instanceof \Pimcore\Model\Object\Data\Hotspotimage) {
             $imageId = null;
             if ($data->getImage()) {
                 $imageId = $data->getImage()->getId();
@@ -277,7 +276,7 @@ class Hotspotimage extends Model\Object\ClassDefinition\Data\Image
 
     /**
      * @see Model\Object\ClassDefinition\Data::getDataFromEditmode
-     * @param Object\Data\Hotspotimage $data
+     * @param Model\Object\Data\Hotspotimage $data
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
      * @return Asset
@@ -313,19 +312,19 @@ class Hotspotimage extends Model\Object\ClassDefinition\Data\Image
         }
 
 
-        return new Object\Data\Hotspotimage($data["image"], $data["hotspots"], $data["marker"], $data["crop"]);
+        return new \Pimcore\Model\Object\Data\Hotspotimage($data["image"], $data["hotspots"], $data["marker"], $data["crop"]);
     }
 
     /**
-     * @see Object\ClassDefinition\Data::getVersionPreview
+     * @see Model\Object\ClassDefinition\Data::getVersionPreview
      * @param Asset\Image $data
-     * @param null|Object\AbstractObject $object
+     * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
      * @return string
      */
     public function getVersionPreview($data, $object = null, $params = [])
     {
-        if ($data instanceof Object\Data\Hotspotimage && $data->getImage() instanceof Asset\Image) {
+        if ($data instanceof \Pimcore\Model\Object\Data\Hotspotimage && $data->getImage() instanceof Asset\Image) {
             return '<img src="/admin/asset/get-image-thumbnail/id/' . $data->getImage()->getId() . '/width/100/height/100/aspectratio/true" />';
         }
     }
@@ -333,14 +332,14 @@ class Hotspotimage extends Model\Object\ClassDefinition\Data\Image
     /**
      * converts object data to a simple string value or CSV Export
      * @abstract
-     * @param Object\AbstractObject $object
+     * @param Model\Object\AbstractObject $object
      * @param array $params
      * @return string
      */
     public function getForCsvExport($object, $params = [])
     {
         $data = $this->getDataFromObjectParam($object, $params);
-        if ($data instanceof Object\Data\Hotspotimage) {
+        if ($data instanceof \Pimcore\Model\Object\Data\Hotspotimage) {
             return base64_encode(Serialize::serialize($data));
         } else {
             return null;
@@ -351,13 +350,13 @@ class Hotspotimage extends Model\Object\ClassDefinition\Data\Image
      * @param string $importValue
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
-     * @return mixed|null|Object\ClassDefinition\Data
+     * @return mixed|null|Model\Object\ClassDefinition\Data
      */
     public function getFromCsvImport($importValue, $object = null, $params = [])
     {
         $value = null;
         $value = Serialize::unserialize(base64_decode($importValue));
-        if ($value instanceof Object\Data\Hotspotimage) {
+        if ($value instanceof \Pimcore\Model\Object\Data\Hotspotimage) {
             return $value;
         } else {
             return null;
@@ -385,7 +384,7 @@ class Hotspotimage extends Model\Object\ClassDefinition\Data\Image
     {
         $tags = is_array($tags) ? $tags : [];
 
-        if ($data instanceof Object\Data\Hotspotimage && $data->getImage() instanceof Asset\Image) {
+        if ($data instanceof \Pimcore\Model\Object\Data\Hotspotimage && $data->getImage() instanceof Asset\Image) {
             if (!array_key_exists($data->getImage()->getCacheTag(), $tags)) {
                 $tags = $data->getImage()->getCacheTags($tags);
             }
@@ -429,7 +428,7 @@ class Hotspotimage extends Model\Object\ClassDefinition\Data\Image
     {
         $dependencies = [];
 
-        if ($data instanceof Object\Data\Hotspotimage && $data->getImage() instanceof Asset\Image) {
+        if ($data instanceof \Pimcore\Model\Object\Data\Hotspotimage && $data->getImage() instanceof Asset\Image) {
             $dependencies["asset_" . $data->getImage()->getId()] = [
                 "id" => $data->getImage()->getId(),
                 "type" => "asset"
@@ -493,7 +492,7 @@ class Hotspotimage extends Model\Object\ClassDefinition\Data\Image
      * @param null $object
      * @param array $params
      * @param null $idMapper
-     * @return null|Asset|Object\Data\Hotspotimage
+     * @return null|Asset|Model\Object\Data\Hotspotimage
      * @throws \Exception
      */
     public function getFromWebserviceImport($value, $object = null, $params = [], $idMapper = null)
@@ -512,7 +511,7 @@ class Hotspotimage extends Model\Object\ClassDefinition\Data\Image
         $hotspotImage = $this->getDataFromResource($value);
 
 
-        /** @var $hotspotImage Object\Data\Hotspotimage */
+        /** @var $hotspotImage Model\Object\Data\Hotspotimage */
 
         if (!$hotspotImage) {
             return null;
@@ -550,7 +549,7 @@ class Hotspotimage extends Model\Object\ClassDefinition\Data\Image
      */
     public function getDataForGrid($data, $object = null, $params = [])
     {
-        if ($data instanceof Object\Data\Hotspotimage && $data->getImage() instanceof Asset) {
+        if ($data instanceof \Pimcore\Model\Object\Data\Hotspotimage && $data->getImage() instanceof Asset) {
             return $data->getImage();
         } else {
             return null;
@@ -575,7 +574,7 @@ class Hotspotimage extends Model\Object\ClassDefinition\Data\Image
     public function rewriteIds($object, $idMapping, $params = [])
     {
         $data = $this->getDataFromObjectParam($object, $params);
-        if ($data instanceof Object\Data\Hotspotimage && $data->getImage()) {
+        if ($data instanceof \Pimcore\Model\Object\Data\Hotspotimage && $data->getImage()) {
             $id = $data->getImage()->getId();
             if (array_key_exists("asset", $idMapping) and array_key_exists($id, $idMapping["asset"])) {
                 $data->setImage(Asset::getById($idMapping["asset"][$id]));
@@ -615,7 +614,7 @@ class Hotspotimage extends Model\Object\ClassDefinition\Data\Image
                         if ($dataEntry['type'] == 'object' && $dataEntry['value']) {
                             $id = $dataEntry['value']->getId();
                             if (array_key_exists("object", $idMapping) and array_key_exists($id, $idMapping["object"])) {
-                                $dataEntry['value'] = Object::getById($idMapping["object"][$id]);
+                                $dataEntry['value'] = \Pimcore\Model\Object\AbstractObject::getById($idMapping["object"][$id]);
                             }
                         }
                         //rewrite assets
@@ -651,7 +650,7 @@ class Hotspotimage extends Model\Object\ClassDefinition\Data\Image
      */
     public function marshal($value, $object = null, $params = [])
     {
-        if ($value instanceof Object\Data\Hotspotimage) {
+        if ($value instanceof \Pimcore\Model\Object\Data\Hotspotimage) {
             $result = [];
             $result["hotspots"] = $value->getHotspots();
             $result["marker"] = $value->getMarker();
@@ -682,7 +681,7 @@ class Hotspotimage extends Model\Object\ClassDefinition\Data\Image
     public function unmarshal($value, $object = null, $params = [])
     {
         if (is_array($value)) {
-            $image = new Object\Data\Hotspotimage();
+            $image = new \Pimcore\Model\Object\Data\Hotspotimage();
             $image->setHotspots($value["hotspots"]);
             $image->setMarker($value["marker"]);
             $image->setCrop($value["crop"]);

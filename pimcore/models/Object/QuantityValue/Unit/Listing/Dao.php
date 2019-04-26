@@ -17,7 +17,6 @@
 namespace Pimcore\Model\Object\QuantityValue\Unit\Listing;
 
 use Pimcore\Model;
-use Pimcore\Model\Object;
 
 /**
  * @property \Pimcore\Model\Object\QuantityValue\Unit\Listing $model
@@ -32,11 +31,11 @@ class Dao extends Model\Listing\Dao\AbstractDao
     {
         $units = [];
 
-        $unitConfigs = $this->db->fetchAll("SELECT * FROM " . Object\QuantityValue\Unit\Dao::TABLE_NAME .
+        $unitConfigs = $this->db->fetchAll("SELECT * FROM " . \Pimcore\Model\Object\QuantityValue\Unit\Dao::TABLE_NAME .
             $this->getCondition() . $this->getOrder() . $this->getOffsetLimit());
 
         foreach ($unitConfigs as $unitConfig) {
-            $unit = new Object\QuantityValue\Unit();
+            $unit = new \Pimcore\Model\Object\QuantityValue\Unit();
             $unit->setValues($unitConfig);
             $units[] = $unit;
         }
@@ -51,7 +50,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
      */
     public function getTotalCount()
     {
-        $amount = $this->db->fetchRow("SELECT COUNT(*) as amount FROM `" . Object\QuantityValue\Unit\Dao::TABLE_NAME . "`" . $this->getCondition());
+        $amount = $this->db->fetchRow("SELECT COUNT(*) as amount FROM `" . \Pimcore\Model\Object\QuantityValue\Unit\Dao::TABLE_NAME . "`" . $this->getCondition());
 
         return $amount["amount"];
     }

@@ -17,7 +17,6 @@
 namespace Pimcore\Model\Object\ClassDefinition\Data;
 
 use Pimcore\Model;
-use Pimcore\Model\Object;
 use Pimcore\Logger;
 
 /**
@@ -132,8 +131,8 @@ class KeyValue extends Model\Object\ClassDefinition\Data
     }
 
     /**
-     * This method is called in Object\\ClassDefinition::save() and is used to create the database table for the localized data
-     * @param Object\ClassDefinition $class
+     * This method is called in Model\\Object\\ClassDefinition::save() and is used to create the database table for the localized data
+     * @param Model\Object\ClassDefinition $class
      * @param mixed $params
      */
     public function classSaved($class, $params = [])
@@ -142,12 +141,12 @@ class KeyValue extends Model\Object\ClassDefinition\Data
         // object_Class_Data_KeyValue
         // if found, create the table, otherwise do nothing
 
-        $keyValue = new Object\Data\KeyValue();
+        $keyValue = new \Pimcore\Model\Object\Data\KeyValue();
         $keyValue->setClass($class);
         $fieldDefinitions = $class->getFieldDefinitions();
         //TODO is this even called if type keyvalue not part of the class def?
         foreach ($fieldDefinitions as $definition) {
-            if ($definition instanceof Object\ClassDefinition\Data\KeyValue) {
+            if ($definition instanceof \Pimcore\Model\Object\ClassDefinition\Data\KeyValue) {
                 Logger::debug("found definition of type keyvalue, create table");
                 $keyValue->createUpdateTable();
                 break;
@@ -163,7 +162,7 @@ class KeyValue extends Model\Object\ClassDefinition\Data
     {
         $pairs = $this->getDataFromObjectParam($object);
 
-        if ($pairs instanceof Object\Data\KeyValue) {
+        if ($pairs instanceof \Pimcore\Model\Object\Data\KeyValue) {
             $pairs->setClass($object->getClass());
             $pairs->setObjectId($object->getId());
             $pairs->save();
@@ -229,7 +228,7 @@ class KeyValue extends Model\Object\ClassDefinition\Data
 
     /** Sets the width of the description column.
      * @param $width
-     * @return Object\ClassDefinition\Data\KeyValue
+     * @return Model\Object\ClassDefinition\Data\KeyValue
      */
     public function setDescWidth($width)
     {
@@ -306,11 +305,11 @@ class KeyValue extends Model\Object\ClassDefinition\Data
     /**
      * @param $object
      * @param array $params
-     * @return Object\Data\KeyValue
+     * @return Model\Object\Data\KeyValue
      */
     public function load($object, $params = [])
     {
-        $pairs = new Object\Data\KeyValue();
+        $pairs = new \Pimcore\Model\Object\Data\KeyValue();
         $pairs->setClass($object->getClass());
         $pairs->setObjectId($object->getId());
         $pairs->setMultivalent($this->multivalent);
@@ -326,7 +325,7 @@ class KeyValue extends Model\Object\ClassDefinition\Data
     {
         $pairs = $this->getDataFromObjectParam($object);
 
-        if ($pairs instanceof Object\Data\KeyValue) {
+        if ($pairs instanceof \Pimcore\Model\Object\Data\KeyValue) {
             $pairs->setClass($object->getClass());
             $pairs->setObjectId($object->getId());
             $pairs->delete();
@@ -334,8 +333,8 @@ class KeyValue extends Model\Object\ClassDefinition\Data
     }
 
     /**
-     * @see Object\ClassDefinition\Data::getDataForEditmode
-     * @param Object\Data\KeyValue $data
+     * @see Model\Object\ClassDefinition\Data::getDataForEditmode
+     * @param Model\Object\Data\KeyValue $data
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
      * @return tbd
@@ -351,13 +350,13 @@ class KeyValue extends Model\Object\ClassDefinition\Data
 
         foreach ($properties as $key => $property) {
             $key = $property["key"];
-            $keyConfig = Object\KeyValue\KeyConfig::getById($key);
+            $keyConfig = \Pimcore\Model\Object\KeyValue\KeyConfig::getById($key);
             $property["type"] = $keyConfig->getType();
             $property["possiblevalues"] = $keyConfig->getPossibleValues();
             $groupId = $keyConfig->getGroup();
 
             if ($groupId) {
-                $group = Object\KeyValue\GroupConfig::getById($groupId);
+                $group = \Pimcore\Model\Object\KeyValue\GroupConfig::getById($groupId);
                 $property["group"] = $group->getName();
                 $property["groupDesc"] = $group->getDescription();
             }
@@ -377,7 +376,7 @@ class KeyValue extends Model\Object\ClassDefinition\Data
      * @param mixed $data
      * @param null $object
      * @param array $params
-     * @return mixed|Object\Data\KeyValue
+     * @return mixed|Model\Object\Data\KeyValue
      * @throws \Exception
      */
     public function getDataFromEditmode($data, $object = null, $params = [])
@@ -406,7 +405,7 @@ class KeyValue extends Model\Object\ClassDefinition\Data
 
 
 
-        $keyValue = new Object\Data\KeyValue();
+        $keyValue = new \Pimcore\Model\Object\Data\KeyValue();
 
         $keyValue->setObjectId($objectId);
         $keyValue->setProperties($pairs);
@@ -442,7 +441,7 @@ class KeyValue extends Model\Object\ClassDefinition\Data
      * @param $data
      * @param null $object
      * @param mixed $params
-     * @return mixed|Object\Data\KeyValue
+     * @return mixed|Model\Object\Data\KeyValue
      * @throws \Exception
      */
     public function getDiffDataFromEditmode($data, $object = null, $params = [])
@@ -489,7 +488,7 @@ class KeyValue extends Model\Object\ClassDefinition\Data
             $diffdata["data"] = $property;
 
 
-            $keyConfig = Object\KeyValue\KeyConfig::getById($key);
+            $keyConfig = \Pimcore\Model\Object\KeyValue\KeyConfig::getById($key);
             $keyName = $keyConfig->getName();
 
             $prettyValue = $property["value"];
@@ -535,7 +534,7 @@ class KeyValue extends Model\Object\ClassDefinition\Data
         if ($data) {
             $result = [];
             foreach ($data->arr as $item) {
-                $keyConfig = Object\KeyValue\KeyConfig::getById($item["key"]);
+                $keyConfig = \Pimcore\Model\Object\KeyValue\KeyConfig::getById($item["key"]);
                 $keyName = $keyConfig->getName();
                 $resultItem = [
                     "id" => $item["key"],
@@ -560,7 +559,7 @@ class KeyValue extends Model\Object\ClassDefinition\Data
      * @param null $relatedObject
      * @param mixed $params
      * @param null $idMapper
-     * @return mixed|Object\Data\KeyValue
+     * @return mixed|Model\Object\Data\KeyValue
      * @throws \Exception
      */
     public function getFromWebserviceImport($value, $relatedObject = null, $params = [], $idMapper = null)
@@ -593,7 +592,7 @@ class KeyValue extends Model\Object\ClassDefinition\Data
                 }
             }
 
-            $keyValueData = new Object\Data\KeyValue();
+            $keyValueData = new \Pimcore\Model\Object\Data\KeyValue();
             $keyValueData->setProperties($pairs);
             $keyValueData->setClass($relatedObject->getClass());
             $keyValueData->setObjectId($relatedObject->getId());
@@ -619,9 +618,9 @@ class KeyValue extends Model\Object\ClassDefinition\Data
     }
 
     /**
-     * @param Object\ClassDefinition\Data $masterDefinition
+     * @param Model\Object\ClassDefinition\Data $masterDefinition
      */
-    public function synchronizeWithMasterDefinition(Object\ClassDefinition\Data $masterDefinition)
+    public function synchronizeWithMasterDefinition(\Pimcore\Model\Object\ClassDefinition\Data $masterDefinition)
     {
         $this->multivalent = $masterDefinition->multivalent;
     }

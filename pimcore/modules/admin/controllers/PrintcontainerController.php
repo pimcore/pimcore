@@ -14,7 +14,6 @@
 
 use Pimcore\Model\Document;
 use Pimcore\Model\Asset;
-use Pimcore\Model\Object;
 use Pimcore\Model\Site;
 
 class Admin_PrintcontainerController extends \Pimcore\Controller\Action\Admin\Printpage

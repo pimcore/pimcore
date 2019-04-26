@@ -18,7 +18,6 @@
 namespace Pimcore\Model\Object\KeyValue;
 
 use Pimcore\Model;
-use Pimcore\Model\Object;
 
 /**
  * Class Helper
@@ -35,7 +34,7 @@ class Helper
     {
         $xml = new \SimpleXMLElement('<xml/>');
 
-        $groupConfigList = new Object\KeyValue\GroupConfig\Listing();
+        $groupConfigList = new \Pimcore\Model\Object\KeyValue\GroupConfig\Listing();
         $groupConfigList->load();
         $groupConfigItems = $groupConfigList->getList();
 
@@ -48,7 +47,7 @@ class Helper
             $group->addChild("description", $item->getDescription());
         }
 
-        $keyConfigList = new Object\KeyValue\KeyConfig\Listing();
+        $keyConfigList = new \Pimcore\Model\Object\KeyValue\KeyConfig\Listing();
         $keyConfigList->load();
         $keyConfigItems = $keyConfigList->getList();
 
@@ -82,9 +81,9 @@ class Helper
 
             foreach ($groups as $groupConfig) {
                 $name = $groupConfig["name"];
-                $group = Object\KeyValue\GroupConfig::getByName($name);
+                $group = \Pimcore\Model\Object\KeyValue\GroupConfig::getByName($name);
                 if (!$group) {
-                    $group = new Object\KeyValue\GroupConfig();
+                    $group = new \Pimcore\Model\Object\KeyValue\GroupConfig();
                     $group->setName($name);
                 }
                 $group->setDescription($groupConfig["description"]);
@@ -101,9 +100,9 @@ class Helper
             }
             foreach ($keys as $keyConfig) {
                 $name = $keyConfig["name"];
-                $key = Object\KeyValue\KeyConfig::getByName($name);
+                $key = \Pimcore\Model\Object\KeyValue\KeyConfig::getByName($name);
                 if (!$key) {
-                    $key = new Object\KeyValue\KeyConfig();
+                    $key = new \Pimcore\Model\Object\KeyValue\KeyConfig();
                     $key->setName($name);
                 }
 

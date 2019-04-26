@@ -18,7 +18,6 @@ use Pimcore\Cache;
 use Pimcore\Model\Listing\AbstractListing;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
-use Pimcore\Model\Object;
 use Pimcore\Model\Asset;
 use Pimcore\Logger;
 
@@ -68,7 +67,7 @@ class Warming
             $classesCondition .= " AND o_className IN ('" . implode("','", $classes) . "')";
         }
 
-        $list = new Object\Listing();
+        $list = new \Pimcore\Model\Object\Listing();
         $list->setCondition("o_type IN ('" . implode("','", $types) . "')" . $classesCondition);
 
         self::loadToCache($list);

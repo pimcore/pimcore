@@ -576,7 +576,7 @@ class Concrete extends AbstractObject
     public static function __callStatic($method, $arguments)
     {
 
-        // check for custom static getters like Object::getByMyfield()
+        // check for custom static getters like Model\Object::getByMyfield()
         $propertyName = lcfirst(preg_replace("/^getBy/i", "", $method));
         $tmpObj = new static();
 
@@ -604,7 +604,7 @@ class Concrete extends AbstractObject
                 $localizedField = $field->getFielddefinition($localizedPropertyName);
 
                 if (!$localizedField instanceof Model\Object\ClassDefinition\Data) {
-                    Logger::error("Class: Object\\Concrete => call to undefined static method " . $method);
+                    Logger::error("Class: \Pimcore\Model\Object\\Concrete => call to undefined static method " . $method);
                     throw new \Exception("Call to undefined static method " . $method . " in class Object\\Concrete");
                 }
 
@@ -654,7 +654,7 @@ class Concrete extends AbstractObject
         }
 
         // there is no property for the called method, so throw an exception
-        Logger::error("Class: Object\\Concrete => call to undefined static method " . $method);
+        Logger::error("Class: \Pimcore\Model\Object\\Concrete => call to undefined static method " . $method);
         throw new \Exception("Call to undefined static method " . $method . " in class Object\\Concrete");
     }
 

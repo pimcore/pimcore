@@ -15,7 +15,6 @@
 use Pimcore\Model\Element;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Document;
-use Pimcore\Model\Object;
 use Pimcore\Model\Version;
 use Pimcore\Model;
 use Pimcore\Logger;
@@ -68,9 +67,9 @@ class Admin_ElementController extends \Pimcore\Controller\Action\Admin
         if ($el) {
             if ($el instanceof Asset || $el instanceof Document) {
                 $subtype = $el->getType();
-            } elseif ($el instanceof Object\Concrete) {
+            } elseif ($el instanceof \Pimcore\Model\Object\Concrete) {
                 $subtype = $el->getClassName();
-            } elseif ($el instanceof Object\Folder) {
+            } elseif ($el instanceof \Pimcore\Model\Object\Folder) {
                 $subtype = "folder";
             }
 
@@ -277,8 +276,8 @@ class Admin_ElementController extends \Pimcore\Controller\Action\Admin
 
             if ($element instanceof Document) {
                 $element = Document\Service::rewriteIds($element, $rewriteConfig);
-            } elseif ($element instanceof Object\AbstractObject) {
-                $element = Object\Service::rewriteIds($element, $rewriteConfig);
+            } elseif ($element instanceof \Pimcore\Model\Object\AbstractObject) {
+                $element = \Pimcore\Model\Object\Service::rewriteIds($element, $rewriteConfig);
             } elseif ($element instanceof Asset) {
                 $element = Asset\Service::rewriteIds($element, $rewriteConfig);
             }
@@ -324,7 +323,7 @@ class Admin_ElementController extends \Pimcore\Controller\Action\Admin
             $element = Document::getById($id);
             $data["index"] = $element->getIndex();
         } else {
-            $element = Object::getById($id);
+            $element = \Pimcore\Model\Object\AbstractObject::getById($id);
         }
         $typePath = Element\Service::getTypePath($element);
 
@@ -360,7 +359,7 @@ class Admin_ElementController extends \Pimcore\Controller\Action\Admin
         $result = [];
 
         $id = $source["id"];
-        $source = Object\Concrete::getById($id);
+        $source = \Pimcore\Model\Object\Concrete::getById($id);
 
         if ($this->getParam("context")) {
             $context = \Zend_Json::decode($this->getParam("context"));
@@ -376,11 +375,11 @@ class Admin_ElementController extends \Pimcore\Controller\Action\Admin
         } elseif ($ownerType == "localizedfield") {
             $fd = $source->getClass()->getFieldDefinition("localizedfields")->getFieldDefinition($fieldname);
         } elseif ($ownerType == "objectbrick") {
-            $fdBrick = Object\Objectbrick\Definition::getByKey($context["containerKey"]);
+            $fdBrick = \Pimcore\Model\Object\Objectbrick\Definition::getByKey($context["containerKey"]);
             $fd = $fdBrick->getFieldDefinition($fieldname);
         } elseif ($ownerType == "fieldcollection") {
             $containerKey = $context["containerKey"];
-            $fdCollection = Object\Fieldcollection\Definition::getByKey($containerKey);
+            $fdCollection = \Pimcore\Model\Object\Fieldcollection\Definition::getByKey($containerKey);
             if ($context["subContainerType"] == "localizedfield") {
                 $fdLocalizedFields = $fdCollection->getFieldDefinition("localizedfields");
                 $fd = $fdLocalizedFields->getFieldDefinition($fieldname);

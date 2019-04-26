@@ -17,7 +17,6 @@
 namespace Pimcore\Model\Object\ClassDefinition\Data;
 
 use Pimcore\Model;
-use Pimcore\Model\Object;
 use Pimcore\Tool;
 use Pimcore\Model\Element;
 
@@ -112,7 +111,7 @@ class Classificationstore extends Model\Object\ClassDefinition\Data
 
 
     /**
-     * @see Object\ClassDefinition\Data::getDataForEditmode
+     * @see Model\Object\ClassDefinition\Data::getDataForEditmode
      * @param string $data
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
@@ -123,7 +122,7 @@ class Classificationstore extends Model\Object\ClassDefinition\Data
         $fieldData = [];
         $metaData = [];
 
-        if (!$data instanceof Object\Classificationstore) {
+        if (!$data instanceof \Pimcore\Model\Object\Classificationstore) {
             return [];
         }
 
@@ -133,9 +132,9 @@ class Classificationstore extends Model\Object\ClassDefinition\Data
         foreach ($result["data"] as $language => &$groups) {
             foreach ($groups as $groupId => &$keys) {
                 foreach ($keys as $keyId => &$keyValue) {
-                    $keyConfig = Object\Classificationstore\DefinitionCache::get($keyId);
+                    $keyConfig = \Pimcore\Model\Object\Classificationstore\DefinitionCache::get($keyId);
                     if ($keyConfig->getEnabled()) {
-                        $fd = Object\Classificationstore\Service::getFieldDefinitionFromKeyConfig($keyConfig);
+                        $fd = \Pimcore\Model\Object\Classificationstore\Service::getFieldDefinitionFromKeyConfig($keyConfig);
                         $keyValue = $fd->getDataForEditmode($keyValue, $object, $params);
                     }
                 }
@@ -152,14 +151,14 @@ class Classificationstore extends Model\Object\ClassDefinition\Data
                     continue;
                 }
 
-                $relation = new Object\Classificationstore\KeyGroupRelation\Listing();
+                $relation = new \Pimcore\Model\Object\Classificationstore\KeyGroupRelation\Listing();
                 $relation->setCondition("type = 'calculatedValue' and groupId = " . $relation->quote($groupId));
                 $relation = $relation->load();
                 foreach ($relation as $key) {
                     $keyId = $key->getKeyId();
-                    $childDef = Object\Classificationstore\Service::getFieldDefinitionFromKeyConfig($key);
+                    $childDef = \Pimcore\Model\Object\Classificationstore\Service::getFieldDefinitionFromKeyConfig($key);
 
-                    $childData = new Object\Data\CalculatedValue($this->getName());
+                    $childData = new \Pimcore\Model\Object\Data\CalculatedValue($this->getName());
                     $childData->setContextualData("classificationstore", $this->getName(), null, $language, $groupId, $keyId, $childDef);
                     $childData = $childDef->getDataForEditmode($childData, $object, $params);
                     $result["data"][$language][$groupId][$keyId]= $childData;
@@ -191,9 +190,9 @@ class Classificationstore extends Model\Object\ClassDefinition\Data
 
         foreach ($items  as $groupId => $keys) {
             foreach ($keys as $keyId => $languages) {
-                $keyConfig = Object\Classificationstore\DefinitionCache::get($keyId);
+                $keyConfig = \Pimcore\Model\Object\Classificationstore\DefinitionCache::get($keyId);
                 if ($keyConfig->getEnabled()) {
-                    $fd = Object\Classificationstore\Service::getFieldDefinitionFromKeyConfig($keyConfig);
+                    $fd = \Pimcore\Model\Object\Classificationstore\Service::getFieldDefinitionFromKeyConfig($keyConfig);
 
 
                     foreach ($languages as $language => $value) {
@@ -214,7 +213,7 @@ class Classificationstore extends Model\Object\ClassDefinition\Data
         // TODO
         if ($inheritanceAllowed) {
             // check if there is a parent with the same type
-            $parent = Object\Service::hasInheritableParentObject($object);
+            $parent = \Pimcore\Model\Object\Service::hasInheritableParentObject($object);
             if ($parent) {
                 // same type, iterate over all language and all fields and check if there is something missing
                 if ($this->localized) {
@@ -234,12 +233,12 @@ class Classificationstore extends Model\Object\ClassDefinition\Data
                             continue;
                         }
 
-                        $relation = new Object\Classificationstore\KeyGroupRelation\Listing();
+                        $relation = new \Pimcore\Model\Object\Classificationstore\KeyGroupRelation\Listing();
                         $relation->setCondition("groupId = " . $relation->quote($groupId));
                         $relation = $relation->load();
                         foreach ($relation as $key) {
                             $keyId = $key->getKeyId();
-                            $fd = Object\Classificationstore\Service::getFieldDefinitionFromKeyConfig($key);
+                            $fd = \Pimcore\Model\Object\Classificationstore\Service::getFieldDefinitionFromKeyConfig($key);
 
                             if ($fd->isEmpty($fieldData[$language][$groupId][$keyId])) {
                                 $foundEmptyValue = true;
@@ -279,8 +278,8 @@ class Classificationstore extends Model\Object\ClassDefinition\Data
     {
         $classificationStore = $this->getDataFromObjectParam($object);
 
-        if (!$classificationStore instanceof Object\Classificationstore) {
-            $classificationStore = new Object\Classificationstore();
+        if (!$classificationStore instanceof \Pimcore\Model\Object\Classificationstore) {
+            $classificationStore = new \Pimcore\Model\Object\Classificationstore();
         }
 
         $data = $containerData["data"];
@@ -303,7 +302,7 @@ class Classificationstore extends Model\Object\ClassDefinition\Data
                     foreach ($keys as $keyId => $value) {
                         $keyConfig = $this->getKeyConfiguration($keyId);
 
-                        $dataDefinition = Object\Classificationstore\Service::getFieldDefinitionFromKeyConfig($keyConfig);
+                        $dataDefinition = \Pimcore\Model\Object\Classificationstore\Service::getFieldDefinitionFromKeyConfig($keyConfig);
 
                         $dataFromEditMode = $dataDefinition->getDataFromEditmode($value);
                         $activeGroups[$groupId] = true;
@@ -346,9 +345,9 @@ class Classificationstore extends Model\Object\ClassDefinition\Data
     }
 
     /**
-     * @see Object\ClassDefinition\Data::getVersionPreview
+     * @see Model\Object\ClassDefinition\Data::getVersionPreview
      * @param $data
-     * @param null|Object\AbstractObject $object
+     * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
      * @return string
      */
@@ -362,7 +361,7 @@ class Classificationstore extends Model\Object\ClassDefinition\Data
     /**
      * converts object data to a simple string value or CSV Export
      * @abstract
-     * @param Object\AbstractObject $object
+     * @param Model\Object\AbstractObject $object
      * @param array $params
      * @return string
      */
@@ -397,7 +396,7 @@ class Classificationstore extends Model\Object\ClassDefinition\Data
             foreach ($items as $groupId => $keys) {
                 foreach ($keys as $keyId => $values) {
                     $keyConfig = $this->getKeyConfiguration($keyId);
-                    $fieldDefinition = Object\Classificationstore\Service::getFieldDefinitionFromKeyConfig($keyConfig);
+                    $fieldDefinition = \Pimcore\Model\Object\Classificationstore\Service::getFieldDefinitionFromKeyConfig($keyConfig);
 
                     foreach ($values as $language => $value) {
                         $value = $fieldDefinition->getDataForResource($value, $object, $params);
@@ -412,13 +411,13 @@ class Classificationstore extends Model\Object\ClassDefinition\Data
     }
 
     /**
-     * @param Object\AbstractObject $object
+     * @param Model\Object\AbstractObject $object
      * @param mixed $params
      * @throws \Exception
      */
     public function getForWebserviceExport($object, $params = [])
     {
-        /** @var  $data Object\Classificationstore */
+        /** @var  $data Model\Object\Classificationstore */
         $data = $this->getDataFromObjectParam($object, $params);
 
         if ($data) {
@@ -434,7 +433,7 @@ class Classificationstore extends Model\Object\ClassDefinition\Data
             $items = $data->getActiveGroups();
             if (is_array($items)) {
                 foreach ($items as $groupId => $groupData) {
-                    $groupDef = Object\Classificationstore\GroupConfig::getById($groupId);
+                    $groupDef = \Pimcore\Model\Object\Classificationstore\GroupConfig::getById($groupId);
                     $activeGroups[] = [
                         "id" => $groupId,
                         "name" => $groupDef->getName(). " - " . $groupDef->getDescription(),
@@ -450,8 +449,8 @@ class Classificationstore extends Model\Object\ClassDefinition\Data
                 $groupResult = [];
 
                 foreach ($groupData as $keyId => $keyData) {
-                    $keyConfig = Object\Classificationstore\DefinitionCache::get($keyId);
-                    $fd = Object\Classificationstore\Service::getFieldDefinitionFromKeyConfig($keyConfig);
+                    $keyConfig = \Pimcore\Model\Object\Classificationstore\DefinitionCache::get($keyId);
+                    $fd = \Pimcore\Model\Object\Classificationstore\Service::getFieldDefinitionFromKeyConfig($keyConfig);
                     $context = [
                         "containerType" => "classificationstore",
                         "fieldname" => $this->getName(),
@@ -471,7 +470,7 @@ class Classificationstore extends Model\Object\ClassDefinition\Data
                 }
 
                 if ($groupResult) {
-                    $groupDef = Object\Classificationstore\GroupConfig::getById($groupId);
+                    $groupDef = \Pimcore\Model\Object\Classificationstore\GroupConfig::getById($groupId);
                     $groupResult = [
                         "id" => $groupId,
                         "name" => $groupDef->getName(). " - " . $groupDef->getDescription(),
@@ -491,13 +490,13 @@ class Classificationstore extends Model\Object\ClassDefinition\Data
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
      * @param IdMapper $idMapper
-     * @return mixed|null|Object\Classificationstore
+     * @return mixed|null|Model\Object\Classificationstore
      * @throws \Exception
      */
     public function getFromWebserviceImport($value, $object = null, $params = [], $idMapper = null)
     {
         if ($value) {
-            $storeData = new Object\Classificationstore();
+            $storeData = new \Pimcore\Model\Object\Classificationstore();
             $storeData->setFieldname($this->getName());
             $storeData->setObject($object);
             $activeGroupsLocal = [];
@@ -525,8 +524,8 @@ class Classificationstore extends Model\Object\ClassDefinition\Data
                         foreach ($keyList as $keyData) {
                             $remoteKeyId = $keyData->id;
                             $localKeyId = $idMapper->getMappedId("csKey", $remoteKeyId);
-                            $keyConfig = Object\Classificationstore\KeyConfig::getById($localKeyId);
-                            $keyDef = Object\Classificationstore\Service::getFieldDefinitionFromJson(json_decode($keyConfig->getDefinition()), $keyConfig->getType());
+                            $keyConfig = \Pimcore\Model\Object\Classificationstore\KeyConfig::getById($localKeyId);
+                            $keyDef = \Pimcore\Model\Object\Classificationstore\Service::getFieldDefinitionFromJson(json_decode($keyConfig->getDefinition()), $keyConfig->getType());
                             $value = $keyData->value;
                             $value = $keyDef->getFromWebserviceImport($value, $object, []);
                             $storeData->setLocalizedKeyValue($localGroupId, $localKeyId, $value, $language);
@@ -631,7 +630,7 @@ class Classificationstore extends Model\Object\ClassDefinition\Data
     public function save($object, $params = [])
     {
         $classificationStore = $this->getDataFromObjectParam($object);
-        if ($classificationStore instanceof Object\Classificationstore) {
+        if ($classificationStore instanceof \Pimcore\Model\Object\Classificationstore) {
             $classificationStore->setObject($object);
             $classificationStore->save();
         }
@@ -640,11 +639,11 @@ class Classificationstore extends Model\Object\ClassDefinition\Data
     /**
      * @param $object
      * @param array $params
-     * @return Object\Classificationstore
+     * @return Model\Object\Classificationstore
      */
     public function load($object, $params = [])
     {
-        $classificationStore = new Object\Classificationstore();
+        $classificationStore = new \Pimcore\Model\Object\Classificationstore();
         $classificationStore->setObject($object);
         $classificationStore->setFieldname($this->getName());
         $classificationStore->load();
@@ -659,7 +658,7 @@ class Classificationstore extends Model\Object\ClassDefinition\Data
     {
         $classificationStore = $this->getDataFromObjectParam($object);
 
-        if ($classificationStore instanceof Object\Classificationstore) {
+        if ($classificationStore instanceof \Pimcore\Model\Object\Classificationstore) {
             $classificationStore->setObject($object);
             $classificationStore->setFieldname($this->getName());
             $classificationStore->delete();
@@ -667,13 +666,13 @@ class Classificationstore extends Model\Object\ClassDefinition\Data
     }
 
     /**
-     * This method is called in Object|Class::save() and is used to create the database table for the classification data
+     * This method is called in Model\Object|Class::save() and is used to create the database table for the classification data
      * @param $class
      * @param array $params
      */
     public function classSaved($class, $params = [])
     {
-        $clasificationStore = new Object\Classificationstore();
+        $clasificationStore = new \Pimcore\Model\Object\Classificationstore();
         $clasificationStore->setClass($class);
         $clasificationStore->createUpdateTable();
     }
@@ -681,17 +680,17 @@ class Classificationstore extends Model\Object\ClassDefinition\Data
     /**
      * @param $object
      * @param array $params
-     * @return Object\Localizedfield
+     * @return Model\Object\Localizedfield
      * @throws \Exception
      */
     public function preGetData($object, $params = [])
     {
-        if (!$object instanceof Object\Concrete) {
+        if (!$object instanceof \Pimcore\Model\Object\Concrete) {
             throw new \Exception("Localized Fields are only valid in Objects");
         }
 
-        if (!$object->{$this->getName()} instanceof Object\Classificationstore) {
-            $store = new Object\Classificationstore();
+        if (!$object->{$this->getName()} instanceof \Pimcore\Model\Object\Classificationstore) {
+            $store = new \Pimcore\Model\Object\Classificationstore();
             $store->setObject($object);
             $store->setFieldname($this->getName());
 
@@ -731,8 +730,8 @@ class Classificationstore extends Model\Object\ClassDefinition\Data
      */
     public function getKeyConfiguration($keyId)
     {
-        /** @var $keyConfig Object\Classificationstore\KeyConfig */
-        $keyConfig = Object\Classificationstore\DefinitionCache::get($keyId);
+        /** @var $keyConfig Model\Object\Classificationstore\KeyConfig */
+        $keyConfig = \Pimcore\Model\Object\Classificationstore\DefinitionCache::get($keyId);
 
         return $keyConfig;
     }
@@ -872,12 +871,12 @@ class Classificationstore extends Model\Object\ClassDefinition\Data
         if (!$omitMandatoryCheck) {
             foreach ($activeGroups as $activeGroupId => $enabled) {
                 if ($enabled) {
-                    $groupDefinition = Object\Classificationstore\GroupConfig::getById($activeGroupId);
+                    $groupDefinition = \Pimcore\Model\Object\Classificationstore\GroupConfig::getById($activeGroupId);
                     if (!$groupDefinition) {
                         continue;
                     }
 
-                    /** @var $keyGroupRelation Object\Classificationstore\KeyGroupRelation */
+                    /** @var $keyGroupRelation Model\Object\Classificationstore\KeyGroupRelation */
                     $keyGroupRelations = $groupDefinition->getRelations();
 
                     foreach ($keyGroupRelations as $keyGroupRelation) {
@@ -885,7 +884,7 @@ class Classificationstore extends Model\Object\ClassDefinition\Data
                             $keyId = $keyGroupRelation->getKeyId();
                             $value = $items[$activeGroupId][$keyId][$validLanguage];
 
-                            $keyDef = Object\Classificationstore\Service::getFieldDefinitionFromJson(json_decode($keyGroupRelation->getDefinition()), $keyGroupRelation->getType());
+                            $keyDef = \Pimcore\Model\Object\Classificationstore\Service::getFieldDefinitionFromJson(json_decode($keyGroupRelation->getDefinition()), $keyGroupRelation->getType());
 
                             if ($keyGroupRelation->isMandatory()) {
                                 $keyDef->setMandatory(1);
@@ -1019,7 +1018,7 @@ class Classificationstore extends Model\Object\ClassDefinition\Data
         }
 
         $getter = "get" . ucfirst($this->getName());
-        /** @var  $classificationStore Object\Classificationstore */
+        /** @var  $classificationStore Model\Object\Classificationstore */
         $classificationStore = $object->$getter();
         $mapping = $classificationStore->getGroupCollectionMappings();
 
@@ -1035,7 +1034,7 @@ class Classificationstore extends Model\Object\ClassDefinition\Data
         $inheritanceAllowed = $class->getAllowInherit();
 
         if ($inheritanceAllowed) {
-            $parent = Object\Service::hasInheritableParentObject($object);
+            $parent = \Pimcore\Model\Object\Service::hasInheritableParentObject($object);
             if ($parent) {
                 $mergedMapping = $this->recursiveGetActiveGroupCollectionMapping($parent, $mergedMapping);
             }
@@ -1046,7 +1045,7 @@ class Classificationstore extends Model\Object\ClassDefinition\Data
 
 
     /**
-     * @param $object Object\Concrete
+     * @param $object Model\Object\Concrete
      * @param array $activeGroups
      * @return array|boolean
      *
@@ -1059,7 +1058,7 @@ class Classificationstore extends Model\Object\ClassDefinition\Data
         }
 
         $getter = "get" . ucfirst($this->getName());
-        /** @var  $classificationStore Object\Classificationstore */
+        /** @var  $classificationStore Model\Object\Classificationstore */
         $classificationStore = $object->$getter();
         $activeGroupIds = $classificationStore->getActiveGroups();
 
@@ -1075,7 +1074,7 @@ class Classificationstore extends Model\Object\ClassDefinition\Data
         $inheritanceAllowed = $class->getAllowInherit();
 
         if ($inheritanceAllowed) {
-            $parent = Object\Service::hasInheritableParentObject($object);
+            $parent = \Pimcore\Model\Object\Service::hasInheritableParentObject($object);
             if ($parent) {
                 $activeGroups = $this->recursiveGetActiveGroupsIds($parent, $activeGroups);
             }
@@ -1085,7 +1084,7 @@ class Classificationstore extends Model\Object\ClassDefinition\Data
     }
 
     /** Override point for Enriching the layout definition before the layout is returned to the admin interface.
-     * @param $object Object\Concrete
+     * @param $object Model\Object\Concrete
      * @param array $context additional contextual data
      */
     public function enrichLayoutDefinition($object, $context = [])
@@ -1108,21 +1107,21 @@ class Classificationstore extends Model\Object\ClassDefinition\Data
         }
 
         $condition = "ID in (" . implode(',', $filteredGroupIds) . ")";
-        $groupList = new Object\Classificationstore\GroupConfig\Listing();
+        $groupList = new \Pimcore\Model\Object\Classificationstore\GroupConfig\Listing();
         $groupList->setCondition($condition);
         $groupList->setOrder(["ASC", "ASC"]);
         $groupList = $groupList->load();
 
-        /** @var  $group Object\Classificationstore\GroupConfig */
+        /** @var  $group Model\Object\Classificationstore\GroupConfig */
         foreach ($groupList as $group) {
             $keyList = [];
 
-            $relation = new Object\Classificationstore\KeyGroupRelation\Listing();
+            $relation = new \Pimcore\Model\Object\Classificationstore\KeyGroupRelation\Listing();
             $relation->setCondition("groupId = " . $relation->quote($group->getId()));
             $relation->setOrderKey(["sorter", "id"]);
             $relation->setOrder(["ASC", "ASC"]);
             $relation = $relation->load();
-            /** @var  $key Object\Classificationstore\KeyGroupRelation */
+            /** @var  $key Model\Object\Classificationstore\KeyGroupRelation */
             foreach ($relation as $key) {
                 if (!$key->isEnabled()) {
                     continue;
@@ -1157,13 +1156,13 @@ class Classificationstore extends Model\Object\ClassDefinition\Data
         if ($groupCollectionMapping) {
             $collectionIds = array_values($groupCollectionMapping);
 
-            $relation = new Object\Classificationstore\CollectionGroupRelation\Listing();
+            $relation = new \Pimcore\Model\Object\Classificationstore\CollectionGroupRelation\Listing();
             $condition = "colId IN (" . implode(",", $collectionIds) . ")";
             $relation->setCondition($condition);
             $relation = $relation->load();
 
             $sorting = [];
-            /** @var $item Object\Classificationstore\CollectionGroupRelation */
+            /** @var $item Model\Object\Classificationstore\CollectionGroupRelation */
             foreach ($relation as $item) {
                 $sorting[$item->getGroupId()] = $item->getSorter();
             }

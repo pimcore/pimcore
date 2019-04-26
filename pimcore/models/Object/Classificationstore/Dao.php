@@ -17,7 +17,6 @@
 namespace Pimcore\Model\Object\Classificationstore;
 
 use Pimcore\Model;
-use Pimcore\Model\Object;
 use Pimcore\Tool;
 use Pimcore\Logger;
 
@@ -85,7 +84,7 @@ class Dao extends Model\Dao\AbstractDao
                         "type" => $keyConfig->getType()
                     ];
 
-                    if ($fd instanceof Object\ClassDefinition\Data\Password) {
+                    if ($fd instanceof \Pimcore\Model\Object\ClassDefinition\Data\Password) {
                         $value = $fd->getDataForResource($value, null, []);
                         $this->model->setLocalizedKeyValue($groupId, $keyId, $value, $language);
                     } else {
@@ -145,7 +144,7 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function load()
     {
-        /** @var  $classificationStore Object\Classificationstore */
+        /** @var  $classificationStore Model\Object\Classificationstore */
         $classificationStore = $this->model;
         $object = $this->model->getObject();
         $dataTableName = $this->getDataTableName();

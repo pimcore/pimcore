@@ -17,7 +17,6 @@
 namespace Pimcore\Model\Object\ClassDefinition\Data;
 
 use Pimcore\Model;
-use Pimcore\Model\Object;
 use Pimcore\Tool\Serialize;
 
 class Geopolygon extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo
@@ -52,7 +51,7 @@ class Geopolygon extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo
     public $phpdocType = "array";
 
     /**
-     * @see Object\ClassDefinition\Data::getDataForResource
+     * @see Model\Object\ClassDefinition\Data::getDataForResource
      * @param string $data
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
@@ -64,7 +63,7 @@ class Geopolygon extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo
     }
 
     /**
-     * @see Object\ClassDefinition\Data::getDataFromResource
+     * @see Model\Object\ClassDefinition\Data::getDataFromResource
      * @param string $data
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
@@ -76,7 +75,7 @@ class Geopolygon extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo
     }
 
     /**
-     * @see Object\ClassDefinition\Data::getDataForQueryResource
+     * @see Model\Object\ClassDefinition\Data::getDataForQueryResource
      * @param string $data
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
@@ -88,7 +87,7 @@ class Geopolygon extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo
     }
 
     /**
-     * @see Object\ClassDefinition\Data::getDataForEditmode
+     * @see Model\Object\ClassDefinition\Data::getDataForEditmode
      * @param string $data
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params     *
@@ -125,7 +124,7 @@ class Geopolygon extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo
         if (is_array($data)) {
             $points = [];
             foreach ($data as $point) {
-                $points[] = new Object\Data\Geopoint($point["longitude"], $point["latitude"]);
+                $points[] = new \Pimcore\Model\Object\Data\Geopoint($point["longitude"], $point["latitude"]);
             }
 
             return $points;
@@ -135,9 +134,9 @@ class Geopolygon extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo
     }
 
     /**
-     * @see Object\ClassDefinition\Data::getVersionPreview
+     * @see Model\Object\ClassDefinition\Data::getVersionPreview
      * @param string $data
-     * @param null|Object\AbstractObject $object
+     * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
      * @return string
      */
@@ -149,7 +148,7 @@ class Geopolygon extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo
     /**
      * converts object data to a simple string value or CSV Export
      * @abstract
-     * @param Object\AbstractObject $object
+     * @param Model\Object\AbstractObject $object
      * @param array $params
      * @return string
      */
@@ -184,7 +183,7 @@ class Geopolygon extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo
         if (is_array($rows)) {
             foreach ($rows as $row) {
                 $coords = explode(";", $row);
-                $points[] = new  Object\Data\Geopoint($coords[1], $coords[0]);
+                $points[] = new \Pimcore\Model\Object\Data\Geopoint($coords[1], $coords[0]);
             }
         }
 
@@ -234,7 +233,7 @@ class Geopolygon extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo
             foreach ($value as $point) {
                 $point = (array) $point;
                 if ($point["longitude"]!=null and  $point["latitude"]!=null) {
-                    $points[] = new Object\Data\Geopoint($point["longitude"], $point["latitude"]);
+                    $points[] = new \Pimcore\Model\Object\Data\Geopoint($point["longitude"], $point["latitude"]);
                 } else {
                     throw new \Exception("cannot get values from web service import - invalid data");
                 }
@@ -298,7 +297,7 @@ class Geopolygon extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo
             $value = Serialize::unserialize($value);
             $result = [];
             if (is_array($value)) {
-                /** @var  $point Object\Data\Geopoint */
+                /** @var  $point Model\Object\Data\Geopoint */
                 foreach ($value as $point) {
                     $result[] = [
                             $point->getLatitude(),
@@ -326,7 +325,7 @@ class Geopolygon extends Model\Object\ClassDefinition\Data\Geo\AbstractGeo
             $result = [];
             if (is_array($value)) {
                 foreach ($value as $point) {
-                    $newPoint = new Object\Data\Geopoint($point[1], $point[1]);
+                    $newPoint = new \Pimcore\Model\Object\Data\Geopoint($point[1], $point[1]);
                     $newPoint->setLatitude($point[0]);
                     $newPoint->setLongitude($point[1]);
                     $result[] = $newPoint;

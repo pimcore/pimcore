@@ -19,7 +19,6 @@ namespace Pimcore\Model\Object\ClassDefinition\Data;
 use Pimcore\Db;
 use Pimcore\Model;
 use Pimcore\Model\Element;
-use Pimcore\Model\Object;
 use Pimcore\Tool\Serialize;
 use Pimcore\Logger;
 
@@ -108,7 +107,7 @@ class Block extends Model\Object\ClassDefinition\Data
 
 
     /**
-     * @see Object\ClassDefinition\Data::getDataForResource
+     * @see Model\Object\ClassDefinition\Data::getDataForResource
      * @param string $data
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
@@ -123,10 +122,10 @@ class Block extends Model\Object\ClassDefinition\Data
                 $resultElement = [];
 
                 /**
-                 * @var  $blockElement Object\Data\BlockElement
+                 * @var  $blockElement Model\Object\Data\BlockElement
                  */
                 foreach ($blockElements as $elementName => $blockElement) {
-                    /** @var  $fd Object\ClassDefinition\Data */
+                    /** @var  $fd Model\Object\ClassDefinition\Data */
                     $fd = $this->getFielddefinition($elementName);
                     if (!$fd) {
                         // class definition seems to have changed
@@ -153,7 +152,7 @@ class Block extends Model\Object\ClassDefinition\Data
     }
 
     /**
-     * @see Object\ClassDefinition\Data::getDataFromResource
+     * @see Model\Object\ClassDefinition\Data::getDataFromResource
      * @param string $data
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
@@ -169,10 +168,10 @@ class Block extends Model\Object\ClassDefinition\Data
 
             foreach ($unserializedData as $blockElements) {
                 $items = [];
-                /** @var  $blockElement Object\Data\BlockElement */
+                /** @var  $blockElement Model\Object\Data\BlockElement */
                 foreach ($blockElements as $elementName => $blockElementRaw) {
 
-                    /** @var  $fd Object\ClassDefinition\Data */
+                    /** @var  $fd Model\Object\ClassDefinition\Data */
                     $fd = $this->getFielddefinition($elementName);
                     if (!$fd) {
                         // class definition seems to have changed
@@ -188,7 +187,7 @@ class Block extends Model\Object\ClassDefinition\Data
                     $blockElementRaw["data"] = $dataFromResource;
 
                     if ($blockElementRaw["type"] == "localizedfields") {
-                        /** @var  $data Object\Localizedfield */
+                        /** @var  $data Model\Object\Localizedfield */
                         $data = $blockElementRaw["data"];
                         if ($data) {
                             $data->setObject($object);
@@ -200,7 +199,7 @@ class Block extends Model\Object\ClassDefinition\Data
                             $blockElementRaw["data"] = $data;
                         }
                     }
-                    $blockElement = new Object\Data\BlockElement($blockElementRaw["name"], $blockElementRaw["type"], $blockElementRaw["data"]);
+                    $blockElement = new \Pimcore\Model\Object\Data\BlockElement($blockElementRaw["name"], $blockElementRaw["type"], $blockElementRaw["data"]);
                     $items[$elementName] = $blockElement;
                 }
                 $result[] = $items;
@@ -214,7 +213,7 @@ class Block extends Model\Object\ClassDefinition\Data
     }
 
     /**
-     * @see Object\ClassDefinition\Data::getDataForQueryResource
+     * @see Model\Object\ClassDefinition\Data::getDataForQueryResource
      * @param string $data
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
@@ -226,7 +225,7 @@ class Block extends Model\Object\ClassDefinition\Data
     }
 
     /**
-     * @see Object\ClassDefinition\Data::getDataForEditmode
+     * @see Model\Object\ClassDefinition\Data::getDataForEditmode
      * @param string $data
      * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
@@ -244,10 +243,10 @@ class Block extends Model\Object\ClassDefinition\Data
                 $idx++;
 
                 /**
-                 * @var  $blockElement Object\Data\BlockElement
+                 * @var  $blockElement Model\Object\Data\BlockElement
                  */
                 foreach ($blockElements as $elementName => $blockElement) {
-                    /** @var  $fd Object\ClassDefinition\Data */
+                    /** @var  $fd Model\Object\ClassDefinition\Data */
                     $fd = $this->getFielddefinition($elementName);
                     if (!$fd) {
                         // class definition seems to have changed
@@ -289,7 +288,7 @@ class Block extends Model\Object\ClassDefinition\Data
 
             foreach ($blockElement as $elementName => $elementData) {
 
-                /** @var  $fd Object\ClassDefinition\Data */
+                /** @var  $fd Model\Object\ClassDefinition\Data */
                 $fd = $this->getFielddefinition($elementName);
                 $dataFromEditMode = $fd->getDataFromEditmode($elementData, $object,
                     [
@@ -305,7 +304,7 @@ class Block extends Model\Object\ClassDefinition\Data
 
                 $elementType = $fd->getFieldtype();
 
-                $resultElement[$elementName] = new Object\Data\BlockElement($elementName, $elementType, $dataFromEditMode);
+                $resultElement[$elementName] = new \Pimcore\Model\Object\Data\BlockElement($elementName, $elementType, $dataFromEditMode);
             }
 
             $result[] = $resultElement;
@@ -316,9 +315,9 @@ class Block extends Model\Object\ClassDefinition\Data
     }
 
     /**
-     * @see Object\ClassDefinition\Data::getVersionPreview
+     * @see Model\Object\ClassDefinition\Data::getVersionPreview
      * @param string $data
-     * @param null|Object\AbstractObject $object
+     * @param null|Model\Object\AbstractObject $object
      * @param mixed $params
      * @return string
      */
@@ -331,7 +330,7 @@ class Block extends Model\Object\ClassDefinition\Data
     /**
      * converts object data to a simple string value or CSV Export
      * @abstract
-     * @param Object\AbstractObject $object
+     * @param Model\Object\AbstractObject $object
      * @param array $params
      * @return string
      */
@@ -415,7 +414,7 @@ class Block extends Model\Object\ClassDefinition\Data
     }
 
     /**
-     * @param Object\Data\ExternalImage $data
+     * @param Model\Object\Data\ExternalImage $data
      * @return bool
      */
     public function isEmpty($data)
@@ -523,7 +522,7 @@ class Block extends Model\Object\ClassDefinition\Data
             }
         }
 
-        if ($def instanceof Object\ClassDefinition\Layout) {
+        if ($def instanceof \Pimcore\Model\Object\ClassDefinition\Layout) {
             if ($def->hasChilds()) {
                 foreach ($def->getChilds() as $child) {
                     $fields = array_merge($fields, $this->doGetFieldDefinitions($child, $fields));
@@ -531,7 +530,7 @@ class Block extends Model\Object\ClassDefinition\Data
             }
         }
 
-        if ($def instanceof Object\ClassDefinition\Data) {
+        if ($def instanceof \Pimcore\Model\Object\ClassDefinition\Data) {
             $fields[$def->getName()] = $def;
         }
 
@@ -546,7 +545,7 @@ class Block extends Model\Object\ClassDefinition\Data
         if (empty($this->fieldDefinitionsCache)) {
             $definitions = $this->doGetFieldDefinitions();
             foreach ($this->getReferencedFields() as $rf) {
-                if ($rf instanceof Object\ClassDefinition\Data\Localizedfields) {
+                if ($rf instanceof \Pimcore\Model\Object\ClassDefinition\Data\Localizedfields) {
                     $definitions = array_merge($definitions, $this->doGetFieldDefinitions($rf->getChilds()));
                 }
             }
@@ -752,7 +751,7 @@ class Block extends Model\Object\ClassDefinition\Data
      */
     public function preSetData($object, $data, $params = [])
     {
-        if ($object instanceof Object\Concrete) {
+        if ($object instanceof \Pimcore\Model\Object\Concrete) {
             if ($this->getLazyLoading() and !in_array($this->getName(), $object->getO__loadedLazyFields())) {
                 $object->addO__loadedLazyField($this->getName());
             }
@@ -773,7 +772,7 @@ class Block extends Model\Object\ClassDefinition\Data
         $field = $this->getName();
         $db = Db::get();
 
-        if ($container instanceof Object\Concrete) {
+        if ($container instanceof \Pimcore\Model\Object\Concrete) {
             if (!method_exists($this, 'getLazyLoading') or !$this->getLazyLoading() or (array_key_exists('force', $params) && $params['force'])) {
                 $data = null;
 
@@ -783,7 +782,7 @@ class Block extends Model\Object\ClassDefinition\Data
             } else {
                 return null;
             }
-        } elseif ($container instanceof Object\Localizedfield) {
+        } elseif ($container instanceof \Pimcore\Model\Object\Localizedfield) {
             $context = $params['context'];
             $object = $context['object'];
 
@@ -794,7 +793,7 @@ class Block extends Model\Object\ClassDefinition\Data
             }
             $data = $db->fetchOne($query);
             $data = $this->getDataFromResource($data, $container, $params);
-        } elseif ($container instanceof Object\Objectbrick\Data\AbstractData) {
+        } elseif ($container instanceof \Pimcore\Model\Object\Objectbrick\Data\AbstractData) {
             $context = $params['context'];
 
             $object = $context['object'];
@@ -805,7 +804,7 @@ class Block extends Model\Object\ClassDefinition\Data
                 . ' where  o_id  = ' . $object->getId() . ' and fieldname = ' . $db->quote($fieldname);
             $data = $db->fetchOne($query);
             $data = $this->getDataFromResource($data, $container, $params);
-        } elseif ($container instanceof Object\Fieldcollection\Data\AbstractData) {
+        } elseif ($container instanceof \Pimcore\Model\Object\Fieldcollection\Data\AbstractData) {
             $context = $params['context'];
             $collectionType = $context['containerKey'];
             $object = $context['object'];
@@ -829,7 +828,7 @@ class Block extends Model\Object\ClassDefinition\Data
     public function preGetData($object, $params = [])
     {
         $data = null;
-        if ($object instanceof Object\Concrete) {
+        if ($object instanceof \Pimcore\Model\Object\Concrete) {
             $data = $object->{$this->getName()};
             if ($this->getLazyLoading() and !in_array($this->getName(), $object->getO__loadedLazyFields())) {
                 $data = $this->load($object, ['force' => true]);
@@ -839,11 +838,11 @@ class Block extends Model\Object\ClassDefinition\Data
                     $object->$setter($data);
                 }
             }
-        } elseif ($object instanceof Object\Localizedfield) {
+        } elseif ($object instanceof \Pimcore\Model\Object\Localizedfield) {
             $data = $params['data'];
-        } elseif ($object instanceof Object\Fieldcollection\Data\AbstractData) {
+        } elseif ($object instanceof \Pimcore\Model\Object\Fieldcollection\Data\AbstractData) {
             $data = $object->{$this->getName()};
-        } elseif ($object instanceof Object\Objectbrick\Data\AbstractData) {
+        } elseif ($object instanceof \Pimcore\Model\Object\Objectbrick\Data\AbstractData) {
             $data = $object->{$this->getName()};
         }
 

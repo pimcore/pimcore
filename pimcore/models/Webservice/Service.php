@@ -19,7 +19,6 @@ namespace Pimcore\Model\Webservice;
 use Pimcore\Model\Document;
 use Pimcore\Model\Webservice;
 use Pimcore\Model\User;
-use Pimcore\Model\Object;
 use Pimcore\Model\Asset;
 use Pimcore\Logger;
 
@@ -625,12 +624,12 @@ class Service
         try {
             if ($wsDocument instanceof Webservice\Data\Object\Folder\In) {
                 $wsDocument->type = "folder";
-                $object = new Object\Folder();
+                $object = new \Pimcore\Model\Object\Folder();
 
                 return $this->create($wsDocument, $object);
             }
 
-            throw new \Exception("Unable to create new Object Folder.");
+            throw new \Exception("Unable to create \Pimcore\Model\Object Folder.");
         } catch (\Exception $e) {
             Logger::error($e);
             throw $e;
@@ -647,14 +646,14 @@ class Service
             if ($wsDocument instanceof Webservice\Data\Object\Concrete\In) {
                 $className = "Pimcore\\Model\\Object\\" . ucfirst($wsDocument->className);
                 $object = \Pimcore::getDiContainer()->make($className);
-                if ($object instanceof Object\Concrete) {
+                if ($object instanceof \Pimcore\Model\Object\Concrete) {
                     return $this->create($wsDocument, $object);
                 } else {
-                    throw new \Exception("Unable to create new Object Concrete, could not instantiate Object with given class name [ $classname ]");
+                    throw new \Exception("Unable to create \Pimcore\Model\Object Concrete, could not instantiate Object with given class name [ $classname ]");
                 }
             }
 
-            throw new \Exception("Unable to create new Object Concrete.");
+            throw new \Exception("Unable to create \Pimcore\Model\Object Concrete.");
         } catch (\Exception $e) {
             Logger::error($e);
             throw $e;
@@ -786,8 +785,8 @@ class Service
     public function getObjectFolderById($id)
     {
         try {
-            $folder = Object::getById($id);
-            if ($folder instanceof Object\Folder) {
+            $folder = \Pimcore\Model\Object\AbstractObject::getById($id);
+            if ($folder instanceof \Pimcore\Model\Object\Folder) {
                 $apiFolder = Webservice\Data\Mapper::map($folder, "\\Pimcore\\Model\\Webservice\\Data\\Object\\Folder\\Out", "out");
 
                 return $apiFolder;
@@ -807,11 +806,11 @@ class Service
     public function getObjectConcreteById($id)
     {
         try {
-            $object = Object::getById($id);
+            $object = \Pimcore\Model\Object\AbstractObject::getById($id);
 
-            if ($object instanceof Object\Concrete) {
+            if ($object instanceof \Pimcore\Model\Object\Concrete) {
                 // load all data (eg. lazy loaded fields like multihref, object, ...)
-                Object\Service::loadAllObjectFields($object);
+                \Pimcore\Model\Object\Service::loadAllObjectFields($object);
                 $apiObject = Webservice\Data\Mapper::map($object, "\\Pimcore\\Model\\Webservice\\Data\\Object\\Concrete\\Out", "out");
 
                 return $apiObject;
@@ -837,7 +836,7 @@ class Service
     public function getObjectList($condition = null, $order = null, $orderKey = null, $offset = null, $limit = null, $groupBy = null, $objectClass = null)
     {
         try {
-            $params = ["objectTypes" => [Object\AbstractObject::OBJECT_TYPE_FOLDER, Object\AbstractObject::OBJECT_TYPE_OBJECT, Object\AbstractObject::OBJECT_TYPE_VARIANT]];
+            $params = ["objectTypes" => [\Pimcore\Model\Object\AbstractObject::OBJECT_TYPE_FOLDER, \Pimcore\Model\Object\AbstractObject::OBJECT_TYPE_OBJECT, \Pimcore\Model\Object\AbstractObject::OBJECT_TYPE_VARIANT]];
 
             if (!empty($condition)) {
                 $params["condition"] = $condition;
@@ -858,11 +857,11 @@ class Service
                 $params["groupBy"] = $groupBy;
             }
 
-            $listClassName = "\\Pimcore\\Model\\Object";
+            $listClassName = "\\Pimcore\\Model\\Object\\AbstractObject";
             if (!empty($objectClass)) {
                 $listClassName = "\\Pimcore\\Model\\Object\\" . ucfirst($objectClass);
                 if (!\Pimcore\Tool::classExists($listClassName)) {
-                    $listClassName = "\\Pimcore\\Model\\Object";
+                    $listClassName = "\\Pimcore\\Model\\Object\\AbstractObject";
                 }
             }
 
@@ -895,8 +894,8 @@ class Service
     public function unpublishObject($id)
     {
         try {
-            $object = Object\AbstractObject::getById($id);
-            if ($object instanceof Object\AbstractObject) {
+            $object = \Pimcore\Model\Object\AbstractObject::getById($id);
+            if ($object instanceof \Pimcore\Model\Object\AbstractObject) {
                 $object->setPublished(false);
                 $object->save();
 
@@ -917,8 +916,8 @@ class Service
     public function deleteObject($id)
     {
         try {
-            $object = Object\AbstractObject::getById($id);
-            if ($object instanceof Object\AbstractObject) {
+            $object = \Pimcore\Model\Object\AbstractObject::getById($id);
+            if ($object instanceof \Pimcore\Model\Object\AbstractObject) {
                 $object->delete();
 
                 return true;
@@ -961,8 +960,8 @@ class Service
      */
     protected function getSaveCopyName($element, $key, $path)
     {
-        if ($element instanceof Object\AbstractObject) {
-            $equal = Object\AbstractObject::getByPath($path . "/" . $key);
+        if ($element instanceof \Pimcore\Model\Object\AbstractObject) {
+            $equal = \Pimcore\Model\Object\AbstractObject::getByPath($path . "/" . $key);
         } elseif ($element instanceof Document) {
             $equal = Document::getByPath($path . "/" . $key);
         } elseif ($element instanceof Asset) {
@@ -1010,19 +1009,19 @@ class Service
      */
     protected function updateObject($wsDocument)
     {
-        $object = Object\AbstractObject::getById($wsDocument->id);
+        $object = \Pimcore\Model\Object\AbstractObject::getById($wsDocument->id);
 
         if ($object === null) {
             throw new \Exception("Object with given ID (" . $wsDocument->id . ") does not exist.");
         }
 
         $this->setModificationParams($object, false);
-        if ($object instanceof Object\Concrete and $object->getClassName() == $wsDocument->className) {
+        if ($object instanceof \Pimcore\Model\Object\Concrete and $object->getClassName() == $wsDocument->className) {
             $wsDocument->reverseMap($object);
             $object->save();
 
             return true;
-        } elseif ($object instanceof Object\Folder and $object->getType() == strtolower($wsDocument->type)) {
+        } elseif ($object instanceof \Pimcore\Model\Object\Folder and $object->getType() == strtolower($wsDocument->type)) {
             $wsDocument->reverseMap($object);
             $object->save();
 
@@ -1084,8 +1083,8 @@ class Service
     public function getClassById($id)
     {
         try {
-            $class = Object\ClassDefinition::getById($id);
-            if ($class instanceof Object\ClassDefinition) {
+            $class = \Pimcore\Model\Object\ClassDefinition::getById($id);
+            if ($class instanceof \Pimcore\Model\Object\ClassDefinition) {
                 $apiClass = Webservice\Data\Mapper::map($class, "\\Pimcore\\Model\\Webservice\\Data\\ClassDefinition\\Out", "out");
                 unset($apiClass->fieldDefinitions);
 
@@ -1107,9 +1106,9 @@ class Service
     public function getObjectMetadataById($id)
     {
         try {
-            $object = Object\Concrete::getById($id);
+            $object = \Pimcore\Model\Object\Concrete::getById($id);
 
-            if ($object instanceof Object\Concrete) {
+            if ($object instanceof \Pimcore\Model\Object\Concrete) {
                 // load all data (eg. lazy loaded fields like multihref, object, ...)
                 $classId = $object->getClassId();
 

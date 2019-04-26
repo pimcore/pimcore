@@ -17,7 +17,6 @@
 namespace Pimcore\Model\Object\Concrete;
 
 use Pimcore\Model;
-use Pimcore\Model\Object;
 use Pimcore\Logger;
 
 /**
@@ -27,7 +26,7 @@ class Dao extends Model\Object\AbstractObject\Dao
 {
 
     /**
-     * @var Object\Concrete\Dao\InheritanceHelper
+     * @var Model\Object\Concrete\Dao\InheritanceHelper
      */
     protected $inheritanceHelper = null;
 
@@ -36,7 +35,7 @@ class Dao extends Model\Object\AbstractObject\Dao
      */
     public function init()
     {
-        $this->inheritanceHelper = new Object\Concrete\Dao\InheritanceHelper($this->model->getClassId());
+        $this->inheritanceHelper = new \Pimcore\Model\Object\Concrete\Dao\InheritanceHelper($this->model->getClassId());
     }
 
     /**
@@ -193,8 +192,8 @@ class Dao extends Model\Object\AbstractObject\Dao
         }
 
 
-        $inheritedValues = Object\AbstractObject::doGetInheritedValues();
-        Object\AbstractObject::setGetInheritedValues(false);
+        $inheritedValues = \Pimcore\Model\Object\AbstractObject::doGetInheritedValues();
+        \Pimcore\Model\Object\AbstractObject::setGetInheritedValues(false);
 
         $data = [];
         $data["oo_id"] = $this->model->getId();
@@ -233,7 +232,7 @@ class Dao extends Model\Object\AbstractObject\Dao
             $parentForInheritance = $this->model->getNextParentForInheritance();
             if ($parentForInheritance) {
                 // we don't use the getter (built in functionality to get inherited values) because we need to avoid race conditions
-                // we cannot Object\AbstractObject::setGetInheritedValues(true); and then $this->model->$method();
+                // we cannot Model\Object\AbstractObject::setGetInheritedValues(true); and then $this->model->$method();
                 // so we select the data from the parent object using FOR UPDATE, which causes a lock on this row
                 // so the data of the parent cannot be changed while this transaction is on progress
                 $parentData = $this->db->fetchRow("SELECT * FROM object_query_" . $this->model->getClassId() . " WHERE oo_id = ? FOR UPDATE", $parentForInheritance->getId());
@@ -323,7 +322,7 @@ class Dao extends Model\Object\AbstractObject\Dao
 
         $this->db->insertOrUpdate("object_query_" . $this->model->getClassId(), $data);
 
-        Object\AbstractObject::setGetInheritedValues($inheritedValues);
+        \Pimcore\Model\Object\AbstractObject::setGetInheritedValues($inheritedValues);
     }
 
     /**

@@ -16,7 +16,7 @@ namespace Pimcore\Placeholder;
 
 use Pimcore\Model;
 
-class Object extends AbstractPlaceholder
+class DataObject extends AbstractPlaceholder
 {
 
     /**
@@ -32,7 +32,7 @@ class Object extends AbstractPlaceholder
     /**
      * Gets a object by it's id and replaces the placeholder width the value form the called "method"
      *
-     * example: %Object(object_id,{"method" : "getId"});
+     * example: %ConcreteObject(object_id,{"method" : "getId"});
      * @return string
      */
     public function getReplacement()

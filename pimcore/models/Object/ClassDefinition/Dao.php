@@ -17,7 +17,6 @@
 namespace Pimcore\Model\Object\ClassDefinition;
 
 use Pimcore\Model;
-use Pimcore\Model\Object;
 use Pimcore\Tool\Serialize;
 use Pimcore\File;
 use Pimcore\Logger;
@@ -27,10 +26,10 @@ use Pimcore\Logger;
  */
 class Dao extends Model\Dao\AbstractDao
 {
-    use Object\ClassDefinition\Helper\Dao;
+    use \Pimcore\Model\Object\ClassDefinition\Helper\Dao;
 
     /**
-     * @var Object\ClassDefinition
+     * @var Model\Object\ClassDefinition
      */
     protected $model;
 
@@ -153,7 +152,7 @@ class Dao extends Model\Dao\AbstractDao
         $columnsToRemove = $existingColumns;
         $datastoreColumnsToRemove = $existingDatastoreColumns;
 
-        Object\ClassDefinition\Service::updateTableDefinitions($this->tableDefinitions, [$objectTable, $objectDatastoreTable]);
+        \Pimcore\Model\Object\ClassDefinition\Service::updateTableDefinitions($this->tableDefinitions, [$objectTable, $objectDatastoreTable]);
 
         // add non existing columns in the table
         if (is_array($this->model->getFieldDefinitions()) && count($this->model->getFieldDefinitions())) {

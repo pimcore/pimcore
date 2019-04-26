@@ -17,7 +17,6 @@ namespace Pimcore\Tool;
 use Pimcore\Document\Newsletter\SendingParamContainer;
 use Pimcore\Mail;
 use Pimcore\Tool;
-use Pimcore\Model\Object;
 use Pimcore\Model\Document;
 use Pimcore\Model;
 use Pimcore\Logger;
@@ -208,14 +207,14 @@ class Newsletter
     {
         $class = null;
         if (is_string($classId)) {
-            $class = Object\ClassDefinition::getByName($classId);
+            $class = \Pimcore\Model\Object\ClassDefinition::getByName($classId);
         } elseif (is_int($classId)) {
-            $class = Object\ClassDefinition::getById($classId);
+            $class = \Pimcore\Model\Object\ClassDefinition::getById($classId);
         } elseif ($classId !== null) {
             throw new \Exception("No valid class identifier given (class name or ID)");
         }
 
-        if ($class instanceof Object\ClassDefinition) {
+        if ($class instanceof \Pimcore\Model\Object\ClassDefinition) {
             $this->setClass($class);
         }
     }
@@ -346,7 +345,7 @@ class Newsletter
 
         $data = \Zend_Json::decode(base64_decode($token));
         if ($data) {
-            if ($object = Object::getById($data["id"])) {
+            if ($object = \Pimcore\Model\Object\AbstractObject::getById($data["id"])) {
                 if ($version = $object->getLatestVersion()) {
                     $object = $version->getData();
                 }

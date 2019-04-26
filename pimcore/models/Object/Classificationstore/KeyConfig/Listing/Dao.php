@@ -17,7 +17,6 @@
 namespace Pimcore\Model\Object\Classificationstore\KeyConfig\Listing;
 
 use Pimcore\Model;
-use Pimcore\Model\Object;
 
 /**
  * @property \Pimcore\Model\Object\Classificationstore\KeyConfig\Listing $model
@@ -32,12 +31,12 @@ class Dao extends Model\Listing\Dao\AbstractDao
      */
     public function load()
     {
-        $sql = "SELECT * FROM " . Object\Classificationstore\KeyConfig\Dao::TABLE_NAME_KEYS . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit();
+        $sql = "SELECT * FROM " . \Pimcore\Model\Object\Classificationstore\KeyConfig\Dao::TABLE_NAME_KEYS . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit();
         $configsData = $this->db->fetchAll($sql, $this->model->getConditionVariables());
 
         $configList = [];
         foreach ($configsData as $keyConfigData) {
-            $keyConfig = new Object\Classificationstore\KeyConfig();
+            $keyConfig = new \Pimcore\Model\Object\Classificationstore\KeyConfig();
             $keyConfig->setValues($keyConfigData);
             $configList[] = $keyConfig;
         }
@@ -52,7 +51,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
      */
     public function getDataArray()
     {
-        $configsData = $this->db->fetchAll("SELECT * FROM " . Object\Classificationstore\KeyConfig\Dao::TABLE_NAME_KEYS . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
+        $configsData = $this->db->fetchAll("SELECT * FROM " . \Pimcore\Model\Object\Classificationstore\KeyConfig\Dao::TABLE_NAME_KEYS . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
 
         return $configsData;
     }
@@ -63,7 +62,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
     public function getTotalCount()
     {
         try {
-            $amount = (int) $this->db->fetchOne("SELECT COUNT(*) as amount FROM " . Object\Classificationstore\KeyConfig\Dao::TABLE_NAME_KEYS . " ". $this->getCondition(), $this->model->getConditionVariables());
+            $amount = (int) $this->db->fetchOne("SELECT COUNT(*) as amount FROM " . \Pimcore\Model\Object\Classificationstore\KeyConfig\Dao::TABLE_NAME_KEYS . " ". $this->getCondition(), $this->model->getConditionVariables());
         } catch (\Exception $e) {
         }
 

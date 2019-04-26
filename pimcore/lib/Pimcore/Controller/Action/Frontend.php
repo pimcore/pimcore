@@ -20,7 +20,6 @@ use Pimcore\Tool;
 use Pimcore\Tool\Authentication;
 use Pimcore\Tool\Session;
 use Pimcore\Model\Document;
-use Pimcore\Model\Object;
 use Pimcore\Model;
 use Pimcore\Translate;
 use Pimcore\Logger;
@@ -83,9 +82,9 @@ abstract class Frontend extends Action
         if (self::$isInitial) {
             \Pimcore::unsetAdminMode();
             Document::setHideUnpublished(true);
-            Object\AbstractObject::setHideUnpublished(true);
-            Object\AbstractObject::setGetInheritedValues(true);
-            Object\Localizedfield::setGetFallbackValues(true);
+            \Pimcore\Model\Object\AbstractObject::setHideUnpublished(true);
+            \Pimcore\Model\Object\AbstractObject::setGetInheritedValues(true);
+            \Pimcore\Model\Object\Localizedfield::setGetFallbackValues(true);
         }
 
         // assign variables

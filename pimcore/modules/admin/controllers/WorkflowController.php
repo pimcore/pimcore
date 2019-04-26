@@ -14,7 +14,6 @@
 
 
 use Pimcore\WorkflowManagement\Workflow;
-use Pimcore\Model\Object;
 use Pimcore\Model\Object\Concrete as ConcreteObject;
 use Pimcore\Model\Document;
 use Pimcore\Model\Asset;
@@ -231,7 +230,7 @@ class Admin_WorkflowController extends \Pimcore\Controller\Action\Admin\Element
             }
         }
 
-        if ($element instanceof Object\Concrete) {
+        if ($element instanceof \Pimcore\Model\Object\Concrete) {
             $modificationDate = $element->getModificationDate();
             $latestVersion = $element->getLatestVersion();
             if ($latestVersion) {

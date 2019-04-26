@@ -17,7 +17,6 @@
 namespace Pimcore\Model\Object\Localizedfield;
 
 use Pimcore\Model;
-use Pimcore\Model\Object;
 use Pimcore\Tool;
 use Pimcore\Logger;
 
@@ -26,7 +25,7 @@ use Pimcore\Logger;
  */
 class Dao extends Model\Dao\AbstractDao
 {
-    use Object\ClassDefinition\Helper\Dao;
+    use \Pimcore\Model\Object\ClassDefinition\Helper\Dao;
 
     /**
      * @var null
@@ -72,7 +71,7 @@ class Dao extends Model\Dao\AbstractDao
         $context = $this->model->getContext();
         if ($context && $context["containerType"] == "fieldcollection") {
             $containerKey = $context["containerKey"];
-            $container = Object\Fieldcollection\Definition::getByKey($containerKey);
+            $container = \Pimcore\Model\Object\Fieldcollection\Definition::getByKey($containerKey);
         } else {
             $container = $this->model->getClass();
         }
@@ -83,17 +82,17 @@ class Dao extends Model\Dao\AbstractDao
          * We temporary enable the runtime cache so we don't have to calculate the tree for each language
          * which is a great performance gain if you have a lot of languages
          */
-        Object\Concrete\Dao\InheritanceHelper::setUseRuntimeCache(true);
+        \Pimcore\Model\Object\Concrete\Dao\InheritanceHelper::setUseRuntimeCache(true);
         foreach ($validLanguages as $language) {
-            $inheritedValues = Object\AbstractObject::doGetInheritedValues();
-            Object\AbstractObject::setGetInheritedValues(false);
+            $inheritedValues = \Pimcore\Model\Object\AbstractObject::doGetInheritedValues();
+            \Pimcore\Model\Object\AbstractObject::setGetInheritedValues(false);
 
             $insertData = [
                 "ooo_id" => $this->model->getObject()->getId(),
                 "language" => $language
             ];
 
-            if ($container instanceof Object\Fieldcollection\Definition) {
+            if ($container instanceof \Pimcore\Model\Object\Fieldcollection\Definition) {
                 $insertData["fieldname"] = $context["fieldname"];
                 $insertData["index"] = $context["index"];
             }
@@ -127,13 +126,13 @@ class Dao extends Model\Dao\AbstractDao
             $this->db->insertOrUpdate($storeTable, $insertData);
 
 
-            if ($container instanceof Object\ClassDefinition) {
+            if ($container instanceof \Pimcore\Model\Object\ClassDefinition) {
                 // query table
                 $data = [];
                 $data["ooo_id"] = $this->model->getObject()->getId();
                 $data["language"] = $language;
 
-                $this->inheritanceHelper = new Object\Concrete\Dao\InheritanceHelper($object->getClassId(), "ooo_id", $storeTable, $queryTable);
+                $this->inheritanceHelper = new \Pimcore\Model\Object\Concrete\Dao\InheritanceHelper($object->getClassId(), "ooo_id", $storeTable, $queryTable);
                 $this->inheritanceHelper->resetFieldsToCheck();
                 $sql = "SELECT * FROM " . $queryTable . " WHERE ooo_id = " . $object->getId() . " AND language = '" . $language . "'";
 
@@ -172,7 +171,7 @@ class Dao extends Model\Dao\AbstractDao
                     $parentForInheritance = $object->getNextParentForInheritance();
                     if ($parentForInheritance) {
                         // we don't use the getter (built in functionality to get inherited values) because we need to avoid race conditions
-                        // we cannot Object\AbstractObject::setGetInheritedValues(true); and then $this->model->getLocalizedValue($key, $language)
+                        // we cannot Model\Object\AbstractObject::setGetInheritedValues(true); and then $this->model->getLocalizedValue($key, $language)
                         // so we select the data from the parent object using FOR UPDATE, which causes a lock on this row
                         // so the data of the parent cannot be changed while this transaction is on progress
                         $parentData = $this->db->fetchRow("SELECT * FROM " . $queryTable . " WHERE ooo_id = ? AND language = ? FOR UPDATE", [$parentForInheritance->getId(), $language]);
@@ -269,10 +268,10 @@ class Dao extends Model\Dao\AbstractDao
                 $this->inheritanceHelper->resetFieldsToCheck();
             }
 
-            Object\AbstractObject::setGetInheritedValues($inheritedValues);
+            \Pimcore\Model\Object\AbstractObject::setGetInheritedValues($inheritedValues);
         } // foreach language
-        Object\Concrete\Dao\InheritanceHelper::setUseRuntimeCache(false);
-        Object\Concrete\Dao\InheritanceHelper::clearRuntimeCache();
+        \Pimcore\Model\Object\Concrete\Dao\InheritanceHelper::setUseRuntimeCache(false);
+        \Pimcore\Model\Object\Concrete\Dao\InheritanceHelper::clearRuntimeCache();
     }
 
     /**
@@ -286,7 +285,7 @@ class Dao extends Model\Dao\AbstractDao
             $context = $this->model->getContext();
             if ($context && $context["containerType"] == "fieldcollection") {
                 $containerKey = $context["containerKey"];
-                $container = Object\Fieldcollection\Definition::getByKey($containerKey);
+                $container = \Pimcore\Model\Object\Fieldcollection\Definition::getByKey($containerKey);
             } else {
                 $container =  $object->getClass();
             }
@@ -296,7 +295,7 @@ class Dao extends Model\Dao\AbstractDao
                 $tablename = $this->getTableName();
                 $this->db->delete($tablename, $this->db->quoteInto("ooo_id = ?", $id));
 
-                if (!$container instanceof  Object\Fieldcollection\Definition) {
+                if (!$container instanceof  \Pimcore\Model\Object\Fieldcollection\Definition) {
                     $validLanguages = Tool::getValidLanguages();
                     foreach ($validLanguages as $language) {
                         $queryTable = $this->getQueryTableName() . "_" . $language;
@@ -326,7 +325,7 @@ class Dao extends Model\Dao\AbstractDao
         }
 
         // remove relations
-        if ($container instanceof Object\Fieldcollection\Definition) {
+        if ($container instanceof \Pimcore\Model\Object\Fieldcollection\Definition) {
             $objectId = $object->getId();
             $index = $context["index"];
             $containerName = $context["fieldname"];
@@ -358,7 +357,7 @@ class Dao extends Model\Dao\AbstractDao
             $index = $context["index"];
             $fieldname = $context["fieldname"];
 
-            $container = Object\Fieldcollection\Definition::getByKey($containerKey);
+            $container = \Pimcore\Model\Object\Fieldcollection\Definition::getByKey($containerKey);
 
             $data = $this->db->fetchAll("SELECT * FROM " . $this->getTableName()
                     . " WHERE ooo_id = ? AND language IN (" . implode(",", $validLanguages) . ") AND `fieldname` = ? AND `index` = ?",
@@ -542,12 +541,12 @@ QUERY;
         $columnsToRemove = $existingColumns;
 
 
-        Object\ClassDefinition\Service::updateTableDefinitions($this->tableDefinitions, ([$table]));
+        \Pimcore\Model\Object\ClassDefinition\Service::updateTableDefinitions($this->tableDefinitions, ([$table]));
 
         if ($context && $context["containerType"] == "fieldcollection") {
             $protectedColumns = ["ooo_id", "language", "index", "fieldname"];
             $containerKey = $context["containerKey"];
-            $container = Object\Fieldcollection\Definition::getByKey($containerKey);
+            $container = \Pimcore\Model\Object\Fieldcollection\Definition::getByKey($containerKey);
         } else {
             $protectedColumns = ["ooo_id", "language"];
             $container = $this->model->getClass();
@@ -577,7 +576,7 @@ QUERY;
 
         $validLanguages = Tool::getValidLanguages();
 
-        if ($container instanceof Object\ClassDefinition) {
+        if ($container instanceof \Pimcore\Model\Object\ClassDefinition) {
             foreach ($validLanguages as &$language) {
                 $queryTable = $this->getQueryTableName();
                 $queryTable .= "_" . $language;
@@ -597,7 +596,7 @@ QUERY;
                 $existingColumns = $this->getValidTableColumns($queryTable, false); // no caching of table definition
                 $columnsToRemove = $existingColumns;
 
-                Object\ClassDefinition\Service::updateTableDefinitions($this->tableDefinitions, [$queryTable]);
+                \Pimcore\Model\Object\ClassDefinition\Service::updateTableDefinitions($this->tableDefinitions, [$queryTable]);
 
                 $fieldDefinitions = $this->model->getClass()->getFielddefinition("localizedfields")->getFielddefinitions();
 

@@ -15,7 +15,6 @@
 use Pimcore\Tool;
 use Pimcore\Model\User;
 use Pimcore\Model\Element;
-use Pimcore\Model\Object;
 use Pimcore\Logger;
 
 class Admin_UserController extends \Pimcore\Controller\Action\Admin
@@ -354,7 +353,7 @@ class Admin_UserController extends \Pimcore\Controller\Action\Admin
         }
 
         // object <=> user dependencies
-        $userObjects = Object\Service::getObjectsReferencingUser($user->getId());
+        $userObjects = \Pimcore\Model\Object\Service::getObjectsReferencingUser($user->getId());
         $userObjectData = [];
 
         foreach ($userObjects as $o) {

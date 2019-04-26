@@ -25,7 +25,7 @@ class Listing extends Model\Listing\AbstractListing
 {
 
     /**
-     * Contains the results of the list. They are all an instance of Object\ClassDefinition\CustomLayout\Listing
+     * Contains the results of the list. They are all an instance of Model\Object\ClassDefinition\CustomLayout\Listing
      *
      * @var array
      */
