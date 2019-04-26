@@ -678,6 +678,13 @@ class Localizedfield extends Model\AbstractModel implements DirtyIndicatorInterf
     protected function getLazyLoadedFieldNames(): array
     {
         $lazyLoadedFieldNames = [];
+
+        if ($this->context && $this->context["containerType"] == "block") {
+            // if localized field is embedded in a block element there is no lazy loading. Maybe we can
+            // prevent this already in the class definition editor
+            return $lazyLoadedFieldNames;
+        }
+
         $fields = $this->getFieldDefinitions($this->getContext(), ['suppressEnrichment' => true]);
         foreach ($fields as $field) {
             if (method_exists($field, 'getLazyLoading') && $field->getLazyLoading()) {
