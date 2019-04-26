@@ -68,6 +68,7 @@ for further information).
  
 If you enable the `redis` cache configuration, the Redis cache will be used instead of the Doctrine one, even if Doctrine
 is enabled as well. 
+> **IMPORTANT!** It is crucial to test and verify your Redis configuration, if Pimcore is unable to connect to Redis, the entire system will stop working.
 
 If you want to use a custom cache pool, ignore the `pools` section (or disable both predefined pools) and set the `pool_service_id`
 entry to the service ID of your custom pool (needs to be defined as service on the service container). There are a couple
