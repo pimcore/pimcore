@@ -554,7 +554,6 @@
     "preserve_color": "Zachovať farbu (profil, priestor)",
     "thumbnail_preserve_info_text": "'Zachovať meta data' a 'zachovať farby' funguje len pre prechody bez kompozícií (frame, farba pozadia, ...) a modifikácií farieb (odtieň šedej, sépia, ...)",
     "full_page_cache": "Cache stránok",
-    "path_formatter_class": "Trieda Formatteru",
     "separated": "oddelené",
     "additional_path_variable": "Ďalšie $PATH premenné",
     "log_refresh_label": "Obnoviť každých",
@@ -703,5 +702,9 @@
     "lazy_loading_warning_block": "WARNING: Lazy Loading is NOT possible within Blocks",
     "left": "left",
     "right": "right",
-    "provide_split_view": "Provide Split View"
+    "provide_split_view": "Provide Split View",
+    "allow_multiple_assignments": "Allow Multiple Assignments",
+    "enable_admin_async_load": "Enable Async Load in Admin",
+    "async_loading_warning_block": "WARNING: Async Loading is NOT possible within Localized Fields and Blocks",
+    "path_formatter_service": "Formatter Service / Class"
 }
