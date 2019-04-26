@@ -581,10 +581,11 @@ class AssetController extends ElementControllerBase implements EventedController
 
             if (!$asset->isAllowed('delete')) {
                 return $this->adminJson(['success' => false, 'message' => 'missing_permission']);
-            } else if ($asset->isLocked()) {
+            } elseif ($asset->isLocked()) {
                 return $this->adminJson(['success' => false, 'message' => 'prevented deleting asset, because it is locked: ID: ' . $asset->getId()]);
             } else {
                 $asset->delete();
+
                 return $this->adminJson(['success' => true]);
             }
         }

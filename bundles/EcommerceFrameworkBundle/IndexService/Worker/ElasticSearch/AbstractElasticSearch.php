@@ -655,13 +655,13 @@ abstract class AbstractElasticSearch extends Worker\AbstractMockupCacheWorker im
     {
         $esClient = $this->getElasticSearchClient();
 
-        $storeEntry = \Pimcore\Db::get()->fetchRow('SELECT * FROM ' . $this->getStoreTableName() . ' WHERE  o_id=? AND tenant=? ', [$objectId,$this->getTenantConfig()->getTenantName()]);
+        $storeEntry = \Pimcore\Db::get()->fetchRow('SELECT * FROM ' . $this->getStoreTableName() . ' WHERE  o_id=? AND tenant=? ', [$objectId, $this->getTenantConfig()->getTenantName()]);
         if ($storeEntry) {
             try {
                 $esClient->delete(['index' => $this->getIndexNameVersion(), 'type' => '_doc', 'id' => $objectId, 'routing' => $storeEntry['o_virtualProductId']]);
-            }catch (\Exception $e){
+            } catch (\Exception $e) {
                 //if \Elasticsearch\Common\Exceptions\Missing404Exception <- the object is not in the index so its ok.
-                if($e instanceof \Elasticsearch\Common\Exceptions\Missing404Exception == false){
+                if ($e instanceof \Elasticsearch\Common\Exceptions\Missing404Exception == false) {
                     throw $e;
                 }
             }

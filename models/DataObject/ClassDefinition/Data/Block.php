@@ -863,13 +863,13 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     {
         $this->markLazyloadedFieldAsLoaded($object);
 
-        $lf = $this->getFielddefinition("localizedfields");
+        $lf = $this->getFielddefinition('localizedfields');
         if ($lf && is_array($data)) {
-            /** @var  $item DataObject\Data\BlockElement */
+            /** @var $item DataObject\Data\BlockElement */
             foreach ($data as $item) {
                 if (is_array($item)) {
                     foreach ($item as $itemElement) {
-                        if ($itemElement->getType() == "localizedfields") {
+                        if ($itemElement->getType() == 'localizedfields') {
                             /** @var $itemElementData DataObject\Localizedfield */
                             $itemElementData = $itemElement->getData();
                             $itemElementData->setObject($object);
