@@ -18,7 +18,6 @@
 namespace Pimcore\Model\Tool\Tag;
 
 use Pimcore\Cache;
-use Pimcore\Logger;
 use Pimcore\Model;
 
 /**

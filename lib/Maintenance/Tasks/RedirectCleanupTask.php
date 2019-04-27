@@ -19,7 +19,6 @@ use Pimcore\Model\Redirect;
 
 final class RedirectCleanupTask implements TaskInterface
 {
-
     /**
      * {@inheritdoc}
      */

@@ -691,6 +691,7 @@ class Document extends Element\AbstractElement
 
     /**
      * Returns true if the document has at least one child
+     *
      * @param $unpublished
      *
      * @return bool

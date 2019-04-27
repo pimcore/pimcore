@@ -107,7 +107,7 @@ class SnippetController extends DocumentControllerBase
             if ($request->get('id')) {
                 $snippet = Document\Snippet::getById($request->get('id'));
 
-                $snippetSession  = $this->getFromSession($snippet);
+                $snippetSession = $this->getFromSession($snippet);
 
                 if ($snippetSession) {
                     $snippet = $snippetSession;

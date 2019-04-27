@@ -350,6 +350,7 @@ class Dao extends Model\Element\Dao
 
     /**
      * Quick check if there are children.
+     *
      * @param bool $unpublished
      *
      * @return bool
@@ -364,7 +365,7 @@ class Dao extends Model\Element\Dao
 
         $sql .= ' LIMIT 1';
 
-        $c = $this->db->fetchOne($sql , $this->model->getId());
+        $c = $this->db->fetchOne($sql, $this->model->getId());
 
         return (bool)$c;
     }

@@ -212,7 +212,7 @@ abstract class DocumentControllerBase extends AdminController implements Evented
     {
         $sessionDocument = null;
 
-        if($doc instanceof Model\Document) {
+        if ($doc instanceof Model\Document) {
             // check if there's a document in session which should be used as data-source
             // see also PageController::clearEditableDataAction() | this is necessary to reset all fields and to get rid of
             // outdated and unused data elements in this document (eg. entries of area-blocks)

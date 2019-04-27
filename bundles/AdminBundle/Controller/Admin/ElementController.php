@@ -26,7 +26,6 @@ use Pimcore\Model\DataObject;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
 use Pimcore\Model\Version;
-use Pimcore\Tool;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -506,14 +505,14 @@ class ElementController extends AdminController
 
         $result = $this->convertResultWithPathFormatter($source, $context, $result, $targets);
 
-        if($request->get('loadEditModeData') == 'true') {
+        if ($request->get('loadEditModeData') == 'true') {
             $idProperty = $request->get('idProperty', 'id');
             $methodName = 'get' . ucfirst($fieldname);
             if ($ownerType == 'object' && method_exists($source, $methodName)) {
                 $data = $source->$methodName();
                 $editModeData = $fd->getDataForEditmode($data, $source);
-                if(is_array($editModeData)) {
-                    foreach($editModeData as $relationObjectAttribute) {
+                if (is_array($editModeData)) {
+                    foreach ($editModeData as $relationObjectAttribute) {
                         $relationObjectAttribute['$$nicepath'] = $result[$relationObjectAttribute[$idProperty]];
                         $result[$relationObjectAttribute[$idProperty]] = $relationObjectAttribute;
                     }
@@ -752,7 +751,9 @@ class ElementController extends AdminController
      * @param                     $context
      * @param                     $result
      * @param                     $targets
+     *
      * @return array
+     *
      * @throws \Exception
      */
     protected function convertResultWithPathFormatter(DataObject\Concrete $source, $context, $result, $targets): array
@@ -779,7 +780,6 @@ class ElementController extends AdminController
             }
         }
 
-
         if ($fd instanceof DataObject\ClassDefinition\PathFormatterAwareInterface) {
             $formatter = $fd->getPathFormatterClass();
 
@@ -793,8 +793,7 @@ class ElementController extends AdminController
                         'fd' => $fd,
                         'context' => $context
                     ]);
-                }
-                elseif (method_exists($formatter, 'formatPath')) {
+                } elseif (method_exists($formatter, 'formatPath')) {
                     @trigger_error(
                         sprintf(
                             'Static PathFormatters are deprecated since Pimcore 5.5 and will be removed in 6.0. Please use %s instead',

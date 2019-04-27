@@ -26,6 +26,7 @@ final class CacheCleanupTask implements TaskInterface
 
     /**
      * CacheCleanupTask constructor.
+     *
      * @param CoreHandlerInterface $cacheHandler
      */
     public function __construct(CoreHandlerInterface $cacheHandler)

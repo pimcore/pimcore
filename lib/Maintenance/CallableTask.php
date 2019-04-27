@@ -39,6 +39,7 @@ final class CallableTask implements TaskInterface
     /**
      * @param callable $callable
      * @param array    $arguments
+     *
      * @return CallableTask
      */
     public static function fromCallable(callable $callable, $arguments = [])

@@ -74,7 +74,7 @@ final class Executor implements ExecutorInterface
             $lockKey = 'maintenance-' . $name;
             $isLocked = Lock::isLocked($lockKey, 86400);
 
-            if ($isLocked  && !$force) {
+            if ($isLocked && !$force) {
                 $this->logger->info('Skipped job with ID {id} because it already being executed', [
                     'id' => $name
                 ]);

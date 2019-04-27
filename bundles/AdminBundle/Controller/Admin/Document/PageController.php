@@ -19,12 +19,10 @@ use Pimcore\Logger;
 use Pimcore\Model\Document;
 use Pimcore\Model\Document\Targeting\TargetingDocumentInterface;
 use Pimcore\Model\Element;
-use Pimcore\Tool\Session;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
@@ -116,7 +114,7 @@ class PageController extends DocumentControllerBase
             if ($request->get('id')) {
                 $page = Document\Page::getById($request->get('id'));
 
-                $pageSession  = $this->getFromSession($page);
+                $pageSession = $this->getFromSession($page);
 
                 if ($pageSession) {
                     $page = $pageSession;

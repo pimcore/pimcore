@@ -23,7 +23,6 @@ use Pimcore\Event\VersionEvents;
 use Pimcore\File;
 use Pimcore\Logger;
 use Pimcore\Model\DataObject\Concrete;
-use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Tool\Serialize;
 
 /**

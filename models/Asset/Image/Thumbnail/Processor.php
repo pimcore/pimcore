@@ -18,7 +18,6 @@
 namespace Pimcore\Model\Asset\Image\Thumbnail;
 
 use Pimcore\File;
-use Pimcore\Image\Optimizer;
 use Pimcore\Logger;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Tool\TmpStore;

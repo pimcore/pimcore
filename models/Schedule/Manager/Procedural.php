@@ -209,7 +209,8 @@ class Procedural
      *
      * @return Job[]
      */
-    public function getJobs() {
+    public function getJobs()
+    {
         return $this->jobs;
     }
 }

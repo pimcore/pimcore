@@ -15,14 +15,9 @@
 namespace Pimcore\Maintenance\Tasks;
 
 use Pimcore\Maintenance\TaskInterface;
-use Pimcore\Model\Asset;
-use Pimcore\Model\DataObject;
-use Pimcore\Model\Document;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Element\Sanitycheck;
 use Pimcore\Model\Element\Service;
-use Pimcore\Model\Schedule\Task\Listing;
-use Pimcore\Model\Version;
 use Psr\Log\LoggerInterface;
 
 final class SanitizeElementsTask implements TaskInterface

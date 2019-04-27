@@ -14,10 +14,8 @@
 
 namespace Pimcore\Maintenance\Tasks;
 
-use Pimcore\File;
 use Pimcore\Maintenance\TaskInterface;
 use Pimcore\Model\Tool\Tag\Config;
-use Pimcore\Tool;
 use Psr\Log\LoggerInterface;
 
 final class TagsExpireTask implements TaskInterface

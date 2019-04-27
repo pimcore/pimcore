@@ -14,12 +14,10 @@
 
 namespace Pimcore\Maintenance\Tasks;
 
-use Pimcore\Cache\Core\CoreHandlerInterface;
 use Pimcore\Config;
 use Pimcore\Db\Connection;
 use Pimcore\Log\Handler\ApplicationLoggerDb;
 use Pimcore\Maintenance\TaskInterface;
-use Psr\Log\LoggerInterface;
 
 final class CheckErrorLogsDbTask implements TaskInterface
 {

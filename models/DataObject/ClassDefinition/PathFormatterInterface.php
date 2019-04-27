@@ -25,6 +25,7 @@ interface PathFormatterInterface
      * @param ElementInterface $source the source object
      * @param array            $targets list of nodes describing the target elements
      * @param array            $params optional parameters. may contain additional context information in the future. to be defined.
+     *
      * @return array list of display names.
      */
     public function formatPath(array $result, ElementInterface $source, array $targets, array $params): array;
