@@ -15,6 +15,7 @@
 namespace Pimcore\Maintenance\Tasks;
 
 use Pimcore\Maintenance\TaskInterface;
+use Pimcore\Model\DataObject;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Element\Sanitycheck;
 use Pimcore\Model\Element\Service;
@@ -40,6 +41,8 @@ final class SanitizeElementsTask implements TaskInterface
      */
     public function execute()
     {
+        DataObject\AbstractObject::disableDirtyDetection(); //force relations cleanup for DataObject elements
+
         $sanityCheck = Sanitycheck::getNext();
         $count = 0;
         while ($sanityCheck) {
