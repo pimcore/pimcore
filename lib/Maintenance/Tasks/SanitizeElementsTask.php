@@ -41,8 +41,6 @@ final class SanitizeElementsTask implements TaskInterface
      */
     public function execute()
     {
-        DataObject\AbstractObject::disableDirtyDetection(); //force relations cleanup for DataObject elements
-
         $sanityCheck = Sanitycheck::getNext();
         $count = 0;
         while ($sanityCheck) {
