@@ -123,12 +123,17 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
      */
     public function loadData($data, $object = null, $params = [])
     {
-        $objects = [];
+        $objects = [
+            'dirty' => false,
+            'data' => []
+        ];
         if (is_array($data) && count($data) > 0) {
             foreach ($data as $object) {
                 $o = DataObject::getById($object['dest_id']);
                 if ($o instanceof DataObject\Concrete) {
-                    $objects[] = $o;
+                    $objects['data'][] = $o;
+                } else {
+                    $objects['dirty'] = true;
                 }
             }
         }

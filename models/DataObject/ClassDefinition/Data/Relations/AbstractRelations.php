@@ -385,11 +385,11 @@ abstract class AbstractRelations extends Data implements CustomResourcePersistin
         });
 
         $data = $this->loadData($relations, $object, $params);
-        if ($object instanceof DataObject\DirtyIndicatorInterface) {
-            $object->markFieldDirty($this->getName(), false);
+        if ($object instanceof DataObject\DirtyIndicatorInterface && $data['dirty']) {
+            $object->markFieldDirty($this->getName(), true);
         }
 
-        return $data;
+        return $data['data'];
     }
 
     /**

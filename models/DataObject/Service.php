@@ -711,7 +711,10 @@ class Service extends Model\Element\Service
             foreach ($fd as $def) {
                 $getter = 'get' . ucfirst($def->getName());
                 if (method_exists($object, $getter)) {
-                    $object->$getter();
+                    $value = $object->$getter();
+                    if ($value instanceof Localizedfield || $value instanceof Objectbrick || $value instanceof Fieldcollection) {
+                        $value->loadLazyData();
+                    }
                 }
             }
         }
