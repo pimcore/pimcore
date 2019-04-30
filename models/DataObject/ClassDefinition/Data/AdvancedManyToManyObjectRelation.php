@@ -126,6 +126,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
 
                     if (!in_array($destinationId, $existingTargets)) {
                         // destination object does not exist anymore
+                        $list['dirty'] = true;
                         continue;
                     }
 
@@ -156,9 +157,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
                             $index
                         );
 
-                        $list['data'] = $metaData;
-                    } else {
-                        $list['dirty'] = true;
+                        $list['data'][] = $metaData;
                     }
                 }
             }

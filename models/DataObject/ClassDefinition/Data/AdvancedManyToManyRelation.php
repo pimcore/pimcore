@@ -126,6 +126,12 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
                     $destinationType = $element['type'];
                     $destinationId = $element['dest_id'];
 
+                    if (!in_array($destinationId, $existingTargets[$destinationType])) {
+                        // destination object does not exist anymore
+                        $list['dirty'] = true;
+                        continue;
+                    }
+
 
                     if ($source instanceof DataObject\Concrete) {
                         /** @var $metaData DataObject\Data\ElementMetadata */
@@ -160,9 +166,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
                         );
                         $objects[] = $metaData;
 
-                        $list['data'] = $metaData;
-                    } else {
-                        $list['dirty'] = true;
+                        $list['data'][] = $metaData;
                     }
                 }
             }
