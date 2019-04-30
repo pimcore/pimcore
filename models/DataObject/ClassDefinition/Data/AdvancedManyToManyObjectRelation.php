@@ -101,7 +101,10 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
      */
     public function loadData($data, $container = null, $params = [])
     {
-        $list = [];
+        $list = [
+            'dirty' => false,
+            'data' => []
+        ];
 
         if (is_array($data) && count($data) > 0) {
             $db = Db::get();
@@ -123,6 +126,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
 
                     if (!in_array($destinationId, $existingTargets)) {
                         // destination object does not exist anymore
+                        $list['dirty'] = true;
                         continue;
                     }
 
@@ -153,7 +157,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
                             $index
                         );
 
-                        $list[] = $metaData;
+                        $list['data'][] = $metaData;
                     }
                 }
             }

@@ -93,7 +93,10 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
      */
     public function loadData($data, $object = null, $params = [])
     {
-        $list = [];
+        $list = [
+            'dirty' => false,
+            'data' => []
+        ];
 
         if (is_array($data) && count($data) > 0) {
             $targets = [];
@@ -124,42 +127,47 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
                     $destinationId = $element['dest_id'];
 
                     if (!in_array($destinationId, $existingTargets[$destinationType])) {
+                        // destination object does not exist anymore
+                        $list['dirty'] = true;
                         continue;
                     }
 
-                    /** @var $metaData DataObject\Data\ElementMetadata */
-                    $metaData = \Pimcore::getContainer()->get('pimcore.model.factory')
-                        ->build(
-                            'Pimcore\Model\DataObject\Data\ElementMetadata',
-                            [
-                                'fieldname' => $this->getName(),
-                                'columns' => $this->getColumnKeys(),
-                                'element' => null,
-                            ]
+
+                    if ($source instanceof DataObject\Concrete) {
+                        /** @var $metaData DataObject\Data\ElementMetadata */
+                        $metaData = \Pimcore::getContainer()->get('pimcore.model.factory')
+                            ->build(
+                                'Pimcore\Model\DataObject\Data\ElementMetadata',
+                                [
+                                    'fieldname' => $this->getName(),
+                                    'columns' => $this->getColumnKeys(),
+                                    'element' => null,
+                                ]
+                            );
+
+                        $metaData->setOwner($object, $this->getName());
+
+                        $metaData->setElementTypeAndId($element['type'], $element['dest_id']);
+
+                        $ownertype = $element['ownertype'] ? $element['ownertype'] : '';
+                        $ownername = $element['ownername'] ? $element['ownername'] : '';
+                        $position = $element['position'] ? $element['position'] : '0';
+                        $index = $element['index'] ? $element['index'] : '0';
+
+                        $metaData->load(
+                            $source,
+                            $element['dest_id'],
+                            $this->getName(),
+                            $ownertype,
+                            $ownername,
+                            $position,
+                            $index,
+                            $destinationType
                         );
+                        $objects[] = $metaData;
 
-                    $metaData->setOwner($object, $this->getName());
-
-                    $metaData->setElementTypeAndId($element['type'], $element['dest_id']);
-
-                    $ownertype = $element['ownertype'] ? $element['ownertype'] : '';
-                    $ownername = $element['ownername'] ? $element['ownername'] : '';
-                    $position = $element['position'] ? $element['position'] : '0';
-                    $index = $element['index'] ? $element['index'] : '0';
-
-                    $metaData->load(
-                        $source,
-                        $element['dest_id'],
-                        $this->getName(),
-                        $ownertype,
-                        $ownername,
-                        $position,
-                        $index,
-                        $destinationType
-                    );
-                    $objects[] = $metaData;
-
-                    $list[] = $metaData;
+                        $list['data'][] = $metaData;
+                    }
                 }
             }
         }

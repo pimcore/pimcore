@@ -73,7 +73,6 @@ class Dao extends Model\Dao\AbstractDao
             }
 
             $this->db->delete('dependencies', ['sourceid' => $id, 'sourcetype' => $type]);
-            $this->db->delete('dependencies', ['targetid' => $id, 'targettype' => $type]);
         } catch (\Exception $e) {
             Logger::error($e);
         }
