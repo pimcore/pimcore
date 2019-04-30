@@ -15,7 +15,6 @@
 namespace Pimcore\Maintenance\Tasks;
 
 use Pimcore\Maintenance\TaskInterface;
-use Pimcore\Model\DataObject;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Element\Sanitycheck;
 use Pimcore\Model\Element\Service;
