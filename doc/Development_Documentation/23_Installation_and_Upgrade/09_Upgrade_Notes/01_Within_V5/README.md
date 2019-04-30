@@ -7,6 +7,8 @@
   was added as second parameter. If you have your custom `getCategories` implementation you need to adapt your method signature.
 - `AbstractObject::hasChildren()` and `Document::hasChildren()` from now on only return the published items by default, similar
 to `getChildren()`   
+- The following warning is issued during the update: `[WARNING] Some commands could not be registered`, this is due 
+to the way how the Symfony container gets built and can be safely ignored.  
 
 ## Version 5.7.2 
 - Signature of `\Pimcore\Model\DataObject\LazyLoadedFieldsInterface` has changed
