@@ -49,7 +49,7 @@ class Unit extends Model\AbstractModel
     public $longname;
 
     /**
-     * @var string
+     * @var int
      */
     public $baseunit;
 
@@ -67,6 +67,9 @@ class Unit extends Model\AbstractModel
      * @var float
      */
     public $conversionOffset;
+
+    /** @var string */
+    public $converter;
 
     /**
      * @param string $abbreviation
@@ -181,12 +184,18 @@ class Unit extends Model\AbstractModel
 
     public function setBaseunit($baseunit)
     {
+        if($baseunit instanceof self) {
+            $baseunit = $baseunit->getId();
+        }
         $this->baseunit = $baseunit;
     }
 
     public function getBaseunit()
     {
-        return $this->baseunit;
+        if($this->baseunit) {
+            return self::getById($this->baseunit);
+        }
+        return null;
     }
 
     public function setFactor($factor)
@@ -259,5 +268,21 @@ class Unit extends Model\AbstractModel
     public function setConversionOffset($conversionOffset)
     {
         $this->conversionOffset = $conversionOffset;
+    }
+
+    /**
+     * @return string
+     */
+    public function getConverter()
+    {
+        return $this->converter;
+    }
+
+    /**
+     * @param string $converter
+     */
+    public function setConverter($converter)
+    {
+        $this->converter = (string)$converter;
     }
 }

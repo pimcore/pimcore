@@ -865,11 +865,17 @@ CREATE TABLE `quantityvalue_units` (
   `group` varchar(50) DEFAULT NULL,
   `abbreviation` varchar(20) NOT NULL,
   `longname` varchar(250) DEFAULT NULL,
-  `baseunit` varchar(10) DEFAULT NULL,
+  `baseunit` INT(11) UNSIGNED DEFAULT NULL,
   `factor` double DEFAULT NULL,
   `conversionOffset` DOUBLE NULL DEFAULT NULL,
   `reference` varchar(50) DEFAULT NULL,
-  PRIMARY KEY (`id`)
+  `converter` VARCHAR(255) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  CONSTRAINT `fk_baseunit`
+    FOREIGN KEY (`baseunit`)
+    REFERENCES `quantityvalue_units`(`id`)
+    ON DELETE SET NULL
+    ON UPDATE CASCADE
 ) DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `element_workflow_state`;

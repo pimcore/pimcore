@@ -17,7 +17,9 @@
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin\DataObject;
 
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
+use Pimcore\Model\DataObject\Data\QuantityValue;
 use Pimcore\Model\DataObject\QuantityValue\Unit;
+use Pimcore\Model\DataObject\QuantityValue\UnitConversionService;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -107,6 +109,9 @@ class QuantityValueController extends AdminController
                 $data = json_decode($request->get('data'), true);
                 $unit = Unit::getById($data['id']);
                 if (!empty($unit)) {
+                    if($data['baseunit'] === -1) {
+                        $data['baseunit'] = null;
+                    }
                     $unit->setValues($data);
                     $unit->save();
 
@@ -116,6 +121,9 @@ class QuantityValueController extends AdminController
                 }
             } elseif ($request->get('xaction') == 'create') {
                 $data = json_decode($request->get('data'), true);
+                if($data['baseunit'] === -1) {
+                    $data['baseunit'] = null;
+                }
                 unset($data['id']);
                 $unit = new Unit();
                 $unit->setValues($data);
@@ -184,5 +192,33 @@ class QuantityValueController extends AdminController
         }
 
         return $this->adminJson(['data' => $units, 'success' => true, 'total' => $list->getTotalCount()]);
+    }
+
+    /**
+     * @Route("/quantity-value/convert", methods={"GET"})
+     *
+     * @param Request $request
+     *
+     * @return JsonResponse
+     */
+    public function convertAction(Request $request)
+    {
+        $fromUnitId = $request->get('fromUnit');
+        $toUnitId = $request->get('toUnit');
+
+        $fromUnit = Unit::getById($fromUnitId);
+        $toUnit = Unit::getById($toUnitId);
+        if(!$fromUnit instanceof Unit || !$toUnit instanceof Unit) {
+            return null;
+        }
+
+        /** @var UnitConversionService $converter */
+        $converter = $this->container->get(UnitConversionService::class);
+        try {
+            $convertedValue = $converter->convert(new QuantityValue($request->get('value'), $fromUnit), $toUnit);
+        } catch (\Exception $e) {
+            return $this->adminJson(['success' => false]);
+        }
+        return $this->adminJson(['value' => $convertedValue->getValue(), 'success' => true]);
     }
 }

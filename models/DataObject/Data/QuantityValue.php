@@ -43,7 +43,7 @@ class QuantityValue implements OwnerAwareFieldInterface
      * QuantityValue constructor.
      *
      * @param null $value
-     * @param null $unitId
+     * @param int|Unit|null $unitId
      */
     public function __construct($value = null, $unitId = null)
     {
@@ -51,7 +51,10 @@ class QuantityValue implements OwnerAwareFieldInterface
         $this->unitId = $unitId;
         $this->unit = '';
 
-        if ($unitId) {
+        if ($unitId instanceof Unit) {
+            $this->unit = $unitId;
+            $this->unitId = $this->unit->getId();
+        } elseif($unitId) {
             $this->unit = Unit::getById($this->unitId);
         }
         $this->markMeDirty();
