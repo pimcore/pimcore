@@ -54,6 +54,11 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
     /**
      * @var bool
      */
+    public $enableBatchEdit;
+
+    /**
+     * @var bool
+     */
     public $allowMultipleAssignments;
 
     /**
@@ -1225,5 +1230,21 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
     public function setAllowMultipleAssignments($allowMultipleAssignments)
     {
         $this->allowMultipleAssignments = $allowMultipleAssignments;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getEnableBatchEdit()
+    {
+        return $this->enableBatchEdit;
+    }
+
+    /**
+     * @param bool $enableBatchEdit
+     */
+    public function setEnableBatchEdit($enableBatchEdit)
+    {
+        $this->enableBatchEdit = $enableBatchEdit;
     }
 }
