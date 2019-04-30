@@ -68,74 +68,6 @@ class AbstractObject extends Model\Element\AbstractElement
     protected static $disableDirtyDetection = false;
 
     /**
-     * @static
-     *
-     * @return bool
-     */
-    public static function getHideUnpublished()
-    {
-        return self::$hideUnpublished;
-    }
-
-    /**
-     * @static
-     *
-     * @param  $hideUnpublished
-     */
-    public static function setHideUnpublished($hideUnpublished)
-    {
-        self::$hideUnpublished = $hideUnpublished;
-    }
-
-    /**
-     * @static
-     *
-     * @return bool
-     */
-    public static function doHideUnpublished()
-    {
-        return self::$hideUnpublished;
-    }
-
-    /**
-     * @static
-     *
-     * @param  $getInheritedValues
-     */
-    public static function setGetInheritedValues($getInheritedValues)
-    {
-        self::$getInheritedValues = $getInheritedValues;
-    }
-
-    /**
-     * @static
-     *
-     * @return bool
-     */
-    public static function getGetInheritedValues()
-    {
-        return self::$getInheritedValues;
-    }
-
-    /**
-     * @static
-     *
-     * @param Concrete $object
-     *
-     * @return bool
-     */
-    public static function doGetInheritedValues(Concrete $object = null)
-    {
-        if (self::$getInheritedValues && $object !== null) {
-            $class = $object->getClass();
-
-            return $class->getAllowInherit();
-        }
-
-        return self::$getInheritedValues;
-    }
-
-    /**
      * @var int
      */
     protected $o_id = 0;
@@ -251,6 +183,75 @@ class AbstractObject extends Model\Element\AbstractElement
 
     /** @var int */
     protected $o_versionCount = 0;
+
+    /**
+     * @static
+     *
+     * @return bool
+     */
+    public static function getHideUnpublished()
+    {
+        return self::$hideUnpublished;
+    }
+
+    /**
+     * @static
+     *
+     * @param  $hideUnpublished
+     */
+    public static function setHideUnpublished($hideUnpublished)
+    {
+        self::$hideUnpublished = $hideUnpublished;
+    }
+
+    /**
+     * @static
+     *
+     * @return bool
+     */
+    public static function doHideUnpublished()
+    {
+        return self::$hideUnpublished;
+    }
+
+    /**
+     * @static
+     *
+     * @param  $getInheritedValues
+     */
+    public static function setGetInheritedValues($getInheritedValues)
+    {
+        self::$getInheritedValues = $getInheritedValues;
+    }
+
+    /**
+     * @static
+     *
+     * @return bool
+     */
+    public static function getGetInheritedValues()
+    {
+        return self::$getInheritedValues;
+    }
+
+    /**
+     * @static
+     *
+     * @param Concrete $object
+     *
+     * @return bool
+     */
+    public static function doGetInheritedValues(Concrete $object = null)
+    {
+        if (self::$getInheritedValues && $object !== null) {
+            $class = $object->getClass();
+
+            return $class->getAllowInherit();
+        }
+
+        return self::$getInheritedValues;
+    }
+
 
     /**
      * get possible types
