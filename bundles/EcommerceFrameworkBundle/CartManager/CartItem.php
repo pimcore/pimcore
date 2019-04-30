@@ -104,6 +104,7 @@ class CartItem extends AbstractCartItem implements ICartItem
                 }
             }
             $itemList = new $itemClass();
+            $itemList->setCartItemClassName(get_class($this));
 
             $db = \Pimcore\Db::get();
             $itemList->setCondition('cartId = ' . $db->quote($this->getCartId()) . ' AND parentItemKey = ' . $db->quote($this->getItemKey()));

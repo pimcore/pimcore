@@ -897,7 +897,7 @@ pimcore.settings.thumbnail.items = {
                 value: data.mode,
                 triggerAction: 'all',
                 editable: false,
-                store: [["", "fit"], ["cropTopLeft", "cropTopLeft"]],
+                store: [["", "fit"], ["cropTopLeft", "cropTopLeft"], ["asTexture", "asTexture"]],
                 width: 300
             }, {
                 xtype: "hidden",

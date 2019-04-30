@@ -16,7 +16,7 @@ pimcore.object.tags.advancedManyToManyObjectRelation = Class.create(pimcore.obje
 
     type: "advancedManyToManyObjectRelation",
     dataChanged: false,
-    idProperty: "id",
+    idProperty: "rowId",
     pathProperty: "fullpath",
     allowBatchAppend: true,
 
@@ -49,6 +49,7 @@ pimcore.object.tags.advancedManyToManyObjectRelation = Class.create(pimcore.obje
         this.visibleFields = visibleFields;
 
         fields.push("id");
+        fields.push("index");
         fields.push("inheritedFields");
         fields.push("metadata");
 
@@ -60,6 +61,15 @@ pimcore.object.tags.advancedManyToManyObjectRelation = Class.create(pimcore.obje
 
         for (i = 0; i < this.fieldConfig.columns.length; i++) {
             fields.push(this.fieldConfig.columns[i].key);
+        }
+
+        var modelName = 'ObjectsMultipleRelations';
+        if (!Ext.ClassManager.isCreated(modelName)) {
+            Ext.define(modelName, {
+                extend: 'Ext.data.Model',
+                idProperty: this.idProperty,
+                fields: fields
+            });
         }
 
         this.store = new Ext.data.JsonStore({
@@ -81,7 +91,7 @@ pimcore.object.tags.advancedManyToManyObjectRelation = Class.create(pimcore.obje
                     this.dataChanged = true;
                 }.bind(this)
             },
-            fields: fields
+            model: modelName
         });
     },
 
@@ -113,7 +123,7 @@ pimcore.object.tags.advancedManyToManyObjectRelation = Class.create(pimcore.obje
 
                 var fc = pimcore.object.tags[layout.fieldtype].prototype.getGridColumnConfig(field);
 
-                fc.width = 100;
+                fc.flex = 1;
                 fc.hidden = false;
                 fc.layout = field;
                 fc.editor = null;
@@ -217,7 +227,6 @@ pimcore.object.tags.advancedManyToManyObjectRelation = Class.create(pimcore.obje
                 dataIndex: this.fieldConfig.columns[i].key,
                 renderer: renderer,
                 listeners: listeners,
-                sortable: true,
                 width: width
             };
 
@@ -338,6 +347,9 @@ pimcore.object.tags.advancedManyToManyObjectRelation = Class.create(pimcore.obje
             columnLines: true,
             stripeRows: true,
             columns: {
+                defaults: {
+                    sortable: false
+                },
                 items: columns
             },
             viewConfig: {
@@ -347,8 +359,8 @@ pimcore.object.tags.advancedManyToManyObjectRelation = Class.create(pimcore.obje
                 },
                 markDirty: false,
                 listeners: {
-                    refresh: function (gridview) {
-                        this.requestNicePathData(this.store.data);
+                    afterrender: function (gridview) {
+                        this.requestNicePathData(this.store.data, true);
                     }.bind(this),
                     drop: function () {
                         // this is necessary to avoid endless recursion when long lists are sorted via d&d
@@ -435,10 +447,11 @@ pimcore.object.tags.advancedManyToManyObjectRelation = Class.create(pimcore.obje
                                     var initData = {
                                         id: data.id,
                                         metadata: '',
+                                        fullpath: data.path,
                                         inheritedFields: {}
                                     };
 
-                                    if (!this.objectAlreadyExists(initData.id)) {
+                                    if (this.fieldConfig.allowMultipleAssignments || !this.objectAlreadyExists(initData.id)) {
                                         toBeRequested.add(this.loadObjectData(initData, this.visibleFields));
                                     }
                                 }
@@ -508,38 +521,6 @@ pimcore.object.tags.advancedManyToManyObjectRelation = Class.create(pimcore.obje
         return this.createLayout(true);
     },
 
-    getEditToolbarItems: function (readOnly) {
-        var toolbarItems = [
-            {
-                xtype: "tbspacer",
-                width: 20,
-                height: 16,
-                cls: "pimcore_icon_droptarget"
-            },
-            {
-                xtype: "tbtext",
-                text: "<b>" + this.fieldConfig.title + "</b>"
-            }];
-
-        if (!readOnly) {
-            toolbarItems = toolbarItems.concat([
-                "->",
-                {
-                    xtype: "button",
-                    iconCls: "pimcore_icon_delete",
-                    handler: this.empty.bind(this)
-                },
-                {
-                    xtype: "button",
-                    iconCls: "pimcore_icon_search",
-                    handler: this.openSearchEditor.bind(this)
-                },
-                this.getCreateControl()]);
-        }
-
-        return toolbarItems;
-    },
-
     dndAllowed: function (data, fromTree) {
         // check if data is a treenode, if not allow drop because of the reordering
         if (!fromTree) {
@@ -568,20 +549,6 @@ pimcore.object.tags.advancedManyToManyObjectRelation = Class.create(pimcore.obje
         return isAllowedClass;
     },
 
-    addDataFromSelector: function (items) {
-
-        if (items.length > 0) {
-            toBeRequested = new Ext.util.Collection();
-
-            for (var i = 0; i < items.length; i++) {
-                if (!this.objectAlreadyExists(items[i].id)) {
-                    toBeRequested.add(this.loadObjectData(items[i], this.visibleFields));
-                }
-            }
-            this.requestNicePathData(toBeRequested);
-        }
-    },
-
     cellMousedown: function (key, colType, grid, cell, rowIndex, cellIndex, e) {
 
         // this is used for the boolean field type
@@ -592,48 +559,6 @@ pimcore.object.tags.advancedManyToManyObjectRelation = Class.create(pimcore.obje
         if (colType == "bool") {
             record.set(key, !record.data[key]);
         }
-    },
-
-    loadObjectData: function (item, fields) {
-
-        var newItem = this.store.add(item);
-
-        Ext.Ajax.request({
-            url: "/admin/object-helper/load-object-data",
-            params: {
-                id: item.id,
-                'fields[]': fields
-            },
-            success: function (response) {
-                var rdata = Ext.decode(response.responseText);
-                var key;
-
-                if (rdata.success) {
-                    var rec = this.store.getById(item.id);
-                    for (key in rdata.fields) {
-                        rec.set(key, rdata.fields[key]);
-                    }
-                }
-            }.bind(this)
-        });
-
-        return newItem;
-    },
-
-    normalizeTargetData: function (targets) {
-        if (!targets) {
-            return targets;
-        }
-
-        targets.each(function (record) {
-            var type = record.data.type;
-            record.data.type = "object";
-            record.data.subtype = type;
-            record.data.path = record.data.fullpath;
-        }, this);
-
-        return targets;
-
     },
 
     getGridColumnConfig: function(field) {

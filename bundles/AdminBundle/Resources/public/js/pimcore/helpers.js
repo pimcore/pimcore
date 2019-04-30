@@ -2547,6 +2547,10 @@ pimcore.helpers.initMenuTooltips = function () {
 };
 
 pimcore.helpers.requestNicePathDataGridDecorator = function (gridView, targets) {
+
+    if(targets && targets.count() > 0) {
+        gridView.mask();
+    }
     targets.each(function (record) {
         var el = gridView.getRow(record);
         if (el) {
@@ -2558,7 +2562,7 @@ pimcore.helpers.requestNicePathDataGridDecorator = function (gridView, targets) 
 };
 
 pimcore.helpers.requestNicePathData = function (source, targets, config, fieldConfig, context, decorator, responseHandler) {
-    if (typeof targets === "undefined" || !fieldConfig.pathFormatterClass) {
+    if (!config.loadEditModeData && (typeof targets === "undefined" || !fieldConfig.pathFormatterClass)) {
         return;
     }
 
@@ -2590,8 +2594,9 @@ pimcore.helpers.requestNicePathData = function (source, targets, config, fieldCo
         params: {
             source: Ext.encode(source),
             targets: elementData,
-            context: Ext.encode(context)
-
+            context: Ext.encode(context),
+            loadEditModeData: config.loadEditModeData,
+            idProperty: config.idProperty
         },
         success: function (response) {
             try {
@@ -2621,20 +2626,32 @@ pimcore.helpers.getNicePathHandlerStore = function (store, config, gridView, res
     store.ignoreDataChanged = true;
     store.each(function (record, id) {
         var recordId = record.data[config.idProperty];
+
         if (typeof responseData[recordId] != "undefined") {
-            record.set(config.pathProperty, responseData[recordId], {dirty: false});
+
+            if(config.loadEditModeData) {
+                for(var i = 0; i < config.fields.length; i++) {
+                    record.set(config.fields[i], responseData[recordId][config.fields[i]], {dirty: false});
+                }
+                if(responseData[recordId]['$$nicepath']) {
+                    record.set(config.pathProperty, responseData[recordId]['$$nicepath'], {dirty: false});
+                }
+            } else {
+                record.set(config.pathProperty, responseData[recordId], {dirty: false});
+            }
 
             var el = gridView.getRow(record);
             if (el) {
                 el = Ext.fly(el);
                 el.removeCls("grid_nicepath_requested");
             }
+
         }
     }, this);
     store.ignoreDataChanged = false;
 
+    gridView.unmask();
     gridView.updateLayout();
-
 };
 
 pimcore.helpers.csvExportWarning = function (callback) {

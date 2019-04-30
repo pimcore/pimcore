@@ -358,7 +358,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
             $deletedItems = [];
             foreach ($documents as $document) {
                 $deletedItems[] = $document->getRealFullPath();
-                if ($document->isAllowed('delete')) {
+                if ($document->isAllowed('delete') && !$document->isLocked()) {
                     $document->delete();
                 }
             }
@@ -368,6 +368,9 @@ class DocumentController extends ElementControllerBase implements EventedControl
             $document = Document::getById($request->get('id'));
             if ($document->isAllowed('delete')) {
                 try {
+                    if ($document->isLocked()) {
+                        throw new \Exception('prevented deleting document, because it is locked: ID: ' . $document->getId());
+                    }
                     $document->delete();
 
                     return $this->adminJson(['success' => true]);

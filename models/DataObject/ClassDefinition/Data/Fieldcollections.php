@@ -324,7 +324,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
      */
     public function load($object, $params = [])
     {
-        if ((!$object->hasLazyKey($this->getName()) && !$this->getLazyLoading()) || (isset($params['force']) && $params['force'])) {
+        if (!$this->getLazyLoading() || (isset($params['force']) && $params['force'])) {
             $container = new DataObject\Fieldcollection(null, $this->getName());
             $container->load($object);
 
@@ -333,8 +333,6 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
             }
 
             return $container;
-        } else {
-            $object->addLazyKey($this->getName());
         }
 
         return null;
@@ -628,7 +626,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
         }
 
         $data = $object->getObjectVar($this->getName());
-        if ($this->getLazyLoading() && $object->hasLazyKey($this->getName())) {
+        if ($this->getLazyLoading() && !$object->isLazyKeyLoaded($this->getName())) {
             $data = $this->load($object, ['force' => true]);
             if ($data instanceof DataObject\DirtyIndicatorInterface) {
                 $data->resetDirtyMap();

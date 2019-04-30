@@ -177,7 +177,8 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
                 folderId: this.element.id,
                 objecttype: this.objecttype,
                 "fields[]": fieldKeys,
-                language: this.gridLanguage
+                language: this.gridLanguage,
+                batch: true //to avoid limit on batch edit/append all
             };
 
 
@@ -489,6 +490,7 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
 
         var filters = "";
         var condition = "";
+        var searchQuery = this.searchField.getValue();
 
         if(this.sqlButton.pressed) {
             condition = this.sqlEditor.getValue();
@@ -521,7 +523,9 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
             language: this.gridLanguage,
             "ids[]": ids,
             "fields[]": fieldKeys,
-            settings: settings
+            settings: settings,
+            query: searchQuery,
+            batch: true // to avoid limit for export
         };
 
 

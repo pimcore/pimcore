@@ -24,6 +24,7 @@ use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data\ManyToManyObjectRelation;
+use Pimcore\Model\DataObject\ClassDefinition\Data\Relations\AbstractRelations;
 use Pimcore\Model\DataObject\ClassDefinition\Data\ReverseManyToManyObjectRelation;
 use Pimcore\Model\Element;
 use Pimcore\Tool;
@@ -49,9 +50,20 @@ class DataObjectController extends ElementControllerBase implements EventedContr
     protected $_objectService;
 
     /**
+     * @var
+     */
+    private $objectData;
+
+    /**
+     * @var
+     */
+    private $metaData;
+
+    /**
      * @Route("/tree-get-childs-by-id", methods={"GET"})
      *
      * @param Request $request
+     * @param EventDispatcherInterface $eventDispatcher
      *
      * @return JsonResponse
      */
@@ -99,7 +111,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
 
             // custom views start
             if ($request->get('view')) {
-                $cv = \Pimcore\Model\Element\Service::getCustomViewById($request->get('view'));
+                $cv = Element\Service::getCustomViewById($request->get('view'));
 
                 if ($cv['classes']) {
                     $cvConditions = [];
@@ -136,7 +148,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
             $childsList->setLimit($limit);
             $childsList->setOffset($offset);
             $childsList->setOrderKey(
-                sprintf('objects.o_%s ASC', $object->getChildrenSortBy()),
+                sprintf('CAST(objects.o_%s AS CHAR CHARACTER SET utf8) COLLATE utf8_general_ci ASC', $object->getChildrenSortBy()),
                 false
             );
             $childsList->setObjectTypes($objectTypes);
@@ -337,8 +349,11 @@ class DataObjectController extends ElementControllerBase implements EventedContr
      * @Route("/get", methods={"GET"})
      *
      * @param Request $request
+     * @param EventDispatcherInterface $eventDispatcher
      *
      * @return JsonResponse
+     *
+     * @throws \Exception
      */
     public function getAction(Request $request, EventDispatcherInterface $eventDispatcher)
     {
@@ -413,7 +428,6 @@ class DataObjectController extends ElementControllerBase implements EventedContr
             }
 
             if ($object instanceof DataObject\Concrete) {
-                $objectData['lazyLoadedFields'] = $object->getLazyLoadedFields();
                 $objectData['general']['linkGeneratorReference'] = $object->getClass()->getLinkGeneratorReference();
             }
 
@@ -495,16 +509,6 @@ class DataObjectController extends ElementControllerBase implements EventedContr
     }
 
     /**
-     * @var
-     */
-    private $objectData;
-
-    /**
-     * @var
-     */
-    private $metaData;
-
-    /**
      * @param DataObject\Concrete $object
      * @param bool $objectFromVersion
      */
@@ -536,8 +540,6 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                 !$objectFromVersion
                 && $fielddefinition instanceof DataObject\ClassDefinition\Data\Relations\AbstractRelations
                 && $fielddefinition->getLazyLoading()
-                && !$fielddefinition instanceof DataObject\ClassDefinition\Data\AdvancedManyToManyObjectRelation
-                && !$fielddefinition instanceof DataObject\ClassDefinition\Data\AdvancedManyToManyRelation
             )
             || $fielddefinition instanceof ReverseManyToManyObjectRelation
         ) {
@@ -555,12 +557,8 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                 $refKey = $key;
             }
 
-            $relations = [];
-            if (!$fielddefinition instanceof ManyToManyObjectRelation
-                || ($fielddefinition instanceof ManyToManyObjectRelation && !$fielddefinition->getVisibleFields())
-                || $fielddefinition instanceof ReverseManyToManyObjectRelation) {
-                $relations = $object->getRelationData($refKey, !$fielddefinition->isRemoteOwner(), $refId);
-            }
+            $relations = $object->getRelationData($refKey, !$fielddefinition->isRemoteOwner(), $refId);
+
             if (empty($relations) && !empty($parent)) {
                 $this->getDataForField($parent, $key, $fielddefinition, $objectFromVersion, $level + 1);
             } else {
@@ -568,24 +566,21 @@ class DataObjectController extends ElementControllerBase implements EventedContr
 
                 if ($fielddefinition instanceof DataObject\ClassDefinition\Data\ManyToOneRelation) {
                     $data = $relations[0];
-                    $data['published'] = (bool) $data['published'];
-                } elseif (($fielddefinition instanceof ManyToManyObjectRelation && $fielddefinition->getVisibleFields()) && !$fielddefinition instanceof ReverseManyToManyObjectRelation) {
-                    $fieldData = $object->$getter();
-                    $data = $fielddefinition->getDataForEditmode($fieldData, $object, $objectFromVersion);
-                } else {
-                    foreach ($relations as $rel) {
-                        if ($fielddefinition instanceof ManyToManyObjectRelation || $fielddefinition instanceof DataObject\ClassDefinition\Data\ManyToManyRelation) {
-                            $rel['fullpath'] = $rel['path'];
-                            $rel['classname'] = $rel['subtype'];
-                            $data[] = $rel;
-                        } else {
-                            $data[] = [$rel['id'],
-                                $rel['path'],
-                                $rel['type'],
-                                $rel['subtype'],
-                                (bool)$rel['published']];
-                        }
+                    $data['published'] = (bool)$data['published'];
+                } elseif (
+                    ($fielddefinition instanceof DataObject\ClassDefinition\Data\OptimizedAdminLoadingInterface && $fielddefinition->isOptimizedAdminLoading())
+                    || ($fielddefinition instanceof ManyToManyObjectRelation && !$fielddefinition->getVisibleFields() && !$fielddefinition instanceof DataObject\ClassDefinition\Data\AdvancedManyToManyObjectRelation)
+                ) {
+                    foreach ($relations as $rkey => $rel) {
+                        $index = $rkey + 1;
+                        $rel['fullpath'] = $rel['path'];
+                        $rel['classname'] = $rel['subtype'];
+                        $rel['rowId'] = $rel['id'] . AbstractRelations::RELATION_ID_SEPARATOR . $index . AbstractRelations::RELATION_ID_SEPARATOR . $rel['type'];
+                        $data[] = $rel;
                     }
+                } else {
+                    $fieldData = $object->$getter();
+                    $data = $fielddefinition->getDataForEditmode($fieldData, $object, ['objectFromVersion' => $objectFromVersion]);
                 }
                 $this->objectData[$key] = $data;
                 $this->metaData[$key]['objectid'] = $object->getId();
@@ -598,9 +593,9 @@ class DataObjectController extends ElementControllerBase implements EventedContr
             if ($fielddefinition instanceof DataObject\ClassDefinition\Data\CalculatedValue) {
                 $fieldData = new DataObject\Data\CalculatedValue($fielddefinition->getName());
                 $fieldData->setContextualData('object', null, null, null);
-                $value = $fielddefinition->getDataForEditmode($fieldData, $object, $objectFromVersion);
+                $value = $fielddefinition->getDataForEditmode($fieldData, $object, ['objectFromVersion' => $objectFromVersion]);
             } else {
-                $value = $fielddefinition->getDataForEditmode($fieldData, $object, $objectFromVersion);
+                $value = $fielddefinition->getDataForEditmode($fieldData, $object, ['objectFromVersion' => $objectFromVersion]);
             }
 
             // following some exceptions for special data types (localizedfields, objectbricks)
@@ -636,30 +631,6 @@ class DataObjectController extends ElementControllerBase implements EventedContr
     }
 
     /**
-     * @param $object
-     * @param $key
-     *
-     * @return mixed
-     */
-    private function getParentValue($object, $key)
-    {
-        $parent = DataObject\Service::hasInheritableParentObject($object);
-        $getter = 'get' . ucfirst($key);
-        if ($parent) {
-            $value = $parent->$getter();
-            if ($value) {
-                $result = new \stdClass();
-                $result->value = $value;
-                $result->id = $parent->getId();
-
-                return $result;
-            } else {
-                return $this->getParentValue($parent, $key);
-            }
-        }
-    }
-
-    /**
      * @param $layout
      * @param $allowedView
      * @param $allowedEdit
@@ -675,8 +646,8 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                     }
                 }
                 if (!($haveAllowedViewDefault && count($allowedView) == 0)) {
-                    $layout->{'permissionView'} = \Pimcore\Tool\Admin::reorderWebsiteLanguages(
-                        \Pimcore\Tool\Admin::getCurrentUser(),
+                    $layout->{'permissionView'} = Tool\Admin::reorderWebsiteLanguages(
+                        Tool\Admin::getCurrentUser(),
                         array_keys($allowedView),
                         true
                     );
@@ -691,8 +662,8 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                 }
 
                 if (!($haveAllowedEditDefault && count($allowedEdit) == 0)) {
-                    $layout->{'permissionEdit'} = \Pimcore\Tool\Admin::reorderWebsiteLanguages(
-                        \Pimcore\Tool\Admin::getCurrentUser(),
+                    $layout->{'permissionEdit'} = Tool\Admin::reorderWebsiteLanguages(
+                        Tool\Admin::getCurrentUser(),
                         array_keys($allowedEdit),
                         true
                     );
@@ -751,6 +722,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
      * @Route("/get-folder", methods={"GET"})
      *
      * @param Request $request
+     * @param EventDispatcherInterface $eventDispatcher
      *
      * @return JsonResponse
      */
@@ -957,6 +929,8 @@ class DataObjectController extends ElementControllerBase implements EventedContr
      * @param Request $request
      *
      * @return JsonResponse
+     *
+     * @throws \Exception
      */
     public function deleteAction(Request $request)
     {
@@ -974,7 +948,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
             $deletedItems = [];
             foreach ($objects as $object) {
                 $deletedItems[] = $object->getRealFullPath();
-                if ($object->isAllowed('delete')) {
+                if ($object->isAllowed('delete') && !$object->isLocked()) {
                     $object->delete();
                 }
             }
@@ -985,6 +959,8 @@ class DataObjectController extends ElementControllerBase implements EventedContr
             if ($object) {
                 if (!$object->isAllowed('delete')) {
                     return $this->adminJson(['success' => false, 'message' => 'missing_permission']);
+                } elseif ($object->isLocked()) {
+                    return $this->adminJson(['success' => false, 'message' => 'prevented deleting object, because it is locked: ID: ' . $object->getId()]);
                 } else {
                     $object->delete();
                 }
@@ -993,6 +969,8 @@ class DataObjectController extends ElementControllerBase implements EventedContr
             // return true, even when the object doesn't exist, this can be the case when using batch delete incl. children
             return $this->adminJson(['success' => true]);
         }
+
+        return $this->adminJson(['success' => false]);
     }
 
     /**
@@ -1001,6 +979,8 @@ class DataObjectController extends ElementControllerBase implements EventedContr
      * @param Request $request
      *
      * @return JsonResponse
+     *
+     * @throws \Exception
      */
     public function changeChildrenSortByAction(Request $request)
     {
@@ -1122,6 +1102,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
 
     /**
      * @param DataObject\AbstractObject $updatedObject
+     * @param $newIndex
      */
     protected function updateIndexesOfObjectSiblings(DataObject\AbstractObject $updatedObject, $newIndex)
     {
@@ -1400,7 +1381,9 @@ class DataObjectController extends ElementControllerBase implements EventedContr
      * @param $originalModificationDate
      * @param $data
      *
-     * @return JsonResponse
+     * @return bool
+     *
+     * @throws \Exception
      */
     protected function performFieldcollectionModificationCheck(Request $request, DataObject\Concrete $object, $originalModificationDate, $data)
     {
@@ -1576,8 +1559,8 @@ class DataObjectController extends ElementControllerBase implements EventedContr
      * @TemplatePhp()
      *
      * @param Request $request
-     * @param from
-     * @param to
+     * @param $from
+     * @param $to
      *
      * @return array
      *
@@ -1616,6 +1599,8 @@ class DataObjectController extends ElementControllerBase implements EventedContr
      * @Route("/grid-proxy", methods={"GET", "POST", "PUT"})
      *
      * @param Request $request
+     * @param EventDispatcherInterface $eventDispatcher
+     * @param GridHelperService $gridHelperService
      *
      * @return JsonResponse
      */
@@ -1703,6 +1688,9 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                                         }
                                     }
 
+                                    $activeGroups = $classificationStoreData->getActiveGroups() ? $classificationStoreData->getActiveGroups() : [];
+                                    $activeGroups[$groupId] = true;
+                                    $classificationStoreData->setActiveGroups($activeGroups);
                                     $classificationStoreData->setLocalizedKeyValue($groupId, $keyid, $value, $csLanguage);
                                 }
                             }
@@ -1952,6 +1940,8 @@ class DataObjectController extends ElementControllerBase implements EventedContr
      * @param Request $request
      *
      * @return JsonResponse
+     *
+     * @throws \Exception
      */
     public function copyRewriteIdsAction(Request $request)
     {
@@ -2015,7 +2005,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                 $targetParent = DataObject::getById($request->get('targetParentId'));
             }
 
-            $targetPath = preg_replace('@^' . $sourceParent->getRealFullPath() . '@', $targetParent . '/', $source->getRealPath());
+            $targetPath = preg_replace('@^' . preg_quote($sourceParent->getRealFullPath(), '@') . '@', $targetParent . '/', $source->getRealPath());
             $target = DataObject::getByPath($targetPath);
         } else {
             $target = DataObject::getById($targetId);

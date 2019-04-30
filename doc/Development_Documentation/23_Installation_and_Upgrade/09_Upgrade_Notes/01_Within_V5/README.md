@@ -1,5 +1,20 @@
 # Upgrade Notes for Upgrades within Pimcore 5
 
+## Version 5.8.0
+- Add PathFormatter interface, static path formatters are now deprecated and will be removed with Version 6.0. You can read
+ more about that [here](../../../05_Objects/01_Object_Classes/05_Class_Settings/14_Path_Formatter.md).
+- Interface of `Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\IConfig:getCategories()` changed - `$subObjectId = null` 
+  was added as second parameter. If you have your custom `getCategories` implementation you need to adapt your method signature.
+- `AbstractObject::hasChildren()` and `Document::hasChildren()` from now on only return the published items by default, similar
+to `getChildren()`   
+- The following warning is issued during the update: `[WARNING] Some commands could not be registered`, this is due 
+to the way how the Symfony container gets built and can be safely ignored.  
+
+## Version 5.7.2 
+- Signature of `\Pimcore\Model\DataObject\LazyLoadedFieldsInterface` has changed
+- `\Pimcore\Model\DataObject\Concrete` the following methods `addLazyLoadedField($fieldName)` and `getLazyLoadedFields()` were removed
+- `\Pimcore\Model\DataObject\Localizedfield::getFieldDefinitionFromContext()` was renamed to `getFieldDefinition()`
+
 ## Version 5.7.0
 
 - `\Pimcore\Model\WebsiteSetting` and `\Pimcore\Model\Property` properties are now `protected` instead of `public`
@@ -22,7 +37,7 @@
 
 ## Version 5.6.4
 
-- `Pimcore\Model\DataObject\Localizedfield` properties are now `protected` instead of `public` 
+- `\Pimcore\Model\DataObject\Localizedfield` properties are now `protected` instead of `public` 
 
 ## Version 5.6.0
 - Removed method `\Pimcore\Model\DataObject\ClassDefinition\Data::setFieldtype($fieldtype)`

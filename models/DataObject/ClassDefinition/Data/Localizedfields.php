@@ -87,6 +87,11 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
     public $labelWidth;
 
     /**
+     * @var bool
+     */
+    public $provideSplitView;
+
+    /**
      * @var
      */
     public $hideLabelsWhenTabsReached;
@@ -158,9 +163,9 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
         $dataItems = $data->getInternalData(true);
         foreach ($dataItems as $language => $values) {
             foreach ($this->getFieldDefinitions() as $fd) {
-                if ($fd instanceof Data\Relations\AbstractRelations && !DataObject\Localizedfield::isLazyLoadingDisabled() && $fd->getLazyLoading()) {
+                if ($fd instanceof Data\Relations\AbstractRelations && !DataObject\Concrete::isLazyLoadingDisabled() && $fd->getLazyLoading()) {
                     $lazyKey = $fd->getName() . DataObject\LazyLoadedFieldsInterface::LAZY_KEY_SEPARATOR . $language;
-                    if ($data->hasLazyKey($lazyKey)) {
+                    if (!$data->isLazyKeyLoaded($lazyKey)) {
                         $params['language'] = $language;
                         $params['object'] = $object;
                         if (!isset($params['context'])) {
@@ -174,7 +179,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
                             $values[$fd->getName()] = $value;
                         }
 
-                        $data->removeLazyKey($lazyKey);
+                        $data->markLazyKeyAsLoaded($lazyKey);
                     }
                 }
 
@@ -278,6 +283,9 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
 
         $context = isset($params['context']) ? $params['context'] : null;
         $localizedFields->setContext($context);
+        if ($object) {
+            $localizedFields->setObject($object);
+        }
 
         if (is_array($data)) {
             foreach ($data as $language => $fields) {
@@ -1005,21 +1013,19 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
     /**
      * @param string $name
      *
-     * @return $this|void
+     * @return $this|Data
+     *
+     * @throws \Exception
      */
     public function setName($name)
     {
+        if ($name !== 'localizedfields') {
+            throw new \Exception('Localizedfields can only be named `localizedfields`, no other names are allowed');
+        }
+
         $this->name = $name;
 
         return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getName()
-    {
-        return $this->name;
     }
 
     /**
@@ -1040,26 +1046,6 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
     public function getRegion()
     {
         return $this->region;
-    }
-
-    /**
-     * @param string $title
-     *
-     * @return $this|void
-     */
-    public function setTitle($title)
-    {
-        $this->title = $title;
-
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getTitle()
-    {
-        return $this->title;
     }
 
     /**
@@ -1363,6 +1349,22 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
     public function getLabelWidth()
     {
         return $this->labelWidth;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getProvideSplitView()
+    {
+        return $this->provideSplitView;
+    }
+
+    /**
+     * @param bool $provideSplitView
+     */
+    public function setProvideSplitView($provideSplitView): void
+    {
+        $this->provideSplitView = $provideSplitView;
     }
 
     /** Encode value for packing it into a single column.

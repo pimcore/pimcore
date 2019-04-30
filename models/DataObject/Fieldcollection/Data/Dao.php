@@ -59,6 +59,7 @@ class Dao extends Model\Dao\AbstractDao
                     // for fieldtypes which have their own save algorithm eg. relational data types, ...
                     $index = $this->model->getIndex();
                     $params = array_merge($params, [
+                        'saveRelationalData' => $saveRelationalData,
                         'context' => [
                             'containerType' => 'fieldcollection',
                             'containerKey' => $this->model->getType(),

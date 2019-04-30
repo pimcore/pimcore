@@ -224,7 +224,7 @@ class AssetController extends ElementControllerBase implements EventedController
 
             $childsList->setLimit($limit);
             $childsList->setOffset($offset);
-            $childsList->setOrderKey("FIELD(assets.type, 'folder') DESC, assets.filename ASC", false);
+            $childsList->setOrderKey("FIELD(assets.type, 'folder') DESC, CAST(assets.filename AS CHAR CHARACTER SET utf8) COLLATE utf8_general_ci ASC", false);
 
             \Pimcore\Model\Element\Service::addTreeFilterJoins($cv, $childsList);
 
@@ -570,7 +570,7 @@ class AssetController extends ElementControllerBase implements EventedController
                  * @var $asset Asset
                  */
                 $deletedItems[] = $asset->getRealFullPath();
-                if ($asset->isAllowed('delete')) {
+                if ($asset->isAllowed('delete') && !$asset->isLocked()) {
                     $asset->delete();
                 }
             }
@@ -579,7 +579,11 @@ class AssetController extends ElementControllerBase implements EventedController
         } elseif ($request->get('id')) {
             $asset = Asset::getById($request->get('id'));
 
-            if ($asset->isAllowed('delete')) {
+            if (!$asset->isAllowed('delete')) {
+                return $this->adminJson(['success' => false, 'message' => 'missing_permission']);
+            } elseif ($asset->isLocked()) {
+                return $this->adminJson(['success' => false, 'message' => 'prevented deleting asset, because it is locked: ID: ' . $asset->getId()]);
+            } else {
                 $asset->delete();
 
                 return $this->adminJson(['success' => true]);
@@ -630,6 +634,7 @@ class AssetController extends ElementControllerBase implements EventedController
             $folderThumbs = [];
             $children = new Asset\Listing();
             $children->setCondition('path LIKE ?', [$asset->getRealFullPath() . '/%']);
+            $children->addConditionParam('type IN (\'image\', \'video\', \'document\')', 'AND');
             $children->setLimit(35);
 
             foreach ($children as $child) {
@@ -1199,7 +1204,8 @@ class AssetController extends ElementControllerBase implements EventedController
             $thumbnail = Asset\Image\Thumbnail\Config::getPreviewConfig((bool) $request->get('hdpi'));
         }
 
-        if ($request->get('cropPercent')) {
+        $cropPercent = $request->get('cropPercent');
+        if ($cropPercent && filter_var($cropPercent, FILTER_VALIDATE_BOOLEAN)) {
             $thumbnail->addItemAt(0, 'cropPercent', [
                 'width' => $request->get('cropWidth'),
                 'height' => $request->get('cropHeight'),
@@ -2264,6 +2270,10 @@ class AssetController extends ElementControllerBase implements EventedController
                 $conditionFilters[] = 'parentId = ' . $folder->getId();
             } else {
                 $conditionFilters[] = 'path LIKE ' . ($folder->getRealFullPath() == '/' ? "'/%'" : $list->quote($folder->getRealFullPath() . '/%'));
+            }
+
+            if ($allParams['only_unreferenced'] == 'true') {
+                $conditionFilters[] = 'id NOT IN (SELECT targetid FROM dependencies WHERE targettype=\'asset\')';
             }
 
             $conditionFilters[] = "type != 'folder'";

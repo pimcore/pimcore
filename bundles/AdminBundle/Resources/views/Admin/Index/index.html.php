@@ -545,6 +545,7 @@ $scripts = array(
     "pimcore/object/objectbrick.js",
     "pimcore/object/objectbricks/field.js",
     "pimcore/object/tags/abstract.js",
+    "pimcore/object/tags/abstractRelations.js",
     "pimcore/object/tags/block.js",
     "pimcore/object/tags/rgbaColor.js",
     "pimcore/object/tags/date.js",

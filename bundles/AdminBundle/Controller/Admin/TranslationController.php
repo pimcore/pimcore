@@ -54,7 +54,7 @@ class TranslationController extends AdminController
         $dialect = $request->get('csvSettings', null);
         $tmpFile = $request->get('importFile');
 
-        if($dialect) {
+        if ($dialect) {
             $dialect = json_decode($dialect);
         }
 
@@ -123,7 +123,7 @@ class TranslationController extends AdminController
         $tmpData = file_get_contents($_FILES['Filedata']['tmp_name']);
 
         //store data for further usage
-        $filename =  uniqid('import_translations-');
+        $filename = uniqid('import_translations-');
         $importFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/' . $filename;
         File::put($importFile, $tmpData);
 

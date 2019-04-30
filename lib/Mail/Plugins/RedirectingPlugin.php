@@ -82,6 +82,7 @@ class RedirectingPlugin extends \Swift_Plugins_RedirectingPlugin
 
         $message = $evt->getMessage();
         if ($message instanceof Mail && $message->doRedirectMailsToDebugMailAddresses()) {
+            $this->setSenderAndReceiversParams($message);
             $this->removeDebugInformation($message);
         }
     }
@@ -127,7 +128,30 @@ class RedirectingPlugin extends \Swift_Plugins_RedirectingPlugin
             $originalData['subject'] = $subject;
             $message->setSubject('Debug email: ' . $subject);
 
+            // Set receiver & sender data.
+            $originalData['From'] = $message->getFrom();
+            $originalData['To'] = $message->getTo();
+            $originalData['Cc'] = $message->getCc();
+            $originalData['Bcc'] = $message->getBcc();
+            $originalData['ReplyTo'] = $message->getReplyTo();
+
             $message->setOriginalData($originalData);
+        }
+    }
+
+    /**
+     * Sets the sender and receiver information of the mail to keep the log searchable for the original data.
+     *
+     * @param Mail $message
+     */
+    protected function setSenderAndReceiversParams($message)
+    {
+        $originalData = $message->getOriginalData();
+
+        $message->setParam('Debug-Redirected', 'true');
+        foreach (['From', 'To', 'Cc', 'Bcc', 'ReplyTo'] as $k) {
+            // Add parameters to show this was redirected
+            $message->setParam('Debug-Original-' . $k, $originalData[$k]);
         }
     }
 

@@ -60,6 +60,11 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
     public $enableBatchEdit;
 
     /**
+     * @var bool
+     */
+    public $allowMultipleAssignments;
+
+    /**
      * @inheritdoc
      */
     public function prepareDataForPersistence($data, $object = null, $params = [])
@@ -94,38 +99,67 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
     /**
      * @inheritdoc
      */
-    public function loadData($data, $object = null, $params = [])
+    public function loadData($data, $container = null, $params = [])
     {
-        $ownerObject = $object;
-        $objects = [];
+        $list = [];
 
         if (is_array($data) && count($data) > 0) {
-            foreach ($data as $object) {
-                $source = DataObject::getById($object['src_id']);
-                $destination = DataObject::getById($object['dest_id']);
+            $db = Db::get();
+            $targets = [];
 
-                if ($source instanceof DataObject\Concrete && $destination instanceof DataObject\Concrete && $destination->getClassName() == $this->getAllowedClassId()) {
-                    /** @var $metaData DataObject\Data\ObjectMetadata */
-                    $metaData = \Pimcore::getContainer()->get('pimcore.model.factory')
-                        ->build('Pimcore\Model\DataObject\Data\ObjectMetadata', [
-                            'fieldname' => $this->getName(),
-                            'columns' => $this->getColumnKeys(),
-                            'object' => $destination
-                        ]);
+            foreach ($data as $relation) {
+                $targetId = $relation['dest_id'];
+                $targets[] = $targetId;
+            }
 
-                    $metaData->setOwner($ownerObject, $this->getName());
+            $existingTargets = $db->fetchCol(
+                'SELECT o_id FROM objects WHERE o_id IN ('.implode(',', $targets).')'
+            );
 
-                    $ownertype = $object['ownertype'] ? $object['ownertype'] : '';
-                    $ownername = $object['ownername'] ? $object['ownername'] : '';
-                    $position = $object['position'] ? $object['position'] : '0';
+            foreach ($data as $key => $relation) {
+                if ($relation['dest_id']) {
+                    $source = DataObject::getById($relation['src_id']);
+                    $destinationId = $relation['dest_id'];
 
-                    $metaData->load($source, $destination, $this->getName(), $ownertype, $ownername, $position);
-                    $objects[] = $metaData;
+                    if (!in_array($destinationId, $existingTargets)) {
+                        // destination object does not exist anymore
+                        continue;
+                    }
+
+                    if ($source instanceof DataObject\Concrete) {
+                        /** @var $metaData DataObject\Data\ObjectMetadata */
+                        $metaData = \Pimcore::getContainer()->get('pimcore.model.factory')
+                            ->build(DataObject\Data\ObjectMetadata::class, [
+                                'fieldname' => $this->getName(),
+                                'columns' => $this->getColumnKeys(),
+                                'object' => null
+                            ]);
+
+                        $metaData->setOwner($container, $this->getName());
+                        $metaData->setObjectId($destinationId);
+
+                        $ownertype = $relation['ownertype'] ? $relation['ownertype'] : '';
+                        $ownername = $relation['ownername'] ? $relation['ownername'] : '';
+                        $position = $relation['position'] ? $relation['position'] : '0';
+                        $index = $key + 1;
+
+                        $metaData->load(
+                            $source,
+                            $relation['dest_id'],
+                            $this->getName(),
+                            $ownertype,
+                            $ownername,
+                            $position,
+                            $index
+                        );
+
+                        $list[] = $metaData;
+                    }
                 }
             }
         }
         //must return array - otherwise this means data is not loaded
-        return $objects;
+        return $list;
     }
 
     /**
@@ -179,7 +213,8 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
 
         // add data
         if (is_array($data) && count($data) > 0) {
-            foreach ($data as $metaObject) {
+            foreach ($data as $mkey => $metaObject) {
+                $index = $mkey + 1;
                 $object = $metaObject->getObject();
                 if ($object instanceof DataObject\Concrete) {
                     $columnData = DataObject\Service::gridObjectData($object, $gridFields, null, ['purpose' => 'editmode']);
@@ -187,6 +222,9 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
                         $getter = 'get' . ucfirst($c['key']);
                         $columnData[$c['key']] = $metaObject->$getter();
                     }
+
+                    $columnData['rowId'] = $columnData['id'] . self::RELATION_ID_SEPARATOR . $index . self::RELATION_ID_SEPARATOR . $columnData['type'];
+
                     $return[] = $columnData;
                 }
             }
@@ -211,10 +249,10 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
             return null;
         }
 
-        $objectsMetadata = [];
+        $relationsMetadata = [];
         if (is_array($data) && count($data) > 0) {
-            foreach ($data as $object) {
-                $o = DataObject::getById($object['id']);
+            foreach ($data as $relation) {
+                $o = DataObject::getById($relation['id']);
                 if ($o && $o->getClassName() == $this->getAllowedClassId()) {
                     $metaData = \Pimcore::getContainer()->get('pimcore.model.factory')
                         ->build('Pimcore\Model\DataObject\Data\ObjectMetadata', [
@@ -226,7 +264,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
 
                     foreach ($this->getColumns() as $c) {
                         $setter = 'set' . ucfirst($c['key']);
-                        $value = $object[$c['key']];
+                        $value = $relation[$c['key']];
 
                         if ($c['type'] == 'multiselect') {
                             if ($value) {
@@ -241,13 +279,13 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
                         $metaData->$setter($value);
                     }
 
-                    $objectsMetadata[] = $metaData;
+                    $relationsMetadata[] = $metaData;
                 }
             }
         }
 
         //must return array if data shall be set
-        return $objectsMetadata;
+        return $relationsMetadata;
     }
 
     /**
@@ -639,10 +677,13 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
                 $objectConcrete = $object;
             }
 
-            foreach ($objectsMetadata as $meta) {
+            $counter = 1;
+            foreach ($objectsMetadata as $mkey => $meta) {
                 $ownerName = isset($relation['ownername']) ? $relation['ownername'] : null;
                 $ownerType = isset($relation['ownertype']) ? $relation['ownertype'] : null;
-                $meta->save($objectConcrete, $ownerType, $ownerName, $position);
+                $meta->save($objectConcrete, $ownerType, $ownerName, $position, $counter);
+
+                $counter++;
             }
         }
 
@@ -660,7 +701,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
         $data = null;
         if ($object instanceof DataObject\Concrete) {
             $data = $object->getObjectVar($this->getName());
-            if ($this->getLazyLoading() && $object->hasLazyKey($this->getName())) {
+            if ($this->getLazyLoading() && !$object->isLazyKeyLoaded($this->getName())) {
                 //$data = $this->getDataFromResource($object->getRelationData($this->getName(),true,null));
                 $data = $this->load($object, ['force' => true]);
 
@@ -677,18 +718,9 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
             $data = $object->getObjectVar($this->getName());
         }
 
-        if (DataObject\AbstractObject::doHideUnpublished() and is_array($data)) {
-            $publishedList = [];
-            foreach ($data as $listElement) {
-                if (Element\Service::isPublished($listElement->getObject())) {
-                    $publishedList[] = $listElement;
-                }
-            }
-
-            return $publishedList;
-        }
-
-        return $data;
+        // note, in case of advanced many to many relations we don't want to force the loading of the element
+        // instead, ask the database directly
+        return Element\Service::filterUnpublishedAdvancedElements($data);
     }
 
     /**
@@ -1131,6 +1163,22 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
         }
 
         return $data;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getAllowMultipleAssignments()
+    {
+        return $this->allowMultipleAssignments;
+    }
+
+    /**
+     * @param bool $allowMultipleAssignments
+     */
+    public function setAllowMultipleAssignments($allowMultipleAssignments)
+    {
+        $this->allowMultipleAssignments = $allowMultipleAssignments;
     }
 
     /**

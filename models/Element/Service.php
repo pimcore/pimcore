@@ -17,6 +17,7 @@
 
 namespace Pimcore\Model\Element;
 
+use Pimcore\Db;
 use Pimcore\Db\ZendCompatibility\QueryBuilder;
 use Pimcore\Event\SystemEvents;
 use Pimcore\File;
@@ -239,6 +240,91 @@ class Service extends Model\AbstractModel
     }
 
     /**
+     * @param $data
+     *
+     * @return array
+     *
+     * @throws \Exception
+     */
+    public static function filterUnpublishedAdvancedElements($data)
+    {
+        if (DataObject\AbstractObject::doHideUnpublished() and is_array($data)) {
+            $publishedList = [];
+            $mapping = [];
+            foreach ($data as $advancedElement) {
+                if (!$advancedElement instanceof DataObject\Data\ObjectMetadata
+                    && !$advancedElement instanceof DataObject\Data\ElementMetadata) {
+                    throw new \Exception('only supported for advanced many-to-many (+object) relations');
+                }
+
+                $elementId = null;
+                if ($advancedElement instanceof DataObject\Data\ObjectMetadata) {
+                    $elementId = $advancedElement->getObjectId();
+                    $elementType = 'object';
+                } else {
+                    $elementId = $advancedElement->getElementId();
+                    $elementType = $advancedElement->getElementType();
+                }
+
+                if (!$elementId) {
+                    continue;
+                }
+                if ($elementType == 'asset') {
+                    // there is no published flag for assets
+                    continue;
+                }
+                $mapping[$elementType][$elementId] = true;
+            }
+
+            $db = Db::get();
+            $publishedMapping = [];
+
+            // now do the query;
+            foreach ($mapping as $elementType => $idList) {
+                $idList = array_keys($mapping[$elementType]);
+                switch ($elementType) {
+                    case 'document':
+                        $idColumn = 'id';
+                        $publishedColumn = 'published';
+                        break;
+                    case 'object':
+                        $idColumn = 'o_id';
+                        $publishedColumn = 'o_published';
+                        break;
+                    default:
+                        throw new \Exception('unknown type');
+                }
+                $query = 'SELECT ' . $idColumn . ' FROM ' . $elementType . 's WHERE ' . $publishedColumn . '=1 AND ' . $idColumn . ' IN (' . implode(',', $idList) . ');';
+                $publishedIds = $db->fetchCol($query);
+                $publishedMapping[$elementType] = $publishedIds;
+            }
+
+            foreach ($data as $advancedElement) {
+                $elementId = null;
+                if ($advancedElement instanceof DataObject\Data\ObjectMetadata) {
+                    $elementId = $advancedElement->getObjectId();
+                    $elementType = 'object';
+                } else {
+                    $elementId = $advancedElement->getElementId();
+                    $elementType = $advancedElement->getElementType();
+                }
+
+                if ($elementType == 'asset') {
+                    $publishedList[] = $advancedElement;
+                }
+
+                if (isset($publishedMapping[$elementType]) && in_array($elementId, $publishedMapping[$elementType])) {
+                    $publishedList[] = $advancedElement;
+                }
+            }
+
+            return $publishedList;
+        }
+
+        return is_array($data) ? $data : [];
+    }
+
+    /**
      * @static
      *
      * @param  string $type
@@ -403,59 +489,6 @@ class Service extends Model\AbstractModel
         $sanityCheck->save();
     }
 
-    public static function runSanityCheck()
-    {
-        $sanityCheck = Sanitycheck::getNext();
-        $count = 0;
-        while ($sanityCheck) {
-            $count++;
-            if ($count % 10 == 0) {
-                \Pimcore::collectGarbage();
-            }
-
-            $element = self::getElementById($sanityCheck->getType(), $sanityCheck->getId());
-            if ($element) {
-                try {
-                    self::performSanityCheck($element);
-                } catch (\Exception $e) {
-                    Logger::error('Element\\Service: sanity check for element with id [ ' . $element->getId() . ' ] and type [ ' . self::getType($element) . ' ] failed');
-                }
-                $sanityCheck->delete();
-            } else {
-                $sanityCheck->delete();
-            }
-            $sanityCheck = Sanitycheck::getNext();
-
-            // reduce load on server
-            Logger::debug('Now timeout for 3 seconds');
-            sleep(3);
-        }
-    }
-
-    /**
-     * @static
-     *
-     * @param ElementInterface $element
-     *
-     * @todo: I think ElementInterface is the wrong type here, it has no getter latestVersion
-     */
-    protected static function performSanityCheck($element)
-    {
-        if ($latestVersion = $element->getLatestVersion()) {
-            if ($latestVersion->getDate() > $element->getModificationDate()) {
-                return;
-            }
-        }
-
-        $element->setUserModification(0);
-        $element->save();
-
-        if ($version = $element->getLatestVersion(true)) {
-            $version->setNote('Sanitycheck');
-            $version->save();
-        }
-    }
-
     /**
      * @static
      *
@@ -593,10 +626,10 @@ class Service extends Model\AbstractModel
         }
 
         // get workspaces
-        $workspaces = $user->{'getWorkspaces'.ucfirst($type)}();
+        $workspaces = $user->{'getWorkspaces' . ucfirst($type)}();
         foreach ($user->getRoles() as $roleId) {
             $role = Model\User\Role::getById($roleId);
-            $workspaces = array_merge($workspaces, $role->{'getWorkspaces'.ucfirst($type)}());
+            $workspaces = array_merge($workspaces, $role->{'getWorkspaces' . ucfirst($type)}());
         }
 
         $forbidden = [];
@@ -624,6 +657,12 @@ class Service extends Model\AbstractModel
      */
     public static function renewReferences($data, $initial = true, $key = null)
     {
+        if ($data instanceof \__PHP_Incomplete_Class) {
+            Logger::err(sprintf('Renew References: Cannot read data (%s) of incomplete class.', is_null($key) ? 'not available' : $key));
+
+            return null;
+        }
+
         if (is_array($data)) {
             foreach ($data as $dataKey => &$value) {
                 $value = self::renewReferences($value, false, $dataKey);

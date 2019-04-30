@@ -62,11 +62,6 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
     protected $o_versions = null;
 
     /**
-     * @var array
-     */
-    protected $lazyLoadedFields = [];
-
-    /**
      * Contains all scheduled tasks
      *
      * @var array
@@ -77,6 +72,11 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
      * @var bool
      */
     protected $omitMandatoryCheck = false;
+
+    /**
+     * @var bool
+     */
+    protected $allLazyKeysMarkedAsLoaded = false;
 
     /**
      * returns the class ID of the current object class
@@ -93,22 +93,6 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
     public function __construct()
     {
         // nothing to do here
-    }
-
-    /**
-     * @param  string $fieldName
-     */
-    public function addLazyLoadedField($fieldName)
-    {
-        $this->lazyLoadedFields[] = $fieldName;
-    }
-
-    /**
-     * @return array
-     */
-    public function getLazyLoadedFields()
-    {
-        return (array) $this->lazyLoadedFields;
     }
 
     /**
@@ -137,8 +121,11 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
                     $value = $this->$getter();
 
                     if (is_array($value) and ($fd instanceof ClassDefinition\Data\ManyToManyRelation or $fd instanceof ClassDefinition\Data\ManyToManyObjectRelation)) {
-                        //don't save relations twice
-                        $this->$setter(array_unique($value));
+                        //don't save relations twice, if multiple assignments not allowed
+                        if (!method_exists($fd, 'getAllowMultipleAssignments') || !$fd->getAllowMultipleAssignments()) {
+                            $value = array_unique($value);
+                        }
+                        $this->$setter($value);
                     }
                     AbstractObject::setGetInheritedValues($inheritedValues);
 
@@ -274,38 +261,47 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
      */
     public function saveVersion($setModificationDate = true, $saveOnlyVersion = true, $versionNote = null)
     {
-        if ($setModificationDate) {
-            $this->setModificationDate(time());
-        }
+        try {
+            if ($setModificationDate) {
+                $this->setModificationDate(time());
+            }
 
-        // hook should be also called if "save only new version" is selected
-        if ($saveOnlyVersion) {
-            \Pimcore::getEventDispatcher()->dispatch(DataObjectEvents::PRE_UPDATE, new DataObjectEvent($this, [
-                'saveVersionOnly' => true
+            // hook should be also called if "save only new version" is selected
+            if ($saveOnlyVersion) {
+                \Pimcore::getEventDispatcher()->dispatch(DataObjectEvents::PRE_UPDATE, new DataObjectEvent($this, [
+                    'saveVersionOnly' => true
+                ]));
+            }
+
+            // scheduled tasks are saved always, they are not versioned!
+            $this->saveScheduledTasks();
+
+            $version = null;
+
+            // only create a new version if there is at least 1 allowed
+            // or if saveVersion() was called directly (it's a newer version of the object)
+            if (Config::getSystemConfig()->objects->versions->steps
+                || Config::getSystemConfig()->objects->versions->days
+                || $setModificationDate) {
+                $version = $this->doSaveVersion($versionNote, $saveOnlyVersion);
+            }
+
+            // hook should be also called if "save only new version" is selected
+            if ($saveOnlyVersion) {
+                \Pimcore::getEventDispatcher()->dispatch(DataObjectEvents::POST_UPDATE, new DataObjectEvent($this, [
+                    'saveVersionOnly' => true
+                ]));
+            }
+
+            return $version;
+        } catch (\Exception $e) {
+            \Pimcore::getEventDispatcher()->dispatch(DataObjectEvents::POST_UPDATE_FAILURE, new DataObjectEvent($this, [
+                'saveVersionOnly' => true,
+                'exception' => $e
             ]));
+
+            throw $e;
         }
-
-        // scheduled tasks are saved always, they are not versioned!
-        $this->saveScheduledTasks();
-
-        $version = null;
-
-        // only create a new version if there is at least 1 allowed
-        // or if saveVersion() was called directly (it's a newer version of the object)
-        if (Config::getSystemConfig()->objects->versions->steps
-            || Config::getSystemConfig()->objects->versions->days
-            || $setModificationDate) {
-            $version = $this->doSaveVersion($versionNote, $saveOnlyVersion);
-        }
-
-        // hook should be also called if "save only new version" is selected
-        if ($saveOnlyVersion) {
-            \Pimcore::getEventDispatcher()->dispatch(DataObjectEvents::POST_UPDATE, new DataObjectEvent($this, [
-                'saveVersionOnly' => true
-            ]));
-        }
-
-        return $version;
     }
 
     /**
@@ -699,7 +695,12 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
             AbstractObject::disableDirtyDetection();
         }
         try {
-            parent::save();
+            $params = [];
+            if (func_num_args() && is_array(func_get_arg(0))) {
+                $params = func_get_arg(0);
+            }
+
+            parent::save($params);
             if ($this instanceof DirtyIndicatorInterface) {
                 $this->resetDirtyMap();
             }
@@ -710,20 +711,55 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
         return $this;
     }
 
+    /**
+     * @internal
+     * @inheritdoc
+     */
+    public function getLazyLoadedFieldNames(): array
+    {
+        $lazyLoadedFieldNames = [];
+        $fields = $this->getClass()->getFieldDefinitions(['suppressEnrichment' => true]);
+        foreach ($fields as $field) {
+            if (method_exists($field, 'getLazyLoading') && $field->getLazyLoading()) {
+                $lazyLoadedFieldNames[] = $field->getName();
+            }
+        }
+
+        return $lazyLoadedFieldNames;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function isAllLazyKeysMarkedAsLoaded(): bool
+    {
+        if (!$this->getId()) {
+            return true;
+        }
+
+        return $this->allLazyKeysMarkedAsLoaded;
+    }
+
+    public function markAllLazyLoadedKeysAsLoaded()
+    {
+        $this->allLazyKeysMarkedAsLoaded = true;
+    }
+
     public function __sleep()
     {
         $parentVars = parent::__sleep();
 
         $finalVars = [];
-        $lazyLoadedFields = $this->getLazyLoadedFields();
+        $blockedVars = ['loadedLazyKeys', 'allLazyKeysMarkedAsLoaded'];
+
+        if (!isset($this->_fulldump)) {
+            // do not dump lazy loaded fields for caching
+            $lazyLoadedFields = $this->getLazyLoadedFieldNames();
+            $blockedVars = array_merge($lazyLoadedFields, $blockedVars);
+        }
 
         foreach ($parentVars as $key) {
-            if (in_array($key, $lazyLoadedFields)) {
-                // prevent lazyloading properties to go into the cache, only to version and recyclebin, ... (_fulldump)
-                if (isset($this->_fulldump)) {
-                    $finalVars[] = $key;
-                }
-            } else {
+            if (!in_array($key, $blockedVars)) {
                 $finalVars[] = $key;
             }
         }
@@ -749,5 +785,38 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
     public function __clone()
     {
         parent::__clone();
+    }
+
+    /**
+     * @var bool
+     */
+    protected static $disableLazyLoading = false;
+
+    /**
+     * @internal
+     * Disables lazy loading
+     */
+    public static function disableLazyLoading()
+    {
+        self::$disableLazyLoading = true;
+    }
+
+    /**
+     * @internal
+     * Enables the lazy loading
+     */
+    public static function enableLazyloading()
+    {
+        self::$disableLazyLoading = false;
+    }
+
+    /**
+     * @internal
+     *
+     * @return bool
+     */
+    public static function isLazyLoadingDisabled()
+    {
+        return self::$disableLazyLoading;
     }
 }

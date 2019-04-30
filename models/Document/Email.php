@@ -215,7 +215,7 @@ class Email extends Model\Document\PageSnippet
     {
         $emailAddresses = preg_split('/,|;/', $this->getFrom());
 
-        return $emailAddresses;
+        return array_map('trim', $emailAddresses);
     }
 
     /**
@@ -257,7 +257,7 @@ class Email extends Model\Document\PageSnippet
 
         $emailAddresses = preg_split('/,|;/', $this->getReplyTo());
 
-        return $emailAddresses;
+        return array_map('trim', $emailAddresses);
     }
 
     /**

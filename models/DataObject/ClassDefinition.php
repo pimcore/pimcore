@@ -405,9 +405,6 @@ class ClassDefinition extends Model\AbstractModel
         $cd .= "\n\n";
 
         if (is_array($this->getFieldDefinitions()) && count($this->getFieldDefinitions())) {
-            $relationTypes = [];
-            $lazyLoadedFields = [];
-
             foreach ($this->getFieldDefinitions() as $key => $def) {
                 if (method_exists($def, 'isRemoteOwner') and $def->isRemoteOwner()) {
                     continue;
@@ -421,19 +418,7 @@ class ClassDefinition extends Model\AbstractModel
                 if (method_exists($def, 'classSaved')) {
                     $def->classSaved($this);
                 }
-
-                if ($def->isRelationType()) {
-                    $relationTypes[$key] = ['type' => $def->getFieldType()];
-                }
-
-                // collect lazyloaded fields
-                if (method_exists($def, 'getLazyLoading') and $def->getLazyLoading()) {
-                    $lazyLoadedFields[] = $key;
-                }
             }
-
-            $cd .= 'protected static $_relationFields = '.var_export($relationTypes, true).";\n\n";
-            $cd .= 'protected $lazyLoadedFields = '.var_export($lazyLoadedFields, true).";\n\n";
         }
 
         $cd .= "}\n";

@@ -145,6 +145,12 @@ pimcore.object.classes.data.localizedfields = Class.create(pimcore.object.classe
                     name: "labelWidth",
                     fieldLabel: t("label_width"),
                     value: this.datax.labelWidth
+                },
+                {
+                    xtype: "checkbox",
+                    fieldLabel: t("provide_split_view"),
+                    name: "provideSplitView",
+                    checked: this.datax.provideSplitView
                 }
             ]
         });

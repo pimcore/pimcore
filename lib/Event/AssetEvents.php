@@ -31,6 +31,9 @@ final class AssetEvents
     const POST_ADD = 'pimcore.asset.postAdd';
 
     /**
+     * Arguments:
+     *  - exception | exception object
+     *
      * @Event("Pimcore\Event\Model\AssetEvent")
      *
      * @var string
@@ -61,6 +64,7 @@ final class AssetEvents
     /**
      * Arguments:
      *  - saveVersionOnly | is set if method saveVersion() was called instead of save()
+     *  - exception | exception object
      *
      * @Event("Pimcore\Event\Model\AssetEvent")
      *
@@ -90,6 +94,9 @@ final class AssetEvents
     const POST_DELETE = 'pimcore.asset.postDelete';
 
     /**
+     * Arguments:
+     *  - exception | exception object
+     *
      * @Event("Pimcore\Event\Model\AssetEvent")
      *
      * @var string
