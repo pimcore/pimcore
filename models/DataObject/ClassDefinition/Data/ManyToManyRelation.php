@@ -261,7 +261,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
                 }
 
                 if ($e instanceof Element\ElementInterface) {
-                    $elements['data'] = $e;
+                    $elements['data'][] = $e;
                 } else {
                     $elements['dirty'] = true;
                 }
