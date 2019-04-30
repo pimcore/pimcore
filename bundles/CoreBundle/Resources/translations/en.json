@@ -886,7 +886,7 @@
   "redirects_expired_cleanup": "Cleanup Expired Redirects",
   "redirects_cleanup_warning": "Do you really want to cleanup expired redirects?",
   "redirects_cleanup_error": "An error occurred while cleanup of expired redirects",
-  "auto_convert": "Automatic conversion"
+  "auto_convert": "Automatic conversion",
   "split_view_settings": "Split View Settings",
   "enable_split_view": "Enable Split View",
   "disable_split_view": "Disable Split View",
