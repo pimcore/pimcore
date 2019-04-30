@@ -858,7 +858,7 @@ class Asset extends Element\AbstractElement
     }
 
     /**
-     * Returns the full path of the document including the filename
+     * Returns the full path of the asset including the filename
      *
      * @return string
      */
