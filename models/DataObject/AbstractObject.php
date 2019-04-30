@@ -138,106 +138,106 @@ class AbstractObject extends Model\Element\AbstractElement
     /**
      * @var int
      */
-    public $o_id = 0;
+    protected $o_id = 0;
 
     /**
      * @var int
      */
-    public $o_parentId;
+    protected $o_parentId;
 
     /**
      * @var self
      */
-    public $o_parent;
+    protected $o_parent;
 
     /**
      * @var string
      */
-    public $o_type = 'object';
+    protected $o_type = 'object';
 
     /**
      * @var string
      */
-    public $o_key;
+    protected $o_key;
 
     /**
      * @var string
      */
-    public $o_path;
+    protected $o_path;
 
     /**
      * @var int
      */
-    public $o_index;
+    protected $o_index;
 
     /**
      * @var int
      */
-    public $o_creationDate;
+    protected $o_creationDate;
 
     /**
      * @var int
      */
-    public $o_modificationDate;
+    protected $o_modificationDate;
 
     /**
      * @var int
      */
-    public $o_userOwner;
+    protected $o_userOwner;
 
     /**
      * @var int
      */
-    public $o_userModification;
+    protected $o_userModification;
 
     /**
      * @var array
      */
-    public $o_properties = null;
+    protected $o_properties = null;
 
     /**
      * @var bool
      */
-    public $o_hasChilds;
+    protected $o_hasChilds;
 
     /**
      * Contains a list of sibling documents
      *
      * @var array
      */
-    public $o_siblings;
+    protected $o_siblings;
 
     /**
      * Indicator if document has siblings or not
      *
      * @var bool
      */
-    public $o_hasSiblings;
+    protected $o_hasSiblings;
 
     /**
      * @var Model\Dependency[]
      */
-    public $o_dependencies;
+    protected $o_dependencies;
 
     /**
      * @var array
      */
-    public $o_childs;
+    protected $o_childs;
 
     /**
      * @var string
      */
-    public $o_locked;
+    protected $o_locked;
 
     /**
      * @var Model\Element\AdminStyle
      */
-    public $o_elementAdminStyle;
+    protected $o_elementAdminStyle;
 
     /**
      * @var string
      */
-    public $o_childrenSortBy;
+    protected $o_childrenSortBy;
 
     /**
      * @var array
