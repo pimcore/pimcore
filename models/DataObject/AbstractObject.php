@@ -68,6 +68,123 @@ class AbstractObject extends Model\Element\AbstractElement
     protected static $disableDirtyDetection = false;
 
     /**
+     * @var int
+     */
+    protected $o_id = 0;
+
+    /**
+     * @var int
+     */
+    protected $o_parentId;
+
+    /**
+     * @var self
+     */
+    protected $o_parent;
+
+    /**
+     * @var string
+     */
+    protected $o_type = 'object';
+
+    /**
+     * @var string
+     */
+    protected $o_key;
+
+    /**
+     * @var string
+     */
+    protected $o_path;
+
+    /**
+     * @var int
+     */
+    protected $o_index;
+
+    /**
+     * @var int
+     */
+    protected $o_creationDate;
+
+    /**
+     * @var int
+     */
+    protected $o_modificationDate;
+
+    /**
+     * @var int
+     */
+    protected $o_userOwner;
+
+    /**
+     * @var int
+     */
+    protected $o_userModification;
+
+    /**
+     * @var array
+     */
+    protected $o_properties = null;
+
+    /**
+     * @var bool
+     */
+    protected $o_hasChilds;
+
+    /**
+     * Contains a list of sibling documents
+     *
+     * @var array
+     */
+    protected $o_siblings;
+
+    /**
+     * Indicator if document has siblings or not
+     *
+     * @var bool
+     */
+    protected $o_hasSiblings;
+
+    /**
+     * @var Model\Dependency[]
+     */
+    protected $o_dependencies;
+
+    /**
+     * @var array
+     */
+    protected $o_childs;
+
+    /**
+     * @var string
+     */
+    protected $o_locked;
+
+    /**
+     * @var Model\Element\AdminStyle
+     */
+    protected $o_elementAdminStyle;
+
+    /**
+     * @var string
+     */
+    protected $o_childrenSortBy;
+
+    /**
+     * @var array
+     */
+    private $lastGetChildsObjectTypes = [];
+
+    /**
+     * @var array
+     */
+    private $lastGetSiblingObjectTypes = [];
+
+    /** @var int */
+    protected $o_versionCount = 0;
+
+    /**
      * @static
      *
      * @return bool
@@ -135,122 +252,6 @@ class AbstractObject extends Model\Element\AbstractElement
         return self::$getInheritedValues;
     }
 
-    /**
-     * @var int
-     */
-    public $o_id = 0;
-
-    /**
-     * @var int
-     */
-    public $o_parentId;
-
-    /**
-     * @var self
-     */
-    public $o_parent;
-
-    /**
-     * @var string
-     */
-    public $o_type = 'object';
-
-    /**
-     * @var string
-     */
-    public $o_key;
-
-    /**
-     * @var string
-     */
-    public $o_path;
-
-    /**
-     * @var int
-     */
-    public $o_index;
-
-    /**
-     * @var int
-     */
-    public $o_creationDate;
-
-    /**
-     * @var int
-     */
-    public $o_modificationDate;
-
-    /**
-     * @var int
-     */
-    public $o_userOwner;
-
-    /**
-     * @var int
-     */
-    public $o_userModification;
-
-    /**
-     * @var array
-     */
-    public $o_properties = null;
-
-    /**
-     * @var bool
-     */
-    public $o_hasChilds;
-
-    /**
-     * Contains a list of sibling documents
-     *
-     * @var array
-     */
-    public $o_siblings;
-
-    /**
-     * Indicator if document has siblings or not
-     *
-     * @var bool
-     */
-    public $o_hasSiblings;
-
-    /**
-     * @var Model\Dependency[]
-     */
-    public $o_dependencies;
-
-    /**
-     * @var array
-     */
-    public $o_childs;
-
-    /**
-     * @var string
-     */
-    public $o_locked;
-
-    /**
-     * @var Model\Element\AdminStyle
-     */
-    public $o_elementAdminStyle;
-
-    /**
-     * @var string
-     */
-    public $o_childrenSortBy;
-
-    /**
-     * @var array
-     */
-    private $lastGetChildsObjectTypes = [];
-
-    /**
-     * @var array
-     */
-    private $lastGetSiblingObjectTypes = [];
-
-    /** @var int */
-    protected $o_versionCount = 0;
 
     /**
      * get possible types
