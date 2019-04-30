@@ -286,6 +286,7 @@ class Item extends Model\AbstractModel
         $restoreBinaryData($element, $this);
 
         if ($element instanceof DataObject\Concrete) {
+            $element->markAllLazyLoadedKeysAsLoaded();
             $element->setOmitMandatoryCheck(true);
         }
         $element->save();
