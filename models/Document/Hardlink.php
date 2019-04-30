@@ -250,11 +250,9 @@ class Hardlink extends Document
     }
 
     /**
-     * hast to overwrite the resource implementation because there can be inherited childs
-     *
-     * @return bool
+     * @inheritdoc
      */
-    public function hasChildren()
+    public function hasChildren($unpublished = false)
     {
         return count($this->getChildren()) > 0;
     }
