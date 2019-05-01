@@ -1,4 +1,5 @@
 <?php
+
 namespace Pimcore\Model\DataObject\QuantityValue;
 
 use Pimcore\Model\DataObject\Data\QuantityValue;

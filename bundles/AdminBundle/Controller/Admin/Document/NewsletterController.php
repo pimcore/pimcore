@@ -333,7 +333,7 @@ class NewsletterController extends DocumentControllerBase
 
         return $this->adminJson(['success' => true]);
     }
-    
+
     /**
      * @Route("/calculate", methods={"POST"})
      *
@@ -350,13 +350,13 @@ class NewsletterController extends DocumentControllerBase
 
         if (!$serviceLocator->has($addressSourceAdapterName)) {
             $msg = sprintf('Cannot send newsletters because Address Source Adapter with identifier %s could not be found', $addressSourceAdapterName);
+
             return $this->adminJson(['success' => false, 'count' => '0', 'message' => $msg]);
         }
 
         $addressAdapterFactory = $serviceLocator->get($addressSourceAdapterName);
         $addressAdapter = $addressAdapterFactory->create($adapterParams);
 
-        
         return $this->adminJson(['success' => true, 'count' => $addressAdapter->getTotalRecordCount()]);
     }
 

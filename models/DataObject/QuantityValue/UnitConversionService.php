@@ -1,4 +1,5 @@
 <?php
+
 namespace Pimcore\Model\DataObject\QuantityValue;
 
 use Pimcore\Model\DataObject\Data\QuantityValue;
@@ -19,23 +20,25 @@ class UnitConversionService
      * @param Unit          $toUnit
      *
      * @return QuantityValue
+     *
      * @throws \Exception
      */
-    public function convert(QuantityValue $quantityValue, Unit $toUnit) {
+    public function convert(QuantityValue $quantityValue, Unit $toUnit)
+    {
         $baseUnit = $toUnit->getBaseunit();
 
-        if($baseUnit === null) {
+        if ($baseUnit === null) {
             $baseUnit = $toUnit;
         }
         $converterServiceName = $baseUnit->getConverter();
 
-        if($converterServiceName) {
+        if ($converterServiceName) {
             $converterService = $this->container->get($converterServiceName);
         } else {
             $converterService = $this->container->get(QuantityValueConverterInterface::class);
         }
 
-        if(!$converterService instanceof QuantityValueConverterInterface) {
+        if (!$converterService instanceof QuantityValueConverterInterface) {
             throw new \Exception('Converter class needs to implement '.QuantityValueConverterInterface::class);
         }
 

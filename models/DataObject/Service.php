@@ -714,9 +714,9 @@ class Service extends Model\Element\Service
                     $value = $object->$getter();
                     if ($value instanceof Localizedfield) {
                         $value->loadLazyData();
-                    } else if ($value instanceof Objectbrick) {
+                    } elseif ($value instanceof Objectbrick) {
                         $value->loadLazyData();
-                    } else if ($value instanceof Fieldcollection) {
+                    } elseif ($value instanceof Fieldcollection) {
                         $value->loadLazyData();
                     }
                 }

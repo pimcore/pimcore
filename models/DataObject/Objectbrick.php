@@ -349,18 +349,19 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
     /**
      * @internal
      */
-    public function loadLazyData() {
+    public function loadLazyData()
+    {
         $allowedBrickTypes = $this->getAllowedBrickTypes();
         if (is_array($allowedBrickTypes)) {
             foreach ($allowedBrickTypes as $allowedBrickType) {
-                $brickGetter = "get" . ucfirst($allowedBrickType);
+                $brickGetter = 'get' . ucfirst($allowedBrickType);
                 $brickData = $this->$brickGetter();
                 if ($brickData) {
                     $brickDef = Model\DataObject\Objectbrick\Definition::getByKey($allowedBrickType);
                     $fds = $brickDef->getFieldDefinitions();
-                    /** @var  $fd Model\DataObject\ClassDefinition\Data */
+                    /** @var $fd Model\DataObject\ClassDefinition\Data */
                     foreach ($fds as $fd) {
-                        $fieldGetter = "get" . ucfirst($fd->getName());
+                        $fieldGetter = 'get' . ucfirst($fd->getName());
                         $fieldValue = $brickData->$fieldGetter();
                         if ($fieldValue instanceof Localizedfield) {
                             $fieldValue->loadLazyData();

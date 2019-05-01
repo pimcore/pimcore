@@ -184,7 +184,7 @@ class Unit extends Model\AbstractModel
 
     public function setBaseunit($baseunit)
     {
-        if($baseunit instanceof self) {
+        if ($baseunit instanceof self) {
             $baseunit = $baseunit->getId();
         }
         $this->baseunit = $baseunit;
@@ -192,9 +192,10 @@ class Unit extends Model\AbstractModel
 
     public function getBaseunit()
     {
-        if($this->baseunit) {
+        if ($this->baseunit) {
             return self::getById($this->baseunit);
         }
+
         return null;
     }
 

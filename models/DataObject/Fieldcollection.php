@@ -302,7 +302,8 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyInd
     /**
      * @internal
      */
-    public function loadLazyData() {
+    public function loadLazyData()
+    {
         $items = $this->getItems();
         if (is_array($items)) {
             /** @var $item Model\DataObject\Fieldcollection\Data\AbstractData */
@@ -310,9 +311,9 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyInd
                 $fcType = $item->getType();
                 $fieldcolDef = Model\DataObject\Fieldcollection\Definition::getByKey($fcType);
                 $fds = $fieldcolDef->getFieldDefinitions();
-                /** @var  $fd Model\DataObject\ClassDefinition\Data */
+                /** @var $fd Model\DataObject\ClassDefinition\Data */
                 foreach ($fds as $fd) {
-                    $fieldGetter = "get" . ucfirst($fd->getName());
+                    $fieldGetter = 'get' . ucfirst($fd->getName());
                     $fieldValue = $item->$fieldGetter();
                     if ($fieldValue instanceof Localizedfield) {
                         $fieldValue->loadLazyData();
@@ -320,6 +321,5 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyInd
                 }
             }
         }
-
     }
 }

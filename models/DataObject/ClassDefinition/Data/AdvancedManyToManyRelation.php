@@ -137,7 +137,6 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
                         continue;
                     }
 
-
                     if ($source instanceof DataObject\Concrete) {
                         /** @var $metaData DataObject\Data\ElementMetadata */
                         $metaData = \Pimcore::getContainer()->get('pimcore.model.factory')

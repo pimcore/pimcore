@@ -12,7 +12,7 @@ class Version20190408084129 extends AbstractPimcoreMigration
      */
     public function up(Schema $schema)
     {
-        $this->addSql("ALTER TABLE `quantityvalue_units`
+        $this->addSql('ALTER TABLE `quantityvalue_units`
             CHANGE `id` `id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
             CHANGE `baseunit` `baseunit` INT(11) UNSIGNED DEFAULT NULL,
             ADD `converter` VARCHAR(255) DEFAULT NULL,
@@ -20,7 +20,7 @@ class Version20190408084129 extends AbstractPimcoreMigration
             FOREIGN KEY (`baseunit`)
             REFERENCES `quantityvalue_units` (`id`)
             ON DELETE SET NULL
-            ON UPDATE CASCADE");
+            ON UPDATE CASCADE');
     }
 
     /**
@@ -28,9 +28,9 @@ class Version20190408084129 extends AbstractPimcoreMigration
      */
     public function down(Schema $schema)
     {
-        $this->addSql("ALTER TABLE `quantityvalue_units`
+        $this->addSql('ALTER TABLE `quantityvalue_units`
             DROP FOREIGN KEY `fk_baseunit`,
             DROP `converter`,
-            CHANGE `baseunit` `baseunit` VARCHAR(10)");
+            CHANGE `baseunit` `baseunit` VARCHAR(10)');
     }
 }

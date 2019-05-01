@@ -252,7 +252,6 @@ class AbstractObject extends Model\Element\AbstractElement
         return self::$getInheritedValues;
     }
 
-
     /**
      * get possible types
      *

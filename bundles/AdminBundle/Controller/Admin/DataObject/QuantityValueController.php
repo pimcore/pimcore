@@ -109,7 +109,7 @@ class QuantityValueController extends AdminController
                 $data = json_decode($request->get('data'), true);
                 $unit = Unit::getById($data['id']);
                 if (!empty($unit)) {
-                    if($data['baseunit'] === -1) {
+                    if ($data['baseunit'] === -1) {
                         $data['baseunit'] = null;
                     }
                     $unit->setValues($data);
@@ -121,7 +121,7 @@ class QuantityValueController extends AdminController
                 }
             } elseif ($request->get('xaction') == 'create') {
                 $data = json_decode($request->get('data'), true);
-                if($data['baseunit'] === -1) {
+                if ($data['baseunit'] === -1) {
                     $data['baseunit'] = null;
                 }
                 unset($data['id']);
@@ -208,7 +208,7 @@ class QuantityValueController extends AdminController
 
         $fromUnit = Unit::getById($fromUnitId);
         $toUnit = Unit::getById($toUnitId);
-        if(!$fromUnit instanceof Unit || !$toUnit instanceof Unit) {
+        if (!$fromUnit instanceof Unit || !$toUnit instanceof Unit) {
             return null;
         }
 
@@ -219,6 +219,7 @@ class QuantityValueController extends AdminController
         } catch (\Exception $e) {
             return $this->adminJson(['success' => false]);
         }
+
         return $this->adminJson(['value' => $convertedValue->getValue(), 'success' => true]);
     }
 }
