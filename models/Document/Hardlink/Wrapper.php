@@ -122,8 +122,7 @@ trait Wrapper
 
     /**
      * @param bool $unpublished
-     *
-     * @return null
+     * @return array
      */
     public function getChildren($unpublished = false)
     {
@@ -150,9 +149,10 @@ trait Wrapper
     }
 
     /**
+     * @param bool $unpublished
      * @return bool
      */
-    public function hasChildren()
+    public function hasChildren($unpublished = false)
     {
         $hardLink = $this->getHardLinkSource();
 
