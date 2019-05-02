@@ -890,5 +890,7 @@
     "enable_split_view": "Activer la vue partagée",
     "disable_split_view": "Désactiver la vue partagée",
     "split_view_object_dirty_title": "Veuillez confirmer",
-    "split_view_object_dirty_msg": "Il y a des modifications non sauvegardées. Vous allez perdre tous les changements. Êtes-vous sûr ?"
+    "split_view_object_dirty_msg": "Il y a des modifications non sauvegardées. Vous allez perdre tous les changements. Êtes-vous sûr ?",
+    "converter_service": "Converter service",
+    "auto_convert": "Automatic conversion"
 }
