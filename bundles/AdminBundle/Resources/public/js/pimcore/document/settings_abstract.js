@@ -361,7 +361,7 @@ pimcore.document.settings_abstract = Class.create({
                     valueField: 'path',
                     name: "template",
                     disableKeyFilter: true,
-                    queryMode: "local",
+                    queryMode: "remote",
                     store: new Ext.data.Store({
                         autoDestroy: true,
                         autoLoad: false,
