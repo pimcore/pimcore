@@ -1,5 +1,5 @@
 {
-    "unsupported_feature": "Caratteristica non supportata! Prego controlla i requisiti di sistema!",
+    "unsupported_feature": "Caratteristica non supportata! Si prega di controllare i requisiti di sistema!",
     "screen_size_to_small": "La risoluzione del tuo schermo è troppo piccola per poter visualizzare correttamente l'anteprima desiderata.",
     "too_many_children_for_recyclebin": "Questo elemento contiene troppi discendenti per questo non può essere spostato nel cestino.",
     "default": "Predefinito",
@@ -890,5 +890,7 @@
     "enable_split_view": "Enable Split View",
     "disable_split_view": "Disable Split View",
     "split_view_object_dirty_title": "Please confirm",
-    "split_view_object_dirty_msg": "There are unsaved modifications. You will lose all changes. Are you sure?"
+    "split_view_object_dirty_msg": "There are unsaved modifications. You will lose all changes. Are you sure?",
+    "converter_service": "Converter service",
+    "auto_convert": "Automatic conversion"
 }
