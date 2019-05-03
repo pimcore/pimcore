@@ -23,6 +23,7 @@ use Pimcore\Event\FrontendEvents;
 use Pimcore\Event\Model\AssetEvent;
 use Pimcore\File;
 use Pimcore\Logger;
+use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Tool\Mime;
 use Symfony\Component\EventDispatcher\GenericEvent;
 
@@ -193,8 +194,15 @@ class Asset extends Element\AbstractElement
      */
     protected $_dataChanged = false;
 
-    /** @var int */
+    /**
+     * @var int
+     */
     protected $versionCount;
+
+    /**
+     * @var string[]
+     */
+    protected $_temporaryFiles = [];
 
     /**
      *
@@ -221,10 +229,27 @@ class Asset extends Element\AbstractElement
             $asset = new Asset();
             $asset->getDao()->getByPath($path);
 
-            return self::getById($asset->getId(), $force);
+            return static::getById($asset->getId(), $force);
         } catch (\Exception $e) {
             return null;
         }
+    }
+
+    /**
+     * @param Asset $asset
+     *
+     * @return bool
+     */
+    protected static function typeMatch(Asset $asset)
+    {
+        $staticType = get_called_class();
+        if ($staticType != Asset::class) {
+            if (!$asset instanceof $staticType) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     /**
@@ -237,17 +262,16 @@ class Asset extends Element\AbstractElement
      */
     public static function getById($id, $force = false)
     {
-        $id = intval($id);
-
-        if ($id < 1) {
+        if (!is_numeric($id) || $id < 1) {
             return null;
         }
+        $id = intval($id);
 
         $cacheKey = 'asset_' . $id;
 
         if (!$force && \Pimcore\Cache\Runtime::isRegistered($cacheKey)) {
             $asset = \Pimcore\Cache\Runtime::get($cacheKey);
-            if ($asset) {
+            if ($asset && static::typeMatch($asset)) {
                 return $asset;
             }
         }
@@ -272,7 +296,7 @@ class Asset extends Element\AbstractElement
             return null;
         }
 
-        if (!$asset) {
+        if (!$asset || !static::typeMatch($asset)) {
             return null;
         }
 
@@ -299,21 +323,23 @@ class Asset extends Element\AbstractElement
                 $tmpFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/asset-create-tmp-file-' . uniqid() . '.' . File::getFileExtension($data['filename']);
                 if (array_key_exists('data', $data)) {
                     File::put($tmpFile, $data['data']);
+                    $mimeType = Mime::detect($tmpFile);
+                    unlink($tmpFile);
                 } else {
                     $streamMeta = stream_get_meta_data($data['stream']);
                     if (file_exists($streamMeta['uri'])) {
                         // stream is a local file, so we don't have to write a tmp file
-                        $tmpFile = $streamMeta['uri'];
+                        $mimeType = Mime::detect($streamMeta['uri']);
                     } else {
                         // write a tmp file because the stream isn't a pointer to the local filesystem
                         rewind($data['stream']);
                         $dest = fopen($tmpFile, 'w+', false, File::getContext());
                         stream_copy_to_stream($data['stream'], $dest);
                         fclose($dest);
+                        $mimeType = Mime::detect($tmpFile);
+                        unlink($tmpFile);
                     }
                 }
-                $mimeType = Mime::detect($tmpFile);
-                unlink($tmpFile);
             } else {
                 $mimeType = Mime::detect($data['sourcePath'], $data['filename']);
                 if (is_file($data['sourcePath'])) {
@@ -330,7 +356,7 @@ class Asset extends Element\AbstractElement
             }
         }
 
-        $asset = new $class();
+        $asset = self::getModelFactory()->build($class);
         $asset->setParentId($parentId);
         $asset->setValues($data);
 
@@ -442,118 +468,130 @@ class Asset extends Element\AbstractElement
      */
     public function save()
     {
-        // additional parameters (e.g. "versionNote" for the version note)
-        $params = [];
-        if (func_num_args() && is_array(func_get_arg(0))) {
-            $params = func_get_arg(0);
-        }
+        try {
+            // additional parameters (e.g. "versionNote" for the version note)
+            $params = [];
+            if (func_num_args() && is_array(func_get_arg(0))) {
+                $params = func_get_arg(0);
+            }
 
-        $isUpdate = false;
+            $isUpdate = false;
 
-        $preEvent = new AssetEvent($this, $params);
+            $preEvent = new AssetEvent($this, $params);
 
-        if ($this->getId()) {
-            $isUpdate = true;
-            \Pimcore::getEventDispatcher()->dispatch(AssetEvents::PRE_UPDATE, $preEvent);
-        } else {
-            \Pimcore::getEventDispatcher()->dispatch(AssetEvents::PRE_ADD, $preEvent);
-        }
+            if ($this->getId()) {
+                $isUpdate = true;
+                \Pimcore::getEventDispatcher()->dispatch(AssetEvents::PRE_UPDATE, $preEvent);
+            } else {
+                \Pimcore::getEventDispatcher()->dispatch(AssetEvents::PRE_ADD, $preEvent);
+            }
 
-        $params = $preEvent->getArguments();
+            $params = $preEvent->getArguments();
 
-        $this->correctPath();
+            $this->correctPath();
 
-        // we wrap the save actions in a loop here, so that we can restart the database transactions in the case it fails
-        // if a transaction fails it gets restarted $maxRetries times, then the exception is thrown out
-        // this is especially useful to avoid problems with deadlocks in multi-threaded environments (forked workers, ...)
-        $maxRetries = 5;
-        for ($retries = 0; $retries < $maxRetries; $retries++) {
-            $this->beginTransaction();
+            // we wrap the save actions in a loop here, so that we can restart the database transactions in the case it fails
+            // if a transaction fails it gets restarted $maxRetries times, then the exception is thrown out
+            // this is especially useful to avoid problems with deadlocks in multi-threaded environments (forked workers, ...)
+            $maxRetries = 5;
+            for ($retries = 0; $retries < $maxRetries; $retries++) {
+                $this->beginTransaction();
 
-            try {
-                if (!$isUpdate) {
-                    $this->getDao()->create();
-                }
-
-                // get the old path from the database before the update is done
-                $oldPath = null;
-                if ($isUpdate) {
-                    $oldPath = $this->getDao()->getCurrentFullPath();
-                }
-
-                $this->update($params);
-
-                // if the old path is different from the new path, update all children
-                $updatedChildren = [];
-                if ($oldPath && $oldPath != $this->getRealFullPath()) {
-                    $oldFullPath = PIMCORE_ASSET_DIRECTORY . $oldPath;
-                    if (is_file($oldFullPath) || is_dir($oldFullPath)) {
-                        if (!@File::rename(PIMCORE_ASSET_DIRECTORY . $oldPath, $this->getFileSystemPath())) {
-                            $error = error_get_last();
-                            throw new \Exception('Unable to rename asset ' . $this->getId() . ' on the filesystem: ' . $oldFullPath . ' - Reason: ' . $error['message']);
-                        }
-                        $this->getDao()->updateWorkspaces();
-                        $updatedChildren = $this->getDao()->updateChildsPaths($oldPath);
-                    }
-                }
-
-                // lastly create a new version if necessary
-                // this has to be after the registry update and the DB update, otherwise this would cause problem in the
-                // $this->__wakeUp() method which is called by $version->save(); (path correction for version restore)
-                if ($this->getType() != 'folder') {
-                    $this->saveVersion(false, false, isset($params['versionNote']) ? $params['versionNote'] : null);
-                }
-
-                $this->commit();
-
-                break; // transaction was successfully completed, so we cancel the loop here -> no restart required
-            } catch (\Exception $e) {
                 try {
-                    $this->rollBack();
-                } catch (\Exception $er) {
-                    // PDO adapter throws exceptions if rollback fails
-                    Logger::error($er);
-                }
-
-                // we try to start the transaction $maxRetries times again (deadlocks, ...)
-                if ($retries < ($maxRetries - 1)) {
-                    $run = $retries + 1;
-                    $waitTime = rand(1, 5) * 100000; // microseconds
-                    Logger::warn('Unable to finish transaction (' . $run . ". run) because of the following reason '" . $e->getMessage() . "'. --> Retrying in " . $waitTime . ' microseconds ... (' . ($run + 1) . ' of ' . $maxRetries . ')');
-
-                    usleep($waitTime); // wait specified time until we restart the transaction
-                } else {
-                    if ($isUpdate) {
-                        \Pimcore::getEventDispatcher()->dispatch(AssetEvents::POST_UPDATE_FAILURE, new AssetEvent($this));
-                    } else {
-                        \Pimcore::getEventDispatcher()->dispatch(AssetEvents::POST_ADD_FAILURE, new AssetEvent($this));
+                    if (!$isUpdate) {
+                        $this->getDao()->create();
                     }
-                    // if the transaction still fail after $maxRetries retries, we throw out the exception
-                    throw $e;
+
+                    // get the old path from the database before the update is done
+                    $oldPath = null;
+                    if ($isUpdate) {
+                        $oldPath = $this->getDao()->getCurrentFullPath();
+                    }
+
+                    $this->update($params);
+
+                    // if the old path is different from the new path, update all children
+                    $updatedChildren = [];
+                    if ($oldPath && $oldPath != $this->getRealFullPath()) {
+                        $oldFullPath = PIMCORE_ASSET_DIRECTORY . $oldPath;
+                        if (is_file($oldFullPath) || is_dir($oldFullPath)) {
+                            if (!@File::rename(PIMCORE_ASSET_DIRECTORY . $oldPath, $this->getFileSystemPath())) {
+                                $error = error_get_last();
+                                throw new \Exception('Unable to rename asset ' . $this->getId() . ' on the filesystem: ' . $oldFullPath . ' - Reason: ' . $error['message']);
+                            }
+                            $differentOldPath = $oldPath;
+                            $this->getDao()->updateWorkspaces();
+                            $updatedChildren = $this->getDao()->updateChildsPaths($oldPath);
+                        }
+                    }
+
+                    // lastly create a new version if necessary
+                    // this has to be after the registry update and the DB update, otherwise this would cause problem in the
+                    // $this->__wakeUp() method which is called by $version->save(); (path correction for version restore)
+                    if ($this->getType() != 'folder') {
+                        $this->saveVersion(false, false, isset($params['versionNote']) ? $params['versionNote'] : null);
+                    }
+
+                    $this->commit();
+
+                    break; // transaction was successfully completed, so we cancel the loop here -> no restart required
+                } catch (\Exception $e) {
+                    try {
+                        $this->rollBack();
+                    } catch (\Exception $er) {
+                        // PDO adapter throws exceptions if rollback fails
+                        Logger::error($er);
+                    }
+
+                    // we try to start the transaction $maxRetries times again (deadlocks, ...)
+                    if ($retries < ($maxRetries - 1)) {
+                        $run = $retries + 1;
+                        $waitTime = rand(1, 5) * 100000; // microseconds
+                        Logger::warn('Unable to finish transaction (' . $run . ". run) because of the following reason '" . $e->getMessage() . "'. --> Retrying in " . $waitTime . ' microseconds ... (' . ($run + 1) . ' of ' . $maxRetries . ')');
+
+                        usleep($waitTime); // wait specified time until we restart the transaction
+                    } else {
+                        // if the transaction still fail after $maxRetries retries, we throw out the exception
+                        throw $e;
+                    }
                 }
             }
-        }
 
-        $additionalTags = [];
-        if (isset($updatedChildren) && is_array($updatedChildren)) {
-            foreach ($updatedChildren as $assetId) {
-                $tag = 'asset_' . $assetId;
-                $additionalTags[] = $tag;
+            $additionalTags = [];
+            if (isset($updatedChildren) && is_array($updatedChildren)) {
+                foreach ($updatedChildren as $assetId) {
+                    $tag = 'asset_' . $assetId;
+                    $additionalTags[] = $tag;
 
-                // remove the child also from registry (internal cache) to avoid path inconsistencies during long running scripts, such as CLI
-                \Pimcore\Cache\Runtime::set($tag, null);
+                    // remove the child also from registry (internal cache) to avoid path inconsistencies during long running scripts, such as CLI
+                    \Pimcore\Cache\Runtime::set($tag, null);
+                }
             }
-        }
-        $this->clearDependentCache($additionalTags);
-        $this->setDataChanged(false);
+            $this->clearDependentCache($additionalTags);
+            $this->setDataChanged(false);
 
-        if ($isUpdate) {
-            \Pimcore::getEventDispatcher()->dispatch(AssetEvents::POST_UPDATE, new AssetEvent($this));
-        } else {
-            \Pimcore::getEventDispatcher()->dispatch(AssetEvents::POST_ADD, new AssetEvent($this));
-        }
+            if ($isUpdate) {
+                $updateEvent = new AssetEvent($this);
+                if ($differentOldPath) {
+                    $updateEvent->setArgument('oldPath', $differentOldPath);
+                }
+                \Pimcore::getEventDispatcher()->dispatch(AssetEvents::POST_UPDATE, $updateEvent);
+            } else {
+                \Pimcore::getEventDispatcher()->dispatch(AssetEvents::POST_ADD, new AssetEvent($this));
+            }
 
-        return $this;
+            return $this;
+        } catch (\Exception $e) {
+            $failureEvent = new AssetEvent($this);
+            $failureEvent->setArgument('exception', $e);
+            if ($isUpdate) {
+                \Pimcore::getEventDispatcher()->dispatch(AssetEvents::POST_UPDATE_FAILURE, $failureEvent);
+            } else {
+                \Pimcore::getEventDispatcher()->dispatch(AssetEvents::POST_ADD_FAILURE, $failureEvent);
+            }
+
+            throw $e;
+        }
     }
 
     /**
@@ -595,8 +633,12 @@ class Asset extends Element\AbstractElement
         }
 
         // do not allow PHP and .htaccess files
-        if (preg_match("@\.ph(p[345]?|t|tml|ps)$@i", $this->getFilename()) || $this->getFilename() == '.htaccess') {
+        if (preg_match("@\.ph(p[\d+]?|t|tml|ps|ar)$@i", $this->getFilename()) || $this->getFilename() == '.htaccess') {
             $this->setFilename($this->getFilename() . '.txt');
+        }
+
+        if (mb_strlen($this->getFilename()) > 255) {
+            throw new \Exception('Filenames longer than 255 characters are not allowed');
         }
 
         if (Asset\Service::pathExists($this->getRealFullPath())) {
@@ -747,7 +789,7 @@ class Asset extends Element\AbstractElement
             // this is important because at the time of creating an asset it's not clear which type (resp. class) it will have
             // the type (image, document, ...) depends on the mime-type
             \Pimcore\Cache\Runtime::set('asset_' . $this->getId(), null);
-            $asset = self::getById($this->getId());
+            $asset = Asset::getById($this->getId());
             \Pimcore\Cache\Runtime::set('asset_' . $this->getId(), $asset);
         }
 
@@ -770,45 +812,53 @@ class Asset extends Element\AbstractElement
      */
     public function saveVersion($setModificationDate = true, $saveOnlyVersion = true, $versionNote = null)
     {
+        try {
+            // hook should be also called if "save only new version" is selected
+            if ($saveOnlyVersion) {
+                \Pimcore::getEventDispatcher()->dispatch(AssetEvents::PRE_UPDATE, new AssetEvent($this, [
+                    'saveVersionOnly' => true
+                ]));
+            }
 
-        // hook should be also called if "save only new version" is selected
-        if ($saveOnlyVersion) {
-            \Pimcore::getEventDispatcher()->dispatch(AssetEvents::PRE_UPDATE, new AssetEvent($this, [
-                'saveVersionOnly' => true
+            // set date
+            if ($setModificationDate) {
+                $this->setModificationDate(time());
+            }
+
+            // scheduled tasks are saved always, they are not versioned!
+            $this->saveScheduledTasks();
+
+            // create version
+            $version = null;
+
+            // only create a new version if there is at least 1 allowed
+            // or if saveVersion() was called directly (it's a newer version of the asset)
+            if (Config::getSystemConfig()->assets->versions->steps
+                || Config::getSystemConfig()->assets->versions->days
+                || $setModificationDate) {
+                $version = $this->doSaveVersion($versionNote, $saveOnlyVersion);
+            }
+
+            // hook should be also called if "save only new version" is selected
+            if ($saveOnlyVersion) {
+                \Pimcore::getEventDispatcher()->dispatch(AssetEvents::POST_UPDATE, new AssetEvent($this, [
+                    'saveVersionOnly' => true
+                ]));
+            }
+
+            return $version;
+        } catch (\Exception $e) {
+            \Pimcore::getEventDispatcher()->dispatch(AssetEvents::POST_UPDATE_FAILURE, new AssetEvent($this, [
+                'saveVersionOnly' => true,
+                'exception' => $e
             ]));
+
+            throw $e;
         }
-
-        // set date
-        if ($setModificationDate) {
-            $this->setModificationDate(time());
-        }
-
-        // scheduled tasks are saved always, they are not versioned!
-        $this->saveScheduledTasks();
-
-        // create version
-        $version = null;
-
-        // only create a new version if there is at least 1 allowed
-        // or if saveVersion() was called directly (it's a newer version of the asset)
-        if (Config::getSystemConfig()->assets->versions->steps
-            || Config::getSystemConfig()->assets->versions->days
-            || $setModificationDate) {
-            $version = $this->doSaveVersion($versionNote, $saveOnlyVersion);
-        }
-
-        // hook should be also called if "save only new version" is selected
-        if ($saveOnlyVersion) {
-            \Pimcore::getEventDispatcher()->dispatch(AssetEvents::POST_UPDATE, new AssetEvent($this, [
-                'saveVersionOnly' => true
-            ]));
-        }
-
-        return $version;
     }
 
     /**
-     * Returns the full path of the document including the filename
+     * Returns the full path of the asset including the filename
      *
      * @return string
      */
@@ -934,9 +984,11 @@ class Asset extends Element\AbstractElement
     }
 
     /**
+     * @param bool $isNested
+     *
      * @throws \Exception
      */
-    public function delete()
+    public function delete(bool $isNested = false)
     {
         if ($this->getId() == 1) {
             throw new \Exception('root-node cannot be deleted');
@@ -944,20 +996,16 @@ class Asset extends Element\AbstractElement
 
         \Pimcore::getEventDispatcher()->dispatch(AssetEvents::PRE_DELETE, new AssetEvent($this));
 
+        $this->beginTransaction();
+
         try {
             $this->closeStream();
 
             // remove childs
             if ($this->hasChildren()) {
                 foreach ($this->getChildren() as $child) {
-                    $child->delete();
+                    $child->delete(true);
                 }
-            }
-
-            // remove file on filesystem
-            $fullPath = $this->getRealFullPath();
-            if ($fullPath != '/..' && !strpos($fullPath, '/../') && $this->getKey() !== '.' && $this->getKey() !== '..') {
-                $this->deletePhysicalFile();
             }
 
             $versions = $this->getVersions();
@@ -984,16 +1032,30 @@ class Asset extends Element\AbstractElement
             // remove from resource
             $this->getDao()->delete();
 
-            // empty asset cache
-            $this->clearDependentCache();
+            $this->commit();
 
-            // clear asset from registry
-            \Pimcore\Cache\Runtime::set('asset_' . $this->getId(), null);
+            // remove file on filesystem
+            if (!$isNested) {
+                $fullPath = $this->getRealFullPath();
+                if ($fullPath != '/..' && !strpos($fullPath,
+                        '/../') && $this->getKey() !== '.' && $this->getKey() !== '..') {
+                    $this->deletePhysicalFile();
+                }
+            }
         } catch (\Exception $e) {
-            \Pimcore::getEventDispatcher()->dispatch(AssetEvents::POST_DELETE_FAILURE, new AssetEvent($this));
+            $this->rollBack();
+            $failureEvent = new AssetEvent($this);
+            $failureEvent->setArgument('exception', $e);
+            \Pimcore::getEventDispatcher()->dispatch(AssetEvents::POST_DELETE_FAILURE, $failureEvent);
             Logger::crit($e);
             throw $e;
         }
+
+        // empty asset cache
+        $this->clearDependentCache();
+
+        // clear asset from registry
+        \Pimcore\Cache\Runtime::set('asset_' . $this->getId(), null);
 
         \Pimcore::getEventDispatcher()->dispatch(AssetEvents::POST_DELETE, new AssetEvent($this));
     }
@@ -1444,6 +1506,8 @@ class Asset extends Element\AbstractElement
 
         @chmod($destinationPath, File::getDefaultMode());
 
+        $this->_temporaryFiles[] = $destinationPath;
+
         return $destinationPath;
     }
 
@@ -1691,44 +1755,23 @@ class Asset extends Element\AbstractElement
     /**
      * Get filesize
      *
-     * @param string $format ('GB','MB','KB','B')
+     * @param bool $formatted
      * @param int $precision
      *
      * @return string
      */
-    public function getFileSize($format = 'noformatting', $precision = 2)
+    public function getFileSize($formatted = false, $precision = 2)
     {
-        $format = strtolower($format);
         $bytes = 0;
         if (is_file($this->getFileSystemPath())) {
             $bytes = filesize($this->getFileSystemPath());
         }
 
-        switch ($format) {
-            case 'gb':
-                $size = (($bytes / 1024) / 1024) / 1024;
-                break;
-
-            case 'mb':
-                $size = (($bytes / 1024) / 1024);
-                break;
-
-            case 'kb':
-                $size = ($bytes / 1024);
-                break;
-
-            case 'b':
-            default:
-                $size = $bytes;
-                $precision = 0;
-                break;
+        if ($formatted) {
+            return formatBytes($bytes, $precision);
         }
 
-        if ($format == 'noformatting') {
-            return $size;
-        }
-
-        return round($size, $precision) . ' ' . $format;
+        return $bytes;
     }
 
     /**
@@ -1737,7 +1780,7 @@ class Asset extends Element\AbstractElement
     public function getParent()
     {
         if ($this->parent === null) {
-            $this->setParent(self::getById($this->getParentId()));
+            $this->setParent(Asset::getById($this->getParentId()));
         }
 
         return $this->parent;
@@ -1784,15 +1827,15 @@ class Asset extends Element\AbstractElement
     {
         $finalVars = [];
         $parentVars = parent::__sleep();
+        $blockedVars = ['_temporaryFiles', 'scheduledTasks', 'dependencies', 'userPermissions', 'hasChilds', 'versions', 'parent', 'stream'];
 
         if (isset($this->_fulldump)) {
             // this is if we want to make a full dump of the asset (eg. for a new version), including childs for recyclebin
-            $blockedVars = ['scheduledTasks', 'dependencies', 'userPermissions', 'hasChilds', 'versions', 'parent', 'stream'];
             $finalVars[] = '_fulldump';
             $this->removeInheritedProperties();
         } else {
             // this is if we want to cache the asset
-            $blockedVars = ['scheduledTasks', 'dependencies', 'userPermissions', 'hasChilds', 'versions', 'childs', 'properties', 'stream', 'parent'];
+            $blockedVars = array_merge($blockedVars, ['childs', 'properties']);
         }
 
         foreach ($parentVars as $key) {
@@ -1856,9 +1899,15 @@ class Asset extends Element\AbstractElement
 
     public function __destruct()
     {
-
         // close open streams
         $this->closeStream();
+
+        // delete temporary files
+        foreach ($this->_temporaryFiles as $tempFile) {
+            if (file_exists($tempFile)) {
+                @unlink($tempFile);
+            }
+        }
     }
 
     /**
@@ -1874,10 +1923,39 @@ class Asset extends Element\AbstractElement
      *
      * @return Asset
      */
-    public function setVersionCount(?int $versionCount): self
+    public function setVersionCount(?int $versionCount): ElementInterface
     {
         $this->versionCount = (int) $versionCount;
 
         return $this;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function resolveDependencies()
+    {
+        $dependencies = parent::resolveDependencies();
+
+        if ($this->hasMetaData) {
+            $metaData = $this->getMetadata();
+
+            foreach ($metaData as $md) {
+                if (isset($md['data']) && $md['data'] instanceof ElementInterface) {
+                    /**
+                     * @var $elementData ElementInterface
+                     */
+                    $elementData = $md['data'];
+                    $elementType = $md['type'];
+                    $key = $elementType . '_' . $elementData->getId();
+                    $dependencies[$key] = [
+                        'id' => $elementData->getId(),
+                        'type' => $elementType
+                    ];
+                }
+            }
+        }
+
+        return $dependencies;
     }
 }

@@ -21,7 +21,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\IProductLis
 class Dao
 {
     /**
-     * @var \Pimcore\Db\Connection
+     * @var \Pimcore\Db\ConnectionInterface
      */
     private $db;
 

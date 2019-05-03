@@ -118,13 +118,15 @@ pimcore.report.custom.report = Class.create(pimcore.report.abstract, {
                                 var data = grid.getStore().getAt(rowIndex).getData();
                                 var columnName = colConfig["name"];
                                 var id = data[columnName];
-                                var action = colConfig["columnAction"]
-                                if (action == "openDocument") {
+                                var action = colConfig["columnAction"];
+                                if (action === "openDocument") {
                                     pimcore.helpers.openElement(id, "document");
-                                } else if (action == "openAsset") {
+                                } else if (action === "openAsset") {
                                     pimcore.helpers.openElement(id, "asset");
-                                } else if (action == "openObject") {
+                                } else if (action === "openObject") {
                                     pimcore.helpers.openElement(id, "object");
+                                } else if (action === "openUrl") {
+                                    window.open(id);
                                 }
                             }.bind(this, colConfig)
                         }
@@ -397,7 +399,7 @@ pimcore.report.custom.report = Class.create(pimcore.report.abstract, {
             var chartFields = [];
             if (data.pieLabelColumn) {
                 chartFields.push(data.pieLabelColumn);
-            };
+            }
             if (data.pieColumn) {
                 chartFields.push({
                     name: data.pieColumn,
@@ -537,94 +539,3 @@ pimcore.report.custom.report = Class.create(pimcore.report.abstract, {
 
 
 });
-
-
-
-
-pimcore.registerNS("pimcore.report.custom.reportplugin");
-pimcore.report.custom.reportplugin = Class.create(pimcore.plugin.admin, {
-
-    getClassName: function() {
-        return "pimcore.report.custom.reportplugin";
-    },
-
-    initialize: function() {
-        pimcore.plugin.broker.registerPlugin(this);
-    },
-
-    pimcoreReady: function (params,broker){
-
-        var user = pimcore.globalmanager.get("user");
-        if(user.isAllowed("reports")){
-
-            // get available reports
-            Ext.Ajax.request({
-                url: "/admin/reports/custom-report/get-report-config",
-                success: function (response) {
-                    var res = Ext.decode(response.responseText);
-                    var report;
-
-                    if(res.success && res.reports && res.reports.length > 0) {
-                        for (var i=0; i<res.reports.length; i++) {
-                            report = res.reports[i];
-
-                            // set some defaults
-                            if(!report["group"]) {
-                                report["group"] = "custom_reports"
-                            }
-
-                            if(!report["niceName"]) {
-                                report["niceName"] = report["name"]
-                            }
-
-                            if(!report["iconClass"]) {
-                                report["iconClass"] = "pimcore_icon_sql";
-                            }
-
-                            if(!report["groupIconClass"]) {
-                                report["groupIconClass"] = "pimcore_icon_sql";
-                            }
-
-                            var reportClass = report.reportClass ? report.reportClass : "pimcore.report.custom.report";
-                            pimcore.report.broker.addGroup(report["group"], report["group"], report["groupIconClass"]);
-                            pimcore.report.broker.addReport(reportClass, report["group"], {
-                                name: report["name"],
-                                text: report["niceName"],
-                                niceName: report["niceName"],
-                                iconCls: report["iconClass"]
-                            });
-
-                            // add the report directly into the reports menu in "extras" -> main menu
-                            if(report["menuShortcut"]) {
-                                try {
-                                    var toolbar = pimcore.globalmanager.get("layout_toolbar");
-                                    if(toolbar["marketingMenu"]) {
-                                        toolbar["marketingMenu"].add({
-                                            text: report["niceName"],
-                                            iconCls: report["iconClass"],
-                                            handler: function (report) {
-                                                toolbar.showReports(reportClass, {
-                                                    name: report["name"],
-                                                    text: report["niceName"],
-                                                    niceName: report["niceName"],
-                                                    iconCls: report["iconClass"]
-                                                });
-                                            }.bind(this, report)
-                                        });
-                                    }
-                                } catch (e) {
-                                    console.log(e);
-                                }
-                            }
-                        }
-                    }
-                }
-            });
-        }
-    }
-});
-
-(function() {
-    new pimcore.report.custom.reportplugin();
-})();
-

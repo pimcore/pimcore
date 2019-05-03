@@ -26,6 +26,8 @@ use Pimcore\Model\DataObject;
  */
 class Dao extends Model\Dao\AbstractDao
 {
+    use DataObject\ClassDefinition\Helper\Dao;
+
     /**
      * @var null
      */
@@ -221,5 +223,7 @@ class Dao extends Model\Dao\AbstractDao
         ) DEFAULT CHARSET=utf8mb4;');
 
         $this->tableDefinitions = null;
+
+        $this->handleEncryption($this->model->getClass(), [$groupsTable, $dataTable]);
     }
 }

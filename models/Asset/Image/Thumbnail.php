@@ -366,7 +366,7 @@ class Thumbnail
 
     /**
      * Get generated HTML for displaying the thumbnail image in a HTML document. (XHTML compatible).
-     * Attributes can be added as a parameter. Attributes containing illigal characters are ignored.
+     * Attributes can be added as a parameter. Attributes containing illegal characters are ignored.
      * Width and Height attribute can be overridden. SRC-attribute not.
      * Values of attributes are escaped.
      *
@@ -375,7 +375,7 @@ class Thumbnail
      *
      * @return string IMG-element with at least the attributes src, width, height, alt.
      */
-    public function getHTML($options = [], $removeAttributes = [])
+    public function getHtml($options = [], $removeAttributes = [])
     {
         $image = $this->getAsset();
         $attributes = [];
@@ -474,6 +474,9 @@ class Thumbnail
 
         $path = $this->getPath(true);
         $attributes['src'] = $path;
+        if (isset($options['cacheBuster']) && $options['cacheBuster']) {
+            $attributes['src'] = '/cache-buster-' . $image->getModificationDate() . $attributes['src'];
+        }
 
         $thumbConfig = $this->getConfig();
 
@@ -484,6 +487,9 @@ class Thumbnail
                 $thumbConfigRes = clone $thumbConfig;
                 $thumbConfigRes->setHighResolution($highRes);
                 $srcsetEntry = $image->getThumbnail($thumbConfigRes, true) . ' ' . $highRes . 'x';
+                if (isset($options['cacheBuster']) && $options['cacheBuster']) {
+                    $srcsetEntry = '/cache-buster-' . $image->getModificationDate() . $srcsetEntry;
+                }
                 $srcSetValues[] = $srcsetEntry;
             }
             $attributes['srcset'] = implode(', ', $srcSetValues);

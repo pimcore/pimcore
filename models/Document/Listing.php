@@ -26,7 +26,7 @@ use Zend\Paginator\AdapterAggregateInterface;
  * @method Document[] load()
  * @method int getTotalCount()
  * @method int getCount()
- * @method int loadIdList()
+ * @method int[] loadIdList()
  * @method \Pimcore\Model\Document\Listing\Dao getDao()
  * @method onCreateQuery(callable $callback)
  */

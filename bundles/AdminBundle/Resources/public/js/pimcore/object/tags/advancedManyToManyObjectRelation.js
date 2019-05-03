@@ -16,7 +16,7 @@ pimcore.object.tags.advancedManyToManyObjectRelation = Class.create(pimcore.obje
 
     type: "advancedManyToManyObjectRelation",
     dataChanged: false,
-    idProperty: "id",
+    idProperty: "rowId",
     pathProperty: "fullpath",
     allowBatchAppend: true,
 
@@ -49,6 +49,7 @@ pimcore.object.tags.advancedManyToManyObjectRelation = Class.create(pimcore.obje
         this.visibleFields = visibleFields;
 
         fields.push("id");
+        fields.push("index");
         fields.push("inheritedFields");
         fields.push("metadata");
 
@@ -60,6 +61,15 @@ pimcore.object.tags.advancedManyToManyObjectRelation = Class.create(pimcore.obje
 
         for (i = 0; i < this.fieldConfig.columns.length; i++) {
             fields.push(this.fieldConfig.columns[i].key);
+        }
+
+        var modelName = 'ObjectsMultipleRelations';
+        if (!Ext.ClassManager.isCreated(modelName)) {
+            Ext.define(modelName, {
+                extend: 'Ext.data.Model',
+                idProperty: this.idProperty,
+                fields: fields
+            });
         }
 
         this.store = new Ext.data.JsonStore({
@@ -81,7 +91,7 @@ pimcore.object.tags.advancedManyToManyObjectRelation = Class.create(pimcore.obje
                     this.dataChanged = true;
                 }.bind(this)
             },
-            fields: fields
+            model: modelName
         });
     },
 
@@ -113,7 +123,7 @@ pimcore.object.tags.advancedManyToManyObjectRelation = Class.create(pimcore.obje
 
                 var fc = pimcore.object.tags[layout.fieldtype].prototype.getGridColumnConfig(field);
 
-                fc.width = 100;
+                fc.flex = 1;
                 fc.hidden = false;
                 fc.layout = field;
                 fc.editor = null;
@@ -195,12 +205,12 @@ pimcore.object.tags.advancedManyToManyObjectRelation = Class.create(pimcore.obje
                 };
 
                 if (readOnly) {
-                    columns.push(Ext.create('Ext.grid.column.Check'), {
+                    columns.push(Ext.create('Ext.grid.column.Check', {
                         text: ts(this.fieldConfig.columns[i].label),
                         dataIndex: this.fieldConfig.columns[i].key,
                         width: width,
                         renderer: renderer
-                    });
+                    }));
                     continue;
                 }
 
@@ -217,7 +227,6 @@ pimcore.object.tags.advancedManyToManyObjectRelation = Class.create(pimcore.obje
                 dataIndex: this.fieldConfig.columns[i].key,
                 renderer: renderer,
                 listeners: listeners,
-                sortable: true,
                 width: width
             };
 
@@ -338,6 +347,9 @@ pimcore.object.tags.advancedManyToManyObjectRelation = Class.create(pimcore.obje
             columnLines: true,
             stripeRows: true,
             columns: {
+                defaults: {
+                    sortable: false
+                },
                 items: columns
             },
             viewConfig: {
@@ -347,8 +359,8 @@ pimcore.object.tags.advancedManyToManyObjectRelation = Class.create(pimcore.obje
                 },
                 markDirty: false,
                 listeners: {
-                    refresh: function (gridview) {
-                        this.requestNicePathData(this.store.data);
+                    afterrender: function (gridview) {
+                        this.requestNicePathData(this.store.data, true);
                     }.bind(this),
                     drop: function () {
                         // this is necessary to avoid endless recursion when long lists are sorted via d&d
@@ -435,10 +447,11 @@ pimcore.object.tags.advancedManyToManyObjectRelation = Class.create(pimcore.obje
                                     var initData = {
                                         id: data.id,
                                         metadata: '',
+                                        fullpath: data.path,
                                         inheritedFields: {}
                                     };
 
-                                    if (!this.objectAlreadyExists(initData.id)) {
+                                    if (this.fieldConfig.allowMultipleAssignments || !this.objectAlreadyExists(initData.id)) {
                                         toBeRequested.add(this.loadObjectData(initData, this.visibleFields));
                                     }
                                 }
@@ -480,18 +493,20 @@ pimcore.object.tags.advancedManyToManyObjectRelation = Class.create(pimcore.obje
                         }.bind(this, grid)
                     });
                     menu.add(batchSelectedMenu);
-                    menu.on('beforeshow', function (batchAllMenu, grid) {
+                    menu.on('beforeshow', function (batchAllMenu, batchSelectedMenu, grid) {
                         var menu = grid.headerCt.getMenu();
                         var columnDataIndex = menu.activeHeader.dataIndex;
                         var metaIndex = this.fieldConfig.columnKeys.indexOf(columnDataIndex);
 
                         if (metaIndex < 0) {
+                            batchSelectedMenu.hide();
                             batchAllMenu.hide();
                         } else {
+                            batchSelectedMenu.show();
                             batchAllMenu.show();
                         }
 
-                    }.bind(this, batchAllMenu, grid));
+                    }.bind(this, batchAllMenu, batchSelectedMenu, grid));
                 }
             }.bind(this));
         }
@@ -506,38 +521,6 @@ pimcore.object.tags.advancedManyToManyObjectRelation = Class.create(pimcore.obje
 
     getLayoutShow: function () {
         return this.createLayout(true);
-    },
-
-    getEditToolbarItems: function (readOnly) {
-        var toolbarItems = [
-            {
-                xtype: "tbspacer",
-                width: 20,
-                height: 16,
-                cls: "pimcore_icon_droptarget"
-            },
-            {
-                xtype: "tbtext",
-                text: "<b>" + this.fieldConfig.title + "</b>"
-            }];
-
-        if (!readOnly) {
-            toolbarItems = toolbarItems.concat([
-                "->",
-                {
-                    xtype: "button",
-                    iconCls: "pimcore_icon_delete",
-                    handler: this.empty.bind(this)
-                },
-                {
-                    xtype: "button",
-                    iconCls: "pimcore_icon_search",
-                    handler: this.openSearchEditor.bind(this)
-                },
-                this.getCreateControl()]);
-        }
-
-        return toolbarItems;
     },
 
     dndAllowed: function (data, fromTree) {
@@ -568,20 +551,6 @@ pimcore.object.tags.advancedManyToManyObjectRelation = Class.create(pimcore.obje
         return isAllowedClass;
     },
 
-    addDataFromSelector: function (items) {
-
-        if (items.length > 0) {
-            toBeRequested = new Ext.util.Collection();
-
-            for (var i = 0; i < items.length; i++) {
-                if (!this.objectAlreadyExists(items[i].id)) {
-                    toBeRequested.add(this.loadObjectData(items[i], this.visibleFields));
-                }
-            }
-            this.requestNicePathData(toBeRequested);
-        }
-    },
-
     cellMousedown: function (key, colType, grid, cell, rowIndex, cellIndex, e) {
 
         // this is used for the boolean field type
@@ -592,48 +561,6 @@ pimcore.object.tags.advancedManyToManyObjectRelation = Class.create(pimcore.obje
         if (colType == "bool") {
             record.set(key, !record.data[key]);
         }
-    },
-
-    loadObjectData: function (item, fields) {
-
-        var newItem = this.store.add(item);
-
-        Ext.Ajax.request({
-            url: "/admin/object-helper/load-object-data",
-            params: {
-                id: item.id,
-                'fields[]': fields
-            },
-            success: function (response) {
-                var rdata = Ext.decode(response.responseText);
-                var key;
-
-                if (rdata.success) {
-                    var rec = this.store.getById(item.id);
-                    for (key in rdata.fields) {
-                        rec.set(key, rdata.fields[key]);
-                    }
-                }
-            }.bind(this)
-        });
-
-        return newItem;
-    },
-
-    normalizeTargetData: function (targets) {
-        if (!targets) {
-            return targets;
-        }
-
-        targets.each(function (record) {
-            var type = record.data.type;
-            record.data.type = "object";
-            record.data.subtype = type;
-            record.data.path = record.data.fullpath;
-        }, this);
-
-        return targets;
-
     },
 
     getGridColumnConfig: function(field) {
@@ -664,106 +591,6 @@ pimcore.object.tags.advancedManyToManyObjectRelation = Class.create(pimcore.obje
 
     getCellEditValue: function () {
         return this.getValue();
-    },
-
-    batchPrepare: function(columnDataIndex, grid, onlySelected, append){
-        var columnIndex = columnDataIndex.fullColumnIndex;
-        var editor = grid.getColumns()[columnIndex].getEditor();
-        var metaIndex = this.fieldConfig.columnKeys.indexOf(columnDataIndex.dataIndex);
-        var columnConfig = this.fieldConfig.columns[metaIndex];
-
-        if (columnConfig.type == 'multiselect') { //create edit layout for multiselect field
-            var selectData = [];
-            if (columnConfig.value) {
-                var selectDataRaw = columnConfig.value.split(";");
-                for (var j = 0; j < selectDataRaw.length; j++) {
-                    selectData.push([selectDataRaw[j], ts(selectDataRaw[j])]);
-                }
-            }
-
-            var store = new Ext.data.ArrayStore({
-                fields: [
-                    'id',
-                    'label'
-                ],
-                data: selectData
-            });
-
-            var options = {
-                triggerAction: "all",
-                editable: false,
-                store: store,
-                componentCls: "object_field",
-                height: '100%',
-                valueField: 'id',
-                displayField: 'label'
-            };
-
-            editor = Ext.create('Ext.ux.form.MultiSelect', options);
-        } else if (columnConfig.type == 'bool') { //create edit layout for bool meta field
-            editor = new Ext.form.Checkbox();
-        }
-
-        var editorLabel = Ext.create('Ext.form.Label', {
-          text: grid.getColumns()[columnIndex].text + ':',
-          style: {
-            float: 'left',
-            margin: '0 20px 0 0'
-          }
-        });
-
-        var formPanel = Ext.create('Ext.form.Panel', {
-            xtype: "form",
-            border: false,
-            items: [editorLabel, editor],
-            bodyStyle: "padding: 10px;",
-            buttons: [
-                {
-                    text: t("edit"),
-                    handler: function() {
-                        if(formPanel.isValid()) {
-                            this.batchProcess(columnDataIndex.dataIndex, editor, grid, onlySelected);
-                        }
-                    }.bind(this)
-                }
-            ]
-        });
-        var batchTitle = onlySelected ? "batch_edit_field_selected" : "batch_edit_field";
-        var title = t(batchTitle) + " " + grid.getColumns()[columnIndex].text;
-        this.batchWin = new Ext.Window({
-            autoScroll: true,
-            modal: false,
-            title: title,
-            items: [formPanel],
-            bodyStyle: "background: #fff;",
-            width: 500,
-            maxHeight: 400
-        });
-        this.batchWin.show();
-        this.batchWin.updateLayout();
-
-    },
-
-    batchProcess: function (dataIndex, editor, grid, onlySelected) {
-
-        var newValue = editor.getValue();
-        var valueType = "primitive";
-
-        if (onlySelected) {
-            var selectedRows = grid.getSelectionModel().getSelection();
-            for (var i=0; i<selectedRows.length; i++) {
-                selectedRows[i].set(dataIndex, newValue);
-            }
-        } else {
-            var items = grid.store.data.items;
-            for (var i = 0; i < items.length; i++)
-            {
-                var record = grid.store.getAt(i);
-                record.set(dataIndex, newValue);
-            }
-        }
-
-        this.batchWin.close();
     }
 
 });

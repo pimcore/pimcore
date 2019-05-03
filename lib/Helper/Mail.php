@@ -183,6 +183,11 @@ CSS;
         $text = $mail->getBodyTextMimePart();
         if ($text) {
             $emailLog->setBodyText($text->getBody());
+        } else {
+            // Mail was probably sent as plain text only.
+            if ($text = $mail->getBodyText()) {
+                $emailLog->setBodyText($text);
+            }
         }
 
         foreach (['To', 'Cc', 'Bcc', 'ReplyTo'] as $key) {
@@ -413,7 +418,7 @@ CSS;
         $emailArray = preg_split('/,|;/', $emailString);
         if ($emailArray) {
             foreach ($emailArray as $emailStringEntry) {
-                $entryAddress = $emailStringEntry;
+                $entryAddress = trim($emailStringEntry);
                 $entryName = null;
                 $matches = [];
                 if (preg_match('/(.*)<(.*)>/', $entryAddress, $matches)) {

@@ -40,7 +40,7 @@ pimcore.object.tags.booleanSelect = Class.create(pimcore.object.tags.abstract, {
                 }
             }
 
-            return value;
+            return Ext.util.Format.htmlEncode(value);
 
         }.bind(this, field.key);
 

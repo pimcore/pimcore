@@ -24,6 +24,7 @@ use Pimcore\Bundle\InstallBundle\SystemConfig\ConfigWriter;
 use Pimcore\Config;
 use Pimcore\Console\Style\PimcoreStyle;
 use Pimcore\Db\Connection;
+use Pimcore\Db\ConnectionInterface;
 use Pimcore\Model\User;
 use Pimcore\Process\PartsBuilder;
 use Pimcore\Tool\AssetsInstaller;
@@ -148,7 +149,7 @@ class Installer
         return empty($this->dbCredentials);
     }
 
-    public function checkPrerequisites(Connection $db = null): array
+    public function checkPrerequisites(ConnectionInterface $db = null): array
     {
         $checks = array_merge(
             Requirements::checkFilesystem(),
@@ -398,7 +399,7 @@ class Installer
             $parts = $partsBuilder->getParts();
 
             $process = new Process($parts);
-            $process->setTimeout(120);
+            $process->setTimeout(0);
             $process->setWorkingDirectory(PIMCORE_PROJECT_ROOT);
             $process->run();
 
@@ -698,6 +699,7 @@ class Installer
             ['key' => 'recyclebin'],
             ['key' => 'redirects'],
             ['key' => 'reports'],
+            ['key' => 'reports_config'],
             ['key' => 'robots.txt'],
             ['key' => 'routes'],
             ['key' => 'seemode'],
@@ -715,7 +717,9 @@ class Installer
             ['key' => 'website_settings'],
             ['key' => 'admin_translations'],
             ['key' => 'web2print_settings'],
-            ['key' => 'workflow_details']
+            ['key' => 'workflow_details'],
+            ['key' => 'notifications'],
+            ['key' => 'notifications_send']
         ];
 
         foreach ($userPermissions as $up) {

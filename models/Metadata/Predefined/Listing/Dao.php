@@ -34,7 +34,7 @@ class Dao extends Model\Dao\PhpArrayTable
      * Loads a list of predefined metadata definitions for the specicified parameters, returns an array of
      * Metadata\Predefined elements
      *
-     * @return array
+     * @return \Pimcore\Model\Metadata\Predefined[]
      */
     public function load()
     {

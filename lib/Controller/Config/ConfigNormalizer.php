@@ -39,6 +39,11 @@ class ConfigNormalizer
     /**
      * @var array
      */
+    private $routingDefaults = [];
+
+    /**
+     * @var array
+     */
     private $bundleCache = [];
 
     /**
@@ -47,6 +52,11 @@ class ConfigNormalizer
     public function __construct(KernelInterface $kernel)
     {
         $this->kernel = $kernel;
+    }
+
+    public function setRoutingDefaults(array $routingDefaults)
+    {
+        $this->routingDefaults = $routingDefaults;
     }
 
     /**
@@ -92,7 +102,7 @@ class ConfigNormalizer
     public function normalizeBundleName(string $bundle = null): string
     {
         if (empty($bundle)) {
-            return PIMCORE_SYMFONY_DEFAULT_BUNDLE;
+            return $this->routingDefaults['bundle'];
         }
 
         $originalBundle = $bundle;
@@ -129,7 +139,7 @@ class ConfigNormalizer
     public function normalizeControllerName(string $controller = null): string
     {
         if (empty($controller)) {
-            return PIMCORE_SYMFONY_DEFAULT_BUNDLE;
+            return $this->routingDefaults['controller'];
         }
 
         // split submodules with _ and uppercase first character
@@ -152,7 +162,7 @@ class ConfigNormalizer
     public function normalizeActionName(string $action = null): string
     {
         if (empty($action)) {
-            return defined('PIMCORE_SYMFONY_DEFAULT_ACTION') ? PIMCORE_SYMFONY_DEFAULT_ACTION : 'default';
+            return $this->routingDefaults['action'];
         }
 
         return Inflector::camelize($action);

@@ -230,11 +230,21 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
         $data = is_array($data) ? $data : [];
         $data = current($data);
 
+        $result = [
+            'dirty' => false,
+            'data' => null
+        ];
+
         if ($data['dest_id'] && $data['type']) {
-            return Element\Service::getElementById($data['type'], $data['dest_id']);
+            $element = Element\Service::getElementById($data['type'], $data['dest_id']);
+            if ($element instanceof Element\ElementInterface) {
+                $result['data'] = $element;
+            } else {
+                $result['dirty'] = true;
+            }
         }
 
-        return null;
+        return $result;
     }
 
     /**
@@ -565,7 +575,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
         if ($object instanceof DataObject\Concrete) {
             $data = $object->getObjectVar($this->getName());
 
-            if ($this->getLazyLoading() and !in_array($this->getName(), $object->getO__loadedLazyFields())) {
+            if ($this->getLazyLoading() && !$object->isLazyKeyLoaded($this->getName())) {
                 $data = $this->load($object, ['force' => true]);
 
                 $object->setObjectVar($this->getName(), $data);
@@ -574,8 +584,10 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
         } elseif ($object instanceof DataObject\Localizedfield) {
             $data = $params['data'];
         } elseif ($object instanceof DataObject\Fieldcollection\Data\AbstractData) {
+            parent::loadLazyFieldcollectionField($object);
             $data = $object->getObjectVar($this->getName());
         } elseif ($object instanceof DataObject\Objectbrick\Data\AbstractData) {
+            parent::loadLazyBrickField($object);
             $data = $object->getObjectVar($this->getName());
         }
 

@@ -31,6 +31,9 @@ final class DataObjectEvents
     const POST_ADD = 'pimcore.dataobject.postAdd';
 
     /**
+     * Arguments:
+     *  - exception | exception object
+     *
      * @Event("Pimcore\Event\Model\DataObjectEvent")
      *
      * @var string
@@ -50,6 +53,7 @@ final class DataObjectEvents
     /**
      * Arguments:
      *  - saveVersionOnly | is set if method saveVersion() was called instead of save()
+     *  - oldPath | the old full path in case the path has changed
      *
      * @Event("Pimcore\Event\Model\DataObjectEvent")
      *
@@ -60,6 +64,7 @@ final class DataObjectEvents
     /**
      * Arguments:
      *  - saveVersionOnly | is set if method saveVersion() was called instead of save()
+     *  - exception | exception object
      *
      * @Event("Pimcore\Event\Model\DataObjectEvent")
      *
@@ -89,6 +94,9 @@ final class DataObjectEvents
     const POST_DELETE = 'pimcore.dataobject.postDelete';
 
     /**
+     * Arguments:
+     *  - exception | exception object
+     *
      * @Event("Pimcore\Event\Model\DataObjectEvent")
      *
      * @var string

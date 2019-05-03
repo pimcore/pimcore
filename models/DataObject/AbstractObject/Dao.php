@@ -215,16 +215,11 @@ class Dao extends Model\Element\Dao
      */
     public function getVersionCountForUpdate(): int
     {
+        $versionCount = (int) $this->db->fetchOne('SELECT o_versionCount FROM objects WHERE o_id = ? FOR UPDATE', $this->model->getId());
+
         if ($this->model instanceof DataObject\Concrete) {
-            $db = Db::get();
-            $versionCount = $db->fetchOne(
-                'SELECT GREATEST(o.o_versionCount, IFNULL(v.versionCount, 0)) FROM objects as o LEFT JOIN versions as v
-                        ON ctype="object" AND v.cid=o.o_id WHERE o.o_id = ? ORDER BY v.id DESC LIMIT 1 FOR UPDATE', $this->model->getId());
-        } else {
-            $versionCount = $this->db->fetchOne(
-                'SELECT o_versionCount FROM objects WHERE o_id = ? FOR UPDATE',
-                $this->model->getId()
-            );
+            $versionCount2 = (int) $this->db->fetchOne("SELECT MAX(versionCount) FROM versions WHERE cid = ? AND ctype = 'object'", $this->model->getId());
+            $versionCount = max($versionCount, $versionCount2);
         }
 
         return (int) $versionCount;
@@ -305,15 +300,23 @@ class Dao extends Model\Element\Dao
     }
 
     /**
-     * Quick test if there are childs
+     * Quick test if there are children
      *
      * @param array $objectTypes
+     * @param bool $unpublished
      *
      * @return bool
      */
-    public function hasChildren($objectTypes = [DataObject::OBJECT_TYPE_OBJECT, DataObject::OBJECT_TYPE_FOLDER])
+    public function hasChildren($objectTypes = [DataObject::OBJECT_TYPE_OBJECT, DataObject::OBJECT_TYPE_FOLDER], $unpublished = false)
     {
-        $c = $this->db->fetchOne("SELECT o_id FROM objects WHERE o_parentId = ? AND o_type IN ('" . implode("','", $objectTypes) . "') LIMIT 1", $this->model->getId());
+        $sql = 'SELECT o_id FROM objects WHERE o_parentId = ?';
+
+        if (DataObject\AbstractObject::doHideUnpublished() && !$unpublished) {
+            $sql .= ' AND o_published = 1';
+        }
+        $sql .= " AND o_type IN ('" . implode("','", $objectTypes) . "') LIMIT 1";
+
+        $c = $this->db->fetchOne($sql, $this->model->getId());
 
         return (bool)$c;
     }

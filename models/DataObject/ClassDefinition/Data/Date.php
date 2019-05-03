@@ -430,7 +430,7 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
             $db = Db::get();
 
             if ($this->getColumnType() == 'date') {
-                $condition = '`' . $params['name'] . ' = '. $db->quote($value);
+                $condition = $db->quoteIdentifier($params['name']) . ' = '. $db->quote($value);
 
                 return $condition;
             } else {

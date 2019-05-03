@@ -24,7 +24,7 @@ abstract class AbstractDao implements DaoInterface
     const CACHEKEY = 'system_resource_columns_';
 
     /**
-     * @var \Pimcore\Db\Connection
+     * @var \Pimcore\Db\ConnectionInterface
      */
     public $db;
 

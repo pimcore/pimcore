@@ -88,6 +88,11 @@ pimcore.object.classes.data.textarea = Class.create(pimcore.object.classes.data.
                 fieldLabel: t("show_charcount"),
                 name: "showCharCount",
                 value: datax.showCharCount
+            }, {
+                xtype: "checkbox",
+                fieldLabel: t("exclude_from_search_index"),
+                name: "excludeFromSearchIndex",
+                checked: datax.excludeFromSearchIndex
             }
         ];
 

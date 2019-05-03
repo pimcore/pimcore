@@ -458,14 +458,31 @@ pimcore.element.selector.object = Class.create(pimcore.element.selector.abstract
 
         var visibleColumns = [];
         for(var i = 0; i < fieldKeys.length; i++) {
-            if(!fields[fieldKeys[i]].hidden) {
-                visibleColumns.push({
+            var field = fields[fieldKeys[i]];
+            if(!field.hidden) {
+                var fc = {
                     key: fieldKeys[i],
-                    label: fields[fieldKeys[i]].fieldConfig.label,
-                    dataType: fields[fieldKeys[i]].fieldConfig.type,
-                    layout: fields[fieldKeys[i]].fieldConfig.layout
-                });
+                    label: field.fieldConfig.label,
+                    dataType: field.fieldConfig.type,
+                    layout: field.fieldConfig.layout
+                };
+                if (field.fieldConfig.width) {
+                    fc.width = field.fieldConfig.width;
+                }
+
+                if (field.isOperator) {
+                    fc.isOperator = true;
+                    fc.attributes = field.fieldConfig.attributes;
+
+                }
+
+                visibleColumns.push(fc);
             }
+        }
+
+        var objectId;
+        if(this["object"] && this.object["id"]) {
+            objectId = this.object.id;
         }
 
         var columnConfig = {
@@ -473,6 +490,7 @@ pimcore.element.selector.object = Class.create(pimcore.element.selector.abstract
             classid: classId,
             selectedGridColumns: visibleColumns
         };
+
         var dialog = new pimcore.object.helpers.gridConfigDialog(columnConfig,
             function(data, settings, save) {
                 this.saveColumnConfigButton.show(); //unhide save config button
@@ -528,7 +546,9 @@ pimcore.element.selector.object = Class.create(pimcore.element.selector.abstract
                     name: cm[i].dataIndex,
                     position: i,
                     hidden: cm[i].hidden,
-                    fieldConfig: this.fieldObject[cm[i].dataIndex]
+                    width: cm[i].width,
+                    fieldConfig: this.fieldObject[cm[i].dataIndex],
+                    isOperator: this.fieldObject[cm[i].dataIndex].isOperator
                 };
 
             }

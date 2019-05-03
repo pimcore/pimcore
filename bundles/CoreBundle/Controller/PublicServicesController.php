@@ -14,6 +14,7 @@
 
 namespace Pimcore\Bundle\CoreBundle\Controller;
 
+use Pimcore\Config;
 use Pimcore\Logger;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Site;
@@ -21,6 +22,8 @@ use Pimcore\Model\Tool;
 use Pimcore\Model\Tool\TmpStore;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller as FrameworkController;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use Symfony\Component\HttpFoundation\Cookie;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -132,9 +135,11 @@ class PublicServicesController extends FrameworkController
         } catch (\Exception $e) {
         }
 
-        $siteSuffix = '-default';
+        $config = Config::getRobotsConfig()->toArray();
+
+        $siteId = 'default';
         if ($site instanceof Site) {
-            $siteSuffix = '-' . $site->getId();
+            $siteId = $site->getId();
         }
 
         // send correct headers
@@ -143,9 +148,8 @@ class PublicServicesController extends FrameworkController
 
         // check for configured robots.txt in pimcore
         $content = '';
-        $robotsPath = PIMCORE_CONFIGURATION_DIRECTORY . '/robots' . $siteSuffix . '.txt';
-        if (is_file($robotsPath)) {
-            $content = file_get_contents($robotsPath);
+        if (array_key_exists($siteId, $config)) {
+            $content = $config[$siteId];
         }
 
         if (empty($content)) {
@@ -198,5 +202,23 @@ class PublicServicesController extends FrameworkController
         } else {
             Logger::error("called an QR code but '" . $request->get('key') . ' is not a code in the system.');
         }
+    }
+
+    /**
+     * @param Request $request
+     *
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse
+     */
+    public function customAdminEntryPointAction(Request $request)
+    {
+        $url = $this->generateUrl('pimcore_admin_login');
+        $redirect = new RedirectResponse($url);
+
+        $customAdminPathIdentifier = $this->getParameter('pimcore_admin.custom_admin_path_identifier');
+        if (isset($customAdminPathIdentifier) && $request->cookies->get('pimcore_custom_admin') != $customAdminPathIdentifier) {
+            $redirect->headers->setCookie(new Cookie('pimcore_custom_admin', $customAdminPathIdentifier, strtotime('+1 year'), '/', null, false, true));
+        }
+
+        return $redirect;
     }
 }

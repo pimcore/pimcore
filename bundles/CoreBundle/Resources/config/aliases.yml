@@ -4,6 +4,7 @@ services:
 
     # aliases enabling autowiring for type hints to our own implementations
     Pimcore\Db\Connection: '@database_connection'
+    Pimcore\Db\ConnectionInterface: '@database_connection'
     Pimcore\Kernel: '@kernel'
 
     # aliases for backwards compatibility

@@ -71,6 +71,11 @@ class NewsletterController extends DocumentControllerBase
         $data = $email->getObjectVars();
         $data['versionDate'] = $email->getModificationDate();
 
+        $data['php'] = [
+            'classes' => array_merge([get_class($email)], array_values(class_parents($email))),
+            'interfaces' => array_values(class_implements($email))
+        ];
+
         $event = new GenericEvent($this, [
             'data' => $data,
             'document' => $email
@@ -327,6 +332,32 @@ class NewsletterController extends DocumentControllerBase
         \Pimcore\Tool\Console::runPhpScriptInBackground(realpath(PIMCORE_PROJECT_ROOT . DIRECTORY_SEPARATOR . 'bin' . DIRECTORY_SEPARATOR . 'console'), 'internal:newsletter-document-send ' . escapeshellarg($document->getTmpStoreId()) . ' ' . escapeshellarg(\Pimcore\Tool::getHostUrl()), PIMCORE_LOG_DIRECTORY . DIRECTORY_SEPARATOR . 'newsletter-sending-output.log');
 
         return $this->adminJson(['success' => true]);
+    }
+
+    /**
+     * @Route("/calculate", methods={"POST"})
+     *
+     * @param Request $request
+     *
+     * @return JsonResponse
+     */
+    public function calculateAction(Request $request)
+    {
+        $addressSourceAdapterName = $request->get('addressAdapterName');
+        $adapterParams = json_decode($request->get('adapterParams'), true);
+
+        $serviceLocator = $this->get('pimcore.newsletter.address_source_adapter.factories');
+
+        if (!$serviceLocator->has($addressSourceAdapterName)) {
+            $msg = sprintf('Cannot send newsletters because Address Source Adapter with identifier %s could not be found', $addressSourceAdapterName);
+
+            return $this->adminJson(['success' => false, 'count' => '0', 'message' => $msg]);
+        }
+
+        $addressAdapterFactory = $serviceLocator->get($addressSourceAdapterName);
+        $addressAdapter = $addressAdapterFactory->create($adapterParams);
+
+        return $this->adminJson(['success' => true, 'count' => $addressAdapter->getTotalRecordCount()]);
     }
 
     /**

@@ -123,17 +123,13 @@ class Bootstrap
         $loader = include __DIR__ . '/../../../../vendor/autoload.php';
         self::defineConstants();
 
-        if (is_integer(PIMCORE_PHP_ERROR_REPORTING)) {
-            error_reporting(PIMCORE_PHP_ERROR_REPORTING);
-        }
+        error_reporting(PIMCORE_PHP_ERROR_REPORTING);
 
         \Pimcore::setAutoloader($loader);
         self::autoload();
 
-        if ('syslog' === PIMCORE_PHP_ERROR_LOG || is_writable(dirname(PIMCORE_PHP_ERROR_LOG))) {
-            ini_set('error_log', PIMCORE_PHP_ERROR_LOG);
-            ini_set('log_errors', '1');
-        }
+        ini_set('error_log', PIMCORE_PHP_ERROR_LOG);
+        ini_set('log_errors', '1');
 
         // load a startup file if it exists - this is a good place to preconfigure the system
         // before the kernel is loaded - e.g. to set trusted proxies on the request object
@@ -216,7 +212,6 @@ class Bootstrap
         $resolveConstant('PIMCORE_PHP_ERROR_REPORTING', E_ALL & ~E_NOTICE & ~E_STRICT);
         $resolveConstant('PIMCORE_PHP_ERROR_LOG', PIMCORE_LOG_DIRECTORY . '/php.log');
         $resolveConstant('PIMCORE_KERNEL_CLASS', '\AppKernel');
-        $resolveConstant('PIMCORE_SYMFONY_DEFAULT_BUNDLE', 'AppBundle');
 
         $kernelDebug = $resolveConstant('PIMCORE_KERNEL_DEBUG', null, false);
         if ($kernelDebug === 'true') {

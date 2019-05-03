@@ -191,7 +191,7 @@ class Dao extends Model\DataObject\AbstractObject\Dao
 
         foreach ($fieldDefinitions as $key => $fd) {
             if (method_exists($fd, 'getLazyLoading') && $fd->getLazyLoading()) {
-                if (!in_array($key, $this->model->getLazyLoadedFields())) {
+                if (!$this->model->isLazyKeyLoaded($key) || $fd instanceof DataObject\ClassDefinition\Data\ReverseManyToManyObjectRelation) {
                     //this is a relation subject to lazy loading - it has not been loaded
                     $untouchable[] = $key;
                 }
@@ -288,7 +288,7 @@ class Dao extends Model\DataObject\AbstractObject\Dao
                     Tool::triggerMissingInterfaceDeprecation(get_class($fd), 'getDataForQueryResource', QueryResourcePersistenceAwareInterface::class);
                 }
                 //exclude untouchables if value is not an array - this means data has not been loaded
-                if (!(in_array($key, $untouchable) and !is_array($this->model->getObjectVar($key)))) {
+                if (!in_array($key, $untouchable)) {
                     $method = 'get' . $key;
                     $fieldValue = $this->model->$method();
                     $insertData = $fd->getDataForQueryResource($fieldValue, $this->model);

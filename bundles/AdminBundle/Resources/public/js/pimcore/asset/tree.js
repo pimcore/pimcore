@@ -66,7 +66,7 @@ pimcore.asset.tree = Class.create({
 
     init: function(rootNodeConfig) {
 
-        var itemsPerPage = 30;
+        var itemsPerPage = pimcore.settings['asset_tree_paging_limit'];
 
         rootNodeConfig.text = t("home");
         rootNodeConfig.allowDrag = true;

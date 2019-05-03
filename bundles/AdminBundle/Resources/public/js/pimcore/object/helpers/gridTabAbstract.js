@@ -167,13 +167,18 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
                 }
             }
 
+            var fields = this.getGridConfig().columns;
+            var fieldKeys = Object.keys(fields);
+
             var params = {
                 filter: filters,
                 condition: condition,
                 classId: this.classId,
                 folderId: this.element.id,
                 objecttype: this.objecttype,
-                language: this.gridLanguage
+                "fields[]": fieldKeys,
+                language: this.gridLanguage,
+                batch: true //to avoid limit on batch edit/append all
             };
 
 
@@ -485,6 +490,7 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
 
         var filters = "";
         var condition = "";
+        var searchQuery = this.searchField.getValue();
 
         if(this.sqlButton.pressed) {
             condition = this.sqlEditor.getValue();
@@ -517,7 +523,9 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
             language: this.gridLanguage,
             "ids[]": ids,
             "fields[]": fieldKeys,
-            settings: settings
+            settings: settings,
+            query: searchQuery,
+            batch: true // to avoid limit for export
         };
 
 
@@ -653,6 +661,7 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
             handler: function (button) {
 
                 this.sqlEditor.setValue("");
+                this.searchField.setValue("");
 
                 // reset base params, because of the condition
                 var proxy = this.store.getProxy();

@@ -227,7 +227,7 @@ class Config
                         case 'document':
                         case 'asset':
                         case 'object':
-                            $s = Model\Element\Service::getElementById($item->getType(), $item->getData());
+                            $s = $item->getData();
                             break;
                         case 'bool':
                             $s = (bool) $item->getData();
@@ -318,6 +318,39 @@ class Config
     public static function setReportConfig(\Pimcore\Config\Config $config)
     {
         \Pimcore\Cache\Runtime::set('pimcore_config_report', $config);
+    }
+
+    /**
+     * @static
+     *
+     * @return \Pimcore\Config\Config
+     */
+    public static function getRobotsConfig()
+    {
+        if (\Pimcore\Cache\Runtime::isRegistered('pimcore_config_robots')) {
+            $config = \Pimcore\Cache\Runtime::get('pimcore_config_robots');
+        } else {
+            try {
+                $file = self::locateConfigFile('robots.php');
+                $config = static::getConfigInstance($file);
+            } catch (\Exception $e) {
+                $config = new \Pimcore\Config\Config([]);
+            }
+
+            self::setRobotsConfig($config);
+        }
+
+        return $config;
+    }
+
+    /**
+     * @static
+     *
+     * @param \Pimcore\Config\Config $config
+     */
+    public static function setRobotsConfig(\Pimcore\Config\Config $config)
+    {
+        \Pimcore\Cache\Runtime::set('pimcore_config_robots', $config);
     }
 
     /**

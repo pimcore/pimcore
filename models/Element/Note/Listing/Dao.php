@@ -46,13 +46,13 @@ class Dao extends Model\Listing\Dao\AbstractDao
     }
 
     /**
-     * @return array
+     * @return int[]
      */
     public function loadIdList()
     {
         $notesIds = $this->db->fetchCol('SELECT id FROM notes' . $this->getCondition() . $this->getGroupBy() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
 
-        return $notesIds;
+        return array_map('intval', $notesIds);
     }
 
     /**

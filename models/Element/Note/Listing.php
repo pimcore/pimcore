@@ -20,8 +20,10 @@ namespace Pimcore\Model\Element\Note;
 use Pimcore\Model;
 
 /**
- * @method \Pimcore\Model\Element\Note\Listing\Dao getDao()
+ * @method Model\Element\Note\Listing\Dao getDao()
  * @method Model\Element\Note[] load()
+ * @method int[] loadIdList()
+ * @method int getTotalCount()
  */
 class Listing extends Model\Listing\AbstractListing
 {

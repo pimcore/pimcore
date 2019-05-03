@@ -12,6 +12,13 @@ data. Currently two adapters ship with Pimcore:
 - Google Analytics: Retrieve Data from Google Analytics 
 
 
+## Custom Report Permissions (since version 5.7.0)
+With custom report permissions it is possible to define which users should be able to see a report. Following options 
+are available:  
+- `Share globally`: Custom report is visible to all users that have `reports` permission. 
+- `Visible to users`: Custom report is visible to all listed users.  
+- `Visible to roles`: Custom report is visible to all listed roles. 
+
 ## Custom Data Source Adapters
 It is easily possible to implement custom source adapters for special use cases. To do so following steps are necessary: 
 
@@ -44,4 +51,8 @@ pimcore:
 
 ````
 
+## Custom JS Class for Report Visualization
+If you need to fully customize the appearance of the report, you can specify a custom java script class that should 
+be used when opening the report in Pimcore Backend. This class can be specified in `Report Class` option and should extend
+the default java script class for the reports which is `pimcore.report.custom.report``. 
 

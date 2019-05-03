@@ -55,7 +55,7 @@ class AbstractObject extends Model\Element\AbstractElement
     /**
      * @var bool
      */
-    private static $hidePublished = false;
+    private static $hideUnpublished = false;
 
     /**
      * @var bool
@@ -68,23 +68,140 @@ class AbstractObject extends Model\Element\AbstractElement
     protected static $disableDirtyDetection = false;
 
     /**
+     * @var int
+     */
+    protected $o_id = 0;
+
+    /**
+     * @var int
+     */
+    protected $o_parentId;
+
+    /**
+     * @var self
+     */
+    protected $o_parent;
+
+    /**
+     * @var string
+     */
+    protected $o_type = 'object';
+
+    /**
+     * @var string
+     */
+    protected $o_key;
+
+    /**
+     * @var string
+     */
+    protected $o_path;
+
+    /**
+     * @var int
+     */
+    protected $o_index;
+
+    /**
+     * @var int
+     */
+    protected $o_creationDate;
+
+    /**
+     * @var int
+     */
+    protected $o_modificationDate;
+
+    /**
+     * @var int
+     */
+    protected $o_userOwner;
+
+    /**
+     * @var int
+     */
+    protected $o_userModification;
+
+    /**
+     * @var array
+     */
+    protected $o_properties = null;
+
+    /**
+     * @var bool
+     */
+    protected $o_hasChilds;
+
+    /**
+     * Contains a list of sibling documents
+     *
+     * @var array
+     */
+    protected $o_siblings;
+
+    /**
+     * Indicator if document has siblings or not
+     *
+     * @var bool
+     */
+    protected $o_hasSiblings;
+
+    /**
+     * @var Model\Dependency[]
+     */
+    protected $o_dependencies;
+
+    /**
+     * @var array
+     */
+    protected $o_childs;
+
+    /**
+     * @var string
+     */
+    protected $o_locked;
+
+    /**
+     * @var Model\Element\AdminStyle
+     */
+    protected $o_elementAdminStyle;
+
+    /**
+     * @var string
+     */
+    protected $o_childrenSortBy;
+
+    /**
+     * @var array
+     */
+    private $lastGetChildsObjectTypes = [];
+
+    /**
+     * @var array
+     */
+    private $lastGetSiblingObjectTypes = [];
+
+    /** @var int */
+    protected $o_versionCount = 0;
+
+    /**
      * @static
      *
      * @return bool
      */
     public static function getHideUnpublished()
     {
-        return self::$hidePublished;
+        return self::$hideUnpublished;
     }
 
     /**
      * @static
      *
-     * @param  $hidePublished
+     * @param  $hideUnpublished
      */
-    public static function setHideUnpublished($hidePublished)
+    public static function setHideUnpublished($hideUnpublished)
     {
-        self::$hidePublished = $hidePublished;
+        self::$hideUnpublished = $hideUnpublished;
     }
 
     /**
@@ -94,7 +211,7 @@ class AbstractObject extends Model\Element\AbstractElement
      */
     public static function doHideUnpublished()
     {
-        return self::$hidePublished;
+        return self::$hideUnpublished;
     }
 
     /**
@@ -136,123 +253,6 @@ class AbstractObject extends Model\Element\AbstractElement
     }
 
     /**
-     * @var int
-     */
-    public $o_id = 0;
-
-    /**
-     * @var int
-     */
-    public $o_parentId;
-
-    /**
-     * @var self
-     */
-    public $o_parent;
-
-    /**
-     * @var string
-     */
-    public $o_type = 'object';
-
-    /**
-     * @var string
-     */
-    public $o_key;
-
-    /**
-     * @var string
-     */
-    public $o_path;
-
-    /**
-     * @var int
-     */
-    public $o_index;
-
-    /**
-     * @var int
-     */
-    public $o_creationDate;
-
-    /**
-     * @var int
-     */
-    public $o_modificationDate;
-
-    /**
-     * @var int
-     */
-    public $o_userOwner;
-
-    /**
-     * @var int
-     */
-    public $o_userModification;
-
-    /**
-     * @var array
-     */
-    public $o_properties = null;
-
-    /**
-     * @var bool
-     */
-    public $o_hasChilds;
-
-    /**
-     * Contains a list of sibling documents
-     *
-     * @var array
-     */
-    public $o_siblings;
-
-    /**
-     * Indicator if document has siblings or not
-     *
-     * @var bool
-     */
-    public $o_hasSiblings;
-
-    /**
-     * @var Model\Dependency[]
-     */
-    public $o_dependencies;
-
-    /**
-     * @var array
-     */
-    public $o_childs;
-
-    /**
-     * @var string
-     */
-    public $o_locked;
-
-    /**
-     * @var Model\Element\AdminStyle
-     */
-    public $o_elementAdminStyle;
-
-    /**
-     * @var string
-     */
-    public $o_childrenSortBy;
-
-    /**
-     * @var array
-     */
-    private $lastGetChildsObjectTypes = [];
-
-    /**
-     * @var array
-     */
-    private $lastGetSiblingObjectTypes = [];
-
-    /** @var int */
-    protected $o_versionCount = 0;
-
-    /**
      * get possible types
      *
      * @return array
@@ -272,11 +272,10 @@ class AbstractObject extends Model\Element\AbstractElement
      */
     public static function getById($id, $force = false)
     {
-        $id = intval($id);
-
-        if ($id < 1) {
+        if (!is_numeric($id) || $id < 1) {
             return null;
         }
+        $id = intval($id);
 
         $cacheKey = 'object_' . $id;
 
@@ -339,7 +338,7 @@ class AbstractObject extends Model\Element\AbstractElement
             $object = new self();
             $object->getDao()->getByPath($path);
 
-            return self::getById($object->getId(), $force);
+            return static::getById($object->getId(), $force);
         } catch (\Exception $e) {
             return null;
         }
@@ -417,7 +416,7 @@ class AbstractObject extends Model\Element\AbstractElement
     protected static function typeMatch(AbstractObject $object)
     {
         $staticType = get_called_class();
-        if ($staticType != 'Pimcore\Model\DataObject\Concrete' && $staticType != 'Pimcore\Model\DataObject\AbstractObject') {
+        if ($staticType != Concrete::class && $staticType != AbstractObject::class) {
             if (!$object instanceof $staticType) {
                 return false;
             }
@@ -450,21 +449,24 @@ class AbstractObject extends Model\Element\AbstractElement
     }
 
     /**
+     * Quick test if there are children
+     *
      * @param array $objectTypes
+     * @param bool $unpublished
      *
      * @return bool
      */
-    public function hasChildren($objectTypes = [self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_FOLDER])
+    public function hasChildren($objectTypes = [self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_FOLDER], $unpublished = false)
     {
         if (is_bool($this->o_hasChilds)) {
             if (($this->o_hasChilds and empty($this->o_childs)) or (!$this->o_hasChilds and !empty($this->o_childs))) {
-                return $this->getDao()->hasChildren($objectTypes);
+                return $this->getDao()->hasChildren($objectTypes, $unpublished);
             } else {
                 return $this->o_hasChilds;
             }
         }
 
-        return $this->getDao()->hasChildren($objectTypes);
+        return $this->getDao()->hasChildren($objectTypes, $unpublished);
     }
 
     /**
@@ -534,17 +536,25 @@ class AbstractObject extends Model\Element\AbstractElement
         return $this;
     }
 
-    public function delete()
+    /**
+     * @param bool $isNested
+     *
+     * @throws \Exception
+     */
+    public function delete(bool $isNested = false)
     {
         \Pimcore::getEventDispatcher()->dispatch(DataObjectEvents::PRE_DELETE, new DataObjectEvent($this));
+
+        $this->beginTransaction();
+
         try {
-            // delete childs
+            // delete children
             if ($this->hasChildren([self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_FOLDER, self::OBJECT_TYPE_VARIANT])) {
                 // delete also unpublished children
                 $unpublishedStatus = self::doHideUnpublished();
                 self::setHideUnpublished(false);
-                foreach ($this->getChildren([self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_FOLDER, self::OBJECT_TYPE_VARIANT], true) as $value) {
-                    $value->delete();
+                foreach ($this->getChildren([self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_FOLDER, self::OBJECT_TYPE_VARIANT], true) as $child) {
+                    $child->delete(true);
                 }
                 self::setHideUnpublished($unpublishedStatus);
             }
@@ -561,16 +571,22 @@ class AbstractObject extends Model\Element\AbstractElement
 
             $this->getDao()->delete();
 
-            // empty object cache
-            $this->clearDependentCache();
-
-            //clear object from registry
-            \Pimcore\Cache\Runtime::set('object_' . $this->getId(), null);
+            $this->commit();
         } catch (\Exception $e) {
-            \Pimcore::getEventDispatcher()->dispatch(DataObjectEvents::POST_DELETE_FAILURE, new DataObjectEvent($this));
+            $this->rollBack();
+            $failureEvent = new DataObjectEvent($this);
+            $failureEvent->setArgument('exception', $e);
+            \Pimcore::getEventDispatcher()->dispatch(DataObjectEvents::POST_DELETE_FAILURE, $failureEvent);
+
             Logger::crit($e);
             throw $e;
         }
+
+        // empty object cache
+        $this->clearDependentCache();
+
+        //clear object from registry
+        \Pimcore\Cache\Runtime::set('object_' . $this->getId(), null);
 
         \Pimcore::getEventDispatcher()->dispatch(DataObjectEvents::POST_DELETE, new DataObjectEvent($this));
     }
@@ -582,130 +598,141 @@ class AbstractObject extends Model\Element\AbstractElement
      */
     public function save()
     {
-        // additional parameters (e.g. "versionNote" for the version note)
-        $params = [];
-        if (func_num_args() && is_array(func_get_arg(0))) {
-            $params = func_get_arg(0);
-        }
+        try {
+            // additional parameters (e.g. "versionNote" for the version note)
+            $params = [];
+            if (func_num_args() && is_array(func_get_arg(0))) {
+                $params = func_get_arg(0);
+            }
 
-        $isUpdate = false;
+            $isUpdate = false;
 
-        $isDirtyDetectionDisabled = self::isDirtyDetectionDisabled();
-        $preEvent = new DataObjectEvent($this, $params);
-        if ($this->getId()) {
-            $isUpdate = true;
-            \Pimcore::getEventDispatcher()->dispatch(DataObjectEvents::PRE_UPDATE, $preEvent);
-        } else {
-            self::disableDirtyDetection();
-            \Pimcore::getEventDispatcher()->dispatch(DataObjectEvents::PRE_ADD, $preEvent);
-        }
+            $isDirtyDetectionDisabled = self::isDirtyDetectionDisabled();
+            $preEvent = new DataObjectEvent($this, $params);
+            if ($this->getId()) {
+                $isUpdate = true;
+                \Pimcore::getEventDispatcher()->dispatch(DataObjectEvents::PRE_UPDATE, $preEvent);
+            } else {
+                self::disableDirtyDetection();
+                \Pimcore::getEventDispatcher()->dispatch(DataObjectEvents::PRE_ADD, $preEvent);
+            }
 
-        $params = $preEvent->getArguments();
+            $params = $preEvent->getArguments();
 
-        $this->correctPath();
+            $this->correctPath();
 
-        // we wrap the save actions in a loop here, so that we can restart the database transactions in the case it fails
-        // if a transaction fails it gets restarted $maxRetries times, then the exception is thrown out
-        // this is especially useful to avoid problems with deadlocks in multi-threaded environments (forked workers, ...)
-        $maxRetries = 5;
-        for ($retries = 0; $retries < $maxRetries; $retries++) {
+            // we wrap the save actions in a loop here, so that we can restart the database transactions in the case it fails
+            // if a transaction fails it gets restarted $maxRetries times, then the exception is thrown out
+            // this is especially useful to avoid problems with deadlocks in multi-threaded environments (forked workers, ...)
+            $maxRetries = 5;
+            for ($retries = 0; $retries < $maxRetries; $retries++) {
 
-            // be sure that unpublished objects in relations are saved also in frontend mode, eg. in importers, ...
-            $hideUnpublishedBackup = self::getHideUnpublished();
-            self::setHideUnpublished(false);
+                // be sure that unpublished objects in relations are saved also in frontend mode, eg. in importers, ...
+                $hideUnpublishedBackup = self::getHideUnpublished();
+                self::setHideUnpublished(false);
 
-            $this->beginTransaction();
+                $this->beginTransaction();
 
-            try {
-                if (!in_array($this->getType(), self::$types)) {
-                    throw new \Exception('invalid object type given: [' . $this->getType() . ']');
-                }
-
-                if (!$isUpdate) {
-                    $this->getDao()->create();
-                }
-
-                // get the old path from the database before the update is done
-                $oldPath = null;
-                if ($isUpdate) {
-                    $oldPath = $this->getDao()->getCurrentFullPath();
-                }
-
-                // if the old path is different from the new path, update all children
-                // we need to do the update of the children's path before $this->update() because the
-                // inheritance helper needs the correct paths of the children in InheritanceHelper::buildTree()
-                $updatedChildren = [];
-                if ($oldPath && $oldPath != $this->getRealFullPath()) {
-                    $this->getDao()->updateWorkspaces();
-                    $updatedChildren = $this->getDao()->updateChildsPaths($oldPath);
-                }
-
-                $this->update($isUpdate, $params);
-
-                self::setHideUnpublished($hideUnpublishedBackup);
-
-                $this->commit();
-                break; // transaction was successfully completed, so we cancel the loop here -> no restart required
-            } catch (\Exception $e) {
                 try {
-                    $this->rollBack();
-                } catch (\Exception $er) {
-                    // PDO adapter throws exceptions if rollback fails
-                    Logger::info($er);
-                }
-
-                if ($e instanceof Model\Element\ValidationException) {
-                    throw $e;
-                }
-
-                if ($e instanceof UniqueConstraintViolationException) {
-                    throw new Element\ValidationException('unique constraint violation', 0, $e);
-                }
-
-                // set "HideUnpublished" back to the value it was originally
-                self::setHideUnpublished($hideUnpublishedBackup);
-
-                // we try to start the transaction $maxRetries times again (deadlocks, ...)
-                if ($retries < ($maxRetries - 1)) {
-                    $run = $retries + 1;
-                    $waitTime = rand(1, 5) * 100000; // microseconds
-                    Logger::warn('Unable to finish transaction (' . $run . ". run) because of the following reason '" . $e->getMessage() . "'. --> Retrying in " . $waitTime . ' microseconds ... (' . ($run + 1) . ' of ' . $maxRetries . ')');
-
-                    usleep($waitTime); // wait specified time until we restart the transaction
-                } else {
-                    if ($isUpdate) {
-                        \Pimcore::getEventDispatcher()->dispatch(DataObjectEvents::POST_UPDATE_FAILURE, new DataObjectEvent($this));
-                    } else {
-                        \Pimcore::getEventDispatcher()->dispatch(DataObjectEvents::POST_ADD_FAILURE, new DataObjectEvent($this));
+                    if (!in_array($this->getType(), self::$types)) {
+                        throw new \Exception('invalid object type given: [' . $this->getType() . ']');
                     }
 
-                    // if the transaction still fail after $maxRetries retries, we throw out the exception
-                    Logger::error('Finally giving up restarting the same transaction again and again, last message: ' . $e->getMessage());
-                    throw $e;
+                    if (!$isUpdate) {
+                        $this->getDao()->create();
+                    }
+
+                    // get the old path from the database before the update is done
+                    $oldPath = null;
+                    if ($isUpdate) {
+                        $oldPath = $this->getDao()->getCurrentFullPath();
+                    }
+
+                    // if the old path is different from the new path, update all children
+                    // we need to do the update of the children's path before $this->update() because the
+                    // inheritance helper needs the correct paths of the children in InheritanceHelper::buildTree()
+                    $updatedChildren = [];
+                    if ($oldPath && $oldPath != $this->getRealFullPath()) {
+                        $differentOldPath = $oldPath;
+                        $this->getDao()->updateWorkspaces();
+                        $updatedChildren = $this->getDao()->updateChildsPaths($oldPath);
+                    }
+
+                    $this->update($isUpdate, $params);
+
+                    self::setHideUnpublished($hideUnpublishedBackup);
+
+                    $this->commit();
+                    break; // transaction was successfully completed, so we cancel the loop here -> no restart required
+                } catch (\Exception $e) {
+                    try {
+                        $this->rollBack();
+                    } catch (\Exception $er) {
+                        // PDO adapter throws exceptions if rollback fails
+                        Logger::info($er);
+                    }
+
+                    if ($e instanceof Model\Element\ValidationException) {
+                        throw $e;
+                    }
+
+                    if ($e instanceof UniqueConstraintViolationException) {
+                        throw new Element\ValidationException('unique constraint violation', 0, $e);
+                    }
+
+                    // set "HideUnpublished" back to the value it was originally
+                    self::setHideUnpublished($hideUnpublishedBackup);
+
+                    // we try to start the transaction $maxRetries times again (deadlocks, ...)
+                    if ($retries < ($maxRetries - 1)) {
+                        $run = $retries + 1;
+                        $waitTime = rand(1, 5) * 100000; // microseconds
+                        Logger::warn('Unable to finish transaction (' . $run . ". run) because of the following reason '" . $e->getMessage() . "'. --> Retrying in " . $waitTime . ' microseconds ... (' . ($run + 1) . ' of ' . $maxRetries . ')');
+
+                        usleep($waitTime); // wait specified time until we restart the transaction
+                    } else {
+                        // if the transaction still fail after $maxRetries retries, we throw out the exception
+                        Logger::error('Finally giving up restarting the same transaction again and again, last message: ' . $e->getMessage());
+                        throw $e;
+                    }
                 }
             }
-        }
 
-        $additionalTags = [];
-        if (isset($updatedChildren) && is_array($updatedChildren)) {
-            foreach ($updatedChildren as $objectId) {
-                $tag = 'object_' . $objectId;
-                $additionalTags[] = $tag;
+            $additionalTags = [];
+            if (isset($updatedChildren) && is_array($updatedChildren)) {
+                foreach ($updatedChildren as $objectId) {
+                    $tag = 'object_' . $objectId;
+                    $additionalTags[] = $tag;
 
-                // remove the child also from registry (internal cache) to avoid path inconsistencies during long running scripts, such as CLI
-                \Pimcore\Cache\Runtime::set($tag, null);
+                    // remove the child also from registry (internal cache) to avoid path inconsistencies during long running scripts, such as CLI
+                    \Pimcore\Cache\Runtime::set($tag, null);
+                }
             }
-        }
-        $this->clearDependentCache($additionalTags);
+            $this->clearDependentCache($additionalTags);
 
-        if ($isUpdate) {
-            \Pimcore::getEventDispatcher()->dispatch(DataObjectEvents::POST_UPDATE, new DataObjectEvent($this));
-        } else {
-            self::setDisableDirtyDetection($isDirtyDetectionDisabled);
-            \Pimcore::getEventDispatcher()->dispatch(DataObjectEvents::POST_ADD, new DataObjectEvent($this));
-        }
+            if ($isUpdate) {
+                $updateEvent = new DataObjectEvent($this);
+                if ($differentOldPath) {
+                    $updateEvent->setArgument('oldPath', $differentOldPath);
+                }
+                \Pimcore::getEventDispatcher()->dispatch(DataObjectEvents::POST_UPDATE, $updateEvent);
+            } else {
+                self::setDisableDirtyDetection($isDirtyDetectionDisabled);
+                \Pimcore::getEventDispatcher()->dispatch(DataObjectEvents::POST_ADD, new DataObjectEvent($this));
+            }
 
-        return $this;
+            return $this;
+        } catch (\Exception $e) {
+            $failureEvent = new DataObjectEvent($this);
+            $failureEvent->setArgument('exception', $e);
+            if ($isUpdate) {
+                \Pimcore::getEventDispatcher()->dispatch(DataObjectEvents::POST_UPDATE_FAILURE, $failureEvent);
+            } else {
+                \Pimcore::getEventDispatcher()->dispatch(DataObjectEvents::POST_ADD_FAILURE, $failureEvent);
+            }
+
+            throw $e;
+        }
     }
 
     public function correctPath()
@@ -1209,14 +1236,16 @@ class AbstractObject extends Model\Element\AbstractElement
         $finalVars = [];
         $parentVars = parent::__sleep();
 
+        $blockedVars = ['o_userPermissions', 'o_dependencies', 'o_hasChilds', 'o_versions', 'o_class', 'scheduledTasks', 'o_parent', 'omitMandatoryCheck'];
+
         if (isset($this->_fulldump)) {
             // this is if we want to make a full dump of the object (eg. for a new version), including childs for recyclebin
-            $blockedVars = ['o_userPermissions', 'o_dependencies', 'o_hasChilds', 'o_versions', 'o_class', 'scheduledTasks', 'o_parent', 'omitMandatoryCheck', 'o_dirtyFields'];
+            $blockedVars = array_merge($blockedVars, ['o_dirtyFields']);
             $finalVars[] = '_fulldump';
             $this->removeInheritedProperties();
         } else {
             // this is if we want to cache the object
-            $blockedVars = ['o_userPermissions', 'o_dependencies', 'o_childs', 'o_hasChilds', 'o_versions', 'o_class', 'scheduledTasks', 'o_properties', 'o_parent', 'o___loadedLazyFields', 'omitMandatoryCheck'];
+            $blockedVars = array_merge($blockedVars, ['o_childs', 'o_properties']);
         }
 
         foreach ($parentVars as $key) {
@@ -1398,7 +1427,7 @@ class AbstractObject extends Model\Element\AbstractElement
      *
      * @return AbstractObject
      */
-    public function setVersionCount(?int $o_versionCount): self
+    public function setVersionCount(?int $o_versionCount): Element\ElementInterface
     {
         $this->o_versionCount = (int) $o_versionCount;
 

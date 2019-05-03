@@ -72,6 +72,14 @@ class TmpStore extends Model\AbstractModel
     }
 
     /**
+     * @return int
+     */
+    protected static function getDefaultLifetime()
+    {
+        return 86400 * 7;
+    }
+
+    /**
      * @param $id
      * @param $data
      * @param null $tag
@@ -84,11 +92,30 @@ class TmpStore extends Model\AbstractModel
         $instance = self::getInstance();
 
         if (!$lifetime) {
-            $lifetime = 86400;
+            $lifetime = self::getDefaultLifetime();
         }
 
         if (self::get($id)) {
             return true;
+        }
+
+        return $instance->getDao()->add($id, $data, $tag, $lifetime);
+    }
+
+    /**
+     * @param $id
+     * @param $data
+     * @param null $tag
+     * @param null $lifetime
+     *
+     * @return mixed
+     */
+    public static function set($id, $data, $tag = null, $lifetime = null)
+    {
+        $instance = self::getInstance();
+
+        if (!$lifetime) {
+            $lifetime = self::getDefaultLifetime();
         }
 
         return $instance->getDao()->add($id, $data, $tag, $lifetime);
@@ -123,12 +150,6 @@ class TmpStore extends Model\AbstractModel
         }
 
         return null;
-    }
-
-    public static function cleanup()
-    {
-        $instance = self::getInstance();
-        $instance->getDao()->cleanup();
     }
 
     /**

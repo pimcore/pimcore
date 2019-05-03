@@ -35,7 +35,7 @@ abstract class AbstractCartItem extends \Pimcore\Model\AbstractModel implements 
      * @var ICheckoutable
      */
     protected $product;
-    protected $productId;
+    protected $productId = null;
     protected $itemKey;
     protected $count;
     protected $comment;
@@ -133,7 +133,7 @@ abstract class AbstractCartItem extends \Pimcore\Model\AbstractModel implements 
      */
     public function getProductId()
     {
-        if ($this->productId) {
+        if (!is_null($this->productId)) {
             return $this->productId;
         }
 

@@ -312,12 +312,13 @@ abstract class AbstractTranslation extends Model\AbstractModel implements Transl
      * @param $file - path to the csv file
      * @param bool $replaceExistingTranslations
      * @param array $languages
+     * @param array $dialect
      *
      * @return mixed
      *
      * @throws \Exception
      */
-    public static function importTranslationsFromFile($file, $replaceExistingTranslations = true, $languages = null)
+    public static function importTranslationsFromFile($file, $replaceExistingTranslations = true, $languages = null, $dialect = null)
     {
         $delta = [];
 
@@ -342,8 +343,11 @@ abstract class AbstractTranslation extends Model\AbstractModel implements Transl
             $importFileOriginal = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/import_translations_original';
             File::put($importFileOriginal, $tmpData);
 
-            // determine csv type
-            $dialect = Tool\Admin::determineCsvDialect(PIMCORE_SYSTEM_TEMP_DIRECTORY . '/import_translations_original');
+            // determine csv type if not set
+            if (empty($dialect)) {
+                $dialect = Tool\Admin::determineCsvDialect(PIMCORE_SYSTEM_TEMP_DIRECTORY . '/import_translations_original');
+            }
+
             //read data
             if (($handle = fopen(PIMCORE_SYSTEM_TEMP_DIRECTORY . '/import_translations', 'r')) !== false) {
                 while (($rowData = fgetcsv($handle, 0, $dialect->delimiter, $dialect->quotechar, $dialect->escapechar)) !== false) {

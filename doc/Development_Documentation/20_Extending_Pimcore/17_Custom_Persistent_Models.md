@@ -501,7 +501,7 @@ class Dao extends Listing\Dao\AbstractDao
     /**
      * Loads a list for the specicifies parameters, returns an array of ids.
      *
-     * @return array
+     * @return int[]
      * @throws \Exception
      */
     public function loadIdList()
@@ -511,7 +511,7 @@ class Dao extends Listing\Dao\AbstractDao
             $objectIds = $this->db->fetchCol($query, $this->model->getConditionVariables());
             $this->totalCount = (int) $this->db->fetchOne('SELECT FOUND_ROWS()');
  
-            return $objectIds;
+            return array_map('intval', $objectIds);
         } catch (\Exception $e) {
             throw $e;
         }

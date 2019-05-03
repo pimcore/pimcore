@@ -17,7 +17,6 @@
 
 namespace Pimcore\Model\Document;
 
-use Pimcore\Db;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Tool\Serialize;
@@ -254,16 +253,11 @@ class Dao extends Model\Element\Dao
      */
     public function getVersionCountForUpdate(): int
     {
+        $versionCount = (int) $this->db->fetchOne('SELECT versionCount FROM documents WHERE id = ? FOR UPDATE', $this->model->getId());
+
         if ($this->model instanceof PageSnippet) {
-            $db = Db::get();
-            $versionCount = $db->fetchOne(
-                'SELECT GREATEST(d.versionCount, IFNULL(v.versionCount, 0)) FROM documents as d LEFT JOIN versions as v
-                        ON ctype="document" AND v.cid=d.id WHERE d.id = ? ORDER BY v.id DESC LIMIT 1 FOR UPDATE', $this->model->getId());
-        } else {
-            $versionCount = $this->db->fetchOne(
-                'SELECT versionCount FROM documents WHERE id = ? FOR UPDATE',
-                $this->model->getId()
-            );
+            $versionCount2 = (int) $this->db->fetchOne("SELECT MAX(versionCount) FROM versions WHERE cid = ? AND ctype = 'document'", $this->model->getId());
+            $versionCount = max($versionCount, $versionCount2);
         }
 
         return (int) $versionCount;
@@ -355,13 +349,23 @@ class Dao extends Model\Element\Dao
     }
 
     /**
-     * Checks if there are children.
+     * Quick check if there are children.
+     *
+     * @param bool $unpublished
      *
      * @return bool
      */
-    public function hasChildren()
+    public function hasChildren($unpublished = false)
     {
-        $c = $this->db->fetchOne('SELECT id FROM documents WHERE parentId = ? LIMIT 1', $this->model->getId());
+        $sql = 'SELECT id FROM documents WHERE parentId = ?';
+
+        if (Model\Document::doHideUnpublished() && !$unpublished) {
+            $sql .= ' AND published = 1';
+        }
+
+        $sql .= ' LIMIT 1';
+
+        $c = $this->db->fetchOne($sql, $this->model->getId());
 
         return (bool)$c;
     }

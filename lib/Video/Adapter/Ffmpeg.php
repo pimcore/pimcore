@@ -38,6 +38,11 @@ class Ffmpeg extends Adapter
     protected $arguments = [];
 
     /**
+     * @var array
+     */
+    private $tmpFiles = [];
+
+    /**
      * @return bool
      */
     public function isAvailable()
@@ -67,11 +72,18 @@ class Ffmpeg extends Adapter
 
     /**
      * @param $file
+     * @param array $options
      *
      * @return $this|mixed
      */
-    public function load($file)
+    public function load($file, $options = [])
     {
+        if (!stream_is_local($file) && isset($options['asset'])) {
+            $tmpFile = $options['asset']->getTemporaryFile();
+            $file = $tmpFile;
+            $this->tmpFiles[] = $tmpFile;
+        }
+
         $this->file = $file;
         $this->setProcessId(uniqid());
 
@@ -127,6 +139,8 @@ class Ffmpeg extends Adapter
             $process->start();
 
             $logHandle = fopen($this->getConversionLogFile(), 'a');
+            fwrite($logHandle, 'Command: ' . $cmd . "\n\n\n");
+
             $process->wait(function ($type, $buffer) use ($logHandle) {
                 fwrite($logHandle, $buffer);
             });
@@ -138,7 +152,10 @@ class Ffmpeg extends Adapter
                 $success = true;
             } else {
                 // create an error log file
-                copy($this->getConversionLogFile(), str_replace('.log', '.error.log', $this->getConversionLogFile()));
+                if (file_exists($this->getConversionLogFile()) && filesize($this->getConversionLogFile())) {
+                    copy($this->getConversionLogFile(),
+                        str_replace('.log', '.error.log', $this->getConversionLogFile()));
+                }
             }
         } else {
             throw new \Exception('There is no destination file for video converter');
@@ -229,6 +246,15 @@ class Ffmpeg extends Adapter
             Logger::debug("FFMPEG finished, last message was: \n" . file_get_contents($this->getConversionLogFile()));
             $this->deleteConversionLogFile();
         }
+
+        foreach ($this->tmpFiles as $tmpFile) {
+            @unlink($tmpFile);
+        }
+    }
+
+    public function __destruct()
+    {
+        $this->destroy();
     }
 
     public function deleteConversionLogFile()

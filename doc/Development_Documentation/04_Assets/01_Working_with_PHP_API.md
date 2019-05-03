@@ -71,7 +71,7 @@ therefore used on all output channels.
 $asset = Asset::getById(123);
  
  
-// get the title for the current language (Zend_Locale in Zend_Registry)
+// get the title for the current language (request attribute `_locale`)
 $asset->getMetadata("title");
  
  
@@ -103,8 +103,8 @@ This includes for example:
  
  
 // thumbnail html generator
-<?= $asset->getThumbnail("xyz")->getHTML(); ?>
-<?= $object->getMyImage()->getThumbnail("xyz")->getHTML(); ?>
+<?= $asset->getThumbnail("xyz")->getHtml(); ?>
+<?= $object->getMyImage()->getThumbnail("xyz")->getHtml(); ?>
 ```
 The `copyright` field will be appended to every `title` and `alt` attribute separated by |. 
 

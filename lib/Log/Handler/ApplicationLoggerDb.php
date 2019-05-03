@@ -24,11 +24,11 @@ class ApplicationLoggerDb extends AbstractProcessingHandler
     const TABLE_ARCHIVE_PREFIX = 'application_logs_archive';
 
     /**
-     * @var Db\Connection
+     * @var Db\ConnectionInterface
      */
     private $db;
 
-    public function __construct(Db\Connection $db, $level = 'debug', $bubble = true)
+    public function __construct(Db\ConnectionInterface $db, $level = 'debug', $bubble = true)
     {
         $this->db = $db;
 

@@ -357,6 +357,11 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
         win.show();
     },
 
+    showDocumentOverview: function () {
+
+        new pimcore.document.document_language_overview(this);
+    },
+
     createTranslation: function (inheritance) {
 
         var languagestore = [];
@@ -542,6 +547,19 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
                     }
                 });
             });
+
+            if(Object.keys(me.data["translations"]).length) {
+                //add menu for All Translations
+                translationsMenu.push({
+                    text: t("all_translations"),
+                    iconCls: "pimcore_icon_translations",
+                    handler: function () {
+                        Ext.iterate(me.data["translations"], function (language, documentId) {
+                            pimcore.helpers.openElement(documentId, "document");
+                        });
+                    }
+                });
+            }
         }
 
         if(this.data["unlinkTranslations"]) {
@@ -599,6 +617,10 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
                 menu: unlinkTranslationsMenu,
                 hidden: !unlinkTranslationsMenu.length,
                 iconCls: "pimcore_icon_delete"
+            }, {
+                text: t("document_language_overview"),
+                handler: this.showDocumentOverview.bind(this),
+                iconCls: "pimcore_icon_page"
             }]
         };
     },

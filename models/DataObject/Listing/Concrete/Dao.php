@@ -94,7 +94,7 @@ class Dao extends Model\DataObject\Listing\Dao
     }
 
     /**
-     * @return array
+     * @return int[]
      *
      * @throws
      */
@@ -110,7 +110,7 @@ class Dao extends Model\DataObject\Listing\Dao
     /**
      * @param $e
      *
-     * @return array
+     * @return int[]
      *
      * @throws
      * @throws \Exception

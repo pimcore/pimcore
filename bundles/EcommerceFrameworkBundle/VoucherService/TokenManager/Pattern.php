@@ -218,8 +218,9 @@ class Pattern extends AbstractTokenManager implements IExportableTokenManager
     /**
      * Generates Codes and an according Insert Query, if the MAX_PACKAGE_SIZE
      * may be reached several queries are generated.
+     * returns the generated voucher codes if it was successfully - otherwise false
      *
-     * @return bool
+     * @return bool | array  - bool failed - array if codes are generated
      */
     public function insertOrUpdateVoucherSeries()
     {
@@ -239,7 +240,7 @@ class Pattern extends AbstractTokenManager implements IExportableTokenManager
                 $db->query($this->buildInsertQuery($codeSets));
             }
 
-            return true;
+            return $codeSets;
         } catch (\Exception $e) {
             return false;
         }

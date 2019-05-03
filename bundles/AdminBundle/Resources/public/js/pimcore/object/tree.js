@@ -69,7 +69,7 @@ pimcore.object.tree = Class.create({
 
     init: function (rootNodeConfig) {
 
-        var itemsPerPage = 30;
+        var itemsPerPage = pimcore.settings['object_tree_paging_limit'];
 
         rootNodeConfig.text = t("home");
         rootNodeConfig.id = "" +  rootNodeConfig.id;

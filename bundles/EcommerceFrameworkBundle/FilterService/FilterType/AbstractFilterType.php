@@ -18,6 +18,8 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\CoreExtensions\ObjectData\IndexField
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\IProductList;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractFilterDefinitionType;
 use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Translation\TranslatorInterface;
 
 abstract class AbstractFilterType
@@ -40,6 +42,11 @@ abstract class AbstractFilterType
     protected $template;
 
     /**
+     * @var Request
+     */
+    protected $request;
+
+    /**
      * @param $translator TranslatorInterface
      * @param EngineInterface $templatingEngine
      * @param string $template for rendering the filter frontend
@@ -48,12 +55,14 @@ abstract class AbstractFilterType
     public function __construct(
         TranslatorInterface $translator,
         EngineInterface $templatingEngine,
+        RequestStack $requestStack,
         string $template,
         array $options = []
     ) {
         $this->translator = $translator;
         $this->templatingEngine = $templatingEngine;
         $this->template = $template;
+        $this->request = $requestStack->getCurrentRequest();
 
         $this->processOptions($options);
     }

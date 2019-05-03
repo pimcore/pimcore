@@ -31,7 +31,7 @@ pimcore.object.helpers.import.configDialog = Class.create({
         if (config.mode == "direct") {
             this.uniqueImportId = config.uniqueImportId;
             this.parentId = config.parentId;
-            this.getFileInfo(false, config.importConfigId);
+            this.getFileInfo(false, config.importConfigId, null);
         } else {
             this.showUpload();
         }
@@ -191,7 +191,7 @@ pimcore.object.helpers.import.configDialog = Class.create({
         return title;
     },
 
-    getFileInfo: function (isReload, importConfigId) {
+    getFileInfo: function (isReload, importConfigId, dialect) {
         Ext.Ajax.request({
             url: "/admin/object-helper/import-get-file-info",
             params: {
@@ -199,7 +199,8 @@ pimcore.object.helpers.import.configDialog = Class.create({
                 importId: this.uniqueImportId,
                 method: "post",
                 className: this.className,          //TODO really needed ?
-                classId: this.classId
+                classId: this.classId,
+                dialect: dialect
             },
             success: this.getFileInfoComplete.bind(this, isReload)
         });
@@ -503,7 +504,7 @@ pimcore.object.helpers.import.configDialog = Class.create({
                     iconCls: "pimcore_icon_apply",
                     handler: function (configsCombo) {
                         if (configsCombo.getValue()) {
-                            this.getFileInfo(true, configsCombo.getValue());
+                            this.getFileInfo(true, configsCombo.getValue(), null);
                             this.loadWindow.close();
                         }
                     }.bind(this, configsCombo)

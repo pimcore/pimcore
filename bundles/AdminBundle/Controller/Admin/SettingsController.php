@@ -19,7 +19,7 @@ use Pimcore\Cache;
 use Pimcore\Cache\Core\CoreHandlerInterface;
 use Pimcore\Cache\Symfony\CacheClearer;
 use Pimcore\Config;
-use Pimcore\Db\Connection;
+use Pimcore\Db\ConnectionInterface;
 use Pimcore\Event\SystemEvents;
 use Pimcore\File;
 use Pimcore\Model;
@@ -368,10 +368,12 @@ class SettingsController extends AdminController
         }
 
         //remove password from values sent to frontend
-        $valueArray['database']['params']['password'] = '##SECRET_PASS##';
+        unset($valueArray['database']);
+        foreach (['email', 'newsletter'] as $type) {
+            $valueArray[$type]['smtp']['auth']['password'] = '#####SUPER-SECRET-VALUE-PLACEHOLDER######';
+        }
 
         // inject debug mode
-
         $debugModeFile = PIMCORE_CONFIGURATION_DIRECTORY . '/debug-mode.php';
         $debugMode = [];
         if (file_exists($debugModeFile)) {
@@ -474,8 +476,6 @@ class SettingsController extends AdminController
                     'days' => $values['documents.versions.days'],
                     'steps' => $values['documents.versions.steps']
                 ],
-                'default_controller' => $values['documents.default_controller'],
-                'default_action' => $values['documents.default_action'],
                 'error_pages' => [
                     'default' => $values['documents.error_pages.default']
                 ],
@@ -557,10 +557,12 @@ class SettingsController extends AdminController
             ];
 
             $smtpPassword = $values[$type . '.smtp.auth.password'];
-            if (!empty($smtpPassword)) {
-                $settings[$type]['smtp']['auth']['password'] = $smtpPassword;
-            } else {
-                $settings[$type]['smtp']['auth']['password'] = null;
+            if ($smtpPassword !== '#####SUPER-SECRET-VALUE-PLACEHOLDER######') {
+                if (!empty($smtpPassword)) {
+                    $settings[$type]['smtp']['auth']['password'] = $smtpPassword;
+                } else {
+                    $settings[$type]['smtp']['auth']['password'] = null;
+                }
             }
 
             if (array_key_exists($type . '.debug.emailAddresses', $values)) {
@@ -571,7 +573,7 @@ class SettingsController extends AdminController
         }
         $settings['newsletter']['usespecific'] = $values['newsletter.usespecific'];
 
-        $settings = array_merge($existingValues, $settings);
+        $settings = array_replace_recursive($existingValues, $settings);
 
         $configFile = \Pimcore\Config::locateConfigFile('system.php');
         File::putPhpFile($configFile, to_php_data_file_format($settings));
@@ -685,7 +687,7 @@ class SettingsController extends AdminController
      * @param KernelInterface $kernel
      * @param EventDispatcherInterface $eventDispatcher
      * @param CoreHandlerInterface $cache
-     * @param Connection $db
+     * @param ConnectionInterface $db
      * @param Filesystem $filesystem
      * @param CacheClearer $symfonyCacheClearer
      *
@@ -696,7 +698,7 @@ class SettingsController extends AdminController
         KernelInterface $kernel,
         EventDispatcherInterface $eventDispatcher,
         CoreHandlerInterface $cache,
-        Connection $db,
+        ConnectionInterface $db,
         Filesystem $filesystem,
         CacheClearer $symfonyCacheClearer
     ) {
@@ -1506,24 +1508,18 @@ class SettingsController extends AdminController
     /**
      * @Route("/robots-txt", methods={"GET"})
      *
-     * @param Request $request
-     *
      * @return JsonResponse
      */
-    public function robotsTxtGetAction(Request $request)
+    public function robotsTxtGetAction()
     {
         $this->checkPermission('robots.txt');
 
-        $robotsPath = $this->getRobotsTxtPath($request);
-
-        $data = '';
-        if (is_file($robotsPath)) {
-            $data = file_get_contents($robotsPath);
-        }
+        $config = Config::getRobotsConfig();
+        $config = $config->toArray();
 
         return $this->adminJson([
             'success' => true,
-            'data' => $data,
+            'data' => $config,
             'onFileSystem' => file_exists(PIMCORE_WEB_ROOT . '/robots.txt')
         ]);
     }
@@ -1539,30 +1535,19 @@ class SettingsController extends AdminController
     {
         $this->checkPermission('robots.txt');
 
-        $robotsPath = $this->getRobotsTxtPath($request);
-        File::put($robotsPath, $request->get('data'));
+        $values = $request->get('data');
+        if (!is_array($values)) {
+            $values = [];
+        }
+
+        File::putPhpFile(
+            Config::locateConfigFile('robots.php'),
+            to_php_data_file_format($values)
+        );
 
         return $this->adminJson([
             'success' => true
         ]);
-    }
-
-    /**
-     * @param Request $request
-     *
-     * @return string
-     */
-    protected function getRobotsTxtPath(Request $request)
-    {
-        if ($request->get('site')) {
-            $siteSuffix = '-' . $request->get('site');
-        } else {
-            $siteSuffix = '-default';
-        }
-
-        $robotsPath = PIMCORE_CONFIGURATION_DIRECTORY . '/robots' . $siteSuffix . '.txt';
-
-        return $robotsPath;
     }
 
     /**
@@ -1757,10 +1742,11 @@ class SettingsController extends AdminController
                         case 'object':
                             if (isset($data['data'])) {
                                 $path = $data['data'];
+                                $element = null;
                                 if ($path != null) {
                                     $element = Element\Service::getElementByPath($setting->getType(), $path);
                                 }
-                                $data['data'] = $element ? $element->getId() : null;
+                                $data['data'] = $element;
                             }
                             break;
                     }
@@ -1780,7 +1766,7 @@ class SettingsController extends AdminController
 
                     $setting->save();
 
-                    return $this->adminJson(['data' => $setting, 'success' => true]);
+                    return $this->adminJson(['data' => $setting->getObjectVars(), 'success' => true]);
                 }
             } else {
                 // get list of routes
@@ -1864,13 +1850,13 @@ class SettingsController extends AdminController
             case 'document':
             case 'asset':
             case 'object':
-                $element = Element\Service::getElementById($item->getType(), $item->getData());
+                $element = $item->getData();
                 if ($element) {
                     $resultItem['data'] = $element->getRealFullPath();
                 }
                 break;
             default:
-                $resultItem['data'] = $item->getData('data');
+                $resultItem['data'] = $item->getData();
                 break;
         }
 

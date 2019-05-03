@@ -107,7 +107,7 @@ class MigrateElementNamesCommand extends AbstractCommand
             return 1;
         }
 
-        $this->db = $this->getContainer()->get(Db\Connection::class);
+        $this->db = $this->getContainer()->get(Db\ConnectionInterface::class);
 
         $qb = $this->buildQuery();
         $stmt = $qb->execute();

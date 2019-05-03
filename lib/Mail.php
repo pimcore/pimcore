@@ -610,6 +610,11 @@ class Mail extends \Swift_Message
             $mailer = \Pimcore::getContainer()->get('mailer');
         }
 
+        if (empty($this->getFrom()) && $hostname = Tool::getHostname()) {
+            // set default "from" address
+            $this->setFrom('no-reply@' . $hostname);
+        }
+
         $event = new MailEvent($this, [
             'mailer' => $mailer
         ]);

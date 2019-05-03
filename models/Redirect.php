@@ -313,18 +313,6 @@ class Redirect extends AbstractModel
         return $this->expiry;
     }
 
-    public static function maintenanceCleanUp()
-    {
-        $list = new Redirect\Listing();
-        $list->setCondition('active = 1 AND expiry < ' . time() . " AND expiry IS NOT NULL AND expiry != ''");
-        $list->load();
-
-        foreach ($list->getRedirects() as $redirect) {
-            $redirect->setActive(false);
-            $redirect->save();
-        }
-    }
-
     /**
      * @return bool
      */

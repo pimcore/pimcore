@@ -196,7 +196,13 @@ class Placeholder
                     //try to create the json config object
                     try {
                         $configJsonString = str_replace(['&quot;', "'"], '"', $placeholderConfigString);
-                        $placeholderConfig = new \Pimcore\Config\Config(json_decode($configJsonString, true), null, ['ignoreconstants' => true]);
+                        $configArray = json_decode($configJsonString, true);
+                        if ($configArray === null && json_last_error() !== JSON_ERROR_NONE) {
+                            throw new \Exception('The JSON string in the PlaceholderConfig could not be converted.');
+                        } elseif (!is_array($configArray)) {
+                            throw new \Exception('The JSON string in the PlaceholderConfig should be an array.');
+                        }
+                        $placeholderConfig = new \Pimcore\Config\Config($configArray, null, ['ignoreconstants' => true]);
                     } catch (\Exception $e) {
                         Logger::warn('PlaceholderConfig is not a valid JSON string. PlaceholderConfig for ' . $placeholderClass . ' ignored.');
                         continue;

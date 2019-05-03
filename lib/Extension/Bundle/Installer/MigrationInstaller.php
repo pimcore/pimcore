@@ -20,7 +20,7 @@ namespace Pimcore\Extension\Bundle\Installer;
 use Doctrine\DBAL\Migrations\Migration;
 use Doctrine\DBAL\Migrations\OutputWriter as DoctrineOutputWriter;
 use Doctrine\DBAL\Schema\Schema;
-use Pimcore\Db\Connection;
+use Pimcore\Db\ConnectionInterface;
 use Pimcore\Extension\Bundle\Installer\Exception\InstallationException;
 use Pimcore\Extension\Bundle\Installer\Exception\UpdateException;
 use Pimcore\Migrations\Configuration\Configuration;
@@ -38,7 +38,7 @@ abstract class MigrationInstaller extends AbstractInstaller implements Migration
     protected $bundle;
 
     /**
-     * @var Connection
+     * @var ConnectionInterface
      */
     protected $connection;
 
@@ -69,7 +69,7 @@ abstract class MigrationInstaller extends AbstractInstaller implements Migration
 
     public function __construct(
         BundleInterface $bundle,
-        Connection $connection,
+        ConnectionInterface $connection,
         MigrationManager $migrationManager
     ) {
         parent::__construct();

@@ -207,6 +207,9 @@ class Hardlink extends Document
             } elseif ($this->getSourceDocument()) {
                 $sourceProperties = $this->getSourceDocument()->getDao()->getProperties(false, true);
                 foreach ($sourceProperties as &$prop) {
+                    /**
+                     * @var Model\Property $prop
+                     */
                     $prop = clone $prop; // because of cache
                     $prop->setInherited(true);
                 }
@@ -227,11 +230,11 @@ class Hardlink extends Document
     public function getChildren($unpublished = false)
     {
         if ($this->childs === null) {
-            $childs = parent::getChildren();
+            $childs = parent::getChildren($unpublished);
 
             $sourceChildren = [];
             if ($this->getChildrenFromSource() && $this->getSourceDocument() && !\Pimcore::inAdmin()) {
-                $sourceChildren = $this->getSourceDocument()->getChildren();
+                $sourceChildren = $this->getSourceDocument()->getChildren($unpublished);
                 foreach ($sourceChildren as &$c) {
                     $c = Document\Hardlink\Service::wrap($c);
                     $c->setHardLinkSource($this);
@@ -247,19 +250,17 @@ class Hardlink extends Document
     }
 
     /**
-     * hast to overwrite the resource implementation because there can be inherited childs
-     *
-     * @return bool
+     * @inheritdoc
      */
-    public function hasChildren()
+    public function hasChildren($unpublished = false)
     {
         return count($this->getChildren()) > 0;
     }
 
     /**
-     * @see Document::delete
+     * @inheritdoc
      */
-    public function delete()
+    public function delete(bool $isNested = false)
     {
 
         // hardlinks cannot have direct children in "real" world, so we have to empty them before we delete it
@@ -274,7 +275,7 @@ class Hardlink extends Document
             $redirect->delete();
         }
 
-        parent::delete();
+        parent::delete($isNested);
 
         // we re-enable the children functionality by setting them to NULL, if requested they'll be loaded again
         // -> see $this->getChilds() , doesn't make sense when deleting an item but who knows, ... ;-)

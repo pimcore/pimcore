@@ -149,7 +149,18 @@ class Dao extends Model\Dao\AbstractDao
                         'language' => $language,
                     ];
 
-                    $fd->save($this->model, $childParams);
+                    if ($fd instanceof DataObject\ClassDefinition\Data\Relations\AbstractRelations) {
+                        if ((isset($params['saveRelationalData'])
+                                && $params['saveRelationalData']['saveLocalizedRelations']
+                                && $container instanceof DataObject\Fieldcollection\Definition
+                                && !$container instanceof DataObject\Objectbrick\Definition
+                            )
+                            || ($this->model->isLanguageDirty($language) || $params['saveRelationalData']['saveLocalizedRelations'])) {
+                            $fd->save($this->model, $childParams);
+                        }
+                    } else {
+                        $fd->save($this->model, $childParams);
+                    }
                 }
                 if ($fd instanceof ResourcePersistenceAwareInterface || method_exists($fd, 'getDataForResource')) {
                     if (!$fd instanceof ResourcePersistenceAwareInterface) {
@@ -259,7 +270,7 @@ class Dao extends Model\Dao\AbstractDao
                         $key = $fd->getName();
 
                         // exclude untouchables if value is not an array - this means data has not been loaded
-                        if (!(in_array($key, $untouchable) and !is_array($this->model->$key))) {
+                        if (!in_array($key, $untouchable)) {
                             $localizedValue = $this->model->getLocalizedValue($key, $language);
                             $insertData = $fd->getDataForQueryResource(
                                 $localizedValue,
@@ -411,7 +422,7 @@ class Dao extends Model\Dao\AbstractDao
                         }
                         $params = [];
                         $params['context'] = $this->model->getContext() ? $this->model->getContext() : [];
-                        if ($params['context']['containerType'] == 'fieldcollection' || $params['context']['containerType'] == 'objectbrick') {
+                        if (isset($params['context']['containerType']) && ($params['context']['containerType'] == 'fieldcollection' || $params['context']['containerType'] == 'objectbrick')) {
                             $params['context']['subContainerType'] = 'localizedfield';
                         }
 
@@ -433,7 +444,10 @@ class Dao extends Model\Dao\AbstractDao
 
         $db = Db::get();
 
-        if ($this->model->allLanguagesAreDirty() || $container instanceof DataObject\Objectbrick\Definition || $container instanceof DataObject\Fieldcollection\Definition) {
+        if ($this->model->allLanguagesAreDirty() ||
+            ($container instanceof DataObject\Fieldcollection\Definition
+            && !$container instanceof DataObject\Objectbrick\Definition)
+            ) {
             $dirtyLanguageCondition = '';
         } elseif ($this->model->hasDirtyLanguages()) {
             $languageList = [];
@@ -541,9 +555,14 @@ class Dao extends Model\Dao\AbstractDao
                             $params['context'] = [];
                         }
                         $params['context']['object'] = $object;
-                        $value = $fd->load($this->model, $params);
-                        if ($value === 0 || !empty($value)) {
-                            $this->model->setLocalizedValue($key, $value, $row['language'], false);
+
+                        if ($fd instanceof  DataObject\ClassDefinition\Data\Relations\AbstractRelations && !DataObject\Concrete::isLazyLoadingDisabled() && $fd->getLazyLoading()) {
+                            $lazyKey = $fd->getName() . DataObject\LazyLoadedFieldsInterface::LAZY_KEY_SEPARATOR . $row['language'];
+                        } else {
+                            $value = $fd->load($this->model, $params);
+                            if ($value === 0 || !empty($value)) {
+                                $this->model->setLocalizedValue($key, $value, $row['language'], false);
+                            }
                         }
                     }
                     if ($fd instanceof ResourcePersistenceAwareInterface || method_exists($fd, 'getDataFromResource')) {
@@ -705,6 +724,8 @@ QUERY;
             );
         }
 
+        $this->handleEncryption($this->model->getClass(), [$table]);
+
         $existingColumns = $this->getValidTableColumns($table, false); // no caching of table definition
         $columnsToRemove = $existingColumns;
 
@@ -763,6 +784,8 @@ QUERY;
                       INDEX `language` (`language`)
                     ) DEFAULT CHARSET=utf8mb4;"
                 );
+
+                $this->handleEncryption($this->model->getClass(), [$queryTable]);
 
                 // create object table if not exists
                 $protectedColumns = ['ooo_id', 'language'];

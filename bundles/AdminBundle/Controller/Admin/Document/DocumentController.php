@@ -65,6 +65,11 @@ class DocumentController extends ElementControllerBase implements EventedControl
         $data = $document->getObjectVars();
         $data['versionDate'] = $document->getModificationDate();
 
+        $data['php'] = [
+            'classes' => array_merge([get_class($document)], array_values(class_parents($document))),
+            'interfaces' => array_values(class_implements($document))
+        ];
+
         $event = new GenericEvent($this, [
             'data' => $data,
             'document' => $document
@@ -227,8 +232,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
                     $createValues['action'] = $translationsBaseDocument->getAction();
                     $createValues['module'] = $translationsBaseDocument->getModule();
                 } elseif ($request->get('type') == 'page' || $request->get('type') == 'snippet' || $request->get('type') == 'email') {
-                    $createValues['controller'] = Config::getSystemConfig()->documents->default_controller;
-                    $createValues['action'] = Config::getSystemConfig()->documents->default_action;
+                    $createValues += Tool::getRoutingDefaults();
                 }
 
                 if ($request->get('inheritanceSource')) {
@@ -354,7 +358,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
             $deletedItems = [];
             foreach ($documents as $document) {
                 $deletedItems[] = $document->getRealFullPath();
-                if ($document->isAllowed('delete')) {
+                if ($document->isAllowed('delete') && !$document->isLocked()) {
                     $document->delete();
                 }
             }
@@ -364,6 +368,9 @@ class DocumentController extends ElementControllerBase implements EventedControl
             $document = Document::getById($request->get('id'));
             if ($document->isAllowed('delete')) {
                 try {
+                    if ($document->isLocked()) {
+                        throw new \Exception('prevented deleting document, because it is locked: ID: ' . $document->getId());
+                    }
                     $document->delete();
 
                     return $this->adminJson(['success' => true]);
@@ -613,7 +620,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
 
         $docTypes = [];
         foreach ($list->getDocTypes() as $type) {
-            $docTypes[] = $type;
+            $docTypes[] = $type->getObjectVars();
         }
 
         return $this->adminJson(['docTypes' => $docTypes]);
@@ -741,6 +748,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
                     'sourceId' => $request->get('sourceId'),
                     'targetId' => $request->get('targetId'),
                     'type' => 'child',
+                    'language' => $request->get('language'),
                     'enableInheritance' => $request->get('enableInheritance'),
                     'transactionId' => $transactionId,
                     'saveParentId' => true,
@@ -767,6 +775,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
                                 'targetParentId' => $request->get('targetId'),
                                 'sourceParentId' => $request->get('sourceId'),
                                 'type' => 'child',
+                                'language' => $request->get('language'),
                                 'enableInheritance' => $request->get('enableInheritance'),
                                 'transactionId' => $transactionId
                             ]
@@ -895,7 +904,12 @@ class DocumentController extends ElementControllerBase implements EventedControl
                 if ($source != null) {
                     if ($request->get('type') == 'child') {
                         $enableInheritance = ($request->get('enableInheritance') == 'true') ? true : false;
-                        $language = $request->get('language', false);
+
+                        $language = false;
+                        if (Tool::isValidLanguage($request->get('language'))) {
+                            $language = $request->get('language');
+                        }
+
                         $resetIndex = ($request->get('resetIndex') == 'true') ? true : false;
 
                         $newDocument = $this->_documentService->copyAsChild($target, $source, $enableInheritance, $resetIndex, $language);
@@ -939,7 +953,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
     {
         // return with error if prerequisites do not match
         if (!HtmlToImage::isSupported() || !class_exists('Imagick')) {
-            return $this->render('PimcoreAdminBundle:Admin/Document:diff-versions-unsupported.html.php');
+            return $this->render('PimcoreAdminBundle:Admin/Document/Document:diff-versions-unsupported.html.php');
         }
 
         $versionFrom = Version::getById($from);
@@ -984,7 +998,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
         $image2->clear();
         $image2->destroy();
 
-        return $this->render('PimcoreAdminBundle:Admin/Document:diff-versions.html.php', $viewParams);
+        return $this->render('PimcoreAdminBundle:Admin/Document/Document:diff-versions.html.php', $viewParams);
     }
 
     /**
@@ -1234,6 +1248,127 @@ class DocumentController extends ElementControllerBase implements EventedControl
     }
 
     /**
+     * @Route("/language-tree", methods={"GET"})
+     *
+     * @param Request $request
+     *
+     * @return JsonResponse
+     */
+    public function languageTreeAction(Request $request)
+    {
+        $document = Document::getById($request->query->get('node'));
+
+        $service = new Document\Service();
+
+        $languages = explode(',', $request->get('languages'));
+
+        $result = [];
+        foreach ($document->getChildren() as $child) {
+            $result[] = $this->getTranslationTreeNodeConfig($child, $languages);
+        }
+
+        return $this->adminJson($result);
+    }
+
+    /**
+     * @Route("/language-tree-root", methods={"GET"})
+     *
+     * @param Request $request
+     *
+     * @return JsonResponse
+     *
+     * @throws \Exception
+     */
+    public function languageTreeRootAction(Request $request)
+    {
+        $document = Document::getById($request->query->get('id'));
+
+        if (!$document) {
+            return $this->adminJson([
+                'success' => false
+            ]);
+        }
+        $service = new Document\Service();
+
+        $locales = Tool::getSupportedLocales();
+
+        $lang = $document->getProperty('language');
+
+        $columns = [
+            [
+                'xtype' => 'treecolumn',
+                'text' => $lang ? $locales[$lang] : '',
+                'dataIndex' => 'text',
+                'cls' => $lang ? 'x-column-header_' . strtolower($lang) : null,
+                'width' => 300,
+                'sortable' => false,
+            ],
+        ];
+
+        $translations = $service->getTranslations($document);
+
+        $combinedTranslations = $translations;
+
+        if ($parentDocument = $document->getParent()) {
+            $parentTranslations = $service->getTranslations($parentDocument);
+            foreach ($parentTranslations as $language => $languageDocumentId) {
+                $combinedTranslations[$language] = $translations[$language] ?? $languageDocumentId;
+            }
+        }
+
+        foreach ($combinedTranslations as $language => $languageDocumentId) {
+            $languageDocument = Document::getById($languageDocumentId);
+
+            if ($languageDocument && $languageDocument->isAllowed('list') && $language != $document->getProperty('language')) {
+                $columns[] = [
+                    'text' => $locales[$language],
+                    'dataIndex' => $language,
+                    'cls' => 'x-column-header_' . strtolower($language),
+                    'width' => 300,
+                    'sortable' => false,
+                ];
+            }
+        }
+
+        return $this->adminJson([
+            'root' => $this->getTranslationTreeNodeConfig($document, array_keys($translations), $translations),
+            'columns' => $columns,
+            'languages' => array_keys($translations)
+        ]);
+    }
+
+    private function getTranslationTreeNodeConfig($document, array $languages, array $translations = null)
+    {
+        $service = new Document\Service();
+
+        $config = $this->getTreeNodeConfig($document);
+
+        $translations = is_null($translations) ? $service->getTranslations($document) : $translations;
+
+        foreach ($languages as $language) {
+            if ($languageDocument = $translations[$language]) {
+                $languageDocument = Document::getById($languageDocument);
+                $config[$language] = [
+                    'text' => $languageDocument->getKey(),
+                    'id' => $languageDocument->getId(),
+                    'type' => $languageDocument->getType(),
+                    'fullPath' => $languageDocument->getFullPath(),
+                    'published' => $languageDocument->getPublished(),
+                    'itemType' => 'document',
+                    'permissions' => $languageDocument->getUserPermissions()
+                ];
+            } elseif (!$document instanceof Document\Folder) {
+                $config[$language] = [
+                    'text' => '--',
+                    'itemType' => 'empty'
+                ];
+            }
+        }
+
+        return $config;
+    }
+
+    /**
      * @Route("/convert", methods={"PUT"})
      *
      * @param Request $request
@@ -1281,22 +1416,24 @@ class DocumentController extends ElementControllerBase implements EventedControl
     public function translationDetermineParentAction(Request $request)
     {
         $success = false;
-        $targetPath = null;
+        $targetDocument = null;
 
         $document = Document::getById($request->get('id'));
         if ($document) {
             $service = new Document\Service;
-            $translations = $service->getTranslations($document->getId() === 1 ? $document : $document->getParent());
+            $document = $document->getId() === 1 ? $document : $document->getParent();
+
+            $translations = $service->getTranslations($document);
             if (isset($translations[$request->get('language')])) {
                 $targetDocument = Document::getById($translations[$request->get('language')]);
-                $targetPath = $targetDocument->getRealFullPath();
                 $success = true;
             }
         }
 
         return $this->adminJson([
             'success' => $success,
-            'targetPath' => $targetPath
+            'targetPath' => $targetDocument ? $targetDocument->getRealFullPath() : null,
+            'targetId' => $targetDocument ? $targetDocument->getid() : null
         ]);
     }
 
@@ -1357,6 +1494,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
     {
         $success = false;
         $language = null;
+        $translationLinks = null;
 
         $document = Document::getByPath($request->get('path'));
         if ($document) {
@@ -1364,11 +1502,15 @@ class DocumentController extends ElementControllerBase implements EventedControl
             if ($language) {
                 $success = true;
             }
+
+            //check if document is already linked to other langauges
+            $translationLinks = array_keys($this->_documentService->getTranslations($document));
         }
 
         return $this->adminJson([
             'success' => $success,
-            'language' => $language
+            'language' => $language,
+            'translationLinks' => $translationLinks
         ]);
     }
 
@@ -1409,7 +1551,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
         }
 
         // check permissions
-        $this->checkActionPermission($event, 'documents', ['docTypesAction']);
+        $this->checkActionPermission($event, 'documents', ['docTypesGetAction']);
 
         $this->_documentService = new Document\Service($this->getAdminUser());
     }

@@ -139,7 +139,7 @@ class Definition extends Model\AbstractModel
      */
     public function getFieldDefinitions($context = [])
     {
-        if (isset($context['suppressEnrichment']) && $context['suppressEnrichment']) {
+        if (!\Pimcore::inAdmin() || (isset($context['suppressEnrichment']) && $context['suppressEnrichment'])) {
             return $this->fieldDefinitions;
         }
 
@@ -188,7 +188,7 @@ class Definition extends Model\AbstractModel
     public function getFieldDefinition($key, $context = [])
     {
         if (is_array($this->fieldDefinitions) && array_key_exists($key, $this->fieldDefinitions)) {
-            if (isset($context['suppressEnrichment']) && $context['suppressEnrichment']) {
+            if (!\Pimcore::inAdmin() || (isset($context['suppressEnrichment']) && $context['suppressEnrichment'])) {
                 return $this->fieldDefinitions[$key];
             }
 
@@ -200,7 +200,7 @@ class Definition extends Model\AbstractModel
         return false;
     }
 
-    public function doEnrichFieldDefinition($fieldDefinition, $context = [])
+    protected function doEnrichFieldDefinition($fieldDefinition, $context = [])
     {
         if (method_exists($fieldDefinition, 'enrichFieldDefinition')) {
             $context['containerType'] = 'fieldcollection';

@@ -157,4 +157,23 @@ interface ElementInterface
      * @return bool
      */
     public function __isBasedOnLatestData();
+
+    /**
+     * @param int|null $versionCount
+     *
+     * @return self
+     */
+    public function setVersionCount(?int $versionCount): self;
+
+    /**
+     * @return int
+     */
+    public function getVersionCount(): int;
+
+    /**
+     * @return $this
+     */
+    public function save();
+
+    public function delete();
 }

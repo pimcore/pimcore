@@ -19,4 +19,11 @@ namespace Pimcore\Model\Document\Hardlink\Wrapper;
 
 interface WrapperInterface
 {
+    public function setHardLinkSource($hardLinkSource);
+
+    public function getHardLinkSource();
+
+    public function setSourceDocument($sourceDocument);
+
+    public function getSourceDocument();
 }

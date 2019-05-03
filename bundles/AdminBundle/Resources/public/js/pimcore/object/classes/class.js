@@ -276,7 +276,7 @@ pimcore.object.classes.klass = Class.create({
 
         var parentRestrictions;
         var groups = [];
-        var groupNames = ["text","numeric","date","select","relation","structured","geo","other"];
+        var groupNames = ["text","numeric","date","select","media","relation","geo","crm","structured","other"];
         for (var i = 0; i < dataComps.length; i++) {
             var dataCompName = dataComps[i];
             var dataComp = pimcore.object.classes.data[dataCompName];
@@ -801,6 +801,17 @@ pimcore.object.classes.klass = Class.create({
                     fieldLabel: t("show_applogger_tab"),
                     name: "showAppLoggerTab",
                     checked: this.data.showAppLoggerTab
+                },
+                {
+                    xtype: "checkbox",
+                    fieldLabel: t("encrypt_data"),
+                    name: "encryption",
+                    style: 'margin: 0',
+                    checked: this.data.encryption
+                }, {
+                    xtype: 'container',
+                    html: t('encrypt_data_description'),
+                    style: 'margin-bottom:10px'
                 },
                 {
                     xtype: "displayfield",

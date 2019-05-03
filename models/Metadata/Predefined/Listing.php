@@ -19,6 +19,7 @@ namespace Pimcore\Model\Metadata\Predefined;
 
 /**
  * @method \Pimcore\Model\Metadata\Predefined\Listing\Dao getDao()
+ * @method \Pimcore\Model\Metadata\Predefined[] load()
  */
 class Listing extends \Pimcore\Model\Listing\JsonListing
 {
@@ -53,7 +54,7 @@ class Listing extends \Pimcore\Model\Listing\JsonListing
      * @param $type
      * @param $subTypes
      *
-     * @return Listing
+     * @return \Pimcore\Model\Metadata\Predefined[]
      *
      * @throws \Exception
      */

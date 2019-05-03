@@ -137,7 +137,6 @@ pimcore.object.helpers.grid = Class.create({
             },
             listeners: {
                 exception: function (proxy, request, operation, eOpts) {
-                    console.log("exception");
                     if(operation.getAction() == "update") {
                         Ext.MessageBox.alert(t('error'),
                             t('cannot_save_object_please_try_to_edit_the_object_in_detail_view'));
@@ -148,8 +147,6 @@ pimcore.object.helpers.grid = Class.create({
             extraParams: this.baseParams
         };
 
-        var writer = null;
-        var listeners = {};
         if(this.enableEditor) {
             proxy.writer = {
                 type: 'json',
@@ -162,11 +159,15 @@ pimcore.object.helpers.grid = Class.create({
         this.store = new Ext.data.Store({
             remoteSort: true,
             remoteFilter: true,
-            listeners: listeners,
             autoDestroy: true,
             fields: readerFields,
             proxy: proxy,
-            autoSync: true
+            autoSync: true,
+            listeners: {
+                "beforeload": function (store) {
+                    store.getProxy().abort();
+                }
+            }
         });
 
         return this.store;

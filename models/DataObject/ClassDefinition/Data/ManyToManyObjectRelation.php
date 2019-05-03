@@ -21,7 +21,7 @@ use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Relations\AbstractRelations;
 use Pimcore\Model\Element;
 
-class ManyToManyObjectRelation extends AbstractRelations implements QueryResourcePersistenceAwareInterface
+class ManyToManyObjectRelation extends AbstractRelations implements QueryResourcePersistenceAwareInterface, OptimizedAdminLoadingInterface
 {
     use Model\DataObject\ClassDefinition\Data\Extension\Relation;
     use Extension\QueryColumnType;
@@ -75,6 +75,11 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
     public $visibleFields;
 
     /**
+     * @var bool
+     */
+    public $optimizedAdminLoading = false;
+
+    /**
      * @return bool
      */
     public function getObjectsAllowed()
@@ -118,12 +123,17 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
      */
     public function loadData($data, $object = null, $params = [])
     {
-        $objects = [];
+        $objects = [
+            'dirty' => false,
+            'data' => []
+        ];
         if (is_array($data) && count($data) > 0) {
             foreach ($data as $object) {
                 $o = DataObject::getById($object['dest_id']);
                 if ($o instanceof DataObject\Concrete) {
-                    $objects[] = $o;
+                    $objects['data'][] = $o;
+                } else {
+                    $objects['dirty'] = true;
                 }
             }
         }
@@ -259,13 +269,14 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
     public function getVersionPreview($data, $object = null, $params = [])
     {
         if (is_array($data) && count($data) > 0) {
+            $paths = [];
             foreach ($data as $o) {
                 if ($o instanceof Element\ElementInterface) {
-                    $pathes[] = $o->getRealFullPath();
+                    $paths[] = $o->getRealFullPath();
                 }
             }
 
-            return implode('<br />', $pathes);
+            return implode('<br />', $paths);
         }
 
         return null;
@@ -529,8 +540,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
         $data = null;
         if ($object instanceof DataObject\Concrete) {
             $data = $object->getObjectVar($this->getName());
-            if ($this->getLazyLoading() and !in_array($this->getName(), $object->getO__loadedLazyFields())) {
-                //$data = $this->getDataFromResource($object->getRelationData($this->getName(),true,null));
+            if ($this->getLazyLoading() && !$object->isLazyKeyLoaded($this->getName())) {
                 $data = $this->load($object, ['force' => true]);
 
                 $object->setObjectVar($this->getName(), $data);
@@ -539,8 +549,10 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
         } elseif ($object instanceof DataObject\Localizedfield) {
             $data = $params['data'];
         } elseif ($object instanceof DataObject\Fieldcollection\Data\AbstractData) {
+            parent::loadLazyFieldcollectionField($object);
             $data = $object->getObjectVar($this->getName());
         } elseif ($object instanceof DataObject\Objectbrick\Data\AbstractData) {
+            parent::loadLazyBrickField($object);
             $data = $object->getObjectVar($this->getName());
         }
 
@@ -921,5 +933,21 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
     public function getVisibleFields()
     {
         return $this->visibleFields;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isOptimizedAdminLoading(): bool
+    {
+        return (bool) $this->optimizedAdminLoading;
+    }
+
+    /**
+     * @param bool $optimizedAdminLoading
+     */
+    public function setOptimizedAdminLoading($optimizedAdminLoading)
+    {
+        $this->optimizedAdminLoading = $optimizedAdminLoading;
     }
 }

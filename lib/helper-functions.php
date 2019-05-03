@@ -150,6 +150,17 @@ function array_htmlspecialchars($array)
 }
 
 /**
+ * @param string $needle
+ * @param array $haystack
+ *
+ * @return bool
+ */
+function in_arrayi(string $needle, array $haystack)
+{
+    return in_array(strtolower($needle), array_map('strtolower', $haystack));
+}
+
+/**
  * @param  $node
  *
  * @return array
@@ -288,10 +299,10 @@ function formatBytes($bytes, $precision = 2)
     $units = ['B', 'KB', 'MB', 'GB', 'TB'];
 
     $bytes = max($bytes, 0);
-    $pow = floor(($bytes ? log($bytes) : 0) / log(1024));
+    $pow = floor(($bytes ? log($bytes) : 0) / log(1000));
     $pow = min($pow, count($units) - 1);
 
-    $bytes /= pow(1024, $pow);
+    $bytes /= pow(1000, $pow);
 
     return round($bytes, $precision) . ' ' . $units[$pow];
 }

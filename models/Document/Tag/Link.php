@@ -411,7 +411,6 @@ class Link extends Model\Document\Tag
                 if ($target) {
                     $data['internal'] = true;
                     $data['internalId'] = $target->getId();
-                    $data['internalType'] = $data['internalType'];
                 }
             }
 

@@ -20,7 +20,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Interpreter\IRelationIn
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\IProductList;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IIndexable;
-use Pimcore\Db\Connection;
+use Pimcore\Db\ConnectionInterface;
 use Pimcore\Logger;
 
 /**
@@ -67,9 +67,9 @@ abstract class AbstractElasticSearch extends Worker\AbstractMockupCacheWorker im
 
     /**
      * @param ElasticSearch|IElasticSearchConfig $tenantConfig
-     * @param Connection $db
+     * @param ConnectionInterface $db
      */
-    public function __construct(IElasticSearchConfig $tenantConfig, Connection $db)
+    public function __construct(IElasticSearchConfig $tenantConfig, ConnectionInterface $db)
     {
         parent::__construct($tenantConfig, $db);
 
@@ -111,6 +111,7 @@ abstract class AbstractElasticSearch extends Worker\AbstractMockupCacheWorker im
         if (is_readable($this->getVersionFile())) {
             $version = (int)trim(file_get_contents($this->getVersionFile()));
         } else {
+            \Pimcore\File::mkdir(dirname($this->getVersionFile()));
             file_put_contents($this->getVersionFile(), $this->getIndexVersion());
         }
         $this->indexVersion = $version;
@@ -343,7 +344,8 @@ abstract class AbstractElasticSearch extends Worker\AbstractMockupCacheWorker im
         $esClient = $this->getElasticSearchClient();
 
         $variants = $esClient->search([
-            'index' => $this->getIndexNameVersion(), 'type' => IProductList::PRODUCT_TYPE_VARIANT,
+            'index' => $this->getIndexNameVersion(),
+            'type' => IProductList::PRODUCT_TYPE_VARIANT,
             'body' => [
                 '_source' => false,
                 'query' => [
@@ -488,16 +490,6 @@ abstract class AbstractElasticSearch extends Worker\AbstractMockupCacheWorker im
         $this->commitUpdateIndex();
 
         return $entriesUpdated;
-    }
-
-    /**
-     * returns product list implementation valid and configured for this worker/tenant
-     *
-     * @return mixed
-     */
-    public function getProductList()
-    {
-        return new \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\DefaultElasticSearch($this->tenantConfig);
     }
 
     protected function getStoreTableName()
@@ -663,13 +655,18 @@ abstract class AbstractElasticSearch extends Worker\AbstractMockupCacheWorker im
     {
         $esClient = $this->getElasticSearchClient();
 
-        $storeEntry = \Pimcore\Db::get()->fetchRow('SELECT * FROM ' . $this->getStoreTableName() . ' WHERE  o_id=?', [$objectId]);
+        $storeEntry = \Pimcore\Db::get()->fetchRow('SELECT * FROM ' . $this->getStoreTableName() . ' WHERE  o_id=? AND tenant=? ', [$objectId, $this->getTenantConfig()->getTenantName()]);
         if ($storeEntry) {
-            $res = $esClient->delete(['index' => $this->getIndexNameVersion(), 'type' => '_doc', 'id' => $objectId, 'routing' => $storeEntry['o_virtualProductId']]);
+            try {
+                $esClient->delete(['index' => $this->getIndexNameVersion(), 'type' => '_doc', 'id' => $objectId, 'routing' => $storeEntry['o_virtualProductId']]);
+            } catch (\Exception $e) {
+                //if \Elasticsearch\Common\Exceptions\Missing404Exception <- the object is not in the index so its ok.
+                if ($e instanceof \Elasticsearch\Common\Exceptions\Missing404Exception == false) {
+                    throw $e;
+                }
+            }
             $this->deleteFromStoreTable($objectId);
             $this->deleteFromMockupCache($objectId);
-        } else {
-            Logger::emergency("Could not delete item with id $objectId because the routing value cant be determined");
         }
     }
 

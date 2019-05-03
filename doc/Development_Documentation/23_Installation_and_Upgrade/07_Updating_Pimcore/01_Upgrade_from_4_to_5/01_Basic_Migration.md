@@ -6,6 +6,7 @@ to the Pimcore 4 compatibility bridge or the Symfony Stack.
 - **Backup your system!**
 
 - Replace your `composer.json` with [this one](https://github.com/pimcore/skeleton/blob/master/composer.json) and re-add your custom dependencies. 
+- Add `/app/AppKernel.php` from [here](https://github.com/pimcore/skeleton/blob/master/app/AppKernel.php)
   
 - Run `COMPOSER_MEMORY_LIMIT=-1 composer update`
 If you encounter errors, please fix them until the command works properly.

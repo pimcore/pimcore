@@ -24,6 +24,7 @@ use Pimcore\Model;
 use Pimcore\Model\Document;
 use Pimcore\Targeting\Document\DocumentTargetingConfigurator;
 use Pimcore\Tool\DeviceDetector;
+use Pimcore\Tool\Frontend;
 
 /**
  * @method \Pimcore\Model\Document\Tag\Dao getDao()
@@ -143,7 +144,11 @@ class Snippet extends Model\Document\Tag
 
                 // TODO is this enough for cache or should we disable caching completely?
                 if ($this->snippet->getUseTargetGroup()) {
-                    $params['target_group'] = $this->snippet->getUseTargetGroup();
+                    $cacheParams['target_group'] = $this->snippet->getUseTargetGroup();
+                }
+
+                if (Frontend::hasWebpSupport()) {
+                    $cacheParams['webp'] = true;
                 }
 
                 $cacheKey = 'tag_snippet__' . md5(serialize($cacheParams));

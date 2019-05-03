@@ -47,10 +47,28 @@ pimcore.document.tags.area = Class.create(pimcore.document.tag, {
 
         var content = Ext.get(element).down(".pimcore_area_editmode");
 
+        if( content === null && element.getAttribute('data-editmmode-button-ref') !== null)
+        {
+            content = Ext.getBody().down( '#' + element.getAttribute('data-editmmode-button-ref' ) );
+        }
+
+        var editmodeWindowWidth = 550;
+        var editmodeWindowHeight = 370;
+
+        if(this.options["params"] && this.options.type) {
+            if (this.options.params[this.options.type] && this.options.params[this.options.type]["editWidth"]) {
+                editmodeWindowWidth = this.options.params[this.options.type].editWidth;
+            }
+
+            if (this.options.params[this.options.type] && this.options.params[this.options.type]["editHeight"]) {
+                editmodeWindowHeight = this.options.params.editHeight;
+            }
+        }
+
         this.editmodeWindow = new Ext.Window({
             modal: true,
-            width: 550,
-            height: 370,
+            width: editmodeWindowWidth,
+            height: editmodeWindowHeight,
             title: "Edit Block",
             closeAction: "hide",
             bodyStyle: "padding: 10px;",
@@ -85,6 +103,14 @@ pimcore.document.tags.area = Class.create(pimcore.document.tag, {
                     "click": this.editmodeSave.bind(this)
                 },
                 iconCls: "pimcore_icon_save"
+            },{
+                text: t("cancel"),
+                handler: function() {
+                    content.addCls("pimcore_area_editmode_hidden");
+                    element.dom.setAttribute('data-editmmode-button-ref', content.getAttribute("id") );
+                    this.editmodeWindow.close();
+                }.bind(this),
+                iconCls: "pimcore_icon_cancel"
             }]
         });
         this.editmodeWindow.show();

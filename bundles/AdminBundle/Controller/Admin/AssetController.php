@@ -72,8 +72,6 @@ class AssetController extends ElementControllerBase implements EventedController
             return $this->adminJson(['success' => false, 'message' => "asset doesn't exist"]);
         }
 
-        $asset->setMetadata(Asset\Service::expandMetadataForEditmode($asset->getMetadata()));
-        $asset->setProperties(Element\Service::minimizePropertiesForEditmode($asset->getProperties()));
         //$asset->getVersions();
         $asset->getScheduledTasks();
         $asset->idPath = Element\Service::getIdPath($asset);
@@ -120,51 +118,31 @@ class AssetController extends ElementControllerBase implements EventedController
                 $imageInfo['dimensions']['height'] = $asset->getHeight();
             }
 
-            $exifData = $asset->getEXIFData();
-            if (!empty($exifData)) {
-                $imageInfo['exif'] = $exifData;
-            }
-
-            $xmpData = $asset->getXMPData();
-            if (!empty($xmpData)) {
-                // flatten to a one-dimensional array
-                array_walk($xmpData, function (&$value) {
-                    if (is_array($value)) {
-                        $value = implode_recursive($value, ' | ');
-                    }
-                });
-                $imageInfo['xmp'] = $xmpData;
-            }
-
-            // check for VR meta-data
-            $mergedMetaData = array_merge($exifData, $xmpData);
-            if (isset($mergedMetaData['ProjectionType']) && $mergedMetaData['ProjectionType'] == 'equirectangular') {
-                $imageInfo['isVrImage'] = true;
-            }
-
-            $iptcData = $asset->getIPTCData();
-            if (!empty($iptcData)) {
-                // flatten data, to be displayed in grid
-                foreach ($iptcData as &$value) {
-                    if (is_array($value)) {
-                        $value = implode(', ', $value);
-                    }
-                }
-
-                $imageInfo['iptc'] = $iptcData;
-            }
-
             $imageInfo['exiftoolAvailable'] = (bool) \Pimcore\Tool\Console::getExecutable('exiftool');
+
+            if (!$asset->getEmbeddedMetaData(false)) {
+                $asset->getEmbeddedMetaData(true, false); // read Exif, IPTC and XPM like in the old days ...
+            }
 
             $asset->imageInfo = $imageInfo;
         }
 
         $asset->setStream(null);
+        $asset->setMetadata(Asset\Service::expandMetadataForEditmode($asset->getMetadata()));
+        $asset->setProperties(Element\Service::minimizePropertiesForEditmode($asset->getProperties()));
 
         //Hook for modifying return value - e.g. for changing permissions based on object data
         //data need to wrapped into a container in order to pass parameter to event listeners by reference so that they can change the values
         $data = $asset->getObjectVars();
         $data['versionDate'] = $asset->getModificationDate();
+        $data['filesizeFormatted'] = $asset->getFileSize(true);
+        $data['filesize'] = $asset->getFileSize();
+        $data['url'] = Tool::getHostUrl(null, $request) . $asset->getRealFullPath();
+
+        $data['php'] = [
+            'classes' => array_merge([get_class($asset)], array_values(class_parents($asset))),
+            'interfaces' => array_values(class_implements($asset))
+        ];
 
         $event = new GenericEvent($this, [
             'data' => $data,
@@ -246,7 +224,7 @@ class AssetController extends ElementControllerBase implements EventedController
 
             $childsList->setLimit($limit);
             $childsList->setOffset($offset);
-            $childsList->setOrderKey("FIELD(assets.type, 'folder') DESC, assets.filename ASC", false);
+            $childsList->setOrderKey("FIELD(assets.type, 'folder') DESC, CAST(assets.filename AS CHAR CHARACTER SET utf8) COLLATE utf8_general_ci ASC", false);
 
             \Pimcore\Model\Element\Service::addTreeFilterJoins($cv, $childsList);
 
@@ -412,6 +390,7 @@ class AssetController extends ElementControllerBase implements EventedController
             $context = $context ? $context : [];
             $event = new \Pimcore\Event\Model\Asset\ResolveUploadTargetEvent($parentId, $filename, $context);
             \Pimcore::getEventDispatcher()->dispatch(AssetEvents::RESOLVE_UPLOAD_TARGET, $event);
+            $filename = Element\Service::getValidKey($event->getFilename(), 'asset');
             $parentId = $event->getParentId();
         }
 
@@ -591,7 +570,7 @@ class AssetController extends ElementControllerBase implements EventedController
                  * @var $asset Asset
                  */
                 $deletedItems[] = $asset->getRealFullPath();
-                if ($asset->isAllowed('delete')) {
+                if ($asset->isAllowed('delete') && !$asset->isLocked()) {
                     $asset->delete();
                 }
             }
@@ -600,7 +579,11 @@ class AssetController extends ElementControllerBase implements EventedController
         } elseif ($request->get('id')) {
             $asset = Asset::getById($request->get('id'));
 
-            if ($asset->isAllowed('delete')) {
+            if (!$asset->isAllowed('delete')) {
+                return $this->adminJson(['success' => false, 'message' => 'missing_permission']);
+            } elseif ($asset->isLocked()) {
+                return $this->adminJson(['success' => false, 'message' => 'prevented deleting asset, because it is locked: ID: ' . $asset->getId()]);
+            } else {
                 $asset->delete();
 
                 return $this->adminJson(['success' => true]);
@@ -651,6 +634,7 @@ class AssetController extends ElementControllerBase implements EventedController
             $folderThumbs = [];
             $children = new Asset\Listing();
             $children->setCondition('path LIKE ?', [$asset->getRealFullPath() . '/%']);
+            $children->addConditionParam('type IN (\'image\', \'video\', \'document\')', 'AND');
             $children->setLimit(35);
 
             foreach ($children as $child) {
@@ -1220,7 +1204,8 @@ class AssetController extends ElementControllerBase implements EventedController
             $thumbnail = Asset\Image\Thumbnail\Config::getPreviewConfig((bool) $request->get('hdpi'));
         }
 
-        if ($request->get('cropPercent')) {
+        $cropPercent = $request->get('cropPercent');
+        if ($cropPercent && filter_var($cropPercent, FILTER_VALIDATE_BOOLEAN)) {
             $thumbnail->addItemAt(0, 'cropPercent', [
                 'width' => $request->get('cropWidth'),
                 'height' => $request->get('cropHeight'),
@@ -2287,6 +2272,10 @@ class AssetController extends ElementControllerBase implements EventedController
                 $conditionFilters[] = 'path LIKE ' . ($folder->getRealFullPath() == '/' ? "'/%'" : $list->quote($folder->getRealFullPath() . '/%'));
             }
 
+            if ($allParams['only_unreferenced'] == 'true') {
+                $conditionFilters[] = 'id NOT IN (SELECT targetid FROM dependencies WHERE targettype=\'asset\')';
+            }
+
             $conditionFilters[] = "type != 'folder'";
             $filterJson = $allParams['filter'];
             if ($filterJson) {
@@ -2377,6 +2366,7 @@ class AssetController extends ElementControllerBase implements EventedController
                         'id' => $asset->getid(),
                         'type' => $asset->getType(),
                         'fullpath' => $asset->getRealFullPath(),
+                        'filename' => $asset->getKey(),
                         'creationDate' => $asset->getCreationDate(),
                         'modificationDate' => $asset->getModificationDate(),
                         'size' => formatBytes($size),

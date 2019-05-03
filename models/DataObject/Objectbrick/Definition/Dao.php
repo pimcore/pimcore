@@ -137,4 +137,15 @@ class Dao extends Model\DataObject\Fieldcollection\Definition\Dao
         $this->removeUnusedColumns($tableStore, $columnsToRemoveStore, $protectedColumnsStore);
         $this->removeUnusedColumns($tableQuery, $columnsToRemoveQuery, $protectedColumnsQuery);
     }
+
+    /**
+     * @param DataObject\ClassDefinition $classDefinition
+     */
+    public function classSaved(DataObject\ClassDefinition $classDefinition)
+    {
+        $tableStore = $this->getTableName($classDefinition, false);
+        $tableQuery = $this->getTableName($classDefinition, true);
+
+        $this->handleEncryption($classDefinition, [$tableQuery, $tableStore]);
+    }
 }

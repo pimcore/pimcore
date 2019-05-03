@@ -112,28 +112,30 @@ class ElementMetadata extends Model\AbstractModel implements DataObject\OwnerAwa
      * @param string $ownertype
      * @param $ownername
      * @param $position
+     * @param $index
      */
-    public function save($object, $ownertype = 'object', $ownername, $position)
+    public function save($object, $ownertype = 'object', $ownername, $position, $index)
     {
         $element = $this->getElement();
         $type = Model\Element\Service::getElementType($element);
-        $this->getDao()->save($object, $ownertype, $ownername, $position, $type);
+        $this->getDao()->save($object, $ownertype, $ownername, $position, $index, $type);
     }
 
     /**
      * @param DataObject\Concrete $source
-     * @param $destination
+     * @param $destinationId
      * @param $fieldname
      * @param $ownertype
      * @param $ownername
      * @param $position
-     * @param $type
+     * @param $index
+     * @param $destinationType
      *
      * @return mixed
      */
-    public function load(DataObject\Concrete $source, $destinationId, $fieldname, $ownertype, $ownername, $position, $destinationType)
+    public function load(DataObject\Concrete $source, $destinationId, $fieldname, $ownertype, $ownername, $position, $index, $destinationType)
     {
-        return $this->getDao()->load($source, $destinationId, $fieldname, $ownertype, $ownername, $position, $destinationType);
+        return $this->getDao()->load($source, $destinationId, $fieldname, $ownertype, $ownername, $position, $index, $destinationType);
     }
 
     /**

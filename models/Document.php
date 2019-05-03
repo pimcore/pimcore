@@ -23,6 +23,7 @@ use Pimcore\Event\FrontendEvents;
 use Pimcore\Event\Model\DocumentEvent;
 use Pimcore\Logger;
 use Pimcore\Model\Document\Listing;
+use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Tool;
 use Pimcore\Tool\Frontend as FrontendTool;
 use Symfony\Component\EventDispatcher\GenericEvent;
@@ -45,7 +46,7 @@ class Document extends Element\AbstractElement
     /**
      * @var bool
      */
-    private static $hidePublished = false;
+    private static $hideUnpublished = false;
 
     /**
      * @var array
@@ -227,13 +228,30 @@ class Document extends Element\AbstractElement
         try {
             $helperDoc = new Document();
             $helperDoc->getDao()->getByPath($path);
-            $doc = self::getById($helperDoc->getId(), $force);
+            $doc = static::getById($helperDoc->getId(), $force);
             \Pimcore\Cache\Runtime::set($cacheKey, $doc);
         } catch (\Exception $e) {
             $doc = null;
         }
 
         return $doc;
+    }
+
+    /**
+     * @param Document $document
+     *
+     * @return bool
+     */
+    protected static function typeMatch(Document $document)
+    {
+        $staticType = get_called_class();
+        if ($staticType != Document::class) {
+            if (!$document instanceof $staticType) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     /**
@@ -246,17 +264,16 @@ class Document extends Element\AbstractElement
      */
     public static function getById($id, $force = false)
     {
-        $id = intval($id);
-
-        if ($id < 1) {
+        if (!is_numeric($id) || $id < 1) {
             return null;
         }
+        $id = intval($id);
 
         $cacheKey = 'document_' . $id;
 
         if (!$force && \Pimcore\Cache\Runtime::isRegistered($cacheKey)) {
             $document = \Pimcore\Cache\Runtime::get($cacheKey);
-            if ($document) {
+            if ($document && static::typeMatch($document)) {
                 return $document;
             }
         }
@@ -290,7 +307,7 @@ class Document extends Element\AbstractElement
             return null;
         }
 
-        if (!$document) {
+        if (!$document || !static::typeMatch($document)) {
             return null;
         }
 
@@ -371,103 +388,115 @@ class Document extends Element\AbstractElement
      */
     public function save()
     {
-        // additional parameters (e.g. "versionNote" for the version note)
-        $params = [];
-        if (func_num_args() && is_array(func_get_arg(0))) {
-            $params = func_get_arg(0);
-        }
+        try {
+            // additional parameters (e.g. "versionNote" for the version note)
+            $params = [];
+            if (func_num_args() && is_array(func_get_arg(0))) {
+                $params = func_get_arg(0);
+            }
 
-        $isUpdate = false;
-        $preEvent = new DocumentEvent($this, $params);
-        if ($this->getId()) {
-            $isUpdate = true;
-            \Pimcore::getEventDispatcher()->dispatch(DocumentEvents::PRE_UPDATE, $preEvent);
-        } else {
-            \Pimcore::getEventDispatcher()->dispatch(DocumentEvents::PRE_ADD, $preEvent);
-        }
+            $isUpdate = false;
+            $preEvent = new DocumentEvent($this, $params);
+            if ($this->getId()) {
+                $isUpdate = true;
+                \Pimcore::getEventDispatcher()->dispatch(DocumentEvents::PRE_UPDATE, $preEvent);
+            } else {
+                \Pimcore::getEventDispatcher()->dispatch(DocumentEvents::PRE_ADD, $preEvent);
+            }
 
-        $params = $preEvent->getArguments();
+            $params = $preEvent->getArguments();
 
-        $this->correctPath();
+            $this->correctPath();
 
-        // we wrap the save actions in a loop here, so that we can restart the database transactions in the case it fails
-        // if a transaction fails it gets restarted $maxRetries times, then the exception is thrown out
-        // this is especially useful to avoid problems with deadlocks in multi-threaded environments (forked workers, ...)
-        $maxRetries = 5;
-        for ($retries = 0; $retries < $maxRetries; $retries++) {
-            $this->beginTransaction();
+            // we wrap the save actions in a loop here, so that we can restart the database transactions in the case it fails
+            // if a transaction fails it gets restarted $maxRetries times, then the exception is thrown out
+            // this is especially useful to avoid problems with deadlocks in multi-threaded environments (forked workers, ...)
+            $maxRetries = 5;
+            for ($retries = 0; $retries < $maxRetries; $retries++) {
+                $this->beginTransaction();
 
-            try {
-                $this->updateModificationInfos();
-
-                if (!$isUpdate) {
-                    $this->getDao()->create();
-                }
-
-                // get the old path from the database before the update is done
-                $oldPath = null;
-                if ($isUpdate) {
-                    $oldPath = $this->getDao()->getCurrentFullPath();
-                }
-
-                $this->update($params);
-
-                // if the old path is different from the new path, update all children
-                $updatedChildren = [];
-                if ($oldPath && $oldPath != $this->getRealFullPath()) {
-                    $this->getDao()->updateWorkspaces();
-                    $updatedChildren = $this->getDao()->updateChildsPaths($oldPath);
-                }
-
-                $this->commit();
-
-                break; // transaction was successfully completed, so we cancel the loop here -> no restart required
-            } catch (\Exception $e) {
                 try {
-                    $this->rollBack();
-                } catch (\Exception $er) {
-                    // PDO adapter throws exceptions if rollback fails
-                    Logger::error($er);
-                }
+                    $this->updateModificationInfos();
 
-                // we try to start the transaction $maxRetries times again (deadlocks, ...)
-                if ($retries < ($maxRetries - 1)) {
-                    $run = $retries + 1;
-                    $waitTime = rand(1, 5) * 100000; // microseconds
-                    Logger::warn('Unable to finish transaction (' . $run . ". run) because of the following reason '" . $e->getMessage() . "'. --> Retrying in " . $waitTime . ' microseconds ... (' . ($run + 1) . ' of ' . $maxRetries . ')');
-
-                    usleep($waitTime); // wait specified time until we restart the transaction
-                } else {
-                    if ($isUpdate) {
-                        \Pimcore::getEventDispatcher()->dispatch(DocumentEvents::POST_UPDATE_FAILURE, new DocumentEvent($this));
-                    } else {
-                        \Pimcore::getEventDispatcher()->dispatch(DocumentEvents::POST_ADD_FAILURE, new DocumentEvent($this));
+                    if (!$isUpdate) {
+                        $this->getDao()->create();
                     }
-                    // if the transaction still fail after $maxRetries retries, we throw out the exception
-                    throw $e;
+
+                    // get the old path from the database before the update is done
+                    $oldPath = null;
+                    if ($isUpdate) {
+                        $oldPath = $this->getDao()->getCurrentFullPath();
+                    }
+
+                    $this->update($params);
+
+                    // if the old path is different from the new path, update all children
+                    $updatedChildren = [];
+                    if ($oldPath && $oldPath != $this->getRealFullPath()) {
+                        $differentOldPath = $oldPath;
+                        $this->getDao()->updateWorkspaces();
+                        $updatedChildren = $this->getDao()->updateChildsPaths($oldPath);
+                    }
+
+                    $this->commit();
+
+                    break; // transaction was successfully completed, so we cancel the loop here -> no restart required
+                } catch (\Exception $e) {
+                    try {
+                        $this->rollBack();
+                    } catch (\Exception $er) {
+                        // PDO adapter throws exceptions if rollback fails
+                        Logger::error($er);
+                    }
+
+                    // we try to start the transaction $maxRetries times again (deadlocks, ...)
+                    if ($retries < ($maxRetries - 1)) {
+                        $run = $retries + 1;
+                        $waitTime = rand(1, 5) * 100000; // microseconds
+                        Logger::warn('Unable to finish transaction (' . $run . ". run) because of the following reason '" . $e->getMessage() . "'. --> Retrying in " . $waitTime . ' microseconds ... (' . ($run + 1) . ' of ' . $maxRetries . ')');
+
+                        usleep($waitTime); // wait specified time until we restart the transaction
+                    } else {
+                        // if the transaction still fail after $maxRetries retries, we throw out the exception
+                        throw $e;
+                    }
                 }
             }
-        }
 
-        $additionalTags = [];
-        if (isset($updatedChildren) && is_array($updatedChildren)) {
-            foreach ($updatedChildren as $documentId) {
-                $tag = 'document_' . $documentId;
-                $additionalTags[] = $tag;
+            $additionalTags = [];
+            if (isset($updatedChildren) && is_array($updatedChildren)) {
+                foreach ($updatedChildren as $documentId) {
+                    $tag = 'document_' . $documentId;
+                    $additionalTags[] = $tag;
 
-                // remove the child also from registry (internal cache) to avoid path inconsistencies during long running scripts, such as CLI
-                \Pimcore\Cache\Runtime::set($tag, null);
+                    // remove the child also from registry (internal cache) to avoid path inconsistencies during long running scripts, such as CLI
+                    \Pimcore\Cache\Runtime::set($tag, null);
+                }
             }
-        }
-        $this->clearDependentCache($additionalTags);
+            $this->clearDependentCache($additionalTags);
 
-        if ($isUpdate) {
-            \Pimcore::getEventDispatcher()->dispatch(DocumentEvents::POST_UPDATE, new DocumentEvent($this));
-        } else {
-            \Pimcore::getEventDispatcher()->dispatch(DocumentEvents::POST_ADD, new DocumentEvent($this));
-        }
+            if ($isUpdate) {
+                $updateEvent = new DocumentEvent($this);
+                if ($differentOldPath) {
+                    $updateEvent->setArgument('oldPath', $differentOldPath);
+                }
+                \Pimcore::getEventDispatcher()->dispatch(DocumentEvents::POST_UPDATE, $updateEvent);
+            } else {
+                \Pimcore::getEventDispatcher()->dispatch(DocumentEvents::POST_ADD, new DocumentEvent($this));
+            }
 
-        return $this;
+            return $this;
+        } catch (\Exception $e) {
+            $failureEvent = new DocumentEvent($this);
+            $failureEvent->setArgument('exception', $e);
+            if ($isUpdate) {
+                \Pimcore::getEventDispatcher()->dispatch(DocumentEvents::POST_UPDATE_FAILURE, $failureEvent);
+            } else {
+                \Pimcore::getEventDispatcher()->dispatch(DocumentEvents::POST_ADD_FAILURE, $failureEvent);
+            }
+
+            throw $e;
+        }
     }
 
     /**
@@ -663,19 +692,21 @@ class Document extends Element\AbstractElement
     /**
      * Returns true if the document has at least one child
      *
+     * @param $unpublished
+     *
      * @return bool
      */
-    public function hasChildren()
+    public function hasChildren($unpublished = false)
     {
         if (is_bool($this->hasChilds)) {
             if (($this->hasChilds and empty($this->childs)) or (!$this->hasChilds and !empty($this->childs))) {
-                return $this->getDao()->hasChildren();
+                return $this->getDao()->hasChildren($unpublished);
             } else {
                 return $this->hasChilds;
             }
         }
 
-        return $this->getDao()->hasChildren();
+        return $this->getDao()->hasChildren($unpublished);
     }
 
     /**
@@ -748,11 +779,16 @@ class Document extends Element\AbstractElement
     }
 
     /**
-     * Deletes the document
+     * @param bool $isNested
+     *
+     * @throws \Exception
      */
-    public function delete()
+    public function delete(bool $isNested = false)
     {
         \Pimcore::getEventDispatcher()->dispatch(DocumentEvents::PRE_DELETE, new DocumentEvent($this));
+
+        $this->beginTransaction();
+
         try {
             // remove childs
             if ($this->hasChildren()) {
@@ -760,7 +796,7 @@ class Document extends Element\AbstractElement
                 $unpublishedStatus = self::doHideUnpublished();
                 self::setHideUnpublished(false);
                 foreach ($this->getChildren(true) as $child) {
-                    $child->delete();
+                    $child->delete(true);
                 }
                 self::setHideUnpublished($unpublishedStatus);
             }
@@ -781,16 +817,21 @@ class Document extends Element\AbstractElement
 
             $this->getDao()->delete();
 
-            // clear cache
-            $this->clearDependentCache();
-
-            //clear document from registry
-            \Pimcore\Cache\Runtime::set('document_' . $this->getId(), null);
+            $this->commit();
         } catch (\Exception $e) {
-            \Pimcore::getEventDispatcher()->dispatch(DocumentEvents::POST_DELETE_FAILURE, new DocumentEvent($this));
+            $this->rollBack();
+            $failureEvent = new DocumentEvent($this);
+            $failureEvent->setArgument('exception', $e);
+            \Pimcore::getEventDispatcher()->dispatch(DocumentEvents::POST_DELETE_FAILURE, $failureEvent);
             Logger::error($e);
             throw $e;
         }
+
+        // clear cache
+        $this->clearDependentCache();
+
+        //clear document from registry
+        \Pimcore\Cache\Runtime::set('document_' . $this->getId(), null);
 
         \Pimcore::getEventDispatcher()->dispatch(DocumentEvents::POST_DELETE, new DocumentEvent($this));
     }
@@ -1323,15 +1364,15 @@ class Document extends Element\AbstractElement
     {
         $finalVars = [];
         $parentVars = parent::__sleep();
+        $blockedVars = ['dependencies', 'userPermissions', 'hasChilds', 'versions', 'scheduledTasks', 'parent'];
 
         if (isset($this->_fulldump)) {
             // this is if we want to make a full dump of the object (eg. for a new version), including childs for recyclebin
-            $blockedVars = ['dependencies', 'userPermissions', 'hasChilds', 'versions', 'scheduledTasks', 'parent'];
             $finalVars[] = '_fulldump';
             $this->removeInheritedProperties();
         } else {
             // this is if we want to cache the object
-            $blockedVars = ['dependencies', 'userPermissions', 'childs', 'hasChilds', 'versions', 'scheduledTasks', 'properties', 'parent'];
+            $blockedVars = array_merge($blockedVars, ['childs', 'properties']);
         }
 
         foreach ($parentVars as $key) {
@@ -1423,11 +1464,11 @@ class Document extends Element\AbstractElement
     /**
      * Set true if want to hide documents.
      *
-     * @param bool $flag
+     * @param bool $hideUnpublished
      */
-    public static function setHideUnpublished($flag)
+    public static function setHideUnpublished($hideUnpublished)
     {
-        self::$hidePublished = $flag;
+        self::$hideUnpublished = $hideUnpublished;
     }
 
     /**
@@ -1437,7 +1478,7 @@ class Document extends Element\AbstractElement
      */
     public static function doHideUnpublished()
     {
-        return self::$hidePublished;
+        return self::$hideUnpublished;
     }
 
     /**
@@ -1461,7 +1502,7 @@ class Document extends Element\AbstractElement
      *
      * @return Document
      */
-    public function setVersionCount(?int $versionCount): self
+    public function setVersionCount(?int $versionCount): ElementInterface
     {
         $this->versionCount = (int) $versionCount;
 

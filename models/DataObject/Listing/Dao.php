@@ -127,7 +127,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
             $query->columns(['totalCount' => new Expression('COUNT(' . $countIdentifier . ')')]);
         }
 
-        $totalCount = $this->db->fetchOne($query, $this->model->getConditionVariables());
+        $totalCount = $this->db->fetchOne($query, $this->model->getConditionVariables(), $this->model->getConditionVariableTypes());
 
         return (int) $totalCount;
     }
@@ -166,14 +166,14 @@ class Dao extends Model\Listing\Dao\AbstractDao
     /**
      * Loads a list of document ids for the specicifies parameters, returns an array of ids
      *
-     * @return array
+     * @return int[]
      */
     public function loadIdList()
     {
         $query = $this->getQuery();
-        $objectIds = $this->db->fetchCol($query, $this->model->getConditionVariables());
+        $objectIds = $this->db->fetchCol($query, $this->model->getConditionVariables(), $this->model->getConditionVariableTypes());
 
-        return $objectIds;
+        return array_map('intval', $objectIds);
     }
 
     /**

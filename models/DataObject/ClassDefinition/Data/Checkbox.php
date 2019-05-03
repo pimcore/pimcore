@@ -90,11 +90,9 @@ class Checkbox extends Data implements ResourcePersistenceAwareInterface, QueryR
      */
     public function getDataForResource($data, $object = null, $params = [])
     {
-        if (is_bool($data)) {
-            $data = (int)$data;
-        }
+        $data = is_null($data) ? $this->getDefaultValue() : $data;
 
-        return $data;
+        return (int)$data;
     }
 
     /**

@@ -150,6 +150,9 @@ $runtimePerspective = \Pimcore\Config::getRuntimePerspective($user);
         </ul>
     </div>
     <div id="pimcore_status">
+        <div href="#" style="display: none" id="pimcore_notification" data-menu-tooltip="<?= $this->translate("notifications") ?>" class="pimcore_icon_comments">
+            <span id="notification_value" style="display:none;"></span>
+        </div>
         <div id="pimcore_status_dev" data-menu-tooltip="DEV MODE" style="display: none;"></div>
         <div id="pimcore_status_debug" data-menu-tooltip="<?= $this->translate("debug_mode_on") ?>" style="display: none;"></div>
         <div id="pimcore_status_email" data-menu-tooltip="<?= $this->translate("mail_settings_incomplete") ?>" style="display: none;"></div>
@@ -226,6 +229,7 @@ $scriptLibs = array(
     "lib/ext-plugins/portlet/Portlet.js",
     "lib/ext-plugins/portlet/PortalColumn.js",
     "lib/ext-plugins/portlet/PortalPanel.js",
+    "lib/ext-plugins/TabMiddleButtonClose.js",
 
     "lib/ckeditor/ckeditor.js",
 
@@ -395,11 +399,13 @@ $scripts = array(
     "pimcore/document/printpage.js",
     "pimcore/document/printcontainer.js",
     "pimcore/document/seopanel.js",
+    "pimcore/document/document_language_overview.js",
     "pimcore/document/customviews/tree.js",
 
     // assets
     "pimcore/asset/asset.js",
     "pimcore/asset/unknown.js",
+    "pimcore/asset/embedded_meta_data.js",
     "pimcore/asset/image.js",
     "pimcore/asset/document.js",
     "pimcore/asset/video.js",
@@ -539,6 +545,7 @@ $scripts = array(
     "pimcore/object/objectbrick.js",
     "pimcore/object/objectbricks/field.js",
     "pimcore/object/tags/abstract.js",
+    "pimcore/object/tags/abstractRelations.js",
     "pimcore/object/tags/block.js",
     "pimcore/object/tags/rgbaColor.js",
     "pimcore/object/tags/date.js",
@@ -634,6 +641,7 @@ $scripts = array(
     "pimcore/report/custom/report.js",
     "pimcore/report/custom/definitions/sql.js",
     "pimcore/report/custom/definitions/analytics.js",
+    "pimcore/report/custom/toolbarenricher.js",
 
     "pimcore/settings/tagmanagement/panel.js",
     "pimcore/settings/tagmanagement/item.js",
@@ -686,6 +694,11 @@ $scripts = array(
 
     // color picker
     "pimcore/colorpicker-overrides.js",
+
+    //notification
+    "pimcore/notification/helper.js",
+    "pimcore/notification/panel.js",
+    "pimcore/notification/modal.js",
 );
 
 ?>

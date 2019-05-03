@@ -41,7 +41,7 @@ This path can then be directly used to display the image in a `<img />` or `<pic
 
     <!-- preferred alternative - let Pimcore create the whole image tag -->
     <!-- including high-res alternatives (srcset) or media queries, if configured -->
-    <?= $asset->getThumbnail("myThumbnail")->getHTML(); ?>
+    <?= $asset->getThumbnail("myThumbnail")->getHtml(); ?>
 
 <?php } ?>
 ```
@@ -78,7 +78,7 @@ For thumbnails in action also have a look at our [Live Demo](http://demo.pimcore
 <?php // Use directly on the asset object ?>
 <?php
     $asset = Asset::getByPath("/path/to/image.jpg");
-    echo $asset->getThumbnail("myThumbnail")->getHTML();
+    echo $asset->getThumbnail("myThumbnail")->getHtml();
 ?>
  
 <?php // Use without pre-configured thumbnail ?>
@@ -111,7 +111,7 @@ For thumbnails in action also have a look at our [Live Demo](http://demo.pimcore
 <?php
  
 $asset = Asset::getByPath("/path/to/image.jpg");
-echo $asset->getThumbnail(["width" => 500, "format" => "png"])->getHTML();
+echo $asset->getThumbnail(["width" => 500, "format" => "png"])->getHtml();
  
 ?>
 ```
@@ -128,7 +128,7 @@ $width = $thumbnail->getWidth();
 $height = $thumbnail->getHeight();
  
 // get the html "img" tag for the thumbnail incl. custom class:
-echo $thumbnail->getHTML(["class" => "custom-class"]);
+echo $thumbnail->getHtml(["class" => "custom-class"]);
  
 // get the path to the thumbnail
 $path = $thumbnail->getPath();
@@ -144,17 +144,17 @@ echo $thumbnail; // prints something like /var/tmp/....png
  "width" => 180,
  "height" => 180,
  "cover" => true
-])->getHTML(["class" => "thumbnail", "data-my-name" => "my value"]) ?>
+])->getHtml(["class" => "thumbnail", "data-my-name" => "my value"]) ?>
  
   
 // same with a thumbnail definition
-<?= $asset->getThumbnail("exampleScaleWidth")->getHTML([
+<?= $asset->getThumbnail("exampleScaleWidth")->getHtml([
     "class" => "thumbnail", 
     "data-my-name" => "my value"
 ]) ?>
   
 // disable the automatically added width & height attributes
-<?= $asset->getThumbnail("exampleScaleWidth")->getHTML([], ["width","height"]) ?>
+<?= $asset->getThumbnail("exampleScaleWidth")->getHtml([], ["width","height"]) ?>
 ```
 
 
@@ -265,7 +265,7 @@ Pimcore will then dynamically generate the thumbnails accordingly.
 
 ## Media Queries in Thumbnail Configuration
 If your're using media queries in your thumbnail configuration pimcore automatically generates a `<picture>`  tag 
-instead of an `<img>` tag when calling `$asset->getThumbnail("example")->getHTML()`.
+instead of an `<img>` tag when calling `$asset->getThumbnail("example")->getHtml()`.
 But in some cases it is necessary to get single thumbnails for certain media queries out of the thumbnail object, 
 which is described in the examples below. 
 ```php
@@ -281,7 +281,7 @@ $a->getThumbnail("galleryCarousel")->getHtml();
 $a->getThumbnail("galleryCarousel")->getMedia("940w");
  
 // get <img> tag for media query 320w including @srcset 2x
-$a->getThumbnail("galleryCarousel")->getMedia("320w")->getHTML();
+$a->getThumbnail("galleryCarousel")->getMedia("320w")->getHtml();
  
 // get 2x thumbnail path for media query 320w
 $a->getThumbnail("galleryCarousel")->getMedia("320w", 2);

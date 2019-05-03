@@ -64,6 +64,12 @@ class HardlinkController extends DocumentControllerBase
         //Hook for modifying return value - e.g. for changing permissions based on object data
         //data need to wrapped into a container in order to pass parameter to event listeners by reference so that they can change the values
         $data = $link->getObjectVars();
+
+        $data['php'] = [
+            'classes' => array_merge([get_class($link)], array_values(class_parents($link))),
+            'interfaces' => array_values(class_implements($link))
+        ];
+
         $event = new GenericEvent($this, [
             'data' => $data,
             'document' => $link

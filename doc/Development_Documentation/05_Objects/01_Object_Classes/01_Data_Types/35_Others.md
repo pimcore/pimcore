@@ -61,9 +61,7 @@ $object = DataObject::getById(234);
 
 Please also see the section about [Link Generators](../05_Class_Settings/15_Link_Generator.md)
 
-## RGBA Color (Experimental)
-
-> Experimental feature: Subject to change without notice.
+## RGBA Color
 
 Allows to store RGBA Values. RGB and Alpha values are stored as hex values in two separate columns as hex values in the database. 
 

@@ -43,6 +43,7 @@ pimcore.settings.translations = Class.create({
         this.preconfiguredFilter = filter;
         this.filterField.setValue(filter);
         this.getAvailableLanguages();
+        this.config = {};
     },
 
 
@@ -319,21 +320,17 @@ pimcore.settings.translations = Class.create({
         menu.showAt(e.pageX, e.pageY);
     },
 
-    doImport: function () {
-        pimcore.helpers.uploadDialog(this.importUrl, "Filedata", function () {
-            this.store.reload();
-        }.bind(this), function () {
-            Ext.MessageBox.alert(t("error"), t("error"));
-        });
-    },
-
     doMerge: function () {
-        pimcore.helpers.uploadDialog(this.mergeUrl, "Filedata", function (result) {
+        pimcore.helpers.uploadDialog(this.uploadImportUrl, "Filedata", function (result) {
             var data = result.response.responseText;
             data = Ext.decode(data);
 
-            var merger = new pimcore.settings.translation.translationmerger(this.translationType, data, this);
-            this.refresh();
+            if(data && data.success == true) {
+                this.config = data.config;
+                this.showImportForm();
+            } else {
+                Ext.MessageBox.alert(t("error"), t("error"));
+            }
         }.bind(this), function () {
             Ext.MessageBox.alert(t("error"), t("error"));
         });
@@ -343,6 +340,74 @@ pimcore.settings.translations = Class.create({
         this.store.reload();
     },
 
+    showImportForm: function () {
+        this.csvSettingsPanel = new pimcore.object.helpers.import.csvSettingsTab(this.config, false, this);
+
+        var ImportForm = new Ext.form.FormPanel({
+            width: 500,
+            bodyStyle: 'padding: 10px;',
+            items: [{
+                    xtype: "form",
+                    bodyStyle: "padding: 10px;",
+                    defaults: {
+                        labelWidth: 250,
+                        width: 550
+                    },
+                    itemId: "form",
+                    items: [this.csvSettingsPanel.getPanel()],
+                    buttons: [{
+                        text: t("cancel"),
+                        iconCls: "pimcore_icon_delete",
+                        handler: function () {
+                            win.close();
+                        }
+                    },
+                    {
+                    text: t("import"),
+                    iconCls: "pimcore_icon_import",
+                    handler: function () {
+                        if(ImportForm.isValid()) {
+                            this.csvSettingsPanel.commitData();
+                            var csvSettings = Ext.encode(this.config.csvSettings);
+                            ImportForm.getForm().submit({
+                                url: this.mergeUrl,
+                                params: {importFile: this.config.tmpFile, csvSettings: csvSettings},
+                                waitMsg: t("please_wait"),
+                                success: function (el, response) {
+                                    try {
+                                        var data = response.response.responseText;
+                                        data = Ext.decode(data);
+                                        var merger = new pimcore.settings.translation.translationmerger(this.translationType, data, this);
+                                        this.refresh();
+                                        win.close();
+                                    } catch (e) {
+                                        Ext.MessageBox.alert(t("error"), t("error"));
+                                        win.close();
+                                    }
+                                }.bind(this),
+                                failure: function (el, res) {
+                                    Ext.MessageBox.alert(t("error"), t("error"));
+                                    win.close();
+                                }
+                            });
+                        }
+                    }.bind(this)
+                    }]
+                }]
+        });
+
+        var windowCfg = {
+            title: t("merge_csv"),
+            width: 600,
+            layout: "fit",
+            closeAction: "close",
+            items: [ImportForm]
+        };
+
+        var win = new Ext.Window(windowCfg);
+
+        win.show();
+    },
 
     doExport: function () {
         var store = this.grid.store;

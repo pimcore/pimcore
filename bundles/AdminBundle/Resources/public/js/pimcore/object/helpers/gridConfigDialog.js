@@ -332,7 +332,9 @@ pimcore.object.helpers.gridConfigDialog = Class.create({
     },
 
     updatePreview: function () {
-        this.commitData(false, true);
+        if (this.previewSettings && this.previewSettings.allowPreview) {
+            this.commitData(false, true);
+        }
     },
 
     commitData: function (save, preview) {
@@ -620,6 +622,70 @@ pimcore.object.helpers.gridConfigDialog = Class.create({
                 }
             });
 
+            var columns = [
+                {
+                    xtype: 'treecolumn',
+                    text: t('configuration'),
+                    dataIndex: 'text',
+                    flex: 90
+                }
+            ];
+
+            if (this.previewSettings && this.previewSettings.allowPreview) {
+                columns.push({
+                    dataIndex: 'preview',
+                    text: t('preview'),
+                    flex: 90,
+                    renderer: function (value, metaData, record) {
+
+                        if (record && record.parentNode.id == 0) {
+
+                            var key = record.data.key;
+                            record.data.inheritedFields = {};
+
+                            if (key == "modificationDate" || key == "creationDate") {
+                                var timestamp = intval(value) * 1000;
+                                var date = new Date(timestamp);
+                                return Ext.Date.format(date, "Y-m-d H:i");
+
+                            } else if (key == "published") {
+                                return Ext.String.format('<div style="text-align: left"><div role="button" class="x-grid-checkcolumn{0}" style=""></div></div>', value ? '-checked' : '');
+                            } else {
+                                var fieldType = record.data.dataType;
+
+                                try {
+                                    if (record.data.isOperator && record.data.configAttributes && pimcore.object.tags[record.data.configAttributes.renderer]) {
+                                        var rendererType = record.data.configAttributes.renderer;
+                                        var tag = pimcore.object.tags[rendererType];
+                                    } else {
+                                        var tag = pimcore.object.tags[fieldType];
+                                    }
+
+                                    if (tag) {
+                                        var fc = tag.prototype.getGridColumnConfig({
+                                            key: key,
+                                            layout: {
+                                                noteditable: true
+                                            }
+                                        }, true);
+
+                                        value = fc.renderer(value, null, record);
+                                    }
+                                } catch (e) {
+                                    console.log(e);
+                                }
+
+                                if (typeof value == "string") {
+                                    value = '<div style="max-height: 50px">' + value + '</div>';
+                                }
+                                return value;
+                            }
+                        }
+
+                    }.bind(this)
+                });
+            }
+
             this.selectionPanel = new Ext.tree.TreePanel({
                 store: store,
                 plugins: [this.cellEditing],
@@ -786,66 +852,7 @@ pimcore.object.helpers.gridConfigDialog = Class.create({
                 listeners: {
                     itemcontextmenu: this.onTreeNodeContextmenu.bind(this)
                 },
-                columns: [
-                    {
-                        xtype: 'treecolumn',                    //this is so we know which column will show the tree
-                        text: t('configuration'),
-                        dataIndex: 'text',
-                        flex: 90
-                    },
-                    {
-                        dataIndex: 'preview',
-                        text: t('preview'),
-                        flex: 90,
-                        renderer: function (value, metaData, record) {
-
-                            if (record && record.parentNode.id == 0) {
-
-                                var key = record.data.key;
-                                record.data.inheritedFields = {};
-
-                                if (key == "modificationDate" || key == "creationDate") {
-                                    var timestamp = intval(value) * 1000;
-                                    var date = new Date(timestamp);
-                                    return Ext.Date.format(date, "Y-m-d H:i");
-
-                                } else if (key == "published") {
-                                    return Ext.String.format('<div style="text-align: left"><div role="button" class="x-grid-checkcolumn{0}" style=""></div></div>', value ? '-checked' : '');
-                                } else {
-                                    var fieldType = record.data.dataType;
-
-                                    try {
-                                        if (record.data.isOperator && record.data.configAttributes && pimcore.object.tags[record.data.configAttributes.renderer]) {
-                                            var rendererType = record.data.configAttributes.renderer;
-                                            var tag = pimcore.object.tags[rendererType];
-                                        } else {
-                                            var tag = pimcore.object.tags[fieldType];
-                                        }
-
-                                        if (tag) {
-                                            var fc = tag.prototype.getGridColumnConfig({
-                                                key: key,
-                                                layout: {
-                                                    noteditable: true
-                                                }
-                                            }, true);
-
-                                            value = fc.renderer(value, null, record);
-                                        }
-                                    } catch (e) {
-                                        console.log(e);
-                                    }
-
-                                    if (typeof value == "string") {
-                                        value = '<div style="max-height: 50px">' + value + '</div>';
-                                    }
-                                    return value;
-                                }
-                            }
-
-                        }.bind(this)
-                    }
-                ]
+                columns: columns
             });
             var store = this.selectionPanel.getStore();
             var model = store.getModel();

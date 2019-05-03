@@ -78,9 +78,9 @@ class Page extends TargetingDocument
     protected $targetGroupIds = '';
 
     /**
-     * @throws \Exception
+     * @inheritdoc
      */
-    public function delete()
+    public function delete(bool $isNested = false)
     {
         if ($this->getId() == 1) {
             throw new \Exception('root-node cannot be deleted');
@@ -99,7 +99,7 @@ class Page extends TargetingDocument
             $site->delete();
         }
 
-        parent::delete();
+        parent::delete($isNested);
     }
 
     /**

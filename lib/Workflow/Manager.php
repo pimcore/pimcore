@@ -81,7 +81,7 @@ class Manager
     public function addPlaceConfig(string $workflowName, string $place, array $placeConfig)
     {
         $this->placeConfigs[$workflowName] = $this->placeConfigs[$workflowName] ?? [];
-        $this->placeConfigs[$workflowName][$place] = new PlaceConfig($place, $placeConfig, $this->expressionService);
+        $this->placeConfigs[$workflowName][$place] = new PlaceConfig($place, $placeConfig, $this->expressionService, $workflowName);
 
         return $this;
     }
@@ -95,7 +95,7 @@ class Manager
     public function addGlobalAction(string $workflowName, string $action, array $actionConfig)
     {
         $this->globalActions[$workflowName] = $this->globalActions[$workflowName] ?? [];
-        $this->globalActions[$workflowName][$action] = new GlobalAction($action, $actionConfig, $this->expressionService);
+        $this->globalActions[$workflowName][$action] = new GlobalAction($action, $actionConfig, $this->expressionService, $workflowName);
 
         return $this;
     }
@@ -242,8 +242,12 @@ class Manager
 
         $this->notesSubscriber->setAdditionalData([]);
 
-        if ($saveSubject && $subject instanceof AbstractElement && method_exists($subject, 'save')) {
-            $subject->save();
+        if ($saveSubject && $subject instanceof AbstractElement) {
+            if (method_exists($subject, 'getPublished') && !$subject->getPublished()) {
+                $subject->saveVersion();
+            } else {
+                $subject->save();
+            }
         }
 
         return $marking;
@@ -290,7 +294,7 @@ class Manager
         $this->eventDispatcher->dispatch(WorkflowEvents::POST_GLOBAL_ACTION, $event);
         $this->notesSubscriber->setAdditionalData([]);
 
-        if ($saveSubject && $subject instanceof AbstractElement && method_exists($subject, 'save')) {
+        if ($saveSubject && $subject instanceof AbstractElement) {
             $subject->save();
         }
 

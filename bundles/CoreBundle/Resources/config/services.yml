@@ -78,7 +78,10 @@ services:
         public: true
         tags: ['controller.service_arguments']
 
-    Pimcore\Controller\Config\ConfigNormalizer: ~
+    Pimcore\Controller\Config\ConfigNormalizer:
+        calls:
+            - [setRoutingDefaults, ['%pimcore.routing.defaults%']]
+
 
     Pimcore\Controller\Config\ControllerDataProvider:
         public : true
@@ -192,7 +195,17 @@ services:
 
     Pimcore\Translation\Escaper\Xliff12Escaper: ~
 
+    Pimcore\Model\DataObject\ClassDefinition\ClassDefinitionManager:
+        public: true
+
     # Override Swiftmailer redirecting plugin
     swiftmailer.plugin.redirecting.abstract:
         abstract: true
         class: Pimcore\Mail\Plugins\RedirectingPlugin
+
+    Pimcore\Model\DataObject\QuantityValue\UnitConversionService:
+        public: true
+
+    Pimcore\Model\DataObject\QuantityValue\QuantityValueConverterInterface:
+        public: true
+        class: Pimcore\Model\DataObject\QuantityValue\DefaultConverter

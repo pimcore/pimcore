@@ -52,8 +52,6 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao
 
             return true;
         } catch (\Exception $e) {
-            var_dump($e);
-
             return false;
         }
     }

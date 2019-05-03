@@ -28,6 +28,10 @@
     -webkit-box-sizing: content-box !important;
 }
 
+.cke_toolgroup, .cke_combo_button {
+    border-bottom: 0 !important;
+}
+
 .cke-code-editor textarea {
     font-family: "courier new", courier !important;
 }
@@ -508,7 +512,7 @@
 }
 
 .pimcore_tag_input.empty, .pimcore_wysiwyg.empty, .pimcore_tag_textarea.empty {
-    box-shadow: 0 0 5px 2px #E8E8E8;
+    outline: 1px dashed #BABABA;
 }
 
 .pimcore_wysiwyg.empty:after {
@@ -516,12 +520,13 @@
     content: "\0000a0";
 }
 
-.pimcore_tag_input:hover, .pimcore_wysiwyg:hover, .pimcore_tag_textarea:hover {
-    box-shadow: 0 0 5px 2px #BABABA;
+.pimcore_tag_input:hover, .pimcore_wysiwyg:hover, .pimcore_tag_textarea:hover, .pimcore_tag_snippet:hover, .pimcore_tag_renderlet:hover, .pimcore_tag_inc:hover {
+    outline: 2px dashed #BABABA;
+    outline-offset: 5px;
 }
 
 .pimcore_tag_input:focus, .pimcore_wysiwyg:focus, .pimcore_tag_textarea:focus {
-    box-shadow: none;
+    outline: none;
 }
 
 .pimcore_tag_textarea {

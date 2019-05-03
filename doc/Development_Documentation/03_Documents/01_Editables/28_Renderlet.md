@@ -98,7 +98,7 @@ Now you have to create the template file at: `website/views/scripts/content/my-g
                 /** @var Pimcore\Model\Asset\Image $asset */
                 ?>
                 <div class="gallery-row">
-                    <?= $asset->getThumbnail('galleryThumbnail')->getHTML(); ?>
+                    <?= $asset->getThumbnail('galleryThumbnail')->getHtml(); ?>
                 </div>
                 <?php
             endif;

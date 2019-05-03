@@ -82,7 +82,7 @@ class Listing extends Model\Listing\AbstractListing implements \Zend_Paginator_A
     /**
      * @param $unpublished
      *
-     * @return bool
+     * @return $this
      */
     public function setUnpublished($unpublished)
     {
@@ -178,7 +178,7 @@ class Listing extends Model\Listing\AbstractListing implements \Zend_Paginator_A
      * @param int $offset
      * @param int $itemCountPerPage
      *
-     * @return array
+     * @return Model\DataObject[]
      */
     public function getItems($offset, $itemCountPerPage)
     {
@@ -228,7 +228,7 @@ class Listing extends Model\Listing\AbstractListing implements \Zend_Paginator_A
     }
 
     /**
-     * @return mixed|void
+     * @return mixed|null
      */
     public function next()
     {

@@ -7,7 +7,7 @@ Pimcore applications can be tested with any PHP testing solution, but this page 
 
 In general it's recommended to start with the first approach as it is simpler to set up and to get started with testing. Note, however, that the PHPUnit setup does not include any out-of-the-box solution how to prepare your application for tests (e.g. how to make sure you are always testing with the same reproducible data set), so that's up to you. You could prepare test data in your bootstrap file or run some script before you start the test suite.
 
-In addition to Codeception's general features, Pimcore's Codeception modules provide a set of helpers to bootstrap a Pimcore installation from an empty installation. The `Pimcore` module is able to drop and re-create the database and addtional modules like the `ClassManager` provide helper code to create Pimcore classes from JSON exports. As the DB initialization is configurable, you should be able to use the module as you need it (e.g. by bootstrapping your application yourself or by just running tests without any DB/data initialization logic. You can find examples how to use those modules by looking through [Pimcore's test setup](https://github.com/pimcore/pimcore/tree/master/pimcore/tests).
+In addition to Codeception's general features, Pimcore's Codeception modules provide a set of helpers to bootstrap a Pimcore installation from an empty installation. The `Pimcore` module is able to drop and re-create the database and addtional modules like the `ClassManager` provide helper code to create Pimcore classes from JSON exports. As the DB initialization is configurable, you should be able to use the module as you need it (e.g. by bootstrapping your application yourself or by just running tests without any DB/data initialization logic. You can find examples how to use those modules by looking through [Pimcore's test setup](https://github.com/pimcore/pimcore/tree/master/tests).
 
 ## PHPUnit
 
@@ -17,7 +17,18 @@ bootstrap file to ensure the Pimcore startup process has everything it needs. St
 to your project:
 
 ```
-$ composer require --dev 'symfony/phpunit-bridge:^3.4'
+$ composer require --dev 'symfony/phpunit-bridge:*'
+```
+
+With ``symfony/phpunit-bridge``` comes ```vendor/bin/simple-phpunit``` which uses its own PHPUnit version. For ```simple-phpunit``` to use the right version, you need to exclude ```phpunit``` from the autoloader's classmap and afterwards update the autoloader with ```composer dump-autoload -o```
+```
+  "autoload": {
+    ...
+
+    "exclude-from-classmap": [
+      "vendor/phpunit"
+    ]
+  }
 ```
 
 Next, add a PHPUnit config file named `phpunit.xml.dist` in the root directory of your project. The config file below
@@ -26,8 +37,8 @@ expects your tests in a `tests/` directory and processes files in `src/` when ca
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/6.5/phpunit.xsd"
-         bootstrap="../../vendor/autoload.php"
+         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/7.4/phpunit.xsd"
+         bootstrap="vendor/autoload.php"
          colors="true">
     <testsuite name="default">
         <directory suffix="Test.php">tests</directory>
@@ -38,6 +49,10 @@ expects your tests in a `tests/` directory and processes files in `src/` when ca
             <directory suffix=".php">src</directory>
         </whitelist>
     </filter>
+
+    <php>
+        <env name="SYMFONY_PHPUNIT_VERSION" value="7.4" />
+    </php>
 </phpunit>
 ``` 
 
@@ -101,7 +116,7 @@ with Symfony's PHPUnit wrapper:
 ```
 $ vendor/bin/simple-phpunit
 
-PHPUnit 6.5.6 by Sebastian Bergmann and contributors.
+PHPUnit 7.4.5 by Sebastian Bergmann and contributors.
 
 Testing default
 ........                                                            8 / 8 (100%)
@@ -120,7 +135,7 @@ to a custom bootstrap file and to add environment variables needed to bootstrap 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/6.5/phpunit.xsd"
+         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/7.4/phpunit.xsd"
          bootstrap="tests/bootstrap.php"
          colors="true">
     <testsuite name="default">
@@ -135,6 +150,7 @@ to a custom bootstrap file and to add environment variables needed to bootstrap 
 
     <php>
         <!-- adjust as needed -->
+        <env name="SYMFONY_PHPUNIT_VERSION" value="7.4" />
         <env name="PIMCORE_PROJECT_ROOT" value="." />
         <env name="KERNEL_DIR" value="app" />
         <env name="KERNEL_CLASS" value="AppKernel" />
@@ -224,7 +240,7 @@ set. The example below just passes the DB connection as env variable:
 
 ```
 $ PIMCORE_TEST_DB_DSN="mysql://username:password@localhost/pimcore" vendor/bin/simple-phpunit
-PHPUnit 6.5.6 by Sebastian Bergmann and contributors.
+PHPUnit 7.4.5 by Sebastian Bergmann and contributors.
 
 Testing default
 ..........                                                        10 / 10 (100%)
@@ -350,6 +366,8 @@ modules:
             connect_db: true
             initialize_db: true
             purge_class_directory: true
+            # If true, it will create database structures for all definitions
+            setup_objects: false
 ```
 
 This will set up a functional test which sends a request directly through Symfony's kernel (similar to the PHPUnit setup above). However, Codeception makes it easy to use a full-blown browser for acceptance testing by configuring additional modules such as the [WebDriver](https://codeception.com/docs/modules/WebDriver) module for Selenium testing. 
@@ -471,7 +489,7 @@ by configuring the DB DSN before running codeception:
 $ PIMCORE_TEST_DB_DSN="mysql://username:password@localhost/pimcore" vendor/bin/codecept run -c tests/codeception.dist.yml
 
 Codeception PHP Testing Framework v2.3.8
-Powered by PHPUnit 6.5.6 by Sebastian Bergmann and contributors.
+Powered by PHPUnit 7.4.5 by Sebastian Bergmann and contributors.
 
   [DB] Initializing DB pimcore5_test
   [DB] Dropping DB pimcore5_test

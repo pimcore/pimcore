@@ -54,7 +54,7 @@ class LogController extends AdminController implements EventedControllerInterfac
      *
      * @return JsonResponse
      */
-    public function showAction(Request $request, Db\Connection $db)
+    public function showAction(Request $request, Db\ConnectionInterface $db)
     {
         $qb = $db->createQueryBuilder();
         $qb

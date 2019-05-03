@@ -336,7 +336,7 @@ pimcore.object.classes.data.data = Class.create({
     },
 
     lazyLoadingNotPossible: function() {
-        return this.context == "fieldcollection";
+        return false;
     },
 
     setInClassificationStoreEditor: function(inClassificationStoreEditor) {

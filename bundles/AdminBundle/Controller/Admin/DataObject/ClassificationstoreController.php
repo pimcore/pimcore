@@ -15,17 +15,20 @@
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin\DataObject;
 
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
+use Pimcore\Controller\EventedControllerInterface;
 use Pimcore\Db;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\Classificationstore;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
+use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * @Route("/classificationstore")
  */
-class ClassificationstoreController extends AdminController
+class ClassificationstoreController extends AdminController implements EventedControllerInterface
 {
     /**
      * Delete collection with the group-relations
@@ -195,6 +198,8 @@ class ClassificationstoreController extends AdminController
      */
     public function collectionsActionGet(Request $request)
     {
+        $this->checkPermission('objects');
+
         $start = 0;
         $limit = $request->get('limit') ? $request->get('limit') : 15;
 
@@ -357,6 +362,8 @@ class ClassificationstoreController extends AdminController
      */
     public function groupsActionGet(Request $request)
     {
+        $this->checkPermission('objects');
+
         $start = 0;
         $limit = 15;
         $orderKey = 'name';
@@ -913,6 +920,8 @@ class ClassificationstoreController extends AdminController
      */
     public function addCollectionsAction(Request $request)
     {
+        $this->checkPermission('objects');
+
         $ids = $this->decodeJson($request->get('collectionIds'));
         $oid = $request->get('oid');
         $object = DataObject\AbstractObject::getById($oid);
@@ -1019,6 +1028,8 @@ class ClassificationstoreController extends AdminController
      */
     public function addGroupsAction(Request $request)
     {
+        $this->checkPermission('objects');
+
         $ids = $this->decodeJson($request->get('groupIds'));
         $oid = $request->get('oid');
         $object = DataObject\AbstractObject::getById($oid);
@@ -1480,5 +1491,26 @@ class ClassificationstoreController extends AdminController
         $page = (int) $result[0]['page'] ;
 
         return $this->adminJson(['success' => true, 'page' => $page]);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function onKernelController(FilterControllerEvent $event)
+    {
+        $isMasterRequest = $event->isMasterRequest();
+        if (!$isMasterRequest) {
+            return;
+        }
+
+        $unrestrictedActions = ['collectionsActionGet', 'groupsActionGet', 'addGroupsAction', 'addCollectionsAction'];
+        $this->checkActionPermission($event, 'classes', $unrestrictedActions);
+    }
+
+    /**
+     * @param FilterResponseEvent $event
+     */
+    public function onKernelResponse(FilterResponseEvent $event)
+    {
     }
 }

@@ -16,7 +16,7 @@ namespace Pimcore\Bundle\CoreBundle\EventListener;
 
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\PimcoreContextAwareTrait;
 use Pimcore\Config;
-use Pimcore\Db\Connection;
+use Pimcore\Db\ConnectionInterface;
 use Pimcore\Document\Renderer\DocumentRenderer;
 use Pimcore\FeatureToggles\Features\DebugMode;
 use Pimcore\Http\Exception\ResponseException;
@@ -47,16 +47,16 @@ class ResponseExceptionListener implements EventSubscriberInterface
     protected $renderErrorPage = true;
 
     /**
-     * @var Connection
+     * @var ConnectionInterface
      */
     protected $db;
 
     /**
      * @param DocumentRenderer $documentRenderer
-     * @param Connection $db
+     * @param ConnectionInterface $db
      * @param bool $renderErrorPage
      */
-    public function __construct(DocumentRenderer $documentRenderer, Connection $db, $renderErrorPage = true)
+    public function __construct(DocumentRenderer $documentRenderer, ConnectionInterface $db, $renderErrorPage = true)
     {
         $this->documentRenderer = $documentRenderer;
         $this->renderErrorPage = (bool)$renderErrorPage;

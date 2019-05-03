@@ -302,7 +302,7 @@ Ext.onReady(function () {
         }
     });
 
-    if (user.isAllowed("documents")) {
+    if (user.isAllowed("documents") || user.isAllowed("users")) {
         var store = new Ext.data.Store({
             id: 'doctypes',
             model: 'pimcore.model.doctypes',
@@ -610,7 +610,8 @@ Ext.onReady(function () {
                                         showCloseOthers: false,
                                         extraItemsTail: pimcore.helpers.getMainTabMenuItems()
                                     }),
-                                    Ext.create('Ext.ux.TabReorderer', {})
+                                    Ext.create('Ext.ux.TabReorderer', {}),
+                                    Ext.create('Ext.ux.TabMiddleButtonClose', {})
                                 ]
                         })
                         ,
@@ -667,12 +668,7 @@ Ext.onReady(function () {
 
                     // open "My Profile" when clicking on avatar
                     Ext.get("pimcore_avatar").on("click", function (ev) {
-                        try {
-                            pimcore.globalmanager.get("profile").activate();
-                        }
-                        catch (e) {
-                            pimcore.globalmanager.add("profile", new pimcore.settings.profile.panel());
-                        }
+                        pimcore.helpers.openProfile();
                     });
                 }
             }
@@ -829,6 +825,10 @@ Ext.onReady(function () {
         });
     }
 
+    if(pimcore.currentuser.isPasswordReset) {
+        pimcore.helpers.openProfile();
+    }
+
     // Quick Search
     var quicksearchMap = new Ext.util.KeyMap({
         target: document,
@@ -857,11 +857,13 @@ Ext.onReady(function () {
             }
         },
         listeners: {
-            "beforeload": function () {
+            "beforeload": function (store) {
                 var previewEl = Ext.get('pimcore_quicksearch_preview');
                 if(previewEl) {
                     previewEl.setHtml('');
                 }
+
+                store.getProxy().abort();
             }
         },
         fields: ["id", 'type', "subtype", "className", "fullpath"]
@@ -948,18 +950,22 @@ pimcore["intervals"]["translations_admin_missing"] = window.setInterval(function
     var missingTranslations = pimcore.globalmanager.get("translations_admin_missing");
     var addedTranslations = pimcore.globalmanager.get("translations_admin_added");
     if (missingTranslations.length > 0) {
-        var params = Ext.encode(missingTranslations);
-        for (var i = 0; i < missingTranslations.length; i++) {
-            addedTranslations.push(missingTranslations[i]);
+        var thresholdIndex = 500;
+        var arraySurpassing = missingTranslations.length > thresholdIndex;
+        var sentTranslations = arraySurpassing ? missingTranslations.slice(0, thresholdIndex) : missingTranslations;
+        var params = Ext.encode(sentTranslations);
+        for (var i = 0; i < sentTranslations.length; i++) {
+            var translation = sentTranslations[i];
+            addedTranslations.push(translation);
         }
-        pimcore.globalmanager.add("translations_admin_missing", new Array());
+        var restMissingTranslations = missingTranslations.slice(thresholdIndex);
+        pimcore.globalmanager.add("translations_admin_missing", restMissingTranslations);
         Ext.Ajax.request({
             method: "POST",
             url: "/admin/translation/add-admin-translation-keys",
             params: {keys: params}
         });
     }
-
 }, 30000);
 
 // session renew
@@ -1002,6 +1008,11 @@ pimcore["intervals"]["ping"] = window.setInterval(function () {
         }
     });
 }, (pimcore.settings.session_gc_maxlifetime - 60) * 1000);
+
+
+pimcore["intervals"]["checkNewNotification"] = window.setInterval(function (elt) {
+    pimcore.notification.helper.updateFromServer();
+}, 30000);
 
 // refreshes the layout
 pimcore.registerNS("pimcore.layout.refresh");

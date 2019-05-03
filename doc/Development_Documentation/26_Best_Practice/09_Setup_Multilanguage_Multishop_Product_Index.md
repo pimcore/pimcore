@@ -9,7 +9,7 @@ As *multi shop* we understand multiple shops in one shop offering different prod
 processes (which is not part of this article), etc.
 
 These requirements are fully met by the e-commerce framework but have effects on how to setup the product index.
- For a general description of how to setup the product index see our [docs](../10_E-Commerce_Framework/05_Index_Service/01_Product_Index_Configuration.md). 
+ For a general description of how to setup the product index see our [docs](../10_E-Commerce_Framework/05_Index_Service/01_Product_Index_Configuration/README.md). 
 
 
 #### Multi Language 
@@ -52,7 +52,7 @@ Beneficial is that only one product index is needed which results in less needed
 ##### 2) One Product Index per Language
 
 This is suitable when having multiple language fields or complex applications and takes advantage of e-commerce frameworks
-[assortment tenants](../10_E-Commerce_Framework/05_Index_Service/03_Assortment_Tenant_Configuration.md)
+[assortment tenants](../10_E-Commerce_Framework/05_Index_Service/01_Product_Index_Configuration/03_Assortment_Tenant_Configuration.md)
  by configuring one assortment tenant per language. 
  
 In order to reduce configuration effort (like copying all attributes for each assortment tenant), you can take advantage of
@@ -97,7 +97,7 @@ Downside is that there are multiple product indices which results in more needed
 #### Multi Shop 
 
 Multi shop setups that just differ in the assortment, but not in products and attributes of products, can be setup with 
-the frameworks [Assortment Subtenant](../10_E-Commerce_Framework/05_Index_Service/03_Assortment_Tenant_Configuration.md) 
+the frameworks [Assortment Subtenant](../10_E-Commerce_Framework/05_Index_Service/01_Product_Index_Configuration/03_Assortment_Tenant_Configuration.md) 
 feature. 
   
 Assortment subtenants are basically a mapping that defines which of the products should be available in a certain shop.  

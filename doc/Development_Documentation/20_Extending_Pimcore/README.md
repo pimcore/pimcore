@@ -28,6 +28,8 @@ Following a list of ways to extend Pimcore. See detail pages for additional info
 * Use [**Maintenance Mode**](./15_Maintenance_Mode.md) to show users a maintenance page when 
  changing system configurations. You also can create a custom maintenance page. 
  
+* Use [**Maintenance Task**](./15_Maintenance_Tasks.md) to register new maintenance task 
+ 
 * Add [**Custom Persistent Models**](./17_Custom_Persistent_Models.md) to save additional information. 
 
 * [**Create Bundles and Pimcore Bundles**](13_Bundle_Developers_Guide/README.md) when you want to add complex and extensive functionalities to Pimcore. 

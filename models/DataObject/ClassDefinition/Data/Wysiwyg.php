@@ -73,6 +73,11 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
     public $toolbarConfig = '';
 
     /**
+     * @var bool
+     */
+    public $excludeFromSearchIndex = false;
+
+    /**
      * @return int
      */
     public function getWidth()
@@ -133,6 +138,24 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
     }
 
     /**
+     * @return bool
+     */
+    public function isExcludeFromSearchIndex(): bool
+    {
+        return $this->excludeFromSearchIndex;
+    }
+
+    /**
+     * @param bool $excludeFromSearchIndex
+     */
+    public function setExcludeFromSearchIndex(bool $excludeFromSearchIndex)
+    {
+        $this->excludeFromSearchIndex = $excludeFromSearchIndex;
+
+        return $this;
+    }
+
+    /**
      * @see ResourcePersistenceAwareInterface::getDataForResource
      *
      * @param string $data
@@ -181,6 +204,23 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
         $data = preg_replace('#[ ]+#', ' ', $data);
 
         return $data;
+    }
+
+    /**
+     * @see Model\DataObject\ClassDefinition\Data::getDataForSearchIndex
+     *
+     * @param null|Model\DataObject\AbstractObject $object
+     * @param mixed $params
+     *
+     * @return string
+     */
+    public function getDataForSearchIndex($object, $params = [])
+    {
+        if ($this->isExcludeFromSearchIndex()) {
+            return '';
+        } else {
+            return parent::getDataForSearchIndex($object, $params);
+        }
     }
 
     /**

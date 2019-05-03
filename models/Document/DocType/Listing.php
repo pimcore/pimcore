@@ -32,7 +32,7 @@ class Listing extends Model\Listing\JsonListing
     public $docTypes = [];
 
     /**
-     * @return array
+     * @return \Pimcore\Model\Document\DocType[]
      */
     public function getDocTypes()
     {
