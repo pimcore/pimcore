@@ -11,3 +11,4 @@ services:
             - '@logger'
         tags:
             - { name: console.command, command: 'pimcore:maintenance' }
+            - { name: console.command, command: 'maintenance' }
