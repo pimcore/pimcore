@@ -606,6 +606,7 @@ class AbstractObject extends Model\Element\AbstractElement
             }
 
             $isUpdate = false;
+            $differentOldPath = null;
 
             $isDirtyDetectionDisabled = self::isDirtyDetectionDisabled();
             $preEvent = new DataObjectEvent($this, $params);
@@ -712,7 +713,7 @@ class AbstractObject extends Model\Element\AbstractElement
 
             if ($isUpdate) {
                 $updateEvent = new DataObjectEvent($this);
-                if (isset($differentOldPath) && strlen($differentOldPath) > 0) {
+                if ($differentOldPath) {
                     $updateEvent->setArgument('oldPath', $differentOldPath);
                 }
                 \Pimcore::getEventDispatcher()->dispatch(DataObjectEvents::POST_UPDATE, $updateEvent);
