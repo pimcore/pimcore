@@ -187,7 +187,7 @@ class AssetController extends ElementControllerBase implements EventedController
             $limit = 100000000;
         }
 
-        $offset = intval($allParams['start']);
+        $offset = isset($allParams['start']) ? intval($allParams['start']) : 0;
 
         $filteredTotalCount = 0;
 
