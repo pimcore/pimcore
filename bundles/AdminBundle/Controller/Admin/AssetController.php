@@ -2277,7 +2277,7 @@ class AssetController extends ElementControllerBase implements EventedController
             }
 
             $conditionFilters[] = "type != 'folder'";
-            $filterJson = $allParams['filter'];
+            $filterJson = $allParams['filter'] ?? null;
             if ($filterJson) {
                 $filters = $this->decodeJson($filterJson);
                 foreach ($filters as $filter) {
