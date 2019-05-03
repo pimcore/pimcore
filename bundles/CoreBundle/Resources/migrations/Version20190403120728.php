@@ -79,7 +79,7 @@ class Version20190403120728 extends AbstractPimcoreMigration
             foreach ($metaTables as $table) {
                 $metaTable = current($table);
                 $this->addSql('ALTER TABLE `' . $metaTable . '` DROP COLUMN `index`');
-                $this->addSql('ALTER TABLE `' . $relationTable . '` DROP PRIMARY KEY');
+                $this->addSql('ALTER TABLE `' . $metaTable . '` DROP PRIMARY KEY');
                 $this->addSql('ALTER TABLE `' . $metaTable . '` ADD PRIMARY KEY (`o_id`, `dest_id`, `type`, `fieldname`, `column`, `ownertype`, `ownername`, `position`)');
             }
         } catch (\Exception $e) {
