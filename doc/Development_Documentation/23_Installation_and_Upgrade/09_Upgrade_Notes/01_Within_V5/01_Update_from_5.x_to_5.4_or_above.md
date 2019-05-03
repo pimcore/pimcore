@@ -83,7 +83,7 @@ Replace the `scripts` and `autoload` sections in your `composer.json` with the f
 ```
 rm composer.lock
 rm -rf vendor
-COMPOSER_MEMORY_LIMIT=-1 composer require pimcore/pimcore:5.4.*
+COMPOSER_MEMORY_LIMIT=-1 composer require pimcore/pimcore:5.4.* --no-scripts
 ```
 
 If this doesn't help, try to remove the remaining dependencies until you've found the package that causes the issue. 
@@ -100,7 +100,14 @@ which used to be located under `/pimcore/config/`, you can keep that folder in y
 This won't have any side-effects, since they are just calling functions from within the Pimcore library, so you can keep
 them as long as it is necessary.  
 
-## 6. Pimcore Static Resources Path Change
+## 6. Rebuild Composer's classmaps and Symfony's container
+```
+composer dump-autoload
+./bin/console cache:clear
+```
+
+
+## 7. Pimcore Static Resources Path Change
 Since the Pimcore admin user interface is now also a Symfony bundle, the path to static resources has changed from 
 `/pimcore/static6/` to `/bundles/pimcoreadmin/`. If you're using Pimcore static resources somewhere in your application 
 you'd have to change the path accordingly or you can use the following RewriteRule in your `.htaccess`: 
@@ -108,7 +115,7 @@ you'd have to change the path accordingly or you can use the following RewriteRu
 RewriteRule ^pimcore/static6/(.*) /bundles/pimcoreadmin/$1 [PT,L]
 ```
 
-## 7. Perform pre-5.4 migrations manually
+## 8. Perform pre-5.4 migrations manually
 Now we're executing the script we have prepared already earlier in step 2. 
 The script accepts one argument, which is the build number we were on, before the update (see step 1). 
 In the following example we were on build 100, replace `100` with your build number! 
@@ -125,12 +132,12 @@ wget https://raw.githubusercontent.com/pimcore/skeleton/master/web/app.php -O we
 wget https://raw.githubusercontent.com/pimcore/demo-basic/master/app/AppKernel.php -O app/AppKernel.php
 ```
 
-## 8. Execute initial and latest migrations
+## 9. Execute initial and latest migrations
 execute these commands to initialize the composer migration, otherwise your composer update won't execute any migrations in the future:
 ```
 bin/console pimcore:migrations:execute -s pimcore_core 20180724144005
 bin/console pimcore:migrations:migrate -s pimcore_core
 ```
 
-## 9. Done 
+## 10. Done 
 You should be done now, Pimcore should boot up and behave as normal. 
