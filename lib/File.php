@@ -176,13 +176,13 @@ class File
 
             $parts = preg_split('@(?<![\:\\\\/]|^)[\\\\/]@', $path);
             $currentPath = '';
-            $lastKey = array_keys($parts)[count($parts)-1];
+            $lastKey = array_keys($parts)[count($parts) - 1];
             $parentPath = $parts[0];
 
             foreach ($parts as $key => $part) {
                 $currentPath .= $part;
 
-                if(!@is_writable($parentPath) && $key != $lastKey) {
+                if (!@is_writable($parentPath) && $key != $lastKey) {
                     // parent directories don't need to be read/writable (open_basedir restriction), see #4315
                 } elseif (!is_dir($currentPath)) {
                     if (!@mkdir($currentPath, $mode, false) && !is_dir($currentPath)) {

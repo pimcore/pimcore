@@ -122,6 +122,7 @@ trait Wrapper
 
     /**
      * @param bool $unpublished
+     *
      * @return array
      */
     public function getChildren($unpublished = false)
@@ -150,6 +151,7 @@ trait Wrapper
 
     /**
      * @param bool $unpublished
+     *
      * @return bool
      */
     public function hasChildren($unpublished = false)
