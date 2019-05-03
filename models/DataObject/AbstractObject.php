@@ -606,6 +606,7 @@ class AbstractObject extends Model\Element\AbstractElement
             }
 
             $isUpdate = false;
+            $differentOldPath = null;
 
             $isDirtyDetectionDisabled = self::isDirtyDetectionDisabled();
             $preEvent = new DataObjectEvent($this, $params);

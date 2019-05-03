@@ -278,6 +278,8 @@ class Service extends Model\Element\Service
             $haveHelperDefinition = false;
 
             foreach ($fields as $key) {
+                $brickDescriptor = null;
+                $brickKey = null;
                 $brickType = null;
                 $brickGetter = null;
                 $dataKey = $key;

@@ -186,7 +186,7 @@ class AssetController extends ElementControllerBase implements EventedController
             $limit = 100000000;
         }
 
-        $offset = intval($allParams['start']);
+        $offset = isset($allParams['start']) ? intval($allParams['start']) : 0;
 
         $filteredTotalCount = 0;
 
@@ -2233,7 +2233,7 @@ class AssetController extends ElementControllerBase implements EventedController
 
         $allParams = $filterPrepareEvent->getArgument('requestParams');
 
-        if ($allParams['data']) {
+        if (isset($allParams['data']) && $allParams['data']) {
             //TODO probably not needed
         } else {
             $db = \Pimcore\Db::get();
@@ -2265,18 +2265,18 @@ class AssetController extends ElementControllerBase implements EventedController
             $list = new Asset\Listing();
 
             $conditionFilters = [];
-            if ($allParams['only_direct_children'] == 'true') {
+            if (isset($allParams['only_direct_children']) && $allParams['only_direct_children'] == 'true') {
                 $conditionFilters[] = 'parentId = ' . $folder->getId();
             } else {
                 $conditionFilters[] = 'path LIKE ' . ($folder->getRealFullPath() == '/' ? "'/%'" : $list->quote($folder->getRealFullPath() . '/%'));
             }
 
-            if ($allParams['only_unreferenced'] == 'true') {
+            if (isset($allParams['only_unreferenced']) && $allParams['only_unreferenced'] == 'true') {
                 $conditionFilters[] = 'id NOT IN (SELECT targetid FROM dependencies WHERE targettype=\'asset\')';
             }
 
             $conditionFilters[] = "type != 'folder'";
-            $filterJson = $allParams['filter'];
+            $filterJson = $allParams['filter'] ?? null;
             if ($filterJson) {
                 $filters = $this->decodeJson($filterJson);
                 foreach ($filters as $filter) {
