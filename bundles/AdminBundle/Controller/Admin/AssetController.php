@@ -66,12 +66,11 @@ class AssetController extends ElementControllerBase implements EventedController
         Element\Editlock::lock($request->get('id'), 'asset');
 
         $asset = Asset::getById(intval($request->get('id')));
-        $asset = clone $asset;
-
         if (!$asset instanceof Asset) {
             return $this->adminJson(['success' => false, 'message' => "asset doesn't exist"]);
         }
 
+        $asset = clone $asset;
         //$asset->getVersions();
         $asset->getScheduledTasks();
         $asset->idPath = Element\Service::getIdPath($asset);
