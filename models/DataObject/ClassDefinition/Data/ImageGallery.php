@@ -357,6 +357,8 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
      * @param DataObject\Data\ImageGallery $data
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
+     *
+     * @return DataObject\Data\ImageGallery
      */
     public function getDataFromGridEditor($data, $object = null, $params = [])
     {
