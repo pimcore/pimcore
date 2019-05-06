@@ -808,7 +808,12 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
     reload: function (params) {
         params = params || {};
         var uiState = null;
-        if(this.data.currentLayoutId === params['layoutId'] && !params['ignoreUiState']) {
+
+        if(!params['layoutId']) {
+            params['layoutId'] = '';
+        }
+
+        if(this.data.currentLayoutId == params['layoutId'] && !params['ignoreUiState']) {
             uiState = this.getUiState(this.tab);
         }
 

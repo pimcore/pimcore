@@ -883,5 +883,14 @@
     "paste_recursive_as_language_variant_updating_references": "Coller le langage (récursif), mettre à jour les références",
     "redirects_expired_cleanup": "Nettoyage des redirections expirées",
     "redirects_cleanup_warning": "Voulez-vous vraiment nettoyer les redirections expirées ?",
-    "redirects_cleanup_error": "Une erreur s'est produite lors du nettoyage des redirections expirées"
+    "redirects_cleanup_error": "Une erreur s'est produite lors du nettoyage des redirections expirées",
+    "all_translations": "Toutes les traductions",
+    "only_unreferenced": "seulement non référencé",
+    "split_view_settings": "Paramètres de vue fractionnée",
+    "enable_split_view": "Activer la vue partagée",
+    "disable_split_view": "Désactiver la vue partagée",
+    "split_view_object_dirty_title": "Veuillez confirmer",
+    "split_view_object_dirty_msg": "Il y a des modifications non sauvegardées. Vous allez perdre tous les changements. Êtes-vous sûr ?",
+    "converter_service": "Converter service",
+    "auto_convert": "Automatic conversion"
 }

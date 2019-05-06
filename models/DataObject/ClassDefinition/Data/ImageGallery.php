@@ -196,6 +196,7 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
     public function getDataForResource($data, $object = null, $params = [])
     {
         if ($data instanceof DataObject\Data\ImageGallery) {
+            $hotspots = [];
             $ids = [];
             $fd = new Hotspotimage();
 

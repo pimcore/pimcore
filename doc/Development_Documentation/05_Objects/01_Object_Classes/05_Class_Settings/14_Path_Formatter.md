@@ -14,6 +14,12 @@ In this example, we want to display the asset metadata title of the target asset
 
 ### Configuration via class editor
 
+Dependency Injection is the preferred way of using a Path Formatter:
+
+![Formatter Class DI](../../../img/formatter_class_di.png)
+
+There is still a BC layer to use class-names instead, but this is deprecated and will be removed with Pimcore 6.0.
+
 ![Formatter Class](../../../img/formatter_class.png)
 
 ### Sample Formatter Class
@@ -21,16 +27,17 @@ In this example, we want to display the asset metadata title of the target asset
 ```php
 <?php
 
-namespace Website;
+namespace AppBundle\PathFormatter;
 
 use Pimcore\Model\Asset;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\DataObject\BlogArticle;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
+use Pimcore\Model\DataObject\ClassDefinition\PathFormatterInterface;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\News;
 
-class TheFormatter
+class TheFormatter implements PathFormatterInterface
 {
     /**
      * @param $result array containing the nice path info. Modify it or leave it as it is. Pass it out afterwards!
@@ -39,7 +46,8 @@ class TheFormatter
      * @param $params optional parameters. may contain additional context information in the future. to be defined.
      * @return mixed list of display names.
      */
-    public static function formatPath($result, ElementInterface $source, $targets, $params) {
+    public function formatPath(array $result, ElementInterface $source, array $targets, array $params): array
+    {
         /** @var  $fd Data */
         $fd = $params["fd"];
         $context = $params["context"];

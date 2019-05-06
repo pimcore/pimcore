@@ -74,7 +74,8 @@ pimcore.object.quantityValue.unitsettings = Class.create({
             {name: 'baseunit'},
             {name: 'factor'},
             {name: 'conversionOffset'},
-            {name: 'reference'}
+            {name: 'reference'},
+            {name: 'converter'}
         ];
 
 
@@ -84,18 +85,64 @@ pimcore.object.quantityValue.unitsettings = Class.create({
             {type: "string", dataIndex: "group"},
             {type: "string", dataIndex: "baseunit"},
             {type: "numeric", dataIndex: "factor"},
-            {type: "string", dataIndex: "reference"}
+            {type: "string", dataIndex: "reference"},
+            {type: "string", dataIndex: "converter"}
         ];
+
+        var baseUnitStore = Ext.create('Ext.data.JsonStore', {
+            proxy: {
+                type: 'ajax',
+                async: false,
+                url: this.dataUrl,
+                reader: {
+                    type: 'json',
+                    rootProperty: 'data'
+                }
+
+            },
+            listeners: {
+                load: function (store, records) {
+                    var storeData = records;
+                    storeData.unshift({'id': -1, 'abbreviation' : "(" + t("empty") + ")"});
+                    store.loadData(storeData);
+                }
+            }
+        });
+        baseUnitStore.load();
+
+        var baseUnitEditor = {
+            xtype: 'combobox',
+            triggerAction: "all",
+            autoSelect: true,
+            editable: true,
+            selectOnFocus: true,
+            forceSelection: true,
+            valueField: 'id',
+            displayField: 'abbreviation',
+            queryMode: 'local',
+            store: baseUnitStore
+        };
 
         var typesColumns = [
             {flex: 1, dataIndex: 'id', text: t("id"), hidden: true, editor: new Ext.form.TextField({}), filter: 'string'},
             {flex: 1, dataIndex: 'abbreviation', text: t("abbreviation"), editor: new Ext.form.TextField({}), filter: 'string'},
             {flex: 2, dataIndex: 'longname', text: t("longname"), editor: new Ext.form.TextField({}), filter: 'string'},
             {flex: 1, dataIndex: 'group', text: t("group"), editor: new Ext.form.TextField({}), filter: 'string', hidden: true},
-            {flex: 1, dataIndex: 'baseunit', text: t("baseunit"), editor: new Ext.form.TextField({}), hidden: true},
-            {flex: 1, dataIndex: 'factor', text: t("conversionFactor"), editor: new Ext.form.NumberField({decimalPrecision: 10}), filter: 'numeric', hidden: true},
-            {flex: 1, dataIndex: 'conversionOffset', text: t("conversionOffset"), editor: new Ext.form.NumberField({decimalPrecision: 10}), filter: 'numeric', hidden: true},
-            {flex: 1, dataIndex: 'reference', text: t("reference"), editor: new Ext.form.TextField({}), hidden: true, filter: 'string'}
+            {flex: 1, dataIndex: 'baseunit', text: t("baseunit"), editor: baseUnitEditor, renderer: function(value){
+                if(!value) {
+                    return '('+t('empty')+')';
+                }
+
+                var baseUnit = baseUnitStore.getById(value);
+                if(!baseUnit) {
+                    return '('+t('empty')+')';
+                }
+                return baseUnit.get('abbreviation');
+            }},
+            {flex: 1, dataIndex: 'factor', text: t("conversionFactor"), editor: new Ext.form.NumberField({decimalPrecision: 10}), filter: 'numeric'},
+            {flex: 1, dataIndex: 'conversionOffset', text: t("conversionOffset"), editor: new Ext.form.NumberField({decimalPrecision: 10}), filter: 'numeric'},
+            {flex: 1, dataIndex: 'reference', text: t("reference"), editor: new Ext.form.TextField({}), hidden: true, filter: 'string'},
+            {flex: 1, dataIndex: 'converter', text: t("converter_service"), editor: new Ext.form.TextField({}), filter: 'string'}
         ];
 
         typesColumns.push({
@@ -144,6 +191,7 @@ pimcore.object.quantityValue.unitsettings = Class.create({
             listeners: {
                 update: function() {
                     pimcore.helpers.quantityValue.getClassDefinitionStore().reload();
+                    baseUnitStore.reload();
                     if (pimcore.helpers.quantityValue.store) {
                         // remote call could be avoided by updating the store directly
                         pimcore.helpers.quantityValue.store.reload();

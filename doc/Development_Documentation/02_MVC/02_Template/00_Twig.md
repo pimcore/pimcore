@@ -203,7 +203,7 @@ Used to interact with navigations. See [Navigation](../../03_Documents/03_Naviga
 
 ```twig
 {% set navigation = pimcore_build_nav(document) %}
-{{ pimcore_render_nav(navigation) %}
+{{ pimcore_render_nav(navigation) }}
 
 {# you can also fetch the renderer instance and call custom render methods #}
 {% set renderer = pimcore_nav_renderer('menu') %}

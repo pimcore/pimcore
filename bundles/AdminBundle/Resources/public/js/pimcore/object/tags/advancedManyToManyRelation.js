@@ -329,7 +329,9 @@ pimcore.object.tags.advancedManyToManyRelation = Class.create(pimcore.object.tag
             enableDragDrop: true,
             ddGroup: 'element',
             trackMouseOver: true,
-            selModel: Ext.create('Ext.selection.RowModel', {}),
+            selModel: {
+                selType: (this.fieldConfig.enableBatchEdit ? 'checkboxmodel': 'rowmodel')
+            },
             columnLines: true,
             stripeRows: true,
             columns : {
@@ -468,6 +470,47 @@ pimcore.object.tags.advancedManyToManyRelation = Class.create(pimcore.object.tag
 
                     }.bind(this)
                 });
+
+                if (this.fieldConfig.enableBatchEdit) {
+                    var grid = this.component;
+                    var menu = grid.headerCt.getMenu();
+
+                    var batchAllMenu = new Ext.menu.Item({
+                        text: t("batch_change"),
+                        iconCls: "pimcore_icon_table pimcore_icon_overlay_go",
+                        handler: function (grid) {
+                            var columnDataIndex = menu.activeHeader;
+                            this.batchPrepare(columnDataIndex, grid, false, false);
+                        }.bind(this, grid)
+                    });
+
+                    menu.add(batchAllMenu);
+
+                    var batchSelectedMenu = new Ext.menu.Item({
+                        text: t("batch_change_selected"),
+                        iconCls: "pimcore_icon_structuredTable pimcore_icon_overlay_go",
+                        handler: function (grid) {
+                            menu = grid.headerCt.getMenu();
+                            var columnDataIndex = menu.activeHeader;
+                            this.batchPrepare(columnDataIndex, grid, true, false);
+                        }.bind(this, grid)
+                    });
+                    menu.add(batchSelectedMenu);
+                    menu.on('beforeshow', function (batchAllMenu, batchSelectedMenu, grid) {
+                        var menu = grid.headerCt.getMenu();
+                        var columnDataIndex = menu.activeHeader.dataIndex;
+                        var metaIndex = this.fieldConfig.columnKeys.indexOf(columnDataIndex);
+
+                        if (metaIndex < 0) {
+                            batchSelectedMenu.hide();
+                            batchAllMenu.hide();
+                        } else {
+                            batchSelectedMenu.show();
+                            batchAllMenu.show();
+                        }
+
+                    }.bind(this, batchSelectedMenu, batchAllMenu, grid));
+                }
             }.bind(this));
         }
 
@@ -863,8 +906,6 @@ pimcore.object.tags.advancedManyToManyRelation = Class.create(pimcore.object.tag
     getCellEditValue: function () {
         return this.getValue();
     }
-
-
 });
 
 // @TODO BC layer, to be removed in v6.0

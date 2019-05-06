@@ -66,12 +66,11 @@ class AssetController extends ElementControllerBase implements EventedController
         Element\Editlock::lock($request->get('id'), 'asset');
 
         $asset = Asset::getById(intval($request->get('id')));
-        $asset = clone $asset;
-
         if (!$asset instanceof Asset) {
             return $this->adminJson(['success' => false, 'message' => "asset doesn't exist"]);
         }
 
+        $asset = clone $asset;
         //$asset->getVersions();
         $asset->getScheduledTasks();
         $asset->idPath = Element\Service::getIdPath($asset);
@@ -187,7 +186,7 @@ class AssetController extends ElementControllerBase implements EventedController
             $limit = 100000000;
         }
 
-        $offset = intval($allParams['start']);
+        $offset = isset($allParams['start']) ? intval($allParams['start']) : 0;
 
         $filteredTotalCount = 0;
 
@@ -224,7 +223,7 @@ class AssetController extends ElementControllerBase implements EventedController
 
             $childsList->setLimit($limit);
             $childsList->setOffset($offset);
-            $childsList->setOrderKey("FIELD(assets.type, 'folder') DESC, assets.filename ASC", false);
+            $childsList->setOrderKey("FIELD(assets.type, 'folder') DESC, CAST(assets.filename AS CHAR CHARACTER SET utf8) COLLATE utf8_general_ci ASC", false);
 
             \Pimcore\Model\Element\Service::addTreeFilterJoins($cv, $childsList);
 
@@ -570,7 +569,7 @@ class AssetController extends ElementControllerBase implements EventedController
                  * @var $asset Asset
                  */
                 $deletedItems[] = $asset->getRealFullPath();
-                if ($asset->isAllowed('delete')) {
+                if ($asset->isAllowed('delete') && !$asset->isLocked()) {
                     $asset->delete();
                 }
             }
@@ -579,7 +578,11 @@ class AssetController extends ElementControllerBase implements EventedController
         } elseif ($request->get('id')) {
             $asset = Asset::getById($request->get('id'));
 
-            if ($asset->isAllowed('delete')) {
+            if (!$asset->isAllowed('delete')) {
+                return $this->adminJson(['success' => false, 'message' => 'missing_permission']);
+            } elseif ($asset->isLocked()) {
+                return $this->adminJson(['success' => false, 'message' => 'prevented deleting asset, because it is locked: ID: ' . $asset->getId()]);
+            } else {
                 $asset->delete();
 
                 return $this->adminJson(['success' => true]);
@@ -2230,7 +2233,7 @@ class AssetController extends ElementControllerBase implements EventedController
 
         $allParams = $filterPrepareEvent->getArgument('requestParams');
 
-        if ($allParams['data']) {
+        if (isset($allParams['data']) && $allParams['data']) {
             //TODO probably not needed
         } else {
             $db = \Pimcore\Db::get();
@@ -2262,14 +2265,18 @@ class AssetController extends ElementControllerBase implements EventedController
             $list = new Asset\Listing();
 
             $conditionFilters = [];
-            if ($allParams['only_direct_children'] == 'true') {
+            if (isset($allParams['only_direct_children']) && $allParams['only_direct_children'] == 'true') {
                 $conditionFilters[] = 'parentId = ' . $folder->getId();
             } else {
                 $conditionFilters[] = 'path LIKE ' . ($folder->getRealFullPath() == '/' ? "'/%'" : $list->quote($folder->getRealFullPath() . '/%'));
             }
 
+            if (isset($allParams['only_unreferenced']) && $allParams['only_unreferenced'] == 'true') {
+                $conditionFilters[] = 'id NOT IN (SELECT targetid FROM dependencies WHERE targettype=\'asset\')';
+            }
+
             $conditionFilters[] = "type != 'folder'";
-            $filterJson = $allParams['filter'];
+            $filterJson = $allParams['filter'] ?? null;
             if ($filterJson) {
                 $filters = $this->decodeJson($filterJson);
                 foreach ($filters as $filter) {

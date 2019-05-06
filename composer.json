@@ -41,7 +41,7 @@
     "ext-pdo_mysql": "*",
     "ext-zip": "*",
     "ext-zlib": "*",
-    "pimcore/core-version": "5.7.2",
+    "pimcore/core-version": "5.8.1",
     "amnuts/opcache-gui": "^2.4.0",
     "cache/tag-interop": "^1",
     "colinmollenhour/credis": "^1.10.0",
@@ -65,7 +65,7 @@
     "linfo/linfo": "^4.0.0",
     "mjaschen/phpgeo": "^2.0",
     "mpratt/embera": "^1.9.3",
-    "myclabs/deep-copy": "^1.9",
+    "myclabs/deep-copy": "^1.3",
     "myclabs/php-enum": "^1.5",
     "neitanod/forceutf8": "^2.0.2",
     "nesbot/carbon": "^1.34.0 || ^2.11.0",
@@ -121,7 +121,7 @@
   },
   "extra": {
     "branch-alias": {
-      "dev-master": "5.7-dev"
+      "dev-master": "5.8-dev"
     }
   },
   "bin": ["bin/pimcore-install"]

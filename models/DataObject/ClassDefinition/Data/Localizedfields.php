@@ -87,6 +87,11 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
     public $labelWidth;
 
     /**
+     * @var bool
+     */
+    public $provideSplitView;
+
+    /**
      * @var
      */
     public $hideLabelsWhenTabsReached;
@@ -1344,6 +1349,22 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
     public function getLabelWidth()
     {
         return $this->labelWidth;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getProvideSplitView()
+    {
+        return $this->provideSplitView;
+    }
+
+    /**
+     * @param bool $provideSplitView
+     */
+    public function setProvideSplitView($provideSplitView): void
+    {
+        $this->provideSplitView = $provideSplitView;
     }
 
     /** Encode value for packing it into a single column.

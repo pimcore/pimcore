@@ -283,7 +283,7 @@ pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.
     ,
 
     getVisibleColumns: function () {
-        var visibleFields = this.visibleFields;
+        var visibleFields = this.visibleFields || [];
 
         var columns = [
             {text: 'ID', dataIndex: 'id', width: 50, hidden: !!visibleFields.length},
@@ -499,7 +499,8 @@ pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.
                                 var initData = {
                                     id: data.id,
                                     metadata: '',
-                                    inheritedFields: {}
+                                    inheritedFields: {},
+                                    fullpath: data.path
                                 };
 
                                 if (!this.objectAlreadyExists(initData.id)) {

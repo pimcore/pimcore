@@ -28,6 +28,7 @@ final class SystemEvents
     /**
      * Use this event to register your own maintenance jobs, this event is triggered just before the jobs are executed
      *
+     * @deprecated The Maintenance event is deprecated since Pimcore 5.7.0 and will be removed with 6.0, please use Maintenance Services instead
      * @Event("Pimcore\Event\System\MaintenanceEvent")
      *
      * @var string

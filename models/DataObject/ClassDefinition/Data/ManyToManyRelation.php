@@ -246,7 +246,10 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
      */
     public function loadData($data, $object = null, $params = [])
     {
-        $elements = [];
+        $elements = [
+            'dirty' => false,
+            'data' => []
+        ];
         if (is_array($data) && count($data) > 0) {
             foreach ($data as $element) {
                 if ($element['type'] == 'object') {
@@ -258,7 +261,9 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
                 }
 
                 if ($e instanceof Element\ElementInterface) {
-                    $elements[] = $e;
+                    $elements['data'][] = $e;
+                } else {
+                    $elements['dirty'] = true;
                 }
             }
         }

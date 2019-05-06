@@ -74,10 +74,11 @@ interface IConfig
      * Possible hook to filter categories for specific tenants.
      *
      * @param IIndexable $object
+     * @param null $subObjectId
      *
      * @return \Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractCategory[]
      */
-    public function getCategories(IIndexable $object);
+    public function getCategories(IIndexable $object, $subObjectId = null);
 
     /**
      * in case of subtenants returns a data structure containing all sub tenants
