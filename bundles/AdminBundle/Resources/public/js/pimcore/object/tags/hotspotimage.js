@@ -66,7 +66,7 @@ pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
                     if (forGridConfigPreview) {
                         return baseUrl + '&width=88&height=20&frame=true" />';
                     } else {
-                        return baseUrl + '&width=88&height=20&frame=true" />';
+                        return baseUrl + '&width=88&height=88&frame=true" />';
                     }
                 }
             }.bind(this, field.key)
