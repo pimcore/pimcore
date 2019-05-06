@@ -53,7 +53,7 @@ final class SanitizeElementsTask implements TaskInterface
                 try {
                     $this->performSanityCheck($element);
                 } catch (\Exception $e) {
-                    $this->logger->error('Element\\Service: sanity check for element with id [ ' . $element->getId() . ' ] and type [ ' . self::getType($element) . ' ] failed');
+                    $this->logger->error('Element\\Service: sanity check for element with id [ ' . $element->getId() . ' ] and type [ ' . Service::getType($element) . ' ] failed');
                 }
                 $sanityCheck->delete();
             } else {
