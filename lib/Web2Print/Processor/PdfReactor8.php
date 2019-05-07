@@ -46,7 +46,7 @@ class PdfReactor8 extends Processor
             'encryption' => $config->encryption,
             'addTags' => $config->tags == 'true',
             'logLevel' => $config->loglevel,
-            'enableDebugMode'=> $web2PrintConfig->pdfreactorEnableDebugMode || $config->enableDebugMode == 'true',
+            'enableDebugMode' => $web2PrintConfig->pdfreactorEnableDebugMode || $config->enableDebugMode == 'true',
             'addOverprint' => $config->addOverprint == 'true'
         ];
         if ($config->viewerPreference) {
