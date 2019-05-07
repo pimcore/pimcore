@@ -87,7 +87,6 @@ pimcore.object.tags.externalImage = Class.create(pimcore.object.tags.abstract, {
         });
 
         this.deleteButton = new Ext.Button({
-            xtype: "button",
             iconCls: "pimcore_icon_delete",
             handler: this.empty.bind(this),
             style: "margin-left: 5px",
