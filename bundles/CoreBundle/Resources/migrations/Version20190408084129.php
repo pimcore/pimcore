@@ -15,7 +15,9 @@ class Version20190408084129 extends AbstractPimcoreMigration
         $this->addSql('ALTER TABLE `quantityvalue_units`
             CHANGE `id` `id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
             CHANGE `baseunit` `baseunit` INT(11) UNSIGNED DEFAULT NULL,
-            ADD `converter` VARCHAR(255) DEFAULT NULL,
+            ADD `converter` VARCHAR(255) DEFAULT NULL');
+
+        $this->addSql('ALTER TABLE `quantityvalue_units`
             ADD CONSTRAINT `fk_baseunit`
             FOREIGN KEY (`baseunit`)
             REFERENCES `quantityvalue_units` (`id`)

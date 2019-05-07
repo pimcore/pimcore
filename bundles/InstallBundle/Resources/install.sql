@@ -873,7 +873,7 @@ CREATE TABLE `quantityvalue_units` (
   PRIMARY KEY (`id`),
   CONSTRAINT `fk_baseunit`
     FOREIGN KEY (`baseunit`)
-    REFERENCES `quantityvalue_units`(`id`)
+    REFERENCES `quantityvalue_units` (`id`)
     ON DELETE SET NULL
     ON UPDATE CASCADE
 ) DEFAULT CHARSET=utf8mb4;
