@@ -58,7 +58,6 @@ pimcore.settings.user.role.settings = Class.create({
             items:generalItems
         });
 
-        var availPermsItems = [];
         var itemsPerSection = [];
         var sectionArray = [];
 
@@ -85,7 +84,7 @@ pimcore.settings.user.role.settings = Class.create({
 
         for (var key in itemsPerSection) {
             let title = "permissions";
-            if (key != title) {
+            if (key !== title) {
                 title = "settings_permissions_" + key;
             }
 
