@@ -61,7 +61,7 @@ pimcore.object.tags.multiselect = Class.create(pimcore.object.tags.abstract, {
                         }
                     }
 
-                    return Ext.util.Format.htmlEncode(singleDisplayValues.join(", "));
+                    return replace_html_event_attributes(strip_tags(singleDisplayValues.join(", "), 'div,span,b,strong,em,i,small,sup,sub'));
                 } else {
                     return "";
                 }
@@ -69,49 +69,63 @@ pimcore.object.tags.multiselect = Class.create(pimcore.object.tags.abstract, {
     },
 
     getGridColumnFilter: function(field) {
+
+        var storeData = this.prepareStoreDataAndFilterLabels(field.layout);
+
         var store = Ext.create('Ext.data.JsonStore', {
-            fields: ['key',"value"],
-            data: field.layout.options
+            fields: ['id', 'text'],
+            data: storeData
         });
 
         return {
             type: 'list',
             dataIndex: field.key,
-            labelField: "key",
-            idField: "value",
+            labelField: "text",
+            idField: "id",
             options: store
         };
     },
 
-    getLayoutEdit: function () {
+    prepareStoreDataAndFilterLabels: function(fieldConfig) {
 
-        // generate store
         var storeData = [];
-        var validValues = [];
-        var hasHTMLContent = false;
-
         var restrictTo = null;
 
-        if (this.fieldConfig.restrictTo) {
-            restrictTo = this.fieldConfig.restrictTo.split(",");
+        if (fieldConfig.restrictTo) {
+            restrictTo = fieldConfig.restrictTo.split(",");
         }
 
-        if (this.fieldConfig.options) {
-            for (var i = 0; i < this.fieldConfig.options.length; i++) {
-                var value = this.fieldConfig.options[i].value;
+        if (fieldConfig.options) {
+            for (var i = 0; i < fieldConfig.options.length; i++) {
+                var value = fieldConfig.options[i].value;
                 if (restrictTo) {
                     if (!in_array(value, restrictTo)) {
                         continue;
                     }
                 }
 
-                storeData.push({id: value, text: ts(this.fieldConfig.options[i].key)});
-
-                if(ts(this.fieldConfig.options[i].key).indexOf('<') >= 0) {
-                    hasHTMLContent = true;
+                var label = ts(fieldConfig.options[i].key);
+                if(label.indexOf('<') >= 0) {
+                    label = replace_html_event_attributes(strip_tags(label, "div,span,b,strong,em,i,small,sup,sub2"));
                 }
+                storeData.push({id: value, text: label});
+            }
+        }
 
-                validValues.push(value);
+        return storeData;
+
+    },
+
+    getLayoutEdit: function () {
+
+        // generate store
+        var validValues = [];
+        var hasHTMLContent = false;
+        var storeData = this.prepareStoreDataAndFilterLabels(this.fieldConfig);
+        for (var i = 0; i < storeData.length; i++) {
+            validValues.push(storeData[i].text);
+            if(storeData[i].text.indexOf('<') >= 0) {
+                hasHTMLContent = true;
             }
         }
 

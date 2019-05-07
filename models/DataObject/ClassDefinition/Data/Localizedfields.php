@@ -87,6 +87,11 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
     public $labelWidth;
 
     /**
+     * @var bool
+     */
+    public $provideSplitView;
+
+    /**
      * @var
      */
     public $hideLabelsWhenTabsReached;
@@ -278,6 +283,9 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
 
         $context = isset($params['context']) ? $params['context'] : null;
         $localizedFields->setContext($context);
+        if ($object) {
+            $localizedFields->setObject($object);
+        }
 
         if (is_array($data)) {
             foreach ($data as $language => $fields) {
@@ -1004,12 +1012,14 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
 
     /**
      * @param string $name
+     *
      * @return $this|Data
+     *
      * @throws \Exception
      */
     public function setName($name)
     {
-        if($name !== 'localizedfields') {
+        if ($name !== 'localizedfields') {
             throw new \Exception('Localizedfields can only be named `localizedfields`, no other names are allowed');
         }
 
@@ -1339,6 +1349,22 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
     public function getLabelWidth()
     {
         return $this->labelWidth;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getProvideSplitView()
+    {
+        return $this->provideSplitView;
+    }
+
+    /**
+     * @param bool $provideSplitView
+     */
+    public function setProvideSplitView($provideSplitView): void
+    {
+        $this->provideSplitView = $provideSplitView;
     }
 
     /** Encode value for packing it into a single column.

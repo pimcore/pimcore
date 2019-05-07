@@ -202,3 +202,10 @@ services:
     swiftmailer.plugin.redirecting.abstract:
         abstract: true
         class: Pimcore\Mail\Plugins\RedirectingPlugin
+
+    Pimcore\Model\DataObject\QuantityValue\UnitConversionService:
+        public: true
+
+    Pimcore\Model\DataObject\QuantityValue\QuantityValueConverterInterface:
+        public: true
+        class: Pimcore\Model\DataObject\QuantityValue\DefaultConverter

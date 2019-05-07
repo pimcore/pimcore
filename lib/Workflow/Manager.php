@@ -81,7 +81,7 @@ class Manager
     public function addPlaceConfig(string $workflowName, string $place, array $placeConfig)
     {
         $this->placeConfigs[$workflowName] = $this->placeConfigs[$workflowName] ?? [];
-        $this->placeConfigs[$workflowName][$place] = new PlaceConfig($place, $placeConfig, $this->expressionService);
+        $this->placeConfigs[$workflowName][$place] = new PlaceConfig($place, $placeConfig, $this->expressionService, $workflowName);
 
         return $this;
     }
@@ -95,7 +95,7 @@ class Manager
     public function addGlobalAction(string $workflowName, string $action, array $actionConfig)
     {
         $this->globalActions[$workflowName] = $this->globalActions[$workflowName] ?? [];
-        $this->globalActions[$workflowName][$action] = new GlobalAction($action, $actionConfig, $this->expressionService);
+        $this->globalActions[$workflowName][$action] = new GlobalAction($action, $actionConfig, $this->expressionService, $workflowName);
 
         return $this;
     }

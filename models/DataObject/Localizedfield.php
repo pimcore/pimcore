@@ -176,7 +176,7 @@ class Localizedfield extends Model\AbstractModel implements DirtyIndicatorInterf
             AbstractObject::disableDirtyDetection();
 
             foreach ($loadLazyFieldNames as $name) {
-                foreach(Tool::getValidLanguages() as $language) {
+                foreach (Tool::getValidLanguages() as $language) {
                     $fieldDefinition = $this->getFieldDefinition($name, $this->getContext());
                     $this->loadLazyField($fieldDefinition, $name, $language);
                 }
@@ -308,25 +308,28 @@ class Localizedfield extends Model\AbstractModel implements DirtyIndicatorInterf
     /**
      * @param array $context
      * @param array $params
+     *
      * @return ClassDefinition\Data[]
+     *
      * @throws \Exception
      */
-    protected function getFieldDefinitions($context = [], $params = []) {
+    protected function getFieldDefinitions($context = [], $params = [])
+    {
         if ($context && $context['containerType'] == 'fieldcollection') {
             $containerKey = $context['containerKey'];
             $fcDef = Model\DataObject\Fieldcollection\Definition::getByKey($containerKey);
-            $container = $fcDef->getFieldDefinition("localizedfields");
+            $container = $fcDef->getFieldDefinition('localizedfields');
         } elseif ($context && $context['containerType'] == 'objectbrick') {
             $containerKey = $context['containerKey'];
             $brickDef = Model\DataObject\Objectbrick\Definition::getByKey($containerKey);
-            $container = $brickDef->getFieldDefinition("localizedfields");
+            $container = $brickDef->getFieldDefinition('localizedfields');
         } elseif ($context && $context['containerType'] == 'block') {
-            $containerKey = $context['containerKey'];
+            $containerKey = $context['fieldname'];
             $object = $this->getObject();
             /**
              * @var Model\DataObject\ClassDefinition\Data\Block $container
              */
-            $container = $object->getClass()->getFieldDefinition($containerKey);
+            $container = $object->getClass()->getFieldDefinition($containerKey)->getFieldDefinition('localizedfields');
         } else {
             $container = $this->getObject()->getClass()->getFieldDefinition('localizedfields');
         }
@@ -490,8 +493,8 @@ class Localizedfield extends Model\AbstractModel implements DirtyIndicatorInterf
         $language = $this->getLanguage($language);
         if (!$this->languageExists($language)) {
             $this->items[$language] = [];
-            $this->markLanguageAsDirty($language);
         }
+        $this->markLanguageAsDirty($language);
 
         $contextInfo = $this->getContext();
         if ($contextInfo && $contextInfo['containerType'] == 'block') {
@@ -540,9 +543,10 @@ class Localizedfield extends Model\AbstractModel implements DirtyIndicatorInterf
     /**
      * @inheritDoc
      */
-    public function isAllLazyKeysMarkedAsLoaded() : bool {
+    public function isAllLazyKeysMarkedAsLoaded(): bool
+    {
         $object = $this->getObject();
-        if($object instanceof Concrete) {
+        if ($object instanceof Concrete) {
             return $this->getObject()->isAllLazyKeysMarkedAsLoaded();
         }
 
@@ -674,9 +678,16 @@ class Localizedfield extends Model\AbstractModel implements DirtyIndicatorInterf
     protected function getLazyLoadedFieldNames(): array
     {
         $lazyLoadedFieldNames = [];
+
+        if ($this->context && $this->context['containerType'] == 'block') {
+            // if localized field is embedded in a block element there is no lazy loading. Maybe we can
+            // prevent this already in the class definition editor
+            return $lazyLoadedFieldNames;
+        }
+
         $fields = $this->getFieldDefinitions($this->getContext(), ['suppressEnrichment' => true]);
-        foreach($fields as $field) {
-            if(method_exists($field, 'getLazyLoading') && $field->getLazyLoading()) {
+        foreach ($fields as $field) {
+            if (method_exists($field, 'getLazyLoading') && $field->getLazyLoading()) {
                 $lazyLoadedFieldNames[] = $field->getName();
             }
         }

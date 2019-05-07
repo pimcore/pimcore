@@ -89,7 +89,7 @@ abstract class AbstractBatchProcessingWorker extends AbstractWorker implements I
      */
     protected function getDefaultDataForIndex(IIndexable $object, $subObjectId)
     {
-        $categories = $this->tenantConfig->getCategories($object);
+        $categories = $this->tenantConfig->getCategories($object, $subObjectId);
         $categoryIds = [];
         $parentCategoryIds = [];
         $categoryIdPaths = [];

@@ -26,7 +26,6 @@ use Pimcore\Model\DataObject;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
 use Pimcore\Model\Version;
-use Pimcore\Tool;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -474,21 +473,16 @@ class ElementController extends AdminController
         if ($source['type'] != 'object') {
             throw new \Exception('currently only objects as source elements are supported');
         }
-
         $result = [];
-
         $id = $source['id'];
         $source = DataObject\Concrete::getById($id);
-
         if ($request->get('context')) {
             $context = $this->decodeJson($request->get('context'));
         } else {
             $context = [];
         }
-
         $ownerType = $context['containerType'];
         $fieldname = $context['fieldname'];
-
         if ($ownerType == 'object') {
             $fd = $source->getClass()->getFieldDefinition($fieldname);
         } elseif ($ownerType == 'localizedfield') {
@@ -507,23 +501,27 @@ class ElementController extends AdminController
             }
         }
 
-        if (method_exists($fd, 'getPathFormatterClass')) {
-            $formatterClass = $fd->getPathFormatterClass();
-            if (Tool::classExists($formatterClass)) {
-                $targets = $this->decodeJson($request->get('targets'));
+        $targets = $this->decodeJson($request->get('targets'));
 
-                $result = call_user_func(
-                    $formatterClass . '::formatPath',
-                    $result,
-                    $source,
-                    $targets,
-                    [
-                        'fd' => $fd,
-                        'context' => $context
-                    ]
-                );
+        $result = $this->convertResultWithPathFormatter($source, $context, $result, $targets);
+
+        if ($request->get('loadEditModeData') == 'true') {
+            $idProperty = $request->get('idProperty', 'id');
+            $methodName = 'get' . ucfirst($fieldname);
+            if ($ownerType == 'object' && method_exists($source, $methodName)) {
+                $data = $source->$methodName();
+                $editModeData = $fd->getDataForEditmode($data, $source);
+                if (is_array($editModeData)) {
+                    foreach ($editModeData as $relationObjectAttribute) {
+                        $relationObjectAttribute['$$nicepath'] = $result[$relationObjectAttribute[$idProperty]];
+                        $result[$relationObjectAttribute[$idProperty]] = $relationObjectAttribute;
+                    }
+                } else {
+                    $editModeData['$$nicepath'] = $result[$editModeData[$idProperty]];
+                    $result[$editModeData[$idProperty]] = $editModeData;
+                }
             } else {
-                Logger::error('Formatter Class does not exist: ' . $formatterClass);
+                Logger::error('Loading edit mode data is not supported for ownertype: ' . $ownerType);
             }
         }
 
@@ -746,5 +744,78 @@ class ElementController extends AdminController
                 'success' => true
             ]
         );
+    }
+
+    /**
+     * @param DataObject\Concrete $source
+     * @param                     $context
+     * @param                     $result
+     * @param                     $targets
+     *
+     * @return array
+     *
+     * @throws \Exception
+     */
+    protected function convertResultWithPathFormatter(DataObject\Concrete $source, $context, $result, $targets): array
+    {
+        $ownerType = $context['containerType'];
+        $fieldname = $context['fieldname'];
+        $fd = null;
+
+        if ($ownerType == 'object') {
+            $fd = $source->getClass()->getFieldDefinition($fieldname);
+        } elseif ($ownerType == 'localizedfield') {
+            $fd = $source->getClass()->getFieldDefinition('localizedfields')->getFieldDefinition($fieldname);
+        } elseif ($ownerType == 'objectbrick') {
+            $fdBrick = DataObject\Objectbrick\Definition::getByKey($context['containerKey']);
+            $fd = $fdBrick->getFieldDefinition($fieldname);
+        } elseif ($ownerType == 'fieldcollection') {
+            $containerKey = $context['containerKey'];
+            $fdCollection = DataObject\Fieldcollection\Definition::getByKey($containerKey);
+            if ($context['subContainerType'] == 'localizedfield') {
+                $fdLocalizedFields = $fdCollection->getFieldDefinition('localizedfields');
+                $fd = $fdLocalizedFields->getFieldDefinition($fieldname);
+            } else {
+                $fd = $fdCollection->getFieldDefinition($fieldname);
+            }
+        }
+
+        if ($fd instanceof DataObject\ClassDefinition\PathFormatterAwareInterface) {
+            $formatter = $fd->getPathFormatterClass();
+
+            if (null !== $formatter) {
+                $pathFormatter = DataObject\ClassDefinition\Helper\PathFormatterResolver::resolvePathFormatter(
+                    $fd->getPathFormatterClass()
+                );
+
+                if ($pathFormatter instanceof DataObject\ClassDefinition\PathFormatterInterface) {
+                    $result = $pathFormatter->formatPath($result, $source, $targets, [
+                        'fd' => $fd,
+                        'context' => $context
+                    ]);
+                } elseif (method_exists($formatter, 'formatPath')) {
+                    @trigger_error(
+                        sprintf(
+                            'Static PathFormatters are deprecated since Pimcore 5.5 and will be removed in 6.0. Please use %s instead',
+                            DataObject\ClassDefinition\PathFormatterInterface::class
+                        ),
+                        E_USER_DEPRECATED
+                    );
+
+                    $result = call_user_func(
+                        $formatter . '::formatPath',
+                        $result,
+                        $source,
+                        $targets,
+                        [
+                            'fd' => $fd,
+                            'context' => $context
+                        ]
+                    );
+                }
+            }
+        }
+
+        return $result;
     }
 }

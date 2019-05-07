@@ -196,6 +196,7 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
     public function getDataForResource($data, $object = null, $params = [])
     {
         if ($data instanceof DataObject\Data\ImageGallery) {
+            $hotspots = [];
             $ids = [];
             $fd = new Hotspotimage();
 
@@ -356,6 +357,8 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
      * @param DataObject\Data\ImageGallery $data
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
+     *
+     * @return DataObject\Data\ImageGallery
      */
     public function getDataFromGridEditor($data, $object = null, $params = [])
     {

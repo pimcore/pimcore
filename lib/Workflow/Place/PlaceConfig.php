@@ -35,11 +35,15 @@ class PlaceConfig
      */
     private $expressionService;
 
-    public function __construct(string $place, array $placeConfigArray, ExpressionService $expressionService)
+    /** @var string */
+    private $workflowName;
+
+    public function __construct(string $place, array $placeConfigArray, ExpressionService $expressionService, string $workflowName)
     {
         $this->place = $place;
         $this->placeConfigArray = $placeConfigArray;
         $this->expressionService = $expressionService;
+        $this->workflowName = $workflowName;
     }
 
     public function getLabel(): string
@@ -90,6 +94,11 @@ class PlaceConfig
     public function getPlace(): string
     {
         return $this->place;
+    }
+
+    public function getWorkflowName(): string
+    {
+        return $this->workflowName;
     }
 
     /**

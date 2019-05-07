@@ -105,6 +105,12 @@ pimcore.object.classes.data.quantityValue = Class.create(pimcore.object.classes.
                 store: this.store,
                 displayField: 'abbreviation',
                 valueField: 'id'
+            },
+            {
+                xtype: "checkbox",
+                name: "autoConvert",
+                fieldLabel: t("auto_convert"),
+                checked: this.datax.autoConvert
             }
         ]);
 
@@ -124,7 +130,8 @@ pimcore.object.classes.data.quantityValue = Class.create(pimcore.object.classes.
                     validUnits: source.datax.validUnits,
                     defaultUnit: source.datax.defaultUnit,
                     defaultValue: source.datax.defaultValue,
-                    decimalPrecision: source.datax.decimalPrecision
+                    decimalPrecision: source.datax.decimalPrecision,
+                    autoConvert: source.datax.autoConvert,
                 });
         }
     }

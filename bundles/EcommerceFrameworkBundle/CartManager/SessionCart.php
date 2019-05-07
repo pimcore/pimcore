@@ -104,6 +104,20 @@ class SessionCart extends AbstractCart implements ICart
     }
 
     /**
+     * @inheritDoc
+     */
+    public function modified()
+    {
+        // Reset cached values
+        $this->itemCount = null;
+        $this->subItemCount = null;
+        $this->itemAmount = null;
+        $this->subItemAmount = null;
+
+        return parent::modified();
+    }
+
+    /**
      * @param int $id
      *
      * @return ICart|SessionCart

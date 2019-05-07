@@ -211,12 +211,8 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
             this.tabPanel.setActiveItem(tabId);
             pimcore.plugin.broker.fireEvent("postOpenObject", this, "object");
 
-            var uiStates = localStorage.getItem('pimcore_uiState_'+this.id);
-            if(uiStates) {
-                uiStates = JSON.parse(uiStates);
-                this.setUiState(this.tab, uiStates);
-                // prevent restoration of UI state on subsequent loading of given object
-                localStorage.removeItem('pimcore_uiState_'+this.id);
+            if(this.options && this.options['uiState']) {
+                this.setUiState(this.tab, this.options['uiState']);
             }
         }.bind(this, tabId));
 
@@ -444,7 +440,9 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
                 tooltip: t('reload'),
                 iconCls: "pimcore_icon_reload",
                 scale: "medium",
-                handler: this.reload.bind(this, this.data.currentLayoutId)
+                handler: this.reload.bind(this, {
+                    layoutId: this.data.currentLayoutId
+                })
             };
 
             if (this.data["validLayouts"] && this.data.validLayouts.length > 1) {
@@ -459,7 +457,9 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
                     menu.push({
                         text: menuLabel,
                         iconCls: "pimcore_icon_reload",
-                        handler: this.reload.bind(this, this.data.validLayouts[i].id)
+                        handler: this.reload.bind(this, {
+                            layoutId: this.data.validLayouts[i].id
+                        })
                     });
                 }
                 reloadConfig.menu = menu;
@@ -805,15 +805,24 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
         return this.data.userPermissions[key];
     },
 
-    reload: function (layoutId) {
-        var uiStates = this.getUiState(this.tab);
-        localStorage.setItem('pimcore_uiState_'+this.id, JSON.stringify(uiStates));
+    reload: function (params) {
+        params = params || {};
+        var uiState = null;
+
+        if(!params['layoutId']) {
+            params['layoutId'] = '';
+        }
+
+        if(this.data.currentLayoutId == params['layoutId'] && !params['ignoreUiState']) {
+            uiState = this.getUiState(this.tab);
+        }
 
         this.tab.on("close", function () {
             var currentTabIndex = this.tab.ownerCt.items.indexOf(this.tab);
             var options = {
-                layoutId: layoutId,
-                tabIndex: currentTabIndex
+                layoutId: params['layoutId'],
+                tabIndex: currentTabIndex,
+                uiState: uiState
             };
 
             window.setTimeout(function (id) {
@@ -888,7 +897,9 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
 
         if (extJsObject.hasOwnProperty('items')) {
             extJsObject.items.each(function (item, index) {
-                states.children[index] = this.getUiState(item);
+                if(!item.hasOwnProperty('excludeFromUiStateRestore')) {
+                    states.children[index] = this.getUiState(item);
+                }
             }.bind(this));
         }
         return states;

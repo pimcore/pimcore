@@ -40,7 +40,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
         $documents = [];
         $select = $this->getQuery(['id', 'type']);
 
-        $documentsData = $this->db->fetchAll($select, $this->model->getConditionVariables());
+        $documentsData = $this->db->fetchAll($select, $this->model->getConditionVariables(), $this->model->getConditionVariableTypes());
 
         foreach ($documentsData as $documentData) {
             if ($documentData['type']) {
@@ -88,7 +88,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
     public function loadIdList()
     {
         $select = $this->getQuery(['id']);
-        $documentIds = $this->db->fetchCol($select, $this->model->getConditionVariables());
+        $documentIds = $this->db->fetchCol($select, $this->model->getConditionVariables(), $this->model->getConditionVariableTypes());
 
         return array_map('intval', $documentIds);
     }
@@ -99,7 +99,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
     public function loadIdPathList()
     {
         $select = $this->getQuery(['id', 'CONCAT(path,`key`)']);
-        $documentIds = $this->db->fetchAll($select, $this->model->getConditionVariables());
+        $documentIds = $this->db->fetchAll($select, $this->model->getConditionVariables(), $this->model->getConditionVariableTypes());
 
         return $documentIds;
     }
@@ -110,7 +110,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
     public function getCount()
     {
         $select = $this->getQuery([new Expression('COUNT(*)')]);
-        $amount = (int)$this->db->fetchOne($select, $this->model->getConditionVariables());
+        $amount = (int)$this->db->fetchOne($select, $this->model->getConditionVariables(), $this->model->getConditionVariableTypes());
 
         return $amount;
     }
@@ -122,7 +122,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
     {
         $select = $this->getQuery([new Expression('COUNT(*)')]);
         $select->reset(QueryBuilder::LIMIT_COUNT);
-        $amount = (int) $this->db->fetchOne($select, $this->model->getConditionVariables());
+        $amount = (int) $this->db->fetchOne($select, $this->model->getConditionVariables(), $this->model->getConditionVariableTypes());
 
         return $amount;
     }

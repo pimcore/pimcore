@@ -418,7 +418,7 @@ CSS;
         $emailArray = preg_split('/,|;/', $emailString);
         if ($emailArray) {
             foreach ($emailArray as $emailStringEntry) {
-                $entryAddress = $emailStringEntry;
+                $entryAddress = trim($emailStringEntry);
                 $entryName = null;
                 $matches = [];
                 if (preg_match('/(.*)<(.*)>/', $entryAddress, $matches)) {

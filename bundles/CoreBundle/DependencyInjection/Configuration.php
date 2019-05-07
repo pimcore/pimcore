@@ -14,6 +14,7 @@
 
 namespace Pimcore\Bundle\CoreBundle\DependencyInjection;
 
+use Pimcore\Bundle\CoreBundle\DependencyInjection\Config\Processor\PlaceholderProcessor;
 use Pimcore\Cache\Pool\Redis;
 use Pimcore\Storage\Redis\ConnectionFactory;
 use Pimcore\Targeting\Storage\CookieStorage;
@@ -28,6 +29,19 @@ use Symfony\Component\Config\Definition\ConfigurationInterface;
 
 class Configuration implements ConfigurationInterface
 {
+    /**
+     * @var PlaceholderProcessor
+     */
+    private $placeholderProcessor;
+
+    private $placeholders = [];
+
+    public function __construct()
+    {
+        $this->placeholderProcessor = new PlaceholderProcessor();
+        $this->placeholders = [];
+    }
+
     /**
      * Generates the configuration tree builder.
      *
@@ -898,6 +912,25 @@ class Configuration implements ConfigurationInterface
                         ->useAttributeAsKey('name')
                         ->prototype('array')
                             ->children()
+                                ->arrayNode('placeholders')
+                                    ->info('Placeholder values in this workflow configuration (locale: "%%locale%%") will be replaced by the given placeholder value (eg. "de_AT")')
+                                    ->example([
+                                        'placeholders' => [
+                                            '%%locale%%' => 'de_AT'
+                                        ]
+                                    ])
+                                    ->defaultValue([])
+                                    ->beforeNormalization()
+                                        ->castToArray()
+                                        ->always()
+                                        ->then(function ($placeholders) {
+                                            $this->placeholders = $placeholders;
+
+                                            return $placeholders;
+                                        })
+                                    ->end()
+                                    ->prototype('scalar')->end()
+                                ->end()
                                 ->booleanNode('enabled')
                                     ->defaultTrue()
                                     ->info('Can be used to enable or disable the workflow.')
@@ -925,9 +958,16 @@ class Configuration implements ConfigurationInterface
                                         ->end()
                                         ->arrayNode('arguments')
                                             ->beforeNormalization()
-                                                ->ifString()
-                                                ->then(function ($v) {
-                                                    return [$v];
+                                                ->always()
+                                                ->then(function ($arguments) {
+                                                    if (is_string($arguments)) {
+                                                        $arguments = [$arguments];
+                                                    }
+                                                    if (!empty($this->placeholders)) {
+                                                        $arguments = $this->placeholderProcessor->mergePlaceholders($arguments, $this->placeholders);
+                                                    }
+
+                                                    return $arguments;
                                                 })
                                             ->end()
                                             ->requiresAtLeastOneElement()
@@ -961,12 +1001,6 @@ class Configuration implements ConfigurationInterface
                                     ->end()
                                     ->prototype('scalar')
                                         ->cannotBeEmpty()
-                                        ->validate()
-                                            ->ifTrue(function ($v) {
-                                                return !class_exists($v);
-                                            })
-                                            ->thenInvalid('The supported class %s does not exist.')
-                                        ->end()
                                     ->end()
                                     ->info('List of supported entity classes. Take a look at the Symfony docs for more details.')
                                     ->example(['\Pimcore\Model\DataObject\Product'])
@@ -1047,6 +1081,18 @@ class Configuration implements ConfigurationInterface
                                                 ->end()
                                             ->end()
                                         ->end()
+                                    ->end()
+                                    ->beforeNormalization()
+                                        ->always()
+                                        ->then(function ($places) {
+                                            if (!empty($this->placeholders)) {
+                                                foreach ($places as $name => $place) {
+                                                    $places[$name] = $this->placeholderProcessor->mergePlaceholders($place, $this->placeholders);
+                                                }
+                                            }
+
+                                            return $places;
+                                        })
                                     ->end()
 
                                     ->example([

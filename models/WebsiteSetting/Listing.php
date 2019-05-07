@@ -18,6 +18,7 @@ use Pimcore\Model;
 
 /**
  * @method \Pimcore\Model\WebsiteSetting\Listing\Dao getDao()
+ * @method \Pimcore\Model\WebsiteSetting[] load()
  */
 class Listing extends Model\Listing\JsonListing
 {

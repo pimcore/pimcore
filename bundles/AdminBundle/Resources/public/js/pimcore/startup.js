@@ -950,18 +950,22 @@ pimcore["intervals"]["translations_admin_missing"] = window.setInterval(function
     var missingTranslations = pimcore.globalmanager.get("translations_admin_missing");
     var addedTranslations = pimcore.globalmanager.get("translations_admin_added");
     if (missingTranslations.length > 0) {
-        var params = Ext.encode(missingTranslations);
-        for (var i = 0; i < missingTranslations.length; i++) {
-            addedTranslations.push(missingTranslations[i]);
+        var thresholdIndex = 500;
+        var arraySurpassing = missingTranslations.length > thresholdIndex;
+        var sentTranslations = arraySurpassing ? missingTranslations.slice(0, thresholdIndex) : missingTranslations;
+        var params = Ext.encode(sentTranslations);
+        for (var i = 0; i < sentTranslations.length; i++) {
+            var translation = sentTranslations[i];
+            addedTranslations.push(translation);
         }
-        pimcore.globalmanager.add("translations_admin_missing", new Array());
+        var restMissingTranslations = missingTranslations.slice(thresholdIndex);
+        pimcore.globalmanager.add("translations_admin_missing", restMissingTranslations);
         Ext.Ajax.request({
             method: "POST",
             url: "/admin/translation/add-admin-translation-keys",
             params: {keys: params}
         });
     }
-
 }, 30000);
 
 // session renew

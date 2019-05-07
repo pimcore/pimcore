@@ -25,7 +25,7 @@ class Folder extends AbstractObject
     /**
      * @var string
      */
-    public $o_type = 'folder';
+    protected $o_type = 'folder';
 
     /**
      * @param array $values

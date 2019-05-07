@@ -95,7 +95,6 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
         // nothing to do here
     }
 
-
     /**
      * @param $isUpdate
      * @param array $params additional parameters (e.g. "versionNote" for the version note)
@@ -122,8 +121,11 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
                     $value = $this->$getter();
 
                     if (is_array($value) and ($fd instanceof ClassDefinition\Data\ManyToManyRelation or $fd instanceof ClassDefinition\Data\ManyToManyObjectRelation)) {
-                        //don't save relations twice
-                        $this->$setter(array_unique($value));
+                        //don't save relations twice, if multiple assignments not allowed
+                        if (!method_exists($fd, 'getAllowMultipleAssignments') || !$fd->getAllowMultipleAssignments()) {
+                            $value = array_unique($value);
+                        }
+                        $this->$setter($value);
                     }
                     AbstractObject::setGetInheritedValues($inheritedValues);
 
@@ -259,38 +261,47 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
      */
     public function saveVersion($setModificationDate = true, $saveOnlyVersion = true, $versionNote = null)
     {
-        if ($setModificationDate) {
-            $this->setModificationDate(time());
-        }
+        try {
+            if ($setModificationDate) {
+                $this->setModificationDate(time());
+            }
 
-        // hook should be also called if "save only new version" is selected
-        if ($saveOnlyVersion) {
-            \Pimcore::getEventDispatcher()->dispatch(DataObjectEvents::PRE_UPDATE, new DataObjectEvent($this, [
-                'saveVersionOnly' => true
+            // hook should be also called if "save only new version" is selected
+            if ($saveOnlyVersion) {
+                \Pimcore::getEventDispatcher()->dispatch(DataObjectEvents::PRE_UPDATE, new DataObjectEvent($this, [
+                    'saveVersionOnly' => true
+                ]));
+            }
+
+            // scheduled tasks are saved always, they are not versioned!
+            $this->saveScheduledTasks();
+
+            $version = null;
+
+            // only create a new version if there is at least 1 allowed
+            // or if saveVersion() was called directly (it's a newer version of the object)
+            if (Config::getSystemConfig()->objects->versions->steps
+                || Config::getSystemConfig()->objects->versions->days
+                || $setModificationDate) {
+                $version = $this->doSaveVersion($versionNote, $saveOnlyVersion);
+            }
+
+            // hook should be also called if "save only new version" is selected
+            if ($saveOnlyVersion) {
+                \Pimcore::getEventDispatcher()->dispatch(DataObjectEvents::POST_UPDATE, new DataObjectEvent($this, [
+                    'saveVersionOnly' => true
+                ]));
+            }
+
+            return $version;
+        } catch (\Exception $e) {
+            \Pimcore::getEventDispatcher()->dispatch(DataObjectEvents::POST_UPDATE_FAILURE, new DataObjectEvent($this, [
+                'saveVersionOnly' => true,
+                'exception' => $e
             ]));
+
+            throw $e;
         }
-
-        // scheduled tasks are saved always, they are not versioned!
-        $this->saveScheduledTasks();
-
-        $version = null;
-
-        // only create a new version if there is at least 1 allowed
-        // or if saveVersion() was called directly (it's a newer version of the object)
-        if (Config::getSystemConfig()->objects->versions->steps
-            || Config::getSystemConfig()->objects->versions->days
-            || $setModificationDate) {
-            $version = $this->doSaveVersion($versionNote, $saveOnlyVersion);
-        }
-
-        // hook should be also called if "save only new version" is selected
-        if ($saveOnlyVersion) {
-            \Pimcore::getEventDispatcher()->dispatch(DataObjectEvents::POST_UPDATE, new DataObjectEvent($this, [
-                'saveVersionOnly' => true
-            ]));
-        }
-
-        return $version;
     }
 
     /**
@@ -684,7 +695,12 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
             AbstractObject::disableDirtyDetection();
         }
         try {
-            parent::save();
+            $params = [];
+            if (func_num_args() && is_array(func_get_arg(0))) {
+                $params = func_get_arg(0);
+            }
+
+            parent::save($params);
             if ($this instanceof DirtyIndicatorInterface) {
                 $this->resetDirtyMap();
             }
@@ -703,8 +719,8 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
     {
         $lazyLoadedFieldNames = [];
         $fields = $this->getClass()->getFieldDefinitions(['suppressEnrichment' => true]);
-        foreach($fields as $field) {
-            if(method_exists($field, 'getLazyLoading') && $field->getLazyLoading()) {
+        foreach ($fields as $field) {
+            if (method_exists($field, 'getLazyLoading') && $field->getLazyLoading()) {
                 $lazyLoadedFieldNames[] = $field->getName();
             }
         }
@@ -715,16 +731,17 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
     /**
      * @inheritDoc
      */
-    public function isAllLazyKeysMarkedAsLoaded() : bool {
-
-        if(!$this->getId()) {
+    public function isAllLazyKeysMarkedAsLoaded(): bool
+    {
+        if (!$this->getId()) {
             return true;
         }
 
         return $this->allLazyKeysMarkedAsLoaded;
     }
 
-    public function markAllLazyLoadedKeysAsLoaded() {
+    public function markAllLazyLoadedKeysAsLoaded()
+    {
         $this->allLazyKeysMarkedAsLoaded = true;
     }
 
@@ -770,7 +787,6 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
         parent::__clone();
     }
 
-
     /**
      * @var bool
      */
@@ -796,6 +812,7 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
 
     /**
      * @internal
+     *
      * @return bool
      */
     public static function isLazyLoadingDisabled()

@@ -38,18 +38,26 @@ class Configuration implements ConfigurationInterface
 
         $rootNode->children()
             ->arrayNode('admin_languages')
-                ->prototype('scalar')->end()
+                ->prototype('scalar')
+                ->end()
             ->end()
-            ->end()
-        ;
-
-        $rootNode->children()
             ->arrayNode('csrf_protection')
-            ->addDefaultsIfNotSet()
-            ->children()
-                ->arrayNode('excluded_routes')
-                ->prototype('scalar')->end()
+                ->addDefaultsIfNotSet()
+                ->children()
+                    ->arrayNode('excluded_routes')
+                        ->prototype('scalar')
+                        ->end()
+                    ->end()
+                ->end()
             ->end()
+            ->scalarNode('custom_admin_path_identifier')
+                ->defaultNull()
+                ->validate()
+                    ->ifTrue(function ($v) {
+                        return strlen($v) < 20;
+                    })
+                    ->thenInvalid('custom_admin_path_identifier must be at least 20 characters long')
+                ->end()
             ->end()
         ;
 

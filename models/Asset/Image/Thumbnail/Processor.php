@@ -18,7 +18,6 @@
 namespace Pimcore\Model\Asset\Image\Thumbnail;
 
 use Pimcore\File;
-use Pimcore\Image\Optimizer;
 use Pimcore\Logger;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Tool\TmpStore;
@@ -348,7 +347,10 @@ class Processor
             $format = $image->getContentOptimizedFormat();
         }
 
-        $image->save($fsPath, $format, $config->getQuality());
+        $tmpFsPath = preg_replace('@\.([\w]+)$@', uniqid('.tmp-', true) . '.$1', $fsPath);
+        $image->save($tmpFsPath, $format, $config->getQuality());
+        @rename($tmpFsPath, $fsPath); // atomic rename to avoid race conditions
+
         $generated = true;
 
         if ($contentOptimizedFormat) {
@@ -386,24 +388,5 @@ class Processor
         }
 
         return $path;
-    }
-
-    public static function processOptimizeQueue()
-    {
-        $ids = TmpStore::getIdsByTag('image-optimize-queue');
-
-        // id = path of image relative to PIMCORE_TEMPORARY_DIRECTORY
-        foreach ($ids as $id) {
-            $file = PIMCORE_TEMPORARY_DIRECTORY . '/' . $id;
-            if (file_exists($file)) {
-                $originalFilesize = filesize($file);
-                \Pimcore::getContainer()->get(Optimizer::class)->optimizeImage($file);
-                Logger::debug('Optimized image: ' . $file . ' saved ' . formatBytes($originalFilesize - filesize($file)));
-            } else {
-                Logger::debug('Skip optimizing of ' . $file . " because it doesn't exist anymore");
-            }
-
-            TmpStore::delete($id);
-        }
     }
 }

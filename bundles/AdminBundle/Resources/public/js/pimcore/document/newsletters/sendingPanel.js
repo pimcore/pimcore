@@ -171,42 +171,57 @@ pimcore.document.newsletters.sendingPanel = Class.create({
 
     send: function() {
 
-        Ext.MessageBox.confirm(t("are_you_sure"), t("do_you_really_want_to_send_the_newsletter_to_all_recipients"), function (buttonValue) {
+        var fieldValues = this.layout.getForm().getFieldValues();
 
-            if (buttonValue == "yes") {
-                var fieldValues = this.layout.getForm().getFieldValues();
+        var params = {
+            id: this.document.id,
+            adapterParams: Ext.encode(this.currentSourceAdapter.getValues()),
+            addressAdapterName: this.currentSourceAdapter.getName(),
+        };
 
-                var params = {
-                    id: this.document.id,
-                    adapterParams: Ext.encode(this.currentSourceAdapter.getValues()),
-                    addressAdapterName: this.currentSourceAdapter.getName()
-                };
+        Ext.Ajax.request({
+            url: "/admin/newsletter/calculate",
+            method: "post",
+            params: params,
+            success: function(response) {
+                var res = Ext.decode(response.responseText);
 
-                Ext.Ajax.request({
-                    url: "/admin/newsletter/send",
-                    method: "post",
-                    params: params,
-                    success: function (response) {
-                        this.checkForActiveSendingProcess();
+                if(res.success) {
+                    var msg = t("do_you_really_want_to_send_the_newsletter_to_all_recipients") + '.<br>' + t("recipients") + ': ' + res.count;
+                    Ext.MessageBox.confirm(t("are_you_sure"), msg, function (buttonValue, params) {
 
-                        var res = Ext.decode(response.responseText);
+                        if (buttonValue == "yes") {
+                            Ext.Ajax.request({
+                                url: "/admin/newsletter/send",
+                                method: "post",
+                                params: params,
+                                success: function (response) {
+                                    this.checkForActiveSendingProcess();
 
-                        if (res.success) {
-                            Ext.MessageBox.alert(t("info"), t("newsletter_sent_message"))
-                        } else {
-                            Ext.MessageBox.alert(t("error"), t("newsletter_send_error"))
+                                    var res = Ext.decode(response.responseText);
+
+                                    if (res.success) {
+                                        Ext.MessageBox.alert(t("info"), t("newsletter_sent_message"))
+                                    } else {
+                                        Ext.MessageBox.alert(t("error"), t("newsletter_send_error"))
+                                    }
+
+                                    //again check in 2 seconds since it may take a while until process starts
+                                    window.setTimeout(function() {
+                                        this.checkForActiveSendingProcess();
+                                    }.bind(this), 2000);
+
+                                }.bind(this)
+                            });
                         }
 
-                        //again check in 2 seconds since it may take a while until process starts
-                        window.setTimeout(function() {
-                            this.checkForActiveSendingProcess();
-                        }.bind(this), 2000);
-
-                    }.bind(this)
-                });
+                    }.bind(this));
+                } else {
+                    var message = (res.message ? res.message : t("newsletter_send_error"));
+                    Ext.MessageBox.alert(t("error"), message)
+                }
             }
-
-        }.bind(this));
+        });
 
     },
 

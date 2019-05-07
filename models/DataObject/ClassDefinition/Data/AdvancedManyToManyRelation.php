@@ -47,6 +47,21 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
     public $phpdocType = '\\Pimcore\\Model\\DataObject\\Data\\ElementMetadata[]';
 
     /**
+     * @var bool
+     */
+    public $optimizedAdminLoading = false;
+
+    /**
+     * @var bool
+     */
+    public $enableBatchEdit;
+
+    /**
+     * @var bool
+     */
+    public $allowMultipleAssignments;
+
+    /**
      * @inheritdoc
      */
     public function prepareDataForPersistence($data, $object = null, $params = [])
@@ -83,7 +98,10 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
      */
     public function loadData($data, $object = null, $params = [])
     {
-        $list = [];
+        $list = [
+            'dirty' => false,
+            'data' => []
+        ];
 
         if (is_array($data) && count($data) > 0) {
             $targets = [];
@@ -107,7 +125,6 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
             }
 
             foreach ($data as $element) {
-                $destination = null;
                 $source = DataObject::getById($element['src_id']);
 
                 if ($element['type'] && $element['dest_id']) {
@@ -115,40 +132,46 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
                     $destinationId = $element['dest_id'];
 
                     if (!in_array($destinationId, $existingTargets[$destinationType])) {
+                        // destination object does not exist anymore
+                        $list['dirty'] = true;
                         continue;
                     }
 
-                    /** @var $metaData DataObject\Data\ElementMetadata */
-                    $metaData = \Pimcore::getContainer()->get('pimcore.model.factory')
-                        ->build(
-                            'Pimcore\Model\DataObject\Data\ElementMetadata',
-                            [
-                                'fieldname' => $this->getName(),
-                                'columns' => $this->getColumnKeys(),
-                                'element' => null,
-                            ]
+                    if ($source instanceof DataObject\Concrete) {
+                        /** @var $metaData DataObject\Data\ElementMetadata */
+                        $metaData = \Pimcore::getContainer()->get('pimcore.model.factory')
+                            ->build(
+                                'Pimcore\Model\DataObject\Data\ElementMetadata',
+                                [
+                                    'fieldname' => $this->getName(),
+                                    'columns' => $this->getColumnKeys(),
+                                    'element' => null,
+                                ]
+                            );
+
+                        $metaData->setOwner($object, $this->getName());
+
+                        $metaData->setElementTypeAndId($element['type'], $element['dest_id']);
+
+                        $ownertype = $element['ownertype'] ? $element['ownertype'] : '';
+                        $ownername = $element['ownername'] ? $element['ownername'] : '';
+                        $position = $element['position'] ? $element['position'] : '0';
+                        $index = $element['index'] ? $element['index'] : '0';
+
+                        $metaData->load(
+                            $source,
+                            $element['dest_id'],
+                            $this->getName(),
+                            $ownertype,
+                            $ownername,
+                            $position,
+                            $index,
+                            $destinationType
                         );
+                        $objects[] = $metaData;
 
-                    $metaData->setOwner($object, $this->getName());
-
-                    $metaData->setElementTypeAndId($element['type'], $element['dest_id']);
-
-                    $ownertype = $element['ownertype'] ? $element['ownertype'] : '';
-                    $ownername = $element['ownername'] ? $element['ownername'] : '';
-                    $position = $element['position'] ? $element['position'] : '0';
-
-                    $metaData->load(
-                        $source,
-                        $element['dest_id'],
-                        $this->getName(),
-                        $ownertype,
-                        $ownername,
-                        $position,
-                        $destinationType
-                    );
-                    $objects[] = $metaData;
-
-                    $list[] = $metaData;
+                        $list['data'][] = $metaData;
+                    }
                 }
             }
         }
@@ -255,9 +278,10 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
             }
 
             /** @var $metaObject DataObject\Data\ElementMetadata */
-            foreach ($data as $metaObject) {
+            foreach ($data as $key => $metaObject) {
                 $targetType = $metaObject->getElementType();
                 $targetId = $metaObject->getElementId();
+                $index = $key + 1;
 
                 if (!isset($existingTargets[$targetType]) || !isset($existingTargets[$targetType][$targetId])) {
                     Logger::error('element ' . $targetType . ' ' . $targetId . ' does not exist anymore');
@@ -296,6 +320,9 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
                     $getter = 'get' . ucfirst($c['key']);
                     $itemData[$c['key']] = $metaObject->$getter();
                 }
+
+                $itemData['rowId'] = $itemData['id'] . self::RELATION_ID_SEPARATOR . $index . self::RELATION_ID_SEPARATOR . $itemData['type'];
+
                 $return[] = $itemData;
             }
             if (empty($return)) {
@@ -656,7 +683,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
     {
         if (!DataObject\AbstractObject::isDirtyDetectionDisabled() && $object instanceof DataObject\DirtyIndicatorInterface) {
             if ($object instanceof DataObject\Localizedfield) {
-                if ($object->getObject() instanceof  DataObject\DirtyIndicatorInterface) {
+                if ($object->getObject() instanceof DataObject\DirtyIndicatorInterface) {
                     if (!$object->hasDirtyFields()) {
                         return;
                     }
@@ -721,12 +748,12 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
 
             if ($params && $params['context']) {
                 if ($params['context']['fieldname']) {
-                    $sql .= ' AND '.$db->quoteInto('ownername = ?', $params['context']['fieldname']);
+                    $sql .= ' AND ' . $db->quoteInto('ownername = ?', $params['context']['fieldname']);
                 }
 
                 if (!DataObject\AbstractObject::isDirtyDetectionDisabled() && $object instanceof DataObject\DirtyIndicatorInterface) {
                     if ($params['context']['containerType']) {
-                        $sql .= ' AND '.$db->quoteInto('ownertype = ?', $params['context']['containerType']);
+                        $sql .= ' AND ' . $db->quoteInto('ownertype = ?', $params['context']['containerType']);
                     }
                 }
             }
@@ -743,10 +770,12 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
                 $objectConcrete = $object;
             }
 
-            foreach ($multihrefMetadata as $meta) {
+            $counter = 1;
+            foreach ($multihrefMetadata as $mkey => $meta) {
                 $ownerName = isset($relation['ownername']) ? $relation['ownername'] : null;
                 $ownerType = isset($relation['ownertype']) ? $relation['ownertype'] : null;
-                $meta->save($objectConcrete, $ownerType, $ownerName, $position);
+                $meta->save($objectConcrete, $ownerType, $ownerName, $position, $counter);
+                $counter++;
             }
         }
 
@@ -781,19 +810,9 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
             $data = $object->getObjectVar($this->getName());
         }
 
-        if (DataObject\AbstractObject::doHideUnpublished() and is_array($data)) {
-            $publishedList = [];
-            /** @var $listElement DataObject\Data\ElementMetadata */
-            foreach ($data as $listElement) {
-                if (Element\Service::isPublished($listElement->getElement())) {
-                    $publishedList[] = $listElement;
-                }
-            }
-
-            return $publishedList;
-        }
-
-        return is_array($data) ? $data : [];
+        // note, in case of advanced many to many relations we don't want to force the loading of the element
+        // instead, ask the database directly
+        return Element\Service::filterUnpublishedAdvancedElements($data);
     }
 
     /**
@@ -821,7 +840,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
                 $db->deleteWhere(
                     'object_metadata_' . $object->getClassId(),
                     $db->quoteInto('o_id = ?', $object->getId()) . " AND ownertype = 'localizedfield' AND "
-                    . $db->quoteInto('ownername LIKE ?', '/' . $params['context']['containerType'] .'~' . $containerName . '/' . $index . '/%')
+                    . $db->quoteInto('ownername LIKE ?', '/' . $params['context']['containerType'] . '~' . $containerName . '/' . $index . '/%')
                     . ' AND ' . $db->quoteInto('fieldname = ?', $this->getName())
                 );
             }
@@ -1178,5 +1197,53 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
         $id = $element->getId();
 
         return $elementType . $id;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isOptimizedAdminLoading(): bool
+    {
+        return (bool) $this->optimizedAdminLoading;
+    }
+
+    /**
+     * @param bool $optimizedAdminLoading
+     */
+    public function setOptimizedAdminLoading($optimizedAdminLoading)
+    {
+        $this->optimizedAdminLoading = $optimizedAdminLoading;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getAllowMultipleAssignments()
+    {
+        return $this->allowMultipleAssignments;
+    }
+
+    /**
+     * @param bool $allowMultipleAssignments
+     */
+    public function setAllowMultipleAssignments($allowMultipleAssignments)
+    {
+        $this->allowMultipleAssignments = $allowMultipleAssignments;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getEnableBatchEdit()
+    {
+        return $this->enableBatchEdit;
+    }
+
+    /**
+     * @param bool $enableBatchEdit
+     */
+    public function setEnableBatchEdit($enableBatchEdit)
+    {
+        $this->enableBatchEdit = $enableBatchEdit;
     }
 }
