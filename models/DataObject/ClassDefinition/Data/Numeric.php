@@ -567,4 +567,20 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
 
         return (float) $value;
     }
+
+    /**
+     * @param $object
+     * @param $data
+     * @param array $params
+     *
+     * @return array|null
+     */
+    public function preSetData($object, $data, $params = [])
+    {
+        if($this->getDecimalPrecision()) {
+            $data = round($data, $this->getDecimalPrecision());
+        }
+
+        return $data;
+    }
 }
