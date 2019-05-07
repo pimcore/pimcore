@@ -1563,8 +1563,7 @@ class AssetController extends ElementControllerBase implements EventedController
         $list->setCondition($condition);
         $list->setLimit($limit);
         $list->setOffset($start);
-        $list->setOrderKey('filename');
-        $list->setOrder('asc');
+        $list->setOrderKey('CAST(filename AS CHAR CHARACTER SET utf8) COLLATE utf8_general_ci ASC', false);
 
         $beforeListLoadEvent = new GenericEvent($this, [
             'list' => $list,
@@ -2252,11 +2251,16 @@ class AssetController extends ElementControllerBase implements EventedController
                 $start = $allParams['start'];
             }
 
+            $orderKeyQuote = true;
             $sortingSettings = \Pimcore\Bundle\AdminBundle\Helper\QueryParams::extractSortingSettings($allParams);
             if ($sortingSettings['orderKey']) {
                 $orderKey = $sortingSettings['orderKey'];
                 if ($orderKey == 'fullpath') {
-                    $orderKey = ['path', 'filename'];
+                    $orderKey = 'CAST(CONCAT(path,filename) AS CHAR CHARACTER SET utf8) COLLATE utf8_general_ci';
+                    $orderKeyQuote = false;
+                } elseif($orderKey == 'filename') {
+                    $orderKey = 'CAST(filename AS CHAR CHARACTER SET utf8) COLLATE utf8_general_ci';
+                    $orderKeyQuote = false;
                 }
 
                 $order = $sortingSettings['order'];
@@ -2341,7 +2345,7 @@ class AssetController extends ElementControllerBase implements EventedController
             $list->setLimit($limit);
             $list->setOffset($start);
             $list->setOrder($order);
-            $list->setOrderKey($orderKey);
+            $list->setOrderKey($orderKey, $orderKeyQuote);
 
             $beforeListLoadEvent = new GenericEvent($this, [
                 'list' => $list,
