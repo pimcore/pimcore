@@ -82,7 +82,7 @@ pimcore.settings.tagmanagement.panel = Class.create({
                 },
                 rootVisible: false,
                 tbar: Ext.create('Ext.Toolbar', {
-                    cls: 'main-toolbar',
+                    cls: '',
                     items: [
                         {
                             text: t("add"),

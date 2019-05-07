@@ -114,7 +114,7 @@ pimcore.asset.text = Class.create(pimcore.asset.asset, {
                     title: t("preview"),
                     html: t("preview_not_available"),
                     bodyCls: "pimcore_panel_body_centered",
-                    iconCls: "pimcore_icon_preview"
+                    iconCls: "pimcore_material_icon_devices pimcore_material_icon"
                 });
             }
         }

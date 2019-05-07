@@ -264,18 +264,21 @@ pimcore.settings.metadata.predefined = Class.create({
                 },
                 forceFit: true
             },
-            tbar: [
-                {
-                    text: t('add'),
-                    handler: this.onAdd.bind(this),
-                    iconCls: "pimcore_icon_add"
-                },"->",{
-                  text: t("filter") + "/" + t("search"),
-                  xtype: "tbtext",
-                  style: "margin: 0 10px 0 0;"
-                },
-                this.filterField
-            ]
+            tbar: {
+                cls: 'pimcore_main_toolbar',
+                items: [
+                    {
+                        text: t('add'),
+                        handler: this.onAdd.bind(this),
+                        iconCls: "pimcore_icon_add"
+                    },"->",{
+                        text: t("filter") + "/" + t("search"),
+                        xtype: "tbtext",
+                        style: "margin: 0 10px 0 0;"
+                    },
+                    this.filterField
+                ]
+            }
         });
 
         this.grid.on("viewready", this.updateRows.bind(this));

@@ -33,7 +33,7 @@ pimcore.element.dependencies = Class.create({
                     pack: 'start',
                     align: 'stretch',
                 },
-                iconCls: "pimcore_icon_dependencies",
+                iconCls: "pimcore_material_icon_dependencies pimcore_material_icon",
                 listeners:{
                     activate: this.getGridLayouts.bind(this)
                 }

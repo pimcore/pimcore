@@ -33,19 +33,11 @@
     background-color: #e3e4e5;
     padding-top: 5px;
     padding-bottom: 5px;
-    -webkit-box-shadow: inset 0px -4px 5px -4px rgba(0,0,0,0.15);
-    -moz-box-shadow: inset 0px -4px 5px -4px rgba(0,0,0,0.15);
     box-shadow: inset 0px -4px 5px -4px rgba(0,0,0,0.15);
 }
 
 .pimcore_body .x-tab-default-top.x-tab-active {
-    -webkit-box-shadow: none;
-    -moz-box-shadow: none;
     box-shadow: none;
-    border-top: 3px solid #6428b4;
-    padding-top: 2px;
-    border-top-left-radius: 2px;
-    border-top-right-radius: 2px;
 }
 
 .x-tab-over.x-tab-default.x-tab-over {
@@ -54,6 +46,7 @@
 
 .x-tab-over.x-tab-default.x-tab-over.x-tab-active {
     background-color: #fff;
+    box-shadow: none;
 }
 
 .x-tab-inner-default {
@@ -62,7 +55,6 @@
 
 .x-tab-bar-default {
     background: #ececec;
-    border-bottom: 1px solid #fff;
 }
 
 .x-tab-focus.x-tab-default {
@@ -81,8 +73,16 @@
     min-height: 30px;
 }
 
+.x-tab.x-tab-active.x-tab-default .x-tab-inner-default {
+    color: #404040;
+}
+
 .x-panel-default.x-tabpanel-child {
     border-top: 3px solid #fff;
+}
+
+.x-panel-body-default {
+    background: #FEFEFE;
 }
 
 .x-fieldset {

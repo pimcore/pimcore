@@ -69,7 +69,7 @@
 }
 
 #pimcore_navigation li:hover {
-    background-color: #323639;
+    background-color: #3C3C3C;
 }
 
 #pimcore_menu_maintenance {
@@ -1398,11 +1398,24 @@ span.warning {
 }
 
 #pimcore_panel_tabs > .x-tab-bar > .x-tab-bar-body {
+    min-height: 40px;
     padding-top: 0;
 }
 
+#pimcore_panel_tabs > .x-tab-bar > .x-tab-bar-body .x-tab {
+    background: #202124;
+    box-shadow: none;
+    border-left: 1px solid #3C3C3C;
+    padding: 10px 20px 10px 10px;
+}
+
 #pimcore_panel_tabs > .x-tab-bar > .x-tab-bar-body .x-tab-active {
-    background: #ececec;
+    background: #3C3C3C;
+    border-color: #202124;
+}
+
+#pimcore_panel_tabs > .x-tab-bar > .x-tab-bar-body .x-tab-active + .x-tab {
+    border-color: #202124;
 }
 
 #pimcore_panel_tabs > .x-tab-bar .x-tab-default-top {
@@ -1420,12 +1433,34 @@ span.warning {
 }
 
 #pimcore_panel_tabs > .x-tab-bar .x-tab-active .x-tab-inner-default {
-    color: #606060;
+    color: #fff;
 }
 
 #pimcore_panel_tabs > .x-panel-body > .x-tabpanel-child {
-    border-color: #ececec;
+    border-color: #3C3C3C;
     border-top-width: 5px;
+}
+
+#pimcore_panel_tabs > .x-tab-bar .x-tab-close-btn {
+    width: 20px;
+    height: 20px;
+    border-radius: 10px;
+    background-color: #4E4E4E;
+    top: 10px;
+    right: 5px;
+    line-height: 20px;
+    font-size: 14px;
+    padding: 2px;
+    color: #202124;
+}
+
+#pimcore_panel_tabs > .x-tab-bar .x-tab-active .x-tab-close-btn {
+    background-color: #6D6D6D;
+    color: #3C3C3C;
+}
+
+#pimcore_panel_tabs > .x-tab-bar .x-tab-close-btn-over {
+    background-color: #777777 !important;
 }
 
 .x-panel-header-default-horizontal.x-header-noborder {
@@ -1442,11 +1477,85 @@ span.warning {
     border:0;
 }
 
-.main-toolbar.x-toolbar-default {
-    background: #ececec;
-    border-bottom: 1px solid #e4e4e4 !important;
+.pimcore_main_toolbar.x-toolbar-default {
+    background: #3C3C3C;
+    border:0 !important;
 }
 
+.pimcore_main_toolbar .x-btn {
+    border:0;
+    background-color: #505050;
+}
+
+.pimcore_main_toolbar .x-btn.x-btn-over, .pimcore_main_toolbar .x-btn.x-btn-menu-active {
+    background-color: #777777;
+}
+
+.pimcore_main_toolbar .x-btn.x-btn-pressed {
+    background-color: #202124;
+}
+
+.pimcore_main_toolbar .x-btn .x-btn-inner {
+    color: #fff;
+}
+
+.pimcore_main_toolbar .x-btn.x-btn-disabled .x-btn-inner {
+    color: #000;
+}
+
+.pimcore_main_toolbar .x-toolbar-separator {
+    border:0;
+}
+
+.pimcore_main_toolbar .x-toolbar-text {
+    color: #e3e4e5;
+}
+
+.pimcore_main_toolbar + .x-panel > .x-tab-bar-default {
+    background: #3C3C3C;
+}
+
+.pimcore_main_toolbar + .x-panel > .x-tab-bar-default .x-tab {
+    background: #3C3C3C;
+    border-left: 1px solid #B4B4B4;
+}
+
+.pimcore_main_toolbar + .x-panel > .x-tab-bar-default .x-tab.x-tab-active + .x-tab, .pimcore_main_toolbar + .x-panel > .x-tab-bar-default .x-tab:first-child {
+    border-color: #3C3C3C;
+}
+
+.pimcore_main_toolbar + .x-panel > .x-tab-bar-default .x-tab .x-tab-inner-default {
+    color: #B4B4B4;
+}
+
+.pimcore_main_toolbar + .x-panel > .x-tab-bar-default .x-tab.x-tab-active {
+    background-color: #fff;
+}
+
+.pimcore_main_toolbar + .x-panel > .x-tab-bar-default .x-tab.x-tab-active .x-tab-inner-default {
+    color: #3C3C3C !important;
+}
+
+.pimcore_main_toolbar + .x-panel > .x-tab-bar-default .x-tab.x-tab-active .pimcore_material_icon {
+    filter: none;
+    opacity: 0.75;
+}
+
+.pimcore_main_toolbar + .x-panel > .x-tab-bar-default .x-tab.x-tab-over  .x-tab-inner-default {
+    color: #fff;
+}
+
+.pimcore_main_toolbar .x-btn-wrap.x-btn-arrow-right:after {
+    color: #fff;
+}
+
+.pimcore_main_toolbar .x-btn-wrap.x-btn-split-right:after {
+    color: #fff;
+}
+
+.pimcore_main_toolbar .x-btn-wrap.x-btn-split-right > .x-btn-button:after {
+    border-color: #3C3C3C;
+}
 
 .class-editor-validation-success input {
     background-color: green;
@@ -1582,24 +1691,24 @@ span.warning {
     border-top:1px solid #EEEEEE;
 }
 
-.pimcore_save_button {
+.pimcore_main_toolbar .pimcore_save_button {
     background: #28a050;
     text-transform: uppercase;
 }
 
-.pimcore_save_button.x-btn-over, .pimcore_save_button.x-btn-pressed, .pimcore_save_button.x-btn-menu-active, .pimcore_save_button.x-btn-focus {
+.pimcore_main_toolbar .pimcore_save_button.x-btn-over, .pimcore_save_button.x-btn-pressed, .pimcore_save_button.x-btn-menu-active, .pimcore_save_button.x-btn-focus {
     background: #298e4b !important;
 }
 
-.pimcore_save_button .x-btn-inner {
+.pimcore_main_toolbar .pimcore_save_button .x-btn-inner {
     color: #fff;
 }
 
-.pimcore_save_button .x-btn-wrap-default-toolbar-medium.x-btn-split-right:after {
+.pimcore_main_toolbar .pimcore_save_button .x-btn-wrap-default-toolbar-medium.x-btn-split-right:after {
     color: #fff;
 }
 
-.pimcore_save_button .x-btn-wrap-default-toolbar-medium.x-btn-split-right > .x-btn-button:after {
+.pimcore_main_toolbar .pimcore_save_button .x-btn-wrap-default-toolbar-medium.x-btn-split-right > .x-btn-button:after {
     border-color: #53b373;
 }
 
@@ -1697,12 +1806,12 @@ span.warning {
 }
 
 .pimcore_main_accordion .x-panel-header .x-title-text {
-    color: #323639;
+    color: #3C3C3C;
     font-weight: bold;
 }
 
 .pimcore_main_accordion .x-collapsed .x-panel-header {
-    background: #323639;
+    background: #3C3C3C;
     border-bottom: 1px solid #5A5A5A;
 }
 
@@ -1711,7 +1820,7 @@ span.warning {
 }
 
 .pimcore_main_accordion .x-collapsed .x-panel-header .x-tool-img {
-    background-color: #323639;
+    background-color: #3C3C3C;
     color: #fff;
 }
 
@@ -1732,8 +1841,6 @@ span.warning {
     filter: invert(100%);
     opacity: 1;
 }
-
-.pimcore_main_accordion
 
 .x-ie11 .pimcore_main_accordion .x-collapsed .pimcore_icon_material {
     border-radius: 15px;
@@ -2113,3 +2220,18 @@ ul.leaflet-draw-actions.leaflet-draw-actions-top.leaflet-draw-actions-bottom li:
 }
 
 /** END notifications **/
+
+.pimcore_material_icon {
+    opacity: 0.75;
+}
+
+.pimcore_material_icon.white, .pimcore_main_toolbar .pimcore_material_icon, .pimcore_main_toolbar + .x-panel > .x-tab-bar-default .pimcore_material_icon {
+    filter: invert(100%);
+    opacity: 1;
+}
+
+.x-ie11 .pimcore_material_icon.white, .x-ie11 .pimcore_main_toolbar .pimcore_material_icon, .x-ie11 .pimcore_main_toolbar + .x-panel > .x-tab-bar-default .pimcore_material_icon  {
+    border-radius: 10px;
+    background-color: #ECECEC;
+    box-shadow: 0px 0px 0px 4px #ECECEC;
+}

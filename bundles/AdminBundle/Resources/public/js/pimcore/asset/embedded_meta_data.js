@@ -43,7 +43,7 @@ pimcore.asset.embedded_meta_data = Class.create({
             this.panel = new Ext.Panel({
                 title: t("embedded_meta_data"),
                 layout: 'fit',
-                iconCls: "pimcore_icon_exif",
+                iconCls: "pimcore_material_icon_embedded_metadata pimcore_material_icon",
                 items: [newPanel]
             });
         }

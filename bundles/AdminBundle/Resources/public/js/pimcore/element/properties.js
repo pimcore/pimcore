@@ -395,7 +395,7 @@ pimcore.element.properties = Class.create({
                 title: t('properties'),
                 border: false,
                 layout: "border",
-                iconCls: "pimcore_icon_properties",
+                iconCls: "pimcore_material_icon_properties pimcore_material_icon",
                 items: [this.propertyGrid]
             });
         }

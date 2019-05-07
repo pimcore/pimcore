@@ -103,7 +103,7 @@ pimcore.settings.targeting.rules.panel= Class.create({
                     }
                 },
                 tbar: Ext.create('Ext.Toolbar', {
-                    cls: 'main-toolbar',
+                    cls: '',
                     items: [
                         {
                             text: t("add"),

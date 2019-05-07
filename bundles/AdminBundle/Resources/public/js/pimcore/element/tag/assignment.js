@@ -137,7 +137,7 @@ pimcore.element.tag.assignment = Class.create({
                     tooltip: t('tags')
                 },
                 region: "center",
-                iconCls: "pimcore_icon_element_tags",
+                iconCls: "pimcore_material_icon_tags pimcore_material_icon",
                 layout: 'border',
                 items: [gridPanel, treePanel],
                 listeners: {

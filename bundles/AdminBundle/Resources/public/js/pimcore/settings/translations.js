@@ -190,7 +190,7 @@ pimcore.settings.translations = Class.create({
         });
 
         var toolbar = Ext.create('Ext.Toolbar', {
-            cls: 'main-toolbar',
+            cls: 'pimcore_main_toolbar',
             items: [
                 {
                     text: t('add'),

@@ -23,7 +23,7 @@ pimcore.document.snippets.settings = Class.create(pimcore.document.settings_abst
                 border: false,
                 autoScroll: true,
                 bodyStyle:'padding:0 10px 0 10px;',
-                iconCls: "pimcore_icon_settings",
+                iconCls: "pimcore_material_icon_settings pimcore_material_icon",
                 items: [
                     this.getControllerViewFields(),
                     this.getPathAndKeyFields(),
