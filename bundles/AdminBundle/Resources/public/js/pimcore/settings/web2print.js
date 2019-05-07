@@ -151,6 +151,11 @@ pimcore.settings.web2print = Class.create({
                         fieldLabel: t("web2print_licence"),
                         name: 'pdfreactorLicence',
                         value: this.getValue("pdfreactorLicence")
+                    }, {
+                        xtype: 'checkbox',
+                        fieldLabel: t("web2print_enableDebugMode"),
+                        name: 'pdfreactorEnableDebugMode',
+                        value: this.getValue("pdfreactorEnableDebugMode")
                     }
                 ]
             });

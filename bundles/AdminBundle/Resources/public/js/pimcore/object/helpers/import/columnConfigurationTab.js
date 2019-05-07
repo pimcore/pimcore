@@ -442,7 +442,7 @@ pimcore.object.helpers.import.columnConfigurationTab = Class.create({
         var tree = classTreeHelper.getClassTree(url, classId);
 
         tree.addListener("itemdblclick", function (tree, record, item, index, e, eOpts) {
-            if (!record.data.root && record.datatype != "layout"
+            if (!record.data.root && record.data.type != "layout"
                 && record.data.dataType != 'localizedfields') {
                 var copy = Ext.apply({}, record.data);
 

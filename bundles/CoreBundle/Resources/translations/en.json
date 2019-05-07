@@ -586,6 +586,7 @@
   "close_tab": "Close Tab",
   "web2print_only_published": "Only possible with published documents.",
   "web2print_documents_changed": "Documents changed since last pdf generation.",
+  "web2print_enableDebugMode": "Enable debug mode",
   "about_pimcore": "ABOUT PIMCORE PLATFORM",
   "phone": "Phone",
   "workflow_additional_info": "Additional Information",

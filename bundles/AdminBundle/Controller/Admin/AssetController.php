@@ -2258,7 +2258,7 @@ class AssetController extends ElementControllerBase implements EventedController
                 if ($orderKey == 'fullpath') {
                     $orderKey = 'CAST(CONCAT(path,filename) AS CHAR CHARACTER SET utf8) COLLATE utf8_general_ci';
                     $orderKeyQuote = false;
-                } elseif($orderKey == 'filename') {
+                } elseif ($orderKey == 'filename') {
                     $orderKey = 'CAST(filename AS CHAR CHARACTER SET utf8) COLLATE utf8_general_ci';
                     $orderKeyQuote = false;
                 }
