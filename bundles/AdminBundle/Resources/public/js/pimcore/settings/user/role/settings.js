@@ -21,6 +21,8 @@ pimcore.settings.user.role.settings = Class.create({
     },
 
     getPanel: function () {
+        //Allow following prefixes to be sorted in sections -> rest will be sorted in a general group
+        const allowedSectionPrefix = ["cp", "custom", "cust", "c", "app"];
 
         var generalItems = [];
 
@@ -57,9 +59,22 @@ pimcore.settings.user.role.settings = Class.create({
         });
 
         var availPermsItems = [];
+        var itemsPerSection = [];
+        var sectionArray = [];
+
         // add available permissions
         for (var i = 0; i < this.data.availablePermissions.length; i++) {
-            availPermsItems.push({
+            let sectionSplit = this.data.availablePermissions[i].key.split("_", 2)
+            if (sectionSplit && Array.isArray(sectionSplit) && allowedSectionPrefix.includes(sectionSplit[0])) {
+                section = sectionSplit[1];
+            } else {
+                section = "permissions";
+            }
+
+            if (!itemsPerSection[section]) {
+                itemsPerSection[section] = [];
+            }
+            itemsPerSection[section].push({
                 xtype: "checkbox",
                 fieldLabel: t(this.data.availablePermissions[i].key),
                 name: "permission_" + this.data.availablePermissions[i].key,
@@ -68,11 +83,19 @@ pimcore.settings.user.role.settings = Class.create({
             });
         }
 
-        this.permissionsSet = new Ext.form.FieldSet({
-            collapsible: true,
-            title: t("permissions"),
-            items: availPermsItems
-        });
+        for (var key in itemsPerSection) {
+            let title = "permissions";
+            if (key != title) {
+                title = "settings_permissions_" + key;
+            }
+
+            sectionArray.push(new Ext.form.FieldSet({
+                collapsible: true,
+                title: t(title),
+                items: itemsPerSection[key],
+                collapsed: true,
+            }));
+        }
 
         this.typesSet = new Ext.form.FieldSet({
             collapsible: true,
@@ -104,9 +127,11 @@ pimcore.settings.user.role.settings = Class.create({
 
         this.websiteTranslationSettings = new pimcore.settings.user.websiteTranslationSettings(this, this.data.validLanguages, this.data.role);
 
+        let items = array_merge([this.generalSet], sectionArray, [this.typesSet, this.websiteTranslationSettings.getPanel()])
+
         this.panel = new Ext.form.FormPanel({
             title: t("settings"),
-            items: [this.generalSet, this.permissionsSet, this.typesSet, this.websiteTranslationSettings.getPanel()],
+            items: items,
             bodyStyle: "padding:10px;",
             autoScroll: true
         });
