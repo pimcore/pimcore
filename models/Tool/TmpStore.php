@@ -152,12 +152,6 @@ class TmpStore extends Model\AbstractModel
         return null;
     }
 
-    public static function cleanup()
-    {
-        $instance = self::getInstance();
-        $instance->getDao()->cleanup();
-    }
-
     /**
      * @param $tag
      *

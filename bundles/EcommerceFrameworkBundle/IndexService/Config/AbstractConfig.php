@@ -264,10 +264,11 @@ abstract class AbstractConfig implements IConfig
 
     /**
      * @param IIndexable $object
+     * @param null $subObjectId
      *
      * @return AbstractCategory[]
      */
-    public function getCategories(IIndexable $object)
+    public function getCategories(IIndexable $object, $subObjectId = null)
     {
         return $object->getCategories();
     }

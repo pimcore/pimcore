@@ -57,4 +57,4 @@ Symfony framework session is configured by default, so you don't need to configu
 
 
 
-Admin sessions `Pimcore\Tool\Session::get/getReadonly()` returns an `AttributeBagInterface` . 
+Admin sessions `Pimcore\Tool\Session::getReadonly()` returns an `AttributeBagInterface` . 

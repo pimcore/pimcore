@@ -19,6 +19,9 @@ namespace Pimcore\Model\Schedule\Maintenance;
 
 use Pimcore\Model\Tool\Lock;
 
+/**
+ * @deprecated Usage of Job is deprecated since Pimcore 5.7 and will be removed in 6.0. Please use Tagged Services now for Maintenance tasks
+ */
 class Job
 {
     /**
@@ -58,6 +61,11 @@ class Job
         $this->callable = $callable;
         $this->arguments = $arguments;
         $this->expire = $expire;
+
+        trigger_error(
+            'Usage of Job is deprecated since Pimcore 5.7 and will be removed in 6.0. Please use Tagged Services now for Maintenance tasks',
+            E_USER_DEPRECATED
+        );
     }
 
     public static function fromMethodCall(string $id, $object, string $method, array $arguments = [], int $expire = self::EXPIRE_TIMESTAMP): Job

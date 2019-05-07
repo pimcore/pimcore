@@ -178,9 +178,15 @@ pimcore.document.seopanel = Class.create({
                 enableKeyEvents: true,
                 listeners: {
                     "keyup": function (el) {
+                        el.up().getForm().findField("title_length").setValue(el.getValue().length);
                         el.setFieldLabel(t("title") + " (" + el.getValue().length + "):");
                     }
                 }
+            },{
+                xtype: 'textfield',
+                name: "title_length",
+                hidden: true,
+                value: record.data.title.length
             }, {
                 xtype: "textfield",
                 fieldLabel: t("pretty_url"),
@@ -196,9 +202,15 @@ pimcore.document.seopanel = Class.create({
                 enableKeyEvents: true,
                 listeners: {
                     "keyup": function (el) {
+                        el.up().getForm().findField("description_length").setValue(el.getValue().length);
                         el.setFieldLabel(t("description") + " (" + el.getValue().length + "):");
-                    }
+                    }.bind(this)
                 }
+            },{
+                xtype: 'textfield',
+                name: "description_length",
+                hidden: true,
+                value: record.data.description.length
             }, {
                 xtype: "hidden",
                 name: "id",
@@ -207,6 +219,7 @@ pimcore.document.seopanel = Class.create({
         });
 
         this.editWindow = new Ext.Window({
+            title:  record.data.path,
             modal: true,
             width: 500,
             height: 290,
@@ -225,6 +238,14 @@ pimcore.document.seopanel = Class.create({
     save: function (tree, record) {
 
         var values = this.formPanel.getForm().getFieldValues();
+        var data = Ext.clone(values);
+
+        for(value in values) {
+           if (value.indexOf('_length') > 0) {
+               delete values[value];
+           }
+        }
+
         this.editWindow.close();
 
         Ext.Ajax.request({
@@ -251,10 +272,15 @@ pimcore.document.seopanel = Class.create({
                         }.bind(tree)
                     });
                 } else {
-                    tree.getStore().load();
+                    this.commitData(data, tree);
                 }
             }.bind(this, tree, record)
         });
-    }
+    },
 
+    commitData: function (data, tree) {
+        var store = tree.getStore();
+        var rec = store.getNodeById(data.id);
+        rec.set(data, {dirty: false});
+    }
 });

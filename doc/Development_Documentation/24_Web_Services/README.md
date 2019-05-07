@@ -240,6 +240,16 @@ condense parameter is set to true then only non-existing object ids are returned
 * **Request body**: JSON-encoded asset data in the same format as returned by get asset by id for the data segment but with missing id field or id set to 0
 * **Returns**: JSON-encoded asset id
 
+**Example:**
+```json
+{
+	"data": "iVBORw0KGgoAAAANSUhEUgAAASwAAAEsBAMAAACLU5NGAAAAG1BMVEXMzMyWlpa...",
+	"parentId": 7, 
+	"type": "image",    
+	"filename": "rest-uploaded-file.jpg",
+}
+```
+
 ### Update Existing Asset
 * **Method**: PUT or POST
 * **URL**: `http://YOUR-DOMAIN/webservice/rest/asset?apikey=[API-KEY]`

@@ -288,13 +288,38 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyInd
     /**
      * @return Concrete|null
      */
-    protected function getObject() : ?Concrete {
+    protected function getObject(): ?Concrete
+    {
         $this->rewind();
         $item = $this->current();
-        if($item instanceof Model\DataObject\Fieldcollection\Data\AbstractData) {
+        if ($item instanceof Model\DataObject\Fieldcollection\Data\AbstractData) {
             return $item->getObject();
         }
 
         return null;
+    }
+
+    /**
+     * @internal
+     */
+    public function loadLazyData()
+    {
+        $items = $this->getItems();
+        if (is_array($items)) {
+            /** @var $item Model\DataObject\Fieldcollection\Data\AbstractData */
+            foreach ($items as $item) {
+                $fcType = $item->getType();
+                $fieldcolDef = Model\DataObject\Fieldcollection\Definition::getByKey($fcType);
+                $fds = $fieldcolDef->getFieldDefinitions();
+                /** @var $fd Model\DataObject\ClassDefinition\Data */
+                foreach ($fds as $fd) {
+                    $fieldGetter = 'get' . ucfirst($fd->getName());
+                    $fieldValue = $item->$fieldGetter();
+                    if ($fieldValue instanceof Localizedfield) {
+                        $fieldValue->loadLazyData();
+                    }
+                }
+            }
+        }
     }
 }

@@ -58,11 +58,7 @@ Pimcore allows the back end (Pimcore administration user interface) to be transl
 When saving an object in Pimcore, the registry contains a reference to the locale of the admin interface. If you try to use  translation for another language you will get an error that the language is not found. If you want to translate something to one of the available languages for the front end you can create a new instance of the website translator with a locale from one of the valid languages. See the example below:
 
 ```php
-//back end (default when saving an object from the admin)
-$adminTranslator = \Zend_Registry::get('Zend_Translate');
-
 //front end ($lang = string with language code)
-$locale = new \Zend_Locale($lang);
 $websiteTranslator = new \Pimcore\Translate\Website($locale);
 $websiteTranslator->translate('name-of-translation-key');
 ```

@@ -179,30 +179,7 @@ pimcore.object.tags.reverseManyToManyObjectRelation = Class.create(pimcore.objec
             width: this.fieldConfig.width,
             height: this.fieldConfig.height,
             tbar: {
-                items: [
-                    {
-                        xtype: "tbspacer",
-                        width: 20,
-                        height: 16,
-                        cls: "pimcore_icon_droptarget"
-                    },
-                    {
-                        xtype: "tbtext",
-                        text: "<b>" + this.fieldConfig.title + "</b>"
-                    },
-                    "->",
-                    {
-                        xtype: "button",
-                        iconCls: "pimcore_icon_delete",
-                        handler: this.empty.bind(this)
-                    },
-                    {
-                        xtype: "button",
-                        iconCls: "pimcore_icon_search",
-                        handler: this.openSearchEditor.bind(this)
-                    },
-                    this.getCreateControl()
-                ],
+                items: this.getEditToolbarItems(),
                 ctCls: "pimcore_force_auto_width",
                 cls: "pimcore_force_auto_width"
             },

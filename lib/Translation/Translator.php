@@ -459,6 +459,11 @@ class Translator implements TranslatorInterface, TranslatorBagInterface
         return $text;
     }
 
+    public function getCaseInsensitive(): bool
+    {
+        return $this->caseInsensitive;
+    }
+
     /**
      * Passes through all unknown calls onto the translator object.
      */

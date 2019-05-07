@@ -2,7 +2,6 @@
 
 namespace Pimcore\Tests\Model\LazyLoading;
 
-
 use Pimcore\Cache;
 use Pimcore\Model\DataObject\Data\BlockElement;
 use Pimcore\Model\DataObject\Fieldcollection;
@@ -12,8 +11,8 @@ use Pimcore\Model\DataObject\Objectbrick\Data\LazyLoadingTest;
 
 class ManyToOneRelationTest extends AbstractLazyLoadingTest
 {
-
-    public function testClassAttributes() {
+    public function testClassAttributes()
+    {
         //prepare data object
         $relationObject = $this->loadSingleRelation();
 
@@ -23,9 +22,7 @@ class ManyToOneRelationTest extends AbstractLazyLoadingTest
         $parentId = $object->getId();
         $childId = $this->createChildDataObject($object)->getId();
 
-
-        foreach(['parent' => $parentId, 'inherited' => $childId] as $objectType => $id) {
-
+        foreach (['parent' => $parentId, 'inherited' => $childId] as $objectType => $id) {
             $messagePrefix = "Testing object-type $objectType: ";
 
             //clear cache and collect garbage
@@ -40,16 +37,15 @@ class ManyToOneRelationTest extends AbstractLazyLoadingTest
 
             //load relation and check if relation loads correctly
             $loadedRelation = $object->getRelation();
-            $this->assertEquals($relationObject->getId(), $loadedRelation->getId(), $messagePrefix . "relations not loaded properly");
+            $this->assertEquals($relationObject->getId(), $loadedRelation->getId(), $messagePrefix . 'relations not loaded properly');
 
             //serialize data object and check for (not) wanted content in serialized string
             $this->checkSerialization($object, $messagePrefix);
-
         }
-
     }
 
-    public function testLocalizedClassAttributes() {
+    public function testLocalizedClassAttributes()
+    {
         //prepare data object
         $relationObject = $this->loadSingleRelation();
 
@@ -59,8 +55,7 @@ class ManyToOneRelationTest extends AbstractLazyLoadingTest
         $parentId = $object->getId();
         $childId = $this->createChildDataObject($object)->getId();
 
-        foreach(['parent' => $parentId, 'inherited' => $childId] as $objectType => $id) {
-
+        foreach (['parent' => $parentId, 'inherited' => $childId] as $objectType => $id) {
             $messagePrefix = "Testing object-type $objectType: ";
 
             //clear cache and collect garbage
@@ -75,29 +70,28 @@ class ManyToOneRelationTest extends AbstractLazyLoadingTest
 
             //load relation and check if relation loads correctly
             $loadedRelation = $object->getLrelation();
-            $this->assertEquals($relationObject->getId(), $loadedRelation->getId(), $messagePrefix . "relations not loaded properly");
+            $this->assertEquals($relationObject->getId(), $loadedRelation->getId(), $messagePrefix . 'relations not loaded properly');
 
             //serialize data object and check for (not) wanted content in serialized string
             $this->checkSerialization($object, $messagePrefix);
         }
     }
 
-
-    public function testBlockClassAttributes() {
+    public function testBlockClassAttributes()
+    {
         //prepare data object
         $relationObject = $this->loadSingleRelation();
 
         $object = $this->createDataObject();
         $data = [
-            "blockrelation" => new BlockElement('blockrelation', 'manyToOneRelation', $relationObject),
+            'blockrelation' => new BlockElement('blockrelation', 'manyToOneRelation', $relationObject),
         ];
         $object->setTestBlock([$data]);
         $object->save();
         $parentId = $object->getId();
         $childId = $this->createChildDataObject($object)->getId();
 
-        foreach(['parent' => $parentId, 'inherited' => $childId] as $objectType => $id) {
-
+        foreach (['parent' => $parentId, 'inherited' => $childId] as $objectType => $id) {
             $messagePrefix = "Testing object-type $objectType: ";
 
             //clear cache and collect garbage
@@ -115,29 +109,29 @@ class ManyToOneRelationTest extends AbstractLazyLoadingTest
 
             //load relation and check if relation loads correctly
             $blockItems = $object->getTestBlock();
-            $loadedRelation = $blockItems[0]["blockrelation"]->getData();
-            $this->assertEquals($relationObject->getId(), $loadedRelation->getId(), $messagePrefix . "relations not loaded properly");
+            $loadedRelation = $blockItems[0]['blockrelation']->getData();
+            $this->assertEquals($relationObject->getId(), $loadedRelation->getId(), $messagePrefix . 'relations not loaded properly');
 
             //serialize data object and check for (not) wanted content in serialized string
             $this->checkSerialization($object, $messagePrefix, $contentShouldBeIncluded);
         }
     }
 
-    public function testLazyBlockClassAttributes() {
+    public function testLazyBlockClassAttributes()
+    {
         //prepare data object
         $relationObject = $this->loadSingleRelation();
 
         $object = $this->createDataObject();
         $data = [
-            "blockrelationLazyLoaded" => new BlockElement('blockrelationLazyLoaded', 'manyToOneRelation', $relationObject),
+            'blockrelationLazyLoaded' => new BlockElement('blockrelationLazyLoaded', 'manyToOneRelation', $relationObject),
         ];
         $object->setTestBlockLazyloaded([$data]);
         $object->save();
         $parentId = $object->getId();
         $childId = $this->createChildDataObject($object)->getId();
 
-        foreach(['parent' => $parentId, 'inherited' => $childId] as $objectType => $id) {
-
+        foreach (['parent' => $parentId, 'inherited' => $childId] as $objectType => $id) {
             $messagePrefix = "Testing object-type $objectType: ";
 
             //clear cache and collect garbage
@@ -152,16 +146,16 @@ class ManyToOneRelationTest extends AbstractLazyLoadingTest
 
             //load relation and check if relation loads correctly
             $blockItems = $object->getTestBlockLazyloaded();
-            $loadedRelation = $blockItems[0]["blockrelationLazyLoaded"]->getData();
-            $this->assertEquals($relationObject->getId(), $loadedRelation->getId(), $messagePrefix . "relations not loaded properly");
+            $loadedRelation = $blockItems[0]['blockrelationLazyLoaded']->getData();
+            $this->assertEquals($relationObject->getId(), $loadedRelation->getId(), $messagePrefix . 'relations not loaded properly');
 
             //serialize data object and check for (not) wanted content in serialized string
             $this->checkSerialization($object, $messagePrefix);
         }
     }
 
-
-    public function testFieldCollectionAttributes() {
+    public function testFieldCollectionAttributes()
+    {
         //prepare data object
         $relationObject = $this->loadSingleRelation();
 
@@ -176,8 +170,7 @@ class ManyToOneRelationTest extends AbstractLazyLoadingTest
         $parentId = $object->getId();
         $childId = $this->createChildDataObject($object)->getId();
 
-        foreach(['parent' => $parentId, 'inherited' => $childId] as $objectType => $id) {
-
+        foreach (['parent' => $parentId, 'inherited' => $childId] as $objectType => $id) {
             $messagePrefix = "Testing object-type $objectType: ";
 
             //clear cache and collect garbage
@@ -192,10 +185,10 @@ class ManyToOneRelationTest extends AbstractLazyLoadingTest
 
             //load relation and check if relation loads correctly
             $collection = $object->getFieldcollection();
-            if($objectType == 'parent') {
+            if ($objectType == 'parent') {
                 $item = $collection->get(0);
                 $loadedRelation = $item->getRelation();
-                $this->assertEquals($relationObject->getId(), $loadedRelation->getId(), $messagePrefix . "relations not loaded properly");
+                $this->assertEquals($relationObject->getId(), $loadedRelation->getId(), $messagePrefix . 'relations not loaded properly');
             }
 
             //serialize data object and check for (not) wanted content in serialized string
@@ -203,8 +196,8 @@ class ManyToOneRelationTest extends AbstractLazyLoadingTest
         }
     }
 
-
-    public function testFieldCollectionLocalizedAttributes() {
+    public function testFieldCollectionLocalizedAttributes()
+    {
         //prepare data object
         $relationObject = $this->loadSingleRelation();
 
@@ -219,8 +212,7 @@ class ManyToOneRelationTest extends AbstractLazyLoadingTest
         $parentId = $object->getId();
         $childId = $this->createChildDataObject($object)->getId();
 
-        foreach(['parent' => $parentId, 'inherited' => $childId] as $objectType => $id) {
-
+        foreach (['parent' => $parentId, 'inherited' => $childId] as $objectType => $id) {
             $messagePrefix = "Testing object-type $objectType: ";
 
             //clear cache and collect garbage
@@ -235,10 +227,10 @@ class ManyToOneRelationTest extends AbstractLazyLoadingTest
 
             //load relation and check if relation loads correctly
             $collection = $object->getFieldcollection();
-            if($objectType == 'parent') {
+            if ($objectType == 'parent') {
                 $item = $collection->get(0);
                 $loadedRelation = $item->getLrelation();
-                $this->assertEquals($relationObject->getId(), $loadedRelation->getId(), $messagePrefix . "relations not loaded properly");
+                $this->assertEquals($relationObject->getId(), $loadedRelation->getId(), $messagePrefix . 'relations not loaded properly');
             }
 
             //serialize data object and check for (not) wanted content in serialized string
@@ -246,7 +238,8 @@ class ManyToOneRelationTest extends AbstractLazyLoadingTest
         }
     }
 
-    public function testBrickAttributes() {
+    public function testBrickAttributes()
+    {
         //prepare data object
         $relationObject = $this->loadSingleRelation();
 
@@ -258,8 +251,7 @@ class ManyToOneRelationTest extends AbstractLazyLoadingTest
         $parentId = $object->getId();
         $childId = $this->createChildDataObject($object)->getId();
 
-        foreach(['parent' => $parentId, 'inherited' => $childId] as $objectType => $id) {
-
+        foreach (['parent' => $parentId, 'inherited' => $childId] as $objectType => $id) {
             $messagePrefix = "Testing object-type $objectType: ";
 
             //clear cache and collect garbage
@@ -275,14 +267,15 @@ class ManyToOneRelationTest extends AbstractLazyLoadingTest
             //load relation and check if relation loads correctly
             $brick = $object->getBricks()->getLazyLoadingTest();
             $loadedRelation = $brick->getRelation();
-            $this->assertEquals($relationObject->getId(), $loadedRelation->getId(), $messagePrefix . "relations not loaded properly");
+            $this->assertEquals($relationObject->getId(), $loadedRelation->getId(), $messagePrefix . 'relations not loaded properly');
 
             //serialize data object and check for (not) wanted content in serialized string
             $this->checkSerialization($object, $messagePrefix, false);
         }
     }
 
-    public function testLocalizedBrickAttributes() {
+    public function testLocalizedBrickAttributes()
+    {
         //prepare data object
         $relationObject = $this->loadSingleRelation();
 
@@ -294,8 +287,7 @@ class ManyToOneRelationTest extends AbstractLazyLoadingTest
         $parentId = $object->getId();
         $childId = $this->createChildDataObject($object)->getId();
 
-        foreach(['parent' => $parentId, 'inherited' => $childId] as $objectType => $id) {
-
+        foreach (['parent' => $parentId, 'inherited' => $childId] as $objectType => $id) {
             $messagePrefix = "Testing object-type $objectType: ";
 
             //clear cache and collect garbage
@@ -311,7 +303,7 @@ class ManyToOneRelationTest extends AbstractLazyLoadingTest
             //load relation and check if relation loads correctly
             $brick = $object->getBricks()->getLazyLoadingLocalizedTest();
             $loadedRelation = $brick->getLocalizedFields()->getLocalizedValue('lrelation');
-            $this->assertEquals($relationObject->getId(), $loadedRelation->getId(), $messagePrefix . "relations not loaded properly");
+            $this->assertEquals($relationObject->getId(), $loadedRelation->getId(), $messagePrefix . 'relations not loaded properly');
 
             //serialize data object and check for (not) wanted content in serialized string
             $this->checkSerialization($object, $messagePrefix, false);

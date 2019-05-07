@@ -65,6 +65,12 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
     public $decimalPrecision;
 
     /**
+     *
+     * @var bool
+     */
+    public $autoConvert;
+
+    /**
      * Type for the column to query
      *
      * @var int
@@ -189,6 +195,22 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
     public function setDecimalPrecision($decimalPrecision)
     {
         $this->decimalPrecision = $decimalPrecision;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isAutoConvert(): bool
+    {
+        return $this->autoConvert;
+    }
+
+    /**
+     * @param bool $autoConvert
+     */
+    public function setAutoConvert($autoConvert)
+    {
+        $this->autoConvert = (bool)$autoConvert;
     }
 
     /**

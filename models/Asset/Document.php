@@ -49,9 +49,8 @@ class Document extends Model\Asset
                     $this->setCustomSetting('document_page_count', $pageCount);
                 }
             } catch (\Exception $e) {
+                // nothing to do
             }
-
-            unlink($tmpFile);
         }
 
         parent::update($params);

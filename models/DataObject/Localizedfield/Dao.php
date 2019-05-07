@@ -150,7 +150,7 @@ class Dao extends Model\Dao\AbstractDao
                     ];
 
                     if ($fd instanceof DataObject\ClassDefinition\Data\Relations\AbstractRelations) {
-                        if ( ( isset($params['saveRelationalData'])
+                        if ((isset($params['saveRelationalData'])
                                 && $params['saveRelationalData']['saveLocalizedRelations']
                                 && $container instanceof DataObject\Fieldcollection\Definition
                                 && !$container instanceof DataObject\Objectbrick\Definition
@@ -444,7 +444,7 @@ class Dao extends Model\Dao\AbstractDao
 
         $db = Db::get();
 
-        if ($this->model->allLanguagesAreDirty()||
+        if ($this->model->allLanguagesAreDirty() ||
             ($container instanceof DataObject\Fieldcollection\Definition
             && !$container instanceof DataObject\Objectbrick\Definition)
             ) {

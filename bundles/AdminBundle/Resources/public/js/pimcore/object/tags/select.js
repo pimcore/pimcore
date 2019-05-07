@@ -23,10 +23,8 @@ pimcore.object.tags.select = Class.create(pimcore.object.tags.abstract, {
             this.defaultValue = data;
         }
 
-
         this.data = data;
         this.fieldConfig = fieldConfig;
-
     },
 
     getGridColumnConfigDynamic: function(field) {
@@ -47,7 +45,7 @@ pimcore.object.tags.select = Class.create(pimcore.object.tags.abstract, {
             if (options) {
                 for (var i = 0; i < options.length; i++) {
                     if (options[i]["value"] == value) {
-                        return options[i]["key"];
+                        return replace_html_event_attributes(strip_tags(options[i]["key"], 'div,span,b,strong,em,i,small,sup,sub'));
                     }
                 }
             }
@@ -76,9 +74,9 @@ pimcore.object.tags.select = Class.create(pimcore.object.tags.abstract, {
                 }
             }
 
-            for(var i=0; i<field.layout.options.length; i++) {
+            for(var i=0; i < field.layout.options.length; i++) {
                 if(field.layout.options[i]["value"] == value) {
-                    return field.layout.options[i]["key"];
+                    return replace_html_event_attributes(strip_tags(field.layout.options[i]["key"], 'div,span,b,strong,em,i,small,sup,sub'));
                 }
             }
 
@@ -102,7 +100,7 @@ pimcore.object.tags.select = Class.create(pimcore.object.tags.abstract, {
         }
     },
 
-    getCellEditor: function ( field, record) {
+    getCellEditor: function (field, record) {
         var key = field.key;
         if(field.layout.noteditable) {
             return null;
@@ -110,10 +108,11 @@ pimcore.object.tags.select = Class.create(pimcore.object.tags.abstract, {
 
         var value = record.data[key];
         var options = record.data[key +  "%options"];
+        options = this.prepareStoreDataAndFilterLabels(options);
 
         var store = new Ext.data.Store({
             autoDestroy: true,
-            fields: ['key',"value"],
+            fields: ['key', 'value'],
             data: options
         });
 
@@ -152,18 +151,11 @@ pimcore.object.tags.select = Class.create(pimcore.object.tags.abstract, {
             return null;
         }
 
-        var store = new Ext.data.JsonStore({
+        var storeData = this.prepareStoreDataAndFilterLabels(field.layout.options);
+        var store = new Ext.data.Store({
             autoDestroy: true,
-            proxy: {
-                type: 'memory',
-                reader: {
-                    type: 'json',
-                    rootProperty: 'options'
-
-                }
-            },
-            fields: ['key',"value"],
-            data: field.layout
+            fields: ['key', 'value'],
+            data: storeData
         });
 
         var editorConfig = {};
@@ -193,13 +185,30 @@ pimcore.object.tags.select = Class.create(pimcore.object.tags.abstract, {
         return new Ext.form.ComboBox(editorConfig);
     },
 
+    prepareStoreDataAndFilterLabels: function(options) {
+        var filteredStoreData = [];
+        if (options) {
+            for (var i = 0; i < options.length; i++) {
+
+                var label = ts(options[i].key);
+                if(label.indexOf('<') >= 0) {
+                    label = replace_html_event_attributes(strip_tags(label, "div,span,b,strong,em,i,small,sup,sub2"));
+                }
+
+                filteredStoreData.push({'value': options[i].value, 'key': label});
+            }
+        }
+
+        return filteredStoreData;
+    },
+
     getGridColumnFilter: function(field) {
         if (field.layout.dynamicOptions) {
             return {type: 'string', dataIndex: field.key};
         } else {
             var store = Ext.create('Ext.data.JsonStore', {
                 fields: ['key', "value"],
-                data: field.layout.options
+                data: this.prepareStoreDataAndFilterLabels(field.layout.options)
             });
 
             return {
@@ -235,10 +244,14 @@ pimcore.object.tags.select = Class.create(pimcore.object.tags.abstract, {
                         continue;
                     }
                 }
-                storeData.push({'value': value, 'key': ts(this.fieldConfig.options[i].key)});
-                if(ts(this.fieldConfig.options[i].key).indexOf('<') >= 0) {
+
+                var label = ts(this.fieldConfig.options[i].key);
+                if(label.indexOf('<') >= 0) {
                     hasHTMLContent = true;
+                    label = replace_html_event_attributes(strip_tags(label, "div,span,b,strong,em,i,small,sup,sub2"));
                 }
+
+                storeData.push({'value': value, 'key': label});
 
                 validValues.push(value);
             }

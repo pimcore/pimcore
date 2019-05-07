@@ -292,25 +292,28 @@ class GD extends Adapter
         $this->preModify();
 
         $image = ltrim($image, '/');
-        $image = PIMCORE_PROJECT_ROOT . '/' . $image;
+        $image = PIMCORE_WEB_ROOT . '/' . $image;
 
         if (is_file($image)) {
             $backgroundImage = imagecreatefromstring(file_get_contents($image));
             list($backgroundImageWidth, $backgroundImageHeight) = getimagesize($image);
+
+            $newImg = $this->createImage($this->getWidth(), $this->getHeight());
+
             if ($mode == 'cropTopLeft') {
-                $newImg = $this->createImage($this->getWidth(), $this->getHeight());
                 imagecopyresampled($newImg, $backgroundImage, 0, 0, 0, 0, $this->getWidth(), $this->getHeight(), $this->getWidth(), $this->getHeight());
-                imagealphablending($newImg, true);
-                imagecopyresampled($newImg, $this->resource, 0, 0, 0, 0, $this->getWidth(), $this->getHeight(), $this->getWidth(), $this->getHeight());
-                $this->resource = $newImg;
+            } elseif ($mode == 'asTexture') {
+                imagesettile($newImg, $backgroundImage);
+                imagefilledrectangle($newImg, 0, 0, $this->getWidth(), $this->getHeight(), IMG_COLOR_TILED);
             } else {
                 // default behavior (fit)
-                $newImg = $this->createImage($this->getWidth(), $this->getHeight());
                 imagecopyresampled($newImg, $backgroundImage, 0, 0, 0, 0, $this->getWidth(), $this->getHeight(), $backgroundImageWidth, $backgroundImageHeight);
-                imagealphablending($newImg, true);
-                imagecopyresampled($newImg, $this->resource, 0, 0, 0, 0, $this->getWidth(), $this->getHeight(), $this->getWidth(), $this->getHeight());
-                $this->resource = $newImg;
             }
+
+            imagealphablending($newImg, true);
+            imagecopyresampled($newImg, $this->resource, 0, 0, 0, 0, $this->getWidth(), $this->getHeight(), $this->getWidth(), $this->getHeight());
+
+            $this->resource = $newImg;
         }
 
         $this->postModify();
