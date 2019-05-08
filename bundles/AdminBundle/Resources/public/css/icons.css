@@ -189,7 +189,7 @@
 }
 
 .pimcore_icon_delete {
-    background: url(/bundles/pimcoreadmin/img/flat-color-icons/delete.svg) center center no-repeat !important;
+    background: url(/bundles/pimcoreadmin/img/flat-color-icons/remove.svg) center center no-repeat !important;
 }
 
 .pimcore_icon_add {
