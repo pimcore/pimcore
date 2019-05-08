@@ -1,4 +1,21 @@
 services:
+
+    #
+    # COMMANDS
+    #
+
+    # auto-register all commands as services
+    Pimcore\Bundle\CoreBundle\Command\:
+        resource: '../../Command'
+        exclude: '../../Command/Bundle/Helper'
+        tags: ['console.command']
+
+    Pimcore\Bundle\CoreBundle\Command\Bundle\Helper\PostStateChange:
+        arguments:
+            - '@Pimcore\Cache\Symfony\CacheClearer'
+            - '@Pimcore\Tool\AssetsInstaller'
+            - '@Symfony\Component\EventDispatcher\EventDispatcherInterface'
+
     Pimcore\Bundle\CoreBundle\Command\OptimizeImageThumbnailsCommand:
         arguments:
             - '@Pimcore\Image\Optimizer'
@@ -12,3 +29,21 @@ services:
         tags:
             - { name: console.command, command: 'pimcore:maintenance' }
             - { name: console.command, command: 'maintenance' }
+
+    Pimcore\Bundle\CoreBundle\Command\Bundle\DisableCommand:
+        arguments:
+            - '@Pimcore\Bundle\CoreBundle\Command\Bundle\Helper\PostStateChange'
+        tags:
+            - { name: console.command, command: 'pimcore:bundle:disable' }
+
+    Pimcore\Bundle\CoreBundle\Command\Bundle\EnableCommand:
+        arguments:
+            - '@Pimcore\Bundle\CoreBundle\Command\Bundle\Helper\PostStateChange'
+        tags:
+            - { name: console.command, command: 'pimcore:bundle:enable' }
+
+    Pimcore\Bundle\CoreBundle\Command\Targeting\MigrateElementNamesCommand:
+        arguments:
+            - '@Pimcore\Document\Tag\NamingStrategy\NamingStrategyInterface'
+        tags:
+            - { name: console.command, command: 'pimcore:targeting:migrate-element-names' }
