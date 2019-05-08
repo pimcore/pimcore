@@ -149,16 +149,14 @@ $runtimePerspective = \Pimcore\Config::getRuntimePerspective($user);
             <li id="pimcore_menu_maintenance" data-menu-tooltip="<?= $this->translate("deactivate_maintenance") ?>" class="pimcore_menu_item " style="display:none;"></li>
         </ul>
     </div>
-    <div id="pimcore_status">
-        <div href="#" style="display: none" id="pimcore_notification" data-menu-tooltip="<?= $this->translate("notifications") ?>" class="pimcore_icon_comments">
-            <span id="notification_value" style="display:none;"></span>
-        </div>
-        <div id="pimcore_status_dev" data-menu-tooltip="DEV MODE" style="display: none;"></div>
-        <div id="pimcore_status_debug" data-menu-tooltip="<?= $this->translate("debug_mode_on") ?>" style="display: none;"></div>
-        <div id="pimcore_status_email" data-menu-tooltip="<?= $this->translate("mail_settings_incomplete") ?>" style="display: none;"></div>
-        <a id="pimcore_status_maintenance" data-menu-tooltip="<?= $this->translate("maintenance_not_active") ?>" style="display: none;" href="https://pimcore.com/docs/5.0.x/Getting_Started/Installation.html#page_5-Maintenance-Cron-Job"></a>
-        <div id="pimcore_status_update" data-menu-tooltip="<?= $this->translate("update_available") ?>" style="display: none;"></div>
+
+    <div id="pimcore_status"></div>
+
+    <div id="pimcore_notification" data-menu-tooltip="<?= $this->translate("notifications") ?>" class="pimcore_icon_comments">
+        <img src="/bundles/pimcoreadmin/img/material-icons/outline-sms-24px.svg">
+        <span id="notification_value" style="display:none;"></span>
     </div>
+
     <div id="pimcore_avatar" style="display:none;">
         <img src="/admin/user/get-image" data-menu-tooltip="<?= $user->getName() ?> | <?= $this->translate('my_profile') ?>"/>
     </div>

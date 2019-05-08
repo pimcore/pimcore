@@ -13,12 +13,29 @@
 pimcore.registerNS("pimcore.notification.helper.x");
 
 pimcore.notification.helper.updateCount = function (count) {
+
+    var currentValue = Ext.get("notification_value").getHtml();
+    if(currentValue > count) {
+        return;
+    }
+
     if (count > 0) {
         Ext.get("notification_value").show();
         Ext.fly('notification_value').update(count);
     } else {
         Ext.get("notification_value").hide();
     }
+};
+
+pimcore.notification.helper.incrementCount = function () {
+    var value = Ext.get("notification_value").getHtml();
+    if(value) {
+        value++;
+    } else {
+        value = 1;
+    }
+
+    pimcore.notification.helper.updateCount(value);
 };
 
 pimcore.notification.helper.showNotifications = function (notifications) {
