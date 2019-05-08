@@ -1,5 +1,9 @@
 # Upgrade Notes for Upgrades within Pimcore 5
 
+## Version 5.8.2
+- Checkbox is tri-state from now on (null, true, false). Default value can be set for editmode. Null means that
+inheritance is enabled, otherwise it isn't. Until now, inheritance was enabled also for false value. 
+
 ## Version 5.8.0
 - Add PathFormatter interface, static path formatters are now deprecated and will be removed with Version 6.0. You can read
  more about that [here](../../../05_Objects/01_Object_Classes/05_Class_Settings/14_Path_Formatter.md).
