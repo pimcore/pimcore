@@ -45,25 +45,18 @@ class Concatenator extends AbstractOperator
 
         foreach ($childs as $c) {
             $childResult = $c->getLabeledValue($element);
-            $childValues = $childResult->value;
-            if ($childValues && !is_array($childValues)) {
-                $childValues = [$childValues];
-            }
+            $childValues = (array)$childResult->value;
 
-            if (is_array($childValues)) {
-                foreach ($childValues as $value) {
-                    if (!$hasValue) {
-                        if (!empty($value) || ((method_exists($value, 'isEmpty') && !$value->isEmpty()))) {
-                            $hasValue = true;
-                        }
-                    }
-
-                    if ($value !== null) {
-                        $valueArray[] = $value;
+            foreach ($childValues as $value) {
+                if (!$hasValue) {
+                    if (!empty($value) || (method_exists($value, 'isEmpty') && !$value->isEmpty())) {
+                        $hasValue = true;
                     }
                 }
-            } else {
-                $valueArray[] = $value;
+
+                if ($value !== null) {
+                    $valueArray[] = $value;
+                }
             }
         }
 
@@ -71,10 +64,10 @@ class Concatenator extends AbstractOperator
             $result->value = implode($this->glue, $valueArray);
 
             return $result;
-        } else {
-            $result->empty = true;
-
-            return $result;
         }
+
+        $result->empty = true;
+
+        return $result;
     }
 }
