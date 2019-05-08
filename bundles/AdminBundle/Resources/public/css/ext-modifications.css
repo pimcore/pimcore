@@ -233,6 +233,32 @@ body > .x-mask {
     height: 20px;
 }
 
+.x-menu-default {
+    border-color: #000;
+}
+
+.x-menu-body-default {
+    background-color: #202124;
+}
+
+.x-menu-item-text-default {
+    color: #fff;
+}
+
+.x-menu-item-default.x-menu-item-separator {
+    background-color: #000;
+    border-color: #000;
+}
+
+.x-menu-item-active .x-menu-item-text {
+    font-weight: 100 !important;
+}
+
+.x-css-shadow {
+    display: none;
+    opacity: 0;
+}
+
 /*.x-accordion-item .x-tree-icon-parent {
     vertical-align: middle;
 }*/
