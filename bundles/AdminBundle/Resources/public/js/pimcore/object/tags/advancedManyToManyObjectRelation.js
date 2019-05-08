@@ -109,6 +109,7 @@ pimcore.object.tags.advancedManyToManyObjectRelation = Class.create(pimcore.obje
         var columns = [];
         columns.push({text: 'ID', dataIndex: 'id', width: 50});
 
+        var repaintNeeded = false;
         for (i = 0; i < visibleFields.length; i++) {
             if (!empty(this.fieldConfig.visibleFieldDefinitions) && !empty(visibleFields[i])) {
                 var layout = this.fieldConfig.visibleFieldDefinitions[visibleFields[i]];
@@ -132,6 +133,10 @@ pimcore.object.tags.advancedManyToManyObjectRelation = Class.create(pimcore.obje
                     fc.renderer = this.fullPathRenderCheck.bind(this);
                 }
                 columns.push(fc);
+
+                if(layout.fieldtype === "image") {
+                    repaintNeeded = true;
+                }
             }
         }
 
@@ -403,9 +408,16 @@ pimcore.object.tags.advancedManyToManyObjectRelation = Class.create(pimcore.obje
 
         this.component.reference = this;
 
+        if(repaintNeeded) {
+            this.component.on("afterrender", function () {
+                setTimeout(function() {
+                    this.component.getView().refresh()
+                }.bind(this), 500);
+            }.bind(this));
+        }
+
         if (!readOnly) {
             this.component.on("afterrender", function () {
-
                 var dropTargetEl = this.component.getEl();
                 var gridDropTarget = new Ext.dd.DropZone(dropTargetEl, {
                     ddGroup: 'element',
