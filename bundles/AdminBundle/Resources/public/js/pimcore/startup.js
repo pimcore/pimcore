@@ -575,20 +575,16 @@ Ext.onReady(function () {
                                 region: 'west',
                                 id: 'pimcore_panel_tree_left',
                                 cls: 'pimcore_main_accordion',
-                                split: {
-                                    cls: 'pimcore_main_splitter'
-                                },
+                                split: true,
                                 width: 300,
                                 minSize: 175,
                                 collapsible: true,
                                 collapseMode: 'header',
-                                defaults: {
-                                    margin: '0'
-                                },
+                                hideCollapseTool: true,
+                                animCollapse: false,
                                 layout: {
                                     type: 'accordion',
-                                    hideCollapseTool: true,
-                                    animate: false
+                                    hideCollapseTool: true
                                 },
                                 header: false,
                                 hidden: true,
@@ -623,23 +619,20 @@ Ext.onReady(function () {
                             region: 'east',
                             id: 'pimcore_panel_tree_right',
                             cls: "pimcore_main_accordion",
-                            split: {
-                                cls: 'pimcore_main_splitter'
-                            },
+                            split: true,
                             width: 300,
                             minSize: 175,
                             collapsible: true,
                             collapseMode: 'header',
-                            defaults: {
-                                margin: '0'
-                            },
-                            layout: {
-                                type: 'accordion',
-                                hideCollapseTool: true,
+                            collapsed: false,
+                            hideCollapseTool: true,
+                            animCollapse: false,
+                            layout: 'accordion',
+                            hidden: true,
+                            header: false,
+                            layoutConfig: {
                                 animate: false
                             },
-                            header: false,
-                            hidden: true,
                             forceLayout: true,
                             hideMode: "offsets",
                             items: []

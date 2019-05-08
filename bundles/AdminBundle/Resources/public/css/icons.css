@@ -1360,17 +1360,3 @@
 }
 
 
-.pimcore_icon_main_tree_document {
-    background: url(/bundles/pimcoreadmin/img/material-icons/outline-description-24px.svg) center center no-repeat;
-    background-size: 30px 30px;
-}
-
-.pimcore_icon_main_tree_asset {
-    background: url(/bundles/pimcoreadmin/img/material-icons/outline-photo_camera-24px.svg) center center no-repeat;
-    background-size: 30px 30px;
-}
-
-.pimcore_icon_main_tree_object {
-    background: url(/bundles/pimcoreadmin/img/material-icons/outline-storage-24px.svg) center center no-repeat;
-    background-size: 30px 30px;
-}

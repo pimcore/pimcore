@@ -34,7 +34,7 @@ pimcore.asset.tree = Class.create({
                 rootVisible: true,
                 loaderBaseParams: {},
                 treeId: "pimcore_panel_tree_assets",
-                treeIconCls: "pimcore_icon_main_tree_asset pimcore_icon_material",
+                treeIconCls: "pimcore_icon_asset",
                 treeTitle: t('assets'),
                 parentPanel: Ext.getCmp("pimcore_panel_tree_" + this.position),
             };
