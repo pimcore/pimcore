@@ -36,7 +36,7 @@ pimcore.object.tree = Class.create({
                 allowedClasses: null,
                 loaderBaseParams: {},
                 treeId: "pimcore_panel_tree_objects",
-                treeIconCls: "pimcore_icon_main_tree_object pimcore_icon_material",
+                treeIconCls: "pimcore_icon_object",
                 treeTitle: t('data_objects'),
                 parentPanel: parentPanel
             };
