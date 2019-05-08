@@ -476,7 +476,7 @@ Ext.onReady(function () {
                 websiteLanguages: pimcore.settings.websiteLanguages.join(',')
             }
         }).done(function(data) {
-            if (data['latestVersion'] || true) {
+            if (data['latestVersion']) {
                 if(pimcore.currentuser.admin) {
 
                     pimcore.notification.helper.incrementCount();
