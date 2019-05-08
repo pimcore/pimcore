@@ -65,7 +65,7 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
         this.tabPanel = Ext.getCmp("pimcore_panel_tabs");
         var tabId = "asset_" + this.id;
 
-        var iconClass = "pimcore_icon_asset";
+        var iconClass = "pimcore_icon_asset_default pimcore_icon_" + this.data.fileExtension;
         if (this.data.type == "folder") {
             iconClass = "pimcore_icon_folder";
         }
