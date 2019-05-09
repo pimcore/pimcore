@@ -345,16 +345,16 @@ class ReverseManyToManyObjectRelation extends ManyToManyObjectRelation
             $item->set($ownerFieldName, $reverseObjects);
         }
 
-        $deletedRelations = $oldRelations;
-        if (is_array($data) && count($data) > 0) {
-            $deletedRelations = array_udiff(
-                $oldRelations, $data, function (DataObject\Concrete $oldRelation, DataObject\Concrete $newRelation) {
-                    return $oldRelation->getId() <=> $newRelation->getId();
-                }
-            );
-        }
+        $oldRelationIds = array_map(function(DataObject\Concrete $newRelation) {
+            return $newRelation->getId();
+        }, $oldRelations);
+        $newRelationIds = array_map(function(DataObject\Concrete $newRelation) {
+            return $newRelation->getId();
+        }, (array)$data);
+        $deletedRelationIds = array_diff($oldRelationIds, $newRelationIds);
 
-        foreach($deletedRelations as $deletedRelation) {
+        foreach($deletedRelationIds as $deletedRelationId) {
+            $deletedRelation = DataObject\Concrete::getById($deletedRelationId);
             $reverseObjects = $deletedRelation->get($ownerFieldName);
 
             foreach($reverseObjects as $index => $reverseObject) {
@@ -362,7 +362,7 @@ class ReverseManyToManyObjectRelation extends ManyToManyObjectRelation
                     unset($reverseObjects[$index]);
                 }
             }
-            $item->set($ownerFieldName, $reverseObjects);
+            $item->set($ownerFieldName, array_values($reverseObjects));
         }
 
         return parent::preSetData($object, $data, $params);
@@ -388,6 +388,16 @@ class ReverseManyToManyObjectRelation extends ManyToManyObjectRelation
 
         foreach($deletedRelationIds as $deletedRelationId) {
             $deletedRelation = DataObject\Concrete::getById($deletedRelationId);
+
+            $reverseObjects = $deletedRelation->get($this->getOwnerFieldName());
+
+            foreach($reverseObjects as $index => $reverseObject) {
+                if($reverseObject->getId() === $object->getId()) {
+                    unset($reverseObjects[$index]);
+                }
+            }
+            $deletedRelation->set($this->getOwnerFieldName(), array_values($reverseObjects));
+
             $version = $deletedRelation->saveVersion(true, true, $params['versionNote'] ?? null);
             $db->update('objects', ['o_versionCount' => $version->getVersionCount(), 'o_modificationDate' => $version->getDate()], ['o_id' => $deletedRelation->getId()]);
 
