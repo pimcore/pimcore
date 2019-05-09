@@ -324,6 +324,8 @@ class ReverseManyToManyObjectRelation extends ManyToManyObjectRelation
      */
     public function preSetData($object, $data, $params = [])
     {
+        $oldRelations = (array)$object->get($this->getName());
+
         $ownerFieldName = $this->getOwnerFieldName();
         /** @var DataObject\Concrete $item */
         foreach ((array)$data as $item) {
@@ -332,8 +334,31 @@ class ReverseManyToManyObjectRelation extends ManyToManyObjectRelation
             }
 
             $reverseObjects = $item->get($ownerFieldName);
-            $reverseObjects[] = $item;
+            foreach((array)$reverseObjects as $reverseObject) {
+                if($reverseObject->getId() === $object->getId()) {
+                    continue 2;
+                }
+            }
+            $reverseObjects[] = $object;
 
+            $item->set($ownerFieldName, $reverseObjects);
+        }
+
+        $newRelations = (array)$data;
+
+        $deletedRelations = array_udiff($oldRelations, $newRelations, function(DataObject\Concrete $oldRelation, DataObject\Concrete $newRelation) {
+            return $oldRelation->getId() <=> $newRelation->getId();
+        });
+
+        foreach($deletedRelations as $deletedRelation) {
+            $reverseObjects = $deletedRelation->get($ownerFieldName);
+
+            foreach($reverseObjects as $index => $reverseObject) {
+                if($reverseObject->getId() === $object->getId()) {
+                    unset($reverseObjects[$index]);
+                }
+            }
+            $reverseObjects[] = $object;
             $item->set($ownerFieldName, $reverseObjects);
         }
 
@@ -352,17 +377,17 @@ class ReverseManyToManyObjectRelation extends ManyToManyObjectRelation
         $return = [];
         if (is_array($data) && count($data) > 0) {
             $counter = 1;
-            foreach ($data as $object) {
-                if ($object instanceof DataObject\Concrete) {
+            foreach ($data as $reverseObject) {
+                if ($reverseObject instanceof DataObject\Concrete) {
                     $return[] = [
-                        'src_id' => $object->getId(),
+                        'src_id' => $reverseObject->getId(),
                         'type' => 'object',
                         'fieldname' => $this->getOwnerFieldName(),
                         'index' => $counter
                     ];
 
-                    $object->saveVersion(true, false, $params['versionNote'] ?? null);
-                    // todo: set o_modification_timestamp of $object
+                    $version = $reverseObject->saveVersion(true, true, $params['versionNote'] ?? null);
+                    $db->update('objects', ['o_versionCount' => $version->getVersionCount()], ['o_id' => $reverseObject->getId()]);
                 }
                 $counter++;
             }
