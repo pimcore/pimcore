@@ -17,6 +17,7 @@
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
+use Pimcore\Cache;
 use Pimcore\Db;
 use Pimcore\Logger;
 use Pimcore\Model;
@@ -344,11 +345,14 @@ class ReverseManyToManyObjectRelation extends ManyToManyObjectRelation
             $item->set($ownerFieldName, $reverseObjects);
         }
 
-        $newRelations = (array)$data;
-
-        $deletedRelations = array_udiff($oldRelations, $newRelations, function(DataObject\Concrete $oldRelation, DataObject\Concrete $newRelation) {
-            return $oldRelation->getId() <=> $newRelation->getId();
-        });
+        $deletedRelations = $oldRelations;
+        if (is_array($data) && count($data) > 0) {
+            $deletedRelations = array_udiff(
+                $oldRelations, $data, function (DataObject\Concrete $oldRelation, DataObject\Concrete $newRelation) {
+                    return $oldRelation->getId() <=> $newRelation->getId();
+                }
+            );
+        }
 
         foreach($deletedRelations as $deletedRelation) {
             $reverseObjects = $deletedRelation->get($ownerFieldName);
@@ -358,7 +362,6 @@ class ReverseManyToManyObjectRelation extends ManyToManyObjectRelation
                     unset($reverseObjects[$index]);
                 }
             }
-            $reverseObjects[] = $object;
             $item->set($ownerFieldName, $reverseObjects);
         }
 
@@ -371,6 +374,31 @@ class ReverseManyToManyObjectRelation extends ManyToManyObjectRelation
     public function prepareDataForPersistence($data, $object = null, $params = [])
     {
         $db = Db::get();
+
+        $oldRelations = $db->fetchAll('SELECT src_id FROM object_relations_' . $this->getOwnerClassId().' WHERE dest_id=? AND fieldname=? AND ownertype = \'object\'', [$object->getId(), $this->getOwnerFieldName()]);
+        $oldRelations = array_map(function($oldRelation) {
+            return $oldRelation['src_id'];
+        }, $oldRelations);
+
+        $deletedRelationIds = $oldRelations;
+        if (is_array($data) && count($data) > 0) {
+            $deletedRelationIds = array_udiff(
+                $oldRelations, $data, function ($oldRelation, $newRelation) {
+                    if ($newRelation instanceof DataObject\Concrete) {
+                        return $oldRelation <=> $newRelation->getId();
+                    }
+                    return 0;
+                }
+            );
+        }
+
+        foreach($deletedRelationIds as $deletedRelationId) {
+            $deletedRelation = DataObject\Concrete::getById($deletedRelationId);
+            $version = $deletedRelation->saveVersion(true, true, $params['versionNote'] ?? null);
+            $db->update('objects', ['o_versionCount' => $version->getVersionCount(), 'o_modificationDate' => $version->getDate()], ['o_id' => $deletedRelation->getId()]);
+
+            Cache::remove('object_' . $deletedRelation->getId());
+        }
 
         $db->deleteWhere('object_relations_' . $this->getOwnerClassId(), 'dest_id='.$db->quote($object->getId()).' AND fieldname='.$db->quote($this->getOwnerFieldName()).' AND ownertype = \'object\'');
 
@@ -387,7 +415,9 @@ class ReverseManyToManyObjectRelation extends ManyToManyObjectRelation
                     ];
 
                     $version = $reverseObject->saveVersion(true, true, $params['versionNote'] ?? null);
-                    $db->update('objects', ['o_versionCount' => $version->getVersionCount()], ['o_id' => $reverseObject->getId()]);
+                    $db->update('objects', ['o_versionCount' => $version->getVersionCount(), 'o_modificationDate' => $version->getDate()], ['o_id' => $reverseObject->getId()]);
+
+                    Cache::remove('object_' . $reverseObject->getId());
                 }
                 $counter++;
             }
