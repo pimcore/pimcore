@@ -15,6 +15,7 @@
 namespace Pimcore\Bundle\CoreBundle;
 
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\AreabrickPass;
+use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\RoutingLoaderPass;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\CacheCollectorPass;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\DebugStopwatchPass;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\DoctrineMigrationsParametersPass;
@@ -86,5 +87,6 @@ class PimcoreCoreBundle extends Bundle
         $container->addCompilerPass(new WorkflowPass());
         $container->addCompilerPass(new RegisterImageOptimizersPass());
         $container->addCompilerPass(new RegisterMaintenanceTaskPass());
+        $container->addCompilerPass(new RoutingLoaderPass());
     }
 }
