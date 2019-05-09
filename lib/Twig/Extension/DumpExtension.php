@@ -20,9 +20,10 @@ namespace Pimcore\Twig\Extension;
 use Symfony\Component\VarDumper\Cloner\VarCloner;
 use Symfony\Component\VarDumper\Dumper\AbstractDumper;
 use Symfony\Component\VarDumper\Dumper\HtmlDumper;
+use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
 
-class DumpExtension extends \Twig_Extension
+class DumpExtension extends AbstractExtension
 {
     public function getFunctions()
     {

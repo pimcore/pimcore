@@ -16,8 +16,9 @@ namespace Pimcore\Twig\Extension;
 
 use Pimcore\Templating\Helper\Action;
 use Pimcore\Templating\Helper\Inc;
+use Twig\Extension\AbstractExtension;
 
-class SubrequestExtension extends \Twig_Extension
+class SubrequestExtension extends AbstractExtension
 {
     /**
      * @var Inc

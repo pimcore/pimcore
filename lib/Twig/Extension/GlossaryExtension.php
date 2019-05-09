@@ -19,8 +19,9 @@ namespace Pimcore\Twig\Extension;
 
 use Pimcore\Templating\Helper\Glossary;
 use Pimcore\Twig\TokenParser\GlossaryTokenParser;
+use Twig\Extension\AbstractExtension;
 
-class GlossaryExtension extends \Twig_Extension
+class GlossaryExtension extends AbstractExtension
 {
     /**
      * @var Glossary

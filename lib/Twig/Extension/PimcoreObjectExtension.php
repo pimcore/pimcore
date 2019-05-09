@@ -21,8 +21,9 @@ use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\Document;
 use Pimcore\Model\Site;
+use Twig\Extension\AbstractExtension;
 
-class PimcoreObjectExtension extends \Twig_Extension
+class PimcoreObjectExtension extends AbstractExtension
 {
     public function getFunctions()
     {

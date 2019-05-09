@@ -21,8 +21,9 @@ use Pimcore\Model\Document;
 use Pimcore\Navigation\Container;
 use Pimcore\Navigation\Renderer\RendererInterface;
 use Pimcore\Templating\Helper\Navigation;
+use Twig\Extension\AbstractExtension;
 
-class NavigationExtension extends \Twig_Extension
+class NavigationExtension extends AbstractExtension
 {
     /**
      * @var Navigation

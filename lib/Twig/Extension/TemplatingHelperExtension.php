@@ -19,12 +19,13 @@ namespace Pimcore\Twig\Extension;
 
 use Pimcore\Templating\PhpEngine;
 use Symfony\Component\Templating\Helper\HelperInterface;
+use Twig\Extension\AbstractExtension;
 
 /**
  * Delegates calls to PHP templating helpers. Use this only with templating helpers which do not rely
  * on PHP rendering!
  */
-class TemplatingHelperExtension extends \Twig_Extension
+class TemplatingHelperExtension extends AbstractExtension
 {
     /**
      * @var PhpEngine
