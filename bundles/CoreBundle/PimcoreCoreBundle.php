@@ -15,10 +15,10 @@
 namespace Pimcore\Bundle\CoreBundle;
 
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\AreabrickPass;
-use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\RoutingLoaderPass;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\CacheCollectorPass;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\DebugStopwatchPass;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\DoctrineMigrationsParametersPass;
+use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\LegacyTemplatePass;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\LongRunningHelperPass;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\MonologPsrLogMessageProcessorPass;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\MonologPublicLoggerPass;
@@ -28,6 +28,7 @@ use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\PimcoreContextResolve
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\PimcoreGlobalTemplatingVariablesPass;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\RegisterImageOptimizersPass;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\RegisterMaintenanceTaskPass;
+use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\RoutingLoaderPass;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\ServiceControllersPass;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\SessionConfiguratorPass;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\TargetingOverrideHandlersPass;
@@ -88,5 +89,6 @@ class PimcoreCoreBundle extends Bundle
         $container->addCompilerPass(new RegisterImageOptimizersPass());
         $container->addCompilerPass(new RegisterMaintenanceTaskPass());
         $container->addCompilerPass(new RoutingLoaderPass());
+        $container->addCompilerPass(new LegacyTemplatePass());
     }
 }
