@@ -174,6 +174,18 @@ class Frontend
                     if (in_array('image/webp', $contentTypes)) {
                         return true;
                     }
+
+                    // not nice to do a browser detection but for now the easiest way to get around the topic described in #4345
+                    $userAgent = strtolower($requestHelper->getMasterRequest()->headers->get('User-Agent'));
+                    if(preg_match('@(firefox|edge)/([\d]+)@', $userAgent, $matches)) {
+                        if($matches[1] == 'firefox' && intval($matches[2]) >= 65) {
+                            return true;
+                        }
+
+                        if($matches[1] == 'edge' && intval($matches[2]) >= 18) {
+                            return true;
+                        }
+                    }
                 }
             } catch (\Exception $e) {
                 // nothing to do
