@@ -773,7 +773,7 @@ CREATE TABLE `versions` (
   `binaryFileId` BIGINT(20) UNSIGNED NULL DEFAULT NULL,
   PRIMARY KEY  (`id`),
   KEY `cid` (`cid`),
-  KEY `ctype` (`ctype`),
+  KEY `ctype_cid` (`ctype`, `cid`),
   KEY `date` (`date`),
   KEY `binaryFileHash` (`binaryFileHash`),
   KEY `binaryFileId` (`binaryFileId`)
