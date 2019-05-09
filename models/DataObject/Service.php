@@ -278,6 +278,8 @@ class Service extends Model\Element\Service
             $haveHelperDefinition = false;
 
             foreach ($fields as $key) {
+                $brickDescriptor = null;
+                $brickKey = null;
                 $brickType = null;
                 $brickGetter = null;
                 $dataKey = $key;
@@ -711,7 +713,14 @@ class Service extends Model\Element\Service
             foreach ($fd as $def) {
                 $getter = 'get' . ucfirst($def->getName());
                 if (method_exists($object, $getter)) {
-                    $object->$getter();
+                    $value = $object->$getter();
+                    if ($value instanceof Localizedfield) {
+                        $value->loadLazyData();
+                    } elseif ($value instanceof Objectbrick) {
+                        $value->loadLazyData();
+                    } elseif ($value instanceof Fieldcollection) {
+                        $value->loadLazyData();
+                    }
                 }
             }
         }

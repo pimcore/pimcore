@@ -1,0 +1,109 @@
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+
+    Pimcore\Maintenance\Executor:
+        arguments:
+            - 'maintenance.pid'
+            - '@logger'
+
+    Pimcore\Maintenance\Tasks\ScheduledTasksTask:
+        arguments:
+            - '@logger'
+        tags:
+            - { name: pimcore.maintenance.task, type: scheduledtasks }
+
+    Pimcore\Maintenance\Tasks\LogMailMaintenanceTask:
+        arguments:
+            - '@doctrine.dbal.default_connection'
+        tags:
+            - { name: pimcore.maintenance.task, type: logmaintenance }
+
+    Pimcore\Maintenance\Tasks\LogCleanupTask:
+        tags:
+            - { name: pimcore.maintenance.task, type: cleanuplogfiles }
+
+    Pimcore\Maintenance\Tasks\LogErrorCleanupTask:
+        arguments:
+            - '@doctrine.dbal.default_connection'
+        tags:
+            - { name: pimcore.maintenance.task, type: httperrorlog }
+
+    Pimcore\Maintenance\Tasks\LogArchiveTask:
+        arguments:
+            - '@doctrine.dbal.default_connection'
+        tags:
+            - { name: pimcore.maintenance.task, type: archiveLogEntries }
+
+    Pimcore\Maintenance\Tasks\SanitizeElementsTask:
+        arguments:
+            - '@logger'
+        tags:
+            - { name: pimcore.maintenance.task, type: runSanityCheck }
+
+    Pimcore\Maintenance\Tasks\VersionsCleanupTask:
+        arguments:
+            - '@logger'
+        tags:
+            - { name: pimcore.maintenance.task, type: versioncleanup }
+
+    Pimcore\Maintenance\Tasks\VersionsCompressTask:
+        arguments:
+            - '@logger'
+        tags:
+            - { name: pimcore.maintenance.task, type: versioncompress }
+
+    Pimcore\Maintenance\Tasks\RedirectCleanupTask:
+        arguments:
+            - '@logger'
+        tags:
+            - { name: pimcore.maintenance.task, type: redirectcleanup }
+
+    Pimcore\Maintenance\Tasks\DbCleanupBrokenViewsTask:
+        arguments:
+            - '@doctrine.dbal.default_connection'
+            - '@logger'
+        tags:
+            - { name: pimcore.maintenance.task, type: cleanupbrokenviews }
+
+    Pimcore\Maintenance\Tasks\DownloadMaxMinDbTask:
+        arguments:
+            - '@logger'
+        tags:
+            - { name: pimcore.maintenance.task, type: downloadmaxminddb }
+
+    Pimcore\Maintenance\Tasks\CacheCleanupTask:
+        arguments:
+            - '@Pimcore\Cache\Core\CoreHandlerInterface'
+        tags:
+            - { name: pimcore.maintenance.task, type: cleanupcache }
+
+    Pimcore\Maintenance\Tasks\TmpStoreCleanupTask:
+        arguments:
+            - '@doctrine.dbal.default_connection'
+        tags:
+            - { name: pimcore.maintenance.task, type: tmpstorecleanup }
+
+    Pimcore\Maintenance\Tasks\ImageOptimizeTask:
+        arguments:
+            - '@Pimcore\Image\Optimizer'
+            - '@logger'
+        tags:
+            - { name: pimcore.maintenance.task, type: imageoptimize }
+
+    Pimcore\Maintenance\Tasks\HousekeepingTask:
+        tags:
+            - { name: pimcore.maintenance.task, type: housekeeping }
+
+    Pimcore\Maintenance\Tasks\TagsExpireTask:
+        arguments:
+            - '@logger'
+        tags:
+            - { name: pimcore.maintenance.task, type: markexpiredtagsdisabled }
+
+    Pimcore\Maintenance\Tasks\CheckErrorLogsDbTask:
+        arguments:
+            - '@doctrine.dbal.default_connection'
+        tags:
+            - { name: pimcore.maintenance.task, type: checkerrorlogsdb }

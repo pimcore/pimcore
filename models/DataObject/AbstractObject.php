@@ -55,7 +55,7 @@ class AbstractObject extends Model\Element\AbstractElement
     /**
      * @var bool
      */
-    private static $hidePublished = false;
+    private static $hideUnpublished = false;
 
     /**
      * @var bool
@@ -68,23 +68,140 @@ class AbstractObject extends Model\Element\AbstractElement
     protected static $disableDirtyDetection = false;
 
     /**
+     * @var int
+     */
+    protected $o_id = 0;
+
+    /**
+     * @var int
+     */
+    protected $o_parentId;
+
+    /**
+     * @var self
+     */
+    protected $o_parent;
+
+    /**
+     * @var string
+     */
+    protected $o_type = 'object';
+
+    /**
+     * @var string
+     */
+    protected $o_key;
+
+    /**
+     * @var string
+     */
+    protected $o_path;
+
+    /**
+     * @var int
+     */
+    protected $o_index;
+
+    /**
+     * @var int
+     */
+    protected $o_creationDate;
+
+    /**
+     * @var int
+     */
+    protected $o_modificationDate;
+
+    /**
+     * @var int
+     */
+    protected $o_userOwner;
+
+    /**
+     * @var int
+     */
+    protected $o_userModification;
+
+    /**
+     * @var array
+     */
+    protected $o_properties = null;
+
+    /**
+     * @var bool
+     */
+    protected $o_hasChilds;
+
+    /**
+     * Contains a list of sibling documents
+     *
+     * @var array
+     */
+    protected $o_siblings;
+
+    /**
+     * Indicator if document has siblings or not
+     *
+     * @var bool
+     */
+    protected $o_hasSiblings;
+
+    /**
+     * @var Model\Dependency[]
+     */
+    protected $o_dependencies;
+
+    /**
+     * @var array
+     */
+    protected $o_childs;
+
+    /**
+     * @var string
+     */
+    protected $o_locked;
+
+    /**
+     * @var Model\Element\AdminStyle
+     */
+    protected $o_elementAdminStyle;
+
+    /**
+     * @var string
+     */
+    protected $o_childrenSortBy;
+
+    /**
+     * @var array
+     */
+    private $lastGetChildsObjectTypes = [];
+
+    /**
+     * @var array
+     */
+    private $lastGetSiblingObjectTypes = [];
+
+    /** @var int */
+    protected $o_versionCount = 0;
+
+    /**
      * @static
      *
      * @return bool
      */
     public static function getHideUnpublished()
     {
-        return self::$hidePublished;
+        return self::$hideUnpublished;
     }
 
     /**
      * @static
      *
-     * @param  $hidePublished
+     * @param  $hideUnpublished
      */
-    public static function setHideUnpublished($hidePublished)
+    public static function setHideUnpublished($hideUnpublished)
     {
-        self::$hidePublished = $hidePublished;
+        self::$hideUnpublished = $hideUnpublished;
     }
 
     /**
@@ -94,7 +211,7 @@ class AbstractObject extends Model\Element\AbstractElement
      */
     public static function doHideUnpublished()
     {
-        return self::$hidePublished;
+        return self::$hideUnpublished;
     }
 
     /**
@@ -134,123 +251,6 @@ class AbstractObject extends Model\Element\AbstractElement
 
         return self::$getInheritedValues;
     }
-
-    /**
-     * @var int
-     */
-    public $o_id = 0;
-
-    /**
-     * @var int
-     */
-    public $o_parentId;
-
-    /**
-     * @var self
-     */
-    public $o_parent;
-
-    /**
-     * @var string
-     */
-    public $o_type = 'object';
-
-    /**
-     * @var string
-     */
-    public $o_key;
-
-    /**
-     * @var string
-     */
-    public $o_path;
-
-    /**
-     * @var int
-     */
-    public $o_index;
-
-    /**
-     * @var int
-     */
-    public $o_creationDate;
-
-    /**
-     * @var int
-     */
-    public $o_modificationDate;
-
-    /**
-     * @var int
-     */
-    public $o_userOwner;
-
-    /**
-     * @var int
-     */
-    public $o_userModification;
-
-    /**
-     * @var array
-     */
-    public $o_properties = null;
-
-    /**
-     * @var bool
-     */
-    public $o_hasChilds;
-
-    /**
-     * Contains a list of sibling documents
-     *
-     * @var array
-     */
-    public $o_siblings;
-
-    /**
-     * Indicator if document has siblings or not
-     *
-     * @var bool
-     */
-    public $o_hasSiblings;
-
-    /**
-     * @var Model\Dependency[]
-     */
-    public $o_dependencies;
-
-    /**
-     * @var array
-     */
-    public $o_childs;
-
-    /**
-     * @var string
-     */
-    public $o_locked;
-
-    /**
-     * @var Model\Element\AdminStyle
-     */
-    public $o_elementAdminStyle;
-
-    /**
-     * @var string
-     */
-    public $o_childrenSortBy;
-
-    /**
-     * @var array
-     */
-    private $lastGetChildsObjectTypes = [];
-
-    /**
-     * @var array
-     */
-    private $lastGetSiblingObjectTypes = [];
-
-    /** @var int */
-    protected $o_versionCount = 0;
 
     /**
      * get possible types
@@ -449,21 +449,24 @@ class AbstractObject extends Model\Element\AbstractElement
     }
 
     /**
+     * Quick test if there are children
+     *
      * @param array $objectTypes
+     * @param bool $unpublished
      *
      * @return bool
      */
-    public function hasChildren($objectTypes = [self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_FOLDER])
+    public function hasChildren($objectTypes = [self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_FOLDER], $unpublished = false)
     {
         if (is_bool($this->o_hasChilds)) {
             if (($this->o_hasChilds and empty($this->o_childs)) or (!$this->o_hasChilds and !empty($this->o_childs))) {
-                return $this->getDao()->hasChildren($objectTypes);
+                return $this->getDao()->hasChildren($objectTypes, $unpublished);
             } else {
                 return $this->o_hasChilds;
             }
         }
 
-        return $this->getDao()->hasChildren($objectTypes);
+        return $this->getDao()->hasChildren($objectTypes, $unpublished);
     }
 
     /**
@@ -603,6 +606,7 @@ class AbstractObject extends Model\Element\AbstractElement
             }
 
             $isUpdate = false;
+            $differentOldPath = null;
 
             $isDirtyDetectionDisabled = self::isDirtyDetectionDisabled();
             $preEvent = new DataObjectEvent($this, $params);

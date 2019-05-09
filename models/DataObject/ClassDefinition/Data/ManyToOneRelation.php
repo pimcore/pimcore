@@ -230,11 +230,21 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
         $data = is_array($data) ? $data : [];
         $data = current($data);
 
+        $result = [
+            'dirty' => false,
+            'data' => null
+        ];
+
         if ($data['dest_id'] && $data['type']) {
-            return Element\Service::getElementById($data['type'], $data['dest_id']);
+            $element = Element\Service::getElementById($data['type'], $data['dest_id']);
+            if ($element instanceof Element\ElementInterface) {
+                $result['data'] = $element;
+            } else {
+                $result['dirty'] = true;
+            }
         }
 
-        return null;
+        return $result;
     }
 
     /**

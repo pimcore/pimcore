@@ -554,7 +554,6 @@
     "preserve_color": "preserve_color",
     "thumbnail_preserve_info_text": "thumbnail_preserve_info_text",
     "full_page_cache": "Caché de página completa",
-    "path_formatter_class": "path_formatter_class",
     "separated": "apartado",
     "additional_path_variable": "additional_path_variable",
     "log_refresh_label": "log_refresh_label",
@@ -703,5 +702,9 @@
     "lazy_loading_warning_block": "WARNING: Lazy Loading is NOT possible within Blocks",
     "left": "left",
     "right": "right",
-    "provide_split_view": "Provide Split View"
+    "provide_split_view": "Provide Split View",
+    "allow_multiple_assignments": "Allow Multiple Assignments",
+    "enable_admin_async_load": "Enable Async Load in Admin",
+    "async_loading_warning_block": "WARNING: Async Loading is NOT possible within Localized Fields and Blocks",
+    "path_formatter_service": "Formatter Service / Class"
 }

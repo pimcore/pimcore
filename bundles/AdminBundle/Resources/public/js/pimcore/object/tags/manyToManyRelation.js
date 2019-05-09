@@ -181,7 +181,7 @@ pimcore.object.tags.manyToManyRelation = Class.create(pimcore.object.tags.abstra
                 },
                 listeners: {
                     refresh: function (gridview) {
-                        this.requestNicePathData(this.store.data, true);
+                        this.requestNicePathData(this.store.data);
                     }.bind(this)
                 }
             },
@@ -682,16 +682,13 @@ pimcore.object.tags.manyToManyRelation = Class.create(pimcore.object.tags.abstra
         return this.dataChanged;
     },
 
-    requestNicePathData: function(targets, isInitialLoad) {
+    requestNicePathData: function(targets) {
         if (!this.object) {
             return;
         }
 
         var context = this.getContext();
-        var loadEditModeData = false;
-        if(isInitialLoad && context['containerType'] == 'object') {
-            loadEditModeData = true;
-        }
+
         pimcore.helpers.requestNicePathData(
             {
                 type: "object",
@@ -700,7 +697,7 @@ pimcore.object.tags.manyToManyRelation = Class.create(pimcore.object.tags.abstra
             targets,
             {
                 idProperty: this.idProperty,
-                loadEditModeData: loadEditModeData
+                pathProperty: this.pathProperty
             },
             this.fieldConfig,
             context,
@@ -708,8 +705,6 @@ pimcore.object.tags.manyToManyRelation = Class.create(pimcore.object.tags.abstra
             pimcore.helpers.getNicePathHandlerStore.bind(this, this.store, {
                 idProperty: this.idProperty,
                 pathProperty: this.pathProperty,
-                loadEditModeData: loadEditModeData,
-                fields: this.fieldConfig.columnKeys
             }, this.component.getView())
         );
     },

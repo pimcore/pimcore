@@ -195,7 +195,7 @@ pimcore.object.classes.data.advancedManyToManyRelation = Class.create(pimcore.ob
             {
                 xtype: 'textfield',
                 width: 600,
-                fieldLabel: t("path_formatter_class"),
+                fieldLabel: t("path_formatter_service"),
                 name: 'pathFormatterClass',
                 value: this.datax.pathFormatterClass
             },
@@ -364,6 +364,13 @@ pimcore.object.classes.data.advancedManyToManyRelation = Class.create(pimcore.ob
         this.stores = {};
         this.grids = {};
         this.specificPanel.add(this.getGrid("cols", this.datax.columns, true));
+
+        this.specificPanel.add({
+            xtype: "checkbox",
+            boxLabel: t("enable_batch_edit_columns"),
+            name: "enableBatchEdit",
+            value: this.datax.enableBatchEdit
+        });
 
         this.specificPanel.add({
             xtype: "checkbox",

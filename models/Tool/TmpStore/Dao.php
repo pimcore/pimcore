@@ -86,11 +86,6 @@ class Dao extends Model\Dao\AbstractDao
         return false;
     }
 
-    public function cleanup()
-    {
-        $this->db->deleteWhere('tmp_store', 'expiryDate < ' . time());
-    }
-
     /**
      * @param $tag
      *

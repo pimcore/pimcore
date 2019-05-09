@@ -505,7 +505,7 @@ class GridHelperService
         }
 
         $list->setCondition(implode(' AND ', $conditionFilters));
-        if (!$requestParams['export'] && empty($requestParams['ids'])) {
+        if (!$requestParams['batch'] && empty($requestParams['ids'])) {
             $list->setLimit($limit);
             $list->setOffset($start);
         }

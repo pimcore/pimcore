@@ -15,7 +15,7 @@
 
 #pimcore_body {
     padding: 4px 10px 0 60px !important;
-    background: #191919;
+    background: #202124;
 }
 
 #pimcore_sidebar {
@@ -57,10 +57,6 @@
 }
 
 #pimcore_navigation li svg path {
-    fill: #969696;
-}
-
-#pimcore_navigation li:hover svg path {
     fill: #fff;
 }
 
@@ -73,17 +69,7 @@
 }
 
 #pimcore_navigation li:hover {
-    background-color: #282828;
-}
-
-#pimcore_navigation li:hover:after {
-    position: absolute;
-    left:0;
-    top:0;
-    width: 6px;
-    height:48px;
-    background-color: #6428b4;
-    content: "";
+    background-color: #323639;
 }
 
 #pimcore_menu_maintenance {
@@ -141,19 +127,18 @@
 
 #pimcore_logout svg {
     position: absolute;
-    left: 17px;
-    top: 0;
-    width: 23px;
-    height: 23px;
-    transform: rotate(180deg);
+    left: 21px;
+    top: 2px;
+    width: 18px;
+    height: 18px;
 }
 
 #pimcore_logout svg path {
-    fill: #969696;
+    fill: #fff;
 }
 
 #pimcore_logout:hover svg path {
-    fill: #f03d29;
+    fill: #ECECEC;
 }
 
 #pimcore_logout:hover {
@@ -169,7 +154,8 @@
     width: 60px;
     height: 100px;
     text-align: center;
-    background: #3c3f41;
+    background: #6428b4;
+    box-shadow: inset 0px -10px 10px -13px #000;
 }
 
 #pimcore_avatar img {
@@ -1403,7 +1389,7 @@ span.warning {
 }
 
 #pimcore_panel_tabs > .x-tab-bar {
-    background: #191919;
+    background: #202124;
 
     background-image: url(/bundles/pimcoreadmin/img/logo-gray.svg);
     background-repeat: no-repeat;
@@ -1598,6 +1584,7 @@ span.warning {
 
 .pimcore_save_button {
     background: #28a050;
+    text-transform: uppercase;
 }
 
 .pimcore_save_button.x-btn-over, .pimcore_save_button.x-btn-pressed, .pimcore_save_button.x-btn-menu-active, .pimcore_save_button.x-btn-focus {
@@ -1695,7 +1682,7 @@ span.warning {
 
 .pimcore_main_accordion .x-panel-body {
     padding: 0;
-    background-color: #FbFbFb;
+    background-color: #ECECEC;
 }
 
 .pimcore_main_accordion .x-grid-body {
@@ -1704,6 +1691,54 @@ span.warning {
 
 .pimcore_main_accordion .x-panel-header {
     cursor: pointer;
+    background: #ECECEC;
+    padding: 9px 12px;
+    border-bottom: 1px solid #E0E0E0;
+}
+
+.pimcore_main_accordion .x-panel-header .x-title-text {
+    color: #323639;
+    font-weight: bold;
+}
+
+.pimcore_main_accordion .x-collapsed .x-panel-header {
+    background: #323639;
+    border-bottom: 1px solid #5A5A5A;
+}
+
+.pimcore_main_accordion .x-collapsed .x-panel-header .x-title-text {
+    color: #fff;
+}
+
+.pimcore_main_accordion .x-collapsed .x-panel-header .x-tool-img {
+    background-color: #323639;
+    color: #fff;
+}
+
+.pimcore_main_accordion .x-panel-header-title-default > .x-title-icon-wrap-default {
+    width: 40px;
+}
+
+.pimcore_main_accordion .x-panel-header-title-default > .x-title-icon-wrap-default > .x-title-icon-default {
+    width: 30px;
+    height: 30px;
+}
+
+.pimcore_main_accordion .pimcore_icon_material {
+    opacity: 0.75;
+}
+
+.pimcore_main_accordion .x-collapsed .pimcore_icon_material {
+    filter: invert(100%);
+    opacity: 1;
+}
+
+.pimcore_main_accordion
+
+.x-ie11 .pimcore_main_accordion .x-collapsed .pimcore_icon_material {
+    border-radius: 15px;
+    background-color: #ECECEC;
+    background-size: 20px 20px !important;
 }
 
 .pimcore_main_accordion .x-grid-item {
@@ -1711,11 +1746,15 @@ span.warning {
 }
 
 .pimcore_main_accordion .x-grid-item.x-grid-item-over {
-    background-color: #f0f0f0;
+    background-color: #fff;
 }
 
 .pimcore_main_accordion .x-grid-item.x-grid-item-selected, .pimcore_main_accordion .x-grid-item.x-grid-item-over.x-grid-item-selected {
-    background-color: #ffefbb;
+    background-color: #e3e4e5;
+}
+
+.pimcore_main_splitter {
+    background-color: #202124;
 }
 
 .pimcore_tree_node_root .x-tree-expander {

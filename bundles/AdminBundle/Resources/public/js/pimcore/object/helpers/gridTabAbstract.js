@@ -178,7 +178,7 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
                 objecttype: this.objecttype,
                 "fields[]": fieldKeys,
                 language: this.gridLanguage,
-                limit: this.store.getPageSize()
+                batch: true //to avoid limit on batch edit/append all
             };
 
 
@@ -525,7 +525,7 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
             "fields[]": fieldKeys,
             settings: settings,
             query: searchQuery,
-            export: true
+            batch: true // to avoid limit for export
         };
 
 

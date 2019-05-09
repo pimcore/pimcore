@@ -184,7 +184,7 @@ pimcore.object.classes.data.manyToOneRelation = Class.create(pimcore.object.clas
                     {
                         xtype: 'textfield',
                         width: 600,
-                        fieldLabel: t("path_formatter_class"),
+                        fieldLabel: t("path_formatter_service"),
                         name: 'pathFormatterClass',
                         value: this.datax.pathFormatterClass
                     }
@@ -227,7 +227,7 @@ pimcore.object.classes.data.manyToOneRelation = Class.create(pimcore.object.clas
                         width: 400
                     })
                 ]
-            }, 
+            },
             {
                 xtype:'fieldset',
                 title: t('asset_restrictions'),

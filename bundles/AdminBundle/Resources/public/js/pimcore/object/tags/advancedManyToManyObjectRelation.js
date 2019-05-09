@@ -493,18 +493,20 @@ pimcore.object.tags.advancedManyToManyObjectRelation = Class.create(pimcore.obje
                         }.bind(this, grid)
                     });
                     menu.add(batchSelectedMenu);
-                    menu.on('beforeshow', function (batchAllMenu, grid) {
+                    menu.on('beforeshow', function (batchAllMenu, batchSelectedMenu, grid) {
                         var menu = grid.headerCt.getMenu();
                         var columnDataIndex = menu.activeHeader.dataIndex;
                         var metaIndex = this.fieldConfig.columnKeys.indexOf(columnDataIndex);
 
                         if (metaIndex < 0) {
+                            batchSelectedMenu.hide();
                             batchAllMenu.hide();
                         } else {
+                            batchSelectedMenu.show();
                             batchAllMenu.show();
                         }
 
-                    }.bind(this, batchAllMenu, grid));
+                    }.bind(this, batchAllMenu, batchSelectedMenu, grid));
                 }
             }.bind(this));
         }
@@ -589,106 +591,6 @@ pimcore.object.tags.advancedManyToManyObjectRelation = Class.create(pimcore.obje
 
     getCellEditValue: function () {
         return this.getValue();
-    },
-
-    batchPrepare: function(columnDataIndex, grid, onlySelected, append){
-        var columnIndex = columnDataIndex.fullColumnIndex;
-        var editor = grid.getColumns()[columnIndex].getEditor();
-        var metaIndex = this.fieldConfig.columnKeys.indexOf(columnDataIndex.dataIndex);
-        var columnConfig = this.fieldConfig.columns[metaIndex];
-
-        if (columnConfig.type == 'multiselect') { //create edit layout for multiselect field
-            var selectData = [];
-            if (columnConfig.value) {
-                var selectDataRaw = columnConfig.value.split(";");
-                for (var j = 0; j < selectDataRaw.length; j++) {
-                    selectData.push([selectDataRaw[j], ts(selectDataRaw[j])]);
-                }
-            }
-
-            var store = new Ext.data.ArrayStore({
-                fields: [
-                    'id',
-                    'label'
-                ],
-                data: selectData
-            });
-
-            var options = {
-                triggerAction: "all",
-                editable: false,
-                store: store,
-                componentCls: "object_field",
-                height: '100%',
-                valueField: 'id',
-                displayField: 'label'
-            };
-
-            editor = Ext.create('Ext.ux.form.MultiSelect', options);
-        } else if (columnConfig.type == 'bool') { //create edit layout for bool meta field
-            editor = new Ext.form.Checkbox();
-        }
-
-        var editorLabel = Ext.create('Ext.form.Label', {
-          text: grid.getColumns()[columnIndex].text + ':',
-          style: {
-            float: 'left',
-            margin: '0 20px 0 0'
-          }
-        });
-
-        var formPanel = Ext.create('Ext.form.Panel', {
-            xtype: "form",
-            border: false,
-            items: [editorLabel, editor],
-            bodyStyle: "padding: 10px;",
-            buttons: [
-                {
-                    text: t("edit"),
-                    handler: function() {
-                        if(formPanel.isValid()) {
-                            this.batchProcess(columnDataIndex.dataIndex, editor, grid, onlySelected);
-                        }
-                    }.bind(this)
-                }
-            ]
-        });
-        var batchTitle = onlySelected ? "batch_edit_field_selected" : "batch_edit_field";
-        var title = t(batchTitle) + " " + grid.getColumns()[columnIndex].text;
-        this.batchWin = new Ext.Window({
-            autoScroll: true,
-            modal: false,
-            title: title,
-            items: [formPanel],
-            bodyStyle: "background: #fff;",
-            width: 500,
-            maxHeight: 400
-        });
-        this.batchWin.show();
-        this.batchWin.updateLayout();
-
-    },
-
-    batchProcess: function (dataIndex, editor, grid, onlySelected) {
-
-        var newValue = editor.getValue();
-        var valueType = "primitive";
-
-        if (onlySelected) {
-            var selectedRows = grid.getSelectionModel().getSelection();
-            for (var i=0; i<selectedRows.length; i++) {
-                selectedRows[i].set(dataIndex, newValue);
-            }
-        } else {
-            var items = grid.store.data.items;
-            for (var i = 0; i < items.length; i++)
-            {
-                var record = grid.store.getAt(i);
-                record.set(dataIndex, newValue);
-            }
-        }
-
-        this.batchWin.close();
     }
 
 });

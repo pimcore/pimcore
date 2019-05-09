@@ -554,7 +554,6 @@
     "preserve_color": "Mantieni colore (profilo, spazio)",
     "thumbnail_preserve_info_text": "'Preserve meta data' e 'preserve color' valgono solo per transizioni senza composizioni (frame, background color, ...) e alterazioni colore (greyscale, sepia, ...)",
     "full_page_cache": "Copia temporanea dell'intera pagina",
-    "path_formatter_class": "Classe di formattazione",
     "separated": "separato",
     "additional_path_variable": "Variabile $PATH addizionale",
     "log_refresh_label": "Aggiorna ogni",
@@ -703,5 +702,9 @@
     "lazy_loading_warning_block": "WARNING: Lazy Loading is NOT possible within Blocks",
     "left": "left",
     "right": "right",
-    "provide_split_view": "Provide Split View"
+    "provide_split_view": "Provide Split View",
+    "allow_multiple_assignments": "Allow Multiple Assignments",
+    "enable_admin_async_load": "Enable Async Load in Admin",
+    "async_loading_warning_block": "WARNING: Async Loading is NOT possible within Localized Fields and Blocks",
+    "path_formatter_service": "Formatter Service / Class"
 }
