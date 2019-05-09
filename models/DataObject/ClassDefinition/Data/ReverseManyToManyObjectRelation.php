@@ -381,16 +381,10 @@ class ReverseManyToManyObjectRelation extends ManyToManyObjectRelation
         }, $oldRelations);
 
         $deletedRelationIds = $oldRelations;
-        if (is_array($data) && count($data) > 0) {
-            $deletedRelationIds = array_udiff(
-                $oldRelations, $data, function ($oldRelation, $newRelation) {
-                    if ($newRelation instanceof DataObject\Concrete) {
-                        return $oldRelation <=> $newRelation->getId();
-                    }
-                    return 0;
-                }
-            );
-        }
+        $newRelationIds = array_map(function(DataObject\Concrete $newRelation) {
+            return $newRelation->getId();
+        }, (array)$data);
+        $deletedRelationIds = array_diff($deletedRelationIds, $newRelationIds);
 
         foreach($deletedRelationIds as $deletedRelationId) {
             $deletedRelation = DataObject\Concrete::getById($deletedRelationId);
@@ -414,10 +408,12 @@ class ReverseManyToManyObjectRelation extends ManyToManyObjectRelation
                         'index' => $counter
                     ];
 
-                    $version = $reverseObject->saveVersion(true, true, $params['versionNote'] ?? null);
-                    $db->update('objects', ['o_versionCount' => $version->getVersionCount(), 'o_modificationDate' => $version->getDate()], ['o_id' => $reverseObject->getId()]);
+                    if(!in_array($reverseObject->getId(), $oldRelations)) {
+                        $version = $reverseObject->saveVersion(true, true, $params['versionNote'] ?? null);
+                        $db->update('objects', ['o_versionCount' => $version->getVersionCount(), 'o_modificationDate' => $version->getDate()], ['o_id' => $reverseObject->getId()]);
 
-                    Cache::remove('object_' . $reverseObject->getId());
+                        Cache::remove('object_' . $reverseObject->getId());
+                    }
                 }
                 $counter++;
             }
