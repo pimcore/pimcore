@@ -188,7 +188,7 @@ pimcore.document.newsletters.sendingPanel = Class.create({
 
                 if(res.success) {
                     var msg = t("do_you_really_want_to_send_the_newsletter_to_all_recipients") + '.<br>' + t("recipients") + ': ' + res.count;
-                    Ext.MessageBox.confirm(t("are_you_sure"), msg, function (buttonValue, params) {
+                    Ext.MessageBox.confirm(t("are_you_sure"), msg, function (buttonValue) {
 
                         if (buttonValue == "yes") {
                             Ext.Ajax.request({
@@ -220,7 +220,7 @@ pimcore.document.newsletters.sendingPanel = Class.create({
                     var message = (res.message ? res.message : t("newsletter_send_error"));
                     Ext.MessageBox.alert(t("error"), message)
                 }
-            }
+            }.bind(this)
         });
 
     },
