@@ -83,9 +83,9 @@ pimcore.settings.user.role.settings = Class.create({
         }
 
         for (var key in itemsPerSection) {
-            let title = "permissions";
-            if (key !== title) {
-                title = "settings_permissions_" + key;
+            let title = t("permissions");
+            if (key != "permissions") {
+                title += " " + t(key);
             }
 
             sectionArray.push(new Ext.form.FieldSet({
