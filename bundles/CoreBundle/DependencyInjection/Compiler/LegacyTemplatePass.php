@@ -34,15 +34,13 @@ class LegacyTemplatePass implements CompilerPassInterface
             $definition
                 ->setPublic(true)
                 ->setClass(LegacyTemplateGuesser::class)
-                ->addArgument(new Reference('service_container'));
+                ->addArgument(new Reference('templating'));
         }
 
 
         if ($container->hasDefinition('sensio_framework_extra.view.listener')) {
             $definition = $container->getDefinition('sensio_framework_extra.view.listener');
-            $definition
-                ->setClass(LegacyTemplateListener::class)
-                ->addArgument(new Reference('service_container'));
+            $definition->setClass(LegacyTemplateListener::class);
         }
     }
 }

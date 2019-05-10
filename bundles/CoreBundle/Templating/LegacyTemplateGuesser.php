@@ -2,11 +2,11 @@
 
 namespace Pimcore\Bundle\CoreBundle\Templating;
 
-use Psr\Container\ContainerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Templating\TemplateGuesser as BaseTemplateGuesser;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Doctrine\Common\Persistence\Proxy;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Bundle\FrameworkBundle\Templating\DelegatingEngine;
 use Symfony\Bundle\FrameworkBundle\Templating\TemplateReference;
 
 /**
@@ -21,22 +21,22 @@ class LegacyTemplateGuesser extends BaseTemplateGuesser
     private $kernel;
 
     /**
-     * @var $container
+     * @var $templateEngine
      */
-    private $container;
+    private $templateEngine;
 
     /**
      * @var string[]
      */
     private $controllerPatterns;
 
-    public function __construct(KernelInterface $kernel, ContainerInterface $container, $controllerPatterns = [])
+    public function __construct(KernelInterface $kernel, DelegatingEngine $templateEngine, $controllerPatterns = [])
     {
         $controllerPatterns[] = '/Controller\\\(.+)Controller$/';
 
         $this->kernel = $kernel;
         $this->controllerPatterns = $controllerPatterns;
-        $this->container = $container;
+        $this->templateEngine = $templateEngine;
 
         parent::__construct($kernel, $controllerPatterns);
     }
@@ -60,7 +60,7 @@ class LegacyTemplateGuesser extends BaseTemplateGuesser
             $templateReference = str_replace('.twig','.php',$templateReference);
         }
 
-        if($this->container->get('templating')->exists($templateReference)) {
+        if($this->templateEngine->exists($templateReference)) {
             return $templateReference;
         }
 
@@ -110,7 +110,7 @@ class LegacyTemplateGuesser extends BaseTemplateGuesser
             $legacyTemplateReference->set('bundle', '');
         }
 
-        if(!$this->container->get('templating')->exists($legacyTemplateReference->getLogicalName())) {
+        if(!$this->templateEngine->exists($legacyTemplateReference->getLogicalName())) {
             throw new \InvalidArgumentException(sprintf('The template "%s" and fallback: "%s" does not exist.',$templateReference, $legacyTemplateReference));
         }
 
