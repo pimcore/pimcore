@@ -177,12 +177,12 @@ class Frontend
 
                     // not nice to do a browser detection but for now the easiest way to get around the topic described in #4345
                     $userAgent = strtolower($requestHelper->getMasterRequest()->headers->get('User-Agent'));
-                    if(preg_match('@(firefox|edge)/([\d]+)@', $userAgent, $matches)) {
-                        if($matches[1] == 'firefox' && intval($matches[2]) >= 65) {
+                    if (preg_match('@(firefox|edge)/([\d]+)@', $userAgent, $matches)) {
+                        if ($matches[1] == 'firefox' && intval($matches[2]) >= 65) {
                             return true;
                         }
 
-                        if($matches[1] == 'edge' && intval($matches[2]) >= 18) {
+                        if ($matches[1] == 'edge' && intval($matches[2]) >= 18) {
                             return true;
                         }
                     }
