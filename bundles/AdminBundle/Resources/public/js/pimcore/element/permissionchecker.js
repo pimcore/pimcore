@@ -203,7 +203,7 @@ pimcore.element.permissionchecker = Class.create({
                 buttons: [
                     {
                         text: t("close"),
-                        iconCls: "pimcore_icon_delete",
+                        iconCls: "pimcore_icon_cancel",
                         listeners: {
                             "click": function () {
                                 this.window.close();
@@ -272,7 +272,7 @@ pimcore.element.permissionchecker = Class.create({
                     if (value === true) {
                         metaData.tdCls += " pimcore_icon_success";
                     } else {
-                        metaData.tdCls += " pimcore_icon_delete";
+                        metaData.tdCls += " pimcore_icon_cancel";
                     }
                 }.bind(this, columnName)
             };
@@ -292,7 +292,7 @@ pimcore.element.permissionchecker = Class.create({
                         if (value === true) {
                             return '<div class="pimcore_icon_success" style="min-width: 50px;">&nbsp;</div>';
                         } else if (value === false) {
-                            return '<div class="pimcore_icon_delete" style="min-width: 50px;">&nbsp;</div>';
+                            return '<div class="pimcore_icon_cancel" style="min-width: 50px;">&nbsp;</div>';
                         }
                     }.bind(this)
                 },

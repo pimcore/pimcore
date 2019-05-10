@@ -925,7 +925,7 @@ pimcore.document.tree = Class.create({
                     title: t("paste_as_language_variant"),
                     buttons: [{
                         text: t("cancel"),
-                        iconCls: "pimcore_icon_delete",
+                        iconCls: "pimcore_icon_cancel",
                         handler: function () {
                             win.close();
                         }
@@ -1275,7 +1275,7 @@ pimcore.document.tree = Class.create({
             }],
             buttons: [{
                 text: t("cancel"),
-                iconCls: "pimcore_icon_delete",
+                iconCls: "pimcore_icon_cancel",
                 handler: function () {
                     win.close();
                 }

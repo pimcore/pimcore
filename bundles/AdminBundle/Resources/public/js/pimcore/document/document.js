@@ -328,7 +328,7 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
             }],
             buttons: [{
                 text: t("cancel"),
-                iconCls: "pimcore_icon_delete",
+                iconCls: "pimcore_icon_cancel",
                 handler: function () {
                     win.close();
                 }
@@ -477,7 +477,7 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
             items: [pageForm],
             buttons: [{
                 text: t("cancel"),
-                iconCls: "pimcore_icon_delete",
+                iconCls: "pimcore_icon_cancel",
                 handler: function () {
                     win.close();
                 }
