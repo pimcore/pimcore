@@ -9,7 +9,7 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Sensio\Bundle\FrameworkExtraBundle\Templating\TemplateGuesser;
 use Sensio\Bundle\FrameworkExtraBundle\EventListener\TemplateListener;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\Templating\EngineInterface;
 
 /**
  * Provides backward compatibility for PHP templates
@@ -18,13 +18,28 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class LegacyTemplateListener extends TemplateListener
 {
     /**
-     * @var ContainerInterface
+     * @var EngineInterface
      */
-    protected $container;
+    private $templateEngine;
 
-    public function __construct(TemplateGuesser $templateGuesser, \Twig_Environment $twig = null, ContainerInterface $container)
+    /**
+     * @return EngineInterface
+     */
+    public function getTemplateEngine(): EngineInterface
     {
-        $this->container = $container;
+        return $this->templateEngine;
+    }
+
+    /**
+     * @param EngineInterface $templateEngine
+     */
+    public function setTemplateEngine(EngineInterface $templateEngine): void
+    {
+        $this->templateEngine = $templateEngine;
+    }
+
+    public function __construct(TemplateGuesser $templateGuesser, \Twig_Environment $twig = null)
+    {
         parent::__construct($templateGuesser, $twig);
     }
 
@@ -54,7 +69,7 @@ class LegacyTemplateListener extends TemplateListener
         }
 
         // attempt to render the actual response
-        $templating = $this->container->get('templating');
+        $templating = $this->getTemplateEngine();
 
         if ($template->isStreamable()) {
             $callback = function () use ($templating, $template, $parameters) {
