@@ -174,7 +174,7 @@ class Environment implements IEnvironment
         $this->load();
 
         $this->customItems = null;
-        $this->userId = null;
+        $this->userId = self::USER_ID_NOT_SET;
         $this->currentAssortmentTenant = null;
         $this->currentAssortmentSubTenant = null;
         $this->currentCheckoutTenant = null;
