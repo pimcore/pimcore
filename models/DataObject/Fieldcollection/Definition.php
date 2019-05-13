@@ -241,6 +241,8 @@ class Definition extends Model\AbstractModel
      * @param $key
      *
      * @throws \Exception
+     *
+     * @return Definition
      */
     public static function getByKey($key)
     {
