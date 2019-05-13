@@ -389,6 +389,8 @@ class DataObjectController extends ElementControllerBase implements EventedContr
             }
 
             $objectData['general'] = [];
+            $objectData['general']['objectFromVersion'] = $objectFromVersion;
+
             $allowedKeys = ['o_published', 'o_key', 'o_id', 'o_creationDate', 'o_classId', 'o_className', 'o_type', 'o_parentId', 'o_userOwner'];
             foreach ($objectFromDatabase->getObjectVars() as $key => $value) {
                 if (in_array($key, $allowedKeys)) {
