@@ -43,6 +43,7 @@ to the way how the Symfony container gets built and can be safely ignored.
 - Removed method `\Pimcore\Model\DataObject\ClassDefinition\Data::setFieldtype($fieldtype)`
 - `\Pimcore\Model\Translation\Website::getByKey()` and `\Pimcore\Model\Translation\Admin::getByKey()` are not throwing an exception anymore if an item doesn't exist, instead they are returning `null`
 - If a custom object data-type extends from a core data-type it has to be compatible with the new interfaces (`CustomResourcePersistingInterface`, `QueryResourcePersistenceAwareInterface` and `ResourcePersistenceAwareInterface`)
+- Data Object Custom Layouts: policy for names of custom layouts is now: `/[a-zA-Z][a-zA-Z0-9]+/`
 
 #### Data Objects: renamed relational data-types
 For better understanding we've renamed all relational data-types to a more meaningful name.  
