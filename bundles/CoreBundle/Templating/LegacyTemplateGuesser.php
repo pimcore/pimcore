@@ -18,12 +18,12 @@ class LegacyTemplateGuesser extends BaseTemplateGuesser
     /**
      * @var KernelInterface
      */
-    private $kernel;
+    protected $kernel;
 
     /**
      * @var $templateEngine
      */
-    private $templateEngine;
+    protected $templateEngine;
 
     /**
      * @var string[]
@@ -92,7 +92,7 @@ class LegacyTemplateGuesser extends BaseTemplateGuesser
         $bundle = $this->getBundleForClass($className);
         if ($bundle) {
             while ($bundleName = $bundle->getName()) {
-                if (null === $parentBundleName = $bundle->getParent()) {
+                if (!method_exists($bundle,'getParent') || (null === $parentBundleName = $bundle->getParent())) {
                     $bundleName = $bundle->getName();
                     break;
                 }

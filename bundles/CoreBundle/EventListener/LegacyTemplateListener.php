@@ -38,11 +38,6 @@ class LegacyTemplateListener extends TemplateListener
         $this->templateEngine = $templateEngine;
     }
 
-    public function __construct(TemplateGuesser $templateGuesser, \Twig_Environment $twig = null)
-    {
-        parent::__construct($templateGuesser, $twig);
-    }
-
     /**
      * @inheritdoc
      */
