@@ -365,41 +365,59 @@ class DataObjectController extends ElementControllerBase implements EventedContr
         }
         Element\Editlock::lock($request->get('id'), 'object');
 
-        $object = DataObject::getById(intval($request->get('id')));
-        $object = clone $object;
+        $objectFromDatabase = DataObject::getById(intval($request->get('id')));
+        $objectFromDatabase = clone $objectFromDatabase;
 
         // set the latest available version for editmode
-        $latestObject = $this->getLatestVersion($object);
+        $latestObject = $this->getLatestVersion($objectFromDatabase);
 
         // we need to know if the latest version is published or not (a version), because of lazy loaded fields in $this->getDataForObject()
-        $objectFromVersion = $latestObject === $object ? false : true;
+        $objectFromVersion = $latestObject === $objectFromDatabase ? false : true;
         $object = $latestObject;
 
         if ($object->isAllowed('view')) {
             $objectData = [];
 
-            $objectData['idPath'] = Element\Service::getIdPath($object);
+            /** -------------------------------------------------------------
+             *   Load some general data from published object (if existing)
+             *  ------------------------------------------------------------- */
+            $objectData['idPath'] = Element\Service::getIdPath($objectFromDatabase);
 
             $objectData['hasPreview'] = false;
-            if ($object->getClass()->getPreviewUrl() || $object->getClass()->getLinkGeneratorReference()) {
+            if ($objectFromDatabase->getClass()->getPreviewUrl() || $objectFromDatabase->getClass()->getLinkGeneratorReference()) {
                 $objectData['hasPreview'] = true;
             }
 
             $objectData['general'] = [];
-            $allowedKeys = ['o_published', 'o_key', 'o_id', 'o_modificationDate', 'o_creationDate', 'o_classId', 'o_className', 'o_locked', 'o_type', 'o_parentId', 'o_userOwner', 'o_userModification'];
-
-            foreach ($object->getObjectVars() as $key => $value) {
+            $allowedKeys = ['o_published', 'o_key', 'o_id', 'o_creationDate', 'o_classId', 'o_className', 'o_type', 'o_parentId', 'o_userOwner'];
+            foreach ($objectFromDatabase->getObjectVars() as $key => $value) {
                 if (strstr($key, 'o_') && in_array($key, $allowedKeys)) {
                     $objectData['general'][$key] = $value;
                 }
             }
-
+            $objectData['general']['fullpath'] = $objectFromDatabase->getRealFullPath();
+            $objectData['general']['o_locked'] = $objectFromDatabase->isLocked();
             $objectData['general']['php'] = [
-                'classes' => array_merge([get_class($object)], array_values(class_parents($object))),
-                'interfaces' => array_values(class_implements($object))
+                'classes' => array_merge([get_class($objectFromDatabase)], array_values(class_parents($objectFromDatabase))),
+                'interfaces' => array_values(class_implements($objectFromDatabase))
             ];
+            $objectData['general']['allowVariants'] = $objectFromDatabase->getClass()->getAllowVariants();
+            $objectData['general']['showVariants'] = $objectFromDatabase->getClass()->getShowVariants();
+            $objectData['general']['showAppLoggerTab'] = $objectFromDatabase->getClass()->getShowAppLoggerTab();
+            if ($objectFromDatabase instanceof DataObject\Concrete) {
+                $objectData['general']['linkGeneratorReference'] = $objectFromDatabase->getClass()->getLinkGeneratorReference();
+            }
 
-            $objectData['general']['o_locked'] = $object->isLocked();
+
+            /** -------------------------------------------------------------
+             *   Load remaining general data from latest version
+             *  ------------------------------------------------------------- */
+            $allowedKeys = ['o_modificationDate', 'o_userModification'];
+            foreach ($objectFromDatabase->getObjectVars() as $key => $value) {
+                if (strstr($key, 'o_') && in_array($key, $allowedKeys)) {
+                    $objectData['general'][$key] = $value;
+                }
+            }
 
             $this->getDataForObject($object, $objectFromVersion);
             $objectData['data'] = $this->objectData;
@@ -413,10 +431,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
             $objectVersions = Element\Service::getSafeVersionInfo($object->getVersions());
             $objectData['versions'] = array_splice($objectVersions, 0, 1);
             $objectData['scheduledTasks'] = $object->getScheduledTasks();
-            $objectData['general']['allowVariants'] = $object->getClass()->getAllowVariants();
-            $objectData['general']['showVariants'] = $object->getClass()->getShowVariants();
-            $objectData['general']['showAppLoggerTab'] = $object->getClass()->getShowAppLoggerTab();
-            $objectData['general']['fullpath'] = $object->getRealFullPath();
+
             $objectData['general']['versionDate'] = $object->getModificationDate();
             $objectData['general']['versionCount'] = $object->getVersionCount();
 
@@ -425,10 +440,6 @@ class DataObjectController extends ElementControllerBase implements EventedContr
             }
             if ($object->getElementAdminStyle()->getElementIconClass()) {
                 $objectData['general']['iconCls'] = $object->getElementAdminStyle()->getElementIconClass();
-            }
-
-            if ($object instanceof DataObject\Concrete) {
-                $objectData['general']['linkGeneratorReference'] = $object->getClass()->getLinkGeneratorReference();
             }
 
             $objectData['childdata']['id'] = $object->getId();
