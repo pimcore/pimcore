@@ -583,4 +583,9 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
 
         return $data;
     }
+
+    public function isFilterable(): bool
+    {
+        return true;
+    }
 }

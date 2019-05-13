@@ -98,7 +98,7 @@ abstract class Data
      */
     public $visibleSearch = true;
 
-    /** If set to true then null values will not be exported.
+        /** If set to true then null values will not be exported.
      * @var
      */
     protected static $dropNullValues;
@@ -988,6 +988,33 @@ abstract class Data
     }
 
     /**
+     * Creates getter code which is used for generation of php file for object classes using this data type
+     *
+     * @param $class
+     *
+     * @return string
+     */
+    public function getFilterCode($class)
+    {
+        $key = $this->getName();
+
+        $code = '/**' . "\n";
+        $code .= '* Filter by ' . str_replace(['/**', '*/', '//'], '', $key) . ' - ' . str_replace(['/**', '*/', '//'], '', $this->getTitle()) . "\n";
+        $code .= '* @return static'."\n";
+        $code .= '*/' . "\n";
+        $code .= 'public function filterBy' . ucfirst($key) .' ($'.$key.', $operator = \'=\') {'."\n";
+        if (method_exists($this, 'preFilterData')) {
+            $code .= "\t" . '[$' . $key . ', $operator] = $this->getClass()->getFieldDefinition("' . $key . '")->preFilterData($' . $key . ', $operator);' . "\n";
+        }
+        $code .= "\t" . '$this->addConditionParam("`'.$key.'` $operator ?", $'.$key.');' . "\n";
+
+        $code .= "\treturn " . '$this' . ";\n";
+        $code .= "}\n\n";
+
+        return $code;
+    }
+
+    /**
      * @param $number
      *
      * @return int|null
@@ -1457,5 +1484,10 @@ abstract class Data
         }
 
         return $this;
+    }
+
+    public function isFilterable(): bool
+    {
+        return false;
     }
 }

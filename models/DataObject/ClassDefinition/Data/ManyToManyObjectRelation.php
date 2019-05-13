@@ -950,4 +950,17 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
     {
         $this->optimizedAdminLoading = $optimizedAdminLoading;
     }
+
+    public function preFilterData($data, $operator) {
+        if($data instanceof DataObject\Concrete && $this->allowObjectRelation($data)) {
+            $data = $data->getId();
+        }
+
+        if($operator === '=') {
+            $operator = 'LIKE "%,';
+            $data .= ',%';
+        }
+
+        return [$data, $operator];
+    }
 }

@@ -444,4 +444,9 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
 
         return parent::getFilterConditionExt($value, $operator, $params);
     }
+
+    public function isFilterable(): bool
+    {
+        return true;
+    }
 }

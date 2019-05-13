@@ -850,7 +850,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
     /**
      * @param array $context additional contextual data
      *
-     * @return array
+     * @return Data[]
      */
     public function getFieldDefinitions($context = [])
     {
@@ -1446,6 +1446,11 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
      * @return bool
      */
     public function supportsDirtyDetection()
+    {
+        return true;
+    }
+
+    public function isFilterable(): bool
     {
         return true;
     }

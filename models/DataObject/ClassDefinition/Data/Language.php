@@ -89,4 +89,9 @@ class Language extends Model\DataObject\ClassDefinition\Data\Select
 
         return $obj;
     }
+
+    public function isFilterable(): bool
+    {
+        return true;
+    }
 }

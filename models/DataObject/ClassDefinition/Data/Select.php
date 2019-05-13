@@ -486,4 +486,9 @@ class Select extends Data implements ResourcePersistenceAwareInterface, QueryRes
             return $data;
         }
     }
+
+    public function isFilterable(): bool
+    {
+        return true;
+    }
 }

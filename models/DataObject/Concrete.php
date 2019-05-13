@@ -269,7 +269,7 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
             // hook should be also called if "save only new version" is selected
             if ($saveOnlyVersion) {
                 \Pimcore::getEventDispatcher()->dispatch(DataObjectEvents::PRE_UPDATE, new DataObjectEvent($this, [
-                    'saveVersionOnly' => true
+                    'saveVersionOnly' => true,
                 ]));
             }
 
@@ -289,7 +289,7 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
             // hook should be also called if "save only new version" is selected
             if ($saveOnlyVersion) {
                 \Pimcore::getEventDispatcher()->dispatch(DataObjectEvents::POST_UPDATE, new DataObjectEvent($this, [
-                    'saveVersionOnly' => true
+                    'saveVersionOnly' => true,
                 ]));
             }
 
@@ -297,7 +297,7 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
         } catch (\Exception $e) {
             \Pimcore::getEventDispatcher()->dispatch(DataObjectEvents::POST_UPDATE_FAILURE, new DataObjectEvent($this, [
                 'saveVersionOnly' => true,
-                'exception' => $e
+                'exception' => $e,
             ]));
 
             throw $e;
@@ -609,13 +609,23 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
         }
         $propertyName = implode('', preg_grep('/^' . preg_quote($propertyName, '/') . '$/i', $fieldnames));
 
-        if (property_exists($tmpObj, $propertyName)) {
-            // check if the given fieldtype is valid for this shorthand
-            $allowedDataTypes = ['input', 'numeric', 'checkbox', 'country', 'date', 'datetime', 'image', 'language', 'manyToManyRelation', 'multiselect', 'select', 'slider', 'time', 'user', 'email', 'firstname', 'lastname', 'localizedfields'];
+        if (!property_exists($tmpObj, $propertyName)) {
+            $localizedField = $tmpObj->getClass()->getFieldDefinition('localizedfields');
+            if($localizedField instanceof Model\DataObject\ClassDefinition\Data\Localizedfields) {
+                foreach($localizedField->getFieldDefinitions() as $localizedFieldDefinition) {
+                    if($propertyName === $localizedFieldDefinition->getName()) {
+                        $propertyName = 'localizedfields';
+                        \array_unshift($arguments, $localizedFieldDefinition->getName());
+                        break;
+                    }
+                }
+            }
+        }
 
+        if (property_exists($tmpObj, $propertyName)) {
             $field = $tmpObj->getClass()->getFieldDefinition($propertyName);
-            if (!in_array($field->getFieldType(), $allowedDataTypes)) {
-                throw new \Exception("Static getter '::getBy".ucfirst($propertyName)."' is not allowed for fieldtype '" . $field->getFieldType() . "', it's only allowed for the following fieldtypes: " . implode(',', $allowedDataTypes));
+            if (!$field->isFilterable()) {
+                throw new \Exception("Static getter '::getBy".ucfirst($propertyName)."' is not allowed for fieldtype '" . $field->getFieldType() . "'");
             }
 
             if ($field instanceof Model\DataObject\ClassDefinition\Data\Localizedfields) {
@@ -630,13 +640,13 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
                     throw new \Exception('Call to undefined static method ' . $method . ' in class DataObject\\Concrete');
                 }
 
-                if (!in_array($localizedField->getFieldType(), $allowedDataTypes)) {
-                    throw new \Exception("Static getter '::getBy".ucfirst($propertyName)."' is not allowed for fieldtype '" . $localizedField->getFieldType() . "', it's only allowed for the following fieldtypes: " . implode(',', $allowedDataTypes));
+                if ($localizedField->isFilterable()) {
+                    throw new \Exception("Static getter '::getBy".ucfirst($propertyName)."' is not allowed for fieldtype '" . $localizedField->getFieldType() . "'");
                 }
 
                 $defaultCondition = $localizedPropertyName . ' = ' . \Pimcore\Db::get()->quote($value) . ' ';
                 $listConfig = [
-                    'condition' => $defaultCondition
+                    'condition' => $defaultCondition,
                 ];
 
                 if ($locale) {
@@ -648,7 +658,7 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
 
                 $defaultCondition = $propertyName . ' = ' . \Pimcore\Db::get()->quote($value) . ' ';
                 $listConfig = [
-                    'condition' => $defaultCondition
+                    'condition' => $defaultCondition,
                 ];
             }
 
