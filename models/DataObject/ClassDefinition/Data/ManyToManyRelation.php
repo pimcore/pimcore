@@ -1065,20 +1065,21 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
         return true;
     }
 
-    public function preFilterData($data, $operator) {
-        if($data instanceof DataObject\Concrete && $this->allowObjectRelation($data)) {
+
+    public function addListingFilter(DataObject\Listing $listing, $data, $operator) {
+        if($data instanceof DataObject\Concrete) {
             $data = $data->getId();
-        } elseif($data instanceof Asset && $this->allowAssetRelation($data)) {
+        } elseif($data instanceof Asset) {
             $data = $data->getId();
-        } elseif($data instanceof Document && $this->allowDocumentRelation($data)) {
+        } elseif($data instanceof Document) {
             $data = $data->getId();
         }
 
         if($operator === '=') {
-            $operator = 'LIKE "%,';
-            $data .= ',%';
+            $listing->addConditionParam('`'.$this->getName().'` LIKE ?', '%,'.$data.',%');
+            return;
         }
 
-        return [$data, $operator];
+        parent::addListingFilter($listing, $data, $operator);
     }
 }

@@ -951,16 +951,16 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
         $this->optimizedAdminLoading = $optimizedAdminLoading;
     }
 
-    public function preFilterData($data, $operator) {
-        if($data instanceof DataObject\Concrete && $this->allowObjectRelation($data)) {
+    public function addListingFilter(DataObject\Listing $listing, $data, $operator) {
+        if($data instanceof DataObject\Concrete) {
             $data = $data->getId();
         }
 
         if($operator === '=') {
-            $operator = 'LIKE "%,';
-            $data .= ',%';
+            $listing->addConditionParam('`'.$this->getName().'` LIKE ?', '%,'.$data.',%');
+            return;
         }
 
-        return [$data, $operator];
+        parent::addListingFilter($listing, $data, $operator);
     }
 }

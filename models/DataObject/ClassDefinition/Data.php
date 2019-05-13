@@ -1003,11 +1003,7 @@ abstract class Data
         $code .= '* @return static'."\n";
         $code .= '*/' . "\n";
         $code .= 'public function filterBy' . ucfirst($key) .' ($'.$key.', $operator = \'=\') {'."\n";
-        if (method_exists($this, 'preFilterData')) {
-            $code .= "\t" . '[$' . $key . ', $operator] = $this->getClass()->getFieldDefinition("' . $key . '")->preFilterData($' . $key . ', $operator);' . "\n";
-        }
-        $code .= "\t" . '$this->addConditionParam("`'.$key.'` $operator ?", $'.$key.');' . "\n";
-
+        $code .= "\t" . '$this->getClass()->getFieldDefinition("' . $key . '")->addListingFilter($this, $' . $key . ', $operator);' . "\n";
         $code .= "\treturn " . '$this' . ";\n";
         $code .= "}\n\n";
 
@@ -1489,5 +1485,9 @@ abstract class Data
     public function isFilterable(): bool
     {
         return false;
+    }
+
+    public function addListingFilter(DataObject\Listing $listing, $data, $operator) {
+        $listing->addConditionParam('`'.$this->getName().'` '.$operator.' ?', $data);
     }
 }
