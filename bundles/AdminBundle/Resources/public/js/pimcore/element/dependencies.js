@@ -75,6 +75,20 @@ pimcore.element.dependencies = Class.create({
 
         var itemsPerPage = pimcore.helpers.grid.getDefaultPageSize(-1);
 
+        var requiresModel = 'requiresModel';
+        if (!Ext.ClassManager.isCreated(requiresModel)) {
+            Ext.define(requiresModel, {
+                extend: 'Ext.data.Model',
+                idProperty: 'rowId',
+                fields: [
+                    'id',
+                    'path',
+                    'type',
+                    'subtype'
+                ]
+            });
+        }
+
         this.requiresStore = new Ext.data.Store({
             pageSize: itemsPerPage,
             proxy : {
@@ -90,7 +104,7 @@ pimcore.element.dependencies = Class.create({
                 }
             },
             autoLoad: false,
-            fields: ['id', 'path', 'type', 'subtype']
+            model: requiresModel
         });
 
         this.requiresGrid = new Ext.grid.GridPanel({
@@ -158,6 +172,20 @@ pimcore.element.dependencies = Class.create({
     getRequiredByLayout: function() {
 
         var itemsPerPage = pimcore.helpers.grid.getDefaultPageSize(-1);
+
+        var requiredByModel = 'requiredByModel';
+        if (!Ext.ClassManager.isCreated(requiredByModel)) {
+            Ext.define(requiredByModel, {
+                extend: 'Ext.data.Model',
+                idProperty: 'rowId',
+                fields: [
+                    'id',
+                    'path',
+                    'type',
+                    'subtype'
+                ]
+            });
+        }
         
         this.requiredByStore = new Ext.data.Store({
             pageSize: itemsPerPage,
@@ -174,7 +202,8 @@ pimcore.element.dependencies = Class.create({
                 }
             },
             autoLoad: false,
-            fields: ['id', 'path', 'type', 'subtype']
+            model: requiredByModel
+
         });
 
         this.requiredByGrid = Ext.create('Ext.grid.Panel', {
