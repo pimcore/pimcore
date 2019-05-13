@@ -98,7 +98,7 @@ abstract class Data
      */
     public $visibleSearch = true;
 
-        /** If set to true then null values will not be exported.
+    /** If set to true then null values will not be exported.
      * @var
      */
     protected static $dropNullValues;
