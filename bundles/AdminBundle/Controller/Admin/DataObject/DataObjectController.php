@@ -391,7 +391,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
             $objectData['general'] = [];
             $allowedKeys = ['o_published', 'o_key', 'o_id', 'o_creationDate', 'o_classId', 'o_className', 'o_type', 'o_parentId', 'o_userOwner'];
             foreach ($objectFromDatabase->getObjectVars() as $key => $value) {
-                if (strstr($key, 'o_') && in_array($key, $allowedKeys)) {
+                if (in_array($key, $allowedKeys)) {
                     $objectData['general'][$key] = $value;
                 }
             }
@@ -408,29 +408,29 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                 $objectData['general']['linkGeneratorReference'] = $objectFromDatabase->getClass()->getLinkGeneratorReference();
             }
 
+            $objectData['layout'] = $objectFromDatabase->getClass()->getLayoutDefinitions();
+            $objectData['userPermissions'] = $objectFromDatabase->getUserPermissions();
+            $objectVersions = Element\Service::getSafeVersionInfo($objectFromDatabase->getVersions());
+            $objectData['versions'] = array_splice($objectVersions, 0, 1);
+            $objectData['scheduledTasks'] = $objectFromDatabase->getScheduledTasks();
+
+            $objectData['childdata']['id'] = $objectFromDatabase->getId();
+            $objectData['childdata']['data']['classes'] = $this->prepareChildClasses($objectFromDatabase->getDao()->getClasses());
 
             /** -------------------------------------------------------------
              *   Load remaining general data from latest version
              *  ------------------------------------------------------------- */
             $allowedKeys = ['o_modificationDate', 'o_userModification'];
-            foreach ($objectFromDatabase->getObjectVars() as $key => $value) {
-                if (strstr($key, 'o_') && in_array($key, $allowedKeys)) {
+            foreach ($object->getObjectVars() as $key => $value) {
+                if (in_array($key, $allowedKeys)) {
                     $objectData['general'][$key] = $value;
                 }
             }
 
             $this->getDataForObject($object, $objectFromVersion);
             $objectData['data'] = $this->objectData;
-
             $objectData['metaData'] = $this->metaData;
-
-            $objectData['layout'] = $object->getClass()->getLayoutDefinitions();
-
             $objectData['properties'] = Element\Service::minimizePropertiesForEditmode($object->getProperties());
-            $objectData['userPermissions'] = $object->getUserPermissions();
-            $objectVersions = Element\Service::getSafeVersionInfo($object->getVersions());
-            $objectData['versions'] = array_splice($objectVersions, 0, 1);
-            $objectData['scheduledTasks'] = $object->getScheduledTasks();
 
             $objectData['general']['versionDate'] = $object->getModificationDate();
             $objectData['general']['versionCount'] = $object->getVersionCount();
@@ -441,9 +441,6 @@ class DataObjectController extends ElementControllerBase implements EventedContr
             if ($object->getElementAdminStyle()->getElementIconClass()) {
                 $objectData['general']['iconCls'] = $object->getElementAdminStyle()->getElementIconClass();
             }
-
-            $objectData['childdata']['id'] = $object->getId();
-            $objectData['childdata']['data']['classes'] = $this->prepareChildClasses($object->getDao()->getClasses());
 
             $currentLayoutId = $request->get('layoutId', null);
 
