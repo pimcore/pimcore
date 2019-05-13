@@ -534,7 +534,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
 
             // check for newer version than the published
             if (this.data.versions.length > 0) {
-                if (this.data.general.o_modificationDate < this.data.versions[0].date) {
+                if (this.data.general.objectFromVersion) {
                     this.newerVersionNotification.show();
                 }
             }
