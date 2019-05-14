@@ -17,12 +17,19 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\GeneratorBundle\Generator;
 
-use Sensio\Bundle\GeneratorBundle\Generator\BundleGenerator as BaseBundleGenerator;
-use Sensio\Bundle\GeneratorBundle\Manipulator\RoutingManipulator;
-use Sensio\Bundle\GeneratorBundle\Model\Bundle;
+use Pimcore\Bundle\GeneratorBundle\Model\Bundle;
+use Pimcore\Bundle\GeneratorBundle\Manipulator\RoutingManipulator;
+use Symfony\Component\Filesystem\Filesystem;
 
 class BundleGenerator extends BaseBundleGenerator
 {
+    private $filesystem;
+
+    public function __construct(Filesystem $filesystem)
+    {
+        $this->filesystem = $filesystem;
+    }
+
     public function generateBundle(Bundle $bundle)
     {
         parent::generateBundle($bundle);
