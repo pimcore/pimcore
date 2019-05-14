@@ -78,7 +78,6 @@
     "sabre/dav": "^3.2",
     "sensio/distribution-bundle": "^5.0.19",
     "sensio/framework-extra-bundle": "^3.0.2",
-    "sensio/generator-bundle": "^3.0",
     "sensiolabs/ansi-to-html": "^1.1",
     "symfony-cmf/routing-bundle": "^2.0",
     "symfony/monolog-bundle": "^3.1.0",
