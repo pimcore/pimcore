@@ -118,7 +118,8 @@ class UserController extends AdminController implements EventedControllerInterfa
                 'parentId' => intval($request->get('parentId')),
                 'name' => trim($request->get('name')),
                 'password' => '',
-                'active' => $request->get('active')
+                'active' => $request->get('active'),
+                'language' => \Pimcore\Config::getSystemConfig()->get('general')->get('language')
             ]);
 
             if ($request->get('rid')) {
