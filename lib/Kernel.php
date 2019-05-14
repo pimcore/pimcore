@@ -284,8 +284,7 @@ abstract class Kernel extends SymfonyKernel
         if (in_array($this->getEnvironment(), $this->getEnvironmentsForDevBundles(), true)) {
             $collection->addBundles([
                 new DebugBundle(),
-                new WebProfilerBundle(),
-                new SensioDistributionBundle()
+                new WebProfilerBundle()
             ], 80);
 
             // add generator bundle only if installed
