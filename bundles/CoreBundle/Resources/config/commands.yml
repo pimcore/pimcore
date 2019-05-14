@@ -47,3 +47,9 @@ services:
             - '@Pimcore\Document\Tag\NamingStrategy\NamingStrategyInterface'
         tags:
             - { name: console.command, command: 'pimcore:targeting:migrate-element-names' }
+
+    Pimcore\Bundle\CoreBundle\Command\ClassesRebuildCommand:
+        calls:
+            - [setClassDefinitionManager, ['@Pimcore\Model\DataObject\ClassDefinition\ClassDefinitionManager']]
+        tags:
+            - { name: console.command, command: 'pimcore:deployment:classes-rebuild' }

@@ -41,7 +41,9 @@ class PublicServicesController extends FrameworkController
         $filename = $request->get('filename');
         $asset = Asset::getById($assetId);
 
-        if ($asset && $asset->getPath() == ('/' . $request->get('prefix'))) {
+        $prefix = preg_replace('@^cache-buster\-[\d]+\/@', '', $request->get('prefix'));
+
+        if ($asset && $asset->getPath() == ('/' . $prefix)) {
             // we need to check the path as well, this is important in the case you have restricted the public access to
             // assets via rewrite rules
             try {

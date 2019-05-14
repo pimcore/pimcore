@@ -41,7 +41,7 @@
     "ext-pdo_mysql": "*",
     "ext-zip": "*",
     "ext-zlib": "*",
-    "pimcore/core-version": "5.8.1",
+    "pimcore/core-version": "5.8.3",
     "amnuts/opcache-gui": "^2.4.0",
     "cache/tag-interop": "^1",
     "colinmollenhour/credis": "^1.10.0",
@@ -76,7 +76,6 @@
     "presta/sitemap-bundle": "^1.5",
     "ramsey/uuid": "^3.8",
     "sabre/dav": "^3.2",
-    "sensio/distribution-bundle": "^5.0.19",
     "sensio/framework-extra-bundle": "^5.2",
     "sensio/generator-bundle": "^3.0",
     "sensiolabs/ansi-to-html": "^1.1",
@@ -121,7 +120,7 @@
   },
   "extra": {
     "branch-alias": {
-      "dev-master": "5.8-dev"
+      "dev-master": "5.9-dev"
     }
   },
   "bin": ["bin/pimcore-install"]
