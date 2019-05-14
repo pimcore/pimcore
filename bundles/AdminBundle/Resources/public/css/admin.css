@@ -498,8 +498,7 @@
 }
 
 .asset_folder_preview {
-    background: white;
-    font: 11px Arial, Helvetica, sans-serif;
+    font-size: 11px;
 }
 
 .asset_folder_preview .thumb{
@@ -517,7 +516,7 @@
     margin: 4px;
     margin-right: 0;
     padding: 5px;
-    background: #f1f1f1;
+    background: #ececec;
     cursor: pointer;
 }
 
@@ -1116,6 +1115,7 @@ span.warning {
     padding: 10px;
     min-height: 80px;
     font: normal 12px tahoma, arial, helvetica, sans-serif;
+    background-color: #fff;
 }
 
 .pimcore_tag_wysiwyg strong {
@@ -1481,7 +1481,7 @@ span.warning {
 }
 
 .pimcore_main_toolbar + .x-panel > .x-tab-bar-default .x-tab.x-tab-active {
-    background-color: #fff;
+    background-color: #f6f6f6;
     opacity: 1;
 }
 

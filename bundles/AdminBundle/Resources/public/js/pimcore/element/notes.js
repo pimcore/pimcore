@@ -104,7 +104,7 @@ pimcore.element.notes = Class.create({
             }
 
             var tbar = Ext.create('Ext.Toolbar', {
-                cls: 'pimcore_main_toolbar',
+                cls: this.inElementContext ? '' : 'pimcore_main_toolbar',
                 items: tbarItems
             });
 
