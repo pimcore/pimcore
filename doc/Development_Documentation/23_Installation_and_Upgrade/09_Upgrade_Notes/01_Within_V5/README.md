@@ -31,7 +31,7 @@ Replacement:
 ```
     "post-install-cmd": [
       "Pimcore\\Composer::postInstall",
-      "@pimcore-scripts",
+      "@pimcore-scripts"
     ],
     "post-update-cmd": [
       "Pimcore\\Composer::postUpdate",
