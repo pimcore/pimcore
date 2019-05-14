@@ -41,7 +41,7 @@ Replacement:
     "pimcore-scripts": [
       "Pimcore\\Composer::clearCache",
       "Pimcore\\Composer::installAssets"
-    ]      
+    ]
 ```
     
 
