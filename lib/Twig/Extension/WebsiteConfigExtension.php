@@ -18,8 +18,9 @@ declare(strict_types=1);
 namespace Pimcore\Twig\Extension;
 
 use Pimcore\Config;
+use Twig\Extension\AbstractExtension;
 
-class WebsiteConfigExtension extends \Twig_Extension
+class WebsiteConfigExtension extends AbstractExtension
 {
     public function getFunctions()
     {

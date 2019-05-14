@@ -25,7 +25,6 @@ use Pimcore\Loader\ImplementationLoader\PrefixLoader;
 use Pimcore\Migrations\Configuration\ConfigurationFactory;
 use Pimcore\Model\Document\Tag\Loader\PrefixLoader as DocumentTagPrefixLoader;
 use Pimcore\Model\Factory;
-use Pimcore\Routing\Loader\AnnotatedRouteControllerLoader;
 use Pimcore\Sitemap\EventListener\SitemapGeneratorListener;
 use Pimcore\Targeting\ActionHandler\DelegatingActionHandler;
 use Pimcore\Targeting\DataLoaderInterface;
@@ -80,8 +79,6 @@ class PimcoreCoreExtension extends ConfigurableExtension implements PrependExten
         // TODO is this bad practice?
         // TODO only extract what we need as parameter?
         $container->setParameter('pimcore.config', $config);
-
-        $this->setAnnotationRouteControllerLoader($container);
 
         $loader = new YamlFileLoader(
             $container,
@@ -500,28 +497,6 @@ class PimcoreCoreExtension extends ConfigurableExtension implements PrependExten
         foreach ($config as $context => $contextConfig) {
             $guesser->addMethodCall('addContextRoutes', [$context, $contextConfig['routes']]);
         }
-    }
-
-    /**
-     * Set annotation loader to our own implementation normalizing admin routes: converts the prefix
-     * pimcore_pimcoreadmin_ to just pimcore_admin_
-     *
-     * @param ContainerBuilder $container
-     */
-    private function setAnnotationRouteControllerLoader(ContainerBuilder $container)
-    {
-        $parameter = 'sensio_framework_extra.routing.loader.annot_class.class';
-
-        // make sure the parameter is not dropped by sensio framework extra bundle
-        // if this exception is thrown, implement the class override in a compiler pass
-        if (!$container->hasParameter($parameter)) {
-            throw new RuntimeException(sprintf(
-                'The sensio framework extra bundle removed support for the "%s" parameter',
-                $parameter
-            ));
-        }
-
-        $container->setParameter($parameter, AnnotatedRouteControllerLoader::class);
     }
 
     /**

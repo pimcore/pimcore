@@ -17,10 +17,12 @@ declare(strict_types=1);
 
 namespace Pimcore\Twig\Extension;
 
+use Twig\Extension\AbstractExtension;
+
 /**
  * Simple helpers that do not need a dedicated extension
  */
-class HelpersExtension extends \Twig_Extension
+class HelpersExtension extends AbstractExtension
 {
     public function getTests()
     {

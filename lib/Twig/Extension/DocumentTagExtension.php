@@ -17,8 +17,9 @@ namespace Pimcore\Twig\Extension;
 use Pimcore\Model\Document\PageSnippet;
 use Pimcore\Model\Document\Tag\BlockInterface;
 use Pimcore\Templating\Renderer\TagRenderer;
+use Twig\Extension\AbstractExtension;
 
-class DocumentTagExtension extends \Twig_Extension
+class DocumentTagExtension extends AbstractExtension
 {
     /**
      * @var TagRenderer

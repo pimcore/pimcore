@@ -76,7 +76,7 @@
     "presta/sitemap-bundle": "^1.5",
     "ramsey/uuid": "^3.8",
     "sabre/dav": "^3.2",
-    "sensio/framework-extra-bundle": "^3.0.2",
+    "sensio/framework-extra-bundle": "^5.2",
     "sensio/generator-bundle": "^3.0",
     "sensiolabs/ansi-to-html": "^1.1",
     "symfony-cmf/routing-bundle": "^2.0",
