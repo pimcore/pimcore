@@ -1,5 +1,40 @@
 # Upgrade Notes for Upgrades within Pimcore 5
 
+## Version 5.9
+
+- `sensio/distribution-bundle` has been removed. Replace the following lines in your existing `composer.json` file
+
+```
+    "post-install-cmd": [
+      "Pimcore\\Composer::postInstall",
+      "@symfony-scripts"
+    ],
+    ...
+    "symfony-scripts": [
+      "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::clearCache",
+      "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::installAssets",
+      "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::installRequirementsFile",
+      "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::prepareDeploymentTarget"
+    ]        
+```
+
+with
+
+```
+    "post-install-cmd": [
+      "Pimcore\\Composer::postInstall",
+      "@pimcore-scripts",
+    ],
+    ...
+    "pimcore-scripts": [
+      "Pimcore\\Composer::clearCache",
+      "Pimcore\\Composer::installAssets"
+    ]      
+```
+
+_BEFORE_ you update!
+    
+
 ## Version 5.8.0
 - Add PathFormatter interface, static path formatters are now deprecated and will be removed with Version 6.0. You can read
  more about that [here](../../../05_Objects/01_Object_Classes/05_Class_Settings/14_Path_Formatter.md).

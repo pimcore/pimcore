@@ -299,4 +299,70 @@ class Composer
     {
         return preg_replace("/\033\[[^m]*m/", '', $string);
     }
+
+    /**
+     *
+     * The following is copied from \Sensio\Bundle\DistributionBundle\Composer\ScriptHandler
+     *
+     * Installs the assets under the web root directory.
+     *
+     * For better interoperability, assets are copied instead of symlinked by default.
+     *
+     * Even if symlinks work on Windows, this is only true on Windows Vista and later,
+     * but then, only when running the console with admin rights or when disabling the
+     * strict user permission checks (which can be done on Windows 7 but not on Windows
+     * Vista).
+     *
+     * @param Event $event
+     */
+    public static function installAssets(Event $event)
+    {
+        $options = static::getOptions($event);
+        $consoleDir = static::getConsoleDir($event, 'install assets');
+
+        if (null === $consoleDir) {
+            return;
+        }
+
+        $webDir = $options['symfony-web-dir'];
+
+        $symlink = '';
+        if ('symlink' == $options['symfony-assets-install']) {
+            $symlink = '--symlink ';
+        } elseif ('relative' == $options['symfony-assets-install']) {
+            $symlink = '--symlink --relative ';
+        }
+
+        if (!static::hasDirectory($event, 'symfony-web-dir', $webDir, 'install assets')) {
+            return;
+        }
+
+        static::executeCommand($event, $consoleDir, 'assets:install '.$symlink.escapeshellarg($webDir), $options['process-timeout']);
+    }
+
+    /**
+     * The following is copied from \Sensio\Bundle\DistributionBundle\Composer\ScriptHandler
+     *
+     * Clears the Symfony cache.
+     *
+     * @param Event $event
+     */
+    public static function clearCache(Event $event)
+    {
+        $options = static::getOptions($event);
+        $consoleDir = static::getConsoleDir($event, 'clear the cache');
+
+        if (null === $consoleDir) {
+            return;
+        }
+
+        $warmup = '';
+        if (!$options['symfony-cache-warmup']) {
+            $warmup = ' --no-warmup';
+        }
+
+        static::executeCommand($event, $consoleDir, 'cache:clear'.$warmup, $options['process-timeout']);
+    }
+
+
 }
