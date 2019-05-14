@@ -62,17 +62,6 @@ pimcore.object.classes.klass = Class.create({
                 isTarget: true
             },
             listeners: this.getTreeNodeListeners(),
-            tbar: {
-                items: [
-                      "->",
-                    {
-                        text: t("configure_custom_layouts"),
-                        iconCls: "pimcore_icon_class pimcore_icon_overlay_add",
-                        hidden: (this instanceof pimcore.object.fieldcollections.field) || (this instanceof pimcore.object.objectbricks.field),
-                        handler: this.configureCustomLayouts.bind(this)
-                    }
-                ]
-            },
             viewConfig: {
                 plugins: {
                     ptype: 'treeviewdragdrop',
@@ -84,6 +73,13 @@ pimcore.object.classes.klass = Class.create({
         var displayId = this.data.key ? this.data.key : this.data.id; // because the field-collections use that also
 
         var panelButtons = [];
+
+        panelButtons.push({
+            text: t("configure_custom_layouts"),
+            iconCls: "pimcore_icon_class pimcore_icon_overlay_add",
+            hidden: (this instanceof pimcore.object.fieldcollections.field) || (this instanceof pimcore.object.objectbricks.field),
+            handler: this.configureCustomLayouts.bind(this)
+        });
 
         panelButtons.push({
             text: t('reload_definition'),

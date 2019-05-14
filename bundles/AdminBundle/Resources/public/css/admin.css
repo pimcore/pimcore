@@ -1353,6 +1353,10 @@ span.warning {
     padding-top: 0;
 }
 
+#pimcore_panel_tabs > .x-tab-bar > .x-tab-bar-strip-default {
+    border-bottom: 0;
+}
+
 #pimcore_panel_tabs > .x-tab-bar > .x-tab-bar-body .x-tab {
     background: #202124;
     box-shadow: none;
@@ -1503,6 +1507,10 @@ span.warning {
 
 .pimcore_main_toolbar + .x-panel > .x-tab-bar-default .x-tab.x-tab-over {
     opacity: 1;
+}
+
+.pimcore_main_toolbar + .x-panel > .x-tab-bar-default .x-tab-bar-strip-default {
+    border-bottom: 0;
 }
 
 .pimcore_main_toolbar .x-btn-wrap.x-btn-arrow-right:after {
@@ -1820,16 +1828,16 @@ span.warning {
     background: none;
 }
 
-.pimcore_main_accordion .x-grid-item.x-grid-item-over {
-    background-color: #fff;
-}
-
-.pimcore_main_accordion .x-grid-item.x-grid-item-selected, .pimcore_main_accordion .x-grid-item.x-grid-item-over.x-grid-item-selected {
-    background-color: #e3e4e5;
+.pimcore_main_accordion .x-tree-view {
+    padding-top: 0;
 }
 
 .pimcore_main_splitter {
     background-color: #202124;
+}
+
+.pimcore_main_splitter .x-collapse-el {
+    background-color: transparent;
 }
 
 .pimcore_tree_node_root .x-tree-expander {
