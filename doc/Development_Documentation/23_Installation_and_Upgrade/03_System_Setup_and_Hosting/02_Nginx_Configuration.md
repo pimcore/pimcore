@@ -74,7 +74,7 @@ server {
 
     # Assets
     # Still use a whitelist approach to prevent each and every missing asset to go through the PHP Engine.
-    location ~* ^(?!/admin/asset/webdav/)(.+?)\.((?:css|js)(?:\.map)?|jpe?g|gif|png|svgz?|eps|exe|gz|zip|mp\d|ogg|ogv|webm|pdf|docx?|xlsx?|pptx?)$ {
+    location ~* ^(?!/admin/asset/webdav/)(?!/admin)(.+?)\.((?:css|js)(?:\.map)?|jpe?g|gif|png|svgz?|eps|exe|gz|zip|mp\d|ogg|ogv|webm|pdf|docx?|xlsx?|pptx?)$ {
         try_files /var/assets$uri $uri =404;
         expires 2w;
         access_log off;
