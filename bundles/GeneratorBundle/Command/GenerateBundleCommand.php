@@ -134,7 +134,7 @@ EOT
     {
         $bundle = parent::createBundleObject($input);
 
-        return new Bundle($bundle);
+        return $bundle;
     }
 
     protected function createGenerator()

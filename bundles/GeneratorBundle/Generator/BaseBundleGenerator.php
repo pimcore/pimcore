@@ -63,7 +63,7 @@ class BaseBundleGenerator extends Generator
         if ($routingFilename = $bundle->getRoutingConfigurationFilename()) {
             $this->renderFile(
                 sprintf('bundle/%s.twig', $routingFilename),
-                $dir.'/Resources/config/'.$routingFilename, $parameters
+                $dir.'/Resources/config/pimcore/'.$routingFilename, $parameters
             );
         }
     }

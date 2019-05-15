@@ -47,12 +47,22 @@ class BundleGenerator extends BaseBundleGenerator
         $routingFilename = $bundle->getRoutingConfigurationFilename() ?: 'routing.yml';
         $routingTarget = $dir . '/Resources/config/pimcore/' . $routingFilename;
 
-        // create routing file
-        self::mkdir(dirname($routingTarget));
-        self::dump($routingTarget, '');
+        // create routing file for default annotation
+        if ($bundle->getConfigurationFormat() == 'annotation')
+        {
+            self::mkdir(dirname($routingTarget));
+            self::dump($routingTarget, '');
 
-        $routing = new RoutingManipulator($routingTarget);
-        $routing->addResource($bundle->getName(), 'annotation');
+            $routing = new RoutingManipulator($routingTarget);
+            $routing->addResource($bundle->getName(), 'annotation');
+        } else {
+            // update routing file created by default implementation
+            $this->renderFile(
+                sprintf('bundle/%s.twig', $routingFilename),
+                $dir.'/Resources/config/pimcore/'.$routingFilename, $parameters
+            );
+        }
+
 
         $this->renderFile(
             'js/pimcore/startup.js.twig',
