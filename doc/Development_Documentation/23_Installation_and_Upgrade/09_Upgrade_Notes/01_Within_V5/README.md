@@ -2,6 +2,7 @@
 
 ## Version 5.9
 
+- `twig/twig` dependency was changed from `^2.0` to `^2.4`
 - `sensio/distribution-bundle` has been removed. Replace the following lines in your 
 existing `composer.json` file **_BEFORE_** you perform the update!
 
