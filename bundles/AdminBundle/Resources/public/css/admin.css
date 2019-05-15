@@ -65,6 +65,14 @@
     background-color: #444547;
 }
 
+#pimcore_navigation li.compatibility {
+    text-indent: -9999px; /* hide text contents */
+    background-position: center center;
+    background-size: 20px 20px;
+    background-repeat: no-repeat;
+    background-image: url(/bundles/pimcoreadmin/img/flat-color-icons/puzzle.svg);
+}
+
 #pimcore_menu_maintenance {
     background-image: url(/bundles/pimcoreadmin/img/flat-color-icons/stop-circle.svg) !important;
     filter: grayscale(0%) !important;
