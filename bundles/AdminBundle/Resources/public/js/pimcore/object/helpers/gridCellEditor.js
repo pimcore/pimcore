@@ -51,7 +51,10 @@ Ext.define('pimcore.object.helpers.gridCellEditor', {
             return;
         }
 
-        var title = fieldInfo.label ? fieldInfo.label : fieldInfo.key;
+        var title = '';
+        if(typeof fieldInfo.layout.title != "undefined") {
+            title = t(fieldInfo.layout.title);
+        }
 
         this.context = this.editingPlugin.context;
         // this.callParent(arguments);
