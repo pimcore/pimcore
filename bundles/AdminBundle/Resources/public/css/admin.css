@@ -1778,7 +1778,11 @@ span.warning {
     cursor: pointer;
     background: #ECECEC;
     padding: 9px;
-    border-bottom: 1px solid #E0E0E0;
+    border-bottom: 1px solid #202124 !important;
+}
+
+.pimcore_main_accordion .x-panel:last-child .x-panel-header-collapsed {
+    border-bottom: 0 !important;
 }
 
 .pimcore_main_accordion .x-panel-header .x-title-text {
@@ -1836,7 +1840,7 @@ span.warning {
     background: none;
 }
 
-.pimcore_main_accordion .x-tree-view {
+.pimcore_main_accordion .x-tree-view .x-grid-item-container {
     padding-top: 0;
 }
 

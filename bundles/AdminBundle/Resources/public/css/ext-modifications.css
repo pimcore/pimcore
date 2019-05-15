@@ -113,10 +113,6 @@
     outline: 0;
 }
 
-.x-tree-view .x-grid-item-container {
-    padding-top: 10px;
-}
-
 .x-tree-view .x-grid-item {
     background-color: #f6f6f6;
 }
@@ -131,6 +127,7 @@
 
 .x-tree-view .x-grid-item-container {
     overflow: visible;
+    padding-top: 10px;
 }
 
 .x-tree-view .x-grid-cell-inner-treecolumn, .pimcore_document_seo_tree .x-grid-cell-inner  {
