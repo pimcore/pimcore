@@ -18,6 +18,7 @@ use Pimcore\Model\Document\PageSnippet;
 use Pimcore\Model\Document\Tag\BlockInterface;
 use Pimcore\Templating\Renderer\TagRenderer;
 use Twig\Extension\AbstractExtension;
+use Twig\TwigFunction;
 
 class DocumentTagExtension extends AbstractExtension
 {
@@ -40,11 +41,11 @@ class DocumentTagExtension extends AbstractExtension
     public function getFunctions()
     {
         return [
-            new \Twig_Function('pimcore_*', [$this, 'renderTag'], [
+            new TwigFunction('pimcore_*', [$this, 'renderTag'], [
                 'needs_context' => true,
                 'is_safe' => ['html'],
             ]),
-            new \Twig_Function('pimcore_iterate_block', [$this, 'getBlockIterator'])
+            new TwigFunction('pimcore_iterate_block', [$this, 'getBlockIterator'])
         ];
     }
 

@@ -89,7 +89,7 @@ class Cache extends Helper
      */
     public function start()
     {
-        if (\Pimcore\Tool::isFrontentRequestByAdmin() && !$this->force) {
+        if (\Pimcore\Tool::isFrontendRequestByAdmin() && !$this->force) {
             return false;
         }
 
