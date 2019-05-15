@@ -28,7 +28,6 @@ use Pimcore\HttpKernel\BundleCollection\LazyLoadedItem;
 use Pimcore\HttpKernel\Config\SystemConfigParamResource;
 use Presta\SitemapBundle\PrestaSitemapBundle;
 use Scheb\TwoFactorBundle\SchebTwoFactorBundle;
-use Sensio\Bundle\DistributionBundle\SensioDistributionBundle;
 use Sensio\Bundle\FrameworkExtraBundle\SensioFrameworkExtraBundle;
 use Sensio\Bundle\GeneratorBundle\SensioGeneratorBundle;
 use Symfony\Bundle\DebugBundle\DebugBundle;

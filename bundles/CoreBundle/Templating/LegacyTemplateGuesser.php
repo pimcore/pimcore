@@ -2,12 +2,12 @@
 
 namespace Pimcore\Bundle\CoreBundle\Templating;
 
-use Sensio\Bundle\FrameworkExtraBundle\Templating\TemplateGuesser as BaseTemplateGuesser;
-use Symfony\Component\HttpKernel\KernelInterface;
 use Doctrine\Common\Persistence\Proxy;
-use Symfony\Component\HttpFoundation\Request;
+use Sensio\Bundle\FrameworkExtraBundle\Templating\TemplateGuesser as BaseTemplateGuesser;
 use Symfony\Bundle\FrameworkBundle\Templating\DelegatingEngine;
 use Symfony\Bundle\FrameworkBundle\Templating\TemplateReference;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\KernelInterface;
 
 /**
  * Provides backward compatibility for camelCase template names and PHP engine support
@@ -51,21 +51,21 @@ class LegacyTemplateGuesser extends BaseTemplateGuesser
         $templateReference = parent::guessTemplateName($controller, $request);
 
         // Only AppBundle should use templates inside app folder
-        if (0 === strpos($templateReference,'@') && substr(explode('/',$templateReference)[0],1) === 'App') {
-            $templateReference = str_replace('@App/','',$templateReference);
+        if (0 === strpos($templateReference, '@') && substr(explode('/', $templateReference)[0], 1) === 'App') {
+            $templateReference = str_replace('@App/', '', $templateReference);
         }
 
         //update view file format(not supported by Sensio), if engine is php
-        if($engine == 'php') {
-            $templateReference = str_replace('.twig','.php',$templateReference);
+        if ($engine == 'php') {
+            $templateReference = str_replace('.twig', '.php', $templateReference);
         }
 
-        if($this->templateEngine->exists($templateReference)) {
+        if ($this->templateEngine->exists($templateReference)) {
             return $templateReference;
         }
 
         if (is_object($controller) && method_exists($controller, '__invoke')) {
-            $controller = array($controller, '__invoke');
+            $controller = [$controller, '__invoke'];
         } elseif (!is_array($controller)) {
             throw new \InvalidArgumentException(sprintf('First argument of %s must be an array callable or an object defining the magic method __invoke. "%s" given.', __METHOD__, gettype($controller)));
         }
@@ -86,13 +86,13 @@ class LegacyTemplateGuesser extends BaseTemplateGuesser
             $matchAction = $matchController;
             $matchController = null;
         } elseif (!preg_match('/^(.+)Action$/', $controller[1], $matchAction)) {
-            $matchAction = array(null, $controller[1]);
+            $matchAction = [null, $controller[1]];
         }
 
         $bundle = $this->getBundleForClass($className);
         if ($bundle) {
             while ($bundleName = $bundle->getName()) {
-                if (!method_exists($bundle,'getParent') || (null === $parentBundleName = $bundle->getParent())) {
+                if (!method_exists($bundle, 'getParent') || (null === $parentBundleName = $bundle->getParent())) {
                     $bundleName = $bundle->getName();
                     break;
                 }
@@ -110,8 +110,8 @@ class LegacyTemplateGuesser extends BaseTemplateGuesser
             $legacyTemplateReference->set('bundle', '');
         }
 
-        if(!$this->templateEngine->exists($legacyTemplateReference->getLogicalName())) {
-            throw new \InvalidArgumentException(sprintf('The template "%s" and fallback: "%s" does not exist.',$templateReference, $legacyTemplateReference));
+        if (!$this->templateEngine->exists($legacyTemplateReference->getLogicalName())) {
+            throw new \InvalidArgumentException(sprintf('The template "%s" and fallback: "%s" does not exist.', $templateReference, $legacyTemplateReference));
         }
 
         return $legacyTemplateReference;

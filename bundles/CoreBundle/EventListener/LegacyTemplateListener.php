@@ -2,13 +2,12 @@
 
 namespace Pimcore\Bundle\CoreBundle\EventListener;
 
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Sensio\Bundle\FrameworkExtraBundle\EventListener\TemplateListener;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\HttpKernel\Event\GetResponseForControllerResultEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
-use Symfony\Component\HttpFoundation\StreamedResponse;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-use Sensio\Bundle\FrameworkExtraBundle\Templating\TemplateGuesser;
-use Sensio\Bundle\FrameworkExtraBundle\EventListener\TemplateListener;
 use Symfony\Component\Templating\EngineInterface;
 
 /**
@@ -51,7 +50,6 @@ class LegacyTemplateListener extends TemplateListener
         if (!$template instanceof Template) {
             return;
         }
-
 
         $parameters = $event->getControllerResult();
         $owner = $template->getOwner();

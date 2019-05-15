@@ -363,6 +363,4 @@ class Composer
 
         static::executeCommand($event, $consoleDir, 'cache:clear'.$warmup, $options['process-timeout']);
     }
-
-
 }
