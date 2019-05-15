@@ -138,7 +138,7 @@ pimcore.document.newsletters.sendingPanel = Class.create({
                 title: t('newsletter_sendingPanel'),
                 border: false,
                 autoScroll: true,
-                iconCls: "pimcore_icon_newsletter",
+                iconCls: "pimcore_material_icon_email pimcore_material_icon",
                 items: [
                     this.dirtyWarning,
                     {

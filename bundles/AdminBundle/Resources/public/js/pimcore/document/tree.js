@@ -47,7 +47,7 @@ pimcore.document.tree = Class.create({
                 rootVisible: true,
                 loaderBaseParams: {},
                 treeId: "pimcore_panel_tree_documents",
-                treeIconCls: "pimcore_icon_document",
+                treeIconCls: "pimcore_icon_main_tree_document pimcore_icon_material",
                 treeTitle: t('documents'),
                 parentPanel: Ext.getCmp("pimcore_panel_tree_" + this.position)
             };
@@ -925,7 +925,7 @@ pimcore.document.tree = Class.create({
                     title: t("paste_as_language_variant"),
                     buttons: [{
                         text: t("cancel"),
-                        iconCls: "pimcore_icon_delete",
+                        iconCls: "pimcore_icon_cancel",
                         handler: function () {
                             win.close();
                         }
@@ -1275,7 +1275,7 @@ pimcore.document.tree = Class.create({
             }],
             buttons: [{
                 text: t("cancel"),
-                iconCls: "pimcore_icon_delete",
+                iconCls: "pimcore_icon_cancel",
                 handler: function () {
                     win.close();
                 }

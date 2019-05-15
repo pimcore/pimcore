@@ -24,7 +24,7 @@ pimcore.document.newsletters.settings = Class.create(pimcore.document.settings_a
                 bodyStyle:'padding:0 10px 0 10px;',
                 border: false,
                 autoScroll: true,
-                iconCls: "pimcore_icon_settings",
+                iconCls: "pimcore_material_icon_settings pimcore_material_icon",
                 items: [
                     {
                         xtype:'fieldset',

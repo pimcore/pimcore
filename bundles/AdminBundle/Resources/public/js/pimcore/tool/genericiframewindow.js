@@ -34,7 +34,7 @@ pimcore.tool.genericiframewindow = Class.create({
     getTabPanel: function () {
 
         var toolbar = Ext.create('Ext.Toolbar', {
-            cls: 'main-toolbar',
+            cls: 'pimcore_main_toolbar',
             items: [{
                 text: t("reload"),
                 iconCls: "pimcore_icon_reload",

@@ -19,50 +19,43 @@
 }
 
 .x-fieldset .x-fieldset-header {
-    background-color: #fff;
-}
-
-.x-tree-view .x-grid-item-container {
-    overflow: visible;
+    background-color: #f6f6f6;
 }
 
 /* Style overrides */
 
 .x-tab-default-top {
-    border-color: #3c3f41;
-    background-color: #e3e4e5;
+    background-color: #323639;
     padding-top: 5px;
     padding-bottom: 5px;
-    -webkit-box-shadow: inset 0px -4px 5px -4px rgba(0,0,0,0.15);
-    -moz-box-shadow: inset 0px -4px 5px -4px rgba(0,0,0,0.15);
-    box-shadow: inset 0px -4px 5px -4px rgba(0,0,0,0.15);
+    border-top: 1px solid transparent;
+    border-left: 1px solid transparent;
+    border-right: 1px solid transparent;
 }
 
 .pimcore_body .x-tab-default-top.x-tab-active {
-    -webkit-box-shadow: none;
-    -moz-box-shadow: none;
     box-shadow: none;
-    border-top: 3px solid #6428b4;
-    padding-top: 2px;
-    border-top-left-radius: 2px;
-    border-top-right-radius: 2px;
 }
 
 .x-tab-over.x-tab-default.x-tab-over {
-    background-color: #f9f9f9;
+    background-color: #444547;
+    border-color: transparent;
 }
 
 .x-tab-over.x-tab-default.x-tab-over.x-tab-active {
-    background-color: #fff;
+    background-color: #f6f6f6;
+    box-shadow: none;
 }
 
 .x-tab-inner-default {
-    color: #606060;
+    color: #fff;
 }
 
 .x-tab-bar-default {
-    background: #ececec;
-    border-bottom: 1px solid #fff;
+    background: transparent;
+    border-top: 0;
+    border-left: 0;
+    border-right: 0;
 }
 
 .x-tab-focus.x-tab-default {
@@ -81,8 +74,30 @@
     min-height: 30px;
 }
 
+.x-tab.x-tab-active.x-tab-default {
+    background-color: #f6f6f6;
+    border-color: #d0d0d0;
+}
+
+.x-tab.x-tab-active.x-tab-default .x-tab-inner-default {
+    color: #404040;
+}
+
+.x-tab-bar-strip-default {
+    border-bottom: 1px solid #d0d0d0;
+}
+
+.x-tab-bar-default-top .x-box-scroller-tab-bar-default {
+    background: none;
+    color: #323639;
+}
+
 .x-panel-default.x-tabpanel-child {
-    border-top: 3px solid #fff;
+    border-top: 3px solid #f6f6f6;
+}
+
+.x-panel-body-default {
+    background: #f6f6f6;
 }
 
 .x-fieldset {
@@ -98,6 +113,32 @@
     outline: 0;
 }
 
+.x-tree-view .x-grid-item {
+    background-color: #f6f6f6;
+}
+
+.x-tree-view .x-grid-item.x-grid-item-over {
+    background: #fff;
+}
+
+.x-tree-view .x-grid-item.x-grid-item-selected {
+    background: #e3e4e5;
+}
+
+.x-tree-view .x-grid-item-container {
+    overflow: visible;
+    padding-top: 10px;
+}
+
+.x-tree-view .x-grid-cell-inner-treecolumn, .pimcore_document_seo_tree .x-grid-cell-inner  {
+    padding: 0 6px 0 0;
+    height: 20px;
+}
+
+.x-grid-item-alt {
+    background-color: #f6f6f6;
+}
+
 .x-grid-item-focused .x-grid-cell-inner:before {
     border: 0;
 }
@@ -111,12 +152,16 @@
     border:0;
 }
 
-.x-panel-header-default {
-    background-color: #ececec;
+body.x-border-layout-ct, div.x-border-layout-ct {
+    background-color: #f6f6f6;
 }
 
-.x-panel-header.x-region-collapsed-placeholder {
-    border:0;
+.x-panel-header-default {
+    background-color: #f6f6f6;
+}
+
+.x-panel-header-horizontal {
+    border-bottom: 1px solid #d0d0d0 !important;
 }
 
 .x-panel-header-title-default {
@@ -133,7 +178,6 @@
 
 .x-grid-body {
     border-width:1px;
-    border-color: #5a5c5e;
 }
 
 .x-grid-header-ct {
@@ -173,11 +217,11 @@ body > .x-mask {
 }
 
 .x-border-item {
-    border-right: 1px solid #ececec;
+    border-right: 1px solid #d0d0d0;
 }
 
 .x-toolbar-default {
-    background-color: #ececec;
+    background-color: #f6f6f6;
     padding: 7px 0 6px 8px;
 }
 
@@ -198,7 +242,12 @@ body > .x-mask {
     border-color: #000;
 }
 
+.x-form-text-wrap {
+    background: #fff;
+}
+
 .x-panel-default {
+    background: #f6f6f6;
     border-color: #d0d0d0;
 }
 
@@ -228,9 +277,30 @@ body > .x-mask {
     -webkit-box-shadow: none !important;
 }
 
-.x-tree-view .x-grid-cell-inner-treecolumn, .pimcore_document_seo_tree .x-grid-cell-inner  {
-    padding: 0 6px 0 0;
-    height: 20px;
+.x-menu-default {
+    border-color: #000;
+}
+
+.x-menu-body-default {
+    background-color: #202124;
+}
+
+.x-menu-item-text-default {
+    color: #fff;
+}
+
+.x-menu-item-default.x-menu-item-separator {
+    background-color: #000;
+    border-color: #000;
+}
+
+.x-menu-item-active .x-menu-item-text {
+    font-weight: 100 !important;
+}
+
+.x-css-shadow {
+    display: none;
+    opacity: 0;
 }
 
 /*.x-accordion-item .x-tree-icon-parent {
@@ -252,6 +322,20 @@ body > .x-mask {
 .x-form-item-default.x-item-disabled, .x-form-item-default.x-form-readonly {
     opacity: 0.7;
 }
+
+.x-splitter-vertical {
+    border-right: 1px solid #d0d0d0;
+    border-left: 1px solid #d0d0d0;
+}
+
+.x-splitter-vertical.x-border-item {
+    border-left: 0;
+}
+
+.x-box-scroller-disabled {
+    visibility: hidden;
+}
+
 
 /* ExtJS 6.0 bugfixes */
 

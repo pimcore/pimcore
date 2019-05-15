@@ -147,7 +147,7 @@ pimcore.document.versions = Class.create({
                 title: t('versions'),
                 border: false,
                 layout: "border",
-                iconCls: "pimcore_icon_versions",
+                iconCls: "pimcore_material_icon_versions pimcore_material_icon",
                 items: [this.grid,preview]
             });
 

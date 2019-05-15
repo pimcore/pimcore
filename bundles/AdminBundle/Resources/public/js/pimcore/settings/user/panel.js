@@ -81,11 +81,14 @@ pimcore.settings.user.panel = Class.create(pimcore.settings.user.panels.abstract
                         }.bind(this)
                     }
                 },
-                tbar: ["->", {
-                    text: t("search"),
-                    iconCls: "pimcore_icon_search",
-                    handler: this.openSearchPanel.bind(this)
-                }],
+                tbar: {
+                    cls: 'pimcore_toolbar_border_bottom',
+                    items: ["->", {
+                        text: t("search"),
+                        iconCls: "pimcore_icon_search",
+                        handler: this.openSearchPanel.bind(this)
+                    }]
+                },
                 listeners: this.getTreeNodeListeners()
             });
         }

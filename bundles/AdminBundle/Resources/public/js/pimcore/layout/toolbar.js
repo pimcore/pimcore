@@ -1094,7 +1094,51 @@ pimcore.layout.toolbar = Class.create({
                     iconCls: "pimcore_icon_sms",
                     id: "notifications_new",
                     handler: this.showNotificationModal.bind(this)
-                })
+                });
+            }
+
+            notificationItems.push('-');
+
+            // check for devmode
+            if (pimcore.settings.devmode) {
+                notificationItems.push({
+                    text: t("DEV MODE"),
+                    iconCls: "pimcore_icon_dev_mode"
+                });
+                pimcore.notification.helper.incrementCount();
+            }
+
+            // check for debug
+            if (pimcore.settings.debug) {
+                notificationItems.push({
+                    text: t("debug_mode_on"),
+                    iconCls: "pimcore_icon_debug_mode"
+                });
+                pimcore.notification.helper.incrementCount();
+            }
+
+            // check for maintenance
+            if (!pimcore.settings.maintenance_active) {
+                notificationItems.push({
+                    text: t("maintenance_not_active"),
+                    iconCls: "pimcore_icon_maintenance",
+                    handler: function () {
+                        window.open('https://pimcore.com/docs/5.0.x/Getting_Started/Installation.html#page_5-Maintenance-Cron-Job');
+                    }
+                });
+                pimcore.notification.helper.incrementCount();
+            }
+
+            //check for mail settings
+            if (!pimcore.settings.mail) {
+                notificationItems.push({
+                    text: t("mail_settings_incomplete"),
+                    iconCls: "pimcore_icon_email",
+                    handler: function () {
+                        window.open('https://pimcore.com/docs/5.x/Development_Documentation/Tools_and_Features/System_Settings.html#page_E-Mail-Settings');
+                    }
+                });
+                pimcore.notification.helper.incrementCount();
             }
 
             this.notificationMenu = new Ext.menu.Menu({

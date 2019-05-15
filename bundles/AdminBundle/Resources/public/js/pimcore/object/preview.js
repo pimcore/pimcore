@@ -33,7 +33,7 @@ pimcore.object.preview = Class.create({
                 border: false,
                 autoScroll: true,
                 closable: false,
-                iconCls: "pimcore_icon_preview",
+                iconCls: "pimcore_material_icon_devices pimcore_material_icon",
                 bodyCls: "pimcore_overflow_scrolling",
                 html: '<iframe src="about:blank" style="width: 100%;" onload="' + iframeOnLoad
                     + '" frameborder="0" id="' + this.frameId + '"></iframe>'
