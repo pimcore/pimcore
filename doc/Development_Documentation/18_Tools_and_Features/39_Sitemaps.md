@@ -17,7 +17,7 @@ an event handler and start to add entries.
 Sitemaps can either be exposed by being generated on-the-fly or by being dumped to static files. What to use depends on the size
 of your site (e.g. the size of the tree which needs to be processed). In general it's recommended to create static files 
 as it reduces the overhead of creating the sitemap on every crawler request. If you want to serve the sitemap directly,
-you need to register the sitemaps routes in your routing config (see [PrestaSitemapBundle Documentation](https://github.com/prestaconcept/PrestaSitemapBundle/blob/master/Resources/doc/1-Installation.md)
+you need to register the sitemaps routes in your routing config (see [PrestaSitemapBundle Documentation](https://github.com/prestaconcept/PrestaSitemapBundle/blob/master/Resources/doc/1-installation.md)
 for details).
 
 ```yaml
