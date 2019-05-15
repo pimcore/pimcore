@@ -53,7 +53,8 @@ CREATE TABLE `assets_metadata` (
   `type` ENUM('input','textarea','asset','document','object','date','select','checkbox') DEFAULT NULL,
   `data` text,
   PRIMARY KEY (`cid`, `name`, `language`),
-	INDEX `name` (`name`)
+	INDEX `name` (`name`),
+	INDEX `cid` (`cid`)
 ) DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `cache`;
