@@ -237,6 +237,10 @@ body > .x-mask {
     border-color: #000;
 }
 
+.x-form-text-wrap {
+    background: #fff;
+}
+
 .x-panel-default {
     background: #f6f6f6;
     border-color: #d0d0d0;

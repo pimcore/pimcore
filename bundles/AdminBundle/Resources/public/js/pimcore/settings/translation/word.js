@@ -65,6 +65,7 @@ pimcore.settings.translation.word = Class.create({
         this.component = Ext.create('Ext.grid.Panel', {
             store: this.exportStore,
             autoHeight: true,
+            border: true,
             style: "margin-bottom: 10px",
             selModel: Ext.create('Ext.selection.RowModel', {}),
             columns: {

@@ -31,10 +31,8 @@ pimcore.object.edit = Class.create({
 
             this.layout = Ext.create('Ext.panel.Panel', {
                 title: t('edit'),
-                bodyStyle:'background-color: #fff;',
                 padding: 10,
                 border: false,
-                //layout: 'border',
                 layout: "fit",
                 iconCls: "pimcore_material_icon_edit pimcore_material_icon",
                 cls: "pimcore_object_panel_edit",

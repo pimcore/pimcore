@@ -1339,6 +1339,10 @@ span.warning {
     background-size: 500px auto;
 }
 
+#pimcore_panel_tabs-body .x-panel-body-default .x-panel-body-default {
+    padding-top:5px;
+}
+
 #pimcore_panel_tabs > .x-tab-bar {
     background: #202124;
 
@@ -1523,6 +1527,10 @@ span.warning {
 
 .pimcore_main_toolbar .x-btn-wrap.x-btn-split-right > .x-btn-button:after {
     border-color: #323639;
+}
+
+.pimcore_toolbar_border_bottom {
+    border-bottom: 1px solid #d0d0d0 !important;
 }
 
 .class-editor-validation-success input {
