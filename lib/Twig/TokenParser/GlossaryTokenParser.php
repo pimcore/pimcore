@@ -18,27 +18,28 @@ declare(strict_types=1);
 namespace Pimcore\Twig\TokenParser;
 
 use Pimcore\Twig\Node\GlossaryNode;
-use Twig_Token;
+use Twig\Token;
+use Twig\TokenParser\AbstractTokenParser;
 
-class GlossaryTokenParser extends \Twig_TokenParser
+class GlossaryTokenParser extends AbstractTokenParser
 {
     /**
      * @inheritDoc
      */
-    public function parse(Twig_Token $token)
+    public function parse(Token $token)
     {
         $lineno = $token->getLine();
 
         $stream = $this->parser->getStream();
-        $stream->expect(\Twig_Token::BLOCK_END_TYPE);
+        $stream->expect(Token::BLOCK_END_TYPE);
 
         // create body subtree
-        $body = $this->parser->subparse(function (Twig_Token $token) {
+        $body = $this->parser->subparse(function (Token $token) {
             return $token->test(['endpimcoreglossary']);
         }, true);
 
         // end tag block end
-        $stream->expect(\Twig_Token::BLOCK_END_TYPE);
+        $stream->expect(Token::BLOCK_END_TYPE);
 
         return new GlossaryNode(['body' => $body], [], $lineno, $this->getTag());
     }

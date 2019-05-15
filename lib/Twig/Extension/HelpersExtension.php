@@ -18,6 +18,7 @@ declare(strict_types=1);
 namespace Pimcore\Twig\Extension;
 
 use Twig\Extension\AbstractExtension;
+use Twig\TwigTest;
 
 /**
  * Simple helpers that do not need a dedicated extension
@@ -27,7 +28,7 @@ class HelpersExtension extends AbstractExtension
     public function getTests()
     {
         return [
-            new \Twig_Test('instanceof', function ($object, $class) {
+            new TwigTest('instanceof', function ($object, $class) {
                 return is_object($object) && $object instanceof $class;
             })
         ];
