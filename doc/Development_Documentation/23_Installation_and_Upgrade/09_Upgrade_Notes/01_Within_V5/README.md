@@ -1,7 +1,7 @@
 # Upgrade Notes for Upgrades within Pimcore 5
 
 ## Version 5.9
-
+- `sensio/generator-bundle` has been removed in favour of Symfony 4. You can still use `pimcore:generate:bundle` command to generate Pimcore Bundle Skeleton.
 - `twig/twig` dependency was changed from `^2.0` to `^2.4`
 - `sensio/distribution-bundle` has been removed. Replace the following lines in your 
 existing `composer.json` file **_BEFORE_** you perform the update!
