@@ -1494,6 +1494,10 @@ span.warning {
     color: #e3e4e5;
 }
 
+.pimcore_main_toolbar + .x-panel {
+    border-right: 1px solid #323639;
+}
+
 .pimcore_main_toolbar + .x-panel > .x-tab-bar-default {
     background: #323639;
 }

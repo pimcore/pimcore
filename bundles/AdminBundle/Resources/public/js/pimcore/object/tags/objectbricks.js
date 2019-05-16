@@ -266,6 +266,7 @@ pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
             var blockElement = new Ext.Panel({
                 //bodyStyle: "padding:10px;",
                 style: "margin: 0 0 10px 0;",
+                cls: 'pimcore_objectbrick_item',
                 closable: !this.fieldConfig.noteditable,
                 autoHeight: true,
                 border: false,
