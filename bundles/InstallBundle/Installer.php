@@ -384,7 +384,7 @@ class Installer
 
     private function installClasses(KernelInterface $kernel)
     {
-        $this->logger->info('Running {command} command', ['command' => 'assets:install']);
+        $this->logger->info('Running {command} command', ['command' => 'pimcore:deployment:classes-rebuild']);
         $io = $this->commandLineOutput;
 
         try {

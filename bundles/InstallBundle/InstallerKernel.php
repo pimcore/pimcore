@@ -61,6 +61,14 @@ class InstallerKernel extends Kernel
     }
 
     /**
+     * {@inheritdoc}
+     */
+    public function getCacheDir()
+    {
+        return $this->getRootDir() . '/cache';
+    }
+
+    /**
      * @inheritDoc
      */
     public function registerBundles()
