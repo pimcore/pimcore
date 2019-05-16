@@ -112,7 +112,7 @@ class Processor
         if ($format == 'print') {
             $format = self::getAllowedFormat($fileExt, ['svg', 'jpeg', 'png', 'tiff'], 'png');
 
-            if (($format == 'tiff') && \Pimcore\Tool::isFrontentRequestByAdmin()) {
+            if (($format == 'tiff') && \Pimcore\Tool::isFrontendRequestByAdmin()) {
                 // return a webformat in admin -> tiff cannot be displayed in browser
                 $format = 'png';
                 $deferred = false; // deferred is default, but it's not possible when using isFrontentRequestByAdmin()
@@ -131,7 +131,7 @@ class Processor
                 return $asset->getFullPath();
             }
         } elseif ($format == 'tiff') {
-            if (\Pimcore\Tool::isFrontentRequestByAdmin()) {
+            if (\Pimcore\Tool::isFrontendRequestByAdmin()) {
                 // return a webformat in admin -> tiff cannot be displayed in browser
                 $format = 'png';
                 $deferred = false; // deferred is default, but it's not possible when using isFrontentRequestByAdmin()

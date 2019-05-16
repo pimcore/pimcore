@@ -102,8 +102,8 @@ pimcore.settings.targeting.rules.panel= Class.create({
                         ptype: 'treeviewdragdrop'
                     }
                 },
-                tbar: Ext.create('Ext.Toolbar', {
-                    cls: 'main-toolbar',
+                tbar: {
+                    cls: 'pimcore_toolbar_border_bottom',
                     items: [
                         {
                             text: t("add"),
@@ -112,7 +112,7 @@ pimcore.settings.targeting.rules.panel= Class.create({
                         },
                         this.saveButton
                     ]
-                }),
+                },
                 listeners: this.getTreeNodeListeners()
             });
 

@@ -127,7 +127,7 @@ pimcore.asset.listfolder = Class.create({
 
         this.grid = Ext.create('Ext.grid.Panel', {
             title: "List",
-            iconCls: "pimcore_icon_table_tab",
+            iconCls: "pimcore_material_icon_list pimcore_material_icon",
             frame: false,
             autoScroll: true,
             store: this.store,

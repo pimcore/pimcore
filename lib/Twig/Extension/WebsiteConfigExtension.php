@@ -18,13 +18,15 @@ declare(strict_types=1);
 namespace Pimcore\Twig\Extension;
 
 use Pimcore\Config;
+use Twig\Extension\AbstractExtension;
+use Twig\TwigFunction;
 
-class WebsiteConfigExtension extends \Twig_Extension
+class WebsiteConfigExtension extends AbstractExtension
 {
     public function getFunctions()
     {
         return [
-            new \Twig_Function('pimcore_website_config', [$this, 'getWebsiteConfig']),
+            new TwigFunction('pimcore_website_config', [$this, 'getWebsiteConfig']),
         ];
     }
 

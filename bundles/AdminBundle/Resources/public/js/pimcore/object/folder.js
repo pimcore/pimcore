@@ -175,14 +175,14 @@ pimcore.object.folder = Class.create(pimcore.object.abstract, {
 
             this.toolbarButtons.remove = new Ext.Button({
                 tooltip: t('delete_folder'),
-                iconCls: "pimcore_icon_delete",
+                iconCls: "pimcore_material_icon_delete pimcore_material_icon",
                 scale: "medium",
                 handler: this.remove.bind(this)
             });
 
             this.toolbarButtons.rename = new Ext.Button({
                 tooltip: t('rename'),
-                iconCls: "pimcore_icon_key pimcore_icon_overlay_go",
+                iconCls: "pimcore_material_icon_rename pimcore_material_icon",
                 scale: "medium",
                 handler: this.rename.bind(this)
             });
@@ -204,7 +204,7 @@ pimcore.object.folder = Class.create(pimcore.object.abstract, {
 
             buttons.push({
                 tooltip: t('reload'),
-                iconCls: "pimcore_icon_reload",
+                iconCls: "pimcore_material_icon_reload pimcore_material_icon",
                 scale: "medium",
                 handler: this.reload.bind(this)
             });
@@ -212,7 +212,7 @@ pimcore.object.folder = Class.create(pimcore.object.abstract, {
             if (pimcore.elementservice.showLocateInTreeButton("object")) {
                 buttons.push({
                     tooltip: t('show_in_tree'),
-                    iconCls: "pimcore_icon_show_in_tree",
+                    iconCls: "pimcore_material_icon_locate pimcore_material_icon",
                     scale: "medium",
                     handler: this.selectInTree.bind(this, "folder")
                 });
@@ -220,7 +220,7 @@ pimcore.object.folder = Class.create(pimcore.object.abstract, {
 
             buttons.push({
                 tooltip: t("show_metainfo"),
-                iconCls: "pimcore_icon_info",
+                iconCls: "pimcore_material_icon_info pimcore_material_icon",
                 scale: "medium",
                 handler: this.showMetaInfo.bind(this)
             });
@@ -239,7 +239,7 @@ pimcore.object.folder = Class.create(pimcore.object.abstract, {
                 id: "object_toolbar_" + this.id,
                 region: "north",
                 border: false,
-                cls: "main-toolbar",
+                cls: "pimcore_main_toolbar",
                 items: buttons,
                 overflowHandler: 'scroller'
             });

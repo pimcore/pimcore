@@ -76,7 +76,7 @@ pimcore.element.workflows = Class.create({
                     tooltip: t('workflow_details')
                 },
                 items: [this.grid],
-                iconCls: "pimcore_icon_workflow_action",
+                iconCls: "pimcore_material_icon_workflow pimcore_material_icon",
                 layout: 'border'
             });
 

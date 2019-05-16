@@ -17,7 +17,7 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
     fieldObject: {},
 
     title: t('search_edit'),
-    icon: "pimcore_icon_search",
+    icon: "pimcore_material_icon_search pimcore_material_icon",
     onlyDirectChildren: false,
 
     sortinfo: {},

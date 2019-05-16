@@ -286,7 +286,7 @@ pimcore.settings.redirects = Class.create({
         });
 
         var toolbar = Ext.create('Ext.Toolbar', {
-            cls: 'main-toolbar',
+            cls: 'pimcore_main_toolbar',
             items: [
                 {
                     xtype: "splitbutton",

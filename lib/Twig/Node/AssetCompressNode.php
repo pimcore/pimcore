@@ -17,16 +17,17 @@ declare(strict_types=1);
 
 namespace Pimcore\Twig\Node;
 
-use Twig_Compiler;
+use Twig\Compiler;
+use Twig\Node\Node;
 
-class AssetCompressNode extends \Twig_Node
+class AssetCompressNode extends Node
 {
-    public function __construct(\Twig_Node $body, $lineno, $tag = 'pimcoreassetcompress')
+    public function __construct(Node $body, $lineno, $tag = 'pimcoreassetcompress')
     {
         parent::__construct(['body' => $body], [], $lineno, $tag);
     }
 
-    public function compile(Twig_Compiler $compiler)
+    public function compile(Compiler $compiler)
     {
         $compiler
             ->addDebugInfo($this)
