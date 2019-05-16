@@ -69,6 +69,10 @@
             background-color: <?= $interfaceColor ?> !important;
         }
 
+        #pimcore_avatar {
+            background-color: <?= $interfaceColor ?> !important;
+        }
+
         #pimcore_navigation li:hover:after {
             background-color: <?= $interfaceColor ?> !important;
         }

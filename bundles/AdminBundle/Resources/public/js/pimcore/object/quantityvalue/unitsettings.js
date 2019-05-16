@@ -217,31 +217,34 @@ pimcore.object.quantityValue.unitsettings = Class.create({
             columns : typesColumns,
             bbar: this.pagingtoolbar,
             selModel: Ext.create('Ext.selection.RowModel', {}),
-            tbar: [
-                {
-                    text: t('add'),
-                    handler: this.onAdd.bind(this),
-                    iconCls: "pimcore_icon_add"
-                },
-                '-',
-                {
-                    text: t('delete'),
-                    handler: this.onDelete.bind(this),
-                    iconCls: "pimcore_icon_delete"
-                },
-                '-',
-                {
-                    text: t('reload'),
-                    handler: function () {
-                        this.store.reload();
-                    }.bind(this),
-                    iconCls: "pimcore_icon_reload"
-                },'-',{
-                  text: this.getHint(),
-                  xtype: "tbtext",
-                  style: "margin: 0 10px 0 0;"
-                }
-            ],
+            tbar: {
+                cls: 'pimcore_main_toolbar',
+                items: [
+                    {
+                        text: t('add'),
+                        handler: this.onAdd.bind(this),
+                        iconCls: "pimcore_icon_add"
+                    },
+                    '-',
+                    {
+                        text: t('delete'),
+                        handler: this.onDelete.bind(this),
+                        iconCls: "pimcore_icon_delete"
+                    },
+                    '-',
+                    {
+                        text: t('reload'),
+                        handler: function () {
+                            this.store.reload();
+                        }.bind(this),
+                        iconCls: "pimcore_icon_reload"
+                    },'-',{
+                        text: this.getHint(),
+                        xtype: "tbtext",
+                        style: "margin: 0 10px 0 0;"
+                    }
+                ]
+            },
             viewConfig: {
                 forceFit: true
             }

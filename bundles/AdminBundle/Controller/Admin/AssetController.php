@@ -137,6 +137,7 @@ class AssetController extends ElementControllerBase implements EventedController
         $data['filesizeFormatted'] = $asset->getFileSize(true);
         $data['filesize'] = $asset->getFileSize();
         $data['url'] = Tool::getHostUrl(null, $request) . $asset->getRealFullPath();
+        $data['fileExtension'] = File::getFileExtension($asset->getFilename());
 
         $data['php'] = [
             'classes' => array_merge([get_class($asset)], array_values(class_parents($asset))),

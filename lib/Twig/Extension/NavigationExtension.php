@@ -21,8 +21,10 @@ use Pimcore\Model\Document;
 use Pimcore\Navigation\Container;
 use Pimcore\Navigation\Renderer\RendererInterface;
 use Pimcore\Templating\Helper\Navigation;
+use Twig\Extension\AbstractExtension;
+use Twig\TwigFunction;
 
-class NavigationExtension extends \Twig_Extension
+class NavigationExtension extends AbstractExtension
 {
     /**
      * @var Navigation
@@ -40,11 +42,11 @@ class NavigationExtension extends \Twig_Extension
     public function getFunctions(): array
     {
         return [
-            new \Twig_Function('pimcore_build_nav', [$this, 'buildNavigation']),
-            new \Twig_Function('pimcore_render_nav', [$this, 'render'], [
+            new TwigFunction('pimcore_build_nav', [$this, 'buildNavigation']),
+            new TwigFunction('pimcore_render_nav', [$this, 'render'], [
                 'is_safe' => ['html']
             ]),
-            new \Twig_Function('pimcore_nav_renderer', [$this, 'getRenderer']),
+            new TwigFunction('pimcore_nav_renderer', [$this, 'getRenderer']),
         ];
     }
 

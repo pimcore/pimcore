@@ -33,7 +33,7 @@ pimcore.document.printpages.pdfpreview = Class.create({
 
             this.generateButton = new Ext.Button({
                 text: t("web2print_generate_pdf"),
-                iconCls: "pimcore_icon_pdf",
+                iconCls: "pimcore_material_icon_pdf pimcore_material_icon",
                 style: "float: right;  margin-top: 10px",
                 disabled: !this.page.data.published,
                 handler: this.generatePdf.bind(this)
@@ -127,7 +127,7 @@ pimcore.document.printpages.pdfpreview = Class.create({
                 title: t('web2print_preview_pdf'),
                 layout: "border",
                 autoScroll: false,
-                iconCls: "pimcore_icon_pdf",
+                iconCls: "pimcore_material_icon_pdf pimcore_material_icon",
                 items: [{
                     region: "center",
                     hideMode: "offsets",

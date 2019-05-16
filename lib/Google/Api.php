@@ -137,7 +137,7 @@ class Api
         }
 
         if (!$token) {
-            $client->refreshTokenWithAssertion();
+            $client->fetchAccessTokenWithAssertion();
             $token = json_encode($client->getAccessToken());
 
             // 1 hour (3600s) is the default expiry time

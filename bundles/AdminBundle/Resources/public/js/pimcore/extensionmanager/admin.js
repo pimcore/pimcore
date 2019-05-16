@@ -121,7 +121,7 @@ pimcore.extensionmanager.admin = Class.create({
         this.store.load();
 
         var toolbar = Ext.create('Ext.Toolbar', {
-            cls: 'main-toolbar',
+            cls: 'pimcore_main_toolbar',
             items: [
                 {
                     text: t("refresh"),

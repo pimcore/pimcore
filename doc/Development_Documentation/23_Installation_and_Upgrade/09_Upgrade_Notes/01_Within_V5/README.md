@@ -1,5 +1,51 @@
 # Upgrade Notes for Upgrades within Pimcore 5
 
+## Version 5.9
+
+- `twig/twig` dependency was changed from `^2.0` to `^2.4`
+- `sensio/distribution-bundle` has been removed. Replace the following lines in your 
+existing `composer.json` file **_BEFORE_** you perform the update!
+
+Config to replace:
+```
+    "post-install-cmd": [
+      "Pimcore\\Composer::postInstall",
+      "@symfony-scripts"
+    ],
+    "post-update-cmd": [
+      "Pimcore\\Composer::postUpdate",
+      "@symfony-scripts",
+      "Pimcore\\Composer::executeMigrationsUp"
+    ],
+    "pre-package-update": [
+      "Pimcore\\Composer::prePackageUpdate"
+    ],
+    "symfony-scripts": [
+      "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::clearCache",
+      "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::installAssets",
+      "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::installRequirementsFile",
+      "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::prepareDeploymentTarget"
+    ]     
+```
+
+Replacement: 
+```
+    "post-install-cmd": [
+      "Pimcore\\Composer::postInstall",
+      "@pimcore-scripts"
+    ],
+    "post-update-cmd": [
+      "Pimcore\\Composer::postUpdate",
+      "@pimcore-scripts",
+      "Pimcore\\Composer::executeMigrationsUp"
+    ],
+    "pimcore-scripts": [
+      "Pimcore\\Composer::clearCache",
+      "Pimcore\\Composer::installAssets"
+    ]
+```
+    
+
 ## Version 5.8.0
 - Add PathFormatter interface, static path formatters are now deprecated and will be removed with Version 6.0. You can read
  more about that [here](../../../05_Objects/01_Object_Classes/05_Class_Settings/14_Path_Formatter.md).
@@ -43,6 +89,7 @@ to the way how the Symfony container gets built and can be safely ignored.
 - Removed method `\Pimcore\Model\DataObject\ClassDefinition\Data::setFieldtype($fieldtype)`
 - `\Pimcore\Model\Translation\Website::getByKey()` and `\Pimcore\Model\Translation\Admin::getByKey()` are not throwing an exception anymore if an item doesn't exist, instead they are returning `null`
 - If a custom object data-type extends from a core data-type it has to be compatible with the new interfaces (`CustomResourcePersistingInterface`, `QueryResourcePersistenceAwareInterface` and `ResourcePersistenceAwareInterface`)
+- Data Object Custom Layouts: policy for names of custom layouts is now: `/[a-zA-Z][a-zA-Z0-9]+/`
 
 #### Data Objects: renamed relational data-types
 For better understanding we've renamed all relational data-types to a more meaningful name.  

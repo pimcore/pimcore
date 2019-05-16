@@ -40,7 +40,7 @@ pimcore.object.variantsTab = Class.create(pimcore.object.helpers.gridTabAbstract
             this.layout = new Ext.Panel({
                 title: t('variants'),
                 border: false,
-                iconCls: "pimcore_icon_variant",
+                iconCls: "pimcore_material_icon_variants pimcore_material_icon",
                 layout: "fit"
             });
         }

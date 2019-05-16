@@ -49,11 +49,12 @@ DROP TABLE IF EXISTS `assets_metadata`;
 CREATE TABLE `assets_metadata` (
   `cid` int(11) DEFAULT NULL,
   `name` varchar(190) DEFAULT NULL,
-  `language` varchar(190) DEFAULT NULL,
+  `language` varchar(10) CHARACTER SET ascii COLLATE ascii_general_ci NOT NULL DEFAULT '',
   `type` ENUM('input','textarea','asset','document','object','date','select','checkbox') DEFAULT NULL,
   `data` text,
-  KEY `cid` (`cid`),
-	INDEX `name` (`name`)
+  PRIMARY KEY (`cid`, `name`, `language`),
+	INDEX `name` (`name`),
+	INDEX `cid` (`cid`)
 ) DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `cache`;

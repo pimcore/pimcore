@@ -211,13 +211,11 @@ pimcore.element.scheduler = Class.create({
                         handler: this.onAdd.bind(this),
                         iconCls: "pimcore_icon_add"
                     },
-                    '-',
                     {
                         text: t('delete'),
                         handler: this.onDelete.bind(this),
                         iconCls: "pimcore_icon_delete"
-                    },
-                    '-'
+                    }
                 ],
                 plugins: [
                     this.cellEditing
@@ -230,7 +228,7 @@ pimcore.element.scheduler = Class.create({
                     tooltip: t('schedule')
                 },
                 border: false,
-                iconCls: "pimcore_icon_schedule",
+                iconCls: "pimcore_material_icon_scheduler pimcore_material_icon",
                 items: [this.grid],
                 layout: "fit"
             });

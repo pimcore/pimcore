@@ -269,7 +269,7 @@ pimcore.asset.video = Class.create(pimcore.asset.asset, {
                 layout: "border",
                 items: [this.previewPanel, this.previewImagePanel],
                 title: t("preview"),
-                iconCls: "pimcore_icon_preview"
+                iconCls: "pimcore_material_icon_devices pimcore_material_icon"
             });
         }
 

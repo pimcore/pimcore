@@ -442,26 +442,6 @@ Ext.onReady(function () {
     targetGroupStore.load();
     pimcore.globalmanager.add("target_group_store", targetGroupStore);
 
-    // STATUSBAR
-    // check for devmode
-    if (pimcore.settings.devmode) {
-        Ext.get("pimcore_status_dev").show();
-    }
-
-    // check for debug
-    if (pimcore.settings.debug) {
-        Ext.get("pimcore_status_debug").show();
-    }
-
-    // check for maintenance
-    if (!pimcore.settings.maintenance_active) {
-        Ext.get("pimcore_status_maintenance").show();
-    }
-
-    //check for mail settings
-    if (!pimcore.settings.mail) {
-        Ext.get("pimcore_status_email").show();
-    }
 
     // check for updates
     window.setTimeout(function () {
@@ -498,36 +478,31 @@ Ext.onReady(function () {
         }).done(function(data) {
             if (data['latestVersion']) {
                 if(pimcore.currentuser.admin) {
-                    Ext.get("pimcore_status_update").show();
 
-                    var lastOpened = localStorage.getItem("pimcore_version_notice");
-                    var now = new Date().getTime();
-                    if((!lastOpened || (now-(86400*7)) > lastOpened)) {
-                        localStorage.setItem("pimcore_version_notice", now);
+                    pimcore.notification.helper.incrementCount();
 
-                        jQuery("#pimcore_status_update").trigger("mouseenter");
-                        window.setTimeout(function () {
-                            jQuery("#pimcore_status_update").trigger("mouseleave");
-                        }, 5000);
-                    }
+                    var toolbar = pimcore.globalmanager.get("layout_toolbar");
+                    toolbar.notificationMenu.add({
+                        text: t("update_available"),
+                        iconCls: "pimcore_icon_reload",
+                        handler: function () {
+                            var html = '<div class="pimcore_about_window" xmlns="http://www.w3.org/1999/html">';
+                            html += '<h2 style="text-decoration: underline">New Version Available!</h2>';
+                            html += '<br><b>Your Version: ' + pimcore.settings.version + '</b>';
+                            html += '<br><b style="color: darkgreen;">New Version: ' + data['latestVersion'] + '</b>';
+                            html += '<h3 style="color: darkred">Please update as soon as possible!</h3>';
+                            html += '</div>';
 
-                    Ext.get("pimcore_status_update").on('click', function () {
-                        var html = '<div class="pimcore_about_window" xmlns="http://www.w3.org/1999/html">';
-                        html += '<h2 style="text-decoration: underline">New Version Available!</h2>';
-                        html += '<br><b>Your Version: ' + pimcore.settings.version + '</b>';
-                        html += '<br><b style="color: darkgreen;">New Version: ' + data['latestVersion'] + '</b>';
-                        html += '<h3 style="color: darkred">Please update as soon as possible!</h3>';
-                        html += '</div>';
-
-                        var win = new Ext.Window({
-                            title: "New Version Available!",
-                            width:500,
-                            height: 220,
-                            bodyStyle: "padding: 10px;",
-                            modal: true,
-                            html: html
-                        });
-                        win.show();
+                            var win = new Ext.Window({
+                                title: "New Version Available!",
+                                width:500,
+                                height: 220,
+                                bodyStyle: "padding: 10px;",
+                                modal: true,
+                                html: html
+                            });
+                            win.show();
+                        }
                     });
                 }
             }
@@ -575,16 +550,20 @@ Ext.onReady(function () {
                                 region: 'west',
                                 id: 'pimcore_panel_tree_left',
                                 cls: 'pimcore_main_accordion',
-                                split: true,
+                                split: {
+                                    cls: 'pimcore_main_splitter'
+                                },
                                 width: 300,
                                 minSize: 175,
                                 collapsible: true,
                                 collapseMode: 'header',
-                                hideCollapseTool: true,
-                                animCollapse: false,
+                                defaults: {
+                                    margin: '0'
+                                },
                                 layout: {
                                     type: 'accordion',
-                                    hideCollapseTool: true
+                                    hideCollapseTool: true,
+                                    animate: false
                                 },
                                 header: false,
                                 hidden: true,
@@ -619,20 +598,23 @@ Ext.onReady(function () {
                             region: 'east',
                             id: 'pimcore_panel_tree_right',
                             cls: "pimcore_main_accordion",
-                            split: true,
+                            split: {
+                                cls: 'pimcore_main_splitter'
+                            },
                             width: 300,
                             minSize: 175,
                             collapsible: true,
                             collapseMode: 'header',
-                            collapsed: false,
-                            hideCollapseTool: true,
-                            animCollapse: false,
-                            layout: 'accordion',
-                            hidden: true,
-                            header: false,
-                            layoutConfig: {
+                            defaults: {
+                                margin: '0'
+                            },
+                            layout: {
+                                type: 'accordion',
+                                hideCollapseTool: true,
                                 animate: false
                             },
+                            header: false,
+                            hidden: true,
                             forceLayout: true,
                             hideMode: "offsets",
                             items: []

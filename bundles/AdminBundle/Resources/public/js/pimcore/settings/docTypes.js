@@ -326,13 +326,16 @@ pimcore.settings.document.doctypes = Class.create({
             plugins: [
                 this.cellEditing
             ],
-            tbar: [
-                {
-                    text: t('add'),
-                    handler: this.onAdd.bind(this),
-                    iconCls: "pimcore_icon_add"
-                }
-            ],
+            tbar: {
+                cls: 'pimcore_main_toolbar',
+                items: [
+                    {
+                        text: t('add'),
+                        handler: this.onAdd.bind(this),
+                        iconCls: "pimcore_icon_add"
+                    }
+                ]
+            },
             viewConfig: {
                 forceFit: true
             }
