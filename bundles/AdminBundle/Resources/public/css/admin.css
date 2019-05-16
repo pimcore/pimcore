@@ -1006,6 +1006,18 @@ span.warning {
     border-color: #d0d0d0 !important;
 }
 
+.pimcore_object_panel_edit > .x-panel-body > .objectlayout_element_tabpanel > .x-tab-bar {
+    border: 0 !important;
+}
+
+.pimcore_object_panel_edit > .x-panel-body > .objectlayout_element_panel > .x-panel-body {
+    border: 0 !important;
+}
+
+.pimcore_object_panel_edit .x-tabpanel-child > .x-panel-body {
+    border:0;
+}
+
 .objectlayout_element_accordion .x-accordion-item, .objectlayout_element_text  {
     border: 1px solid #d0d0d0;
     padding: 10px;
@@ -1109,6 +1121,10 @@ span.warning {
     padding:2px 5px 2px 20px;
     color: #999;
 
+}
+
+.pimcore_fieldcollection_item > .x-panel-body > .x-autocontainer-outerCt > .x-autocontainer-innerCt > .x-panel > .x-panel-body  {
+    border: 0 !important;
 }
 
 .pimcore_object_label_icon {

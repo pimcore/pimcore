@@ -219,8 +219,6 @@ pimcore.object.tags.fieldcollections = Class.create(pimcore.object.tags.abstract
             });
 
             if (title) {
-                items.push('->');
-
                 items.push({
                     xtype: "tbtext",
                     text: ts(title)
@@ -370,6 +368,7 @@ pimcore.object.tags.fieldcollections = Class.create(pimcore.object.tags.abstract
 
         var blockElement = new Ext.Panel({
             pimcore_oIndex: oIndex,
+            cls: 'pimcore_fieldcollection_item',
             bodyStyle: "padding:10px;",
             style: "margin: 0 0 10px 0;",
             manageHeight: false,
