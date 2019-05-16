@@ -6,7 +6,6 @@ sudo: false
 language: php
 
 php:
-  - 7.1
   - 7.2
   - 7.3
 
@@ -22,12 +21,6 @@ matrix:
   include:
     - os: linux
       sudo: required
-      php: 7.1
-      env:
-          - PIMCORE_TEST_SUITE=rest
-          - PIMCORE_TEST_ENV=http
-    - os: linux
-      sudo: required
       php: 7.2
       env:
           - PIMCORE_TEST_SUITE=rest
@@ -39,13 +32,13 @@ matrix:
           - PIMCORE_TEST_SUITE=rest
           - PIMCORE_TEST_ENV=http
     - os: linux
-      php: 7.1
+      php: 7.2
       env:
           - PIMCORE_TEST_SUITE=cache
           - PIMCORE_TEST_GROUP=cache.core.redis
           - PIMCORE_TEST_SETUP_SKIP_PHP_REDIS_EXTENSION=true
     - os: linux
-      php: 7.1
+      php: 7.2
       services: ~
       addons: ~
       env:
