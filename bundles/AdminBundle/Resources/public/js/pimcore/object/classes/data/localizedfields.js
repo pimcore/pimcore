@@ -104,6 +104,12 @@ pimcore.object.classes.data.localizedfields = Class.create(pimcore.object.classe
                             editable: false
                         },
                         {
+                            xtype: "checkbox",
+                            fieldLabel: t("border"),
+                            name: "border",
+                            checked: this.datax.border,
+                        },
+                        {
                             xtype: "numberfield",
                             fieldLabel: t("width"),
                             name: "width",

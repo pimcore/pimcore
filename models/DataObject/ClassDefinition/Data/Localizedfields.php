@@ -89,6 +89,11 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
     /**
      * @var bool
      */
+    public $border = false;
+
+    /**
+     * @var bool
+     */
     public $provideSplitView;
 
     /**
@@ -1008,6 +1013,22 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
     public function getLayout()
     {
         return $this->layout;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getBorder(): bool
+    {
+        return $this->border;
+    }
+
+    /**
+     * @param bool $border
+     */
+    public function setBorder(bool $border): void
+    {
+        $this->border = $border;
     }
 
     /**

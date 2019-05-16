@@ -82,7 +82,7 @@ pimcore.object.helpers.edit = {
                 forceLayout: true,
                 monitorResize: true,
                 bodyStyle: "padding: 10px",
-                border: true,
+                border: false,
                 defaults: {
                     width: "auto"
                 },
@@ -102,7 +102,7 @@ pimcore.object.helpers.edit = {
                 activeTab: 0,
                 monitorResize: true,
                 deferredRender: true,
-                border: true,
+                border: false,
                 bodyStyle: "padding: 10px",
                 forceLayout: true,
                 hideMode: "offsets",
@@ -127,7 +127,7 @@ pimcore.object.helpers.edit = {
         };
 
         var validKeys = ["xtype","title","layout","icon","items","region","width","height","name","text","html","handler",
-            "labelWidth", "fieldLabel", "collapsible","collapsed","bodyStyle","listeners"];
+            "labelWidth", "fieldLabel", "collapsible","collapsed","bodyStyle","listeners", "border"];
 
         var tmpItems;
 

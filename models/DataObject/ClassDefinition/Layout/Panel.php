@@ -40,6 +40,11 @@ class Panel extends Model\DataObject\ClassDefinition\Layout
     public $layout;
 
     /**
+     * @var bool
+     */
+    public $border = false;
+
+    /**
      * @param $labelWidth
      *
      * @return $this
@@ -79,5 +84,21 @@ class Panel extends Model\DataObject\ClassDefinition\Layout
     public function getLayout()
     {
         return $this->layout;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getBorder(): bool
+    {
+        return $this->border;
+    }
+
+    /**
+     * @param bool $border
+     */
+    public function setBorder(bool $border): void
+    {
+        $this->border = $border;
     }
 }
