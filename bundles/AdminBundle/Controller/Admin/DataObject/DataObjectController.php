@@ -1124,9 +1124,24 @@ class DataObjectController extends ElementControllerBase implements EventedContr
             }
         };
 
+        $list = new DataObject\Listing();
         $updatedObject->saveIndex($newIndex);
 
-        $list = new DataObject\Listing();
+        Db::get()->executeUpdate('UPDATE '.$list->getDao()->getTableName().' o, 
+            (
+                SELECT newIndex, o_id FROM (SELECT @n := IF(o_id=?,o_index,@n + 1) AS newIndex, o_id 
+                FROM '.$list->getDao()->getTableName().', 
+                (SELECT @n := -1) variable 
+                WHERE o_parentId = ? AND o_type IN (\'' . implode("','", [DataObject\AbstractObject::OBJECT_TYPE_OBJECT, DataObject\AbstractObject::OBJECT_TYPE_VARIANT, DataObject\AbstractObject::OBJECT_TYPE_FOLDER]) . '\') 
+                ORDER BY o_index, o_id=?
+            ) tmp) order_table
+            SET o.o_index = order_table.newIndex
+            WHERE o.o_id=order_table.o_id',
+            [
+                $updatedObject->getId(), $updatedObject->getParentId(), $updatedObject->getId()
+            ]
+        );
+
         $list->setCondition(
             'o_parentId = ? AND o_id != ?',
             [$updatedObject->getParentId(), $updatedObject->getId()]
@@ -1143,9 +1158,10 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                 $index++;
             }
 
-            $sibling->saveIndex($index);
             $updateLatestVersionIndex($sibling, $index);
             $index++;
+
+            $sibling->clearDependentCache();
         }
     }
 
