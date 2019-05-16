@@ -25,7 +25,7 @@
 /* Style overrides */
 
 .x-tab-default-top {
-    background-color: #323639;
+    background-color: transparent;
     padding-top: 5px;
     padding-bottom: 5px;
     border-top: 1px solid transparent;
@@ -38,17 +38,16 @@
 }
 
 .x-tab-over.x-tab-default.x-tab-over {
-    background-color: #444547;
+    background-color: #eaeaea;
     border-color: transparent;
 }
 
 .x-tab-over.x-tab-default.x-tab-over.x-tab-active {
-    background-color: #f6f6f6;
     box-shadow: none;
 }
 
 .x-tab-inner-default {
-    color: #fff;
+    color: #404040;
 }
 
 .x-tab-bar-default {
