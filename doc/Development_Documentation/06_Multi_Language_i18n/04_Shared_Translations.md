@@ -15,7 +15,7 @@ Available languages are defined within the system languages, see [here](./README
 
 ## Translations case sensitivity
 
-In constrast to previous Pimcore versions, starting from Pimcore 5 translations are case sensitive by default. You can
+Translations are case sensitive by default. You can
 reconfigure Pimcore to handle website and admin translations as case insensitive, however as this implies a performance
 hit (translations might be looked up twice) and it does not  conform with Symfony's translators you're encouraged to reference
 translation keys with the same casing as they were saved.

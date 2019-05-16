@@ -10,7 +10,7 @@ Below is the configuration for a Nginx server (just the server part, the http et
 
 Assumptions - change them to match your environment/distro:
 
-- Pimcore 5 was installed into: `/var/www/pimcore`; therefore, the Document-Root is: `/var/www/pimcore/web`
+- Pimcore was installed into: `/var/www/pimcore`; therefore, the Document-Root is: `/var/www/pimcore/web`
 - Logfiles are written to the default location `/var/log/nginx`. If you prefer to have the logs together with the Pimcore Logs: these are in `/var/www/pimcore/var/logs`.
 - PHP-FPM is configured to listen on the Socket `/var/run/php/pimcore5.sock`. If your setup differs, change the `server` directive within the `upstream` block accordingly.
 - Before you change the order of location blocks, read [Understanding Nginx Server and Location Block Selection Algorithms](https://www.digitalocean.com/community/tutorials/understanding-nginx-server-and-location-block-selection-algorithms)
