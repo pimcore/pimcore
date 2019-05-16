@@ -96,7 +96,9 @@ services:
         # keep this public until static method was removed
         public: true
 
-    pimcore.http_client:
+    pimcore.http_client: '@GuzzleHttp\Client'
+
+    GuzzleHttp\Client:
         public: true
         class: \GuzzleHttp\Client
         factory: ['@Pimcore\Http\ClientFactory', createClient]
