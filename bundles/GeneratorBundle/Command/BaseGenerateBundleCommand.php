@@ -2,17 +2,17 @@
 
 namespace Pimcore\Bundle\GeneratorBundle\Command;
 
-use Pimcore\Bundle\GeneratorBundle\Manipulator\ConfigurationManipulator;
-use Pimcore\Bundle\GeneratorBundle\Model\Bundle;
-use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Question\Question;
-use Symfony\Component\Console\Question\ConfirmationQuestion;
-use Symfony\Component\HttpKernel\KernelInterface;
 use Pimcore\Bundle\GeneratorBundle\Generator\BundleGenerator;
+use Pimcore\Bundle\GeneratorBundle\Manipulator\ConfigurationManipulator;
 use Pimcore\Bundle\GeneratorBundle\Manipulator\KernelManipulator;
 use Pimcore\Bundle\GeneratorBundle\Manipulator\RoutingManipulator;
+use Pimcore\Bundle\GeneratorBundle\Model\Bundle;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Question\ConfirmationQuestion;
+use Symfony\Component\Console\Question\Question;
+use Symfony\Component\HttpKernel\KernelInterface;
 
 /**
  * Generates bundles.
@@ -29,13 +29,13 @@ class BaseGenerateBundleCommand extends BaseGeneratorCommand
         $this
             ->setName('generate:bundle')
             ->setDescription('Generates a bundle')
-            ->setDefinition(array(
+            ->setDefinition([
                 new InputOption('namespace', '', InputOption::VALUE_REQUIRED, 'The namespace of the bundle to create'),
                 new InputOption('dir', '', InputOption::VALUE_REQUIRED, 'The directory where to create the bundle', 'src/'),
                 new InputOption('bundle-name', '', InputOption::VALUE_REQUIRED, 'The optional bundle name'),
                 new InputOption('format', '', InputOption::VALUE_REQUIRED, 'Use the format for configuration files (php, xml, yml, or annotation)'),
                 new InputOption('shared', '', InputOption::VALUE_NONE, 'Are you planning on sharing this bundle across multiple applications?'),
-            ))
+            ])
             ->setHelp(<<<EOT
 The <info>%command.name%</info> command helps you generates new bundles.
 
@@ -81,7 +81,7 @@ EOT
         ));
         $generator->generateBundle($bundle);
 
-        $errors = array();
+        $errors = [];
         $runner = $questionHelper->getRunner($output, $errors);
 
         // check that the namespace is already autoloaded
@@ -122,17 +122,17 @@ EOT
          * namespace option
          */
         $namespace = $input->getOption('namespace');
-        $output->writeln(array(
+        $output->writeln([
             '',
             'Your application code must be written in <comment>bundles</comment>. This command helps',
             'you generate them easily.',
             '',
-        ));
+        ]);
 
         $askForBundleName = true;
         if ($shared) {
             // a shared bundle, so it should probably have a vendor namespace
-            $output->writeln(array(
+            $output->writeln([
                 'Each bundle is hosted under a namespace (like <comment>Acme/BlogBundle</comment>).',
                 'The namespace should begin with a "vendor" name like your company name, your',
                 'project name, or your client name, followed by one or more optional category',
@@ -144,7 +144,7 @@ EOT
                 '',
                 'Use <comment>/</comment> instead of <comment>\\ </comment>for the namespace delimiter to avoid any problems.',
                 '',
-            ));
+            ]);
 
             $question = new Question($questionHelper->getQuestion(
                 'Bundle namespace',
@@ -156,9 +156,9 @@ EOT
             $namespace = $questionHelper->ask($input, $output, $question);
         } else {
             // a simple application bundle
-            $output->writeln(array(
+            $output->writeln([
                 'Give your bundle a descriptive name, like <comment>BlogBundle</comment>.',
-            ));
+            ]);
 
             $question = new Question($questionHelper->getQuestion(
                 'Bundle name',
@@ -185,23 +185,23 @@ EOT
             $bundle = $input->getOption('bundle-name');
             // no bundle yet? Get a default from the namespace
             if (!$bundle) {
-                $bundle = strtr($namespace, array('\\Bundle\\' => '', '\\' => ''));
+                $bundle = strtr($namespace, ['\\Bundle\\' => '', '\\' => '']);
             }
 
-            $output->writeln(array(
+            $output->writeln([
                 '',
                 'In your code, a bundle is often referenced by its name. It can be the',
                 'concatenation of all namespace parts but it\'s really up to you to come',
                 'up with a unique name (a good practice is to start with the vendor name).',
                 'Based on the namespace, we suggest <comment>'.$bundle.'</comment>.',
                 '',
-            ));
+            ]);
             $question = new Question($questionHelper->getQuestion(
                 'Bundle name',
                 $bundle
             ), $bundle);
             $question->setValidator(
-                array('Pimcore\Bundle\GeneratorBundle\Command\Validators', 'validateBundleName')
+                ['Pimcore\Bundle\GeneratorBundle\Command\Validators', 'validateBundleName']
             );
             $bundle = $questionHelper->ask($input, $output, $question);
             $input->setOption('bundle-name', $bundle);
@@ -212,12 +212,12 @@ EOT
          */
         // defaults to src/ in the option
         $dir = $input->getOption('dir');
-        $output->writeln(array(
+        $output->writeln([
             '',
             'Bundles are usually generated into the <info>src/</info> directory. Unless you\'re',
             'doing something custom, hit enter to keep this default!',
             '',
-        ));
+        ]);
 
         $question = new Question($questionHelper->getQuestion(
             'Target Directory',
@@ -233,11 +233,11 @@ EOT
         if (!$format) {
             $format = $shared ? 'xml' : 'annotation';
         }
-        $output->writeln(array(
+        $output->writeln([
             '',
             'What format do you want to use for your generated configuration?',
             '',
-        ));
+        ]);
 
         $question = new Question($questionHelper->getQuestion(
             'Configuration format (annotation, yml, xml, php)',
@@ -246,7 +246,7 @@ EOT
         $question->setValidator(function ($format) {
             return Validators::validateFormat($format);
         });
-        $question->setAutocompleterValues(array('annotation', 'yml', 'xml', 'php'));
+        $question->setAutocompleterValues(['annotation', 'yml', 'xml', 'php']);
         $format = $questionHelper->ask($input, $output, $question);
         $input->setOption('format', $format);
     }
@@ -255,11 +255,11 @@ EOT
     {
         $output->writeln('> Checking that the bundle is autoloaded');
         if (!class_exists($bundle->getBundleClassName())) {
-            return array(
+            return [
                 '- Edit the <comment>composer.json</comment> file and register the bundle',
                 '  namespace in the "autoload" section:',
                 '',
-            );
+            ];
         }
     }
 
@@ -278,19 +278,19 @@ EOT
             if (!$ret) {
                 $reflected = new \ReflectionObject($kernel);
 
-                return array(
+                return [
                     sprintf('- Edit <comment>%s</comment>', $reflected->getFilename()),
                     '  and add the following bundle in the <comment>AppKernel::registerBundles()</comment> method:',
                     '',
                     sprintf('    <comment>new %s(),</comment>', $bundle->getBundleClassName()),
                     '',
-                );
+                ];
             }
         } catch (\RuntimeException $e) {
-            return array(
+            return [
                 sprintf('Bundle <comment>%s</comment> is already defined in <comment>AppKernel::registerBundles()</comment>.', $bundle->getBundleClassName()),
                 '',
-            );
+            ];
         }
     }
 
@@ -312,19 +312,19 @@ EOT
                 }
                 $help .= "        <comment>prefix:   /</comment>\n";
 
-                return array(
+                return [
                     '- Import the bundle\'s routing resource in the app\'s main routing file:',
                     '',
                     sprintf('    <comment>%s:</comment>', $bundle->getName()),
                     $help,
                     '',
-                );
+                ];
             }
         } catch (\RuntimeException $e) {
-            return array(
+            return [
                 sprintf('Bundle <comment>%s</comment> is already imported.', $bundle->getName()),
                 '',
-            );
+            ];
         }
     }
 
@@ -340,12 +340,12 @@ EOT
         try {
             $manipulator->addResource($bundle);
         } catch (\RuntimeException $e) {
-            return array(
+            return [
                 sprintf('- Import the bundle\'s "%s" resource in the app\'s main configuration file:', $bundle->getServicesConfigurationFilename()),
                 '',
                 $manipulator->getImportCode($bundle),
                 '',
-            );
+            ];
         }
     }
 
@@ -358,7 +358,7 @@ EOT
      */
     protected function createBundleObject(InputInterface $input)
     {
-        foreach (array('namespace', 'dir') as $option) {
+        foreach (['namespace', 'dir'] as $option) {
             if (null === $input->getOption($option)) {
                 throw new \RuntimeException(sprintf('The "%s" option must be provided.', $option));
             }
@@ -368,7 +368,7 @@ EOT
 
         $namespace = Validators::validateBundleNamespace($input->getOption('namespace'), $shared);
         if (!$bundleName = $input->getOption('bundle-name')) {
-            $bundleName = strtr($namespace, array('\\' => ''));
+            $bundleName = strtr($namespace, ['\\' => '']);
         }
         $bundleName = Validators::validateBundleName($bundleName);
         $dir = $input->getOption('dir');

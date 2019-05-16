@@ -28,7 +28,7 @@ class BaseBundleGenerator extends Generator
                 throw new \RuntimeException(sprintf('Unable to generate the bundle as the target directory "%s" exists but is a file.', realpath($dir)));
             }
             $files = scandir($dir);
-            if ($files != array('.', '..')) {
+            if ($files != ['.', '..']) {
                 throw new \RuntimeException(sprintf('Unable to generate the bundle as the target directory "%s" is not empty.', realpath($dir)));
             }
             if (!is_writable($dir)) {
@@ -36,13 +36,13 @@ class BaseBundleGenerator extends Generator
             }
         }
 
-        $parameters = array(
+        $parameters = [
             'namespace' => $bundle->getNamespace(),
             'bundle' => $bundle->getName(),
             'format' => $bundle->getConfigurationFormat(),
             'bundle_basename' => $bundle->getBasename(),
             'extension_alias' => $bundle->getExtensionAlias(),
-        );
+        ];
 
         $this->renderFile('bundle/Bundle.php.twig', $dir.'/'.$bundle->getName().'.php', $parameters);
         if ($bundle->shouldGenerateDependencyInjectionDirectory()) {

@@ -2,9 +2,9 @@
 
 namespace Pimcore\Bundle\GeneratorBundle\Manipulator;
 
-use Symfony\Component\DependencyInjection\Container;
 use Pimcore\Bundle\GeneratorBundle\Generator\DoctrineCrudGenerator;
 use Pimcore\Bundle\GeneratorBundle\Generator\Generator;
+use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\Yaml\Yaml;
 
 /**

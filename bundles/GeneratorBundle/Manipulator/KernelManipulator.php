@@ -2,8 +2,8 @@
 
 namespace Pimcore\Bundle\GeneratorBundle\Manipulator;
 
-use Symfony\Component\HttpKernel\KernelInterface;
 use Pimcore\Bundle\GeneratorBundle\Generator\Generator;
+use Symfony\Component\HttpKernel\KernelInterface;
 
 /**
  * Changes the PHP code of a Kernel.
@@ -96,9 +96,9 @@ class KernelManipulator extends Manipulator
                 }
 
                 $lines = array_merge(
-                    array($leadingContent, "\n"),
-                    array(str_repeat(' ', 12), sprintf('new %s(),', $bundle), "\n"),
-                    array(str_repeat(' ', 8), $closingSymbol.';', "\n"),
+                    [$leadingContent, "\n"],
+                    [str_repeat(' ', 12), sprintf('new %s(),', $bundle), "\n"],
+                    [str_repeat(' ', 8), $closingSymbol.';', "\n"],
                     array_slice($src, $this->line)
                 );
 

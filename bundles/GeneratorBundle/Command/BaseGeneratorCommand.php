@@ -2,10 +2,10 @@
 
 namespace Pimcore\Bundle\GeneratorBundle\Command;
 
-use Pimcore\Bundle\GeneratorBundle\Generator\Generator;
 use Pimcore\Bundle\GeneratorBundle\Command\Helper\QuestionHelper;
-use Symfony\Component\HttpKernel\Bundle\BundleInterface;
+use Pimcore\Bundle\GeneratorBundle\Generator\Generator;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use Symfony\Component\HttpKernel\Bundle\BundleInterface;
 
 /**
  * Base class for generator commands.
@@ -39,7 +39,7 @@ abstract class BaseGeneratorCommand extends ContainerAwareCommand
 
     protected function getSkeletonDirs(BundleInterface $bundle = null)
     {
-        $skeletonDirs = array();
+        $skeletonDirs = [];
 
         if (isset($bundle) && is_dir($dir = $bundle->getPath().'/Resources/GeneratorBundle/skeleton')) {
             $skeletonDirs[] = $dir;

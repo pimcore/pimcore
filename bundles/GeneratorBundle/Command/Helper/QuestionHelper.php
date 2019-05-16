@@ -27,10 +27,10 @@ class QuestionHelper extends BaseQuestionHelper
         if (!$errors) {
             $this->writeSection($output, 'Everything is OK! Now get to work :).');
         } else {
-            $this->writeSection($output, array(
+            $this->writeSection($output, [
                 'The command was not able to configure everything automatically.',
                 'You\'ll need to make the following changes manually.',
-            ), 'error');
+            ], 'error');
 
             $output->writeln($errors);
         }
@@ -59,10 +59,10 @@ class QuestionHelper extends BaseQuestionHelper
     {
         $text = str_replace('Symfony bundle generator', 'Pimcore bundle generator', $text);
 
-        $output->writeln(array(
+        $output->writeln([
             '',
             $this->getHelperSet()->get('formatter')->formatBlock($text, $style, true),
             '',
-        ));
+        ]);
     }
 }

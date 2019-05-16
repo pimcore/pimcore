@@ -17,8 +17,8 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\GeneratorBundle\Generator;
 
-use Pimcore\Bundle\GeneratorBundle\Model\Bundle;
 use Pimcore\Bundle\GeneratorBundle\Manipulator\RoutingManipulator;
+use Pimcore\Bundle\GeneratorBundle\Model\Bundle;
 use Symfony\Component\Filesystem\Filesystem;
 
 class BundleGenerator extends BaseBundleGenerator
@@ -48,8 +48,7 @@ class BundleGenerator extends BaseBundleGenerator
         $routingTarget = $dir . '/Resources/config/pimcore/' . $routingFilename;
 
         // create routing file for default annotation
-        if ($bundle->getConfigurationFormat() == 'annotation')
-        {
+        if ($bundle->getConfigurationFormat() == 'annotation') {
             self::mkdir(dirname($routingTarget));
             self::dump($routingTarget, '');
 
@@ -62,7 +61,6 @@ class BundleGenerator extends BaseBundleGenerator
                 $dir.'/Resources/config/pimcore/'.$routingFilename, $parameters
             );
         }
-
 
         $this->renderFile(
             'js/pimcore/startup.js.twig',
