@@ -84,7 +84,6 @@ server {
 
     location / {
         error_page 404 /meta/404;
-        add_header "X-UA-Compatible" "IE=edge";
         try_files $uri /app.php$is_args$args;
     }
 
