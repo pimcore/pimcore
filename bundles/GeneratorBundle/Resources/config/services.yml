@@ -11,3 +11,15 @@ services:
     # auto-register all commands as services
     Pimcore\Bundle\GeneratorBundle\Command\:
         resource: '../../Command'
+        exclude: '../../Command/Validators.php'
+        tags: ['console.command']
+
+    Pimcore\Bundle\GeneratorBundle\Command\GenerateBundleCommand:
+        public: true
+
+    Pimcore\Bundle\GeneratorBundle\Command\Helper\QuestionHelper:
+        public: true
+
+    Pimcore\Bundle\GeneratorBundle\PimcoreGeneratorBundle:
+        arguments:
+            - 'Pimcore\Bundle\GeneratorBundle\Command\GenerateBundleCommand'

@@ -286,23 +286,13 @@ abstract class Kernel extends SymfonyKernel
                 new WebProfilerBundle()
             ], 80);
 
-            // add generator bundle only if installed
-            if (class_exists('Sensio\Bundle\GeneratorBundle\SensioGeneratorBundle')) {
-                $generatorEnvironments = $this->getEnvironmentsForDevGeneratorBundles();
-
-                $collection->addBundle(
-                    new SensioGeneratorBundle(),
-                    80,
-                    $generatorEnvironments
-                );
-
-                // PimcoreGeneratorBundle depends on SensioGeneratorBundle
-                $collection->addBundle(
-                    new PimcoreGeneratorBundle(),
-                    60,
-                    $generatorEnvironments
-                );
-            }
+            // PimcoreGeneratorBundle depends on SensioGeneratorBundle
+            $generatorEnvironments = $this->getEnvironmentsForDevGeneratorBundles();
+            $collection->addBundle(
+                new PimcoreGeneratorBundle(),
+                60,
+                $generatorEnvironments
+            );
         }
     }
 
