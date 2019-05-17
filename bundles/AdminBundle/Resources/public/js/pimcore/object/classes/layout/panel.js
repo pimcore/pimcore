@@ -68,6 +68,11 @@ pimcore.object.classes.layout.panel = Class.create(pimcore.object.classes.layout
                     name: "labelWidth",
                     fieldLabel: t("label_width"),
                     value: this.datax.labelWidth
+                },{
+                    xtype: "textfield",
+                    name: "icon",
+                    fieldLabel: t("icon"),
+                    value: this.datax.icon
                 }
             ]
         });

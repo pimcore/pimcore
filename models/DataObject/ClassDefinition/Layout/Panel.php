@@ -45,6 +45,11 @@ class Panel extends Model\DataObject\ClassDefinition\Layout
     public $border = false;
 
     /**
+     * @var string|null
+     */
+    public $icon;
+
+    /**
      * @param $labelWidth
      *
      * @return $this
@@ -100,5 +105,21 @@ class Panel extends Model\DataObject\ClassDefinition\Layout
     public function setBorder(bool $border): void
     {
         $this->border = $border;
+    }
+
+    /**
+     * @return string
+     */
+    public function getIcon(): ?string
+    {
+        return $this->icon;
+    }
+
+    /**
+     * @param string $icon
+     */
+    public function setIcon(?string $icon): void
+    {
+        $this->icon = $icon;
     }
 }
