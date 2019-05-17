@@ -3,6 +3,7 @@
 namespace Pimcore\Bundle\CoreBundle\Templating;
 
 use Doctrine\Common\Persistence\Proxy;
+use Pimcore\Tool\DeviceDetector;
 use Sensio\Bundle\FrameworkExtraBundle\Templating\TemplateGuesser as BaseTemplateGuesser;
 use Symfony\Bundle\FrameworkBundle\Templating\DelegatingEngine;
 use Symfony\Bundle\FrameworkBundle\Templating\TemplateReference;
@@ -69,8 +70,52 @@ class LegacyTemplateGuesser extends BaseTemplateGuesser
         } elseif (!is_array($controller)) {
             throw new \InvalidArgumentException(sprintf('First argument of %s must be an array callable or an object defining the magic method __invoke. "%s" given.', __METHOD__, gettype($controller)));
         }
-        $className = $this->getRealClass(\get_class($controller[0]));
 
+        $legacyTemplateReference = $this->buildLegacyTemplateReference($controller, $request, $engine);
+
+        // Only AppBundle should use templates inside app folder
+        if ($legacyTemplateReference->get('bundle') === 'AppBundle') {
+            $legacyTemplateReference->set('bundle', '');
+        }
+
+        $logicalName = $request->attributes->has('template') ? $request->attributes->get('template') : $legacyTemplateReference->getLogicalName();
+        if (!$this->templateEngine->exists($logicalName)) {
+            throw new \InvalidArgumentException(sprintf('The template "%s" and fallback: "%s" does not exist.', $templateReference, $legacyTemplateReference));
+        }
+
+        return $legacyTemplateReference;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    protected function getBundleForClass($class)
+    {
+        $reflectionClass = new \ReflectionClass($class);
+        $bundles = $this->kernel->getBundles();
+        do {
+            $namespace = $reflectionClass->getNamespaceName();
+            foreach ($bundles as $bundle) {
+                if (0 === strpos($namespace, $bundle->getNamespace())) {
+                    return $bundle;
+                }
+            }
+            $reflectionClass = $reflectionClass->getParentClass();
+        } while ($reflectionClass);
+    }
+
+    private static function getRealClass(string $class): string
+    {
+        if (false === $pos = strrpos($class, '\\'.Proxy::MARKER.'\\')) {
+            return $class;
+        }
+
+        return substr($class, $pos + Proxy::MARKER_LENGTH + 2);
+    }
+
+    protected function buildLegacyTemplateReference($controller, Request $request, $engine = 'php')
+    {
+        $className = $this->getRealClass(\get_class($controller[0]));
         $matchController = null;
         foreach ($this->controllerPatterns as $pattern) {
             if (preg_match($pattern, $className, $tempMatch)) {
@@ -103,44 +148,6 @@ class LegacyTemplateGuesser extends BaseTemplateGuesser
             $bundleName = null;
         }
 
-        $legacyTemplateReference = new TemplateReference($bundleName, $matchController[1], $matchAction[1], $request->getRequestFormat(), $engine);
-
-        // Only AppBundle should use templates inside app folder
-        if ($legacyTemplateReference->get('bundle') === 'AppBundle') {
-            $legacyTemplateReference->set('bundle', '');
-        }
-
-        if (!$this->templateEngine->exists($legacyTemplateReference->getLogicalName())) {
-            throw new \InvalidArgumentException(sprintf('The template "%s" and fallback: "%s" does not exist.', $templateReference, $legacyTemplateReference));
-        }
-
-        return $legacyTemplateReference;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    protected function getBundleForClass($class)
-    {
-        $reflectionClass = new \ReflectionClass($class);
-        $bundles = $this->kernel->getBundles();
-        do {
-            $namespace = $reflectionClass->getNamespaceName();
-            foreach ($bundles as $bundle) {
-                if (0 === strpos($namespace, $bundle->getNamespace())) {
-                    return $bundle;
-                }
-            }
-            $reflectionClass = $reflectionClass->getParentClass();
-        } while ($reflectionClass);
-    }
-
-    private static function getRealClass(string $class): string
-    {
-        if (false === $pos = strrpos($class, '\\'.Proxy::MARKER.'\\')) {
-            return $class;
-        }
-
-        return substr($class, $pos + Proxy::MARKER_LENGTH + 2);
+       return new TemplateReference($bundleName, $matchController[1], $matchAction[1], $request->getRequestFormat(), $engine);
     }
 }
