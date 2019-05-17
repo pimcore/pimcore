@@ -1010,7 +1010,7 @@ span.warning {
     border:0;
 }
 
-.objectlayout_element_accordion .x-accordion-item, .objectlayout_element_text  {
+.objectlayout_element_accordion .x-accordion-item {
     border: 1px solid #d0d0d0;
     padding: 10px;
 }

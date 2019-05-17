@@ -42,6 +42,12 @@ pimcore.object.classes.layout.text = Class.create(pimcore.object.classes.layout.
             style: "margin: 10px 0 10px 0",
             items: [
                 {
+                    xtype: "checkbox",
+                    fieldLabel: t("border"),
+                    name: "border",
+                    checked: this.datax.border,
+                },
+                {
                     xtype: "textfield",
                     fieldLabel: t("rendering_class"),
                     value: this.datax.renderingClass,
