@@ -30,16 +30,6 @@ use Pimcore\Tool\Frontend;
 class Page extends TargetingDocument
 {
     /**
-     * @deprecated Will be removed in Pimcore 6.
-     */
-    const PERSONA_ELEMENT_PREFIX_PREFIXPART = TargetingDocumentInterface::TARGET_GROUP_ELEMENT_PREFIX;
-
-    /**
-     * @deprecated Will be removed in Pimcore 6.
-     */
-    const PERSONA_ELEMENT_PREFIX_SUFFIXPART = TargetingDocumentInterface::TARGET_GROUP_ELEMENT_SUFFIX;
-
-    /**
      * Contains the title of the page (meta-title)
      *
      * @var string
@@ -172,19 +162,6 @@ class Page extends TargetingDocument
     }
 
     /**
-     * @deprecated
-     *
-     * @return string
-     */
-    public function getKeywords()
-    {
-        // keywords are not supported anymore
-        Logger::info('getKeywords() is deprecated and will be removed in the future!');
-
-        return '';
-    }
-
-    /**
      * @return string
      */
     public function getTitle()
@@ -200,21 +177,6 @@ class Page extends TargetingDocument
     public function setDescription($description)
     {
         $this->description = str_replace("\n", ' ', $description);
-
-        return $this;
-    }
-
-    /**
-     * @deprecated
-     *
-     * @param string $keywords
-     *
-     * @return $this
-     */
-    public function setKeywords($keywords)
-    {
-        // keywords are not supported anymore
-        Logger::info('setKeywords() is deprecated and will be removed in the future!');
 
         return $this;
     }
@@ -366,58 +328,6 @@ class Page extends TargetingDocument
         $targetGroups = array_filter($targetGroups);
 
         return $targetGroups;
-    }
-
-    /**
-     * @deprecated Use setTargetGroupIds instead. Will be removed in Pimcore 6.
-     *
-     * @param string $personas
-     */
-    public function setPersonas($personas)
-    {
-        $this->setTargetGroupIds((array)$personas);
-    }
-
-    /**
-     * @deprecated Use getTargetGroupIds instead. Will be removed in Pimcore 6.
-     *
-     * @return string
-     */
-    public function getPersonas()
-    {
-        return $this->getTargetGroupIds();
-    }
-
-    /**
-     * @deprecated Use getTargetGroupElementPrefix instead. Will be removed in Pimcore 6.
-     */
-    public function getPersonaElementPrefix($personaId = null)
-    {
-        return $this->getTargetGroupElementPrefix(null !== $personaId ? (int)$personaId : null);
-    }
-
-    /**
-     * @deprecated Use getTargetGroupElementName instead. Will be removed in Pimcore 6.
-     */
-    public function getPersonaElementName($name)
-    {
-        return $this->getTargetGroupElementName((string)$name);
-    }
-
-    /**
-     * @deprecated Use setUseTargetGroup instead. Will be removed in Pimcore 6.
-     */
-    public function setUsePersona($usePersona)
-    {
-        $this->setUseTargetGroup(null !== $usePersona ? (int)$usePersona : null);
-    }
-
-    /**
-     * @deprecated Use getUseTargetGroup instead. Will be removed in Pimcore 6.
-     */
-    public function getUsePersona()
-    {
-        return $this->getUseTargetGroup();
     }
 
     /**

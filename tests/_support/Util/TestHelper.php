@@ -169,7 +169,6 @@ class TestHelper
 
                 if ($document instanceof Document\Page) {
                     $d['name'] = $document->getName();
-                    $d['keywords'] = $document->getKeywords();
                     $d['title'] = $document->getTitle();
                     $d['description'] = $document->getDescription();
                 }
