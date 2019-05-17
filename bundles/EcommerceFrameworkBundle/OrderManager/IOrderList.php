@@ -26,7 +26,7 @@ use Zend\Paginator\AdapterAggregateInterface;
  *
  * @method IOrderListItem current()
  */
-interface IOrderList extends SeekableIterator, Countable, \Zend_Paginator_Adapter_Interface, \Zend_Paginator_AdapterAggregate, ArrayAccess, AdapterInterface, AdapterAggregateInterface
+interface IOrderList extends SeekableIterator, Countable, ArrayAccess, AdapterInterface, AdapterAggregateInterface
 {
     const LIST_TYPE_ORDER = 'order';
     const LIST_TYPE_ORDER_ITEM = 'item';

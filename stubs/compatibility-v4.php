@@ -12,29 +12,6 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-/**
- * This classes and interfaces need to be defined if Pimcore is in v5-only mode, so without the Pimcore\Bundle\LegacyBundle
- * They are used in parts of the code where it isn't possible to outsource them into the Pimcore\Bundle\LegacyBundle
- *
- * See also:
- * pimcore/models/DataObject/ClassDefinition/Data/Datetime.php
- * pimcore/models/DataObject/ClassDefinition/Data/Date.php
- * pimcore/models/DataObject/Listing.php
- * pimcore/models/Document/Listing.php
- * pimcore/models/Asset/Listing.php
- * pimcore/lib/Pimcore/Log/ApplicationLogger.php
- * pimcore/lib/Pimcore/Google/Cse.php
- */
-interface Zend_Paginator_Adapter_Interface extends Countable
-{
-    public function getItems($offset, $itemCountPerPage);
-}
-
-interface Zend_Paginator_AdapterAggregate
-{
-    public function getPaginatorAdapter();
-}
-
 class Zend_Date extends \Pimcore\Helper\LegacyClass
 {
 }
