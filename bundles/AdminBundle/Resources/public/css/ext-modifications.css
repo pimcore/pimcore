@@ -106,6 +106,7 @@
 .x-accordion-item .x-accordion-hd {
     padding-top: 5px;
     padding-bottom: 5px;
+    border:0 !important;
 }
 
 .x-view-item-focused {
