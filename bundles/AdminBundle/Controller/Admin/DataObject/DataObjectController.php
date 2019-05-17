@@ -147,10 +147,14 @@ class DataObjectController extends ElementControllerBase implements EventedContr
             $childsList->setCondition($condition);
             $childsList->setLimit($limit);
             $childsList->setOffset($offset);
-            $childsList->setOrderKey(
-                sprintf('CAST(objects.o_%s AS CHAR CHARACTER SET utf8) COLLATE utf8_general_ci ASC', $object->getChildrenSortBy()),
-                false
-            );
+            if($object->getChildrenSortBy() === 'index') {
+                $childsList->setOrderKey('objects.o_index ASC', false);
+            } else {
+                $childsList->setOrderKey(
+                    sprintf('CAST(objects.o_%s AS CHAR CHARACTER SET utf8) COLLATE utf8_general_ci ASC', $object->getChildrenSortBy()),
+                    false
+                );
+            }
             $childsList->setObjectTypes($objectTypes);
 
             Element\Service::addTreeFilterJoins($cv, $childsList);
