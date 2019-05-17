@@ -110,7 +110,11 @@ class LegacyTemplateGuesser extends BaseTemplateGuesser
             $legacyTemplateReference->set('bundle', '');
         }
 
-        return $legacyTemplateReference;
+        if ($this->templateEngine->exists($legacyTemplateReference->getLogicalName())) {
+            return $legacyTemplateReference;
+        }
+
+        return $templateReference;
     }
 
     /**
