@@ -147,7 +147,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
             $childsList->setCondition($condition);
             $childsList->setLimit($limit);
             $childsList->setOffset($offset);
-            if($object->getChildrenSortBy() === 'index') {
+            if ($object->getChildrenSortBy() === 'index') {
                 $childsList->setOrderKey('objects.o_index ASC', false);
             } else {
                 $childsList->setOrderKey(
