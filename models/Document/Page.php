@@ -17,8 +17,6 @@
 
 namespace Pimcore\Model\Document;
 
-use Pimcore\Logger;
-use Pimcore\Model\Document\Targeting\TargetingDocumentInterface;
 use Pimcore\Model\Redirect;
 use Pimcore\Model\Site;
 use Pimcore\Model\Tool\Targeting\TargetGroup;
