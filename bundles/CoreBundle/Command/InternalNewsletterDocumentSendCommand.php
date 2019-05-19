@@ -158,6 +158,7 @@ class InternalNewsletterDocumentSendCommand extends AbstractCommand
 
             $sendingParamContainers = $addressAdapter->getParamsForSingleSending($limit, $offset);
             foreach ($sendingParamContainers as $sendingParamContainer) {
+                //Please leave log-level warning, otherwise current status of sending process won't be logged in newsletter-sending-output.log
                 Logger::warn('Sending newsletter ' . $index . ' / ' . $totalCount. ' [' . $document->getId(). ']');
                 
                 try {
