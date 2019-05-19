@@ -627,7 +627,6 @@ class Mail extends \Swift_Message
                 $mailer->send($this, $emailaddress);            
             } catch (\Exception $e){
                 $mailer->getTransport()->stop();
-                sleep(10);
                 throw new \Exception($emailaddress[0].' - '.$e->getMessage());
             }
         }
