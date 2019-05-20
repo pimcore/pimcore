@@ -104,6 +104,8 @@ Since the only value can be found on level 1 for the default language the tree i
 // the value is of type "quantity value" where 1 is the unit ID in this example
 $heightValue = new \Pimcore\Model\DataObject\Data\QuantityValue(13, 1);
 $object->getClassificationStore2()->setLocalizedKeyValue(1, 2, $heightValue, "de");
+// 1 = group id
+$object->getClassificationStore2()->setActiveGroups([1 => true]);
   
 // provide additional information about which collection the group belongs to
 // group 1 belongs to collection with ID 2
