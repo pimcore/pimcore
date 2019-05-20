@@ -35,6 +35,33 @@ server {
     access_log  /var/log/access.log;
     error_log   /var/log/error.log error;
 
+    # Protected Assets
+    #
+    ### 1. Option - Restricting access to certain assets completely
+    #
+    # location ~ ^/protected/.* {
+    #   return 403;
+    # }
+    # location ~ ^/var/.*/protected(.*) {
+    #   return 403;
+    # }
+    #
+    # location ~ ^/cache-buster\-[\d]+/protected(.*) {
+    #   return 403;
+    # }
+    #
+    ### 2. Option - Checking permissions before delivery
+    #
+    # rewrite ^(/protected/.*) /app.php$is_args$args last;
+    #
+    # location ~ ^/var/.*/protected(.*) {
+    #   return 403;
+    # }
+    #
+    # location ~ ^/cache-buster\-[\d]+/protected(.*) {
+    #   return 403;
+    # }
+
     # Pimcore Head-Link Cache-Busting
     rewrite ^/cache-buster-(?:\d+)/(.*) /$1 last;
 
