@@ -23,11 +23,6 @@ use Symfony\Cmf\Bundle\RoutingBundle\Routing\DynamicRouter;
 class Config
 {
     /**
-     * @deprecated Default environment is now determined by EnvironmentConfig
-     */
-    const DEFAULT_ENVIRONMENT = 'prod';
-
-    /**
      * @var array
      */
     protected static $configFileCache = [];

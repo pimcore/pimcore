@@ -360,18 +360,6 @@ class Tool
     }
 
     /**
-     * @deprecated Just a BC compatibility method
-     *
-     * @param Request|null $request
-     *
-     * @return bool
-     */
-    public static function isFrontentRequestByAdmin(Request $request = null)
-    {
-        return self::isFrontendRequestByAdmin($request);
-    }
-
-    /**
      * @static
      *
      * @param Request|null $request
