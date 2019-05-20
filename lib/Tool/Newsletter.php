@@ -114,12 +114,12 @@ class Newsletter
     public static function sendNewsletterDocumentBasedMail(Mail $mail, SendingParamContainer $sendingContainer)
     {
         $mailAddress = $sendingContainer->getEmail();
-        
-        if(!self::to_domain_exists($mailAddress)) {
+
+        if (!self::to_domain_exists($mailAddress)) {
             Logger::err('E-Mail address invalid: ' . self::obfuscateEmail($mailAddress));
             $mailAddress = null;
         }
-        
+
         if (!empty($mailAddress)) {
             $mail->setTo($mailAddress);
             //Getting bounces
@@ -531,7 +531,7 @@ class Newsletter
     {
         return $this->class;
     }
-    
+
     /**
      * Checks if domain of email has a MX record
      *
@@ -541,7 +541,8 @@ class Newsletter
      */
     public function to_domain_exists($email)
     {
-	    list($user, $domain) = explode('@', $email);
-	    return checkdnsrr($domain, 'MX');
+        list($user, $domain) = explode('@', $email);
+
+        return checkdnsrr($domain, 'MX');
     }
 }

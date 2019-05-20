@@ -160,7 +160,7 @@ class InternalNewsletterDocumentSendCommand extends AbstractCommand
             foreach ($sendingParamContainers as $sendingParamContainer) {
                 //Please leave log-level warning, otherwise current status of sending process won't be logged in newsletter-sending-output.log
                 Logger::warn('Sending newsletter ' . $index . ' / ' . $totalCount. ' [' . $document->getId(). ']');
-                
+
                 try {
                     $mail = \Pimcore\Tool\Newsletter::prepareMail($document, $sendingParamContainer, $hostUrl);
                     \Pimcore\Tool\Newsletter::sendNewsletterDocumentBasedMail($mail, $sendingParamContainer);
