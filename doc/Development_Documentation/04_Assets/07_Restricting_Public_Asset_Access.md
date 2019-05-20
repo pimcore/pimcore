@@ -24,6 +24,7 @@ backend permissions this is necessary anyway).
 In the `.htaccess` of the project, the access to this folder has to be restricted with an additional rewrite rule. It is
 important, that this rule is placed **in front of** the rewrite rule for asset delivery. 
 
+**Apache**
 ```.htaccess
 
 ...
@@ -35,6 +36,24 @@ RewriteRule ^cache-buster\-[\d]+/protected(.*) - [F,L]
 ...
 
 ```
+
+**Nginx**
+Add the following parts to your Nginx configuration directly after the index directive. 
+````
+location ~ ^/protected/.* {
+  return 403;
+}
+
+location ~ ^/var/.*/protected(.*) {
+  return 403;
+}
+
+location ~ ^/cache-buster\-[\d]+/protected(.*) {
+  return 403;
+}
+````
+A full configuration example can be found [on this page](../23_Installation_and_Upgrade/03_System_Setup_and_Hosting/02_Nginx_Configuration.md).
+
 
 Because of this rule, all assets located within `/protected` (also all their thumbnails) are not delivered via the web 
 server anymore. As a consequence also using the direct link for downloading or using the Pimcore generated img tags for 
@@ -53,6 +72,7 @@ Again all confidential assets need to be stored within one (or a few) folders, e
 In the `.htaccess` of the project, requests to assets of this folder need to be routed to `app.php`. Again, it is
 important, that this rule is placed **in front of** the rewrite rule for asset delivery.
 
+**Apache**
 ```.htaccess
  
 ...
@@ -64,6 +84,23 @@ RewriteRule ^cache-buster\-[\d]+/protected(.*) - [F,L]
 ...
  
 ```
+
+**Nginx**
+Add the following parts to your Nginx configuration directly after the index directive. 
+
+````
+rewrite ^(/protected/.*) /app.php$is_args$args last;
+
+location ~ ^/var/.*/protected(.*) {
+  return 403;
+}
+
+location ~ ^/cache-buster\-[\d]+/protected(.*) {
+  return 403;
+}
+````
+A full configuration example can be found [on this page](../23_Installation_and_Upgrade/03_System_Setup_and_Hosting/02_Nginx_Configuration.md).
+
 
 In the application, there has to be a route in (app/config/routing.yml) and a controller action that handles the request, e.g. like the following:
 
