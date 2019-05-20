@@ -185,6 +185,7 @@ class DocumentRouteHandler implements DynamicRouteHandlerInterface
         }
 
         $route = new DocumentRoute($document->getFullPath());
+        $route->setOption('utf8', true);
 
         // coming from matching -> set route path the currently matched one
         if (null !== $context) {
