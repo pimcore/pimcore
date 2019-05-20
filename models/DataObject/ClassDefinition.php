@@ -1289,39 +1289,4 @@ class ClassDefinition extends Model\AbstractModel
 
         return $generator;
     }
-
-    /**
-     * @deprecated Just a BC compatibility method
-     * Adds given data field after existing field with given field name. If existing field is not found, nothing is added.
-     *
-     * @param $fieldNameToAddAfter
-     * @param ClassDefinition\Data $fieldToAdd
-     * @param ClassDefinition\Layout|null $layoutComponent
-     */
-    public function addNewDataField($fieldNameToAddAfter, DataObject\ClassDefinition\Data $fieldToAdd, DataObject\ClassDefinition\Layout $layoutComponent = null)
-    {
-        if (null === $layoutComponent) {
-            $layoutComponent = $this->getLayoutDefinitions();
-        }
-
-        $definitionModifier = new DefinitionModifier();
-        $definitionModifier->appendFields($layoutComponent, $fieldNameToAddAfter, $fieldToAdd);
-    }
-
-    /**
-     * @deprecated Just a BC compatibility method
-     * Removes data field with given name. If not found, nothing is removed.
-     *
-     * @param $fieldNameToRemove
-     * @param ClassDefinition\Layout|null $layoutComponent
-     */
-    public function removeExistingDataField($fieldNameToRemove, DataObject\ClassDefinition\Layout $layoutComponent = null)
-    {
-        if (null === $layoutComponent) {
-            $layoutComponent = $this->getLayoutDefinitions();
-        }
-
-        $definitionModifier = new DefinitionModifier();
-        $definitionModifier->removeField($layoutComponent, $fieldNameToRemove);
-    }
 }
