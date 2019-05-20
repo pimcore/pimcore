@@ -35,7 +35,7 @@ class TestHelper
     public static function checkDbSupport()
     {
         if (!static::supportsDbTests()) {
-            throw new \PHPUnit_Framework_SkippedTestError('Not running test as DB is not connected');
+            throw new \PHPUnit\Framework\SkippedTestError('Not running test as DB is not connected');
         }
     }
 

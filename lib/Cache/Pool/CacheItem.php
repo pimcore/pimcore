@@ -20,11 +20,13 @@ use Psr\Log\LoggerInterface;
 
 class CacheItem implements PimcoreCacheItemInterface
 {
+    private const METADATA_EXPIRY_OFFSET = 1527506807;
     protected $key;
     protected $value;
     protected $isHit;
     protected $expiry;
     protected $defaultLifetime;
+    protected $metadata = [];
     protected $previousTags = [];
     protected $tags = [];
 
@@ -93,6 +95,45 @@ class CacheItem implements PimcoreCacheItemInterface
     public function getDefaultLifetime()
     {
         return $this->defaultLifetime;
+    }
+
+
+    /**
+     * {@inheritdoc}
+     */
+    public function tag($tags): PimcoreCacheItemInterface
+    {
+        if (!$this->isTaggable) {
+            throw new LogicException(sprintf('Cache item "%s" comes from a non tag-aware pool: you cannot tag it.', $this->key));
+        }
+        if (!\is_iterable($tags)) {
+            $tags = [$tags];
+        }
+        foreach ($tags as $tag) {
+            if (!\is_string($tag)) {
+                throw new InvalidArgumentException(sprintf('Cache tag must be string, "%s" given', \is_object($tag) ? \get_class($tag) : \gettype($tag)));
+            }
+            if (isset($this->newMetadata[self::METADATA_TAGS][$tag])) {
+                continue;
+            }
+            if ('' === $tag) {
+                throw new InvalidArgumentException('Cache tag length must be greater than zero');
+            }
+            if (false !== strpbrk($tag, '{}()/\@:')) {
+                throw new InvalidArgumentException(sprintf('Cache tag "%s" contains reserved characters {}()/\@:', $tag));
+            }
+            $this->newMetadata[self::METADATA_TAGS][$tag] = $tag;
+        }
+        return $this;
+    }
+
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getMetadata(): array
+    {
+        return $this->metadata;
     }
 
     /**
