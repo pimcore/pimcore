@@ -623,7 +623,12 @@ class Mail extends \Swift_Message
 
         if ($event->hasArgument('mailer')) {
             $mailer = $event->getArgument('mailer');
-            $mailer->send($this);
+            try {
+                $mailer->send($this, $emailaddress);            
+            } catch (\Exception $e){
+                $mailer->getTransport()->stop();
+                throw new \Exception($emailaddress[0].' - '.$e->getMessage());
+            }
         }
 
         if ($this->loggingIsEnabled()) {

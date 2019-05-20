@@ -145,13 +145,12 @@ class InternalNewsletterDocumentSendCommand extends AbstractCommand
         $limit = $fifth > 10 ? 10 : ($fifth < 3 ? 3 : intval($fifth));
         $offset = 0;
         $hasElements = true;
+        $index = 1;
 
         while ($hasElements) {
             $tmpStore = Model\Tool\TmpStore::get($sendingId);
 
             $data = $tmpStore->getData();
-
-            Logger::info('Sending newsletter ' . $hasElements . ' / ' . $totalCount. ' [' . $document->getId(). ']');
 
             $data['progress'] = round($offset / $totalCount * 100, 2);
             $tmpStore->setData($data);
@@ -159,6 +158,9 @@ class InternalNewsletterDocumentSendCommand extends AbstractCommand
 
             $sendingParamContainers = $addressAdapter->getParamsForSingleSending($limit, $offset);
             foreach ($sendingParamContainers as $sendingParamContainer) {
+                //Please leave log-level warning, otherwise current status of sending process won't be logged in newsletter-sending-output.log
+                Logger::warn('Sending newsletter ' . $index . ' / ' . $totalCount. ' [' . $document->getId(). ']');
+                
                 try {
                     $mail = \Pimcore\Tool\Newsletter::prepareMail($document, $sendingParamContainer, $hostUrl);
                     \Pimcore\Tool\Newsletter::sendNewsletterDocumentBasedMail($mail, $sendingParamContainer);
@@ -170,6 +172,7 @@ class InternalNewsletterDocumentSendCommand extends AbstractCommand
                     Logger::warn("Sending configuration for sending ID $sendingId was deleted. Cancelling sending process.");
                     exit;
                 }
+                ++$index;
             }
 
             $offset += $limit;
