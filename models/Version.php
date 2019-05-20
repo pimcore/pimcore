@@ -366,39 +366,6 @@ class Version extends AbstractModel
         return PIMCORE_VERSION_DIRECTORY . '/' . $this->getCtype() . '/' . $this->getId();
     }
 
-    /**
-     * the cleanup is now done in the maintenance see self::maintenanceCleanUp()
-     *
-     * @deprecated
-     */
-    public function cleanHistory()
-    {
-        if ($this->getCtype() == 'document') {
-            $conf = Config::getSystemConfig()->documents->versions;
-        } elseif ($this->getCtype() == 'asset') {
-            $conf = Config::getSystemConfig()->assets->versions;
-        } elseif ($this->getCtype() == 'object') {
-            $conf = Config::getSystemConfig()->objects->versions;
-        } else {
-            return;
-        }
-
-        $days = [];
-        $steps = [];
-
-        if (intval($conf->days) > 0) {
-            $days = $this->getDao()->getOutdatedVersionsDays($conf->days);
-        } else {
-            $steps = $this->getDao()->getOutdatedVersionsSteps(intval($conf->steps));
-        }
-
-        $versions = array_merge($days, $steps);
-
-        foreach ($versions as $id) {
-            $version = Version::getById($id);
-            $version->delete();
-        }
-    }
 
     /**
      * @return int
