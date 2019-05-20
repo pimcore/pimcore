@@ -134,8 +134,6 @@ pimcore:
                     rgbaColor: \Pimcore\Model\DataObject\ClassDefinition\Data\RgbaColor
                     targetGroup: \Pimcore\Model\DataObject\ClassDefinition\Data\TargetGroup
                     targetGroupMultiselect: \Pimcore\Model\DataObject\ClassDefinition\Data\TargetGroupMultiselect
-                    persona: \Pimcore\Model\DataObject\ClassDefinition\Data\Persona
-                    personamultiselect: \Pimcore\Model\DataObject\ClassDefinition\Data\Personamultiselect
                     quantityValue: \Pimcore\Model\DataObject\ClassDefinition\Data\QuantityValue
                     inputQuantityValue: \Pimcore\Model\DataObject\ClassDefinition\Data\InputQuantityValue
                     select: \Pimcore\Model\DataObject\ClassDefinition\Data\Select

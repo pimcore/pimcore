@@ -94,12 +94,4 @@ class Dao extends Model\Document\PageSnippet\Dao implements TargetingDocumentDao
             throw $e;
         }
     }
-
-    /**
-     * @deprecated Use hasTargetGroupSpecificElements. Will be removed in Pimcore 6.
-     */
-    public function hasPersonaSpecificElements()
-    {
-        return $this->hasTargetGroupSpecificElements();
-    }
 }
