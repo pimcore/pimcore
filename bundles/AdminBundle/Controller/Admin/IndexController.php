@@ -25,8 +25,10 @@ use Pimcore\Event\Admin\IndexSettingsEvent;
 use Pimcore\Event\AdminEvents;
 use Pimcore\FeatureToggles\Features\DevMode;
 use Pimcore\Google;
+use Pimcore\Maintenance\Executor;
+use Pimcore\Maintenance\ExecutorInterface;
 use Pimcore\Model\Element\Service;
-use Pimcore\Model\Schedule\Manager\Procedural;
+use Pimcore\Model\Tool\Lock;
 use Pimcore\Model\User;
 use Pimcore\Templating\Model\ViewModel;
 use Pimcore\Tool;
@@ -61,6 +63,7 @@ class IndexController extends AdminController
      * @param Request $request
      * @param SiteConfigProvider $siteConfigProvider
      * @param KernelInterface $kernel
+     * @param Executor $maintenanceExecutor
      *
      * @return ViewModel
      *
@@ -69,7 +72,8 @@ class IndexController extends AdminController
     public function indexAction(
         Request $request,
         SiteConfigProvider $siteConfigProvider,
-        KernelInterface $kernel
+        KernelInterface $kernel,
+        Executor $maintenanceExecutor
     ) {
         $user = $this->getAdminUser();
         $view = new ViewModel([
@@ -81,7 +85,7 @@ class IndexController extends AdminController
             ->addReportConfig($view)
             ->addPluginAssets($view);
 
-        $settings = $this->buildPimcoreSettings($request, $view, $user, $kernel);
+        $settings = $this->buildPimcoreSettings($request, $view, $user, $kernel, $maintenanceExecutor);
         $this->buildGoogleAnalyticsSettings($view, $settings, $siteConfigProvider);
 
         if ($user->getTwoFactorAuthentication('required') && !$user->getTwoFactorAuthentication('enabled')) {
@@ -218,16 +222,14 @@ class IndexController extends AdminController
     }
 
     /**
-     * Build pimcore.settings data
-     *
      * @param Request $request
      * @param ViewModel $view
      * @param User $user
      * @param KernelInterface $kernel
-     *
+     * @param ExecutorInterface $maintenanceExecutor
      * @return ViewModel
      */
-    protected function buildPimcoreSettings(Request $request, ViewModel $view, User $user, KernelInterface $kernel)
+    protected function buildPimcoreSettings(Request $request, ViewModel $view, User $user, KernelInterface $kernel, ExecutorInterface $maintenanceExecutor)
     {
         $config = $view->config;
         $settings = new ViewModel([
@@ -289,7 +291,7 @@ class IndexController extends AdminController
         $this
             ->addSystemVarSettings($settings)
             ->addCsrfToken($settings, $user)
-            ->addMaintenanceSettings($settings)
+            ->addMaintenanceSettings($settings, $maintenanceExecutor)
             ->addMailSettings($settings, $config)
             ->addCustomViewSettings($settings);
 
@@ -375,18 +377,14 @@ class IndexController extends AdminController
 
     /**
      * @param ViewModel $settings
-     *
+     * @param ExecutorInterface $maintenanceExecutor
      * @return $this
      */
-    protected function addMaintenanceSettings(ViewModel $settings)
+    protected function addMaintenanceSettings(ViewModel $settings, ExecutorInterface $maintenanceExecutor)
     {
         // check maintenance
         $maintenance_active = false;
-
-        $manager = $this->get(Procedural::class);
-
-        $lastExecution = $manager->getLastExecution();
-        if ($lastExecution) {
+        if ($lastExecution = $maintenanceExecutor->getLastExecution()) {
             if ((time() - $lastExecution) < 3660) { // maintenance script should run at least every hour + a little tolerance
                 $maintenance_active = true;
             }

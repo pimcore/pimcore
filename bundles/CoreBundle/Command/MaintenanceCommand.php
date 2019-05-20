@@ -15,12 +15,9 @@
 namespace Pimcore\Bundle\CoreBundle\Command;
 
 use Pimcore\Console\AbstractCommand;
-use Pimcore\Event\System\MaintenanceEvent;
 use Pimcore\Event\SystemEvents;
-use Pimcore\Maintenance\CallableTask;
 use Pimcore\Maintenance\ExecutorInterface;
 use Pimcore\Model\Schedule;
-use Pimcore\Model\Schedule\Maintenance\Job;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -94,35 +91,6 @@ class MaintenanceCommand extends AbstractCommand
     {
         $validJobs = $this->getArrayOptionValue($input, 'job');
         $excludedJobs = $this->getArrayOptionValue($input, 'excludedJobs');
-
-        $manager = $this->getContainer()->get(Schedule\Manager\Procedural::class);
-        $manager->setValidJobs($validJobs);
-        $manager->setExcludedJobs($excludedJobs);
-        $manager->setForce((bool) $input->getOption('force'));
-
-        $event = new MaintenanceEvent($manager);
-        \Pimcore::getEventDispatcher()->dispatch(SystemEvents::MAINTENANCE, $event);
-
-        foreach ($manager->getJobs() as $job) {
-            @trigger_error(
-                sprintf('Job with ID %s is registered using the deprecated %s Event, please use a service tag instead', $job->getId(), SystemEvents::MAINTENANCE),
-                E_USER_DEPRECATED
-            );
-
-            $trackerReflector = new \ReflectionClass(Job::class);
-            $callableProperty = $trackerReflector->getProperty('callable');
-            $callableProperty->setAccessible(true);
-
-            $argumentsProperty = $trackerReflector->getProperty('arguments');
-            $argumentsProperty->setAccessible(true);
-
-            $callable = $callableProperty->getValue($job);
-            $arguments = $argumentsProperty->getValue($job);
-
-            if (is_callable($callable)) {
-                $this->maintenanceExecutor->registerTask($job->getId(), CallableTask::fromCallable($callable, $arguments ?? []));
-            }
-        }
 
         $this->maintenanceExecutor->executeMaintenance($validJobs, $excludedJobs, (bool) $input->getOption('force'));
 
