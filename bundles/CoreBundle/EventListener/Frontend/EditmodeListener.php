@@ -107,7 +107,7 @@ class EditmodeListener implements EventSubscriberInterface
             return;
         }
 
-        // trigger this once to make sure it is resolved properly (and set for legacy)
+        // trigger this once to make sure it is resolved properly
         // TODO is this needed?
         $this->editmodeResolver->isEditmode($request);
     }

@@ -62,7 +62,7 @@ class Service extends Model\Element\Service
     }
 
     /**
-     * Renders a document outside of a view with support for legacy documents
+     * Renders a document outside of a view
      *
      * Parameter order was kept for BC (useLayout before query and options).
      *
@@ -81,23 +81,7 @@ class Service extends Model\Element\Service
         $container = \Pimcore::getContainer();
 
         /** @var DocumentRendererInterface $renderer */
-        $renderer = null;
-
-        if ($document->doRenderWithLegacyStack()) {
-            $serviceId = 'pimcore.legacy.document.renderer';
-            if (!$container->has($serviceId)) {
-                throw new MissingDependencyException(sprintf(
-                    'Document %d (%s) is expected to be rendered with the legacy renderer, but legacy renderer does not exist as service "%s"',
-                    $document->getId(),
-                    $document->getFullPath(),
-                    $serviceId
-                ));
-            }
-
-            $renderer = $container->get($serviceId);
-        } else {
-            $renderer = $container->get(DocumentRenderer::class);
-        }
+        $renderer = $container->get(DocumentRenderer::class);
 
         // keep useLayout compatibility
         $attributes['_useLayout'] = $useLayout;

@@ -761,21 +761,4 @@ class Tool
             E_USER_DEPRECATED
         );
     }
-
-    /**
-     * @param $name
-     * @param $arguments
-     *
-     * @return mixed
-     *
-     * @throws \Exception
-     */
-    public static function __callStatic($name, $arguments)
-    {
-        if (class_exists('Pimcore\\Tool\\Legacy')) {
-            return forward_static_call_array('Pimcore\\Tool\\Legacy::' . $name, $arguments);
-        }
-
-        throw new \Exception('Call to undefined static method ' . $name . ' on class Pimcore\\Tool');
-    }
 }

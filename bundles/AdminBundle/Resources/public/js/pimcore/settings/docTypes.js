@@ -56,13 +56,6 @@ pimcore.settings.document.doctypes = Class.create({
 
         this.store = pimcore.globalmanager.get("document_types_store");
 
-        var legacyCheck = new Ext.grid.column.Check({
-            text: t("legacy_mode"),
-            dataIndex: "legacy",
-            hidden: !pimcore.settings.isLegacyModeAvailable,
-            width: 90
-        });
-
         var typesColumns = [
             {
                 text: t("name"),
@@ -243,7 +236,6 @@ pimcore.settings.document.doctypes = Class.create({
                     triggerAction: "all"
                 })
             },
-            legacyCheck,
             {
                 text: t("creationDate"),
                 sortable: true,

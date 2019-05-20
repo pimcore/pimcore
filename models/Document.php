@@ -1440,16 +1440,6 @@ class Document extends Element\AbstractElement
     }
 
     /**
-     * returns true if document should be rendered with legacy stack
-     *
-     * @return bool
-     */
-    public function doRenderWithLegacyStack()
-    {
-        return false;
-    }
-
-    /**
      * Add document type to the $types array. It defines additional document types available in Pimcore.
      *
      * @param $type

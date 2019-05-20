@@ -52,10 +52,6 @@ pimcore.extensionmanager.admin = Class.create({
         return this.panel;
     },
 
-    isLegacyType: function (type) {
-        return Ext.Array.contains(['plugin', 'brick'], type);
-    },
-
     getExtensionId: function (record) {
         var extensionId = record.get('extensionId');
         if (extensionId) {
@@ -63,14 +59,6 @@ pimcore.extensionmanager.admin = Class.create({
         }
 
         return record.get('id');
-    },
-
-    getExtensionType: function (record) {
-        if (this.isLegacyType(record.get('type'))) {
-            return 'legacy';
-        }
-
-        return null;
     },
 
     getGrid: function () {
@@ -82,7 +70,7 @@ pimcore.extensionmanager.admin = Class.create({
                 extend: 'Ext.data.Model',
                 fields: [
                     "id", "extensionId", "type", "name", "description", "installed", "installable", "uninstallable", "active",
-                    "configuration", "updateable", "canChangeState", "version", "priority", "environments"
+                    "configuration", "canChangeState", "version", "priority", "environments"
                 ],
                 proxy: {
                     type: 'ajax',
@@ -270,8 +258,7 @@ pimcore.extensionmanager.admin = Class.create({
                             params: {
                                 method: method,
                                 id: self.getExtensionId(rec),
-                                type: rec.get("type"),
-                                extensionType: self.getExtensionType(rec)
+                                type: rec.get("type")
                             },
                             success: handleSuccess,
                             failure: handleFailure
@@ -314,50 +301,7 @@ pimcore.extensionmanager.admin = Class.create({
                             method: 'POST',
                             params: {
                                 id: self.getExtensionId(rec),
-                                type: rec.get("type"),
-                                extensionType: self.getExtensionType(rec)
-                            },
-                            success: handleSuccess,
-                            failure: handleFailure
-                        });
-                    }.bind(this)
-                }]
-            },
-            {
-                text: t('update'),
-                menuText: t('update'),
-                xtype: 'actioncolumn',
-                width: 100,
-                items: [{
-                    tooltip: t('update'),
-                    getClass: function (v, meta, rec) {
-                        if (rec.get('updateable')) {
-                            return 'pimcore_action_column pimcore_icon_add';
-                        }
-
-                        return '';
-                    },
-                    handler: function (grid, rowIndex) {
-                        var rec = grid.getStore().getAt(rowIndex);
-
-                        // legacy types can't be updated
-                        if (self.isLegacyType(rec.get('type'))) {
-                            return;
-                        }
-
-                        if (!rec.get('updateable')) {
-                            return;
-                        }
-
-                        this.panel.setLoading(true);
-
-                        Ext.Ajax.request({
-                            url: '/admin/extensionmanager/admin/update',
-                            method: 'POST',
-                            params: {
-                                id: self.getExtensionId(rec),
-                                type: rec.get("type"),
-                                extensionType: self.getExtensionType(rec)
+                                type: rec.get("type")
                             },
                             success: handleSuccess,
                             failure: handleFailure

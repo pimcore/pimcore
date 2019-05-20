@@ -19,7 +19,7 @@ pimcore.document.settings_abstract = Class.create({
     },
 
     setDocumentType: function (field, newValue, oldValue) {
-        var allowedFields = ["module","controller","action","template","legacy"];
+        var allowedFields = ["module","controller","action","template"];
         var form = this.getLayout().getForm();
         var element = null;
 
@@ -383,14 +383,6 @@ pimcore.document.settings_abstract = Class.create({
                     }
                 }
             ]
-        });
-
-        fieldSet.add({
-            xtype: "checkbox",
-            fieldLabel: t("legacy_mode"),
-            name: "legacy",
-            checked: this.document.data.legacy,
-            hidden: !pimcore.settings.isLegacyModeAvailable
         });
 
         return fieldSet;

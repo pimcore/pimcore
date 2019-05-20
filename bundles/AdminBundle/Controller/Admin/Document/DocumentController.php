@@ -224,7 +224,6 @@ class DocumentController extends ElementControllerBase implements EventedControl
                     $createValues['controller'] = $docType->getController();
                     $createValues['action'] = $docType->getAction();
                     $createValues['module'] = $docType->getModule();
-                    $createValues['legacy'] = $docType->getLegacy();
                 } elseif ($request->get('translationsBaseDocument')) {
                     $translationsBaseDocument = Document::getById($request->get('translationsBaseDocument'));
                     $createValues['template'] = $translationsBaseDocument->getTemplate();
