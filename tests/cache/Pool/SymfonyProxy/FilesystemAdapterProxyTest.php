@@ -2,6 +2,7 @@
 
 namespace Pimcore\Tests\Cache\Adapter\SymfonyProxy;
 
+use Pimcore\Cache\Pool\CacheItem;
 use Pimcore\Cache\Pool\PimcoreCacheItemPoolInterface;
 use Pimcore\Tests\Cache\Factory;
 use Pimcore\Tests\Cache\Pool\SymfonyProxy\Traits\SymfonyProxyTestTrait;
@@ -18,6 +19,10 @@ class FilesystemAdapterProxyTest extends FilesystemAdapterTest
         createCachePool as _createCachePool;
     }
 
+    protected $skippedTests = [
+        'testGetMetadata' => 'Metadata tags are not loaded for performance reasons.',
+    ];
+
     public function createCachePool($defaultLifetime = 0)
     {
         $this->defaultLifetime = $defaultLifetime;
@@ -31,5 +36,38 @@ class FilesystemAdapterProxyTest extends FilesystemAdapterTest
     protected function buildCachePool()
     {
         return (new Factory())->createFilesystemAdapterProxyItemPool($this->defaultLifetime);
+    }
+
+    public function testGet()
+    {
+        if (isset($this->skippedTests[__FUNCTION__])) {
+            $this->markTestSkipped($this->skippedTests[__FUNCTION__]);
+        }
+
+        /** @var SymfonyAdapterProxy $cache */
+        $cache = $this->createCachePool();
+        $cache->clear();
+
+        $value = mt_rand();
+
+        $this->assertSame($value, $cache->get('foo', function (CacheItem $item) use ($value) {
+            $this->assertSame('foo', $item->getKey());
+
+            return $value;
+        }));
+
+        $item = $cache->getItem('foo');
+        $this->assertSame($value, $item->get());
+
+        $isHit = true;
+        $this->assertSame($value, $cache->get('foo', function (CacheItem $item) use (&$isHit) { $isHit = false; }, 0));
+        $this->assertTrue($isHit);
+
+        $this->assertNull($cache->get('foo', function (CacheItem $item) use (&$isHit, $value) {
+            $isHit = false;
+            $this->assertTrue($item->isHit());
+            $this->assertSame($value, $item->get());
+        }, INF));
+        $this->assertFalse($isHit);
     }
 }
