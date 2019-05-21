@@ -93,11 +93,6 @@ class LongRunningHelper
         }
 
         \Pimcore\Cache\Runtime::clear($protectedItems);
-
-        if (class_exists('\\Pimcore\\Legacy')) {
-            // @TODO: should be removed
-            \Pimcore\Legacy::collectGarbage($protectedItems);
-        }
     }
 
     /**

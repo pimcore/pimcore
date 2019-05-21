@@ -639,7 +639,6 @@
   "press_crtl_and_select_to_compare": "Compare: Press CTRL + Click Version",
   "clear_filters": "Clear Filters",
   "tags_configuration": "Tags Configuration",
-  "legacy_mode": "Legacy Mode",
   "export_csv_include_headers": "CSV Export with headers",
   "analyze_permissions": "Analyze Permissions",
   "unique": "Unique",

@@ -277,7 +277,7 @@ Ext.onReady(function () {
         extend: 'Ext.data.Model',
         fields: [
             'id',  {name: 'name', allowBlank: false}, 'module', 'controller', 'action', 'template',
-            {name: 'type', allowBlank: false},'priority', 'creationDate', 'modificationDate', 'legacy'
+            {name: 'type', allowBlank: false},'priority', 'creationDate', 'modificationDate'
         ],
         proxy: {
             type: 'ajax',

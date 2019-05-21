@@ -18,7 +18,6 @@
 namespace Pimcore\Model\Document\Tag;
 
 use Pimcore\Document\Tag\Block\BlockName;
-use Pimcore\ExtensionManager;
 use Pimcore\Model;
 use Pimcore\Tool\HtmlUtils;
 
@@ -147,26 +146,6 @@ class Area extends Model\Document\Tag
     public function isEmpty()
     {
         return false;
-    }
-
-    /**
-     * @deprecated Only used in legacy mode
-     *
-     * @return array
-     */
-    public function getAreaDirs()
-    {
-        return ExtensionManager::getBrickDirectories();
-    }
-
-    /**
-     * @deprecated Only used in legacy mode
-     *
-     * @return array|mixed
-     */
-    public function getBrickConfigs()
-    {
-        return ExtensionManager::getBrickConfigs();
     }
 
     /**

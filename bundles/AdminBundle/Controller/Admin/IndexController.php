@@ -241,7 +241,6 @@ class IndexController extends AdminController
             'disableMinifyJs' => \Pimcore::disableMinifyJs(),
             'environment' => $kernel->getEnvironment(),
             'sessionId' => htmlentities(Session::getSessionId(), ENT_QUOTES, 'UTF-8'),
-            'isLegacyModeAvailable' => \Pimcore::isLegacyModeAvailable()
         ]);
 
         // languages

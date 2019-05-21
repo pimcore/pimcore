@@ -179,11 +179,6 @@ class DocumentRouteHandler implements DynamicRouteHandlerInterface
             }
         }
 
-        // check if document should be handled (not legacy)
-        if (!$this->isDocumentSupported($document)) {
-            return null;
-        }
-
         $route = new DocumentRoute($document->getFullPath());
         $route->setOption('utf8', true);
 
@@ -364,15 +359,5 @@ class DocumentRouteHandler implements DynamicRouteHandlerInterface
         }
 
         return false;
-    }
-
-    /**
-     * @param Document $document
-     *
-     * @return bool
-     */
-    private function isDocumentSupported(Document $document)
-    {
-        return !$document->doRenderWithLegacyStack();
     }
 }

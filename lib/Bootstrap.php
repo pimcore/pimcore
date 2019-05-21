@@ -261,17 +261,6 @@ class Bootstrap
         if (defined('PIMCORE_APP_BUNDLE_CLASS_FILE')) {
             require_once PIMCORE_APP_BUNDLE_CLASS_FILE;
         }
-
-        self::zendCompatibility();
-    }
-
-    public static function zendCompatibility()
-    {
-        if (!class_exists('Zend_Date')) {
-            // if ZF is not loaded, we need to provide some compatibility stubs
-            // for a detailed description see the included file
-            require_once __DIR__ . '/../stubs/compatibility-v4.php';
-        }
     }
 
     public static function includes()

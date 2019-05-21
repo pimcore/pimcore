@@ -416,29 +416,4 @@ class Pimcore
             }
         }
     }
-
-    /**
-     * @return bool
-     */
-    public static function isLegacyModeAvailable()
-    {
-        return class_exists('Pimcore\\Legacy');
-    }
-
-    /**
-     * @param $name
-     * @param $arguments
-     *
-     * @return mixed
-     *
-     * @throws Exception
-     */
-    public static function __callStatic($name, $arguments)
-    {
-        if (self::isLegacyModeAvailable()) {
-            return forward_static_call_array('Pimcore\\Legacy::' . $name, $arguments);
-        }
-
-        throw new \Exception('Call to undefined static method ' . $name . ' on class Pimcore');
-    }
 }
