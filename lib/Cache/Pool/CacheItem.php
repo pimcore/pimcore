@@ -97,7 +97,6 @@ class CacheItem implements PimcoreCacheItemInterface
         return $this->defaultLifetime;
     }
 
-
     /**
      * {@inheritdoc}
      */
@@ -124,9 +123,9 @@ class CacheItem implements PimcoreCacheItemInterface
             }
             $this->newMetadata[self::METADATA_TAGS][$tag] = $tag;
         }
+
         return $this;
     }
-
 
     /**
      * {@inheritdoc}

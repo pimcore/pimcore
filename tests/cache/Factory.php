@@ -44,7 +44,7 @@ class Factory
 
         $database = isset($connectionOptions['database']) ? $connectionOptions['database'] : null;
         if (null === $database) {
-             throw new \PHPUnit\Framework\SkippedTestError('Test redis DB is not configured (env var PIMCORE_TEST_CACHE_REDIS_DATABASE)');
+            throw new \PHPUnit\Framework\SkippedTestError('Test redis DB is not configured (env var PIMCORE_TEST_CACHE_REDIS_DATABASE)');
         }
 
         $connection = ConnectionFactory::createConnection($connectionOptions);

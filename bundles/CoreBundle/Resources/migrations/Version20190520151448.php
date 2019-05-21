@@ -20,7 +20,6 @@ class Version20190520151448 extends AbstractPimcoreMigration
         $this->addSql('ALTER TABLE `documents_page` DROP COLUMN `legacy`;');
         $this->addSql('ALTER TABLE `documents_snippet` DROP COLUMN `legacy`;');
         $this->addSql('ALTER TABLE `documents_printpage` DROP COLUMN `legacy`;');
-
     }
 
     /**

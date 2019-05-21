@@ -2,6 +2,7 @@
 
 namespace Pimcore\Tests\Cache\Adapter\SymfonyProxy;
 
+use Pimcore\Cache\Pool\CacheItem;
 use Pimcore\Cache\Pool\PimcoreCacheItemPoolInterface;
 use Pimcore\Cache\Pool\SymfonyAdapterProxy;
 use Pimcore\Tests\Cache\Factory;
@@ -9,7 +10,6 @@ use Pimcore\Tests\Cache\Pool\SymfonyProxy\Traits\SymfonyProxyTestTrait;
 use Pimcore\Tests\Cache\Pool\Traits\CacheItemPoolTestTrait;
 use Symfony\Component\Cache\Adapter\ArrayAdapter;
 use Symfony\Component\Cache\Tests\Adapter\ArrayAdapterTest;
-use Pimcore\Cache\Pool\CacheItem;
 
 /**
  * @group cache.core.array
@@ -86,7 +86,9 @@ class ArrayAdapterProxyTest extends ArrayAdapterTest
         $this->assertSame($value, $item->get());
 
         $isHit = true;
-        $this->assertSame($value, $cache->get('foo', function (CacheItem $item) use (&$isHit) { $isHit = false; }, 0));
+        $this->assertSame($value, $cache->get('foo', function (CacheItem $item) use (&$isHit) {
+            $isHit = false;
+        }, 0));
         $this->assertTrue($isHit);
 
         $this->assertNull($cache->get('foo', function (CacheItem $item) use (&$isHit, $value) {

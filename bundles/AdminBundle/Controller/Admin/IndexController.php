@@ -28,7 +28,6 @@ use Pimcore\Google;
 use Pimcore\Maintenance\Executor;
 use Pimcore\Maintenance\ExecutorInterface;
 use Pimcore\Model\Element\Service;
-use Pimcore\Model\Tool\Lock;
 use Pimcore\Model\User;
 use Pimcore\Templating\Model\ViewModel;
 use Pimcore\Tool;
@@ -227,6 +226,7 @@ class IndexController extends AdminController
      * @param User $user
      * @param KernelInterface $kernel
      * @param ExecutorInterface $maintenanceExecutor
+     *
      * @return ViewModel
      */
     protected function buildPimcoreSettings(Request $request, ViewModel $view, User $user, KernelInterface $kernel, ExecutorInterface $maintenanceExecutor)
@@ -377,6 +377,7 @@ class IndexController extends AdminController
     /**
      * @param ViewModel $settings
      * @param ExecutorInterface $maintenanceExecutor
+     *
      * @return $this
      */
     protected function addMaintenanceSettings(ViewModel $settings, ExecutorInterface $maintenanceExecutor)

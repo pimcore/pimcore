@@ -17,7 +17,6 @@
 
 namespace Pimcore\Model;
 
-use Pimcore\Config;
 use Pimcore\Event\Model\VersionEvent;
 use Pimcore\Event\VersionEvents;
 use Pimcore\File;
@@ -365,7 +364,6 @@ class Version extends AbstractModel
     {
         return PIMCORE_VERSION_DIRECTORY . '/' . $this->getCtype() . '/' . $this->getId();
     }
-
 
     /**
      * @return int

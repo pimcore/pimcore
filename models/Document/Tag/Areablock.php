@@ -596,7 +596,6 @@ class Areablock extends Model\Document\Tag implements BlockInterface
         }
     }
 
-
     /**
      * @param string $name
      *

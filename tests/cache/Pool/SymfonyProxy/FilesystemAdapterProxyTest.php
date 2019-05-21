@@ -60,7 +60,9 @@ class FilesystemAdapterProxyTest extends FilesystemAdapterTest
         $this->assertSame($value, $item->get());
 
         $isHit = true;
-        $this->assertSame($value, $cache->get('foo', function (CacheItem $item) use (&$isHit) { $isHit = false; }, 0));
+        $this->assertSame($value, $cache->get('foo', function (CacheItem $item) use (&$isHit) {
+            $isHit = false;
+        }, 0));
         $this->assertTrue($isHit);
 
         $this->assertNull($cache->get('foo', function (CacheItem $item) use (&$isHit, $value) {
