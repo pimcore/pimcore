@@ -4,7 +4,6 @@ namespace Pimcore\Bundle\CoreBundle\Command;
 
 use Pimcore\Console\AbstractCommand;
 use Pimcore\Console\Traits\DryRun;
-use Pimcore\Update;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -23,12 +22,6 @@ class RunScriptCommand extends AbstractCommand
                 'script',
                 InputArgument::REQUIRED,
                 'Path to PHP script which should run'
-            )
-            ->addOption(
-                'cleanup',
-                'c',
-                InputOption::VALUE_NONE,
-                'Clean up opcache and temporary DB tables after script (useful if running update scripts)'
             );
 
         $this->configureDryRunOption();
@@ -62,13 +55,6 @@ class RunScriptCommand extends AbstractCommand
         $scriptOutput = trim($scriptOutput);
         if (!empty($scriptOutput)) {
             $output->writeln("\n" . $scriptOutput . "\n");
-        }
-
-        if ($input->getOption('cleanup')) {
-            $output->writeln($this->dryRunMessage('Cleaning up'));
-
-            Update::clearOPCaches();
-            Update::cleanup();
         }
 
         $output->writeln($this->dryRunMessage('Done'));
