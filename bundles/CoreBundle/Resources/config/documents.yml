@@ -78,6 +78,7 @@ services:
         public: true
 
     Pimcore\Document\Renderer\DocumentRenderer:
+        public: true
         arguments:
             $fragmentRenderer: '@fragment.renderer.inline'
 
