@@ -361,6 +361,8 @@ pimcore.object.tree = Class.create({
             var tmpMenuEntryImport;
             var $this = this;
 
+            object_types.sort([{property: 'translatedText', direction: 'ASC'}]);
+
             object_types.each(function (classRecord) {
 
                 if ($this.config.allowedClasses && !in_array(classRecord.get("id"), $this.config.allowedClasses)) {
