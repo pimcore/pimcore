@@ -262,7 +262,7 @@ pimcore.document.settings_abstract = Class.create({
                 },
                 {
                     xtype:'combo',
-                    fieldLabel: t('bundle') + "(" + t('optional') + ")",
+                    fieldLabel: t('bundle') + " (" + t('optional') + ")",
                     itemId: "bundle",
                     displayField: 'name',
                     valueField: 'name',
