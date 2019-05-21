@@ -312,7 +312,7 @@ class ReverseManyToManyObjectRelation extends ManyToManyObjectRelation
             $object->markFieldDirty($this->getName(), false);
         }
 
-        return $data;
+        return $data['data'];
     }
 
     /**
@@ -328,12 +328,10 @@ class ReverseManyToManyObjectRelation extends ManyToManyObjectRelation
         $oldRelations = (array)$object->get($this->getName());
 
         $ownerFieldName = $this->getOwnerFieldName();
-        $data = (array)$data;
         /** @var DataObject\Concrete $item */
-        foreach ($data as $index => $item) {
+        foreach ((array)$data as $item) {
             if(!$this->allowObjectRelation($item)) {
-                unset($data[$index]);
-                continue;
+                throw new \InvalidArgumentException('Object is not an instance of an allowed class in field "'.$this->getName().'"');
             }
 
             $reverseObjects = $item->get($ownerFieldName);
@@ -352,7 +350,7 @@ class ReverseManyToManyObjectRelation extends ManyToManyObjectRelation
         }, $oldRelations);
         $newRelationIds = array_map(function(DataObject\Concrete $newRelation) {
             return $newRelation->getId();
-        }, \array_values($data));
+        }, (array)$data);
         $deletedRelationIds = array_diff($oldRelationIds, $newRelationIds);
 
         foreach($deletedRelationIds as $deletedRelationId) {
