@@ -620,51 +620,6 @@ class Tool
     }
 
     /**
-     * @deprecated Use the Pimcore\Cache\Symfony\CacheClearer service
-     *
-     * @param Container|null $container
-     */
-    public static function clearSymfonyCache(Container $container = null)
-    {
-        if (count(func_get_args()) > 1) {
-            @trigger_error(
-                sprintf(
-                    'The $envSpecific flag for Tool::clearSymfonyCache is not supported anymore. Please use the %s service instead.',
-                    CacheClearer::class
-                ),
-                E_USER_DEPRECATED
-            );
-        }
-
-        if (!$container) {
-            $container = \Pimcore::getContainer();
-        }
-
-        $kernel = $container->get('kernel');
-
-        $clearer = $container->get(CacheClearer::class);
-        $clearer->clear($kernel->getEnvironment());
-    }
-
-    /**
-     * @deprecated Will be removed in Pimcore 6
-     */
-    public static function getSymfonyCacheDirRemoveTempLocation(string $realCacheDir): string
-    {
-        @trigger_error(
-            sprintf(
-                'The Tool::getSymfonyCacheDirRemoveTempLocation() method is deprecated and will be removed in Pimcore 6. Please use the %s service instead.',
-                CacheClearer::class
-            ),
-            E_USER_DEPRECATED
-        );
-
-        // the temp cache dir name must not be longer than the real one to avoid exceeding
-        // the maximum length of a directory or file path within it (esp. Windows MAX_PATH)
-        return substr($realCacheDir, 0, -1) . ('~' === substr($realCacheDir, -1) ? '+' : '~');
-    }
-
-    /**
      * @static
      *
      * @param $class

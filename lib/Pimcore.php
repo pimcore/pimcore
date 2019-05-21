@@ -297,43 +297,6 @@ class Pimcore
         self::$autoloader = $autoloader;
     }
 
-    /** Add $keepItems to the list of items which are protected from garbage collection.
-     * @param $keepItems
-     *
-     * @deprecated
-     */
-    public static function addToGloballyProtectedItems($keepItems)
-    {
-        if (is_string($keepItems)) {
-            $keepItems = [$keepItems];
-        }
-        if (is_array($keepItems)) {
-            $longRunningHelper = self::getContainer()->get(\Pimcore\Helper\LongRunningHelper::class);
-            $longRunningHelper->addPimcoreRuntimeCacheProtectedItems($keepItems);
-        } else {
-            throw new \InvalidArgumentException('keepItems must be an instance of array');
-        }
-    }
-
-    /** Items to be deleted.
-     * @param $deleteItems
-     *
-     * @deprecated
-     */
-    public static function removeFromGloballyProtectedItems($deleteItems)
-    {
-        if (is_string($deleteItems)) {
-            $deleteItems = [$deleteItems];
-        }
-
-        if (is_array($deleteItems)) {
-            $longRunningHelper = self::getContainer()->get(\Pimcore\Helper\LongRunningHelper::class);
-            $longRunningHelper->removePimcoreRuntimeCacheProtectedItems($deleteItems);
-        } else {
-            throw new \InvalidArgumentException('deleteItems must be an instance of array');
-        }
-    }
-
     /**
      * Forces a garbage collection.
      *
