@@ -284,13 +284,6 @@ class Service extends Model\Element\Service
             $target->setInternal($source->getInternal());
             $target->setDirect($source->getDirect());
             $target->setLinktype($source->getLinktype());
-            $target->setTarget($source->getTarget());
-            $target->setParameters($source->getParameters());
-            $target->setAnchor($source->getAnchor());
-            $target->setTitle($source->getTitle());
-            $target->setAccesskey($source->getAccesskey());
-            $target->setRel($source->getRel());
-            $target->setTabindex($source->getTabindex());
         }
 
         $target->setUserModification($this->_user->getId());

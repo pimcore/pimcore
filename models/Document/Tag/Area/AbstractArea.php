@@ -103,28 +103,6 @@ abstract class AbstractArea
     }
 
     /**
-     * @deprecated
-     *
-     * @param $key
-     *
-     * @return mixed
-     */
-    public function _getParam($key)
-    {
-        return $this->getParam($key);
-    }
-
-    /**
-     * @deprecated
-     *
-     * @return array
-     */
-    public function _getAllParams()
-    {
-        return $this->getAllParams();
-    }
-
-    /**
      * @param $key
      * @param $value
      */
