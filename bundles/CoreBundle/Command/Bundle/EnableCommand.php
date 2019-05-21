@@ -19,6 +19,7 @@ namespace Pimcore\Bundle\CoreBundle\Command\Bundle;
 
 use Pimcore\Bundle\CoreBundle\Command\Bundle\Helper\PostStateChange;
 use Pimcore\Extension\Bundle\PimcoreBundleManager;
+use Pimcore\Tests\Helper\Pimcore;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -31,9 +32,9 @@ class EnableCommand extends AbstractBundleCommand
      */
     private $postStateChangeHelper;
 
-    public function __construct(PostStateChange $postStateChangeHelper)
+    public function __construct(PimcoreBundleManager $bundleManager, PostStateChange $postStateChangeHelper)
     {
-        parent::__construct();
+        parent::__construct($bundleManager);
 
         $this->postStateChangeHelper = $postStateChangeHelper;
     }
@@ -72,17 +73,15 @@ class EnableCommand extends AbstractBundleCommand
     {
         $state = $this->resolveState($input);
 
-        $bm = $this->getBundleManager();
-
         $bundleClass = $this->normalizeBundleIdentifier($input->getArgument('bundle-class'));
 
-        $mapping = $this->getAvailableBundleShortNameMapping($bm);
+        $mapping = $this->getAvailableBundleShortNameMapping($this->bundleManager);
         if (isset($mapping[$bundleClass])) {
             $bundleClass = $mapping[$bundleClass];
         }
 
         try {
-            $bm->enable($bundleClass, $state);
+            $this->bundleManager->enable($bundleClass, $state);
 
             $this->io->success(sprintf('Bundle "%s" was successfully enabled', $bundleClass));
         } catch (\Exception $e) {
