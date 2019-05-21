@@ -304,8 +304,6 @@ class QueryBuilder
     /**
      * Set bind variables
      *
-     * @deprecated Use setParameters() instead
-     *
      * @param mixed $bind
      *
      * @return self
