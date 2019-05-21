@@ -331,7 +331,7 @@ class ReverseManyToManyObjectRelation extends ManyToManyObjectRelation
         /** @var DataObject\Concrete $item */
         foreach ((array)$data as $item) {
             if(!$this->allowObjectRelation($item)) {
-                throw new \InvalidArgumentException('Object '.gettype($item).' is not an instance of an allowed class');
+                throw new \InvalidArgumentException('Object is not an instance of an allowed class in field "'.$this->getName().'"');
             }
 
             $reverseObjects = $item->get($ownerFieldName);
