@@ -1,21 +1,20 @@
 # Security Concept
 We at Pimcore take security very seriously and recommend a multi-layer security concept to keep Pimcore-based solutions 
-save. 
+safe. 
 
 As Pimcore is a framework and not an out-of-the box solution, this multi-layer security concept has parts that are 
 provided by the core framework itself, and parts that need to be provided by the solution partner, 
 that delivers the solution. 
 
 
-## On Pimcore Core Level (Provided by the Core Team) 
+## Pimcore Core Level 
 
 ### Following Coding Standards & Best Practices
-To minimize risk of security issues, Pimcore Core development follows standard php coding standards and industry best 
-practises. The coding standards are based on PSR-1, PSR-2 and PSR-4 and are enforced during our continues integration 
-process at Github. 
+To minimize the risk of security issues, we follow established and proven php coding standards as well as industry best 
+practises. The coding standards are based on so called PSRs (PHP Standards Recommendations) developed by the 
+PHP Framework Interop Group (PHP-FIG) and are enforced during our continues integration process at Github. 
 
-In general, we are big fans of standards, that is also the reason why we are voting members of the PHP-FIG (PHP Framework 
-Interop Group), which is responsible for the PSR coding standards.
+Pimcore is also a voting member of the PHP-FIG.
  
 
 ### Dependency Management
@@ -28,7 +27,7 @@ Since Pimcore is a Symfony application, it can utilize all Symfony tools, like t
 
 
 ### Handling Security Issues
-In the case of a security issue with Pimcore Core, we handle them with the following procedure: 
+In the case of a security issue/vulnerability in the Pimcore core framework, we handle them with the following procedure: 
 - **Reporting Issue**: 
 Report issue via [Pimcore Security form](https://pimcorehq.wufoo.com/forms/pimcore-security-report/), not via public 
 issue tracker (according guidelines also available at public issue tracker). 
@@ -42,7 +41,7 @@ issue tracker (according guidelines also available at public issue tracker).
   - Publish security announcement with at least affected versions, possible exploits and how to patch/upgrade
 
 
-## On Project specific Level (recommended by Pimcore Core Team, provided by Integration Partner) 
+## Project specific Level (provided by Integration Partner) 
 
 ### Following Coding Standards & Best Practices
 Same as for the core development, we recommend applying all the coding standards and best practises for solution development 
