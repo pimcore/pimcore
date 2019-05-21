@@ -465,6 +465,9 @@ class Service extends Model\Element\Service
     public static function getConfigForHelperDefinition($helperDefinitions, $key, $context = [])
     {
         $cacheKey = 'gridcolumn_config_' . $key;
+	    if(isset($context['language'])) {
+		    $cacheKey .= '_' . $context['language'];
+	    }
         if (Runtime::isRegistered($cacheKey)) {
             $config = Runtime::get($cacheKey);
         } else {
