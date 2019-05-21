@@ -262,7 +262,8 @@ class Service extends Model\Element\Service
 
         if ($object instanceof Concrete) {
             $context = ['object' => $object,
-                'purpose' => 'gridview'];
+                'purpose' => 'gridview',
+                'language' => $requestedLanguage];
             $data['classname'] = $object->getClassName();
             $data['idPath'] = Element\Service::getIdPath($object);
             $data['inheritedFields'] = [];
