@@ -19,7 +19,6 @@ namespace Pimcore\DataObject\GridColumnConfig\Operator\Factory;
 
 use Pimcore\DataObject\GridColumnConfig\Operator\OperatorInterface;
 use Pimcore\DataObject\GridColumnConfig\Operator\TranslateValue;
-use Pimcore\Tool;
 use Symfony\Component\Translation\TranslatorInterface;
 
 class TranslateValueFactory implements OperatorFactoryInterface
@@ -36,9 +35,6 @@ class TranslateValueFactory implements OperatorFactoryInterface
 
     public function build(\stdClass $configElement, $context = null): OperatorInterface
     {
-	    if(null !== $context && isset($context['language']) && Tool::isValidLanguage($context['language'])) {
-		    $this->translator->setLocale($context['language']);
-	    }
-        return new TranslateValue($this->translator, $configElement, $context);
+	    return new TranslateValue($this->translator, $configElement, $context);
     }
 }
