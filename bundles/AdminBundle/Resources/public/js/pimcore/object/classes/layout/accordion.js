@@ -30,6 +30,25 @@ pimcore.object.classes.layout.accordion = Class.create(pimcore.object.classes.la
 
     getIconClass: function () {
         return "pimcore_icon_accordion";
-    }
+    },
 
+    getLayout: function ($super) {
+        $super();
+
+        this.layout.add({
+            xtype: "form",
+            bodyStyle: "padding: 10px;",
+            style: "margin: 10px 0 10px 0",
+            items: [
+                {
+                    xtype: "checkbox",
+                    fieldLabel: t("border"),
+                    name: "border",
+                    checked: this.datax.border,
+                }
+            ]
+        });
+
+        return this.layout;
+    }
 });

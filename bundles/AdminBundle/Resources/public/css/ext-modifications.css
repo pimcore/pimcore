@@ -113,6 +113,10 @@
     border:0 !important;
 }
 
+.x-accordion-item .x-accordion-hd.x-accordion-hd-over {
+    background: #dadada;
+}
+
 .x-view-item-focused {
     outline: 0;
 }
