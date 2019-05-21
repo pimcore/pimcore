@@ -368,7 +368,7 @@ pimcore.settings.redirects = Class.create({
                                         maxHeight: 500,
                                         html: message,
                                         autoScroll: true,
-                                        bodyStyle: "padding: 10px; background:#fff;",
+                                        bodyStyle: "padding: 10px;",
                                         buttonAlign: "center",
                                         shadow: false,
                                         closable: false,

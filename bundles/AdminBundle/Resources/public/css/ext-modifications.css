@@ -99,6 +99,10 @@
     background: #f6f6f6;
 }
 
+.x-window-body-default {
+    background: #f6f6f6;
+}
+
 .x-fieldset {
     background: none;
 }
@@ -122,7 +126,7 @@
 }
 
 .x-tree-view .x-grid-item.x-grid-item-selected {
-    background: #e3e4e5;
+    background: #dadada;
 }
 
 .x-tree-view .x-grid-item-container {
