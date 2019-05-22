@@ -407,6 +407,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                 'classes' => array_merge([get_class($objectFromDatabase)], array_values(class_parents($objectFromDatabase))),
                 'interfaces' => array_values(class_implements($objectFromDatabase))
             ];
+            $objectData['general']['allowInheritance'] = $objectFromDatabase->getClass()->getAllowInherit();
             $objectData['general']['allowVariants'] = $objectFromDatabase->getClass()->getAllowVariants();
             $objectData['general']['showVariants'] = $objectFromDatabase->getClass()->getShowVariants();
             $objectData['general']['showAppLoggerTab'] = $objectFromDatabase->getClass()->getShowAppLoggerTab();

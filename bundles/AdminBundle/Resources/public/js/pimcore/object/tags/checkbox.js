@@ -69,20 +69,26 @@ pimcore.object.tags.checkbox = Class.create(pimcore.object.tags.abstract, {
     },
 
     getStyle: function() {
-        if (this.data !== null) {
-            return '#919191';
-        } else {
-            return '#FF91BB';
+        if (this.data === null) {
+            return '#6782F6';
         }
+
+        return '';
     },
 
     updateStyle: function(newStyle) {
+
+        if(!this.getObject().data.general.allowInheritance) {
+            return;
+        }
+
         var cbEl = this.checkbox.el.down('.x-form-checkbox');
 
         if (cbEl) {
             if (!newStyle) {
                 newStyle = this.getStyle();
             }
+
             cbEl.setStyle('color', newStyle);
         }
     },
@@ -111,7 +117,9 @@ pimcore.object.tags.checkbox = Class.create(pimcore.object.tags.abstract, {
 
         this.emptyButton = new Ext.Button({
             iconCls: "pimcore_icon_delete",
+            cls: 'pimcore_button_transparent',
             tooltip: t("set_to_null"),
+            hidden: !this.getObject().data.general.allowInheritance,
             handler: function() {
                 if (this.data !== null) {
                     this.dataChanged = true;
@@ -121,7 +129,7 @@ pimcore.object.tags.checkbox = Class.create(pimcore.object.tags.abstract, {
                 this.data = null;
                 this.updateStyle();
             }.bind(this),
-            style: "margin-left: 10px",
+            style: "margin-left: 10px; filter:grayscale(100%);",
         });
 
         this.checkbox = new Ext.form.Checkbox(checkbox);
@@ -148,7 +156,7 @@ pimcore.object.tags.checkbox = Class.create(pimcore.object.tags.abstract, {
 
 
     addInheritanceSourceButton:function ($super, metaData) {
-        this.updateStyle("#FF91BB");
+        this.updateStyle("#6782F6");
         $super();
     },
 
