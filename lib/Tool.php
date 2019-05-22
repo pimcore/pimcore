@@ -15,7 +15,6 @@
 namespace Pimcore;
 
 use GuzzleHttp\RequestOptions;
-use Pimcore\Cache\Symfony\CacheClearer;
 use Pimcore\FeatureToggles\Features\DebugMode;
 use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\HttpFoundation\Request;

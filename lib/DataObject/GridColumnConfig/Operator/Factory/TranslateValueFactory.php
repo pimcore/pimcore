@@ -35,6 +35,6 @@ class TranslateValueFactory implements OperatorFactoryInterface
 
     public function build(\stdClass $configElement, $context = null): OperatorInterface
     {
-	    return new TranslateValue($this->translator, $configElement, $context);
+        return new TranslateValue($this->translator, $configElement, $context);
     }
 }

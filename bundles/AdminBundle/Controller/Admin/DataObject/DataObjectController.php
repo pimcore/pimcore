@@ -627,7 +627,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
             }
 
             if ($fielddefinition->isEmpty($fieldData) && !empty($parent)
-                 && !(method_exists($fielddefinition, "getDefaultValue") && !$fielddefinition->isEmpty($fielddefinition->getDefaultValue()))
+                 && !(method_exists($fielddefinition, 'getDefaultValue') && !$fielddefinition->isEmpty($fielddefinition->getDefaultValue()))
             ) {
                 $this->getDataForField($parent, $key, $fielddefinition, $objectFromVersion, $level + 1);
             } else {

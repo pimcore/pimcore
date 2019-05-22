@@ -337,7 +337,7 @@ class Asset extends Element\AbstractElement
                         stream_copy_to_stream($data['stream'], $dest);
                         $mimeType = Mime::detect($tmpFile);
 
-                        if(!$isRewindable) {
+                        if (!$isRewindable) {
                             $data['stream'] = $dest;
                         } else {
                             fclose($dest);
@@ -1278,7 +1278,7 @@ class Asset extends Element\AbstractElement
         if ($this->stream) {
             $streamMeta = stream_get_meta_data($this->stream);
             if (!@rewind($this->stream) && $streamMeta['stream_type'] === 'STDIO') {
-                    $this->stream = null;
+                $this->stream = null;
             }
         }
 

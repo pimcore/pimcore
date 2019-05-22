@@ -271,7 +271,6 @@ class Link extends Model\Document
         return $this;
     }
 
-
     /**
      * @return string
      */

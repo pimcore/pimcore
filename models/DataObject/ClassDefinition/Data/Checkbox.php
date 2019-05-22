@@ -78,9 +78,9 @@ class Checkbox extends Data implements ResourcePersistenceAwareInterface, QueryR
             $defaultValue = null;
         }
         $this->defaultValue = $defaultValue;
+
         return $this;
     }
-
 
     /**
      * @see ResourcePersistenceAwareInterface::getDataForResource
@@ -140,6 +140,7 @@ class Checkbox extends Data implements ResourcePersistenceAwareInterface, QueryR
     public function getDataForEditmode($data, $object = null, $params = [])
     {
         $value = $this->getDataForResource($data, $object, $params);
+
         return $value;
     }
 
