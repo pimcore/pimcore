@@ -482,11 +482,12 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
                 $cd .= "\n\n";
                 $cd .= 'namespace ' . $namespace . ';';
                 $cd .= "\n\n";
+                $cd .= 'use Pimcore\Model\DataObject\Exception\InheritanceParentNotFoundException;';
+                $cd .= "\n\n";
                 $cd .= 'class ' . $className . ' extends \\Pimcore\\Model\\DataObject\\Objectbrick {';
                 $cd .= "\n\n";
 
-                $cd .= "\n\n";
-                $cd .= 'protected $brickGetters = array(' . "'" . implode("','", $brickKeys) . "');\n";
+                $cd .= 'protected $brickGetters = [' . "'" . implode("','", $brickKeys) . "'];\n";
                 $cd .= "\n\n";
 
                 foreach ($brickKeys as $brickKey) {
@@ -504,7 +505,7 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
                         $cd .= "\t\t\t" . 'if(!empty($brick)) {' . "\n";
                         $cd .= "\t\t\t\t" . 'return $this->getObject()->getValueFromParent("' . $fieldname . '")->get' . ucfirst($brickKey) . "(); \n";
                         $cd .= "\t\t\t" . "}\n";
-                        $cd .= "\t\t" . '} catch (\Exception $e) {' . "\n";
+                        $cd .= "\t\t" . '} catch (InheritanceParentNotFoundException $e) {' . "\n";
                         $cd .= "\t\t\t" . '// no data from parent available, continue ... ' . "\n";
                         $cd .= "\t\t" . '}' . "\n";
                         $cd .= "\t" . "}\n";

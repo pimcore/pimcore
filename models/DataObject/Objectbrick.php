@@ -19,6 +19,7 @@ namespace Pimcore\Model\DataObject;
 
 use Pimcore\Logger;
 use Pimcore\Model;
+use Pimcore\Model\DataObject\Exception\InheritanceParentNotFoundException;
 
 /**
  * @method \Pimcore\Model\DataObject\Objectbrick\Dao getDao()
@@ -188,7 +189,7 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
                             if (!empty($container)) {
                                 $parentBrick = $container->$getter();
                             }
-                        } catch (\Exception $e) {
+                        } catch (InheritanceParentNotFoundException $e) {
                             // no data from parent available, continue ...
                         }
                     }
@@ -216,7 +217,7 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
                             if (!empty($container)) {
                                 $parentBrick = $container->$getter();
                             }
-                        } catch (\Exception $e) {
+                        } catch (InheritanceParentNotFoundException $e) {
                             // no data from parent available, continue ...
                         }
                     }

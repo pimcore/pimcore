@@ -22,6 +22,7 @@ use Pimcore\Event\DataObjectEvents;
 use Pimcore\Event\Model\DataObjectEvent;
 use Pimcore\Logger;
 use Pimcore\Model;
+use Pimcore\Model\DataObject\Exception\InheritanceParentNotFoundException;
 
 /**
  * @method \Pimcore\Model\DataObject\Concrete\Dao getDao()
@@ -525,7 +526,7 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
      * @param $key
      * @param null $params
      * @return mixed
-     * @throws \Exception
+     * @throws InheritanceParentNotFoundException
      */
     public function getValueFromParent($key, $params = null)
     {
@@ -535,11 +536,11 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
             if (method_exists($parent, $method)) {
                 return call_user_func([$parent, $method], $params);
             } else {
-                throw new \Exception(sprintf('Parent object does not have a method called `%s()`, unable to retrieve value for key `%s`', $method, $key));
+                throw new InheritanceParentNotFoundException(sprintf('Parent object does not have a method called `%s()`, unable to retrieve value for key `%s`', $method, $key));
             }
         }
 
-        throw new \Exception('No parent object available to get a value from');
+        throw new InheritanceParentNotFoundException('No parent object available to get a value from');
     }
 
     /**
