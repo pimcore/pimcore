@@ -345,6 +345,10 @@ body > .x-mask {
     visibility: hidden;
 }
 
+.x-form-checkbox-focus.x-form-checkbox-default {
+    color: #919191;
+}
+
 
 /* ExtJS 6.0 bugfixes */
 

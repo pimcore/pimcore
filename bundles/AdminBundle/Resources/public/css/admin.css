@@ -1465,8 +1465,17 @@ span.warning {
     color: #fff;
 }
 
+.pimcore_main_toolbar .x-btn.x-btn-disabled {
+    background-color: #282C2F;
+    opacity: 1;
+}
+
 .pimcore_main_toolbar .x-btn.x-btn-disabled .x-btn-inner {
     color: #000;
+}
+
+.pimcore_main_toolbar .x-btn.x-btn-disabled .x-btn-wrap {
+    opacity: .5;
 }
 
 .pimcore_main_toolbar .x-toolbar-separator {
@@ -1738,6 +1747,11 @@ span.warning {
 .pimcore_button_black.x-btn-over, .pimcore_button_black.x-btn.x-btn-pressed {
     background-color: #000;
     border-color:#000;
+}
+
+.pimcore_button_transparent {
+    background: transparent !important;
+    border: 0 !important;
 }
 
 .pimcore_document_edit_panel_areatoolbar_button_pressed:after {
