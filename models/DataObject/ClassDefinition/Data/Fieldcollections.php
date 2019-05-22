@@ -694,9 +694,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
         $code .= '*/' . "\n";
         $code .= 'public function get' . ucfirst($key) . " () {\n";
 
-        // adds a hook preGetValue which can be defined in an extended class
-        $code .= "\t" . '$preValue = $this->preGetValue("' . $key . '");' . " \n";
-        $code .= "\t" . 'if($preValue !== null && !\Pimcore::inAdmin()) { return $preValue;}' . "\n";
+        $code .= $this->getPreGetValueHookCode($key);
 
         if (method_exists($this, 'preGetData')) {
             $code .= "\t" . '$data = $this->getClass()->getFieldDefinition("' . $key . '")->preGetData($this);' . "\n";

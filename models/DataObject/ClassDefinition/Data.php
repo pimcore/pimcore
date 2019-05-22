@@ -627,6 +627,21 @@ abstract class Data
     }
 
     /**
+     * @param string $key
+     * @return string
+     */
+    protected function getPreGetValueHookCode(string $key): string {
+        $code = "\t" . 'if($this instanceof PreGetValueHookInterface && !\Pimcore::inAdmin()) {' . " \n";
+        $code .= "\t\t" . '$preValue = $this->preGetValue("' . $key . '");' . " \n";
+        $code .= "\t\t" . 'if($preValue !== null) { ' . "\n";
+        $code .= "\t\t\t" . 'return $preValue;' . "\n";
+        $code .= "\t\t" . '}' . "\n";
+        $code .= "\t" . '}' . " \n";
+
+        return $code;
+    }
+
+    /**
      * Creates getter code which is used for generation of php file for object classes using this data type
      *
      * @param $class
@@ -644,11 +659,7 @@ abstract class Data
         $code .= '*/' . "\n";
         $code .= 'public function get' . ucfirst($key) . " () {\n";
 
-        // adds a hook preGetValue which can be defined in an extended class
-        $code .= "\t" . '$preValue = $this->preGetValue("' . $key . '");' . " \n";
-        $code .= "\t" . 'if($preValue !== null && !\Pimcore::inAdmin()) { ' . "\n";
-        $code .= "\t\t" . 'return $preValue;' . "\n";
-        $code .= "\t" . '}' . "\n";
+        $code .= $this->getPreGetValueHookCode($key);
 
         if (method_exists($this, 'preGetData')) {
             $code .= "\t" . '$data = $this->getClass()->getFieldDefinition("' . $key . '")->preGetData($this);' . "\n";
@@ -920,11 +931,7 @@ abstract class Data
         $code .= "\t" . '$data = $this->getLocalizedfields()->getLocalizedValue("' . $key . '", $language);' . "\n";
 
         if (!$class instanceof DataObject\Fieldcollection\Definition) {
-            // adds a hook preGetValue which can be defined in an extended class
-            $code .= "\t" . '$preValue = $this->preGetValue("' . $key . '");' . " \n";
-            $code .= "\t" . 'if($preValue !== null && !\Pimcore::inAdmin()) { ' . "\n";
-            $code .= "\t\t" . 'return $preValue;' . "\n";
-            $code .= "\t" . '}' . "\n";
+            $code .= $this->getPreGetValueHookCode($key);
         }
 
         $code .= "\t" . 'if ($data instanceof \\Pimcore\\Model\\DataObject\\Data\\EncryptedField) {' . "\n";
