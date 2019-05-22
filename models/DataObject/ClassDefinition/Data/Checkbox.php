@@ -36,7 +36,7 @@ class Checkbox extends Data implements ResourcePersistenceAwareInterface, QueryR
     /**
      * @var bool
      */
-    public $defaultValue = 0;
+    public $defaultValue;
 
     /**
      * Type for the column to query
@@ -60,7 +60,7 @@ class Checkbox extends Data implements ResourcePersistenceAwareInterface, QueryR
     public $phpdocType = 'boolean';
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getDefaultValue()
     {
@@ -68,16 +68,19 @@ class Checkbox extends Data implements ResourcePersistenceAwareInterface, QueryR
     }
 
     /**
-     * @param int $defaultValue
+     * @param $defaultValue
      *
      * @return $this
      */
     public function setDefaultValue($defaultValue)
     {
-        $this->defaultValue = (int)$defaultValue;
-
+        if (!is_numeric($defaultValue)) {
+            $defaultValue = null;
+        }
+        $this->defaultValue = $defaultValue;
         return $this;
     }
+
 
     /**
      * @see ResourcePersistenceAwareInterface::getDataForResource
@@ -90,9 +93,7 @@ class Checkbox extends Data implements ResourcePersistenceAwareInterface, QueryR
      */
     public function getDataForResource($data, $object = null, $params = [])
     {
-        $data = is_null($data) ? $this->getDefaultValue() : $data;
-
-        return (int)$data;
+        return is_null($data) ? null : (int)$data;
     }
 
     /**
@@ -138,7 +139,8 @@ class Checkbox extends Data implements ResourcePersistenceAwareInterface, QueryR
      */
     public function getDataForEditmode($data, $object = null, $params = [])
     {
-        return $this->getDataForResource($data, $object, $params);
+        $value = $this->getDataForResource($data, $object, $params);
+        return $value;
     }
 
     /**
@@ -152,11 +154,7 @@ class Checkbox extends Data implements ResourcePersistenceAwareInterface, QueryR
      */
     public function getDataFromEditmode($data, $object = null, $params = [])
     {
-        if ($data === 'false') {
-            return false;
-        }
-
-        return (bool)$this->getDataFromResource($data, $object, $params);
+        return $this->getDataFromResource($data, $object, $params);
     }
 
     /**
@@ -324,5 +322,13 @@ class Checkbox extends Data implements ResourcePersistenceAwareInterface, QueryR
     public function getDataForSearchIndex($object, $params = [])
     {
         return '';
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function isEmpty($data)
+    {
+        return $data === null;
     }
 }

@@ -1020,7 +1020,7 @@ abstract class Data
     }
 
     /**
-     * @param DataObject\Concrete $data
+     * @param mixed $data
      *
      * @return bool
      */

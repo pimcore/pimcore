@@ -22,7 +22,11 @@ pimcore.object.tags.checkbox = Class.create(pimcore.object.tags.abstract, {
 
         if (data) {
             this.data = data;
-        } else if ((typeof data === "undefined" || data === null) && fieldConfig.defaultValue) {
+        } else if ((typeof data === "undefined" || data === null)) {
+            if (fieldConfig.defaultValue !== null) {
+                this.dataChanged = true;
+            }
+
             this.data = fieldConfig.defaultValue;
         }
         this.fieldConfig = fieldConfig;
@@ -64,29 +68,89 @@ pimcore.object.tags.checkbox = Class.create(pimcore.object.tags.abstract, {
         return {type:'boolean', dataIndex:field.key};
     },
 
+    getStyle: function() {
+        if (this.data !== null) {
+            return '#919191';
+        } else {
+            return '#FF91BB';
+        }
+    },
+
+    updateStyle: function(newStyle) {
+        var cbEl = this.checkbox.el.down('.x-form-checkbox');
+
+        if (cbEl) {
+            if (!newStyle) {
+                newStyle = this.getStyle();
+            }
+            cbEl.setStyle('color', newStyle);
+        }
+    },
+
     getLayoutEdit:function () {
 
         var checkbox = {
-            fieldLabel:this.fieldConfig.title,
             name:this.fieldConfig.name,
-            componentCls:"object_field",
-            value: this.data
+            value: this.data,
+            width: 25,
+            handler: function (checkbox, checked) {
+                this.dataChanged = true;
+                this.data = this.checkbox.getValue();
+                this.updateStyle();
+            }.bind(this),
+            listeners: {
+                afterrender: function() {
+                    this.updateStyle();
+                }.bind(this)
+            }
         };
 
         if (this.fieldConfig.labelWidth) {
             checkbox.labelWidth = this.fieldConfig.labelWidth;
         }
-        checkbox.width += checkbox.labelWidth;
 
-        if (this.fieldConfig.width) {
-            checkbox.width = this.fieldConfig.width;
-        }
+        this.emptyButton = new Ext.Button({
+            iconCls: "pimcore_icon_delete",
+            tooltip: t("set_to_null"),
+            handler: function() {
+                if (this.data !== null) {
+                    this.dataChanged = true;
+                }
+                this.checkbox.setValue(false);
 
-        this.component = new Ext.form.Checkbox(checkbox);
+                this.data = null;
+                this.updateStyle();
+            }.bind(this),
+            style: "margin-left: 10px",
+        });
+
+        this.checkbox = new Ext.form.Checkbox(checkbox);
+
+        var componentCfg = {
+            fieldLabel:this.fieldConfig.title,
+            layout: 'hbox',
+            border: true,
+            items: [
+                this.checkbox,
+                this.emptyButton
+            ],
+            componentCls: "object_field",
+            border: false,
+            style: {
+                padding: 0
+            }
+        };
+
+        this.component = Ext.create('Ext.form.FieldContainer', componentCfg);
 
         return this.component;
     },
 
+
+    addInheritanceSourceButton:function ($super, metaData) {
+        this.updateStyle("#FF91BB");
+        $super();
+    },
 
     getLayoutShow:function () {
 
@@ -97,7 +161,7 @@ pimcore.object.tags.checkbox = Class.create(pimcore.object.tags.abstract, {
     },
 
     getValue:function () {
-        return this.component.getValue();
+        return this.data;
     },
 
     getName:function () {
@@ -109,35 +173,6 @@ pimcore.object.tags.checkbox = Class.create(pimcore.object.tags.abstract, {
     },
 
     isDirty:function () {
-        var dirty = false;
-        if (this.component && typeof this.component.isDirty == "function") {
-
-            if (!this.component.rendered) {
-                if (!this.fieldConfig.defaultValue) {
-                    return false;
-                } else {
-                    return true;
-                }
-
-            } else {
-                dirty = this.component.isDirty();
-
-                if (!dirty && (this.fieldConfig.defaultValue)) {
-                    dirty = true;
-                }
-
-                // once a field is dirty it should be always dirty (not an ExtJS behavior)
-                if (this.component["__pimcore_dirty"]) {
-                    dirty = true;
-                }
-                if (dirty) {
-                    this.component["__pimcore_dirty"] = true;
-                }
-
-                return dirty;
-            }
-        }
-
-        throw "isDirty() is not implemented";
+        return this.dataChanged;
     }
 });
