@@ -276,8 +276,22 @@ Ext.onReady(function () {
     Ext.define('pimcore.model.doctypes', {
         extend: 'Ext.data.Model',
         fields: [
-            'id',  {name: 'name', allowBlank: false}, 'module', 'controller', 'action', 'template',
-            {name: 'type', allowBlank: false},'priority', 'creationDate', 'modificationDate'
+            'id',
+            {name: 'name', allowBlank: false},
+            {
+                name: "translatedName",
+                convert: function (v, rec) {
+                    return t(rec.get("name"));
+                }
+            },
+            'module',
+            'controller',
+            'action',
+            'template',
+            {name: 'type', allowBlank: false},
+            'priority',
+            'creationDate',
+            'modificationDate'
         ],
         proxy: {
             type: 'ajax',
