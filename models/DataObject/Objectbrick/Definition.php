@@ -217,12 +217,13 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
         $cd .= 'namespace Pimcore\\Model\\DataObject\\Objectbrick\\Data;';
         $cd .= "\n\n";
         $cd .= 'use Pimcore\\Model\\DataObject;';
+        $cd .= "\n";
+        $cd .= 'use Pimcore\Model\DataObject\Exception\InheritanceParentNotFoundException;';
         $cd .= "\n\n";
 
         $cd .= 'class ' . ucfirst($this->getKey()) . ' extends ' . $extendClass . ' implements \\Pimcore\\Model\\DataObject\\DirtyIndicatorInterface {';
         $cd .= "\n\n";
 
-        $cd .= "\n\n";
         $cd .= 'use \\Pimcore\\Model\\DataObject\\Traits\\DirtyIndicatorTrait;';
         $cd .= "\n\n";
 
