@@ -14,6 +14,7 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\Model;
 
+use Pimcore\Model\DataObject\Exception\InheritanceParentNotFoundException;
 use \Pimcore\Model\DataObject;
 
 /**
@@ -84,7 +85,12 @@ abstract class AbstractFilterDefinition extends DataObject\Concrete implements D
                 'get' . $checkInheritanceKey
                 }() == 'true'
             ) {
-                $parentValue = $this->getValueFromParent($key);
+                try {
+                    $parentValue = $this->getValueFromParent($key);
+                } catch (InheritanceParentNotFoundException $e) {
+                    $parentValue = null;
+                }
+
                 $data = $this->$key;
                 if (!$data) {
                     $data = $this->getClass()->getFieldDefinition($key)->preGetData($this);

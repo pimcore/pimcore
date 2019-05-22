@@ -503,7 +503,7 @@ class Config extends Model\AbstractModel
     /**
      * This is just for compatibility, this method will be removed with the next major release
      *
-     * @depricated
+     * @deprecated
      * @static
      *
      * @param $config
