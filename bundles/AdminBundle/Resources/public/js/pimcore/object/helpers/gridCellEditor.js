@@ -51,12 +51,15 @@ Ext.define('pimcore.object.helpers.gridCellEditor', {
             return;
         }
 
-        var title = fieldInfo.label ? fieldInfo.label : fieldInfo.key;
-
         this.context = this.editingPlugin.context;
         // this.callParent(arguments);
 
         var tagType = fieldInfo.layout.fieldtype;
+
+        // translate title
+        if(typeof fieldInfo.layout.title != "undefined") {
+            fieldInfo.layout.title = t(fieldInfo.layout.title);
+        }
 
         var tag = new pimcore.object.tags[tagType](value, fieldInfo.layout);
         var object = Ext.clone(this.context.record);
@@ -70,7 +73,7 @@ Ext.define('pimcore.object.helpers.gridCellEditor', {
         });
         this.editWin = new Ext.Window({
             modal: false,
-            title: t("edit") + " " + title,
+            title: t("edit") + " " + fieldInfo.layout.title,
             items: [formPanel],
             bodyStyle: "background: #fff;",
             width: 700,

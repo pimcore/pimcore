@@ -114,7 +114,7 @@ abstract class Dao extends Model\Listing\Dao\AbstractDao implements Dao\DaoInter
                 $translations[$t['key']]->addTranslation($t['language'], $t['text']);
 
                 //for legacy support
-                if ($translations[$t['key']]->getDate() < $t['creationDate']) {
+                if ($translations[$t['key']]->getModificationDate() < $t['creationDate']) {
                     $translations[$t['key']]->setDate($t['creationDate']);
                 }
 

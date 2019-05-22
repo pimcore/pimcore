@@ -365,7 +365,7 @@ pimcore.settings.gdpr.dataproviders.sentMail = Class.create({
         this.pagingtoolbar = pimcore.helpers.grid.buildDefaultPagingToolbar(this.store);
 
         var toolbar = Ext.create('Ext.Toolbar', {
-            cls: 'main-toolbar',
+            cls: 'pimcore_main_toolbar',
             items: [
                 {
                     text: t("gdpr_dataSource_sentMail_only_email") + ": " + this.searchParams.email,

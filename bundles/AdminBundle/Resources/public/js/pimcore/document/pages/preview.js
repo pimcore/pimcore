@@ -174,7 +174,7 @@ pimcore.document.pages.preview = Class.create({
                 layout: "border",
                 tbar: tbar,
                 height: 200,
-                iconCls: "pimcore_icon_preview",
+                iconCls: "pimcore_material_icon_devices pimcore_material_icon",
                 bodyCls: "pimcore_preview_body",
                 items: [this.framePanel, this.timeSelectPanel]
             });

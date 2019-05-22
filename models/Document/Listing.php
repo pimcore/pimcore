@@ -30,7 +30,7 @@ use Zend\Paginator\AdapterAggregateInterface;
  * @method \Pimcore\Model\Document\Listing\Dao getDao()
  * @method onCreateQuery(callable $callback)
  */
-class Listing extends Model\Listing\AbstractListing implements \Zend_Paginator_Adapter_Interface, \Zend_Paginator_AdapterAggregate, \Iterator, AdapterInterface, AdapterAggregateInterface
+class Listing extends Model\Listing\AbstractListing implements \Iterator, AdapterInterface, AdapterAggregateInterface
 {
     /**
      * Return all documents as Type Document. eg. for trees an so on there isn't the whole data required
@@ -125,7 +125,7 @@ class Listing extends Model\Listing\AbstractListing implements \Zend_Paginator_A
 
     /**
      *
-     * Methods for \Zend_Paginator_Adapter_Interface | AdapterInterface
+     * Methods for AdapterInterface
      */
 
     /**

@@ -86,6 +86,7 @@ pimcore.object.klass = Class.create({
                 listeners: this.getTreeNodeListeners(),
                 rootVisible: false,
                 tbar: {
+                    cls: 'pimcore_toolbar_border_bottom',
                     items: [
                         {
                             text: t("add"),

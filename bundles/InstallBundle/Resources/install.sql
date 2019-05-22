@@ -49,11 +49,12 @@ DROP TABLE IF EXISTS `assets_metadata`;
 CREATE TABLE `assets_metadata` (
   `cid` int(11) DEFAULT NULL,
   `name` varchar(190) DEFAULT NULL,
-  `language` varchar(190) DEFAULT NULL,
+  `language` varchar(10) CHARACTER SET ascii COLLATE ascii_general_ci NOT NULL DEFAULT '',
   `type` ENUM('input','textarea','asset','document','object','date','select','checkbox') DEFAULT NULL,
   `data` text,
-  KEY `cid` (`cid`),
-	INDEX `name` (`name`)
+  PRIMARY KEY (`cid`, `name`, `language`),
+	INDEX `name` (`name`),
+	INDEX `cid` (`cid`)
 ) DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `cache`;
@@ -156,7 +157,6 @@ CREATE TABLE `documents_email` (
   `cc` varchar(255) DEFAULT NULL,
   `bcc` varchar(255) DEFAULT NULL,
   `subject` varchar(255) DEFAULT NULL,
-  `legacy` tinyint(1) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) DEFAULT CHARSET=utf8mb4;
 
@@ -174,7 +174,6 @@ CREATE TABLE `documents_newsletter` (
   `trackingParameterName` varchar(255) DEFAULT NULL,
   `enableTrackingParameters` tinyint(1) unsigned DEFAULT NULL,
   `sendingMode` varchar(20) DEFAULT NULL,
-  `legacy` tinyint(1) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) DEFAULT CHARSET=utf8mb4;
 
@@ -210,7 +209,6 @@ CREATE TABLE `documents_page` (
   `prettyUrl` varchar(190) DEFAULT NULL,
   `contentMasterDocumentId` int(11) DEFAULT NULL,
   `targetGroupIds` varchar(255) DEFAULT NULL,
-  `legacy` TINYINT(1) NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `prettyUrl` (`prettyUrl`)
 ) DEFAULT CHARSET=utf8mb4;
@@ -223,7 +221,6 @@ CREATE TABLE `documents_snippet` (
   `action` varchar(255) DEFAULT NULL,
   `template` varchar(255) DEFAULT NULL,
   `contentMasterDocumentId` int(11) DEFAULT NULL,
-  `legacy` TINYINT(1) NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) DEFAULT CHARSET=utf8mb4;
 
@@ -248,7 +245,6 @@ CREATE TABLE `documents_printpage` (
   `lastGenerated` int(11) DEFAULT NULL,
   `lastGenerateMessage` text,
   `contentMasterDocumentId` int(11) DEFAULT NULL,
-  `legacy` tinyint(1) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) DEFAULT CHARSET=utf8mb4;
 
@@ -773,7 +769,7 @@ CREATE TABLE `versions` (
   `binaryFileId` BIGINT(20) UNSIGNED NULL DEFAULT NULL,
   PRIMARY KEY  (`id`),
   KEY `cid` (`cid`),
-  KEY `ctype` (`ctype`),
+  KEY `ctype_cid` (`ctype`, `cid`),
   KEY `date` (`date`),
   KEY `binaryFileHash` (`binaryFileHash`),
   KEY `binaryFileId` (`binaryFileId`)

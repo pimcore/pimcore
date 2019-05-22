@@ -493,7 +493,7 @@ pimcore.helpers.showPrettyError = function (type, title, text, errorText, stack,
                             height: 600,
                             html: stack,
                             autoScroll: true,
-                            bodyStyle: "padding: 10px; background:#fff;",
+                            bodyStyle: "padding: 10px;",
                             buttonAlign: "center",
                             shadow: false,
                             closable: true,
@@ -531,7 +531,7 @@ pimcore.helpers.showPrettyError = function (type, title, text, errorText, stack,
             detailedInfo
         ],
         autoScroll: true,
-        bodyStyle: "padding: 10px; background:#fff;",
+        bodyStyle: "padding: 10px;",
         buttonAlign: "center",
         shadow: false,
         closable: false,
@@ -565,7 +565,7 @@ pimcore.helpers.showNotification = function (title, text, type, errorText, hideD
             maxHeight: 500,
             html: text,
             autoScroll: true,
-            bodyStyle: "padding: 10px; background:#fff;",
+            bodyStyle: "padding: 10px;",
             buttonAlign: "center",
             shadow: false,
             closable: false,
@@ -2524,8 +2524,6 @@ pimcore.helpers.hideRedundantSeparators = function (menu) {
 pimcore.helpers.initMenuTooltips = function () {
 
     var items = jQuery("[data-menu-tooltip]:not(.initialized)");
-    jQuery('#pimcore_navigation li:not(:has(>svg))').addClass('compatibility');
-
     items.mouseenter(function (e) {
         jQuery("#pimcore_tooltip").show();
         jQuery("#pimcore_tooltip").removeClass('right');
@@ -2725,7 +2723,7 @@ pimcore.helpers.csvExportWarning = function (callback) {
         title: t('export_csv'),
         width: 600,
         height: 450,
-        bodyStyle: "padding: 10px; background:#fff;",
+        bodyStyle: "padding: 10px;",
         buttonAlign: "center",
         shadow: false,
         closable: true,

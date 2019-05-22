@@ -33,7 +33,6 @@ class AliasMapper extends AbstractAutoloader
         'Pimcore\Service\WebPathResolver' => \Pimcore\HttpKernel\WebPathResolver::class,
         'Pimcore\Service\RequestMatcherFactory' => \Pimcore\Http\RequestMatcherFactory::class,
         'Pimcore\Service\Context\PimcoreContextGuesser' => \Pimcore\Http\Context\PimcoreContextGuesser::class,
-        'Pimcore\Service\Request\PimcoreContextResolverAwareInterface' => \Pimcore\Http\Context\PimcoreContextResolverAwareInterface::class,
         'Pimcore\Service\Request\AbstractRequestResolver' => \Pimcore\Http\Request\Resolver\AbstractRequestResolver::class,
         'Pimcore\Service\Request\DocumentResolver' => \Pimcore\Http\Request\Resolver\DocumentResolver::class,
         'Pimcore\Service\Request\EditmodeResolver' => \Pimcore\Http\Request\Resolver\EditmodeResolver::class,

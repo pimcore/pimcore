@@ -332,12 +332,17 @@ class Asset extends Element\AbstractElement
                         $mimeType = Mime::detect($streamMeta['uri']);
                     } else {
                         // write a tmp file because the stream isn't a pointer to the local filesystem
-                        rewind($data['stream']);
+                        $isRewindable = @rewind($data['stream']);
                         $dest = fopen($tmpFile, 'w+', false, File::getContext());
                         stream_copy_to_stream($data['stream'], $dest);
-                        fclose($dest);
                         $mimeType = Mime::detect($tmpFile);
-                        unlink($tmpFile);
+
+                        if(!$isRewindable) {
+                            $data['stream'] = $dest;
+                        } else {
+                            fclose($dest);
+                            unlink($tmpFile);
+                        }
                     }
                 }
             } else {
@@ -1273,7 +1278,7 @@ class Asset extends Element\AbstractElement
         if ($this->stream) {
             $streamMeta = stream_get_meta_data($this->stream);
             if (!@rewind($this->stream) && $streamMeta['stream_type'] === 'STDIO') {
-                $this->stream = null;
+                    $this->stream = null;
             }
         }
 

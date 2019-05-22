@@ -14,7 +14,6 @@
 
 namespace Pimcore\Bundle\AdminBundle\Controller\Rest;
 
-use Pimcore\ExtensionManager;
 use Pimcore\Tool\Console;
 use Pimcore\Version;
 use Symfony\Component\HttpFoundation\Request;
@@ -79,12 +78,10 @@ class InfoController extends AbstractRestController
         ];
 
         // TODO add new bundles here
-        $plugins = ExtensionManager::getPluginConfigs();
 
         return $this->createSuccessResponse([
             'system' => $system,
             'pimcore' => $pimcore,
-            'plugins' => $plugins
         ], false);
     }
 

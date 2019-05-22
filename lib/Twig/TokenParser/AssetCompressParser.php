@@ -18,26 +18,27 @@ declare(strict_types=1);
 namespace Pimcore\Twig\TokenParser;
 
 use Pimcore\Twig\Node\AssetCompressNode;
-use Twig_Token;
+use Twig\Token;
+use Twig\TokenParser\AbstractTokenParser;
 
 /**
  * The spaceless tag only removes spaces between HTML elements. This removes all newlines in a block and is suited
  * for a simple minification of CSS/JS assets.
  */
-class AssetCompressParser extends \Twig_TokenParser
+class AssetCompressParser extends AbstractTokenParser
 {
-    public function parse(Twig_Token $token)
+    public function parse(Token $token)
     {
         $lineno = $token->getLine();
 
-        $this->parser->getStream()->expect(Twig_Token::BLOCK_END_TYPE);
+        $this->parser->getStream()->expect(Token::BLOCK_END_TYPE);
         $body = $this->parser->subparse([$this, 'decideAssetCompressEnd'], true);
-        $this->parser->getStream()->expect(Twig_Token::BLOCK_END_TYPE);
+        $this->parser->getStream()->expect(Token::BLOCK_END_TYPE);
 
         return new AssetCompressNode($body, $lineno, $this->getTag());
     }
 
-    public function decideAssetCompressEnd(Twig_Token $token)
+    public function decideAssetCompressEnd(Token $token)
     {
         return $token->test('endpimcoreassetcompress');
     }

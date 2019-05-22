@@ -13,9 +13,6 @@ $platform       = $browser->getPlatform();
 if ($browser->getBrowser() == \Pimcore\Browser::BROWSER_FIREFOX && $browserVersion >= 52) {
     $supported = true;
 }
-if ($browser->getBrowser() == \Pimcore\Browser::BROWSER_IE && $browserVersion >= 11) {
-    $supported = true;
-}
 if ($browser->getBrowser() == \Pimcore\Browser::BROWSER_CHROME && $browserVersion >= 52) { // Edge identifies currently as Chrome 52
     $supported = true;
 }

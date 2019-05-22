@@ -50,6 +50,11 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface
     public $maxItems;
 
     /**
+     * @var bool
+     */
+    public $border = false;
+
+    /**
      * @param $maxItems
      *
      * @return $this
@@ -67,6 +72,22 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface
     public function getMaxItems()
     {
         return $this->maxItems;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getBorder(): bool
+    {
+        return $this->border;
+    }
+
+    /**
+     * @param bool $border
+     */
+    public function setBorder(bool $border): void
+    {
+        $this->border = $border;
     }
 
     /**

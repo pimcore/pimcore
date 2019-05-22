@@ -21,7 +21,6 @@ use Pimcore\Document\Renderer\DocumentRenderer;
 use Pimcore\Document\Renderer\DocumentRendererInterface;
 use Pimcore\Event\DocumentEvents;
 use Pimcore\Event\Model\DocumentEvent;
-use Pimcore\Exception\MissingDependencyException;
 use Pimcore\File;
 use Pimcore\Model;
 use Pimcore\Model\Document;
@@ -62,7 +61,7 @@ class Service extends Model\Element\Service
     }
 
     /**
-     * Renders a document outside of a view with support for legacy documents
+     * Renders a document outside of a view
      *
      * Parameter order was kept for BC (useLayout before query and options).
      *
@@ -81,23 +80,7 @@ class Service extends Model\Element\Service
         $container = \Pimcore::getContainer();
 
         /** @var DocumentRendererInterface $renderer */
-        $renderer = null;
-
-        if ($document->doRenderWithLegacyStack()) {
-            $serviceId = 'pimcore.legacy.document.renderer';
-            if (!$container->has($serviceId)) {
-                throw new MissingDependencyException(sprintf(
-                    'Document %d (%s) is expected to be rendered with the legacy renderer, but legacy renderer does not exist as service "%s"',
-                    $document->getId(),
-                    $document->getFullPath(),
-                    $serviceId
-                ));
-            }
-
-            $renderer = $container->get($serviceId);
-        } else {
-            $renderer = $container->get(DocumentRenderer::class);
-        }
+        $renderer = $container->get(DocumentRenderer::class);
 
         // keep useLayout compatibility
         $attributes['_useLayout'] = $useLayout;
@@ -301,13 +284,6 @@ class Service extends Model\Element\Service
             $target->setInternal($source->getInternal());
             $target->setDirect($source->getDirect());
             $target->setLinktype($source->getLinktype());
-            $target->setTarget($source->getTarget());
-            $target->setParameters($source->getParameters());
-            $target->setAnchor($source->getAnchor());
-            $target->setTitle($source->getTitle());
-            $target->setAccesskey($source->getAccesskey());
-            $target->setRel($source->getRel());
-            $target->setTabindex($source->getTabindex());
         }
 
         $target->setUserModification($this->_user->getId());

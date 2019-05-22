@@ -28,7 +28,6 @@ use Pimcore\HttpKernel\BundleCollection\LazyLoadedItem;
 use Pimcore\HttpKernel\Config\SystemConfigParamResource;
 use Presta\SitemapBundle\PrestaSitemapBundle;
 use Scheb\TwoFactorBundle\SchebTwoFactorBundle;
-use Sensio\Bundle\DistributionBundle\SensioDistributionBundle;
 use Sensio\Bundle\FrameworkExtraBundle\SensioFrameworkExtraBundle;
 use Sensio\Bundle\GeneratorBundle\SensioGeneratorBundle;
 use Symfony\Bundle\DebugBundle\DebugBundle;
@@ -284,27 +283,16 @@ abstract class Kernel extends SymfonyKernel
         if (in_array($this->getEnvironment(), $this->getEnvironmentsForDevBundles(), true)) {
             $collection->addBundles([
                 new DebugBundle(),
-                new WebProfilerBundle(),
-                new SensioDistributionBundle()
+                new WebProfilerBundle()
             ], 80);
 
-            // add generator bundle only if installed
-            if (class_exists('Sensio\Bundle\GeneratorBundle\SensioGeneratorBundle')) {
-                $generatorEnvironments = $this->getEnvironmentsForDevGeneratorBundles();
-
-                $collection->addBundle(
-                    new SensioGeneratorBundle(),
-                    80,
-                    $generatorEnvironments
-                );
-
-                // PimcoreGeneratorBundle depends on SensioGeneratorBundle
-                $collection->addBundle(
-                    new PimcoreGeneratorBundle(),
-                    60,
-                    $generatorEnvironments
-                );
-            }
+            // PimcoreGeneratorBundle depends on SensioGeneratorBundle
+            $generatorEnvironments = $this->getEnvironmentsForDevGeneratorBundles();
+            $collection->addBundle(
+                new PimcoreGeneratorBundle(),
+                60,
+                $generatorEnvironments
+            );
         }
     }
 
@@ -396,7 +384,7 @@ abstract class Kernel extends SymfonyKernel
         }
 
         // check some system variables
-        $requiredVersion = '7.1';
+        $requiredVersion = '7.2';
         if (version_compare(PHP_VERSION, $requiredVersion, '<')) {
             $m = "pimcore requires at least PHP version $requiredVersion your PHP version is: " . PHP_VERSION;
             Tool::exitWithError($m);

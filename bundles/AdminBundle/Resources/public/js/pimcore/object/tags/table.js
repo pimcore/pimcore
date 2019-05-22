@@ -23,37 +23,43 @@ pimcore.object.tags.table = Class.create(pimcore.object.tags.abstract, {
         var i;
 
         if (!data) {
-            data = [
-                [""]
-            ];
-            if (this.fieldConfig.cols) {
-                for (i = 0; i < (this.fieldConfig.cols - 1); i++) {
-                    data[0].push("");
-                }
-            }
-            if (this.fieldConfig.rows) {
-                for (i = 0; i < (this.fieldConfig.rows - 1); i++) {
-                    data.push(data[0]);
-                }
-            }
-            if (this.fieldConfig.data) {
-                try {
-                    var dataRows = this.fieldConfig.data.split("\n");
-                    var dataGrid = [];
-                    for (i = 0; i < dataRows.length; i++) {
-                        dataGrid.push(dataRows[i].split("|"));
-                    }
+            data = this.getInitialData();
 
-                    data = dataGrid;
-                    this.dirty = true;
-                }
-                catch (e) {
-                    console.log(e);
-                }
-            }
         }
 
         this.data = data;
+    },
+
+    getInitialData: function() {
+        var data = [
+            [""]
+        ];
+        if (this.fieldConfig.cols) {
+            for (i = 0; i < (this.fieldConfig.cols - 1); i++) {
+                data[0].push("");
+            }
+        }
+        if (this.fieldConfig.rows) {
+            for (i = 0; i < (this.fieldConfig.rows - 1); i++) {
+                data.push(data[0]);
+            }
+        }
+        if (this.fieldConfig.data) {
+            try {
+                var dataRows = this.fieldConfig.data.split("\n");
+                var dataGrid = [];
+                for (i = 0; i < dataRows.length; i++) {
+                    dataGrid.push(dataRows[i].split("|"));
+                }
+
+                data = dataGrid;
+                this.dirty = true;
+            }
+            catch (e) {
+                console.log(e);
+            }
+        }
+        return data;
     },
 
     getGridColumnConfig: function (field) {
@@ -198,7 +204,8 @@ pimcore.object.tags.table = Class.create(pimcore.object.tags.abstract, {
 
     emptyStore: function () {
         this.dirty = true;
-        this.initStore([[""]]);
+        var initialData = this.getInitialData();
+        this.initStore(initialData);
     },
 
     initStore: function (data) {

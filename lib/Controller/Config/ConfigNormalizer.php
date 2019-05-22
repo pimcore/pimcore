@@ -209,9 +209,7 @@ class ConfigNormalizer
             $parts = explode('/', $template);
             $template = array_pop($parts);
 
-            // ucfirst to match views/Content - TODO should we remove this?
             $path = implode('/', $parts);
-            $path = ucfirst($path);
         }
 
         return sprintf('%s/%s', $path, $template);

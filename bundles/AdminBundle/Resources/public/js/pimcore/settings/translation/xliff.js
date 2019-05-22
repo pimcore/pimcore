@@ -68,6 +68,7 @@ pimcore.settings.translation.xliff = Class.create({
         this.component = Ext.create('Ext.grid.Panel', {
             store: this.exportStore,
             autoHeight: true,
+            border: true,
             style: "margin-bottom: 10px",
             selModel: Ext.create('Ext.selection.RowModel', {}),
             columns: {
@@ -97,45 +98,47 @@ pimcore.settings.translation.xliff = Class.create({
                     }
                 ]
             },
-            tbar: [
-                {
-                    xtype: "tbspacer",
-                    width: 20,
-                    height: 16,
-                    cls: "pimcore_icon_droptarget"
-                },
-                t("elements_to_export"),
-                "->",
-                {
-                    xtype: "button",
-                    iconCls: "pimcore_icon_delete",
-                    handler: function () {
-                        this.exportStore.removeAll();
-                    }.bind(this)
-                }
-                ,
-                {
-                    xtype: "button",
-                    iconCls: "pimcore_icon_search"
+            tbar: {
+                items: [
+                    {
+                        xtype: "tbspacer",
+                        width: 20,
+                        height: 16,
+                        cls: "pimcore_icon_droptarget"
+                    },
+                    t("elements_to_export"),
+                    "->",
+                    {
+                        xtype: "button",
+                        iconCls: "pimcore_icon_delete",
+                        handler: function () {
+                            this.exportStore.removeAll();
+                        }.bind(this)
+                    }
                     ,
-                    handler: function () {
-                        pimcore.helpers.itemselector(true, function (items) {
-                            if (items.length > 0) {
-                                for (var i = 0; i < items.length; i++) {
-                                    this.exportStore.add({
-                                        id: items[i].id,
-                                        path: items[i].fullpath,
-                                        type: items[i].type,
-                                        children: true
-                                    });
+                    {
+                        xtype: "button",
+                        iconCls: "pimcore_icon_search"
+                        ,
+                        handler: function () {
+                            pimcore.helpers.itemselector(true, function (items) {
+                                if (items.length > 0) {
+                                    for (var i = 0; i < items.length; i++) {
+                                        this.exportStore.add({
+                                            id: items[i].id,
+                                            path: items[i].fullpath,
+                                            type: items[i].type,
+                                            children: true
+                                        });
+                                    }
                                 }
-                            }
-                        }.bind(this), {
-                            type: ["object", "document"]
-                        });
-                    }.bind(this)
-                }
-            ]
+                            }.bind(this), {
+                                type: ["object", "document"]
+                            });
+                        }.bind(this)
+                    }
+                ]
+            }
         });
 
         //this.component.on("rowcontextmenu", this.onRowContextmenu);
@@ -217,11 +220,13 @@ pimcore.settings.translation.xliff = Class.create({
                 style: "margin-bottom: 10px"
             }, {
                 title: t("important_notice") + " (" + t("documents") + ")",
+                bodyStyle: 'padding-top:10px;',
                 html: '<div>' + t("xliff_export_documents") + '</div>',
                 style: "margin-bottom: 10px",
                 iconCls: "pimcore_icon_document"
             }, {
                 title: t("important_notice") + " (" + t("data_objects") + ")",
+                bodyStyle: 'padding-top:10px;',
                 html: '<div>' + t("xliff_export_objects") + '</div>',
                 style: "margin-bottom: 10px",
                 iconCls: "pimcore_icon_object"

@@ -1188,7 +1188,7 @@ abstract class AbstractElasticSearch implements IProductList
 
     /**
      *  -----------------------------------------------------------------------------------------
-     *   Methods for Zend_Paginator_Adapter_Interface, Zend_Paginator_AdapterAggregate, Iterator
+     *   Methods for Iterator
      *  -----------------------------------------------------------------------------------------
      */
 
@@ -1245,7 +1245,7 @@ abstract class AbstractElasticSearch implements IProductList
     /**
      * Return a fully configured Paginator Adapter from this method.
      *
-     * @return \Zend_Paginator_Adapter_Interface
+     * @return self
      */
     public function getPaginatorAdapter()
     {

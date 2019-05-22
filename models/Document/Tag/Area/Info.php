@@ -60,27 +60,6 @@ class Info
     public $index;
 
     /**
-     * @deprecated
-     *
-     * @var string
-     */
-    public $name;
-
-    /**
-     * @deprecated
-     *
-     * @var \Pimcore\Config\Config
-     */
-    public $config;
-
-    /**
-     * @deprecated Only used for legacy areas as the AreaInterface now handles static Area data.
-     *
-     * @var string
-     */
-    public $path;
-
-    /**
      * @return string
      */
     public function getId()
@@ -244,73 +223,5 @@ class Info
         }
 
         return $document;
-    }
-
-    /**
-     * @deprecated Only used for legacy areas as the AreaInterface now handles static Area data.
-     *
-     * @param \Pimcore\Config\Config $config
-     *
-     * @return $this
-     */
-    public function setConfig($config)
-    {
-        $this->config = $config;
-
-        return $this;
-    }
-
-    /**
-     * @deprecated Only used for legacy areas as the AreaInterface now handles static Area data.
-     *
-     * @return \Pimcore\Config\Config
-     */
-    public function getConfig()
-    {
-        return $this->config;
-    }
-
-    /**
-     * @deprecated Only used for legacy areas as the AreaInterface now handles static Area data.
-     *
-     * @param string $path
-     *
-     * @return $this
-     */
-    public function setPath($path)
-    {
-        $this->path = $path;
-
-        return $this;
-    }
-
-    /**
-     * @deprecated Only used for legacy areas as the AreaInterface now handles static Area data.
-     *
-     * @return string
-     */
-    public function getPath()
-    {
-        return $this->path;
-    }
-
-    /**
-     * @deprecated Only used for legacy areas as the AreaInterface now handles static Area data.
-     *
-     * @param string $name
-     */
-    public function setName($name)
-    {
-        $this->name = $name;
-    }
-
-    /**
-     * @deprecated Only used for legacy areas as the AreaInterface now handles static Area data.
-     *
-     * @return string
-     */
-    public function getName()
-    {
-        return $this->name;
     }
 }

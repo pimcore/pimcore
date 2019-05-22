@@ -18,15 +18,16 @@ use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\AreabrickPass;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\CacheCollectorPass;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\DebugStopwatchPass;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\DoctrineMigrationsParametersPass;
+use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\LegacyTemplatePass;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\LongRunningHelperPass;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\MonologPsrLogMessageProcessorPass;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\MonologPublicLoggerPass;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\NavigationRendererPass;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\PhpTemplatingPass;
-use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\PimcoreContextResolverAwarePass;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\PimcoreGlobalTemplatingVariablesPass;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\RegisterImageOptimizersPass;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\RegisterMaintenanceTaskPass;
+use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\RoutingLoaderPass;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\ServiceControllersPass;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\SessionConfiguratorPass;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\TargetingOverrideHandlersPass;
@@ -66,7 +67,6 @@ class PimcoreCoreBundle extends Bundle
      */
     public function build(ContainerBuilder $container)
     {
-        $container->addCompilerPass(new PimcoreContextResolverAwarePass());
         $container->addCompilerPass(new PhpTemplatingPass());
         $container->addCompilerPass(new AreabrickPass());
         $container->addCompilerPass(new NavigationRendererPass());
@@ -86,5 +86,7 @@ class PimcoreCoreBundle extends Bundle
         $container->addCompilerPass(new WorkflowPass());
         $container->addCompilerPass(new RegisterImageOptimizersPass());
         $container->addCompilerPass(new RegisterMaintenanceTaskPass());
+        $container->addCompilerPass(new RoutingLoaderPass());
+        $container->addCompilerPass(new LegacyTemplatePass());
     }
 }

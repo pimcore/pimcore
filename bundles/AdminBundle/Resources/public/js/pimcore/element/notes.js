@@ -104,7 +104,7 @@ pimcore.element.notes = Class.create({
             }
 
             var tbar = Ext.create('Ext.Toolbar', {
-                cls: 'main-toolbar',
+                cls: this.inElementContext ? '' : 'pimcore_main_toolbar',
                 items: tbarItems
             });
 
@@ -213,7 +213,7 @@ pimcore.element.notes = Class.create({
                 tabConfig: {
                     tooltip: t('notes_events')
                 },
-                iconCls: "pimcore_icon_notes",
+                iconCls: "pimcore_material_icon_notes pimcore_material_icon",
                 items: [this.grid, this.detailView],
                 layout: "border",
                 closable: !this.inElementContext

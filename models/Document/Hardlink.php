@@ -120,33 +120,11 @@ class Hardlink extends Document
     }
 
     /**
-     * @deprecated
-     *
-     * @param $childsFromSource
-     *
-     * @return Hardlink
-     */
-    public function setChildsFromSource($childsFromSource)
-    {
-        return $this->setChildrenFromSource($childsFromSource);
-    }
-
-    /**
      * @return bool
      */
     public function getChildrenFromSource()
     {
         return $this->childsFromSource;
-    }
-
-    /**
-     * @deprecated
-     *
-     * @return bool
-     */
-    public function getChildsFromSource()
-    {
-        return $this->getChildrenFromSource();
     }
 
     /**

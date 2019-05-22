@@ -65,7 +65,7 @@ pimcore.object.classes.data.localizedfields = Class.create(pimcore.object.classe
                 {
                     xtype: "form",
                     title: '<b>' + t("localizedfields") + "</b>",
-                    bodyStyle: 'padding: 10px; border-top: 1px solid #606060 !important;',
+                    bodyStyle: 'padding: 10px;',
                     defaults: {
                         labelWidth: 140,
                         width: 300
@@ -102,6 +102,12 @@ pimcore.object.classes.data.localizedfields = Class.create(pimcore.object.classe
                             store: ["","fit"],
                             triggerAction: 'all',
                             editable: false
+                        },
+                        {
+                            xtype: "checkbox",
+                            fieldLabel: t("border"),
+                            name: "border",
+                            checked: this.datax.border,
                         },
                         {
                             xtype: "numberfield",

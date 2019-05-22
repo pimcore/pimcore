@@ -101,7 +101,7 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
         this.fieldConfig.fieldtype = "panel";
 
         var wrapperConfig = {
-            border: false,
+            border: this.fieldConfig.border,
             layout: "fit"
         };
 
@@ -393,7 +393,6 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
                 wrapperConfig.items = [this.tabPanel];
             }
 
-            wrapperConfig.border = true;
             wrapperConfig.style = "margin-bottom: 10px";
             wrapperConfig.cls = "object_localizedfields_panel";
 

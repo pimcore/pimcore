@@ -75,6 +75,11 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
     public $collapsible;
 
     /**
+     * @var bool
+     */
+    public $border = false;
+
+    /**
      * @return bool
      */
     public function getLazyLoading()
@@ -862,9 +867,9 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
     public function classSaved($class, $params = [])
     {
         if (is_array($this->allowedTypes)) {
-            foreach ($this->allowedTypes as $allowedType) {
-                $definition = DataObject\Fieldcollection\Definition::getByKey($allowedType);
-                if ($definition) {
+            foreach ($this->allowedTypes as $i => $allowedType) {
+                try {
+                    $definition = DataObject\Fieldcollection\Definition::getByKey($allowedType);
                     $definition->getDao()->createUpdateTable($class);
                     $fieldDefinition = $definition->getFieldDefinitions();
 
@@ -878,6 +883,9 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
                     }
 
                     $definition->getDao()->classSaved($class);
+                } catch (\Exception $exception) {
+                    Logger::warn("Removed unknown allowed type [ $allowedType ] from allowed types of field collection");
+                    unset($this->allowedTypes[$i]);
                 }
             }
         }
@@ -913,6 +921,22 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
     public function getDisallowReorder()
     {
         return $this->disallowReorder;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getBorder(): bool
+    {
+        return $this->border;
+    }
+
+    /**
+     * @param bool $border
+     */
+    public function setBorder(bool $border): void
+    {
+        $this->border = $border;
     }
 
     /**

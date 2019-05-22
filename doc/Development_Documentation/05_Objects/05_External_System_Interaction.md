@@ -102,10 +102,11 @@ To avoid this, you can pass an array with keys (indexes) which should stay in th
 Pimcore::collectGarbage(["myImportantKey","myConfig"]);
 
 // You can also add items to the static list of globally protected keys by passing them to
-\Pimcore::addToGloballyProtectedItems(["myVeryImportantKey", "mySuperImportKey", "..."]);
+$longRunningHelper = \Pimcore::getContainer()->get(\Pimcore\Helper\LongRunningHelper::class);
+$longRunningHelper->addPimcoreRuntimeCacheProtectedItems(["myVeryImportantKey", "mySuperImportKey", "..."]);
 
 // This list is maintained as long as the process exists. You can remove protected keys again by calling
-\Pimcore::removeFromGloballyProtectedItems(["myVeryImportantKey", "..."]);
+$longRunningHelper->removePimcoreRuntimeCacheProtectedItems(["myVeryImportantKey", "mySuperImportKey", "..."]);
 
 ```
 You can pass in a string instead of an array if you only want to supply a single key.

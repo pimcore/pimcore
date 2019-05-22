@@ -97,16 +97,6 @@ abstract class AbstractTranslation extends Model\AbstractModel implements Transl
     }
 
     /**
-     * @return int
-     *
-     * @deprecated use getCreationDate or getModificationDate instead
-     */
-    public function getDate()
-    {
-        return $this->getModificationDate();
-    }
-
-    /**
      * @param $date
      *
      * @return $this

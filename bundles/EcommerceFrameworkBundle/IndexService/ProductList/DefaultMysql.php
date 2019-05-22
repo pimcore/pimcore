@@ -731,7 +731,7 @@ class DefaultMysql implements IProductList
 
     /**
      *  -----------------------------------------------------------------------------------------
-     *   Methods for Zend_Paginator_Adapter_Interface, Zend_Paginator_AdapterAggregate, Iterator
+     *   Methods for Iterator
      *  -----------------------------------------------------------------------------------------
      */
 

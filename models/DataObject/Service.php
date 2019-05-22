@@ -262,7 +262,8 @@ class Service extends Model\Element\Service
 
         if ($object instanceof Concrete) {
             $context = ['object' => $object,
-                'purpose' => 'gridview'];
+                'purpose' => 'gridview',
+                'language' => $requestedLanguage];
             $data['classname'] = $object->getClassName();
             $data['idPath'] = Element\Service::getIdPath($object);
             $data['inheritedFields'] = [];
@@ -465,6 +466,9 @@ class Service extends Model\Element\Service
     public static function getConfigForHelperDefinition($helperDefinitions, $key, $context = [])
     {
         $cacheKey = 'gridcolumn_config_' . $key;
+	    if(isset($context['language'])) {
+		    $cacheKey .= '_' . $context['language'];
+	    }
         if (Runtime::isRegistered($cacheKey)) {
             $config = Runtime::get($cacheKey);
         } else {

@@ -20,7 +20,7 @@ use Pimcore\Model;
 use Zend\Paginator\Adapter\AdapterInterface;
 use Zend\Paginator\AdapterAggregateInterface;
 
-class Cse implements \Zend_Paginator_Adapter_Interface, \Zend_Paginator_AdapterAggregate, \Iterator, AdapterInterface, AdapterAggregateInterface
+class Cse implements \Iterator, AdapterInterface, AdapterAggregateInterface
 {
     /**
      * @param $query
@@ -389,7 +389,7 @@ class Cse implements \Zend_Paginator_Adapter_Interface, \Zend_Paginator_AdapterA
     }
 
     /**
-     * Methods for \Zend_Paginator_Adapter_Interface | AdapterInterface
+     * Methods for AdapterInterface
      */
 
     /**
@@ -419,7 +419,7 @@ class Cse implements \Zend_Paginator_Adapter_Interface, \Zend_Paginator_AdapterA
     }
 
     /**
-     * @return $this|\Zend_Paginator_Adapter_Interface | AdapterInterface
+     * @return self
      */
     public function getPaginatorAdapter()
     {

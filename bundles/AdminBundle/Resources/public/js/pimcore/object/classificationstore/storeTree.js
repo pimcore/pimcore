@@ -32,13 +32,16 @@ pimcore.object.classificationstore.storeTree = Class.create({
                 layout: "border",
                 closable:true,
                 items: [this.getStoreTree(), this.getEditContainer()],
-                tbar: [
-                    {
-                        text: t('add'),
-                        handler: this.onAdd.bind(this),
-                        iconCls: "pimcore_icon_add"
-                    }
-                ]
+                tbar: {
+                    cls: 'pimcore_toolbar_border_bottom',
+                    items: [
+                        {
+                            text: t('add'),
+                            handler: this.onAdd.bind(this),
+                            iconCls: "pimcore_icon_add"
+                        }
+                    ]
+                }
             });
 
             var tabPanel = Ext.getCmp("pimcore_panel_tabs");

@@ -53,8 +53,6 @@ interface ConnectionInterface extends Connection
 
     public function select();
 
-    public function supportsParameters();
-
     public function limit($sql, $count, $offset = 0);
 
     public function queryIgnoreError($sql, $exclusions = []);

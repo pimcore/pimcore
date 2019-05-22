@@ -95,48 +95,6 @@ class Placeholder
     }
 
     /**
-     * Sets a custom website class prefix for the Placeholder Classes
-     *
-     * @static
-     *
-     * @param $string
-     *
-     * @deprecated deprecated since version 1.4.6
-     */
-    public static function setWebsiteClassPrefix($string)
-    {
-        self::addPlaceholderClassPrefix($string);
-    }
-
-    /**
-     * Returns the website class prefix for the Placeholder Classes
-     *
-     * @static
-     *
-     * @return string
-     *
-     * @deprecated deprecated since version 1.4.6
-     */
-    public static function getWebsiteClassPrefix()
-    {
-        return self::$placeholderClassPrefixes[1];
-    }
-
-    /**
-     * Set a custom Placeholder prefix
-     *
-     * @throws \Exception
-     *
-     * @param string $prefix
-     *
-     * @deprecated deprecated since version 1.4.6
-     */
-    public static function setPlaceholderPrefix($prefix)
-    {
-        self::addPlaceholderClassPrefix($prefix);
-    }
-
-    /**
      * Returns the Placeholder prefix
      *
      * @return string

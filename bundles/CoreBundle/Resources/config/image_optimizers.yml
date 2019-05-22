@@ -1,5 +1,6 @@
 services:
-    Pimcore\Image\Optimizer: ~
+    Pimcore\Image\Optimizer:
+        public: true
 
     Pimcore\Image\Optimizer\AdvancedPngOptimizer:
         tags:

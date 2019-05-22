@@ -46,7 +46,6 @@ pimcore.object.tags.externalImage = Class.create(pimcore.object.tags.abstract, {
 
     getWrappingEl:function () {
         return this.inputField.getEl();
-
     },
 
     getLayoutEdit: function () {
@@ -62,7 +61,6 @@ pimcore.object.tags.externalImage = Class.create(pimcore.object.tags.abstract, {
             this.fieldConfig.inputWidth = 300;
         }
 
-
         var conf = {
             width: intval(this.fieldConfig.previewWidth),
             height: intval(this.fieldConfig.previewHeight),
@@ -72,7 +70,6 @@ pimcore.object.tags.externalImage = Class.create(pimcore.object.tags.abstract, {
         };
 
         this.inputField =  new Ext.form.field.Text({
-            xtype: "textfield",
             fieldLabel: "URL",
             name: "icon",
             width: this.fieldConfig.inputWidth,

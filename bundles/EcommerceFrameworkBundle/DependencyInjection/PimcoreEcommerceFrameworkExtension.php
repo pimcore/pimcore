@@ -83,6 +83,7 @@ class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
         $loader->load('offer_tool.yml');
         $loader->load('tracking_manager.yml');
         $loader->load('maintenance.yml');
+        $loader->load('commands.yml');
 
         $this->registerFactoryConfiguration($container, $config['factory']);
         $this->registerEnvironmentConfiguration($container, $config['environment']);
