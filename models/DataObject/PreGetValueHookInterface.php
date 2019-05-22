@@ -19,5 +19,5 @@ namespace Pimcore\Model\DataObject;
 
 interface PreGetValueHookInterface
 {
-    public function preGetValue($key);
+    public function preGetValue(string $key);
 }

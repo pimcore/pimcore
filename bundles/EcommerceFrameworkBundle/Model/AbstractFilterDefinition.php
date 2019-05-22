@@ -73,7 +73,7 @@ abstract class AbstractFilterDefinition extends DataObject\Concrete implements D
      *
      * @return mixed|\Pimcore\Model\DataObject\Fieldcollection
      */
-    public function preGetValue($key)
+    public function preGetValue(string $key)
     {
         if ($this->getClass()->getAllowInherit()
             && DataObject\AbstractObject::doGetInheritedValues()
