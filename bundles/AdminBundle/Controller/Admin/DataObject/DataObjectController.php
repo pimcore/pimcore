@@ -407,6 +407,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                 'classes' => array_merge([get_class($objectFromDatabase)], array_values(class_parents($objectFromDatabase))),
                 'interfaces' => array_values(class_implements($objectFromDatabase))
             ];
+            $objectData['general']['allowInheritance'] = $objectFromDatabase->getClass()->getAllowInherit();
             $objectData['general']['allowVariants'] = $objectFromDatabase->getClass()->getAllowVariants();
             $objectData['general']['showVariants'] = $objectFromDatabase->getClass()->getShowVariants();
             $objectData['general']['showAppLoggerTab'] = $objectFromDatabase->getClass()->getShowAppLoggerTab();
@@ -626,7 +627,9 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                 }
             }
 
-            if ($fielddefinition->isEmpty($fieldData) && !empty($parent)) {
+            if ($fielddefinition->isEmpty($fieldData) && !empty($parent)
+                 && !(method_exists($fielddefinition, "getDefaultValue") && !$fielddefinition->isEmpty($fielddefinition->getDefaultValue()))
+            ) {
                 $this->getDataForField($parent, $key, $fielddefinition, $objectFromVersion, $level + 1);
             } else {
                 $isInheritedValue = $isInheritedValue || ($level != 0);

@@ -34,13 +34,6 @@ services:
     # INFRASTRUCTURE
     #
 
-    Pimcore\Model\Schedule\Manager\Procedural:
-        public: true
-        arguments:
-            $pidFileName: 'maintenance.pid'
-        tags:
-            - { name: monolog.logger, channel: pimcore.maintenance }
-
     # creates needed pimcore directories
     Pimcore\HttpKernel\CacheWarmer\MkdirCacheWarmer:
         public: false
@@ -96,7 +89,9 @@ services:
         # keep this public until static method was removed
         public: true
 
-    pimcore.http_client: '@GuzzleHttp\Client'
+    pimcore.http_client:
+        alias: GuzzleHttp\Client
+        public: true
 
     GuzzleHttp\Client:
         public: true

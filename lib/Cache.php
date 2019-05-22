@@ -194,22 +194,6 @@ class Cache
     }
 
     /**
-     * @deprecated Use addIgnoredTagOnSave() instead
-     *
-     * @param string $tag
-     */
-    public static function addClearedTag($tag)
-    {
-        static::getHandler()->getLogger()->warning('addClearedTag is deprecated, please use addIngoredTagOnSave instead', [
-            'tag' => $tag
-        ]);
-
-        // instead of messing with the internal cleared tags property, we expose a
-        // dedicated property for tags which should be ignored on save
-        static::addIgnoredTagOnSave($tag);
-    }
-
-    /**
      * Write and clean up cache
      *
      * @param bool $forceWrite

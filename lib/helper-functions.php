@@ -254,18 +254,6 @@ function urlencode_ignore_slash($var)
 }
 
 /**
- * @deprecated
- *
- * @param  $filename
- *
- * @return bool
- */
-function is_includeable($filename)
-{
-    return \Pimcore\File::isIncludeable($filename);
-}
-
-/**
  * @param  $val
  *
  * @return int|string

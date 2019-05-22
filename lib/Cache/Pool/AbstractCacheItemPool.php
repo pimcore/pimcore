@@ -462,7 +462,9 @@ abstract class AbstractCacheItemPool implements PimcoreCacheItemPoolInterface
      * @param callable $callback
      * @param float|null $beta
      * @param array|null $metadata
+     *
      * @return mixed
+     *
      * @throws \Psr\Cache\InvalidArgumentException
      */
     public function get(string $key, callable $callback, float $beta = null, array &$metadata = null)
@@ -470,9 +472,9 @@ abstract class AbstractCacheItemPool implements PimcoreCacheItemPoolInterface
         return $this->doGet($this, $key, $callback, $beta, $metadata);
     }
 
-
     /**
      * @param string $key
+     *
      * @return bool
      */
     public function delete(string $key): bool
@@ -486,7 +488,9 @@ abstract class AbstractCacheItemPool implements PimcoreCacheItemPoolInterface
      * @param callable $callback
      * @param float|null $beta
      * @param array|null $metadata
+     *
      * @return mixed
+     *
      * @throws \Psr\Cache\InvalidArgumentException
      */
     private function doGet(PimcoreCacheItemPoolInterface $pool, string $key, callable $callback, ?float $beta, array &$metadata = null)

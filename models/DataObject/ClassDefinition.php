@@ -343,6 +343,7 @@ class ClassDefinition extends Model\AbstractModel
         $cd .= "\n\n";
         $cd .= 'namespace Pimcore\\Model\\DataObject;';
         $cd .= "\n\n";
+        $cd .= 'use Pimcore\Model\DataObject\Exception\InheritanceParentNotFoundException;';
         $cd .= "\n\n";
         $cd .= "/**\n";
         if (is_array($this->getFieldDefinitions()) && count($this->getFieldDefinitions())) {
@@ -367,8 +368,7 @@ class ClassDefinition extends Model\AbstractModel
         $cd .= 'class '.ucfirst($this->getName()).' extends '.$extendClass.' implements \\Pimcore\\Model\\DataObject\\DirtyIndicatorInterface {';
         $cd .= "\n\n";
 
-        $cd .= "\n\n";
-        $cd .= 'use \\Pimcore\\Model\\DataObject\\Traits\\DirtyIndicatorTrait;';
+        $cd .= 'use \Pimcore\Model\DataObject\Traits\DirtyIndicatorTrait;';
         $cd .= "\n\n";
 
         if ($this->getUseTraits()) {
@@ -1288,40 +1288,5 @@ class ClassDefinition extends Model\AbstractModel
         $generator = DataObject\ClassDefinition\Helper\LinkGeneratorResolver::resolveGenerator($this->getLinkGeneratorReference());
 
         return $generator;
-    }
-
-    /**
-     * @deprecated Just a BC compatibility method
-     * Adds given data field after existing field with given field name. If existing field is not found, nothing is added.
-     *
-     * @param $fieldNameToAddAfter
-     * @param ClassDefinition\Data $fieldToAdd
-     * @param ClassDefinition\Layout|null $layoutComponent
-     */
-    public function addNewDataField($fieldNameToAddAfter, DataObject\ClassDefinition\Data $fieldToAdd, DataObject\ClassDefinition\Layout $layoutComponent = null)
-    {
-        if (null === $layoutComponent) {
-            $layoutComponent = $this->getLayoutDefinitions();
-        }
-
-        $definitionModifier = new DefinitionModifier();
-        $definitionModifier->appendFields($layoutComponent, $fieldNameToAddAfter, $fieldToAdd);
-    }
-
-    /**
-     * @deprecated Just a BC compatibility method
-     * Removes data field with given name. If not found, nothing is removed.
-     *
-     * @param $fieldNameToRemove
-     * @param ClassDefinition\Layout|null $layoutComponent
-     */
-    public function removeExistingDataField($fieldNameToRemove, DataObject\ClassDefinition\Layout $layoutComponent = null)
-    {
-        if (null === $layoutComponent) {
-            $layoutComponent = $this->getLayoutDefinitions();
-        }
-
-        $definitionModifier = new DefinitionModifier();
-        $definitionModifier->removeField($layoutComponent, $fieldNameToRemove);
     }
 }

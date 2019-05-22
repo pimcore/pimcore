@@ -20,6 +20,7 @@ services:
     #
 
     Pimcore\Localization\LocaleServiceInterface:
+        public: true
         class: Pimcore\Localization\LocaleService
 
     # formatting service for dates, times and numbers

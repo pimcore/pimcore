@@ -187,42 +187,17 @@ class Link extends Model\Document
     {
         $path = $this->getHref();
 
-        if (strlen($this->getParameters()) > 0) {
-            $path .= '?' . str_replace('?', '', $this->getParameters());
+        $parameters = $this->getProperty('navigation_parameters');
+        if (strlen($parameters) > 0) {
+            $path .= '?' . str_replace('?', '', $parameters);
         }
-        if (strlen($this->getAnchor()) > 0) {
-            $path .= '#' . str_replace('#', '', $this->getAnchor());
+
+        $anchor = $this->getProperty('navigation_anchor');
+        if (strlen($anchor) > 0) {
+            $path .= '#' . str_replace('#', '', $anchor);
         }
 
         return $path;
-    }
-
-    /**
-     * getProperty method should be used instead
-     *
-     * @deprecated
-     *
-     * @return string
-     */
-    public function getTarget()
-    {
-        return $this->getProperty('navigation_target');
-    }
-
-    /**
-     * setProperty method should be used instead
-     *
-     * @deprecated
-     *
-     * @param string $target
-     *
-     * @return string
-     */
-    public function setTarget($target)
-    {
-        $this->setProperty('navigation_target', 'text', $target, false);
-
-        return $this;
     }
 
     /**
@@ -296,33 +271,6 @@ class Link extends Model\Document
         return $this;
     }
 
-    /**
-     * getProperty method should be used instead
-     *
-     * @deprecated
-     *
-     * @return string
-     */
-    public function getName()
-    {
-        return $this->getProperty('navigation_name');
-    }
-
-    /**
-     * setProperty method should be used instead
-     *
-     * @deprecated
-     *
-     * @param string $name
-     *
-     * @return $this
-     */
-    public function setName($name)
-    {
-        $this->setProperty('navigation_name', 'text', $name, false);
-
-        return $this;
-    }
 
     /**
      * @return string
@@ -388,146 +336,6 @@ class Link extends Model\Document
         }
 
         return $this->object;
-    }
-
-    /**
-     * getProperty method should be used instead
-     *
-     * @deprecated
-     *
-     * @return string
-     */
-    public function getParameters()
-    {
-        return $this->getProperty('navigation_parameters');
-    }
-
-    /**
-     * @param $parameters
-     *
-     * @return $this
-     */
-    public function setParameters($parameters)
-    {
-        $this->setProperty('navigation_parameters', 'text', $parameters, false);
-
-        return $this;
-    }
-
-    /**
-     * getProperty method should be used instead
-     *
-     * @deprecated
-     *
-     * @return string
-     */
-    public function getAnchor()
-    {
-        return $this->getProperty('navigation_anchor');
-    }
-
-    /**
-     * @param $anchor
-     *
-     * @return $this
-     */
-    public function setAnchor($anchor)
-    {
-        $this->setProperty('navigation_anchor', 'text', $anchor, false);
-
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getTitle()
-    {
-        return $this->getProperty('navigation_title');
-    }
-
-    /**
-     * @param $title
-     *
-     * @return $this
-     */
-    public function setTitle($title)
-    {
-        $this->setProperty('navigation_title', 'text', $title, false);
-
-        return $this;
-    }
-
-    /**
-     * getProperty method should be used instead
-     *
-     * @deprecated
-     *
-     * @return string
-     */
-    public function getAccesskey()
-    {
-        return $this->getProperty('accesskey');
-    }
-
-    /**
-     * @param $accesskey
-     *
-     * @return $this
-     */
-    public function setAccesskey($accesskey)
-    {
-        $this->setProperty('accesskey', 'text', $accesskey, false);
-
-        return $this;
-    }
-
-    /**
-     * getProperty method should be used instead
-     *
-     * @deprecated
-     *
-     * @return string
-     */
-    public function getRel()
-    {
-        return $this->getProperty('navigation_relation');
-    }
-
-    /**
-     * @param $rel
-     *
-     * @return $this
-     */
-    public function setRel($rel)
-    {
-        $this->setProperty('navigation_relation', 'text', $rel, false);
-
-        return $this;
-    }
-
-    /**
-     * getProperty method should be used instead
-     *
-     * @deprecated
-     *
-     * @return string
-     */
-    public function getTabindex()
-    {
-        return $this->getProperty('tabindex');
-    }
-
-    /**
-     * @param $tabindex
-     *
-     * @return $this
-     */
-    public function setTabindex($tabindex)
-    {
-        $this->setProperty('navigation_tabindex', 'text', $tabindex, false);
-
-        return $this;
     }
 
     /**

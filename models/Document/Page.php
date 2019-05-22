@@ -124,34 +124,6 @@ class Page extends TargetingDocument
     }
 
     /**
-     * getProperty method should be used instead
-     *
-     * @deprecated
-     *
-     * @return string
-     */
-    public function getName()
-    {
-        return $this->getProperty('navigation_name');
-    }
-
-    /**
-     * setProperty method should be used instead
-     *
-     * @deprecated
-     *
-     * @param string $name
-     *
-     * @return $this
-     */
-    public function setName($name)
-    {
-        $this->setProperty('navigation_name', 'text', $name, false);
-
-        return $this;
-    }
-
-    /**
      * @return string
      */
     public function getDescription()

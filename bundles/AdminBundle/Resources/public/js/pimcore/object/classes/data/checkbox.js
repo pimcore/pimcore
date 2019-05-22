@@ -57,14 +57,32 @@ pimcore.object.classes.data.checkbox = Class.create(pimcore.object.classes.data.
     },
 
     getSpecificPanelItems: function (datax, inEncryptedField) {
+
+        var defaultValueData = [["empty", t("null")], [0, t("false")], [1, t("true")]];
+
+        var defaultField = new Ext.form.ComboBox({
+            mode: 'local',
+            autoSelect: true,
+            forceSelection: true,
+            editable: false,
+            fieldLabel: t("default_value"),
+            name: "defaultValue",
+            value: datax.defaultValue === null ? "empty" : datax.defaultValue,
+            store: new Ext.data.ArrayStore({
+                fields: [
+                    'id',
+                    'label'
+                ],
+                data: defaultValueData
+            }),
+            triggerAction: 'all',
+            valueField: 'id',
+            displayField: 'label',
+            disabled: this.isInCustomLayoutEditor()
+        });
+
         return [
-            {
-                xtype: "checkbox",
-                fieldLabel: t("default_value"),
-                name: "defaultValue",
-                checked: datax.defaultValue,
-                disabled: this.isInCustomLayoutEditor()
-            }, {
+            defaultField, {
             xtype: "displayfield",
             hideLabel:true,
             html:'<span class="object_field_setting_warning">' +t('default_value_warning')+'</span>'
