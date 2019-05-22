@@ -636,7 +636,7 @@ abstract class Data
         $code .= "\t\t" . 'if($preValue !== null) { ' . "\n";
         $code .= "\t\t\t" . 'return $preValue;' . "\n";
         $code .= "\t\t" . '}' . "\n";
-        $code .= "\t" . '}' . " \n";
+        $code .= "\t" . '}' . " \n\n";
 
         return $code;
     }
@@ -662,9 +662,9 @@ abstract class Data
         $code .= $this->getPreGetValueHookCode($key);
 
         if (method_exists($this, 'preGetData')) {
-            $code .= "\t" . '$data = $this->getClass()->getFieldDefinition("' . $key . '")->preGetData($this);' . "\n";
+            $code .= "\t" . '$data = $this->getClass()->getFieldDefinition("' . $key . '")->preGetData($this);' . "\n\n";
         } else {
-            $code .= "\t" . '$data = $this->' . $key . ";\n";
+            $code .= "\t" . '$data = $this->' . $key . ";\n\n";
         }
 
         // insert this line if inheritance from parent objects is allowed
@@ -675,12 +675,12 @@ abstract class Data
             $code .= "\t\t" . '} catch (InheritanceParentNotFoundException $e) {' . "\n";
             $code .= "\t\t\t" . '// no data from parent available, continue ... ' . "\n";
             $code .= "\t\t" . '}' . "\n";
-            $code .= "\t" . '}' . "\n";
+            $code .= "\t" . '}' . "\n\n";
         }
 
         $code .= "\t" . 'if ($data instanceof \\Pimcore\\Model\\DataObject\\Data\\EncryptedField) {' . "\n";
         $code .= "\t\t" . '    return $data->getPlain();' . "\n";
-        $code .= "\t" . '}' . "\n";
+        $code .= "\t" . '}' . "\n\n";
 
         $code .= "\treturn " . '$data' . ";\n";
         $code .= "}\n\n";

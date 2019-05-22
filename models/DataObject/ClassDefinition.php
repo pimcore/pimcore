@@ -344,6 +344,8 @@ class ClassDefinition extends Model\AbstractModel
         $cd .= 'namespace Pimcore\\Model\\DataObject;';
         $cd .= "\n\n";
         $cd .= 'use Pimcore\Model\DataObject\Exception\InheritanceParentNotFoundException;';
+        $cd .= "\n";
+        $cd .= 'use Pimcore\Model\DataObject\PreGetValueHookInterface;';
         $cd .= "\n\n";
         $cd .= "/**\n";
         if (is_array($this->getFieldDefinitions()) && count($this->getFieldDefinitions())) {
