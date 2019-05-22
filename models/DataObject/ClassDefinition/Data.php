@@ -659,7 +659,11 @@ abstract class Data
         // insert this line if inheritance from parent objects is allowed
         if ($class instanceof DataObject\ClassDefinition && $class->getAllowInherit() && $this->supportsInheritance()) {
             $code .= "\t" . 'if(\Pimcore\Model\DataObject::doGetInheritedValues() && $this->getClass()->getFieldDefinition("' . $key . '")->isEmpty($data)) {' . "\n";
-            $code .= "\t\t" . 'return $this->getValueFromParent("' . $key . '");' . "\n";
+            $code .= "\t\t" . 'try {' . "\n";
+            $code .= "\t\t\t" . 'return $this->getValueFromParent("' . $key . '");' . "\n";
+            $code .= "\t\t" . '} catch (InheritanceParentNotFoundException $e) {' . "\n";
+            $code .= "\t\t\t" . '// no data from parent available, continue ... ' . "\n";
+            $code .= "\t\t" . '}' . "\n";
             $code .= "\t" . '}' . "\n";
         }
 
@@ -751,7 +755,11 @@ abstract class Data
 
         if ($this->supportsInheritance()) {
             $code .= "\t" . 'if(\Pimcore\Model\DataObject::doGetInheritedValues($this->getObject()) && $this->getDefinition()->getFieldDefinition("' . $key . '")->isEmpty($data)) {' . "\n";
-            $code .= "\t\t" . 'return $this->getValueFromParent("' . $key . '");' . "\n";
+            $code .= "\t\t" . 'try {' . "\n";
+            $code .= "\t\t\t" . 'return $this->getValueFromParent("' . $key . '");' . "\n";
+            $code .= "\t\t" . '} catch (InheritanceParentNotFoundException $e) {' . "\n";
+            $code .= "\t\t\t" . '// no data from parent available, continue ... ' . "\n";
+            $code .= "\t\t" . '}' . "\n";
             $code .= "\t" . '}' . "\n";
         }
 
