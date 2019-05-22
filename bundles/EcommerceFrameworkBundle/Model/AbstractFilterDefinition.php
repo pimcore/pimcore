@@ -82,7 +82,12 @@ abstract class AbstractFilterDefinition extends \Pimcore\Model\DataObject\Concre
                 'get' . $checkInheritanceKey
                 }() == 'true'
             ) {
-                $parentValue = $this->getValueFromParent($key);
+                try {
+                    $parentValue = $this->getValueFromParent($key);
+                } catch (\Exception $e) {
+                    $parentValue = null;
+                }
+
                 $data = $this->$key;
                 if (!$data) {
                     $data = $this->getClass()->getFieldDefinition($key)->preGetData($this);

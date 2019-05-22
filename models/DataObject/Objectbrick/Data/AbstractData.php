@@ -146,8 +146,8 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
 
     /**
      * @param $key
-     *
      * @return mixed
+     * @throws \Exception
      */
     public function getValueFromParent($key)
     {
@@ -163,7 +163,7 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
             }
         }
 
-        return null;
+        throw new \Exception('No parent object available to get a value from');
     }
 
     /**

@@ -499,10 +499,14 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
 
                     if ($class->getAllowInherit()) {
                         $cd .= "\t" . 'if(!$this->' . $brickKey . ' && \\Pimcore\\Model\\DataObject\\AbstractObject::doGetInheritedValues($this->getObject())) { ' . "\n";
-                        $cd .= "\t\t" . '$brick = $this->getObject()->getValueFromParent("' . $fieldname . '");' . "\n";
-                        $cd .= "\t\t" . 'if(!empty($brick)) {' . "\n";
-                        $cd .= "\t\t\t" . 'return $this->getObject()->getValueFromParent("' . $fieldname . '")->get' . ucfirst($brickKey) . "(); \n";
-                        $cd .= "\t\t" . "}\n";
+                        $cd .= "\t\t" . 'try {' . "\n";
+                        $cd .= "\t\t\t" . '$brick = $this->getObject()->getValueFromParent("' . $fieldname . '");' . "\n";
+                        $cd .= "\t\t\t" . 'if(!empty($brick)) {' . "\n";
+                        $cd .= "\t\t\t\t" . 'return $this->getObject()->getValueFromParent("' . $fieldname . '")->get' . ucfirst($brickKey) . "(); \n";
+                        $cd .= "\t\t\t" . "}\n";
+                        $cd .= "\t\t" . '} catch (\Exception $e) {' . "\n";
+                        $cd .= "\t\t\t" . '// no data from parent available, continue ... ' . "\n";
+                        $cd .= "\t\t" . '}' . "\n";
                         $cd .= "\t" . "}\n";
                     }
                     $cd .= '   return $this->' . $brickKey . "; \n";

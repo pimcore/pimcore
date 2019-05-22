@@ -183,9 +183,13 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
                     $inheritanceModeBackup = AbstractObject::getGetInheritedValues();
                     AbstractObject::setGetInheritedValues(true);
                     if (AbstractObject::doGetInheritedValues($object)) {
-                        $container = $object->getValueFromParent($this->fieldname);
-                        if (!empty($container)) {
-                            $parentBrick = $container->$getter();
+                        try {
+                            $container = $object->getValueFromParent($this->fieldname);
+                            if (!empty($container)) {
+                                $parentBrick = $container->$getter();
+                            }
+                        } catch (\Exception $e) {
+                            // no data from parent available, continue ...
                         }
                     }
                     AbstractObject::setGetInheritedValues($inheritanceModeBackup);
@@ -207,9 +211,13 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
                     $inheritanceModeBackup = AbstractObject::getGetInheritedValues();
                     AbstractObject::setGetInheritedValues(true);
                     if (AbstractObject::doGetInheritedValues($object)) {
-                        $container = $object->getValueFromParent($this->fieldname);
-                        if (!empty($container)) {
-                            $parentBrick = $container->$getter();
+                        try {
+                            $container = $object->getValueFromParent($this->fieldname);
+                            if (!empty($container)) {
+                                $parentBrick = $container->$getter();
+                            }
+                        } catch (\Exception $e) {
+                            // no data from parent available, continue ...
                         }
                     }
                     AbstractObject::setGetInheritedValues($inheritanceModeBackup);
