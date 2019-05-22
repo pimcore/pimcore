@@ -54,6 +54,11 @@ abstract class Data
     public $index;
 
     /**
+     * @var string
+     */
+    public $phpdocType;
+
+    /**
      * @var bool
      */
     public $locked;

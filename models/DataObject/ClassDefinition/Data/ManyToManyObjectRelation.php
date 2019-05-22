@@ -533,7 +533,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
      * @param $object
      * @param array $params
      *
-     * @return array|mixed|null
+     * @return array
      */
     public function preGetData($object, $params = [])
     {
