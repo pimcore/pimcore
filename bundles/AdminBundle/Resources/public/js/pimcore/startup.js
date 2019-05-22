@@ -281,7 +281,7 @@ Ext.onReady(function () {
             {
                 name: "translatedName",
                 convert: function (v, rec) {
-                    return t(rec.data.name);
+                    return t(rec.get("name"));
                 }
             },
             'module',
