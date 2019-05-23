@@ -15,6 +15,8 @@ sudo rm -f /etc/apache2/sites-enabled/*
  # set up web server config
 .travis/setup-fpm.sh
 
+sudo cp -f .travis/apache-fpm.conf /etc/apache2/sites-available/pimcore-test.dev.conf
+
 # enable pimcore-test.dev config
 sudo ln -s /etc/apache2/sites-available/pimcore-test.dev.conf /etc/apache2/sites-enabled/pimcore-test.dev.conf
 
