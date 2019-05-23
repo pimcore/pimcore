@@ -110,7 +110,7 @@ class DocumentRouteHandler implements DynamicRouteHandlerInterface
         if (preg_match('/^document_(\d+)$/', $name, $match)) {
             $document = Document::getById($match[1]);
 
-            if ($this->isDirectRouteDocument($document) && $this->isDocumentSupported($document)) {
+            if ($this->isDirectRouteDocument($document)) {
                 return $this->buildRouteForDocument($document);
             }
         }
