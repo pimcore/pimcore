@@ -25,5 +25,5 @@ use Pimcore\Model\Element;
  */
 class Printpage extends Model\Document\Printpage implements Model\Document\Hardlink\Wrapper\WrapperInterface
 {
-    use Model\Document\Hardlink\Wrapper, Element\ChildsCompatibilityTrait;
+    use Model\Document\Hardlink\Wrapper;
 }

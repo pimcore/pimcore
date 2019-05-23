@@ -25,8 +25,6 @@ use Pimcore\Model\Asset;
  */
 class Folder extends Model\Asset
 {
-    use Model\Element\ChildsCompatibilityTrait;
-
     /**
      * @var string
      */

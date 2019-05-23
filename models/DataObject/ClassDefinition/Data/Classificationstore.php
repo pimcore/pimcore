@@ -24,8 +24,6 @@ use Pimcore\Tool;
 
 class Classificationstore extends Data implements CustomResourcePersistingInterface
 {
-    use Element\ChildsCompatibilityTrait;
-
     /**
      * Static type of this element
      *

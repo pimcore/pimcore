@@ -687,8 +687,8 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                 }
             }
         } else {
-            if (method_exists($layout, 'getChilds')) {
-                $children = $layout->getChilds();
+            if (method_exists($layout, 'getChildren')) {
+                $children = $layout->getChildren();
                 if (is_array($children)) {
                     foreach ($children as $child) {
                         $this->setLayoutPermission($child, $allowedView, $allowedEdit);

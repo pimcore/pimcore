@@ -951,6 +951,9 @@ class ClassController extends AdminController implements EventedControllerInterf
 
         $filteredDefinitions = DataObject\Service::getCustomLayoutDefinitionForGridColumnConfig($class, $objectId);
 
+        /**
+         * @var DataObject\ClassDefinition\Layout $layoutDefinitions
+         */
         $layoutDefinitions = isset($filteredDefinitions['layoutDefinition']) ? $filteredDefinitions['layoutDefinition'] : false;
         $filteredFieldDefinition = isset($filteredDefinitions['fieldDefinition']) ? $filteredDefinitions['fieldDefinition'] : false;
 
@@ -958,7 +961,7 @@ class ClassController extends AdminController implements EventedControllerInterf
 
         $result = [];
 
-        $result['objectColumns']['childs'] = $layoutDefinitions->getChilds();
+        $result['objectColumns']['childs'] = $layoutDefinitions->getChildren();
         $result['objectColumns']['nodeLabel'] = 'object_columns';
         $result['objectColumns']['nodeType'] = 'object';
 
@@ -990,7 +993,7 @@ class ClassController extends AdminController implements EventedControllerInterf
                         $result[$key]['nodeLabel'] = $key;
                         $result[$key]['brickField'] = $fieldName;
                         $result[$key]['nodeType'] = 'objectbricks';
-                        $result[$key]['childs'] = $brickDefinition->getLayoutdefinitions()->getChilds();
+                        $result[$key]['childs'] = $brickDefinition->getLayoutdefinitions()->getChildren();
                         break;
                     }
                 }

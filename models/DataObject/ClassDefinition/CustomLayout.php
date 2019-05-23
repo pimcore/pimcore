@@ -151,8 +151,8 @@ class CustomLayout extends Model\AbstractModel
             if ($definition->getName() == $key) {
                 return $definition;
             } else {
-                if (method_exists($definition, 'getChilds')) {
-                    foreach ($definition->getChilds() as $definition) {
+                if (method_exists($definition, 'getChildren')) {
+                    foreach ($definition->getChildren() as $definition) {
                         if ($definition = $findElement($key, $definition)) {
                             return $definition;
                         }
@@ -261,8 +261,8 @@ class CustomLayout extends Model\AbstractModel
             unset($data->fieldDefinitionsCache);
         }
 
-        if (method_exists($data, 'getChilds')) {
-            $children = $data->getChilds();
+        if (method_exists($data, 'getChildren')) {
+            $children = $data->getChildren();
             if (is_array($children)) {
                 foreach ($children as $child) {
                     self::cleanupForExport($child);

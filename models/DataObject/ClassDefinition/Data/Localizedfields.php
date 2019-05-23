@@ -25,8 +25,6 @@ use Pimcore\Tool;
 
 class Localizedfields extends Data implements CustomResourcePersistingInterface
 {
-    use Element\ChildsCompatibilityTrait;
-
     /**
      * Static type of this element
      *

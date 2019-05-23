@@ -555,19 +555,19 @@ class Service extends Model\AbstractModel
      */
     protected function updateChilds($target, $new)
     {
-        if (is_array($target->getChilds())) {
+        if (is_array($target->getChildren())) {
             //check in case of recursion
             $found = false;
-            foreach ($target->getChilds() as $child) {
+            foreach ($target->getChildren() as $child) {
                 if ($child->getId() == $new->getId()) {
                     $found = true;
                 }
             }
             if (!$found) {
-                $target->setChilds(array_merge($target->getChilds(), [$new]));
+                $target->setChildren(array_merge($target->getChildren(), [$new]));
             }
         } else {
-            $target->setChilds([$new]);
+            $target->setChildren([$new]);
         }
     }
 

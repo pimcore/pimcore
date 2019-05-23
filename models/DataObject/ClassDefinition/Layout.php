@@ -21,7 +21,7 @@ use Pimcore\Model\Element;
 
 class Layout
 {
-    use Model\DataObject\ClassDefinition\Helper\VarExport, Element\ChildsCompatibilityTrait;
+    use Model\DataObject\ClassDefinition\Helper\VarExport;
 
     /**
      * @var string

@@ -626,8 +626,8 @@ class AssetController extends ElementControllerBase implements EventedController
         // set type specific settings
         if ($asset->getType() == 'folder') {
             $tmpAsset['leaf'] = false;
-            $tmpAsset['expanded'] = $asset->hasNoChilds();
-            $tmpAsset['loaded'] = $asset->hasNoChilds();
+            $tmpAsset['expanded'] = !$asset->hasChildren();
+            $tmpAsset['loaded'] = !$asset->hasChildren();
             $tmpAsset['iconCls'] = 'pimcore_icon_folder';
             $tmpAsset['permissions']['create'] = $asset->isAllowed('create');
 

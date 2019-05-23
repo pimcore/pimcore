@@ -31,8 +31,6 @@ use Pimcore\Model\Element;
  */
 class AbstractObject extends Model\Element\AbstractElement
 {
-    use Element\ChildsCompatibilityTrait;
-
     const OBJECT_TYPE_FOLDER = 'folder';
     const OBJECT_TYPE_OBJECT = 'object';
     const OBJECT_TYPE_VARIANT = 'variant';

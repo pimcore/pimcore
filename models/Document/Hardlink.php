@@ -27,7 +27,6 @@ use Pimcore\Model\Redirect;
  */
 class Hardlink extends Document
 {
-    use Element\ChildsCompatibilityTrait;
     use Document\Traits\ScheduledTasksTrait;
 
     /**
@@ -256,7 +255,7 @@ class Hardlink extends Document
         parent::delete($isNested);
 
         // we re-enable the children functionality by setting them to NULL, if requested they'll be loaded again
-        // -> see $this->getChilds() , doesn't make sense when deleting an item but who knows, ... ;-)
+        // -> see $this->getChildren() , doesn't make sense when deleting an item but who knows, ... ;-)
         $this->childs = null;
     }
 

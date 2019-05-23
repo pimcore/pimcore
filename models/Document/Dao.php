@@ -26,8 +26,6 @@ use Pimcore\Tool\Serialize;
  */
 class Dao extends Model\Element\Dao
 {
-    use Model\Element\ChildsCompatibilityTrait;
-
     /**
      * Fetch a row by an id from the database and assign variables to the document model.
      *

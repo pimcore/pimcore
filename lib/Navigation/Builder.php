@@ -229,16 +229,6 @@ class Builder
 
     /**
      * @param Document $parentDocument
-     *
-     * @return Document[]
-     */
-    protected function getChilds(Document $parentDocument)
-    {
-        return $parentDocument->getChildren();
-    }
-
-    /**
-     * @param $parentDocument
      * @param bool $isRoot
      * @param callable $pageCallback
      *
@@ -247,7 +237,7 @@ class Builder
     protected function buildNextLevel($parentDocument, $isRoot = false, $pageCallback = null, $parents = [])
     {
         $pages = [];
-        $childs = $this->getChilds($parentDocument);
+        $childs = $parentDocument->getChildren();
         $parents[$parentDocument->getId()] = $parentDocument;
 
         if (!is_array($childs)) {

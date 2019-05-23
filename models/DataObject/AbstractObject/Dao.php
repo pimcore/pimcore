@@ -157,8 +157,6 @@ class Dao extends Model\Element\Dao
      * @param string $oldPath
      *
      * @return null|array
-     *
-     * @todo: calls deprecated ::hasChilds
      */
     public function updateChildsPaths($oldPath)
     {
@@ -285,18 +283,6 @@ class Dao extends Model\Element\Dao
     public function deleteAllPermissions()
     {
         $this->db->delete('users_workspaces_object', ['cid' => $this->model->getId()]);
-    }
-
-    /**
-     * @deprecated
-     *
-     * @param array $objectTypes
-     *
-     * @return bool
-     */
-    public function hasChilds($objectTypes = [DataObject::OBJECT_TYPE_OBJECT, DataObject::OBJECT_TYPE_FOLDER])
-    {
-        return $this->hasChildren($objectTypes);
     }
 
     /**

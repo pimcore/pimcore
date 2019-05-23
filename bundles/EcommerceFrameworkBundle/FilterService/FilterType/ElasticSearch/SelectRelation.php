@@ -30,7 +30,7 @@ class SelectRelation extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterServ
     {
         foreach ($availableRelations as $rel) {
             if ($rel instanceof Folder) {
-                $availableRelationsArray = $this->loadAllAvailableRelations($rel->getChilds(), $availableRelationsArray);
+                $availableRelationsArray = $this->loadAllAvailableRelations($rel->getChildren(), $availableRelationsArray);
             } else {
                 $availableRelationsArray[$rel->getId()] = true;
             }

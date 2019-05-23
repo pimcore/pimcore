@@ -34,8 +34,6 @@ use Symfony\Component\EventDispatcher\GenericEvent;
  */
 class Document extends Element\AbstractElement
 {
-    use Element\ChildsCompatibilityTrait;
-
     /**
      * possible types of a document
      *
@@ -673,7 +671,7 @@ class Document extends Element\AbstractElement
      *
      * @param bool
      *
-     * @return array
+     * @return Document[]
      */
     public function getChildren($unpublished = false)
     {

@@ -110,8 +110,8 @@ class Service extends Model\Element\Service
     }
 
     /**
-     * @param $target
-     * @param $source
+     * @param AbstractObject $target
+     * @param AbstractObject $source
      *
      * @return mixed
      */
@@ -130,9 +130,12 @@ class Service extends Model\Element\Service
         //load all in case of lazy loading fields
         self::loadAllObjectFields($source);
 
+        /**
+         * @var AbstractObject $new
+         */
         $new = Element\Service::cloneMe($source);
         $new->setId(null);
-        $new->setChilds(null);
+        $new->setChildren(null);
         $new->setKey(Element\Service::getSaveCopyName('object', $new->getKey(), $target));
         $new->setParentId($target->getId());
         $new->setUserOwner($this->_user->getId());
@@ -145,7 +148,7 @@ class Service extends Model\Element\Service
         // add to store
         $this->_copyRecursiveIds[] = $new->getId();
 
-        foreach ($source->getChilds() as $child) {
+        foreach ($source->getChildren() as $child) {
             $this->copyRecursive($new, $child);
         }
 
@@ -202,8 +205,8 @@ class Service extends Model\Element\Service
     }
 
     /**
-     * @param $target
-     * @param $source
+     * @param AbstractObject $target
+     * @param AbstractObject $source
      *
      * @return AbstractObject
      *
@@ -220,8 +223,11 @@ class Service extends Model\Element\Service
         //load all in case of lazy loading fields
         self::loadAllObjectFields($source);
 
+        /**
+         * @var AbstractObject $new
+         */
         $new = Element\Service::cloneMe($source);
-        $new->setChilds($target->getChilds());
+        $new->setChildren($target->getChildren());
         $new->setId($target->getId());
         $new->setPath($target->getRealPath());
         $new->setKey($target->getKey());
@@ -974,8 +980,8 @@ class Service extends Model\Element\Service
             $layout->layoutId = -1;
         }
 
-        if (method_exists($layout, 'getChilds')) {
-            $children = $layout->getChilds();
+        if (method_exists($layout, 'getChildren')) {
+            $children = $layout->getChildren();
             if (is_array($children)) {
                 foreach ($children as $child) {
                     self::createSuperLayout($child);
@@ -1005,8 +1011,8 @@ class Service extends Model\Element\Service
             }
         }
 
-        if (method_exists($layout, 'getChilds')) {
-            $children = $layout->getChilds();
+        if (method_exists($layout, 'getChildren')) {
+            $children = $layout->getChildren();
             if (is_array($children)) {
                 $count = count($children);
                 for ($i = $count - 1; $i >= 0; $i--) {
@@ -1014,7 +1020,7 @@ class Service extends Model\Element\Service
                     if (!self::synchronizeCustomLayoutFieldWithMaster($masterDefinition, $child)) {
                         unset($children[$i]);
                     }
-                    $layout->setChilds($children);
+                    $layout->setChildren($children);
                 }
             }
         }
@@ -1105,7 +1111,7 @@ class Service extends Model\Element\Service
                         $mergedLocalizedFieldDefinitions[$locKey]->setInvisible(false);
                         $mergedLocalizedFieldDefinitions[$locKey]->setNotEditable(false);
                     }
-                    $mergedFieldDefinition[$key]->setChilds($mergedLocalizedFieldDefinitions);
+                    $mergedFieldDefinition[$key]->setChildren($mergedLocalizedFieldDefinitions);
                 } else {
                     $mergedFieldDefinition[$key]->setInvisible(false);
                     $mergedFieldDefinition[$key]->setNotEditable(false);
@@ -1136,7 +1142,7 @@ class Service extends Model\Element\Service
                     foreach ($mergedLocalizedFieldDefinitions as $locKey => $locValue) {
                         self::mergeFieldDefinition($mergedLocalizedFieldDefinitions, $customLocalizedFieldDefinitions, $locKey);
                     }
-                    $mergedFieldDefinition[$key]->setChilds($mergedLocalizedFieldDefinitions);
+                    $mergedFieldDefinition[$key]->setChildren($mergedLocalizedFieldDefinitions);
                 } else {
                     self::mergeFieldDefinition($mergedFieldDefinition, $customFieldDefinitions, $key);
                 }
@@ -1206,8 +1212,8 @@ class Service extends Model\Element\Service
             }
         }
 
-        if (method_exists($layout, 'getChilds')) {
-            $children = $layout->getChilds();
+        if (method_exists($layout, 'getChildren')) {
+            $children = $layout->getChildren();
             if (is_array($children)) {
                 $count = count($children);
                 for ($i = $count - 1; $i >= 0; $i--) {
@@ -1216,7 +1222,7 @@ class Service extends Model\Element\Service
                         unset($children[$i]);
                     }
                 }
-                $layout->setChilds(array_values($children));
+                $layout->setChildren(array_values($children));
             }
         }
 

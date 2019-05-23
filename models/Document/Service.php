@@ -119,14 +119,14 @@ class Service extends Model\Element\Service
         }
 
         foreach ($document->getChildren() as $child) {
-            if (!$child->hasChilds()) {
+            if (!$child->hasChildren()) {
                 $child->save();
                 $saved++;
                 if ($saved % $collectGarbageAfterIteration === 0) {
                     \Pimcore::collectGarbage();
                 }
             }
-            if ($child->hasChilds()) {
+            if ($child->hasChildren()) {
                 self::saveRecursive($child, $collectGarbageAfterIteration, $saved);
             }
         }
@@ -206,9 +206,12 @@ class Service extends Model\Element\Service
 
         $source->getProperties();
 
+        /**
+         * @var Document $new
+         */
         $new = Element\Service::cloneMe($source);
         $new->setId(null);
-        $new->setChilds(null);
+        $new->setChildren(null);
         $new->setKey(Element\Service::getSaveCopyName('document', $new->getKey(), $target));
         $new->setParentId($target->getId());
         $new->setUserOwner($this->_user->getId());

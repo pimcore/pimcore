@@ -28,7 +28,7 @@ class OperatorSample extends AbstractOperator
 
     public function getLabeledValue($element)
     {
-        $childs = $this->getChilds();
+        $childs = $this->getChildren();
 
         $result = new ResultContainer();
         $result->setValue($element->getId() . " huhu " .  count($childs) . " " . $this->additionalData);

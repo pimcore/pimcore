@@ -24,8 +24,6 @@ use Pimcore\Model;
  */
 class Folder extends Model\User\AbstractUser
 {
-    use Model\Element\ChildsCompatibilityTrait;
-
     /**
      * @var bool
      */
@@ -36,7 +34,7 @@ class Folder extends Model\User\AbstractUser
      *
      * @return $this
      */
-    public function setHasChilds($state)
+    public function setHasChildren($state)
     {
         $this->hasChilds = $state;
 
