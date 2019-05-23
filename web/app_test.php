@@ -18,6 +18,8 @@ use Symfony\Component\HttpFoundation\Request;
 
 include __DIR__ . "/../vendor/autoload.php";
 
+define('PIMCORE_PROJECT_ROOT', __DIR__ . '/../');
+
 \Pimcore\Bootstrap::setProjectRoot();
 \Pimcore\Bootstrap::boostrap();
 
