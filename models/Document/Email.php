@@ -125,41 +125,6 @@ class Email extends Model\Document\PageSnippet
     }
 
     /**
-     * Returns the "to" receivers as array
-     *
-     * @deprecated use \Pimcore\Helper\Mail::parseEmailAddressField instead
-     *
-     * @return array
-     */
-    public function getToAsArray()
-    {
-        return $this->getAsArray('To');
-    }
-
-    /**
-     * Helper to return receivers as array
-     *
-     * @param $key
-     *
-     * @deprecated use \Pimcore\Helper\Mail::parseEmailAddressField instead
-     *
-     * @return array
-     */
-    protected function getAsArray($key)
-    {
-        $parsedAddresses = Mail::parseEmailAddressField($this->{'get' . ucfirst($key)}());
-        $emailAddresses = [];
-
-        foreach ($parsedAddresses as $emailInfo) {
-            if ($validAddress = self::validateEmailAddress($emailInfo['email'])) {
-                $emailAddresses[] = $emailInfo['email'];
-            }
-        }
-
-        return $emailAddresses;
-    }
-
-    /**
      * Helper to validate a email address
      *
      * @static
@@ -205,20 +170,6 @@ class Email extends Model\Document\PageSnippet
     }
 
     /**
-     * Returns the "from" email address as array
-     *
-     * @deprecated use \Pimcore\Helper\Mail::parseEmailAddressField instead
-     *
-     * @return array
-     */
-    public function getFromAsArray()
-    {
-        $emailAddresses = preg_split('/,|;/', $this->getFrom());
-
-        return array_map('trim', $emailAddresses);
-    }
-
-    /**
      * Sets the "replyTo" email address
      *
      * @param string $replyTo
@@ -240,24 +191,6 @@ class Email extends Model\Document\PageSnippet
     public function getReplyTo()
     {
         return $this->replyTo;
-    }
-
-    /**
-     * Returns the "replyTo" email address as array
-     *
-     * @deprecated use \Pimcore\Helper\Mail::parseEmailAddressField instead
-     *
-     * @return array
-     */
-    public function getReplyToAsArray()
-    {
-        if (empty($this->getReplyTo())) {
-            return null;
-        }
-
-        $emailAddresses = preg_split('/,|;/', $this->getReplyTo());
-
-        return array_map('trim', $emailAddresses);
     }
 
     /**
@@ -285,18 +218,6 @@ class Email extends Model\Document\PageSnippet
     }
 
     /**
-     * Returns the carbon copy receivers as array
-     *
-     * @deprecated use \Pimcore\Helper\Mail::parseEmailAddressField instead
-     *
-     * @return array
-     */
-    public function getCcAsArray()
-    {
-        return $this->getAsArray('Cc');
-    }
-
-    /**
      * Sets the blind carbon copy receivers (multiple receivers should be separated with a ",")
      *
      * @param string $bcc
@@ -318,17 +239,5 @@ class Email extends Model\Document\PageSnippet
     public function getBcc()
     {
         return $this->bcc;
-    }
-
-    /**
-     * Returns the blind carbon copy receivers as array
-     *
-     * @deprecated use \Pimcore\Helper\Mail::parseEmailAddressField instead
-     *
-     * @return array
-     */
-    public function getBccAsArray()
-    {
-        return $this->getAsArray('Bcc');
     }
 }

@@ -480,18 +480,6 @@ class Log extends Model\AbstractModel
     }
 
     /**
-     * Returns the "to" recipients as array
-     *
-     * @deprecated directly use \Pimcore\Helper\Mail::parseEmailAddressField instead
-     *
-     * @return array
-     */
-    public function getToAsArray()
-    {
-        return \Pimcore\Helper\Mail::parseEmailAddressField($this->getTo());
-    }
-
-    /**
      * @param $cc
      *
      * @return $this
@@ -514,18 +502,6 @@ class Log extends Model\AbstractModel
     }
 
     /**
-     * Returns the carbon copy recipients as array
-     *
-     * @deprecated directly use \Pimcore\Helper\Mail::parseEmailAddressField instead
-     *
-     * @return array
-     */
-    public function getCcAsArray()
-    {
-        return \Pimcore\Helper\Mail::parseEmailAddressField($this->getCc());
-    }
-
-    /**
      * @param $bcc
      *
      * @return $this
@@ -545,18 +521,6 @@ class Log extends Model\AbstractModel
     public function getBcc()
     {
         return $this->bcc;
-    }
-
-    /**
-     * Returns the blind carbon copy recipients as array
-     *
-     * @deprecated directly use \Pimcore\Helper\Mail::parseEmailAddressField instead
-     *
-     * @return array
-     */
-    public function getBccAsArray()
-    {
-        return \Pimcore\Helper\Mail::parseEmailAddressField($this->getBcc());
     }
 
     /**
@@ -601,18 +565,6 @@ class Log extends Model\AbstractModel
     public function getReplyTo()
     {
         return $this->replyTo;
-    }
-
-    /**
-     * Returns the "replyTo" email addresses as array
-     *
-     * @deprecated directly use \Pimcore\Helper\Mail::parseEmailAddressField instead
-     *
-     * @return array
-     */
-    public function getReplyToAsArray()
-    {
-        return \Pimcore\Helper\Mail::parseEmailAddressField($this->getReplyTo());
     }
 
     /**
