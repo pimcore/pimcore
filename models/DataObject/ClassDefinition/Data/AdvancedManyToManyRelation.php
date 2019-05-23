@@ -786,7 +786,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
      * @param $object
      * @param array $params
      *
-     * @return array|mixed|null
+     * @return array
      */
     public function preGetData($object, $params = [])
     {

@@ -35,14 +35,13 @@ class InstallCommand extends AbstractBundleCommand
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $bm = $this->getBundleManager();
         $bundle = $this->getBundle();
 
         // sets up installer with console output writer
         $this->setupInstaller($bundle);
 
         try {
-            $bm->install($bundle);
+            $this->bundleManager->install($bundle);
 
             $this->io->success(sprintf('Bundle "%s" was successfully installed', $bundle->getName()));
         } catch (\Exception $e) {

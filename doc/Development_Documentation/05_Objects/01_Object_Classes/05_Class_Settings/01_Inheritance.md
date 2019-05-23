@@ -68,21 +68,22 @@ Starting from Pimcore 5.4.0, it is also possible to use class inheritance and tr
 </div>
 
 ### Hooks available when using class inheritance
-Currently there's one hook available. Hooks can be defined as simple methods in the extended class.
+Currently there's only one hook available. 
+For using a hook you need to implement a certain interface in your custom parent class. 
 
-| Method | Arguments |  Description |
-|--------|-----------|--------------|
-| `preGetValue($key)` | `$key` (the name of the property) | This method is called in the getter and makes it possible to modify data before returning it to the caller. |
+|Interface                 |  Description |
+|--------------------------|--------------|
+|`PreGetValueHookInterface`| Makes it possible to modify data before returning it to the caller. Hook is called at the beginning of every getter of a field. |
 
 ##### Example:
 ```php
 namespace Website\DataObject;
 
-use Pimcore\Model;
+use \Pimcore\Model\DataObject;
   
-class Special extends Model\DataObject\Concrete {
+class Special extends DataObject\Concrete implements DataObject\PreGetValueHookInterface {
  
-   public function preGetValue($key) {
+   public function preGetValue(string $key) {
       if($key == "myCustomProperty") {
          return strtolower($object->myCustomProperty);
       }

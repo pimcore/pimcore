@@ -14,8 +14,30 @@
 
 namespace Pimcore\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Controller\Controller as BaseController;
+use Psr\Container\ContainerInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController as BaseController;
 
 abstract class Controller extends BaseController
 {
+    /**
+     * @param ContainerInterface $container
+     * @return ContainerInterface
+     */
+    public function setContainer(ContainerInterface $container)
+    {
+        return parent::setContainer($container);
+    }
+
+    /**
+     * Gets a container configuration parameter by its name.
+     *
+     * @param string $name
+     *
+     * @return mixed
+     *
+     */
+    protected function getParameter(string $name)
+    {
+        return $this->container->getParameter($name);
+    }
 }

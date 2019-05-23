@@ -22,7 +22,7 @@ use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\Translation\Exception\InvalidArgumentException;
 use Symfony\Component\Translation\MessageCatalogue;
 use Symfony\Component\Translation\MessageCatalogueInterface;
-use Symfony\Component\Translation\MessageSelector;
+use Symfony\Component\Translation\IdentityTranslator;
 use Symfony\Component\Translation\TranslatorBagInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 
@@ -44,7 +44,7 @@ class Translator implements TranslatorInterface, TranslatorBagInterface
     protected $initializedCatalogues = [];
 
     /**
-     * @var MessageSelector
+     * @var IdentityTranslator
      */
     private $selector;
 
@@ -78,7 +78,7 @@ class Translator implements TranslatorInterface, TranslatorBagInterface
         }
 
         $this->translator = $translator;
-        $this->selector = new MessageSelector();
+        $this->selector = new IdentityTranslator();
 
         $this->caseInsensitive = $caseInsensitive;
     }

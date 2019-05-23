@@ -167,7 +167,7 @@ class Console
     protected static function checkPngout($executablePath)
     {
         try {
-            $process = new Process($executablePath . ' --help');
+            $process = new Process([$executablePath, '--help']);
             $process->run();
             if (strpos($process->getOutput() . $process->getErrorOutput(), 'bitdepth') !== false) {
                 return true;
@@ -187,7 +187,7 @@ class Console
     protected static function checkCjpeg($executablePath)
     {
         try {
-            $process = new Process($executablePath . ' --help');
+            $process = new Process([$executablePath, '--help']);
             $process->run();
             if (strpos($process->getOutput() . $process->getErrorOutput(), '-optimize') !== false) {
                 if (strpos($process->getOutput() . $process->getErrorOutput(), 'mozjpeg') !== false) {
@@ -219,7 +219,7 @@ class Console
     protected static function checkConvert($executablePath)
     {
         try {
-            $process = new Process($executablePath . ' --help');
+            $process = new Process([$executablePath, '--help']);
             $process->run();
             if (strpos($process->getOutput() . $process->getErrorOutput(), 'imagemagick.org') !== false) {
                 return true;

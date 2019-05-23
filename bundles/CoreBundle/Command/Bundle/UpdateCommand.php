@@ -34,20 +34,21 @@ class UpdateCommand extends AbstractBundleCommand
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $bm = $this->getBundleManager();
         $bundle = $this->getBundle();
 
         // sets up installer with console output writer
         $installer = $this->setupInstaller($bundle);
 
-        if (!$installer->canBeUpdated()) {
+        if ($installer === null) {
+            $this->io->error(sprintf(' No updates found for bundle "%s"', $bundle->getName()));
+        } else if (!$installer->canBeUpdated()) {
             $this->io->success(sprintf('No pending updates for bundle "%s"', $bundle->getName()));
 
             return 0;
         }
 
         try {
-            $bm->update($bundle);
+            $this->bundleManager->update($bundle);
 
             $this->io->success(sprintf('Bundle "%s" was successfully updated', $bundle->getName()));
         } catch (\Exception $e) {
