@@ -70,7 +70,6 @@ matrix:
       php: 7.3
       env:
         - TASK_TESTS=0
-        - TASK_DOCS=0
         - TASK_STAN=1
     - os: linux
       php: 7.2
@@ -85,7 +84,6 @@ matrix:
   allow_failures:
     - env:
         - TASK_STAN=1
-        - TASK_TESTS=0
   fast_finish: true
 
 cache:
