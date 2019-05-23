@@ -1,0 +1,17 @@
+parameters:
+    autoload_files:
+        - %currentWorkingDirectory%/vendor/pimcore/pimcore/lib/helper-functions.php
+        - %currentWorkingDirectory%/vendor/pimcore/pimcore/lib/simple_html_dom.php
+
+    reportUnmatchedIgnoredErrors: false
+
+    symfony:
+        container_xml_path: var/cache/dev/appDevDebugProjectContainer.xml
+
+    excludes_analyse:
+        # Makes PHPStan crash
+        - '**/DependencyInjection/Configuration.php'
+        - '**/Migrations/Version*.php'
+
+    ignoreErrors:
+        - '/Call to an undefined method Symfony\\Component\\Config\\Definition\\Builder\\NodeDefinition::children()/'
