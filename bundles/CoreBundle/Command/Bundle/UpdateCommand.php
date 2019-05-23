@@ -41,7 +41,7 @@ class UpdateCommand extends AbstractBundleCommand
 
         if ($installer === null) {
             $this->io->error(sprintf(' No updates found for bundle "%s"', $bundle->getName()));
-        } else if (!$installer->canBeUpdated()) {
+        } elseif (!$installer->canBeUpdated()) {
             $this->io->success(sprintf('No pending updates for bundle "%s"', $bundle->getName()));
 
             return 0;

@@ -18,10 +18,10 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\CoreBundle\Command\Bundle;
 
 use Pimcore\Bundle\CoreBundle\Command\Bundle\Helper\PostStateChange;
+use Pimcore\Extension\Bundle\PimcoreBundleManager;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Pimcore\Extension\Bundle\PimcoreBundleManager;
 
 class DisableCommand extends AbstractBundleCommand
 {

@@ -21,6 +21,7 @@ abstract class Controller extends BaseController
 {
     /**
      * @param ContainerInterface $container
+     *
      * @return ContainerInterface
      */
     public function setContainer(ContainerInterface $container)

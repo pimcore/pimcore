@@ -628,9 +628,11 @@ abstract class Data
 
     /**
      * @param string $key
+     *
      * @return string
      */
-    protected function getPreGetValueHookCode(string $key): string {
+    protected function getPreGetValueHookCode(string $key): string
+    {
         $code = "\t" . 'if($this instanceof PreGetValueHookInterface && !\Pimcore::inAdmin()) {' . " \n";
         $code .= "\t\t" . '$preValue = $this->preGetValue("' . $key . '");' . " \n";
         $code .= "\t\t" . 'if($preValue !== null) { ' . "\n";

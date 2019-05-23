@@ -147,7 +147,9 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
 
     /**
      * @param $key
+     *
      * @return mixed
+     *
      * @throws InheritanceParentNotFoundException
      */
     public function getValueFromParent($key)

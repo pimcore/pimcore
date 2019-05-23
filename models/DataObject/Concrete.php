@@ -525,7 +525,9 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
     /**
      * @param $key
      * @param null $params
+     *
      * @return mixed
+     *
      * @throws InheritanceParentNotFoundException
      */
     public function getValueFromParent($key, $params = null)

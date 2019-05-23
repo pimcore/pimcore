@@ -235,7 +235,7 @@ class LoginController extends AdminController implements BruteforceProtectedCont
     {
         $view = $this->buildLoginPageViewModel();
 
-        if($request->hasSession()) {
+        if ($request->hasSession()) {
             $session = $request->getSession();
             $authException = $session->get(Security::AUTHENTICATION_ERROR);
             if ($authException instanceof AuthenticationException) {
