@@ -14,8 +14,10 @@
 
 namespace Pimcore;
 
+use Composer\Autoload\ClassLoader;
 use Doctrine\Common\Annotations\AnnotationReader;
-use Doctrine\Common\Annotations\AnnotationRegistry;
+use Pimcore\Loader\Autoloader\AliasMapper;
+use Pimcore\Loader\Autoloader\DataObjectCompatibility;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\Document;
 use Symfony\Component\Console\Input\ArgvInput;
@@ -119,13 +121,13 @@ class Bootstrap
     {
         error_reporting(E_ALL & ~E_NOTICE & ~E_STRICT);
 
-        /** @var $loader \Composer\Autoload\ClassLoader */
-        $loader = include __DIR__ . '/../../../../vendor/autoload.php';
+        $autoloader = new ClassLoader();
+        $autoloader->register(true);
+
         self::defineConstants();
 
         error_reporting(PIMCORE_PHP_ERROR_REPORTING);
 
-        \Pimcore::setAutoloader($loader);
         self::autoload();
 
         ini_set('error_log', PIMCORE_PHP_ERROR_LOG);
@@ -226,23 +228,24 @@ class Bootstrap
 
     public static function autoload()
     {
-        $loader = \Pimcore::getAutoloader();
-
         // tell the autoloader where to find Pimcore's generated class stubs
         // this is primarily necessary for tests and custom class directories, which are not covered in composer.json
-        $loader->addPsr4('Pimcore\\Model\\DataObject\\', PIMCORE_CLASS_DIRECTORY . '/DataObject');
+        $dataObjectClassLoader = new ClassLoader();
+        $dataObjectClassLoader->addPsr4('Pimcore\\Model\\DataObject\\', PIMCORE_CLASS_DIRECTORY . '/DataObject');
+        $dataObjectClassLoader->register(true);
 
         // compatibility autoloader for the \Pimcore\Model\Object\* namespace (seems to work with PHP 7.2 as well, tested with 7.2.3)
-        $dataObjectCompatibilityLoader = new \Pimcore\Loader\Autoloader\DataObjectCompatibility($loader);
-        $dataObjectCompatibilityLoader->register(true);
+        $dataObjectCompatibilityLoader = new DataObjectCompatibility();
+        $dataObjectCompatibilityLoader->register();
 
         // legacy mapping loader creates aliases for renamed classes
-        $legacyMappingLoader = new \Pimcore\Loader\Autoloader\AliasMapper($loader);
+        $legacyMappingLoader = new AliasMapper();
         $legacyMappingLoader->register(true);
 
         // the following code is out of `app/autoload.php`
         // see also: https://github.com/symfony/symfony-demo/blob/master/app/autoload.php
-        AnnotationRegistry::registerLoader([$loader, 'loadClass']);
+        // Don't think this is necessary anymore
+        //AnnotationRegistry::registerLoader([$loader, 'loadClass']);
 
         // ignore apiDoc params (see http://apidocjs.com/) as we use apiDoc in webservice
         $apiDocAnnotations = [
