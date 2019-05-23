@@ -123,7 +123,6 @@ class CodeInjector
 
     private function injectIntoDomSelector(string $html, string $code, string $selector, string $position, string $charset): string
     {
-        include_once(PIMCORE_PATH . '/lib/simple_html_dom.php');
         $dom = str_get_html($html);
         if ($dom) {
             $element = $dom->find($selector, 0);

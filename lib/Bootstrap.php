@@ -256,18 +256,9 @@ class Bootstrap
             AnnotationReader::addGlobalIgnoredName($apiDocAnnotation);
         }
 
-        self::includes();
-
         if (defined('PIMCORE_APP_BUNDLE_CLASS_FILE')) {
             require_once PIMCORE_APP_BUNDLE_CLASS_FILE;
         }
-    }
-
-    public static function includes()
-    {
-        // some pimcore specific generic includes
-        // includes not covered by composer autoloader
-        require_once __DIR__ . '/helper-functions.php';
     }
 
     public static function kernel()

@@ -763,8 +763,6 @@ class Mail extends \Swift_Message
         } else {
             //creating text version from html email if html2text is installed
             try {
-                include_once(PIMCORE_PATH . '/lib/simple_html_dom.php');
-
                 $htmlContent = $this->getBodyHtmlRendered();
                 $html = str_get_html($htmlContent);
                 if ($html) {

@@ -187,7 +187,6 @@ class TagManagerListener
                             } else {
                                 // use simple_html_dom
                                 if (!$html) {
-                                    include_once(PIMCORE_PATH . '/lib/simple_html_dom.php');
                                     $html = str_get_html($content);
                                 }
 
