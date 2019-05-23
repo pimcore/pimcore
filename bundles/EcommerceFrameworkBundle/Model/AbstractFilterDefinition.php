@@ -15,11 +15,12 @@
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\Model;
 
 use Pimcore\Model\DataObject\Exception\InheritanceParentNotFoundException;
+use \Pimcore\Model\DataObject;
 
 /**
  * Abstract base class for filter definition pimcore objects
  */
-abstract class AbstractFilterDefinition extends \Pimcore\Model\DataObject\Concrete
+abstract class AbstractFilterDefinition extends DataObject\Concrete implements DataObject\PreGetValueHookInterface
 {
     /**
      * returns page limit for product list
@@ -73,11 +74,11 @@ abstract class AbstractFilterDefinition extends \Pimcore\Model\DataObject\Concre
      *
      * @return mixed|\Pimcore\Model\DataObject\Fieldcollection
      */
-    public function preGetValue($key)
+    public function preGetValue(string $key)
     {
         if ($this->getClass()->getAllowInherit()
-            && \Pimcore\Model\DataObject\AbstractObject::doGetInheritedValues()
-            && $this->getClass()->getFieldDefinition($key) instanceof \Pimcore\Model\DataObject\ClassDefinition\Data\Fieldcollections
+            && DataObject\AbstractObject::doGetInheritedValues()
+            && $this->getClass()->getFieldDefinition($key) instanceof DataObject\ClassDefinition\Data\Fieldcollections
         ) {
             $checkInheritanceKey = $key . 'Inheritance';
             if ($this->{
@@ -98,14 +99,14 @@ abstract class AbstractFilterDefinition extends \Pimcore\Model\DataObject\Concre
                     return $parentValue;
                 } else {
                     if (!empty($parentValue)) {
-                        $value = new \Pimcore\Model\DataObject\Fieldcollection($parentValue->getItems());
+                        $value = new DataObject\Fieldcollection($parentValue->getItems());
                         if (!empty($data)) {
                             foreach ($data as $entry) {
                                 $value->add($entry);
                             }
                         }
                     } else {
-                        $value = new \Pimcore\Model\DataObject\Fieldcollection($data->getItems());
+                        $value = new DataObject\Fieldcollection($data->getItems());
                     }
 
                     return $value;
@@ -113,6 +114,6 @@ abstract class AbstractFilterDefinition extends \Pimcore\Model\DataObject\Concre
             }
         }
 
-        return parent::preGetValue($key);
+        return null;
     }
 }

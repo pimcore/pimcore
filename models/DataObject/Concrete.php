@@ -565,16 +565,6 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
     }
 
     /**
-     * Dummy which can be overwritten by a parent class, this is a hook executed in every getter of the properties in the object
-     *
-     * @param string $key
-     */
-    public function preGetValue($key)
-    {
-        return;
-    }
-
-    /**
      * get object relation data as array for a specific field
      *
      * @param string $fieldName

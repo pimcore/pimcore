@@ -319,6 +319,8 @@ class Definition extends Model\AbstractModel
         $cd .= 'namespace Pimcore\\Model\\DataObject\\Fieldcollection\\Data;';
         $cd .= "\n\n";
         $cd .= 'use Pimcore\\Model\\DataObject;';
+        $cd .= "\n";
+        $cd .= 'use Pimcore\Model\DataObject\PreGetValueHookInterface;';
         $cd .= "\n\n";
 
         $cd .= 'class ' . ucfirst($this->getKey()) . ' extends ' . $extendClass . ' implements \\Pimcore\\Model\\DataObject\\DirtyIndicatorInterface {';
