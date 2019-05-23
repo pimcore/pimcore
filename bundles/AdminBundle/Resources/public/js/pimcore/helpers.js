@@ -807,7 +807,7 @@ pimcore.helpers.closeAllElements = function (except, tabPanel) {
         tabs.each(function (item, index, length) {
             window.setTimeout(function () {
                 if (!in_array(item, exceptions)) {
-                    tabPanel.remove(item);
+                    item.close();
                 }
             }, 100 * index);
         });
