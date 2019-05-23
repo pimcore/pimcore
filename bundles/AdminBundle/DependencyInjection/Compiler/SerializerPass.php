@@ -26,7 +26,7 @@ use Symfony\Component\DependencyInjection\Exception\RuntimeException;
  * This does exactly the same as the framework serializer pass, but adds encoders/normalizers to our custom admin
  * serializer.
  *
- * @see \Symfony\Bundle\FrameworkBundle\DependencyInjection\Compiler\SerializerPass
+ * @see \Symfony\Component\Serializer\Serializer
  */
 class SerializerPass implements CompilerPassInterface
 {

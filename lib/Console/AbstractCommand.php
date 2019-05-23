@@ -16,7 +16,7 @@ namespace Pimcore\Console;
 
 use Pimcore\Console\Style\PimcoreStyle;
 use Pimcore\Tool\Admin;
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\ConsoleOutput;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -26,7 +26,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  *
  * @method Application getApplication()
  */
-abstract class AbstractCommand extends ContainerAwareCommand
+abstract class AbstractCommand extends Command
 {
     /**
      * @var PimcoreStyle

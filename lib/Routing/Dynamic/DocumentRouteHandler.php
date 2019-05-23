@@ -211,7 +211,7 @@ class DocumentRouteHandler implements DynamicRouteHandlerInterface
      */
     private function handleLinkDocument(Document\Link $document, DocumentRoute $route)
     {
-        $route->setDefault('_controller', 'FrameworkBundle:Redirect:urlRedirect');
+        $route->setDefault('_controller', 'Symfony\Bundle\FrameworkBundle\Controller\RedirectController::urlRedirectAction');
         $route->setDefault('path', $document->getHref());
         $route->setDefault('permanent', true);
 
@@ -309,7 +309,7 @@ class DocumentRouteHandler implements DynamicRouteHandlerInterface
         }
 
         if (null !== $redirectTargetUrl && $redirectTargetUrl !== $context->getOriginalPath()) {
-            $route->setDefault('_controller', 'FrameworkBundle:Redirect:urlRedirect');
+            $route->setDefault('_controller', 'Symfony\Bundle\FrameworkBundle\Controller\RedirectController::urlRedirectAction');
             $route->setDefault('path', $redirectTargetUrl);
             $route->setDefault('permanent', true);
 

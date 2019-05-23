@@ -121,5 +121,5 @@ your needs. Examples:
 
 use \Symfony\Component\HttpFoundation\Request;
 
-Request::setTrustedProxies(['192.0.0.1', '10.0.0.0/8']);
+Request::setTrustedProxies(['192.0.0.1', '10.0.0.0/8'], Request::HEADER_X_FORWARDED_ALL);
 ```

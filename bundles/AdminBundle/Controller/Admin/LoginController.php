@@ -235,12 +235,16 @@ class LoginController extends AdminController implements BruteforceProtectedCont
     {
         $view = $this->buildLoginPageViewModel();
 
-        $session = $request->getSession();
-        $authException = $session->get(Security::AUTHENTICATION_ERROR);
-        if ($authException instanceof AuthenticationException) {
-            $session->remove(Security::AUTHENTICATION_ERROR);
+        if($request->hasSession()) {
+            $session = $request->getSession();
+            $authException = $session->get(Security::AUTHENTICATION_ERROR);
+            if ($authException instanceof AuthenticationException) {
+                $session->remove(Security::AUTHENTICATION_ERROR);
 
-            $view->error = $authException->getMessage();
+                $view->error = $authException->getMessage();
+            }
+        } else {
+            $view->error = 'No session available, it either timed out or cookies are not enabled.';
         }
 
         return $view;

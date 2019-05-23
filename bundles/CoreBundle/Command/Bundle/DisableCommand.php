@@ -21,6 +21,7 @@ use Pimcore\Bundle\CoreBundle\Command\Bundle\Helper\PostStateChange;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Pimcore\Extension\Bundle\PimcoreBundleManager;
 
 class DisableCommand extends AbstractBundleCommand
 {
@@ -29,9 +30,9 @@ class DisableCommand extends AbstractBundleCommand
      */
     private $postStateChangeHelper;
 
-    public function __construct(PostStateChange $postStateChangeHelper)
+    public function __construct(PimcoreBundleManager $bundleManager, PostStateChange $postStateChangeHelper)
     {
-        parent::__construct();
+        parent::__construct($bundleManager);
 
         $this->postStateChangeHelper = $postStateChangeHelper;
     }
@@ -49,11 +50,10 @@ class DisableCommand extends AbstractBundleCommand
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $bm = $this->getBundleManager();
         $bundle = $this->getBundle();
 
         try {
-            $bm->disable($bundle);
+            $this->bundleManager->disable($bundle);
 
             $this->io->success(sprintf('Bundle "%s" was successfully disabled', $bundle->getName()));
         } catch (\Exception $e) {
