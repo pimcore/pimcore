@@ -47,8 +47,8 @@ CREATE TABLE `assets` (
 
 DROP TABLE IF EXISTS `assets_metadata`;
 CREATE TABLE `assets_metadata` (
-  `cid` int(11) DEFAULT NULL,
-  `name` varchar(190) DEFAULT NULL,
+  `cid` int(11) NOT NULL,
+  `name` varchar(190) NOT NULL,
   `language` varchar(10) CHARACTER SET ascii COLLATE ascii_general_ci NOT NULL DEFAULT '',
   `type` ENUM('input','textarea','asset','document','object','date','select','checkbox') DEFAULT NULL,
   `data` text,
