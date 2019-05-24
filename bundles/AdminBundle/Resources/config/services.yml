@@ -33,7 +33,6 @@ services:
 
     Pimcore\Model\Notification\Service\NotificationService:
         public: true
-    Pimcore\Model\Notification\Service\NotificationServiceFilterParser: ~
     Pimcore\Model\Notification\Service\UserService: ~
 
     #
