@@ -14,10 +14,7 @@
 
 namespace Pimcore;
 
-use Composer\Autoload\ClassLoader;
 use Doctrine\Common\Annotations\AnnotationReader;
-use Pimcore\Loader\Autoloader\AliasMapper;
-use Pimcore\Loader\Autoloader\DataObjectCompatibility;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\Document;
 use Symfony\Component\Console\Input\ArgvInput;
