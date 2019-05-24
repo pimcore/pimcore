@@ -20,24 +20,8 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPriceInfo;
 /**
  * Class ICheckoutable
  */
-interface ICheckoutable
+interface ICheckoutable extends IProduct
 {
-    /**
-     * called by default CommitOrderProcessor to get the product name to store it in the order item
-     * should be overwritten in mapped sub classes of product classes
-     *
-     * @return string
-     */
-    public function getOSName();
-
-    /**
-     * called by default CommitOrderProcessor to get the product number to store it in the order item
-     * should be overwritten in mapped sub classes of product classes
-     *
-     * @return string
-     */
-    public function getOSProductNumber();
-
     /**
      * defines the name of the price system for this product.
      * there should either be a attribute in pro product object or
