@@ -23,9 +23,19 @@ class DataObjectCompatibility extends AbstractAutoloader
     {
         if (strpos($class, 'Pimcore\\') === 0 && strpos($class, '\\Object\\')) {
             $realClassName = str_replace('\\Object\\', '\\DataObject\\', $class);
+            if (!$this->classExists($realClassName, false)) {
+                $this->composerAutoloader->loadClass($realClassName);
+            }
 
-            if (class_exists($realClassName)) {
+            if ($this->classExists($realClassName, false)) {
                 class_alias($realClassName, $class);
+
+                return true;
+            }
+        } elseif (strpos($class, 'Pimcore\\') === 0 && strpos($class, '\\DataObject\\')) {
+            if ($this->composerAutoloader->loadClass($class)) {
+                $oldClassName = str_replace('\\DataObject\\', '\\Object\\', $class);
+                class_alias($class, $oldClassName, false);
 
                 return true;
             }

@@ -121,13 +121,19 @@ class Bootstrap
     {
         error_reporting(E_ALL & ~E_NOTICE & ~E_STRICT);
 
-        $autoloader = new ClassLoader();
-        $autoloader->register(true);
+        /** @var $loader \Composer\Autoload\ClassLoader */
+        if (file_exists(__DIR__ . '/../vendor/autoload.php')) {
+            $loader = include __DIR__ . '/../vendor/autoload.php';
+        }
+        else {
+            $loader = include __DIR__ . '/../../../../vendor/autoload.php';
+        }
 
         self::defineConstants();
 
         error_reporting(PIMCORE_PHP_ERROR_REPORTING);
 
+        \Pimcore::setAutoloader($loader);
         self::autoload();
 
         ini_set('error_log', PIMCORE_PHP_ERROR_LOG);
@@ -228,20 +234,20 @@ class Bootstrap
 
     public static function autoload()
     {
+        $loader = \Pimcore::getAutoloader();
+
         // tell the autoloader where to find Pimcore's generated class stubs
         // this is primarily necessary for tests and custom class directories, which are not covered in composer.json
-        $dataObjectClassLoader = new ClassLoader();
-        $dataObjectClassLoader->addPsr4('Pimcore\\Model\\DataObject\\', PIMCORE_CLASS_DIRECTORY . '/DataObject');
-        $dataObjectClassLoader->register(true);
+        $loader->addPsr4('Pimcore\\Model\\DataObject\\', PIMCORE_CLASS_DIRECTORY . '/DataObject');
 
         // compatibility autoloader for the \Pimcore\Model\Object\* namespace (seems to work with PHP 7.2 as well, tested with 7.2.3)
-        $dataObjectCompatibilityLoader = new DataObjectCompatibility();
-        $dataObjectCompatibilityLoader->register();
+        $dataObjectCompatibilityLoader = new \Pimcore\Loader\Autoloader\DataObjectCompatibility($loader);
+        $dataObjectCompatibilityLoader->register(true);
 
         // legacy mapping loader creates aliases for renamed classes
-        $legacyMappingLoader = new AliasMapper();
+        $legacyMappingLoader = new \Pimcore\Loader\Autoloader\AliasMapper($loader);
         $legacyMappingLoader->register(true);
-        
+
         // ignore apiDoc params (see http://apidocjs.com/) as we use apiDoc in webservice
         $apiDocAnnotations = [
             'api', 'apiDefine',
