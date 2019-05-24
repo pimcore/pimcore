@@ -26,6 +26,7 @@ interface ConnectionInterface extends Connection
      * @param array $params
      * @param array $types
      * @param QueryCacheProfile|null $qcp
+     *
      * @return \Doctrine\DBAL\Driver\Statement
      */
     public function executeQuery($query, array $params = [], $types = [], QueryCacheProfile $qcp = null);
@@ -34,6 +35,7 @@ interface ConnectionInterface extends Connection
      * @param string $query
      * @param array $params
      * @param array $types
+     *
      * @return int
      */
     public function executeUpdate($query, array $params = [], array $types = []);
@@ -43,6 +45,7 @@ interface ConnectionInterface extends Connection
      * @param $params
      * @param $types
      * @param QueryCacheProfile $qcp
+     *
      * @return \Doctrine\DBAL\Driver\ResultStatement
      */
     public function executeCacheQuery($query, $params, $types, QueryCacheProfile $qcp);
@@ -52,6 +55,7 @@ interface ConnectionInterface extends Connection
      * @param array $data
      * @param array $identifier
      * @param array $types
+     *
      * @return int
      */
     public function update($tableExpression, array $data, array $identifier, array $types = []);
@@ -60,6 +64,7 @@ interface ConnectionInterface extends Connection
      * @param string $tableExpression
      * @param array $data
      * @param array $types
+     *
      * @return mixed
      */
     public function insert($tableExpression, array $data, array $types = []);
@@ -67,6 +72,7 @@ interface ConnectionInterface extends Connection
     /**
      * @param string $table
      * @param string $where
+     *
      * @return int
      */
     public function deleteWhere($table, $where = '');
@@ -75,6 +81,7 @@ interface ConnectionInterface extends Connection
      * @param string $table
      * @param array $data
      * @param string $where
+     *
      * @return int
      */
     public function updateWhere($table, array $data, $where = '');
@@ -83,6 +90,7 @@ interface ConnectionInterface extends Connection
      * @param string $sql
      * @param array $params
      * @param array $types
+     *
      * @return mixed
      */
     public function fetchRow($sql, $params = [], $types = []);
@@ -91,6 +99,7 @@ interface ConnectionInterface extends Connection
      * @param $sql
      * @param array $params
      * @param array $types
+     *
      * @return mixed
      */
     public function fetchCol($sql, $params = [], $types = []);
@@ -99,6 +108,7 @@ interface ConnectionInterface extends Connection
      * @param $sql
      * @param array $params
      * @param array $types
+     *
      * @return mixed
      */
     public function fetchOne($sql, $params = [], $types = []);
@@ -107,6 +117,7 @@ interface ConnectionInterface extends Connection
      * @param $sql
      * @param array $params
      * @param array $types
+     *
      * @return array
      */
     public function fetchPairs($sql, array $params = [], $types = []);
@@ -114,12 +125,14 @@ interface ConnectionInterface extends Connection
     /**
      * @param string $table
      * @param array $data
+     *
      * @return int
      */
     public function insertOrUpdate($table, array $data);
 
     /**
      * @param string $str
+     *
      * @return string
      */
     public function quoteIdentifier($str);
@@ -129,6 +142,7 @@ interface ConnectionInterface extends Connection
      * @param $value
      * @param string|null $type
      * @param int|null $count
+     *
      * @return string
      */
     public function quoteInto($text, $value, $type = null, $count = null);
@@ -136,6 +150,7 @@ interface ConnectionInterface extends Connection
     /**
      * @param string $ident
      * @param string $alias
+     *
      * @return string
      */
     public function quoteColumnAs($ident, $alias);
@@ -143,6 +158,7 @@ interface ConnectionInterface extends Connection
     /**
      * @param string $ident
      * @param string|null $alias
+     *
      * @return string
      */
     public function quoteTableAs($ident, $alias = null);
@@ -156,6 +172,7 @@ interface ConnectionInterface extends Connection
      * @param string $sql
      * @param int $count
      * @param int $offset
+     *
      * @return string
      */
     public function limit($sql, $count, $offset = 0);
@@ -163,12 +180,14 @@ interface ConnectionInterface extends Connection
     /**
      * @param string $sql
      * @param array $exclusions
+     *
      * @return \Doctrine\DBAL\Driver\Statement|int|null
      */
     public function queryIgnoreError($sql, $exclusions = []);
 
     /**
      * @param bool $autoQuoteIdentifiers
+     *
      * @return void
      */
     public function setAutoQuoteIdentifiers($autoQuoteIdentifiers);
@@ -177,6 +196,7 @@ interface ConnectionInterface extends Connection
      * @param string $statement
      * @param mixed[] $params
      * @param int[]|string[] $types
+     *
      * @return mixed[]|false
      */
     public function fetchAssoc($statement, array $params = [], array $types = []);
@@ -185,6 +205,7 @@ interface ConnectionInterface extends Connection
      * @param string $statement
      * @param mixed[] $params
      * @param int[]|string[] $types
+     *
      * @return mixed[]|false
      */
     public function fetchArray($statement, array $params = [], array $types = []);
@@ -194,6 +215,7 @@ interface ConnectionInterface extends Connection
      * @param mixed[] $params
      * @param int $column
      * @param int[]|string[] $types
+     *
      * @return  mixed|false
      */
     public function fetchColumn($statement, array $params = [], $column = 0, array $types = []);
@@ -202,6 +224,7 @@ interface ConnectionInterface extends Connection
      * @param string $tableExpression
      * @param mixed[] $identifier
      * @param int[]|string[] $types
+     *
      * @return mixed
      */
     public function delete($tableExpression, array $identifier, array $types = []);
@@ -210,6 +233,7 @@ interface ConnectionInterface extends Connection
      * @param string $sql
      * @param mixed[] $params
      * @param int[]|string[] $types
+     *
      * @return mixed
      */
     public function fetchAll($sql, array $params = [], $types = []);

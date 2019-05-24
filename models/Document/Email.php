@@ -19,7 +19,6 @@ namespace Pimcore\Model\Document;
 
 use Egulias\EmailValidator\EmailValidator;
 use Egulias\EmailValidator\Validation\RFCValidation;
-use Pimcore\Helper\Mail;
 use Pimcore\Model;
 
 /**
