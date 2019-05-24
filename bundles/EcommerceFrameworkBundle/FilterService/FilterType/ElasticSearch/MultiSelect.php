@@ -62,7 +62,7 @@ class MultiSelect extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService
                         $productList->addCondition($value, $field);
                     }
                 } else {
-                    $productList->addCondition(['terms' => ['attributes.' . $field => $quotedValues]], 'attributes.' . $field);
+                    $productList->addCondition(['terms' => ['attributes.' . $field => $quotedValues]], $field);
                 }
             }
         }
