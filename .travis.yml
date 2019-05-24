@@ -5,10 +5,6 @@ notifications:
 sudo: false
 language: php
 
-php:
-  - 7.2
-  - 7.3
-
 services:
   - redis
 
@@ -19,24 +15,51 @@ addons:
 
 matrix:
   include:
+    # Symfony 3.4 all tests
+    - os: linux
+      sudo: required
+      php: 7.2
+
+    - os: linux
+      sudo: required
+      php: 7.3
+
+    # Symfony 4.* all tests
+    - os: linux
+      sudo: required
+      php: 7.2
+      env:
+        - SYMFONY_VERSION=^4.0
+
+    - os: linux
+      sudo: required
+      php: 7.3
+      env:
+        - SYMFONY_VERSION=^4.0
+
+    # Other Tests
     - os: linux
       sudo: required
       php: 7.2
       env:
           - PIMCORE_TEST_SUITE=rest
           - PIMCORE_TEST_ENV=http
+
     - os: linux
       sudo: required
       php: 7.3
       env:
           - PIMCORE_TEST_SUITE=rest
           - PIMCORE_TEST_ENV=http
+
     - os: linux
       php: 7.2
       env:
           - PIMCORE_TEST_SUITE=cache
           - PIMCORE_TEST_GROUP=cache.core.redis
           - PIMCORE_TEST_SETUP_SKIP_PHP_REDIS_EXTENSION=true
+
+    # Test Docs
     - os: linux
       php: 7.2
       services: ~
@@ -61,6 +84,7 @@ env:
     - PIMCORE_TEST_URL=http://pimcore-test.dev
     - PIMCORE_TEST_DB_DSN="mysql://root@localhost/pimcore_test"
     - PIMCORE_TEST_CACHE_REDIS_DATABASE=1
+    - SYMFONY_VERSION=^3.4
 
 before_install:
   - mysql --version

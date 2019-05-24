@@ -15,7 +15,6 @@
 namespace Pimcore;
 
 use Doctrine\Common\Annotations\AnnotationReader;
-use Doctrine\Common\Annotations\AnnotationRegistry;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\Document;
 use Symfony\Component\Console\Input\ArgvInput;
@@ -120,7 +119,13 @@ class Bootstrap
         error_reporting(E_ALL & ~E_NOTICE & ~E_STRICT);
 
         /** @var $loader \Composer\Autoload\ClassLoader */
-        $loader = include __DIR__ . '/../../../../vendor/autoload.php';
+        if (file_exists(__DIR__ . '/../vendor/autoload.php')) {
+            $loader = include __DIR__ . '/../vendor/autoload.php';
+        }
+        else {
+            $loader = include __DIR__ . '/../../../../vendor/autoload.php';
+        }
+
         self::defineConstants();
 
         error_reporting(PIMCORE_PHP_ERROR_REPORTING);
@@ -239,10 +244,6 @@ class Bootstrap
         // legacy mapping loader creates aliases for renamed classes
         $legacyMappingLoader = new \Pimcore\Loader\Autoloader\AliasMapper($loader);
         $legacyMappingLoader->register(true);
-
-        // the following code is out of `app/autoload.php`
-        // see also: https://github.com/symfony/symfony-demo/blob/master/app/autoload.php
-        AnnotationRegistry::registerLoader([$loader, 'loadClass']);
 
         // ignore apiDoc params (see http://apidocjs.com/) as we use apiDoc in webservice
         $apiDocAnnotations = [

@@ -116,6 +116,14 @@
       "lib/Pimcore/Bundle/EcommerceFrameworkBundle/config/namespace_compatibility.php"
     ]
   },
+  "autoload-dev": {
+    "psr-4": {
+      "Pimcore\\Tests\\": "tests"
+    },
+    "files": [
+      "app/AppKernel.php"
+    ]
+  },
   "extra": {
     "branch-alias": {
       "dev-master": "6.0-dev"
