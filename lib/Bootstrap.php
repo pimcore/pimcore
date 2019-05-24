@@ -241,12 +241,7 @@ class Bootstrap
         // legacy mapping loader creates aliases for renamed classes
         $legacyMappingLoader = new AliasMapper();
         $legacyMappingLoader->register(true);
-
-        // the following code is out of `app/autoload.php`
-        // see also: https://github.com/symfony/symfony-demo/blob/master/app/autoload.php
-        // Don't think this is necessary anymore
-        //AnnotationRegistry::registerLoader([$loader, 'loadClass']);
-
+        
         // ignore apiDoc params (see http://apidocjs.com/) as we use apiDoc in webservice
         $apiDocAnnotations = [
             'api', 'apiDefine',
