@@ -20,6 +20,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\DependencyInjection;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Config\Processor\PlaceholderProcessor;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\Cart;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartFactory;
+use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartPriceCalculator;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartPriceCalculatorFactory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\MultiCartManager;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\SessionCart;
@@ -298,7 +299,13 @@ class Configuration implements ConfigurationInterface
                                         ->cannotBeEmpty()
                                         ->defaultValue(CartPriceCalculatorFactory::class)
                                     ->end()
-                                    ->append($this->buildOptionsNode('factory_options'))
+                                    ->append($this->buildOptionsNode(
+                                        'factory_options',
+                                        [
+                                            'class' => CartPriceCalculator::class
+                                        ],
+                                        "'class' defines a class mame of the price calculator, which the factory instantiates. If you wish to replace or extend price calculation routine shipped with e-commerce framework provide your custom class name here."
+                                    ))
                                     ->arrayNode('modificators')
                                         ->info('List price modificators for cart, e.g. for shipping-cost, special discounts, etc. Key is name of modificator.')
                                         ->useAttributeAsKey('name')
@@ -1140,9 +1147,13 @@ class Configuration implements ConfigurationInterface
         return $trackingManager;
     }
 
-    private function buildOptionsNode(string $name = 'options', array $defaultValue = []): NodeDefinition
+    private function buildOptionsNode(string $name = 'options', array $defaultValue = [], string $documentation = null): NodeDefinition
     {
         $node = new VariableNodeDefinition($name);
+        if($documentation) {
+            $node->info($documentation);
+        }
+
         $node
             ->defaultValue($defaultValue)
             ->treatNullLike([])
