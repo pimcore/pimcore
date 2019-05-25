@@ -59,9 +59,9 @@ class Cse implements \Iterator, AdapterInterface, AdapterAggregateInterface
 
             // determine language
             $language = \Pimcore::getContainer()->get('pimcore.locale')->findLocale();
-            
-            if ($position = strpos($language, "_")){
-                $language = substr($language, 0,$position);
+
+            if ($position = strpos($language, '_')) {
+                $language = substr($language, 0, $position);
             }
 
             if (!array_key_exists('hl', $config) && !empty($language)) {

@@ -1150,7 +1150,7 @@ class Configuration implements ConfigurationInterface
     private function buildOptionsNode(string $name = 'options', array $defaultValue = [], string $documentation = null): NodeDefinition
     {
         $node = new VariableNodeDefinition($name);
-        if($documentation) {
+        if ($documentation) {
             $node->info($documentation);
         }
 
