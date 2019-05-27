@@ -427,7 +427,7 @@ class AbstractObject extends Model\Element\AbstractElement
      * @param array $objectTypes
      * @param bool $unpublished
      *
-     * @return array
+     * @return self[]
      */
     public function getChildren($objectTypes = [self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_FOLDER], $unpublished = false)
     {
@@ -654,7 +654,7 @@ class AbstractObject extends Model\Element\AbstractElement
                     if ($oldPath && $oldPath != $this->getRealFullPath()) {
                         $differentOldPath = $oldPath;
                         $this->getDao()->updateWorkspaces();
-                        $updatedChildren = $this->getDao()->updateChildsPaths($oldPath);
+                        $updatedChildren = $this->getDao()->updateChildrenPaths($oldPath);
                     }
 
                     $this->update($isUpdate, $params);

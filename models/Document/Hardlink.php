@@ -202,7 +202,7 @@ class Hardlink extends Document
     /**
      * @param bool $unpublished
      *
-     * @return array|null
+     * @return Document[]
      */
     public function getChildren($unpublished = false)
     {

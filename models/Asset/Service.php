@@ -46,10 +46,10 @@ class Service extends Model\Element\Service
     }
 
     /**
-     * @param  Model\Asset $target
-     * @param  Model\Asset $source
+     * @param  Asset|Asset\Folder $target
+     * @param  Asset|Asset\Folder $source
      *
-     * @return Model\Asset copied asset
+     * @return Asset copied asset
      */
     public function copyRecursive($target, $source)
     {
@@ -88,7 +88,7 @@ class Service extends Model\Element\Service
         }
 
         if ($target instanceof Asset\Folder) {
-            $this->updateChilds($target, $new);
+            $this->updateChildren($target, $new);
         }
 
         // triggers actions after the complete asset cloning
@@ -126,7 +126,7 @@ class Service extends Model\Element\Service
         $new->save();
 
         if ($target instanceof Asset\Folder) {
-            $this->updateChilds($target, $new);
+            $this->updateChildren($target, $new);
         }
 
         // triggers actions after the complete asset cloning

@@ -551,12 +551,15 @@ class Service extends Model\AbstractModel
      * @param DataObject\AbstractObject|Document|Asset\Folder $target the parent element
      * @param ElementInterface $new the newly inserted child
      */
-    protected function updateChilds($target, $new)
+    protected function updateChildren($target, $new)
     {
         if (is_array($target->getChildren())) {
             //check in case of recursion
             $found = false;
             foreach ($target->getChildren() as $child) {
+                /**
+                 * @var ElementInterface $child
+                 */
                 if ($child->getId() == $new->getId()) {
                     $found = true;
                 }

@@ -152,7 +152,7 @@ class Service extends Model\Element\Service
             $this->copyRecursive($new, $child);
         }
 
-        $this->updateChilds($target, $new);
+        $this->updateChildren($target, $new);
 
         // triggers actions after the complete document cloning
         \Pimcore::getEventDispatcher()->dispatch(DataObjectEvents::POST_COPY, new DataObjectEvent($new, [
@@ -194,7 +194,7 @@ class Service extends Model\Element\Service
 
         Model\DataObject\AbstractObject::setDisableDirtyDetection($isDirtyDetectionDisabled);
 
-        $this->updateChilds($target, $new);
+        $this->updateChildren($target, $new);
 
         // triggers actions after the complete object cloning
         \Pimcore::getEventDispatcher()->dispatch(DataObjectEvents::POST_COPY, new DataObjectEvent($new, [

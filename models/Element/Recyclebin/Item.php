@@ -175,7 +175,7 @@ class Item extends Model\AbstractModel
         $this->setPath($this->getElement()->getRealFullPath());
         $this->setDate(time());
 
-        $this->loadChilds($this->getElement());
+        $this->loadChildren($this->getElement());
 
         if ($user instanceof Model\User) {
             $this->setDeletedby($user->getName());
@@ -235,7 +235,7 @@ class Item extends Model\AbstractModel
     /**
      * @param Element\ElementInterface $element
      */
-    public function loadChilds(Element\ElementInterface $element)
+    public function loadChildren(Element\ElementInterface $element)
     {
         $this->amount++;
 
@@ -262,7 +262,7 @@ class Item extends Model\AbstractModel
             }
 
             foreach ($childs as $child) {
-                $this->loadChilds($child);
+                $this->loadChildren($child);
             }
         }
     }

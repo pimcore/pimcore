@@ -158,7 +158,7 @@ class Dao extends Model\Element\Dao
      *
      * @return null|array
      */
-    public function updateChildsPaths($oldPath)
+    public function updateChildrenPaths($oldPath)
     {
         if ($this->hasChildren([DataObject::OBJECT_TYPE_OBJECT, DataObject::OBJECT_TYPE_FOLDER, DataObject::OBJECT_TYPE_VARIANT])) {
             //get objects to empty their cache

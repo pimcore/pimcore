@@ -433,7 +433,7 @@ class Document extends Element\AbstractElement
                     if ($oldPath && $oldPath != $this->getRealFullPath()) {
                         $differentOldPath = $oldPath;
                         $this->getDao()->updateWorkspaces();
-                        $updatedChildren = $this->getDao()->updateChildsPaths($oldPath);
+                        $updatedChildren = $this->getDao()->updateChildrenPaths($oldPath);
                     }
 
                     $this->commit();
@@ -671,7 +671,7 @@ class Document extends Element\AbstractElement
      *
      * @param bool
      *
-     * @return array
+     * @return self[]
      */
     public function getChildren($unpublished = false)
     {
