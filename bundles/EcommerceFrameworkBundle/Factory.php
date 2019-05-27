@@ -28,7 +28,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterService;
 use Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterServiceLocatorInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\IndexService;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractVoucherTokenType;
-use Pimcore\Bundle\EcommerceFrameworkBundle\OfferTool\IService;
+use Pimcore\Bundle\EcommerceFrameworkBundle\OfferTool\ServiceInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\IOrderManager;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\IOrderManagerLocator;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\IPaymentManager;
@@ -280,7 +280,7 @@ class Factory
         return $this->getIndexService()->getTenants();
     }
 
-    public function getOfferToolService(): IService
+    public function getOfferToolService(): ServiceInterface
     {
         return $this->container->get(PimcoreEcommerceFrameworkExtension::SERVICE_ID_OFFER_TOOL);
     }

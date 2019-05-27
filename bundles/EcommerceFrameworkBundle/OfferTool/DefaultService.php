@@ -21,7 +21,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
 use Pimcore\Model\DataObject\Folder;
 use Pimcore\Model\DataObject\Service;
 
-class DefaultService implements IService
+class DefaultService implements ServiceInterface
 {
     /**
      * @var string
@@ -333,7 +333,7 @@ class DefaultService implements IService
             $totalPrice = $totalPrice->add(Decimal::create($item->getFinalTotalPrice()));
         }
 
-        if ($offer->getDiscountType() === IService::DISCOUNT_TYPE_PERCENT) {
+        if ($offer->getDiscountType() === ServiceInterface::DISCOUNT_TYPE_PERCENT) {
             $discount = $totalPrice->toPercentage($offer->getDiscount());
         } else {
             $discount = Decimal::create($offer->getDiscount());

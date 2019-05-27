@@ -14,47 +14,18 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\OfferTool;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartInterface;
-use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartItemInterface;
 
-interface IService
-{
-    const DISCOUNT_TYPE_PERCENT = 'percent';
-    const DISCOUNT_TYPE_AMOUNT = 'amount';
+@trigger_error(
+    'Interface Pimcore\Bundle\EcommerceFrameworkBundle\OfferTool\IService is deprecated since version 6.0.0 and will be removed in 7.0.0. ' .
+    ' Use ' . ServiceInterface::class . ' class instead.',
+    E_USER_DEPRECATED
+);
 
+if(false) {
     /**
-     * @param CartInterface $cart
-     * @param CartItemInterface[] $excludeItems
-     *
-     * @return AbstractOffer
+     * @deprecated use ServiceInterface instead.
      */
-    public function createNewOfferFromCart(CartInterface $cart, array $excludeItems = []);
-
-    /**
-     * @param AbstractOffer $offer
-     * @param CartInterface $cart
-     * @param array $excludeItems
-     *
-     * @return AbstractOffer
-     */
-    public function updateOfferFromCart(AbstractOffer $offer, CartInterface $cart, array $excludeItems = []);
-
-    /**
-     * @param AbstractOffer $offer
-     *
-     * @return AbstractOffer
-     */
-    public function updateTotalPriceOfOffer(AbstractOffer $offer);
-
-    /**
-     * @param CartInterface $cart
-     *
-     * @return AbstractOffer[]
-     */
-    public function getOffersForCart(CartInterface $cart);
-
-    /**
-     * @return AbstractOfferItem
-     */
-    public function getNewOfferItemObject();
+    interface IService
+    {
+    }
 }
