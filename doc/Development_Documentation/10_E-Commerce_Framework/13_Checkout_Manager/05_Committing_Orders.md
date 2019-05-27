@@ -43,12 +43,12 @@ A simple implementation of `AppBundle\Ecommerce\Order\OrderManager` could look l
 class OrderManager extends \Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderManager {
 
     /**
-     * @param ICart $cart
+     * @param CartInterface $cart
      * @param AbstractOrder $order
      * @return AbstractOrder
      * @throws InvalidConfigException
      */
-    protected function applyCustomCheckoutDataToOrder(ICart $cart, AbstractOrder $order)
+    protected function applyCustomCheckoutDataToOrder(CartInterface $cart, AbstractOrder $order)
     {
         $order = parent::applyCustomCheckoutDataToOrder($cart, $order);
 

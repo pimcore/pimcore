@@ -133,7 +133,7 @@ In order to populate the additional mapping data, also following methods have to
     /**
      * in case of subtenants returns a data structure containing all sub tenants
      *
-     * @param IIndexable $object
+     * @param IndexableInterface $object
      * @param null $subObjectId
      *
      * @return mixed $subTenantData
