@@ -14,14 +14,14 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Condition;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\ICondition;
-use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IEnvironment;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\ConditionInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\EnvironmentInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IRule;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
 use Pimcore\Model\DataObject\OnlineShopOrder;
 use Pimcore\Model\DataObject\OnlineShopOrderItem;
 
-class Sales extends AbstractOrder implements ICondition
+class Sales extends AbstractOrder implements ConditionInterface
 {
     /**
      * @var int
@@ -34,11 +34,11 @@ class Sales extends AbstractOrder implements ICondition
     protected $currentSalesAmount = [];
 
     /**
-     * @param IEnvironment $environment
+     * @param EnvironmentInterface $environment
      *
      * @return bool
      */
-    public function check(IEnvironment $environment)
+    public function check(EnvironmentInterface $environment)
     {
         $rule = $environment->getRule();
         if ($rule) {
@@ -67,7 +67,7 @@ class Sales extends AbstractOrder implements ICondition
     /**
      * @param string $string
      *
-     * @return ICondition
+     * @return ConditionInterface
      */
     public function fromJSON($string)
     {

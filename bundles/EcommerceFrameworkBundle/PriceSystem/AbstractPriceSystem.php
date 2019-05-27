@@ -21,19 +21,19 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartPriceModificator\ICa
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\CheckoutableInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\TaxManagement\TaxCalculationService;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\TaxManagement\TaxEntry;
-use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IPricingManager;
-use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IPricingManagerLocator;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\PricingManagerInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\PricingManagerLocatorInterface;
 use Pimcore\Model\DataObject\OnlineShopTaxClass;
 use Pimcore\Model\WebsiteSetting;
 
 abstract class AbstractPriceSystem implements PriceSystemInterface
 {
     /**
-     * @var IPricingManagerLocator
+     * @var PricingManagerLocatorInterface
      */
     protected $pricingManagers;
 
-    public function __construct(IPricingManagerLocator $pricingManagers)
+    public function __construct(PricingManagerLocatorInterface $pricingManagers)
     {
         $this->pricingManagers = $pricingManagers;
     }
@@ -74,7 +74,7 @@ abstract class AbstractPriceSystem implements PriceSystemInterface
         return $priceInfoWithRules;
     }
 
-    protected function getPricingManager(): IPricingManager
+    protected function getPricingManager(): PricingManagerInterface
     {
         return $this->pricingManagers->getPricingManager();
     }

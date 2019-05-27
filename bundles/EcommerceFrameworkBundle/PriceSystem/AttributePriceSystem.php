@@ -21,7 +21,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Model\Currency;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\CheckoutableInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\TaxManagement\TaxCalculationService;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\TaxManagement\TaxEntry;
-use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IPricingManagerLocator;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\PricingManagerLocatorInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -42,7 +42,7 @@ class AttributePriceSystem extends CachingPriceSystem implements PriceSystemInte
      */
     protected $priceClass;
 
-    public function __construct(IPricingManagerLocator $pricingManagers, IEnvironment $environment, array $options = [])
+    public function __construct(PricingManagerLocatorInterface $pricingManagers, IEnvironment $environment, array $options = [])
     {
         parent::__construct($pricingManagers);
 

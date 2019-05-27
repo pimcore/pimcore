@@ -14,31 +14,19 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Condition;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\ICondition;
+@trigger_error(
+    'Interface Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Condition\IDateRange is deprecated since version 6.0.0 and will be removed in 7.0.0. ' .
+    ' Use ' . DateRangeInterface::class . ' class instead.',
+    E_USER_DEPRECATED
+);
 
-interface IDateRange extends ICondition
-{
-    /**
-     * @param \DateTime $date
-     *
-     * @return IDateRange
-     */
-    public function setStarting(\DateTime $date);
+class_exists(DateRangeInterface::class);
 
+if(false) {
     /**
-     * @param \DateTime $date
-     *
-     * @return IDateRange
+     * @deprecated use DateRangeInterface instead.
      */
-    public function setEnding(\DateTime $date);
-
-    /**
-     * @return \DateTime
-     */
-    public function getStarting();
-
-    /**
-     * @return \DateTime
-     */
-    public function getEnding();
+    interface IDateRange
+    {
+    }
 }

@@ -14,19 +14,26 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager;
 
-@trigger_error(
-    'Interface Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IPricingManager is deprecated since version 6.0.0 and will be removed in 7.0.0. ' .
-    ' Use ' . PricingManagerInterface::class . ' class instead.',
-    E_USER_DEPRECATED
-);
-
-class_exists(PricingManagerInterface::class);
-
-if(false) {
+interface ConditionInterface
+{
     /**
-     * @deprecated use PricingManagerInterface instead.
+     * @param EnvironmentInterface $environment
+     *
+     * @return bool
      */
-    interface IPricingManager
-    {
-    }
+    public function check(EnvironmentInterface $environment);
+
+    /**
+     * @return string
+     */
+    public function toJSON();
+
+    /**
+     * @param string $string
+     *
+     * @return ConditionInterface
+     */
+    public function fromJSON($string);
 }
+
+class_alias(ConditionInterface::class, 'Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\ICondition');

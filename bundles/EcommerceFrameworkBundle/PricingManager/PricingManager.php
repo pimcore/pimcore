@@ -24,7 +24,7 @@ use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class PricingManager implements IPricingManager
+class PricingManager implements PricingManagerInterface
 {
     /**
      * @var bool
@@ -136,7 +136,7 @@ class PricingManager implements IPricingManager
     /**
      * @param CartInterface $cart
      *
-     * @return IPricingManager
+     * @return PricingManagerInterface
      */
     public function applyCartRules(CartInterface $cart)
     {
@@ -147,7 +147,7 @@ class PricingManager implements IPricingManager
         // configure environment
         $env = $this->getEnvironment();
         $env->setCart($cart);
-        $env->setExecutionMode(IEnvironment::EXECUTION_MODE_CART);
+        $env->setExecutionMode(EnvironmentInterface::EXECUTION_MODE_CART);
         $env->setProduct(null);
         if ($this->visitorInfoStorage && $this->visitorInfoStorage->hasVisitorInfo()) {
             $env->setVisitorInfo($this->visitorInfoStorage->getVisitorInfo());
@@ -219,7 +219,7 @@ class PricingManager implements IPricingManager
     }
 
     /**
-     * @return IEnvironment
+     * @return EnvironmentInterface
      */
     public function getEnvironment()
     {
@@ -228,7 +228,7 @@ class PricingManager implements IPricingManager
 
         $class = $this->options['environment_class'];
 
-        /** @var IEnvironment $environment */
+        /** @var EnvironmentInterface $environment */
         $environment = new $class();
         $environment->setSession($sessionBag);
 
@@ -278,14 +278,14 @@ class PricingManager implements IPricingManager
      *
      * @param string $type
      *
-     * @return ICondition
+     * @return ConditionInterface
      *
      * @throws InvalidConfigException
      */
     public function getCondition($type)
     {
         if (!isset($this->conditionMapping[$type])) {
-            throw new InvalidConfigException(sprintf('ICondition for type "%s" is not registered', $type));
+            throw new InvalidConfigException(sprintf('ConditionInterface for type "%s" is not registered', $type));
         }
 
         $class = $this->conditionMapping[$type];
@@ -298,14 +298,14 @@ class PricingManager implements IPricingManager
      *
      * @param string $type
      *
-     * @return IAction
+     * @return ActionInterface
      *
      * @throws InvalidConfigException
      */
     public function getAction($type)
     {
         if (!isset($this->actionMapping[$type])) {
-            throw new InvalidConfigException(sprintf('IAction for type "%s" is not registered', $type));
+            throw new InvalidConfigException(sprintf('ActionInterface for type "%s" is not registered', $type));
         }
 
         $class = $this->actionMapping[$type];
@@ -316,7 +316,7 @@ class PricingManager implements IPricingManager
     /**
      * @param PriceSystemPriceInfoInterface $priceInfo
      *
-     * @return IPriceInfo
+     * @return PriceInfoInterface
      *
      * @throws InvalidConfigException
      */

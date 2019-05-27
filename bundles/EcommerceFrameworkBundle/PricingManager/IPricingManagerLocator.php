@@ -17,9 +17,19 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager;
 
-interface IPricingManagerLocator
-{
-    public function getPricingManager(string $tenant = null): IPricingManager;
+@trigger_error(
+    'Interface Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IPricingManagerLocator is deprecated since version 6.0.0 and will be removed in 7.0.0. ' .
+    ' Use ' . PricingManagerLocatorInterface::class . ' class instead.',
+    E_USER_DEPRECATED
+);
 
-    public function hasPricingManager(string $tenant): bool;
+class_exists(PricingManagerLocatorInterface::class);
+
+if(false) {
+    /**
+     * @deprecated use PricingManagerLocatorInterface instead.
+     */
+    interface IPricingManagerLocator
+    {
+    }
 }

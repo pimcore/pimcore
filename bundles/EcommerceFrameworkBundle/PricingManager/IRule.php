@@ -71,14 +71,14 @@ interface IRule
     public function getDescription($locale = null);
 
     /**
-     * @param ICondition
+     * @param ConditionInterface
      *
      * @return IRule
      */
-    public function setCondition(ICondition $condition);
+    public function setCondition(ConditionInterface $condition);
 
     /**
-     * @return ICondition
+     * @return ConditionInterface
      */
     public function getCondition();
 
@@ -90,7 +90,7 @@ interface IRule
     public function setActions(array $action);
 
     /**
-     * @return array|IAction
+     * @return array|ActionInterface
      */
     public function getActions();
 
@@ -121,11 +121,11 @@ interface IRule
     /**
      * test all conditions if this rule is valid
      *
-     * @param IEnvironment $environment
+     * @param EnvironmentInterface $environment
      *
      * @return bool
      */
-    public function check(IEnvironment $environment);
+    public function check(EnvironmentInterface $environment);
 
     /**
      * checks if rule has at least one action that changes product price (and not cart price)
@@ -137,20 +137,20 @@ interface IRule
     /**
      * execute rule actions based on current product
      *
-     * @param IEnvironment $environment
+     * @param EnvironmentInterface $environment
      *
      * @return IRule
      */
-    public function executeOnProduct(IEnvironment $environment);
+    public function executeOnProduct(EnvironmentInterface $environment);
 
     /**
      * execute rule actions based on current cart
      *
-     * @param IEnvironment $environment
+     * @param EnvironmentInterface $environment
      *
      * @return IRule
      */
-    public function executeOnCart(IEnvironment $environment);
+    public function executeOnCart(EnvironmentInterface $environment);
 
     /**
      * @param int $prio

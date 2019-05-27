@@ -34,8 +34,8 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderManagerLocatorInte
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\PaymentManagerInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\PriceSystemInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\PriceSystemLocatorInterface;
-use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IPricingManager;
-use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IPricingManagerLocator;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\PricingManagerInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\PricingManagerLocatorInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\ITrackingManager;
 use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\IVoucherService;
 use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\TokenManager\ITokenManager;
@@ -70,7 +70,7 @@ class Factory
     /**
      * Pricing managers registered by tenant
      *
-     * @var IPricingManagerLocator
+     * @var PricingManagerLocatorInterface
      */
     private $pricingManagers;
 
@@ -117,7 +117,7 @@ class Factory
      * @param ContainerInterface $container
      * @param CartManagerLocatorInterface $cartManagers
      * @param OrderManagerLocatorInterface $orderManagers
-     * @param IPricingManagerLocator $pricingManagers
+     * @param PricingManagerLocatorInterface $pricingManagers
      * @param PriceSystemLocatorInterface $priceSystems
      * @param AvailabilitySystemLocatorInterface $availabilitySystems
      * @param CheckoutManagerFactoryLocatorInterface $checkoutManagerFactories
@@ -128,7 +128,7 @@ class Factory
         ContainerInterface $container,
         CartManagerLocatorInterface $cartManagers,
         OrderManagerLocatorInterface $orderManagers,
-        IPricingManagerLocator $pricingManagers,
+        PricingManagerLocatorInterface $pricingManagers,
         PriceSystemLocatorInterface $priceSystems,
         AvailabilitySystemLocatorInterface $availabilitySystems,
         CheckoutManagerFactoryLocatorInterface $checkoutManagerFactories,
@@ -188,9 +188,9 @@ class Factory
      *
      * @param string|null $tenant
      *
-     * @return IPricingManager
+     * @return PricingManagerInterface
      */
-    public function getPricingManager(string $tenant = null): IPricingManager
+    public function getPricingManager(string $tenant = null): PricingManagerInterface
     {
         return $this->pricingManagers->getPricingManager($tenant);
     }

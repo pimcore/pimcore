@@ -20,10 +20,10 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\PriceInfoInterface as Pr
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\PriceSystemInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
 
-class PriceInfo implements IPriceInfo
+class PriceInfo implements PriceInfoInterface
 {
     /**
-     * @var IPriceInfo
+     * @var PriceInfoInterface
      */
     protected $priceInfo;
 
@@ -53,14 +53,14 @@ class PriceInfo implements IPriceInfo
     protected $priceEnvironmentHash = null;
 
     /**
-     * @var IEnvironment
+     * @var EnvironmentInterface
      */
     protected $environment;
 
     /**
      * @inheritdoc
      */
-    public function __construct(PriceSystemPriceInfoInterface $priceInfo, IEnvironment $environment)
+    public function __construct(PriceSystemPriceInfoInterface $priceInfo, EnvironmentInterface $environment)
     {
         $this->amount = Decimal::create(0);
         $this->priceInfo = $priceInfo;
@@ -78,7 +78,7 @@ class PriceInfo implements IPriceInfo
     /**
      * @inheritdoc
      */
-    public function getEnvironment(): IEnvironment
+    public function getEnvironment(): EnvironmentInterface
     {
         return $this->environment;
     }
@@ -86,7 +86,7 @@ class PriceInfo implements IPriceInfo
     /**
      * @inheritdoc
      */
-    public function setEnvironment(IEnvironment $environment)
+    public function setEnvironment(EnvironmentInterface $environment)
     {
         $this->environment = $environment;
 

@@ -14,20 +14,19 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Condition;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractCategory;
-use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\ICondition;
+@trigger_error(
+    'Interface Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Condition\ICategory is deprecated since version 6.0.0 and will be removed in 7.0.0. ' .
+    ' Use ' . CategoryInterface::class . ' class instead.',
+    E_USER_DEPRECATED
+);
 
-interface ICategory extends ICondition
-{
-    /**
-     * @param AbstractCategory[] $categories
-     *
-     * @return ICategory
-     */
-    public function setCategories(array $categories);
+class_exists(CategoryInterface::class);
 
+if(false) {
     /**
-     * @return AbstractCategory[]
+     * @deprecated use CategoryInterface instead.
      */
-    public function getCategories();
+    interface ICategory
+    {
+    }
 }

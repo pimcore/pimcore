@@ -26,7 +26,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\ModificatedPriceInterfac
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\PriceInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\Price;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\TaxManagement\TaxEntry;
-use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IPricingManager;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\PricingManagerInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -257,7 +257,7 @@ class CartPriceCalculator implements CartPriceCalculatorInterface
         }
     }
 
-    public function setPricingManager(IPricingManager $pricingManager)
+    public function setPricingManager(PricingManagerInterface $pricingManager)
     {
         $this->pricingManager = $pricingManager;
     }

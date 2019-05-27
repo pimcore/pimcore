@@ -14,20 +14,19 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Condition;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractProduct;
-use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\ICondition;
+@trigger_error(
+    'Interface Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Condition\ICatalogProduct is deprecated since version 6.0.0 and will be removed in 7.0.0. ' .
+    ' Use ' . CatalogProductInterface::class . ' class instead.',
+    E_USER_DEPRECATED
+);
 
-interface ICatalogProduct extends ICondition
-{
-    /**
-     * @param AbstractProduct[] $products
-     *
-     * @return ICatalogProduct
-     */
-    public function setProducts(array $products);
+class_exists(CatalogProductInterface::class);
 
+if(false) {
     /**
-     * @return AbstractProduct[]
+     * @deprecated use CatalogProductInterface instead.
      */
-    public function getProducts();
+    interface ICatalogProduct
+    {
+    }
 }

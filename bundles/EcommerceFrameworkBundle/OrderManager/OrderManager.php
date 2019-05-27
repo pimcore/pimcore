@@ -26,7 +26,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Exception\ProviderNot
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\StatusInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment\PaymentInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\TaxManagement\TaxEntry;
-use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IPriceInfo;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\PriceInfoInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
 use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\IVoucherService;
 use Pimcore\File;
@@ -657,7 +657,7 @@ class OrderManager implements OrderManagerInterface
         if (!$isGiftItem) {
             // save active pricing rules
             $priceInfo = $item->getPriceInfo();
-            if ($priceInfo instanceof IPriceInfo && method_exists($orderItem, 'setPricingRules')) {
+            if ($priceInfo instanceof PriceInfoInterface && method_exists($orderItem, 'setPricingRules')) {
                 $priceRules = new \Pimcore\Model\DataObject\Fieldcollection();
                 foreach ($priceInfo->getRules() as $rule) {
                     if ($rule->hasProductActions()) {

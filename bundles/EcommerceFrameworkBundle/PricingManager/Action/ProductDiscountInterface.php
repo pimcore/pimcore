@@ -14,19 +14,11 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Action;
 
-@trigger_error(
-    'Interface Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Action\IDiscount is deprecated since version 6.0.0 and will be removed in 7.0.0. ' .
-    ' Use ' . DiscountInterface::class . ' class instead.',
-    E_USER_DEPRECATED
-);
-
-class_exists(DiscountInterface::class);
-
-if(false) {
-    /**
-     * @deprecated use DiscountInterface instead.
-     */
-    interface IDiscount
-    {
-    }
+/**
+ * Interface to identify product discount actions
+ */
+interface ProductDiscountInterface extends DiscountInterface
+{
 }
+
+class_alias(ProductDiscountInterface::class, 'Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Action\IProductDiscount');

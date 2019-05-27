@@ -15,8 +15,8 @@
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
-use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Action\IProductDiscount;
-use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Condition\IBracket;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Action\ProductDiscountInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Condition\BracketInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Rule\Dao;
 use Pimcore\Cache\Runtime;
 use Pimcore\Logger;
@@ -72,12 +72,12 @@ class Rule extends AbstractModel implements IRule
     protected $description;
 
     /**
-     * @var IBracket
+     * @var BracketInterface
      */
     protected $condition;
 
     /**
-     * @var array|IAction
+     * @var array|ActionInterface
      */
     protected $action = [];
 
@@ -263,17 +263,17 @@ class Rule extends AbstractModel implements IRule
     }
 
     /**
-     * @param ICondition $condition
+     * @param ConditionInterface $condition
      *
      * @return IRule
      */
-    public function setCondition(ICondition $condition)
+    public function setCondition(ConditionInterface $condition)
     {
         $this->condition = $condition;
     }
 
     /**
-     * @return ICondition
+     * @return ConditionInterface
      */
     public function getCondition()
     {
@@ -293,7 +293,7 @@ class Rule extends AbstractModel implements IRule
     }
 
     /**
-     * @return array|IAction
+     * @return array|ActionInterface
      */
     public function getActions()
     {
@@ -341,11 +341,11 @@ class Rule extends AbstractModel implements IRule
     /**
      * test all conditions if this rule is valid
      *
-     * @param IEnvironment $environment
+     * @param EnvironmentInterface $environment
      *
      * @return bool
      */
-    public function check(IEnvironment $environment)
+    public function check(EnvironmentInterface $environment)
     {
         $condition = $this->getCondition();
         if ($condition) {
@@ -363,7 +363,7 @@ class Rule extends AbstractModel implements IRule
     public function hasProductActions()
     {
         foreach ($this->getActions() as $action) {
-            if ($action instanceof IProductDiscount) {
+            if ($action instanceof ProductDiscountInterface) {
                 return true;
             }
         }
@@ -372,14 +372,14 @@ class Rule extends AbstractModel implements IRule
     }
 
     /**
-     * @param IEnvironment $environment
+     * @param EnvironmentInterface $environment
      *
      * @return IRule
      */
-    public function executeOnProduct(IEnvironment $environment)
+    public function executeOnProduct(EnvironmentInterface $environment)
     {
         foreach ($this->getActions() as $action) {
-            /* @var IAction $action */
+            /* @var ActionInterface $action */
             $action->executeOnProduct($environment);
         }
 
@@ -387,14 +387,14 @@ class Rule extends AbstractModel implements IRule
     }
 
     /**
-     * @param IEnvironment $environment
+     * @param EnvironmentInterface $environment
      *
      * @return IRule
      */
-    public function executeOnCart(IEnvironment $environment)
+    public function executeOnCart(EnvironmentInterface $environment)
     {
         foreach ($this->getActions() as $action) {
-            /* @var IAction $action */
+            /* @var ActionInterface $action */
             $action->executeOnCart($environment);
         }
 

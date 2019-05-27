@@ -17,92 +17,20 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\PriceInterface;
-use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\PriceInfoInterface as PriceSystemPriceInfoInterface;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
+@trigger_error(
+    'Interface Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IPriceInfo is deprecated since version 6.0.0 and will be removed in 7.0.0. ' .
+    ' Use ' . PriceInfoInterface::class . ' class instead.',
+    E_USER_DEPRECATED
+);
 
-interface IPriceInfo extends PriceSystemPriceInfoInterface
-{
-    /**
-     * @param PriceSystemPriceInfoInterface $priceInfo
-     * @param IEnvironment $environment
-     */
-    public function __construct(PriceSystemPriceInfoInterface $priceInfo, IEnvironment $environment);
+class_exists(PriceInfoInterface::class);
 
+if(false) {
     /**
-     * @param IRule $rule
-     *
-     * @return PriceSystemPriceInfoInterface
+     * @deprecated use PriceInfoInterface instead.
      */
-    public function addRule(IRule $rule);
-
-    /**
-     * Returns all valid rules, if forceRecalc, recalculation of valid rules is forced
-     *
-     * @param bool $forceRecalc
-     *
-     * @return IRule[]
-     */
-    public function getRules(bool $forceRecalc = false): array;
-
-    /**
-     * @param Decimal $amount
-     *
-     * @return IPriceInfo
-     */
-    public function setAmount(Decimal $amount);
-
-    /**
-     * @return IPriceInfo
-     */
-    public function getAmount(): Decimal;
-
-    /**
-     * @return PriceInterface
-     */
-    public function getOriginalPrice(): PriceInterface;
-
-    /**
-     * @return PriceInterface
-     */
-    public function getOriginalTotalPrice(): PriceInterface;
-
-    /**
-     * @return IEnvironment
-     */
-    public function getEnvironment(): IEnvironment;
-
-    /**
-     * @param IEnvironment $environment
-     *
-     * @return IPriceInfo
-     */
-    public function setEnvironment(IEnvironment $environment);
-
-    /**
-     * @return bool
-     */
-    public function hasDiscount(): bool;
-
-    /**
-     * @return PriceInterface
-     */
-    public function getDiscount(): PriceInterface;
-
-    /**
-     * @return PriceInterface
-     */
-    public function getTotalDiscount(): PriceInterface;
-
-    /**
-     * Get discount in percent
-     *
-     * @return float
-     */
-    public function getDiscountPercent();
-
-    /**
-     * @return bool
-     */
-    public function hasRulesApplied(): bool;
+    interface IPriceInfo
+    {
+    }
 }
+

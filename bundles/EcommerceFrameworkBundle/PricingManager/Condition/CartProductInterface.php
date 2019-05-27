@@ -14,19 +14,10 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Condition;
 
-@trigger_error(
-    'Interface Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Condition\ICartAmount is deprecated since version 6.0.0 and will be removed in 7.0.0. ' .
-    ' Use ' . CartAmountInterface::class . ' class instead.',
-    E_USER_DEPRECATED
-);
+use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\ConditionInterface;
 
-class_exists(CartAmountInterface::class);
-
-if(false) {
-    /**
-     * @deprecated use CartAmountInterface instead.
-     */
-    interface ICartAmount
-    {
-    }
+interface CartProductInterface extends ConditionInterface
+{
 }
+
+class_alias(CartProductInterface::class, 'Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Condition\ICartProduct');
