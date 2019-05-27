@@ -19,7 +19,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartItemInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\ConditionInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\EnvironmentInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\PriceInfoInterface;
-use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IRule;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\RuleInterface;
 
 class Sold extends AbstractOrder implements ConditionInterface
 {
@@ -142,12 +142,12 @@ class Sold extends AbstractOrder implements ConditionInterface
      * Returns a count how often the rule is already used in the cart
      *
      * @param CartInterface $cart
-     * @param IRule $rule
+     * @param RuleInterface $rule
      * @param CartItemInterface|null $cartItem
      *
      * @return int
      */
-    protected function getCartRuleCount(ICart $cart, IRule $rule, CartItemInterface $cartItem = null)
+    protected function getCartRuleCount(ICart $cart, RuleInterface $rule, CartItemInterface $cartItem = null)
     {
         // init
         $counter = 0;

@@ -44,7 +44,7 @@ class Environment implements EnvironmentInterface
     protected $visitorInfo;
 
     /**
-     * @var IRule
+     * @var RuleInterface
      */
     protected $rule;
 
@@ -151,7 +151,7 @@ class Environment implements EnvironmentInterface
     }
 
     /**
-     * @param IRule $rule
+     * @param RuleInterface $rule
      *
      * @return EnvironmentInterface
      */
@@ -163,7 +163,7 @@ class Environment implements EnvironmentInterface
     }
 
     /**
-     * @return IRule
+     * @return RuleInterface
      */
     public function getRule()
     {

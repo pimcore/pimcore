@@ -30,18 +30,18 @@ interface PriceInfoInterface extends PriceSystemPriceInfoInterface
     public function __construct(PriceSystemPriceInfoInterface $priceInfo, EnvironmentInterface $environment);
 
     /**
-     * @param IRule $rule
+     * @param RuleInterface $rule
      *
      * @return PriceSystemPriceInfoInterface
      */
-    public function addRule(IRule $rule);
+    public function addRule(RuleInterface $rule);
 
     /**
      * Returns all valid rules, if forceRecalc, recalculation of valid rules is forced
      *
      * @param bool $forceRecalc
      *
-     * @return IRule[]
+     * @return RuleInterface[]
      */
     public function getRules(bool $forceRecalc = false): array;
 

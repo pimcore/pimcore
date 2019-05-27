@@ -33,12 +33,12 @@ class PriceInfo implements PriceInfoInterface
     protected $amount;
 
     /**
-     * @var IRule[]
+     * @var RuleInterface[]
      */
     protected $rules = [];
 
     /**
-     * @var IRule[]
+     * @var RuleInterface[]
      */
     protected $validRules = null;
 
@@ -70,7 +70,7 @@ class PriceInfo implements PriceInfoInterface
     /**
      * @inheritdoc
      */
-    public function addRule(IRule $rule)
+    public function addRule(RuleInterface $rule)
     {
         $this->rules[] = $rule;
     }
@@ -153,7 +153,7 @@ class PriceInfo implements PriceInfoInterface
             $env = $this->getEnvironment();
 
             foreach ($this->getRules() as $rule) {
-                /* @var IRule $rule */
+                /* @var RuleInterface $rule */
                 $env->setRule($rule);
 
                 // execute rule

@@ -126,7 +126,7 @@ class PricingManager implements PricingManagerInterface
 
         // add all valid rules to the price info
         foreach ($this->getValidRules() as $rule) {
-            /* @var IRule $rule */
+            /* @var RuleInterface $rule */
             $priceInfoWithRules->addRule($rule);
         }
 
@@ -201,7 +201,7 @@ class PricingManager implements PricingManagerInterface
     }
 
     /**
-     * @return IRule[]
+     * @return RuleInterface[]
      */
     public function getValidRules()
     {
@@ -238,7 +238,7 @@ class PricingManager implements PricingManagerInterface
     /**
      * @deprecated as it is never used. Will be removed in Pimcore 6.
      *
-     * @return IRule
+     * @return RuleInterface
      */
     public function getRule()
     {

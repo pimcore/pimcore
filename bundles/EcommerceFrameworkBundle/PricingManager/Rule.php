@@ -22,12 +22,12 @@ use Pimcore\Cache\Runtime;
 use Pimcore\Logger;
 use Pimcore\Model\AbstractModel;
 
-class Rule extends AbstractModel implements IRule
+class Rule extends AbstractModel implements RuleInterface
 {
     /**
      * @param int $id
      *
-     * @return IRule
+     * @return RuleInterface
      */
     public static function getById($id)
     {
@@ -138,7 +138,7 @@ class Rule extends AbstractModel implements IRule
     /**
      * @param $id
      *
-     * @return $this|IRule
+     * @return $this|RuleInterface
      */
     public function setId($id)
     {
@@ -159,7 +159,7 @@ class Rule extends AbstractModel implements IRule
      * @param string $label
      * @param string $locale
      *
-     * @return IRule
+     * @return RuleInterface
      */
     public function setLabel($label, $locale = null)
     {
@@ -190,7 +190,7 @@ class Rule extends AbstractModel implements IRule
      * @param $name
      * @param string $locale
      *
-     * @return IRule
+     * @return RuleInterface
      */
     public function setName($name, $locale = null)
     {
@@ -203,7 +203,7 @@ class Rule extends AbstractModel implements IRule
      * @param string $description
      * @param string $locale
      *
-     * @return IRule
+     * @return RuleInterface
      */
     public function setDescription($description, $locale = null)
     {
@@ -225,7 +225,7 @@ class Rule extends AbstractModel implements IRule
     /**
      * @param string $behavior
      *
-     * @return IRule
+     * @return RuleInterface
      */
     public function setBehavior($behavior)
     {
@@ -245,7 +245,7 @@ class Rule extends AbstractModel implements IRule
     /**
      * @param bool $active
      *
-     * @return IRule
+     * @return RuleInterface
      */
     public function setActive($active)
     {
@@ -265,7 +265,7 @@ class Rule extends AbstractModel implements IRule
     /**
      * @param ConditionInterface $condition
      *
-     * @return IRule
+     * @return RuleInterface
      */
     public function setCondition(ConditionInterface $condition)
     {
@@ -283,7 +283,7 @@ class Rule extends AbstractModel implements IRule
     /**
      * @param array $action
      *
-     * @return IRule
+     * @return RuleInterface
      */
     public function setActions(array $action)
     {
@@ -303,7 +303,7 @@ class Rule extends AbstractModel implements IRule
     /**
      * @param int $prio
      *
-     * @return IRule
+     * @return RuleInterface
      */
     public function setPrio($prio)
     {
@@ -321,7 +321,7 @@ class Rule extends AbstractModel implements IRule
     }
 
     /**
-     * @return IRule
+     * @return RuleInterface
      */
     public function save()
     {
@@ -374,7 +374,7 @@ class Rule extends AbstractModel implements IRule
     /**
      * @param EnvironmentInterface $environment
      *
-     * @return IRule
+     * @return RuleInterface
      */
     public function executeOnProduct(EnvironmentInterface $environment)
     {
@@ -389,7 +389,7 @@ class Rule extends AbstractModel implements IRule
     /**
      * @param EnvironmentInterface $environment
      *
-     * @return IRule
+     * @return RuleInterface
      */
     public function executeOnCart(EnvironmentInterface $environment)
     {

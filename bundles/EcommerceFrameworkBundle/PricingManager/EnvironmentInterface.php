@@ -75,14 +75,14 @@ interface EnvironmentInterface
     public function getVisitorInfo();
 
     /**
-     * @param IRule $rule
+     * @param RuleInterface $rule
      *
      * @return EnvironmentInterface
      */
     public function setRule($rule);
 
     /**
-     * @return IRule
+     * @return RuleInterface
      */
     public function getRule();
 

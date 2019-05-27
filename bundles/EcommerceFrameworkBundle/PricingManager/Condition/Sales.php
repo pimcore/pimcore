@@ -16,7 +16,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Condition;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\ConditionInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\EnvironmentInterface;
-use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IRule;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\RuleInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
 use Pimcore\Model\DataObject\OnlineShopOrder;
 use Pimcore\Model\DataObject\OnlineShopOrderItem;
@@ -94,7 +94,7 @@ class Sales extends AbstractOrder implements ConditionInterface
         $this->amount = (int)$amount;
     }
 
-    protected function getCurrentAmount(IRule $rule)
+    protected function getCurrentAmount(RuleInterface $rule)
     {
         if (!array_key_exists($rule->getId(), $this->currentSalesAmount)) {
             $query = <<<'SQL'

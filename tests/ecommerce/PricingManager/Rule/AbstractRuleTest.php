@@ -26,7 +26,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Condition\Bracket;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\ActionInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\ConditionInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\PricingManagerInterface;
-use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IRule;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\RuleInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\PricingManager;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\PricingManagerLocator;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Rule;
@@ -345,7 +345,7 @@ class AbstractRuleTest extends EcommerceTestCase
     /**
      * @param $ruleDefinitions
      *
-     * @return IRule[]
+     * @return RuleInterface[]
      */
     protected function buildRules($ruleDefinitions)
     {

@@ -37,7 +37,7 @@ interface PricingManagerInterface
     /**
      * @deprecated as it is never used. Will be removed in Pimcore 6.
      *
-     * @return IRule
+     * @return RuleInterface
      */
     public function getRule();
 
