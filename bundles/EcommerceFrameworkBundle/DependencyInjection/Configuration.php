@@ -304,7 +304,7 @@ class Configuration implements ConfigurationInterface
                                         [
                                             'class' => CartPriceCalculator::class
                                         ],
-                                        "'class' defines a class mame of the price calculator, which the factory instantiates. If you wish to replace or extend price calculation routine shipped with e-commerce framework provide your custom class name here."
+                                        "'class' defines a class name of the price calculator, which the factory instantiates. If you wish to replace or extend price calculation routine shipped with e-commerce framework provide your custom class name here."
                                     ))
                                     ->arrayNode('modificators')
                                         ->info('List price modificators for cart, e.g. for shipping-cost, special discounts, etc. Key is name of modificator.')
