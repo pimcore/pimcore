@@ -36,7 +36,7 @@ class CheckoutManagerFactory implements ICheckoutManagerFactory
     protected $orderManagers;
 
     /**
-     * @var ICommitOrderProcessorLocator
+     * @var CommitOrderProcessorLocatorInterface
      */
     protected $commitOrderProcessors;
 
@@ -65,7 +65,7 @@ class CheckoutManagerFactory implements ICheckoutManagerFactory
     public function __construct(
         IEnvironment $environment,
         IOrderManagerLocator $orderManagers,
-        ICommitOrderProcessorLocator $commitOrderProcessors,
+        CommitOrderProcessorLocatorInterface $commitOrderProcessors,
         array $checkoutStepDefinitions,
         IPayment $paymentProvider = null,
         array $options = []

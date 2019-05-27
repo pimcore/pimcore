@@ -55,7 +55,7 @@ class CheckoutManager implements ICheckoutManager
     protected $orderManagers;
 
     /**
-     * @var ICommitOrderProcessorLocator
+     * @var CommitOrderProcessorLocatorInterface
      */
     protected $commitOrderProcessors;
 
@@ -99,7 +99,7 @@ class CheckoutManager implements ICheckoutManager
      * @param CartInterface $cart
      * @param IEnvironment $environment
      * @param IOrderManagerLocator $orderManagers
-     * @param ICommitOrderProcessorLocator $commitOrderProcessors
+     * @param CommitOrderProcessorLocatorInterface $commitOrderProcessors
      * @param ICheckoutStep[] $checkoutSteps
      * @param IPayment|null $paymentProvider
      */
@@ -107,7 +107,7 @@ class CheckoutManager implements ICheckoutManager
         CartInterface $cart,
         IEnvironment $environment,
         IOrderManagerLocator $orderManagers,
-        ICommitOrderProcessorLocator $commitOrderProcessors,
+        CommitOrderProcessorLocatorInterface $commitOrderProcessors,
         array $checkoutSteps,
         IPayment $paymentProvider = null
     ) {

@@ -21,8 +21,8 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartManagerInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartManagerLocatorInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\ICheckoutManager;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\ICheckoutManagerFactoryLocator;
-use Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\ICommitOrderProcessor;
-use Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\ICommitOrderProcessorLocator;
+use Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\CommitOrderProcessorInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\CommitOrderProcessorLocatorInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\DependencyInjection\PimcoreEcommerceFrameworkExtension;
 use Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterService;
 use Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\IFilterServiceLocator;
@@ -98,7 +98,7 @@ class Factory
     /**
      * Commit order processors registered by tenant
      *
-     * @var ICommitOrderProcessorLocator
+     * @var CommitOrderProcessorLocatorInterface
      */
     private $commitOrderProcessors;
 
@@ -121,7 +121,7 @@ class Factory
      * @param IPriceSystemLocator $priceSystems
      * @param AvailabilitySystemLocatorInterface $availabilitySystems
      * @param ICheckoutManagerFactoryLocator $checkoutManagerFactories
-     * @param ICommitOrderProcessorLocator $commitOrderProcessors
+     * @param CommitOrderProcessorLocatorInterface $commitOrderProcessors
      * @param IFilterServiceLocator $filterServices
      */
     public function __construct(
@@ -132,7 +132,7 @@ class Factory
         IPriceSystemLocator $priceSystems,
         AvailabilitySystemLocatorInterface $availabilitySystems,
         ICheckoutManagerFactoryLocator $checkoutManagerFactories,
-        ICommitOrderProcessorLocator $commitOrderProcessors,
+        CommitOrderProcessorLocatorInterface $commitOrderProcessors,
         IFilterServiceLocator $filterServices
     ) {
         $this->container = $container;
@@ -240,9 +240,9 @@ class Factory
      *
      * @param string|null $tenant
      *
-     * @return ICommitOrderProcessor
+     * @return CommitOrderProcessorInterface
      */
-    public function getCommitOrderProcessor(string $tenant = null): ICommitOrderProcessor
+    public function getCommitOrderProcessor(string $tenant = null): CommitOrderProcessorInterface
     {
         return $this->commitOrderProcessors->getCommitOrderProcessor($tenant);
     }

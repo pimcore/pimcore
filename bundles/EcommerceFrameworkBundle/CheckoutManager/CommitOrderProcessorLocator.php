@@ -20,9 +20,9 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager;
 use Pimcore\Bundle\EcommerceFrameworkBundle\DependencyInjection\ServiceLocator\CheckoutTenantAwareServiceLocator;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\UnsupportedException;
 
-class CommitOrderProcessorLocator extends CheckoutTenantAwareServiceLocator implements ICommitOrderProcessorLocator
+class CommitOrderProcessorLocator extends CheckoutTenantAwareServiceLocator implements CommitOrderProcessorLocatorInterface
 {
-    public function getCommitOrderProcessor(string $tenant = null): ICommitOrderProcessor
+    public function getCommitOrderProcessor(string $tenant = null): CommitOrderProcessorInterface
     {
         return $this->locate($tenant);
     }
