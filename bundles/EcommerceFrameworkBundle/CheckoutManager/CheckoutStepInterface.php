@@ -47,4 +47,4 @@ interface CheckoutStepInterface
     public function commit($data);
 }
 
-class_alias(CheckoutStepInterface::class, ' Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\ICheckoutStep');
+class_alias(CheckoutStepInterface::class, 'Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\ICheckoutStep');

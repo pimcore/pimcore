@@ -24,4 +24,4 @@ interface CommitOrderProcessorLocatorInterface
     public function hasCommitOrderProcessor(string $tenant): bool;
 }
 
-class_alias(CommitOrderProcessorLocatorInterface::class, ' Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\ICommitOrderProcessorLocator');
+class_alias(CommitOrderProcessorLocatorInterface::class, 'Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\ICommitOrderProcessorLocator');
