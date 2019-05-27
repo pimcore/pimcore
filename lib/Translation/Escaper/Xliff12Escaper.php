@@ -95,7 +95,6 @@ class Xliff12Escaper
         $content = preg_replace("/&lt;\/?(target|mrk)((?!&gt;).)*&gt;/i", '', $content);
 
         if (preg_match("/<\/?(bpt|ept)/", $content)) {
-            include_once(PIMCORE_PATH . '/lib/simple_html_dom.php');
             $xml = str_get_html($content);
             if ($xml) {
                 $els = $xml->find('bpt,ept,ph');

@@ -971,7 +971,6 @@ class TranslationController extends AdminController
                     );
                     $html = preg_replace('/<!--(.*)-->/Uis', '', $html);
 
-                    include_once(PIMCORE_PATH . '/lib/simple_html_dom.php');
                     $dom = str_get_html($html);
                     if ($dom) {
 

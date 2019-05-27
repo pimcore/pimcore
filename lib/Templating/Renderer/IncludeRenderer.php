@@ -173,8 +173,6 @@ class IncludeRenderer
      */
     protected function modifyEditmodeContent(PageSnippet $include, $content)
     {
-        include_once(PIMCORE_PATH . '/lib/simple_html_dom.php');
-
         $editmodeClass = ' pimcore_editable pimcore_tag_inc ';
 
         // this is if the content that is included does already contain markup/html
