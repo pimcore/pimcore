@@ -103,6 +103,9 @@
     "elasticsearch/elasticsearch": "2.0.0"
   },
   "autoload": {
+    "files": [
+      "lib/helper-functions.php"
+    ],
     "psr-4": {
       "Pimcore\\Model\\": "models",
       "Pimcore\\": "lib",

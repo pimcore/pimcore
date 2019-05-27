@@ -51,7 +51,6 @@ if (!defined('PIMCORE_PROJECT_ROOT')) {
 }
 
 \Pimcore\Bootstrap::defineConstants();
-\Pimcore\Bootstrap::includes();
 
 Debug::enable();
 
