@@ -119,14 +119,14 @@ class Service extends Model\Element\Service
         }
 
         foreach ($document->getChildren() as $child) {
-            if (!$child->hasChilds()) {
+            if (!$child->hasChildren()) {
                 $child->save();
                 $saved++;
                 if ($saved % $collectGarbageAfterIteration === 0) {
                     \Pimcore::collectGarbage();
                 }
             }
-            if ($child->hasChilds()) {
+            if ($child->hasChildren()) {
                 self::saveRecursive($child, $collectGarbageAfterIteration, $saved);
             }
         }
@@ -178,7 +178,7 @@ class Service extends Model\Element\Service
             $this->copyRecursive($new, $child);
         }
 
-        $this->updateChilds($target, $new);
+        $this->updateChildren($target, $new);
 
         // triggers actions after the complete document cloning
         \Pimcore::getEventDispatcher()->dispatch(DocumentEvents::POST_COPY, new DocumentEvent($new, [
@@ -189,8 +189,8 @@ class Service extends Model\Element\Service
     }
 
     /**
-     * @param $target
-     * @param $source
+     * @param Document $target
+     * @param Document $source
      * @param bool $enableInheritance
      * @param bool $resetIndex
      *
@@ -206,9 +206,12 @@ class Service extends Model\Element\Service
 
         $source->getProperties();
 
+        /**
+         * @var Document $new
+         */
         $new = Element\Service::cloneMe($source);
         $new->setId(null);
-        $new->setChilds(null);
+        $new->setChildren(null);
         $new->setKey(Element\Service::getSaveCopyName('document', $new->getKey(), $target));
         $new->setParentId($target->getId());
         $new->setUserOwner($this->_user->getId());
@@ -237,7 +240,7 @@ class Service extends Model\Element\Service
 
         $new->save();
 
-        $this->updateChilds($target, $new);
+        $this->updateChildren($target, $new);
 
         //link translated document
         if ($language) {

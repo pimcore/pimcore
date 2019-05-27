@@ -225,16 +225,6 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
     }
 
     /**
-     * Inverted hasChilds()
-     *
-     * @return bool
-     */
-    public function hasNoChilds()
-    {
-        return !$this->hasChilds();
-    }
-
-    /**
      * @return string
      */
     public function __toString()

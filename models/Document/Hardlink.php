@@ -27,7 +27,6 @@ use Pimcore\Model\Redirect;
  */
 class Hardlink extends Document
 {
-    use Element\ChildsCompatibilityTrait;
     use Document\Traits\ScheduledTasksTrait;
 
     /**
@@ -203,12 +202,12 @@ class Hardlink extends Document
     /**
      * @param bool $unpublished
      *
-     * @return array|null
+     * @return Document[]
      */
     public function getChildren($unpublished = false)
     {
-        if ($this->childs === null) {
-            $childs = parent::getChildren($unpublished);
+        if ($this->children === null) {
+            $children = parent::getChildren($unpublished);
 
             $sourceChildren = [];
             if ($this->getChildrenFromSource() && $this->getSourceDocument() && !\Pimcore::inAdmin()) {
@@ -220,11 +219,11 @@ class Hardlink extends Document
                 }
             }
 
-            $childs = array_merge($sourceChildren, $childs);
-            $this->setChildren($childs);
+            $children = array_merge($sourceChildren, $children);
+            $this->setChildren($children);
         }
 
-        return $this->childs;
+        return $this->children;
     }
 
     /**
@@ -242,7 +241,7 @@ class Hardlink extends Document
     {
 
         // hardlinks cannot have direct children in "real" world, so we have to empty them before we delete it
-        $this->childs = [];
+        $this->children = [];
 
         // check for redirects pointing to this document, and delete them too
         $redirects = new Redirect\Listing();
@@ -256,8 +255,8 @@ class Hardlink extends Document
         parent::delete($isNested);
 
         // we re-enable the children functionality by setting them to NULL, if requested they'll be loaded again
-        // -> see $this->getChilds() , doesn't make sense when deleting an item but who knows, ... ;-)
-        $this->childs = null;
+        // -> see $this->getChildren() , doesn't make sense when deleting an item but who knows, ... ;-)
+        $this->children = null;
     }
 
     /**

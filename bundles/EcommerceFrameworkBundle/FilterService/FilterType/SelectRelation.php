@@ -65,7 +65,7 @@ class SelectRelation extends AbstractFilterType
     {
         foreach ($availableRelations as $rel) {
             if ($rel instanceof Folder) {
-                $availableRelationsArray = $this->loadAllAvailableRelations($rel->getChilds(), $availableRelationsArray);
+                $availableRelationsArray = $this->loadAllAvailableRelations($rel->getChildren(), $availableRelationsArray);
             } else {
                 $availableRelationsArray[$rel->getId()] = true;
             }

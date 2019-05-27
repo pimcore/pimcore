@@ -31,8 +31,6 @@ use Pimcore\Model\Element;
  */
 class AbstractObject extends Model\Element\AbstractElement
 {
-    use Element\ChildsCompatibilityTrait;
-
     const OBJECT_TYPE_FOLDER = 'folder';
     const OBJECT_TYPE_OBJECT = 'object';
     const OBJECT_TYPE_VARIANT = 'variant';
@@ -130,7 +128,7 @@ class AbstractObject extends Model\Element\AbstractElement
     /**
      * @var bool
      */
-    protected $o_hasChilds;
+    protected $o_hasChildren;
 
     /**
      * Contains a list of sibling documents
@@ -154,7 +152,7 @@ class AbstractObject extends Model\Element\AbstractElement
     /**
      * @var array
      */
-    protected $o_childs;
+    protected $o_children;
 
     /**
      * @var string
@@ -174,7 +172,7 @@ class AbstractObject extends Model\Element\AbstractElement
     /**
      * @var array
      */
-    private $lastGetChildsObjectTypes = [];
+    private $lastGetChildrenObjectTypes = [];
 
     /**
      * @var array
@@ -429,12 +427,12 @@ class AbstractObject extends Model\Element\AbstractElement
      * @param array $objectTypes
      * @param bool $unpublished
      *
-     * @return array
+     * @return self[]
      */
     public function getChildren($objectTypes = [self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_FOLDER], $unpublished = false)
     {
-        if ($this->o_childs === null || $this->lastGetChildsObjectTypes != $objectTypes) {
-            $this->lastGetChildsObjectTypes = $objectTypes;
+        if ($this->o_children === null || $this->lastGetChildrenObjectTypes != $objectTypes) {
+            $this->lastGetChildrenObjectTypes = $objectTypes;
 
             $list = new Listing();
             $list->setUnpublished($unpublished);
@@ -442,10 +440,10 @@ class AbstractObject extends Model\Element\AbstractElement
             $list->setOrderKey(sprintf('o_%s', $this->getChildrenSortBy()));
             $list->setOrder('asc');
             $list->setObjectTypes($objectTypes);
-            $this->o_childs = $list->load();
+            $this->o_children = $list->load();
         }
 
-        return $this->o_childs;
+        return $this->o_children;
     }
 
     /**
@@ -458,11 +456,11 @@ class AbstractObject extends Model\Element\AbstractElement
      */
     public function hasChildren($objectTypes = [self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_FOLDER], $unpublished = false)
     {
-        if (is_bool($this->o_hasChilds)) {
-            if (($this->o_hasChilds and empty($this->o_childs)) or (!$this->o_hasChilds and !empty($this->o_childs))) {
+        if (is_bool($this->o_hasChildren)) {
+            if (($this->o_hasChildren and empty($this->o_children)) or (!$this->o_hasChildren and !empty($this->o_children))) {
                 return $this->getDao()->hasChildren($objectTypes, $unpublished);
             } else {
-                return $this->o_hasChilds;
+                return $this->o_hasChildren;
             }
         }
 
@@ -656,7 +654,7 @@ class AbstractObject extends Model\Element\AbstractElement
                     if ($oldPath && $oldPath != $this->getRealFullPath()) {
                         $differentOldPath = $oldPath;
                         $this->getDao()->updateWorkspaces();
-                        $updatedChildren = $this->getDao()->updateChildsPaths($oldPath);
+                        $updatedChildren = $this->getDao()->updateChildPaths($oldPath);
                     }
 
                     $this->update($isUpdate, $params);
@@ -1115,11 +1113,11 @@ class AbstractObject extends Model\Element\AbstractElement
      */
     public function setChildren($children)
     {
-        $this->o_childs = $children;
+        $this->o_children = $children;
         if (is_array($children) and count($children) > 0) {
-            $this->o_hasChilds = true;
+            $this->o_hasChildren = true;
         } else {
-            $this->o_hasChilds = false;
+            $this->o_hasChildren = false;
         }
 
         return $this;
@@ -1237,16 +1235,16 @@ class AbstractObject extends Model\Element\AbstractElement
         $finalVars = [];
         $parentVars = parent::__sleep();
 
-        $blockedVars = ['o_userPermissions', 'o_dependencies', 'o_hasChilds', 'o_versions', 'o_class', 'scheduledTasks', 'o_parent', 'omitMandatoryCheck'];
+        $blockedVars = ['o_userPermissions', 'o_dependencies', 'o_hasChildren', 'o_versions', 'o_class', 'scheduledTasks', 'o_parent', 'omitMandatoryCheck'];
 
         if (isset($this->_fulldump)) {
-            // this is if we want to make a full dump of the object (eg. for a new version), including childs for recyclebin
+            // this is if we want to make a full dump of the object (eg. for a new version), including children for recyclebin
             $blockedVars = array_merge($blockedVars, ['o_dirtyFields']);
             $finalVars[] = '_fulldump';
             $this->removeInheritedProperties();
         } else {
             // this is if we want to cache the object
-            $blockedVars = array_merge($blockedVars, ['o_childs', 'o_properties']);
+            $blockedVars = array_merge($blockedVars, ['o_children', 'o_properties']);
         }
 
         foreach ($parentVars as $key) {

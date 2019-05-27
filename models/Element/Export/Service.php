@@ -63,7 +63,7 @@ class Service
     }
 
     /**
-     * @param $element
+     * @param DataObject\AbstractObject|Document|Asset $element
      * @param $apiElementKeys
      * @param $recursive
      * @param $includeRelations
@@ -87,11 +87,17 @@ class Service
             }
         }
 
-        $childs = $element->getChilds();
-        if ($recursive and $childs) {
-            foreach ($childs as $child) {
-                if (!in_array(Element\Service::getType($child) . '_' . $child->getId(), $apiElementKeys)) {
-                    $foundRelations[Element\Service::getType($child) . '_' . $child->getId()] = ['elementType' => Element\Service::getType($child), 'element' => $child->getId(), 'recursive' => $recursive];
+        if(method_exists($element, 'getChildren')) {
+            $children = $element->getChildren();
+            if ($recursive && $children) {
+                foreach ($children as $child) {
+                    if (!in_array(Element\Service::getType($child) . '_' . $child->getId(), $apiElementKeys)) {
+                        $foundRelations[Element\Service::getType($child) . '_' . $child->getId()] = [
+                            'elementType' => Element\Service::getType($child),
+                            'element' => $child->getId(),
+                            'recursive' => $recursive
+                        ];
+                    }
                 }
             }
         }

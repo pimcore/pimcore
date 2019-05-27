@@ -526,7 +526,7 @@ class Asset extends Element\AbstractElement
                             }
                             $differentOldPath = $oldPath;
                             $this->getDao()->updateWorkspaces();
-                            $updatedChildren = $this->getDao()->updateChildsPaths($oldPath);
+                            $updatedChildren = $this->getDao()->updateChildPaths($oldPath);
                         }
                     }
 
@@ -1006,7 +1006,7 @@ class Asset extends Element\AbstractElement
         try {
             $this->closeStream();
 
-            // remove childs
+            // remove children
             if ($this->hasChildren()) {
                 foreach ($this->getChildren() as $child) {
                     $child->delete(true);
@@ -1832,15 +1832,15 @@ class Asset extends Element\AbstractElement
     {
         $finalVars = [];
         $parentVars = parent::__sleep();
-        $blockedVars = ['_temporaryFiles', 'scheduledTasks', 'dependencies', 'userPermissions', 'hasChilds', 'versions', 'parent', 'stream'];
+        $blockedVars = ['_temporaryFiles', 'scheduledTasks', 'dependencies', 'userPermissions', 'hasChildren', 'versions', 'parent', 'stream'];
 
         if (isset($this->_fulldump)) {
-            // this is if we want to make a full dump of the asset (eg. for a new version), including childs for recyclebin
+            // this is if we want to make a full dump of the asset (eg. for a new version), including children for recyclebin
             $finalVars[] = '_fulldump';
             $this->removeInheritedProperties();
         } else {
             // this is if we want to cache the asset
-            $blockedVars = array_merge($blockedVars, ['childs', 'properties']);
+            $blockedVars = array_merge($blockedVars, ['children', 'properties']);
         }
 
         foreach ($parentVars as $key) {

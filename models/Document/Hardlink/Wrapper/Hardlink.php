@@ -25,5 +25,5 @@ use Pimcore\Model\Element;
  */
 class Hardlink extends Model\Document\Hardlink implements Model\Document\Hardlink\Wrapper\WrapperInterface
 {
-    use Model\Document\Hardlink\Wrapper, Element\ChildsCompatibilityTrait;
+    use Model\Document\Hardlink\Wrapper;
 }

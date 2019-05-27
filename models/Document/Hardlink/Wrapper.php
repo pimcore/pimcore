@@ -123,7 +123,7 @@ trait Wrapper
     /**
      * @param bool $unpublished
      *
-     * @return array
+     * @return Document[]
      */
     public function getChildren($unpublished = false)
     {

@@ -25,8 +25,6 @@ use Pimcore\Model\Asset;
  */
 class Folder extends Model\Asset
 {
-    use Model\Element\ChildsCompatibilityTrait;
-
     /**
      * @var string
      */
@@ -37,14 +35,14 @@ class Folder extends Model\Asset
      *
      * @var array
      */
-    protected $childs;
+    protected $children;
 
     /**
-     * Indicator if there are childs
+     * Indicator if there are children
      *
      * @var bool
      */
-    protected $hasChilds;
+    protected $hasChildren;
 
     /**
      * set the children of the document
@@ -55,31 +53,31 @@ class Folder extends Model\Asset
      */
     public function setChildren($children)
     {
-        $this->childs = $children;
+        $this->children = $children;
         if (is_array($children) and count($children) > 0) {
-            $this->hasChilds = true;
+            $this->hasChildren = true;
         } else {
-            $this->hasChilds = false;
+            $this->hasChildren = false;
         }
 
         return $this;
     }
 
     /**
-     * @return array
+     * @return Asset[]|self[]
      */
     public function getChildren()
     {
-        if ($this->childs === null) {
+        if ($this->children === null) {
             $list = new Asset\Listing();
             $list->setCondition('parentId = ?', $this->getId());
             $list->setOrderKey('filename');
             $list->setOrder('asc');
 
-            $this->childs = $list->load();
+            $this->children = $list->load();
         }
 
-        return $this->childs;
+        return $this->children;
     }
 
     /**
@@ -87,11 +85,11 @@ class Folder extends Model\Asset
      */
     public function hasChildren()
     {
-        if (is_bool($this->hasChilds)) {
-            if (($this->hasChilds and empty($this->childs)) or (!$this->hasChilds and !empty($this->childs))) {
+        if (is_bool($this->hasChildren)) {
+            if (($this->hasChildren and empty($this->children)) or (!$this->hasChildren and !empty($this->children))) {
                 return $this->getDao()->hasChildren();
             } else {
-                return $this->hasChilds;
+                return $this->hasChildren;
             }
         }
 

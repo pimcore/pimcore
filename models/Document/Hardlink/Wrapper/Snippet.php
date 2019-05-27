@@ -25,5 +25,5 @@ use Pimcore\Model\Element;
  */
 class Snippet extends Model\Document\Snippet implements Model\Document\Hardlink\Wrapper\WrapperInterface
 {
-    use Model\Document\Hardlink\Wrapper, Element\ChildsCompatibilityTrait;
+    use Model\Document\Hardlink\Wrapper;
 }
