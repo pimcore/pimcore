@@ -22,8 +22,8 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\UnsupportedException;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IEnvironment;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\Currency;
-use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IModificatedPrice;
-use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPrice;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\ModificatedPriceInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\PriceInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\Price;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\TaxManagement\TaxEntry;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IPricingManager;
@@ -48,12 +48,12 @@ class CartPriceCalculator implements CartPriceCalculatorInterface
     protected $isCalculated = false;
 
     /**
-     * @var IPrice
+     * @var PriceInterface
      */
     protected $subTotal;
 
     /**
-     * @var IPrice
+     * @var PriceInterface
      */
     protected $grandTotal;
 
@@ -71,7 +71,7 @@ class CartPriceCalculator implements CartPriceCalculatorInterface
     protected $modificators = [];
 
     /**
-     * @var IModificatedPrice[]
+     * @var ModificatedPriceInterface[]
      */
     protected $modifications = [];
 
@@ -287,17 +287,17 @@ class CartPriceCalculator implements CartPriceCalculatorInterface
      * @param Decimal $amount
      * @param Currency $currency
      *
-     * @return IPrice
+     * @return PriceInterface
      */
-    protected function getDefaultPriceObject(Decimal $amount, Currency $currency): IPrice
+    protected function getDefaultPriceObject(Decimal $amount, Currency $currency): PriceInterface
     {
         return new Price($amount, $currency);
     }
 
     /**
-     * @return IPrice $price
+     * @return PriceInterface $price
      */
-    public function getGrandTotal(): IPrice
+    public function getGrandTotal(): PriceInterface
     {
         if (!$this->isCalculated) {
             $this->calculate();
@@ -307,7 +307,7 @@ class CartPriceCalculator implements CartPriceCalculatorInterface
     }
 
     /**
-     * @return IModificatedPrice[] $priceModification
+     * @return ModificatedPriceInterface[] $priceModification
      */
     public function getPriceModifications(): array
     {
@@ -319,9 +319,9 @@ class CartPriceCalculator implements CartPriceCalculatorInterface
     }
 
     /**
-     * @return IPrice $price
+     * @return PriceInterface $price
      */
-    public function getSubTotal(): IPrice
+    public function getSubTotal(): PriceInterface
     {
         if (!$this->isCalculated) {
             $this->calculate();

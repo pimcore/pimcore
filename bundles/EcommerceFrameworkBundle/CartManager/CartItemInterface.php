@@ -17,8 +17,8 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\CartManager;
 use Pimcore\Bundle\EcommerceFrameworkBundle\AvailabilitySystem\AvailabilityInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractSetProductEntry;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\CheckoutableInterface;
-use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPrice;
-use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPriceInfo;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\PriceInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\PriceInfoInterface;
 
 /**
  * Interface for cart item implementations of online shop framework
@@ -79,19 +79,19 @@ interface CartItemInterface
     public function setSubItems($subItems);
 
     /**
-     * @return IPrice
+     * @return PriceInterface
      */
-    public function getPrice(): IPrice;
+    public function getPrice(): PriceInterface;
 
     /**
-     * @return IPrice
+     * @return PriceInterface
      */
-    public function getTotalPrice(): IPrice;
+    public function getTotalPrice(): PriceInterface;
 
     /**
-     * @return IPriceInfo
+     * @return PriceInfoInterface
      */
-    public function getPriceInfo(): IPriceInfo;
+    public function getPriceInfo(): PriceInfoInterface;
 
     /**
      * @param string $comment

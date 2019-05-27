@@ -18,8 +18,8 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\AvailabilitySystem\AvailabilityInter
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractSetProduct;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractSetProductEntry;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\CheckoutableInterface;
-use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPrice;
-use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPriceInfo;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\PriceInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\PriceInfoInterface;
 use Pimcore\Model\DataObject\AbstractObject;
 
 abstract class AbstractCartItem extends \Pimcore\Model\AbstractModel implements CartItemInterface
@@ -202,17 +202,17 @@ abstract class AbstractCartItem extends \Pimcore\Model\AbstractModel implements 
     }
 
     /**
-     * @return IPrice
+     * @return PriceInterface
      */
-    public function getPrice(): IPrice
+    public function getPrice(): PriceInterface
     {
         return $this->getPriceInfo()->getPrice();
     }
 
     /**
-     * @return IPriceInfo
+     * @return PriceInfoInterface
      */
-    public function getPriceInfo(): IPriceInfo
+    public function getPriceInfo(): PriceInfoInterface
     {
         if ($this->getProduct() instanceof AbstractSetProduct) {
             $priceInfo = $this->getProduct()->getOSPriceInfo($this->getCount(), $this->getSetEntries());
@@ -220,7 +220,7 @@ abstract class AbstractCartItem extends \Pimcore\Model\AbstractModel implements 
             $priceInfo = $this->getProduct()->getOSPriceInfo($this->getCount());
         }
 
-        if ($priceInfo instanceof \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IPriceInfo) {
+        if ($priceInfo instanceof PriceInfoInterface) {
             $priceInfo->getEnvironment()->setCart($this->getCart());
             $priceInfo->getEnvironment()->setCartItem($this);
         }
@@ -272,9 +272,9 @@ abstract class AbstractCartItem extends \Pimcore\Model\AbstractModel implements 
     }
 
     /**
-     * @return IPrice
+     * @return PriceInterface
      */
-    public function getTotalPrice(): IPrice
+    public function getTotalPrice(): PriceInterface
     {
         return $this->getPriceInfo()->getTotalPrice();
     }

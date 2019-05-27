@@ -16,7 +16,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartPriceModificat
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
-use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPrice;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\PriceInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\ModificatedPrice;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\TaxManagement\TaxEntry;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IRule;
@@ -60,12 +60,12 @@ class Discount implements IDiscount
     /**
      * modify price
      *
-     * @param IPrice $currentSubTotal
+     * @param PriceInterface $currentSubTotal
      * @param CartInterface  $cart
      *
-     * @return IPrice
+     * @return PriceInterface
      */
-    public function modify(IPrice $currentSubTotal, CartInterface $cart)
+    public function modify(PriceInterface $currentSubTotal, CartInterface $cart)
     {
         if ($this->getAmount() != 0) {
             $amount = $this->getAmount();

@@ -17,7 +17,8 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\Model;
 use Pimcore\Bundle\EcommerceFrameworkBundle\AvailabilitySystem\AvailabilityInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\AvailabilitySystem\AvailabilitySystemInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\AbstractPriceInfo;
-use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPriceInfo;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\PriceInfoInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\PriceInterface;
 
 /**
  * Interface CheckoutableInterface
@@ -52,7 +53,7 @@ interface CheckoutableInterface extends ProductInterface
     /**
      * returns instance of price system implementation based on result of getPriceSystemName()
      *
-     * @return \Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPriceSystem
+     * @return \Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\PriceSystemInterface
      */
     public function getPriceSystemImplementation();
 
@@ -68,7 +69,7 @@ interface CheckoutableInterface extends ProductInterface
      *
      * @param int $quantityScale
      *
-     * @return \Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPrice
+     * @return PriceInterface
      */
     public function getOSPrice($quantityScale = 1);
 
@@ -78,7 +79,7 @@ interface CheckoutableInterface extends ProductInterface
      *
      * @param int $quantityScale
      *
-     * @return IPriceInfo|AbstractPriceInfo
+     * @return PriceInfoInterface|AbstractPriceInfo
      */
     public function getOSPriceInfo($quantityScale = 1);
 

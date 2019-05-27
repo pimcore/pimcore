@@ -19,7 +19,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Model\Currency;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\CheckoutableInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\AttributePriceInfo;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\AttributePriceSystem;
-use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPrice;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\PriceInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\Price;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\TaxManagement\TaxEntry;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Condition\Bracket;
@@ -72,7 +72,7 @@ class AbstractRuleTest extends EcommerceTestCase
     /**
      * @param $value
      *
-     * @return IPrice
+     * @return PriceInterface
      *
      * @throws \TypeError
      */

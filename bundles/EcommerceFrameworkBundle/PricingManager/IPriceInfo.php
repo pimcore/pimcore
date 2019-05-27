@@ -17,22 +17,22 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPrice;
-use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPriceInfo as PriceSystemIPriceInfo;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\PriceInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\PriceInfoInterface as PriceSystemPriceInfoInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
 
-interface IPriceInfo extends PriceSystemIPriceInfo
+interface IPriceInfo extends PriceSystemPriceInfoInterface
 {
     /**
-     * @param PriceSystemIPriceInfo $priceInfo
+     * @param PriceSystemPriceInfoInterface $priceInfo
      * @param IEnvironment $environment
      */
-    public function __construct(PriceSystemIPriceInfo $priceInfo, IEnvironment $environment);
+    public function __construct(PriceSystemPriceInfoInterface $priceInfo, IEnvironment $environment);
 
     /**
      * @param IRule $rule
      *
-     * @return PriceSystemIPriceInfo
+     * @return PriceSystemPriceInfoInterface
      */
     public function addRule(IRule $rule);
 
@@ -58,14 +58,14 @@ interface IPriceInfo extends PriceSystemIPriceInfo
     public function getAmount(): Decimal;
 
     /**
-     * @return IPrice
+     * @return PriceInterface
      */
-    public function getOriginalPrice(): IPrice;
+    public function getOriginalPrice(): PriceInterface;
 
     /**
-     * @return IPrice
+     * @return PriceInterface
      */
-    public function getOriginalTotalPrice(): IPrice;
+    public function getOriginalTotalPrice(): PriceInterface;
 
     /**
      * @return IEnvironment
@@ -85,14 +85,14 @@ interface IPriceInfo extends PriceSystemIPriceInfo
     public function hasDiscount(): bool;
 
     /**
-     * @return IPrice
+     * @return PriceInterface
      */
-    public function getDiscount(): IPrice;
+    public function getDiscount(): PriceInterface;
 
     /**
-     * @return IPrice
+     * @return PriceInterface
      */
-    public function getTotalDiscount(): IPrice;
+    public function getTotalDiscount(): PriceInterface;
 
     /**
      * Get discount in percent

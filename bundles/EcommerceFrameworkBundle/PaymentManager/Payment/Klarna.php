@@ -17,7 +17,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\StatusInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Status;
-use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPrice;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\PriceInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class Klarna extends AbstractPayment
@@ -100,7 +100,7 @@ class Klarna extends AbstractPayment
     /**
      * Start payment
      *
-     * @param IPrice $price
+     * @param PriceInterface $price
      * @param array $config
      * @param CartInterface  $cart
      *
@@ -108,7 +108,7 @@ class Klarna extends AbstractPayment
      *
      * @throws \Exception
      */
-    public function initPayment(IPrice $price, array $config, CartInterface $cart = null)
+    public function initPayment(PriceInterface $price, array $config, CartInterface $cart = null)
     {
         // check params
         $required = [
@@ -206,7 +206,7 @@ class Klarna extends AbstractPayment
     /**
      * @inheritdoc
      */
-    public function executeDebit(IPrice $price = null, $reference = null)
+    public function executeDebit(PriceInterface $price = null, $reference = null)
     {
         if ($price) {
             // TODO or not ?
@@ -241,7 +241,7 @@ class Klarna extends AbstractPayment
     /**
      * Executes credit
      *
-     * @param IPrice $price
+     * @param PriceInterface $price
      * @param string $reference
      * @param $transactionId
      *
@@ -251,7 +251,7 @@ class Klarna extends AbstractPayment
      *
      * @see http://developers.klarna.com/en/at+php/kco-v2/order-management-api#introduction
      */
-    public function executeCredit(IPrice $price, $reference, $transactionId)
+    public function executeCredit(PriceInterface $price, $reference, $transactionId)
     {
         // TODO: Implement executeCredit() method.
         throw new \Exception('not implemented');

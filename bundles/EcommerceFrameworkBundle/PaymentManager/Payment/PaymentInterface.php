@@ -16,7 +16,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\StatusInterface;
-use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPrice;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\PriceInterface;
 use Pimcore\Model\DataObject\Listing\Concrete;
 
 /**
@@ -32,13 +32,13 @@ interface PaymentInterface
     /**
      * Start payment
      *
-     * @param IPrice $price
+     * @param PriceInterface $price
      * @param array $config
      *
      * @return mixed - either an url for a link the user has to follow to (e.g. paypal) or
      *                 an symfony form builder which needs to submitted (e.g. datatrans and wirecard)
      */
-    public function initPayment(IPrice $price, array $config);
+    public function initPayment(PriceInterface $price, array $config);
 
     /**
      * Handles response of payment provider and creates payment status object
@@ -66,23 +66,23 @@ interface PaymentInterface
     /**
      * Executes payment
      *
-     * @param IPrice $price
+     * @param PriceInterface $price
      * @param string $reference
      *
      * @return StatusInterface
      */
-    public function executeDebit(IPrice $price = null, $reference = null);
+    public function executeDebit(PriceInterface $price = null, $reference = null);
 
     /**
      * Executes credit
      *
-     * @param IPrice $price
+     * @param PriceInterface $price
      * @param string $reference
      * @param $transactionId
      *
      * @return StatusInterface
      */
-    public function executeCredit(IPrice $price, $reference, $transactionId);
+    public function executeCredit(PriceInterface $price, $reference, $transactionId);
 
     /**
      * Payment supports recurring payment

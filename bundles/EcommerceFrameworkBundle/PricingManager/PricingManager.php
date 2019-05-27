@@ -17,7 +17,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartPriceModificator\Discount;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\InvalidConfigException;
-use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPriceInfo as PriceSystemIPriceInfo;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\PriceInfoInterface as PriceSystemPriceInfoInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tools\SessionConfigurator;
 use Pimcore\Targeting\VisitorInfoStorageInterface;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
@@ -111,11 +111,11 @@ class PricingManager implements IPricingManager
     }
 
     /**
-     * @param PriceSystemIPriceInfo $priceInfo
+     * @param PriceSystemPriceInfoInterface $priceInfo
      *
-     * @return PriceSystemIPriceInfo
+     * @return PriceSystemPriceInfoInterface
      */
-    public function applyProductRules(PriceSystemIPriceInfo $priceInfo)
+    public function applyProductRules(PriceSystemPriceInfoInterface $priceInfo)
     {
         if (!$this->enabled) {
             return $priceInfo;
@@ -314,13 +314,13 @@ class PricingManager implements IPricingManager
     }
 
     /**
-     * @param PriceSystemIPriceInfo $priceInfo
+     * @param PriceSystemPriceInfoInterface $priceInfo
      *
      * @return IPriceInfo
      *
      * @throws InvalidConfigException
      */
-    public function getPriceInfo(PriceSystemIPriceInfo $priceInfo)
+    public function getPriceInfo(PriceSystemPriceInfoInterface $priceInfo)
     {
         // TODO make getPriceInfo private as this call is only used internally where the enabled check is alread applied?
         if (!$this->enabled) {

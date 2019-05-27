@@ -17,7 +17,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\Currency;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\StatusInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Status;
-use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPrice;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\PriceInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\Price;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
@@ -162,14 +162,14 @@ class OGone extends AbstractPayment
     /**
      * Start payment and build form, including fingerprint for Ogone.
      *
-     * @param IPrice $price
+     * @param PriceInterface $price
      * @param array $config
      *
      * @return FormBuilderInterface
      *
      * @throws \Exception
      */
-    public function initPayment(IPrice $price, array $config)
+    public function initPayment(PriceInterface $price, array $config)
     {
         //form name needs to be null in order to make sure the element names are correct - and not FORMNAME[ELEMENTNAME]
         $form = $this->formFactory->createNamedBuilder(null, FormType::class, [], [
@@ -409,14 +409,14 @@ class OGone extends AbstractPayment
      *  if price is given, recurPayment command is executed
      *  if no price is given, amount from authorized Data is used and deposit command is executed
      *
-     * @param IPrice $price
+     * @param PriceInterface $price
      * @param string $reference
      *
      * @return StatusInterface
      *
      * @throws \Exception
      */
-    public function executeDebit(IPrice $price = null, $reference = null)
+    public function executeDebit(PriceInterface $price = null, $reference = null)
     {
         throw new NotImplementedException('executeDebit is not implemented yet.');
     }
@@ -424,7 +424,7 @@ class OGone extends AbstractPayment
     /**
      * Executes credit
      *
-     * @param IPrice $price
+     * @param PriceInterface $price
      * @param string $reference
      * @param $transactionId
      *
@@ -432,7 +432,7 @@ class OGone extends AbstractPayment
      *
      * @throws \Exception
      */
-    public function executeCredit(IPrice $price, $reference, $transactionId)
+    public function executeCredit(PriceInterface $price, $reference, $transactionId)
     {
         throw new NotImplementedException('executeCredit is not implemented yet.');
     }

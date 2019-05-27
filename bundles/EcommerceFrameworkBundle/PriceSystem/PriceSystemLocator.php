@@ -20,9 +20,9 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem;
 use Pimcore\Bundle\EcommerceFrameworkBundle\DependencyInjection\ServiceLocator\NameServiceLocator;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\UnsupportedException;
 
-class PriceSystemLocator extends NameServiceLocator implements IPriceSystemLocator
+class PriceSystemLocator extends NameServiceLocator implements PriceSystemLocatorInterface
 {
-    public function getPriceSystem(string $name = null): IPriceSystem
+    public function getPriceSystem(string $name = null): PriceSystemInterface
     {
         return $this->locate($name);
     }

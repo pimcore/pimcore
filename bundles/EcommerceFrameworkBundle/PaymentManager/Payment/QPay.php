@@ -18,7 +18,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\Currency;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\StatusInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Status;
-use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPrice;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\PriceInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\Price;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
 use Pimcore\Logger;
@@ -189,12 +189,12 @@ class QPay extends AbstractPayment
 
     /**
      * @param array $formAttributes
-     * @param IPrice $price
+     * @param PriceInterface $price
      * @param array $config
      *
      * @return array
      */
-    protected function extendFormAttributes(array $formAttributes, IPrice $price, array $config): array
+    protected function extendFormAttributes(array $formAttributes, PriceInterface $price, array $config): array
     {
         return $formAttributes;
     }
@@ -202,14 +202,14 @@ class QPay extends AbstractPayment
     /**
      * Start payment
      *
-     * @param IPrice $price
+     * @param PriceInterface $price
      * @param array $config
      *
      * @return FormBuilderInterface
      *
      * @throws \Exception
      */
-    public function initPayment(IPrice $price, array $config)
+    public function initPayment(PriceInterface $price, array $config)
     {
         // check params
         $required = $this->getRequiredRequestFields();
@@ -414,14 +414,14 @@ class QPay extends AbstractPayment
      * Recurring payment backend operation:     https://guides.wirecard.at/back-end_operations:transaction-based:recurpayment
      *
      *
-     * @param IPrice $price
+     * @param PriceInterface $price
      * @param string $reference
      *
      * @return StatusInterface
      *
      * @throws \Exception
      */
-    public function executeDebit(IPrice $price = null, $reference = null)
+    public function executeDebit(PriceInterface $price = null, $reference = null)
     {
         if ($price) {
             // recurPayment
@@ -529,7 +529,7 @@ class QPay extends AbstractPayment
     /**
      * Executes credit
      *
-     * @param IPrice $price
+     * @param PriceInterface $price
      * @param string $reference
      * @param $transactionId
      *
@@ -537,7 +537,7 @@ class QPay extends AbstractPayment
      *
      * @throws \Exception
      */
-    public function executeCredit(IPrice $price, $reference, $transactionId)
+    public function executeCredit(PriceInterface $price, $reference, $transactionId)
     {
         // init request
         $request = [

@@ -25,7 +25,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IPricingManagerLocato
 use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class AttributePriceSystem extends CachingPriceSystem implements IPriceSystem
+class AttributePriceSystem extends CachingPriceSystem implements PriceSystemInterface
 {
     /**
      * @var IEnvironment
@@ -79,7 +79,7 @@ class AttributePriceSystem extends CachingPriceSystem implements IPriceSystem
     /**
      * @inheritdoc
      */
-    public function createPriceInfoInstance($quantityScale, CheckoutableInterface $product, $products): IPriceInfo
+    public function createPriceInfoInstance($quantityScale, CheckoutableInterface $product, $products): PriceInfoInterface
     {
         $taxClass = $this->getTaxClassForProduct($product);
 
@@ -154,13 +154,13 @@ class AttributePriceSystem extends CachingPriceSystem implements IPriceSystem
     }
 
     /**
-     * Creates instance of IPrice
+     * Creates instance of PriceInterface
      *
      * @param Decimal $amount
      *
-     * @return IPrice
+     * @return PriceInterface
      */
-    protected function getPriceClassInstance(Decimal $amount): IPrice
+    protected function getPriceClassInstance(Decimal $amount): PriceInterface
     {
         $priceClass = $this->priceClass;
         $price = new $priceClass($amount, $this->getDefaultCurrency(), false);

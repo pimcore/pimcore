@@ -16,16 +16,16 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\InvalidConfigException;
-use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPriceInfo as PriceSystemIPriceInfo;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\PriceInfoInterface as PriceSystemPriceInfoInterface;
 
 interface IPricingManager
 {
     /**
-     * @param PriceSystemIPriceInfo $priceinfo
+     * @param PriceSystemPriceInfoInterface $priceinfo
      *
-     * @return PriceSystemIPriceInfo
+     * @return PriceSystemPriceInfoInterface
      */
-    public function applyProductRules(PriceSystemIPriceInfo $priceinfo);
+    public function applyProductRules(PriceSystemPriceInfoInterface $priceinfo);
 
     /**
      * @param CartInterface $cart
@@ -85,9 +85,9 @@ interface IPricingManager
     /**
      * Wraps price info in pricing manager price info
      *
-     * @param PriceSystemIPriceInfo $priceInfo
+     * @param PriceSystemPriceInfoInterface $priceInfo
      *
-     * @return PriceSystemIPriceInfo|IPriceInfo
+     * @return PriceSystemPriceInfoInterface|IPriceInfo
      */
-    public function getPriceInfo(PriceSystemIPriceInfo $priceInfo);
+    public function getPriceInfo(PriceSystemPriceInfoInterface $priceInfo);
 }

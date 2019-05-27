@@ -22,7 +22,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractPaymentInformation;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\Currency;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\StatusInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Status;
-use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPrice;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\PriceInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\Price;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tools\SessionConfigurator;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
@@ -249,14 +249,14 @@ class WirecardSeamless extends AbstractPayment
     /**
      * Start payment
      *
-     * @param IPrice $price
+     * @param PriceInterface $price
      * @param array $config
      *
      * @return mixed
      *
      * @throws \Exception
      */
-    public function initPayment(IPrice $price, array $config)
+    public function initPayment(PriceInterface $price, array $config)
     {
         $orderIdent = $config['orderIdent'];
 
@@ -307,7 +307,7 @@ class WirecardSeamless extends AbstractPayment
             throw new \Exception('no cart sent');
         }
 
-        /** @var IPrice $price */
+        /** @var PriceInterface $price */
         $price = $config['price'] ?: $cart->getPriceCalculator()->getGrandTotal();
 
         $orderIdent = $this->encodeOrderIdent($config['paymentInfo']->getInternalPaymentId());
@@ -640,14 +640,14 @@ class WirecardSeamless extends AbstractPayment
     /**
      * execute payment
      *
-     * @param IPrice|null $price
+     * @param PriceInterface|null $price
      * @param null $reference
      *
      * @throws \Exception
      *
      * @return StatusInterface
      */
-    public function executeDebit(IPrice $price = null, $reference = null)
+    public function executeDebit(PriceInterface $price = null, $reference = null)
     {
         throw new \Exception('not implemented yet');
     }
@@ -655,14 +655,14 @@ class WirecardSeamless extends AbstractPayment
     /**
      * Executes payment
      *
-     * @param IPrice $price
+     * @param PriceInterface $price
      * @param string $reference
      *
      * @return StatusInterface
      *
      * @throws \Exception
      */
-    public function deposit(IPrice $price = null, $reference = null, $transactionId = null)
+    public function deposit(PriceInterface $price = null, $reference = null, $transactionId = null)
     {
         $fields = [
             'customerId' => $this->customerId,
@@ -707,7 +707,7 @@ class WirecardSeamless extends AbstractPayment
     /**
      * Executes credit
      *
-     * @param IPrice $price
+     * @param PriceInterface $price
      * @param string $reference
      * @param $transactionId
      *
@@ -715,7 +715,7 @@ class WirecardSeamless extends AbstractPayment
      *
      * @return StatusInterface
      */
-    public function executeCredit(IPrice $price, $reference, $transactionId)
+    public function executeCredit(PriceInterface $price, $reference, $transactionId)
     {
         throw new \Exception('not implemented yet');
     }

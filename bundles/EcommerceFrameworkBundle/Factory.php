@@ -32,8 +32,8 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\OfferTool\ServiceInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderManagerInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderManagerLocatorInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\PaymentManagerInterface;
-use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPriceSystem;
-use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPriceSystemLocator;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\PriceSystemInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\PriceSystemLocatorInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IPricingManager;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IPricingManagerLocator;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\ITrackingManager;
@@ -77,7 +77,7 @@ class Factory
     /**
      * Price systems registered by name
      *
-     * @var IPriceSystemLocator
+     * @var PriceSystemLocatorInterface
      */
     private $priceSystems;
 
@@ -118,7 +118,7 @@ class Factory
      * @param CartManagerLocatorInterface $cartManagers
      * @param OrderManagerLocatorInterface $orderManagers
      * @param IPricingManagerLocator $pricingManagers
-     * @param IPriceSystemLocator $priceSystems
+     * @param PriceSystemLocatorInterface $priceSystems
      * @param AvailabilitySystemLocatorInterface $availabilitySystems
      * @param CheckoutManagerFactoryLocatorInterface $checkoutManagerFactories
      * @param CommitOrderProcessorLocatorInterface $commitOrderProcessors
@@ -129,7 +129,7 @@ class Factory
         CartManagerLocatorInterface $cartManagers,
         OrderManagerLocatorInterface $orderManagers,
         IPricingManagerLocator $pricingManagers,
-        IPriceSystemLocator $priceSystems,
+        PriceSystemLocatorInterface $priceSystems,
         AvailabilitySystemLocatorInterface $availabilitySystems,
         CheckoutManagerFactoryLocatorInterface $checkoutManagerFactories,
         CommitOrderProcessorLocatorInterface $commitOrderProcessors,
@@ -200,9 +200,9 @@ class Factory
      *
      * @param string|null $name
      *
-     * @return IPriceSystem
+     * @return PriceSystemInterface
      */
-    public function getPriceSystem(string $name = null): IPriceSystem
+    public function getPriceSystem(string $name = null): PriceSystemInterface
     {
         return $this->priceSystems->getPriceSystem($name);
     }

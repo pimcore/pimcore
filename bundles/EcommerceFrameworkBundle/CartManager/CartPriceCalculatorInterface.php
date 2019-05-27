@@ -19,8 +19,8 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\CartManager;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartPriceModificator\ICartPriceModificator;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IEnvironment;
-use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IModificatedPrice;
-use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPrice;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\ModificatedPriceInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\PriceInterface;
 
 interface CartPriceCalculatorInterface
 {
@@ -54,21 +54,21 @@ interface CartPriceCalculatorInterface
     /**
      * Returns sub total of cart
      *
-     * @return IPrice $price
+     * @return PriceInterface $price
      */
-    public function getSubTotal(): IPrice;
+    public function getSubTotal(): PriceInterface;
 
     /**
      * Returns grand total of cart
      *
-     * @return IPrice $price
+     * @return PriceInterface $price
      */
-    public function getGrandTotal(): IPrice;
+    public function getGrandTotal(): PriceInterface;
 
     /**
      * Returns all price modifications which apply for this cart
      *
-     * @return IModificatedPrice[] $priceModification
+     * @return ModificatedPriceInterface[] $priceModification
      */
     public function getPriceModifications(): array;
 
