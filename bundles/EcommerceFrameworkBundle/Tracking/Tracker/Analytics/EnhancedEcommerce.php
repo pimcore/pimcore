@@ -110,7 +110,7 @@ class EnhancedEcommerce extends AbstractAnalyticsTracker implements
     /**
      * @inheritDoc
      */
-    public function trackCartProductActionAdd(ICart $cart, IProduct $product, $quantity = 1)
+    public function trackCartProductActionAdd(CartInterface $cart, IProduct $product, $quantity = 1)
     {
         return $this->trackProductActionAdd($product, $quantity);
     }
@@ -131,7 +131,7 @@ class EnhancedEcommerce extends AbstractAnalyticsTracker implements
     /**
      * @inheritDoc
      */
-    public function trackCartProductActionRemove(ICart $cart, IProduct $product, $quantity = 1)
+    public function trackCartProductActionRemove(CartInterface $cart, IProduct $product, $quantity = 1)
     {
         $this->trackProductActionRemove($product, $quantity);
     }
