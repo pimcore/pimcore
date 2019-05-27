@@ -14,8 +14,8 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart;
-use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICartItem;
+use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartItemInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\UnsupportedException;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IEnvironment;
@@ -248,23 +248,23 @@ class OrderManager implements IOrderManager
     /**
      * returns cart id for order object
      *
-     * @param ICart $cart
+     * @param CartInterface $cart
      *
      * @return string
      */
-    protected function createCartId(ICart $cart)
+    protected function createCartId(CartInterface $cart)
     {
         return get_class($cart) . '_' . $cart->getId();
     }
 
     /**
-     * @param ICart $cart
+     * @param CartInterface $cart
      *
      * @return null|AbstractOrder
      *
      * @throws \Exception
      */
-    public function getOrderFromCart(ICart $cart)
+    public function getOrderFromCart(CartInterface $cart)
     {
         $cartId = $this->createCartId($cart);
 
@@ -285,7 +285,7 @@ class OrderManager implements IOrderManager
     }
 
     /**
-     * @param ICart $cart
+     * @param CartInterface $cart
      *
      * @return AbstractOrder
      *
@@ -293,7 +293,7 @@ class OrderManager implements IOrderManager
      * @throws UnsupportedException
      *
      */
-    public function getOrCreateOrderFromCart(ICart $cart)
+    public function getOrCreateOrderFromCart(CartInterface $cart)
     {
         $order = $this->getOrderFromCart($cart);
 
@@ -428,7 +428,7 @@ class OrderManager implements IOrderManager
         return $orderItems;
     }
 
-    protected function applyVoucherTokens(AbstractOrder $order, ICart $cart)
+    protected function applyVoucherTokens(AbstractOrder $order, CartInterface $cart)
     {
         $voucherTokens = $cart->getVoucherTokenCodes();
         if (is_array($voucherTokens)) {
@@ -457,12 +457,12 @@ class OrderManager implements IOrderManager
     /**
      * hook to save individual data into order object
      *
-     * @param ICart $cart
+     * @param CartInterface $cart
      * @param AbstractOrder $order
      *
      * @return AbstractOrder
      */
-    protected function applyCustomCheckoutDataToOrder(ICart $cart, AbstractOrder $order)
+    protected function applyCustomCheckoutDataToOrder(CartInterface $cart, AbstractOrder $order)
     {
         return $order;
     }
@@ -603,7 +603,7 @@ class OrderManager implements IOrderManager
     }
 
     /**
-     * @param ICartItem $item
+     * @param CartItemInterface $item
      * @param $parent
      * @param bool $isGiftItem
      *
@@ -611,7 +611,7 @@ class OrderManager implements IOrderManager
      *
      * @throws \Exception
      */
-    protected function createOrderItem(ICartItem $item, $parent, $isGiftItem = false)
+    protected function createOrderItem(CartItemInterface $item, $parent, $isGiftItem = false)
     {
         $key = $this->buildOrderItemKey($item, $isGiftItem);
 
@@ -702,12 +702,12 @@ class OrderManager implements IOrderManager
     /**
      * Build order item key from cart item
      *
-     * @param ICartItem $item
+     * @param CartItemInterface $item
      * @param bool $isGiftItem
      *
      * @return string
      */
-    protected function buildOrderItemKey(ICartItem $item, bool $isGiftItem = false)
+    protected function buildOrderItemKey(CartItemInterface $item, bool $isGiftItem = false)
     {
         $key = File::getValidFilename(sprintf(
             '%s_%s%s',

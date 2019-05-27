@@ -30,7 +30,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IPricingManager;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class CartPriceCalculator implements ICartPriceCalculator
+class CartPriceCalculator implements CartPriceCalculatorInterface
 {
     /**
      * @var IEnvironment
@@ -38,7 +38,7 @@ class CartPriceCalculator implements ICartPriceCalculator
     protected $environment;
 
     /**
-     * @var ICart
+     * @var CartInterface
      */
     protected $cart;
 
@@ -77,10 +77,10 @@ class CartPriceCalculator implements ICartPriceCalculator
 
     /**
      * @param IEnvironment $environment
-     * @param ICart $cart
+     * @param CartInterface $cart
      * @param array $modificatorConfig
      */
-    public function __construct(IEnvironment $environment, ICart $cart, array $modificatorConfig = [])
+    public function __construct(IEnvironment $environment, CartInterface $cart, array $modificatorConfig = [])
     {
         $this->environment = $environment;
         $this->cart = $cart;
@@ -341,7 +341,7 @@ class CartPriceCalculator implements ICartPriceCalculator
     /**
      * @param ICartPriceModificator $modificator
      *
-     * @return ICartPriceCalculator
+     * @return CartPriceCalculatorInterface
      */
     public function addModificator(ICartPriceModificator $modificator)
     {
@@ -362,7 +362,7 @@ class CartPriceCalculator implements ICartPriceCalculator
     /**
      * @param ICartPriceModificator $modificator
      *
-     * @return ICartPriceCalculator
+     * @return CartPriceCalculatorInterface
      */
     public function removeModificator(ICartPriceModificator $modificator)
     {

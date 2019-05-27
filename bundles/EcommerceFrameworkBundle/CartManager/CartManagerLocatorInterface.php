@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 /**
  * Pimcore
  *
@@ -12,16 +15,13 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\Bundle\EcommerceFrameworkBundle\Tracking;
+namespace Pimcore\Bundle\EcommerceFrameworkBundle\CartManager;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartInterface;
-
-interface ICheckout
+interface CartManagerLocatorInterface
 {
-    /**
-     * Track start checkout with first step
-     *
-     * @param CartInterface $cart
-     */
-    public function trackCheckout(CartInterface $cart);
+    public function getCartManager(string $tenant = null): CartManagerInterface;
+
+    public function hasCartManager(string $tenant): bool;
 }
+
+class_alias(CartManagerLocatorInterface::class, 'Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICartManagerLocator');

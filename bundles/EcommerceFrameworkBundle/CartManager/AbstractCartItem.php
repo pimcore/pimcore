@@ -14,7 +14,7 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\CartManager;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\AvailabilitySystem\IAvailability;
+use Pimcore\Bundle\EcommerceFrameworkBundle\AvailabilitySystem\AvailabilityInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractSetProduct;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractSetProductEntry;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\ICheckoutable;
@@ -22,7 +22,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPrice;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPriceInfo;
 use Pimcore\Model\DataObject\AbstractObject;
 
-abstract class AbstractCartItem extends \Pimcore\Model\AbstractModel implements ICartItem
+abstract class AbstractCartItem extends \Pimcore\Model\AbstractModel implements CartItemInterface
 {
     /**
      * flag needed for preventing call modified on cart when loading cart from storage
@@ -44,7 +44,7 @@ abstract class AbstractCartItem extends \Pimcore\Model\AbstractModel implements 
     protected $subItems = null;
 
     /**
-     * @var ICart
+     * @var CartInterface
      */
     protected $cart;
     protected $cartId;
@@ -99,16 +99,16 @@ abstract class AbstractCartItem extends \Pimcore\Model\AbstractModel implements 
     }
 
     /**
-     * @param ICart $cart
+     * @param CartInterface $cart
      */
-    public function setCart(ICart $cart)
+    public function setCart(CartInterface $cart)
     {
         $this->cart = $cart;
         $this->cartId = $cart->getId();
     }
 
     /**
-     * @return ICart
+     * @return CartInterface
      */
     abstract public function getCart();
 
@@ -185,7 +185,7 @@ abstract class AbstractCartItem extends \Pimcore\Model\AbstractModel implements 
     }
 
     /**
-     * @param  \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICartItem[] $subItems
+     * @param  CartItemInterface[] $subItems
      *
      * @return void
      */
@@ -229,7 +229,7 @@ abstract class AbstractCartItem extends \Pimcore\Model\AbstractModel implements 
     }
 
     /**
-     * @return IAvailability
+     * @return AvailabilityInterface
      */
     public function getAvailabilityInfo()
     {

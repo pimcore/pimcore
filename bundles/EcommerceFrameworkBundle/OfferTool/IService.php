@@ -14,7 +14,8 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\OfferTool;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart;
+use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartItemInterface;
 
 interface IService
 {
@@ -22,21 +23,21 @@ interface IService
     const DISCOUNT_TYPE_AMOUNT = 'amount';
 
     /**
-     * @param ICart $cart
-     * @param \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICartItem[] $excludeItems
+     * @param CartInterface $cart
+     * @param CartItemInterface[] $excludeItems
      *
      * @return AbstractOffer
      */
-    public function createNewOfferFromCart(ICart $cart, array $excludeItems = []);
+    public function createNewOfferFromCart(CartInterface $cart, array $excludeItems = []);
 
     /**
      * @param AbstractOffer $offer
-     * @param ICart $cart
+     * @param CartInterface $cart
      * @param array $excludeItems
      *
      * @return AbstractOffer
      */
-    public function updateOfferFromCart(AbstractOffer $offer, ICart $cart, array $excludeItems = []);
+    public function updateOfferFromCart(AbstractOffer $offer, CartInterface $cart, array $excludeItems = []);
 
     /**
      * @param AbstractOffer $offer
@@ -46,11 +47,11 @@ interface IService
     public function updateTotalPriceOfOffer(AbstractOffer $offer);
 
     /**
-     * @param ICart $cart
+     * @param CartInterface $cart
      *
      * @return AbstractOffer[]
      */
-    public function getOffersForCart(ICart $cart);
+    public function getOffersForCart(CartInterface $cart);
 
     /**
      * @return AbstractOfferItem

@@ -14,7 +14,7 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartPriceModificator;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart;
+use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IModificatedPrice;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPrice;
@@ -66,11 +66,11 @@ class Shipping implements IShipping
 
     /**
      * @param IPrice $currentSubTotal
-     * @param ICart $cart
+     * @param CartInterface $cart
      *
      * @return IModificatedPrice
      */
-    public function modify(IPrice $currentSubTotal, ICart $cart)
+    public function modify(IPrice $currentSubTotal, CartInterface $cart)
     {
         $modificatedPrice = new ModificatedPrice($this->getCharge(), $currentSubTotal->getCurrency());
 

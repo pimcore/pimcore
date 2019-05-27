@@ -16,7 +16,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\DependencyInjection;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\AvailabilitySystem\AvailabilitySystemLocator;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartManagerLocator;
-use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICartManagerLocator;
+use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartManagerLocatorInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\CheckoutManagerFactoryLocator;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\CommitOrderProcessorLocator;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\ICheckoutManagerFactoryLocator;
@@ -166,7 +166,7 @@ class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
 
         $this->setupTenantAwareComponentLocator(
             $container,
-            ICartManagerLocator::class,
+            CartManagerLocatorInterface::class,
             $mapping,
             CartManagerLocator::class,
             [

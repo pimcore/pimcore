@@ -12,7 +12,7 @@ use Codeception\Util\Stub;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartPriceCalculator;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartPriceModificator\IShipping;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartPriceModificator\Shipping;
-use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart;
+use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\SessionCart;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractProduct;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\Currency;
@@ -82,11 +82,11 @@ class AbstractRuleTest extends EcommerceTestCase
     }
 
     /**
-     * @param ICart $cart
+     * @param CartInterface $cart
      *
      * @return CartPriceCalculator
      */
-    protected function buildCartCalculator(ICart $cart, IPricingManager $pricingManager, $withModificators = false)
+    protected function buildCartCalculator(CartInterface $cart, IPricingManager $pricingManager, $withModificators = false)
     {
         $calculator = new CartPriceCalculator($this->buildEnvironment(), $cart);
 
@@ -101,7 +101,7 @@ class AbstractRuleTest extends EcommerceTestCase
     }
 
     /**
-     * @return ICart
+     * @return CartInterface
      */
     protected function setUpCart(IPricingManager $pricingManager, $withModificators = false)
     {

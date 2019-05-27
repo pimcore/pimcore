@@ -14,7 +14,7 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart;
+use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\InvalidConfigException;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPriceInfo as PriceSystemIPriceInfo;
 
@@ -28,11 +28,11 @@ interface IPricingManager
     public function applyProductRules(PriceSystemIPriceInfo $priceinfo);
 
     /**
-     * @param ICart $cart
+     * @param CartInterface $cart
      *
      * @return IPricingManager
      */
-    public function applyCartRules(ICart $cart);
+    public function applyCartRules(CartInterface $cart);
 
     /**
      * @deprecated as it is never used. Will be removed in Pimcore 6.

@@ -14,7 +14,7 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\CartManager;
 
-class SessionCartItem extends AbstractCartItem implements ICartItem
+class SessionCartItem extends AbstractCartItem implements CartItemInterface
 {
     public function getCart()
     {
@@ -44,7 +44,7 @@ class SessionCartItem extends AbstractCartItem implements ICartItem
     }
 
     /**
-     * @return \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICartItem[]
+     * @return CartItemInterface[]
      */
     public function getSubItems()
     {

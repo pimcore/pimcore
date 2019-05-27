@@ -14,7 +14,7 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\TokenManager;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart;
+use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractVoucherTokenType;
 use Pimcore\Model\DataObject\OnlineShopVoucherToken;
@@ -55,49 +55,49 @@ interface ITokenManager
      * e.g. it is not reserved or used, or other tokenType specific settings.
      *
      * @param string $code
-     * @param ICart $cart
+     * @param CartInterface $cart
      *
      * @throws \Pimcore\Bundle\EcommerceFrameworkBundle\Exception\VoucherServiceException
      *
      * @return bool
      */
-    public function checkToken($code, ICart $cart);
+    public function checkToken($code, CartInterface $cart);
 
     /**
      * Adds a reservation to a specific token code.
      *
      * @param string $code
-     * @param ICart $cart
+     * @param CartInterface $cart
      *
      * @throws \Pimcore\Bundle\EcommerceFrameworkBundle\Exception\VoucherServiceException
      *
      * @return bool
      */
-    public function reserveToken($code, ICart $cart);
+    public function reserveToken($code, CartInterface $cart);
 
     /**
      * Creates token object and adds it to order, increases token usage and
      * clears the reservation of the token.
      *
      * @param string $code
-     * @param ICart $cart
+     * @param CartInterface $cart
      * @param AbstractOrder $order
      *
      * @throws \Pimcore\Bundle\EcommerceFrameworkBundle\Exception\VoucherServiceException
      *
      * @return bool|\Pimcore\Model\DataObject\OnlineShopVoucherToken
      */
-    public function applyToken($code, ICart $cart, AbstractOrder $order);
+    public function applyToken($code, CartInterface $cart, AbstractOrder $order);
 
     /**
      * Removes the reservation of a token code.
      *
      * @param string $code
-     * @param ICart $cart
+     * @param CartInterface $cart
      *
      * @return bool
      */
-    public function releaseToken($code, ICart $cart);
+    public function releaseToken($code, CartInterface $cart);
 
     /**
      * cleans up the token usage and the ordered token object if necessary

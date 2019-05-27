@@ -14,7 +14,7 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart;
+use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\IStatus;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Status;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPrice;
@@ -102,13 +102,13 @@ class Klarna extends AbstractPayment
      *
      * @param IPrice $price
      * @param array $config
-     * @param ICart  $cart
+     * @param CartInterface  $cart
      *
      * @return string
      *
      * @throws \Exception
      */
-    public function initPayment(IPrice $price, array $config, ICart $cart = null)
+    public function initPayment(IPrice $price, array $config, CartInterface $cart = null)
     {
         // check params
         $required = [

@@ -18,7 +18,7 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\Tracker;
 
 use Pimcore\Analytics\Piwik\Tracker as PiwikTracker;
-use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart;
+use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IProduct;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\ICartProductActionAdd;
@@ -140,7 +140,7 @@ class Piwik extends Tracker implements
     /**
      * @inheritDoc
      */
-    public function trackCartProductActionAdd(ICart $cart, IProduct $product, $quantity = 1)
+    public function trackCartProductActionAdd(CartInterface $cart, IProduct $product, $quantity = 1)
     {
         if ($this->handleCartAdd) {
             $this->trackCartUpdate($cart);
@@ -150,7 +150,7 @@ class Piwik extends Tracker implements
     /**
      * @inheritDoc
      */
-    public function trackCartProductActionRemove(ICart $cart, IProduct $product, $quantity = 1)
+    public function trackCartProductActionRemove(CartInterface $cart, IProduct $product, $quantity = 1)
     {
         if ($this->handleCartRemove) {
             $this->trackCartUpdate($cart);
@@ -160,7 +160,7 @@ class Piwik extends Tracker implements
     /**
      * @inheritDoc
      */
-    public function trackCartUpdate(ICart $cart)
+    public function trackCartUpdate(CartInterface $cart)
     {
         $items = $this->trackingItemBuilder->buildCheckoutItemsByCart($cart);
 

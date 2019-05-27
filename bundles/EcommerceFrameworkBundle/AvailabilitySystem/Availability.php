@@ -19,7 +19,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\AvailabilitySystem;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\ICheckoutable;
 
-class Availability implements IAvailability
+class Availability implements AvailabilityInterface
 {
     /**
      * @var ICheckoutable

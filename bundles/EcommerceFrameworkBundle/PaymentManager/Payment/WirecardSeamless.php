@@ -14,7 +14,7 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart;
+use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\CheckoutManager;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IEnvironment;
@@ -302,7 +302,7 @@ class WirecardSeamless extends AbstractPayment
 
     public function getInitPaymentRedirectUrl($config)
     {
-        /** @var ICart $cart */
+        /** @var CartInterface $cart */
         if (!$cart = $config['cart']) {
             throw new \Exception('no cart sent');
         }
@@ -817,7 +817,7 @@ class WirecardSeamless extends AbstractPayment
      * @param $response
      * @param IEnvironment|null $environment
      *
-     * @return ICart|null
+     * @return CartInterface|null
      */
     public static function createCartByOrderIdent($response, IEnvironment $environment = null)
     {
@@ -829,7 +829,7 @@ class WirecardSeamless extends AbstractPayment
 
             $cartId = explode('_', $cartId, 2);
             if (class_exists($cartId[0])) {
-                /** @var ICart $cart */
+                /** @var CartInterface $cart */
                 $cart = new $cartId[0];
                 $cart->setId($cartId[1]);
 

@@ -14,14 +14,14 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\Tracking;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart;
+use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartInterface;
 
 interface ICartUpdate
 {
     /**
      * Track a cart update
      *
-     * @param ICart $cart
+     * @param CartInterface $cart
      */
-    public function trackCartUpdate(ICart $cart);
+    public function trackCartUpdate(CartInterface $cart);
 }

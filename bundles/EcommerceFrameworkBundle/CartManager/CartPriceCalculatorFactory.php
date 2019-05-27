@@ -20,7 +20,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\CartManager;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IEnvironment;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class CartPriceCalculatorFactory implements ICartPriceCalculatorFactory
+class CartPriceCalculatorFactory implements CartPriceCalculatorFactoryInterface
 {
     /**
      * @var IEnvironment
@@ -62,7 +62,7 @@ class CartPriceCalculatorFactory implements ICartPriceCalculatorFactory
         $resolver->setAllowedTypes('class', 'string');
     }
 
-    public function create(IEnvironment $environment, ICart $cart): ICartPriceCalculator
+    public function create(IEnvironment $environment, CartInterface $cart): CartPriceCalculatorInterface
     {
         $class = $this->options['class'];
 

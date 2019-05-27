@@ -12,16 +12,14 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\Bundle\EcommerceFrameworkBundle\Tracking;
+namespace Pimcore\Bundle\EcommerceFrameworkBundle\AvailabilitySystem;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartInterface;
-
-interface ICheckout
+interface AvailabilityInterface
 {
     /**
-     * Track start checkout with first step
-     *
-     * @param CartInterface $cart
+     * @return bool
      */
-    public function trackCheckout(CartInterface $cart);
+    public function getAvailable();
 }
+
+class_alias(AvailabilityInterface::class, 'Pimcore\Bundle\EcommerceFrameworkBundle\AvailabilitySystem\IAvailability');

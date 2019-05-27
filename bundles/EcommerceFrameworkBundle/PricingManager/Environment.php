@@ -14,8 +14,8 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart;
-use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICartItem;
+use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartItemInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractCategory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\ICheckoutable;
 use Pimcore\Targeting\Model\VisitorInfo;
@@ -24,12 +24,12 @@ use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 class Environment implements IEnvironment
 {
     /**
-     * @var ICart
+     * @var CartInterface
      */
     protected $cart;
 
     /**
-     * @var ICartItem
+     * @var CartItemInterface
      */
     protected $cartItem;
 
@@ -71,11 +71,11 @@ class Environment implements IEnvironment
     protected $executionMode = IEnvironment::EXECUTION_MODE_PRODUCT;
 
     /**
-     * @param ICart $cart
+     * @param CartInterface $cart
      *
      * @return IEnvironment
      */
-    public function setCart(ICart $cart)
+    public function setCart(CartInterface $cart)
     {
         $this->cart = $cart;
 
@@ -83,7 +83,7 @@ class Environment implements IEnvironment
     }
 
     /**
-     * @return ICart
+     * @return CartInterface
      */
     public function getCart()
     {
@@ -91,7 +91,7 @@ class Environment implements IEnvironment
     }
 
     /**
-     * @return ICartItem
+     * @return CartItemInterface
      */
     public function getCartItem()
     {
@@ -99,11 +99,11 @@ class Environment implements IEnvironment
     }
 
     /**
-     * @param ICartItem $cartItem
+     * @param CartItemInterface $cartItem
      *
      * @return $this
      */
-    public function setCartItem(ICartItem $cartItem)
+    public function setCartItem(CartItemInterface $cartItem)
     {
         $this->cartItem = $cartItem;
 

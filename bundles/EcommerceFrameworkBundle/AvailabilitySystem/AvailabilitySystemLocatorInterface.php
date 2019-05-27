@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 /**
  * Pimcore
  *
@@ -14,18 +17,11 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\AvailabilitySystem;
 
+interface AvailabilitySystemLocatorInterface
+{
+    public function getAvailabilitySystem(string $name = null): AvailabilitySystemInterface;
 
-@trigger_error(
-    'Interface Pimcore\Bundle\EcommerceFrameworkBundle\AvailabilitySystem\IAvailability is deprecated since version 6.0.0 and will be removed in 7.0.0. ' .
-    'Use ' . AvailabilityInterface::class . '  class instead.',
-    E_USER_DEPRECATED
-);
-
-if (false) {
-    /**
-     * @deprecated use Pimcore\Bundle\EcommerceFrameworkBundle\AvailabilitySystem\AvailabilityInterface instead.
-     */
-    interface IAvailability
-    {
-    }
+    public function hasAvailabilitySystem(string $name): bool;
 }
+
+class_alias(AvailabilitySystemLocatorInterface::class, 'Pimcore\Bundle\EcommerceFrameworkBundle\AvailabilitySystem\IAvailabilitySystemLocator');

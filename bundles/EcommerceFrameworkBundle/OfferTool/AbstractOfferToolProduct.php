@@ -14,6 +14,8 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\OfferTool;
 
+use Pimcore\Bundle\EcommerceFrameworkBundle\AvailabilitySystem\AvailabilityInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\AvailabilitySystem\AvailabilitySystemInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\UnsupportedException;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\ICheckoutable;
@@ -103,7 +105,7 @@ class AbstractOfferToolProduct extends \Pimcore\Model\DataObject\Concrete implem
     /**
      * returns instance of availability system implementation based on result of getAvailabilitySystemName()
      *
-     * @return \Pimcore\Bundle\EcommerceFrameworkBundle\AvailabilitySystem\IAvailabilitySystem
+     * @return AvailabilitySystemInterface
      */
     public function getAvailabilitySystemImplementation()
     {
@@ -140,7 +142,7 @@ class AbstractOfferToolProduct extends \Pimcore\Model\DataObject\Concrete implem
      *
      * @param int $quantity
      *
-     * @return \Pimcore\Bundle\EcommerceFrameworkBundle\AvailabilitySystem\IAvailability
+     * @return AvailabilityInterface
      */
     public function getOSAvailabilityInfo($quantity = null)
     {

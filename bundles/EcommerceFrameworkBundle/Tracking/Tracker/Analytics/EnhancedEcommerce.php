@@ -15,7 +15,7 @@
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\Tracker\Analytics;
 
 use Pimcore\Analytics\Google\Tracker as GoogleTracker;
-use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart;
+use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\ICheckoutStep as CheckoutManagerICheckoutStep;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IProduct;
@@ -171,9 +171,9 @@ class EnhancedEcommerce extends AbstractAnalyticsTracker implements
     /**
      * Track start checkout with first step
      *
-     * @param ICart $cart
+     * @param CartInterface $cart
      */
-    public function trackCheckout(ICart $cart)
+    public function trackCheckout(CartInterface $cart)
     {
         $this->ensureDependencies();
 
@@ -193,11 +193,11 @@ class EnhancedEcommerce extends AbstractAnalyticsTracker implements
 
     /**
      * @param CheckoutManagerICheckoutStep $step
-     * @param ICart $cart
+     * @param CartInterface $cart
      * @param null $stepNumber
      * @param null $checkoutOption
      */
-    public function trackCheckoutStep(CheckoutManagerICheckoutStep $step, ICart $cart, $stepNumber = null, $checkoutOption = null)
+    public function trackCheckoutStep(CheckoutManagerICheckoutStep $step, CartInterface $cart, $stepNumber = null, $checkoutOption = null)
     {
         $this->ensureDependencies();
 

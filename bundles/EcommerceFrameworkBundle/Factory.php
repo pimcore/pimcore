@@ -14,11 +14,11 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\AvailabilitySystem\IAvailabilitySystem;
-use Pimcore\Bundle\EcommerceFrameworkBundle\AvailabilitySystem\IAvailabilitySystemLocator;
-use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart;
-use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICartManager;
-use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICartManagerLocator;
+use Pimcore\Bundle\EcommerceFrameworkBundle\AvailabilitySystem\AvailabilitySystemInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\AvailabilitySystem\AvailabilitySystemLocatorInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartManagerInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartManagerLocatorInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\ICheckoutManager;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\ICheckoutManagerFactoryLocator;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\ICommitOrderProcessor;
@@ -56,7 +56,7 @@ class Factory
     /**
      * Tenant specific cart managers
      *
-     * @var ICartManagerLocator
+     * @var CartManagerLocatorInterface
      */
     private $cartManagers;
 
@@ -84,7 +84,7 @@ class Factory
     /**
      * Availability systems registered by name
      *
-     * @var IAvailabilitySystemLocator
+     * @var AvailabilitySystemLocatorInterface
      */
     private $availabilitySystems;
 
@@ -115,22 +115,22 @@ class Factory
      * are loaded from the container on demand to make sure only services needed are built.
      *
      * @param ContainerInterface $container
-     * @param ICartManagerLocator $cartManagers
+     * @param CartManagerLocatorInterface $cartManagers
      * @param IOrderManagerLocator $orderManagers
      * @param IPricingManagerLocator $pricingManagers
      * @param IPriceSystemLocator $priceSystems
-     * @param IAvailabilitySystemLocator $availabilitySystems
+     * @param AvailabilitySystemLocatorInterface $availabilitySystems
      * @param ICheckoutManagerFactoryLocator $checkoutManagerFactories
      * @param ICommitOrderProcessorLocator $commitOrderProcessors
      * @param IFilterServiceLocator $filterServices
      */
     public function __construct(
         ContainerInterface $container,
-        ICartManagerLocator $cartManagers,
+        CartManagerLocatorInterface $cartManagers,
         IOrderManagerLocator $orderManagers,
         IPricingManagerLocator $pricingManagers,
         IPriceSystemLocator $priceSystems,
-        IAvailabilitySystemLocator $availabilitySystems,
+        AvailabilitySystemLocatorInterface $availabilitySystems,
         ICheckoutManagerFactoryLocator $checkoutManagerFactories,
         ICommitOrderProcessorLocator $commitOrderProcessors,
         IFilterServiceLocator $filterServices
@@ -162,9 +162,9 @@ class Factory
      *
      * @param string|null $tenant
      *
-     * @return ICartManager
+     * @return CartManagerInterface
      */
-    public function getCartManager(string $tenant = null): ICartManager
+    public function getCartManager(string $tenant = null): CartManagerInterface
     {
         return $this->cartManagers->getCartManager($tenant);
     }
@@ -212,9 +212,9 @@ class Factory
      *
      * @param string|null $name
      *
-     * @return IAvailabilitySystem
+     * @return AvailabilitySystemInterface
      */
-    public function getAvailabilitySystem(string $name = null): IAvailabilitySystem
+    public function getAvailabilitySystem(string $name = null): AvailabilitySystemInterface
     {
         return $this->availabilitySystems->getAvailabilitySystem($name);
     }
@@ -223,12 +223,12 @@ class Factory
      * Returns checkout manager for a specific tenant. If no tenant is passed it will fall back to the current
      * checkout tenant or to "default" if no current checkout tenant is set.
      *
-     * @param ICart $cart
+     * @param CartInterface $cart
      * @param string|null $tenant
      *
      * @return ICheckoutManager
      */
-    public function getCheckoutManager(ICart $cart, string $tenant = null): ICheckoutManager
+    public function getCheckoutManager(CartInterface $cart, string $tenant = null): ICheckoutManager
     {
         $factory = $this->checkoutManagerFactories->getCheckoutManagerFactory($tenant);
 

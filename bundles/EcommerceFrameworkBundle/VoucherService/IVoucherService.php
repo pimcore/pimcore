@@ -14,7 +14,7 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart;
+use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\VoucherServiceException;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
 
@@ -24,33 +24,33 @@ interface IVoucherService
      * Gets the correct token manager and calls its checkToken() function.
      *
      * @param string $code
-     * @param ICart $cart
+     * @param CartInterface $cart
      *
      * @return bool
      *
      * @throws VoucherServiceException
      */
-    public function checkToken($code, ICart $cart);
+    public function checkToken($code, CartInterface $cart);
 
     /**
      * Gets the correct token manager and calls its reserveToken() function.
      *
      * @param string $code
-     * @param ICart $cart
+     * @param CartInterface $cart
      *
      * @return bool
      */
-    public function reserveToken($code, ICart $cart);
+    public function reserveToken($code, CartInterface $cart);
 
     /**
      * Gets the correct token manager and calls its releaseToken() function, which removes a reservations.
      *
      * @param string $code
-     * @param ICart $cart
+     * @param CartInterface $cart
      *
      * @return bool
      */
-    public function releaseToken($code, ICart $cart);
+    public function releaseToken($code, CartInterface $cart);
 
     /**
      * Gets the correct token manager and calls its applyToken() function, which returns
@@ -58,12 +58,12 @@ interface IVoucherService
      * reservations gets released.
      *
      * @param string $code
-     * @param ICart $cart
+     * @param CartInterface $cart
      * @param AbstractOrder $order
      *
      * @return bool
      */
-    public function applyToken($code, ICart $cart, AbstractOrder $order);
+    public function applyToken($code, CartInterface $cart, AbstractOrder $order);
 
     /**
      * Gets the correct token manager and calls removeAppliedTokenFromOrder(), which cleans up the

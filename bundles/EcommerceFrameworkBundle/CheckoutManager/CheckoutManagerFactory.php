@@ -17,7 +17,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart;
+use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IEnvironment;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\IOrderManagerLocator;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment\IPayment;
@@ -122,7 +122,7 @@ class CheckoutManagerFactory implements ICheckoutManagerFactory
         $resolver->setAllowedTypes('class', 'string');
     }
 
-    public function createCheckoutManager(ICart $cart): ICheckoutManager
+    public function createCheckoutManager(CartInterface $cart): ICheckoutManager
     {
         $cartId = $cart->getId();
 
@@ -149,7 +149,7 @@ class CheckoutManagerFactory implements ICheckoutManagerFactory
         return $this->checkoutManagers[$cartId];
     }
 
-    protected function buildCheckoutStep(ICart $cart, array $checkoutStepDefinition): ICheckoutStep
+    protected function buildCheckoutStep(CartInterface $cart, array $checkoutStepDefinition): ICheckoutStep
     {
         $className = $checkoutStepDefinition['class'];
 

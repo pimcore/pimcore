@@ -14,7 +14,7 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart;
+use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\UnsupportedException;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IEnvironment;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
@@ -40,7 +40,7 @@ class CheckoutManager implements ICheckoutManager
     const TRACK_ECOMMERCE_UNIVERSAL = 'checkout_trackecommerce_universal';
 
     /**
-     * @var ICart
+     * @var CartInterface
      */
     protected $cart;
 
@@ -96,7 +96,7 @@ class CheckoutManager implements ICheckoutManager
     protected $paid = true;
 
     /**
-     * @param ICart $cart
+     * @param CartInterface $cart
      * @param IEnvironment $environment
      * @param IOrderManagerLocator $orderManagers
      * @param ICommitOrderProcessorLocator $commitOrderProcessors
@@ -104,7 +104,7 @@ class CheckoutManager implements ICheckoutManager
      * @param IPayment|null $paymentProvider
      */
     public function __construct(
-        ICart $cart,
+        CartInterface $cart,
         IEnvironment $environment,
         IOrderManagerLocator $orderManagers,
         ICommitOrderProcessorLocator $commitOrderProcessors,

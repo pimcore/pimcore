@@ -4,7 +4,7 @@ namespace Pimcore\Tests\Ecommerce\PricingManager;
 
 use Codeception\Util\Stub;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartPriceCalculator;
-use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart;
+use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\SessionCart;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractCategory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractProduct;
@@ -206,7 +206,7 @@ class ConditionTest extends EcommerceTestCase
     }
 
     /**
-     * @return ICart
+     * @return CartInterface
      */
     private function mockCart()
     {

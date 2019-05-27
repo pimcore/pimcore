@@ -7,7 +7,7 @@ namespace Pimcore\Tests\Ecommerce;
 use Codeception\Util\Stub;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartPriceCalculator;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartPriceModificator\Shipping;
-use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart;
+use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\SessionCart;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractProduct;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\Currency;
@@ -115,11 +115,11 @@ class CartTaxManagementTest extends EcommerceTestCase
     }
 
     /**
-     * @param ICart $cart
+     * @param CartInterface $cart
      *
      * @return CartPriceCalculator
      */
-    private function setUpCartCalculator(ICart $cart, $withModificators = false, $taxes = [])
+    private function setUpCartCalculator(CartInterface $cart, $withModificators = false, $taxes = [])
     {
         $calculator = new CartPriceCalculator($this->buildEnvironment(), $cart);
 

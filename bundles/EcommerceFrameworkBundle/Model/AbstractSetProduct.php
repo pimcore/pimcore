@@ -14,6 +14,7 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\Model;
 
+use Pimcore\Bundle\EcommerceFrameworkBundle\AvailabilitySystem\AvailabilityInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\UnsupportedException;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\AbstractPriceInfo;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPriceInfo;
@@ -158,7 +159,7 @@ class AbstractSetProduct extends AbstractProduct
      * @param int $quantity
      * @param $products AbstractSetProductEntry[]
      *
-     * @return \Pimcore\Bundle\EcommerceFrameworkBundle\AvailabilitySystem\IAvailability
+     * @return AvailabilityInterface
      */
     public function getOSAvailabilityInfo($quantity = 1, $products = null)
     {

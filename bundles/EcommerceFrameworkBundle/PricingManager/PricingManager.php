@@ -14,8 +14,8 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager;
 
+use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartPriceModificator\Discount;
-use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\InvalidConfigException;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPriceInfo as PriceSystemIPriceInfo;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tools\SessionConfigurator;
@@ -134,11 +134,11 @@ class PricingManager implements IPricingManager
     }
 
     /**
-     * @param ICart $cart
+     * @param CartInterface $cart
      *
      * @return IPricingManager
      */
-    public function applyCartRules(ICart $cart)
+    public function applyCartRules(CartInterface $cart)
     {
         if (!$this->enabled) {
             return $this;

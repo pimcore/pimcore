@@ -21,7 +21,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\IEnvironment;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class CartFactory implements ICartFactory
+class CartFactory implements CartFactoryInterface
 {
     /**
      * @var array
@@ -69,7 +69,7 @@ class CartFactory implements ICartFactory
         return $this->options['cart_class_name'];
     }
 
-    public function create(IEnvironment $environment, string $name, string $id = null, array $options = []): ICart
+    public function create(IEnvironment $environment, string $name, string $id = null, array $options = []): CartInterface
     {
         $cart = $this->createCartInstance($environment, $name, $id, $options);
         $cart->save();
@@ -77,11 +77,11 @@ class CartFactory implements ICartFactory
         return $cart;
     }
 
-    protected function createCartInstance(IEnvironment $environment, string $name, string $id = null, array $options = []): ICart
+    protected function createCartInstance(IEnvironment $environment, string $name, string $id = null, array $options = []): CartInterface
     {
         $class = $this->getCartClassName($environment);
 
-        /** @var ICart $cart */
+        /** @var CartInterface $cart */
         $cart = new $class;
 
         $cart->setName($name);

@@ -14,7 +14,7 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\Tracking;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart;
+use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrderItem;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IProduct;
@@ -70,11 +70,11 @@ interface ITrackingItemBuilder
     /**
      * Build checkout items by cart
      *
-     * @param ICart $cart
+     * @param CartInterface $cart
      *
      * @return ProductAction[]
      */
-    public function buildCheckoutItemsByCart(ICart $cart);
+    public function buildCheckoutItemsByCart(CartInterface $cart);
 
     /**
      * Build a checkout item object

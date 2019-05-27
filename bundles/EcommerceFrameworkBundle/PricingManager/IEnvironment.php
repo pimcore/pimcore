@@ -14,8 +14,8 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart;
-use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICartItem;
+use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartItemInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractCategory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\ICheckoutable;
 use Pimcore\Targeting\Model\VisitorInfo;
@@ -27,26 +27,26 @@ interface IEnvironment
     const EXECUTION_MODE_CART = 'cart';
 
     /**
-     * @param ICart $cart
+     * @param CartInterface $cart
      *
      * @return IEnvironment
      */
-    public function setCart(ICart $cart);
+    public function setCart(CartInterface $cart);
 
     /**
-     * @return ICart
+     * @return CartInterface
      */
     public function getCart();
 
     /**
-     * @param ICartItem $cartItem
+     * @param CartItemInterface $cartItem
      *
      * @return IEnvironment
      */
-    public function setCartItem(ICartItem $cartItem);
+    public function setCartItem(CartItemInterface $cartItem);
 
     /**
-     * @return ICartItem
+     * @return CartItemInterface
      */
     public function getCartItem();
 

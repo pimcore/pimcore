@@ -17,18 +17,13 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\CartManager;
 
+use Pimcore\Bundle\EcommerceFrameworkBundle\IEnvironment;
 
-@trigger_error(
-    'Interface Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICartManagerLocator is deprecated since version 6.0.0 and will be removed in 7.0.0. ' .
-    ' Use ' . CartManagerLocatorInterface::class . ' class instead.',
-    E_USER_DEPRECATED
-);
+interface CartFactoryInterface
+{
+    public function getCartClassName(IEnvironment $environment): string;
 
-if(false) {
-    /**
-     * @deprecated use CartManagerLocatorInterface instead.
-     */
-    interface ICartManagerLocator
-    {
-    }
+    public function create(IEnvironment $environment, string $name, string $id = null, array $options = []): CartInterface;
 }
+
+class_alias(CartFactoryInterface::class, 'Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICartFactory');

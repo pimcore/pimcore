@@ -14,6 +14,8 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\Model;
 
+use Pimcore\Bundle\EcommerceFrameworkBundle\AvailabilitySystem\AvailabilityInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\AvailabilitySystem\AvailabilitySystemInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\UnsupportedException;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\AbstractPriceInfo;
@@ -174,7 +176,7 @@ class AbstractProduct extends \Pimcore\Model\DataObject\Concrete implements IPro
     /**
      * returns instance of availability system implementation based on result of getAvailabilitySystemName()
      *
-     * @return \Pimcore\Bundle\EcommerceFrameworkBundle\AvailabilitySystem\IAvailabilitySystem
+     * @return AvailabilitySystemInterface
      */
     public function getAvailabilitySystemImplementation()
     {
@@ -211,7 +213,7 @@ class AbstractProduct extends \Pimcore\Model\DataObject\Concrete implements IPro
      *
      * @param int $quantity
      *
-     * @return \Pimcore\Bundle\EcommerceFrameworkBundle\AvailabilitySystem\IAvailability
+     * @return AvailabilityInterface
      */
     public function getOSAvailabilityInfo($quantity = null)
     {

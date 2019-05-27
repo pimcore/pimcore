@@ -14,9 +14,9 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\Tracking;
 
+use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartPriceModificator\IShipping;
-use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart;
-use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICartItem;
+use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartItemInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrderItem;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\ICheckoutable;
@@ -136,11 +136,11 @@ class TrackingItemBuilder implements ITrackingItemBuilder
     /**
      * Build checkout items
      *
-     * @param ICart $cart
+     * @param CartInterface $cart
      *
      * @return ProductAction[]
      */
-    public function buildCheckoutItemsByCart(ICart $cart)
+    public function buildCheckoutItemsByCart(CartInterface $cart)
     {
         $items = [];
 
@@ -190,11 +190,11 @@ class TrackingItemBuilder implements ITrackingItemBuilder
     /**
      * Build a checkout item object by cart Item
      *
-     * @param ICartItem $cartItem
+     * @param CartItemInterface $cartItem
      *
      * @return ProductAction
      */
-    public function buildCheckoutItemByCartItem(ICartItem $cartItem)
+    public function buildCheckoutItemByCartItem(CartItemInterface $cartItem)
     {
         /** @var IProduct|AbstractObject $product */
         $product = $cartItem->getProduct();

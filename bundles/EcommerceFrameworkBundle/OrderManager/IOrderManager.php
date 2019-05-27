@@ -14,7 +14,7 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart;
+use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\IStatus;
 use Pimcore\Model\DataObject\Folder;
@@ -55,16 +55,16 @@ interface IOrderManager
      *
      * @return AbstractOrder
      */
-    public function getOrCreateOrderFromCart(ICart $cart);
+    public function getOrCreateOrderFromCart(CartInterface $cart);
 
     /**
      * Looks if order object for given cart exists and returns it - it does not create it!
      *
-     * @param ICart $cart
+     * @param CartInterface $cart
      *
      * @return AbstractOrder
      */
-    public function getOrderFromCart(ICart $cart);
+    public function getOrderFromCart(CartInterface $cart);
 
     /**
      * Returns order based on given payment status
