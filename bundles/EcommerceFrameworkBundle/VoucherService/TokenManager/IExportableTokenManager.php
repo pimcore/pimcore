@@ -14,26 +14,19 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\TokenManager;
 
-interface IExportableTokenManager
-{
-    const FORMAT_CSV = 'csv';
-    const FORMAT_PLAIN = 'plain';
+@trigger_error(
+    'Interface Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\TokenManager\IExportableTokenManager is deprecated since version 6.0.0 and will be removed in 7.0.0. ' .
+    ' Use ' . ExportableTokenManagerInterface::class . ' class instead.',
+    E_USER_DEPRECATED
+);
 
-    /**
-     * Export tokens to CSV
-     *
-     * @param array $params
-     *
-     * @return string
-     */
-    public function exportCsv(array $params);
+class_exists(ExportableTokenManagerInterface::class);
 
+if(false) {
     /**
-     * Export tokens to plain text list
-     *
-     * @param array $params
-     *
-     * @return string
+     * @deprecated use ExportableTokenManagerInterface instead.
      */
-    public function exportPlain(array $params);
+    interface IExportableTokenManager
+    {
+    }
 }

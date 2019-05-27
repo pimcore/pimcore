@@ -29,7 +29,7 @@ use Zend\Paginator\Paginator;
 /**
  * Class Pattern
  */
-class Pattern extends AbstractTokenManager implements IExportableTokenManager
+class Pattern extends AbstractTokenManager implements ExportableTokenManagerInterface
 {
     /* @var float Max probability to hit a duplicate entry on insertion e.g. to guess a code  */
 

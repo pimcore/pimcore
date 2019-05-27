@@ -26,7 +26,7 @@ use Pimcore\Model\DataObject\OnlineShopVoucherToken;
 use Zend\Paginator\Adapter\ArrayAdapter;
 use Zend\Paginator\Paginator;
 
-class Single extends AbstractTokenManager implements IExportableTokenManager
+class Single extends AbstractTokenManager implements ExportableTokenManagerInterface
 {
     protected $template;
 

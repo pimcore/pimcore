@@ -19,7 +19,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\VoucherServiceException;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class DefaultService implements IVoucherService
+class DefaultService implements VoucherServiceInterface
 {
     /**
      * @var int
@@ -203,7 +203,7 @@ class DefaultService implements IVoucherService
     /**
      * @param $code
      *
-     * @return bool|TokenManager\ITokenManager
+     * @return bool|TokenManager\TokenManagerInterface
      */
     public function getTokenManager($code)
     {

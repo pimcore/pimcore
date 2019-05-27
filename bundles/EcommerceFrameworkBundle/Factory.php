@@ -37,8 +37,8 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\PriceSystemLocatorInterf
 use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\PricingManagerInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\PricingManagerLocatorInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\ITrackingManager;
-use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\IVoucherService;
-use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\TokenManager\ITokenManager;
+use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\VoucherServiceInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\TokenManager\TokenManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class Factory
@@ -285,7 +285,7 @@ class Factory
         return $this->container->get(PimcoreEcommerceFrameworkExtension::SERVICE_ID_OFFER_TOOL);
     }
 
-    public function getVoucherService(): IVoucherService
+    public function getVoucherService(): VoucherServiceInterface
     {
         return $this->container->get(PimcoreEcommerceFrameworkExtension::SERVICE_ID_VOUCHER_SERVICE);
     }
@@ -295,9 +295,9 @@ class Factory
      *
      * @param AbstractVoucherTokenType $configuration
      *
-     * @return ITokenManager
+     * @return TokenManagerInterface
      */
-    public function getTokenManager(AbstractVoucherTokenType $configuration): ITokenManager
+    public function getTokenManager(AbstractVoucherTokenType $configuration): TokenManagerInterface
     {
         $tokenManagerFactory = $this->container->get(PimcoreEcommerceFrameworkExtension::SERVICE_ID_TOKEN_MANAGER_FACTORY);
 

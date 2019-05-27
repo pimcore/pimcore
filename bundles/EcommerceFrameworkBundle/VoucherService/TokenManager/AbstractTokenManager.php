@@ -21,7 +21,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractVoucherTokenType;
 use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Token;
 use Pimcore\Model\DataObject\OnlineShopVoucherSeries;
 
-abstract class AbstractTokenManager implements ITokenManager
+abstract class AbstractTokenManager implements TokenManagerInterface
 {
     /* @var AbstractVoucherTokenType */
     public $configuration;

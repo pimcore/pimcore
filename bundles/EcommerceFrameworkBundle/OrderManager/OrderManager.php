@@ -28,7 +28,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment\PaymentInterf
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\TaxManagement\TaxEntry;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\PriceInfoInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
-use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\IVoucherService;
+use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\VoucherServiceInterface;
 use Pimcore\File;
 use Pimcore\Logger;
 use Pimcore\Model\DataObject\Folder;
@@ -50,7 +50,7 @@ class OrderManager implements OrderManagerInterface
     protected $orderAgentFactory;
 
     /**
-     * @var IVoucherService
+     * @var VoucherServiceInterface
      */
     protected $voucherService;
 
@@ -82,7 +82,7 @@ class OrderManager implements OrderManagerInterface
     public function __construct(
         IEnvironment $environment,
         OrderAgentFactoryInterface $orderAgentFactory,
-        IVoucherService $voucherService,
+        VoucherServiceInterface $voucherService,
         array $options = []
     ) {
         $this->environment = $environment;
