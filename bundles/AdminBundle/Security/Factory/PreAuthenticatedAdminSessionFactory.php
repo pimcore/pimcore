@@ -21,7 +21,7 @@ use Symfony\Bundle\SecurityBundle\DependencyInjection\Security\Factory\SecurityF
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\Config\Definition\Builder\NodeDefinition;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\DefinitionDecorator;
+use Symfony\Component\DependencyInjection\ChildDefinition;
 use Symfony\Component\DependencyInjection\Reference;
 
 class PreAuthenticatedAdminSessionFactory implements SecurityFactoryInterface
@@ -37,7 +37,7 @@ class PreAuthenticatedAdminSessionFactory implements SecurityFactoryInterface
         $container
             ->setDefinition(
                 $providerId,
-                new DefinitionDecorator('pimcore.security.authentication.provider.admin_pre_auth')
+                new ChildDefinition('pimcore.security.authentication.provider.admin_pre_auth')
             )
             ->replaceArgument(0, new Reference($userProvider))
             ->replaceArgument(2, $id);
@@ -45,7 +45,7 @@ class PreAuthenticatedAdminSessionFactory implements SecurityFactoryInterface
         $container
             ->setDefinition(
                 $listenerId,
-                new DefinitionDecorator('pimcore.security.authentication.listener.admin_pre_auth')
+                new ChildDefinition('pimcore.security.authentication.listener.admin_pre_auth')
             )
             ->replaceArgument(2, $id);
 
