@@ -16,7 +16,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\Currency;
-use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\IStatus;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\StatusInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Status;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPrice;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\Price;
@@ -292,7 +292,7 @@ class QPay extends AbstractPayment
      *
      * @param mixed $response
      *
-     * @return IStatus
+     * @return StatusInterface
      *
      * @throws \Exception
      */
@@ -334,7 +334,7 @@ class QPay extends AbstractPayment
                 $response['orderIdent'],
                 $response['orderNumber'],
                 $response['avsResponseMessage'] ?: $response['message'] ?: 'fingerprint error',
-                IStatus::STATUS_CANCELLED
+                StatusInterface::STATUS_CANCELLED
             );
         }
 
@@ -354,8 +354,8 @@ class QPay extends AbstractPayment
             $response['orderNumber'],
             $response['avsResponseMessage'] ?: $response['message'],
             $response['orderNumber'] !== null && $response['paymentState'] == 'SUCCESS'
-                ? IStatus::STATUS_AUTHORIZED
-                : IStatus::STATUS_CANCELLED,
+                ? StatusInterface::STATUS_AUTHORIZED
+                : StatusInterface::STATUS_CANCELLED,
             [
                 'qpay_amount' => (string)$price,
                 'qpay_paymentType' => $response['paymentType'],
@@ -417,7 +417,7 @@ class QPay extends AbstractPayment
      * @param IPrice $price
      * @param string $reference
      *
-     * @return IStatus
+     * @return StatusInterface
      *
      * @throws \Exception
      */
@@ -495,7 +495,7 @@ class QPay extends AbstractPayment
                 $reference,
                 $response['paymentNumber'] ?: $response['orderNumber'],
                 '',
-                IStatus::STATUS_CLEARED,
+                StatusInterface::STATUS_CLEARED,
                 [
                     'qpay_amount' => (string)$price,
                     'qpay_command' => $request['command'],
@@ -514,7 +514,7 @@ class QPay extends AbstractPayment
                 $reference,
                 $response['paymentNumber'] ?: $response['orderNumber'],
                 implode("\n", $error),
-                IStatus::STATUS_CANCELLED,
+                StatusInterface::STATUS_CANCELLED,
                 [
                     'qpay_amount' => (string)$price,
                     'qpay_command' => $request['command'],
@@ -533,7 +533,7 @@ class QPay extends AbstractPayment
      * @param string $reference
      * @param $transactionId
      *
-     * @return IStatus
+     * @return StatusInterface
      *
      * @throws \Exception
      */
@@ -576,7 +576,7 @@ class QPay extends AbstractPayment
                 $transactionId,
                 $reference,
                 'executeCredit',
-                IStatus::STATUS_CLEARED,
+                StatusInterface::STATUS_CLEARED,
                 [
                     'qpay_amount' => (string)$price,
                     'qpay_command' => $request['command'],
@@ -590,7 +590,7 @@ class QPay extends AbstractPayment
                 $transactionId,
                 $reference,
                 $response['message'],
-                IStatus::STATUS_CANCELLED,
+                StatusInterface::STATUS_CANCELLED,
                 [
                     'qpay_amount' => (string)$price,
                     'qpay_command' => $request['command'],

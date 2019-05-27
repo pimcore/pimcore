@@ -18,8 +18,8 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\UnsupportedException;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractPaymentInformation;
-use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\IStatus;
-use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment\IPayment;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\StatusInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment\PaymentInterface;
 
 interface CheckoutManagerInterface
 {
@@ -163,11 +163,11 @@ interface CheckoutManagerInterface
      * @deprecated use handlePaymentResponseAndCommitOrderPayment instead
      *
      * @param AbstractOrder $sourceOrder
-     * @param IStatus $status
+     * @param StatusInterface $status
      *
      * @return AbstractOrder
      */
-    public function commitOrderPayment(IStatus $status, AbstractOrder $sourceOrder);
+    public function commitOrderPayment(StatusInterface $status, AbstractOrder $sourceOrder);
 
     /**
      * Commits order - does not consider any payment
@@ -191,7 +191,7 @@ interface CheckoutManagerInterface
     /**
      * Returns payment adapter
      *
-     * @return IPayment|null
+     * @return PaymentInterface|null
      */
     public function getPayment();
 

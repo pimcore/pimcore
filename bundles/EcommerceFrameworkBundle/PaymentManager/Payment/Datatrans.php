@@ -16,7 +16,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\Currency;
-use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\IStatus;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\StatusInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Status;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPrice;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\Price;
@@ -69,7 +69,7 @@ class Datatrans extends AbstractPayment
     protected $authorizedData = [];
 
     /**
-     * @var IStatus
+     * @var StatusInterface
      */
     protected $paymentStatus;
 
@@ -286,7 +286,7 @@ class Datatrans extends AbstractPayment
      *
      * @param mixed $response
      *
-     * @return IStatus
+     * @return StatusInterface
      *
      * @throws \Exception
      *
@@ -553,7 +553,7 @@ class Datatrans extends AbstractPayment
      * @param string $reference
      * @param string $transactionId
      *
-     * @return IStatus
+     * @return StatusInterface
      */
     public function executeAuthorizationCancel(IPrice $price, $reference, $transactionId)
     {

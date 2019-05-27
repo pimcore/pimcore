@@ -16,7 +16,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
-use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\IStatus;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\StatusInterface;
 use Pimcore\Model\DataObject\Folder;
 
 interface OrderManagerInterface
@@ -69,11 +69,11 @@ interface OrderManagerInterface
     /**
      * Returns order based on given payment status
      *
-     * @param IStatus $paymentStatus
+     * @param StatusInterface $paymentStatus
      *
      * @return AbstractOrder
      */
-    public function getOrderByPaymentStatus(IStatus $paymentStatus);
+    public function getOrderByPaymentStatus(StatusInterface $paymentStatus);
 
     /**
      * Builds order listing

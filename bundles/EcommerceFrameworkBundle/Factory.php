@@ -31,7 +31,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractVoucherTokenType;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OfferTool\ServiceInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderManagerInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderManagerLocatorInterface;
-use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\IPaymentManager;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\PaymentManagerInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPriceSystem;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPriceSystemLocator;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IPricingManager;
@@ -247,7 +247,7 @@ class Factory
         return $this->commitOrderProcessors->getCommitOrderProcessor($tenant);
     }
 
-    public function getPaymentManager(): IPaymentManager
+    public function getPaymentManager(): PaymentManagerInterface
     {
         return $this->container->get(PimcoreEcommerceFrameworkExtension::SERVICE_ID_PAYMENT_MANAGER);
     }

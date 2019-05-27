@@ -6,7 +6,7 @@ use Mpay24\Mpay24;
 use Mpay24\Mpay24Config;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractPaymentInformation;
-use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\IStatus;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\StatusInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Status;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPrice;
 use Pimcore\Model\DataObject\Fieldcollection\Data\OrderPriceModifications;
@@ -324,7 +324,7 @@ class Mpay24Seamless extends AbstractPayment
      *
      * @param array $response
      *
-     * @return IStatus
+     * @return StatusInterface
      *
      * @throws \Exception
      */
@@ -337,11 +337,11 @@ class Mpay24Seamless extends AbstractPayment
         $internalPaymentId = $response['TID'];
 
         $transactionParams = $params->getParams();
-        $responseStatus = IStatus::STATUS_PENDING;
+        $responseStatus = StatusInterface::STATUS_PENDING;
         if ($params->hasStatusOk() && $transactionParams['STATUS'] != 'ERROR') {
-            $responseStatus = IStatus::STATUS_AUTHORIZED;
+            $responseStatus = StatusInterface::STATUS_AUTHORIZED;
         } else {
-            $responseStatus = IStatus::STATUS_CANCELLED;
+            $responseStatus = StatusInterface::STATUS_CANCELLED;
         }
 
         $mpayLogData = [];
@@ -396,7 +396,7 @@ class Mpay24Seamless extends AbstractPayment
      * @param IPrice $price
      * @param string $reference
      *
-     * @return IStatus
+     * @return StatusInterface
      *
      * @throws \Exception
      */
@@ -412,7 +412,7 @@ class Mpay24Seamless extends AbstractPayment
      * @param string $reference
      * @param $transactionId
      *
-     * @return IStatus
+     * @return StatusInterface
      *
      * @throws \Exception
      */

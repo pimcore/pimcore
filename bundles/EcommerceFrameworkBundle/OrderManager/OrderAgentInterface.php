@@ -20,8 +20,8 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder as Order;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrderItem as OrderItem;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractPaymentInformation;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\Currency;
-use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\IStatus;
-use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment\IPayment;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\StatusInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment\PaymentInterface;
 use Pimcore\Model\Element\Note;
 
 interface OrderAgentInterface
@@ -81,17 +81,17 @@ interface OrderAgentInterface
     public function hasPayment();
 
     /**
-     * @return IPayment
+     * @return PaymentInterface
      */
     public function getPaymentProvider();
 
     /**
-     * @param IPayment $paymentProvider
+     * @param PaymentInterface $paymentProvider
      * @param AbstractOrder|null $sourceOrder
      *
      * @return Order
      */
-    public function setPaymentProvider(IPayment $paymentProvider, AbstractOrder $sourceOrder = null);
+    public function setPaymentProvider(PaymentInterface $paymentProvider, AbstractOrder $sourceOrder = null);
 
     /**
      * Init payment:
@@ -141,11 +141,11 @@ interface OrderAgentInterface
     public function cancelStartedOrderPayment();
 
     /**
-     * @param IStatus $status
+     * @param StatusInterface $status
      *
      * @return OrderAgentInterface
      */
-    public function updatePayment(IStatus $status);
+    public function updatePayment(StatusInterface $status);
 
     /**
      * @return Note[]

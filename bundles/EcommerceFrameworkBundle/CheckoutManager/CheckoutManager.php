@@ -21,8 +21,8 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderManagerLocatorInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\Order\Agent;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderManager;
-use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\IStatus;
-use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment\IPayment;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\StatusInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment\PaymentInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment\QPay;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\Price;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
@@ -62,7 +62,7 @@ class CheckoutManager implements CheckoutManagerInterface
     /**
      * Payment Provider
      *
-     * @var IPayment
+     * @var PaymentInterface
      */
     protected $payment;
 
@@ -101,7 +101,7 @@ class CheckoutManager implements CheckoutManagerInterface
      * @param OrderManagerLocatorInterface $orderManagers
      * @param CommitOrderProcessorLocatorInterface $commitOrderProcessors
      * @param CheckoutStepInterface[] $checkoutSteps
-     * @param IPayment|null $paymentProvider
+     * @param PaymentInterface|null $paymentProvider
      */
     public function __construct(
         CartInterface $cart,
@@ -109,7 +109,7 @@ class CheckoutManager implements CheckoutManagerInterface
         OrderManagerLocatorInterface $orderManagers,
         CommitOrderProcessorLocatorInterface $commitOrderProcessors,
         array $checkoutSteps,
-        IPayment $paymentProvider = null
+        PaymentInterface $paymentProvider = null
     ) {
         $this->cart = $cart;
         $this->environment = $environment;
@@ -324,12 +324,12 @@ class CheckoutManager implements CheckoutManagerInterface
     /**
      * Verifies if the payment provider is supported for recurring payment
      *
-     * @param IPayment $provider
+     * @param PaymentInterface $provider
      * @param AbstractOrder $sourceOrder
      *
      * @throws \Exception
      */
-    protected function verifyRecurringPayment(IPayment $provider, AbstractOrder $sourceOrder, string $customerId)
+    protected function verifyRecurringPayment(PaymentInterface $provider, AbstractOrder $sourceOrder, string $customerId)
     {
 
         /* @var OrderManager $orderManager */
@@ -394,7 +394,7 @@ class CheckoutManager implements CheckoutManagerInterface
     /**
      * @inheritdoc
      */
-    public function commitOrderPayment(IStatus $status, AbstractOrder $sourceOrder = null)
+    public function commitOrderPayment(StatusInterface $status, AbstractOrder $sourceOrder = null)
     {
         $this->validateCheckoutSteps();
 

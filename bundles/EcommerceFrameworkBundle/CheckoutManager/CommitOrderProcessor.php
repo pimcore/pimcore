@@ -17,8 +17,8 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\UnsupportedException;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderManagerLocatorInterface;
-use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\IStatus;
-use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment\IPayment;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\StatusInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment\PaymentInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Status;
 use Pimcore\Log\ApplicationLogger;
 use Pimcore\Log\FileObject;
@@ -75,11 +75,11 @@ class CommitOrderProcessor implements CommitOrderProcessorInterface
 
     /**
      * @param $paymentResponseParams
-     * @param IPayment $paymentProvider
+     * @param PaymentInterface $paymentProvider
      *
-     * @return Status|IStatus
+     * @return Status|StatusInterface
      */
-    protected function getPaymentStatus($paymentResponseParams, IPayment $paymentProvider)
+    protected function getPaymentStatus($paymentResponseParams, PaymentInterface $paymentProvider)
     {
         // since handle response can throw exceptions and commitOrderPayment must be executed,
         // this needs to be in a try-catch block
@@ -93,7 +93,7 @@ class CommitOrderProcessor implements CommitOrderProcessorInterface
                 $paymentResponseParams['orderIdent'],
                 'unknown',
                 'there was an error: ' . $e->getMessage(),
-                IStatus::STATUS_CANCELLED
+                StatusInterface::STATUS_CANCELLED
             );
         }
 
@@ -103,7 +103,7 @@ class CommitOrderProcessor implements CommitOrderProcessorInterface
     /**
      * @inheritdoc
      */
-    public function handlePaymentResponseAndCommitOrderPayment($paymentResponseParams, IPayment $paymentProvider)
+    public function handlePaymentResponseAndCommitOrderPayment($paymentResponseParams, PaymentInterface $paymentProvider)
     {
         // check if order is already committed and payment information with same internal payment id has same state
         // if so, do nothing and return order
@@ -119,9 +119,9 @@ class CommitOrderProcessor implements CommitOrderProcessorInterface
     /**
      * @inheritdoc
      */
-    public function committedOrderWithSamePaymentExists($paymentResponseParams, IPayment $paymentProvider)
+    public function committedOrderWithSamePaymentExists($paymentResponseParams, PaymentInterface $paymentProvider)
     {
-        if (!$paymentResponseParams instanceof IStatus) {
+        if (!$paymentResponseParams instanceof StatusInterface) {
             $paymentStatus = $this->getPaymentStatus($paymentResponseParams, $paymentProvider);
         } else {
             $paymentStatus = $paymentResponseParams;
@@ -150,7 +150,7 @@ class CommitOrderProcessor implements CommitOrderProcessorInterface
     /**
      * @inheritdoc
      */
-    public function commitOrderPayment(IStatus $paymentStatus, IPayment $paymentProvider, AbstractOrder $sourceOrder = null)
+    public function commitOrderPayment(StatusInterface $paymentStatus, PaymentInterface $paymentProvider, AbstractOrder $sourceOrder = null)
     {
         // acquire lock to make sure only one process is committing order payment
         Lock::acquire(self::LOCK_KEY . $paymentStatus->getInternalPaymentId());
@@ -211,10 +211,10 @@ class CommitOrderProcessor implements CommitOrderProcessorInterface
      * Called in commitOrderPayment() just after updatePayment on OrderAgent is called
      *
      * @param AbstractOrder $order
-     * @param IStatus $paymentStatus
-     * @param IPayment $paymentProvider
+     * @param StatusInterface $paymentStatus
+     * @param PaymentInterface $paymentProvider
      */
-    protected function applyAdditionalDataToOrder(AbstractOrder $order, IStatus $paymentStatus, IPayment $paymentProvider)
+    protected function applyAdditionalDataToOrder(AbstractOrder $order, StatusInterface $paymentStatus, PaymentInterface $paymentProvider)
     {
         // nothing to do by default
     }

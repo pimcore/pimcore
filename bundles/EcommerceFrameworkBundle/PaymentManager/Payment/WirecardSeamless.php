@@ -20,7 +20,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IEnvironment;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractPaymentInformation;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\Currency;
-use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\IStatus;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\StatusInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Status;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPrice;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\Price;
@@ -475,7 +475,7 @@ class WirecardSeamless extends AbstractPayment
     /**
      * @param mixed $response
      *
-     * @return IStatus
+     * @return StatusInterface
      *
      * @throws \Exception
      */
@@ -506,7 +506,7 @@ class WirecardSeamless extends AbstractPayment
                 $orderIdent,
                 '',
                 '',
-                IStatus::STATUS_AUTHORIZED,
+                StatusInterface::STATUS_AUTHORIZED,
                 [
                     'seamless_amount' => '',
                     'seamless_paymentType' => 'PREPAYMENT',
@@ -537,8 +537,8 @@ class WirecardSeamless extends AbstractPayment
                 $response['orderNumber'],
                 $response['avsResponseMessage'],
                 $response['orderNumber'] !== null && $response['paymentState'] == 'PENDING'
-                    ? IStatus::STATUS_PENDING
-                    : IStatus::STATUS_CANCELLED,
+                    ? StatusInterface::STATUS_PENDING
+                    : StatusInterface::STATUS_CANCELLED,
                 [
                     'seamless_amount' => '',
                     'seamless_paymentType' => '',
@@ -606,8 +606,8 @@ class WirecardSeamless extends AbstractPayment
             $response['orderNumber'],
             $response['avsResponseMessage'],
             $response['orderNumber'] !== null && $response['paymentState'] == 'SUCCESS'
-                ? IStatus::STATUS_AUTHORIZED
-                : IStatus::STATUS_CANCELLED,
+                ? StatusInterface::STATUS_AUTHORIZED
+                : StatusInterface::STATUS_CANCELLED,
             [
                 'seamless_amount' => (string)$price,
                 'seamless_paymentType' => $response['paymentType'],
@@ -645,7 +645,7 @@ class WirecardSeamless extends AbstractPayment
      *
      * @throws \Exception
      *
-     * @return IStatus
+     * @return StatusInterface
      */
     public function executeDebit(IPrice $price = null, $reference = null)
     {
@@ -658,7 +658,7 @@ class WirecardSeamless extends AbstractPayment
      * @param IPrice $price
      * @param string $reference
      *
-     * @return IStatus
+     * @return StatusInterface
      *
      * @throws \Exception
      */
@@ -690,7 +690,7 @@ class WirecardSeamless extends AbstractPayment
                 $transactionId,
                 $reference,
                 'executeDepit: deposit canceled',
-                IStatus::STATUS_CANCELLED,
+                StatusInterface::STATUS_CANCELLED,
                 $result
             );
         } else {
@@ -698,7 +698,7 @@ class WirecardSeamless extends AbstractPayment
                 $transactionId,
                 $reference,
                 'deposit executed: ' . round($price->getAmount()->asNumeric(), 2) . ' ' . $price->getCurrency()->getShortName(),
-                IStatus::STATUS_CLEARED,
+                StatusInterface::STATUS_CLEARED,
                 []
             );
         }
@@ -713,7 +713,7 @@ class WirecardSeamless extends AbstractPayment
      *
      * @throws \Exception
      *
-     * @return IStatus
+     * @return StatusInterface
      */
     public function executeCredit(IPrice $price, $reference, $transactionId)
     {
@@ -734,7 +734,7 @@ class WirecardSeamless extends AbstractPayment
                 $reference,
                 $transactionId,
                 'approveReversal: payment approval canceled',
-                IStatus::STATUS_CANCELLED,
+                StatusInterface::STATUS_CANCELLED,
                 []
             );
         }
@@ -763,7 +763,7 @@ class WirecardSeamless extends AbstractPayment
                 $reference,
                 $transactionId,
                 'approveReversal: payment approval canceled',
-                IStatus::STATUS_CANCELLED,
+                StatusInterface::STATUS_CANCELLED,
                 []
             );
         } else {

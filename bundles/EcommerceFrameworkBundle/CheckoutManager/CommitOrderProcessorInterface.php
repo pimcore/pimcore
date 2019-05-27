@@ -16,23 +16,23 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\UnsupportedException;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
-use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\IStatus;
-use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment\IPayment;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\StatusInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment\PaymentInterface;
 
 interface CommitOrderProcessorInterface
 {
     /**
      * Checks if order is already committed and payment information with same internal payment id has same state
      *
-     * @param array|IStatus $paymentResponseParams
-     * @param IPayment $paymentProvider
+     * @param array|StatusInterface $paymentResponseParams
+     * @param PaymentInterface $paymentProvider
      *
      * @return null|AbstractOrder
      *
      * @throws \Exception
      * @throws UnsupportedException
      */
-    public function committedOrderWithSamePaymentExists($paymentResponseParams, IPayment $paymentProvider);
+    public function committedOrderWithSamePaymentExists($paymentResponseParams, PaymentInterface $paymentProvider);
 
     /**
      * Facade method for
@@ -43,11 +43,11 @@ interface CommitOrderProcessorInterface
      * Can be used by controllers to commit orders with payment
      *
      * @param $paymentResponseParams
-     * @param IPayment $paymentProvider
+     * @param PaymentInterface $paymentProvider
      *
      * @return AbstractOrder
      */
-    public function handlePaymentResponseAndCommitOrderPayment($paymentResponseParams, IPayment $paymentProvider);
+    public function handlePaymentResponseAndCommitOrderPayment($paymentResponseParams, PaymentInterface $paymentProvider);
 
     /**
      * Commits order payment
@@ -57,13 +57,13 @@ interface CommitOrderProcessorInterface
      *
      * Use this for committing order when payment is activated
      *
-     * @param IStatus $paymentStatus
-     * @param IPayment $paymentProvider
+     * @param StatusInterface $paymentStatus
+     * @param PaymentInterface $paymentProvider
      * @param AbstractOrder $sourceOrder Source order for recurring payment
      *
      * @return AbstractOrder
      */
-    public function commitOrderPayment(IStatus $paymentStatus, IPayment $paymentProvider, AbstractOrder $sourceOrder = null);
+    public function commitOrderPayment(StatusInterface $paymentStatus, PaymentInterface $paymentProvider, AbstractOrder $sourceOrder = null);
 
     /**
      * Commits order

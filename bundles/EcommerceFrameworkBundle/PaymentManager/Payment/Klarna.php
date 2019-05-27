@@ -15,7 +15,7 @@
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartInterface;
-use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\IStatus;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\StatusInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Status;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPrice;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -168,7 +168,7 @@ class Klarna extends AbstractPayment
         $order->fetch();
 
         $statMap = [
-            'checkout_complete' => IStatus::STATUS_AUTHORIZED, 'created' => IStatus::STATUS_CLEARED
+            'checkout_complete' => StatusInterface::STATUS_AUTHORIZED, 'created' => StatusInterface::STATUS_CLEARED
         ];
 
         return new Status(
@@ -177,7 +177,7 @@ class Klarna extends AbstractPayment
             $order['status'],
             array_key_exists($order['status'], $statMap)
                 ? $statMap[$order['status']]
-                : IStatus::STATUS_CANCELLED,
+                : StatusInterface::STATUS_CANCELLED,
             [
                 'klarna_amount' => $order['cart']['total_price_including_tax'],
                 'klarna_marshal' => json_encode($order->marshal()),
@@ -228,8 +228,8 @@ class Klarna extends AbstractPayment
                 $order['id'],
                 $order['status'],
                 $order['status'] == 'created'
-                    ? IStatus::STATUS_CLEARED
-                    : IStatus::STATUS_CANCELLED,
+                    ? StatusInterface::STATUS_CLEARED
+                    : StatusInterface::STATUS_CANCELLED,
                 [
                     'klarna_amount' => $order['cart']['total_price_including_tax'],
                     'klarna_marshal' => json_encode($order->marshal())
@@ -245,7 +245,7 @@ class Klarna extends AbstractPayment
      * @param string $reference
      * @param $transactionId
      *
-     * @return IStatus
+     * @return StatusInterface
      *
      * @throws \Exception
      *

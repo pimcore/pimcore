@@ -23,8 +23,8 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrderItem;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\Order\Listing;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Exception\ProviderNotFoundException;
-use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\IStatus;
-use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment\IPayment;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\StatusInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment\PaymentInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\TaxManagement\TaxEntry;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IPriceInfo;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
@@ -517,7 +517,7 @@ class OrderManager implements OrderManagerInterface
      * Get list of valid source orders to perform recurring payment on.
      *
      * @param string $customerId
-     * @param IPayment $paymentProvider
+     * @param PaymentInterface $paymentProvider
      * @param null $paymentMethod
      * @param null|int $limit
      * @param string $orderId
@@ -527,7 +527,7 @@ class OrderManager implements OrderManagerInterface
      *
      * @return false|\Pimcore\Model\DataObject\Listing\Concrete
      */
-    public function getRecurringPaymentSourceOrderList(string $customerId, IPayment $paymentProvider, $paymentMethod = null, $orderId = '')
+    public function getRecurringPaymentSourceOrderList(string $customerId, PaymentInterface $paymentProvider, $paymentMethod = null, $orderId = '')
     {
         $orders = $this->buildOrderList();
         $orders->addConditionParam('customer__id = ?', $customerId);
@@ -556,12 +556,12 @@ class OrderManager implements OrderManagerInterface
      * Get source order for performing recurring payment
      *
      * @param string $customerId
-     * @param IPayment $paymentProvider
+     * @param PaymentInterface $paymentProvider
      * @param null $paymentMethod
      *
      * @return mixed
      */
-    public function getRecurringPaymentSourceOrder(string $customerId, IPayment $paymentProvider, $paymentMethod = null)
+    public function getRecurringPaymentSourceOrder(string $customerId, PaymentInterface $paymentProvider, $paymentMethod = null)
     {
         if (!$paymentProvider->isRecurringPaymentEnabled()) {
             return null;
@@ -575,12 +575,12 @@ class OrderManager implements OrderManagerInterface
 
     /**
      * @param AbstractOrder $order
-     * @param IPayment $payment
+     * @param PaymentInterface $payment
      * @param string $customerId
      *
      * @return bool
      */
-    public function isValidOrderForRecurringPayment(AbstractOrder $order, IPayment $payment, $customerId = '')
+    public function isValidOrderForRecurringPayment(AbstractOrder $order, PaymentInterface $payment, $customerId = '')
     {
         $orders = $this->getRecurringPaymentSourceOrderList($customerId, $payment, null, $order->getId());
 
@@ -796,11 +796,11 @@ class OrderManager implements OrderManagerInterface
     }
 
     /**
-     * @param IStatus $paymentStatus
+     * @param StatusInterface $paymentStatus
      *
      * @return AbstractOrder
      */
-    public function getOrderByPaymentStatus(IStatus $paymentStatus)
+    public function getOrderByPaymentStatus(StatusInterface $paymentStatus)
     {
         //this call is needed in order to really load most updated object from cache or DB (otherwise it could be loaded from process)
         \Pimcore::collectGarbage();

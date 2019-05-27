@@ -15,7 +15,7 @@
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\Currency;
-use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\IStatus;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\StatusInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Status;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPrice;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\Price;
@@ -221,7 +221,7 @@ class OGone extends AbstractPayment
      *
      * @param array $response
      *
-     * @return IStatus
+     * @return StatusInterface
      *
      * @throws \Exception
      */
@@ -263,7 +263,7 @@ class OGone extends AbstractPayment
             $orderId, //internal Payment ID
             $orderId, //paymentReference
             '',
-            !empty($orderId) && $state === 'success' ? IStatus::STATUS_AUTHORIZED : IStatus::STATUS_CANCELLED,
+            !empty($orderId) && $state === 'success' ? StatusInterface::STATUS_AUTHORIZED : StatusInterface::STATUS_CANCELLED,
             [
                 'ogone_amount' => (string)$price,
                 'ogone_paymentId' => $oGonePaymentId,
@@ -412,7 +412,7 @@ class OGone extends AbstractPayment
      * @param IPrice $price
      * @param string $reference
      *
-     * @return IStatus
+     * @return StatusInterface
      *
      * @throws \Exception
      */
@@ -428,7 +428,7 @@ class OGone extends AbstractPayment
      * @param string $reference
      * @param $transactionId
      *
-     * @return IStatus
+     * @return StatusInterface
      *
      * @throws \Exception
      */
