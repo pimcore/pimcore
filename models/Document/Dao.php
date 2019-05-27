@@ -202,11 +202,12 @@ class Dao extends Model\Element\Dao
     /**
      * Updates children path in order to the old document path specified in the $oldPath parameter.
      *
+     * @internal
      * @param $oldPath
      *
      * @return array
      */
-    public function updateChildrenPaths($oldPath)
+    public function updateChildPaths($oldPath)
     {
         //get documents to empty their cache
         $documents = $this->db->fetchCol('SELECT id FROM documents WHERE path LIKE ?', $oldPath . '%');

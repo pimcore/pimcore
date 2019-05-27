@@ -433,7 +433,7 @@ class Document extends Element\AbstractElement
                     if ($oldPath && $oldPath != $this->getRealFullPath()) {
                         $differentOldPath = $oldPath;
                         $this->getDao()->updateWorkspaces();
-                        $updatedChildren = $this->getDao()->updateChildrenPaths($oldPath);
+                        $updatedChildren = $this->getDao()->updateChildPaths($oldPath);
                     }
 
                     $this->commit();

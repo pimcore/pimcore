@@ -178,11 +178,12 @@ class Dao extends Model\Element\Dao
     }
 
     /**
+     * @internal
      * @param $oldPath
      *
      * @return array
      */
-    public function updateChildrenPaths($oldPath)
+    public function updateChildPaths($oldPath)
     {
         //get assets to empty their cache
         $assets = $this->db->fetchCol('SELECT id FROM assets WHERE path LIKE ' . $this->db->quote($oldPath . '%'));

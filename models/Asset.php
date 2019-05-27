@@ -526,7 +526,7 @@ class Asset extends Element\AbstractElement
                             }
                             $differentOldPath = $oldPath;
                             $this->getDao()->updateWorkspaces();
-                            $updatedChildren = $this->getDao()->updateChildrenPaths($oldPath);
+                            $updatedChildren = $this->getDao()->updateChildPaths($oldPath);
                         }
                     }
 

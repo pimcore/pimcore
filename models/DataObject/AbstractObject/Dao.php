@@ -154,11 +154,12 @@ class Dao extends Model\Element\Dao
     /**
      * Updates the paths for children, children's properties and children's permissions in the database
      *
+     * @internal
      * @param string $oldPath
      *
      * @return null|array
      */
-    public function updateChildrenPaths($oldPath)
+    public function updateChildPaths($oldPath)
     {
         if ($this->hasChildren([DataObject::OBJECT_TYPE_OBJECT, DataObject::OBJECT_TYPE_FOLDER, DataObject::OBJECT_TYPE_VARIANT])) {
             //get objects to empty their cache
