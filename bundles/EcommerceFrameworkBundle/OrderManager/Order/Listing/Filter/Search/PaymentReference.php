@@ -14,7 +14,7 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\Order\Listing\Filter\Search;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\IOrderList;
+use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderListInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\Order\Listing\Filter\AbstractSearch;
 
 class PaymentReference extends AbstractSearch
@@ -41,9 +41,9 @@ class PaymentReference extends AbstractSearch
     /**
      * Join paymentInfo
      *
-     * @param IOrderList $orderList
+     * @param OrderListInterface $orderList
      */
-    protected function prepareApply(IOrderList $orderList)
+    protected function prepareApply(OrderListInterface $orderList)
     {
         $orderList->joinPaymentInfo();
     }

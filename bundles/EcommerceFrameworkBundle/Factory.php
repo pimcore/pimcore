@@ -29,8 +29,8 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterServiceLocatorIn
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\IndexService;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractVoucherTokenType;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OfferTool\ServiceInterface;
-use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\IOrderManager;
-use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\IOrderManagerLocator;
+use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderManagerInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderManagerLocatorInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\IPaymentManager;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPriceSystem;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPriceSystemLocator;
@@ -63,7 +63,7 @@ class Factory
     /**
      * Tenant specific order managers
      *
-     * @var IOrderManagerLocator
+     * @var OrderManagerLocatorInterface
      */
     private $orderManagers;
 
@@ -116,7 +116,7 @@ class Factory
      *
      * @param ContainerInterface $container
      * @param CartManagerLocatorInterface $cartManagers
-     * @param IOrderManagerLocator $orderManagers
+     * @param OrderManagerLocatorInterface $orderManagers
      * @param IPricingManagerLocator $pricingManagers
      * @param IPriceSystemLocator $priceSystems
      * @param AvailabilitySystemLocatorInterface $availabilitySystems
@@ -127,7 +127,7 @@ class Factory
     public function __construct(
         ContainerInterface $container,
         CartManagerLocatorInterface $cartManagers,
-        IOrderManagerLocator $orderManagers,
+        OrderManagerLocatorInterface $orderManagers,
         IPricingManagerLocator $pricingManagers,
         IPriceSystemLocator $priceSystems,
         AvailabilitySystemLocatorInterface $availabilitySystems,
@@ -175,9 +175,9 @@ class Factory
      *
      * @param string|null $tenant
      *
-     * @return IOrderManager
+     * @return OrderManagerInterface
      */
-    public function getOrderManager(string $tenant = null): IOrderManager
+    public function getOrderManager(string $tenant = null): OrderManagerInterface
     {
         return $this->orderManagers->getOrderManager($tenant);
     }

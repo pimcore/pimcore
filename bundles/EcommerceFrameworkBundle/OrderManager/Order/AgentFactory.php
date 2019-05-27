@@ -19,12 +19,12 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\Order;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\IEnvironment;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
-use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\IOrderAgent;
-use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\IOrderAgentFactory;
+use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderAgentInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderAgentFactoryInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\IPaymentManager;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class AgentFactory implements IOrderAgentFactory
+class AgentFactory implements OrderAgentFactoryInterface
 {
     /**
      * @var IEnvironment
@@ -74,7 +74,7 @@ class AgentFactory implements IOrderAgentFactory
         $resolver->setAllowedTypes('agent_class', 'string');
     }
 
-    public function createAgent(AbstractOrder $order): IOrderAgent
+    public function createAgent(AbstractOrder $order): OrderAgentInterface
     {
         $class = $this->agentClass;
 

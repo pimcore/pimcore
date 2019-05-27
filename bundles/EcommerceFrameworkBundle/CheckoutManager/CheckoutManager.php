@@ -18,7 +18,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\UnsupportedException;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IEnvironment;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
-use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\IOrderManagerLocator;
+use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderManagerLocatorInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\Order\Agent;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderManager;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\IStatus;
@@ -50,7 +50,7 @@ class CheckoutManager implements CheckoutManagerInterface
     protected $environment;
 
     /**
-     * @var IOrderManagerLocator
+     * @var OrderManagerLocatorInterface
      */
     protected $orderManagers;
 
@@ -98,7 +98,7 @@ class CheckoutManager implements CheckoutManagerInterface
     /**
      * @param CartInterface $cart
      * @param IEnvironment $environment
-     * @param IOrderManagerLocator $orderManagers
+     * @param OrderManagerLocatorInterface $orderManagers
      * @param CommitOrderProcessorLocatorInterface $commitOrderProcessors
      * @param CheckoutStepInterface[] $checkoutSteps
      * @param IPayment|null $paymentProvider
@@ -106,7 +106,7 @@ class CheckoutManager implements CheckoutManagerInterface
     public function __construct(
         CartInterface $cart,
         IEnvironment $environment,
-        IOrderManagerLocator $orderManagers,
+        OrderManagerLocatorInterface $orderManagers,
         CommitOrderProcessorLocatorInterface $commitOrderProcessors,
         array $checkoutSteps,
         IPayment $paymentProvider = null

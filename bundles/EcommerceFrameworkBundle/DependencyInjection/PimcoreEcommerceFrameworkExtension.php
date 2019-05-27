@@ -23,7 +23,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\CheckoutManagerFacto
 use Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\CommitOrderProcessorLocatorInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterServiceLocator;
 use Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterServiceLocatorInterface;
-use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\IOrderManagerLocator;
+use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderManagerLocatorInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderManagerLocator;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\PriceSystemLocator;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IPricingManagerLocator;
@@ -203,7 +203,7 @@ class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
 
         $this->setupTenantAwareComponentLocator(
             $container,
-            IOrderManagerLocator::class,
+            OrderManagerLocatorInterface::class,
             $mapping,
             OrderManagerLocator::class,
             [

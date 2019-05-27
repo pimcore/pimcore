@@ -22,7 +22,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder as Order;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrderItem as OrderItem;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractPaymentInformation;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\Currency;
-use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\IOrderAgent;
+use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderAgentInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\IPaymentManager;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\IStatus;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment\IPayment;
@@ -36,7 +36,7 @@ use Pimcore\Model\Element\Note;
 use Pimcore\Model\Element\Note\Listing as NoteListing;
 use Symfony\Component\Lock\Exception\NotSupportedException;
 
-class Agent implements IOrderAgent
+class Agent implements OrderAgentInterface
 {
     const PAYMENT_PROVIDER_BRICK_PREFIX = 'PaymentProvider';
 

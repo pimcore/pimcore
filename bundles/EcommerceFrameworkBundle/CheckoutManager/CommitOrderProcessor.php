@@ -16,7 +16,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\UnsupportedException;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
-use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\IOrderManagerLocator;
+use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderManagerLocatorInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\IStatus;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment\IPayment;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Status;
@@ -32,7 +32,7 @@ class CommitOrderProcessor implements CommitOrderProcessorInterface
     const LOGGER_NAME = 'commit-order-processor';
 
     /**
-     * @var IOrderManagerLocator
+     * @var OrderManagerLocatorInterface
      */
     protected $orderManagers;
 
@@ -41,7 +41,7 @@ class CommitOrderProcessor implements CommitOrderProcessorInterface
      */
     protected $confirmationMail = '/emails/order-confirmation';
 
-    public function __construct(IOrderManagerLocator $orderManagers, array $options = [])
+    public function __construct(OrderManagerLocatorInterface $orderManagers, array $options = [])
     {
         $this->orderManagers = $orderManagers;
 

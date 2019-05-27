@@ -1,7 +1,4 @@
 <?php
-
-declare(strict_types=1);
-
 /**
  * Pimcore
  *
@@ -17,18 +14,20 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager;
 
+use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder as Order;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrderItem as OrderItem;
 
-@trigger_error(
-    'Interface Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\IOrderManagerLocator is deprecated since version 6.0.0 and will be removed in 7.0.0. ' .
-    ' Use ' . OrderManagerLocatorInterface::class . ' class instead.',
-    E_USER_DEPRECATED
-);
-
-if(false) {
+interface OrderListItemInterface
+{
     /**
-     * @deprecated use OrderManagerLocatorInterface instead.
+     * @return int
      */
-    interface IOrderManagerLocator
-    {
-    }
+    public function getId();
+
+    /**
+     * @return Order|OrderItem
+     */
+    public function reference();
 }
+
+class_alias(OrderListItemInterface::class, 'Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\IOrderListItem');

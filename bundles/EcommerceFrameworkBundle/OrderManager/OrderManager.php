@@ -37,7 +37,7 @@ use Pimcore\Model\FactoryInterface;
 use Pimcore\Tool;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class OrderManager implements IOrderManager
+class OrderManager implements OrderManagerInterface
 {
     /**
      * @var IEnvironment
@@ -45,7 +45,7 @@ class OrderManager implements IOrderManager
     protected $environment;
 
     /**
-     * @var IOrderAgentFactory
+     * @var OrderAgentFactoryInterface
      */
     protected $orderAgentFactory;
 
@@ -81,7 +81,7 @@ class OrderManager implements IOrderManager
 
     public function __construct(
         IEnvironment $environment,
-        IOrderAgentFactory $orderAgentFactory,
+        OrderAgentFactoryInterface $orderAgentFactory,
         IVoucherService $voucherService,
         array $options = []
     ) {
@@ -146,11 +146,11 @@ class OrderManager implements IOrderManager
     }
 
     /**
-     * @return IOrderList
+     * @return OrderListInterface
      */
     public function createOrderList()
     {
-        /* @var IOrderList $orderList */
+        /* @var OrderListInterface $orderList */
         $orderList = new $this->options['list_class'];
         $orderList->setItemClassName($this->options['list_item_class']);
 
@@ -160,7 +160,7 @@ class OrderManager implements IOrderManager
     /**
      * @param AbstractOrder $order
      *
-     * @return IOrderAgent
+     * @return OrderAgentInterface
      */
     public function createOrderAgent(AbstractOrder $order)
     {

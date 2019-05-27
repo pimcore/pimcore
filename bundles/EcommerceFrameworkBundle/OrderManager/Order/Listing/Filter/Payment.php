@@ -14,10 +14,10 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\Order\Listing\Filter;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\IOrderList;
-use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\IOrderListFilter;
+use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderListInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderListFilterInterface;
 
-class Payment implements IOrderListFilter
+class Payment implements OrderListFilterInterface
 {
     const PAYMENT_STATE_OK = 'ok';
     const PAYMENT_STATE_FAIL = 'fail';
@@ -50,11 +50,11 @@ class Payment implements IOrderListFilter
     }
 
     /**
-     * @param IOrderList $orderList
+     * @param OrderListInterface $orderList
      *
-     * @return IOrderListFilter
+     * @return OrderListFilterInterface
      */
-    public function apply(IOrderList $orderList)
+    public function apply(OrderListInterface $orderList)
     {
         switch ($this->value) {
             case self::PAYMENT_STATE_OK:

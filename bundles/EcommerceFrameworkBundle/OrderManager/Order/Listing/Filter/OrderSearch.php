@@ -14,10 +14,10 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\Order\Listing\Filter;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\IOrderList;
-use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\IOrderListFilter;
+use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderListInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderListFilterInterface;
 
-class OrderSearch implements IOrderListFilter
+class OrderSearch implements OrderListFilterInterface
 {
     /**
      * @var string
@@ -25,11 +25,11 @@ class OrderSearch implements IOrderListFilter
     protected $keyword;
 
     /**
-     * @param IOrderList $orderList
+     * @param OrderListInterface $orderList
      *
-     * @return IOrderListFilter
+     * @return OrderListFilterInterface
      */
-    public function apply(IOrderList $orderList)
+    public function apply(OrderListInterface $orderList)
     {
         // init
         $query = $orderList->getQuery();
