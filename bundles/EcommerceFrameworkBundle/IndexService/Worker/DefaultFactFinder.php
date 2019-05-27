@@ -27,7 +27,7 @@ use Pimcore\Tool\Text;
 /**
  * @property DefaultFactFinderConfig $tenantConfig
  */
-class DefaultFactFinder extends AbstractMockupCacheWorker implements IWorker, IBatchProcessingWorker
+class DefaultFactFinder extends AbstractMockupCacheWorker implements WorkerInterface, BatchProcessingWorkerInterface
 {
     const STORE_TABLE_NAME = 'ecommerceframework_productindex_store_factfinder';
     const MOCKUP_CACHE_PREFIX = 'ecommerce_mockup_factfinder';

@@ -18,7 +18,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Traits\OptionsResolverTrait;
 use Pimcore\Model\DataObject\AbstractObject;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class ObjectValue implements IInterpreter
+class ObjectValue implements InterpreterInterface
 {
     use OptionsResolverTrait;
 

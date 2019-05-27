@@ -12,19 +12,11 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker;
+namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Interpreter;
 
-@trigger_error(
-    'Interface Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\IWorker is deprecated since version 6.0.0 and will be removed in 7.0.0. ' .
-    ' Use ' . WorkerInterface::class . ' class instead.',
-    E_USER_DEPRECATED
-);
-
-if(false) {
-    /**
-     * @deprecated use WorkerInterface instead.
-     */
-    interface IWorker
-    {
-    }
+interface InterpreterInterface
+{
+    public function interpret($value, $config = null);
 }
+
+class_alias(InterpreterInterface::class, 'Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Interpreter\IInterpreter');

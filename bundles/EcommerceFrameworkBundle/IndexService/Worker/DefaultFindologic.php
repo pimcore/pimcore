@@ -26,7 +26,7 @@ use Pimcore\Model\DataObject\Concrete;
  *
  * @method FindologicConfigInterface getTenantConfig()
  */
-class DefaultFindologic extends AbstractMockupCacheWorker implements IWorker, IBatchProcessingWorker
+class DefaultFindologic extends AbstractMockupCacheWorker implements WorkerInterface, BatchProcessingWorkerInterface
 {
     const STORE_TABLE_NAME = 'ecommerceframework_productindex_store_findologic';
     const EXPORT_TABLE_NAME = 'ecommerceframework_productindex_export_findologic';

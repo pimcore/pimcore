@@ -14,7 +14,7 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\FilterService;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\IProductList;
+use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\ProductListInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractCategory;
 use Pimcore\Templating\Model\ViewModel;
 
@@ -26,7 +26,7 @@ class Helper
 {
     /**
      * @param \Pimcore\Model\DataObject\FilterDefinition $filterDefinition
-     * @param IProductList $productList
+     * @param ProductListInterface $productList
      * @param $params
      * @param ViewModel $viewModel
      * @param FilterService $filterService
@@ -35,7 +35,7 @@ class Helper
      */
     public static function setupProductList(
         \Pimcore\Model\DataObject\FilterDefinition $filterDefinition,
-        IProductList $productList,
+        ProductListInterface $productList,
         $params,
         ViewModel $viewModel,
         FilterService $filterService,

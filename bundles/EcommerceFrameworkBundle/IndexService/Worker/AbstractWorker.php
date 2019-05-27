@@ -18,7 +18,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\ConfigInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IIndexable;
 use Pimcore\Db\ConnectionInterface;
 
-abstract class AbstractWorker implements IWorker
+abstract class AbstractWorker implements WorkerInterface
 {
     /**
      * @var ConnectionInterface
@@ -146,7 +146,7 @@ abstract class AbstractWorker implements IWorker
     protected function convertArray($data)
     {
         if (is_array($data)) {
-            return IWorker::MULTISELECT_DELIMITER . implode($data, IWorker::MULTISELECT_DELIMITER) . IWorker::MULTISELECT_DELIMITER;
+            return WorkerInterface::MULTISELECT_DELIMITER . implode($data, WorkerInterface::MULTISELECT_DELIMITER) . WorkerInterface::MULTISELECT_DELIMITER;
         }
 
         return $data;

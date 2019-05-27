@@ -16,8 +16,8 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\ElasticSea
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\ElasticSearch;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\ElasticSearchConfigInterface;
-use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Interpreter\IRelationInterpreter;
-use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\IProductList;
+use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Interpreter\RelationInterpreterInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\ProductListInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IIndexable;
 use Pimcore\Db\ConnectionInterface;
@@ -26,7 +26,7 @@ use Pimcore\Logger;
 /**
  * @property ElasticSearch $tenantConfig
  */
-abstract class AbstractElasticSearch extends Worker\AbstractMockupCacheWorker implements Worker\IBatchProcessingWorker
+abstract class AbstractElasticSearch extends Worker\AbstractMockupCacheWorker implements Worker\BatchProcessingWorkerInterface
 {
     const STORE_TABLE_NAME = 'ecommerceframework_productindex_store_elastic';
     const MOCKUP_CACHE_PREFIX = 'ecommerce_mockup_elastic';
@@ -200,7 +200,7 @@ abstract class AbstractElasticSearch extends Worker\AbstractMockupCacheWorker im
                 //check, if interpreter is set and if this interpreter is instance of relation interpreter
                 // -> then set type to long
                 if (null !== $attribute->getInterpreter()) {
-                    if ($attribute->getInterpreter() instanceof IRelationInterpreter) {
+                    if ($attribute->getInterpreter() instanceof RelationInterpreterInterface) {
                         $type = 'long';
                         $isRelation = true;
                     }
@@ -345,7 +345,7 @@ abstract class AbstractElasticSearch extends Worker\AbstractMockupCacheWorker im
 
         $variants = $esClient->search([
             'index' => $this->getIndexNameVersion(),
-            'type' => IProductList::PRODUCT_TYPE_VARIANT,
+            'type' => ProductListInterface::PRODUCT_TYPE_VARIANT,
             'body' => [
                 '_source' => false,
                 'query' => [
@@ -366,7 +366,7 @@ abstract class AbstractElasticSearch extends Worker\AbstractMockupCacheWorker im
             if ($hit['_parent'] != $indexSystemData['o_virtualProductId']) {
                 $params = [
                     'index' => $this->getIndexNameVersion(),
-                    'type' => IProductList::PRODUCT_TYPE_VARIANT,
+                    'type' => ProductListInterface::PRODUCT_TYPE_VARIANT,
                     'id' => $indexSystemData['o_id'],
                     'parent' => $hit['_parent']
                 ];
@@ -412,12 +412,12 @@ abstract class AbstractElasticSearch extends Worker\AbstractMockupCacheWorker im
             $data = $this->doPreIndexDataModification($data);
 
             //check if parent should exist and if so, consider parent relation at indexing
-            $routingId = $indexSystemData['o_type'] == IProductList::PRODUCT_TYPE_VARIANT ? $indexSystemData['o_virtualProductId'] : $indexSystemData['o_id'];
+            $routingId = $indexSystemData['o_type'] == ProductListInterface::PRODUCT_TYPE_VARIANT ? $indexSystemData['o_virtualProductId'] : $indexSystemData['o_id'];
 
             $this->bulkIndexData[] = ['index' => ['_index' => $this->getIndexNameVersion(), '_type' => $this->getTenantConfig()->getElasticSearchClientParams()['indexType'], '_id' => $objectId, '_routing' => $routingId]];
             $bulkIndexData = array_filter(['system' => array_filter($indexSystemData), 'type' => $indexSystemData['o_type'], 'attributes' => array_filter($indexAttributeData), 'relations' => $indexRelationData, 'subtenants' => $data['subtenants']]);
 
-            if ($indexSystemData['o_type'] == IProductList::PRODUCT_TYPE_VARIANT) {
+            if ($indexSystemData['o_type'] == ProductListInterface::PRODUCT_TYPE_VARIANT) {
                 $bulkIndexData[self::RELATION_FIELD] = ['name' => $indexSystemData['o_type'], 'parent' => $indexSystemData['o_virtualProductId']];
             } else {
                 $bulkIndexData[self::RELATION_FIELD] = ['name' => $indexSystemData['o_type']];

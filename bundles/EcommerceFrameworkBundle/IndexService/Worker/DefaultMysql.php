@@ -15,7 +15,7 @@
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\MysqlConfigInterface;
-use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Interpreter\IRelationInterpreter;
+use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Interpreter\RelationInterpreterInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractCategory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IIndexable;
 use Pimcore\Db\ConnectionInterface;
@@ -25,7 +25,7 @@ use Pimcore\Model\DataObject\AbstractObject;
 /**
  * @property MysqlConfigInterface $tenantConfig
  */
-class DefaultMysql extends AbstractWorker implements IWorker
+class DefaultMysql extends AbstractWorker implements WorkerInterface
 {
     /**
      * @var array
@@ -152,7 +152,7 @@ class DefaultMysql extends AbstractWorker implements IWorker
                         if (null !== $attribute->getInterpreter()) {
                             $value = $attribute->interpretValue($value);
 
-                            if ($attribute->getInterpreter() instanceof IRelationInterpreter) {
+                            if ($attribute->getInterpreter() instanceof RelationInterpreterInterface) {
                                 foreach ($value as $v) {
                                     $relData = [];
                                     $relData['src'] = $subObjectId;

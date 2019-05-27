@@ -15,7 +15,7 @@
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\Helper;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\MysqlConfigInterface;
-use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Interpreter\IRelationInterpreter;
+use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Interpreter\RelationInterpreterInterface;
 use Pimcore\Cache;
 use Pimcore\Db\ConnectionInterface;
 use Pimcore\Logger;
@@ -111,7 +111,7 @@ class MySql
         foreach ($this->tenantConfig->getAttributes() as $attribute) {
             if (!array_key_exists($attribute->getName(), $columns)) {
                 $doAdd = true;
-                if (null !== $attribute->getInterpreter() && $attribute->getInterpreter() instanceof  IRelationInterpreter) {
+                if (null !== $attribute->getInterpreter() && $attribute->getInterpreter() instanceof  RelationInterpreterInterface) {
                     $doAdd = false;
                 }
 

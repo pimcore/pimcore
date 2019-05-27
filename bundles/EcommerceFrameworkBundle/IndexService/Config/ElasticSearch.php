@@ -15,9 +15,9 @@
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\Definition\Attribute;
-use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Interpreter\IRelationInterpreter;
+use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Interpreter\RelationInterpreterInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\ElasticSearch\AbstractElasticSearch as DefaultElasticSearchWorker;
-use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\IWorker;
+use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\WorkerInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\DefaultMockup;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IIndexable;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Traits\OptionsResolverTrait;
@@ -72,7 +72,7 @@ class ElasticSearch extends AbstractConfig implements MockupConfigInterface, Ela
         parent::addAttribute($attribute);
 
         $attributeType = 'attributes';
-        if (null !== $attribute->getInterpreter() && $attribute->getInterpreter() instanceof IRelationInterpreter) {
+        if (null !== $attribute->getInterpreter() && $attribute->getInterpreter() instanceof RelationInterpreterInterface) {
             $attributeType = 'relations';
         }
 
@@ -218,7 +218,7 @@ class ElasticSearch extends AbstractConfig implements MockupConfigInterface, Ela
     /**
      * @inheritDoc
      */
-    public function setTenantWorker(IWorker $tenantWorker)
+    public function setTenantWorker(WorkerInterface $tenantWorker)
     {
         if (!$tenantWorker instanceof DefaultElasticSearchWorker) {
             throw new \InvalidArgumentException(sprintf(

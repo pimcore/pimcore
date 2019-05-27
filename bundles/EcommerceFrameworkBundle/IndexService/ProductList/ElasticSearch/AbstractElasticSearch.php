@@ -16,11 +16,11 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\Elast
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\ElasticSearchConfigInterface;
-use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\IProductList;
+use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\ProductListInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractCategory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IIndexable;
 
-abstract class AbstractElasticSearch implements IProductList
+abstract class AbstractElasticSearch implements ProductListInterface
 {
     const LIMIT_UNLIMITED = 'unlimited';
     const INTEGER_MAX_VALUE = 2147483647;     // Elasticsearch Integer.MAX_VALUE is 2^31-1
@@ -62,7 +62,7 @@ abstract class AbstractElasticSearch implements IProductList
     /**
      * @var string
      */
-    protected $variantMode = IProductList::VARIANT_MODE_INCLUDE;
+    protected $variantMode = ProductListInterface::VARIANT_MODE_INCLUDE;
 
     /**
      * @var int
@@ -388,7 +388,7 @@ abstract class AbstractElasticSearch implements IProductList
     public function setOrderKey($orderKey)
     {
         $this->products = null;
-        if ($orderKey == IProductList::ORDERKEY_PRICE) {
+        if ($orderKey == ProductListInterface::ORDERKEY_PRICE) {
             $this->orderByPrice = true;
         } else {
             $this->orderByPrice = false;
@@ -699,7 +699,7 @@ abstract class AbstractElasticSearch implements IProductList
             $variantMode = $this->getVariantMode();
         }
 
-        if ($variantMode == IProductList::VARIANT_MODE_INCLUDE_PARENT_OBJECT) {
+        if ($variantMode == ProductListInterface::VARIANT_MODE_INCLUDE_PARENT_OBJECT) {
             $params['body']['query']['bool']['must']['has_child']['type'] = self::PRODUCT_TYPE_VARIANT;
             $params['body']['query']['bool']['must']['has_child']['score_mode'] = 'avg';
             $params['body']['query']['bool']['must']['has_child']['query']['bool']['must'] = $queryFilters;
@@ -712,11 +712,11 @@ abstract class AbstractElasticSearch implements IProductList
                 'size' => 100
             ];
         } else {
-            if ($variantMode == IProductList::VARIANT_MODE_VARIANTS_ONLY) {
+            if ($variantMode == ProductListInterface::VARIANT_MODE_VARIANTS_ONLY) {
                 $boolFilters[] = [
                     'term' => ['type' => self::PRODUCT_TYPE_VARIANT]
                 ];
-            } elseif ($variantMode == IProductList::VARIANT_MODE_HIDE) {
+            } elseif ($variantMode == ProductListInterface::VARIANT_MODE_HIDE) {
                 $boolFilters[] = [
                     'term' => ['type' => self::PRODUCT_TYPE_OBJECT]
                 ];
@@ -1054,7 +1054,7 @@ abstract class AbstractElasticSearch implements IProductList
                 ];
 
                 //necessary to calculate correct counts of search results for filter values
-                if ($this->getVariantMode() == IProductList::VARIANT_MODE_INCLUDE_PARENT_OBJECT) {
+                if ($this->getVariantMode() == ProductListInterface::VARIANT_MODE_INCLUDE_PARENT_OBJECT) {
                     $aggregations[$fieldname]['aggs'][$fieldname]['aggs'] = [
                         'objectCount' => ['cardinality' => ['field' => 'system.o_virtualProductId']]
                     ];
@@ -1065,7 +1065,7 @@ abstract class AbstractElasticSearch implements IProductList
                 ];
 
                 //necessary to calculate correct counts of search results for filter values
-                if ($this->getVariantMode() == IProductList::VARIANT_MODE_INCLUDE_PARENT_OBJECT) {
+                if ($this->getVariantMode() == ProductListInterface::VARIANT_MODE_INCLUDE_PARENT_OBJECT) {
                     $aggregations[$fieldname]['aggs'] = [
                         'objectCount' => ['cardinality' => ['field' => 'system.o_virtualProductId']]
                     ];
@@ -1083,8 +1083,8 @@ abstract class AbstractElasticSearch implements IProductList
 
             // build query for request
             $variantModeForAggregations = $this->getVariantMode();
-            if ($this->getVariantMode() == IProductList::VARIANT_MODE_INCLUDE_PARENT_OBJECT) {
-                $variantModeForAggregations = IProductList::VARIANT_MODE_VARIANTS_ONLY;
+            if ($this->getVariantMode() == ProductListInterface::VARIANT_MODE_INCLUDE_PARENT_OBJECT) {
+                $variantModeForAggregations = ProductListInterface::VARIANT_MODE_VARIANTS_ONLY;
             }
 
             // build query for request

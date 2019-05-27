@@ -22,8 +22,8 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\IEnvironment;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\ConfigInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Exception\DefaultWorkerNotFoundException;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Exception\WorkerNotFoundException;
-use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\IProductList;
-use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\IWorker;
+use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\ProductListInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\WorkerInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IIndexable;
 
 class IndexService
@@ -34,7 +34,7 @@ class IndexService
     protected $environment;
 
     /**
-     * @var IWorker[]
+     * @var WorkerInterface[]
      */
     protected $tenantWorkers = [];
 
@@ -45,7 +45,7 @@ class IndexService
 
     /**
      * @param IEnvironment $environment
-     * @param IWorker[] $tenantWorkers
+     * @param WorkerInterface[] $tenantWorkers
      * @param string $defaultTenant
      */
     public function __construct(IEnvironment $environment, array $tenantWorkers = [], string $defaultTenant = 'default')
@@ -61,7 +61,7 @@ class IndexService
         }
     }
 
-    protected function registerTenantWorker(IWorker $tenantWorker)
+    protected function registerTenantWorker(WorkerInterface $tenantWorker)
     {
         $this->tenantWorkers[$tenantWorker->getTenantConfig()->getTenantName()] = $tenantWorker;
     }
@@ -76,11 +76,11 @@ class IndexService
      *
      * @param string $tenant
      *
-     * @return IWorker
+     * @return WorkerInterface
      *
      * @throws WorkerNotFoundException
      */
-    public function getTenantWorker(string $tenant): IWorker
+    public function getTenantWorker(string $tenant): WorkerInterface
     {
         if (!array_key_exists($tenant, $this->tenantWorkers)) {
             throw new WorkerNotFoundException(sprintf('Tenant "%s" doesn\'t exist', $tenant));
@@ -92,11 +92,11 @@ class IndexService
     /**
      * Returns default worker as set in defaultTenant
      *
-     * @return IWorker
+     * @return WorkerInterface
      *
      * @throws DefaultWorkerNotFoundException
      */
-    public function getDefaultWorker(): IWorker
+    public function getDefaultWorker(): WorkerInterface
     {
         if (!array_key_exists($this->defaultTenant, $this->tenantWorkers)) {
             throw new DefaultWorkerNotFoundException(sprintf(
@@ -286,19 +286,19 @@ class IndexService
         return $this->getCurrentTenantWorker()->getTenantConfig();
     }
 
-    public function getCurrentTenantWorker(): IWorker
+    public function getCurrentTenantWorker(): WorkerInterface
     {
         return $this->resolveTenantWorker();
     }
 
-    public function getProductListForCurrentTenant(): IProductList
+    public function getProductListForCurrentTenant(): ProductListInterface
     {
         $tenantWorker = $this->getCurrentTenantWorker();
 
         return $tenantWorker->getProductList();
     }
 
-    public function getProductListForTenant(string $tenant): IProductList
+    public function getProductListForTenant(string $tenant): ProductListInterface
     {
         $tenantWorker = $this->resolveTenantWorker($tenant);
 
@@ -310,11 +310,11 @@ class IndexService
      *
      * @param string|null $tenant
      *
-     * @return IWorker
+     * @return WorkerInterface
      *
      * @throws WorkerNotFoundException
      */
-    protected function resolveTenantWorker(string $tenant = null): IWorker
+    protected function resolveTenantWorker(string $tenant = null): WorkerInterface
     {
         if (null === $tenant) {
             $tenant = $this->environment->getCurrentAssortmentTenant();

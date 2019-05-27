@@ -23,7 +23,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractCategory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IIndexable;
 use Zend\Paginator\Adapter\AdapterInterface;
 
-class DefaultFindologic implements IProductList
+class DefaultFindologic implements ProductListInterface
 {
     /**
      * @var string
@@ -63,7 +63,7 @@ class DefaultFindologic implements IProductList
     /**
      * @var string
      */
-    protected $variantMode = IProductList::VARIANT_MODE_INCLUDE;
+    protected $variantMode = ProductListInterface::VARIANT_MODE_INCLUDE;
 
     /**
      * @var int

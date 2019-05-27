@@ -24,7 +24,7 @@ use Pimcore\Tool;
 use Psr\Http\Message\ResponseInterface;
 use Zend\Paginator\Adapter\AdapterInterface;
 
-class DefaultFactFinder implements IProductList
+class DefaultFactFinder implements ProductListInterface
 {
     /**
      * @var IIndexable[]
@@ -77,7 +77,7 @@ class DefaultFactFinder implements IProductList
     /**
      * @var string
      */
-    protected $variantMode = IProductList::VARIANT_MODE_INCLUDE;
+    protected $variantMode = ProductListInterface::VARIANT_MODE_INCLUDE;
 
     /**
      * @var int

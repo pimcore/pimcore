@@ -26,7 +26,7 @@ use Zend\Paginator\Adapter\AdapterInterface;
 /**
  * Implementation of product list which works based on the product index of the online shop framework
  */
-class DefaultMysql implements IProductList
+class DefaultMysql implements ProductListInterface
 {
     /**
      * @var null|IIndexable[]
@@ -51,7 +51,7 @@ class DefaultMysql implements IProductList
     /**
      * @var string
      */
-    protected $variantMode = IProductList::VARIANT_MODE_INCLUDE;
+    protected $variantMode = ProductListInterface::VARIANT_MODE_INCLUDE;
 
     /**
      * @var int
@@ -248,7 +248,7 @@ class DefaultMysql implements IProductList
     public function setOrderKey($orderKey)
     {
         $this->products = null;
-        if ($orderKey == IProductList::ORDERKEY_PRICE) {
+        if ($orderKey == ProductListInterface::ORDERKEY_PRICE) {
             $this->orderByPrice = true;
         } else {
             $this->orderByPrice = false;
@@ -536,7 +536,7 @@ class DefaultMysql implements IProductList
             $excludedFieldName = null;
         }
         if ($this->conditionPriceFrom === null && $this->conditionPriceTo === null) {
-            return $this->resource->loadGroupByRelationValues($fieldname, $this->buildQueryFromConditions(false, $excludedFieldName, IProductList::VARIANT_MODE_INCLUDE), $countValues);
+            return $this->resource->loadGroupByRelationValues($fieldname, $this->buildQueryFromConditions(false, $excludedFieldName, ProductListInterface::VARIANT_MODE_INCLUDE), $countValues);
         } else {
             throw new \Exception('Not supported yet');
         }
@@ -567,18 +567,18 @@ class DefaultMysql implements IProductList
         //variant handling and userspecific conditions
 
         switch ($variantMode) {
-            case IProductList::VARIANT_MODE_INCLUDE_PARENT_OBJECT:
+            case ProductListInterface::VARIANT_MODE_INCLUDE_PARENT_OBJECT:
 
                 //make sure, that only variant objects are considered
                 $condition .= ' AND o_id != o_virtualProductId ';
                 break;
 
-            case IProductList::VARIANT_MODE_HIDE:
+            case ProductListInterface::VARIANT_MODE_HIDE:
 
                 $condition .= " AND o_type != 'variant'";
                 break;
 
-            case IProductList::VARIANT_MODE_VARIANTS_ONLY:
+            case ProductListInterface::VARIANT_MODE_VARIANTS_ONLY:
 
                 $condition .= " AND o_type = 'variant'";
                 break;
@@ -646,7 +646,7 @@ class DefaultMysql implements IProductList
 
     protected function buildOrderBy()
     {
-        if (!empty($this->orderKey) && $this->orderKey !== IProductList::ORDERKEY_PRICE) {
+        if (!empty($this->orderKey) && $this->orderKey !== ProductListInterface::ORDERKEY_PRICE) {
             $orderKeys = $this->orderKey;
             if (!is_array($orderKeys)) {
                 $orderKeys = [$orderKeys];
@@ -672,7 +672,7 @@ class DefaultMysql implements IProductList
                 }
                 $direction = $keyDirection[1];
 
-                if ($this->getVariantMode() == IProductList::VARIANT_MODE_INCLUDE_PARENT_OBJECT) {
+                if ($this->getVariantMode() == ProductListInterface::VARIANT_MODE_INCLUDE_PARENT_OBJECT) {
                     if (strtoupper($this->order) == 'DESC') {
                         $orderByStringArray[] = 'max(' . $key . ') ' . $direction;
                     } else {

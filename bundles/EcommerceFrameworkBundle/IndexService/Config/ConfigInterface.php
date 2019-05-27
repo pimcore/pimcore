@@ -15,7 +15,7 @@
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\Definition\Attribute;
-use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\IWorker;
+use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\WorkerInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IIndexable;
 
 /**
@@ -105,18 +105,18 @@ interface ConfigInterface
      * Config <-> worker have a 1:1 relation as the config
      * needs to access its worker in certain cases.
      *
-     * @param IWorker $tenantWorker
+     * @param WorkerInterface $tenantWorker
      *
      * @throws \LogicException If the config already has a worker set
      * @throws \LogicException If the config used from the worker does not match the config object the worker is
      *                         about to be set to
      */
-    public function setTenantWorker(IWorker $tenantWorker);
+    public function setTenantWorker(WorkerInterface $tenantWorker);
 
     /**
      * creates and returns tenant worker suitable for this tenant configuration
      *
-     * @return IWorker
+     * @return WorkerInterface
      */
     public function getTenantWorker();
 

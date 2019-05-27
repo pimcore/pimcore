@@ -15,7 +15,7 @@
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\Definition\Attribute;
-use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\IWorker;
+use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\WorkerInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractCategory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IIndexable;
 use Pimcore\Config\Config;
@@ -59,7 +59,7 @@ abstract class AbstractConfig implements ConfigInterface
     protected $filterTypes;
 
     /**
-     * @var IWorker
+     * @var WorkerInterface
      */
     protected $tenantWorker;
 
@@ -167,7 +167,7 @@ abstract class AbstractConfig implements ConfigInterface
     /**
      * @inheritdoc
      */
-    public function setTenantWorker(IWorker $tenantWorker)
+    public function setTenantWorker(WorkerInterface $tenantWorker)
     {
         $this->checkTenantWorker($tenantWorker);
         $this->tenantWorker = $tenantWorker;
@@ -177,9 +177,9 @@ abstract class AbstractConfig implements ConfigInterface
      * Checks if tenant worker matches prerequisites (config wrapped in worker is this instance and instance has no
      * worker set yet).
      *
-     * @param IWorker $tenantWorker
+     * @param WorkerInterface $tenantWorker
      */
-    protected function checkTenantWorker(IWorker $tenantWorker)
+    protected function checkTenantWorker(WorkerInterface $tenantWorker)
     {
         if (null !== $this->tenantWorker) {
             throw new \LogicException(sprintf('Worker for tenant "%s" is already set', $this->tenantName));
