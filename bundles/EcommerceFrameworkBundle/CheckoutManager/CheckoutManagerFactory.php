@@ -23,7 +23,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\IOrderManagerLocator;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment\IPayment;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class CheckoutManagerFactory implements ICheckoutManagerFactory
+class CheckoutManagerFactory implements CheckoutManagerFactoryInterface
 {
     /**
      * @var IEnvironment
@@ -53,7 +53,7 @@ class CheckoutManagerFactory implements ICheckoutManagerFactory
     protected $paymentProvider;
 
     /**
-     * @var ICheckoutManager[]
+     * @var CheckoutManagerInterface[]
      */
     protected $checkoutManagers = [];
 
@@ -122,7 +122,7 @@ class CheckoutManagerFactory implements ICheckoutManagerFactory
         $resolver->setAllowedTypes('class', 'string');
     }
 
-    public function createCheckoutManager(CartInterface $cart): ICheckoutManager
+    public function createCheckoutManager(CartInterface $cart): CheckoutManagerInterface
     {
         $cartId = $cart->getId();
 
@@ -149,7 +149,7 @@ class CheckoutManagerFactory implements ICheckoutManagerFactory
         return $this->checkoutManagers[$cartId];
     }
 
-    protected function buildCheckoutStep(CartInterface $cart, array $checkoutStepDefinition): ICheckoutStep
+    protected function buildCheckoutStep(CartInterface $cart, array $checkoutStepDefinition): CheckoutStepInterface
     {
         $className = $checkoutStepDefinition['class'];
 

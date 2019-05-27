@@ -15,7 +15,7 @@
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\Tracking;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartInterface;
-use Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\ICheckoutStep as CheckoutManagerICheckoutStep;
+use Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\CheckoutStepInterface as CheckoutManagerCheckoutStepInterface;
 
 interface ICheckoutStep
 {
@@ -27,5 +27,5 @@ interface ICheckoutStep
      * @param null $stepNumber
      * @param null $checkoutOption
      */
-    public function trackCheckoutStep(CheckoutManagerICheckoutStep $step, CartInterface $cart, $stepNumber = null, $checkoutOption = null);
+    public function trackCheckoutStep(CheckoutManagerCheckoutStepInterface $step, CartInterface $cart, $stepNumber = null, $checkoutOption = null);
 }

@@ -19,8 +19,8 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\AvailabilitySystem\AvailabilitySyste
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartManagerInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartManagerLocatorInterface;
-use Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\ICheckoutManager;
-use Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\ICheckoutManagerFactoryLocator;
+use Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\CheckoutManagerInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\CheckoutManagerFactoryLocatorInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\CommitOrderProcessorInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\CommitOrderProcessorLocatorInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\DependencyInjection\PimcoreEcommerceFrameworkExtension;
@@ -91,7 +91,7 @@ class Factory
     /**
      * Checkout manager factories registered by tenant
      *
-     * @var ICheckoutManagerFactoryLocator
+     * @var CheckoutManagerFactoryLocatorInterface
      */
     private $checkoutManagerFactories;
 
@@ -120,7 +120,7 @@ class Factory
      * @param IPricingManagerLocator $pricingManagers
      * @param IPriceSystemLocator $priceSystems
      * @param AvailabilitySystemLocatorInterface $availabilitySystems
-     * @param ICheckoutManagerFactoryLocator $checkoutManagerFactories
+     * @param CheckoutManagerFactoryLocatorInterface $checkoutManagerFactories
      * @param CommitOrderProcessorLocatorInterface $commitOrderProcessors
      * @param IFilterServiceLocator $filterServices
      */
@@ -131,7 +131,7 @@ class Factory
         IPricingManagerLocator $pricingManagers,
         IPriceSystemLocator $priceSystems,
         AvailabilitySystemLocatorInterface $availabilitySystems,
-        ICheckoutManagerFactoryLocator $checkoutManagerFactories,
+        CheckoutManagerFactoryLocatorInterface $checkoutManagerFactories,
         CommitOrderProcessorLocatorInterface $commitOrderProcessors,
         IFilterServiceLocator $filterServices
     ) {
@@ -226,9 +226,9 @@ class Factory
      * @param CartInterface $cart
      * @param string|null $tenant
      *
-     * @return ICheckoutManager
+     * @return CheckoutManagerInterface
      */
-    public function getCheckoutManager(CartInterface $cart, string $tenant = null): ICheckoutManager
+    public function getCheckoutManager(CartInterface $cart, string $tenant = null): CheckoutManagerInterface
     {
         $factory = $this->checkoutManagerFactories->getCheckoutManagerFactory($tenant);
 

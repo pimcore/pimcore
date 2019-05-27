@@ -28,7 +28,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\Price;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
 use Pimcore\Model\DataObject\Fieldcollection\Data\PaymentInfo;
 
-class CheckoutManager implements ICheckoutManager
+class CheckoutManager implements CheckoutManagerInterface
 {
     /**
      * Constants for custom environment item names for persisting state of checkout
@@ -69,19 +69,19 @@ class CheckoutManager implements ICheckoutManager
     /**
      * Needed for effective access to one specific checkout step
      *
-     * @var ICheckoutStep[]
+     * @var CheckoutStepInterface[]
      */
     protected $checkoutSteps = [];
 
     /**
      * Needed for preserving order of checkout steps
      *
-     * @var ICheckoutStep[]
+     * @var CheckoutStepInterface[]
      */
     protected $checkoutStepOrder = [];
 
     /**
-     * @var ICheckoutStep
+     * @var CheckoutStepInterface
      */
     protected $currentStep;
 
@@ -100,7 +100,7 @@ class CheckoutManager implements ICheckoutManager
      * @param IEnvironment $environment
      * @param IOrderManagerLocator $orderManagers
      * @param CommitOrderProcessorLocatorInterface $commitOrderProcessors
-     * @param ICheckoutStep[] $checkoutSteps
+     * @param CheckoutStepInterface[] $checkoutSteps
      * @param IPayment|null $paymentProvider
      */
     public function __construct(
@@ -123,7 +123,7 @@ class CheckoutManager implements ICheckoutManager
     }
 
     /**
-     * @param ICheckoutStep[] $checkoutSteps
+     * @param CheckoutStepInterface[] $checkoutSteps
      */
     protected function setCheckoutSteps(array $checkoutSteps)
     {
@@ -138,7 +138,7 @@ class CheckoutManager implements ICheckoutManager
         $this->initializeStepState();
     }
 
-    protected function addCheckoutStep(ICheckoutStep $checkoutStep)
+    protected function addCheckoutStep(CheckoutStepInterface $checkoutStep)
     {
         $this->checkoutStepOrder[] = $checkoutStep;
         $this->checkoutSteps[$checkoutStep->getName()] = $checkoutStep;
@@ -585,7 +585,7 @@ class CheckoutManager implements ICheckoutManager
     /**
      * @inheritdoc
      */
-    public function commitStep(ICheckoutStep $step, $data)
+    public function commitStep(CheckoutStepInterface $step, $data)
     {
         $this->validateCheckoutSteps();
 

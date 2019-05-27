@@ -17,9 +17,17 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartInterface;
+@trigger_error(
+    'Interface Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\ICheckoutManagerFactory is deprecated since version 6.0.0 and will be removed in 7.0.0. ' .
+    ' Use ' . CheckoutManagerFactoryInterface::class . ' class instead.',
+    E_USER_DEPRECATED
+);
 
-interface ICheckoutManagerFactory
-{
-    public function createCheckoutManager(CartInterface $cart): ICheckoutManager;
+if(false) {
+    /**
+     * @deprecated use CheckoutManagerFactoryInterface instead.
+     */
+    interface ICheckoutManagerFactory
+    {
+    }
 }

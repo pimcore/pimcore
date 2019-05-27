@@ -15,7 +15,7 @@
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\Tracking;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartInterface;
-use Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\ICheckoutStep as CheckoutManagerICheckoutStep;
+use Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\CheckoutStepInterface as CheckoutManagerCheckoutStepInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IEnvironment;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IProduct;
@@ -285,12 +285,12 @@ class TrackingManager implements ITrackingManager
      *
      * @implements ICheckoutStep
      *
-     * @param CheckoutManagerICheckoutStep $step
+     * @param CheckoutManagerCheckoutStepInterface $step
      * @param CartInterface $cart
      * @param null $stepNumber
      * @param null $checkoutOption
      */
-    public function trackCheckoutStep(CheckoutManagerICheckoutStep $step, CartInterface $cart, $stepNumber = null, $checkoutOption = null)
+    public function trackCheckoutStep(CheckoutManagerCheckoutStepInterface $step, CartInterface $cart, $stepNumber = null, $checkoutOption = null)
     {
         foreach ($this->getActiveTrackers() as $tracker) {
             if ($tracker instanceof ICheckoutStep) {

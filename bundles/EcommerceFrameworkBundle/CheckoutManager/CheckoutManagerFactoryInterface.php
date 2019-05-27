@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 /**
  * Pimcore
  *
@@ -16,15 +19,9 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartInterface;
 
-abstract class AbstractStep implements CheckoutStepInterface
+interface CheckoutManagerFactoryInterface
 {
-    /**
-     * @var CartInterface
-     */
-    protected $cart;
-
-    public function __construct(CartInterface $cart, array $options = [])
-    {
-        $this->cart = $cart;
-    }
+    public function createCheckoutManager(CartInterface $cart): CheckoutManagerInterface;
 }
+
+class_alias(CheckoutManagerFactoryInterface::class, ' Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\ICheckoutManagerFactory');
