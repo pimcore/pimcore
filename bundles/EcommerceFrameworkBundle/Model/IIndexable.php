@@ -20,6 +20,8 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\Model;
     E_USER_DEPRECATED
 );
 
+class_exists(IndexableInterface::class);
+
 if(false) {
     /**
      * @deprecated use IndexableInterface instead.

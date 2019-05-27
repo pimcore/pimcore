@@ -21,6 +21,8 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager;
     E_USER_DEPRECATED
 );
 
+class_exists(CheckoutManagerInterface::class);
+
 if(false) {
     /**
      * @deprecated use CheckoutManagerInterface instead.

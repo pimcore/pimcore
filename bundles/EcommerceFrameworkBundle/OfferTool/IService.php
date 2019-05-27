@@ -21,6 +21,8 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\OfferTool;
     E_USER_DEPRECATED
 );
 
+class_exists(ServiceInterface::class);
+
 if(false) {
     /**
      * @deprecated use ServiceInterface instead.

@@ -20,6 +20,8 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker;
     E_USER_DEPRECATED
 );
 
+class_exists(WorkerInterface::class);
+
 if(false) {
     /**
      * @deprecated use WorkerInterface instead.

@@ -20,6 +20,8 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config;
     E_USER_DEPRECATED
 );
 
+class_exists(MysqlConfigInterface::class);
+
 if(false) {
     /**
      * @deprecated use MysqlConfigInterface instead.

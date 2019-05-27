@@ -20,6 +20,8 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Getter;
     E_USER_DEPRECATED
 );
 
+class_exists(ExtendedGetterInterface::class);
+
 if(false) {
     /**
      * @deprecated use ExtendedGetterInterface instead.

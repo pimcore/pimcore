@@ -24,6 +24,8 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager;
     E_USER_DEPRECATED
 );
 
+class_exists(OrderManagerLocatorInterface::class);
+
 if(false) {
     /**
      * @deprecated use OrderManagerLocatorInterface instead.

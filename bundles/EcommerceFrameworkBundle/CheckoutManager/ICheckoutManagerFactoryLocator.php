@@ -23,6 +23,8 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager;
     E_USER_DEPRECATED
 );
 
+class_exists(CheckoutManagerFactoryLocatorInterface::class);
+
 if(false) {
     /**
      * @deprecated use CheckoutManagerFactoryLocatorInterface instead.

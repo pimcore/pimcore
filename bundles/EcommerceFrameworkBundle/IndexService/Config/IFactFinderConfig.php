@@ -21,6 +21,8 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config;
     E_USER_DEPRECATED
 );
 
+class_exists(FactFinderConfigInterface::class);
+
 if(false) {
     /**
      * @deprecated use FactFinderConfigInterface instead.

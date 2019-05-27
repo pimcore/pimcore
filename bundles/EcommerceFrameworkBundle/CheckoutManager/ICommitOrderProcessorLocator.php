@@ -24,6 +24,8 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager;
     E_USER_DEPRECATED
 );
 
+class_exists(CommitOrderProcessorLocatorInterface::class);
+
 if(false) {
     /**
      * @deprecated use CommitOrderProcessorLocatorInterface instead.

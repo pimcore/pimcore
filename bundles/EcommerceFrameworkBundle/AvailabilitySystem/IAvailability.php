@@ -21,6 +21,8 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\AvailabilitySystem;
     E_USER_DEPRECATED
 );
 
+class_exists(AvailabilityInterface::class);
+
 if (false) {
     /**
      * @deprecated use Pimcore\Bundle\EcommerceFrameworkBundle\AvailabilitySystem\AvailabilityInterface instead.

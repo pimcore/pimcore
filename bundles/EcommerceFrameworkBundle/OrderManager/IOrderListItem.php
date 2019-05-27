@@ -21,6 +21,8 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager;
     E_USER_DEPRECATED
 );
 
+class_exists(OrderListItemInterface::class);
+
 if(false) {
     /**
      * @deprecated use OrderListItemInterface instead.

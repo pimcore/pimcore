@@ -20,6 +20,8 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config;
     E_USER_DEPRECATED
 );
 
+class_exists(MockupConfigInterface::class);
+
 if(false) {
     /**
      * @deprecated use MockupConfigInterface instead.

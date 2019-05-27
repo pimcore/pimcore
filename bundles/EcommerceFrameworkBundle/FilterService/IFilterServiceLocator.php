@@ -23,6 +23,8 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\FilterService;
     E_USER_DEPRECATED
 );
 
+class_exists(FilterServiceLocatorInterface::class);
+
 if(false) {
     /**
      * @deprecated use FilterServiceLocatorInterface instead.

@@ -20,6 +20,8 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList;
     E_USER_DEPRECATED
 );
 
+class_exists(ProductListInterface::class);
+
 if(false) {
     /**
      * @deprecated use ProductListInterface instead.

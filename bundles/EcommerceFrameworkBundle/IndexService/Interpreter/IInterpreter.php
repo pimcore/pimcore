@@ -20,6 +20,8 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Interpreter;
     E_USER_DEPRECATED
 );
 
+class_exists(InterpreterInterface::class);
+
 if(false) {
     /**
      * @deprecated use InterpreterInterface instead.

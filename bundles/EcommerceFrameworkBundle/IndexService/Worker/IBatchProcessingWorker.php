@@ -20,6 +20,8 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker;
     E_USER_DEPRECATED
 );
 
+class_exists(BatchProcessingWorkerInterface::class);
+
 if(false) {
     /**
      * @deprecated use BatchProcessingWorkerInterface instead.

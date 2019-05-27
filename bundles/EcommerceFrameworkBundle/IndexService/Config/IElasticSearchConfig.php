@@ -20,6 +20,8 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config;
     E_USER_DEPRECATED
 );
 
+class_exists(ElasticSearchConfigInterface::class);
+
 if(false) {
     /**
      * @deprecated use ElasticSearchConfigInterface instead.

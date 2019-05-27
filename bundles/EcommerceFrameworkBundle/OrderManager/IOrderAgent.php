@@ -21,6 +21,8 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager;
     E_USER_DEPRECATED
 );
 
+class_exists(OrderAgentInterface::class);
+
 if(false) {
     /**
      * @deprecated use OrderAgentInterface instead.

@@ -23,6 +23,8 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\CartManager;
     E_USER_DEPRECATED
 );
 
+class_exists(CartFactoryInterface::class);
+
 if(false) {
     /**
      * @deprecated use CartFactoryInterface instead.

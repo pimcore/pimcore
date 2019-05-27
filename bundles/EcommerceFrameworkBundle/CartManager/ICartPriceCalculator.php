@@ -23,6 +23,8 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\CartManager;
     E_USER_DEPRECATED
 );
 
+class_exists(CartPriceCalculatorInterface::class);
+
 if(false) {
     /**
      * @deprecated use CartPriceCalculatorInterface instead.
