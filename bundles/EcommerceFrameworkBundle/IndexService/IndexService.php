@@ -24,7 +24,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Exception\DefaultWorker
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Exception\WorkerNotFoundException;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\ProductListInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\WorkerInterface;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IIndexable;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IndexableInterface;
 
 class IndexService
 {
@@ -161,9 +161,9 @@ class IndexService
     /**
      * Deletes given element from index
      *
-     * @param IIndexable $object
+     * @param IndexableInterface $object
      */
-    public function deleteFromIndex(IIndexable $object)
+    public function deleteFromIndex(IndexableInterface $object)
     {
         foreach ($this->tenantWorkers as $tenant => $tenantWorker) {
             $tenantWorker->deleteFromIndex($object);
@@ -173,9 +173,9 @@ class IndexService
     /**
      * Updates given element in index
      *
-     * @param IIndexable $object
+     * @param IndexableInterface $object
      */
-    public function updateIndex(IIndexable $object)
+    public function updateIndex(IndexableInterface $object)
     {
         foreach ($this->tenantWorkers as $tenant => $tenantWorker) {
             $tenantWorker->updateIndex($object);

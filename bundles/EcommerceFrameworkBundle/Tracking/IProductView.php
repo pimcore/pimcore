@@ -14,14 +14,14 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\Tracking;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IProduct;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Model\ProductInterface;
 
 interface IProductView
 {
     /**
      * Track product view
      *
-     * @param IProduct $product
+     * @param ProductInterface $product
      */
-    public function trackProductView(IProduct $product);
+    public function trackProductView(ProductInterface $product);
 }

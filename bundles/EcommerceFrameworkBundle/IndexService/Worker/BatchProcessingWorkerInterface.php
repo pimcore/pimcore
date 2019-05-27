@@ -14,7 +14,7 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IIndexable;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IndexableInterface;
 
 /**
  * Interface for IndexService workers which support batch processing of index data preparation and index updating
@@ -24,9 +24,9 @@ interface BatchProcessingWorkerInterface extends WorkerInterface
     /**
      * fills queue based on path
      *
-     * @param IIndexable $object
+     * @param IndexableInterface $object
      */
-    public function fillupPreparationQueue(IIndexable $object);
+    public function fillupPreparationQueue(IndexableInterface $object);
 
     /**
      * processes elements in the queue for preparation of index data

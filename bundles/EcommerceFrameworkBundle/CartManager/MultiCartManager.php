@@ -17,7 +17,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\CartManager;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\CheckoutManager;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\InvalidConfigException;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IEnvironment;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Model\ICheckoutable;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Model\CheckoutableInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\IOrderManagerLocator;
 use Psr\Log\LoggerInterface;
 
@@ -127,7 +127,7 @@ class MultiCartManager implements CartManagerInterface
     }
 
     /**
-     * @param ICheckoutable $product
+     * @param CheckoutableInterface $product
      * @param float $count
      * @param null $key
      * @param null $itemKey
@@ -141,7 +141,7 @@ class MultiCartManager implements CartManagerInterface
      * @throws InvalidConfigException
      */
     public function addToCart(
-        ICheckoutable $product,
+        CheckoutableInterface $product,
         $count,
         $key = null,
         $itemKey = null,

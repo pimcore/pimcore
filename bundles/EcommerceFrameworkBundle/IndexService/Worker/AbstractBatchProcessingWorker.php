@@ -17,7 +17,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\AbstractConfig;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Interpreter\RelationInterpreterInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractCategory;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IIndexable;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IndexableInterface;
 use Pimcore\Logger;
 use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Model\DataObject\Concrete;
@@ -82,12 +82,12 @@ abstract class AbstractBatchProcessingWorker extends AbstractWorker implements B
     /**
      * prepare data for index creation and store is in store table
      *
-     * @param IIndexable $object
+     * @param IndexableInterface $object
      * @param $subObjectId
      *
      * @return array
      */
-    protected function getDefaultDataForIndex(IIndexable $object, $subObjectId)
+    protected function getDefaultDataForIndex(IndexableInterface $object, $subObjectId)
     {
         $categories = $this->tenantConfig->getCategories($object, $subObjectId);
         $categoryIds = [];
@@ -164,15 +164,15 @@ abstract class AbstractBatchProcessingWorker extends AbstractWorker implements B
     /**
      * prepare data for index creation and store is in store table
      *
-     * @param IIndexable $object
+     * @param IndexableInterface $object
      */
-    public function prepareDataForIndex(IIndexable $object)
+    public function prepareDataForIndex(IndexableInterface $object)
     {
         $subObjectIds = $this->tenantConfig->createSubIdsForObject($object);
 
         foreach ($subObjectIds as $subObjectId => $object) {
             /**
-             * @var IIndexable $object
+             * @var IndexableInterface $object
              */
             if ($object->getOSDoIndexProduct() && $this->tenantConfig->inIndex($object)) {
                 $a = \Pimcore::inAdmin();
@@ -286,9 +286,9 @@ abstract class AbstractBatchProcessingWorker extends AbstractWorker implements B
     /**
      * fills queue based on path
      *
-     * @param IIndexable $object
+     * @param IndexableInterface $object
      */
-    public function fillupPreparationQueue(IIndexable $object)
+    public function fillupPreparationQueue(IndexableInterface $object)
     {
         if ($object instanceof Concrete) {
 
@@ -328,7 +328,7 @@ abstract class AbstractBatchProcessingWorker extends AbstractWorker implements B
                 Logger::info("Worker $workerId preparing data for index for element " . $objectId);
 
                 $object = $this->tenantConfig->getObjectById($objectId, true);
-                if ($object instanceof IIndexable) {
+                if ($object instanceof IndexableInterface) {
                     $this->prepareDataForIndex($object);
                 } else {
                     //delete entry with id which was retrieved from index before

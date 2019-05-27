@@ -17,7 +17,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartItemInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractCategory;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Model\ICheckoutable;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Model\CheckoutableInterface;
 use Pimcore\Targeting\Model\VisitorInfo;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 
@@ -51,14 +51,14 @@ interface IEnvironment
     public function getCartItem();
 
     /**
-     * @param ICheckoutable $product
+     * @param CheckoutableInterface $product
      *
      * @return IEnvironment
      */
-    public function setProduct(ICheckoutable $product);
+    public function setProduct(CheckoutableInterface $product);
 
     /**
-     * @return ICheckoutable
+     * @return CheckoutableInterface
      */
     public function getProduct();
 

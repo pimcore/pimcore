@@ -17,7 +17,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\Tracking;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrderItem;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IProduct;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Model\ProductInterface;
 use Pimcore\Model\Element\ElementInterface;
 
 interface ITrackingItemBuilder
@@ -25,29 +25,29 @@ interface ITrackingItemBuilder
     /**
      * Build a product view object
      *
-     * @param IProduct|ElementInterface $product
+     * @param ProductInterface|ElementInterface $product
      *
      * @return ProductAction
      */
-    public function buildProductViewItem(IProduct $product);
+    public function buildProductViewItem(ProductInterface $product);
 
     /**
      * Build a product action item object
      *
-     * @param IProduct|ElementInterface $product
+     * @param ProductInterface|ElementInterface $product
      *
      * @return ProductAction
      */
-    public function buildProductActionItem(IProduct $product);
+    public function buildProductActionItem(ProductInterface $product);
 
     /**
      * Build a product impression object
      *
-     * @param IProduct|ElementInterface $product
+     * @param ProductInterface|ElementInterface $product
      *
      * @return ProductImpression
      */
-    public function buildProductImpressionItem(IProduct $product);
+    public function buildProductImpressionItem(ProductInterface $product);
 
     /**
      * Build a checkout transaction object

@@ -18,7 +18,7 @@ use Pimcore\Analytics\Google\Tracker as GoogleTracker;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\CheckoutStepInterface as CheckoutManagerCheckoutStepInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IProduct;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Model\ProductInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\ICartProductActionAdd;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\ICartProductActionRemove;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\ICheckout;
@@ -68,9 +68,9 @@ class EnhancedEcommerce extends AbstractAnalyticsTracker implements
     /**
      * Track product view
      *
-     * @param IProduct $product
+     * @param ProductInterface $product
      */
-    public function trackProductView(IProduct $product)
+    public function trackProductView(ProductInterface $product)
     {
         $this->ensureDependencies();
 
@@ -90,9 +90,9 @@ class EnhancedEcommerce extends AbstractAnalyticsTracker implements
     /**
      * Track product view
      *
-     * @param IProduct $product
+     * @param ProductInterface $product
      */
-    public function trackProductImpression(IProduct $product)
+    public function trackProductImpression(ProductInterface $product)
     {
         $this->ensureDependencies();
 
@@ -110,7 +110,7 @@ class EnhancedEcommerce extends AbstractAnalyticsTracker implements
     /**
      * @inheritDoc
      */
-    public function trackCartProductActionAdd(CartInterface $cart, IProduct $product, $quantity = 1)
+    public function trackCartProductActionAdd(CartInterface $cart, ProductInterface $product, $quantity = 1)
     {
         return $this->trackProductActionAdd($product, $quantity);
     }
@@ -118,10 +118,10 @@ class EnhancedEcommerce extends AbstractAnalyticsTracker implements
     /**
      * Track product action add
      *
-     * @param IProduct $product
+     * @param ProductInterface $product
      * @param int|float $quantity
      */
-    public function trackProductActionAdd(IProduct $product, $quantity = 1)
+    public function trackProductActionAdd(ProductInterface $product, $quantity = 1)
     {
         $this->ensureDependencies();
 
@@ -131,7 +131,7 @@ class EnhancedEcommerce extends AbstractAnalyticsTracker implements
     /**
      * @inheritDoc
      */
-    public function trackCartProductActionRemove(CartInterface $cart, IProduct $product, $quantity = 1)
+    public function trackCartProductActionRemove(CartInterface $cart, ProductInterface $product, $quantity = 1)
     {
         $this->trackProductActionRemove($product, $quantity);
     }
@@ -139,10 +139,10 @@ class EnhancedEcommerce extends AbstractAnalyticsTracker implements
     /**
      * Track product remove from cart
      *
-     * @param IProduct $product
+     * @param ProductInterface $product
      * @param int|float $quantity
      */
-    public function trackProductActionRemove(IProduct $product, $quantity = 1)
+    public function trackProductActionRemove(ProductInterface $product, $quantity = 1)
     {
         $this->ensureDependencies();
 

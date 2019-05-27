@@ -19,7 +19,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\InvalidConfigException;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\ConfigInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\FactFinderConfigInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractCategory;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IIndexable;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IndexableInterface;
 use Pimcore\Tool;
 use Psr\Http\Message\ResponseInterface;
 use Zend\Paginator\Adapter\AdapterInterface;
@@ -27,7 +27,7 @@ use Zend\Paginator\Adapter\AdapterInterface;
 class DefaultFactFinder implements ProductListInterface
 {
     /**
-     * @var IIndexable[]
+     * @var IndexableInterface[]
      */
     protected $products = null;
 
@@ -453,7 +453,7 @@ class DefaultFactFinder implements ProductListInterface
     }
 
     /**
-     * @return IIndexable[]
+     * @return IndexableInterface[]
      *
      * @throws \Exception
      */

@@ -26,7 +26,7 @@ Following example implements a price system that retrieves prices from an extra 
 
 namespace AppBundle\Ecommerce\Pricing;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\Model\ICheckoutable;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Model\CheckoutableInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\AttributePriceSystem;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
 use Pimcore\Db;
@@ -36,11 +36,11 @@ class MyPriceSystem extends AttributePriceSystem {
     /**
      * Calculates prices from product
      *
-     * @param ICheckoutable $product
-     * @param ICheckoutable[] $products
+     * @param CheckoutableInterface $product
+     * @param CheckoutableInterface[] $products
      * @return Decimal
      */
-    protected function calculateAmount(ICheckoutable $product, $products): Decimal
+    protected function calculateAmount(CheckoutableInterface $product, $products): Decimal
     {
         // Get Product ID
         $productId = $product->getId();

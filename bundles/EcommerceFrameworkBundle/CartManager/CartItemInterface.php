@@ -16,7 +16,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\CartManager;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\AvailabilitySystem\AvailabilityInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractSetProductEntry;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Model\ICheckoutable;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Model\CheckoutableInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPrice;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPriceInfo;
 
@@ -26,7 +26,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPriceInfo;
 interface CartItemInterface
 {
     /**
-     * @return ICheckoutable
+     * @return CheckoutableInterface
      */
     public function getProduct();
 
@@ -41,11 +41,11 @@ interface CartItemInterface
     public function getItemKey();
 
     /**
-     * @param ICheckoutable $product
+     * @param CheckoutableInterface $product
      *
      * @return void
      */
-    public function setProduct(ICheckoutable $product);
+    public function setProduct(CheckoutableInterface $product);
 
     /**
      * @param int $count

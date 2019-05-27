@@ -20,7 +20,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\Findologic\
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\ConfigInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\FindologicConfigInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractCategory;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IIndexable;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IndexableInterface;
 use Zend\Paginator\Adapter\AdapterInterface;
 
 class DefaultFindologic implements ProductListInterface
@@ -41,7 +41,7 @@ class DefaultFindologic implements ProductListInterface
     protected $revision = '0.1';
 
     /**
-     * @var IIndexable[]
+     * @var IndexableInterface[]
      */
     protected $products = null;
 
@@ -348,7 +348,7 @@ class DefaultFindologic implements ProductListInterface
     }
 
     /**
-     * @return IIndexable[]
+     * @return IndexableInterface[]
      */
     public function load()
     {
@@ -718,7 +718,7 @@ class DefaultFindologic implements ProductListInterface
     }
 
     /**
-     * @return IIndexable[]
+     * @return IndexableInterface[]
      */
     protected function doLoadGroupByValues()
     {

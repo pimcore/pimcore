@@ -15,7 +15,7 @@
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Condition;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractProduct;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Model\ICheckoutable;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Model\CheckoutableInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\ICondition;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IEnvironment;
 
@@ -62,7 +62,7 @@ class CatalogProduct extends AbstractObjectListCondition implements ICatalogProd
                 /* @var AbstractProduct $product */
 
                 $currentProductCheck = $currentProduct;
-                while ($currentProductCheck instanceof ICheckoutable) {
+                while ($currentProductCheck instanceof CheckoutableInterface) {
                     if ($currentProductCheck->getId() === $product->getId()) {
                         return true;
                     }

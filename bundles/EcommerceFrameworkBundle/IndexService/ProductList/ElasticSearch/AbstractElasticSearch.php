@@ -18,7 +18,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\ElasticSearchConfigInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\ProductListInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractCategory;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IIndexable;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IndexableInterface;
 
 abstract class AbstractElasticSearch implements ProductListInterface
 {
@@ -26,7 +26,7 @@ abstract class AbstractElasticSearch implements ProductListInterface
     const INTEGER_MAX_VALUE = 2147483647;     // Elasticsearch Integer.MAX_VALUE is 2^31-1
 
     /**
-     * @var null|IIndexable[]
+     * @var null|IndexableInterface[]
      */
     protected $products = null;
 
@@ -205,7 +205,7 @@ abstract class AbstractElasticSearch implements ProductListInterface
     /**
      * Returns all products valid for this search
      *
-     * @return IIndexable[]
+     * @return IndexableInterface[]
      */
     public function getProducts()
     {
@@ -499,7 +499,7 @@ abstract class AbstractElasticSearch implements ProductListInterface
     /**
      * loads search results from index and returns them
      *
-     * @return IIndexable[]
+     * @return IndexableInterface[]
      */
     public function load()
     {
@@ -836,7 +836,7 @@ abstract class AbstractElasticSearch implements ProductListInterface
      *
      * @param $elementId
      *
-     * @return array|IIndexable
+     * @return array|IndexableInterface
      */
     protected function loadElementById($elementId)
     {

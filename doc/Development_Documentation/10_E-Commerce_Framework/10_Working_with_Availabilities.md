@@ -28,7 +28,7 @@ The product class returns the name of an Availability System:
 ```php
 <?php
 
-class MyProduct implements \Pimcore\Bundle\EcommerceFrameworkBundle\Model\ICheckoutable
+class MyProduct implements \Pimcore\Bundle\EcommerceFrameworkBundle\Model\CheckoutableInterface
 {
     public function getAvailabilitySystemName()
     {
@@ -73,7 +73,7 @@ pimcore_ecommerce_framework:
 
 
 ## Getting Availabilities
-Each product (if it implements `ICheckoutable`) needs to implement the method `getOSAvailabilityInfo` which in the default
+Each product (if it implements `CheckoutableInterface`) needs to implement the method `getOSAvailabilityInfo` which in the default
 implementation gets the corresponding Availability System and calculates the availability. 
 
 The return value is an `IAvailability` object, which at least has one `getAvailable` method and can contain additional 

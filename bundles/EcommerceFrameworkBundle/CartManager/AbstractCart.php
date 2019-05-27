@@ -17,7 +17,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\CartManager;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\VoucherServiceException;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractSetProductEntry;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Model\ICheckoutable;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Model\CheckoutableInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Reservation;
 use Pimcore\Logger;
 
@@ -162,7 +162,7 @@ abstract class AbstractCart extends \Pimcore\Model\AbstractModel implements Cart
     }
 
     /**
-     * @param ICheckoutable $product
+     * @param CheckoutableInterface $product
      * @param $count
      * @param null $itemKey
      * @param bool $replace
@@ -172,7 +172,7 @@ abstract class AbstractCart extends \Pimcore\Model\AbstractModel implements Cart
      *
      * @return mixed
      */
-    public function addItem(ICheckoutable $product, $count, $itemKey = null, $replace = false, $params = [], $subProducts = [], $comment = null)
+    public function addItem(CheckoutableInterface $product, $count, $itemKey = null, $replace = false, $params = [], $subProducts = [], $comment = null)
     {
         $this->checkCartIsReadOnly();
 
@@ -189,7 +189,7 @@ abstract class AbstractCart extends \Pimcore\Model\AbstractModel implements Cart
 
     /**
      * @param $itemKey
-     * @param ICheckoutable $product
+     * @param CheckoutableInterface $product
      * @param $count
      * @param bool $replace
      * @param array $params
@@ -198,7 +198,7 @@ abstract class AbstractCart extends \Pimcore\Model\AbstractModel implements Cart
      *
      * @return mixed
      */
-    public function updateItem($itemKey, ICheckoutable $product, $count, $replace = false, $params = [], $subProducts = [], $comment = null)
+    public function updateItem($itemKey, CheckoutableInterface $product, $count, $replace = false, $params = [], $subProducts = [], $comment = null)
     {
         $this->checkCartIsReadOnly();
 
@@ -270,7 +270,7 @@ abstract class AbstractCart extends \Pimcore\Model\AbstractModel implements Cart
     }
 
     /**
-     * @param ICheckoutable $product
+     * @param CheckoutableInterface $product
      * @param int                                  $count
      * @param null                                 $itemKey
      * @param bool                                 $replace
@@ -280,7 +280,7 @@ abstract class AbstractCart extends \Pimcore\Model\AbstractModel implements Cart
      *
      * @return string
      */
-    public function addGiftItem(ICheckoutable $product, $count, $itemKey = null, $replace = false, $params = [], $subProducts = [], $comment = null)
+    public function addGiftItem(CheckoutableInterface $product, $count, $itemKey = null, $replace = false, $params = [], $subProducts = [], $comment = null)
     {
         $this->checkCartIsReadOnly();
 
@@ -297,7 +297,7 @@ abstract class AbstractCart extends \Pimcore\Model\AbstractModel implements Cart
 
     /**
      * @param string                               $itemKey
-     * @param ICheckoutable $product
+     * @param CheckoutableInterface $product
      * @param int                                  $count
      * @param bool                                 $replace
      * @param array                                $params
@@ -306,7 +306,7 @@ abstract class AbstractCart extends \Pimcore\Model\AbstractModel implements Cart
      *
      * @return string
      */
-    public function updateGiftItem($itemKey, ICheckoutable $product, $count, $replace = false, $params = [], $subProducts = [], $comment = null)
+    public function updateGiftItem($itemKey, CheckoutableInterface $product, $count, $replace = false, $params = [], $subProducts = [], $comment = null)
     {
         $this->checkCartIsReadOnly();
 
@@ -770,7 +770,7 @@ abstract class AbstractCart extends \Pimcore\Model\AbstractModel implements Cart
     /**
      * @param int $count
      *
-     * @return ICheckoutable[]
+     * @return CheckoutableInterface[]
      */
     public function getRecentlyAddedItems($count)
     {

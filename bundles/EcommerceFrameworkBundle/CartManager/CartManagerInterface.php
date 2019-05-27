@@ -16,7 +16,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\CartManager;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\IComponent;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractSetProductEntry;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Model\ICheckoutable;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Model\CheckoutableInterface;
 
 interface CartManagerInterface extends IComponent
 {
@@ -33,7 +33,7 @@ interface CartManagerInterface extends IComponent
     /**
      * Adds item to given cart
      *
-     * @param ICheckoutable $product - product to add
+     * @param CheckoutableInterface $product - product to add
      * @param float $count
      * @param string $key            - optional key of cart where the item should be added to
      * @param null|string $itemKey   - optional item key
@@ -45,7 +45,7 @@ interface CartManagerInterface extends IComponent
      * @return string - item key
      */
     public function addToCart(
-        ICheckoutable $product,
+        CheckoutableInterface $product,
         $count,
         $key = null,
         $itemKey = null,

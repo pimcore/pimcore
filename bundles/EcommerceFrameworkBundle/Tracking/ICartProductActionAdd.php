@@ -15,7 +15,7 @@
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\Tracking;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartInterface;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IProduct;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Model\ProductInterface;
 
 interface ICartProductActionAdd
 {
@@ -23,8 +23,8 @@ interface ICartProductActionAdd
      * Track product add to cart
      *
      * @param CartInterface $cart
-     * @param IProduct $product
+     * @param ProductInterface $product
      * @param int|float $quantity
      */
-    public function trackCartProductActionAdd(CartInterface $cart, IProduct $product, $quantity = 1);
+    public function trackCartProductActionAdd(CartInterface $cart, ProductInterface $product, $quantity = 1);
 }

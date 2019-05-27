@@ -19,7 +19,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Interpreter\RelationInt
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\ElasticSearch\AbstractElasticSearch as DefaultElasticSearchWorker;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\WorkerInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\DefaultMockup;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IIndexable;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IndexableInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Traits\OptionsResolverTrait;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -168,11 +168,11 @@ class ElasticSearch extends AbstractConfig implements MockupConfigInterface, Ela
     /**
      * checks, if product should be in index for current tenant
      *
-     * @param IIndexable $object
+     * @param IndexableInterface $object
      *
      * @return bool
      */
-    public function inIndex(IIndexable $object)
+    public function inIndex(IndexableInterface $object)
     {
         return true;
     }
@@ -180,12 +180,12 @@ class ElasticSearch extends AbstractConfig implements MockupConfigInterface, Ela
     /**
      * in case of subtenants returns a data structure containing all sub tenants
      *
-     * @param IIndexable $object
+     * @param IndexableInterface $object
      * @param null $subObjectId
      *
      * @return mixed $subTenantData
      */
-    public function prepareSubTenantEntries(IIndexable $object, $subObjectId = null)
+    public function prepareSubTenantEntries(IndexableInterface $object, $subObjectId = null)
     {
         return null;
     }
@@ -250,7 +250,7 @@ class ElasticSearch extends AbstractConfig implements MockupConfigInterface, Ela
      *
      * @param $objectId
      *
-     * @return IIndexable | array
+     * @return IndexableInterface | array
      */
     public function getObjectMockupById($objectId)
     {

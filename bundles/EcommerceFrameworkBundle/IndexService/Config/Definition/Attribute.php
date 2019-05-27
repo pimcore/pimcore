@@ -21,7 +21,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\ConfigInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Getter\ExtendedGetterInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Getter\GetterInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Interpreter\InterpreterInterface;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IIndexable;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IndexableInterface;
 
 class Attribute
 {
@@ -193,14 +193,14 @@ class Attribute
     /**
      * Get value from object, running through getter if defined
      *
-     * @param IIndexable $object
+     * @param IndexableInterface $object
      * @param null $subObjectId
      * @param ConfigInterface|null $tenantConfig
      * @param mixed $default
      *
      * @return mixed
      */
-    public function getValue(IIndexable $object, $subObjectId = null, ConfigInterface $tenantConfig = null, $default = null)
+    public function getValue(IndexableInterface $object, $subObjectId = null, ConfigInterface $tenantConfig = null, $default = null)
     {
         if (null !== $this->getter) {
             if ($this->getter instanceof ExtendedGetterInterface) {

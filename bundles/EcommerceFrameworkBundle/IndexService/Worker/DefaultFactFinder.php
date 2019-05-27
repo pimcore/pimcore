@@ -18,7 +18,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\DefaultFactFinde
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\FactFinderConfigInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Interpreter\DefaultRelations;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IIndexable;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IndexableInterface;
 use Pimcore\Db\ConnectionInterface;
 use Pimcore\Logger;
 use Pimcore\Model\DataObject\AbstractObject;
@@ -159,11 +159,11 @@ class DefaultFactFinder extends AbstractMockupCacheWorker implements WorkerInter
     /**
      * deletes given element from index
      *
-     * @param IIndexable $object
+     * @param IndexableInterface $object
      *
      * @return void
      */
-    public function deleteFromIndex(IIndexable $object)
+    public function deleteFromIndex(IndexableInterface $object)
     {
         // TODO: Implement deleteFromIndex() method.
     }
@@ -171,15 +171,15 @@ class DefaultFactFinder extends AbstractMockupCacheWorker implements WorkerInter
     /**
      * prepare data for index creation and store is in store table
      *
-     * @param IIndexable $object
+     * @param IndexableInterface $object
      */
-    public function prepareDataForIndex(IIndexable $object)
+    public function prepareDataForIndex(IndexableInterface $object)
     {
         $subObjectIds = $this->tenantConfig->createSubIdsForObject($object);
 
         foreach ($subObjectIds as $subObjectId => $object) {
             /**
-             * @var IIndexable $object
+             * @var IndexableInterface $object
              */
             if ($object->getOSDoIndexProduct() && $this->tenantConfig->inIndex($object)) {
                 $a = \Pimcore::inAdmin();
@@ -236,11 +236,11 @@ class DefaultFactFinder extends AbstractMockupCacheWorker implements WorkerInter
     /**
      * updates given element in index
      *
-     * @param IIndexable $object
+     * @param IndexableInterface $object
      *
      * @return void
      */
-    public function updateIndex(IIndexable $object)
+    public function updateIndex(IndexableInterface $object)
     {
         if (!$this->tenantConfig->isActive($object)) {
             Logger::info("Tenant {$this->name} is not active.");
@@ -293,11 +293,11 @@ class DefaultFactFinder extends AbstractMockupCacheWorker implements WorkerInter
 
     /**
      * @param $subObjectId
-     * @param IIndexable|null $object
+     * @param IndexableInterface|null $object
      *
      * @return mixed|void
      */
-    protected function doDeleteFromIndex($subObjectId, IIndexable $object = null)
+    protected function doDeleteFromIndex($subObjectId, IndexableInterface $object = null)
     {
     }
 

@@ -16,7 +16,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\Definition\Attribute;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\WorkerInterface;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IIndexable;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IndexableInterface;
 
 /**
  * Interface for IndexService Tenant Configurations
@@ -54,41 +54,41 @@ interface ConfigInterface
     /**
      * returns if given product is active for this tenant
      *
-     * @param IIndexable $object
+     * @param IndexableInterface $object
      *
      * @return bool
      */
-    public function isActive(IIndexable $object);
+    public function isActive(IndexableInterface $object);
 
     /**
      * checks, if product should be in index for current tenant
      *
-     * @param IIndexable $object
+     * @param IndexableInterface $object
      *
      * @return bool
      */
-    public function inIndex(IIndexable $object);
+    public function inIndex(IndexableInterface $object);
 
     /**
      * Returns categories for given object in context of the current tenant.
      * Possible hook to filter categories for specific tenants.
      *
-     * @param IIndexable $object
+     * @param IndexableInterface $object
      * @param null $subObjectId
      *
      * @return \Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractCategory[]
      */
-    public function getCategories(IIndexable $object, $subObjectId = null);
+    public function getCategories(IndexableInterface $object, $subObjectId = null);
 
     /**
      * in case of subtenants returns a data structure containing all sub tenants
      *
-     * @param IIndexable $object
+     * @param IndexableInterface $object
      * @param null $subObjectId
      *
      * @return mixed $subTenantData
      */
-    public function prepareSubTenantEntries(IIndexable $object, $subObjectId = null);
+    public function prepareSubTenantEntries(IndexableInterface $object, $subObjectId = null);
 
     /**
      * populates index for tenant relations based on given data
@@ -124,32 +124,32 @@ interface ConfigInterface
      * creates an array of sub ids for the given object
      * use that function, if one object should be indexed more than once (e.g. if field collections are in use)
      *
-     * @param IIndexable $object
+     * @param IndexableInterface $object
      *
-     * @return IIndexable[]
+     * @return IndexableInterface[]
      */
-    public function createSubIdsForObject(IIndexable $object);
+    public function createSubIdsForObject(IndexableInterface $object);
 
     /**
      * checks if there are some zombie subIds around and returns them for cleanup
      *
-     * @param IIndexable $object
+     * @param IndexableInterface $object
      * @param array $subIds
      *
      * @return mixed
      */
-    public function getSubIdsToCleanup(IIndexable $object, array $subIds);
+    public function getSubIdsToCleanup(IndexableInterface $object, array $subIds);
 
     /**
      * creates virtual parent id for given sub id
      * default is getOSParentId
      *
-     * @param IIndexable $object
+     * @param IndexableInterface $object
      * @param $subId
      *
      * @return mixed
      */
-    public function createVirtualParentIdForSubId(IIndexable $object, $subId);
+    public function createVirtualParentIdForSubId(IndexableInterface $object, $subId);
 
     /**
      * Gets object by id, can consider subIds and therefore return e.g. an array of values
@@ -168,7 +168,7 @@ interface ConfigInterface
      *
      * @param $objectId
      *
-     * @return IIndexable | array
+     * @return IndexableInterface | array
      */
     public function getObjectMockupById($objectId);
 }

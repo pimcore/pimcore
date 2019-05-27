@@ -15,7 +15,7 @@
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\CartManager;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractSetProductEntry;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Model\ICheckoutable;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Model\CheckoutableInterface;
 
 /**
  * Interface for cart implementations of online shop framework
@@ -72,7 +72,7 @@ interface CartInterface
     public function getGiftItem($itemKey);
 
     /**
-     * @param ICheckoutable $product
+     * @param CheckoutableInterface $product
      * @param int $count
      * @param null $itemKey
      * @param bool $replace replace if item with same key exists
@@ -82,11 +82,11 @@ interface CartInterface
      *
      * @return string $itemKey
      */
-    public function addItem(ICheckoutable $product, $count, $itemKey = null, $replace = false, $params = [], $subProducts = [], $comment = null);
+    public function addItem(CheckoutableInterface $product, $count, $itemKey = null, $replace = false, $params = [], $subProducts = [], $comment = null);
 
     /**
      * @param string $itemKey
-     * @param ICheckoutable $product
+     * @param CheckoutableInterface $product
      * @param int $count
      * @param bool $replace replace if item with same key exists
      * @param array $params optional additional item information
@@ -95,7 +95,7 @@ interface CartInterface
      *
      * @return string $itemKey
      */
-    public function updateItem($itemKey, ICheckoutable $product, $count, $replace = false, $params = [], $subProducts = [], $comment = null);
+    public function updateItem($itemKey, CheckoutableInterface $product, $count, $replace = false, $params = [], $subProducts = [], $comment = null);
 
     /**
      * updates count of specific cart item
@@ -108,7 +108,7 @@ interface CartInterface
     public function updateItemCount($itemKey, $count);
 
     /**
-     * @param ICheckoutable $product
+     * @param CheckoutableInterface $product
      * @param int $count
      * @param null $itemKey
      * @param bool $replace replace if item with same key exists
@@ -118,11 +118,11 @@ interface CartInterface
      *
      * @return string $itemKey
      */
-    public function addGiftItem(ICheckoutable $product, $count, $itemKey = null, $replace = false, $params = [], $subProducts = [], $comment = null);
+    public function addGiftItem(CheckoutableInterface $product, $count, $itemKey = null, $replace = false, $params = [], $subProducts = [], $comment = null);
 
     /**
      * @param string $itemKey
-     * @param ICheckoutable $product
+     * @param CheckoutableInterface $product
      * @param int $count
      * @param bool $replace replace if item with same key exists
      * @param array $params optional additional item information
@@ -131,7 +131,7 @@ interface CartInterface
      *
      * @return string $itemKey
      */
-    public function updateGiftItem($itemKey, ICheckoutable $product, $count, $replace = false, $params = [], $subProducts = [], $comment = null);
+    public function updateGiftItem($itemKey, CheckoutableInterface $product, $count, $replace = false, $params = [], $subProducts = [], $comment = null);
 
     /**
      * @param string $itemKey

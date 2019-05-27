@@ -20,7 +20,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\MysqlConfigInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractCategory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractProduct;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IIndexable;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IndexableInterface;
 use Zend\Paginator\Adapter\AdapterInterface;
 
 /**
@@ -29,7 +29,7 @@ use Zend\Paginator\Adapter\AdapterInterface;
 class DefaultMysql implements ProductListInterface
 {
     /**
-     * @var null|IIndexable[]
+     * @var null|IndexableInterface[]
      */
     protected $products = null;
 

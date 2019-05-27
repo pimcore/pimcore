@@ -24,10 +24,10 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPriceInfo;
 /**
  * Abstract base class for pimcore objects who should be used as products in the online shop framework
  */
-class AbstractProduct extends \Pimcore\Model\DataObject\Concrete implements IProduct, IIndexable, ICheckoutable
+class AbstractProduct extends \Pimcore\Model\DataObject\Concrete implements ProductInterface, IndexableInterface, CheckoutableInterface
 {
     // =============================================
-    //     IIndexable Methods
+    //     IndexableInterface Methods
     //  =============================================
 
     /**
@@ -106,7 +106,7 @@ class AbstractProduct extends \Pimcore\Model\DataObject\Concrete implements IPro
     }
 
     // =============================================
-    //     ICheckoutable Methods
+    //     CheckoutableInterface Methods
     //  =============================================
 
     /**

@@ -16,7 +16,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\SessionCart;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractProduct;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\Currency;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Model\ICheckoutable;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Model\CheckoutableInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\AttributePriceInfo;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\AttributePriceSystem;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPrice;
@@ -130,11 +130,11 @@ class AbstractRuleTest extends EcommerceTestCase
      * @param array $taxes
      * @param string $combinationType
      *
-     * @return ICheckoutable
+     * @return CheckoutableInterface
      *
      * @throws \TypeError
      */
-    protected function setUpProduct(int $id, float $grossPrice, IPricingManager $pricingManager = null, $categories = [], $taxes = [], $combinationType = TaxEntry::CALCULATION_MODE_COMBINE): ICheckoutable
+    protected function setUpProduct(int $id, float $grossPrice, IPricingManager $pricingManager = null, $categories = [], $taxes = [], $combinationType = TaxEntry::CALCULATION_MODE_COMBINE): CheckoutableInterface
     {
         $grossPrice = Decimal::create($grossPrice);
 

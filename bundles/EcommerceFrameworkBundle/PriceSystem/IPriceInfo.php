@@ -17,7 +17,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\Model\ICheckoutable;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Model\CheckoutableInterface;
 
 /**
  * Interface for PriceInfo implementations of online shop framework
@@ -73,16 +73,16 @@ interface IPriceInfo
     /**
      * Relation to product
      *
-     * @param ICheckoutable $product
+     * @param CheckoutableInterface $product
      *
      * @return IPriceInfo
      */
-    public function setProduct(ICheckoutable $product);
+    public function setProduct(CheckoutableInterface $product);
 
     /**
      * Returns product
      *
-     * @return ICheckoutable
+     * @return CheckoutableInterface
      */
     public function getProduct();
 }

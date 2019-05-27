@@ -29,7 +29,7 @@ The product class returns the name of a price system:
 ```php
 <?php
 
-class MyProduct implements \Pimcore\Bundle\EcommerceFrameworkBundle\Model\ICheckoutable
+class MyProduct implements \Pimcore\Bundle\EcommerceFrameworkBundle\Model\CheckoutableInterface
 {
     public function getPriceSystemName()
     {

@@ -17,7 +17,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\CartManager;
 use Pimcore\Bundle\EcommerceFrameworkBundle\AvailabilitySystem\AvailabilityInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractSetProduct;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractSetProductEntry;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Model\ICheckoutable;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Model\CheckoutableInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPrice;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPriceInfo;
 use Pimcore\Model\DataObject\AbstractObject;
@@ -32,7 +32,7 @@ abstract class AbstractCartItem extends \Pimcore\Model\AbstractModel implements 
     protected $isLoading = false;
 
     /**
-     * @var ICheckoutable
+     * @var CheckoutableInterface
      */
     protected $product;
     protected $productId = null;
@@ -73,10 +73,10 @@ abstract class AbstractCartItem extends \Pimcore\Model\AbstractModel implements 
     }
 
     /**
-     * @param ICheckoutable $product
+     * @param CheckoutableInterface $product
      * @param bool $fireModified
      */
-    public function setProduct(ICheckoutable $product, bool $fireModified = true)
+    public function setProduct(CheckoutableInterface $product, bool $fireModified = true)
     {
         if ((empty($product) || $this->productId != $product->getId()) && $this->getCart() && !$this->isLoading && $fireModified) {
             $this->getCart()->modified();
@@ -86,7 +86,7 @@ abstract class AbstractCartItem extends \Pimcore\Model\AbstractModel implements 
     }
 
     /**
-     * @return ICheckoutable
+     * @return CheckoutableInterface
      */
     public function getProduct()
     {

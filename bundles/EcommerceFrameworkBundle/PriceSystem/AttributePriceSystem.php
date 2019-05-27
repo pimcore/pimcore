@@ -18,7 +18,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\UnsupportedException;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IEnvironment;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractSetProductEntry;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\Currency;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Model\ICheckoutable;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Model\CheckoutableInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\TaxManagement\TaxCalculationService;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\TaxManagement\TaxEntry;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IPricingManagerLocator;
@@ -79,7 +79,7 @@ class AttributePriceSystem extends CachingPriceSystem implements IPriceSystem
     /**
      * @inheritdoc
      */
-    public function createPriceInfoInstance($quantityScale, ICheckoutable $product, $products): IPriceInfo
+    public function createPriceInfoInstance($quantityScale, CheckoutableInterface $product, $products): IPriceInfo
     {
         $taxClass = $this->getTaxClassForProduct($product);
 
@@ -113,12 +113,12 @@ class AttributePriceSystem extends CachingPriceSystem implements IPriceSystem
     /**
      * Calculates prices from product
      *
-     * @param ICheckoutable $product
-     * @param ICheckoutable[] $products
+     * @param CheckoutableInterface $product
+     * @param CheckoutableInterface[] $products
      *
      * @return Decimal
      */
-    protected function calculateAmount(ICheckoutable $product, $products): Decimal
+    protected function calculateAmount(CheckoutableInterface $product, $products): Decimal
     {
         $getter = 'get' . ucfirst($this->attributeName);
 

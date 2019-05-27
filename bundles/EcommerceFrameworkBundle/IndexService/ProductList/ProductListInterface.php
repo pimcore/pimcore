@@ -15,7 +15,7 @@
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractCategory;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IIndexable;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IndexableInterface;
 use Zend\Paginator\Adapter\AdapterInterface;
 use Zend\Paginator\AdapterAggregateInterface;
 
@@ -56,7 +56,7 @@ interface ProductListInterface extends \Iterator, AdapterInterface, AdapterAggre
     /**
      * Returns all products valid for this search
      *
-     * @return IIndexable[]
+     * @return IndexableInterface[]
      */
     public function getProducts();
 
@@ -212,7 +212,7 @@ interface ProductListInterface extends \Iterator, AdapterInterface, AdapterAggre
     /**
      * loads search results from index and returns them
      *
-     * @return IIndexable[]
+     * @return IndexableInterface[]
      */
     public function load();
 

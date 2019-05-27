@@ -18,7 +18,7 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartPriceModificator\ICartPriceModificator;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Model\ICheckoutable;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Model\CheckoutableInterface;
 use Pimcore\Model\DataObject\OnlineShopTaxClass;
 
 interface IPriceSystem
@@ -26,13 +26,13 @@ interface IPriceSystem
     /**
      * Creates price info object for given product and quantity scale
      *
-     * @param ICheckoutable $product
+     * @param CheckoutableInterface $product
      * @param null|int|string $quantityScale - Numeric or string (allowed values: IPriceInfo::MIN_PRICE)
-     * @param ICheckoutable[] $products
+     * @param CheckoutableInterface[] $products
      *
      * @return IPriceInfo
      */
-    public function getPriceInfo(ICheckoutable $product, $quantityScale = null, $products = null): IPriceInfo;
+    public function getPriceInfo(CheckoutableInterface $product, $quantityScale = null, $products = null): IPriceInfo;
 
     /**
      * Filters and orders given product IDs based on price information
@@ -49,15 +49,15 @@ interface IPriceSystem
     public function filterProductIds($productIds, $fromPrice, $toPrice, $order, $offset, $limit);
 
     /**
-     * Returns OnlineShopTaxClass for given ICheckoutable
+     * Returns OnlineShopTaxClass for given CheckoutableInterface
      *
      * Should be overwritten in custom price systems with suitable implementation.
      *
-     * @param ICheckoutable $product
+     * @param CheckoutableInterface $product
      *
      * @return OnlineShopTaxClass
      */
-    public function getTaxClassForProduct(ICheckoutable $product);
+    public function getTaxClassForProduct(CheckoutableInterface $product);
 
     /**
      * Returns OnlineShopTaxClass for given ICartPriceModificator

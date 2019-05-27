@@ -15,7 +15,7 @@
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\UnsupportedException;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Model\ICheckoutable;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Model\CheckoutableInterface;
 
 /**
  * Price system which caches created price info objects per product and request
@@ -30,7 +30,7 @@ abstract class CachingPriceSystem extends AbstractPriceSystem implements ICachin
     /**
      * @inheritdoc
      */
-    public function getPriceInfo(ICheckoutable $product, $quantityScale = 1, $products = null): IPriceInfo
+    public function getPriceInfo(CheckoutableInterface $product, $quantityScale = 1, $products = null): IPriceInfo
     {
         $pId = $product->getId();
         if (!array_key_exists($pId, $this->priceInfos) || !is_array($this->priceInfos[$pId])) {

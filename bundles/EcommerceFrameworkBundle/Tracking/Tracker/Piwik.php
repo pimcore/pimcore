@@ -20,7 +20,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\Tracker;
 use Pimcore\Analytics\Piwik\Tracker as PiwikTracker;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IProduct;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Model\ProductInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\ICartProductActionAdd;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\ICartProductActionRemove;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\ICartUpdate;
@@ -96,7 +96,7 @@ class Piwik extends Tracker implements
     /**
      * @inheritDoc
      */
-    public function trackProductView(IProduct $product)
+    public function trackProductView(ProductInterface $product)
     {
         $item = $this->trackingItemBuilder->buildProductViewItem($product);
 
@@ -140,7 +140,7 @@ class Piwik extends Tracker implements
     /**
      * @inheritDoc
      */
-    public function trackCartProductActionAdd(CartInterface $cart, IProduct $product, $quantity = 1)
+    public function trackCartProductActionAdd(CartInterface $cart, ProductInterface $product, $quantity = 1)
     {
         if ($this->handleCartAdd) {
             $this->trackCartUpdate($cart);
@@ -150,7 +150,7 @@ class Piwik extends Tracker implements
     /**
      * @inheritDoc
      */
-    public function trackCartProductActionRemove(CartInterface $cart, IProduct $product, $quantity = 1)
+    public function trackCartProductActionRemove(CartInterface $cart, ProductInterface $product, $quantity = 1)
     {
         if ($this->handleCartRemove) {
             $this->trackCartUpdate($cart);

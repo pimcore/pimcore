@@ -18,7 +18,7 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\UnsupportedException;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Model\ICheckoutable;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Model\CheckoutableInterface;
 
 class AbstractPriceInfo implements IPriceInfo
 {
@@ -33,12 +33,12 @@ class AbstractPriceInfo implements IPriceInfo
     protected $quantity;
 
     /**
-     * @var ICheckoutable
+     * @var CheckoutableInterface
      */
     protected $product;
 
     /**
-     * @var ICheckoutable[]
+     * @var CheckoutableInterface[]
      */
     protected $products;
 
@@ -109,7 +109,7 @@ class AbstractPriceInfo implements IPriceInfo
     /**
      * @inheritdoc
      */
-    public function setProduct(ICheckoutable $product)
+    public function setProduct(CheckoutableInterface $product)
     {
         $this->product = $product;
     }

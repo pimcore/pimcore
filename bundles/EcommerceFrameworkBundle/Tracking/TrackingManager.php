@@ -18,7 +18,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\CheckoutStepInterface as CheckoutManagerCheckoutStepInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IEnvironment;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IProduct;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Model\ProductInterface;
 
 class TrackingManager implements ITrackingManager
 {
@@ -133,12 +133,12 @@ class TrackingManager implements ITrackingManager
      *
      * @implements IProductImpression
      *
-     * @param IProduct $product
+     * @param ProductInterface $product
      */
-    public function trackProductImpression(IProduct $product)
+    public function trackProductImpression(ProductInterface $product)
     {
         foreach ($this->getActiveTrackers() as $tracker) {
-            if ($tracker instanceof IProductImpression) {
+            if ($tracker instanceof ProductInterfaceImpression) {
                 $tracker->trackProductImpression($product);
             }
         }
@@ -147,11 +147,11 @@ class TrackingManager implements ITrackingManager
     /**
      * Track product view
      *
-     * @param IProduct $product
+     * @param ProductInterface $product
      *
-     * @implements IProductView
+     * @implements ProductInterfaceView
      */
-    public function trackProductView(IProduct $product)
+    public function trackProductView(ProductInterface $product)
     {
         foreach ($this->getActiveTrackers() as $tracker) {
             if ($tracker instanceof IProductView) {
@@ -178,10 +178,10 @@ class TrackingManager implements ITrackingManager
      * Track product add to cart
      *
      * @param CartInterface $cart
-     * @param IProduct $product
+     * @param ProductInterface $product
      * @param int|float $quantity
      */
-    public function trackCartProductActionAdd(CartInterface $cart, IProduct $product, $quantity = 1)
+    public function trackCartProductActionAdd(CartInterface $cart, ProductInterface $product, $quantity = 1)
     {
         foreach ($this->getActiveTrackers() as $tracker) {
             if ($tracker instanceof ICartProductActionAdd) {
@@ -195,10 +195,10 @@ class TrackingManager implements ITrackingManager
      *
      * @deprecated Use ICartProductActionAdd::trackCartProductActionAdd instead
      *
-     * @param IProduct $product
+     * @param ProductInterface $product
      * @param int|float $quantity
      */
-    public function trackProductActionAdd(IProduct $product, $quantity = 1)
+    public function trackProductActionAdd(ProductInterface $product, $quantity = 1)
     {
         foreach ($this->getActiveTrackers() as $tracker) {
             if ($tracker instanceof IProductActionAdd) {
@@ -211,10 +211,10 @@ class TrackingManager implements ITrackingManager
      * Track product remove from cart
      *
      * @param CartInterface $cart
-     * @param IProduct $product
+     * @param ProductInterface $product
      * @param int|float $quantity
      */
-    public function trackCartProductActionRemove(CartInterface $cart, IProduct $product, $quantity = 1)
+    public function trackCartProductActionRemove(CartInterface $cart, ProductInterface $product, $quantity = 1)
     {
         foreach ($this->getActiveTrackers() as $tracker) {
             if ($tracker instanceof ICartProductActionRemove) {
@@ -228,10 +228,10 @@ class TrackingManager implements ITrackingManager
      *
      * @deprecated Use ICartProductActionRemove::trackCartProductActionRemove instead
      *
-     * @param IProduct $product
+     * @param ProductInterface $product
      * @param int|float $quantity
      */
-    public function trackProductActionRemove(IProduct $product, $quantity = 1)
+    public function trackProductActionRemove(ProductInterface $product, $quantity = 1)
     {
         foreach ($this->getActiveTrackers() as $tracker) {
             if ($tracker instanceof IProductActionRemove) {
