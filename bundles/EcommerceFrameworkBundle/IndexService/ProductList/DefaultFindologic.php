@@ -17,7 +17,8 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList;
 use Monolog\Logger;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\InvalidConfigException;
 use Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\Findologic\SelectCategory;
-use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\IConfig;
+use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\ConfigInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\FindologicConfigInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractCategory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IIndexable;
 use Zend\Paginator\Adapter\AdapterInterface;
@@ -50,7 +51,7 @@ class DefaultFindologic implements IProductList
     protected $tenantName;
 
     /**
-     * @var \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\IFindologicConfig
+     * @var FindologicConfigInterface
      */
     protected $tenantConfig;
 
@@ -142,9 +143,9 @@ class DefaultFindologic implements IProductList
     protected $timeout = 3;
 
     /**
-     * @param IConfig $tenantConfig
+     * @param ConfigInterface $tenantConfig
      */
-    public function __construct(IConfig $tenantConfig)
+    public function __construct(ConfigInterface $tenantConfig)
     {
         $this->tenantName = $tenantConfig->getTenantName();
         $this->tenantConfig = $tenantConfig;

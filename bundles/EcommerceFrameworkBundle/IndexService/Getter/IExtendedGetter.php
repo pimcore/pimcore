@@ -14,12 +14,12 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Getter;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\IConfig;
+use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\ConfigInterface;
 
 /**
  * Interface for getter of product index columns which consider sub object ids and tenant configs
  */
 interface IExtendedGetter extends IGetter
 {
-    public function get($object, $config = null, $subObjectId = null, IConfig $tenantConfig = null);
+    public function get($object, $config = null, $subObjectId = null, ConfigInterface $tenantConfig = null);
 }

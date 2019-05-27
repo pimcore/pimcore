@@ -14,7 +14,7 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\IFindologicConfig;
+use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\FindologicConfigInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractCategory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IIndexable;
 use Pimcore\Db\ConnectionInterface;
@@ -22,9 +22,9 @@ use Pimcore\Logger;
 use Pimcore\Model\DataObject\Concrete;
 
 /**
- * @property IFindologicConfig $tenantConfig
+ * @property FindologicConfigInterface $tenantConfig
  *
- * @method IFindologicConfig getTenantConfig()
+ * @method FindologicConfigInterface getTenantConfig()
  */
 class DefaultFindologic extends AbstractMockupCacheWorker implements IWorker, IBatchProcessingWorker
 {
@@ -46,7 +46,7 @@ class DefaultFindologic extends AbstractMockupCacheWorker implements IWorker, IB
      */
     protected $batchData;
 
-    public function __construct(IFindologicConfig $tenantConfig, ConnectionInterface $db)
+    public function __construct(FindologicConfigInterface $tenantConfig, ConnectionInterface $db)
     {
         parent::__construct($tenantConfig, $db);
     }

@@ -21,7 +21,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IIndexable;
 use Pimcore\Config\Config;
 use Pimcore\Model\DataObject\AbstractObject;
 
-abstract class AbstractConfig implements IConfig
+abstract class AbstractConfig implements ConfigInterface
 {
     /**
      * @var string

@@ -26,7 +26,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  *
  * @method DefaultFactFinderWorker getTenantWorker()
  */
-class DefaultFactFinder extends AbstractConfig implements IFactFinderConfig, IMockupConfig
+class DefaultFactFinder extends AbstractConfig implements FactFinderConfigInterface, MockupConfigInterface
 {
     use OptionsResolverTrait;
 

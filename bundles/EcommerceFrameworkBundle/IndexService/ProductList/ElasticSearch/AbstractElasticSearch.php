@@ -15,7 +15,7 @@
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\ElasticSearch;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
-use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\IElasticSearchConfig;
+use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\ElasticSearchConfigInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\IProductList;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractCategory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IIndexable;
@@ -50,7 +50,7 @@ abstract class AbstractElasticSearch implements IProductList
     protected $tenantName;
 
     /**
-     * @var IElasticSearchConfig
+     * @var ElasticSearchConfigInterface
      */
     protected $tenantConfig;
 
@@ -176,7 +176,7 @@ abstract class AbstractElasticSearch implements IProductList
         return $this;
     }
 
-    public function __construct(IElasticSearchConfig $tenantConfig)
+    public function __construct(ElasticSearchConfigInterface $tenantConfig)
     {
         $this->tenantName = $tenantConfig->getTenantName();
         $this->tenantConfig = $tenantConfig;
@@ -1123,7 +1123,7 @@ abstract class AbstractElasticSearch implements IProductList
     }
 
     /**
-     * @return IElasticSearchConfig
+     * @return ElasticSearchConfigInterface
      */
     public function getTenantConfig()
     {

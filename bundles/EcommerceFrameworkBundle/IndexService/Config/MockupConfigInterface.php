@@ -14,18 +14,21 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config;
 
-
-@trigger_error(
-    'Interface Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\IFactFinderConfig is deprecated since version 6.0.0 and will be removed in 7.0.0. ' .
-    ' Use ' . FactFinderConfigInterface::class . ' class instead.',
-    E_USER_DEPRECATED
-);
-
-if(false) {
+/**
+ * Interface for IndexService Tenant Configurations with mockup implementations
+ */
+interface MockupConfigInterface
+{
     /**
-     * @deprecated use FactFinderConfigInterface instead.
+     * creates object mockup for given data
+     *
+     * @param $objectId
+     * @param $data
+     * @param $relations
+     *
+     * @return mixed
      */
-    interface IFactFinderConfig
-    {
-    }
+    public function createMockupObject($objectId, $data, $relations);
 }
+
+class_alias(MockupConfigInterface::class, 'Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\IMockupConfig');

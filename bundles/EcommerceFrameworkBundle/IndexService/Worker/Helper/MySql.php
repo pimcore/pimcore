@@ -14,7 +14,7 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\Helper;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\IMysqlConfig;
+use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\MysqlConfigInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Interpreter\IRelationInterpreter;
 use Pimcore\Cache;
 use Pimcore\Db\ConnectionInterface;
@@ -28,7 +28,7 @@ class MySql
     protected $_sqlChangeLog = [];
 
     /**
-     * @var IMysqlConfig
+     * @var MysqlConfigInterface
      */
     protected $tenantConfig;
 
@@ -37,7 +37,7 @@ class MySql
      */
     protected $db;
 
-    public function __construct(IMysqlConfig $tenantConfig, ConnectionInterface $db)
+    public function __construct(MysqlConfigInterface $tenantConfig, ConnectionInterface $db)
     {
         $this->tenantConfig = $tenantConfig;
         $this->db = $db;

@@ -17,7 +17,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\Definition;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\IConfig;
+use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\ConfigInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Getter\IExtendedGetter;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Getter\IGetter;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Interpreter\IInterpreter;
@@ -195,12 +195,12 @@ class Attribute
      *
      * @param IIndexable $object
      * @param null $subObjectId
-     * @param IConfig|null $tenantConfig
+     * @param ConfigInterface|null $tenantConfig
      * @param mixed $default
      *
      * @return mixed
      */
-    public function getValue(IIndexable $object, $subObjectId = null, IConfig $tenantConfig = null, $default = null)
+    public function getValue(IIndexable $object, $subObjectId = null, ConfigInterface $tenantConfig = null, $default = null)
     {
         if (null !== $this->getter) {
             if ($this->getter instanceof IExtendedGetter) {

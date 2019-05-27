@@ -15,7 +15,7 @@
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\ElasticSearch;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\ElasticSearch;
-use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\IElasticSearchConfig;
+use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\ElasticSearchConfigInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Interpreter\IRelationInterpreter;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\IProductList;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker;
@@ -66,10 +66,10 @@ abstract class AbstractElasticSearch extends Worker\AbstractMockupCacheWorker im
     protected $bulkIndexData = [];
 
     /**
-     * @param ElasticSearch|IElasticSearchConfig $tenantConfig
+     * @param ElasticSearch|ElasticSearchConfigInterface $tenantConfig
      * @param ConnectionInterface $db
      */
-    public function __construct(IElasticSearchConfig $tenantConfig, ConnectionInterface $db)
+    public function __construct(ElasticSearchConfigInterface $tenantConfig, ConnectionInterface $db)
     {
         parent::__construct($tenantConfig, $db);
 

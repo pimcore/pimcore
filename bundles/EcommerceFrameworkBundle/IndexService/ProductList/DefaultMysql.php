@@ -17,7 +17,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList;
 use Monolog\Logger;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CoreExtensions\ObjectData\IndexFieldSelection;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
-use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\IMysqlConfig;
+use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\MysqlConfigInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractCategory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractProduct;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IIndexable;
@@ -39,7 +39,7 @@ class DefaultMysql implements IProductList
     protected $tenantName;
 
     /**
-     * @var IMysqlConfig
+     * @var MysqlConfigInterface
      */
     protected $tenantConfig;
 
@@ -83,7 +83,7 @@ class DefaultMysql implements IProductList
      */
     protected $logger;
 
-    public function __construct(IMysqlConfig $tenantConfig)
+    public function __construct(MysqlConfigInterface $tenantConfig)
     {
         $this->tenantName = $tenantConfig->getTenantName();
         $this->tenantConfig = $tenantConfig;
@@ -695,7 +695,7 @@ class DefaultMysql implements IProductList
     }
 
     /**
-     * @return IMysqlConfig
+     * @return MysqlConfigInterface
      */
     public function getCurrentTenantConfig()
     {

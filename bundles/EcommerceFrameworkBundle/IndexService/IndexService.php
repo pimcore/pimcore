@@ -19,7 +19,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\InvalidConfigException;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IEnvironment;
-use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\IConfig;
+use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\ConfigInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Exception\DefaultWorkerNotFoundException;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Exception\WorkerNotFoundException;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\IProductList;
@@ -277,7 +277,7 @@ class IndexService
     /**
      * Returns current tenant configuration
      *
-     * @return IConfig
+     * @return ConfigInterface
      *
      * @throws InvalidConfigException
      */

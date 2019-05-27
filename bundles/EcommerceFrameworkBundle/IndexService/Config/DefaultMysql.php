@@ -23,7 +23,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IIndexable;
  *
  * @method DefaultMysqlWorker getTenantWorker()
  */
-class DefaultMysql extends AbstractConfig implements IMysqlConfig
+class DefaultMysql extends AbstractConfig implements MysqlConfigInterface
 {
     /**
      * @return string

@@ -25,7 +25,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\CommitOrderProcessor
 use Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\CommitOrderProcessorLocatorInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\DependencyInjection\PimcoreEcommerceFrameworkExtension;
 use Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterService;
-use Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\IFilterServiceLocator;
+use Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterServiceLocatorInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\IndexService;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractVoucherTokenType;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OfferTool\IService;
@@ -105,7 +105,7 @@ class Factory
     /**
      * Filter services registered by ^tenant
      *
-     * @var IFilterServiceLocator
+     * @var FilterServiceLocatorInterface
      */
     private $filterServices;
 
@@ -122,7 +122,7 @@ class Factory
      * @param AvailabilitySystemLocatorInterface $availabilitySystems
      * @param CheckoutManagerFactoryLocatorInterface $checkoutManagerFactories
      * @param CommitOrderProcessorLocatorInterface $commitOrderProcessors
-     * @param IFilterServiceLocator $filterServices
+     * @param FilterServiceLocatorInterface $filterServices
      */
     public function __construct(
         ContainerInterface $container,
@@ -133,7 +133,7 @@ class Factory
         AvailabilitySystemLocatorInterface $availabilitySystems,
         CheckoutManagerFactoryLocatorInterface $checkoutManagerFactories,
         CommitOrderProcessorLocatorInterface $commitOrderProcessors,
-        IFilterServiceLocator $filterServices
+        FilterServiceLocatorInterface $filterServices
     ) {
         $this->container = $container;
         $this->cartManagers = $cartManagers;

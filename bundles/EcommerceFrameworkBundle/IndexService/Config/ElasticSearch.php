@@ -28,7 +28,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  *
  * @method DefaultElasticSearchWorker getTenantWorker()
  */
-class ElasticSearch extends AbstractConfig implements IMockupConfig, IElasticSearchConfig
+class ElasticSearch extends AbstractConfig implements MockupConfigInterface, ElasticSearchConfigInterface
 {
     use OptionsResolverTrait;
 

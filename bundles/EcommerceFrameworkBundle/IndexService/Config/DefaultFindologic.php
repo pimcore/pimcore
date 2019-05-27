@@ -26,7 +26,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  *
  * @method DefaultFindologicWorker getTenantWorker()
  */
-class DefaultFindologic extends AbstractConfig implements IFindologicConfig, IMockupConfig
+class DefaultFindologic extends AbstractConfig implements FindologicConfigInterface, MockupConfigInterface
 {
     use OptionsResolverTrait;
 

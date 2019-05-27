@@ -14,7 +14,7 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\IMysqlConfig;
+use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\MysqlConfigInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Interpreter\IRelationInterpreter;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractCategory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IIndexable;
@@ -23,7 +23,7 @@ use Pimcore\Logger;
 use Pimcore\Model\DataObject\AbstractObject;
 
 /**
- * @property IMysqlConfig $tenantConfig
+ * @property MysqlConfigInterface $tenantConfig
  */
 class DefaultMysql extends AbstractWorker implements IWorker
 {
@@ -37,7 +37,7 @@ class DefaultMysql extends AbstractWorker implements IWorker
      */
     protected $mySqlHelper;
 
-    public function __construct(IMysqlConfig $tenantConfig, ConnectionInterface $db)
+    public function __construct(MysqlConfigInterface $tenantConfig, ConnectionInterface $db)
     {
         parent::__construct($tenantConfig, $db);
 

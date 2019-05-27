@@ -23,7 +23,7 @@ use Pimcore\Logger;
 /**
  * Configuration for the optimized mysql product index implementation.
  */
-class OptimizedMysql extends DefaultMysql implements IMockupConfig
+class OptimizedMysql extends DefaultMysql implements MockupConfigInterface
 {
     /**
      * creates object mockup for given data
