@@ -14,17 +14,19 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\Tracking;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartInterface;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Model\ProductInterface;
+@trigger_error(
+    'Interface Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\ICartProductActionAdd is deprecated since version 6.0.0 and will be removed in 7.0.0. ' .
+    ' Use ' . CartProductActionAddInterface::class . ' class instead.',
+    E_USER_DEPRECATED
+);
 
-interface ICartProductActionAdd
-{
+class_exists(CartProductActionAddInterface::class);
+
+if(false) {
     /**
-     * Track product add to cart
-     *
-     * @param CartInterface $cart
-     * @param ProductInterface $product
-     * @param int|float $quantity
+     * @deprecated use CartProductActionAddInterface instead.
      */
-    public function trackCartProductActionAdd(CartInterface $cart, ProductInterface $product, $quantity = 1);
+    interface ICartProductActionAdd
+    {
+    }
 }

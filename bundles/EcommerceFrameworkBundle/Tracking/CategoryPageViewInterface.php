@@ -14,19 +14,15 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\Tracking;
 
-@trigger_error(
-    'Interface Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\ICartUpdate is deprecated since version 6.0.0 and will be removed in 7.0.0. ' .
-    ' Use ' . CartUpdateInterface::class . ' class instead.',
-    E_USER_DEPRECATED
-);
-
-class_exists(CartUpdateInterface::class);
-
-if(false) {
+interface CategoryPageViewInterface
+{
     /**
-     * @deprecated use CartUpdateInterface instead.
+     * Tracks a category page view
+     *
+     * @param array|string $category One or more categories matching the page
+     * @param mixed $page            Any kind of page information you can use to track your page
      */
-    interface ICartUpdate
-    {
-    }
+    public function trackCategoryPageView($category, $page = null);
 }
+
+class_alias(CategoryPageViewInterface::class, 'Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\ICategoryPageView');

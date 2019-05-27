@@ -21,25 +21,25 @@ use Pimcore\Analytics\Piwik\Tracker as PiwikTracker;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\ProductInterface;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\ICartProductActionAdd;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\ICartProductActionRemove;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\ICartUpdate;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\ICategoryPageView;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\ICheckoutComplete;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\IProductView;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\ITrackingItemBuilder;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\CartProductActionAddInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\CartProductActionRemoveInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\CartUpdateInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\CategoryPageViewInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\CheckoutCompleteInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\ProductViewInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\TrackingItemBuilderInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\ProductAction;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\Tracker;
 use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class Piwik extends Tracker implements
-    IProductView,
-    ICategoryPageView,
-    ICartUpdate,
-    ICartProductActionAdd,
-    ICartProductActionRemove,
-    ICheckoutComplete
+    ProductViewInterface,
+    CategoryPageViewInterface,
+    CartUpdateInterface,
+    CartProductActionAddInterface,
+    CartProductActionRemoveInterface,
+    CheckoutCompleteInterface
 {
     /**
      * @var PiwikTracker
@@ -58,7 +58,7 @@ class Piwik extends Tracker implements
 
     public function __construct(
         PiwikTracker $tracker,
-        ITrackingItemBuilder $trackingItemBuilder,
+        TrackingItemBuilderInterface $trackingItemBuilder,
         EngineInterface $templatingEngine,
         array $options = []
     ) {

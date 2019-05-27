@@ -36,7 +36,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\PriceSystemInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\PriceSystemLocatorInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\PricingManagerInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\PricingManagerLocatorInterface;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\ITrackingManager;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\TrackingManagerInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\VoucherServiceInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\TokenManager\TokenManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -304,7 +304,7 @@ class Factory
         return $tokenManagerFactory->getTokenManager($configuration);
     }
 
-    public function getTrackingManager(): ITrackingManager
+    public function getTrackingManager(): TrackingManagerInterface
     {
         return $this->container->get(PimcoreEcommerceFrameworkExtension::SERVICE_ID_TRACKING_MANAGER);
     }

@@ -14,14 +14,19 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\Tracking;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
+@trigger_error(
+    'Interface Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\ICheckoutComplete is deprecated since version 6.0.0 and will be removed in 7.0.0. ' .
+    ' Use ' . CheckoutCompleteInterface::class . ' class instead.',
+    E_USER_DEPRECATED
+);
 
-interface ICheckoutComplete
-{
+class_exists(CheckoutCompleteInterface::class);
+
+if(false) {
     /**
-     * Track checkout complete
-     *
-     * @param AbstractOrder $order
+     * @deprecated use CheckoutCompleteInterface instead.
      */
-    public function trackCheckoutComplete(AbstractOrder $order);
+    interface ICheckoutComplete
+    {
+    }
 }

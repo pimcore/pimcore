@@ -14,75 +14,19 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\Tracking;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartInterface;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrderItem;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Model\ProductInterface;
-use Pimcore\Model\Element\ElementInterface;
+@trigger_error(
+    'Interface Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\ITrackingItemBuilder is deprecated since version 6.0.0 and will be removed in 7.0.0. ' .
+    ' Use ' . TrackingItemBuilderInterface::class . ' class instead.',
+    E_USER_DEPRECATED
+);
 
-interface ITrackingItemBuilder
-{
-    /**
-     * Build a product view object
-     *
-     * @param ProductInterface|ElementInterface $product
-     *
-     * @return ProductAction
-     */
-    public function buildProductViewItem(ProductInterface $product);
+class_exists(TrackingItemBuilderInterface::class);
 
+if(false) {
     /**
-     * Build a product action item object
-     *
-     * @param ProductInterface|ElementInterface $product
-     *
-     * @return ProductAction
+     * @deprecated use TrackingItemBuilderInterface instead.
      */
-    public function buildProductActionItem(ProductInterface $product);
-
-    /**
-     * Build a product impression object
-     *
-     * @param ProductInterface|ElementInterface $product
-     *
-     * @return ProductImpression
-     */
-    public function buildProductImpressionItem(ProductInterface $product);
-
-    /**
-     * Build a checkout transaction object
-     *
-     * @param AbstractOrder $order
-     *
-     * @return Transaction
-     */
-    public function buildCheckoutTransaction(AbstractOrder $order);
-
-    /**
-     * Build checkout items
-     *
-     * @param AbstractOrder $order
-     *
-     * @return ProductAction[]
-     */
-    public function buildCheckoutItems(AbstractOrder $order);
-
-    /**
-     * Build checkout items by cart
-     *
-     * @param CartInterface $cart
-     *
-     * @return ProductAction[]
-     */
-    public function buildCheckoutItemsByCart(CartInterface $cart);
-
-    /**
-     * Build a checkout item object
-     *
-     * @param AbstractOrder $order
-     * @param AbstractOrderItem $orderItem
-     *
-     * @return ProductAction
-     */
-    public function buildCheckoutItem(AbstractOrder $order, AbstractOrderItem $orderItem);
+    interface ITrackingItemBuilder
+    {
+    }
 }

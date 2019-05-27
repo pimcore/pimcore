@@ -29,7 +29,7 @@ use Pimcore\Model\Element\ElementInterface;
  * Takes an object (e.g. a product, an order) and transforms it into a
  * normalized tracking object (e.g. a ProductAction or a Transaction).
  */
-class TrackingItemBuilder implements ITrackingItemBuilder
+class TrackingItemBuilder implements TrackingItemBuilderInterface
 {
     /**
      * Build a product impression object

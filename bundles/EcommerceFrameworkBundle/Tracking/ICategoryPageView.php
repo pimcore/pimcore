@@ -14,13 +14,19 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\Tracking;
 
-interface ICategoryPageView
-{
+@trigger_error(
+    'Interface Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\ICategoryPageView is deprecated since version 6.0.0 and will be removed in 7.0.0. ' .
+    ' Use ' . CategoryPageViewInterface::class . ' class instead.',
+    E_USER_DEPRECATED
+);
+
+class_exists(CategoryPageViewInterface::class);
+
+if(false) {
     /**
-     * Tracks a category page view
-     *
-     * @param array|string $category One or more categories matching the page
-     * @param mixed $page            Any kind of page information you can use to track your page
+     * @deprecated use CategoryPageViewInterface instead.
      */
-    public function trackCategoryPageView($category, $page = null);
+    interface ICategoryPageView
+    {
+    }
 }

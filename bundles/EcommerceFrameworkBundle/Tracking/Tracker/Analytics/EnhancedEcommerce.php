@@ -19,30 +19,30 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\CheckoutStepInterface as CheckoutManagerCheckoutStepInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\ProductInterface;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\ICartProductActionAdd;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\ICartProductActionRemove;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\ICheckout;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\ICheckoutComplete;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\ICheckoutStep;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\CartProductActionAddInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\CartProductActionRemoveInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\CheckoutInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\CheckoutCompleteInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\CheckoutStepInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\IProductActionAdd;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\IProductActionRemove;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\IProductImpression;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\IProductView;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\ProductImpressionInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\ProductViewInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\ProductAction;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\ProductImpression;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\Transaction;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class EnhancedEcommerce extends AbstractAnalyticsTracker implements
-    IProductView,
-    IProductImpression,
+    ProductViewInterface,
+    ProductImpressionInterface,
     IProductActionAdd,
     IProductActionRemove,
-    ICartProductActionAdd,
-    ICartProductActionRemove,
-    ICheckout,
-    ICheckoutStep,
-    ICheckoutComplete
+    CartProductActionAddInterface,
+    CartProductActionRemoveInterface,
+    CheckoutInterface,
+    CheckoutStepInterface,
+    CheckoutCompleteInterface
 {
     /**
      * Dependencies to include before any tracking actions

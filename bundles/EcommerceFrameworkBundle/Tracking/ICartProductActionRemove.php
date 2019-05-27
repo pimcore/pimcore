@@ -14,17 +14,19 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\Tracking;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartInterface;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Model\ProductInterface;
+@trigger_error(
+    'Interface Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\ICartProductActionRemove is deprecated since version 6.0.0 and will be removed in 7.0.0. ' .
+    ' Use ' . CartProductActionRemoveInterface::class . ' class instead.',
+    E_USER_DEPRECATED
+);
 
-interface ICartProductActionRemove
-{
+class_exists(CartProductActionRemoveInterface::class);
+
+if(false) {
     /**
-     * Track product remove from cart
-     *
-     * @param CartInterface $cart
-     * @param ProductInterface $product
-     * @param int|float $quantity
+     * @deprecated use CartProductActionRemoveInterface instead.
      */
-    public function trackCartProductActionRemove(CartInterface $cart, ProductInterface $product, $quantity = 1);
+    interface ICartProductActionRemove
+    {
+    }
 }

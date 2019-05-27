@@ -14,19 +14,21 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\Tracking;
 
-@trigger_error(
-    'Interface Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\ICartUpdate is deprecated since version 6.0.0 and will be removed in 7.0.0. ' .
-    ' Use ' . CartUpdateInterface::class . ' class instead.',
-    E_USER_DEPRECATED
-);
-
-class_exists(CartUpdateInterface::class);
-
-if(false) {
+interface TrackerInterface
+{
     /**
-     * @deprecated use CartUpdateInterface instead.
+     * Returns assortment tenants the tracker should be activated for.
+     *
+     * @return array
      */
-    interface ICartUpdate
-    {
-    }
+    public function getAssortmentTenants(): array;
+
+    /**
+     * Returns checkout tenants the tracker should be activated for.
+     *
+     * @return array
+     */
+    public function getCheckoutTenants(): array;
 }
+
+class_alias(TrackerInterface::class, 'Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\ITracker');

@@ -14,19 +14,20 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\Tracking;
 
-interface ITracker
-{
-    /**
-     * Returns assortment tenants the tracker should be activated for.
-     *
-     * @return array
-     */
-    public function getAssortmentTenants(): array;
+@trigger_error(
+    'Interface Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\ITracker is deprecated since version 6.0.0 and will be removed in 7.0.0. ' .
+    ' Use ' . TrackerInterface::class . ' class instead.',
+    E_USER_DEPRECATED
+);
 
+class_exists(TrackerInterface::class);
+
+if(false) {
     /**
-     * Returns checkout tenants the tracker should be activated for.
-     *
-     * @return array
+     * @deprecated use TrackerInterface instead.
      */
-    public function getCheckoutTenants(): array;
+    interface ITracker
+    {
+    }
 }
+
