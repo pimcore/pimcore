@@ -97,6 +97,15 @@ abstract class AbstractConfig implements IConfig
     }
 
     /**
+     * Attribute configuration
+     *
+     * @return array
+     */
+    public function getAttributeConfig(){
+        return $this->attributeConfig;
+    }
+
+    /**
      * Sets attribute factory as dependency. This was added as setter for BC reasons and will be added to the constructor
      * signature in Pimcore 6.
      *
