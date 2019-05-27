@@ -77,9 +77,9 @@ abstract class Document extends Model\Webservice\Data
 
         $keys = get_object_vars($this);
         if (array_key_exists('childs', $keys)) {
-            if ($object->hasChilds()) {
+            if ($object->hasChildren()) {
                 $this->childs = [];
-                foreach ($object->getChilds() as $child) {
+                foreach ($object->getChildren() as $child) {
                     $item = new Webservice\Data\Document\Listing\Item();
                     $item->id = $child->getId();
                     $item->type = $child->getType();

@@ -110,8 +110,8 @@ class Service extends Model\Element\Service
     }
 
     /**
-     * @param $target
-     * @param $source
+     * @param AbstractObject $target
+     * @param AbstractObject $source
      *
      * @return mixed
      */
@@ -130,9 +130,12 @@ class Service extends Model\Element\Service
         //load all in case of lazy loading fields
         self::loadAllObjectFields($source);
 
+        /**
+         * @var AbstractObject $new
+         */
         $new = Element\Service::cloneMe($source);
         $new->setId(null);
-        $new->setChilds(null);
+        $new->setChildren(null);
         $new->setKey(Element\Service::getSaveCopyName('object', $new->getKey(), $target));
         $new->setParentId($target->getId());
         $new->setUserOwner($this->_user->getId());
@@ -145,7 +148,7 @@ class Service extends Model\Element\Service
         // add to store
         $this->_copyRecursiveIds[] = $new->getId();
 
-        foreach ($source->getChilds() as $child) {
+        foreach ($source->getChildren() as $child) {
             $this->copyRecursive($new, $child);
         }
 
@@ -202,8 +205,8 @@ class Service extends Model\Element\Service
     }
 
     /**
-     * @param $target
-     * @param $source
+     * @param AbstractObject $target
+     * @param AbstractObject $source
      *
      * @return AbstractObject
      *
@@ -220,8 +223,11 @@ class Service extends Model\Element\Service
         //load all in case of lazy loading fields
         self::loadAllObjectFields($source);
 
+        /**
+         * @var AbstractObject $new
+         */
         $new = Element\Service::cloneMe($source);
-        $new->setChilds($target->getChilds());
+        $new->setChildren($target->getChildren());
         $new->setId($target->getId());
         $new->setPath($target->getRealPath());
         $new->setKey($target->getKey());
@@ -705,7 +711,7 @@ class Service extends Model\Element\Service
      *
      * @static
      *
-     * @param  Concrete $object
+     * @param AbstractObject $object
      */
     public static function loadAllObjectFields($object)
     {

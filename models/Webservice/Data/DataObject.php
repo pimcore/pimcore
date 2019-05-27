@@ -81,9 +81,9 @@ class DataObject extends Model\Webservice\Data
 
         $keys = get_object_vars($this);
         if (array_key_exists('childs', $keys)) {
-            if ($object->hasChilds()) {
+            if ($object->hasChildren()) {
                 $this->childs = [];
-                foreach ($object->getChilds() as $child) {
+                foreach ($object->getChildren() as $child) {
                     $item = new Model\Webservice\Data\DataObject\Listing\Item();
                     $item->id = $child->getId();
                     $item->type = $child->getType();

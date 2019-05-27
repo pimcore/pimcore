@@ -25,5 +25,5 @@ use Pimcore\Model\Element;
  */
 class Printcontainer extends Model\Document\Printcontainer implements Model\Document\Hardlink\Wrapper\WrapperInterface
 {
-    use Model\Document\Hardlink\Wrapper, Element\ChildsCompatibilityTrait;
+    use Model\Document\Hardlink\Wrapper;
 }

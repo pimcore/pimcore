@@ -26,8 +26,6 @@ use Pimcore\Tool\Serialize;
  */
 class Dao extends Model\Element\Dao
 {
-    use Model\Element\ChildsCompatibilityTrait;
-
     /**
      * Fetch a row by an id from the database and assign variables to the document model.
      *
@@ -496,14 +494,14 @@ class Dao extends Model\Element\Dao
 
             // exception for list permission
             if (empty($permissionsParent) && $type == 'list') {
-                // check for childs with permissions
+                // check for children with permissions
                 $path = $this->model->getRealFullPath() . '/';
                 if ($this->model->getId() == 1) {
                     $path = '/';
                 }
 
-                $permissionsChilds = $this->db->fetchOne('SELECT list FROM users_workspaces_document WHERE cpath LIKE ? AND userId IN (' . implode(',', $userIds) . ') AND list = 1 LIMIT 1', $path . '%');
-                if ($permissionsChilds) {
+                $permissionsChildren = $this->db->fetchOne('SELECT list FROM users_workspaces_document WHERE cpath LIKE ? AND userId IN (' . implode(',', $userIds) . ') AND list = 1 LIMIT 1', $path . '%');
+                if ($permissionsChildren) {
                     return true;
                 }
             }

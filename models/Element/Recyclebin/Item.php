@@ -253,12 +253,12 @@ class Item extends Model\AbstractModel
         // with the property _fulldump set, because this would cause major issues in wakeUp()
         Cache::addIgnoredTagOnSave($element->getCacheTag());
 
-        if (method_exists($element, 'getChilds')) {
+        if (method_exists($element, 'getChildren')) {
             if ($element instanceof DataObject\AbstractObject) {
                 // because we also want variants
                 $childs = $element->getChildren([DataObject::OBJECT_TYPE_FOLDER, DataObject::OBJECT_TYPE_VARIANT, DataObject::OBJECT_TYPE_OBJECT]);
             } else {
-                $childs = $element->getChilds();
+                $childs = $element->getChildren();
             }
 
             foreach ($childs as $child) {

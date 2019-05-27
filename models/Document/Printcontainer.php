@@ -48,7 +48,7 @@ class Printcontainer extends Document\PrintAbstract
     {
         $tmpDocument = [];
         $tmpDocument['leaf'] = false;
-        $tmpDocument['expanded'] = $this->hasNoChilds();
+        $tmpDocument['expanded'] = !$this->hasChildren();
         $tmpDocument['iconCls'] = 'pimcore_icon_printcontainer';
         $tmpDocument['permissions'] = [
             'view' => $this->isAllowed('view'),
