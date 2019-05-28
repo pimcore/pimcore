@@ -16,7 +16,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\Order;
 
 use Exception;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\UnsupportedException;
-use Pimcore\Bundle\EcommerceFrameworkBundle\IEnvironment;
+use Pimcore\Bundle\EcommerceFrameworkBundle\EnvironmentInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder as Order;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrderItem as OrderItem;
@@ -46,7 +46,7 @@ class Agent implements OrderAgentInterface
     protected $order;
 
     /**
-     * @var IEnvironment
+     * @var EnvironmentInterface
      */
     protected $environment;
 
@@ -67,7 +67,7 @@ class Agent implements OrderAgentInterface
 
     public function __construct(
         Order $order,
-        IEnvironment $environment,
+        EnvironmentInterface $environment,
         PaymentManagerInterface $paymentManager
     ) {
         $this->order = $order;

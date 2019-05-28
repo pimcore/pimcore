@@ -14,11 +14,11 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\CartManager;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\IComponent;
+use Pimcore\Bundle\EcommerceFrameworkBundle\ComponentInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractSetProductEntry;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\CheckoutableInterface;
 
-interface CartManagerInterface extends IComponent
+interface CartManagerInterface extends ComponentInterface
 {
     /**
      * Returns cart class name configured in the ecommerce framework config

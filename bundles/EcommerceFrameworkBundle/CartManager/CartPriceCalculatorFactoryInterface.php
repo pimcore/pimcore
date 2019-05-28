@@ -17,11 +17,11 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\CartManager;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\IEnvironment;
+use Pimcore\Bundle\EcommerceFrameworkBundle\EnvironmentInterface;
 
 interface CartPriceCalculatorFactoryInterface
 {
-    public function create(IEnvironment $environment, CartInterface $cart): CartPriceCalculatorInterface;
+    public function create(EnvironmentInterface $environment, CartInterface $cart): CartPriceCalculatorInterface;
 }
 
 class_alias(CartPriceCalculatorFactoryInterface::class, 'Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICartPriceCalculatorFactory');

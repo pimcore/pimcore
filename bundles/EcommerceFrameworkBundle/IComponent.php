@@ -14,10 +14,19 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle;
 
-interface IComponent
-{
+@trigger_error(
+    'Interface Pimcore\Bundle\EcommerceFrameworkBundle\IComponent is deprecated since version 6.0.0 and will be removed in 7.0.0. ' .
+    'Use ' . ComponentInterface::class . '  class instead.',
+    E_USER_DEPRECATED
+);
+
+class_exists(ComponentInterface::class);
+
+if (false) {
     /**
-     * @return mixed
+     * @deprecated use ComponentInterface instead.
      */
-    public function save();
+    interface IComponent
+    {
+    }
 }

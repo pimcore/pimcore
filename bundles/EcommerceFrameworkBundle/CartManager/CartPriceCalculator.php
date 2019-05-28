@@ -20,7 +20,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\CartManager;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartPriceModificator\ICartPriceModificator;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\UnsupportedException;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
-use Pimcore\Bundle\EcommerceFrameworkBundle\IEnvironment;
+use Pimcore\Bundle\EcommerceFrameworkBundle\EnvironmentInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\Currency;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\ModificatedPriceInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\PriceInterface;
@@ -33,7 +33,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 class CartPriceCalculator implements CartPriceCalculatorInterface
 {
     /**
-     * @var IEnvironment
+     * @var EnvironmentInterface
      */
     protected $environment;
 
@@ -76,11 +76,11 @@ class CartPriceCalculator implements CartPriceCalculatorInterface
     protected $modifications = [];
 
     /**
-     * @param IEnvironment $environment
+     * @param EnvironmentInterface $environment
      * @param CartInterface $cart
      * @param array $modificatorConfig
      */
-    public function __construct(IEnvironment $environment, CartInterface $cart, array $modificatorConfig = [])
+    public function __construct(EnvironmentInterface $environment, CartInterface $cart, array $modificatorConfig = [])
     {
         $this->environment = $environment;
         $this->cart = $cart;

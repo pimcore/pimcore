@@ -18,7 +18,7 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\InvalidConfigException;
-use Pimcore\Bundle\EcommerceFrameworkBundle\IEnvironment;
+use Pimcore\Bundle\EcommerceFrameworkBundle\EnvironmentInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\ConfigInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Exception\DefaultWorkerNotFoundException;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Exception\WorkerNotFoundException;
@@ -29,7 +29,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IndexableInterface;
 class IndexService
 {
     /**
-     * @var IEnvironment
+     * @var EnvironmentInterface
      */
     protected $environment;
 
@@ -44,11 +44,11 @@ class IndexService
     protected $defaultTenant = 'default';
 
     /**
-     * @param IEnvironment $environment
+     * @param EnvironmentInterface $environment
      * @param WorkerInterface[] $tenantWorkers
      * @param string $defaultTenant
      */
-    public function __construct(IEnvironment $environment, array $tenantWorkers = [], string $defaultTenant = 'default')
+    public function __construct(EnvironmentInterface $environment, array $tenantWorkers = [], string $defaultTenant = 'default')
     {
         $this->environment = $environment;
 

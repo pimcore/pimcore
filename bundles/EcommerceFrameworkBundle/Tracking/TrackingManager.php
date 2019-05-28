@@ -16,7 +16,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\Tracking;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\CheckoutStepInterface as CheckoutManagerCheckoutStepInterface;
-use Pimcore\Bundle\EcommerceFrameworkBundle\IEnvironment;
+use Pimcore\Bundle\EcommerceFrameworkBundle\EnvironmentInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\ProductInterface;
 
@@ -43,15 +43,15 @@ class TrackingManager implements TrackingManagerInterface
     protected $cachedCheckoutTenant = null;
 
     /**
-     * @var null|IEnvironment
+     * @var null|EnvironmentInterface
      */
     protected $enviroment = null;
 
     /**
      * @param TrackerInterface[] $trackers
-     * @param IEnvironment $environment
+     * @param EnvironmentInterface $environment
      */
-    public function __construct(array $trackers = [], IEnvironment $environment)
+    public function __construct(array $trackers = [], EnvironmentInterface $environment)
     {
         foreach ($trackers as $tracker) {
             $this->registerTracker($tracker);

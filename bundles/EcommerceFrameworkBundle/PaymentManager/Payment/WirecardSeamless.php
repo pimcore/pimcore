@@ -17,7 +17,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\CheckoutManager;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
-use Pimcore\Bundle\EcommerceFrameworkBundle\IEnvironment;
+use Pimcore\Bundle\EcommerceFrameworkBundle\EnvironmentInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractPaymentInformation;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\Currency;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\StatusInterface;
@@ -815,11 +815,11 @@ class WirecardSeamless extends AbstractPayment
      * Environment was kept optional for backwards compatibility, but should be passed if possible
      *
      * @param $response
-     * @param IEnvironment|null $environment
+     * @param EnvironmentInterface|null $environment
      *
      * @return CartInterface|null
      */
-    public static function createCartByOrderIdent($response, IEnvironment $environment = null)
+    public static function createCartByOrderIdent($response, EnvironmentInterface $environment = null)
     {
         $orderIdent = $response['orderIdent'];
         $orderIdent = explode(self::ENCODED_ORDERIDENT_DELIMITER, $orderIdent);

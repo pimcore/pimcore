@@ -18,7 +18,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartItemInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\UnsupportedException;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
-use Pimcore\Bundle\EcommerceFrameworkBundle\IEnvironment;
+use Pimcore\Bundle\EcommerceFrameworkBundle\EnvironmentInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrderItem;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\Order\Listing;
@@ -40,7 +40,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 class OrderManager implements OrderManagerInterface
 {
     /**
-     * @var IEnvironment
+     * @var EnvironmentInterface
      */
     protected $environment;
 
@@ -80,7 +80,7 @@ class OrderManager implements OrderManagerInterface
     protected $orderItemClassName;
 
     public function __construct(
-        IEnvironment $environment,
+        EnvironmentInterface $environment,
         OrderAgentFactoryInterface $orderAgentFactory,
         VoucherServiceInterface $voucherService,
         array $options = []

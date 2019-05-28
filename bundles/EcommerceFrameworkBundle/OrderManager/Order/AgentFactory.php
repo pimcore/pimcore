@@ -17,7 +17,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\Order;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\IEnvironment;
+use Pimcore\Bundle\EcommerceFrameworkBundle\EnvironmentInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderAgentInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderAgentFactoryInterface;
@@ -27,7 +27,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 class AgentFactory implements OrderAgentFactoryInterface
 {
     /**
-     * @var IEnvironment
+     * @var EnvironmentInterface
      */
     protected $environment;
 
@@ -42,7 +42,7 @@ class AgentFactory implements OrderAgentFactoryInterface
     protected $agentClass = Agent::class;
 
     public function __construct(
-        IEnvironment $environment,
+        EnvironmentInterface $environment,
         PaymentManagerInterface $paymentManager,
         array $options = []
     ) {

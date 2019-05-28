@@ -16,7 +16,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\UnsupportedException;
-use Pimcore\Bundle\EcommerceFrameworkBundle\IEnvironment;
+use Pimcore\Bundle\EcommerceFrameworkBundle\EnvironmentInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderManagerLocatorInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\Order\Agent;
@@ -45,7 +45,7 @@ class CheckoutManager implements CheckoutManagerInterface
     protected $cart;
 
     /**
-     * @var IEnvironment
+     * @var EnvironmentInterface
      */
     protected $environment;
 
@@ -97,7 +97,7 @@ class CheckoutManager implements CheckoutManagerInterface
 
     /**
      * @param CartInterface $cart
-     * @param IEnvironment $environment
+     * @param EnvironmentInterface $environment
      * @param OrderManagerLocatorInterface $orderManagers
      * @param CommitOrderProcessorLocatorInterface $commitOrderProcessors
      * @param CheckoutStepInterface[] $checkoutSteps
@@ -105,7 +105,7 @@ class CheckoutManager implements CheckoutManagerInterface
      */
     public function __construct(
         CartInterface $cart,
-        IEnvironment $environment,
+        EnvironmentInterface $environment,
         OrderManagerLocatorInterface $orderManagers,
         CommitOrderProcessorLocatorInterface $commitOrderProcessors,
         array $checkoutSteps,

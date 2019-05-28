@@ -17,13 +17,13 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\CartManager;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\IEnvironment;
+use Pimcore\Bundle\EcommerceFrameworkBundle\EnvironmentInterface;
 
 interface CartFactoryInterface
 {
-    public function getCartClassName(IEnvironment $environment): string;
+    public function getCartClassName(EnvironmentInterface $environment): string;
 
-    public function create(IEnvironment $environment, string $name, string $id = null, array $options = []): CartInterface;
+    public function create(EnvironmentInterface $environment, string $name, string $id = null, array $options = []): CartInterface;
 }
 
 class_alias(CartFactoryInterface::class, 'Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICartFactory');

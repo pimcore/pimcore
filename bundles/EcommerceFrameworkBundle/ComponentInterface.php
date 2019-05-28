@@ -14,20 +14,12 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle;
 
-
-@trigger_error(
-    'Interface Pimcore\Bundle\EcommerceFrameworkBundle\IEnvironment is deprecated since version 6.0.0 and will be removed in 7.0.0. ' .
-    'Use ' . EnvironmentInterface::class . '  class instead.',
-    E_USER_DEPRECATED
-);
-
-class_exists(EnvironmentInterface::class);
-
-if (false) {
+interface ComponentInterface
+{
     /**
-     * @deprecated use EnvironmentInterface instead.
+     * @return mixed
      */
-    interface IEnvironment
-    {
-    }
+    public function save();
 }
+
+class_alias(ComponentInterface::class, 'Pimcore\Bundle\EcommerceFrameworkBundle\IComponent');

@@ -15,7 +15,7 @@
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\UnsupportedException;
-use Pimcore\Bundle\EcommerceFrameworkBundle\IEnvironment;
+use Pimcore\Bundle\EcommerceFrameworkBundle\EnvironmentInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractSetProductEntry;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\Currency;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\CheckoutableInterface;
@@ -28,7 +28,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 class AttributePriceSystem extends CachingPriceSystem implements PriceSystemInterface
 {
     /**
-     * @var IEnvironment
+     * @var EnvironmentInterface
      */
     protected $environment;
 
@@ -42,7 +42,7 @@ class AttributePriceSystem extends CachingPriceSystem implements PriceSystemInte
      */
     protected $priceClass;
 
-    public function __construct(PricingManagerLocatorInterface $pricingManagers, IEnvironment $environment, array $options = [])
+    public function __construct(PricingManagerLocatorInterface $pricingManagers, EnvironmentInterface $environment, array $options = [])
     {
         parent::__construct($pricingManagers);
 

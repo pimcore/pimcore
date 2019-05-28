@@ -49,7 +49,7 @@ class Factory
     private $container;
 
     /**
-     * @var IEnvironment
+     * @var EnvironmentInterface
      */
     private $environment;
 
@@ -151,7 +151,7 @@ class Factory
         return \Pimcore::getContainer()->get(PimcoreEcommerceFrameworkExtension::SERVICE_ID_FACTORY);
     }
 
-    public function getEnvironment(): IEnvironment
+    public function getEnvironment(): EnvironmentInterface
     {
         return $this->container->get(PimcoreEcommerceFrameworkExtension::SERVICE_ID_ENVIRONMENT);
     }

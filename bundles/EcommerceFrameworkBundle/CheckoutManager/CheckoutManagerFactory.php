@@ -18,7 +18,7 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartInterface;
-use Pimcore\Bundle\EcommerceFrameworkBundle\IEnvironment;
+use Pimcore\Bundle\EcommerceFrameworkBundle\EnvironmentInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderManagerLocatorInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment\PaymentInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -26,7 +26,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 class CheckoutManagerFactory implements CheckoutManagerFactoryInterface
 {
     /**
-     * @var IEnvironment
+     * @var EnvironmentInterface
      */
     protected $environment;
 
@@ -63,7 +63,7 @@ class CheckoutManagerFactory implements CheckoutManagerFactoryInterface
     protected $className = CheckoutManager::class;
 
     public function __construct(
-        IEnvironment $environment,
+        EnvironmentInterface $environment,
         OrderManagerLocatorInterface $orderManagers,
         CommitOrderProcessorLocatorInterface $commitOrderProcessors,
         array $checkoutStepDefinitions,

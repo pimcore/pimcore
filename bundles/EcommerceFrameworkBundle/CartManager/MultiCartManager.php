@@ -16,7 +16,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\CartManager;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\CheckoutManager;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\InvalidConfigException;
-use Pimcore\Bundle\EcommerceFrameworkBundle\IEnvironment;
+use Pimcore\Bundle\EcommerceFrameworkBundle\EnvironmentInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\CheckoutableInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderManagerLocatorInterface;
 use Psr\Log\LoggerInterface;
@@ -24,7 +24,7 @@ use Psr\Log\LoggerInterface;
 class MultiCartManager implements CartManagerInterface
 {
     /**
-     * @var IEnvironment
+     * @var EnvironmentInterface
      */
     protected $environment;
 
@@ -59,14 +59,14 @@ class MultiCartManager implements CartManagerInterface
     protected $initialized = false;
 
     /**
-     * @param IEnvironment $environment
+     * @param EnvironmentInterface $environment
      * @param CartFactoryInterface $cartFactory
      * @param CartPriceCalculatorFactoryInterface $cartPriceCalculatorFactory
      * @param OrderManagerLocatorInterface $orderManagers
      * @param LoggerInterface $logger
      */
     public function __construct(
-        IEnvironment $environment,
+        EnvironmentInterface $environment,
         CartFactoryInterface $cartFactory,
         CartPriceCalculatorFactoryInterface $cartPriceCalculatorFactory,
         OrderManagerLocatorInterface $orderManagers,

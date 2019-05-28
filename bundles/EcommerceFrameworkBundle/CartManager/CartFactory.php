@@ -17,7 +17,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\CartManager;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\IEnvironment;
+use Pimcore\Bundle\EcommerceFrameworkBundle\EnvironmentInterface;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -60,7 +60,7 @@ class CartFactory implements CartFactoryInterface
         });
     }
 
-    public function getCartClassName(IEnvironment $environment): string
+    public function getCartClassName(EnvironmentInterface $environment): string
     {
         if ($environment->getUseGuestCart()) {
             return $this->options['guest_cart_class_name'];
@@ -69,7 +69,7 @@ class CartFactory implements CartFactoryInterface
         return $this->options['cart_class_name'];
     }
 
-    public function create(IEnvironment $environment, string $name, string $id = null, array $options = []): CartInterface
+    public function create(EnvironmentInterface $environment, string $name, string $id = null, array $options = []): CartInterface
     {
         $cart = $this->createCartInstance($environment, $name, $id, $options);
         $cart->save();
@@ -77,7 +77,7 @@ class CartFactory implements CartFactoryInterface
         return $cart;
     }
 
-    protected function createCartInstance(IEnvironment $environment, string $name, string $id = null, array $options = []): CartInterface
+    protected function createCartInstance(EnvironmentInterface $environment, string $name, string $id = null, array $options = []): CartInterface
     {
         $class = $this->getCartClassName($environment);
 

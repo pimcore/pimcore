@@ -18,7 +18,7 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\DependencyInjection\ServiceLocator;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\UnsupportedException;
-use Pimcore\Bundle\EcommerceFrameworkBundle\IEnvironment;
+use Pimcore\Bundle\EcommerceFrameworkBundle\EnvironmentInterface;
 use Psr\Container\ContainerInterface as PsrContainerInterface;
 
 abstract class TenantAwareServiceLocator
@@ -29,7 +29,7 @@ abstract class TenantAwareServiceLocator
     protected $locator;
 
     /**
-     * @var IEnvironment
+     * @var EnvironmentInterface
      */
     protected $environment;
 
@@ -47,7 +47,7 @@ abstract class TenantAwareServiceLocator
 
     public function __construct(
         PsrContainerInterface $locator,
-        IEnvironment $environment,
+        EnvironmentInterface $environment,
         bool $strictTenants = false
     ) {
         $this->locator = $locator;

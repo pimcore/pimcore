@@ -18,18 +18,18 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\CartManager;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartPriceModificator\ICartPriceModificator;
-use Pimcore\Bundle\EcommerceFrameworkBundle\IEnvironment;
+use Pimcore\Bundle\EcommerceFrameworkBundle\EnvironmentInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\ModificatedPriceInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\PriceInterface;
 
 interface CartPriceCalculatorInterface
 {
     /**
-     * @param IEnvironment $environment
+     * @param EnvironmentInterface $environment
      * @param CartInterface $cart
      * @param ICartPriceModificator[] $modificators
      */
-    public function __construct(IEnvironment $environment, CartInterface $cart, array $modificators = []);
+    public function __construct(EnvironmentInterface $environment, CartInterface $cart, array $modificators = []);
 
     /**
      * (Re-)initialize standard price modificators, e.g. after removing an item from a cart
