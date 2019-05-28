@@ -19,7 +19,6 @@ namespace Pimcore\Model\Document;
 
 use Pimcore\Model;
 use Pimcore\Model\Document;
-use Pimcore\Model\Element;
 use Pimcore\Model\Redirect;
 
 /**

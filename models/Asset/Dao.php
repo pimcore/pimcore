@@ -179,6 +179,7 @@ class Dao extends Model\Element\Dao
 
     /**
      * @internal
+     *
      * @param $oldPath
      *
      * @return array

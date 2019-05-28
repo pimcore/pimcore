@@ -203,6 +203,7 @@ class Dao extends Model\Element\Dao
      * Updates children path in order to the old document path specified in the $oldPath parameter.
      *
      * @internal
+     *
      * @param $oldPath
      *
      * @return array

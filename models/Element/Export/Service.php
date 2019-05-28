@@ -87,7 +87,7 @@ class Service
             }
         }
 
-        if(method_exists($element, 'getChildren')) {
+        if (method_exists($element, 'getChildren')) {
             $children = $element->getChildren();
             if ($recursive && $children) {
                 foreach ($children as $child) {

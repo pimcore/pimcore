@@ -155,6 +155,7 @@ class Dao extends Model\Element\Dao
      * Updates the paths for children, children's properties and children's permissions in the database
      *
      * @internal
+     *
      * @param string $oldPath
      *
      * @return null|array
