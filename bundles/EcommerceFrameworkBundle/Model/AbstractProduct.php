@@ -21,6 +21,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\AbstractPriceInfo;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\PriceInfoInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\PriceInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\PriceSystemInterface;
 
 /**
  * Abstract base class for pimcore objects who should be used as products in the online shop framework
@@ -167,7 +168,7 @@ class AbstractProduct extends \Pimcore\Model\DataObject\Concrete implements Prod
     /**
      * returns instance of price system implementation based on result of getPriceSystemName()
      *
-     * @return \Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\PriceSystemInterface
+     * @return PriceSystemInterface
      */
     public function getPriceSystemImplementation()
     {
