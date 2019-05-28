@@ -121,6 +121,15 @@
     outline: 0;
 }
 
+.x-tree-icon {
+    width: 24px;
+}
+
+.x-btn-icon-el, .x-tab-icon-el {
+    /* this is for pimcore_icon_overlay_* */
+    position: relative;
+}
+
 .x-tree-view .x-grid-item {
     background-color: #f6f6f6;
 }
@@ -130,7 +139,7 @@
 }
 
 .x-tree-view .x-grid-item.x-grid-item-selected {
-    background: #dadada;
+    background: #EFF0F1;
 }
 
 .x-tree-view .x-grid-item-container {
@@ -139,8 +148,28 @@
 }
 
 .x-tree-view .x-grid-cell-inner-treecolumn, .pimcore_document_seo_tree .x-grid-cell-inner  {
-    padding: 0 6px 0 0;
-    height: 20px;
+    padding: 3px 6px 0 0;
+    height: 24px;
+}
+
+.x-tree-elbow-plus:before,
+.x-tree-elbow-end-plus:before,
+.x-grid-tree-node-expanded .x-tree-elbow-plus:before,
+.x-grid-tree-node-expanded .x-tree-elbow-end-plus:before {
+    content: none;
+}
+
+.x-tree-elbow-plus {
+    background: url(/bundles/pimcoreadmin/img/material-icons/main-accordion-plus.svg) center center no-repeat !important;
+}
+
+.x-grid-tree-node-expanded .x-tree-elbow-plus {
+    background: url(/bundles/pimcoreadmin/img/material-icons/main-accordion-minus.svg) center center no-repeat !important;
+}
+
+.x-tree-elbow-img {
+    width: 20px;
+    margin-right: 8px;
 }
 
 .x-grid-item-alt {
@@ -270,7 +299,7 @@ body > .x-mask {
 }
 
 .x-btn-icon .x-btn-icon-el {
-    background-size: contain !important;
+    background-size: 24px !important;
 }
 
 .x-tip-header-default {
@@ -287,24 +316,48 @@ body > .x-mask {
 }
 
 .x-menu-default {
-    border-color: #000;
+    border:0;
 }
 
 .x-menu-body-default {
-    background-color: #202124;
+    background-color: #1B1E21;
 }
 
 .x-menu-item-text-default {
     color: #fff;
 }
 
+.x-menu-item-default {
+    border-top: 1px solid #2A2D30;
+}
+
+.x-menu-item-default:first-child {
+    border:0;
+}
+
+.x-menu-item-separator + .x-menu-item-default {
+    border-top-width: 3px;
+}
+
 .x-menu-item-default.x-menu-item-separator {
-    background-color: #000;
-    border-color: #000;
+    border:0;
+    height:0;
+}
+
+.x-menu-item-default.x-menu-item-active {
+    background-color: #2A2D30;
 }
 
 .x-menu-item-active .x-menu-item-text {
     font-weight: 100 !important;
+}
+
+.x-menu-icon-separator-default {
+    border-left-color: #1B1E21;
+}
+
+.x-menu-item-link {
+    outline: none !important;
 }
 
 .x-css-shadow {

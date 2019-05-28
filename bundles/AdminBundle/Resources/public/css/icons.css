@@ -11,15 +11,6 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-.x-tree-icon {
-    width: 18px!important;
-}
-
-.x-btn-icon-el, .x-tab-icon-el {
-    /* this is for pimcore_icon_overlay_* */
-    position: relative;
-}
-
 .pimcore_icon_overlay_add, .pimcore_icon_overlay_delete, .pimcore_icon_overlay_edit, .pimcore_icon_overlay_go,
 .pimcore_icon_overlay_download, .pimcore_icon_overlay_upload, .pimcore_icon_overlay_search, .pimcore_icon_overlay_error {
     /*position: relative;*/
@@ -1373,17 +1364,17 @@
 
 
 .pimcore_icon_main_tree_document {
-    background: url(/bundles/pimcoreadmin/img/material-icons/outline-description-24px.svg) center center no-repeat;
+    background: url(/bundles/pimcoreadmin/img/material-icons/pimcore-main-icon-document.svg) center center no-repeat;
     background-size: 30px 30px;
 }
 
 .pimcore_icon_main_tree_asset {
-    background: url(/bundles/pimcoreadmin/img/material-icons/outline-photo_camera-24px.svg) center center no-repeat;
+    background: url(/bundles/pimcoreadmin/img/material-icons/pimcore-main-icon-asset.svg) center center no-repeat;
     background-size: 30px 30px;
 }
 
 .pimcore_icon_main_tree_object {
-    background: url(/bundles/pimcoreadmin/img/material-icons/outline-storage-24px.svg) center center no-repeat;
+    background: url(/bundles/pimcoreadmin/img/material-icons/pimcore-main-icon-object.svg) center center no-repeat;
     background-size: 30px 30px;
 }
 
