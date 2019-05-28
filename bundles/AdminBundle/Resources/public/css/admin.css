@@ -1369,6 +1369,7 @@ span.warning {
 #pimcore_panel_tabs > .x-tab-bar > .x-tab-bar-body {
     min-height: 40px;
     padding-top: 0;
+    padding-left: 0;
 }
 
 #pimcore_panel_tabs > .x-tab-bar > .x-tab-bar-strip-default {
@@ -1507,6 +1508,10 @@ span.warning {
 
 .pimcore_main_toolbar + .x-panel > .x-tab-bar-default {
     background: #2A2D30;
+}
+
+.pimcore_main_toolbar + .x-panel > .x-tab-bar-default .x-tab-bar-body {
+    padding-top: 3px;
 }
 
 .pimcore_main_toolbar + .x-panel > .x-tab-bar-default .x-tab {
