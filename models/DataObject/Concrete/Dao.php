@@ -152,7 +152,12 @@ class Dao extends Model\DataObject\AbstractObject\Dao
                     Tool::triggerMissingInterfaceDeprecation(get_class($value), 'load', CustomResourcePersistingInterface::class);
                 }
                 // datafield has it's own loader
-                $value = $value->load($this->model);
+                $params = [
+                    "context" => [
+                        "object" => $this->model
+                        ]
+                ];
+                $value = $value->load($this->model, $params);
                 if ($value === 0 || !empty($value)) {
                     $this->model->setValue($key, $value);
                 }
