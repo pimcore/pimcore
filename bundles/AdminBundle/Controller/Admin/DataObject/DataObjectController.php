@@ -1129,7 +1129,9 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                 // don't renew references (which means loading the target elements)
                 // Not needed as we just save a new version with the updated index
                 $object = $latestVersion->loadData(false);
-                $object->setIndex($newIndex);
+                if ($newIndex !== $object->getIndex()) {
+                    $object->setIndex($newIndex);
+                }
                 $latestVersion->save();
             }
         };
@@ -1154,7 +1156,9 @@ class DataObjectController extends ElementControllerBase implements EventedContr
         );
 
         $db = Db::get();
-        $siblings = $db->fetchAll("SELECT o_id, o_modificationDate FROM objects WHERE o_type IN ('object', 'variant') ORDER BY o_index ASC");
+        $siblings = $db->fetchAll("SELECT o_id, o_modificationDate FROM objects"
+                . " WHERE o_parentId = ? AND o_id != ? AND o_type IN ('object', 'variant') ORDER BY o_index ASC",
+                        [$updatedObject->getParentId(), $updatedObject->getId()]);
 
         $index = 0;
         /** @var DataObject\AbstractObject $child */
