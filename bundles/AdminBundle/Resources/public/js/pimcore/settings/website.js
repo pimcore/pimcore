@@ -156,13 +156,15 @@ pimcore.settings.website = Class.create({
                 }
             },
             {text: t("site"), width: 250, sortable:true, dataIndex: "siteId",
-                editor: new Ext.form.ComboBox({
+                getEditor: function() {
+                    return new Ext.form.ComboBox({
                         store: pimcore.globalmanager.get("sites"),
                         valueField: "id",
                         displayField: "domain",
                         editable: false,
                         triggerAction: "all"
-                }),
+                    });
+                },
                 renderer: function (siteId) {
                     var store = pimcore.globalmanager.get("sites");
                     var pos = store.findExact("id", siteId);
