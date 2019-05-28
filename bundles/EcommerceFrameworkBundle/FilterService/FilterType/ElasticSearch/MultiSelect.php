@@ -64,12 +64,14 @@ class MultiSelect extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService
                 }
             }
 
-            if ($filterDefinition->getUseAndCondition()) {
-                foreach ($quotedValues as $value) {
-                    $productList->addCondition($value, $field);
+            if (!empty($quotedValues)) {
+                if ($filterDefinition->getUseAndCondition()) {
+                    foreach ($quotedValues as $value) {
+                        $productList->addCondition($value, $field);
+                    }
+                } else {
+                    $productList->addCondition(['terms' => ['attributes.' . $field => $quotedValues]], $field);
                 }
-            } else {
-                $productList->addCondition(['terms' => ['attributes.' . $field => $quotedValues]], $field);
             }
         }
 
