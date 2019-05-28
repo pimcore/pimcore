@@ -260,9 +260,11 @@ class Version extends AbstractModel
     /**
      * Object
      *
+     * @param $renewReferences
+     *
      * @return mixed
      */
-    public function loadData()
+    public function loadData($renewReferences = true)
     {
         $data = null;
         $zipped = false;
@@ -315,7 +317,10 @@ class Version extends AbstractModel
             $data->setData($data->data);
         }
 
-        $data = Element\Service::renewReferences($data);
+        if ($renewReferences) {
+            $data = Element\Service::renewReferences($data);
+        }
+
         $this->setData($data);
 
         return $data;

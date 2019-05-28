@@ -831,8 +831,22 @@ class AbstractObject extends Model\Element\AbstractElement
      */
     public function clearDependentCache($additionalTags = [])
     {
+        self::clearDependentCacheByObjectId($this->getId(), $additionalTags);
+    }
+
+    /**
+     * @internal
+     *
+     * @param $objectId
+     * @param array $additionalTags
+     */
+    public static function clearDependentCacheByObjectId($objectId, $additionalTags = []) {
+        if (!$objectId) {
+            throw new \Exception("object ID missing");
+        }
+
         try {
-            $tags = ['object_' . $this->getId(), 'object_properties', 'output'];
+            $tags = ['object_' . $objectId, 'object_properties', 'output'];
             $tags = array_merge($tags, $additionalTags);
 
             Cache::clearTags($tags);
