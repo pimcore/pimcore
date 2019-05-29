@@ -119,10 +119,5 @@
       "lib/Pimcore/Bundle/EcommerceFrameworkBundle/config/namespace_compatibility.php"
     ]
   },
-  "extra": {
-    "branch-alias": {
-      "dev-master": "5.9-dev"
-    }
-  },
   "bin": ["bin/pimcore-install"]
 }
