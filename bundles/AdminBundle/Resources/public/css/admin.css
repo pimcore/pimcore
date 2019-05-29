@@ -1367,7 +1367,7 @@ span.warning {
 }
 
 #pimcore_panel_tabs > .x-tab-bar > .x-tab-bar-body {
-    min-height: 40px;
+    min-height: 36px;
     padding-top: 0;
     padding-left: 0;
 }
@@ -1380,7 +1380,7 @@ span.warning {
     background: #0C0F12;
     box-shadow: none;
     border-left: 1px solid #2A2D30;
-    padding: 10px 20px 10px 10px;
+    padding: 6px 20px 6px 10px;
 }
 
 #pimcore_panel_tabs > .x-tab-bar > .x-tab-bar-body .x-tab:first-child {
@@ -1388,8 +1388,8 @@ span.warning {
 }
 
 #pimcore_panel_tabs > .x-tab-bar > .x-tab-bar-body .x-tab-active {
-    background: #2A2D30;
-    border-color: #202124;
+    background: #393C3F;
+    border-color: #393C3F;
 }
 
 #pimcore_panel_tabs > .x-tab-bar > .x-tab-bar-body .x-tab-active + .x-tab {
@@ -1416,10 +1416,15 @@ span.warning {
 
 #pimcore_panel_tabs > .x-tab-bar .x-box-scroller-tab-bar-default {
     color: #fff;
+    background-color: #0C0F12;
+}
+
+#pimcore_panel_tabs > .x-tab-bar .x-box-scroller-body-horizontal {
+    margin-left: 24px;
 }
 
 #pimcore_panel_tabs > .x-panel-body > .x-tabpanel-child {
-    border-color: #2A2D30;
+    border-color: #393C3F;
     border-top-width: 3px;
 }
 
@@ -1460,21 +1465,22 @@ span.warning {
 }
 
 .pimcore_main_toolbar.x-toolbar-default {
-    background: #2A2D30;
+    background: #393C3F;
     border:0 !important;
 }
 
 .pimcore_main_toolbar .x-btn {
     border:0;
-    background-color: #393C3F;
+    background-color: #484B4E;
+    padding: 6px 8px 6px 8px;
 }
 
 .pimcore_main_toolbar .x-btn.x-btn-over {
-    background-color: #444547;
+    background-color: #616467;
 }
 
 .pimcore_main_toolbar .x-btn.x-btn-pressed, .pimcore_main_toolbar .x-btn.x-btn-menu-active {
-    background-color: #202124;
+    background-color: #1B1E21;
 }
 
 .pimcore_main_toolbar .x-btn .x-btn-inner {
@@ -1507,7 +1513,7 @@ span.warning {
 }
 
 .pimcore_main_toolbar + .x-panel > .x-tab-bar-default {
-    background: #2A2D30;
+    background: #393C3F;
 }
 
 .pimcore_main_toolbar + .x-panel > .x-tab-bar-default .x-tab-bar-body {
@@ -1515,17 +1521,16 @@ span.warning {
 }
 
 .pimcore_main_toolbar + .x-panel > .x-tab-bar-default .x-tab {
-    background: #2A2D30;
+    background: #393C3F;
     border-left: 1px solid #B4B4B4;
-    opacity: 0.7;
 }
 
 .pimcore_main_toolbar + .x-panel > .x-tab-bar-default .x-tab.x-tab-active + .x-tab, .pimcore_main_toolbar + .x-panel > .x-tab-bar-default .x-tab:first-child {
-    border-color: #2A2D30;
+    border-color: #393C3F;
 }
 
 .pimcore_main_toolbar + .x-panel > .x-tab-bar-default .x-tab .x-tab-inner-default {
-    color: #fff;
+    color: #B2B4B6;
 }
 
 .pimcore_main_toolbar + .x-panel > .x-tab-bar-default .x-tab.x-tab-active {
@@ -1534,27 +1539,30 @@ span.warning {
 }
 
 .pimcore_main_toolbar + .x-panel > .x-tab-bar-default .x-tab.x-tab-active .x-tab-inner-default {
-    color: #2A2D30 !important;
+    color: #000 !important;
 }
 
 .pimcore_main_toolbar + .x-panel > .x-tab-bar-default .x-tab.x-tab-active .pimcore_material_icon {
     filter: invert(100%);
-    opacity: 0.75;
 }
 
 .x-ie11 .pimcore_main_toolbar + .x-panel > .x-tab-bar-default .x-tab.x-tab-active .pimcore_material_icon {
     border-radius: 15px;
-    background-color: #2A2D30;
+    background-color: #393C3F;
     background-size: 15px 15px;
     opacity: 1;
 }
 
-.pimcore_main_toolbar + .x-panel > .x-tab-bar-default .x-tab.x-tab-over {
-    opacity: 1;
+.pimcore_main_toolbar + .x-panel > .x-tab-bar-default .x-tab.x-tab-over .x-tab-inner-default {
+    color: #fff;
 }
 
 .pimcore_main_toolbar + .x-panel > .x-tab-bar-default .x-tab-bar-strip-default {
     border-bottom: 0;
+}
+
+.pimcore_main_toolbar + .x-panel > .x-tab-bar-default .x-tab-button-default {
+    height: 25px;
 }
 
 .pimcore_main_toolbar .x-btn-wrap.x-btn-arrow-right:after {
@@ -1566,7 +1574,7 @@ span.warning {
 }
 
 .pimcore_main_toolbar .x-btn-wrap.x-btn-split-right > .x-btn-button:after {
-    border-color: #2A2D30;
+    border-color: #393C3F;
 }
 
 .pimcore_toolbar_border_bottom {
@@ -1634,6 +1642,10 @@ span.warning {
 
 .grid_nicepath_requested {
     background-color: lightblue;
+}
+
+.pimcore_document_edit_panel {
+    margin-top: 7px;
 }
 
 /* page SERP preview */
@@ -1761,12 +1773,11 @@ span.warning {
 
 .pimcore_button_black {
     background-color: #3c3f41;
-    border-color:#000;
+    border:0;
 }
 
 .pimcore_button_black.x-btn-over, .pimcore_button_black.x-btn.x-btn-pressed {
     background-color: #000;
-    border-color:#000;
 }
 
 .pimcore_button_transparent {

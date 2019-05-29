@@ -91,6 +91,11 @@
     color: #323639;
 }
 
+.x-tab .x-tab-icon-el {
+    min-height: 24px;
+    width: 24px;
+}
+
 .x-panel-default.x-tabpanel-child {
     border-top: 3px solid #f6f6f6;
 }
@@ -299,7 +304,8 @@ body > .x-mask {
 }
 
 .x-btn-icon .x-btn-icon-el {
-    background-size: 24px !important;
+    width: 24px;
+    height: 24px;
 }
 
 .x-tip-header-default {
