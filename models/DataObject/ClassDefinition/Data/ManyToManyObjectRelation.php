@@ -951,3 +951,5 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
         $this->optimizedAdminLoading = $optimizedAdminLoading;
     }
 }
+
+class_alias(ManyToManyObjectRelation::class, 'Pimcore\Model\DataObject\ClassDefinition\Data\Objects');
