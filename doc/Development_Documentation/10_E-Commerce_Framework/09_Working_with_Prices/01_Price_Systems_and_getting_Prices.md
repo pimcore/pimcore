@@ -11,7 +11,7 @@ In terms of product availabilities and stocks, the very similar concept of Avail
 
 ## Configuration of Price Systems
 
-A price system is a class implementing `Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPriceSystem` which is defined
+A price system is a class implementing `Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\PriceSystemInterface` which is defined
 as service and registered with a name in the `pimcore_ecommerce_framework.price_systems` configuration tree. The framework
 already ships with a number of [concrete implementations](https://github.com/pimcore/pimcore/tree/master/bundles/EcommerceFrameworkBundle/PriceSystem)
 which you can use as starting point.
@@ -29,7 +29,7 @@ The product class returns the name of a price system:
 ```php
 <?php
 
-class MyProduct implements \Pimcore\Bundle\EcommerceFrameworkBundle\Model\ICheckoutable
+class MyProduct implements \Pimcore\Bundle\EcommerceFrameworkBundle\Model\CheckoutableInterface
 {
     public function getPriceSystemName()
     {
@@ -83,13 +83,13 @@ pimcore_ecommerce_framework:
 
 > The simplest price system is [`Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\AttributePriceSystem`](https://github.com/pimcore/pimcore/blob/master/bundles/EcommerceFrameworkBundle/PriceSystem/AttributePriceSystem.php) 
 > which reads the price from an attribute of the product object. For implementing custom price systems have a look at method comments 
-> of [`\Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPriceSystem`](https://github.com/pimcore/pimcore/blob/master/bundles/EcommerceFrameworkBundle/PriceSystem/IPriceSystem.php) 
+> of [`\Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\PriceSystemInterface`](https://github.com/pimcore/pimcore/blob/master/bundles/EcommerceFrameworkBundle/PriceSystem/PriceSystemInterface.php) 
 > and the implementations of the existing price systems. 
 
 
 ## Getting and Printing Prices
 Once the Price Systems are set up correctly, working with prices should be quite easy. Each product has the method 
-`getOSPrice()` which returns a `\Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPrice` object with the price of 
+`getOSPrice()` which returns a `\Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\PriceInterface` object with the price of 
 the product. 
 
 Internally the product gets its Price System and starts the price calculation to get the price. 

@@ -17,9 +17,20 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\TokenManager;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractVoucherTokenType;
+@trigger_error(
+    'Interface Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\TokenManager\ITokenManagerFactory is deprecated since version 6.0.0 and will be removed in 7.0.0. ' .
+    ' Use ' . TokenManagerFactoryInterface::class . ' class instead.',
+    E_USER_DEPRECATED
+);
 
-interface ITokenManagerFactory
-{
-    public function getTokenManager(AbstractVoucherTokenType $configuration): ITokenManager;
+class_exists(TokenManagerFactoryInterface::class);
+
+if(false) {
+    /**
+     * @deprecated use TokenManagerFactoryInterface instead.
+     */
+    interface ITokenManagerFactory
+    {
+    }
 }
+

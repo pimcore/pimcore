@@ -14,31 +14,19 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\DefaultElasticSearch as DefaultElasticSearchWorker;
+@trigger_error(
+    'Interface Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\IElasticSearchConfig is deprecated since version 6.0.0 and will be removed in 7.0.0. ' .
+    ' Use ' . ElasticSearchConfigInterface::class . ' class instead.',
+    E_USER_DEPRECATED
+);
 
-/**
- * Interface for IndexService Tenant Configurations using elastic search as index
- */
-interface IElasticSearchConfig extends IConfig
-{
-    /**
-     * returns elastic search client parameters defined in the tenant config
-     *
-     * @return array
-     */
-    public function getElasticSearchClientParams();
+class_exists(ElasticSearchConfigInterface::class);
 
+if(false) {
     /**
-     * returns condition for current subtenant
-     *
-     * @return array
+     * @deprecated use ElasticSearchConfigInterface instead.
      */
-    public function getSubTenantCondition();
-
-    /**
-     * creates and returns tenant worker suitable for this tenant configuration
-     *
-     * @return DefaultElasticSearchWorker
-     */
-    public function getTenantWorker();
+    interface IElasticSearchConfig
+    {
+    }
 }

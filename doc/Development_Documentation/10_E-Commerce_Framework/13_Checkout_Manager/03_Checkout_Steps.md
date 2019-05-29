@@ -3,7 +3,7 @@
 For each checkout step (e.g. delivery address, delivery date, ...) there has to be a concrete checkout step implementation.
 This implementation is responsible for storage and loading of necessary checkout data for each step. It needs to extend 
 `\Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\AbstractStep` and implement 
-`\Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\ICheckoutStep`. 
+`\Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\CheckoutStepInterface`. 
 
 Following methods have to be implemented: 
 * `commit($data)`: Is called when step is finished and data needs to be saved. 
@@ -26,7 +26,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager;
  *
  * sample implementation for delivery address
  */
-class DeliveryAddress extends AbstractStep implements ICheckoutStep
+class DeliveryAddress extends AbstractStep implements CheckoutStepInterface
 {
     /**
      * namespace key

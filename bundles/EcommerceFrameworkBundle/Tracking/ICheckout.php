@@ -14,14 +14,19 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\Tracking;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart;
+@trigger_error(
+    'Interface Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\ICheckout is deprecated since version 6.0.0 and will be removed in 7.0.0. ' .
+    ' Use ' . CheckoutInterface::class . ' class instead.',
+    E_USER_DEPRECATED
+);
 
-interface ICheckout
-{
+class_exists(CheckoutInterface::class);
+
+if(false) {
     /**
-     * Track start checkout with first step
-     *
-     * @param ICart $cart
+     * @deprecated use CheckoutInterface instead.
      */
-    public function trackCheckout(ICart $cart);
+    interface ICheckout
+    {
+    }
 }

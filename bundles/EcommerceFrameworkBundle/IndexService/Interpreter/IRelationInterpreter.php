@@ -14,6 +14,19 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Interpreter;
 
-interface IRelationInterpreter extends IInterpreter
-{
+@trigger_error(
+    'Interface Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Interpreter\IRelationInterpreter is deprecated since version 6.0.0 and will be removed in 7.0.0. ' .
+    ' Use ' . RelationInterpreterInterface::class . ' class instead.',
+    E_USER_DEPRECATED
+);
+
+class_exists(RelationInterpreterInterface::class);
+
+if(false) {
+    /**
+     * @deprecated use RelationInterpreterInterface instead.
+     */
+    interface IRelationInterpreter
+    {
+    }
 }

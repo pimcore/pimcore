@@ -14,37 +14,19 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IIndexable;
+@trigger_error(
+    'Interface Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\IBatchProcessingWorker is deprecated since version 6.0.0 and will be removed in 7.0.0. ' .
+    ' Use ' . BatchProcessingWorkerInterface::class . ' class instead.',
+    E_USER_DEPRECATED
+);
 
-/**
- * Interface for IndexService workers which support batch processing of index data preparation and index updating
- */
-interface IBatchProcessingWorker extends IWorker
-{
-    /**
-     * fills queue based on path
-     *
-     * @param IIndexable $object
-     */
-    public function fillupPreparationQueue(IIndexable $object);
+class_exists(BatchProcessingWorkerInterface::class);
 
+if(false) {
     /**
-     * processes elements in the queue for preparation of index data
-     * can be run in parallel since each thread marks the entries it is working on and only processes these entries
-     *
-     * @param int $limit
-     *
-     * @return int number of entries
+     * @deprecated use BatchProcessingWorkerInterface instead.
      */
-    public function processPreparationQueue($limit = 200);
-
-    /**
-     * processes the update index queue - updates all elements where current_crc != index_crc
-     * can be run in parallel since each thread marks the entries it is working on and only processes these entries
-     *
-     * @param int $limit
-     *
-     * @return $int number of entries processed
-     */
-    public function processUpdateIndexQueue($limit = 200);
+    interface IBatchProcessingWorker
+    {
+    }
 }

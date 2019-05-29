@@ -17,56 +17,19 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartPriceModificator\ICartPriceModificator;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Model\ICheckoutable;
-use Pimcore\Model\DataObject\OnlineShopTaxClass;
+@trigger_error(
+    'Interface Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPriceSystem is deprecated since version 6.0.0 and will be removed in 7.0.0. ' .
+    ' Use ' . PriceSystemInterface::class . ' class instead.',
+    E_USER_DEPRECATED
+);
 
-interface IPriceSystem
-{
-    /**
-     * Creates price info object for given product and quantity scale
-     *
-     * @param ICheckoutable $product
-     * @param null|int|string $quantityScale - Numeric or string (allowed values: IPriceInfo::MIN_PRICE)
-     * @param ICheckoutable[] $products
-     *
-     * @return IPriceInfo
-     */
-    public function getPriceInfo(ICheckoutable $product, $quantityScale = null, $products = null): IPriceInfo;
+class_exists(PriceSystemInterface::class);
 
+if(false) {
     /**
-     * Filters and orders given product IDs based on price information
-     *
-     * @param $productIds
-     * @param $fromPrice
-     * @param $toPrice
-     * @param $order
-     * @param $offset
-     * @param $limit
-     *
-     * @return mixed
+     * @deprecated use PriceSystemInterface instead.
      */
-    public function filterProductIds($productIds, $fromPrice, $toPrice, $order, $offset, $limit);
-
-    /**
-     * Returns OnlineShopTaxClass for given ICheckoutable
-     *
-     * Should be overwritten in custom price systems with suitable implementation.
-     *
-     * @param ICheckoutable $product
-     *
-     * @return OnlineShopTaxClass
-     */
-    public function getTaxClassForProduct(ICheckoutable $product);
-
-    /**
-     * Returns OnlineShopTaxClass for given ICartPriceModificator
-     *
-     * Should be overwritten in custom price systems with suitable implementation.
-     *
-     * @param ICartPriceModificator $modificator
-     *
-     * @return OnlineShopTaxClass
-     */
-    public function getTaxClassForPriceModification(ICartPriceModificator $modificator);
+    interface IPriceSystem
+    {
+    }
 }

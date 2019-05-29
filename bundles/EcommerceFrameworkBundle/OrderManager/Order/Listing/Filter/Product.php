@@ -14,10 +14,10 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\Order\Listing\Filter;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\IOrderList;
-use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\IOrderListFilter;
+use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderListInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderListFilterInterface;
 
-class Product implements IOrderListFilter
+class Product implements OrderListFilterInterface
 {
     /**
      * @var \Pimcore\Model\DataObject\Concrete
@@ -33,11 +33,11 @@ class Product implements IOrderListFilter
     }
 
     /**
-     * @param IOrderList $orderList
+     * @param OrderListInterface $orderList
      *
-     * @return IOrderListFilter
+     * @return OrderListFilterInterface
      */
-    public function apply(IOrderList $orderList)
+    public function apply(OrderListInterface $orderList)
     {
         $ids = [
             $this->product->getId()

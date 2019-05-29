@@ -15,34 +15,34 @@
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\Tracker\Analytics;
 
 use Pimcore\Analytics\Google\Tracker as GoogleTracker;
-use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart;
-use Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\ICheckoutStep as CheckoutManagerICheckoutStep;
+use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\CheckoutStepInterface as CheckoutManagerCheckoutStepInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IProduct;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\ICartProductActionAdd;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\ICartProductActionRemove;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\ICheckout;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\ICheckoutComplete;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\ICheckoutStep;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Model\ProductInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\CartProductActionAddInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\CartProductActionRemoveInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\CheckoutInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\CheckoutCompleteInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\CheckoutStepInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\IProductActionAdd;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\IProductActionRemove;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\IProductImpression;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\IProductView;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\ProductImpressionInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\ProductViewInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\ProductAction;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\ProductImpression;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\Transaction;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class EnhancedEcommerce extends AbstractAnalyticsTracker implements
-    IProductView,
-    IProductImpression,
+    ProductViewInterface,
+    ProductImpressionInterface,
     IProductActionAdd,
     IProductActionRemove,
-    ICartProductActionAdd,
-    ICartProductActionRemove,
-    ICheckout,
-    ICheckoutStep,
-    ICheckoutComplete
+    CartProductActionAddInterface,
+    CartProductActionRemoveInterface,
+    CheckoutInterface,
+    CheckoutStepInterface,
+    CheckoutCompleteInterface
 {
     /**
      * Dependencies to include before any tracking actions
@@ -68,9 +68,9 @@ class EnhancedEcommerce extends AbstractAnalyticsTracker implements
     /**
      * Track product view
      *
-     * @param IProduct $product
+     * @param ProductInterface $product
      */
-    public function trackProductView(IProduct $product)
+    public function trackProductView(ProductInterface $product)
     {
         $this->ensureDependencies();
 
@@ -90,9 +90,9 @@ class EnhancedEcommerce extends AbstractAnalyticsTracker implements
     /**
      * Track product view
      *
-     * @param IProduct $product
+     * @param ProductInterface $product
      */
-    public function trackProductImpression(IProduct $product)
+    public function trackProductImpression(ProductInterface $product)
     {
         $this->ensureDependencies();
 
@@ -110,7 +110,7 @@ class EnhancedEcommerce extends AbstractAnalyticsTracker implements
     /**
      * @inheritDoc
      */
-    public function trackCartProductActionAdd(ICart $cart, IProduct $product, $quantity = 1)
+    public function trackCartProductActionAdd(CartInterface $cart, ProductInterface $product, $quantity = 1)
     {
         return $this->trackProductActionAdd($product, $quantity);
     }
@@ -118,10 +118,10 @@ class EnhancedEcommerce extends AbstractAnalyticsTracker implements
     /**
      * Track product action add
      *
-     * @param IProduct $product
+     * @param ProductInterface $product
      * @param int|float $quantity
      */
-    public function trackProductActionAdd(IProduct $product, $quantity = 1)
+    public function trackProductActionAdd(ProductInterface $product, $quantity = 1)
     {
         $this->ensureDependencies();
 
@@ -131,7 +131,7 @@ class EnhancedEcommerce extends AbstractAnalyticsTracker implements
     /**
      * @inheritDoc
      */
-    public function trackCartProductActionRemove(ICart $cart, IProduct $product, $quantity = 1)
+    public function trackCartProductActionRemove(CartInterface $cart, ProductInterface $product, $quantity = 1)
     {
         $this->trackProductActionRemove($product, $quantity);
     }
@@ -139,10 +139,10 @@ class EnhancedEcommerce extends AbstractAnalyticsTracker implements
     /**
      * Track product remove from cart
      *
-     * @param IProduct $product
+     * @param ProductInterface $product
      * @param int|float $quantity
      */
-    public function trackProductActionRemove(IProduct $product, $quantity = 1)
+    public function trackProductActionRemove(ProductInterface $product, $quantity = 1)
     {
         $this->ensureDependencies();
 
@@ -171,9 +171,9 @@ class EnhancedEcommerce extends AbstractAnalyticsTracker implements
     /**
      * Track start checkout with first step
      *
-     * @param ICart $cart
+     * @param CartInterface $cart
      */
-    public function trackCheckout(ICart $cart)
+    public function trackCheckout(CartInterface $cart)
     {
         $this->ensureDependencies();
 
@@ -192,12 +192,12 @@ class EnhancedEcommerce extends AbstractAnalyticsTracker implements
     }
 
     /**
-     * @param CheckoutManagerICheckoutStep $step
-     * @param ICart $cart
+     * @param CheckoutManagerCheckoutStepInterface $step
+     * @param CartInterface $cart
      * @param null $stepNumber
      * @param null $checkoutOption
      */
-    public function trackCheckoutStep(CheckoutManagerICheckoutStep $step, ICart $cart, $stepNumber = null, $checkoutOption = null)
+    public function trackCheckoutStep(CheckoutManagerCheckoutStepInterface $step, CartInterface $cart, $stepNumber = null, $checkoutOption = null)
     {
         $this->ensureDependencies();
 

@@ -14,19 +14,19 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Condition;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\ICondition;
+@trigger_error(
+    'Interface Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Condition\IBracket is deprecated since version 6.0.0 and will be removed in 7.0.0. ' .
+    ' Use ' . BracketInterface::class . ' class instead.',
+    E_USER_DEPRECATED
+);
 
-interface IBracket extends ICondition
-{
-    const OPERATOR_AND = 'and';
-    const OPERATOR_OR = 'or';
-    const OPERATOR_AND_NOT = 'and_not';
+class_exists(BracketInterface::class);
 
+if(false) {
     /**
-     * @param ICondition $condition
-     * @param string $operator IBracket::OPERATOR_*
-     *
-     * @return self
+     * @deprecated use BracketInterface instead.
      */
-    public function addCondition(ICondition $condition, $operator);
+    interface IBracket
+    {
+    }
 }

@@ -16,30 +16,30 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\CartManager;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\CheckoutManager;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\InvalidConfigException;
-use Pimcore\Bundle\EcommerceFrameworkBundle\IEnvironment;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Model\ICheckoutable;
-use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\IOrderManagerLocator;
+use Pimcore\Bundle\EcommerceFrameworkBundle\EnvironmentInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Model\CheckoutableInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderManagerLocatorInterface;
 use Psr\Log\LoggerInterface;
 
-class MultiCartManager implements ICartManager
+class MultiCartManager implements CartManagerInterface
 {
     /**
-     * @var IEnvironment
+     * @var EnvironmentInterface
      */
     protected $environment;
 
     /**
-     * @var ICartFactory
+     * @var CartFactoryInterface
      */
     protected $cartFactory;
 
     /**
-     * @var ICartPriceCalculatorFactory
+     * @var CartPriceCalculatorFactoryInterface
      */
     protected $cartPriceCalculatorFactory;
 
     /**
-     * @var IOrderManagerLocator
+     * @var OrderManagerLocatorInterface
      */
     protected $orderManagers;
 
@@ -49,7 +49,7 @@ class MultiCartManager implements ICartManager
     protected $logger;
 
     /**
-     * @var ICart[]
+     * @var CartInterface[]
      */
     protected $carts = [];
 
@@ -59,17 +59,17 @@ class MultiCartManager implements ICartManager
     protected $initialized = false;
 
     /**
-     * @param IEnvironment $environment
-     * @param ICartFactory $cartFactory
-     * @param ICartPriceCalculatorFactory $cartPriceCalculatorFactory
-     * @param IOrderManagerLocator $orderManagers
+     * @param EnvironmentInterface $environment
+     * @param CartFactoryInterface $cartFactory
+     * @param CartPriceCalculatorFactoryInterface $cartPriceCalculatorFactory
+     * @param OrderManagerLocatorInterface $orderManagers
      * @param LoggerInterface $logger
      */
     public function __construct(
-        IEnvironment $environment,
-        ICartFactory $cartFactory,
-        ICartPriceCalculatorFactory $cartPriceCalculatorFactory,
-        IOrderManagerLocator $orderManagers,
+        EnvironmentInterface $environment,
+        CartFactoryInterface $cartFactory,
+        CartPriceCalculatorFactoryInterface $cartPriceCalculatorFactory,
+        OrderManagerLocatorInterface $orderManagers,
         LoggerInterface $logger
     ) {
         $this->environment = $environment;
@@ -99,7 +99,7 @@ class MultiCartManager implements ICartManager
     {
         $classname = $this->getCartClassName();
 
-        /* @var ICart[] $carts */
+        /* @var CartInterface[] $carts */
         $carts = $classname::getAllCartsForUser($this->environment->getCurrentUserId());
 
         if (empty($carts)) {
@@ -127,7 +127,7 @@ class MultiCartManager implements ICartManager
     }
 
     /**
-     * @param ICheckoutable $product
+     * @param CheckoutableInterface $product
      * @param float $count
      * @param null $key
      * @param null $itemKey
@@ -141,7 +141,7 @@ class MultiCartManager implements ICartManager
      * @throws InvalidConfigException
      */
     public function addToCart(
-        ICheckoutable $product,
+        CheckoutableInterface $product,
         $count,
         $key = null,
         $itemKey = null,
@@ -236,7 +236,7 @@ class MultiCartManager implements ICartManager
     /**
      * @param null $key
      *
-     * @return ICart
+     * @return CartInterface
      *
      * @throws InvalidConfigException
      */
@@ -254,7 +254,7 @@ class MultiCartManager implements ICartManager
     /**
      * @param string $name
      *
-     * @return null|ICart
+     * @return null|CartInterface
      */
     public function getCartByName($name)
     {
@@ -272,7 +272,7 @@ class MultiCartManager implements ICartManager
     /**
      * @param string $name
      *
-     * @return ICart
+     * @return CartInterface
      *
      * @throws InvalidConfigException
      */
@@ -291,7 +291,7 @@ class MultiCartManager implements ICartManager
     }
 
     /**
-     * @return ICart[]
+     * @return CartInterface[]
      */
     public function getCarts(): array
     {
@@ -319,11 +319,11 @@ class MultiCartManager implements ICartManager
     }
 
     /**
-     * @param ICart $cart
+     * @param CartInterface $cart
      *
-     * @return ICartPriceCalculator
+     * @return CartPriceCalculatorInterface
      */
-    public function getCartPriceCalculator(ICart $cart): ICartPriceCalculator
+    public function getCartPriceCalculator(CartInterface $cart): CartPriceCalculatorInterface
     {
         return $this->cartPriceCalculatorFactory->create($this->environment, $cart);
     }

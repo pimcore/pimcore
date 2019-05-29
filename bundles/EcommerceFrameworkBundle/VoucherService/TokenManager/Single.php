@@ -14,7 +14,7 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\TokenManager;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart;
+use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\InvalidConfigException;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractVoucherTokenType;
@@ -26,7 +26,7 @@ use Pimcore\Model\DataObject\OnlineShopVoucherToken;
 use Zend\Paginator\Adapter\ArrayAdapter;
 use Zend\Paginator\Paginator;
 
-class Single extends AbstractTokenManager implements IExportableTokenManager
+class Single extends AbstractTokenManager implements ExportableTokenManagerInterface
 {
     protected $template;
 
@@ -191,11 +191,11 @@ class Single extends AbstractTokenManager implements IExportableTokenManager
 
     /**
      * @param string $code
-     * @param ICart $cart
+     * @param CartInterface $cart
      *
      * @return bool
      */
-    public function reserveToken($code, ICart $cart)
+    public function reserveToken($code, CartInterface $cart)
     {
         if ($token = Token::getByCode($code)) {
             if (Reservation::create($code, $cart)) {
@@ -208,12 +208,12 @@ class Single extends AbstractTokenManager implements IExportableTokenManager
 
     /**
      * @param string $code
-     * @param ICart $cart
+     * @param CartInterface $cart
      * @param AbstractOrder $order
      *
      * @return bool|\Pimcore\Model\DataObject\OnlineShopVoucherToken
      */
-    public function applyToken($code, ICart $cart, AbstractOrder $order)
+    public function applyToken($code, CartInterface $cart, AbstractOrder $order)
     {
         if ($token = Token::getByCode($code)) {
             if ($token->check($this->configuration->getUsages(), true)) {
@@ -258,22 +258,22 @@ class Single extends AbstractTokenManager implements IExportableTokenManager
 
     /**
      * @param string $code
-     * @param ICart $cart
+     * @param CartInterface $cart
      *
      * @return bool
      */
-    public function releaseToken($code, ICart $cart)
+    public function releaseToken($code, CartInterface $cart)
     {
         return Reservation::releaseToken($code, $cart);
     }
 
     /**
      * @param string $code
-     * @param ICart $cart
+     * @param CartInterface $cart
      *
      * @return bool
      */
-    public function checkToken($code, ICart $cart)
+    public function checkToken($code, CartInterface $cart)
     {
         parent::checkToken($code, $cart);
         if ($token = Token::getByCode($code)) {

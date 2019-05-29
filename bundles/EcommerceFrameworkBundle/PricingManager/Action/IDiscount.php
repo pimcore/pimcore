@@ -14,31 +14,19 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Action;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IAction;
+@trigger_error(
+    'Interface Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Action\IDiscount is deprecated since version 6.0.0 and will be removed in 7.0.0. ' .
+    ' Use ' . DiscountInterface::class . ' class instead.',
+    E_USER_DEPRECATED
+);
 
-interface IDiscount extends IAction
-{
-    /**
-     * @param float $amount
-     *
-     * @return void
-     */
-    public function setAmount($amount);
+class_exists(DiscountInterface::class);
 
+if(false) {
     /**
-     * @param float $percent
-     *
-     * @return void
+     * @deprecated use DiscountInterface instead.
      */
-    public function setPercent($percent);
-
-    /**
-     * @return float
-     */
-    public function getAmount();
-
-    /**
-     * @return float
-     */
-    public function getPercent();
+    interface IDiscount
+    {
+    }
 }

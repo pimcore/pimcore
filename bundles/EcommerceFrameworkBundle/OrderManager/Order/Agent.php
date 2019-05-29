@@ -16,16 +16,16 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\Order;
 
 use Exception;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\UnsupportedException;
-use Pimcore\Bundle\EcommerceFrameworkBundle\IEnvironment;
+use Pimcore\Bundle\EcommerceFrameworkBundle\EnvironmentInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder as Order;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrderItem as OrderItem;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractPaymentInformation;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\Currency;
-use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\IOrderAgent;
-use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\IPaymentManager;
-use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\IStatus;
-use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment\IPayment;
+use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderAgentInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\PaymentManagerInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\StatusInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment\PaymentInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
 use Pimcore\Logger;
 use Pimcore\Model\DataObject\Concrete;
@@ -36,7 +36,7 @@ use Pimcore\Model\Element\Note;
 use Pimcore\Model\Element\Note\Listing as NoteListing;
 use Symfony\Component\Lock\Exception\NotSupportedException;
 
-class Agent implements IOrderAgent
+class Agent implements OrderAgentInterface
 {
     const PAYMENT_PROVIDER_BRICK_PREFIX = 'PaymentProvider';
 
@@ -46,17 +46,17 @@ class Agent implements IOrderAgent
     protected $order;
 
     /**
-     * @var IEnvironment
+     * @var EnvironmentInterface
      */
     protected $environment;
 
     /**
-     * @var IPaymentManager
+     * @var PaymentManagerInterface
      */
     protected $paymentManager;
 
     /**
-     * @var IPayment
+     * @var PaymentInterface
      */
     protected $paymentProvider;
 
@@ -67,8 +67,8 @@ class Agent implements IOrderAgent
 
     public function __construct(
         Order $order,
-        IEnvironment $environment,
-        IPaymentManager $paymentManager
+        EnvironmentInterface $environment,
+        PaymentManagerInterface $paymentManager
     ) {
         $this->order = $order;
         $this->environment = $environment;
@@ -245,7 +245,7 @@ class Agent implements IOrderAgent
     }
 
     /**
-     * @return IPayment
+     * @return PaymentInterface
      */
     public function getPaymentProvider()
     {
@@ -288,12 +288,12 @@ class Agent implements IOrderAgent
     }
 
     /**
-     * @param IPayment $paymentProvider
+     * @param PaymentInterface $paymentProvider
      * @param Order $sourceOrder
      *
      * @return $this
      */
-    public function setPaymentProvider(IPayment $paymentProvider, Order $sourceOrder = null)
+    public function setPaymentProvider(PaymentInterface $paymentProvider, Order $sourceOrder = null)
     {
         $this->paymentProvider = $paymentProvider;
 
@@ -519,14 +519,14 @@ class Agent implements IOrderAgent
     }
 
     /**
-     * @param IStatus $status
+     * @param StatusInterface $status
      *
      * @return $this
      *
      * @throws Exception
      * @throws UnsupportedException
      */
-    public function updatePayment(IStatus $status)
+    public function updatePayment(StatusInterface $status)
     {
         //log this for documentation
         \Pimcore\Log\Simple::log('update-payment', 'Update payment called with status: ' . print_r($status, true));
@@ -618,10 +618,10 @@ class Agent implements IOrderAgent
     /**
      * Hook to extract and save additional information in payment information
      *
-     * @param IStatus $status
+     * @param StatusInterface $status
      * @param PaymentInfo $currentPaymentInformation
      */
-    protected function extractAdditionalPaymentInformation(IStatus $status, PaymentInfo $currentPaymentInformation)
+    protected function extractAdditionalPaymentInformation(StatusInterface $status, PaymentInfo $currentPaymentInformation)
     {
     }
 

@@ -17,25 +17,19 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem;
 
-interface ICachingPriceSystem extends IPriceSystem
-{
-    /**
-     * Loads price infos once for given product entries and caches them
-     *
-     * @param $productEntries
-     * @param $options
-     *
-     * @return mixed
-     */
-    public function loadPriceInfos($productEntries, $options);
+@trigger_error(
+    'Interface Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\ICachingPriceSystem is deprecated since version 6.0.0 and will be removed in 7.0.0. ' .
+    ' Use ' . CachingPriceSystemInterface::class . ' class instead.',
+    E_USER_DEPRECATED
+);
 
+class_exists(CachingPriceSystemInterface::class);
+
+if(false) {
     /**
-     * Clears cached price infos
-     *
-     * @param $productEntries
-     * @param $options
-     *
-     * @return mixed
+     * @deprecated use CachingPriceSystemInterface instead.
      */
-    public function clearPriceInfos($productEntries, $options);
+    interface ICachingPriceSystem
+    {
+    }
 }

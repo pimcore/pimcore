@@ -6,7 +6,7 @@ use Codeception\Util\Stub;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractProduct;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\Currency;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\AttributePriceSystem;
-use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPrice;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\PriceInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\Price;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\TaxManagement\TaxCalculationService;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\TaxManagement\TaxEntry;
@@ -89,22 +89,22 @@ class TaxCalculationTest extends EcommerceTestCase
     public function testSetAmount()
     {
         $price = new Price(Decimal::create(100), new Currency('EUR'));
-        $price->setAmount(Decimal::create(110), IPrice::PRICE_MODE_GROSS, false);
+        $price->setAmount(Decimal::create(110), PriceInterface::PRICE_MODE_GROSS, false);
 
         $this->assertEquals(110, $price->getGrossAmount()->asNumeric());
         $this->assertEquals(100, $price->getNetAmount()->asNumeric());
 
-        $price->setAmount(Decimal::create(120), IPrice::PRICE_MODE_GROSS, true);
+        $price->setAmount(Decimal::create(120), PriceInterface::PRICE_MODE_GROSS, true);
 
         $this->assertEquals(120, $price->getGrossAmount()->asNumeric());
         $this->assertEquals(120, $price->getNetAmount()->asNumeric());
 
-        $price->setAmount(Decimal::create(90), IPrice::PRICE_MODE_NET, false);
+        $price->setAmount(Decimal::create(90), PriceInterface::PRICE_MODE_NET, false);
 
         $this->assertEquals(120, $price->getGrossAmount()->asNumeric());
         $this->assertEquals(90, $price->getNetAmount()->asNumeric());
 
-        $price->setAmount(Decimal::create(80), IPrice::PRICE_MODE_NET, true);
+        $price->setAmount(Decimal::create(80), PriceInterface::PRICE_MODE_NET, true);
 
         $this->assertEquals(80, $price->getGrossAmount()->asNumeric());
         $this->assertEquals(80, $price->getNetAmount()->asNumeric());

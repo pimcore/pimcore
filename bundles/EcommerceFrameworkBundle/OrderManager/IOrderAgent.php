@@ -14,141 +14,20 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\UnsupportedException;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder as Order;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrderItem as OrderItem;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractPaymentInformation;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Model\Currency;
-use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\IStatus;
-use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment\IPayment;
-use Pimcore\Model\Element\Note;
 
-interface IOrderAgent
-{
-    /**
-     * @return Order
-     */
-    public function getOrder();
+@trigger_error(
+    'Interface Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\IOrderAgent is deprecated since version 6.0.0 and will be removed in 7.0.0. ' .
+    ' Use ' . OrderAgentInterface::class . ' class instead.',
+    E_USER_DEPRECATED
+);
 
-    /**
-     * cancel order item and refund payment
-     *
-     * @param OrderItem $item
-     *
-     * @return Note
-     */
-    public function itemCancel(OrderItem $item);
+class_exists(OrderAgentInterface::class);
 
+if(false) {
     /**
-     * start item complaint
-     *
-     * @param OrderItem $item
-     * @param float $quantity
-     *
-     * @return Note
+     * @deprecated use OrderAgentInterface instead.
      */
-    public function itemComplaint(OrderItem $item, $quantity);
-
-    /**
-     * change order item
-     *
-     * @param OrderItem $item
-     * @param float $amount
-     *
-     * @return Note
-     */
-    public function itemChangeAmount(OrderItem $item, $amount);
-
-    /**
-     * set a item state
-     *
-     * @param OrderItem $item
-     * @param string    $state
-     *
-     * @return Note
-     */
-    public function itemSetState(OrderItem $item, $state);
-
-    /**
-     * @return Currency
-     */
-    public function getCurrency();
-
-    /**
-     * @return bool
-     */
-    public function hasPayment();
-
-    /**
-     * @return IPayment
-     */
-    public function getPaymentProvider();
-
-    /**
-     * @param IPayment $paymentProvider
-     * @param AbstractOrder|null $sourceOrder
-     *
-     * @return Order
-     */
-    public function setPaymentProvider(IPayment $paymentProvider, AbstractOrder $sourceOrder = null);
-
-    /**
-     * Init payment:
-     *
-     * creates new payment info with INIT state
-     *
-     * throws exception when payment info exists
-     *
-     * @return AbstractPaymentInformation
-     *
-     * @throws UnsupportedException
-     */
-    public function initPayment();
-
-    /**
-     * Starts payment:
-     *
-     * checks if payment info with PENDING payment exists and checks if order fingerprint has not changed
-     * if true -> returns existing payment info
-     * if false -> creates new payment info (and aborts existing PENDING payment infos)
-     *
-     * @return AbstractPaymentInformation
-     *
-     * @throws UnsupportedException
-     */
-    public function startPayment();
-
-    /**
-     * Returns current payment info of order, or null if none exists
-     *
-     * @return null|AbstractPaymentInformation
-     */
-    public function getCurrentPendingPaymentInfo();
-
-    /**
-     * cancels payment for current payment info
-     * - payment will be cancelled, order state will be resetted and cart will we writable again.
-     *
-     * -> this should be used, when user cancels payment
-     *
-     * only possible when payment state is PENDING, otherwise exception is thrown
-     *
-     * @return Order
-     *
-     * @throws UnsupportedException
-     */
-    public function cancelStartedOrderPayment();
-
-    /**
-     * @param IStatus $status
-     *
-     * @return IOrderAgent
-     */
-    public function updatePayment(IStatus $status);
-
-    /**
-     * @return Note[]
-     */
-    public function getFullChangeLog();
+    interface IOrderAgent
+    {
+    }
 }

@@ -14,16 +14,16 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\IWorker;
+use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\WorkerInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\OptimizedMysql as OptimizedMysqlWorker;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\DefaultMockup;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IIndexable;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IndexableInterface;
 use Pimcore\Logger;
 
 /**
  * Configuration for the optimized mysql product index implementation.
  */
-class OptimizedMysql extends DefaultMysql implements IMockupConfig
+class OptimizedMysql extends DefaultMysql implements MockupConfigInterface
 {
     /**
      * creates object mockup for given data
@@ -45,7 +45,7 @@ class OptimizedMysql extends DefaultMysql implements IMockupConfig
      *
      * @param $objectId
      *
-     * @return IIndexable | array
+     * @return IndexableInterface | array
      */
     public function getObjectMockupById($objectId)
     {
@@ -63,7 +63,7 @@ class OptimizedMysql extends DefaultMysql implements IMockupConfig
     /**
      * @inheritDoc
      */
-    public function setTenantWorker(IWorker $tenantWorker)
+    public function setTenantWorker(WorkerInterface $tenantWorker)
     {
         if (!$tenantWorker instanceof OptimizedMysqlWorker) {
             throw new \InvalidArgumentException(sprintf(

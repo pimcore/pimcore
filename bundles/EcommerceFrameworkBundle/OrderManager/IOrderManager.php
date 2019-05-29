@@ -14,82 +14,20 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
-use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\IStatus;
-use Pimcore\Model\DataObject\Folder;
 
-interface IOrderManager
-{
-    /**
-     * @return IOrderList
-     */
-    public function createOrderList();
+@trigger_error(
+    'Interface Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\IOrderManager is deprecated since version 6.0.0 and will be removed in 7.0.0. ' .
+    ' Use ' . OrderManagerInterface::class . ' class instead.',
+    E_USER_DEPRECATED
+);
 
-    /**
-     * @param AbstractOrder $order
-     *
-     * @return IOrderAgent
-     */
-    public function createOrderAgent(AbstractOrder $order);
+class_exists(OrderManagerInterface::class);
 
+if(false) {
     /**
-     * @param int|Folder $orderParentFolder
+     * @deprecated use OrderManagerInterface instead.
      */
-    public function setParentOrderFolder($orderParentFolder);
-
-    /**
-     * @param string $classname
-     */
-    public function setOrderClass($classname);
-
-    /**
-     * @param string $classname
-     */
-    public function setOrderItemClass($classname);
-
-    /**
-     * Looks if order object for given cart already exists, otherwise creates it
-     *
-     * move to ordermanagers
-     *
-     * @return AbstractOrder
-     */
-    public function getOrCreateOrderFromCart(ICart $cart);
-
-    /**
-     * Looks if order object for given cart exists and returns it - it does not create it!
-     *
-     * @param ICart $cart
-     *
-     * @return AbstractOrder
-     */
-    public function getOrderFromCart(ICart $cart);
-
-    /**
-     * Returns order based on given payment status
-     *
-     * @param IStatus $paymentStatus
-     *
-     * @return AbstractOrder
-     */
-    public function getOrderByPaymentStatus(IStatus $paymentStatus);
-
-    /**
-     * Builds order listing
-     *
-     * @return \Pimcore\Model\DataObject\Listing\Concrete
-     *
-     * @throws \Exception
-     */
-    public function buildOrderList();
-
-    /**
-     * Build order item listing
-     *
-     * @return \Pimcore\Model\DataObject\Listing\Concrete
-     *
-     * @throws \Exception
-     */
-    public function buildOrderItemList();
+    interface IOrderManager
+    {
+    }
 }

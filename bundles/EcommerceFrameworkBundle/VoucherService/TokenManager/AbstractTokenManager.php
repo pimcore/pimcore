@@ -14,14 +14,14 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\TokenManager;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart;
+use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\VoucherServiceException;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractVoucherSeries;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractVoucherTokenType;
 use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Token;
 use Pimcore\Model\DataObject\OnlineShopVoucherSeries;
 
-abstract class AbstractTokenManager implements ITokenManager
+abstract class AbstractTokenManager implements TokenManagerInterface
 {
     /* @var AbstractVoucherTokenType */
     public $configuration;
@@ -61,13 +61,13 @@ abstract class AbstractTokenManager implements ITokenManager
 
     /**
      * @param string $code
-     * @param ICart $cart
+     * @param CartInterface $cart
      *
      * @return mixed
      *
      * @throws VoucherServiceException When validation fails for any reason
      */
-    public function checkToken($code, ICart $cart)
+    public function checkToken($code, CartInterface $cart)
     {
         $this->checkVoucherSeriesIsPublished($code);
         $this->checkAllowOncePerCart($code, $cart);
@@ -102,11 +102,11 @@ abstract class AbstractTokenManager implements ITokenManager
      * Once per cart setting
      *
      * @param $code
-     * @param ICart $cart
+     * @param CartInterface $cart
      *
      * @throws VoucherServiceException
      */
-    protected function checkAllowOncePerCart($code, ICart $cart)
+    protected function checkAllowOncePerCart($code, CartInterface $cart)
     {
         $cartCodes = $cart->getVoucherTokenCodes();
         if (method_exists($this->configuration, 'getAllowOncePerCart') && $this->configuration->getAllowOncePerCart()) {
@@ -125,11 +125,11 @@ abstract class AbstractTokenManager implements ITokenManager
     /**
      * Only token per cart setting
      *
-     * @param ICart $cart
+     * @param CartInterface $cart
      *
      * @throws VoucherServiceException
      */
-    protected function checkOnlyToken(ICart $cart)
+    protected function checkOnlyToken(CartInterface $cart)
     {
         $cartCodes = $cart->getVoucherTokenCodes();
         $cartVoucherCount = sizeof($cartCodes);
@@ -239,28 +239,28 @@ abstract class AbstractTokenManager implements ITokenManager
 
     /**
      * @param string $code
-     * @param ICart $cart
+     * @param CartInterface $cart
      *
      * @return bool
      */
-    abstract public function reserveToken($code, ICart $cart);
+    abstract public function reserveToken($code, CartInterface $cart);
 
     /**
      * @param string $code
-     * @param ICart $cart
+     * @param CartInterface $cart
      * @param \Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder $order
      *
      * @return bool
      */
-    abstract public function applyToken($code, ICart $cart, \Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder $order);
+    abstract public function applyToken($code, CartInterface $cart, \Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder $order);
 
     /**
      * @param string $code
-     * @param ICart $cart
+     * @param CartInterface $cart
      *
      * @return bool
      */
-    abstract public function releaseToken($code, ICart $cart);
+    abstract public function releaseToken($code, CartInterface $cart);
 
     /**
      * @param null $filter

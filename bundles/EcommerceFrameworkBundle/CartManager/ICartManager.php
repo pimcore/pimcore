@@ -14,129 +14,19 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\CartManager;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\IComponent;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractSetProductEntry;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Model\ICheckoutable;
+@trigger_error(
+    'Interface Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICartManager is deprecated since version 6.0.0 and will be removed in 7.0.0. ' .
+    ' Use ' . CartManagerInterface::class . ' class instead.',
+    E_USER_DEPRECATED
+);
 
-interface ICartManager extends IComponent
-{
-    /**
-     * Returns cart class name configured in the ecommerce framework config
-     *
-     * Is also responsible for checking if guest cart class should be used or not,
-     * by calling \Pimcore\Bundle\EcommerceFrameworkBundle\IEnvironment::getUseGuestCart();
-     *
-     * @return string
-     */
-    public function getCartClassName();
+class_exists(CartManagerInterface::class);
 
+if(false) {
     /**
-     * Adds item to given cart
-     *
-     * @param ICheckoutable $product - product to add
-     * @param float $count
-     * @param string $key            - optional key of cart where the item should be added to
-     * @param null|string $itemKey   - optional item key
-     * @param bool $replace          - replace item if same key already exists
-     * @param array $params          - optional addtional item information
-     * @param AbstractSetProductEntry[] $subProducts
-     * @param null|string $comment
-     *
-     * @return string - item key
+     * @deprecated use CartManagerInterface instead.
      */
-    public function addToCart(
-        ICheckoutable $product,
-        $count,
-        $key = null,
-        $itemKey = null,
-        $replace = false,
-        array $params = [],
-        array $subProducts = [],
-        $comment = null
-    );
-
-    /**
-     * Removes item from given cart
-     *
-     * @param string      $itemKey
-     * @param null|string $key     - optional identification of cart in case of multi cart
-     *
-     * @return void
-     */
-    public function removeFromCart($itemKey, $key = null);
-
-    /**
-     * Returns cart
-     *
-     * @param null|string $key - optional identification of cart in case of multi cart
-     *
-     * @return ICart
-     */
-    public function getCart($key = null);
-
-    /**
-     * Returns cart by name
-     *
-     * @param string $name
-     *
-     * @return null|ICart
-     */
-    public function getCartByName($name);
-
-    /**
-     * Returns cart by name, if it does not exist, it will be created
-     *
-     * @param string $name
-     *
-     * @return ICart
-     */
-    public function getOrCreateCartByName($name);
-
-    /**
-     * Returns all carts
-     *
-     * @return ICart[]
-     */
-    public function getCarts();
-
-    /**
-     * Clears given cart
-     *
-     * @param null|string  $key - optional identification of cart in case of multi cart
-     *
-     * @return void
-     */
-    public function clearCart($key = null);
-
-    /**
-     * Creates new cart
-     *
-     * @param array $param - array of cart information
-     *
-     * @return string key of new created cart
-     */
-    public function createCart(array $params);
-
-    /**
-     * Deletes cart
-     *
-     * @param null|string $key - optional identification of cart in case of multi cart
-     *
-     * @return void
-     */
-    public function deleteCart($key = null);
-
-    /**
-     * Creates price calculator for given cart
-     *
-     * @return ICartPriceCalculator
-     */
-    public function getCartPriceCalculator(ICart $cart);
-
-    /**
-     * Resets cart manager - carts need to be reloaded after reset() is called
-     *
-     * @return void
-     */
-    public function reset();
+    interface ICartManager
+    {
+    }
 }

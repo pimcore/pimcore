@@ -17,7 +17,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\Controller;
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
-use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IRule;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\RuleInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Rule;
 use Pimcore\Controller\EventedControllerInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -55,7 +55,7 @@ class PricingController extends AdminController implements EventedControllerInte
 
         $json = [];
         foreach ($rules->load() as $rule) {
-            /* @var  IRule $rule */
+            /* @var  RuleInterface $rule */
 
             if ($rule->getActive()) {
                 $icon = 'bundle_ecommerce_pricing_icon_rule_' . $rule->getBehavior();

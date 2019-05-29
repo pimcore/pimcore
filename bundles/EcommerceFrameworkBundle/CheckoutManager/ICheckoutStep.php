@@ -14,35 +14,20 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart;
 
-/**
- * Interface for checkout step implementations of online shop framework
- */
-interface ICheckoutStep
-{
-    public function __construct(ICart $cart, array $options = []);
+@trigger_error(
+    'Interface Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\ICheckoutStep is deprecated since version 6.0.0 and will be removed in 7.0.0. ' .
+    ' Use ' . CheckoutStepInterface::class . ' class instead.',
+    E_USER_DEPRECATED
+);
 
+class_exists(CheckoutStepInterface::class);
+
+if(false) {
     /**
-     * Returns checkout step name
-     *
-     * @return string
+     * @deprecated use CheckoutStepInterface instead.
      */
-    public function getName();
-
-    /**
-     * Returns saved data of step
-     *
-     * @return mixed
-     */
-    public function getData();
-
-    /**
-     * Sets delivered data and commits step
-     *
-     * @param $data
-     *
-     * @return bool
-     */
-    public function commit($data);
+    interface ICheckoutStep
+    {
+    }
 }

@@ -15,18 +15,18 @@
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\ElasticSearch;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\ElasticSearch;
-use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\IElasticSearchConfig;
-use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Interpreter\IRelationInterpreter;
-use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\IProductList;
+use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\ElasticSearchConfigInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Interpreter\RelationInterpreterInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\ProductListInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IIndexable;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IndexableInterface;
 use Pimcore\Db\ConnectionInterface;
 use Pimcore\Logger;
 
 /**
  * @property ElasticSearch $tenantConfig
  */
-abstract class AbstractElasticSearch extends Worker\AbstractMockupCacheWorker implements Worker\IBatchProcessingWorker
+abstract class AbstractElasticSearch extends Worker\AbstractMockupCacheWorker implements Worker\BatchProcessingWorkerInterface
 {
     const STORE_TABLE_NAME = 'ecommerceframework_productindex_store_elastic';
     const MOCKUP_CACHE_PREFIX = 'ecommerce_mockup_elastic';
@@ -66,10 +66,10 @@ abstract class AbstractElasticSearch extends Worker\AbstractMockupCacheWorker im
     protected $bulkIndexData = [];
 
     /**
-     * @param ElasticSearch|IElasticSearchConfig $tenantConfig
+     * @param ElasticSearch|ElasticSearchConfigInterface $tenantConfig
      * @param ConnectionInterface $db
      */
-    public function __construct(IElasticSearchConfig $tenantConfig, ConnectionInterface $db)
+    public function __construct(ElasticSearchConfigInterface $tenantConfig, ConnectionInterface $db)
     {
         parent::__construct($tenantConfig, $db);
 
@@ -200,7 +200,7 @@ abstract class AbstractElasticSearch extends Worker\AbstractMockupCacheWorker im
                 //check, if interpreter is set and if this interpreter is instance of relation interpreter
                 // -> then set type to long
                 if (null !== $attribute->getInterpreter()) {
-                    if ($attribute->getInterpreter() instanceof IRelationInterpreter) {
+                    if ($attribute->getInterpreter() instanceof RelationInterpreterInterface) {
                         $type = 'long';
                         $isRelation = true;
                     }
@@ -284,11 +284,11 @@ abstract class AbstractElasticSearch extends Worker\AbstractMockupCacheWorker im
     /**
      * deletes given element from index
      *
-     * @param IIndexable $object
+     * @param IndexableInterface $object
      *
      * @return void
      */
-    public function deleteFromIndex(IIndexable $object)
+    public function deleteFromIndex(IndexableInterface $object)
     {
         if (!$this->tenantConfig->isActive($object)) {
             Logger::info("Tenant {$this->name} is not active.");
@@ -308,11 +308,11 @@ abstract class AbstractElasticSearch extends Worker\AbstractMockupCacheWorker im
     /**
      * updates given element in index
      *
-     * @param IIndexable $object
+     * @param IndexableInterface $object
      *
      * @return void
      */
-    public function updateIndex(IIndexable $object)
+    public function updateIndex(IndexableInterface $object)
     {
         if (!$this->tenantConfig->isActive($object)) {
             Logger::info("Tenant {$this->name} is not active.");
@@ -345,7 +345,7 @@ abstract class AbstractElasticSearch extends Worker\AbstractMockupCacheWorker im
 
         $variants = $esClient->search([
             'index' => $this->getIndexNameVersion(),
-            'type' => IProductList::PRODUCT_TYPE_VARIANT,
+            'type' => ProductListInterface::PRODUCT_TYPE_VARIANT,
             'body' => [
                 '_source' => false,
                 'query' => [
@@ -366,7 +366,7 @@ abstract class AbstractElasticSearch extends Worker\AbstractMockupCacheWorker im
             if ($hit['_parent'] != $indexSystemData['o_virtualProductId']) {
                 $params = [
                     'index' => $this->getIndexNameVersion(),
-                    'type' => IProductList::PRODUCT_TYPE_VARIANT,
+                    'type' => ProductListInterface::PRODUCT_TYPE_VARIANT,
                     'id' => $indexSystemData['o_id'],
                     'parent' => $hit['_parent']
                 ];
@@ -412,12 +412,12 @@ abstract class AbstractElasticSearch extends Worker\AbstractMockupCacheWorker im
             $data = $this->doPreIndexDataModification($data);
 
             //check if parent should exist and if so, consider parent relation at indexing
-            $routingId = $indexSystemData['o_type'] == IProductList::PRODUCT_TYPE_VARIANT ? $indexSystemData['o_virtualProductId'] : $indexSystemData['o_id'];
+            $routingId = $indexSystemData['o_type'] == ProductListInterface::PRODUCT_TYPE_VARIANT ? $indexSystemData['o_virtualProductId'] : $indexSystemData['o_id'];
 
             $this->bulkIndexData[] = ['index' => ['_index' => $this->getIndexNameVersion(), '_type' => $this->getTenantConfig()->getElasticSearchClientParams()['indexType'], '_id' => $objectId, '_routing' => $routingId]];
             $bulkIndexData = array_filter(['system' => array_filter($indexSystemData), 'type' => $indexSystemData['o_type'], 'attributes' => array_filter($indexAttributeData), 'relations' => $indexRelationData, 'subtenants' => $data['subtenants']]);
 
-            if ($indexSystemData['o_type'] == IProductList::PRODUCT_TYPE_VARIANT) {
+            if ($indexSystemData['o_type'] == ProductListInterface::PRODUCT_TYPE_VARIANT) {
                 $bulkIndexData[self::RELATION_FIELD] = ['name' => $indexSystemData['o_type'], 'parent' => $indexSystemData['o_virtualProductId']];
             } else {
                 $bulkIndexData[self::RELATION_FIELD] = ['name' => $indexSystemData['o_type']];
@@ -651,7 +651,7 @@ abstract class AbstractElasticSearch extends Worker\AbstractMockupCacheWorker im
         return $data;
     }
 
-    protected function doDeleteFromIndex($objectId, IIndexable $object = null)
+    protected function doDeleteFromIndex($objectId, IndexableInterface $object = null)
     {
         $esClient = $this->getElasticSearchClient();
 

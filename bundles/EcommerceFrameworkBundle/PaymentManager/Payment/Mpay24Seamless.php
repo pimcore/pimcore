@@ -6,9 +6,9 @@ use Mpay24\Mpay24;
 use Mpay24\Mpay24Config;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractPaymentInformation;
-use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\IStatus;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\StatusInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Status;
-use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPrice;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\PriceInterface;
 use Pimcore\Model\DataObject\Fieldcollection\Data\OrderPriceModifications;
 use Pimcore\Model\DataObject\OnlineShopOrder;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -119,14 +119,14 @@ class Mpay24Seamless extends AbstractPayment
     /**
      * Start payment and build form, including token.
      *
-     * @param IPrice $price
+     * @param PriceInterface $price
      * @param array $config
      *
      * @return FormBuilderInterface
      *
      * @throws \Exception
      */
-    public function initPayment(IPrice $price, array $config)
+    public function initPayment(PriceInterface $price, array $config)
     {
         /** @var Request $request */
         $request = $config['request'];
@@ -324,7 +324,7 @@ class Mpay24Seamless extends AbstractPayment
      *
      * @param array $response
      *
-     * @return IStatus
+     * @return StatusInterface
      *
      * @throws \Exception
      */
@@ -337,11 +337,11 @@ class Mpay24Seamless extends AbstractPayment
         $internalPaymentId = $response['TID'];
 
         $transactionParams = $params->getParams();
-        $responseStatus = IStatus::STATUS_PENDING;
+        $responseStatus = StatusInterface::STATUS_PENDING;
         if ($params->hasStatusOk() && $transactionParams['STATUS'] != 'ERROR') {
-            $responseStatus = IStatus::STATUS_AUTHORIZED;
+            $responseStatus = StatusInterface::STATUS_AUTHORIZED;
         } else {
-            $responseStatus = IStatus::STATUS_CANCELLED;
+            $responseStatus = StatusInterface::STATUS_CANCELLED;
         }
 
         $mpayLogData = [];
@@ -393,14 +393,14 @@ class Mpay24Seamless extends AbstractPayment
      *  if price is given, recurPayment command is executed
      *  if no price is given, amount from authorized Data is used and deposit command is executed
      *
-     * @param IPrice $price
+     * @param PriceInterface $price
      * @param string $reference
      *
-     * @return IStatus
+     * @return StatusInterface
      *
      * @throws \Exception
      */
-    public function executeDebit(IPrice $price = null, $reference = null)
+    public function executeDebit(PriceInterface $price = null, $reference = null)
     {
         throw new NotImplementedException('executeDebit is not implemented yet.');
     }
@@ -408,15 +408,15 @@ class Mpay24Seamless extends AbstractPayment
     /**
      * Executes credit
      *
-     * @param IPrice $price
+     * @param PriceInterface $price
      * @param string $reference
      * @param $transactionId
      *
-     * @return IStatus
+     * @return StatusInterface
      *
      * @throws \Exception
      */
-    public function executeCredit(IPrice $price, $reference, $transactionId)
+    public function executeCredit(PriceInterface $price, $reference, $transactionId)
     {
         throw new NotImplementedException('executeCredit is not implemented yet.');
     }

@@ -14,80 +14,19 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\InvalidConfigException;
-use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPriceInfo as PriceSystemIPriceInfo;
+@trigger_error(
+    'Interface Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IPricingManager is deprecated since version 6.0.0 and will be removed in 7.0.0. ' .
+    ' Use ' . PricingManagerInterface::class . ' class instead.',
+    E_USER_DEPRECATED
+);
 
-interface IPricingManager
-{
-    /**
-     * @param PriceSystemIPriceInfo $priceinfo
-     *
-     * @return PriceSystemIPriceInfo
-     */
-    public function applyProductRules(PriceSystemIPriceInfo $priceinfo);
+class_exists(PricingManagerInterface::class);
 
+if(false) {
     /**
-     * @param ICart $cart
-     *
-     * @return IPricingManager
+     * @deprecated use PricingManagerInterface instead.
      */
-    public function applyCartRules(ICart $cart);
-
-    /**
-     * @deprecated as it is never used. Will be removed in Pimcore 6.
-     *
-     * @return IRule
-     */
-    public function getRule();
-
-    /**
-     * Get map from action name to used class
-     *
-     * @return array
-     */
-    public function getActionMapping(): array;
-
-    /**
-     * Get map from condition name to used class
-     *
-     * @return array
-     */
-    public function getConditionMapping(): array;
-
-    /**
-     * Factory
-     *
-     * @param string $type
-     *
-     * @return ICondition
-     *
-     * @throws InvalidConfigException
-     */
-    public function getCondition($type);
-
-    /**
-     * Factory
-     *
-     * @param $type
-     *
-     * @return IAction
-     */
-    public function getAction($type);
-
-    /**
-     * Factory
-     *
-     * @return IEnvironment
-     */
-    public function getEnvironment();
-
-    /**
-     * Wraps price info in pricing manager price info
-     *
-     * @param PriceSystemIPriceInfo $priceInfo
-     *
-     * @return PriceSystemIPriceInfo|IPriceInfo
-     */
-    public function getPriceInfo(PriceSystemIPriceInfo $priceInfo);
+    interface IPricingManager
+    {
+    }
 }

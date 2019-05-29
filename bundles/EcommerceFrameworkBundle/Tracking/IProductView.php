@@ -14,14 +14,20 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\Tracking;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IProduct;
+@trigger_error(
+    'Interface Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\IProductView is deprecated since version 6.0.0 and will be removed in 7.0.0. ' .
+    ' Use ' . ProductViewInterface::class . ' class instead.',
+    E_USER_DEPRECATED
+);
 
-interface IProductView
-{
+class_exists(ProductViewInterface::class);
+
+if(false) {
     /**
-     * Track product view
-     *
-     * @param IProduct $product
+     * @deprecated use ProductViewInterface instead.
      */
-    public function trackProductView(IProduct $product);
+    interface IProductView
+    {
+    }
 }
+

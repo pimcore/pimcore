@@ -15,15 +15,15 @@
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\DefaultMysql as DefaultMysqlWorker;
-use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\IWorker;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IIndexable;
+use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\WorkerInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IndexableInterface;
 
 /**
  * Tenant configuration for a simple mysql product index implementation. It is used by the default tenant.
  *
  * @method DefaultMysqlWorker getTenantWorker()
  */
-class DefaultMysql extends AbstractConfig implements IMysqlConfig
+class DefaultMysql extends AbstractConfig implements MysqlConfigInterface
 {
     /**
      * @return string
@@ -66,11 +66,11 @@ class DefaultMysql extends AbstractConfig implements IMysqlConfig
     }
 
     /**
-     * @param IIndexable $object
+     * @param IndexableInterface $object
      *
      * @return bool
      */
-    public function inIndex(IIndexable $object)
+    public function inIndex(IndexableInterface $object)
     {
         return true;
     }
@@ -78,12 +78,12 @@ class DefaultMysql extends AbstractConfig implements IMysqlConfig
     /**
      * in case of subtenants returns a data structure containing all sub tenants
      *
-     * @param IIndexable $object
+     * @param IndexableInterface $object
      * @param null $subObjectId
      *
      * @return mixed $subTenantData
      */
-    public function prepareSubTenantEntries(IIndexable $object, $subObjectId = null)
+    public function prepareSubTenantEntries(IndexableInterface $object, $subObjectId = null)
     {
         return null;
     }
@@ -121,7 +121,7 @@ class DefaultMysql extends AbstractConfig implements IMysqlConfig
     /**
      * @inheritDoc
      */
-    public function setTenantWorker(IWorker $tenantWorker)
+    public function setTenantWorker(WorkerInterface $tenantWorker)
     {
         if (!$tenantWorker instanceof DefaultMysqlWorker) {
             throw new \InvalidArgumentException(sprintf(

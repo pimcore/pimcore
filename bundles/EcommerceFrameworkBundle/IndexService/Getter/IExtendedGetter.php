@@ -14,12 +14,19 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Getter;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\IConfig;
+@trigger_error(
+    'Interface Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Getter\IExtendedGetter is deprecated since version 6.0.0 and will be removed in 7.0.0. ' .
+    ' Use ' . ExtendedGetterInterface::class . ' class instead.',
+    E_USER_DEPRECATED
+);
 
-/**
- * Interface for getter of product index columns which consider sub object ids and tenant configs
- */
-interface IExtendedGetter extends IGetter
-{
-    public function get($object, $config = null, $subObjectId = null, IConfig $tenantConfig = null);
+class_exists(ExtendedGetterInterface::class);
+
+if(false) {
+    /**
+     * @deprecated use ExtendedGetterInterface instead.
+     */
+    interface IExtendedGetter
+    {
+    }
 }

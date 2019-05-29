@@ -14,9 +14,9 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\ElasticSearch;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Interpreter\IRelationInterpreter;
-use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\IProductList;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IIndexable;
+use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Interpreter\RelationInterpreterInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\ProductListInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IndexableInterface;
 use Pimcore\Logger;
 
 /**
@@ -50,25 +50,25 @@ class DefaultElasticSearch5 extends AbstractElasticSearch
 
     protected function getMappingParams($type = null)
     {
-        if ($type == IProductList::PRODUCT_TYPE_OBJECT) {
+        if ($type == ProductListInterface::PRODUCT_TYPE_OBJECT) {
             $params = [
                 'index' => $this->getIndexNameVersion(),
-                'type' => IProductList::PRODUCT_TYPE_OBJECT,
+                'type' => ProductListInterface::PRODUCT_TYPE_OBJECT,
                 'body' => [
-                    IProductList::PRODUCT_TYPE_OBJECT => [
+                    ProductListInterface::PRODUCT_TYPE_OBJECT => [
                         'properties' => $this->createMappingAttributes()
                     ]
                 ]
             ];
 
             return $params;
-        } elseif ($type == IProductList::PRODUCT_TYPE_VARIANT) {
+        } elseif ($type == ProductListInterface::PRODUCT_TYPE_VARIANT) {
             $params = [
                 'index' => $this->getIndexNameVersion(),
-                'type' => IProductList::PRODUCT_TYPE_VARIANT,
+                'type' => ProductListInterface::PRODUCT_TYPE_VARIANT,
                 'body' => [
-                    IProductList::PRODUCT_TYPE_VARIANT => [
-                        '_parent' => ['type' => IProductList::PRODUCT_TYPE_OBJECT],
+                    ProductListInterface::PRODUCT_TYPE_VARIANT => [
+                        '_parent' => ['type' => ProductListInterface::PRODUCT_TYPE_OBJECT],
                         'properties' => $this->createMappingAttributes()
                     ]
                 ]
@@ -115,7 +115,7 @@ class DefaultElasticSearch5 extends AbstractElasticSearch
             }
         }
 
-        foreach ([IProductList::PRODUCT_TYPE_VARIANT, IProductList::PRODUCT_TYPE_OBJECT] as $mappingType) {
+        foreach ([ProductListInterface::PRODUCT_TYPE_VARIANT, ProductListInterface::PRODUCT_TYPE_OBJECT] as $mappingType) {
             $params = $this->getMappingParams($mappingType);
 
             try {
@@ -164,7 +164,7 @@ class DefaultElasticSearch5 extends AbstractElasticSearch
                 //check, if interpreter is set and if this interpreter is instance of relation interpreter
                 // -> then set type to long
                 if (null !== $attribute->getInterpreter()) {
-                    if ($attribute->getInterpreter() instanceof IRelationInterpreter) {
+                    if ($attribute->getInterpreter() instanceof RelationInterpreterInterface) {
                         $type = 'long';
                         $isRelation = true;
                     }
@@ -211,14 +211,14 @@ class DefaultElasticSearch5 extends AbstractElasticSearch
         return $mappingAttributes;
     }
 
-    protected function doDeleteFromIndex($objectId, IIndexable $object = null)
+    protected function doDeleteFromIndex($objectId, IndexableInterface $object = null)
     {
         $esClient = $this->getElasticSearchClient();
 
         if ($object) {
             try {
                 $params = ['index' => $this->getIndexNameVersion(), 'type' => $object->getOSIndexType(), 'id' => $objectId];
-                if ($object->getOSIndexType() == IProductList::PRODUCT_TYPE_VARIANT) {
+                if ($object->getOSIndexType() == ProductListInterface::PRODUCT_TYPE_VARIANT) {
                     $params['parent'] = $this->tenantConfig->createVirtualParentIdForSubId($object, $objectId);
                 }
                 $esClient->delete($params);
@@ -237,7 +237,7 @@ class DefaultElasticSearch5 extends AbstractElasticSearch
         } else {
             //object is empty so the object does not exist in pimcore any more. therefore it has to be deleted from the index, store table and mockup table
             try {
-                $esClient->delete(['index' => $this->getIndexNameVersion(), 'type' => IProductList::PRODUCT_TYPE_OBJECT, 'id' => $objectId]);
+                $esClient->delete(['index' => $this->getIndexNameVersion(), 'type' => ProductListInterface::PRODUCT_TYPE_OBJECT, 'id' => $objectId]);
             } catch (\Exception $e) {
                 Logger::warn('Could not delete item form ES index: ID: ' . $objectId.' Message: ' . $e->getMessage());
             }
@@ -310,7 +310,7 @@ class DefaultElasticSearch5 extends AbstractElasticSearch
     /**
      * returns product list implementation valid and configured for this worker/tenant
      *
-     * @return IProductList
+     * @return ProductListInterface
      */
     public function getProductList()
     {

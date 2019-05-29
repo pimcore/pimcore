@@ -14,15 +14,15 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\CartManager;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\AvailabilitySystem\IAvailability;
+use Pimcore\Bundle\EcommerceFrameworkBundle\AvailabilitySystem\AvailabilityInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractSetProduct;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractSetProductEntry;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Model\ICheckoutable;
-use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPrice;
-use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPriceInfo;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Model\CheckoutableInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\PriceInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\PriceInfoInterface;
 use Pimcore\Model\DataObject\AbstractObject;
 
-abstract class AbstractCartItem extends \Pimcore\Model\AbstractModel implements ICartItem
+abstract class AbstractCartItem extends \Pimcore\Model\AbstractModel implements CartItemInterface
 {
     /**
      * flag needed for preventing call modified on cart when loading cart from storage
@@ -32,7 +32,7 @@ abstract class AbstractCartItem extends \Pimcore\Model\AbstractModel implements 
     protected $isLoading = false;
 
     /**
-     * @var ICheckoutable
+     * @var CheckoutableInterface
      */
     protected $product;
     protected $productId = null;
@@ -44,7 +44,7 @@ abstract class AbstractCartItem extends \Pimcore\Model\AbstractModel implements 
     protected $subItems = null;
 
     /**
-     * @var ICart
+     * @var CartInterface
      */
     protected $cart;
     protected $cartId;
@@ -73,10 +73,10 @@ abstract class AbstractCartItem extends \Pimcore\Model\AbstractModel implements 
     }
 
     /**
-     * @param ICheckoutable $product
+     * @param CheckoutableInterface $product
      * @param bool $fireModified
      */
-    public function setProduct(ICheckoutable $product, bool $fireModified = true)
+    public function setProduct(CheckoutableInterface $product, bool $fireModified = true)
     {
         if ((empty($product) || $this->productId != $product->getId()) && $this->getCart() && !$this->isLoading && $fireModified) {
             $this->getCart()->modified();
@@ -86,7 +86,7 @@ abstract class AbstractCartItem extends \Pimcore\Model\AbstractModel implements 
     }
 
     /**
-     * @return ICheckoutable
+     * @return CheckoutableInterface
      */
     public function getProduct()
     {
@@ -99,16 +99,16 @@ abstract class AbstractCartItem extends \Pimcore\Model\AbstractModel implements 
     }
 
     /**
-     * @param ICart $cart
+     * @param CartInterface $cart
      */
-    public function setCart(ICart $cart)
+    public function setCart(CartInterface $cart)
     {
         $this->cart = $cart;
         $this->cartId = $cart->getId();
     }
 
     /**
-     * @return ICart
+     * @return CartInterface
      */
     abstract public function getCart();
 
@@ -185,7 +185,7 @@ abstract class AbstractCartItem extends \Pimcore\Model\AbstractModel implements 
     }
 
     /**
-     * @param  \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICartItem[] $subItems
+     * @param  CartItemInterface[] $subItems
      *
      * @return void
      */
@@ -202,17 +202,17 @@ abstract class AbstractCartItem extends \Pimcore\Model\AbstractModel implements 
     }
 
     /**
-     * @return IPrice
+     * @return PriceInterface
      */
-    public function getPrice(): IPrice
+    public function getPrice(): PriceInterface
     {
         return $this->getPriceInfo()->getPrice();
     }
 
     /**
-     * @return IPriceInfo
+     * @return PriceInfoInterface
      */
-    public function getPriceInfo(): IPriceInfo
+    public function getPriceInfo(): PriceInfoInterface
     {
         if ($this->getProduct() instanceof AbstractSetProduct) {
             $priceInfo = $this->getProduct()->getOSPriceInfo($this->getCount(), $this->getSetEntries());
@@ -220,7 +220,7 @@ abstract class AbstractCartItem extends \Pimcore\Model\AbstractModel implements 
             $priceInfo = $this->getProduct()->getOSPriceInfo($this->getCount());
         }
 
-        if ($priceInfo instanceof \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IPriceInfo) {
+        if ($priceInfo instanceof PriceInfoInterface) {
             $priceInfo->getEnvironment()->setCart($this->getCart());
             $priceInfo->getEnvironment()->setCartItem($this);
         }
@@ -229,7 +229,7 @@ abstract class AbstractCartItem extends \Pimcore\Model\AbstractModel implements 
     }
 
     /**
-     * @return IAvailability
+     * @return AvailabilityInterface
      */
     public function getAvailabilityInfo()
     {
@@ -272,9 +272,9 @@ abstract class AbstractCartItem extends \Pimcore\Model\AbstractModel implements 
     }
 
     /**
-     * @return IPrice
+     * @return PriceInterface
      */
-    public function getTotalPrice(): IPrice
+    public function getTotalPrice(): PriceInterface
     {
         return $this->getPriceInfo()->getTotalPrice();
     }

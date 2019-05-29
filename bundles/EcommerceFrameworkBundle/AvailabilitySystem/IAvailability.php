@@ -14,10 +14,20 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\AvailabilitySystem;
 
-interface IAvailability
-{
+
+@trigger_error(
+    'Interface Pimcore\Bundle\EcommerceFrameworkBundle\AvailabilitySystem\IAvailability is deprecated since version 6.0.0 and will be removed in 7.0.0. ' .
+    'Use ' . AvailabilityInterface::class . '  class instead.',
+    E_USER_DEPRECATED
+);
+
+class_exists(AvailabilityInterface::class);
+
+if (false) {
     /**
-     * @return bool
+     * @deprecated use Pimcore\Bundle\EcommerceFrameworkBundle\AvailabilitySystem\AvailabilityInterface instead.
      */
-    public function getAvailable();
+    interface IAvailability
+    {
+    }
 }

@@ -14,31 +14,31 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\AvailabilitySystem\IAvailabilitySystem;
-use Pimcore\Bundle\EcommerceFrameworkBundle\AvailabilitySystem\IAvailabilitySystemLocator;
-use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart;
-use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICartManager;
-use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICartManagerLocator;
-use Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\ICheckoutManager;
-use Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\ICheckoutManagerFactoryLocator;
-use Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\ICommitOrderProcessor;
-use Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\ICommitOrderProcessorLocator;
+use Pimcore\Bundle\EcommerceFrameworkBundle\AvailabilitySystem\AvailabilitySystemInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\AvailabilitySystem\AvailabilitySystemLocatorInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartManagerInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartManagerLocatorInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\CheckoutManagerInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\CheckoutManagerFactoryLocatorInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\CommitOrderProcessorInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\CommitOrderProcessorLocatorInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\DependencyInjection\PimcoreEcommerceFrameworkExtension;
 use Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterService;
-use Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\IFilterServiceLocator;
+use Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterServiceLocatorInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\IndexService;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractVoucherTokenType;
-use Pimcore\Bundle\EcommerceFrameworkBundle\OfferTool\IService;
-use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\IOrderManager;
-use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\IOrderManagerLocator;
-use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\IPaymentManager;
-use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPriceSystem;
-use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPriceSystemLocator;
-use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IPricingManager;
-use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IPricingManagerLocator;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\ITrackingManager;
-use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\IVoucherService;
-use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\TokenManager\ITokenManager;
+use Pimcore\Bundle\EcommerceFrameworkBundle\OfferTool\ServiceInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderManagerInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderManagerLocatorInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\PaymentManagerInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\PriceSystemInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\PriceSystemLocatorInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\PricingManagerInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\PricingManagerLocatorInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\TrackingManagerInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\VoucherServiceInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\TokenManager\TokenManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class Factory
@@ -49,63 +49,63 @@ class Factory
     private $container;
 
     /**
-     * @var IEnvironment
+     * @var EnvironmentInterface
      */
     private $environment;
 
     /**
      * Tenant specific cart managers
      *
-     * @var ICartManagerLocator
+     * @var CartManagerLocatorInterface
      */
     private $cartManagers;
 
     /**
      * Tenant specific order managers
      *
-     * @var IOrderManagerLocator
+     * @var OrderManagerLocatorInterface
      */
     private $orderManagers;
 
     /**
      * Pricing managers registered by tenant
      *
-     * @var IPricingManagerLocator
+     * @var PricingManagerLocatorInterface
      */
     private $pricingManagers;
 
     /**
      * Price systems registered by name
      *
-     * @var IPriceSystemLocator
+     * @var PriceSystemLocatorInterface
      */
     private $priceSystems;
 
     /**
      * Availability systems registered by name
      *
-     * @var IAvailabilitySystemLocator
+     * @var AvailabilitySystemLocatorInterface
      */
     private $availabilitySystems;
 
     /**
      * Checkout manager factories registered by tenant
      *
-     * @var ICheckoutManagerFactoryLocator
+     * @var CheckoutManagerFactoryLocatorInterface
      */
     private $checkoutManagerFactories;
 
     /**
      * Commit order processors registered by tenant
      *
-     * @var ICommitOrderProcessorLocator
+     * @var CommitOrderProcessorLocatorInterface
      */
     private $commitOrderProcessors;
 
     /**
      * Filter services registered by ^tenant
      *
-     * @var IFilterServiceLocator
+     * @var FilterServiceLocatorInterface
      */
     private $filterServices;
 
@@ -115,25 +115,25 @@ class Factory
      * are loaded from the container on demand to make sure only services needed are built.
      *
      * @param ContainerInterface $container
-     * @param ICartManagerLocator $cartManagers
-     * @param IOrderManagerLocator $orderManagers
-     * @param IPricingManagerLocator $pricingManagers
-     * @param IPriceSystemLocator $priceSystems
-     * @param IAvailabilitySystemLocator $availabilitySystems
-     * @param ICheckoutManagerFactoryLocator $checkoutManagerFactories
-     * @param ICommitOrderProcessorLocator $commitOrderProcessors
-     * @param IFilterServiceLocator $filterServices
+     * @param CartManagerLocatorInterface $cartManagers
+     * @param OrderManagerLocatorInterface $orderManagers
+     * @param PricingManagerLocatorInterface $pricingManagers
+     * @param PriceSystemLocatorInterface $priceSystems
+     * @param AvailabilitySystemLocatorInterface $availabilitySystems
+     * @param CheckoutManagerFactoryLocatorInterface $checkoutManagerFactories
+     * @param CommitOrderProcessorLocatorInterface $commitOrderProcessors
+     * @param FilterServiceLocatorInterface $filterServices
      */
     public function __construct(
         ContainerInterface $container,
-        ICartManagerLocator $cartManagers,
-        IOrderManagerLocator $orderManagers,
-        IPricingManagerLocator $pricingManagers,
-        IPriceSystemLocator $priceSystems,
-        IAvailabilitySystemLocator $availabilitySystems,
-        ICheckoutManagerFactoryLocator $checkoutManagerFactories,
-        ICommitOrderProcessorLocator $commitOrderProcessors,
-        IFilterServiceLocator $filterServices
+        CartManagerLocatorInterface $cartManagers,
+        OrderManagerLocatorInterface $orderManagers,
+        PricingManagerLocatorInterface $pricingManagers,
+        PriceSystemLocatorInterface $priceSystems,
+        AvailabilitySystemLocatorInterface $availabilitySystems,
+        CheckoutManagerFactoryLocatorInterface $checkoutManagerFactories,
+        CommitOrderProcessorLocatorInterface $commitOrderProcessors,
+        FilterServiceLocatorInterface $filterServices
     ) {
         $this->container = $container;
         $this->cartManagers = $cartManagers;
@@ -151,7 +151,7 @@ class Factory
         return \Pimcore::getContainer()->get(PimcoreEcommerceFrameworkExtension::SERVICE_ID_FACTORY);
     }
 
-    public function getEnvironment(): IEnvironment
+    public function getEnvironment(): EnvironmentInterface
     {
         return $this->container->get(PimcoreEcommerceFrameworkExtension::SERVICE_ID_ENVIRONMENT);
     }
@@ -162,9 +162,9 @@ class Factory
      *
      * @param string|null $tenant
      *
-     * @return ICartManager
+     * @return CartManagerInterface
      */
-    public function getCartManager(string $tenant = null): ICartManager
+    public function getCartManager(string $tenant = null): CartManagerInterface
     {
         return $this->cartManagers->getCartManager($tenant);
     }
@@ -175,9 +175,9 @@ class Factory
      *
      * @param string|null $tenant
      *
-     * @return IOrderManager
+     * @return OrderManagerInterface
      */
-    public function getOrderManager(string $tenant = null): IOrderManager
+    public function getOrderManager(string $tenant = null): OrderManagerInterface
     {
         return $this->orderManagers->getOrderManager($tenant);
     }
@@ -188,9 +188,9 @@ class Factory
      *
      * @param string|null $tenant
      *
-     * @return IPricingManager
+     * @return PricingManagerInterface
      */
-    public function getPricingManager(string $tenant = null): IPricingManager
+    public function getPricingManager(string $tenant = null): PricingManagerInterface
     {
         return $this->pricingManagers->getPricingManager($tenant);
     }
@@ -200,9 +200,9 @@ class Factory
      *
      * @param string|null $name
      *
-     * @return IPriceSystem
+     * @return PriceSystemInterface
      */
-    public function getPriceSystem(string $name = null): IPriceSystem
+    public function getPriceSystem(string $name = null): PriceSystemInterface
     {
         return $this->priceSystems->getPriceSystem($name);
     }
@@ -212,9 +212,9 @@ class Factory
      *
      * @param string|null $name
      *
-     * @return IAvailabilitySystem
+     * @return AvailabilitySystemInterface
      */
-    public function getAvailabilitySystem(string $name = null): IAvailabilitySystem
+    public function getAvailabilitySystem(string $name = null): AvailabilitySystemInterface
     {
         return $this->availabilitySystems->getAvailabilitySystem($name);
     }
@@ -223,12 +223,12 @@ class Factory
      * Returns checkout manager for a specific tenant. If no tenant is passed it will fall back to the current
      * checkout tenant or to "default" if no current checkout tenant is set.
      *
-     * @param ICart $cart
+     * @param CartInterface $cart
      * @param string|null $tenant
      *
-     * @return ICheckoutManager
+     * @return CheckoutManagerInterface
      */
-    public function getCheckoutManager(ICart $cart, string $tenant = null): ICheckoutManager
+    public function getCheckoutManager(CartInterface $cart, string $tenant = null): CheckoutManagerInterface
     {
         $factory = $this->checkoutManagerFactories->getCheckoutManagerFactory($tenant);
 
@@ -240,14 +240,14 @@ class Factory
      *
      * @param string|null $tenant
      *
-     * @return ICommitOrderProcessor
+     * @return CommitOrderProcessorInterface
      */
-    public function getCommitOrderProcessor(string $tenant = null): ICommitOrderProcessor
+    public function getCommitOrderProcessor(string $tenant = null): CommitOrderProcessorInterface
     {
         return $this->commitOrderProcessors->getCommitOrderProcessor($tenant);
     }
 
-    public function getPaymentManager(): IPaymentManager
+    public function getPaymentManager(): PaymentManagerInterface
     {
         return $this->container->get(PimcoreEcommerceFrameworkExtension::SERVICE_ID_PAYMENT_MANAGER);
     }
@@ -280,12 +280,12 @@ class Factory
         return $this->getIndexService()->getTenants();
     }
 
-    public function getOfferToolService(): IService
+    public function getOfferToolService(): ServiceInterface
     {
         return $this->container->get(PimcoreEcommerceFrameworkExtension::SERVICE_ID_OFFER_TOOL);
     }
 
-    public function getVoucherService(): IVoucherService
+    public function getVoucherService(): VoucherServiceInterface
     {
         return $this->container->get(PimcoreEcommerceFrameworkExtension::SERVICE_ID_VOUCHER_SERVICE);
     }
@@ -295,16 +295,16 @@ class Factory
      *
      * @param AbstractVoucherTokenType $configuration
      *
-     * @return ITokenManager
+     * @return TokenManagerInterface
      */
-    public function getTokenManager(AbstractVoucherTokenType $configuration): ITokenManager
+    public function getTokenManager(AbstractVoucherTokenType $configuration): TokenManagerInterface
     {
         $tokenManagerFactory = $this->container->get(PimcoreEcommerceFrameworkExtension::SERVICE_ID_TOKEN_MANAGER_FACTORY);
 
         return $tokenManagerFactory->getTokenManager($configuration);
     }
 
-    public function getTrackingManager(): ITrackingManager
+    public function getTrackingManager(): TrackingManagerInterface
     {
         return $this->container->get(PimcoreEcommerceFrameworkExtension::SERVICE_ID_TRACKING_MANAGER);
     }

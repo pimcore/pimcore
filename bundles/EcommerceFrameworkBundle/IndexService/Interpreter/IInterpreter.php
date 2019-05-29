@@ -14,7 +14,19 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Interpreter;
 
-interface IInterpreter
-{
-    public function interpret($value, $config = null);
+@trigger_error(
+    'Interface Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Interpreter\IInterpreter is deprecated since version 6.0.0 and will be removed in 7.0.0. ' .
+    ' Use ' . InterpreterInterface::class . ' class instead.',
+    E_USER_DEPRECATED
+);
+
+class_exists(InterpreterInterface::class);
+
+if(false) {
+    /**
+     * @deprecated use InterpreterInterface instead.
+     */
+    interface IInterpreter
+    {
+    }
 }

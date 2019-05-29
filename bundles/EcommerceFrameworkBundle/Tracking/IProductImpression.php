@@ -14,14 +14,19 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\Tracking;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IProduct;
+@trigger_error(
+    'Interface Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\IProductImpression is deprecated since version 6.0.0 and will be removed in 7.0.0. ' .
+    ' Use ' . ProductImpressionInterface::class . ' class instead.',
+    E_USER_DEPRECATED
+);
 
-interface IProductImpression
-{
+class_exists(ProductImpressionInterface::class);
+
+if(false) {
     /**
-     * Track product impression
-     *
-     * @param IProduct $product
+     * @deprecated use ProductImpressionInterface instead.
      */
-    public function trackProductImpression(IProduct $product);
+    interface IProductImpression
+    {
+    }
 }

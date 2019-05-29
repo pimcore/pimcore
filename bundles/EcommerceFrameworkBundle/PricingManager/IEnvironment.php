@@ -14,132 +14,19 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart;
-use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICartItem;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractCategory;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Model\ICheckoutable;
-use Pimcore\Targeting\Model\VisitorInfo;
-use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
+@trigger_error(
+    'Interface Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IEnvironment is deprecated since version 6.0.0 and will be removed in 7.0.0. ' .
+    ' Use ' . EnvironmentInterface::class . ' class instead.',
+    E_USER_DEPRECATED
+);
 
-interface IEnvironment
-{
-    const EXECUTION_MODE_PRODUCT = 'product';
-    const EXECUTION_MODE_CART = 'cart';
+class_exists(EnvironmentInterface::class);
 
+if(false) {
     /**
-     * @param ICart $cart
-     *
-     * @return IEnvironment
+     * @deprecated use EnvironmentInterface instead.
      */
-    public function setCart(ICart $cart);
-
-    /**
-     * @return ICart
-     */
-    public function getCart();
-
-    /**
-     * @param ICartItem $cartItem
-     *
-     * @return IEnvironment
-     */
-    public function setCartItem(ICartItem $cartItem);
-
-    /**
-     * @return ICartItem
-     */
-    public function getCartItem();
-
-    /**
-     * @param ICheckoutable $product
-     *
-     * @return IEnvironment
-     */
-    public function setProduct(ICheckoutable $product);
-
-    /**
-     * @return ICheckoutable
-     */
-    public function getProduct();
-
-    /**
-     * @param VisitorInfo $visitorInfo
-     *
-     * @return IEnvironment
-     */
-    public function setVisitorInfo(VisitorInfo $visitorInfo);
-
-    /**
-     * @return VisitorInfo
-     */
-    public function getVisitorInfo();
-
-    /**
-     * @param IRule $rule
-     *
-     * @return IEnvironment
-     */
-    public function setRule($rule);
-
-    /**
-     * @return IRule
-     */
-    public function getRule();
-
-    /**
-     * @param IPriceInfo $priceInfo
-     *
-     * @return IEnvironment
-     */
-    public function setPriceInfo(IPriceInfo $priceInfo);
-
-    /**
-     * @return IPriceInfo
-     */
-    public function getPriceInfo();
-
-    /**
-     * @param array $categories
-     *
-     * @return IEnvironment
-     */
-    public function setCategories(array $categories);
-
-    /**
-     * @return AbstractCategory[]
-     */
-    public function getCategories();
-
-    /**
-     * @param AttributeBagInterface $namespace
-     *
-     * @return IEnvironment
-     */
-    public function setSession(AttributeBagInterface $namespace);
-
-    /**
-     * @return AttributeBagInterface
-     */
-    public function getSession();
-
-    /**
-     * sets execution mode of system - either product or cart
-     *
-     * @param $executionMode
-     */
-    public function setExecutionMode($executionMode);
-
-    /**
-     * returns in with execution mode the system is - either product or cart
-     *
-     * @return string
-     */
-    public function getExecutionMode();
-
-    /**
-     * returns hash of environment based on its content
-     *
-     * @return string
-     */
-    public function getHash();
+    interface IEnvironment
+    {
+    }
 }

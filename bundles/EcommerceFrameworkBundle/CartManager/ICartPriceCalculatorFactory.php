@@ -17,9 +17,20 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\CartManager;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\IEnvironment;
+@trigger_error(
+    'Interface Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICartPriceCalculatorFactory is deprecated since version 6.0.0 and will be removed in 7.0.0. ' .
+    ' Use ' . CartPriceCalculatorFactoryInterface::class . ' class instead.',
+    E_USER_DEPRECATED
+);
 
-interface ICartPriceCalculatorFactory
-{
-    public function create(IEnvironment $environment, ICart $cart): ICartPriceCalculator;
+class_exists(CartPriceCalculatorFactoryInterface::class);
+
+if(false) {
+    /**
+     * @deprecated use CartPriceCalculatorFactoryInterface instead.
+     */
+    interface ICartPriceCalculatorFactory
+    {
+    }
 }
+

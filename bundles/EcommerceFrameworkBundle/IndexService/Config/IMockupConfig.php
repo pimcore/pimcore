@@ -14,19 +14,20 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config;
 
-/**
- * Interface for IndexService Tenant Configurations with mockup implementations
- */
-interface IMockupConfig
-{
+@trigger_error(
+    'Interface Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\IMockupConfig is deprecated since version 6.0.0 and will be removed in 7.0.0. ' .
+    ' Use ' . MockupConfigInterface::class . ' class instead.',
+    E_USER_DEPRECATED
+);
+
+class_exists(MockupConfigInterface::class);
+
+if(false) {
     /**
-     * creates object mockup for given data
-     *
-     * @param $objectId
-     * @param $data
-     * @param $relations
-     *
-     * @return mixed
+     * @deprecated use MockupConfigInterface instead.
      */
-    public function createMockupObject($objectId, $data, $relations);
+    interface IMockupConfig
+    {
+    }
 }
+

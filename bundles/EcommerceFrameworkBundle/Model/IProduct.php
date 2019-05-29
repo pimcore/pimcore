@@ -14,24 +14,19 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\Model;
 
-/**
- * Interface IProduct
- */
-interface IProduct
-{
-    /**
-     * called by default CommitOrderProcessor to get the product name to store it in the order item
-     * should be overwritten in mapped sub classes of product classes
-     *
-     * @return string
-     */
-    public function getOSName();
+@trigger_error(
+    'Interface Pimcore\Bundle\EcommerceFrameworkBundle\Model\IProduct is deprecated since version 6.0.0 and will be removed in 7.0.0. ' .
+    ' Use ' . ProductInterface::class . ' class instead.',
+    E_USER_DEPRECATED
+);
 
+class_exists(ProductInterface::class);
+
+if(false) {
     /**
-     * called by default CommitOrderProcessor to get the product number to store it in the order item
-     * should be overwritten in mapped sub classes of product classes
-     *
-     * @return string
+     * @deprecated use ProductInterface instead.
      */
-    public function getOSProductNumber();
+    interface IProduct
+    {
+    }
 }

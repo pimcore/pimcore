@@ -14,9 +14,9 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartPriceModificator;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart;
-use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IModificatedPrice;
-use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPrice;
+use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\ModificatedPriceInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\PriceInterface;
 
 /**
  * Interface ICartPriceModificator
@@ -31,10 +31,10 @@ interface ICartPriceModificator
     /**
      * function which modifies the current sub total price
      *
-     * @param IPrice $currentSubTotal - current sub total which is modified and returned
-     * @param ICart $cart - cart
+     * @param PriceInterface $currentSubTotal - current sub total which is modified and returned
+     * @param CartInterface $cart - cart
      *
-     * @return IModificatedPrice
+     * @return ModificatedPriceInterface
      */
-    public function modify(IPrice $currentSubTotal, ICart $cart);
+    public function modify(PriceInterface $currentSubTotal, CartInterface $cart);
 }

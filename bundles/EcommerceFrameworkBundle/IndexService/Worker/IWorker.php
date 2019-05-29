@@ -14,85 +14,19 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\IConfig;
-use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\IProductList;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IIndexable;
+@trigger_error(
+    'Interface Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\IWorker is deprecated since version 6.0.0 and will be removed in 7.0.0. ' .
+    ' Use ' . WorkerInterface::class . ' class instead.',
+    E_USER_DEPRECATED
+);
 
-/**
- * Interface for IndexService workers
- */
-interface IWorker
-{
-    const MULTISELECT_DELIMITER = '#;#';
+class_exists(WorkerInterface::class);
 
+if(false) {
     /**
-     * returns all attributes marked as general search attributes for full text search
-     *
-     * @return array
+     * @deprecated use WorkerInterface instead.
      */
-    public function getGeneralSearchAttributes();
-
-    /**
-     * creates or updates necessary index structures (like database tables and so on)
-     *
-     * @return void
-     */
-    public function createOrUpdateIndexStructures();
-
-    /**
-     * deletes given element from index
-     *
-     * @param IIndexable $object
-     *
-     * @return void
-     */
-    public function deleteFromIndex(IIndexable $object);
-
-    /**
-     * updates given element in index
-     *
-     * @param IIndexable $object
-     *
-     * @return void
-     */
-    public function updateIndex(IIndexable $object);
-
-    /**
-     * returns all index attributes
-     *
-     * @param bool $considerHideInFieldList
-     *
-     * @return array
-     */
-    public function getIndexAttributes($considerHideInFieldList = false);
-
-    /**
-     * returns all filter groups
-     *
-     * @return array
-     */
-    public function getAllFilterGroups();
-
-    /**
-     * retruns all index attributes for a given filter group
-     *
-     * @param string $filterGroup
-     *
-     * @return array
-     */
-    public function getIndexAttributesByFilterGroup($filterGroup);
-
-    /**
-     * returns current tenant configuration
-     *
-     * @return IConfig
-     */
-    public function getTenantConfig();
-
-    /**
-     * returns product list implementation valid and configured for this worker/tenant
-     *
-     * @return IProductList
-     */
-    public function getProductList();
+    interface IWorker
+    {
+    }
 }

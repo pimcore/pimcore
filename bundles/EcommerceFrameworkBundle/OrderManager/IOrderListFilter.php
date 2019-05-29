@@ -14,12 +14,20 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager;
 
-interface IOrderListFilter
-{
+
+@trigger_error(
+    'Interface Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\IOrderListFilter is deprecated since version 6.0.0 and will be removed in 7.0.0. ' .
+    ' Use ' . OrderListFilterInterface::class . ' class instead.',
+    E_USER_DEPRECATED
+);
+
+class_exists(OrderListFilterInterface::class);
+
+if(false) {
     /**
-     * @param IOrderList $orderList
-     *
-     * @return IOrderListFilter
+     * @deprecated use OrderListFilterInterface instead.
      */
-    public function apply(IOrderList $orderList);
+    interface IOrderListFilter
+    {
+    }
 }

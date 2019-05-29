@@ -22,7 +22,7 @@ For setting up an Assortment Tenant, following steps are necessary:
 - **Implementation of a Tenant Config:**
 The Tenant Config class is the central configuration of an assortment tenant, defines which products are available for 
 the tenant and provides the connection to the used *Product Index* implementation. It needs to implement 
-[`Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\IConfig`](https://github.com/pimcore/pimcore/blob/master/bundles/EcommerceFrameworkBundle/IndexService/Config/IConfig.php). 
+[`Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\ConfigInterface`](https://github.com/pimcore/pimcore/blob/master/bundles/EcommerceFrameworkBundle/IndexService/Config/ConfigInterface.php). 
 For detailed information see in-source documentation of the interface. Following implementations are provided by the framework 
 and may be extended:
    - `Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\DefaultMysql`: Provides a simple mysql implementation of 
@@ -42,7 +42,7 @@ attributes. Depending on the *Product Index* implementation, additional configur
 
 
 ### Setting current Assortment Tenant for Frontend
-The [E-Commerce Framework Environment](https://github.com/pimcore/pimcore/blob/master/bundles/EcommerceFrameworkBundle/IEnvironment.php#L22-L22) 
+The [E-Commerce Framework Environment](https://github.com/pimcore/pimcore/blob/master/bundles/EcommerceFrameworkBundle/EnvironmentInterface.php#L22-L22) 
 provides following methods to set the current Assortment Tenant when working with *Product Lists* in Code: 
 ```php
 <?php
@@ -102,7 +102,7 @@ Subtenants are light-weight tenants, which share the same Product Index with the
 assortment tenant.
 The mapping which product is assigned to with subtenant is done with an additional mapping table. The necessary 
 joins and conditions are implemented within additional methods within 
-[`Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\IMysqlConfig`](https://github.com/pimcore/pimcore/blob/master/bundles/EcommerceFrameworkBundle/IndexService/Config/IMysqlConfig.php): 
+[`Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\MysqlConfigInterface`](https://github.com/pimcore/pimcore/blob/master/bundles/EcommerceFrameworkBundle/IndexService/Config/MysqlConfigInterface.php): 
  
 ```php
     /**
@@ -133,7 +133,7 @@ In order to populate the additional mapping data, also following methods have to
     /**
      * in case of subtenants returns a data structure containing all sub tenants
      *
-     * @param IIndexable $object
+     * @param IndexableInterface $object
      * @param null $subObjectId
      *
      * @return mixed $subTenantData

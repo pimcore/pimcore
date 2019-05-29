@@ -17,9 +17,19 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\FilterService;
 
-interface IFilterServiceLocator
-{
-    public function getFilterService(string $tenant = null): FilterService;
+@trigger_error(
+    'Interface Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\IFilterServiceLocator is deprecated since version 6.0.0 and will be removed in 7.0.0. ' .
+    ' Use ' . FilterServiceLocatorInterface::class . ' class instead.',
+    E_USER_DEPRECATED
+);
 
-    public function hasFilterService(string $tenant): bool;
+class_exists(FilterServiceLocatorInterface::class);
+
+if(false) {
+    /**
+     * @deprecated use FilterServiceLocatorInterface instead.
+     */
+    interface IFilterServiceLocator
+    {
+    }
 }

@@ -14,27 +14,27 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart;
-use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICartItem;
+use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartItemInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractCategory;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Model\ICheckoutable;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Model\CheckoutableInterface;
 use Pimcore\Targeting\Model\VisitorInfo;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 
-class Environment implements IEnvironment
+class Environment implements EnvironmentInterface
 {
     /**
-     * @var ICart
+     * @var CartInterface
      */
     protected $cart;
 
     /**
-     * @var ICartItem
+     * @var CartItemInterface
      */
     protected $cartItem;
 
     /**
-     * @var ICheckoutable
+     * @var CheckoutableInterface
      */
     protected $product;
 
@@ -44,12 +44,12 @@ class Environment implements IEnvironment
     protected $visitorInfo;
 
     /**
-     * @var IRule
+     * @var RuleInterface
      */
     protected $rule;
 
     /**
-     * @var IPriceInfo
+     * @var PriceInfoInterface
      */
     protected $priceInfo;
 
@@ -68,14 +68,14 @@ class Environment implements IEnvironment
      *
      * @var string
      */
-    protected $executionMode = IEnvironment::EXECUTION_MODE_PRODUCT;
+    protected $executionMode = EnvironmentInterface::EXECUTION_MODE_PRODUCT;
 
     /**
-     * @param ICart $cart
+     * @param CartInterface $cart
      *
-     * @return IEnvironment
+     * @return EnvironmentInterface
      */
-    public function setCart(ICart $cart)
+    public function setCart(CartInterface $cart)
     {
         $this->cart = $cart;
 
@@ -83,7 +83,7 @@ class Environment implements IEnvironment
     }
 
     /**
-     * @return ICart
+     * @return CartInterface
      */
     public function getCart()
     {
@@ -91,7 +91,7 @@ class Environment implements IEnvironment
     }
 
     /**
-     * @return ICartItem
+     * @return CartItemInterface
      */
     public function getCartItem()
     {
@@ -99,11 +99,11 @@ class Environment implements IEnvironment
     }
 
     /**
-     * @param ICartItem $cartItem
+     * @param CartItemInterface $cartItem
      *
      * @return $this
      */
-    public function setCartItem(ICartItem $cartItem)
+    public function setCartItem(CartItemInterface $cartItem)
     {
         $this->cartItem = $cartItem;
 
@@ -111,11 +111,11 @@ class Environment implements IEnvironment
     }
 
     /**
-     * @param ICheckoutable $product
+     * @param CheckoutableInterface $product
      *
-     * @return IEnvironment
+     * @return EnvironmentInterface
      */
-    public function setProduct(ICheckoutable $product = null)
+    public function setProduct(CheckoutableInterface $product = null)
     {
         $this->product = $product;
 
@@ -123,7 +123,7 @@ class Environment implements IEnvironment
     }
 
     /**
-     * @return ICheckoutable
+     * @return CheckoutableInterface
      */
     public function getProduct()
     {
@@ -133,7 +133,7 @@ class Environment implements IEnvironment
     /**
      * @param VisitorInfo $visitorInfo
      *
-     * @return IEnvironment
+     * @return EnvironmentInterface
      */
     public function setVisitorInfo(VisitorInfo $visitorInfo)
     {
@@ -151,9 +151,9 @@ class Environment implements IEnvironment
     }
 
     /**
-     * @param IRule $rule
+     * @param RuleInterface $rule
      *
-     * @return IEnvironment
+     * @return EnvironmentInterface
      */
     public function setRule($rule)
     {
@@ -163,7 +163,7 @@ class Environment implements IEnvironment
     }
 
     /**
-     * @return IRule
+     * @return RuleInterface
      */
     public function getRule()
     {
@@ -171,11 +171,11 @@ class Environment implements IEnvironment
     }
 
     /**
-     * @param IPriceInfo $priceInfo
+     * @param PriceInfoInterface $priceInfo
      *
-     * @return IEnvironment
+     * @return EnvironmentInterface
      */
-    public function setPriceInfo(IPriceInfo $priceInfo)
+    public function setPriceInfo(PriceInfoInterface $priceInfo)
     {
         $this->priceInfo = $priceInfo;
 
@@ -183,7 +183,7 @@ class Environment implements IEnvironment
     }
 
     /**
-     * @return IPriceInfo
+     * @return PriceInfoInterface
      */
     public function getPriceInfo()
     {
@@ -193,7 +193,7 @@ class Environment implements IEnvironment
     /**
      * @param array $categories
      *
-     * @return IEnvironment
+     * @return EnvironmentInterface
      */
     public function setCategories(array $categories)
     {
@@ -221,7 +221,7 @@ class Environment implements IEnvironment
     /**
      * @param AttributeBagInterface $session
      *
-     * @return IEnvironment
+     * @return EnvironmentInterface
      */
     public function setSession(AttributeBagInterface $session)
     {

@@ -16,9 +16,9 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\DefaultFactFinder as DefaultFactFinderConfig;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\IFactFinderConfig;
+use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\FactFinderConfigInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Interpreter\DefaultRelations;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IIndexable;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IndexableInterface;
 use Pimcore\Db\ConnectionInterface;
 use Pimcore\Logger;
 use Pimcore\Model\DataObject\AbstractObject;
@@ -27,7 +27,7 @@ use Pimcore\Tool\Text;
 /**
  * @property DefaultFactFinderConfig $tenantConfig
  */
-class DefaultFactFinder extends AbstractMockupCacheWorker implements IWorker, IBatchProcessingWorker
+class DefaultFactFinder extends AbstractMockupCacheWorker implements WorkerInterface, BatchProcessingWorkerInterface
 {
     const STORE_TABLE_NAME = 'ecommerceframework_productindex_store_factfinder';
     const MOCKUP_CACHE_PREFIX = 'ecommerce_mockup_factfinder';
@@ -37,7 +37,7 @@ class DefaultFactFinder extends AbstractMockupCacheWorker implements IWorker, IB
      */
     protected $_sqlChangeLog = [];
 
-    public function __construct(IFactFinderConfig $tenantConfig, ConnectionInterface $db)
+    public function __construct(FactFinderConfigInterface $tenantConfig, ConnectionInterface $db)
     {
         parent::__construct($tenantConfig, $db);
     }
@@ -159,11 +159,11 @@ class DefaultFactFinder extends AbstractMockupCacheWorker implements IWorker, IB
     /**
      * deletes given element from index
      *
-     * @param IIndexable $object
+     * @param IndexableInterface $object
      *
      * @return void
      */
-    public function deleteFromIndex(IIndexable $object)
+    public function deleteFromIndex(IndexableInterface $object)
     {
         // TODO: Implement deleteFromIndex() method.
     }
@@ -171,15 +171,15 @@ class DefaultFactFinder extends AbstractMockupCacheWorker implements IWorker, IB
     /**
      * prepare data for index creation and store is in store table
      *
-     * @param IIndexable $object
+     * @param IndexableInterface $object
      */
-    public function prepareDataForIndex(IIndexable $object)
+    public function prepareDataForIndex(IndexableInterface $object)
     {
         $subObjectIds = $this->tenantConfig->createSubIdsForObject($object);
 
         foreach ($subObjectIds as $subObjectId => $object) {
             /**
-             * @var IIndexable $object
+             * @var IndexableInterface $object
              */
             if ($object->getOSDoIndexProduct() && $this->tenantConfig->inIndex($object)) {
                 $a = \Pimcore::inAdmin();
@@ -236,11 +236,11 @@ class DefaultFactFinder extends AbstractMockupCacheWorker implements IWorker, IB
     /**
      * updates given element in index
      *
-     * @param IIndexable $object
+     * @param IndexableInterface $object
      *
      * @return void
      */
-    public function updateIndex(IIndexable $object)
+    public function updateIndex(IndexableInterface $object)
     {
         if (!$this->tenantConfig->isActive($object)) {
             Logger::info("Tenant {$this->name} is not active.");
@@ -293,11 +293,11 @@ class DefaultFactFinder extends AbstractMockupCacheWorker implements IWorker, IB
 
     /**
      * @param $subObjectId
-     * @param IIndexable|null $object
+     * @param IndexableInterface|null $object
      *
      * @return mixed|void
      */
-    protected function doDeleteFromIndex($subObjectId, IIndexable $object = null)
+    protected function doDeleteFromIndex($subObjectId, IndexableInterface $object = null)
     {
     }
 

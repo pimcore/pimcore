@@ -4,7 +4,7 @@ namespace Pimcore\Tests\Ecommerce\PricingManager;
 
 use Codeception\Util\Stub;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartPriceCalculator;
-use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart;
+use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\SessionCart;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractCategory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractProduct;
@@ -15,6 +15,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Condition\CatalogCate
 use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Condition\CatalogProduct;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Condition\DateRange;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Environment;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\EnvironmentInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tools\SessionConfigurator;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
 use Pimcore\Tests\Test\EcommerceTestCase;
@@ -206,7 +207,7 @@ class ConditionTest extends EcommerceTestCase
     }
 
     /**
-     * @return ICart
+     * @return CartInterface
      */
     private function mockCart()
     {
@@ -240,7 +241,7 @@ class ConditionTest extends EcommerceTestCase
          */
         $environment = Stub::make(Environment::class, [
             'getExecutionMode' => function () {
-                return \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IEnvironment::EXECUTION_MODE_PRODUCT;
+                return EnvironmentInterface::EXECUTION_MODE_PRODUCT;
             }
         ]);
 
@@ -258,7 +259,7 @@ class ConditionTest extends EcommerceTestCase
 
         $environment = Stub::make(Environment::class, [
             'getExecutionMode' => function () {
-                return \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IEnvironment::EXECUTION_MODE_PRODUCT;
+                return EnvironmentInterface::EXECUTION_MODE_PRODUCT;
             },
             'getCart' => function () use ($cart) {
                 return $cart;
@@ -270,7 +271,7 @@ class ConditionTest extends EcommerceTestCase
         $mockProduct1 = $this->mockProduct(1);
         $environment = Stub::make(Environment::class, [
             'getExecutionMode' => function () {
-                return \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IEnvironment::EXECUTION_MODE_PRODUCT;
+                return EnvironmentInterface::EXECUTION_MODE_PRODUCT;
             },
             'getCart' => function () use ($cart) {
                 return $cart;
@@ -285,7 +286,7 @@ class ConditionTest extends EcommerceTestCase
         $mockProduct1 = $this->mockProduct(999);
         $environment = Stub::make(Environment::class, [
             'getExecutionMode' => function () {
-                return \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IEnvironment::EXECUTION_MODE_PRODUCT;
+                return EnvironmentInterface::EXECUTION_MODE_PRODUCT;
             },
             'getCart' => function () use ($cart) {
                 return $cart;
@@ -300,7 +301,7 @@ class ConditionTest extends EcommerceTestCase
         $mockProduct1 = $this->mockProduct(1);
         $environment = Stub::make(Environment::class, [
             'getExecutionMode' => function () {
-                return \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IEnvironment::EXECUTION_MODE_CART;
+                return EnvironmentInterface::EXECUTION_MODE_CART;
             },
             'getCart' => function () use ($cart) {
                 return $cart;
@@ -318,7 +319,7 @@ class ConditionTest extends EcommerceTestCase
         $mockProduct1 = $this->mockProduct(1);
         $environment = Stub::make(Environment::class, [
             'getExecutionMode' => function () {
-                return \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IEnvironment::EXECUTION_MODE_CART;
+                return EnvironmentInterface::EXECUTION_MODE_CART;
             },
             'getCart' => function () use ($cart) {
                 return $cart;

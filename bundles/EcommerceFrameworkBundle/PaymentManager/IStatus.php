@@ -14,48 +14,19 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager;
 
-/**
- * Interface IStatus
- */
-interface IStatus
-{
-    const STATUS_PENDING = 'paymentPending';
-    const STATUS_AUTHORIZED = 'paymentAuthorized';
-    const STATUS_CANCELLED = 'cancelled';
-    const STATUS_CLEARED = 'committed';
+@trigger_error(
+    'Interface Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\IStatus is deprecated since version 6.0.0 and will be removed in 7.0.0. ' .
+    ' Use ' . StatusInterface::class . ' class instead.',
+    E_USER_DEPRECATED
+);
 
-    /**
-     * payment reference from payment provider
-     *
-     * @return string
-     */
-    public function getPaymentReference();
+class_exists(StatusInterface::class);
 
+if(false) {
     /**
-     * pimcore internal payment id, necessary to identify payment information in order object
-     *
-     * @return string
+     * @deprecated use StatusInterface instead.
      */
-    public function getInternalPaymentId();
-
-    /**
-     * payment message provided from payment provider - e.g. error message on error
-     *
-     * @return string
-     */
-    public function getMessage();
-
-    /**
-     * internal pimcore order status - see also constants \Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder::ORDER_STATE_*
-     *
-     * @return string
-     */
-    public function getStatus();
-
-    /**
-     * additional payment data
-     *
-     * @return array
-     */
-    public function getData();
+    interface IStatus
+    {
+    }
 }

@@ -15,7 +15,7 @@
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\EventListener;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IIndexable;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IndexableInterface;
 use Pimcore\Event\DataObjectEvents;
 use Pimcore\Event\Model\DataObjectEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -35,7 +35,7 @@ class IndexUpdateListener implements EventSubscriberInterface
     {
         $object = $event->getObject();
 
-        if ($object instanceof IIndexable && (!$event->hasArgument('saveVersionOnly') || !$event->getArgument('saveVersionOnly'))) {
+        if ($object instanceof IndexableInterface && (!$event->hasArgument('saveVersionOnly') || !$event->getArgument('saveVersionOnly'))) {
             $indexService = Factory::getInstance()->getIndexService();
             $indexService->updateIndex($object);
         }
@@ -45,7 +45,7 @@ class IndexUpdateListener implements EventSubscriberInterface
     {
         $object = $event->getObject();
 
-        if ($object instanceof IIndexable) {
+        if ($object instanceof IndexableInterface) {
             $indexService = Factory::getInstance()->getIndexService();
             $indexService->deleteFromIndex($object);
         }

@@ -17,72 +17,19 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\Model\ICheckoutable;
+@trigger_error(
+    'Interface Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPriceInfo is deprecated since version 6.0.0 and will be removed in 7.0.0. ' .
+    ' Use ' . PriceInfoInterface::class . ' class instead.',
+    E_USER_DEPRECATED
+);
 
-/**
- * Interface for PriceInfo implementations of online shop framework
- */
-interface IPriceInfo
-{
-    const MIN_PRICE = 'min';
+class_exists(PriceInfoInterface::class);
 
+if(false) {
     /**
-     * Returns single price
-     *
-     * @return IPrice
+     * @deprecated use PriceInfoInterface instead.
      */
-    public function getPrice(): IPrice;
-
-    /**
-     * Returns total price (single price * quantity)
-     *
-     * @return IPrice
-     */
-    public function getTotalPrice(): IPrice;
-
-    /**
-     * Returns if price is a minimal price (e.g. when having many product variants they might have a from price)
-     *
-     * @return bool
-     */
-    public function isMinPrice(): bool;
-
-    /**
-     * Returns quantity
-     *
-     * @return int|string
-     */
-    public function getQuantity();
-
-    /**
-     * Numeric quantity or constant IPriceInfo::MIN_PRICE
-     *
-     * @param int|string $quantity
-     */
-    public function setQuantity($quantity);
-
-    /**
-     * Relation to price system
-     *
-     * @param IPriceSystem $priceSystem
-     *
-     * @return IPriceInfo
-     */
-    public function setPriceSystem(IPriceSystem $priceSystem);
-
-    /**
-     * Relation to product
-     *
-     * @param ICheckoutable $product
-     *
-     * @return IPriceInfo
-     */
-    public function setProduct(ICheckoutable $product);
-
-    /**
-     * Returns product
-     *
-     * @return ICheckoutable
-     */
-    public function getProduct();
+    interface IPriceInfo
+    {
+    }
 }

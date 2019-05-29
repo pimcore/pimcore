@@ -14,8 +14,19 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Condition;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\ICondition;
+@trigger_error(
+    'Interface Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Condition\ICartProduct is deprecated since version 6.0.0 and will be removed in 7.0.0. ' .
+    ' Use ' . CartProductInterface::class . ' class instead.',
+    E_USER_DEPRECATED
+);
 
-interface ICartProduct extends ICondition
-{
+class_exists(CartProductInterface::class);
+
+if(false) {
+    /**
+     * @deprecated use CartProductInterface instead.
+     */
+    interface ICartProduct
+    {
+    }
 }

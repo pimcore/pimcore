@@ -14,102 +14,19 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
-use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\IStatus;
-use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPrice;
-use Pimcore\Model\DataObject\Listing\Concrete;
+@trigger_error(
+    'Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment\IPayment is deprecated since version 6.0.0 and will be removed in 7.0.0. ' .
+    ' Use ' . PaymentInterface::class . ' class instead.',
+    E_USER_DEPRECATED
+);
 
-/**
- * Interface for checkout payment provider
- */
-interface IPayment
-{
-    /**
-     * @return string
-     */
-    public function getName();
+class_exists(PaymentInterface::class);
 
+if(false) {
     /**
-     * Start payment
-     *
-     * @param IPrice $price
-     * @param array $config
-     *
-     * @return mixed - either an url for a link the user has to follow to (e.g. paypal) or
-     *                 an symfony form builder which needs to submitted (e.g. datatrans and wirecard)
+     * @deprecated use PaymentInterface instead.
      */
-    public function initPayment(IPrice $price, array $config);
-
-    /**
-     * Handles response of payment provider and creates payment status object
-     *
-     * @param IStatus $response
-     *
-     * @return IStatus
-     */
-    public function handleResponse($response);
-
-    /**
-     * Returns the authorized data from payment provider
-     *
-     * @return array
-     */
-    public function getAuthorizedData();
-
-    /**
-     * Set authorized data from payment provider
-     *
-     * @param array $authorizedData
-     */
-    public function setAuthorizedData(array $authorizedData);
-
-    /**
-     * Executes payment
-     *
-     * @param IPrice $price
-     * @param string $reference
-     *
-     * @return IStatus
-     */
-    public function executeDebit(IPrice $price = null, $reference = null);
-
-    /**
-     * Executes credit
-     *
-     * @param IPrice $price
-     * @param string $reference
-     * @param $transactionId
-     *
-     * @return IStatus
-     */
-    public function executeCredit(IPrice $price, $reference, $transactionId);
-
-    /**
-     * Payment supports recurring payment
-     *
-     * @return bool
-     */
-    public function isRecurringPaymentEnabled();
-
-    /**
-     * @param AbstractOrder $sourceOrder
-     * @param $paymentBrick
-     *
-     * @return mixed
-     */
-    public function setRecurringPaymentSourceOrderData(AbstractOrder $sourceOrder, $paymentBrick);
-
-    /**
-     * @param Concrete $orderListing
-     *
-     * @return Concrete
-     */
-    public function applyRecurringPaymentCondition(Concrete $orderListing, $additionalParameters = []);
-
-    /**
-     * returns configuration key in yml configuration file
-     *
-     * @return string
-     */
-    public function getConfigurationKey();
+    interface IPayment
+    {
+    }
 }

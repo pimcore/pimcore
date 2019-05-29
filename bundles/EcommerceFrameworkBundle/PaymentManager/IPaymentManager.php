@@ -17,19 +17,19 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Exception\ProviderNotFoundException;
-use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment\IPayment;
+@trigger_error(
+    'Interface Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\IPaymentManager is deprecated since version 6.0.0 and will be removed in 7.0.0. ' .
+    ' Use ' . PaymentManagerInterface::class . ' class instead.',
+    E_USER_DEPRECATED
+);
 
-interface IPaymentManager
-{
+class_exists(PaymentManagerInterface::class);
+
+if(false) {
     /**
-     * Get a payment provider by name
-     *
-     * @param string $name
-     *
-     * @return Payment\IPayment
-     *
-     * @throws ProviderNotFoundException
+     * @deprecated use PaymentManagerInterface instead.
      */
-    public function getProvider(string $name): IPayment;
+    interface IPaymentManager
+    {
+    }
 }

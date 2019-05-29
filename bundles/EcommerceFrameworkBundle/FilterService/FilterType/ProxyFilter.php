@@ -14,7 +14,7 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\IProductList;
+use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\ProductListInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractFilterDefinitionType;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Traits\OptionsResolverTrait;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -74,7 +74,7 @@ class ProxyFilter extends AbstractFilterType
 
     public function getFilterFrontend(
         AbstractFilterDefinitionType $filterDefinition,
-        IProductList $productList,
+        ProductListInterface $productList,
         $currentFilter
     ) {
         $filterDefinition->field = $this->field;
@@ -84,7 +84,7 @@ class ProxyFilter extends AbstractFilterType
 
     public function addCondition(
         AbstractFilterDefinitionType $filterDefinition,
-        IProductList $productList,
+        ProductListInterface $productList,
         $currentFilter,
         $params,
         $isPrecondition = false

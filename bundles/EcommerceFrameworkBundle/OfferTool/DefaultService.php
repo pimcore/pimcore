@@ -14,14 +14,14 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\OfferTool;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart;
-use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICartItem;
+use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartItemInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
 use Pimcore\Model\DataObject\Folder;
 use Pimcore\Model\DataObject\Service;
 
-class DefaultService implements IService
+class DefaultService implements ServiceInterface
 {
     /**
      * @var string
@@ -76,12 +76,12 @@ class DefaultService implements IService
     }
 
     /**
-     * @param ICart $cart
-     * @param ICartItem[] $excludeItems
+     * @param CartInterface $cart
+     * @param CartItemInterface[] $excludeItems
      *
      * @return AbstractOffer
      */
-    public function createNewOfferFromCart(ICart $cart, array $excludeItems = [])
+    public function createNewOfferFromCart(CartInterface $cart, array $excludeItems = [])
     {
         $tempOfferNumber = uniqid('offer_');
         $offer = $this->getNewOfferObject($tempOfferNumber);
@@ -151,12 +151,12 @@ class DefaultService implements IService
     }
 
     /**
-     * @param ICartItem $item
+     * @param CartItemInterface $item
      * @param $parent
      *
      * @return AbstractOfferItem
      */
-    protected function createOfferItem(ICartItem $item, $parent)
+    protected function createOfferItem(CartItemInterface $item, $parent)
     {
         $offerItem = $this->getNewOfferItemObject();
         $offerItem->setParent($parent);
@@ -202,7 +202,7 @@ class DefaultService implements IService
         return $offerItem;
     }
 
-    protected function updateOfferItem(ICartItem $cartItem, AbstractOfferItem $offerItem)
+    protected function updateOfferItem(CartItemInterface $cartItem, AbstractOfferItem $offerItem)
     {
         $offerItem->setAmount($cartItem->getCount());
         $offerItem->setProduct($cartItem->getProduct());
@@ -275,7 +275,7 @@ class DefaultService implements IService
         return $offer;
     }
 
-    public function updateOfferFromCart(AbstractOffer $offer, ICart $cart, array $excludeItems = [], $save = true)
+    public function updateOfferFromCart(AbstractOffer $offer, CartInterface $cart, array $excludeItems = [], $save = true)
     {
         $excludedItemKeys = $this->getExcludedItemKeys($excludeItems);
 
@@ -333,7 +333,7 @@ class DefaultService implements IService
             $totalPrice = $totalPrice->add(Decimal::create($item->getFinalTotalPrice()));
         }
 
-        if ($offer->getDiscountType() === IService::DISCOUNT_TYPE_PERCENT) {
+        if ($offer->getDiscountType() === ServiceInterface::DISCOUNT_TYPE_PERCENT) {
             $discount = $totalPrice->toPercentage($offer->getDiscount());
         } else {
             $discount = Decimal::create($offer->getDiscount());
@@ -345,7 +345,7 @@ class DefaultService implements IService
         return $offer;
     }
 
-    public function getOffersForCart(ICart $cart)
+    public function getOffersForCart(CartInterface $cart)
     {
         $offerListClass = $this->offerClass . '\Listing';
         $list = new $offerListClass();

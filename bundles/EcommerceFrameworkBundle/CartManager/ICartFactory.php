@@ -17,11 +17,19 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\CartManager;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\IEnvironment;
+@trigger_error(
+    'Interface Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICartFactory is deprecated since version 6.0.0 and will be removed in 7.0.0. ' .
+    ' Use ' . CartFactoryInterface::class . ' class instead.',
+    E_USER_DEPRECATED
+);
 
-interface ICartFactory
-{
-    public function getCartClassName(IEnvironment $environment): string;
+class_exists(CartFactoryInterface::class);
 
-    public function create(IEnvironment $environment, string $name, string $id = null, array $options = []): ICart;
+if(false) {
+    /**
+     * @deprecated use CartFactoryInterface instead.
+     */
+    interface ICartFactory
+    {
+    }
 }

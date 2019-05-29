@@ -17,26 +17,26 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart;
-use Pimcore\Bundle\EcommerceFrameworkBundle\IEnvironment;
-use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\IOrderManagerLocator;
-use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment\IPayment;
+use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\EnvironmentInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderManagerLocatorInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment\PaymentInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class CheckoutManagerFactory implements ICheckoutManagerFactory
+class CheckoutManagerFactory implements CheckoutManagerFactoryInterface
 {
     /**
-     * @var IEnvironment
+     * @var EnvironmentInterface
      */
     protected $environment;
 
     /**
-     * @var IOrderManagerLocator
+     * @var OrderManagerLocatorInterface
      */
     protected $orderManagers;
 
     /**
-     * @var ICommitOrderProcessorLocator
+     * @var CommitOrderProcessorLocatorInterface
      */
     protected $commitOrderProcessors;
 
@@ -48,12 +48,12 @@ class CheckoutManagerFactory implements ICheckoutManagerFactory
     protected $checkoutStepDefinitions = [];
 
     /**
-     * @var IPayment
+     * @var PaymentInterface
      */
     protected $paymentProvider;
 
     /**
-     * @var ICheckoutManager[]
+     * @var CheckoutManagerInterface[]
      */
     protected $checkoutManagers = [];
 
@@ -63,11 +63,11 @@ class CheckoutManagerFactory implements ICheckoutManagerFactory
     protected $className = CheckoutManager::class;
 
     public function __construct(
-        IEnvironment $environment,
-        IOrderManagerLocator $orderManagers,
-        ICommitOrderProcessorLocator $commitOrderProcessors,
+        EnvironmentInterface $environment,
+        OrderManagerLocatorInterface $orderManagers,
+        CommitOrderProcessorLocatorInterface $commitOrderProcessors,
         array $checkoutStepDefinitions,
-        IPayment $paymentProvider = null,
+        PaymentInterface $paymentProvider = null,
         array $options = []
     ) {
         $this->environment = $environment;
@@ -122,7 +122,7 @@ class CheckoutManagerFactory implements ICheckoutManagerFactory
         $resolver->setAllowedTypes('class', 'string');
     }
 
-    public function createCheckoutManager(ICart $cart): ICheckoutManager
+    public function createCheckoutManager(CartInterface $cart): CheckoutManagerInterface
     {
         $cartId = $cart->getId();
 
@@ -149,7 +149,7 @@ class CheckoutManagerFactory implements ICheckoutManagerFactory
         return $this->checkoutManagers[$cartId];
     }
 
-    protected function buildCheckoutStep(ICart $cart, array $checkoutStepDefinition): ICheckoutStep
+    protected function buildCheckoutStep(CartInterface $cart, array $checkoutStepDefinition): CheckoutStepInterface
     {
         $className = $checkoutStepDefinition['class'];
 

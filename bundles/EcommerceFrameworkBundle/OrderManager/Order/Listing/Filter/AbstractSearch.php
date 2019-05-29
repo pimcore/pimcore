@@ -14,15 +14,15 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\Order\Listing\Filter;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\IOrderList;
-use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\IOrderListFilter;
+use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderListInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderListFilterInterface;
 
 /**
  * Base filter for LIKE queries. For simple queries you'll just
  * need to override the getConditionColumn() method and return
  * the query part coming before LIKE.
  */
-abstract class AbstractSearch implements IOrderListFilter
+abstract class AbstractSearch implements OrderListFilterInterface
 {
     /**
      * Search value
@@ -57,11 +57,11 @@ abstract class AbstractSearch implements IOrderListFilter
     }
 
     /**
-     * @param IOrderList $orderList
+     * @param OrderListInterface $orderList
      *
-     * @return IOrderListFilter
+     * @return OrderListInterfaceFilter
      */
-    public function apply(IOrderList $orderList)
+    public function apply(OrderListInterface $orderList)
     {
         if (empty($this->value)) {
             return $orderList;
@@ -80,9 +80,9 @@ abstract class AbstractSearch implements IOrderListFilter
     /**
      * Override if necessary (e.g. join a table)
      *
-     * @param IOrderList $orderList
+     * @param OrderListInterface $orderList
      */
-    protected function prepareApply(IOrderList $orderList)
+    protected function prepareApply(OrderListInterface $orderList)
     {
     }
 }

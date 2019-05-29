@@ -14,10 +14,10 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Condition;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\ICondition;
-use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IEnvironment;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\ConditionInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\EnvironmentInterface;
 
-class Token implements ICondition
+class Token implements ConditionInterface
 {
     /**
      * @var string
@@ -25,11 +25,11 @@ class Token implements ICondition
     protected $token;
 
     /**
-     * @param IEnvironment $environment
+     * @param EnvironmentInterface $environment
      *
      * @return bool
      */
-    public function check(IEnvironment $environment)
+    public function check(EnvironmentInterface $environment)
     {
         $token = $environment->getSession()->get('token');
 
@@ -52,7 +52,7 @@ class Token implements ICondition
     /**
      * @param string $string
      *
-     * @return ICondition
+     * @return ConditionInterface
      */
     public function fromJSON($string)
     {

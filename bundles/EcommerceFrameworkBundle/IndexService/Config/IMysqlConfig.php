@@ -14,52 +14,19 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config;
 
-/**
- * Interface for IndexService Tenant Configurations using mysql as index
- */
-interface IMysqlConfig extends IConfig
-{
-    /**
-     * returns table name of product index
-     *
-     * @return string
-     */
-    public function getTablename();
+@trigger_error(
+    'Interface Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\IMysqlConfig is deprecated since version 6.0.0 and will be removed in 7.0.0. ' .
+    ' Use ' . MysqlConfigInterface::class . ' class instead.',
+    E_USER_DEPRECATED
+);
 
-    /**
-     * returns table name of product index reations
-     *
-     * @return string
-     */
-    public function getRelationTablename();
+class_exists(MysqlConfigInterface::class);
 
+if(false) {
     /**
-     * return table name of product index tenant relations for subtenants
-     *
-     * @return string
+     * @deprecated use MysqlConfigInterface instead.
      */
-    public function getTenantRelationTablename();
-
-    /**
-     * return join statement in case of subtenants
-     *
-     * @return string
-     */
-    public function getJoins();
-
-    /**
-     * returns additional condition in case of subtenants
-     *
-     * @return string
-     */
-    public function getCondition();
-
-    /**
-     * returns column type for id
-     *
-     * @param $isPrimary
-     *
-     * @return string
-     */
-    public function getIdColumnType($isPrimary);
+    interface IMysqlConfig
+    {
+    }
 }

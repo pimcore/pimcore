@@ -14,21 +14,21 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart;
+use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\UnsupportedException;
-use Pimcore\Bundle\EcommerceFrameworkBundle\IEnvironment;
+use Pimcore\Bundle\EcommerceFrameworkBundle\EnvironmentInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
-use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\IOrderManagerLocator;
+use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderManagerLocatorInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\Order\Agent;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderManager;
-use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\IStatus;
-use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment\IPayment;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\StatusInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment\PaymentInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment\QPay;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\Price;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
 use Pimcore\Model\DataObject\Fieldcollection\Data\PaymentInfo;
 
-class CheckoutManager implements ICheckoutManager
+class CheckoutManager implements CheckoutManagerInterface
 {
     /**
      * Constants for custom environment item names for persisting state of checkout
@@ -40,48 +40,48 @@ class CheckoutManager implements ICheckoutManager
     const TRACK_ECOMMERCE_UNIVERSAL = 'checkout_trackecommerce_universal';
 
     /**
-     * @var ICart
+     * @var CartInterface
      */
     protected $cart;
 
     /**
-     * @var IEnvironment
+     * @var EnvironmentInterface
      */
     protected $environment;
 
     /**
-     * @var IOrderManagerLocator
+     * @var OrderManagerLocatorInterface
      */
     protected $orderManagers;
 
     /**
-     * @var ICommitOrderProcessorLocator
+     * @var CommitOrderProcessorLocatorInterface
      */
     protected $commitOrderProcessors;
 
     /**
      * Payment Provider
      *
-     * @var IPayment
+     * @var PaymentInterface
      */
     protected $payment;
 
     /**
      * Needed for effective access to one specific checkout step
      *
-     * @var ICheckoutStep[]
+     * @var CheckoutStepInterface[]
      */
     protected $checkoutSteps = [];
 
     /**
      * Needed for preserving order of checkout steps
      *
-     * @var ICheckoutStep[]
+     * @var CheckoutStepInterface[]
      */
     protected $checkoutStepOrder = [];
 
     /**
-     * @var ICheckoutStep
+     * @var CheckoutStepInterface
      */
     protected $currentStep;
 
@@ -96,20 +96,20 @@ class CheckoutManager implements ICheckoutManager
     protected $paid = true;
 
     /**
-     * @param ICart $cart
-     * @param IEnvironment $environment
-     * @param IOrderManagerLocator $orderManagers
-     * @param ICommitOrderProcessorLocator $commitOrderProcessors
-     * @param ICheckoutStep[] $checkoutSteps
-     * @param IPayment|null $paymentProvider
+     * @param CartInterface $cart
+     * @param EnvironmentInterface $environment
+     * @param OrderManagerLocatorInterface $orderManagers
+     * @param CommitOrderProcessorLocatorInterface $commitOrderProcessors
+     * @param CheckoutStepInterface[] $checkoutSteps
+     * @param PaymentInterface|null $paymentProvider
      */
     public function __construct(
-        ICart $cart,
-        IEnvironment $environment,
-        IOrderManagerLocator $orderManagers,
-        ICommitOrderProcessorLocator $commitOrderProcessors,
+        CartInterface $cart,
+        EnvironmentInterface $environment,
+        OrderManagerLocatorInterface $orderManagers,
+        CommitOrderProcessorLocatorInterface $commitOrderProcessors,
         array $checkoutSteps,
-        IPayment $paymentProvider = null
+        PaymentInterface $paymentProvider = null
     ) {
         $this->cart = $cart;
         $this->environment = $environment;
@@ -123,7 +123,7 @@ class CheckoutManager implements ICheckoutManager
     }
 
     /**
-     * @param ICheckoutStep[] $checkoutSteps
+     * @param CheckoutStepInterface[] $checkoutSteps
      */
     protected function setCheckoutSteps(array $checkoutSteps)
     {
@@ -138,7 +138,7 @@ class CheckoutManager implements ICheckoutManager
         $this->initializeStepState();
     }
 
-    protected function addCheckoutStep(ICheckoutStep $checkoutStep)
+    protected function addCheckoutStep(CheckoutStepInterface $checkoutStep)
     {
         $this->checkoutStepOrder[] = $checkoutStep;
         $this->checkoutSteps[$checkoutStep->getName()] = $checkoutStep;
@@ -324,12 +324,12 @@ class CheckoutManager implements ICheckoutManager
     /**
      * Verifies if the payment provider is supported for recurring payment
      *
-     * @param IPayment $provider
+     * @param PaymentInterface $provider
      * @param AbstractOrder $sourceOrder
      *
      * @throws \Exception
      */
-    protected function verifyRecurringPayment(IPayment $provider, AbstractOrder $sourceOrder, string $customerId)
+    protected function verifyRecurringPayment(PaymentInterface $provider, AbstractOrder $sourceOrder, string $customerId)
     {
 
         /* @var OrderManager $orderManager */
@@ -394,7 +394,7 @@ class CheckoutManager implements ICheckoutManager
     /**
      * @inheritdoc
      */
-    public function commitOrderPayment(IStatus $status, AbstractOrder $sourceOrder = null)
+    public function commitOrderPayment(StatusInterface $status, AbstractOrder $sourceOrder = null)
     {
         $this->validateCheckoutSteps();
 
@@ -585,7 +585,7 @@ class CheckoutManager implements ICheckoutManager
     /**
      * @inheritdoc
      */
-    public function commitStep(ICheckoutStep $step, $data)
+    public function commitStep(CheckoutStepInterface $step, $data)
     {
         $this->validateCheckoutSteps();
 

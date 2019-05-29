@@ -15,13 +15,13 @@
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\Order;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\AbstractOrderList;
-use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\IOrderList;
-use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\IOrderListFilter;
+use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderListInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderListFilterInterface;
 use Pimcore\Db;
 use Pimcore\Model\DataObject\OnlineShopOrder;
 use Pimcore\Model\DataObject\OnlineShopOrderItem;
 
-class Listing extends AbstractOrderList implements IOrderList
+class Listing extends AbstractOrderList implements OrderListInterface
 {
     /**
      * @var Db\ZendCompatibility\QueryBuilder
@@ -29,7 +29,7 @@ class Listing extends AbstractOrderList implements IOrderList
     protected $query;
 
     /**
-     * @var IOrderListFilter[]
+     * @var OrderListFilterInterface[]
      */
     protected $filter = [];
 
@@ -41,7 +41,7 @@ class Listing extends AbstractOrderList implements IOrderList
     /**
      * @param string $type
      *
-     * @return IOrderList
+     * @return OrderListInterface
      */
     public function setListType($type)
     {
@@ -326,11 +326,11 @@ SUBQUERY
     }
 
     /**
-     * @param IOrderListFilter $filter
+     * @param OrderListFilterInterface $filter
      *
      * @return $this
      */
-    public function addFilter(IOrderListFilter $filter)
+    public function addFilter(OrderListFilterInterface $filter)
     {
         $this->filter[] = $filter;
         $filter->apply($this);

@@ -19,7 +19,7 @@ use Pimcore\Bundle\AdminBundle\Security\User\TokenStorageUserResolver;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrderItem;
-use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\IOrderManager;
+use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderManagerInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\Order\Listing\Filter\OrderDateTime;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\Order\Listing\Filter\OrderSearch;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\Order\Listing\Filter\ProductType;
@@ -49,7 +49,7 @@ class AdminOrderController extends AdminController implements EventedControllerI
     use TemplateControllerTrait;
 
     /**
-     * @var IOrderManager
+     * @var OrderManagerInterface
      */
     protected $orderManager;
 

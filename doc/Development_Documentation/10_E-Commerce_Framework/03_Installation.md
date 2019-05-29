@@ -35,8 +35,8 @@ There are two ways of preparing a Pimcore class for product-usage in the E-Comme
    * This is useful, when both product index and checkout functionality are based on the E-Commerce Framework.    
    
    
-2. Make sure that the Pimcore class implements either `\Pimcore\Bundle\EcommerceFrameworkBundle\Model\IIndexable` or 
-`\Pimcore\Bundle\EcommerceFrameworkBundle\Model\ICheckoutable` - or both, depending on the use case it is used for.
+2. Make sure that the Pimcore class implements either `\Pimcore\Bundle\EcommerceFrameworkBundle\Model\IndexableInterface` or 
+`\Pimcore\Bundle\EcommerceFrameworkBundle\Model\CheckoutableInterface` - or both, depending on the use case it is used for.
    * This is useful, when e.g. only checkout functionality is based on the E-Commerce Framework, but not the product 
    presentation. 
    * The interfaces define methods that are needed for the two use cases and need to be implemented. 

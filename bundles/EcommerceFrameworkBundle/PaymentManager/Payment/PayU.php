@@ -17,9 +17,9 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment;
 use GuzzleHttp\Client;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\Currency;
-use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\IStatus;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\StatusInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Status;
-use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPrice;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\PriceInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\Price;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
 use Pimcore\Model\DataObject\OnlineShopOrder;
@@ -125,14 +125,14 @@ class PayU extends AbstractPayment
     }
 
     /**
-     * @param IPrice $price
+     * @param PriceInterface $price
      * @param array $config
      *
      * @return mixed|string
      *
      * @throws \Exception
      */
-    public function initPayment(IPrice $price, array $config)
+    public function initPayment(PriceInterface $price, array $config)
     {
         $required = [
             'extOrderId',
@@ -253,7 +253,7 @@ class PayU extends AbstractPayment
      *
      * @param mixed $response
      *
-     * @return IStatus
+     * @return StatusInterface
      *
      * @throws \Exception
      */
@@ -312,7 +312,7 @@ class PayU extends AbstractPayment
     /**
      * @inheritdoc
      */
-    public function executeDebit(IPrice $price = null, $response = null)
+    public function executeDebit(PriceInterface $price = null, $response = null)
     {
         /** @var OnlineShopOrder $order */
         $order = $response['order'];
@@ -343,7 +343,7 @@ class PayU extends AbstractPayment
     /**
      * @inheritdoc
      */
-    public function executeCredit(IPrice $price, $reference, $transactionId)
+    public function executeCredit(PriceInterface $price, $reference, $transactionId)
     {
         // TODO: Implement executeCredit() method.
         throw new \Exception('not implemented');

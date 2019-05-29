@@ -18,12 +18,12 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\UnsupportedException;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Model\ICheckoutable;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Model\CheckoutableInterface;
 
-class AbstractPriceInfo implements IPriceInfo
+class AbstractPriceInfo implements PriceInfoInterface
 {
     /**
-     * @var IPriceSystem
+     * @var PriceSystemInterface
      */
     private $priceSystem;
 
@@ -33,12 +33,12 @@ class AbstractPriceInfo implements IPriceInfo
     protected $quantity;
 
     /**
-     * @var ICheckoutable
+     * @var CheckoutableInterface
      */
     protected $product;
 
     /**
-     * @var ICheckoutable[]
+     * @var CheckoutableInterface[]
      */
     protected $products;
 
@@ -77,13 +77,13 @@ class AbstractPriceInfo implements IPriceInfo
     /**
      * @inheritdoc
      */
-    public function setPriceSystem(IPriceSystem $priceSystem)
+    public function setPriceSystem(PriceSystemInterface $priceSystem)
     {
         $this->priceSystem = $priceSystem;
     }
 
     /**
-     * @return IPriceSystem
+     * @return PriceSystemInterface
      */
     protected function getPriceSystem()
     {
@@ -93,7 +93,7 @@ class AbstractPriceInfo implements IPriceInfo
     /**
      * @inheritdoc
      */
-    public function getPrice(): IPrice
+    public function getPrice(): PriceInterface
     {
         throw new UnsupportedException(__METHOD__ . ' is not supported for ' . get_class($this));
     }
@@ -101,7 +101,7 @@ class AbstractPriceInfo implements IPriceInfo
     /**
      * @inheritdoc
      */
-    public function getTotalPrice(): IPrice
+    public function getTotalPrice(): PriceInterface
     {
         throw new UnsupportedException(__METHOD__ . ' is not supported for ' . get_class($this));
     }
@@ -109,7 +109,7 @@ class AbstractPriceInfo implements IPriceInfo
     /**
      * @inheritdoc
      */
-    public function setProduct(ICheckoutable $product)
+    public function setProduct(CheckoutableInterface $product)
     {
         $this->product = $product;
     }

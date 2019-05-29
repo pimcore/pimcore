@@ -14,25 +14,19 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Action;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractProduct;
-use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IAction;
+@trigger_error(
+    'Interface Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Action\IGift is deprecated since version 6.0.0 and will be removed in 7.0.0. ' .
+    ' Use ' . GiftInterface::class . ' class instead.',
+    E_USER_DEPRECATED
+);
 
-/**
- * Adds a gift product to the given cart
- */
-interface IGift extends IAction
-{
-    /**
-     * Set gift product
-     *
-     * @param AbstractProduct $product
-     *
-     * @return IGift
-     */
-    public function setProduct(AbstractProduct $product);
+class_exists(GiftInterface::class);
 
+if(false) {
     /**
-     * @return AbstractProduct
+     * @deprecated use GiftInterface instead.
      */
-    public function getProduct();
+    interface IGift
+    {
+    }
 }

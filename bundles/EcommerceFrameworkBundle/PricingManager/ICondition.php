@@ -14,24 +14,19 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager;
 
-interface ICondition
-{
-    /**
-     * @param IEnvironment $environment
-     *
-     * @return bool
-     */
-    public function check(IEnvironment $environment);
+@trigger_error(
+    'Interface Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\ICondition is deprecated since version 6.0.0 and will be removed in 7.0.0. ' .
+    ' Use ' . ConditionInterface::class . ' class instead.',
+    E_USER_DEPRECATED
+);
 
-    /**
-     * @return string
-     */
-    public function toJSON();
+class_exists(ConditionInterface::class);
 
+if(false) {
     /**
-     * @param string $string
-     *
-     * @return ICondition
+     * @deprecated use ConditionInterface instead.
      */
-    public function fromJSON($string);
+    interface ICondition
+    {
+    }
 }

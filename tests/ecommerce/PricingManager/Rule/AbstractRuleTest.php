@@ -12,21 +12,21 @@ use Codeception\Util\Stub;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartPriceCalculator;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartPriceModificator\IShipping;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartPriceModificator\Shipping;
-use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart;
+use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\SessionCart;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractProduct;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\Currency;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Model\ICheckoutable;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Model\CheckoutableInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\AttributePriceInfo;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\AttributePriceSystem;
-use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPrice;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\PriceInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\Price;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\TaxManagement\TaxEntry;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Condition\Bracket;
-use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IAction;
-use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\ICondition;
-use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IPricingManager;
-use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IRule;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\ActionInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\ConditionInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\PricingManagerInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\RuleInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\PricingManager;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\PricingManagerLocator;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Rule;
@@ -39,7 +39,7 @@ use Pimcore\Tests\Test\EcommerceTestCase;
 class AbstractRuleTest extends EcommerceTestCase
 {
     /**
-     * @return IPricingManager
+     * @return PricingManagerInterface
      *
      * @throws \Codeception\Exception\ModuleException
      */
@@ -72,7 +72,7 @@ class AbstractRuleTest extends EcommerceTestCase
     /**
      * @param $value
      *
-     * @return IPrice
+     * @return PriceInterface
      *
      * @throws \TypeError
      */
@@ -82,11 +82,11 @@ class AbstractRuleTest extends EcommerceTestCase
     }
 
     /**
-     * @param ICart $cart
+     * @param CartInterface $cart
      *
      * @return CartPriceCalculator
      */
-    protected function buildCartCalculator(ICart $cart, IPricingManager $pricingManager, $withModificators = false)
+    protected function buildCartCalculator(CartInterface $cart, PricingManagerInterface $pricingManager, $withModificators = false)
     {
         $calculator = new CartPriceCalculator($this->buildEnvironment(), $cart);
 
@@ -101,9 +101,9 @@ class AbstractRuleTest extends EcommerceTestCase
     }
 
     /**
-     * @return ICart
+     * @return CartInterface
      */
-    protected function setUpCart(IPricingManager $pricingManager, $withModificators = false)
+    protected function setUpCart(PricingManagerInterface $pricingManager, $withModificators = false)
     {
         $sessionBag = $this->buildSession()->getBag(SessionConfigurator::ATTRIBUTE_BAG_CART);
 
@@ -130,11 +130,11 @@ class AbstractRuleTest extends EcommerceTestCase
      * @param array $taxes
      * @param string $combinationType
      *
-     * @return ICheckoutable
+     * @return CheckoutableInterface
      *
      * @throws \TypeError
      */
-    protected function setUpProduct(int $id, float $grossPrice, IPricingManager $pricingManager = null, $categories = [], $taxes = [], $combinationType = TaxEntry::CALCULATION_MODE_COMBINE): ICheckoutable
+    protected function setUpProduct(int $id, float $grossPrice, PricingManagerInterface $pricingManager = null, $categories = [], $taxes = [], $combinationType = TaxEntry::CALCULATION_MODE_COMBINE): CheckoutableInterface
     {
         $grossPrice = Decimal::create($grossPrice);
 
@@ -282,7 +282,7 @@ class AbstractRuleTest extends EcommerceTestCase
     /**
      * @param $actionDefinitions
      *
-     * @return IAction[]
+     * @return ActionInterface[]
      */
     protected function buildActions($definitions)
     {
@@ -307,11 +307,11 @@ class AbstractRuleTest extends EcommerceTestCase
     /**
      * @param $conditionDefinitions
      *
-     * @return ICondition
+     * @return ConditionInterface
      */
     protected function buildConditions($conditionDefinitions)
     {
-        if ($conditionDefinitions instanceof ICondition) {
+        if ($conditionDefinitions instanceof ConditionInterface) {
             return $conditionDefinitions;
         }
 
@@ -345,7 +345,7 @@ class AbstractRuleTest extends EcommerceTestCase
     /**
      * @param $ruleDefinitions
      *
-     * @return IRule[]
+     * @return RuleInterface[]
      */
     protected function buildRules($ruleDefinitions)
     {

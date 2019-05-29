@@ -17,9 +17,20 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem;
 
-interface IPriceSystemLocator
-{
-    public function getPriceSystem(string $name = null): IPriceSystem;
+@trigger_error(
+    'Interface Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPriceSystemLocator is deprecated since version 6.0.0 and will be removed in 7.0.0. ' .
+    ' Use ' . PriceSystemLocatorInterface::class . ' class instead.',
+    E_USER_DEPRECATED
+);
 
-    public function hasPriceSystem(string $name): bool;
+class_exists(PriceSystemLocatorInterface::class);
+
+if(false) {
+    /**
+     * @deprecated use PriceSystemLocatorInterface instead.
+     */
+    interface IPriceSystemLocator
+    {
+    }
 }
+

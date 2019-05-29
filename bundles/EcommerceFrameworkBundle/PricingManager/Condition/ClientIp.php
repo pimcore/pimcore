@@ -14,10 +14,10 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Condition;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\ICondition;
-use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IEnvironment;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\ConditionInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\EnvironmentInterface;
 
-class ClientIp implements ICondition
+class ClientIp implements ConditionInterface
 {
     /**
      * @var int
@@ -25,11 +25,11 @@ class ClientIp implements ICondition
     protected $ip;
 
     /**
-     * @param IEnvironment $environment
+     * @param EnvironmentInterface $environment
      *
      * @return bool
      */
-    public function check(IEnvironment $environment)
+    public function check(EnvironmentInterface $environment)
     {
         $clientIp = $_SERVER['HTTP_X_FORWARDED_FOR'] ?: $_SERVER['REMOTE_ADDR'];
 
@@ -52,7 +52,7 @@ class ClientIp implements ICondition
     /**
      * @param string $string
      *
-     * @return ICondition
+     * @return ConditionInterface
      */
     public function fromJSON($string)
     {

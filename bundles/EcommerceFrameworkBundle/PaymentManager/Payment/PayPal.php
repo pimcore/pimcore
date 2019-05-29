@@ -16,9 +16,9 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\Currency;
-use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\IStatus;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\StatusInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Status;
-use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPrice;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\PriceInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\Price;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
 use Pimcore\Model\DataObject\Fieldcollection\Data\OrderPriceModifications;
@@ -138,7 +138,7 @@ class PayPal extends AbstractPayment
     /**
      * Start payment
      *
-     * @param IPrice $price
+     * @param PriceInterface $price
      * @param array $config
      *
      * @return string
@@ -147,7 +147,7 @@ class PayPal extends AbstractPayment
      *
      * @link https://devtools-paypal.com/apiexplorer/PayPalAPIs
      */
-    public function initPayment(IPrice $price, array $config)
+    public function initPayment(PriceInterface $price, array $config)
     {
         // check params
         $required = [
@@ -210,7 +210,7 @@ class PayPal extends AbstractPayment
      *
      * @param mixed $response
      *
-     * @return IStatus
+     * @return StatusInterface
      *
      * @throws \Exception
      */
@@ -272,7 +272,7 @@ class PayPal extends AbstractPayment
     /**
      * @inheritdoc
      */
-    public function executeDebit(IPrice $price = null, $reference = null)
+    public function executeDebit(PriceInterface $price = null, $reference = null)
     {
         // Execute payment
         $x = new \stdClass;
@@ -326,21 +326,21 @@ class PayPal extends AbstractPayment
     /**
      * @inheritdoc
      */
-    public function executeCredit(IPrice $price, $reference, $transactionId)
+    public function executeCredit(PriceInterface $price, $reference, $transactionId)
     {
         // TODO: Implement executeCredit() method.
         throw new \Exception('not implemented');
     }
 
     /**
-     * @param IPrice $price
+     * @param PriceInterface $price
      * @param null|AbstractOrder $order
      *
      * @return \stdClass
      *
      * @throws \Pimcore\Bundle\EcommerceFrameworkBundle\Exception\UnsupportedException
      */
-    protected function createPaymentDetails(IPrice $price, ?AbstractOrder $order)
+    protected function createPaymentDetails(PriceInterface $price, ?AbstractOrder $order)
     {
         // create order total
         $paymentDetails = new \stdClass();

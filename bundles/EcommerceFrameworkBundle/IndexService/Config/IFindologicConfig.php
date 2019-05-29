@@ -14,33 +14,19 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\DefaultFindologic as DefaultFindologicWorker;
+@trigger_error(
+    'Interface Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\IFindologicConfig is deprecated since version 6.0.0 and will be removed in 7.0.0. ' .
+    ' Use ' . FindologicConfigInterface::class . ' class instead.',
+    E_USER_DEPRECATED
+);
 
-/**
- * Interface for IndexService Tenant Configurations using findologic as index
- */
-interface IFindologicConfig extends IConfig
-{
-    /**
-     * returns factfinder client parameters defined in the tenant config
-     *
-     * @param string $setting
-     *
-     * @return array|string
-     */
-    public function getClientConfig($setting = null);
+class_exists(FindologicConfigInterface::class);
 
+if(false) {
     /**
-     * returns condition for current subtenant
-     *
-     * @return string
+     * @deprecated use FindologicConfigInterface instead.
      */
-    public function getSubTenantCondition();
-
-    /**
-     * creates and returns tenant worker suitable for this tenant configuration
-     *
-     * @return DefaultFindologicWorker
-     */
-    public function getTenantWorker();
+    interface IFindologicConfig
+    {
+    }
 }

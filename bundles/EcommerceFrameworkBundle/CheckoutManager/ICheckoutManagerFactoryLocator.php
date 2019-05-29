@@ -17,9 +17,19 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager;
 
-interface ICheckoutManagerFactoryLocator
-{
-    public function getCheckoutManagerFactory(string $tenant = null): ICheckoutManagerFactory;
+@trigger_error(
+    'Interface Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\ICheckoutManagerFactoryLocator is deprecated since version 6.0.0 and will be removed in 7.0.0. ' .
+    ' Use ' . CheckoutManagerFactoryLocatorInterface::class . ' class instead.',
+    E_USER_DEPRECATED
+);
 
-    public function hasCheckoutManagerFactory(string $tenant): bool;
+class_exists(CheckoutManagerFactoryLocatorInterface::class);
+
+if(false) {
+    /**
+     * @deprecated use CheckoutManagerFactoryLocatorInterface instead.
+     */
+    interface ICheckoutManagerFactoryLocator
+    {
+    }
 }

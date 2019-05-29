@@ -22,7 +22,7 @@ use Pimcore\Localization\LocaleServiceInterface;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
-class SessionEnvironment extends Environment implements IEnvironment
+class SessionEnvironment extends Environment implements EnvironmentInterface
 {
     const SESSION_KEY_CUSTOM_ITEMS = 'customitems';
     const SESSION_KEY_USERID = 'userid';

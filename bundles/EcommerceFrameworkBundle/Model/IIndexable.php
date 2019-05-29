@@ -14,71 +14,19 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\Model;
 
-/**
- * Class IIndexable
- */
-interface IIndexable
-{
-    /**
-     * @return int
-     */
-    public function getId();
+@trigger_error(
+    'Interface Pimcore\Bundle\EcommerceFrameworkBundle\Model\IIndexable is deprecated since version 6.0.0 and will be removed in 7.0.0. ' .
+    ' Use ' . IndexableInterface::class . ' class instead.',
+    E_USER_DEPRECATED
+);
 
-    /**
-     * defines if product is included into the product index. If false, product doesn't appear in product index.
-     *
-     * @return bool
-     */
-    public function getOSDoIndexProduct();
+class_exists(IndexableInterface::class);
 
+if(false) {
     /**
-     * defines the name of the price system for this product.
-     * there should either be a attribute in pro product object or
-     * it should be overwritten in mapped sub classes of product classes
-     *
-     * @return string
+     * @deprecated use IndexableInterface instead.
      */
-    public function getPriceSystemName();
-
-    /**
-     * returns if product is active.
-     * there should either be a attribute in pro product object or
-     * it should be overwritten in mapped sub classes of product classes in case of multiple criteria for product active state
-     *
-     * @param bool $inProductList
-     *
-     * @return bool
-     */
-    public function isActive($inProductList = false);
-
-    /**
-     * returns product type for product index (either object or variant).
-     * by default it returns type of object, but it may be overwritten if necessary.
-     *
-     * @return string
-     */
-    public function getOSIndexType();
-
-    /**
-     * returns parent id for product index.
-     * by default it returns id of parent object, but it may be overwritten if necessary.
-     *
-     * @return int
-     */
-    public function getOSParentId();
-
-    /**
-     * returns array of categories.
-     * has to be overwritten either in pimcore object or mapped sub class.
-     *
-     * @return \Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractCategory[]
-     */
-    public function getCategories();
-
-    /**
-     * returns the class id of the object
-     *
-     * @return string
-     */
-    public function getClassId();
+    interface IIndexable
+    {
+    }
 }

@@ -14,18 +14,22 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\Model;
 
+use Pimcore\Bundle\EcommerceFrameworkBundle\AvailabilitySystem\AvailabilityInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\AvailabilitySystem\AvailabilitySystemInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\UnsupportedException;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\AbstractPriceInfo;
-use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPriceInfo;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\PriceInfoInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\PriceInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\PriceSystemInterface;
 
 /**
  * Abstract base class for pimcore objects who should be used as products in the online shop framework
  */
-class AbstractProduct extends \Pimcore\Model\DataObject\Concrete implements IProduct, IIndexable, ICheckoutable
+class AbstractProduct extends \Pimcore\Model\DataObject\Concrete implements ProductInterface, IndexableInterface, CheckoutableInterface
 {
     // =============================================
-    //     IIndexable Methods
+    //     IndexableInterface Methods
     //  =============================================
 
     /**
@@ -104,7 +108,7 @@ class AbstractProduct extends \Pimcore\Model\DataObject\Concrete implements IPro
     }
 
     // =============================================
-    //     ICheckoutable Methods
+    //     CheckoutableInterface Methods
     //  =============================================
 
     /**
@@ -164,7 +168,7 @@ class AbstractProduct extends \Pimcore\Model\DataObject\Concrete implements IPro
     /**
      * returns instance of price system implementation based on result of getPriceSystemName()
      *
-     * @return \Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPriceSystem
+     * @return PriceSystemInterface
      */
     public function getPriceSystemImplementation()
     {
@@ -174,7 +178,7 @@ class AbstractProduct extends \Pimcore\Model\DataObject\Concrete implements IPro
     /**
      * returns instance of availability system implementation based on result of getAvailabilitySystemName()
      *
-     * @return \Pimcore\Bundle\EcommerceFrameworkBundle\AvailabilitySystem\IAvailabilitySystem
+     * @return AvailabilitySystemInterface
      */
     public function getAvailabilitySystemImplementation()
     {
@@ -186,7 +190,7 @@ class AbstractProduct extends \Pimcore\Model\DataObject\Concrete implements IPro
      *
      * @param int $quantityScale
      *
-     * @return \Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPrice
+     * @return PriceInterface
      */
     public function getOSPrice($quantityScale = 1)
     {
@@ -199,7 +203,7 @@ class AbstractProduct extends \Pimcore\Model\DataObject\Concrete implements IPro
      *
      * @param int $quantityScale
      *
-     * @return IPriceInfo|AbstractPriceInfo
+     * @return PriceInfoInterface|AbstractPriceInfo
      */
     public function getOSPriceInfo($quantityScale = 1)
     {
@@ -211,7 +215,7 @@ class AbstractProduct extends \Pimcore\Model\DataObject\Concrete implements IPro
      *
      * @param int $quantity
      *
-     * @return \Pimcore\Bundle\EcommerceFrameworkBundle\AvailabilitySystem\IAvailability
+     * @return AvailabilityInterface
      */
     public function getOSAvailabilityInfo($quantity = null)
     {

@@ -14,14 +14,19 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\Tracking;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart;
+@trigger_error(
+    'Interface Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\ICartUpdate is deprecated since version 6.0.0 and will be removed in 7.0.0. ' .
+    ' Use ' . CartUpdateInterface::class . ' class instead.',
+    E_USER_DEPRECATED
+);
 
-interface ICartUpdate
-{
+class_exists(CartUpdateInterface::class);
+
+if(false) {
     /**
-     * Track a cart update
-     *
-     * @param ICart $cart
+     * @deprecated use CartUpdateInterface instead.
      */
-    public function trackCartUpdate(ICart $cart);
+    interface ICartUpdate
+    {
+    }
 }

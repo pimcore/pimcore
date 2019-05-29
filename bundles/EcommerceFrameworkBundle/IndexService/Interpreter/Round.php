@@ -14,7 +14,7 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Interpreter;
 
-class Round implements IInterpreter
+class Round implements InterpreterInterface
 {
     public function interpret($value, $config = null)
     {

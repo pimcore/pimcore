@@ -14,7 +14,7 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Rule;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IRule;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\RuleInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Rule;
 
 /**
@@ -24,7 +24,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Rule;
 class Listing extends \Pimcore\Model\Listing\AbstractListing
 {
     /**
-     * @var IRule[]
+     * @var RuleInterface[]
      */
     protected $rules;
 
@@ -52,7 +52,7 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing
     }
 
     /**
-     * @return IRule[]
+     * @return RuleInterface[]
      */
     public function getRules()
     {
@@ -65,7 +65,7 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing
     }
 
     /**
-     * @param IRule[] $rules
+     * @param RuleInterface[] $rules
      *
      * @return void
      */

@@ -14,10 +14,10 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart;
-use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\IStatus;
+use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\StatusInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Status;
-use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPrice;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\PriceInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class Klarna extends AbstractPayment
@@ -100,15 +100,15 @@ class Klarna extends AbstractPayment
     /**
      * Start payment
      *
-     * @param IPrice $price
+     * @param PriceInterface $price
      * @param array $config
-     * @param ICart  $cart
+     * @param CartInterface  $cart
      *
      * @return string
      *
      * @throws \Exception
      */
-    public function initPayment(IPrice $price, array $config, ICart $cart = null)
+    public function initPayment(PriceInterface $price, array $config, CartInterface $cart = null)
     {
         // check params
         $required = [
@@ -168,7 +168,7 @@ class Klarna extends AbstractPayment
         $order->fetch();
 
         $statMap = [
-            'checkout_complete' => IStatus::STATUS_AUTHORIZED, 'created' => IStatus::STATUS_CLEARED
+            'checkout_complete' => StatusInterface::STATUS_AUTHORIZED, 'created' => StatusInterface::STATUS_CLEARED
         ];
 
         return new Status(
@@ -177,7 +177,7 @@ class Klarna extends AbstractPayment
             $order['status'],
             array_key_exists($order['status'], $statMap)
                 ? $statMap[$order['status']]
-                : IStatus::STATUS_CANCELLED,
+                : StatusInterface::STATUS_CANCELLED,
             [
                 'klarna_amount' => $order['cart']['total_price_including_tax'],
                 'klarna_marshal' => json_encode($order->marshal()),
@@ -206,7 +206,7 @@ class Klarna extends AbstractPayment
     /**
      * @inheritdoc
      */
-    public function executeDebit(IPrice $price = null, $reference = null)
+    public function executeDebit(PriceInterface $price = null, $reference = null)
     {
         if ($price) {
             // TODO or not ?
@@ -228,8 +228,8 @@ class Klarna extends AbstractPayment
                 $order['id'],
                 $order['status'],
                 $order['status'] == 'created'
-                    ? IStatus::STATUS_CLEARED
-                    : IStatus::STATUS_CANCELLED,
+                    ? StatusInterface::STATUS_CLEARED
+                    : StatusInterface::STATUS_CANCELLED,
                 [
                     'klarna_amount' => $order['cart']['total_price_including_tax'],
                     'klarna_marshal' => json_encode($order->marshal())
@@ -241,17 +241,17 @@ class Klarna extends AbstractPayment
     /**
      * Executes credit
      *
-     * @param IPrice $price
+     * @param PriceInterface $price
      * @param string $reference
      * @param $transactionId
      *
-     * @return IStatus
+     * @return StatusInterface
      *
      * @throws \Exception
      *
      * @see http://developers.klarna.com/en/at+php/kco-v2/order-management-api#introduction
      */
-    public function executeCredit(IPrice $price, $reference, $transactionId)
+    public function executeCredit(PriceInterface $price, $reference, $transactionId)
     {
         // TODO: Implement executeCredit() method.
         throw new \Exception('not implemented');
