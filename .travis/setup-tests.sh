@@ -20,6 +20,7 @@ echo "Starting Install-Script"
 
 # checkout skeleton
 git clone https://github.com/pimcore/skeleton.git /tmp/www
+git -C /tmp/www/ checkout v1.3.0
 
 # remove .git folder so that composer merge plugin makes symlink correctly
 rm -r -f ~/build/pimcore/pimcore/.git
