@@ -98,10 +98,7 @@ class Dao extends Model\Dao\AbstractDao
         foreach ($fieldDefinitions as $key => $fd) {
             $getter = 'get' . ucfirst($fd->getName());
 
-            if ($fd instanceof CustomResourcePersistingInterface || method_exists($fd, 'save')) {
-                if (!$fd instanceof CustomResourcePersistingInterface) {
-                    Tool::triggerMissingInterfaceDeprecation(get_class($fd), 'save', CustomResourcePersistingInterface::class);
-                }
+            if ($fd instanceof CustomResourcePersistingInterface) {
                 if ((!isset($params['newParent']) || !$params['newParent']) && isset($params['isUpdate']) && $params['isUpdate'] && !DataObject\AbstractObject::isDirtyDetectionDisabled() && $this->model instanceof DataObject\DirtyIndicatorInterface) {
                     // ownerNameList contains the dirty stuff
                     if ($fd instanceof DataObject\ClassDefinition\Data\Relations\AbstractRelations && !in_array($db->quote($key), $dirtyRelations)) {
@@ -119,10 +116,7 @@ class Dao extends Model\Dao\AbstractDao
                         ]
                     ]));
             }
-            if ($fd instanceof ResourcePersistenceAwareInterface || method_exists($fd, 'getDataForResource')) {
-                if (!$fd instanceof ResourcePersistenceAwareInterface) {
-                    Tool::triggerMissingInterfaceDeprecation(get_class($fd), 'getDataForResource', ResourcePersistenceAwareInterface::class);
-                }
+            if ($fd instanceof ResourcePersistenceAwareInterface) {
                 if (is_array($fd->getColumnType())) {
                     $insertDataArray = $fd->getDataForResource($this->model->$getter(), $object, [
                         'context' => $this->model //\Pimcore\Model\DataObject\Objectbrick\Data\Dao
@@ -165,11 +159,7 @@ class Dao extends Model\Dao\AbstractDao
         }
 
         foreach ($fieldDefinitions as $key => $fd) {
-            if ($fd instanceof QueryResourcePersistenceAwareInterface || method_exists($fd, 'getDataForQueryResource')) {
-                if (!$fd instanceof QueryResourcePersistenceAwareInterface) {
-                    Tool::triggerMissingInterfaceDeprecation(get_class($fd), 'getDataForQueryResource', QueryResourcePersistenceAwareInterface::class);
-                }
-
+            if ($fd instanceof QueryResourcePersistenceAwareInterface) {
                 $method = 'get' . $key;
                 $fieldValue = $this->model->$method();
                 $insertData = $fd->getDataForQueryResource($fieldValue, $object);
@@ -305,10 +295,7 @@ class Dao extends Model\Dao\AbstractDao
                     continue;
                 }
 
-                if ($fd instanceof QueryResourcePersistenceAwareInterface || method_exists($fd, 'getDataForQueryResource')) {
-                    if (!$fd instanceof QueryResourcePersistenceAwareInterface) {
-                        Tool::triggerMissingInterfaceDeprecation(get_class($fd), 'getDataForQueryResource', QueryResourcePersistenceAwareInterface::class);
-                    }
+                if ($fd instanceof QueryResourcePersistenceAwareInterface) {
                     //exclude untouchables if value is not an array - this means data has not been loaded
                     //get changed fields for inheritance
                     if ($fd instanceof DataObject\ClassDefinition\Data\CalculatedValue) {
@@ -325,10 +312,7 @@ class Dao extends Model\Dao\AbstractDao
                         }
                     }
 
-                    if ($fd instanceof CustomResourcePersistingInterface || method_exists($fd, 'delete')) {
-                        if (!$fd instanceof CustomResourcePersistingInterface) {
-                            Tool::triggerMissingInterfaceDeprecation(get_class($fd), 'delete', CustomResourcePersistingInterface::class);
-                        }
+                    if ($fd instanceof CustomResourcePersistingInterface) {
                         $fd->delete($object);
                     }
                 }

@@ -64,11 +64,7 @@ class Dao extends Model\DataObject\Fieldcollection\Dao
                 $brick->setObject($object);
 
                 foreach ($fieldDefinitions as $key => $fd) {
-                    if ($fd instanceof CustomResourcePersistingInterface || method_exists($fd, 'load')) {
-                        if (!$fd instanceof CustomResourcePersistingInterface) {
-                            Tool::triggerMissingInterfaceDeprecation(get_class($fd), 'load', CustomResourcePersistingInterface::class);
-                        }
-
+                    if ($fd instanceof CustomResourcePersistingInterface) {
                         $doLoad = true;
 
                         if ($fd instanceof  DataObject\ClassDefinition\Data\Relations\AbstractRelations) {
@@ -93,10 +89,7 @@ class Dao extends Model\DataObject\Fieldcollection\Dao
                             }
                         }
                     }
-                    if ($fd instanceof ResourcePersistenceAwareInterface || method_exists($fd, 'getDataFromResource')) {
-                        if (!$fd instanceof ResourcePersistenceAwareInterface) {
-                            Tool::triggerMissingInterfaceDeprecation(get_class($fd), 'getDataFromResource', ResourcePersistenceAwareInterface::class);
-                        }
+                    if ($fd instanceof ResourcePersistenceAwareInterface) {
                         if (is_array($fd->getColumnType())) {
                             $multidata = [];
                             foreach ($fd->getColumnType() as $fkey => $fvalue) {
