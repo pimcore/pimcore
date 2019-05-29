@@ -25,7 +25,7 @@ class_exists(Relations::class);
 
 if (false) {
     /**
-     * @deprecated use \Pimcore\Model\Document\Tag\Relation instead
+     * @deprecated use \Pimcore\Model\Document\Tag\Relations instead
      */
     class Multihref extends Relations {
 
