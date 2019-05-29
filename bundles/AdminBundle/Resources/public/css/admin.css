@@ -1416,11 +1416,8 @@ span.warning {
 
 #pimcore_panel_tabs > .x-tab-bar .x-box-scroller-tab-bar-default {
     color: #fff;
-    background-color: #0C0F12;
-}
-
-#pimcore_panel_tabs > .x-tab-bar .x-box-scroller-body-horizontal {
-    margin-left: 24px;
+    background: #0C0F12;
+    z-index: 1000;
 }
 
 #pimcore_panel_tabs > .x-panel-body > .x-tabpanel-child {
