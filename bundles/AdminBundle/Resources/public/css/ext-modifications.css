@@ -128,6 +128,7 @@
 
 .x-tree-icon {
     width: 24px;
+    background-size: 24px;
 }
 
 .x-btn-icon-el, .x-tab-icon-el {
@@ -303,9 +304,20 @@ body > .x-mask {
     margin-bottom: 10px;
 }
 
-.x-btn-icon .x-btn-icon-el {
+.x-btn-default-toolbar-medium .x-btn-icon .x-btn-icon-el,
+.x-btn-default-toolbar-small .x-btn-icon .x-btn-icon-el,
+.x-btn-default-small .x-btn-icon .x-btn-icon-el  {
     width: 24px;
     height: 24px;
+}
+
+.x-btn.x-btn-default-toolbar-small,
+.x-btn.x-btn-default-small {
+    padding: 3px;
+}
+
+.x-btn.x-btn-default-toolbar-medium {
+    padding: 6px;
 }
 
 .x-tip-header-default {
