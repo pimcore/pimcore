@@ -773,8 +773,8 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
                     'containerKey' => $container->getType(),
                 ];
                 $lf->setContext($context);
-            } else if ($container instanceof DataObject\Concrete) {
-                $context = ["object" => $container];
+            } elseif ($container instanceof DataObject\Concrete) {
+                $context = ['object' => $container];
                 $lf->setContext($context);
             }
             $lf->setObject($object);

@@ -153,8 +153,8 @@ class Dao extends Model\DataObject\AbstractObject\Dao
                 }
                 // datafield has it's own loader
                 $params = [
-                    "context" => [
-                        "object" => $this->model
+                    'context' => [
+                        'object' => $this->model
                         ]
                 ];
                 $value = $value->load($this->model, $params);
