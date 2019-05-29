@@ -25,8 +25,8 @@ use Pimcore\Event\Admin\IndexSettingsEvent;
 use Pimcore\Event\AdminEvents;
 use Pimcore\FeatureToggles\Features\DevMode;
 use Pimcore\Google;
+use Pimcore\Maintenance\ExecutorInterface;
 use Pimcore\Model\Element\Service;
-use Pimcore\Model\Schedule\Manager\Procedural;
 use Pimcore\Model\User;
 use Pimcore\Templating\Model\ViewModel;
 use Pimcore\Tool;
@@ -375,18 +375,14 @@ class IndexController extends AdminController
 
     /**
      * @param ViewModel $settings
-     *
+     * @param ExecutorInterface $maintenanceExecutor
      * @return $this
      */
-    protected function addMaintenanceSettings(ViewModel $settings)
+    protected function addMaintenanceSettings(ViewModel $settings, ExecutorInterface $maintenanceExecutor)
     {
         // check maintenance
         $maintenance_active = false;
-
-        $manager = $this->get(Procedural::class);
-
-        $lastExecution = $manager->getLastExecution();
-        if ($lastExecution) {
+        if ($lastExecution = $maintenanceExecutor->getLastExecution()) {
             if ((time() - $lastExecution) < 3660) { // maintenance script should run at least every hour + a little tolerance
                 $maintenance_active = true;
             }
