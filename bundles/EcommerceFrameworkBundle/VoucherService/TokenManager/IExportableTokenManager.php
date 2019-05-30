@@ -22,7 +22,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\TokenManager;
 
 class_exists(ExportableTokenManagerInterface::class);
 
-if(false) {
+if (false) {
     /**
      * @deprecated use ExportableTokenManagerInterface instead.
      */

@@ -22,7 +22,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager;
 
 class_exists(ActionInterface::class);
 
-if(false) {
+if (false) {
     /**
      * @deprecated use ActionInterface instead.
      */

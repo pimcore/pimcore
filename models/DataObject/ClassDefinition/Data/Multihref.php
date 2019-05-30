@@ -14,7 +14,6 @@
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
-
 @trigger_error(
     'Data-type `\Pimcore\Model\DataObject\ClassDefinition\Data\Multihref` is deprecated since version 6.0.0 and will be removed in 7.0.0. ' .
     'Use `' . ManyToManyRelation::class . '` instead.',
@@ -27,7 +26,7 @@ if (false) {
     /**
      * @deprecated use \Pimcore\Model\DataObject\ClassDefinition\Data\ManyToManyRelation instead
      */
-    class Multihref extends ManyToManyRelation {
-
+    class Multihref extends ManyToManyRelation
+    {
     }
 }

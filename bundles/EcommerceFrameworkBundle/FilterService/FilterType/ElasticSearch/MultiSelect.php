@@ -58,8 +58,8 @@ class MultiSelect extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService
             }
 
             $attributeConfig = $productList->getTenantConfig()->getAttributeConfig()[$field];
-            if($attributeConfig['type'] == 'boolean'){
-                foreach($quotedValues as $k => $v){
+            if ($attributeConfig['type'] == 'boolean') {
+                foreach ($quotedValues as $k => $v) {
                     $quotedValues[$k] = (bool)$v;
                 }
             }

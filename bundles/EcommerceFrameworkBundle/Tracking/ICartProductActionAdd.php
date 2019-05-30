@@ -22,7 +22,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\Tracking;
 
 class_exists(CartProductActionAddInterface::class);
 
-if(false) {
+if (false) {
     /**
      * @deprecated use CartProductActionAddInterface instead.
      */

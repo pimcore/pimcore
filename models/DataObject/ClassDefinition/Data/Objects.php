@@ -14,7 +14,6 @@
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
-
 @trigger_error(
     'Data-type `Pimcore\Model\DataObject\ClassDefinition\Data\Objects` is deprecated since version 6.0.0 and will be removed in 7.0.0. ' .
     'Use `' . ManyToManyObjectRelation::class . '` instead.',
@@ -27,7 +26,7 @@ if (false) {
     /**
      * @deprecated use \Pimcore\Model\DataObject\ClassDefinition\Data\ManyToManyObjectRelation instead
      */
-    class Objects extends ManyToManyObjectRelation {
-
+    class Objects extends ManyToManyObjectRelation
+    {
     }
 }

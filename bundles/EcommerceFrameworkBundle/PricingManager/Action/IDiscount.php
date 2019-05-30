@@ -22,7 +22,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Action;
 
 class_exists(DiscountInterface::class);
 
-if(false) {
+if (false) {
     /**
      * @deprecated use DiscountInterface instead.
      */

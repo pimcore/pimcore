@@ -22,7 +22,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Condition;
 
 class_exists(CartAmountInterface::class);
 
-if(false) {
+if (false) {
     /**
      * @deprecated use CartAmountInterface instead.
      */

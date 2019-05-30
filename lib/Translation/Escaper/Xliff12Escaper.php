@@ -49,7 +49,6 @@ class Xliff12Escaper
             $parts = explode('>', $match);
             $parts[0] .= '>';
             foreach ($parts as $part) {
-
                 if (!empty(trim($part))) {
                     if (preg_match("/<([a-z0-9\/]+)/", $part, $tag)) {
                         $tagName = str_replace('/', '', $tag[1]);

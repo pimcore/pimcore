@@ -14,7 +14,6 @@
 
 namespace Pimcore\Model\Document\Tag;
 
-
 @trigger_error(
     'Tag `Href` is deprecated since version 6.0.0 and will be removed in 7.0.0. ' .
     'Use `Relation` instead.',
@@ -27,7 +26,7 @@ if (false) {
     /**
      * @deprecated use \Pimcore\Model\Document\Tag\Relation instead
      */
-    class Href extends Relation {
-
+    class Href extends Relation
+    {
     }
 }

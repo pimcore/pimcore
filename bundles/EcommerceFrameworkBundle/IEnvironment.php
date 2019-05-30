@@ -14,7 +14,6 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle;
 
-
 @trigger_error(
     'Interface Pimcore\Bundle\EcommerceFrameworkBundle\IEnvironment is deprecated since version 6.0.0 and will be removed in 7.0.0. ' .
     'Use ' . EnvironmentInterface::class . '  class instead.',

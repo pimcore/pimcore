@@ -194,5 +194,4 @@ interface EnvironmentInterface extends ComponentInterface
     public function getCurrentSubTenant();
 }
 
-
 class_alias(EnvironmentInterface::class, 'Pimcore\Bundle\EcommerceFrameworkBundle\IEnvironment');

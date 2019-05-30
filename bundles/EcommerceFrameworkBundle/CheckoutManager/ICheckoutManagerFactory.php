@@ -25,7 +25,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager;
 
 class_exists(CheckoutManagerFactoryInterface::class);
 
-if(false) {
+if (false) {
     /**
      * @deprecated use CheckoutManagerFactoryInterface instead.
      */

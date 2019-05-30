@@ -22,7 +22,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService;
 
 class_exists(VoucherServiceInterface::class);
 
-if(false) {
+if (false) {
     /**
      * @deprecated use VoucherServiceInterface instead.
      */

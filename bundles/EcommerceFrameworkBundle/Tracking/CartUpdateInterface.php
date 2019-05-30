@@ -26,5 +26,4 @@ interface CartUpdateInterface
     public function trackCartUpdate(CartInterface $cart);
 }
 
-
 class_alias(CartUpdateInterface::class, 'Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\ICartUpdate');

@@ -25,7 +25,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem;
 
 class_exists(PriceSystemLocatorInterface::class);
 
-if(false) {
+if (false) {
     /**
      * @deprecated use PriceSystemLocatorInterface instead.
      */
@@ -33,4 +33,3 @@ if(false) {
     {
     }
 }
-

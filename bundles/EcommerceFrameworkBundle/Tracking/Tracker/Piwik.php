@@ -26,10 +26,10 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\CartProductActionRemoveInte
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\CartUpdateInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\CategoryPageViewInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\CheckoutCompleteInterface;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\ProductViewInterface;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\TrackingItemBuilderInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\ProductAction;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\ProductViewInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\Tracker;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\TrackingItemBuilderInterface;
 use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 

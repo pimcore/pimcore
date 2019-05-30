@@ -173,5 +173,4 @@ interface ConfigInterface
     public function getObjectMockupById($objectId);
 }
 
-
 class_alias(ConfigInterface::class, 'Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\IConfig');

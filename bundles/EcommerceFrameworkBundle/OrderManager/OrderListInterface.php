@@ -181,5 +181,4 @@ interface OrderListInterface extends SeekableIterator, Countable, ArrayAccess, A
     public function setUseSubItems($useSubItems);
 }
 
-
 class_alias(OrderListInterface::class, 'Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\IOrderList');

@@ -25,7 +25,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\TokenManager;
 
 class_exists(TokenManagerFactoryInterface::class);
 
-if(false) {
+if (false) {
     /**
      * @deprecated use TokenManagerFactoryInterface instead.
      */
@@ -33,4 +33,3 @@ if(false) {
     {
     }
 }
-

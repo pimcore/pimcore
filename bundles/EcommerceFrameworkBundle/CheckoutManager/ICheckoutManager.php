@@ -14,7 +14,6 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager;
 
-
 @trigger_error(
     'Interface Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\ICheckoutManager is deprecated since version 6.0.0 and will be removed in 7.0.0. ' .
     ' Use ' . CheckoutManagerInterface::class . ' class instead.',
@@ -23,7 +22,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager;
 
 class_exists(CheckoutManagerInterface::class);
 
-if(false) {
+if (false) {
     /**
      * @deprecated use CheckoutManagerInterface instead.
      */

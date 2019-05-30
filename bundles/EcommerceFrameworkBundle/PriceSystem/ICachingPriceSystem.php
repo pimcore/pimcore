@@ -25,7 +25,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem;
 
 class_exists(CachingPriceSystemInterface::class);
 
-if(false) {
+if (false) {
     /**
      * @deprecated use CachingPriceSystemInterface instead.
      */

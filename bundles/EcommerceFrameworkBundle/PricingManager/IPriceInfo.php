@@ -25,7 +25,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager;
 
 class_exists(PriceInfoInterface::class);
 
-if(false) {
+if (false) {
     /**
      * @deprecated use PriceInfoInterface instead.
      */
@@ -33,4 +33,3 @@ if(false) {
     {
     }
 }
-

@@ -22,7 +22,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\Tracking;
 
 class_exists(ProductImpressionInterface::class);
 
-if(false) {
+if (false) {
     /**
      * @deprecated use ProductImpressionInterface instead.
      */

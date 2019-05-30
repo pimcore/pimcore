@@ -22,7 +22,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config;
 
 class_exists(FindologicConfigInterface::class);
 
-if(false) {
+if (false) {
     /**
      * @deprecated use FindologicConfigInterface instead.
      */

@@ -14,7 +14,6 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\OfferTool;
 
-
 @trigger_error(
     'Interface Pimcore\Bundle\EcommerceFrameworkBundle\OfferTool\IService is deprecated since version 6.0.0 and will be removed in 7.0.0. ' .
     ' Use ' . ServiceInterface::class . ' class instead.',
@@ -23,7 +22,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\OfferTool;
 
 class_exists(ServiceInterface::class);
 
-if(false) {
+if (false) {
     /**
      * @deprecated use ServiceInterface instead.
      */

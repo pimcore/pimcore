@@ -14,7 +14,6 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager;
 
-
 @trigger_error(
     'Interface Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\IOrderList is deprecated since version 6.0.0 and will be removed in 7.0.0. ' .
     ' Use ' . OrderListInterface::class . ' class instead.',
@@ -23,7 +22,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager;
 
 class_exists(OrderListInterface::class);
 
-if(false) {
+if (false) {
     /**
      * @deprecated use OrderListInterface instead.
      */

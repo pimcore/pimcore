@@ -14,7 +14,6 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager;
 
-
 @trigger_error(
     'Interface Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\IOrderAgent is deprecated since version 6.0.0 and will be removed in 7.0.0. ' .
     ' Use ' . OrderAgentInterface::class . ' class instead.',
@@ -23,7 +22,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager;
 
 class_exists(OrderAgentInterface::class);
 
-if(false) {
+if (false) {
     /**
      * @deprecated use OrderAgentInterface instead.
      */

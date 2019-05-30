@@ -21,15 +21,15 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\ProductInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\CartProductActionAddInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\CartProductActionRemoveInterface;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\CheckoutInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\CheckoutCompleteInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\CheckoutInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\CheckoutStepInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\IProductActionAdd;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\IProductActionRemove;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\ProductImpressionInterface;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\ProductViewInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\ProductAction;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\ProductImpression;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\ProductImpressionInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\ProductViewInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\Transaction;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 

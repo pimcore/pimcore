@@ -22,7 +22,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Interpreter;
 
 class_exists(RelationInterpreterInterface::class);
 
-if(false) {
+if (false) {
     /**
      * @deprecated use RelationInterpreterInterface instead.
      */

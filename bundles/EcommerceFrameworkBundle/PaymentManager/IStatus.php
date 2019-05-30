@@ -22,7 +22,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager;
 
 class_exists(StatusInterface::class);
 
-if(false) {
+if (false) {
     /**
      * @deprecated use StatusInterface instead.
      */

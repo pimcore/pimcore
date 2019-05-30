@@ -22,7 +22,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker;
 
 class_exists(WorkerInterface::class);
 
-if(false) {
+if (false) {
     /**
      * @deprecated use WorkerInterface instead.
      */

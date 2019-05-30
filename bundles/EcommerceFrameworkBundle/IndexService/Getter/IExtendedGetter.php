@@ -22,7 +22,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Getter;
 
 class_exists(ExtendedGetterInterface::class);
 
-if(false) {
+if (false) {
     /**
      * @deprecated use ExtendedGetterInterface instead.
      */

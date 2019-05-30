@@ -25,7 +25,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem;
 
 class_exists(PriceInterface::class);
 
-if(false) {
+if (false) {
     /**
      * @deprecated use PriceInterface instead.
      */

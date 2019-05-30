@@ -22,7 +22,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\Model;
 
 class_exists(CheckoutableInterface::class);
 
-if(false) {
+if (false) {
     /**
      * @deprecated use CheckoutableInterface instead.
      */

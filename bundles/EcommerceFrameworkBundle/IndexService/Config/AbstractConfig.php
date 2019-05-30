@@ -101,7 +101,8 @@ abstract class AbstractConfig implements ConfigInterface
      *
      * @return array
      */
-    public function getAttributeConfig(){
+    public function getAttributeConfig()
+    {
         return $this->attributeConfig;
     }
 

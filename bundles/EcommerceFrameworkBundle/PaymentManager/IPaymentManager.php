@@ -25,7 +25,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager;
 
 class_exists(PaymentManagerInterface::class);
 
-if(false) {
+if (false) {
     /**
      * @deprecated use PaymentManagerInterface instead.
      */

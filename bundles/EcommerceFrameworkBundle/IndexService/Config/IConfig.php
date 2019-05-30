@@ -22,7 +22,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config;
 
 class_exists(ConfigInterface::class);
 
-if(false) {
+if (false) {
     /**
      * @deprecated use ConfigInterface instead.
      */

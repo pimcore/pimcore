@@ -22,7 +22,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker;
 
 class_exists(BatchProcessingWorkerInterface::class);
 
-if(false) {
+if (false) {
     /**
      * @deprecated use BatchProcessingWorkerInterface instead.
      */

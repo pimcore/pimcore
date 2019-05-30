@@ -22,7 +22,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Condition;
 
 class_exists(DateRangeInterface::class);
 
-if(false) {
+if (false) {
     /**
      * @deprecated use DateRangeInterface instead.
      */

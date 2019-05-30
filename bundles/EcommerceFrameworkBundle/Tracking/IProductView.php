@@ -22,7 +22,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\Tracking;
 
 class_exists(ProductViewInterface::class);
 
-if(false) {
+if (false) {
     /**
      * @deprecated use ProductViewInterface instead.
      */
@@ -30,4 +30,3 @@ if(false) {
     {
     }
 }
-

@@ -22,7 +22,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager;
 
 class_exists(ConditionInterface::class);
 
-if(false) {
+if (false) {
     /**
      * @deprecated use ConditionInterface instead.
      */

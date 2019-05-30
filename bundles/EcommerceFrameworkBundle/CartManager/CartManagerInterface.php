@@ -141,5 +141,4 @@ interface CartManagerInterface extends ComponentInterface
     public function reset();
 }
 
-
 class_alias(CartManagerInterface::class, 'Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICartManager');

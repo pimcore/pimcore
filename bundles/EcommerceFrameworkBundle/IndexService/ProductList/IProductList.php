@@ -22,7 +22,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList;
 
 class_exists(ProductListInterface::class);
 
-if(false) {
+if (false) {
     /**
      * @deprecated use ProductListInterface instead.
      */
