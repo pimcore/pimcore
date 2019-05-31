@@ -314,6 +314,6 @@ class DefaultElasticSearch5 extends AbstractElasticSearch
      */
     public function getProductList()
     {
-        return new \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\DefaultElasticSearch($this->tenantConfig);
+        return new \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\ElasticSearch\DefaultElasticSearch5($this->tenantConfig);
     }
 }

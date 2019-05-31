@@ -14,7 +14,7 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\DefaultElasticSearch as DefaultElasticSearchWorker;
+use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\ElasticSearch\AbstractElasticSearch;
 
 /**
  * Interface for IndexService Tenant Configurations using elastic search as index
@@ -38,7 +38,7 @@ interface ElasticSearchConfigInterface extends ConfigInterface
     /**
      * creates and returns tenant worker suitable for this tenant configuration
      *
-     * @return DefaultElasticSearchWorker
+     * @return AbstractElasticSearch
      */
     public function getTenantWorker();
 }
