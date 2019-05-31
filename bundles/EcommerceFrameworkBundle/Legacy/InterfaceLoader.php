@@ -14,7 +14,6 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\Legacy;
 
-
 use Pimcore\Bundle\EcommerceFrameworkBundle\AvailabilitySystem\AvailabilityInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\AvailabilitySystem\AvailabilitySystemInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\AvailabilitySystem\AvailabilitySystemLocatorInterface;
@@ -99,7 +98,6 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\VoucherServiceInterfa
 
 class InterfaceLoader
 {
-
     protected static $interfaces = [
         ComponentInterface::class,
         EnvironmentInterface::class,
@@ -196,11 +194,10 @@ class InterfaceLoader
      *
      * should be removed when BC layer for interfaces is removed
      */
-    public static function loadInterfaces() {
-        foreach(self::$interfaces as $interface) {
+    public static function loadInterfaces()
+    {
+        foreach (self::$interfaces as $interface) {
             interface_exists($interface);
         }
     }
-
-
 }
