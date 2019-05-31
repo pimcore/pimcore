@@ -53,6 +53,7 @@ class Configuration implements ConfigurationInterface
 
         $rootNode = $treeBuilder->root('pimcore');
         $rootNode->addDefaultsIfNotSet();
+        $rootNode->ignoreExtraKeys();
 
         $rootNode
             ->children()
@@ -137,6 +138,8 @@ class Configuration implements ConfigurationInterface
                 ->end()
             ->end();
 
+        $this->addGeneralNode($rootNode);
+        $this->addServicesNode($rootNode);
         $this->addObjectsNode($rootNode);
         $this->addAssetNode($rootNode);
         $this->addDocumentsNode($rootNode);
@@ -144,10 +147,12 @@ class Configuration implements ConfigurationInterface
         $this->addModelsNode($rootNode);
         $this->addRoutingNode($rootNode);
         $this->addCacheNode($rootNode);
+        $this->addOutputFiltersNode($rootNode);
         $this->addContextNode($rootNode);
         $this->addAdminNode($rootNode);
         $this->addWebProfilerNode($rootNode);
         $this->addSecurityNode($rootNode);
+        $this->addEmailNode($rootNode);
         $this->addNewsletterNode($rootNode);
         $this->addCustomReportsNode($rootNode);
         $this->addMigrationsNode($rootNode);
@@ -155,8 +160,96 @@ class Configuration implements ConfigurationInterface
         $this->addSitemapsNode($rootNode);
         $this->addMimeNode($rootNode);
         $this->addWorkflowNode($rootNode);
+        $this->addHttpClientNode($rootNode);
+        $this->addApplicationLogNode($rootNode);
 
         return $treeBuilder;
+    }
+
+    /**
+     * Add general config
+     *
+     * @param ArrayNodeDefinition $rootNode
+     */
+    private function addGeneralNode(ArrayNodeDefinition $rootNode)
+    {
+        $rootNode
+            ->children()
+            ->arrayNode('general')
+            ->ignoreExtraKeys()
+            ->addDefaultsIfNotSet()
+            ->children()
+                ->scalarNode('timezone')
+                    ->defaultValue('Europe/Berlin')
+                ->end()
+                ->scalarNode('path_variable')
+                    ->defaultNull()
+                ->end()
+                ->scalarNode('domain')
+                    ->defaultNull()
+                ->end()
+                ->booleanNode('redirect_to_maindomain')
+                    ->defaultFalse()
+                ->end()
+                ->scalarNode('language')
+                    ->defaultValue('en')
+                ->end()
+                ->scalarNode('validLanguages')
+                    ->defaultValue('en')
+                ->end()
+                ->arrayNode('fallbackLanguages')
+                    ->prototype('scalar')->end()
+                ->end()
+                ->scalarNode('defaultLanguage')
+                    ->defaultValue('en')
+                ->end()
+                ->booleanNode('disableusagestatistics')
+                    ->defaultFalse()
+                ->end()
+                ->booleanNode('debug_admin_translations')
+                    ->defaultFalse()
+                ->end()
+                ->booleanNode('devmode')
+                    ->defaultFalse()
+                ->end()
+                ->scalarNode('instanceIdentifier')
+                    ->defaultNull()->end()
+                ->booleanNode('show_cookie_notice')
+                    ->defaultFalse()
+                ->end()
+            ->end();
+    }
+
+    /**
+     * @param ArrayNodeDefinition $rootNode
+     */
+    private function addServicesNode(ArrayNodeDefinition $rootNode)
+    {
+        $rootNode
+            ->children()
+            ->arrayNode('services')
+                ->children()
+                    ->arrayNode('google')
+                    ->children()
+                        ->scalarNode('client_id')
+                            ->defaultNull()
+                        ->end()
+                        ->scalarNode('email')
+                            ->defaultNull()
+                        ->end()
+                        ->scalarNode('simpleapikey')
+                            ->defaultNull()
+                        ->end()
+                        ->scalarNode('browserapikey')
+                            ->defaultNull()
+                        ->end()
+                    ->end()
+                    ->end()
+                ->end()
+            ->end()
+            ->arrayNode('webservice')
+                ->canBeEnabled()
+            ->end();
     }
 
     /**
@@ -175,6 +268,88 @@ class Configuration implements ConfigurationInterface
     }
 
     /**
+     * @param ArrayNodeDefinition $rootNode
+     */
+    private function addHttpClientNode(ArrayNodeDefinition $rootNode)
+    {
+        $rootNode
+            ->children()
+                ->arrayNode('httpclient')
+                ->addDefaultsIfNotSet()
+                    ->children()
+                        ->scalarNode('adapter')
+                            ->defaultValue('Socket')
+                        ->end()
+                        ->scalarNode('proxy_host')
+                            ->defaultNull()
+                        ->end()
+                        ->scalarNode('proxy_port')
+                            ->defaultNull()
+                        ->end()
+                        ->scalarNode('proxy_user')
+                            ->defaultNull()
+                        ->end()
+                        ->scalarNode('proxy_pass')
+                            ->defaultNull()
+                        ->end()
+                    ->end()
+                ->end()
+            ->end();
+    }
+
+    /**
+     * @param ArrayNodeDefinition $rootNode
+     */
+    private function addApplicationLogNode(ArrayNodeDefinition $rootNode)
+    {
+        $rootNode
+            ->children()
+                ->arrayNode('applicationlog')
+                ->addDefaultsIfNotSet()
+                    ->children()
+                        ->arrayNode('mail_notification')
+                            ->children()
+                                ->booleanNode('send_log_summary')
+                                    ->defaultFalse()
+                                ->end()
+                                ->scalarNode('filter_priority')
+                                    ->defaultNull()
+                                ->end()
+                                ->scalarNode('mail_receiver')
+                                ->end()
+                            ->end()
+                        ->end()
+                        ->scalarNode('archive_treshold')
+                            ->defaultValue('')
+                        ->end()
+                        ->scalarNode('archive_alternative_database')
+                            ->defaultValue('')
+                        ->end()
+                    ->end()
+            ->end();
+    }
+
+    /**
+     * @param ArrayNodeDefinition $rootNode
+     */
+    private function addOutputFiltersNode(ArrayNodeDefinition $rootNode)
+    {
+        $rootNode
+            ->children()
+                ->arrayNode('outputfilters')
+                    ->addDefaultsIfNotSet()
+                    ->children()
+                        ->booleanNode('less')
+                            ->defaultFalse()
+                        ->end()
+                        ->scalarNode('lesscpath')
+                            ->end()
+                    ->end()
+                ->end();
+    }
+
+
+    /**
      * Add asset specific extension config
      *
      * @param ArrayNodeDefinition $rootNode
@@ -184,6 +359,7 @@ class Configuration implements ConfigurationInterface
         $rootNode
             ->children()
                 ->arrayNode('assets')
+                ->ignoreExtraKeys()
                 ->addDefaultsIfNotSet()
                 ->children()
                     ->scalarNode('preview_image_thumbnail')
@@ -240,10 +416,28 @@ class Configuration implements ConfigurationInterface
                     ->arrayNode('versions')
                         ->addDefaultsIfNotSet()
                         ->children()
+                            ->scalarNode('days')
+                                ->defaultNull()
+                            ->end()
+                            ->scalarNode('steps')
+                                ->defaultNull()
+                            ->end()
                             ->booleanNode('use_hardlinks')
                                 ->defaultTrue()
                             ->end()
                         ->end()
+                    ->end()
+                    ->scalarNode('icc_rgb_profile')
+                        ->defaultNull()
+                    ->end()
+                    ->scalarNode('icc_cmyk_profile')
+                        ->defaultNull()
+                    ->end()
+                    ->booleanNode('hide_edit_image')
+                        ->defaultFalse()
+                    ->end()
+                    ->booleanNode('disable_tree_preview')
+                        ->defaultTrue()
                     ->end()
                 ->end()
             ->end();
@@ -259,13 +453,19 @@ class Configuration implements ConfigurationInterface
         $objectsNode = $rootNode
             ->children()
                 ->arrayNode('objects')
+                    ->ignoreExtraKeys()
                     ->addDefaultsIfNotSet()
                     ->children()
                         ->integerNode('tree_paging_limit')
                             ->defaultValue(30)
+                        ->end()
+                        ->arrayNode('versions')
+                            ->children()
+                                ->scalarNode('days')->defaultNull()->end()
+                                ->scalarNode('steps')->defaultNull()->end()
                             ->end()
+                        ->end()
                     ->end();
-
         $classDefinitionsNode = $objectsNode
             ->children()
                 ->arrayNode('class_definitions')
@@ -301,12 +501,39 @@ class Configuration implements ConfigurationInterface
         $documentsNode = $rootNode
             ->children()
                 ->arrayNode('documents')
+                    ->ignoreExtraKeys()
                     ->addDefaultsIfNotSet();
 
         $this->addImplementationLoaderNode($documentsNode, 'tags');
 
         $documentsNode
             ->children()
+                ->arrayNode('versions')
+                    ->children()
+                        ->scalarNode('days')
+                            ->defaultNull()
+                        ->end()
+                        ->scalarNode('steps')
+                            ->defaultNull()
+                        ->end()
+                    ->end()
+                ->end()
+                ->arrayNode('error_pages')
+                    ->children()
+                        ->scalarNode('default')
+                            ->defaultNull()
+                        ->end()
+                    ->end()
+                ->end()
+                ->booleanNode('createredirectwhenmoved')
+                    ->defaultFalse()
+                ->end()
+                ->scalarNode('allowtrailingslash')
+                    ->defaultValue('no')
+                ->end()
+                ->booleanNode('generatepreview')
+                    ->defaultFalse()
+                ->end()
                 ->integerNode('tree_paging_limit')
                     ->defaultValue(50)
                 ->end()
@@ -418,6 +645,7 @@ class Configuration implements ConfigurationInterface
     {
         $adminNode = $rootNode->children()
             ->arrayNode('admin')
+            ->ignoreExtraKeys()
             ->addDefaultsIfNotSet();
 
         // add session attribute bag config
@@ -630,9 +858,15 @@ class Configuration implements ConfigurationInterface
 
         $rootNode->children()
             ->arrayNode('cache')
+            ->ignoreExtraKeys()
             ->canBeDisabled()
             ->addDefaultsIfNotSet()
                 ->children()
+                    ->scalarNode('lifetime')
+                        ->defaultNull()
+                    ->end()
+                    ->scalarNode('excludePatterns')->end()
+                    ->scalarNode('excludeCookie')->end()
                     ->scalarNode('pool_service_id')
                         ->defaultValue(null)
                     ->end()
@@ -703,6 +937,47 @@ class Configuration implements ConfigurationInterface
     }
 
     /**
+     * Adds configuration for email source adapters
+     *
+     * @param ArrayNodeDefinition $rootNode
+     */
+    private function addEmailNode(ArrayNodeDefinition $rootNode)
+    {
+        $rootNode
+            ->children()
+                ->arrayNode('email')
+                ->addDefaultsIfNotSet()
+                    ->children()
+                        ->arrayNode('sender')
+                            ->children()
+                                ->scalarNode('name')->end()
+                                ->scalarNode('email')->end()
+                            ->end()
+                        ->end()
+                        ->arrayNode('return')
+                            ->children()
+                                ->scalarNode('name')->end()
+                                ->scalarNode('email')->end()
+                            ->end()
+                        ->end()
+                        ->scalarNode('method')
+                            ->defaultNull()
+                        ->end()
+                        ->arrayNode('debug')
+                            ->children()
+                                ->scalarNode('emailaddresses')
+                                    ->defaultValue("")
+                                ->end()
+                            ->end()
+                        ->end()
+                        ->booleanNode('usespecific')
+                        ->end()
+                    ->end()
+                ->end()
+            ->end();
+    }
+
+    /**
      * Adds configuration tree for newsletter source adapters
      *
      * @param ArrayNodeDefinition $rootNode
@@ -714,6 +989,30 @@ class Configuration implements ConfigurationInterface
                 ->arrayNode('newsletter')
                     ->addDefaultsIfNotSet()
                     ->children()
+                        ->arrayNode('sender')
+                            ->children()
+                                ->scalarNode('name')->end()
+                                ->scalarNode('email')->end()
+                            ->end()
+                        ->end()
+                        ->arrayNode('return')
+                            ->children()
+                                ->scalarNode('name')->end()
+                                ->scalarNode('email')->end()
+                            ->end()
+                        ->end()
+                        ->scalarNode('method')
+                            ->defaultNull()
+                        ->end()
+                        ->arrayNode('debug')
+                            ->children()
+                                ->scalarNode('emailaddresses')
+                                    ->defaultValue("")
+                                ->end()
+                            ->end()
+                        ->end()
+                        ->booleanNode('usespecific')
+                        ->end()
                         ->arrayNode('source_adapters')
                             ->useAttributeAsKey('name')
                                 ->prototype('scalar')
