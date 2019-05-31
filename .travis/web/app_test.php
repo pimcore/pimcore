@@ -31,7 +31,7 @@ $request = Request::createFromGlobals();
 Tool::setCurrentRequest($request);
 
 // redirect to installer if pimcore is not installed
-if (!is_file(\Pimcore\Config::locateConfigFile('system.php'))) {
+if (!is_file(\Pimcore\Config::locateConfigFile('system.yml'))) {
     Debug::enable(E_ALL, true);
     throw new RuntimeException('Pimcore is not installed! Please install via command line.');
 }
