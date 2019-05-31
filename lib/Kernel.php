@@ -96,7 +96,7 @@ abstract class Kernel extends SymfonyKernel
     public function registerContainerConfiguration(LoaderInterface $loader)
     {
         $loader->load(function (ContainerBuilder $container) use ($loader) {
-            // add system.php as container resource and extract config values into params
+            // add system.yml as container resource and extract config values into params
             $resource = new SystemConfigParamResource($container);
             $resource->register();
             $resource->setParameters();

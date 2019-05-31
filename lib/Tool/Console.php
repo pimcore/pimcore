@@ -500,7 +500,7 @@ class Console
      */
     public static function checkExecutingUser($allowedUsers = [])
     {
-        $configFile = \Pimcore\Config::locateConfigFile('system.php');
+        $configFile = Config::locateConfigFile('system.yml');
         $owner = fileowner($configFile);
         if ($owner == false) {
             throw new \Exception("Couldn't get user from file " . $configFile);

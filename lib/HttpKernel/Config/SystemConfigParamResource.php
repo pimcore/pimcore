@@ -34,12 +34,12 @@ class SystemConfigParamResource
     }
 
     /**
-     * Register system.php as container resource
+     * Register system.yml as container resource
      */
     public function register()
     {
-        // register system.php as resource to rebuild container in dev on change
-        $systemConfigFile = Config::locateConfigFile('system.php');
+        // register system.yml as resource to rebuild container in dev on change
+        $systemConfigFile = Config::locateConfigFile('system.yml');
         if (file_exists($systemConfigFile)) {
             $this->container->addResource(new FileResource($systemConfigFile));
         }
@@ -53,18 +53,6 @@ class SystemConfigParamResource
         $config = Config::getSystemConfig(true);
         if ($config) {
             $this->processConfig('pimcore_system_config', $config->toArray());
-
-            // @TODO remove in 6.0
-            // compatibility layer for sendmail
-            // mail transport is not supported anymore -> use sendmail instead
-            foreach (['email', 'newsletter'] as $type) {
-                $parameterName = sprintf('pimcore_system_config.%s.method', $type);
-                if ($this->container->hasParameter($parameterName)) {
-                    if ($this->container->getParameter($parameterName) == 'mail') {
-                        $this->container->setParameter($parameterName, 'sendmail');
-                    }
-                }
-            }
 
             // set default domain for router to main domain if configured
             // this will be overridden from the request in web context but is handy for CLI scripts
@@ -85,43 +73,36 @@ class SystemConfigParamResource
     protected function getDefaultParameters()
     {
         return [
-            'database' => [
-                'params' => [
-                    'host' => 'localhost',
-                    'port' => 3306,
-                    'dbname' => '',
-                    'username' => 'root',
-                    'password' => '',
-                ]
-            ],
             'email' => [
                 'method' => 'sendmail',
-                'smtp' => [
-                    'host' => '',
-                    'port' => '',
-                    'ssl' => null,
-                    'name' => '',
-                    'auth' => [
-                        'method' => null,
-                        'username' => '',
-                        'password' => ''
-                    ]
-                ],
                 'debug' => [
                     'emailaddresses' => ''
-                ]
+                ],
             ],
             'newsletter' => [
                 'method' => 'sendmail',
-                'smtp' => [
-                    'host' => '',
-                    'port' => '',
-                    'ssl' => null,
-                    'name' => '',
-                    'auth' => [
-                        'method' => null,
+            ],
+            'swiftmailer' => [
+                'mailers' => [
+                    'pimcore_mailer' => [
+                        'transport' => 'smtp',
+                        'delivery_addresses' => [],
+                        'host' => '',
                         'username' => '',
-                        'password' => ''
+                        'password' => '',
+                        'port' => '',
+                        'encryption' => '',
+                        'auth_mode' => null
+                    ],
+                    'newsletter_mailer' => [
+                        'transport' => 'smtp',
+                        'delivery_addresses' => [],
+                        'host' => '',
+                        'username' => '',
+                        'password' => '',
+                        'port' => '',
+                        'encryption' => '',
+                        'auth_mode' => null
                     ]
                 ]
             ]

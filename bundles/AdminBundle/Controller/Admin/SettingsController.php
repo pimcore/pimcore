@@ -42,6 +42,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Yaml\Yaml;
 
 /**
  * @Route("/settings")
@@ -326,7 +327,7 @@ class SettingsController extends AdminController
     {
         $this->checkPermission('system_settings');
 
-        $values = Config::getSystemConfig();
+        $values = Config::getSystemConfiguration();
 
         $timezones = \DateTimeZone::listIdentifiers();
 
@@ -343,11 +344,11 @@ class SettingsController extends AdminController
         }
 
         $valueArray = $values->toArray();
-        $valueArray['general']['validLanguage'] = explode(',', $valueArray['general']['validLanguages']);
+        $valueArray['pimcore']['general']['validLanguage'] = explode(',', $valueArray['pimcore']['general']['validLanguages']);
 
         //for "wrong" legacy values
-        if (is_array($valueArray['general']['validLanguage'])) {
-            foreach ($valueArray['general']['validLanguage'] as $existingValue) {
+        if (is_array($valueArray['pimcore']['general']['validLanguage'])) {
+            foreach ($valueArray['pimcore']['general']['validLanguage'] as $existingValue) {
                 if (!in_array($existingValue, $validLanguages)) {
                     $languageOptions[] = [
                         'language' => $existingValue,
@@ -358,19 +359,18 @@ class SettingsController extends AdminController
         }
 
         //cache exclude patterns - add as array
-        if (!empty($valueArray['cache']['excludePatterns'])) {
-            $patterns = explode(',', $valueArray['cache']['excludePatterns']);
+        if (!empty($valueArray['pimcore']['cache']['excludePatterns'])) {
+            $patterns = explode(',', $valueArray['pimcore']['cache']['excludePatterns']);
             if (is_array($patterns)) {
                 foreach ($patterns as $pattern) {
-                    $valueArray['cache']['excludePatternsArray'][] = ['value' => $pattern];
+                    $valueArray['pimcore']['cache']['excludePatternsArray'][] = ['value' => $pattern];
                 }
             }
         }
 
         //remove password from values sent to frontend
-        unset($valueArray['database']);
-        foreach (['email', 'newsletter'] as $type) {
-            $valueArray[$type]['smtp']['auth']['password'] = '#####SUPER-SECRET-VALUE-PLACEHOLDER######';
+        foreach (['email' => 'pimcore_mailer', 'newsletter' => 'newsletter_mailer'] as $type => $group) {
+            $valueArray['swiftmailer']['mailers'][$group]['password'] = '#####SUPER-SECRET-VALUE-PLACEHOLDER######';
         }
 
         // inject debug mode
@@ -379,8 +379,8 @@ class SettingsController extends AdminController
         if (file_exists($debugModeFile)) {
             $debugMode = include $debugModeFile;
         }
-        $valueArray['general']['debug'] = $debugMode['active'];
-        $valueArray['general']['debug_ip'] = $debugMode['ip'];
+        $valueArray['pimcore']['general']['debug'] = $debugMode['active'];
+        $valueArray['pimcore']['general']['debug_ip'] = $debugMode['ip'];
 
         $response = [
             'values' => $valueArray,
@@ -411,7 +411,7 @@ class SettingsController extends AdminController
         $values = $this->decodeJson($request->get('data'));
 
         // email settings
-        $existingConfig = Config::getSystemConfig();
+        $existingConfig = Config::getSystemConfiguration();
         $existingValues = $existingConfig->toArray();
 
         // fallback languages
@@ -419,8 +419,8 @@ class SettingsController extends AdminController
         $languages = explode(',', $values['general.validLanguages']);
         $filteredLanguages = [];
         foreach ($languages as $language) {
-            if (isset($values['general.fallbackLanguages.' . $language])) {
-                $fallbackLanguages[$language] = str_replace(' ', '', $values['general.fallbackLanguages.' . $language]);
+            if (isset($values['pimcore']['general.fallbackLanguages.' . $language])) {
+                $fallbackLanguages[$language] = str_replace(' ', '', $values['pimcore']['general.fallbackLanguages.' . $language]);
             }
 
             if (\Pimcore::getContainer()->get('pimcore.locale')->isLocale($language)) {
@@ -439,7 +439,8 @@ class SettingsController extends AdminController
                 $existingValues['general']['fallbackLanguages'],
                 $fallbackLanguages
             );
-            $dbName = $existingValues['database']['params']['dbname'];
+            $db = \Pimcore\Db::get();
+            $dbName = $db->getDatabase();
             foreach ($fallbackLanguagesChanged as $language => $dummy) {
                 $this->deleteViews($language, $dbName);
             }
@@ -450,7 +451,7 @@ class SettingsController extends AdminController
             $cacheExcludePatterns = implode(',', $cacheExcludePatterns);
         }
 
-        $settings = [
+        $settings['pimcore'] = [
             'general' => [
                 'timezone' => $values['general.timezone'],
                 'path_variable' => $values['general.path_variable'],
@@ -460,16 +461,11 @@ class SettingsController extends AdminController
                 'validLanguages' => implode(',', $filteredLanguages),
                 'fallbackLanguages' => $fallbackLanguages,
                 'defaultLanguage' => $values['general.defaultLanguage'],
-                'loginscreencustomimage' => $values['general.loginscreencustomimage'],
                 'disableusagestatistics' => $values['general.disableusagestatistics'],
                 'debug_admin_translations' => $values['general.debug_admin_translations'],
                 'devmode' => $values['general.devmode'],
                 'instanceIdentifier' => $values['general.instanceIdentifier'],
                 'show_cookie_notice' => $values['general.show_cookie_notice'],
-            ],
-            'branding' => [
-                'color_login_screen' => $values['branding.color_login_screen'],
-                'color_admin_interface' => $values['branding.color_admin_interface'],
             ],
             'documents' => [
                 'versions' => [
@@ -534,9 +530,19 @@ class SettingsController extends AdminController
             ]
         ];
 
-        // email & newsletter
-        foreach (['email', 'newsletter'] as $type) {
-            $settings[$type] = [
+        //branding
+        $settings['pimcore_admin'] = [
+            'branding' =>
+                [
+                    'color_login_screen' => $values['branding.color_login_screen'],
+                    'color_admin_interface' => $values['branding.color_admin_interface'],
+                    'loginscreencustomimage' => $values['general.loginscreencustomimage'],
+                ]
+        ];
+
+        // email & newsletter (swiftmailer settings)
+        foreach (['email' => 'pimcore_mailer', 'newsletter' => 'newsletter_mailer'] as $type => $group) {
+            $settings['pimcore'][$type] = [
                 'sender' => [
                     'name' => $values[$type . '.sender.name'],
                     'email' => $values[$type . '.sender.email']],
@@ -544,39 +550,40 @@ class SettingsController extends AdminController
                     'name' => $values[$type . '.return.name'],
                     'email' => $values[$type . '.return.email']],
                 'method' => $values[$type . '.method'],
-                'smtp' => [
-                    'host' => $values[$type . '.smtp.host'],
-                    'port' => $values[$type . '.smtp.port'],
-                    'ssl' => $values[$type . '.smtp.ssl'] ? $values[$type . '.smtp.ssl'] : null,
-                    'name' => $values[$type . '.smtp.name'],
-                    'auth' => [
-                        'method' => $values[$type . '.smtp.auth.method'] ? $values[$type . '.smtp.auth.method'] : null,
-                        'username' => $values[$type . '.smtp.auth.username'],
-                    ]
-                ]
+            ];
+
+            $settings['swiftmailer']['mailers'][$group] = [
+                'transport' => $values[$type . '.method'],
+                'host' => $values[$type . '.smtp.host'],
+                'username' => $values[$type . '.smtp.auth.username'],
+                'port' => $values[$type . '.smtp.port'],
+                'encryption' => $values[$type . '.smtp.ssl'] ? $values[$type . '.smtp.ssl'] : null,
+                'auth_mode' => $values[$type . '.smtp.auth.method'] ? $values[$type . '.smtp.auth.method'] : null,
             ];
 
             $smtpPassword = $values[$type . '.smtp.auth.password'];
             if ($smtpPassword !== '#####SUPER-SECRET-VALUE-PLACEHOLDER######') {
                 if (!empty($smtpPassword)) {
-                    $settings[$type]['smtp']['auth']['password'] = $smtpPassword;
+                    $settings['swiftmailer']['mailers'][$group]['password'] = $smtpPassword;
                 } else {
-                    $settings[$type]['smtp']['auth']['password'] = null;
+                    $settings['swiftmailer']['mailers'][$group]['password'] = null;
                 }
             }
-
-            if (array_key_exists($type . '.debug.emailAddresses', $values)) {
-                $settings[$type]['debug'] = ['emailaddresses' => $values[$type . '.debug.emailAddresses']];
+            if (array_key_exists('email.debug.emailAddresses', $values) && $values['email.debug.emailAddresses']) {
+                $settings['swiftmailer']['mailers'][$group]['delivery_addresses'] = [$values['email.debug.emailAddresses']];
+                $settings['pimcore'][$type]['debug']['emailaddresses'] = $values['email.debug.emailAddresses'];
             } else {
-                $settings[$type]['debug'] = null;
+                $settings['swiftmailer']['mailers'][$group]['delivery_addresses'] = [];
+                $settings['pimcore'][$type]['debug']['emailaddresses'] = null;
             }
         }
-        $settings['newsletter']['usespecific'] = $values['newsletter.usespecific'];
+        $settings['pimcore']['newsletter']['usespecific'] = $values['newsletter.usespecific'];
 
         $settings = array_replace_recursive($existingValues, $settings);
 
-        $configFile = \Pimcore\Config::locateConfigFile('system.php');
-        File::putPhpFile($configFile, to_php_data_file_format($settings));
+        $settingsYml = Yaml::dump($settings, 5);
+        $configFile = PIMCORE_CONFIGURATION_DIRECTORY . '/system.yml';
+        File::put($configFile, $settingsYml);
 
         $debugModeFile = PIMCORE_CONFIGURATION_DIRECTORY . '/debug-mode.php';
         File::putPhpFile($debugModeFile, to_php_data_file_format([

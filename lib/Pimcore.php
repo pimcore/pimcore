@@ -59,29 +59,9 @@ class Pimcore
      */
     public static function initConfiguration()
     {
-        $conf = null;
-
-        // init configuration
-        try {
-            $conf = Config::getSystemConfig(true);
-
-            // set timezone
-            if ($conf instanceof \Pimcore\Config\Config) {
-                if ($conf->general->timezone) {
-                    date_default_timezone_set($conf->general->timezone);
-                }
-            }
-
-            if (!defined('PIMCORE_DEVMODE')) {
-                define('PIMCORE_DEVMODE', (bool) $conf->general->devmode);
-            }
-        } catch (\Exception $e) {
-            $m = "Couldn't load system configuration";
-            Logger::err($m);
-
-            if (!defined('PIMCORE_DEVMODE')) {
-                define('PIMCORE_DEVMODE', false);
-            }
+        $dev = self::inDevMode();
+        if (!defined('PIMCORE_DEVMODE')) {
+            define('PIMCORE_DEVMODE', $dev);
         }
 
         $debug = self::inDebugMode();
@@ -94,7 +74,7 @@ class Pimcore
             error_reporting(E_ALL & ~E_NOTICE);
         }
 
-        return $conf;
+        return true;
     }
 
     public static function setFeatureManager(FeatureManagerInterface $featureManager)
