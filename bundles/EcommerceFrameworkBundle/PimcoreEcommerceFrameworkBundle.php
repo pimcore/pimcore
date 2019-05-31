@@ -84,14 +84,6 @@ class PimcoreEcommerceFrameworkBundle extends AbstractPimcoreBundle
             Decimal::setDefaultScale($container->getParameter('pimcore_ecommerce.decimal_scale'));
         }
 
-        // use legacy class mapping if configured
-        if (
-            $container->hasParameter('pimcore_ecommerce.use_legacy_class_mapping')
-            && $container->getParameter('pimcore_ecommerce.use_legacy_class_mapping')
-        ) {
-            // load legacy class mapping only when ecommerce framework bundle is installed
-            LegacyClassMappingTool::loadMapping();
-        }
     }
 
     /**
