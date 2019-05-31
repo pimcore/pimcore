@@ -12,6 +12,10 @@ services:
 
     Pimcore\Bundle\EcommerceFrameworkBundle\EnvironmentInterface: '@pimcore_ecommerce.environment'
 
+    Pimcore\Bundle\EcommerceFrameworkBundle\IEnvironment:
+        alias: Pimcore\Bundle\EcommerceFrameworkBundle\EnvironmentInterface
+        deprecated: 'use Pimcore\Bundle\EcommerceFrameworkBundle\EnvironmentInterface instead'
+
     Pimcore\Bundle\EcommerceFrameworkBundle\Environment:
         arguments:
             $options: '%pimcore_ecommerce.environment.options%'
