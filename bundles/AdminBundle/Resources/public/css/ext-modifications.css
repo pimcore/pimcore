@@ -212,6 +212,23 @@ body.x-border-layout-ct, div.x-border-layout-ct {
     color: #606060;
 }
 
+.x-panel-header-default-horizontal {
+    padding: 6px 7px 7px;
+}
+
+.x-panel-header-default-horizontal .x-panel-header-title {
+    min-height: 24px;
+}
+
+.x-panel-header-horizontal .x-panel-header-title-default > .x-title-icon-wrap-default.x-title-icon-left {
+    width: 28px;
+}
+
+.x-panel-header-horizontal .x-panel-header-title-default > .x-title-icon-wrap-default > .x-title-icon-default {
+    width: 24px;
+    height: 24px;
+}
+
 .x-column-header {
     background-color: #d0d0d0;
     border-right-color: #5a5c5e;
@@ -314,6 +331,10 @@ body > .x-mask {
 .x-btn.x-btn-default-toolbar-small,
 .x-btn.x-btn-default-small {
     padding: 3px;
+}
+
+.x-btn-button-default-small {
+    min-height: 24px;
 }
 
 .x-btn.x-btn-default-toolbar-medium {

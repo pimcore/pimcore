@@ -120,25 +120,10 @@
     height:23px;
 }
 
-#pimcore_logout svg {
+#pimcore_logout img {
     position: absolute;
-    left: 21px;
+    left: 18px;
     top: 2px;
-    width: 18px;
-    height: 18px;
-}
-
-#pimcore_logout svg path {
-    fill: #fff;
-}
-
-#pimcore_logout:hover svg path {
-    fill: #ECECEC;
-}
-
-#pimcore_logout:hover {
-    filter: grayscale(0%) brightness(100%);
-    -webkit-filter: grayscale(0%) brightness(100%);
 }
 
 #pimcore_avatar {
@@ -1066,11 +1051,6 @@ span.warning {
     border-color: #bee5eb;
 }
 
-
-.object_field .x-panel-header-title-default > .x-title-icon-wrap-default > .x-title-icon-default {
-    width: 24px;
-}
-
 .objectlayout_element_region .x-border-item {
     border-right: none;
 }
@@ -1518,7 +1498,7 @@ span.warning {
 
 .pimcore_main_toolbar + .x-panel > .x-tab-bar-default .x-tab {
     background: #393C3F;
-    border-left: 1px solid #B4B4B4;
+    border-left: 1px solid #616467;
 }
 
 .pimcore_main_toolbar + .x-panel > .x-tab-bar-default .x-tab.x-tab-active + .x-tab, .pimcore_main_toolbar + .x-panel > .x-tab-bar-default .x-tab:first-child {
@@ -1769,7 +1749,7 @@ span.warning {
 
 .pimcore_button_black {
     background-color: #3c3f41;
-    border:0;
+    border-color: #3c3f41;
 }
 
 .pimcore_button_black.x-btn-over, .pimcore_button_black.x-btn.x-btn-pressed {
@@ -1855,7 +1835,7 @@ span.warning {
 }
 
 .pimcore_main_accordion .x-panel-header-title-default > .x-title-icon-wrap-default {
-    width: 40px;
+    width: 40px !important;
 }
 
 .pimcore_main_accordion .x-panel-header-title-default > .x-title-icon-wrap-default > .x-title-icon-default {

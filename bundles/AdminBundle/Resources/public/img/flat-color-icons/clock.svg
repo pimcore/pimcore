@@ -1,8 +1,9 @@
-<svg version="1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" enable-background="new 0 0 48 48">
-    <circle fill="#00ACC1" cx="24" cy="24" r="20"/>
-    <circle fill="#eee" cx="24" cy="24" r="16"/>
-    <rect x="23" y="11" width="2" height="13"/>
-    <rect x="26.1" y="22.7" transform="matrix(-.707 .707 -.707 -.707 65.787 27.25)" width="2.3" height="9.2"/>
-    <circle cx="24" cy="24" r="2"/>
-    <circle fill="#00ACC1" cx="24" cy="24" r="1"/>
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 22.1.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<svg version="1.1" id="Ebene_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 width="48px" height="48px" viewBox="0 0 48 48" enable-background="new 0 0 48 48" xml:space="preserve">
+<path fill="none" d="M0,0h48v48H0V0z"/>
+<circle fill="#A3A5A7" cx="24" cy="24" r="20"/>
+<circle fill="#E0E1E2" cx="24" cy="24" r="16"/>
+<polygon fill="#0C0F12" points="25,14 22,14 22,26 32.5,32.3 34,29.8 25,24.5 "/>
 </svg>
