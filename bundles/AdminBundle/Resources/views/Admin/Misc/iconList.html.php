@@ -46,10 +46,10 @@ $twemoji = rscandir($iconDir . '/twemoji/');
 <body>
 
 <div class="info">
-    <a href="https://raw.githack.com/icons8/flat-color-icons/master/index.html" target="_blank">Source (Icon8)</a>
+    <a target="_blank">Pimcore Icons</a>
 </div>
 
-<div id="icon8" class="icons">
+<div id="icons" class="icons">
     <?php foreach ($icons as $icon) {
         ?>
         <div class="icon">
@@ -65,7 +65,7 @@ $twemoji = rscandir($iconDir . '/twemoji/');
     <a href="https://github.com/twitter/twemoji" target="_blank">Source (Twemoji)</a>
 </div>
 
-<div id="icon8" class="icons">
+<div id="twenoji" class="icons">
     <?php foreach ($twemoji as $icon) {
         ?>
         <div class="icon">

@@ -58,7 +58,17 @@ pimcore.bundle.EcommerceFramework.bundle = Class.create(pimcore.plugin.admin, {
         // init
         var menuItems = toolbar.ecommerceMenu;
         if (!menuItems) {
-            menuItems = new Ext.menu.Menu({cls: "pimcore_navigation_flyout"});
+            menuItems = new Ext.menu.Menu({
+                cls: "pimcore_navigation_flyout",
+                listeners: {
+                    "show": function (e) {
+                        Ext.get('pimcore_menu_ecommerce').addCls('active');
+                    },
+                    "hide": function (e) {
+                        Ext.get('pimcore_menu_ecommerce').removeCls('active');
+                    }
+                }
+            });
             toolbar.ecommerceMenu = menuItems;
         }
 

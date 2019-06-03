@@ -257,7 +257,15 @@ pimcore.layout.toolbar = Class.create({
             this.fileMenu = new Ext.menu.Menu({
                 items: fileItems,
                 shadow: false,
-                cls: "pimcore_navigation_flyout"
+                cls: "pimcore_navigation_flyout",
+                listeners: {
+                    "show": function (e) {
+                        Ext.get('pimcore_menu_file').addCls('active');
+                    },
+                    "hide": function (e) {
+                        Ext.get('pimcore_menu_file').removeCls('active');
+                    }
+                }
             });
         }
 
@@ -467,7 +475,15 @@ pimcore.layout.toolbar = Class.create({
                 this.extrasMenu = new Ext.menu.Menu({
                     items: extrasItems,
                     shadow: false,
-                    cls: "pimcore_navigation_flyout"
+                    cls: "pimcore_navigation_flyout",
+                    listeners: {
+                        "show": function (e) {
+                            Ext.get('pimcore_menu_extras').addCls('active');
+                        },
+                        "hide": function (e) {
+                            Ext.get('pimcore_menu_extras').removeCls('active');
+                        }
+                    }
                 });
             }
         }
@@ -657,7 +673,15 @@ pimcore.layout.toolbar = Class.create({
                 this.marketingMenu = new Ext.menu.Menu({
                     items: marketingItems,
                     shadow: false,
-                    cls: "pimcore_navigation_flyout"
+                    cls: "pimcore_navigation_flyout",
+                    listeners: {
+                        "show": function (e) {
+                            Ext.get('pimcore_menu_marketing').addCls('active');
+                        },
+                        "hide": function (e) {
+                            Ext.get('pimcore_menu_marketing').removeCls('active');
+                        }
+                    }
                 });
             }
         }
@@ -1014,7 +1038,15 @@ pimcore.layout.toolbar = Class.create({
                 this.settingsMenu = new Ext.menu.Menu({
                     items: settingsItems,
                     shadow: false,
-                    cls: "pimcore_navigation_flyout"
+                    cls: "pimcore_navigation_flyout",
+                    listeners: {
+                        "show": function (e) {
+                            Ext.get('pimcore_menu_settings').addCls('active');
+                        },
+                        "hide": function (e) {
+                            Ext.get('pimcore_menu_settings').removeCls('active');
+                        }
+                    }
                 });
             }
         }
@@ -1075,7 +1107,15 @@ pimcore.layout.toolbar = Class.create({
                 this.searchMenu = new Ext.menu.Menu({
                     items: searchItems,
                     shadow: false,
-                    cls: "pimcore_navigation_flyout"
+                    cls: "pimcore_navigation_flyout",
+                    listeners: {
+                        "show": function (e) {
+                            Ext.get('pimcore_menu_search').addCls('active');
+                        },
+                        "hide": function (e) {
+                            Ext.get('pimcore_menu_search').removeCls('active');
+                        }
+                    }
                 });
             }
         }
@@ -1173,8 +1213,8 @@ pimcore.layout.toolbar = Class.create({
             el = Ext.get(el);
 
             if (el) {
+                var menuVariable = el.id.replace(/pimcore_menu_/, "") + "Menu";
                 if (el.hasCls("pimcore_menu_needs_children")) {
-                    var menuVariable = el.id.replace(/pimcore_menu_/, "") + "Menu";
                     if (!this[menuVariable]) {
                         el.setStyle("display", "none");
                     }
