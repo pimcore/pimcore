@@ -165,11 +165,13 @@
     content: none;
 }
 
-.x-tree-elbow-plus {
+.x-tree-elbow-plus,
+.x-tree-elbow-end-plus {
     background: url(/bundles/pimcoreadmin/img/material-icons/main-accordion-plus.svg) center center no-repeat !important;
 }
 
-.x-grid-tree-node-expanded .x-tree-elbow-plus {
+.x-grid-tree-node-expanded .x-tree-elbow-plus,
+.x-grid-tree-node-expanded .x-tree-elbow-end-plus {
     background: url(/bundles/pimcoreadmin/img/material-icons/main-accordion-minus.svg) center center no-repeat !important;
 }
 
