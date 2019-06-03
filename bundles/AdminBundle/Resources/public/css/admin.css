@@ -305,7 +305,7 @@
 }
 
 .pimcore_icon_droptarget_upload {
-    background: url(/bundles/pimcoreadmin/img/flat-color-icons/drop-target-upload.svg) center center/40px no-repeat;
+    background: url(/bundles/pimcoreadmin/img/flat-color-icons/drop-target-upload.svg) left center/48px no-repeat;
 }
 
 .pimcore_externalimage_container {
