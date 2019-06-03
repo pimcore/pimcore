@@ -48,7 +48,7 @@ pimcore.layout.toolbar = Class.create({
 
                     this.perspectivesMenu = new Ext.menu.Item({
                         text: t("perspectives"),
-                        iconCls: "pimcore_icon_perspective",
+                        iconCls: "pimcore_nav_icon_perspective",
                         hideOnClick: false,
                         menu: {
                             cls: "pimcore_navigation_flyout",
@@ -64,14 +64,14 @@ pimcore.layout.toolbar = Class.create({
             if (user.isAllowed("dashboards") && perspectiveCfg.inToolbar("file.dashboards")) {
                 this.dashboardMenu = new Ext.menu.Item({
                     text: t("dashboards"),
-                    iconCls: "pimcore_icon_welcome",
+                    iconCls: "pimcore_nav_icon_dashboards",
                     hideOnClick: false,
                     menu: {
                         cls: "pimcore_navigation_flyout",
                         shadow: false,
                         items: [{
                             text: t("welcome"),
-                            iconCls: "pimcore_icon_welcome",
+                            iconCls: "pimcore_nav_icon_dashboards",
                             handler: pimcore.helpers.openWelcomePage.bind(this)
                         }]
                     }
@@ -84,7 +84,7 @@ pimcore.layout.toolbar = Class.create({
                         for (var i = 0; i < data.length; i++) {
                             this.dashboardMenu.menu.add(new Ext.menu.Item({
                                 text: data[i],
-                                iconCls: "pimcore_icon_welcome",
+                                iconCls: "pimcore_nav_icon_dashboards",
                                 handler: function (key) {
                                     try {
                                         pimcore.globalmanager.get("layout_portal_" + key).activate();
@@ -99,7 +99,7 @@ pimcore.layout.toolbar = Class.create({
                         this.dashboardMenu.menu.add(new Ext.menu.Separator({}));
                         this.dashboardMenu.menu.add({
                             text: t("add"),
-                            iconCls: "pimcore_icon_add",
+                            iconCls: "pimcore_nav_icon_add",
                             handler: function () {
                                 Ext.MessageBox.prompt(' ', t('enter_the_name_of_the_new_item'),
                                     function (button, value, object) {
@@ -150,7 +150,7 @@ pimcore.layout.toolbar = Class.create({
             if (user.isAllowed("documents") && perspectiveCfg.inToolbar("file.openDocument")) {
                 fileItems.push({
                     text: t("open_document_by_id"),
-                    iconCls: "pimcore_icon_document pimcore_icon_overlay_go",
+                    iconCls: "pimcore_nav_icon_document pimcore_icon_overlay_go",
                     handler: pimcore.helpers.openElementByIdDialog.bind(this, "document")
                 });
             }
@@ -158,7 +158,7 @@ pimcore.layout.toolbar = Class.create({
             if (user.isAllowed("assets") && perspectiveCfg.inToolbar("file.openAsset")) {
                 fileItems.push({
                     text: t("open_asset_by_id"),
-                    iconCls: "pimcore_icon_asset pimcore_icon_overlay_go",
+                    iconCls: "pimcore_nav_icon_asset pimcore_icon_overlay_go",
                     handler: pimcore.helpers.openElementByIdDialog.bind(this, "asset")
                 });
             }
@@ -166,7 +166,7 @@ pimcore.layout.toolbar = Class.create({
             if (user.isAllowed("objects") && perspectiveCfg.inToolbar("file.openObject")) {
                 fileItems.push({
                     text: t("open_data_object"),
-                    iconCls: "pimcore_icon_object pimcore_icon_overlay_go",
+                    iconCls: "pimcore_nav_icon_object pimcore_icon_overlay_go",
                     handler: pimcore.helpers.openElementByIdDialog.bind(this, "object")
                 });
             }
@@ -174,7 +174,7 @@ pimcore.layout.toolbar = Class.create({
             if (perspectiveCfg.inToolbar("file.searchReplace") && (user.isAllowed("objects") || user.isAllowed("documents") || user.isAllowed("assets"))) {
                 fileItems.push({
                     text: t("search_replace_assignments"),
-                    iconCls: "pimcore_icon_search pimcore_icon_overlay_go",
+                    iconCls: "pimcore_nav_icon_search pimcore_icon_overlay_go",
                     handler: function () {
                         new pimcore.element.replace_assignments();
                     }
@@ -184,7 +184,7 @@ pimcore.layout.toolbar = Class.create({
             if (perspectiveCfg.inToolbar("file.schedule") && (user.isAllowed("objects") || user.isAllowed("documents") || user.isAllowed("assets"))) {
                 fileItems.push({
                     text: t('element_history'),
-                    iconCls: "pimcore_icon_schedule",
+                    iconCls: "pimcore_nav_icon_history",
                     cls: "pimcore_main_menu",
                     handler: this.showElementHistory.bind(this)
                 });
@@ -193,7 +193,7 @@ pimcore.layout.toolbar = Class.create({
             if (user.isAllowed("seemode") && perspectiveCfg.inToolbar("file.seemode")) {
                 fileItems.push({
                     text: t("seemode"),
-                    iconCls: "pimcore_icon_seemode",
+                    iconCls: "pimcore_nav_icon_seemode",
                     cls: "pimcore_main_menu",
                     handler: pimcore.helpers.openSeemode
                 });
@@ -202,7 +202,7 @@ pimcore.layout.toolbar = Class.create({
             if (perspectiveCfg.inToolbar("file.closeAll")) {
                 fileItems.push({
                     text: t("close_all_tabs"),
-                    iconCls: "pimcore_icon_tabs pimcore_icon_overlay_delete",
+                    iconCls: "pimcore_nav_icon_close_all",
                     handler: this.closeAllTabs
                 });
             }
@@ -218,7 +218,7 @@ pimcore.layout.toolbar = Class.create({
 
                 fileItems.push({
                     text: t('help'),
-                    iconCls: "pimcore_icon_help",
+                    iconCls: "pimcore_nav_icon_help",
                     cls: "pimcore_main_menu",
                     hideOnClick: false,
                     menu: {
@@ -226,14 +226,14 @@ pimcore.layout.toolbar = Class.create({
                         shadow: false,
                         items: [{
                             text: t("documentation"),
-                            iconCls: "pimcore_icon_documentation",
+                            iconCls: "pimcore_nav_icon_documentation",
                             handler: function () {
                                 window.open("https://pimcore.com/docs/" + docsVersion);
                             }
                         },
                             {
                                 text: t("report_bugs"),
-                                iconCls: "pimcore_icon_github",
+                                iconCls: "pimcore_nav_icon_github",
                                 handler: function () {
                                     window.open("https://github.com/pimcore/pimcore/issues");
                                 }
@@ -247,7 +247,7 @@ pimcore.layout.toolbar = Class.create({
             if (perspectiveCfg.inToolbar("file.about")) {
                 fileItems.push({
                     text: t("about_pimcore") + " &reg;",
-                    iconCls: "pimcore_icon_pimcore",
+                    iconCls: "pimcore_nav_icon_pimcore",
                     handler: function () {
                         pimcore.helpers.showAbout();
                     }
@@ -276,7 +276,7 @@ pimcore.layout.toolbar = Class.create({
             if (user.isAllowed("glossary") && perspectiveCfg.inToolbar("extras.glossary")) {
                 extrasItems.push({
                     text: t("glossary"),
-                    iconCls: "pimcore_icon_glossary",
+                    iconCls: "pimcore_nav_icon_glossary",
                     handler: this.editGlossary
                 });
             }
@@ -284,7 +284,7 @@ pimcore.layout.toolbar = Class.create({
             if (user.isAllowed("redirects") && perspectiveCfg.inToolbar("extras.redirects")) {
                 extrasItems.push({
                     text: t("redirects"),
-                    iconCls: "pimcore_icon_redirects",
+                    iconCls: "pimcore_nav_icon_redirects",
                     handler: this.editRedirects
                 });
             }
@@ -292,22 +292,22 @@ pimcore.layout.toolbar = Class.create({
             if (user.isAllowed("translations") && perspectiveCfg.inToolbar("extras.translations")) {
                 extrasItems.push({
                     text: t("translations"),
-                    iconCls: "pimcore_icon_translations",
+                    iconCls: "pimcore_nav_icon_translations",
                     hideOnClick: false,
                     menu: {
                         cls: "pimcore_navigation_flyout",
                         shadow: false,
                         items: [{
                             text: t("shared_translations"),
-                            iconCls: "pimcore_icon_translations",
+                            iconCls: "pimcore_nav_icon_translations",
                             handler: this.editTranslations
                         }, {
                             text: "XLIFF " + t("export") + "/" + t("import"),
-                            iconCls: "pimcore_icon_translations",
+                            iconCls: "pimcore_nav_icon_translations",
                             handler: this.xliffImportExport
                         }, {
                             text: "Microsoft® Word " + t("export"),
-                            iconCls: "pimcore_icon_docx",
+                            iconCls: "pimcore_nav_icon_word_export",
                             handler: this.wordExport
                         }]
                     }
@@ -317,15 +317,15 @@ pimcore.layout.toolbar = Class.create({
             if (user.isAllowed("recyclebin") && perspectiveCfg.inToolbar("extras.recyclebin")) {
                 extrasItems.push({
                     text: t("recyclebin"),
-                    iconCls: "pimcore_icon_recyclebin",
+                    iconCls: "pimcore_nav_icon_recyclebin",
                     handler: this.recyclebin
                 });
             }
 
             if (user.isAllowed("plugins") && perspectiveCfg.inToolbar("extras.plugins")) {
                 extrasItems.push({
-                    text: t("extensions"),
-                    iconCls: "pimcore_icon_plugin",
+                    text: t("bundles"),
+                    iconCls: "pimcore_nav_icon_bundles",
                     handler: this.extensionAdmin
                 });
             }
@@ -333,7 +333,7 @@ pimcore.layout.toolbar = Class.create({
             if (user.isAllowed("notes_events") && perspectiveCfg.inToolbar("extras.notesEvents")) {
                 extrasItems.push({
                     text: t('notes_events'),
-                    iconCls: "pimcore_icon_notes",
+                    iconCls: "pimcore_nav_icon_notes",
                     handler: this.notes
                 });
             }
@@ -341,7 +341,7 @@ pimcore.layout.toolbar = Class.create({
             if (user.isAllowed("application_logging")&& perspectiveCfg.inToolbar("extras.applicationlog")) {
                 extrasItems.push({
                     text: t("log_applicationlog"),
-                    iconCls: "pimcore_icon_log_admin",
+                    iconCls: "pimcore_nav_icon_log_admin",
                     handler: this.logAdmin
                 });
             }
@@ -349,7 +349,7 @@ pimcore.layout.toolbar = Class.create({
             if(user.isAllowed("gdpr_data_extractor")&& perspectiveCfg.inToolbar("extras.gdpr_data_extractor")) {
                 extrasItems.push({
                     text: t("gdpr_data_extractor"),
-                    iconCls: "pimcore_icon_gdpr",
+                    iconCls: "pimcore_nav_icon_gdpr",
                     handler: function() {
                         new pimcore.settings.gdpr.gdprPanel();
                     }
@@ -363,22 +363,22 @@ pimcore.layout.toolbar = Class.create({
             if (user.isAllowed("emails") && perspectiveCfg.inToolbar("extras.emails")) {
                 extrasItems.push({
                     text: t("email"),
-                    iconCls: "pimcore_icon_email",
+                    iconCls: "pimcore_nav_icon_email",
                     hideOnClick: false,
                     menu: {
                         cls: "pimcore_navigation_flyout",
                         shadow: false,
                         items: [{
                             text: t("email_logs"),
-                            iconCls: "pimcore_icon_email",
+                            iconCls: "pimcore_nav_icon_email",
                             handler: this.sentEmailsLog
                         }, {
                             text: t("email_blacklist"),
-                            iconCls: "pimcore_icon_email pimcore_icon_overlay_delete",
+                            iconCls: "pimcore_nav_icon_email",
                             handler: this.emailBlacklist
                         }, {
                             text: t("send_test_email"),
-                            iconCls: "pimcore_icon_email",
+                            iconCls: "pimcore_nav_icon_email",
                             handler: this.sendTestEmail
                         }]
                     }
@@ -389,7 +389,7 @@ pimcore.layout.toolbar = Class.create({
                 if (perspectiveCfg.inToolbar("extras.maintenance")) {
                     extrasItems.push({
                         text: t("maintenance_mode"),
-                        iconCls: "pimcore_icon_maintenance",
+                        iconCls: "pimcore_nav_icon_maintenance",
                         handler: this.showMaintenance
                     });
                 }
@@ -401,7 +401,7 @@ pimcore.layout.toolbar = Class.create({
                         systemItems.push(
                             {
                                 text: t("php_info"),
-                                iconCls: "pimcore_icon_php",
+                                iconCls: "pimcore_nav_icon_php",
                                 handler: this.showPhpInfo
                             }
                         );
@@ -411,7 +411,7 @@ pimcore.layout.toolbar = Class.create({
                         systemItems.push(
                             {
                                 text: t("php_opcache_status"),
-                                iconCls: "pimcore_icon_reports",
+                                iconCls: "pimcore_nav_icon_reports",
                                 handler: this.showOpcacheStatus
                             }
                         );
@@ -421,7 +421,7 @@ pimcore.layout.toolbar = Class.create({
                         systemItems.push(
                             {
                                 text: t("system_requirements_check"),
-                                iconCls: "pimcore_icon_systemrequirements",
+                                iconCls: "pimcore_nav_icon_systemrequirements",
                                 handler: this.showSystemRequirementsCheck
                             }
                         );
@@ -431,7 +431,7 @@ pimcore.layout.toolbar = Class.create({
                         systemItems.push(
                             {
                                 text: t("server_info"),
-                                iconCls: "pimcore_icon_server_info",
+                                iconCls: "pimcore_nav_icon_server_info",
                                 handler: this.showServerInfo
                             }
                         );
@@ -441,7 +441,7 @@ pimcore.layout.toolbar = Class.create({
                         systemItems.push(
                             {
                                 text: t("database_administration"),
-                                iconCls: "pimcore_icon_mysql",
+                                iconCls: "pimcore_nav_icon_mysql",
                                 handler: this.showAdminer
                             }
                         );
@@ -451,7 +451,7 @@ pimcore.layout.toolbar = Class.create({
                         systemItems.push(
                             {
                                 text: t("server_fileexplorer"),
-                                iconCls: "pimcore_icon_folder pimcore_icon_overlay_search",
+                                iconCls: "pimcore_nav_icon_fileexplorer",
                                 handler: this.showFilexplorer
                             }
                         );
@@ -459,7 +459,7 @@ pimcore.layout.toolbar = Class.create({
 
                     extrasItems.push({
                         text: t("system_infos_and_tools"),
-                        iconCls: "pimcore_icon_info",
+                        iconCls: "pimcore_nav_icon_info",
                         hideOnClick: false,
                         menu: {
                             cls: "pimcore_navigation_flyout",
@@ -495,7 +495,7 @@ pimcore.layout.toolbar = Class.create({
             if (user.isAllowed("reports") && perspectiveCfg.inToolbar("marketing.reports")) {
                 marketingItems.push({
                     text: t("reports"),
-                    iconCls: "pimcore_icon_reports",
+                    iconCls: "pimcore_nav_icon_reports",
                     handler: this.showReports.bind(this, null)
                 });
             }
@@ -503,7 +503,7 @@ pimcore.layout.toolbar = Class.create({
             if (user.isAllowed("tag_snippet_management") && perspectiveCfg.inToolbar("marketing.tagmanagement")) {
                 marketingItems.push({
                     text: t("tag_snippet_management"),
-                    iconCls: "pimcore_icon_tag",
+                    iconCls: "pimcore_nav_icon_tag",
                     handler: this.showTagManagement
                 });
             }
@@ -511,7 +511,7 @@ pimcore.layout.toolbar = Class.create({
             if (user.isAllowed("qr_codes")) {
                 marketingItems.push({
                     text: t("qr_codes"),
-                    iconCls: "pimcore_icon_qrcode",
+                    iconCls: "pimcore_nav_icon_qrcode",
                     handler: this.showQRCode
                 });
             }
@@ -519,7 +519,7 @@ pimcore.layout.toolbar = Class.create({
             if (user.isAllowed("targeting") && perspectiveCfg.inToolbar("marketing.targeting")) {
                 marketingItems.push({
                     text: t("personalization") + " / " + t("targeting"),
-                    iconCls: "pimcore_icon_usergroup",
+                    iconCls: "pimcore_nav_icon_usergroup",
                     hideOnClick: false,
                     menu: {
                         cls: "pimcore_navigation_flyout",
@@ -527,15 +527,15 @@ pimcore.layout.toolbar = Class.create({
                         items: [
                             {
                                 text: t("global_targeting_rules"),
-                                iconCls: "pimcore_icon_targeting",
+                                iconCls: "pimcore_nav_icon_targeting",
                                 handler: this.showTargetingRules
                             }, {
                                 text: t('target_groups'),
-                                iconCls: "pimcore_icon_target_groups",
+                                iconCls: "pimcore_nav_icon_target_groups",
                                 handler: this.showTargetGroups
                             }, {
                                 text: t("targeting_toolbar"),
-                                iconCls: "pimcore_icon_targeting_toolbar",
+                                iconCls: "pimcore_nav_icon_targeting_toolbar",
                                 handler: this.showTargetingToolbarSettings
                             }
                         ]
@@ -549,7 +549,7 @@ pimcore.layout.toolbar = Class.create({
                 if (user.isAllowed("documents") && user.isAllowed("seo_document_editor") && perspectiveCfg.inToolbar("marketing.seo.documents")) {
                     seoMenu.push({
                         text: t("seo_document_editor"),
-                        iconCls: "pimcore_icon_document pimcore_icon_overlay_search",
+                        iconCls: "pimcore_nav_icon_document_seo",
                         handler: this.showDocumentSeo
                     });
                 }
@@ -557,7 +557,7 @@ pimcore.layout.toolbar = Class.create({
                 if (user.isAllowed("robots.txt") && perspectiveCfg.inToolbar("marketing.seo.robots")) {
                     seoMenu.push({
                         text: "robots.txt",
-                        iconCls: "pimcore_icon_robots",
+                        iconCls: "pimcore_nav_icon_robots",
                         handler: this.showRobotsTxt
                     });
                 }
@@ -565,7 +565,7 @@ pimcore.layout.toolbar = Class.create({
                 if (user.isAllowed("http_errors") && perspectiveCfg.inToolbar("marketing.seo.httperrors")) {
                     seoMenu.push({
                         text: t("http_errors"),
-                        iconCls: "pimcore_icon_httperrorlog",
+                        iconCls: "pimcore_nav_icon_httperrorlog",
                         handler: this.showHttpErrorLog
                     });
                 }
@@ -573,7 +573,7 @@ pimcore.layout.toolbar = Class.create({
                 if (seoMenu.length > 0) {
                     marketingItems.push({
                         text: t("search_engine_optimization"),
-                        iconCls: "pimcore_icon_seo",
+                        iconCls: "pimcore_nav_icon_seo",
                         hideOnClick: false,
                         menu: {
                             cls: "pimcore_navigation_flyout",
@@ -588,7 +588,7 @@ pimcore.layout.toolbar = Class.create({
                 if (perspectiveCfg.inToolbar("settings.customReports")) {
                     marketingItems.push({
                         text: t("custom_reports"),
-                        iconCls: "pimcore_icon_reports",
+                        iconCls: "pimcore_nav_icon_reports",
                         handler: this.showCustomReports
                     });
                 }
@@ -598,7 +598,7 @@ pimcore.layout.toolbar = Class.create({
                 if (perspectiveCfg.inToolbar("settings.marketingReports")) {
                     marketingItems.push({
                         text: t("marketing_settings"),
-                        iconCls: "pimcore_icon_system",
+                        iconCls: "pimcore_nav_icon_marketing_settings",
                         handler: this.reportSettings
                     });
                 }
@@ -607,7 +607,7 @@ pimcore.layout.toolbar = Class.create({
             if (user.isAllowed("piwik_reports") && 'undefined' !== typeof pimcore.settings.piwik && pimcore.settings.piwik.iframe_configured) {
                 marketingItems.push({
                     text: "Matomo / Piwik",
-                    iconCls: "pimcore_icon_piwik",
+                    iconCls: "pimcore_nav_icon_matomo",
                     handler: (function() {
                         // create a promise which is resolved if the request succeeds
                         var promise = new Ext.Promise(function (resolve, reject) {
@@ -654,7 +654,7 @@ pimcore.layout.toolbar = Class.create({
                                     pimcore.helpers.openGenericIframeWindow(
                                         "piwik_iframe_integration",
                                         url,
-                                        "pimcore_icon_piwik",
+                                        "pimcore_nav_icon_matomo",
                                         "Matomo / Piwik"
                                     );
                                 },
@@ -693,14 +693,14 @@ pimcore.layout.toolbar = Class.create({
             if (user.isAllowed("document_types") && perspectiveCfg.inToolbar("settings.documentTypes")) {
                 settingsItems.push({
                     text: t("document_types"),
-                    iconCls: "pimcore_icon_doctypes",
+                    iconCls: "pimcore_nav_icon_doctypes",
                     handler: this.editDocumentTypes
                 });
             }
             if (user.isAllowed("predefined_properties") && perspectiveCfg.inToolbar("settings.predefinedProperties")) {
                 settingsItems.push({
                     text: t("predefined_properties"),
-                    iconCls: "pimcore_icon_properties",
+                    iconCls: "pimcore_nav_icon_properties",
                     handler: this.editProperties
                 });
             }
@@ -708,7 +708,7 @@ pimcore.layout.toolbar = Class.create({
             if (user.isAllowed("predefined_properties") && perspectiveCfg.inToolbar("settings.predefinedMetadata")) {
                 settingsItems.push({
                     text: t("predefined_asset_metadata"),
-                    iconCls: "pimcore_icon_metadata",
+                    iconCls: "pimcore_nav_icon_metadata",
                     handler: this.editPredefinedMetadata
                 });
             }
@@ -716,7 +716,7 @@ pimcore.layout.toolbar = Class.create({
             if (user.isAllowed("system_settings") && perspectiveCfg.inToolbar("settings.system")) {
                 settingsItems.push({
                     text: t("system_settings"),
-                    iconCls: "pimcore_icon_system",
+                    iconCls: "pimcore_nav_icon_system_settings",
                     handler: this.systemSettings
                 });
             }
@@ -724,7 +724,7 @@ pimcore.layout.toolbar = Class.create({
             if (user.isAllowed("website_settings") && perspectiveCfg.inToolbar("settings.website")) {
                 settingsItems.push({
                     text: t("website_settings"),
-                    iconCls: "pimcore_icon_website",
+                    iconCls: "pimcore_nav_icon_website_settings",
                     handler: this.websiteSettings
                 });
             }
@@ -732,7 +732,7 @@ pimcore.layout.toolbar = Class.create({
             if (user.isAllowed("web2print_settings") && perspectiveCfg.inToolbar("settings.web2print")) {
                 settingsItems.push({
                     text: t("web2print_settings"),
-                    iconCls: "pimcore_icon_printpage pimcore_icon_overlay_setting",
+                    iconCls: "pimcore_nav_icon_print_settings",
                     handler: this.web2printSettings
                 });
             }
@@ -745,7 +745,7 @@ pimcore.layout.toolbar = Class.create({
                         {
                             text: t("users"),
                             handler: this.editUsers,
-                            iconCls: "pimcore_icon_user"
+                            iconCls: "pimcore_nav_icon_users"
                         }
                     );
                 }
@@ -755,7 +755,7 @@ pimcore.layout.toolbar = Class.create({
                         {
                             text: t("roles"),
                             handler: this.editRoles,
-                            iconCls: "pimcore_icon_roles"
+                            iconCls: "pimcore_nav_icon_roles"
                         }
                     );
                 }
@@ -768,7 +768,7 @@ pimcore.layout.toolbar = Class.create({
                                 var checker = new pimcore.element.permissionchecker();
                                 checker.show();
                             }.bind(this),
-                            iconCls: "pimcore_icon_search"
+                            iconCls: "pimcore_nav_icon_analyze_permissions"
                         }
                     );
                 }
@@ -776,7 +776,7 @@ pimcore.layout.toolbar = Class.create({
                 if (userItems.length > 0) {
                     settingsItems.push({
                         text: t("users") + " / " + t("roles"),
-                        iconCls: "pimcore_icon_user",
+                        iconCls: "pimcore_nav_icon_users",
                         hideOnClick: false,
                         menu: {
                             cls: "pimcore_navigation_flyout",
@@ -790,18 +790,18 @@ pimcore.layout.toolbar = Class.create({
             if (user.isAllowed("thumbnails") && perspectiveCfg.inToolbar("settings.thumbnails")) {
                 settingsItems.push({
                     text: t("thumbnails"),
-                    iconCls: "pimcore_icon_thumbnails",
+                    iconCls: "pimcore_nav_icon_thumbnails",
                     hideOnClick: false,
                     menu: {
                         cls: "pimcore_navigation_flyout",
                         shadow: false,
                         items: [{
                             text: t("image_thumbnails"),
-                            iconCls: "pimcore_icon_thumbnails",
+                            iconCls: "pimcore_nav_icon_thumbnails",
                             handler: this.editThumbnails
                         }, {
                             text: t("video_thumbnails"),
-                            iconCls: "pimcore_icon_videothumbnails",
+                            iconCls: "pimcore_nav_icon_videothumbnails",
                             handler: this.editVideoThumbnails
                         }]
                     }
@@ -812,7 +812,7 @@ pimcore.layout.toolbar = Class.create({
 
                 var objectMenu = {
                     text: t("data_objects"),
-                    iconCls: "pimcore_icon_object",
+                    iconCls: "pimcore_nav_icon_object",
                     hideOnClick: false,
                     menu: {
                         cls: "pimcore_navigation_flyout",
@@ -825,7 +825,7 @@ pimcore.layout.toolbar = Class.create({
                     if (perspectiveCfg.inToolbar("settings.objects.classes")) {
                         objectMenu.menu.items.push({
                             text: t("classes"),
-                            iconCls: "pimcore_icon_class",
+                            iconCls: "pimcore_nav_icon_class",
                             handler: this.editClasses
                         });
                     }
@@ -833,7 +833,7 @@ pimcore.layout.toolbar = Class.create({
                     if (perspectiveCfg.inToolbar("settings.objects.fieldcollections")) {
                         objectMenu.menu.items.push({
                             text: t("field_collections"),
-                            iconCls: "pimcore_icon_fieldcollection",
+                            iconCls: "pimcore_nav_icon_fieldcollection",
                             handler: this.editFieldcollections
                         });
                     }
@@ -841,7 +841,7 @@ pimcore.layout.toolbar = Class.create({
                     if (perspectiveCfg.inToolbar("settings.objects.objectbricks")) {
                         objectMenu.menu.items.push({
                             text: t("objectbricks"),
-                            iconCls: "pimcore_icon_objectbricks",
+                            iconCls: "pimcore_nav_icon_objectbricks",
                             handler: this.editObjectBricks
                         });
                     }
@@ -849,7 +849,7 @@ pimcore.layout.toolbar = Class.create({
                     if (perspectiveCfg.inToolbar("settings.objects.quantityValue")) {
                         objectMenu.menu.items.push({
                             text: t("quantityValue_field"),
-                            iconCls: "pimcore_icon_quantityValue",
+                            iconCls: "pimcore_nav_icon_quantityValue",
                             cls: "pimcore_main_menu",
                             handler: function () {
                                 try {
@@ -865,7 +865,7 @@ pimcore.layout.toolbar = Class.create({
                     if (perspectiveCfg.inToolbar("settings.objects.classificationstore")) {
                         objectMenu.menu.items.push({
                             text: t("classification_store"),
-                            iconCls: "pimcore_icon_classificationstore",
+                            iconCls: "pimcore_nav_icon_classificationstore",
                             handler: this.editClassificationStoreConfig
                         });
                     }
@@ -873,7 +873,7 @@ pimcore.layout.toolbar = Class.create({
                     if (perspectiveCfg.inToolbar("settings.objects.bulkExport")) {
                         objectMenu.menu.items.push({
                             text: t("bulk_export"),
-                            iconCls: "pimcore_icon_export",
+                            iconCls: "pimcore_nav_icon_export",
                             handler: this.bulkExport
                         });
                     }
@@ -881,7 +881,7 @@ pimcore.layout.toolbar = Class.create({
                     if (perspectiveCfg.inToolbar("settings.objects.bulkImport")) {
                         objectMenu.menu.items.push({
                             text: t("bulk_import"),
-                            iconCls: "pimcore_icon_import",
+                            iconCls: "pimcore_nav_icon_import",
                             handler: this.bulkImport.bind(this)
                         });
                     }
@@ -896,7 +896,7 @@ pimcore.layout.toolbar = Class.create({
             if (user.isAllowed("routes") && perspectiveCfg.inToolbar("settings.routes")) {
                 settingsItems.push({
                     text: t("static_routes"),
-                    iconCls: "pimcore_icon_routes",
+                    iconCls: "pimcore_nav_icon_routes",
                     handler: this.editRoutes
                 });
             }
@@ -911,7 +911,7 @@ pimcore.layout.toolbar = Class.create({
                     if (perspectiveCfg.inToolbar("settings.cache.clearAll")) {
                         cacheSubItems.push({
                             text: t("all_caches") + ' (Symfony + Data)',
-                            iconCls: "pimcore_icon_clear_cache",
+                            iconCls: "pimcore_nav_icon_clear_cache",
                             handler: this.clearCache.bind(this, {'env[]': ['dev','prod']})
                         });
                     }
@@ -919,7 +919,7 @@ pimcore.layout.toolbar = Class.create({
                     if (perspectiveCfg.inToolbar("settings.cache.clearData")) {
                         cacheSubItems.push({
                             text: t("data_cache"),
-                            iconCls: "pimcore_icon_clear_cache",
+                            iconCls: "pimcore_nav_icon_clear_cache",
                             handler: this.clearCache.bind(this, {'only_pimcore_cache': true})
                         });
                     }
@@ -927,26 +927,26 @@ pimcore.layout.toolbar = Class.create({
                     if (perspectiveCfg.inToolbar("settings.cache.clearSymfony")) {
                         cacheSubItems.push({
                             text: 'Symfony ' + t('environment') + ": prod",
-                            iconCls: "pimcore_icon_clear_cache",
+                            iconCls: "pimcore_nav_icon_clear_cache",
                             handler: this.clearCache.bind(this, {'only_symfony_cache': true, 'env[]': 'prod'})
                         });
 
                         cacheSubItems.push({
                             text: 'Symfony ' + t('environment') + ": " + pimcore.settings['environment'],
-                            iconCls: "pimcore_icon_clear_cache",
+                            iconCls: "pimcore_nav_icon_clear_cache",
                             handler: this.clearCache.bind(this, {'only_symfony_cache': true, 'env[]': pimcore.settings['environment']})
                         });
 
                         cacheSubItems.push({
                             text: 'Symfony ' + t('environment') + ": " + t('all'),
-                            iconCls: "pimcore_icon_clear_cache",
+                            iconCls: "pimcore_nav_icon_clear_cache",
                             handler: this.clearCache.bind(this, {'only_symfony_cache': true, 'env[]': ['dev','prod']})
                         });
                     }
 
                     cacheItems.push({
                         text: t("clear_cache"),
-                        iconCls: "pimcore_icon_clear_cache",
+                        iconCls: "pimcore_nav_icon_clear_cache",
                         hideOnClick: false,
                         menu: {
                             cls: "pimcore_navigation_flyout",
@@ -960,7 +960,7 @@ pimcore.layout.toolbar = Class.create({
                     if (user.isAllowed("clear_fullpage_cache")) {
                         cacheItems.push({
                             text: t("clear_full_page_cache"),
-                            iconCls: "pimcore_icon_clear_cache",
+                            iconCls: "pimcore_nav_icon_clear_cache",
                             handler: this.clearOutputCache
                         });
                     }
@@ -970,7 +970,7 @@ pimcore.layout.toolbar = Class.create({
                     if (user.isAllowed("clear_temp_files")) {
                         cacheItems.push({
                             text: t("clear_temporary_files"),
-                            iconCls: "pimcore_icon_clear_cache",
+                            iconCls: "pimcore_nav_icon_clear_cache",
                             handler: this.clearTemporaryFiles
                         });
                     }
@@ -980,7 +980,7 @@ pimcore.layout.toolbar = Class.create({
                     if (pimcore.settings.document_generatepreviews && pimcore.settings.htmltoimage) {
                         cacheItems.push({
                             text: t("generate_page_previews"),
-                            iconCls: "pimcore_icon_page",
+                            iconCls: "pimcore_nav_icon_page_previews",
                             handler: this.generatePagePreviews
                         });
                     }
@@ -990,7 +990,7 @@ pimcore.layout.toolbar = Class.create({
                 if (cacheItems.length > 0) {
                     var cacheMenu = {
                         text: t("cache"),
-                        iconCls: "pimcore_icon_clear_cache",
+                        iconCls: "pimcore_nav_icon_clear_cache",
                         hideOnClick: false,
                         menu: {
                             cls: "pimcore_navigation_flyout",
@@ -1008,7 +1008,7 @@ pimcore.layout.toolbar = Class.create({
                 if (perspectiveCfg.inToolbar("settings.adminTranslations")) {
                     settingsItems.push({
                         text: t("admin_translations"),
-                        iconCls: "pimcore_icon_translations",
+                        iconCls: "pimcore_nav_icon_translations",
                         handler: this.editTranslationsSpecific
                     });
                 }
@@ -1018,14 +1018,14 @@ pimcore.layout.toolbar = Class.create({
             if (user.isAllowed("tags_configuration") && perspectiveCfg.inToolbar("settings.tagConfiguration")) {
                 settingsItems.push({
                     text: t("element_tag_configuration"),
-                    iconCls: "pimcore_icon_element_tags",
+                    iconCls: "pimcore_nav_icon_element_tags",
                     handler: this.showTagConfiguration
                 });
             }
 
             if (user.admin) {
                 settingsItems.push({
-                    iconCls: "pimcore_icon_icons",
+                    iconCls: "pimcore_nav_icon_icons",
                     text: t('icon_library'),
                     handler: function() {
                         pimcore.helpers.openGenericIframeWindow("icon-library", "/admin/misc/icon-list", "pimcore_icon_icons", t("icon_library"));
@@ -1060,7 +1060,7 @@ pimcore.layout.toolbar = Class.create({
             if ((user.isAllowed("documents") || user.isAllowed("asset") || user.isAllowed("objects")) && perspectiveCfg.inToolbar("search.quickSearch")) {
                 searchItems.push({
                     text: t("quicksearch"),
-                    iconCls: "pimcore_icon_search",
+                    iconCls: "pimcore_nav_icon_quicksearch",
                     handler: function () {
                         pimcore.helpers.showQuickSearch();
                     }
@@ -1082,7 +1082,7 @@ pimcore.layout.toolbar = Class.create({
             if (user.isAllowed("documents") && perspectiveCfg.inToolbar("search.documents")) {
                 searchItems.push({
                     text: t("documents"),
-                    iconCls: "pimcore_icon_document",
+                    iconCls: "pimcore_nav_icon_document",
                     handler: searchAction.bind(this, "document")
                 });
             }
@@ -1090,7 +1090,7 @@ pimcore.layout.toolbar = Class.create({
             if (user.isAllowed("assets") && perspectiveCfg.inToolbar("search.assets")) {
                 searchItems.push({
                     text: t("assets"),
-                    iconCls: "pimcore_icon_asset",
+                    iconCls: "pimcore_nav_icon_asset",
                     handler: searchAction.bind(this, "asset")
                 });
             }
@@ -1098,7 +1098,7 @@ pimcore.layout.toolbar = Class.create({
             if (user.isAllowed("objects") && perspectiveCfg.inToolbar("search.objects")) {
                 searchItems.push({
                     text: t("data_objects"),
-                    iconCls: "pimcore_icon_object",
+                    iconCls: "pimcore_nav_icon_object",
                     handler: searchAction.bind(this, "object")
                 });
             }
@@ -1124,14 +1124,14 @@ pimcore.layout.toolbar = Class.create({
         if (user.isAllowed("notifications")) {
             var notificationItems = [{
                 text: t("notifications"),
-                iconCls: "pimcore_icon_comments",
+                iconCls: "pimcore_nav_icon_notifications",
                 handler: this.showNotificationTab.bind(this)
             }];
 
             if(user.isAllowed('notifications_send')) {
                 notificationItems.push({
                     text: t("notifications_send"),
-                    iconCls: "pimcore_icon_sms",
+                    iconCls: "pimcore_nav_icon_notifications_sent",
                     id: "notifications_new",
                     handler: this.showNotificationModal.bind(this)
                 });
@@ -1143,7 +1143,7 @@ pimcore.layout.toolbar = Class.create({
             if (pimcore.settings.devmode) {
                 notificationItems.push({
                     text: t("DEV MODE"),
-                    iconCls: "pimcore_icon_dev_mode"
+                    iconCls: "pimcore_nav_icon_dev_mode"
                 });
                 pimcore.notification.helper.incrementCount();
             }
@@ -1152,7 +1152,7 @@ pimcore.layout.toolbar = Class.create({
             if (pimcore.settings.debug) {
                 notificationItems.push({
                     text: t("debug_mode_on"),
-                    iconCls: "pimcore_icon_debug_mode"
+                    iconCls: "pimcore_nav_icon_debug_mode"
                 });
                 pimcore.notification.helper.incrementCount();
             }
@@ -1161,7 +1161,7 @@ pimcore.layout.toolbar = Class.create({
             if (!pimcore.settings.maintenance_active) {
                 notificationItems.push({
                     text: t("maintenance_not_active"),
-                    iconCls: "pimcore_icon_maintenance",
+                    iconCls: "pimcore_nav_icon_maintenance",
                     handler: function () {
                         window.open('https://pimcore.com/docs/5.0.x/Getting_Started/Installation.html#page_5-Maintenance-Cron-Job');
                     }
