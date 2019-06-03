@@ -18,6 +18,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\VoucherServiceException;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractSetProductEntry;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\CheckoutableInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Model\ProductInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Reservation;
 use Pimcore\Logger;
 
@@ -929,7 +930,7 @@ abstract class AbstractCart extends \Pimcore\Model\AbstractModel implements Cart
      */
     protected static function isValidCartItem(CartItemInterface $item)
     {
-        if ($item->getProduct() != null) {
+        if ($item->getProduct() instanceof ProductInterface) {
             return true;
         } else {
             Logger::warn('product ' . $item->getProductId() . ' not found');
