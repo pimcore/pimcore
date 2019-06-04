@@ -81,7 +81,7 @@
     "symfony/contracts": "^1.1",
     "symfony/monolog-bundle": "^3.1.0",
     "symfony/swiftmailer-bundle": "^3.2.2",
-    "symfony/symfony": "^3.4.17 || ^4.0",
+    "symfony/symfony": "3.4",
     "tijsverkoyen/css-to-inline-styles": "^2.2.1",
     "twig/extensions": "^1.5",
     "twig/twig": "^2.4",
@@ -134,23 +134,28 @@
     ]
   },
   "scripts": {
+    "post-create-project-cmd": "Pimcore\\Composer::postCreateProject",
     "post-install-cmd": [
-      "@symfony-scripts"
+      "Pimcore\\Composer::postInstall",
+      "@pimcore-scripts"
     ],
     "post-update-cmd": [
-      "@symfony-scripts"
+      "Pimcore\\Composer::postUpdate",
+      "@pimcore-scripts",
+      "Pimcore\\Composer::executeMigrationsUp"
     ],
-    "pre-package-update": [
-
-    ],
-    "symfony-scripts": [
-      "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::clearCache",
-      "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::installAssets",
-      "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::installRequirementsFile",
-      "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::prepareDeploymentTarget"
+    "pimcore-scripts": [
+      "Pimcore\\Composer::clearCache",
+      "Pimcore\\Composer::installAssets"
     ]
   },
   "extra": {
+    "symfony-app-dir": "app",
+    "symfony-bin-dir": "bin",
+    "symfony-var-dir": "var",
+    "symfony-web-dir": "web",
+    "symfony-tests-dir": "tests",
+    "symfony-assets-install": "relative",
     "branch-alias": {
       "dev-master": "6.0-dev"
     }
