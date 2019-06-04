@@ -29,13 +29,13 @@ matrix:
       sudo: required
       php: 7.2
       env:
-        - SYMFONY_VERSION=^4.0
+        - SYMFONY_VERSION="^4.0"
 
     - os: linux
       sudo: required
       php: 7.3
       env:
-        - SYMFONY_VERSION=^4.0
+        - SYMFONY_VERSION="^4.0"
 
     # Other Tests
     - os: linux
@@ -77,13 +77,13 @@ matrix:
       env:
         - TASK_TESTS=0
         - TASK_STAN=1
-        - SYMFONY_VERSION=^4.0
+        - SYMFONY_VERSION="^4.0"
     - os: linux
       php: 7.3
       env:
         - TASK_TESTS=0
         - TASK_STAN=1
-        - SYMFONY_VERSION=^4.0
+        - SYMFONY_VERSION="^4.0"
 
     # Test Docs
     - os: linux
@@ -98,12 +98,12 @@ matrix:
           - tmp-docs/pimcore-docs/vendor
   allow_failures:
     - env:
-        - TASK_STAN=1
         - TASK_TESTS=0
+        - TASK_STAN=1
     - env:
-        - TASK_STAN=1
         - TASK_TESTS=0
-        - SYMFONY_VERSION=^4.0
+        - TASK_STAN=1
+        - SYMFONY_VERSION="^4.0"
   fast_finish: true
 
 cache:
@@ -121,7 +121,6 @@ env:
     - PIMCORE_TEST_DB_DSN="mysql://root@localhost/pimcore_test"
     - PIMCORE_TEST_CACHE_REDIS_DATABASE=1
     - SYMFONY_VERSION=^3.4
-    - PIMCORE_TEST_CACHE_REDIS_DATABASE=1
 
 before_install:
   - mysql --version
