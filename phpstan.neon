@@ -1,8 +1,4 @@
 parameters:
-    autoload_files:
-        - %currentWorkingDirectory%/vendor/pimcore/pimcore/lib/helper-functions.php
-        - %currentWorkingDirectory%/vendor/pimcore/pimcore/lib/simple_html_dom.php
-
     reportUnmatchedIgnoredErrors: false
 
     symfony:
