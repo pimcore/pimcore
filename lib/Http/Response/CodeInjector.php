@@ -29,11 +29,6 @@ class CodeInjector
     const POSITION_END = 'end';
     const REPLACE = 'replace';
 
-    /**
-     * @deprecated Use REPLACE instead
-     */
-    const POSITION_REPLACE = self::REPLACE;
-
     private static $presetSelectors = [
         self::SELECTOR_HEAD,
         self::SELECTOR_BODY,
