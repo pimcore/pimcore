@@ -434,6 +434,13 @@
     background: url(/bundles/pimcoreadmin/img/flat-color-icons/email.svg) center center no-repeat !important;
 }
 
+.pimcore_nav_icon_commerce_backoffice {
+    background: url(/bundles/pimcoreadmin/img/flat-color-icons/tachometer.svg) center center no-repeat !important;
+}
+
+.pimcore_nav_icon_commerce_pricing_rules {
+    background: url(/bundles/pimcoreadmin/img/flat-color-icons/percent.svg) center center no-repeat !important;
+}
 
 
 

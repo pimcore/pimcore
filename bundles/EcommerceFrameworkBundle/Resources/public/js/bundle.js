@@ -89,7 +89,7 @@ pimcore.bundle.EcommerceFramework.bundle = Class.create(pimcore.plugin.admin, {
             var pricingPanelId = "bundle_ecommerce_pricing_config";
             var item = {
                 text: t("bundle_ecommerce_pricing_rules"),
-                iconCls: "bundle_ecommerce_pricing_rules",
+                iconCls: "pimcore_nav_icon_commerce_pricing_rules",
                 handler: function () {
                     try {
                         pimcore.globalmanager.get(pricingPanelId).activate();
@@ -110,7 +110,7 @@ pimcore.bundle.EcommerceFramework.bundle = Class.create(pimcore.plugin.admin, {
             var orderPanelId = "bundle_ecommerce_back-office_order";
             var item = {
                 text: t("bundle_ecommerce_back-office_order"),
-                iconCls: "bundle_ecommerce_back-office_order",
+                iconCls: "pimcore_nav_icon_commerce_backoffice",
                 handler: function () {
                     try {
                         pimcore.globalmanager.get(orderPanelId).activate();
