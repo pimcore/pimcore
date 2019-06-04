@@ -97,6 +97,11 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
     public $provideSplitView;
 
     /**
+     * @var string
+     */
+    public $tabPosition = 'top';
+
+    /**
      * @var
      */
     public $hideLabelsWhenTabsReached;
@@ -1472,5 +1477,21 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
     public function supportsDirtyDetection()
     {
         return true;
+    }
+
+    /**
+     * @return string
+     */
+    public function getTabPosition(): string
+    {
+        return $this->tabPosition;
+    }
+
+    /**
+     * @param string $tabPosition
+     */
+    public function setTabPosition(string $tabPosition): void
+    {
+        $this->tabPosition = $tabPosition;
     }
 }
