@@ -121,7 +121,7 @@ env:
     - PIMCORE_TEST_DB_DSN="mysql://root@localhost/pimcore_test"
     - PIMCORE_TEST_CACHE_REDIS_DATABASE=1
     - SYMFONY_VERSION=^3.4
-    - PIMCORE_PROJECT_ROOT=TRAVIS_BUILD_DIR
+    - PIMCORE_PROJECT_ROOT=$TRAVIS_BUILD_DIR
 
 before_install:
   - mysql --version
