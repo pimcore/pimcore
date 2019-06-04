@@ -127,7 +127,7 @@ pimcore.object.helpers.edit = {
         };
 
         var validKeys = ["xtype","title","layout","icon","items","region","width","height","name","text","html","handler",
-            "labelWidth", "fieldLabel", "collapsible","collapsed","bodyStyle","listeners", "border"];
+            "labelWidth", "fieldLabel", "collapsible","collapsed","bodyStyle","listeners", "border", "tabPosition"];
 
         var tmpItems;
 
