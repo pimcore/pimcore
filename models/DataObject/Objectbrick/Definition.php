@@ -258,13 +258,13 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
                  * @var $def DataObject\ClassDefinition\Data
                  */
                 $cd .= $def->getGetterCodeObjectbrick($this);
-                
+
                 if ($def instanceof DataObject\ClassDefinition\Data\Localizedfields) {
                     $cd .= $def->getGetterCode($this);
                 }
-                
+
                 $cd .= $def->getSetterCodeObjectbrick($this);
-                
+
                 if ($def instanceof DataObject\ClassDefinition\Data\Localizedfields) {
                     $cd .= $def->getSetterCode($this);
                 }
