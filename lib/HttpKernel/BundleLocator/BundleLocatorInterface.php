@@ -41,9 +41,4 @@ interface BundleLocatorInterface
      * @throws NotFoundException
      */
     public function getBundlePath($class): string;
-
-    /**
-     * @deprecated Use getBundlePath instead
-     */
-    public function resolveBundlePath($class);
 }
