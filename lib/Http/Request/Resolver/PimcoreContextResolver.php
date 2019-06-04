@@ -31,11 +31,6 @@ class PimcoreContextResolver extends AbstractRequestResolver
     const CONTEXT_DEFAULT = 'default';
 
     /**
-     * @deprecated
-     */
-    const CONTEXT_INSTALL = 'install';
-
-    /**
      * @var PimcoreContextGuesser
      */
     protected $guesser;
