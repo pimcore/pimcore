@@ -4,7 +4,8 @@
 $prefixSearch = realpath(__DIR__ . '/../../../public');
 $prefixReplace = '/bundles/pimcoreadmin';
 $iconDir = realpath($prefixSearch . '/img');
-$icons = rscandir($iconDir . '/flat-color-icons/');
+$colorIcons = rscandir($iconDir . '/flat-color-icons/');
+$whiteIcons = rscandir($iconDir . '/flat-white-icons/');
 $twemoji = rscandir($iconDir . '/twemoji/');
 
 ?><!DOCTYPE html>
@@ -34,6 +35,14 @@ $twemoji = rscandir($iconDir . '/twemoji/');
             word-wrap: break-word;
         }
 
+        .icon.black {
+            background-color: #0C0F12;
+        }
+
+        .icon.black .label {
+            color: #fff;
+        }
+
         .info {
             text-align: center;
             margin-bottom: 30px;
@@ -41,16 +50,23 @@ $twemoji = rscandir($iconDir . '/twemoji/');
             font-size: 22px;
             padding-top: 50px;
         }
+
+        .info small {
+            font-size: 16px;
+        }
+
     </style>
 </head>
 <body>
 
 <div class="info">
-    <a target="_blank">Pimcore Icons</a>
+    <a target="_blank">Color Icons</a>
+    <br>
+    <small>based on the <a href="https://github.com/google/material-design-icons/blob/master/LICENSE" target="_blank">Material Design Icons</a></small>
 </div>
 
-<div id="icons" class="icons">
-    <?php foreach ($icons as $icon) {
+<div id="color_icons" class="icons">
+    <?php foreach ($colorIcons as $icon) {
         ?>
         <div class="icon">
             <img style="width:50px;" src="<?= str_replace($prefixSearch, $prefixReplace, $icon) ?>" title="<?= basename($icon) ?>">
@@ -60,6 +76,22 @@ $twemoji = rscandir($iconDir . '/twemoji/');
     } ?>
 </div>
 
+<div class="info">
+    <a target="_blank">White Icons</a>
+    <br>
+    <small>based on the <a href="https://github.com/google/material-design-icons/blob/master/LICENSE" target="_blank">Material Design Icons</a></small>
+</div>
+
+<div id="white_icons" class="icons">
+    <?php foreach ($whiteIcons as $icon) {
+        ?>
+        <div class="icon black">
+            <img style="width:50px;" src="<?= str_replace($prefixSearch, $prefixReplace, $icon) ?>" title="<?= basename($icon) ?>">
+            <div class="label"><?= basename($icon) ?></div>
+        </div>
+        <?php
+    } ?>
+</div>
 
 <div class="info">
     <a href="https://github.com/twitter/twemoji" target="_blank">Source (Twemoji)</a>
