@@ -145,8 +145,10 @@ pimcore.settings.user.user.settings = Class.create({
             }]
         });
 
-        var date = new Date();
-        var image = "/admin/user/get-image?id=" + this.currentUser.id + "&_dc=" + date.getTime();
+        var getPreviewImageHTML = function () {
+            var date = new Date();
+            return '<img src="/admin/user/get-image?id=' + this.currentUser.id + '&_dc=' + date.getTime() + '" style="width: 46px" />'
+        }.bind(this);
 
         generalItems.push({
             xtype: "fieldset",
@@ -154,10 +156,7 @@ pimcore.settings.user.user.settings = Class.create({
             items: [{
                 xtype: "container",
                 id: "pimcore_user_image_" + this.currentUser.id,
-                html: '<img src="' + image + '" />',
-                width: 45,
-                height: 45,
-                style: "float:left; margin-right: 10px;"
+                html: getPreviewImageHTML()
             }, {
                 xtype: "button",
                 text: t("upload"),
@@ -165,9 +164,7 @@ pimcore.settings.user.user.settings = Class.create({
                     pimcore.helpers.uploadDialog("/admin/user/upload-image?id=" + this.currentUser.id, null,
                         function () {
                             var cont = Ext.getCmp("pimcore_user_image_" + this.currentUser.id);
-                            var date = new Date();
-                            cont.update('<img src="/admin/user/get-image?id='
-                                + this.currentUser.id + '&_dc=' + date.getTime() + '" />');
+                            cont.update(getPreviewImageHTML());
                         }.bind(this));
                 }.bind(this)
             }]
