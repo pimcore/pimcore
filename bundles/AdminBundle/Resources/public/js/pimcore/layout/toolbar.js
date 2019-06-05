@@ -1173,7 +1173,7 @@ pimcore.layout.toolbar = Class.create({
             if (!pimcore.settings.mail) {
                 notificationItems.push({
                     text: t("mail_settings_incomplete"),
-                    iconCls: "pimcore_icon_email",
+                    iconCls: "pimcore_nav_icon_email",
                     handler: function () {
                         window.open('https://pimcore.com/docs/5.x/Development_Documentation/Tools_and_Features/System_Settings.html#page_E-Mail-Settings');
                     }

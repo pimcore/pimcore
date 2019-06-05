@@ -327,7 +327,7 @@
 }
 
 .pimcore_nav_icon_metadata {
-    background: url(/bundles/pimcoreadmin/img/flat-white-icons/label.svg) center center no-repeat !important;
+    background: url(/bundles/pimcoreadmin/img/material-icons/outline-all_inbox-24px.svg) center center no-repeat !important;
 }
 
 .pimcore_nav_icon_system_settings {
@@ -660,7 +660,7 @@
 }
 
 .pimcore_icon_system {
-    background: url(/bundles/pimcoreadmin/img/flat-color-icons/settings-2.svg) center center no-repeat !important;
+    background: url(/bundles/pimcoreadmin/img/flat-color-icons/settings.svg) center center no-repeat !important;
 }
 
 .pimcore_icon_plugin, .pimcore_icon_bundle {
@@ -668,7 +668,7 @@
 }
 
 .pimcore_icon_log_admin {
-    background: url(/bundles/pimcoreadmin/img/flat-color-icons/calendar.svg) center center no-repeat !important;
+    background: url(/bundles/pimcoreadmin/img/flat-color-icons/text.svg) center center no-repeat !important;
 }
 
 .pimcore_icon_doctypes {
@@ -716,7 +716,7 @@
 }
 
 .pimcore_icon_properties {
-    background: url(/bundles/pimcoreadmin/img/flat-color-icons/candle_sticks.svg) center center no-repeat !important;
+    background: url(/bundles/pimcoreadmin/img/flat-color-icons/settings-2.svg) center center no-repeat !important;
 }
 
 .pimcore_icon_upload {
@@ -869,8 +869,8 @@
     background: url(/bundles/pimcoreadmin/img/flat-color-icons/data_configuration.svg) center center no-repeat !important;
 }
 
-.pimcore_icon_website {
-    background: url(/bundles/pimcoreadmin/img/flat-color-icons/engineering.svg) center center no-repeat !important;
+.pimcore_icon_website_settings {
+    background: url(/bundles/pimcoreadmin/img/flat-color-icons/candle_sticks.svg) center center no-repeat !important;
 }
 
 .pimcore_icon_analytics {
@@ -1100,7 +1100,7 @@
 }
 
 .pimcore_icon_metadata {
-    background: url(/bundles/pimcoreadmin/img/flat-color-icons/label.svg) center center no-repeat !important;
+    background: url(/bundles/pimcoreadmin/img/flat-color-icons/asset_metadata.svg) center center no-repeat !important;
 }
 
 .pimcore_icon_merge {
@@ -1266,11 +1266,11 @@
     background: url(/bundles/pimcoreadmin/img/flat-color-icons/bricks.svg) center center no-repeat !important;
 }
 
-.pimcore_icon_href, .pimcore_icon_manyToOneRelation {
+.pimcore_icon_manyToOneRelation {
     background: url(/bundles/pimcoreadmin/img/flat-color-icons/href.svg) center center no-repeat !important;
 }
 
-.pimcore_icon_multihref, .pimcore_icon_manyToManyRelation {
+.pimcore_icon_manyToManyRelation {
     background: url(/bundles/pimcoreadmin/img/flat-color-icons/multihref.svg) center center no-repeat !important;
 }
 
@@ -1363,19 +1363,19 @@
     background: url(/bundles/pimcoreadmin/img/flat-color-icons/neutral_trading.svg) center center no-repeat !important;
 }
 
-.pimcore_icon_nonownerobjects, .pimcore_icon_reverseManyToManyObjectRelation {
-    background: url(/bundles/pimcoreadmin/img/flat-color-icons/group-by.svg) center center no-repeat !important;
+.pimcore_icon_reverseManyToManyObjectRelation {
+    background: url(/bundles/pimcoreadmin/img/flat-color-icons/reverse_many_to_many_object_relation.svg) center center no-repeat !important;
 }
 
-.pimcore_icon_objects, .pimcore_icon_manyToManyObjectRelation {
+.pimcore_icon_manyToManyObjectRelation {
     background: url(/bundles/pimcoreadmin/img/flat-color-icons/objects.svg) center center no-repeat !important;
 }
 
-.pimcore_icon_objectsMetadata, .pimcore_icon_advancedManyToManyObjectRelation  {
+.pimcore_icon_advancedManyToManyObjectRelation  {
     background: url(/bundles/pimcoreadmin/img/flat-color-icons/objects-meta.svg) center center no-repeat !important;
 }
 
-.pimcore_icon_multihrefMetadata, .pimcore_icon_advancedManyToManyRelation {
+.pimcore_icon_advancedManyToManyRelation {
     background: url(/bundles/pimcoreadmin/img/flat-color-icons/multihref-meta.svg) center center no-repeat !important;
 }
 
@@ -1388,7 +1388,7 @@
 }
 
 .pimcore_icon_localizedfields {
-    background: url(/bundles/pimcoreadmin/img/flat-color-icons/localizedfields.svg) center center no-repeat !important;
+    background: url(/bundles/pimcoreadmin/img/flat-color-icons/translation.svg) center center no-repeat !important;
 }
 
 .pimcore_icon_qrcode {
