@@ -386,13 +386,11 @@ pimcore.object.helpers.edit = {
                                 }
                             }
 
-
                             // apply tooltips
                             if(field.tooltip) {
                                 try {
                                     new Ext.ToolTip({
                                         target: el,
-                                        title: field.title,
                                         html: nl2br(ts(field.tooltip)),
                                         trackMouse:true,
                                         showDelay: 200
