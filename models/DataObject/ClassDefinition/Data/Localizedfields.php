@@ -1490,7 +1490,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
     /**
      * @param string $tabPosition
      */
-    public function setTabPosition(string $tabPosition): void
+    public function setTabPosition($tabPosition): void
     {
         $this->tabPosition = $tabPosition;
     }

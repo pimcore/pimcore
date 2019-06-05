@@ -64,7 +64,7 @@ class Tabpanel extends Model\DataObject\ClassDefinition\Layout
     /**
      * @param string $tabPosition
      */
-    public function setTabPosition(string $tabPosition): void
+    public function setTabPosition($tabPosition): void
     {
         $this->tabPosition = $tabPosition;
     }
