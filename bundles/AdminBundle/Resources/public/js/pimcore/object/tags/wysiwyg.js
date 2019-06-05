@@ -159,7 +159,14 @@ pimcore.object.tags.wysiwyg = Class.create(pimcore.object.tags.abstract, {
         var eConfig = {
             width: this.fieldConfig.width,
             height: this.fieldConfig.height,
-            language: pimcore.settings["language"]
+            language: pimcore.settings["language"],
+            resize_enabled: false,
+            entities: false,
+            entities_greek: false,
+            entities_latin: false,
+            extraAllowedContent: "*[pimcore_type,pimcore_id]",
+            baseFloatZIndex: 40000, // prevent that the editor gets displayed behind the grid cell editor window
+            enterMode: 2
         };
 
         eConfig.toolbarGroups = [
@@ -173,14 +180,6 @@ pimcore.object.tags.wysiwyg = Class.create(pimcore.object.tags.abstract, {
             { name: 'styles' },
             { name: 'tools', groups: ['colors', 'tools', 'cleanup', 'mode', 'others'] }
         ];
-
-        //prevent override important settings!
-        eConfig.resize_enabled = false;
-        eConfig.entities = false;
-        eConfig.entities_greek = false;
-        eConfig.entities_latin = false;
-        eConfig.extraAllowedContent = "*[pimcore_type,pimcore_id]";
-        eConfig.baseFloatZIndex = 40000;   // prevent that the editor gets displayed behind the grid cell editor window
 
         if(eConfig.hasOwnProperty('removePlugins'))
             eConfig.removePlugins += ",tableresize";
