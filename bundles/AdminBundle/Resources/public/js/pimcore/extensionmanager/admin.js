@@ -30,7 +30,7 @@ pimcore.extensionmanager.admin = Class.create({
             this.panel = new Ext.Panel({
                 id: "pimcore_extensionmanager_admin",
                 title: t("manage_extensions"),
-                iconCls: "pimcore_icon_plugin pimcore_icon_overlay_edit",
+                iconCls: "pimcore_icon_plugin",
                 border: false,
                 layout: "fit",
                 closable:true,

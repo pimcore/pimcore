@@ -127,7 +127,7 @@ pimcore.object.helpers.edit = {
         };
 
         var validKeys = ["xtype","title","layout","icon","items","region","width","height","name","text","html","handler",
-            "labelWidth", "fieldLabel", "collapsible","collapsed","bodyStyle","listeners", "border"];
+            "labelWidth", "fieldLabel", "collapsible","collapsed","bodyStyle","listeners", "border", "tabPosition"];
 
         var tmpItems;
 
@@ -386,13 +386,11 @@ pimcore.object.helpers.edit = {
                                 }
                             }
 
-
                             // apply tooltips
                             if(field.tooltip) {
                                 try {
                                     new Ext.ToolTip({
                                         target: el,
-                                        title: field.title,
                                         html: nl2br(ts(field.tooltip)),
                                         trackMouse:true,
                                         showDelay: 200

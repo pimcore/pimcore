@@ -44,8 +44,8 @@ pimcore.document.tags.relations = Class.create(pimcore.document.tag, {
 
         var tbar = [
             Ext.create('Ext.toolbar.Spacer', {
-                width: 20,
-                height: 16,
+                width: 24,
+                height: 24,
                 cls: "pimcore_icon_droptarget"
             }),
             Ext.create('Ext.toolbar.TextItem', {

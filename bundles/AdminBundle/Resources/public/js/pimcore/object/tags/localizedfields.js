@@ -345,6 +345,8 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
                     panelConf.autoHeight = false;
                 }
 
+                panelConf.tabPosition = this.fieldConfig.tabPosition;
+
                 var hideLabels = this.hideLabels();
 
                 for (var i = 0; i < nrOfLanguages; i++) {

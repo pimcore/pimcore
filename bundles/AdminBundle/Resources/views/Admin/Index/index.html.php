@@ -116,7 +116,7 @@ $runtimePerspective = \Pimcore\Config::getRuntimePerspective($user);
         <ul>
             <?php if (\Pimcore\Config::inPerspective($runtimePerspective, "file")) { ?>
                 <li id="pimcore_menu_file" data-menu-tooltip="<?= $this->translate("file") ?>" class="pimcore_menu_item pimcore_menu_needs_children">
-                    <img src="/bundles/pimcoreadmin/img/material-icons/outline-bubble_chart-24px.svg">
+                    <img src="/bundles/pimcoreadmin/img/material-icons/outline-file-24px.svg">
                 </li>
             <?php } ?>
             <?php if (\Pimcore\Config::inPerspective($runtimePerspective, "extras")) { ?>
@@ -159,7 +159,7 @@ $runtimePerspective = \Pimcore\Config::getRuntimePerspective($user);
         <img src="/admin/user/get-image" data-menu-tooltip="<?= $user->getName() ?> | <?= $this->translate('my_profile') ?>"/>
     </div>
     <a id="pimcore_logout" data-menu-tooltip="<?= $this->translate("logout") ?>" href="<?= $view->router()->path('pimcore_admin_logout') ?>" style="display: none">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 23 23"><path d="M10.06,17.09l1.8,1.8,6.39-6.39L11.86,6.11l-1.8,1.8,3.3,3.31H1v2.56H13.36ZM21.44,1H3.56A2.55,2.55,0,0,0,1,3.56V8.67H3.56V3.56H21.44V21.44H3.56V16.33H1v5.11A2.55,2.55,0,0,0,3.56,24H21.44A2.56,2.56,0,0,0,24,21.44V3.56A2.56,2.56,0,0,0,21.44,1Z" transform="translate(-1 -1)"/></svg>
+        <img src="/bundles/pimcoreadmin/img/material-icons/outline-logout-24px.svg">
     </a>
     <div id="pimcore_signet" data-menu-tooltip="Pimcore Platform (<?= \Pimcore\Version::getVersion() ?>|<?= \Pimcore\Version::getRevision() ?>)" style="text-indent: -10000px">
         BE RESPECTFUL AND HONOR OUR WORK FOR FREE & OPEN SOURCE SOFTWARE BY NOT REMOVING OUR LOGO.

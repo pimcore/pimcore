@@ -149,7 +149,7 @@ pimcore.element.selector.document = Class.create(pimcore.element.selector.abstra
                             return '<div class="pimcore_icon_' + value + '" name="' + t(record.data.subtype) + '">&nbsp;</div>';
                         }
                     },
-                    {text: t("filename"), flex: 1, sortable: true, dataIndex: 'filename'}
+                    {text: t("filename"), flex: 1, sortable: false, dataIndex: 'filename'}
                 ],
                 viewConfig: {
                     forceFit: true

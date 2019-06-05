@@ -945,12 +945,12 @@ abstract class Data
         }
 
         $code .= "\t" . 'if ($data instanceof \\Pimcore\\Model\\DataObject\\Data\\EncryptedField) {' . "\n";
-        $code .= "\t\t" . '    return $data->getPlain();' . "\n";
+        $code .= "\t\t" . 'return $data->getPlain();' . "\n";
         $code .= "\t" . '}' . "\n";
 
         // we don't need to consider preGetData, because this is already managed directly by the localized fields within getLocalizedValue()
 
-        $code .= "\t return " . '$data' . ";\n";
+        $code .= "\treturn " . '$data' . ";\n";
         $code .= "}\n\n";
 
         return $code;

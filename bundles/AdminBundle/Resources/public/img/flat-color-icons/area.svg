@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Generator: Adobe Illustrator 19.2.1, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<!-- Generator: Adobe Illustrator 22.1.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
 <svg version="1.1" id="Ebene_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-	 viewBox="0 0 48 48" style="enable-background:new 0 0 48 48;" xml:space="preserve">
-<style type="text/css">
-	.st0{fill:#37474F;}
-	.st1{fill:#BBDEFB;}
-</style>
-<path class="st0" d="M7,10h34c2.2,0,4,1.8,4,4v20c0,2.2-1.8,4-4,4H7c-2.2,0-4-1.8-4-4V14C3,11.8,4.8,10,7,10z"/>
-<path class="st1" d="M42,34V14c0-0.6-0.4-1-1-1H7c-0.6,0-1,0.4-1,1v20c0,0.6,0.4,1,1,1h34C41.6,35,42,34.6,42,34z"/>
+	 width="24px" height="24px" viewBox="0 0 24 24" enable-background="new 0 0 24 24" xml:space="preserve">
+<path fill="none" d="M0,0h24v24H0V0z"/>
+<path fill="#5A9BF5" d="M22,6V4h-2V2h-2v2H6V2H4v2H2v2h2v12H2v2h2v2h2v-2h12v2h2v-2h2v-2h-2V6H22z M6,6h12v12H6V6z"/>
+<rect x="6" y="18" fill="#89BBF8" width="2" height="2"/>
+<rect x="18" y="16" fill="#89BBF8" width="2" height="2"/>
+<rect x="16" y="4" fill="#89BBF8" width="2" height="2"/>
+<rect x="4" y="6" fill="#89BBF8" width="2" height="2"/>
 </svg>

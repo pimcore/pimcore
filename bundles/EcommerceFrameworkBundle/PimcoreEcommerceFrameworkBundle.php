@@ -15,7 +15,6 @@
 namespace Pimcore\Bundle\EcommerceFrameworkBundle;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\DependencyInjection\Compiler\RegisterConfiguredServicesPass;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Legacy\LegacyClassMappingTool;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tools\Installer;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
 use Pimcore\Extension\Bundle\AbstractPimcoreBundle;
@@ -83,7 +82,6 @@ class PimcoreEcommerceFrameworkBundle extends AbstractPimcoreBundle
             // set default decimal scale from config
             Decimal::setDefaultScale($container->getParameter('pimcore_ecommerce.decimal_scale'));
         }
-
     }
 
     /**
