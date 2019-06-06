@@ -814,6 +814,9 @@ class ClassController extends AdminController implements EventedControllerInterf
         }
         $object = DataObject\AbstractObject::getById($request->get('object_id'));
 
+        $currentLayoutId = $request->get('layoutId', null);
+        $user = \Pimcore\Tool\Admin::getCurrentUser();
+
         $groups = [];
         /** @var $item DataObject\Fieldcollection\Definition */
         foreach ($list as $item) {
@@ -837,6 +840,10 @@ class ClassController extends AdminController implements EventedControllerInterf
                 if ($forObjectEditor) {
                     $itemLayoutDefinitions = $item->getLayoutDefinitions();
                     DataObject\Service::enrichLayoutDefinition($itemLayoutDefinitions, $object);
+
+                    if ($currentLayoutId == -1 && $user->isAdmin()) {
+                        DataObject\Service::createSuperLayout($itemLayoutDefinitions);
+                    }
                     $layoutDefinitions[$item->getKey()] = $itemLayoutDefinitions;
                 }
                 $groups[$item->getGroup()]['children'][] =
@@ -852,6 +859,11 @@ class ClassController extends AdminController implements EventedControllerInterf
                 if ($forObjectEditor) {
                     $itemLayoutDefinitions = $item->getLayoutDefinitions();
                     DataObject\Service::enrichLayoutDefinition($itemLayoutDefinitions, $object);
+
+                    if ($currentLayoutId == -1 && $user->isAdmin()) {
+                        DataObject\Service::createSuperLayout($itemLayoutDefinitions);
+                    }
+
                     $layoutDefinitions[$item->getKey()] = $itemLayoutDefinitions;
                 }
                 $definitions[] = [
