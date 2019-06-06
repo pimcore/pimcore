@@ -174,7 +174,7 @@ class ClassDefinition extends Model\AbstractModel
     /**
      * @param $id
      *
-     * @return mixed|null|ClassDefinition
+     * @return null|ClassDefinition
      *
      * @throws \Exception
      */
@@ -216,7 +216,7 @@ class ClassDefinition extends Model\AbstractModel
     /**
      * @param string $name
      *
-     * @return self
+     * @return self|null
      */
     public static function getByName($name)
     {

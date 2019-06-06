@@ -131,8 +131,7 @@ class Config extends Model\AbstractModel
                 $thumbnail = self::getByName($config);
             } catch (\Exception $e) {
                 Logger::error('requested thumbnail ' . $config . ' is not defined');
-
-                return false;
+                return null;
             }
         } elseif (is_array($config)) {
             // check if it is a legacy config or a new one
@@ -166,9 +165,7 @@ class Config extends Model\AbstractModel
         } catch (\Exception $e) {
             try {
                 $thumbnail = new self();
-                $thumbnail->setName($name);
-                $thumbnail->getDao()->getByName();
-
+                $thumbnail->getDao()->getByName($name);
                 \Pimcore\Cache\Runtime::set($cacheKey, $thumbnail);
             } catch (\Exception $e) {
                 return null;
