@@ -207,8 +207,6 @@ class ClassDefinition extends Model\AbstractModel
 
                 \Pimcore\Cache\Runtime::set($cacheKey, $class);
             } catch (\Exception $e) {
-                Logger::error($e);
-
                 return null;
             }
         }
@@ -228,12 +226,8 @@ class ClassDefinition extends Model\AbstractModel
             $id = $class->getDao()->getIdByName($name);
             if ($id) {
                 return self::getById($id);
-            } else {
-                throw new \Exception('There is no class with the name: ' . $name);
             }
         } catch (\Exception $e) {
-            Logger::error($e);
-
             return null;
         }
     }
