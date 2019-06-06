@@ -327,7 +327,7 @@ class SettingsController extends AdminController
     {
         $this->checkPermission('system_settings');
 
-        $values = Config::getSystemConfiguration();
+        $values = Config::getSystemConfig(true);
 
         $timezones = \DateTimeZone::listIdentifiers();
 
@@ -344,11 +344,11 @@ class SettingsController extends AdminController
         }
 
         $valueArray = $values->toArray();
-        $valueArray['pimcore']['general']['validLanguage'] = explode(',', $valueArray['pimcore']['general']['validLanguages']);
+        $valueArray['general']['validLanguage'] = explode(',', $valueArray['general']['validLanguages']);
 
         //for "wrong" legacy values
-        if (is_array($valueArray['pimcore']['general']['validLanguage'])) {
-            foreach ($valueArray['pimcore']['general']['validLanguage'] as $existingValue) {
+        if (is_array($valueArray['general']['validLanguage'])) {
+            foreach ($valueArray['general']['validLanguage'] as $existingValue) {
                 if (!in_array($existingValue, $validLanguages)) {
                     $languageOptions[] = [
                         'language' => $existingValue,
@@ -359,18 +359,19 @@ class SettingsController extends AdminController
         }
 
         //cache exclude patterns - add as array
-        if (!empty($valueArray['pimcore']['cache']['excludePatterns'])) {
-            $patterns = explode(',', $valueArray['pimcore']['cache']['excludePatterns']);
+        if (!empty($valueArray['cache']['excludePatterns'])) {
+            $patterns = explode(',', $valueArray['cache']['excludePatterns']);
             if (is_array($patterns)) {
                 foreach ($patterns as $pattern) {
-                    $valueArray['pimcore']['cache']['excludePatternsArray'][] = ['value' => $pattern];
+                    $valueArray['cache']['excludePatternsArray'][] = ['value' => $pattern];
                 }
             }
         }
 
         //remove password from values sent to frontend
-        foreach (['email' => 'pimcore_mailer', 'newsletter' => 'newsletter_mailer'] as $type => $group) {
-            $valueArray['swiftmailer']['mailers'][$group]['password'] = '#####SUPER-SECRET-VALUE-PLACEHOLDER######';
+        unset($valueArray['database']);
+        foreach (['email', 'newsletter'] as $type) {
+            $valueArray[$type]['smtp']['auth']['password'] = '#####SUPER-SECRET-VALUE-PLACEHOLDER######';
         }
 
         // inject debug mode
@@ -379,8 +380,8 @@ class SettingsController extends AdminController
         if (file_exists($debugModeFile)) {
             $debugMode = include $debugModeFile;
         }
-        $valueArray['pimcore']['general']['debug'] = $debugMode['active'];
-        $valueArray['pimcore']['general']['debug_ip'] = $debugMode['ip'];
+        $valueArray['general']['debug'] = $debugMode['active'];
+        $valueArray['general']['debug_ip'] = $debugMode['ip'];
 
         $response = [
             'values' => $valueArray,

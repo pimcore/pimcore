@@ -550,11 +550,6 @@ pimcore.settings.system = Class.create({
                                             value: this.getValue("email.smtp.port")
                                         },
                                         {
-                                            fieldLabel: t("email_smtp_name"),
-                                            name: "email.smtp.name",
-                                            value: this.getValue("email.smtp.name")
-                                        },
-                                        {
                                             fieldLabel: t("email_smtp_auth_method"),
                                             xtype: "combo",
                                             width: 425,
@@ -1168,11 +1163,6 @@ pimcore.settings.system = Class.create({
                                             fieldLabel: t("email_smtp_port"),
                                             name: "newsletter.smtp.port",
                                             value: this.getValue("newsletter.smtp.port")
-                                        },
-                                        {
-                                            fieldLabel: t("email_smtp_name"),
-                                            name: "newsletter.smtp.name",
-                                            value: this.getValue("newsletter.smtp.name")
                                         },
                                         {
                                             fieldLabel: t("email_smtp_auth_method"),

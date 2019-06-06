@@ -89,7 +89,6 @@ class Config
     }
 
     /**
-     * @param bool $forceReload
      *
      * @return mixed|null|\Pimcore\Config\Config
      *
@@ -359,7 +358,19 @@ class Config
                         "email" => $config->email->return->email
                     ],
                     "method" => $config->email->method,
-                    "smtp" => [],
+                    "smtp" => [
+                        "transport" =>  $config->email->smtp->transport,
+                        "host" => $config->email->smtp->host,
+                        "port" => $config->email->smtp->port,
+                        "ssl" => $config->email->smtp->encryption,
+                        "name" => "smtp",
+                        "auth" => [
+                            "method" => $config->email->smtp->auth_mode,
+                            "username" => $config->email->smtp->username,
+                            "password" => $config->email->smtp->password
+                        ],
+                        "delivery_addresses" => $config->email->smtp->delivery_addresses
+                    ],
                     "debug" => [
                         "emailaddresses" => $config->email->debug->emailaddresses
                     ]
@@ -374,7 +385,19 @@ class Config
                         "email" => $config->newsletter->return->email
                     ],
                     "method" => $config->newsletter->method,
-                    "smtp" => [],
+                    "smtp" => [
+                        "transport" =>  $config->newsletter->smtp->transport,
+                        "host" => $config->newsletter->smtp->host,
+                        "port" => $config->newsletter->smtp->port,
+                        "ssl" => $config->newsletter->smtp->encryption,
+                        "name" => "smtp",
+                        "auth" => [
+                            "method" => $config->newsletter->smtp->auth_mode,
+                            "username" => $config->newsletter->smtp->username,
+                            "password" => $config->newsletter->smtp->password
+                        ],
+                        "delivery_addresses" => $config->email->smtp->delivery_addresses
+                    ],
                     "debug" => $config->newsletter->debug->emailaddresses,
                     "usespecific" => $config->newsletter->usespecific
                 ],
@@ -412,9 +435,23 @@ class Config
         if (\Pimcore\Cache\Runtime::isRegistered('pimcore_config_system') && !$forceReload) {
             $systemConfig = \Pimcore\Cache\Runtime::get('pimcore_config_system');
         } else {
-            if(\Pimcore::getContainer()) {
-                $config = \Pimcore::getContainer()->getParameter('pimcore.config');
-                $adminConfig = \Pimcore::getContainer()->getParameter('pimcore_admin.config');
+            if($container = \Pimcore::getContainer()) {
+                $config = $container->getParameter('pimcore.config');
+                $adminConfig = $container->getParameter('pimcore_admin.config');
+
+                //add email settings
+                foreach (['email' => 'pimcore_mailer', 'newsletter' => 'newsletter_mailer'] as $key => $group) {
+                    $config[$key]['smtp'] = [
+                        'transport' => $container->getParameter('swiftmailer.mailer.'.$group.'.transport.name'),
+                        'host' => $container->getParameter('swiftmailer.mailer.'.$group.'.transport.smtp.host'),
+                        'username' => $container->getParameter('swiftmailer.mailer.'.$group.'.transport.smtp.username'),
+                        'password' => $container->getParameter('swiftmailer.mailer.'.$group.'.transport.smtp.password'),
+                        'port' => $container->getParameter('swiftmailer.mailer.'.$group.'.transport.smtp.port'),
+                        'encryption' => $container->getParameter('swiftmailer.mailer.'.$group.'.transport.smtp.encryption'),
+                        'auth_mode' => $container->getParameter('swiftmailer.mailer.'.$group.'.transport.smtp.auth_mode'),
+                        'delivery_addresses' => $container->getParameter('swiftmailer.mailer.'.$group.'.delivery_addresses')
+                    ];
+                }
 
                 $config = json_decode(json_encode(array_merge_recursive($config, $adminConfig)));
 

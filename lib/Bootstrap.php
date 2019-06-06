@@ -287,16 +287,8 @@ class Bootstrap
 
         $conf = \Pimcore::getContainer()->getParameter('pimcore.config');
 
-        if (isset($conf['general']['domain']) && !empty($conf['general']['domain'])) {
-            if (!empty($conf['general']['timezone'])) {
-                date_default_timezone_set($conf['general']['timezone']);
-            }
-        }
-
-        // set default domain for router to main domain if configured
-        // this will be overridden from the request in web context but is handy for CLI scripts
-        if ( isset($conf['general']['domain']) && !empty($conf['general']['domain'])) {
-           \Pimcore::getContainer()->setParameter('router.request_context.host', $conf->general->domain);
+        if (isset($conf['general']['timezone']) && !empty($conf['general']['timezone'])) {
+            date_default_timezone_set($conf['general']['timezone']);
         }
 
         return $kernel;
