@@ -73,16 +73,6 @@ pimcore:
         method: sendmail
         debug:
             emailaddresses: ''
-        bounce:
-            type: ''
-            maildir: ''
-            mbox: ''
-            imap:
-                host: ''
-                port: ''
-                username: ''
-                password: ''
-                ssl: false
     newsletter:
         sender:
             name: ''
