@@ -96,13 +96,13 @@ abstract class Kernel extends SymfonyKernel
     public function registerContainerConfiguration(LoaderInterface $loader)
     {
         $loader->load(function (ContainerBuilder $container) use ($loader) {
-            // add system.yml as container resource and extract config values into params
-            $resource = new SystemConfigParamResource($container);
-            $resource->register();
-            $resource->setParameters();
 
             $this->registerExtensionConfigFileResources($container);
         });
+
+
+        //load system configuration from /var/config/
+        $loader->load(PIMCORE_CONFIGURATION_DIRECTORY.'/*{yaml,yml}', 'glob');
 
         $bundleConfigLocator = new BundleConfigLocator($this);
         foreach ($bundleConfigLocator->locate('config') as $bundleConfig) {
