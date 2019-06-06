@@ -197,7 +197,15 @@ class Configuration implements ConfigurationInterface
                     ->defaultValue('en')
                 ->end()
                 ->arrayNode('fallbackLanguages')
-                    ->prototype('scalar')->end()
+                    ->performNoDeepMerging()
+                    ->beforeNormalization()
+                    ->ifArray()
+                        ->then(function ($v) {
+                            return $v;
+                        })
+                    ->end()
+                    ->prototype('scalar')
+                    ->end()
                 ->end()
                 ->scalarNode('defaultLanguage')
                     ->defaultValue('en')

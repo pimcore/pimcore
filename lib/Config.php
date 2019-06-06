@@ -445,8 +445,7 @@ class Config
                         'port' => $container->getParameter('swiftmailer.mailer.'.$group.'.transport.smtp.port'),
                         'encryption' => $container->getParameter('swiftmailer.mailer.'.$group.'.transport.smtp.encryption'),
                         'auth_mode' => $container->getParameter('swiftmailer.mailer.'.$group.'.transport.smtp.auth_mode'),
-                        'delivery_addresses' => $container->getParameter('swiftmailer.mailer.'.$group.'.delivery_addresses')
-                    ];
+                     ];
                 }
 
                 $config = json_decode(json_encode(array_merge_recursive($config, $adminConfig)));

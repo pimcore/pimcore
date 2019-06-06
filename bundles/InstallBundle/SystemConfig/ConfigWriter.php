@@ -39,9 +39,9 @@ class ConfigWriter
                 'error_pages' => [
                     'default' => '/'
                 ],
-                'createredirectwhenmoved' => '',
+                'createredirectwhenmoved' => false,
                 'allowtrailingslash' => 'no',
-                'generatepreview' => '1'
+                'generatepreview' => false
             ],
             'objects' => [
                 'versions' => [
@@ -84,7 +84,7 @@ class ConfigWriter
                     'email' => ''
                 ],
                 'method' => 'sendmail',
-                'usespecific' => ''
+                'usespecific' => false
             ]
         ],
         'pimcore_admin' => [
@@ -103,7 +103,7 @@ class ConfigWriter
                     'username' => '',
                     'password' => '',
                     'port' => '',
-                    'encryption' => '',
+                    'encryption' => null,
                     'auth_mode' => null
                 ],
                 'newsletter_mailer' => [
@@ -113,7 +113,7 @@ class ConfigWriter
                     'username' => '',
                     'password' => '',
                     'port' => '',
-                    'encryption' => '',
+                    'encryption' => null,
                     'auth_mode' => null
                 ]
             ]
@@ -127,7 +127,7 @@ class ConfigWriter
         }
     }
 
-    public function writeSystemConfig(array $config = [])
+    public function writeSystemConfig()
     {
         $settings = null;
 
@@ -166,9 +166,10 @@ class ConfigWriter
             $settings = $this->defaultConfig;
         }
 
-        $configFile = PIMCORE_CONFIGURATION_DIRECTORY . '/system1.yml';
+        $configFile = PIMCORE_CONFIGURATION_DIRECTORY . '/system.yml';
         $settingsYml = Yaml::dump($settings, 5);
         File::put($configFile, $settingsYml);
+        p_r('done'); die;
 
     }
 
@@ -176,7 +177,7 @@ class ConfigWriter
     {
         if(count($config)) {
             $content = Yaml::dump($config);
-            $configFile = PIMCORE_APP_ROOT.'/config/local/database1.yml';
+            $configFile = PIMCORE_APP_ROOT.'/config/local/database.yml';
             File::put($configFile, $content);
         }
     }
