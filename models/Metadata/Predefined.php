@@ -90,15 +90,13 @@ class Predefined extends Model\AbstractModel
     /**
      * @param int $id
      *
-     * @return self
+     * @return self|null
      */
     public static function getById($id)
     {
         try {
             $metadata = new self();
-            $metadata->setId($id);
-            $metadata->getDao()->getById();
-
+            $metadata->getDao()->getById($id);
             return $metadata;
         } catch (\Exception $e) {
             return null;
