@@ -90,7 +90,7 @@ class KeyConfig extends Model\AbstractModel
     /**
      * @param int $id
      *
-     * @return Model\DataObject\Classificationstore\KeyConfig
+     * @return self|null
      */
     public static function getById($id)
     {
@@ -107,9 +107,7 @@ class KeyConfig extends Model\AbstractModel
             }
 
             $config = new self();
-            $config->setId($id);
-
-            $config->getDao()->getById();
+            $config->getDao()->getById($id);
             if (self::$cacheEnabled) {
                 self::$cache[$id] = $config;
             }
@@ -118,6 +116,7 @@ class KeyConfig extends Model\AbstractModel
 
             return $config;
         } catch (\Exception $e) {
+            return null;
         }
     }
 
@@ -144,7 +143,7 @@ class KeyConfig extends Model\AbstractModel
      * @param $name
      * @param int $storeId
      *
-     * @return KeyConfig
+     * @return self|null
      *
      * @internal param null $groupId
      */
@@ -155,9 +154,9 @@ class KeyConfig extends Model\AbstractModel
             $config->setName($name);
             $config->setStoreId($storeId ? $storeId : 1);
             $config->getDao()->getByName();
-
             return $config;
         } catch (\Exception $e) {
+            return null;
         }
     }
 

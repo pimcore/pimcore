@@ -48,17 +48,16 @@ class StoreConfig extends Model\AbstractModel
     /**
      * @param int $id
      *
-     * @return Model\DataObject\Classificationstore\StoreConfig
+     * @return self|null
      */
     public static function getById($id)
     {
         try {
             $config = new self();
-            $config->setId(intval($id));
-            $config->getDao()->getById();
-
+            $config->getDao()->getById(intval($id));
             return $config;
         } catch (\Exception $e) {
+            return null;
         }
     }
 
@@ -71,11 +70,10 @@ class StoreConfig extends Model\AbstractModel
     {
         try {
             $config = new self();
-            $config->setName($name);
-            $config->getDao()->getByName();
-
+            $config->getDao()->getByName($name);
             return $config;
         } catch (\Exception $e) {
+            return null;
         }
     }
 
