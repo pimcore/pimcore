@@ -3,8 +3,8 @@
 <svg version="1.1" id="Ebene_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
 	 width="24px" height="24px" viewBox="0 0 24 24" enable-background="new 0 0 24 24" xml:space="preserve">
 <path fill="none" d="M0,0h24v24H0V0z"/>
-<rect x="18" y="3" fill="#A3A5A7" width="3" height="18"/>
-<rect x="3" y="3" fill="#A3A5A7" width="3" height="18"/>
+<rect x="18" y="3" fill="#89BBF8" width="3" height="18"/>
+<rect x="3" y="3" fill="#89BBF8" width="3" height="18"/>
 <path fill="#5B9CF5" d="M16,3H8v18h8V3L16,3z"/>
 <circle fill="#28A050" cx="18" cy="18" r="6"/>
 <polygon fill="#FFFFFF" points="22,17 19,17 19,14 17,14 17,17 14,17 14,19 17,19 17,22 19,22 19,19 22,19 "/>
