@@ -454,7 +454,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
             $validLayouts = DataObject\Service::getValidLayouts($object);
 
             //master layout has id 0 so we check for is_null()
-            if (is_null($currentLayoutId) && !empty($validLayouts)) {
+            if ((is_null($currentLayoutId) || !strlen($currentLayoutId)) && !empty($validLayouts)) {
                 if (count($validLayouts) == 1) {
                     $firstLayout = reset($validLayouts);
                     $currentLayoutId = $firstLayout->getId();
