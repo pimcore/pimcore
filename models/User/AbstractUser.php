@@ -49,7 +49,7 @@ class AbstractUser extends Model\AbstractModel
     /**
      * @param int $id
      *
-     * @return AbstractUser
+     * @return AbstractUser|null
      */
     public static function getById($id)
     {
@@ -71,7 +71,7 @@ class AbstractUser extends Model\AbstractModel
 
             return $user;
         } catch (\Exception $e) {
-            return false;
+            return null;
         }
     }
 
@@ -92,17 +92,16 @@ class AbstractUser extends Model\AbstractModel
     /**
      * @param string $name
      *
-     * @return self
+     * @return self|null
      */
     public static function getByName($name)
     {
         try {
             $user = new static();
             $user->getDao()->getByName($name);
-
             return $user;
         } catch (\Exception $e) {
-            return false;
+            return null;
         }
     }
 
