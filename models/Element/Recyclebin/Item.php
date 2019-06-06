@@ -90,14 +90,17 @@ class Item extends Model\AbstractModel
      *
      * @param $id
      *
-     * @return Element\Recyclebin\Item
+     * @return self|null
      */
     public static function getById($id)
     {
-        $item = new self();
-        $item->getDao()->getById($id);
-
-        return $item;
+        try {
+            $item = new self();
+            $item->getDao()->getById($id);
+            return $item;
+        } catch (\Exception $e) {
+            return null;
+        }
     }
 
     /**

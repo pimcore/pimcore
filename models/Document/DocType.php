@@ -98,20 +98,17 @@ class DocType extends Model\AbstractModel
      *
      * @param int $id
      *
-     * @return DocType
+     * @return self|null
      */
     public static function getById($id)
     {
-        $docType = new self();
-        $docType->setId(intval($id));
-
         try {
-            $docType->getDao()->getById();
+            $docType = new self();
+            $docType->getDao()->getById(intval($id));
+            return $docType;
         } catch (\Exception $e) {
             return null;
         }
-
-        return $docType;
     }
 
     /**
