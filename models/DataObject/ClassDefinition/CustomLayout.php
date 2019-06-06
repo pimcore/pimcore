@@ -83,17 +83,10 @@ class CustomLayout extends Model\AbstractModel
 
     /**
      * @param $id
-     *
-     * @return mixed|null|CustomLayout
-     *
-     * @throws \Exception
+     * @return null|CustomLayout
      */
     public static function getById($id)
     {
-        if ($id === null) {
-            throw new \Exception('CustomLayout id is null');
-        }
-
         $cacheKey = 'customlayout_' . $id;
 
         try {
@@ -105,12 +98,9 @@ class CustomLayout extends Model\AbstractModel
             try {
                 $customLayout = new self();
                 $customLayout->getDao()->getById($id);
-
                 DataObject\Service::synchronizeCustomLayout($customLayout);
                 \Pimcore\Cache\Runtime::set($cacheKey, $customLayout);
             } catch (\Exception $e) {
-                Logger::error($e);
-
                 return null;
             }
         }
@@ -121,20 +111,14 @@ class CustomLayout extends Model\AbstractModel
     /**
      * @param string $name
      *
-     * @return null|CustomLayout|mixed
+     * @return null|CustomLayout
      */
     public static function getByName(string $name)
     {
-        try {
-            $customLayout = new self();
-            $id = $customLayout->getDao()->getIdByName($name);
-            if ($id) {
-                return self::getById($id);
-            } else {
-                throw new \Exception('There is no customlayout with the name: ' . $name);
-            }
-        } catch (\Exception $e) {
-            Logger::error($e);
+        $customLayout = new self();
+        $id = $customLayout->getDao()->getIdByName($name);
+        if ($id) {
+            return self::getById($id);
         }
 
         return null;
