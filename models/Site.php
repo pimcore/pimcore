@@ -90,10 +90,13 @@ class Site extends AbstractModel
      */
     public static function getById($id)
     {
-        $site = new self();
-        $site->getDao()->getById(intval($id));
-
-        return $site;
+        try {
+            $site = new self();
+            $site->getDao()->getById(intval($id));
+            return $site;
+        } catch (\Exception $e) {
+            return null;
+        }
     }
 
     /**
@@ -106,7 +109,6 @@ class Site extends AbstractModel
         try {
             $site = new self();
             $site->getDao()->getByRootId(intval($id));
-
             return $site;
         } catch (\Exception $e) {
             return null;
@@ -115,38 +117,24 @@ class Site extends AbstractModel
 
     /**
      * @param $domain
-     *
-     * @return mixed|Site|string
-     *
-     * @throws \Exception
+     * @return Site|null
      */
     public static function getByDomain($domain)
     {
-
         // cached because this is called in the route (Pimcore_Controller_Router_Route_Frontend)
         $cacheKey = 'site_domain_'. md5($domain);
 
         if (Runtime::isRegistered($cacheKey)) {
             $site = Runtime::get($cacheKey);
         } elseif (!$site = \Pimcore\Cache::load($cacheKey)) {
-            $site = new self();
-
             try {
+                $site = new self();
                 $site->getDao()->getByDomain($domain);
+                Runtime::set($cacheKey, $site);
+                \Pimcore\Cache::save($site, $cacheKey, ['system', 'site'], null, 999);
             } catch (\Exception $e) {
-                Logger::debug($e);
-                $site = 'failed';
+                return null;
             }
-
-            \Pimcore\Cache::save($site, $cacheKey, ['system', 'site'], null, 999);
-        }
-
-        Runtime::set($cacheKey, $site);
-
-        if ($site == 'failed' || !$site) {
-            $msg = 'there is no site for the requested domain [' . $domain . '], content was [' . $site . ']';
-            Logger::debug($msg);
-            throw new \Exception($msg);
         }
 
         return $site;

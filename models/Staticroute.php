@@ -450,13 +450,9 @@ class Staticroute extends AbstractModel
             if ($siteId < 1) {
                 continue;
             }
-            try {
-                $site = Site::getById($siteId);
-                if ($site) {
-                    $result[] = $siteId;
-                }
-            } catch (\Exception $e) {
-                // cleanup
+
+            if($site = Site::getById($siteId)) {
+                $result[] = $siteId;
             }
         }
 

@@ -164,19 +164,16 @@ class RedirectHandler implements LoggerAwareInterface
         }
 
         if ($redirect->getTargetSite() && !preg_match('@http(s)?://@i', $url)) {
-            try {
-                $targetSite = Site::getById($redirect->getTargetSite());
-
+            if($targetSite = Site::getById($redirect->getTargetSite())) {
                 // if the target site is specified and and the target-path is starting at root (not absolute to site)
                 // the root-path will be replaced so that the page can be shown
                 $url = preg_replace('@^' . $targetSite->getRootPath() . '/@', '/', $url);
                 $url = $request->getScheme() . '://' . $targetSite->getMainDomain() . $url;
-            } catch (\Exception $e) {
+            } else {
                 $this->logger->error('Site with ID {targetSite} not found', [
                     'redirect' => $redirect->getId(),
                     'targetSite' => $redirect->getTargetSite()
                 ]);
-
                 return null;
             }
         } elseif (!preg_match('@http(s)?://@i', $url) && $config->general->domain) {

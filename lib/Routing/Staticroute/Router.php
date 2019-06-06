@@ -151,8 +151,7 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
             $site = $parameters['site'];
 
             if (!empty($site)) {
-                try {
-                    $site = Site::getBy($site);
+                if($site = Site::getBy($site)) {
                     unset($parameters['site']);
                     $hostname = $site->getMainDomain();
 
@@ -160,11 +159,10 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
                         $needsHostname = true;
                         $siteId = $site->getId();
                     }
-                } catch (\Exception $e) {
+                } else {
                     $this->logger->warning('The site {site} does not exist for route {route}', [
                         'site' => $siteId,
                         'route' => $name,
-                        'exception' => $e
                     ]);
                 }
             } else {

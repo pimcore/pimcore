@@ -157,16 +157,13 @@ class FrontendRoutingListener implements EventSubscriberInterface
             // host name without port incl. X-Forwarded-For handling for trusted proxies
             $host = $request->getHost();
 
-            try {
-                $site = Site::getByDomain($host);
+            if($site = Site::getByDomain($host)) {
                 $path = $site->getRootPath() . $path;
 
                 Site::setCurrentSite($site);
 
                 $this->siteResolver->setSite($request, $site);
                 $this->siteResolver->setSitePath($request, $path);
-            } catch (\Exception $e) {
-                // noop - execption is logged in getByDomain
             }
         }
 
