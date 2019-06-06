@@ -1034,6 +1034,10 @@
 }
 
 .pimcore_icon_show_in_tree {
+    background: url(/bundles/pimcoreadmin/img/flat-white-icons/target.svg) center center no-repeat !important;
+}
+
+.pimcore_icon_index_sorting {
     background: url(/bundles/pimcoreadmin/img/flat-color-icons/tree_select.svg) center center no-repeat !important;
 }
 
