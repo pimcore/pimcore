@@ -90,7 +90,8 @@ pimcore.asset.tree = Class.create({
                 extraParams: {
                     limit: itemsPerPage,
                     view: this.config.customViewId
-                }
+                },
+                timeout: 60000
             },
             pageSize: itemsPerPage,
             root: rootNodeConfig
