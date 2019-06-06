@@ -98,11 +98,10 @@ class Config extends Model\AbstractModel
         try {
             $tag = new self();
             $tag->getDao()->getByName($name);
+            return $tag;
         } catch (\Exception $e) {
             return null;
         }
-
-        return $tag;
     }
 
     /**

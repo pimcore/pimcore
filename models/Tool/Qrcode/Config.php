@@ -76,11 +76,10 @@ class Config extends Model\AbstractModel
         try {
             $code = new self();
             $code->getDao()->getByName($name);
+            return $code;
         } catch (\Exception $e) {
             return null;
         }
-
-        return $code;
     }
 
     /**

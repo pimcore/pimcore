@@ -56,15 +56,17 @@ class Event extends Model\AbstractModel
 
     /**
      * @param $id
-     *
-     * @return Event
+     * @return Event|null
      */
     public static function getById($id)
     {
-        $event = new self();
-        $event->getDao()->getById(intval($id));
-
-        return $event;
+        try {
+            $event = new self();
+            $event->getDao()->getById(intval($id));
+            return $event;
+        } catch (\Exception $e) {
+            return null;
+        }
     }
 
     /**
