@@ -108,7 +108,7 @@ swiftmailer:
             encryption: null
             auth_mode:
         newsletter_mailer:
-            transport: mail
+            transport: sendmail
             delivery_addresses: null
             host: ''
             username: ''
