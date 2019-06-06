@@ -38,8 +38,8 @@
 
 .pimcore_icon_overlay_edit:before {
     position: absolute;
-    width: 16px;
-    height: 16px;
+    width: 24px;
+    height: 24px;
     bottom: 0px;
     right: 0px;
     content: "";
