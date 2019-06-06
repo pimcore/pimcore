@@ -752,11 +752,11 @@
 }
 
 .pimcore_icon_fieldcontainer {
-    background: url(/bundles/pimcoreadmin/img/flat-color-icons/row.svg) center center no-repeat !important;
+    background: url(/bundles/pimcoreadmin/img/flat-color-icons/panel.svg) center center no-repeat !important;
 }
 
 .pimcore_icon_panel {
-    background: url(/bundles/pimcoreadmin/img/flat-color-icons/panel.svg) center center no-repeat !important;
+    background: url(/bundles/pimcoreadmin/img/flat-color-icons/row.svg) center center no-repeat !important;
 }
 
 .pimcore_icon_tabpanel {
@@ -1319,7 +1319,7 @@
 }
 
 .pimcore_icon_input {
-    background: url(/bundles/pimcoreadmin/img/flat-color-icons/row.svg) center center no-repeat !important;
+    background: url(/bundles/pimcoreadmin/img/flat-color-icons/input.svg) center center no-repeat !important;
 }
 
 .pimcore_icon_firstname {
