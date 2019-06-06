@@ -137,7 +137,7 @@ class ClassManager extends Module
      */
     public function getObjectbrick($name)
     {
-        $ob = ObjectbrickDefinition::getByKey($name)) {
+        $ob = ObjectbrickDefinition::getByKey($name);
         return $ob;
     }
 
