@@ -246,8 +246,7 @@ class Installer extends MigrationInstaller
         );
 
         foreach ($fieldCollections as $key => $path) {
-            try {
-                $fieldCollection = Fieldcollection\Definition::getByKey($key);
+            if($fieldCollection = Fieldcollection\Definition::getByKey($key)) {
 
                 if ($fieldCollection) {
                     $this->outputWriter->write(sprintf(
@@ -257,7 +256,7 @@ class Installer extends MigrationInstaller
 
                     continue;
                 }
-            } catch (\Exception $e) {
+            } else {
                 $fieldCollection = new Fieldcollection\Definition();
                 $fieldCollection->setKey($key);
             }
