@@ -154,8 +154,6 @@ class Staticroute extends AbstractModel
                 $route->getDao()->getById();
                 \Pimcore\Cache\Runtime::set($cacheKey, $route);
             } catch (\Exception $e) {
-                Logger::error($e);
-
                 return null;
             }
         }
@@ -184,8 +182,6 @@ class Staticroute extends AbstractModel
         try {
             $route->getDao()->getByName($name, $siteId);
         } catch (\Exception $e) {
-            Logger::warn($e);
-
             return null;
         }
 
