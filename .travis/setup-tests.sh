@@ -8,7 +8,6 @@ cp -r .travis/app app
 cp -r .travis/bin/console bin/console
 cp -r .travis/web web
 
-cp .travis/system.template.yml var/config/system.yml
 cp .travis/extensions.template.php var/config/extensions.php
 cp app/config/parameters.example.yml app/config/parameters.yml
 
