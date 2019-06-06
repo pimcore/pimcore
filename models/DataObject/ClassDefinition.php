@@ -22,7 +22,6 @@ use Pimcore\Db;
 use Pimcore\Event\DataObjectClassDefinitionEvents;
 use Pimcore\Event\Model\DataObject\ClassDefinitionEvent;
 use Pimcore\File;
-use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 
