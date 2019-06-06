@@ -408,7 +408,7 @@ pimcore.object.tags.manyToOneRelation = Class.create(pimcore.object.tags.abstrac
         if (elementType == "object" && this.fieldConfig.objectsAllowed) {
 
             if(data.type == 'folder') {
-                if(this.dataObjectFolderAllowed) {
+                if(this.dataObjectFolderAllowed || this.fieldConfig.classes.length <= 0) {
                     isAllowed = true;
                 }
             } else {
@@ -423,8 +423,9 @@ pimcore.object.tags.manyToOneRelation = Class.create(pimcore.object.tags.abstrac
                         }
                     }
                 } else {
-                    //no classes configured - allow all
-                    isAllowed = true;
+                    if(!this.dataObjectFolderAllowed) {
+                        isAllowed = true;
+                    }
                 }
             }
         } else if (elementType == "asset" && this.fieldConfig.assetsAllowed) {
