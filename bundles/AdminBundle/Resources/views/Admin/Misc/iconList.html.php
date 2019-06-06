@@ -8,6 +8,17 @@ $colorIcons = rscandir($iconDir . '/flat-color-icons/');
 $whiteIcons = rscandir($iconDir . '/flat-white-icons/');
 $twemoji = rscandir($iconDir . '/twemoji/');
 
+$iconsCss = file_get_contents($prefixSearch . '/css/icons.css');
+
+$iconInUse = function ($iconPath) use ($iconsCss, $prefixReplace, $prefixSearch) {
+    $relativePath = str_replace($prefixSearch, $prefixReplace, $iconPath);
+    if(strpos($iconsCss, $relativePath)) {
+        return true;
+    }
+
+    return false;
+}
+
 ?><!DOCTYPE html>
 <html>
 <head>
@@ -70,7 +81,10 @@ $twemoji = rscandir($iconDir . '/twemoji/');
         ?>
         <div class="icon">
             <img style="width:50px;" src="<?= str_replace($prefixSearch, $prefixReplace, $icon) ?>" title="<?= basename($icon) ?>">
-            <div class="label"><?= basename($icon) ?></div>
+            <div class="label">
+                <?= $iconInUse($icon) ? '*' : '' ?>
+                <?= basename($icon) ?>
+            </div>
         </div>
         <?php
     } ?>
@@ -87,7 +101,10 @@ $twemoji = rscandir($iconDir . '/twemoji/');
         ?>
         <div class="icon black">
             <img style="width:50px;" src="<?= str_replace($prefixSearch, $prefixReplace, $icon) ?>" title="<?= basename($icon) ?>">
-            <div class="label"><?= basename($icon) ?></div>
+            <div class="label">
+                <?= $iconInUse($icon) ? '*' : '' ?>
+                <?= basename($icon) ?>
+            </div>
         </div>
         <?php
     } ?>
