@@ -749,9 +749,8 @@ class TestHelper
     public static function getAssetCount()
     {
         $list = new Asset\Listing();
-        $childs = $list->load();
-
-        return count($childs);
+        $children = $list->getAssets();
+        return count($children);
     }
 
     /**

@@ -24,17 +24,19 @@ namespace Pimcore\Model\Metadata\Predefined;
 class Listing extends \Pimcore\Model\Listing\JsonListing
 {
     /**
-     * Contains the results of the list. They are all an instance of Metadata\Predefined
-     *
-     * @var array
+     * @var array|null
      */
-    public $definitions = [];
+    protected $definitions = null;
 
     /**
-     * @return array
+     * @return \Pimcore\Model\Metadata\Predefined[]
      */
     public function getDefinitions()
     {
+        if($this->definitions === null) {
+            $this->getDao()->load();
+        }
+
         return $this->definitions;
     }
 

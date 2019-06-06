@@ -27,11 +27,9 @@ use Pimcore\Model\Tool\Targeting\Rule;
 class Listing extends Model\Listing\AbstractListing
 {
     /**
-     * Contains the results of the list
-     *
-     * @var Rule[]
+     * @var Rule[]|null
      */
-    public $targets = [];
+    protected $targets = null;
 
     /**
      * @param Rule[] $targets
@@ -50,6 +48,10 @@ class Listing extends Model\Listing\AbstractListing
      */
     public function getTargets(): array
     {
+        if($this->targets === null) {
+            $this->getDao()->load();
+        }
+
         return $this->targets;
     }
 }

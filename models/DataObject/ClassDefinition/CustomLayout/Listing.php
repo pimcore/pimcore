@@ -25,11 +25,9 @@ use Pimcore\Model;
 class Listing extends Model\Listing\AbstractListing
 {
     /**
-     * Contains the results of the list. They are all an instance of DataObject\ClassDefinition\CustomLayout\Listing
-     *
-     * @var array
+     * @var array|null
      */
-    public $layoutDefinitions;
+    protected $layoutDefinitions = null;
 
     /**
      * @param array $layoutDefinitions
@@ -40,10 +38,14 @@ class Listing extends Model\Listing\AbstractListing
     }
 
     /**
-     * @return array
+     * @return Model\DataObject\ClassDefinition\CustomLayout[]
      */
     public function getLayoutDefinitions()
     {
+        if($this->layoutDefinitions === null) {
+            $this->getDao()->load();
+        }
+
         return $this->layoutDefinitions;
     }
 }

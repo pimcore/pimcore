@@ -26,20 +26,22 @@ use Pimcore\Model;
 class Listing extends Model\Listing\AbstractListing
 {
     /**
-     * Contains the results of the list.
-     *
-     * @var array
+     * @var array|null
      */
-    public $list = [];
+    protected $list = null;
 
     /** @var bool */
     public $resolveGroupName;
 
     /**
-     * @return array
+     * @return Model\DataObject\Classificationstore\KeyGroupRelation[]
      */
     public function getList()
     {
+        if($this->list === null) {
+            $this->getDao()->load();
+        }
+
         return $this->list;
     }
 

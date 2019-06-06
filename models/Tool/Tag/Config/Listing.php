@@ -25,15 +25,19 @@ use Pimcore\Model;
 class Listing extends Model\Listing\JsonListing
 {
     /**
-     * @var array
+     * @var array|null
      */
-    public $tags = [];
+    protected $tags = null;
 
     /**
-     * @return array
+     * @return \Pimcore\Model\Tool\Tag\Config[]
      */
     public function getTags()
     {
+        if($this->tags === null) {
+            $this->getDao()->load();
+        }
+
         return $this->tags;
     }
 

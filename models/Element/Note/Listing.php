@@ -28,11 +28,9 @@ use Pimcore\Model;
 class Listing extends Model\Listing\AbstractListing
 {
     /**
-     * Contains the results of the list. They are all an instance of Staticroute
-     *
-     * @var array
+     * @var array|null
      */
-    public $notes = [];
+    protected $notes = null;
 
     /**
      * @param $notes
@@ -47,10 +45,14 @@ class Listing extends Model\Listing\AbstractListing
     }
 
     /**
-     * @return array
+     * @return Model\Element\Note[]
      */
     public function getNotes()
     {
+        if($this->notes === null) {
+            $this->getDao()->load();
+        }
+
         return $this->notes;
     }
 }

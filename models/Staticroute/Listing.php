@@ -25,17 +25,19 @@ use Pimcore\Model;
 class Listing extends Model\Listing\JsonListing
 {
     /**
-     * Contains the results of the list. They are all an instance of Staticroute
-     *
-     * @var array
+     * @var array|null
      */
-    public $routes = [];
+    protected $routes = null;
 
     /**
-     * @return array
+     * @return \Pimcore\Model\Staticroute[]
      */
     public function getRoutes()
     {
+        if($this->routes === null) {
+            $this->getDao()->load();
+        }
+
         return $this->routes;
     }
 

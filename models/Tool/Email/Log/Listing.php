@@ -26,19 +26,19 @@ use Pimcore\Model;
 class Listing extends Model\Listing\AbstractListing
 {
     /**
-     * Contains the results of the list. They are all an instance of Document\Email
-     *
      * @var array
      */
-    public $emailLogs = [];
+    protected $emailLogs = null;
 
     /**
-     * Returns a list of EmailLog entries
-     *
-     * @return array
+     * @return Model\Tool\Email\Log[]
      */
     public function getEmailLogs()
     {
+        if($this->emailLogs === null) {
+            $this->getDao()->load();
+        }
+
         return $this->emailLogs;
     }
 

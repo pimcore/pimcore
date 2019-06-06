@@ -26,17 +26,19 @@ use Pimcore\Model;
 class Listing extends Model\Listing\AbstractListing
 {
     /**
-     * Contains the results of the list. They are all an instance of GridConfigShare
-     *
-     * @var array
+     * @var array|null
      */
-    public $gridConfigShares = [];
+    protected $gridConfigShares = null;
 
     /**
-     * @return array
+     * @return Model\GridConfigShare[]
      */
     public function getGridconfigShares()
     {
+        if($this->gridConfigShares === null) {
+            $this->getDao()->load();
+        }
+
         return $this->gridConfigShares;
     }
 

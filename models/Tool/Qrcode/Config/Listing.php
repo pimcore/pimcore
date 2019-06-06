@@ -25,15 +25,19 @@ use Pimcore\Model;
 class Listing extends Model\Listing\JsonListing
 {
     /**
-     * @var array
+     * @var array|null
      */
-    public $codes = [];
+    protected $codes = null;
 
     /**
-     * @return array
+     * @return \Pimcore\Model\Tool\Qrcode\Config[]
      */
     public function getCodes()
     {
+        if($this->codes === null) {
+            $this->getDao()->load();
+        }
+
         return $this->codes;
     }
 

@@ -25,17 +25,19 @@ use Pimcore\Model;
 class Listing extends Model\Listing\JsonListing
 {
     /**
-     * Contains the results of the list. They are all an instance of Property\Predefined
-     *
-     * @var array
+     * @var array|null
      */
-    public $properties = [];
+    protected $properties = null;
 
     /**
-     * @return array
+     * @return \Pimcore\Model\Property\Predefined[]
      */
     public function getProperties()
     {
+        if($this->properties === null) {
+            $this->getDao()->load();
+        }
+
         return $this->properties;
     }
 

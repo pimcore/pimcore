@@ -26,20 +26,22 @@ use Pimcore\Model;
 class Listing extends Model\Listing\AbstractListing
 {
     /**
-     * Contains the results of the list. They are all an instance of Classificationstore_KeyConfig
-     *
-     * @var array
+     * @var array|null
      */
-    public $list = [];
+    protected $list = null;
 
     /** @var bool */
     public $includeDisabled;
 
     /**
-     * @return array
+     * @return Model\DataObject\Classificationstore\KeyConfig[]
      */
     public function getList()
     {
+        if($this->list === null) {
+            $this->getDao()->load();
+        }
+
         return $this->list;
     }
 

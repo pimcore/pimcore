@@ -26,17 +26,19 @@ use Pimcore\Model;
 class Listing extends Model\Listing\AbstractListing
 {
     /**
-     * Contains the results of the list. They are all an instance of Staticroute
-     *
-     * @var array
+     * @var array|null
      */
-    public $redirects = [];
+    protected $redirects = null;
 
     /**
-     * @return array
+     * @return Model\Redirect[]
      */
     public function getRedirects()
     {
+        if($this->redirects === null) {
+            $this->getDao()->load();
+        }
+
         return $this->redirects;
     }
 

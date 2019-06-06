@@ -26,17 +26,19 @@ use Pimcore\Model;
 class Listing extends Model\Listing\AbstractListing
 {
     /**
-     * Contains the results of the list. They are all an instance of Schedule\Task
-     *
-     * @var array
+     * @var array|null
      */
-    public $tasks = [];
+    protected $tasks = null;
 
     /**
-     * @return array
+     * @return Model\Schedule\Task[]
      */
     public function getTasks()
     {
+        if($this->tasks === null) {
+            $this->getDao()->load();
+        }
+
         return $this->tasks;
     }
 

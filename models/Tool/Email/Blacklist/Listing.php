@@ -26,11 +26,9 @@ use Pimcore\Model;
 class Listing extends Model\Listing\AbstractListing
 {
     /**
-     * Contains the results of the list. They are all an instance of Staticroute
-     *
-     * @var array
+     * @var array|null
      */
-    public $items = [];
+    protected $items = null;
 
     /**
      * @param $items
@@ -45,10 +43,14 @@ class Listing extends Model\Listing\AbstractListing
     }
 
     /**
-     * @return array
+     * @return Model\Tool\Email\Blacklist[]
      */
     public function getItems()
     {
+        if($this->items === null) {
+            $this->getDao()->load();
+        }
+
         return $this->items;
     }
 }

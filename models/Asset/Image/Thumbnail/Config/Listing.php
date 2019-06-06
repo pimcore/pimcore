@@ -20,23 +20,27 @@ namespace Pimcore\Model\Asset\Image\Thumbnail\Config;
 use Pimcore\Model;
 
 /**
+ * @method Model\Asset\Image\Thumbnail\Config[] load()
  * @method \Pimcore\Model\Asset\Image\Thumbnail\Config\Listing\Dao getDao()
  */
 class Listing extends Model\Listing\JsonListing
 {
     /**
-     * Contains the results of the list. They are all an instance of Property\Predefined
-     *
-     * @var array
+     * @var array|null
      */
-    public $thumbnails = [];
+    protected $thumbnails = null;
 
     /**
-     * @return array
+     * @return Model\Asset\Image\Thumbnail\Config[]
      */
     public function getThumbnails()
     {
+        if($this->thumbnails === null) {
+            $this->getDao()->load();
+        }
+
         return $this->thumbnails;
+
     }
 
     /**

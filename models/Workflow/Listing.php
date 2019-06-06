@@ -26,17 +26,19 @@ use Pimcore\Model\Workflow;
 class Listing extends Model\Listing\JsonListing
 {
     /**
-     * Contains the results of the list. They are all an instance of Workflow
-     *
-     * @var array
+     * @var array|null
      */
-    public $workflows = [];
+    protected $workflows = null;
 
     /**
      * @return Workflow[]
      */
     public function getWorkflows()
     {
+        if($this->workflows === null) {
+            $this->getDao()->load();
+        }
+
         return $this->workflows;
     }
 

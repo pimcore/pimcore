@@ -960,10 +960,8 @@ class DataObjectController extends ElementControllerBase implements EventedContr
             $list->setOrderKey('LENGTH(o_path)', false);
             $list->setOrder('DESC');
 
-            $objects = $list->load();
-
             $deletedItems = [];
-            foreach ($objects as $object) {
+            foreach ($list as $object) {
                 $deletedItems[] = $object->getRealFullPath();
                 if ($object->isAllowed('delete') && !$object->isLocked()) {
                     $object->delete();
@@ -1157,11 +1155,10 @@ class DataObjectController extends ElementControllerBase implements EventedContr
         $list->setObjectTypes([DataObject\AbstractObject::OBJECT_TYPE_OBJECT, DataObject\AbstractObject::OBJECT_TYPE_VARIANT, DataObject\AbstractObject::OBJECT_TYPE_FOLDER]);
         $list->setOrderKey('o_index');
         $list->setOrder('asc');
-        $siblings = $list->load();
 
         $index = 0;
         /** @var DataObject\AbstractObject $child */
-        foreach ($siblings as $sibling) {
+        foreach ($list as $sibling) {
             if ($index == $newIndex) {
                 $index++;
             }

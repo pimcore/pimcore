@@ -27,11 +27,9 @@ use Pimcore\Model\Tool\Targeting\TargetGroup;
 class Listing extends Model\Listing\AbstractListing
 {
     /**
-     * Contains the results of the list
-     *
-     * @var TargetGroup[]
+     * @var TargetGroup[]|null
      */
-    public $targetGroups = [];
+    protected $targetGroups = null;
 
     /**
      * @param TargetGroup[] $targetGroups
@@ -50,6 +48,10 @@ class Listing extends Model\Listing\AbstractListing
      */
     public function getTargetGroups(): array
     {
+        if($this->targetGroups === null) {
+            $this->getDao()->load();
+        }
+
         return $this->targetGroups;
     }
 }

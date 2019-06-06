@@ -40,11 +40,9 @@ class Listing extends Model\Listing\AbstractListing implements \Iterator, Adapte
     public $objectTypeDocument = false;
 
     /**
-     * Contains the results of the list
-     *
-     * @var array
+     * @var array|null
      */
-    public $documents = null;
+    protected $documents = null;
 
     /**
      * @var bool
@@ -52,24 +50,19 @@ class Listing extends Model\Listing\AbstractListing implements \Iterator, Adapte
     public $unpublished = false;
 
     /**
-     * Returns documents, also loads the rows if these aren't loaded.
-     *
-     * @return array
+     * @return Document[]
      */
     public function getDocuments()
     {
         if ($this->documents === null) {
-            $this->load();
+            $this->getDao()->load();
         }
 
         return $this->documents;
     }
 
     /**
-     * Assign documents to the listing.
-     *
      * @param array $documents
-     *
      * @return Listing
      */
     public function setDocuments($documents)

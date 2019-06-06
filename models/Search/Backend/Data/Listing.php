@@ -23,15 +23,19 @@ use Pimcore\Model\Search\Backend\Data;
 class Listing extends \Pimcore\Model\Listing\AbstractListing
 {
     /**
-     * @var array
+     * @var array|null
      */
-    public $entries;
+    protected $entries = null;
 
     /**
-     * @return array
+     * @return Data[]
      */
     public function getEntries()
     {
+        if($this->entries === null) {
+            $this->getDao()->load();
+        }
+
         return $this->entries;
     }
 

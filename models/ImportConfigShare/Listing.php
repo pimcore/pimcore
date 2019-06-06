@@ -26,17 +26,19 @@ use Pimcore\Model;
 class Listing extends Model\Listing\AbstractListing
 {
     /**
-     * Contains the results of the list. They are all an instance of ImportConfigShare
-     *
-     * @var array
+     * @var array|null
      */
-    public $importConfigShares = [];
+    protected $importConfigShares = null;
 
     /**
-     * @return array
+     * @return Model\ImportConfigShare[]
      */
     public function getImportConfigShares(): array
     {
+        if($this->importConfigShares === null) {
+            $this->getDao()->load();
+        }
+
         return $this->importConfigShares;
     }
 

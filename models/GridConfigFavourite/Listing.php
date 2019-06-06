@@ -26,17 +26,19 @@ use Pimcore\Model;
 class Listing extends Model\Listing\AbstractListing
 {
     /**
-     * Contains the results of the list. They are all an instance of GridConfigFavourite
-     *
-     * @var array
+     * @var array|null
      */
-    public $gridconfigFavourites = [];
+    protected $gridconfigFavourites = null;
 
     /**
-     * @return array
+     * @return Model\GridConfigFavourite[]
      */
     public function getGridconfigFavourites()
     {
+        if($this->gridconfigFavourites === null) {
+            $this->getDao()->load();
+        }
+
         return $this->gridconfigFavourites;
     }
 
