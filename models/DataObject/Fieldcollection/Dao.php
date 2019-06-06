@@ -50,9 +50,7 @@ class Dao extends Model\Dao\AbstractDao
         $values = [];
 
         foreach ($fieldDef->getAllowedTypes() as $type) {
-            try {
-                $definition = DataObject\Fieldcollection\Definition::getByKey($type);
-            } catch (\Exception $e) {
+            if(!$definition = DataObject\Fieldcollection\Definition::getByKey($type)) {
                 continue;
             }
 
@@ -148,10 +146,7 @@ class Dao extends Model\Dao\AbstractDao
         $hasLocalizedFields = false;
 
         foreach ($fieldDef->getAllowedTypes() as $type) {
-            try {
-                /** @var $definition Definition */
-                $definition = DataObject\Fieldcollection\Definition::getByKey($type);
-            } catch (\Exception $e) {
+            if(!$definition = DataObject\Fieldcollection\Definition::getByKey($type)) {
                 continue;
             }
 

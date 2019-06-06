@@ -1460,14 +1460,12 @@ class ClassController extends AdminController implements EventedControllerInterf
 
                 return $this->adminJson(['success' => $success !== false]);
             } elseif ($type == 'fieldcollection' && $item['key'] == $name) {
-                try {
-                    $fieldCollection = DataObject\Fieldcollection\Definition::getByKey($name);
-                } catch (\Exception $e) {
+                if(!$fieldCollection = DataObject\Fieldcollection\Definition::getByKey($name)) {
                     $fieldCollection = new DataObject\Fieldcollection\Definition();
                     $fieldCollection->setKey($name);
                 }
-                $success = DataObject\ClassDefinition\Service::importFieldCollectionFromJson($fieldCollection, json_encode($item), true);
 
+                $success = DataObject\ClassDefinition\Service::importFieldCollectionFromJson($fieldCollection, json_encode($item), true);
                 return $this->adminJson(['success' => $success !== false]);
             } elseif ($type == 'customlayout') {
                 $layoutData = json_decode($data['name'], true);
