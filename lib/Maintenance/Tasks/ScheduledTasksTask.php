@@ -52,8 +52,7 @@ final class ScheduledTasksTask implements TaskInterface
                     $document = Document::getById($task->getCid());
                     if ($document instanceof Document) {
                         if ($task->getAction() === 'publish-version' && $task->getVersion()) {
-                            try {
-                                $version = Version::getById($task->getVersion());
+                            if($version = Version::getById($task->getVersion())) {
                                 $document = $version->getData();
                                 if ($document instanceof Document) {
                                     $document->setPublished(true);
@@ -61,7 +60,7 @@ final class ScheduledTasksTask implements TaskInterface
                                 } else {
                                     $this->logger->error('Schedule\\Task\\Executor: Could not restore document from version data.');
                                 }
-                            } catch (\Exception $e) {
+                            } else {
                                 $this->logger->error('Schedule\\Task\\Executor: Version [ '.$task->getVersion().' ] does not exist.');
                             }
                         } elseif ($task->getAction() === 'publish') {
@@ -79,15 +78,14 @@ final class ScheduledTasksTask implements TaskInterface
 
                     if ($asset instanceof Asset) {
                         if ($task->getAction() === 'publish-version' && $task->getVersion()) {
-                            try {
-                                $version = Version::getById($task->getVersion());
+                            if($version = Version::getById($task->getVersion())) {
                                 $asset = $version->getData();
                                 if ($asset instanceof Asset) {
                                     $asset->save();
                                 } else {
                                     $this->logger->error('Schedule\\Task\\Executor: Could not restore asset from version data.');
                                 }
-                            } catch (\Exception $e) {
+                            } else {
                                 $this->logger->error('Schedule\\Task\\Executor: Version [ '.$task->getVersion().' ] does not exist.');
                             }
                         } elseif ($task->getAction() === 'delete') {
@@ -99,8 +97,7 @@ final class ScheduledTasksTask implements TaskInterface
 
                     if ($object instanceof DataObject) {
                         if ($task->getAction() === 'publish-version' && $task->getVersion()) {
-                            try {
-                                $version = Version::getById($task->getVersion());
+                            if($version = Version::getById($task->getVersion())) {
                                 $object = $version->getData();
                                 if ($object instanceof DataObject\AbstractObject) {
                                     $object->setPublished(true);
@@ -108,7 +105,7 @@ final class ScheduledTasksTask implements TaskInterface
                                 } else {
                                     $this->logger->error('Schedule\\Task\\Executor: Could not restore object from version data.');
                                 }
-                            } catch (\Exception $e) {
+                            } else {
                                 $this->logger->error('Schedule\\Task\\Executor: Version [ '.$task->getVersion().' ] does not exist.');
                             }
                         } elseif ($task->getAction() === 'publish') {

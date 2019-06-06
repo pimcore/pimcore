@@ -86,13 +86,12 @@ final class VersionsCleanupTask implements TaskInterface
             if (is_array($versions) && !empty($versions)) {
                 $totalCount = count($versions);
                 foreach ($versions as $index => $id) {
-                    try {
-                        $version = Version::getById($id);
-                    } catch (\Exception $e) {
+                    if(!$version = Version::getById($id))  {
                         $ignoredIds[] = $id;
                         $this->logger->debug('Version with ' . $id . " not found\n");
                         continue;
                     }
+
                     $counter++;
 
                     // do not delete public versions

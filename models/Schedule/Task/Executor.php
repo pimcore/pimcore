@@ -37,8 +37,7 @@ class Executor
                     $document = Document::getById($task->getCid());
                     if ($document instanceof Document) {
                         if ($task->getAction() == 'publish-version' && $task->getVersion()) {
-                            try {
-                                $version = Version::getById($task->getVersion());
+                            if($version = Version::getById($task->getVersion())) {
                                 $document = $version->getData();
                                 if ($document instanceof Document) {
                                     $document->setPublished(true);
@@ -46,7 +45,7 @@ class Executor
                                 } else {
                                     Logger::err('Schedule\\Task\\Executor: Could not restore document from version data.');
                                 }
-                            } catch (\Exception $e) {
+                            } else {
                                 Logger::err('Schedule\\Task\\Executor: Version [ '.$task->getVersion().' ] does not exist.');
                             }
                         } elseif ($task->getAction() == 'publish') {
@@ -64,15 +63,14 @@ class Executor
 
                     if ($asset instanceof Asset) {
                         if ($task->getAction() == 'publish-version' && $task->getVersion()) {
-                            try {
-                                $version = Version::getById($task->getVersion());
+                            if($version = Version::getById($task->getVersion())) {
                                 $asset = $version->getData();
                                 if ($asset instanceof Asset) {
                                     $asset->save();
                                 } else {
                                     Logger::err('Schedule\\Task\\Executor: Could not restore asset from version data.');
                                 }
-                            } catch (\Exception $e) {
+                            } else {
                                 Logger::err('Schedule\\Task\\Executor: Version [ '.$task->getVersion().' ] does not exist.');
                             }
                         } elseif ($task->getAction() == 'delete') {
@@ -84,8 +82,7 @@ class Executor
 
                     if ($object instanceof DataObject) {
                         if ($task->getAction() == 'publish-version' && $task->getVersion()) {
-                            try {
-                                $version = Version::getById($task->getVersion());
+                            if($version = Version::getById($task->getVersion())) {
                                 $object = $version->getData();
                                 if ($object instanceof DataObject\AbstractObject) {
                                     $object->setPublished(true);
@@ -93,7 +90,7 @@ class Executor
                                 } else {
                                     Logger::err('Schedule\\Task\\Executor: Could not restore object from version data.');
                                 }
-                            } catch (\Exception $e) {
+                            } else {
                                 Logger::err('Schedule\\Task\\Executor: Version [ '.$task->getVersion().' ] does not exist.');
                             }
                         } elseif ($task->getAction() == 'publish') {
