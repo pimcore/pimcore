@@ -147,7 +147,6 @@ class Configuration implements ConfigurationInterface
         $this->addModelsNode($rootNode);
         $this->addRoutingNode($rootNode);
         $this->addCacheNode($rootNode);
-        $this->addOutputFiltersNode($rootNode);
         $this->addContextNode($rootNode);
         $this->addAdminNode($rootNode);
         $this->addWebProfilerNode($rootNode);
@@ -327,25 +326,6 @@ class Configuration implements ConfigurationInterface
                         ->end()
                     ->end()
             ->end();
-    }
-
-    /**
-     * @param ArrayNodeDefinition $rootNode
-     */
-    private function addOutputFiltersNode(ArrayNodeDefinition $rootNode)
-    {
-        $rootNode
-            ->children()
-                ->arrayNode('outputfilters')
-                    ->addDefaultsIfNotSet()
-                    ->children()
-                        ->booleanNode('less')
-                            ->defaultFalse()
-                        ->end()
-                        ->scalarNode('lesscpath')
-                            ->end()
-                    ->end()
-                ->end();
     }
 
 

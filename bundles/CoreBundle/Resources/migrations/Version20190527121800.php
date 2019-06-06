@@ -48,6 +48,9 @@ class Version20190527121800 extends AbstractPimcoreMigration
                 //write new system.yml file in /var/config
                 $content['pimcore'] = include($originalConfigFile);
 
+                //cleanup unused config
+                unset($content['pimcore']['outputfilters']);
+
                 $content = Yaml::dump($content, 6);
                 File::put($newConfigFile, $content);
 

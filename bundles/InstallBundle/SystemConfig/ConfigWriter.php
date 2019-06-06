@@ -97,7 +97,7 @@ class ConfigWriter
         'swiftmailer' => [
             'mailers' => [
                 'pimcore_mailer' => [
-                    'transport' => 'smtp',
+                    'transport' => 'sendmail',
                     'delivery_addresses' => [],
                     'host' => '',
                     'username' => '',
@@ -107,7 +107,7 @@ class ConfigWriter
                     'auth_mode' => null
                 ],
                 'newsletter_mailer' => [
-                    'transport' => 'smtp',
+                    'transport' => 'sendmail',
                     'delivery_addresses' => [],
                     'host' => '',
                     'username' => '',

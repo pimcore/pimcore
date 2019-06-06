@@ -52,9 +52,6 @@ pimcore:
         lifetime: null
         excludePatterns: ''
         excludeCookie: ''
-    outputfilters:
-        less: false
-        lesscpath: ''
     webservice:
         enabled: true
     httpclient:
@@ -99,8 +96,7 @@ swiftmailer:
     mailers:
         pimcore_mailer:
             transport: smtp
-            delivery_addresses:
-                emailaddresses: ''
+            delivery_addresses: []
             host: ''
             username: ''
             password: ''
@@ -109,7 +105,7 @@ swiftmailer:
             auth_mode:
         newsletter_mailer:
             transport: sendmail
-            delivery_addresses: null
+            delivery_addresses: []
             host: ''
             username: ''
             password: null

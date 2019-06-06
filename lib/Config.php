@@ -334,10 +334,6 @@ class Config
                     "excludePatterns" => $config->cache->excludePatterns,
                     "excludeCookie" => $config->cache->excludeCookie
                 ],
-                "outputfilters" => [
-                    "less" => $config->outputfilters->less,
-                    "lesscpath" => $config->outputfilters->lesscpath
-                ],
                 "webservice" => [
                     "enabled" => $config->webservice->enabled
                 ],
