@@ -113,13 +113,18 @@ abstract class AbstractRelations extends Data implements CustomResourcePersistin
         if (!$this->getObjectsAllowed()) {
             $allowed = false;
         } elseif ($this->getObjectsAllowed() and is_array($allowedClasses) and count($allowedClasses) > 0) {
+            $allowedClassnames = [];
+            foreach ($allowedClasses as $c) {
+                $allowedClassnames[] = $c['classes'];
+            }
             //check for allowed classes
             if ($object instanceof DataObject\Concrete) {
                 $classname = $object->getClassName();
-                foreach ($allowedClasses as $c) {
-                    $allowedClassnames[] = $c['classes'];
-                }
                 if (!in_array($classname, $allowedClassnames)) {
+                    $allowed = false;
+                }
+            } else if($object instanceof DataObject\Folder) {
+                if (!in_array('folder', $allowedClassnames)) {
                     $allowed = false;
                 }
             } else {
