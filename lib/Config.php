@@ -355,7 +355,6 @@ class Config
                     ],
                     "method" => $config->email->method,
                     "smtp" => [
-                        "transport" =>  $config->email->smtp->transport,
                         "host" => $config->email->smtp->host,
                         "port" => $config->email->smtp->port,
                         "ssl" => $config->email->smtp->encryption,
@@ -365,7 +364,6 @@ class Config
                             "username" => $config->email->smtp->username,
                             "password" => $config->email->smtp->password
                         ],
-                        "delivery_addresses" => $config->email->smtp->delivery_addresses
                     ],
                     "debug" => [
                         "emailaddresses" => $config->email->debug->emailaddresses
@@ -382,7 +380,6 @@ class Config
                     ],
                     "method" => $config->newsletter->method,
                     "smtp" => [
-                        "transport" =>  $config->newsletter->smtp->transport,
                         "host" => $config->newsletter->smtp->host,
                         "port" => $config->newsletter->smtp->port,
                         "ssl" => $config->newsletter->smtp->encryption,
@@ -392,7 +389,6 @@ class Config
                             "username" => $config->newsletter->smtp->username,
                             "password" => $config->newsletter->smtp->password
                         ],
-                        "delivery_addresses" => $config->email->smtp->delivery_addresses
                     ],
                     "debug" => $config->newsletter->debug->emailaddresses,
                     "usespecific" => $config->newsletter->usespecific
@@ -438,7 +434,6 @@ class Config
                 //add email settings
                 foreach (['email' => 'pimcore_mailer', 'newsletter' => 'newsletter_mailer'] as $key => $group) {
                     $config[$key]['smtp'] = [
-                        'transport' => $container->getParameter('swiftmailer.mailer.'.$group.'.transport.name'),
                         'host' => $container->getParameter('swiftmailer.mailer.'.$group.'.transport.smtp.host'),
                         'username' => $container->getParameter('swiftmailer.mailer.'.$group.'.transport.smtp.username'),
                         'password' => $container->getParameter('swiftmailer.mailer.'.$group.'.transport.smtp.password'),
