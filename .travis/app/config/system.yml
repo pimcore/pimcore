@@ -108,7 +108,6 @@ pimcore_admin:
 swiftmailer:
     mailers:
         pimcore_mailer:
-            namne: ''
             transport: smtp
             delivery_addresses:
                 emailaddresses: ''
@@ -119,7 +118,6 @@ swiftmailer:
             encryption: null
             auth_mode:
         newsletter_mailer:
-            namne: ''
             transport: mail
             delivery_addresses: null
             host: ''
