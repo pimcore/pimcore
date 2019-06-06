@@ -73,12 +73,8 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
 
     /**
      * @static
-     *
-     * @throws \Exception
-     *
      * @param $key
-     *
-     * @return self
+     * @return self|null
      */
     public static function getByKey($key)
     {
@@ -104,7 +100,7 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
             return $brick;
         }
 
-        throw new \Exception('Object-Brick with key: ' . $key . ' does not exist.');
+        return null;
     }
 
     /**

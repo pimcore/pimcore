@@ -148,9 +148,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface
             return null;
         }
 
-        try {
-            $collectionDef = DataObject\Objectbrick\Definition::getByKey($item->getType());
-        } catch (\Exception $e) {
+        if(!$collectionDef = DataObject\Objectbrick\Definition::getByKey($item->getType())) {
             return null;
         }
 
@@ -399,14 +397,10 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface
                     continue;
                 }
 
-                try {
-                    $collectionDef = DataObject\Objectbrick\Definition::getByKey($item->getType());
-                } catch (\Exception $e) {
-                    continue;
-                }
-
-                foreach ($collectionDef->getFieldDefinitions() as $fd) {
-                    $dataString .= $fd->getDataForSearchIndex($item, $params) . ' ';
+                if($collectionDef = DataObject\Objectbrick\Definition::getByKey($item->getType())) {
+                    foreach ($collectionDef->getFieldDefinitions() as $fd) {
+                        $dataString .= $fd->getDataForSearchIndex($item, $params) . ' ';
+                    }
                 }
             }
         }
@@ -479,9 +473,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface
 
         if (is_array($allowedTypes)) {
             for ($i = 0; $i < count($allowedTypes); $i++) {
-                try {
-                    DataObject\Objectbrick\Definition::getByKey($allowedTypes[$i]);
-                } catch (\Exception $e) {
+                if(!DataObject\Objectbrick\Definition::getByKey($allowedTypes[$i])) {
                     Logger::warn("Removed unknown allowed type [ $allowedTypes[$i] ] from allowed types of object brick");
                     unset($allowedTypes[$i]);
                 }
@@ -516,25 +508,21 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface
                 $wsDataItem->value = [];
                 $wsDataItem->type = $item->getType();
 
-                try {
-                    $collectionDef = DataObject\Objectbrick\Definition::getByKey($item->getType());
-                } catch (\Exception $e) {
-                    continue;
-                }
+                if($collectionDef = DataObject\Objectbrick\Definition::getByKey($item->getType())) {
+                    foreach ($collectionDef->getFieldDefinitions() as $fd) {
+                        $el = new Webservice\Data\DataObject\Element();
+                        $el->name = $fd->getName();
+                        $el->type = $fd->getFieldType();
+                        $el->value = $fd->getForWebserviceExport($item, $params);
+                        if ($el->value == null && self::$dropNullValues) {
+                            continue;
+                        }
 
-                foreach ($collectionDef->getFieldDefinitions() as $fd) {
-                    $el = new Webservice\Data\DataObject\Element();
-                    $el->name = $fd->getName();
-                    $el->type = $fd->getFieldType();
-                    $el->value = $fd->getForWebserviceExport($item, $params);
-                    if ($el->value == null && self::$dropNullValues) {
-                        continue;
+                        $wsDataItem->value[] = $el;
                     }
 
-                    $wsDataItem->value[] = $el;
+                    $wsData[] = $wsDataItem;
                 }
-
-                $wsData[] = $wsDataItem;
             }
         }
 
@@ -646,16 +634,12 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface
                     continue;
                 }
 
-                try {
-                    $collectionDef = DataObject\Objectbrick\Definition::getByKey($item->getType());
-                } catch (\Exception $e) {
-                    continue;
-                }
-
-                foreach ($collectionDef->getFieldDefinitions() as $fd) {
-                    $key = $fd->getName();
-                    $getter = 'get' . ucfirst($key);
-                    $dependencies = array_merge($dependencies, $fd->resolveDependencies($item->$getter()));
+                if($collectionDef = DataObject\Objectbrick\Definition::getByKey($item->getType())) {
+                    foreach ($collectionDef->getFieldDefinitions() as $fd) {
+                        $key = $fd->getName();
+                        $getter = 'get' . ucfirst($key);
+                        $dependencies = array_merge($dependencies, $fd->resolveDependencies($item->$getter()));
+                    }
                 }
             }
         }
@@ -682,16 +666,12 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface
                     continue;
                 }
 
-                try {
-                    $collectionDef = DataObject\Objectbrick\Definition::getByKey($item->getType());
-                } catch (\Exception $e) {
-                    continue;
-                }
-
-                foreach ($collectionDef->getFieldDefinitions(['suppressEnrichment' => true]) as $fd) {
-                    $key = $fd->getName();
-                    $getter = 'get' . ucfirst($key);
-                    $tags = $fd->getCacheTags($item->$getter(), $tags);
+                if($collectionDef = DataObject\Objectbrick\Definition::getByKey($item->getType())) {
+                    foreach ($collectionDef->getFieldDefinitions(['suppressEnrichment' => true]) as $fd) {
+                        $key = $fd->getName();
+                        $getter = 'get' . ucfirst($key);
+                        $tags = $fd->getCacheTags($item->$getter(), $tags);
+                    }
                 }
             }
         }
@@ -765,9 +745,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface
                         continue;
                     }
 
-                    try {
-                        $collectionDef = DataObject\Objectbrick\Definition::getByKey($item->getType());
-                    } catch (\Exception $e) {
+                    if(!$collectionDef = DataObject\Objectbrick\Definition::getByKey($item->getType())) {
                         continue;
                     }
 
@@ -852,9 +830,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface
             return null;
         }
 
-        try {
-            $collectionDef = DataObject\Objectbrick\Definition::getByKey($item->getType());
-        } catch (\Exception $e) {
+        if(!$collectionDef = DataObject\Objectbrick\Definition::getByKey($item->getType())) {
             return null;
         }
 
@@ -1006,9 +982,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface
                     continue;
                 }
 
-                try {
-                    $collectionDef = DataObject\Objectbrick\Definition::getByKey($item->getType());
-                } catch (\Exception $e) {
+                if(!$collectionDef = DataObject\Objectbrick\Definition::getByKey($item->getType())) {
                     continue;
                 }
 
@@ -1044,14 +1018,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface
     {
         if (is_array($this->allowedTypes)) {
             foreach ($this->allowedTypes as $allowedType) {
-                $definition = null;
-                try {
-                    $definition = DataObject\Objectbrick\Definition::getByKey($allowedType);
-                } catch (\Exception $e) {
-                    Logger::info("Unknown allowed type [ $allowedType ] ignored.");
-                }
-
-                //TODO: Shouldn't this moved inside the try block?
+                $definition = DataObject\Objectbrick\Definition::getByKey($allowedType);
                 if ($definition) {
                     $definition->getDao()->createUpdateTable($class);
                     $fieldDefinition = $definition->getFieldDefinitions();

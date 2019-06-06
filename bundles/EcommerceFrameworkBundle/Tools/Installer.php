@@ -282,18 +282,14 @@ class Installer extends MigrationInstaller
         );
 
         foreach ($bricks as $key => $path) {
-            try {
-                $brick = Objectbrick\Definition::getByKey($key);
+            if($brick = Objectbrick\Definition::getByKey($key)) {
+                $this->outputWriter->write(sprintf(
+                    '     <comment>WARNING:</comment> Skipping object brick "%s" as it already exists',
+                    $key
+                ));
 
-                if ($brick) {
-                    $this->outputWriter->write(sprintf(
-                        '     <comment>WARNING:</comment> Skipping object brick "%s" as it already exists',
-                        $key
-                    ));
-
-                    continue;
-                }
-            } catch (\Exception $e) {
+                continue;
+            } else {
                 $brick = new Objectbrick\Definition();
                 $brick->setKey($key);
             }

@@ -1449,9 +1449,7 @@ class ClassController extends AdminController implements EventedControllerInterf
 
                 return $this->adminJson(['success' => $success !== false]);
             } elseif ($type == 'objectbrick' && $item['key'] == $name) {
-                try {
-                    $brick = DataObject\Objectbrick\Definition::getByKey($name);
-                } catch (\Exception $e) {
+                if(!$brick = DataObject\Objectbrick\Definition::getByKey($name)) {
                     $brick = new DataObject\Objectbrick\Definition();
                     $brick->setKey($name);
                 }
