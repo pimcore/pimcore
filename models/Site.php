@@ -130,12 +130,18 @@ class Site extends AbstractModel
             try {
                 $site = new self();
                 $site->getDao()->getByDomain($domain);
-                Runtime::set($cacheKey, $site);
-                \Pimcore\Cache::save($site, $cacheKey, ['system', 'site'], null, 999);
             } catch (\Exception $e) {
-                return null;
+                $site = 'failed';
             }
+
+            \Pimcore\Cache::save($site, $cacheKey, ['system', 'site'], null, 999);
         }
+
+        if ($site == 'failed' || !$site) {
+            $site = null;
+        }
+
+        Runtime::set($cacheKey, $site);
 
         return $site;
     }
