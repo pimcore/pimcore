@@ -84,11 +84,14 @@ class Glossary extends AbstractModel
      */
     public static function getById($id)
     {
-        $glossary = new self();
-        $glossary->setId(intval($id));
-        $glossary->getDao()->getById();
-
-        return $glossary;
+        try {
+            $glossary = new self();
+            $glossary->setId(intval($id));
+            $glossary->getDao()->getById();
+            return $glossary;
+        } catch(\Exception $e) {
+            return null;
+        }
     }
 
     /**
