@@ -34,7 +34,7 @@ class Listing extends Model\Listing\JsonListing
      */
     public function getTags()
     {
-        if($this->tags === null) {
+        if ($this->tags === null) {
             $this->getDao()->load();
         }
 

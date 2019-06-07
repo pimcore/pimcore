@@ -35,7 +35,7 @@ class Listing extends Model\Listing\AbstractListing
      */
     public function getImportconfigs(): array
     {
-        if($this->importconfigs === null) {
+        if ($this->importconfigs === null) {
             $this->getDao()->load();
         }
 

@@ -246,8 +246,7 @@ class Installer extends MigrationInstaller
         );
 
         foreach ($fieldCollections as $key => $path) {
-            if($fieldCollection = Fieldcollection\Definition::getByKey($key)) {
-
+            if ($fieldCollection = Fieldcollection\Definition::getByKey($key)) {
                 if ($fieldCollection) {
                     $this->outputWriter->write(sprintf(
                         '     <comment>WARNING:</comment> Skipping field collection "%s" as it already exists',
@@ -281,7 +280,7 @@ class Installer extends MigrationInstaller
         );
 
         foreach ($bricks as $key => $path) {
-            if($brick = Objectbrick\Definition::getByKey($key)) {
+            if ($brick = Objectbrick\Definition::getByKey($key)) {
                 $this->outputWriter->write(sprintf(
                     '     <comment>WARNING:</comment> Skipping object brick "%s" as it already exists',
                     $key

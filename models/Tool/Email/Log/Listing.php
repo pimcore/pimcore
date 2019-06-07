@@ -35,7 +35,7 @@ class Listing extends Model\Listing\AbstractListing
      */
     public function getEmailLogs()
     {
-        if($this->emailLogs === null) {
+        if ($this->emailLogs === null) {
             $this->getDao()->load();
         }
 

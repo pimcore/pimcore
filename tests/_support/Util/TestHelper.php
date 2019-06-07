@@ -750,6 +750,7 @@ class TestHelper
     {
         $list = new Asset\Listing();
         $children = $list->getAssets();
+
         return count($children);
     }
 

@@ -35,7 +35,7 @@ class Listing extends Model\Listing\AbstractListing
      */
     public function getVersions()
     {
-        if($this->versions === null) {
+        if ($this->versions === null) {
             $this->getDao()->load();
         }
 

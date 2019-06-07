@@ -32,6 +32,7 @@ class Listing extends Model\Listing\AbstractListing
 
     /**
      * @param $workflowStates
+     *
      * @return $this
      */
     public function setWorkflowStates($workflowStates)
@@ -46,7 +47,7 @@ class Listing extends Model\Listing\AbstractListing
      */
     public function getWorkflowStates()
     {
-        if($this->workflowStates === null) {
+        if ($this->workflowStates === null) {
             $this->getDao()->load();
         }
 

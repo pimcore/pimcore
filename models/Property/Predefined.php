@@ -89,6 +89,7 @@ class Predefined extends Model\AbstractModel
         try {
             $property = new self();
             $property->getDao()->getById($id);
+
             return $property;
         } catch (\Exception $e) {
             return null;

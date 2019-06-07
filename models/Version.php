@@ -117,6 +117,7 @@ class Version extends AbstractModel
              */
             $version = self::getModelFactory()->build(Version::class);
             $version->getDao()->getById($id);
+
             return $version;
         } catch (\Exception $e) {
             return null;

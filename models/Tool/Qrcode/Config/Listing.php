@@ -34,7 +34,7 @@ class Listing extends Model\Listing\JsonListing
      */
     public function getCodes()
     {
-        if($this->codes === null) {
+        if ($this->codes === null) {
             $this->getDao()->load();
         }
 

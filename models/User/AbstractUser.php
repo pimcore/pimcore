@@ -99,6 +99,7 @@ class AbstractUser extends Model\AbstractModel
         try {
             $user = new static();
             $user->getDao()->getByName($name);
+
             return $user;
         } catch (\Exception $e) {
             return null;

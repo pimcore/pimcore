@@ -34,7 +34,7 @@ class Listing extends Model\Listing\JsonListing
      */
     public function getRoutes()
     {
-        if($this->routes === null) {
+        if ($this->routes === null) {
             $this->getDao()->load();
         }
 

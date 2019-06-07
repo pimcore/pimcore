@@ -148,7 +148,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface
             return null;
         }
 
-        if(!$collectionDef = DataObject\Objectbrick\Definition::getByKey($item->getType())) {
+        if (!$collectionDef = DataObject\Objectbrick\Definition::getByKey($item->getType())) {
             return null;
         }
 
@@ -397,7 +397,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface
                     continue;
                 }
 
-                if($collectionDef = DataObject\Objectbrick\Definition::getByKey($item->getType())) {
+                if ($collectionDef = DataObject\Objectbrick\Definition::getByKey($item->getType())) {
                     foreach ($collectionDef->getFieldDefinitions() as $fd) {
                         $dataString .= $fd->getDataForSearchIndex($item, $params) . ' ';
                     }
@@ -473,7 +473,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface
 
         if (is_array($allowedTypes)) {
             for ($i = 0; $i < count($allowedTypes); $i++) {
-                if(!DataObject\Objectbrick\Definition::getByKey($allowedTypes[$i])) {
+                if (!DataObject\Objectbrick\Definition::getByKey($allowedTypes[$i])) {
                     Logger::warn("Removed unknown allowed type [ $allowedTypes[$i] ] from allowed types of object brick");
                     unset($allowedTypes[$i]);
                 }
@@ -508,7 +508,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface
                 $wsDataItem->value = [];
                 $wsDataItem->type = $item->getType();
 
-                if($collectionDef = DataObject\Objectbrick\Definition::getByKey($item->getType())) {
+                if ($collectionDef = DataObject\Objectbrick\Definition::getByKey($item->getType())) {
                     foreach ($collectionDef->getFieldDefinitions() as $fd) {
                         $el = new Webservice\Data\DataObject\Element();
                         $el->name = $fd->getName();
@@ -634,7 +634,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface
                     continue;
                 }
 
-                if($collectionDef = DataObject\Objectbrick\Definition::getByKey($item->getType())) {
+                if ($collectionDef = DataObject\Objectbrick\Definition::getByKey($item->getType())) {
                     foreach ($collectionDef->getFieldDefinitions() as $fd) {
                         $key = $fd->getName();
                         $getter = 'get' . ucfirst($key);
@@ -666,7 +666,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface
                     continue;
                 }
 
-                if($collectionDef = DataObject\Objectbrick\Definition::getByKey($item->getType())) {
+                if ($collectionDef = DataObject\Objectbrick\Definition::getByKey($item->getType())) {
                     foreach ($collectionDef->getFieldDefinitions(['suppressEnrichment' => true]) as $fd) {
                         $key = $fd->getName();
                         $getter = 'get' . ucfirst($key);
@@ -745,7 +745,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface
                         continue;
                     }
 
-                    if(!$collectionDef = DataObject\Objectbrick\Definition::getByKey($item->getType())) {
+                    if (!$collectionDef = DataObject\Objectbrick\Definition::getByKey($item->getType())) {
                         continue;
                     }
 
@@ -830,7 +830,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface
             return null;
         }
 
-        if(!$collectionDef = DataObject\Objectbrick\Definition::getByKey($item->getType())) {
+        if (!$collectionDef = DataObject\Objectbrick\Definition::getByKey($item->getType())) {
             return null;
         }
 
@@ -982,7 +982,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface
                     continue;
                 }
 
-                if(!$collectionDef = DataObject\Objectbrick\Definition::getByKey($item->getType())) {
+                if (!$collectionDef = DataObject\Objectbrick\Definition::getByKey($item->getType())) {
                     continue;
                 }
 

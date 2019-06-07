@@ -1449,7 +1449,7 @@ class ClassController extends AdminController implements EventedControllerInterf
 
                 return $this->adminJson(['success' => $success !== false]);
             } elseif ($type == 'objectbrick' && $item['key'] == $name) {
-                if(!$brick = DataObject\Objectbrick\Definition::getByKey($name)) {
+                if (!$brick = DataObject\Objectbrick\Definition::getByKey($name)) {
                     $brick = new DataObject\Objectbrick\Definition();
                     $brick->setKey($name);
                 }
@@ -1458,12 +1458,13 @@ class ClassController extends AdminController implements EventedControllerInterf
 
                 return $this->adminJson(['success' => $success !== false]);
             } elseif ($type == 'fieldcollection' && $item['key'] == $name) {
-                if(!$fieldCollection = DataObject\Fieldcollection\Definition::getByKey($name)) {
+                if (!$fieldCollection = DataObject\Fieldcollection\Definition::getByKey($name)) {
                     $fieldCollection = new DataObject\Fieldcollection\Definition();
                     $fieldCollection->setKey($name);
                 }
 
                 $success = DataObject\ClassDefinition\Service::importFieldCollectionFromJson($fieldCollection, json_encode($item), true);
+
                 return $this->adminJson(['success' => $success !== false]);
             } elseif ($type == 'customlayout') {
                 $layoutData = json_decode($data['name'], true);

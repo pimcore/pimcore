@@ -38,7 +38,7 @@ class Listing extends Model\Listing\AbstractListing
      */
     public function getTranslations()
     {
-        if($this->translations === null) {
+        if ($this->translations === null) {
             $this->getDao()->load();
         }
 

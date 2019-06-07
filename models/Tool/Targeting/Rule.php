@@ -109,6 +109,7 @@ class Rule extends Model\AbstractModel
         try {
             $target = new self();
             $target->getDao()->getById(intval($id));
+
             return $target;
         } catch (\Exception $e) {
             return null;

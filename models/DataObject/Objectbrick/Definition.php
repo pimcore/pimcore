@@ -73,7 +73,9 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
 
     /**
      * @static
+     *
      * @param $key
+     *
      * @return self|null
      */
     public static function getByKey($key)

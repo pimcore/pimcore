@@ -32,7 +32,7 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing
      */
     public function getEntries()
     {
-        if($this->entries === null) {
+        if ($this->entries === null) {
             $this->getDao()->load();
         }
 

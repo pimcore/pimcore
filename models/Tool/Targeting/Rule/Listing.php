@@ -48,7 +48,7 @@ class Listing extends Model\Listing\AbstractListing
      */
     public function getTargets(): array
     {
-        if($this->targets === null) {
+        if ($this->targets === null) {
             $this->getDao()->load();
         }
 

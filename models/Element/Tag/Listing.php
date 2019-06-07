@@ -49,7 +49,7 @@ class Listing extends Model\Listing\AbstractListing
      */
     public function getTags()
     {
-        if($this->tags === null) {
+        if ($this->tags === null) {
             $this->getDao()->load();
         }
 

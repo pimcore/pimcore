@@ -33,7 +33,7 @@ class Listing extends \Pimcore\Model\Listing\JsonListing
      */
     public function getDefinitions()
     {
-        if($this->definitions === null) {
+        if ($this->definitions === null) {
             $this->getDao()->load();
         }
 

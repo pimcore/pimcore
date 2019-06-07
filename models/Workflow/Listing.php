@@ -35,7 +35,7 @@ class Listing extends Model\Listing\JsonListing
      */
     public function getWorkflows()
     {
-        if($this->workflows === null) {
+        if ($this->workflows === null) {
             $this->getDao()->load();
         }
 

@@ -56,6 +56,7 @@ class Event extends Model\AbstractModel
 
     /**
      * @param $id
+     *
      * @return Event|null
      */
     public static function getById($id)
@@ -63,6 +64,7 @@ class Event extends Model\AbstractModel
         try {
             $event = new self();
             $event->getDao()->getById(intval($id));
+
             return $event;
         } catch (\Exception $e) {
             return null;

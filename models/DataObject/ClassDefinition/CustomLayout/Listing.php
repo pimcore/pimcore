@@ -42,7 +42,7 @@ class Listing extends Model\Listing\AbstractListing
      */
     public function getLayoutDefinitions()
     {
-        if($this->layoutDefinitions === null) {
+        if ($this->layoutDefinitions === null) {
             $this->getDao()->load();
         }
 

@@ -35,12 +35,11 @@ class Listing extends Model\Listing\JsonListing
      */
     public function getThumbnails()
     {
-        if($this->thumbnails === null) {
+        if ($this->thumbnails === null) {
             $this->getDao()->load();
         }
 
         return $this->thumbnails;
-
     }
 
     /**

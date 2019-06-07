@@ -35,7 +35,7 @@ class Listing extends Model\Listing\AbstractListing
      */
     public function getGridconfigFavourites()
     {
-        if($this->gridconfigFavourites === null) {
+        if ($this->gridconfigFavourites === null) {
             $this->getDao()->load();
         }
 

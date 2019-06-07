@@ -35,7 +35,7 @@ class Listing extends Model\Listing\AbstractListing
      */
     public function getGlossary()
     {
-        if($this->glossary === null) {
+        if ($this->glossary === null) {
             $this->getDao()->load();
         }
 

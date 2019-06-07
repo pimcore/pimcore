@@ -49,7 +49,7 @@ class Listing extends Model\Listing\AbstractListing
      */
     public function getNotes()
     {
-        if($this->notes === null) {
+        if ($this->notes === null) {
             $this->getDao()->load();
         }
 

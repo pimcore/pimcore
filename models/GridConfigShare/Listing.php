@@ -35,7 +35,7 @@ class Listing extends Model\Listing\AbstractListing
      */
     public function getGridconfigShares()
     {
-        if($this->gridConfigShares === null) {
+        if ($this->gridConfigShares === null) {
             $this->getDao()->load();
         }
 

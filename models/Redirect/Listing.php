@@ -35,7 +35,7 @@ class Listing extends Model\Listing\AbstractListing
      */
     public function getRedirects()
     {
-        if($this->redirects === null) {
+        if ($this->redirects === null) {
             $this->getDao()->load();
         }
 

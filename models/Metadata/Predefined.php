@@ -97,6 +97,7 @@ class Predefined extends Model\AbstractModel
         try {
             $metadata = new self();
             $metadata->getDao()->getById($id);
+
             return $metadata;
         } catch (\Exception $e) {
             return null;

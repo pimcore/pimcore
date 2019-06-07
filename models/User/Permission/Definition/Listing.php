@@ -47,7 +47,7 @@ class Listing extends Model\Listing\AbstractListing
      */
     public function getDefinitions()
     {
-        if($this->definitions === null) {
+        if ($this->definitions === null) {
             $this->getDao()->load();
         }
 

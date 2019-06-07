@@ -121,7 +121,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
                     continue;
                 }
 
-                if($collectionDef = DataObject\Fieldcollection\Definition::getByKey($item->getType())) {
+                if ($collectionDef = DataObject\Fieldcollection\Definition::getByKey($item->getType())) {
                     $collectionData = [];
 
                     foreach ($collectionDef->getFieldDefinitions() as $fd) {
@@ -273,7 +273,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
                     continue;
                 }
 
-                if($collectionDef = DataObject\Fieldcollection\Definition::getByKey($item->getType())) {
+                if ($collectionDef = DataObject\Fieldcollection\Definition::getByKey($item->getType())) {
                     foreach ($collectionDef->getFieldDefinitions() as $fd) {
                         $dataString .= $fd->getDataForSearchIndex($item, $params) . ' ';
                     }
@@ -366,7 +366,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
 
         if (is_array($allowedTypes)) {
             for ($i = 0; $i < count($allowedTypes); $i++) {
-                if(!DataObject\Fieldcollection\Definition::getByKey($allowedTypes[$i])) {
+                if (!DataObject\Fieldcollection\Definition::getByKey($allowedTypes[$i])) {
                     Logger::warn("Removed unknown allowed type [ $allowedTypes[$i] ] from allowed types of field collection");
                     unset($allowedTypes[$i]);
                 }
@@ -400,7 +400,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
                 $wsDataItem->value = [];
                 $wsDataItem->type = $item->getType();
 
-                if($collectionDef = DataObject\Fieldcollection\Definition::getByKey($item->getType())) {
+                if ($collectionDef = DataObject\Fieldcollection\Definition::getByKey($item->getType())) {
                     foreach ($collectionDef->getFieldDefinitions() as $fd) {
                         $el = new Webservice\Data\DataObject\Element();
                         $el->name = $fd->getName();
@@ -503,7 +503,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
                     continue;
                 }
 
-                if($collectionDef = DataObject\Fieldcollection\Definition::getByKey($item->getType())) {
+                if ($collectionDef = DataObject\Fieldcollection\Definition::getByKey($item->getType())) {
                     foreach ($collectionDef->getFieldDefinitions() as $fd) {
                         $getter = 'get' . ucfirst($fd->getName());
                         $dependencies = array_merge($dependencies, $fd->resolveDependencies($item->$getter()));
@@ -533,7 +533,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
                     continue;
                 }
 
-                if($collectionDef = DataObject\Fieldcollection\Definition::getByKey($item->getType())) {
+                if ($collectionDef = DataObject\Fieldcollection\Definition::getByKey($item->getType())) {
                     foreach ($collectionDef->getFieldDefinitions() as $fd) {
                         $getter = 'get' . ucfirst($fd->getName());
                         $tags = $fd->getCacheTags($item->$getter(), $tags);
@@ -566,7 +566,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
                         continue;
                     }
 
-                    if($collectionDef = DataObject\Fieldcollection\Definition::getByKey($item->getType())) {
+                    if ($collectionDef = DataObject\Fieldcollection\Definition::getByKey($item->getType())) {
                         foreach ($collectionDef->getFieldDefinitions() as $fd) {
                             try {
                                 $getter = 'get' . ucfirst($fd->getName());
@@ -735,7 +735,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
                 $type = $item->getType();
                 $html .= '<tr><th><b>' . $type . '</b></th><th>&nbsp;</th><th>&nbsp;</th></tr>';
 
-                if($collectionDef = DataObject\Fieldcollection\Definition::getByKey($item->getType())) {
+                if ($collectionDef = DataObject\Fieldcollection\Definition::getByKey($item->getType())) {
                     foreach ($collectionDef->getFieldDefinitions() as $fd) {
                         $title = !empty($fd->title) ? $fd->title : $fd->getName();
                         $html .= '<tr><td>&nbsp;</td><td>' . $title . '</td><td>';
@@ -797,7 +797,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
                     continue;
                 }
 
-                if($collectionDef = DataObject\Fieldcollection\Definition::getByKey($item->getType())) {
+                if ($collectionDef = DataObject\Fieldcollection\Definition::getByKey($item->getType())) {
                     foreach ($collectionDef->getFieldDefinitions() as $fd) {
                         if (method_exists($fd, 'rewriteIds')) {
                             $d = $fd->rewriteIds($item, $idMapping, $params);
@@ -832,7 +832,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
     {
         if (is_array($this->allowedTypes)) {
             foreach ($this->allowedTypes as $i => $allowedType) {
-                if($definition = DataObject\Fieldcollection\Definition::getByKey($allowedType)) {
+                if ($definition = DataObject\Fieldcollection\Definition::getByKey($allowedType)) {
                     $definition->getDao()->createUpdateTable($class);
                     $fieldDefinition = $definition->getFieldDefinitions();
 

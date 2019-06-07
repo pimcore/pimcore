@@ -151,7 +151,7 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
             $site = $parameters['site'];
 
             if (!empty($site)) {
-                if($site = Site::getBy($site)) {
+                if ($site = Site::getBy($site)) {
                     unset($parameters['site']);
                     $hostname = $site->getMainDomain();
 

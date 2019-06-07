@@ -40,7 +40,7 @@ class Listing extends Model\Listing\JsonListing
      */
     public function getSettings()
     {
-        if($this->settings === null) {
+        if ($this->settings === null) {
             $this->getDao()->load();
         }
 

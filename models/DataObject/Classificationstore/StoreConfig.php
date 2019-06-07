@@ -55,6 +55,7 @@ class StoreConfig extends Model\AbstractModel
         try {
             $config = new self();
             $config->getDao()->getById(intval($id));
+
             return $config;
         } catch (\Exception $e) {
             return null;
@@ -71,6 +72,7 @@ class StoreConfig extends Model\AbstractModel
         try {
             $config = new self();
             $config->getDao()->getByName($name);
+
             return $config;
         } catch (\Exception $e) {
             return null;

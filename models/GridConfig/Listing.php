@@ -35,7 +35,7 @@ class Listing extends Model\Listing\AbstractListing
      */
     public function getGridConfigs()
     {
-        if($this->gridConfigs === null) {
+        if ($this->gridConfigs === null) {
             $this->getDao()->load();
         }
 

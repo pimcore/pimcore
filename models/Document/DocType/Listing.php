@@ -34,7 +34,7 @@ class Listing extends Model\Listing\JsonListing
      */
     public function getDocTypes()
     {
-        if($this->docTypes === null) {
+        if ($this->docTypes === null) {
             $this->getDao()->load();
         }
 
@@ -43,6 +43,7 @@ class Listing extends Model\Listing\JsonListing
 
     /**
      * @param array $docTypes
+     *
      * @return $this
      */
     public function setDocTypes($docTypes)

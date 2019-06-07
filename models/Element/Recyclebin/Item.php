@@ -97,6 +97,7 @@ class Item extends Model\AbstractModel
         try {
             $item = new self();
             $item->getDao()->getById($id);
+
             return $item;
         } catch (\Exception $e) {
             return null;

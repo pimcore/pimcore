@@ -35,7 +35,7 @@ class Listing extends Model\Listing\AbstractListing
      */
     public function getImportConfigShares(): array
     {
-        if($this->importConfigShares === null) {
+        if ($this->importConfigShares === null) {
             $this->getDao()->load();
         }
 

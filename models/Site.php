@@ -93,6 +93,7 @@ class Site extends AbstractModel
         try {
             $site = new self();
             $site->getDao()->getById(intval($id));
+
             return $site;
         } catch (\Exception $e) {
             return null;
@@ -109,6 +110,7 @@ class Site extends AbstractModel
         try {
             $site = new self();
             $site->getDao()->getByRootId(intval($id));
+
             return $site;
         } catch (\Exception $e) {
             return null;
@@ -117,6 +119,7 @@ class Site extends AbstractModel
 
     /**
      * @param $domain
+     *
      * @return Site|null
      */
     public static function getByDomain($domain)

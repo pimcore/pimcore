@@ -88,6 +88,7 @@ class ClassManager extends Module
     public function getFieldcollection($name)
     {
         $fc = FieldcollectionDefinition::getByKey($name);
+
         return $fc;
     }
 
@@ -138,6 +139,7 @@ class ClassManager extends Module
     public function getObjectbrick($name)
     {
         $ob = ObjectbrickDefinition::getByKey($name);
+
         return $ob;
     }
 

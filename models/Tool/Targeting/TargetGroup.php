@@ -59,6 +59,7 @@ class TargetGroup extends Model\AbstractModel
         try {
             $targetGroup = new self();
             $targetGroup->getDao()->getById(intval($id));
+
             return $targetGroup;
         } catch (\Exception $e) {
             return null;
@@ -67,6 +68,7 @@ class TargetGroup extends Model\AbstractModel
 
     /**
      * @param $name
+     *
      * @return TargetGroup|null
      */
     public static function getByName($name)

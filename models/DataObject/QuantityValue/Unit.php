@@ -18,7 +18,6 @@
 namespace Pimcore\Model\DataObject\QuantityValue;
 
 use Pimcore\Cache;
-use Pimcore\Logger;
 use Pimcore\Model;
 
 /**
@@ -81,6 +80,7 @@ class Unit extends Model\AbstractModel
         try {
             $unit = new self();
             $unit->getDao()->getByAbbreviation($abbreviation);
+
             return $unit;
         } catch (\Exception $e) {
             return null;
@@ -97,6 +97,7 @@ class Unit extends Model\AbstractModel
         try {
             $unit = new self();
             $unit->getDao()->getByReference($reference);
+
             return $unit;
         } catch (\Exception $e) {
             return null;

@@ -63,6 +63,7 @@ class Listing extends Model\Listing\AbstractListing implements \Iterator, Adapte
 
     /**
      * @param array $documents
+     *
      * @return Listing
      */
     public function setDocuments($documents)

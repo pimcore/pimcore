@@ -35,7 +35,7 @@ class Listing extends Model\Listing\AbstractListing
      */
     public function getSites()
     {
-        if($this->sites === null) {
+        if ($this->sites === null) {
             $this->getDao()->load();
         }
 

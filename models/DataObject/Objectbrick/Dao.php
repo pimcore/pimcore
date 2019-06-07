@@ -40,7 +40,7 @@ class Dao extends Model\DataObject\Fieldcollection\Dao
         $values = [];
 
         foreach ($fieldDef->getAllowedTypes() as $type) {
-            if(!$definition = DataObject\Objectbrick\Definition::getByKey($type)) {
+            if (!$definition = DataObject\Objectbrick\Definition::getByKey($type)) {
                 continue;
             }
 
@@ -131,7 +131,7 @@ class Dao extends Model\DataObject\Fieldcollection\Dao
         // this is to clean up also the inherited values
         $fieldDef = $object->getClass()->getFieldDefinition($this->model->getFieldname());
         foreach ($fieldDef->getAllowedTypes() as $type) {
-            if($definition = DataObject\Objectbrick\Definition::getByKey($type)) {
+            if ($definition = DataObject\Objectbrick\Definition::getByKey($type)) {
                 $tableName = $definition->getTableName($object->getClass(), true);
                 $this->db->delete($tableName, ['o_id' => $object->getId()]);
             }

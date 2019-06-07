@@ -35,7 +35,7 @@ class Listing extends Model\Listing\AbstractListing
      */
     public function getTasks()
     {
-        if($this->tasks === null) {
+        if ($this->tasks === null) {
             $this->getDao()->load();
         }
 
