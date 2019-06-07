@@ -287,7 +287,7 @@ class Config
                     "validLanguages" => $config['general']['valid_languages'],
                     "fallbackLanguages" => $config['general']['fallback_languages'],
                     "defaultLanguage" => $config['general']['default_language'],
-                    "loginscreencustomimage" => $config['general']['login_screen_custom_image'],
+                    "loginscreencustomimage" => $config['branding']['login_screen_custom_image'],
                     "disableusagestatistics" => $config['general']['disable_usage_statistics'],
                     "debug_admin_translations" => $config['general']['debug_admin_translations'],
                     "devmode" => $config['general']['devmode'],
@@ -409,7 +409,6 @@ class Config
             ]);
         }
 
-
         return $systemConfig;
     }
 
@@ -424,7 +423,7 @@ class Config
     {
         $systemConfig = null;
 
-        try {
+        //try {
             if (\Pimcore\Cache\Runtime::isRegistered('pimcore_config_system') && !$forceReload) {
                 $systemConfig = \Pimcore\Cache\Runtime::get('pimcore_config_system');
             } else {
@@ -452,10 +451,10 @@ class Config
                 }
 
             }
-        } catch (\Exception $e) {
-            Logger::error('System configuration error: ' . $e->getMessage());
-            $systemConfig = new \Pimcore\Config\Config([]);
-        }
+//        } catch (\Exception $e) {
+//            Logger::error('System configuration error: ' . $e->getMessage());
+//            $systemConfig = new \Pimcore\Config\Config([]);
+//        }
 
         return $systemConfig;
     }
