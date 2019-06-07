@@ -22,7 +22,6 @@ class Version20190527121800 extends AbstractPimcoreMigration
         $configFile = $this->migrateSystemConfiguration();
 
         if($configFile) {
-            $this->migrateDb($configFile);
             $this->migrateBranding($configFile);
             $this->migrateEmail($configFile);
         }
@@ -50,6 +49,9 @@ class Version20190527121800 extends AbstractPimcoreMigration
 
                 //cleanup unused config
                 unset($content['pimcore']['outputfilters']);
+                unset($content['pimcore']['database']);
+
+                self::standardizeSystemConfigKeys($content);
 
                 $content = Yaml::dump($content, 6);
                 File::put($newConfigFile, $content);
@@ -69,38 +71,39 @@ class Version20190527121800 extends AbstractPimcoreMigration
     }
 
     /**
-     * Migrate database configuration from system.yml to /app/config/local/database.yml
-     *
-     * @param $systemConfigFile
-     * @return bool
+     * @param $config
      */
-    public function migrateDb($systemConfigFile)
+    public static function standardizeSystemConfigKeys(&$config)
     {
-        try{
-            $databaseFilePath = PIMCORE_APP_ROOT . '/config/local/database.yml';
+        //convert system config keys to follow snake_case standard
+        $validKeys = [
+            'validLanguages' => 'valid_languages',
+            'fallbackLanguages' => 'fallback_languages',
+            'disableusagestatistics' => 'disable_usage_statistics',
+            'instanceIdentifier' => 'instance_identifier',
+            'defaultLanguage' => 'default_language',
+            'createredirectwhenmoved' => 'create_redirect_when_moved',
+            'allowtrailingslash' => 'allow_trailing_slash',
+            'generatepreview' => 'generate_preview',
+            'defaultUploadPath' => 'default_upload_path',
+            'simpleapikey' => 'simple_api_key',
+            'browserapikey' => 'browser_api_key',
+            'excludePatterns' => 'exclude_patterns',
+            'excludeCookie' => 'exclude_cookie',
+            'usespecific' => 'use_specific',
+            'loginscreencustomimage' => 'login_screen_custom_image',
+            'emailaddresses' => 'email_addresses',
+        ];
 
-            $systemConfigContent = Yaml::parseFile($systemConfigFile);
-
-            if(isset($systemConfigContent['pimcore']['database']) && isset($systemConfigContent['pimcore']['database']['params'])) {
-                //change username key to user
-                $systemConfigContent['pimcore']['database']['params']['user'] = $systemConfigContent['pimcore']['database']['params']['username'];
-                unset($systemConfigContent['pimcore']['database']['params']['username']);
-
-                $content['doctrine']['dbal']['connections']['default'] = $systemConfigContent['pimcore']['database']['params'];
-
-                $content = Yaml::dump($content,6);
-                File::put($databaseFilePath, $content);
-
-                unset($systemConfigContent['pimcore']['database']);
-
-                $settingsYml = Yaml::dump($systemConfigContent, 4);
-
-                File::put($systemConfigFile, $settingsYml);
+        foreach ($config as $key => &$value) {
+            if (isset($validKeys[$key])) {
+                $config[$validKeys[$key]] = $value;
+                unset($config[$key]);
             }
 
-            return true;
-        } catch (\Exception $e) {
-            $this->writeMessage('An error occurred while performing system configuration migration: ' . $e->getMessage());
+            if (is_array($value) && array_values($value) !== $value) {
+                self::standardizeSystemConfigKeys($value);
+            }
         }
     }
 

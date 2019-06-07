@@ -420,8 +420,8 @@ class SettingsController extends AdminController
         $languages = explode(',', $values['general.validLanguages']);
         $filteredLanguages = [];
         foreach ($languages as $language) {
-            if (isset($values['pimcore']['general.fallbackLanguages.' . $language])) {
-                $fallbackLanguages[$language] = str_replace(' ', '', $values['pimcore']['general.fallbackLanguages.' . $language]);
+            if (isset($values['general.fallbackLanguages.' . $language])) {
+                $fallbackLanguages[$language] = str_replace(' ', '', $values['general.fallbackLanguages.' . $language]);
             }
 
             if (\Pimcore::getContainer()->get('pimcore.locale')->isLocale($language)) {
@@ -452,6 +452,7 @@ class SettingsController extends AdminController
             $cacheExcludePatterns = implode(',', $cacheExcludePatterns);
         }
 
+
         $settings['pimcore'] = [
             'general' => [
                 'timezone' => $values['general.timezone'],
@@ -459,13 +460,13 @@ class SettingsController extends AdminController
                 'domain' => $values['general.domain'],
                 'redirect_to_maindomain' => $values['general.redirect_to_maindomain'],
                 'language' => $values['general.language'],
-                'validLanguages' => implode(',', $filteredLanguages),
-                'fallbackLanguages' => $fallbackLanguages,
-                'defaultLanguage' => $values['general.defaultLanguage'],
-                'disableusagestatistics' => $values['general.disableusagestatistics'],
+                'valid_languages' => implode(',', $filteredLanguages),
+                'fallback_languages' => $fallbackLanguages,
+                'default_language' => $values['general.defaultLanguage'],
+                'disable_usage_statistics' => $values['general.disableusagestatistics'],
                 'debug_admin_translations' => $values['general.debug_admin_translations'],
                 'devmode' => $values['general.devmode'],
-                'instanceIdentifier' => $values['general.instanceIdentifier'],
+                'instance_identifier' => $values['general.instanceIdentifier'],
                 'show_cookie_notice' => $values['general.show_cookie_notice'],
             ],
             'documents' => [
@@ -476,9 +477,9 @@ class SettingsController extends AdminController
                 'error_pages' => [
                     'default' => $values['documents.error_pages.default']
                 ],
-                'createredirectwhenmoved' => $values['documents.createredirectwhenmoved'],
-                'allowtrailingslash' => $values['documents.allowtrailingslash'],
-                'generatepreview' => $values['documents.generatepreview']
+                'create_redirect_when_moved' => $values['documents.createredirectwhenmoved'],
+                'allow_trailing_slash' => $values['documents.allowtrailingslash'],
+                'generate_preview' => $values['documents.generatepreview']
             ],
             'objects' => [
                 'versions' => [
@@ -500,15 +501,15 @@ class SettingsController extends AdminController
                 'google' => [
                     'client_id' => $values['services.google.client_id'],
                     'email' => $values['services.google.email'],
-                    'simpleapikey' => $values['services.google.simpleapikey'],
-                    'browserapikey' => $values['services.google.browserapikey']
+                    'simple_api_key' => $values['services.google.simpleapikey'],
+                    'browser_api_key' => $values['services.google.browserapikey']
                 ]
             ],
             'cache' => [
                 'enabled' => $values['cache.enabled'],
                 'lifetime' => $values['cache.lifetime'],
-                'excludePatterns' => $cacheExcludePatterns,
-                'excludeCookie' => $values['cache.excludeCookie']
+                'exclude_patterns' => $cacheExcludePatterns,
+                'exclude_cookie' => $values['cache.excludeCookie']
             ],
             'webservice' => [
                 'enabled' => $values['webservice.enabled']
@@ -537,7 +538,7 @@ class SettingsController extends AdminController
                 [
                     'color_login_screen' => $values['branding.color_login_screen'],
                     'color_admin_interface' => $values['branding.color_admin_interface'],
-                    'loginscreencustomimage' => $values['general.loginscreencustomimage'],
+                    'login_screen_custom_image' => $values['general.loginscreencustomimage'],
                 ]
         ];
 
@@ -572,13 +573,13 @@ class SettingsController extends AdminController
             }
             if (array_key_exists('email.debug.emailAddresses', $values) && $values['email.debug.emailAddresses']) {
                 $settings['swiftmailer']['mailers'][$group]['delivery_addresses'] = [$values['email.debug.emailAddresses']];
-                $settings['pimcore'][$type]['debug']['emailaddresses'] = $values['email.debug.emailAddresses'];
+                $settings['pimcore'][$type]['debug']['email_addresses'] = $values['email.debug.emailAddresses'];
             } else {
                 $settings['swiftmailer']['mailers'][$group]['delivery_addresses'] = [];
-                $settings['pimcore'][$type]['debug']['emailaddresses'] = null;
+                $settings['pimcore'][$type]['debug']['email_addresses'] = null;
             }
         }
-        $settings['pimcore']['newsletter']['usespecific'] = $values['newsletter.usespecific'];
+        $settings['pimcore']['newsletter']['use_specific'] = $values['newsletter.usespecific'];
 
         $settings = array_replace_recursive($existingValues, $settings);
 

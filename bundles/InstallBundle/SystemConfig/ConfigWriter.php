@@ -30,7 +30,7 @@ class ConfigWriter
             'general' => [
                 'timezone' => 'Europe/Berlin',
                 'language' => 'en',
-                'validLanguages' => 'en',
+                'valid_languages' => 'en',
             ],
             'documents' => [
                 'versions' => [
@@ -39,9 +39,9 @@ class ConfigWriter
                 'error_pages' => [
                     'default' => '/'
                 ],
-                'createredirectwhenmoved' => false,
-                'allowtrailingslash' => 'no',
-                'generatepreview' => false
+                'create_redirect_when_moved' => false,
+                'allow_trailing_slash' => 'no',
+                'generate_preview' => false
             ],
             'objects' => [
                 'versions' => [
@@ -55,7 +55,7 @@ class ConfigWriter
             ],
             'services' => [],
             'cache' => [
-                'excludeCookie' => ''
+                'exclude_cookie' => ''
             ],
             'httpclient' => [
                 'adapter' => 'Socket'
@@ -71,7 +71,7 @@ class ConfigWriter
                 ],
                 'method' => 'sendmail',
                 'debug' => [
-                    'emailaddresses' => ''
+                    'email_addresses' => ''
                 ]
             ],
             'newsletter' => [
@@ -84,14 +84,14 @@ class ConfigWriter
                     'email' => ''
                 ],
                 'method' => 'sendmail',
-                'usespecific' => false
+                'use_specific' => false
             ]
         ],
         'pimcore_admin' => [
             'branding' => [
                 'color_login_screen' => '',
                 'color_admin_interface' => '',
-                'loginscreencustomimage' => '',
+                'login_screen_custom_image' => '',
             ]
         ],
         'swiftmailer' => [

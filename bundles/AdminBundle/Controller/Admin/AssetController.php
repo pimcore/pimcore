@@ -328,7 +328,7 @@ class AssetController extends ElementControllerBase implements EventedController
     protected function addAsset(Request $request)
     {
         $success = false;
-        $defaultUploadPath = $this->getParameter('pimcore.config')['assets']['defaultUploadPath'];
+        $defaultUploadPath = $this->getParameter('pimcore.config')['assets']['default_upload_path'];
 
         if (array_key_exists('Filedata', $_FILES)) {
             $filename = $_FILES['Filedata']['name'];

@@ -5,12 +5,12 @@ pimcore:
         domain: pimcore-test.dev
         redirect_to_maindomain: false
         language: en
-        validLanguages: 'en,de'
-        fallbackLanguages:
+        valid_languages: 'en,de'
+        fallback_languages:
             en: ''
             de: ''
-        defaultLanguage: ''
-        disableusagestatistics: false
+        default_language: ''
+        disable_usage_statistics: false
         debug: true
         debug_ip: ''
         http_auth:
@@ -18,7 +18,7 @@ pimcore:
             password: ''
         debug_admin_translations: false
         devmode: false
-        instanceIdentifier: ''
+        instance_identifier: ''
         show_cookie_notice: false
     documents:
         versions:
@@ -26,9 +26,9 @@ pimcore:
             steps: 10
         error_pages:
             default: /error
-        createredirectwhenmoved: false
-        allowtrailingslash: 'no'
-        generatepreview: true
+        create_redirect_when_moved: false
+        allow_trailing_slash: 'no'
+        generate_preview: true
     objects:
         versions:
             days: null
@@ -45,17 +45,17 @@ pimcore:
         google:
             client_id: ''
             email: ''
-            simpleapikey: ''
-            browserapikey: ''
+            simple_api_key: ''
+            browser_api_key: ''
     cache:
         enabled: false
         lifetime: null
-        excludePatterns: ''
-        excludeCookie: ''
+        exclude_patterns: ''
+        exclude_cookie: ''
     webservice:
         enabled: true
     httpclient:
-        adapter: Zend_Http_Client_Adapter_Socket
+        adapter: Socket
         proxy_host: ''
         proxy_port: ''
         proxy_user: ''
@@ -69,7 +69,7 @@ pimcore:
             email: pimcore@example.com
         method: sendmail
         debug:
-            emailaddresses: ''
+            email_addresses: ''
     newsletter:
         sender:
             name: ''
@@ -79,7 +79,7 @@ pimcore:
             email: ''
         method: sendmail
         debug: null
-        usespecific: true
+        use_specific: true
     applicationlog:
         mail_notification:
             send_log_summary: false
@@ -91,7 +91,7 @@ pimcore_admin:
     branding:
         color_login_screen: ''
         color_admin_interface: ''
-        loginscreencustomimage: ''
+        login_screen_custom_image: ''
 swiftmailer:
     mailers:
         pimcore_mailer:

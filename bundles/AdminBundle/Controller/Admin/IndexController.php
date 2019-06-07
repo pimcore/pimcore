@@ -262,7 +262,7 @@ class IndexController extends AdminController
         $settings->getParameters()->add([
             'showCloseConfirmation' => true,
             'debug_admin_translations' => (bool)$config->general->debug_admin_translations,
-            'document_generatepreviews' => (bool)$config->documents->generatepreview,
+            'document_generatepreviews' => (bool)$config->documents->generate_preview,
             'document_naming_strategy' => $namingStrategy->getName(),
             'asset_disable_tree_preview' => (bool)$config->assets->disable_tree_preview,
             'htmltoimage' => \Pimcore\Image\HtmlToImage::isSupported(),

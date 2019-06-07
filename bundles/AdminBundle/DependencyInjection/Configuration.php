@@ -68,7 +68,7 @@ class Configuration implements ConfigurationInterface
                     ->scalarNode('color_admin_interface')
                         ->defaultNull()
                     ->end()
-                    ->scalarNode('loginscreencustomimage')
+                    ->scalarNode('login_screen_custom_image')
                         ->defaultNull()
                     ->end()
                 ->end()
@@ -174,7 +174,7 @@ class Configuration implements ConfigurationInterface
     protected function buildObjectsNode()
     {
         $treeBuilder = new TreeBuilder();
-        $objectsNode = $treeBuilder->root('dataObjects');
+        $objectsNode = $treeBuilder->root('objects');
 
         $objectsNode
             ->addDefaultsIfNotSet()
