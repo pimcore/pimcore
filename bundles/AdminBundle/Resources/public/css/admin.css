@@ -259,12 +259,12 @@
 }
 
 .pimcore_treenode_locked .x-tree-node-text {
-    color: #3b72c0!important;
+    color: #3b72c0 !important;
 }
 
 
 .pimcore_treenode_lockOwner .x-tree-node-text  {
-    color: #6dc1fd!important;
+    color: #0091f8 !important;
 }
 
 .pimcore_overflow_scrolling {
