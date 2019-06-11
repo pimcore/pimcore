@@ -18,6 +18,7 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\InstallBundle\SystemConfig;
 
 use Pimcore\File;
+use Symfony\Component\Yaml\Yaml;
 
 class ConfigWriter
 {
@@ -25,93 +26,97 @@ class ConfigWriter
      * @var array
      */
     private $defaultConfig = [
-        'general' => [
-            'timezone' => 'Europe/Berlin',
-            'language' => 'en',
-            'validLanguages' => 'en',
-        ],
-        'database' => [
-            'params' => [
-                'username' => 'root',
-                'password' => '',
-                'dbname' => '',
-            ]
-        ],
-        'documents' => [
-            'versions' => [
-                'steps' => '10'
+        'pimcore' => [
+            'general' => [
+                'timezone' => 'Europe/Berlin',
+                'language' => 'en',
+                'valid_languages' => 'en',
             ],
-            'error_pages' => [
-                'default' => '/'
+            'documents' => [
+                'versions' => [
+                    'steps' => '10'
+                ],
+                'error_pages' => [
+                    'default' => '/'
+                ],
+                'create_redirect_when_moved' => false,
+                'allow_trailing_slash' => 'no',
+                'generate_preview' => false
             ],
-            'createredirectwhenmoved' => '',
-            'allowtrailingslash' => 'no',
-            'generatepreview' => '1'
-        ],
-        'objects' => [
-            'versions' => [
-                'steps' => '10'
-            ]
-        ],
-        'assets' => [
-            'versions' => [
-                'steps' => '10'
-            ]
-        ],
-        'services' => [],
-        'cache' => [
-            'excludeCookie' => ''
-        ],
-        'httpclient' => [
-            'adapter' => 'Socket'
-        ],
-        'email' => [
-            'sender' => [
-                'name' => '',
-                'email' => ''
-            ],
-            'return' => [
-                'name' => '',
-                'email' => ''
-            ],
-            'method' => 'sendmail',
-            'smtp' => [
-                'host' => '',
-                'port' => '',
-                'ssl' => null,
-                'name' => '',
-                'auth' => [
-                    'method' => null,
-                    'username' => '',
-                    'password' => ''
+            'objects' => [
+                'versions' => [
+                    'steps' => '10'
                 ]
             ],
-            'debug' => [
-                'emailaddresses' => ''
-            ]
-        ],
-        'newsletter' => [
-            'sender' => [
-                'name' => '',
-                'email' => ''
-            ],
-            'return' => [
-                'name' => '',
-                'email' => ''
-            ],
-            'method' => 'sendmail',
-            'smtp' => [
-                'host' => '',
-                'port' => '',
-                'ssl' => null,
-                'name' => '',
-                'auth' => [
-                    'method' => null,
-                    'username' => '',
-                    'password' => ''
+            'assets' => [
+                'versions' => [
+                    'steps' => '10'
                 ]
             ],
-            'usespecific' => ''
+            'services' => [],
+            'cache' => [
+                'exclude_cookie' => ''
+            ],
+            'httpclient' => [
+                'adapter' => 'Socket'
+            ],
+            'email' => [
+                'sender' => [
+                    'name' => '',
+                    'email' => ''
+                ],
+                'return' => [
+                    'name' => '',
+                    'email' => ''
+                ],
+                'method' => 'sendmail',
+                'debug' => [
+                    'email_addresses' => ''
+                ]
+            ],
+            'newsletter' => [
+                'sender' => [
+                    'name' => '',
+                    'email' => ''
+                ],
+                'return' => [
+                    'name' => '',
+                    'email' => ''
+                ],
+                'method' => 'sendmail',
+                'use_specific' => false
+            ]
+        ],
+        'pimcore_admin' => [
+            'branding' => [
+                'color_login_screen' => '',
+                'color_admin_interface' => '',
+                'login_screen_custom_image' => '',
+            ]
+        ],
+        'swiftmailer' => [
+            'mailers' => [
+                'pimcore_mailer' => [
+                    'transport' => 'sendmail',
+                    'delivery_addresses' => [],
+                    'host' => '',
+                    'username' => '',
+                    'password' => '',
+                    'port' => '',
+                    'encryption' => null,
+                    'auth_mode' => null
+                ],
+                'newsletter_mailer' => [
+                    'transport' => 'sendmail',
+                    'delivery_addresses' => [],
+                    'host' => '',
+                    'username' => '',
+                    'password' => '',
+                    'port' => '',
+                    'encryption' => null,
+                    'auth_mode' => null
+                ]
+            ]
         ]
     ];
 
@@ -122,15 +127,15 @@ class ConfigWriter
         }
     }
 
-    public function writeSystemConfig(array $config = [])
+    public function writeSystemConfig()
     {
         $settings = null;
 
         // check for an initial configuration template
         // used eg. by the demo installer
         $configTemplatePaths = [
-            PIMCORE_CONFIGURATION_DIRECTORY . '/system.php',
-            PIMCORE_CONFIGURATION_DIRECTORY . '/system.template.php'
+            PIMCORE_CONFIGURATION_DIRECTORY . '/system.yml',
+            PIMCORE_CONFIGURATION_DIRECTORY . '/system.template.yml'
         ];
 
         foreach ($configTemplatePaths as $configTemplatePath) {
@@ -139,19 +144,15 @@ class ConfigWriter
             }
 
             try {
-                $configTemplateArray = include($configTemplatePath);
+                $configTemplateArray = Yaml::parseFile($configTemplatePath);
 
                 if (!is_array($configTemplateArray)) {
                     continue;
                 }
 
                 $configTemplate = new \Pimcore\Config\Config($configTemplateArray);
-                if ($configTemplate->general) { // check if the template contains a valid configuration
+                if ($configTemplate->pimcore->general) { // check if the template contains a valid configuration
                     $settings = $configTemplate->toArray();
-
-                    // unset database configuration
-                    unset($settings['database']['params']['host']);
-                    unset($settings['database']['params']['port']);
 
                     break;
                 }
@@ -165,10 +166,18 @@ class ConfigWriter
             $settings = $this->defaultConfig;
         }
 
-        $settings = array_replace_recursive($settings, $config);
+        $configFile = \Pimcore\Config::locateConfigFile('system.yml');
+        $settingsYml = Yaml::dump($settings, 5);
+        File::put($configFile, $settingsYml);
+    }
 
-        $configFile = \Pimcore\Config::locateConfigFile('system.php');
-        File::putPhpFile($configFile, to_php_data_file_format($settings));
+    public function writeDbConfig(array $config = [])
+    {
+        if(count($config)) {
+            $content = Yaml::dump($config);
+            $configFile = PIMCORE_APP_ROOT.'/config/local/database.yml';
+            File::put($configFile, $content);
+        }
     }
 
     public function writeDebugModeConfig($ip = '')

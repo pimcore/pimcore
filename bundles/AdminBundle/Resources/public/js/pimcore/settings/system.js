@@ -550,11 +550,6 @@ pimcore.settings.system = Class.create({
                                             value: this.getValue("email.smtp.port")
                                         },
                                         {
-                                            fieldLabel: t("email_smtp_name"),
-                                            name: "email.smtp.name",
-                                            value: this.getValue("email.smtp.name")
-                                        },
-                                        {
                                             fieldLabel: t("email_smtp_auth_method"),
                                             xtype: "combo",
                                             width: 425,
@@ -1124,8 +1119,9 @@ pimcore.settings.system = Class.create({
                                     name: "newsletter.method",
                                     value: this.getValue("newsletter.method"),
                                     store: [
-                                        ["mail", "mail"],
-                                        ["smtp", "smtp"]
+                                        ["sendmail", "Sendmail"],
+                                        ["smtp", "SMTP"],
+                                        ["null", t("none")]
                                     ],
                                     listeners: {
                                         select: this.emailMethodSelected.bind(this, "newsletter")
@@ -1167,11 +1163,6 @@ pimcore.settings.system = Class.create({
                                             fieldLabel: t("email_smtp_port"),
                                             name: "newsletter.smtp.port",
                                             value: this.getValue("newsletter.smtp.port")
-                                        },
-                                        {
-                                            fieldLabel: t("email_smtp_name"),
-                                            name: "newsletter.smtp.name",
-                                            value: this.getValue("newsletter.smtp.name")
                                         },
                                         {
                                             fieldLabel: t("email_smtp_auth_method"),
@@ -1254,6 +1245,9 @@ pimcore.settings.system = Class.create({
     },
 
     save: function () {
+
+        this.layout.mask();
+
         var values = this.layout.getForm().getFieldValues();
 
         Ext.Ajax.request({
@@ -1263,6 +1257,9 @@ pimcore.settings.system = Class.create({
                 data: Ext.encode(values)
             },
             success: function (response) {
+
+                this.layout.unmask();
+
                 try {
                     var res = Ext.decode(response.responseText);
                     if (res.success) {
@@ -1280,7 +1277,7 @@ pimcore.settings.system = Class.create({
                 } catch (e) {
                     pimcore.helpers.showNotification(t("error"), t("saving_failed"), "error");
                 }
-            }
+            }.bind(this)
         });
     },
 

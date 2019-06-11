@@ -170,7 +170,7 @@ class InstallCommand extends Command
                 'ignore-existing-config',
                 null,
                 InputOption::VALUE_NONE,
-                'Do not abort if a <comment>system.php</comment> file already exists'
+                'Do not abort if a <comment>system.yml</comment> file already exists'
             );
 
         foreach ($this->getOptions() as $name => $config) {
@@ -189,9 +189,9 @@ class InstallCommand extends Command
     protected function initialize(InputInterface $input, OutputInterface $output)
     {
         // no installer if Pimcore is already installed
-        $configFile = Config::locateConfigFile('system.php');
+        $configFile = Config::locateConfigFile('system.yml');
         if ($configFile && is_file($configFile) && !$input->getOption('ignore-existing-config')) {
-            throw new \RuntimeException(sprintf('The system.php config file already exists in "%s". You can run this command with the --ignore-existing-config flag to ignore this error.', $configFile));
+            throw new \RuntimeException(sprintf('The system.yml config file already exists in "%s". You can run this command with the --ignore-existing-config flag to ignore this error.', $configFile));
         }
 
         $this->io = new PimcoreStyle($input, $output);

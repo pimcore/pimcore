@@ -33,7 +33,7 @@ class Configuration implements ConfigurationInterface
 
         $rootNode->append($this->buildGdprDataExtractorNode());
         $rootNode->append($this->buildObjectsNode());
-        $rootNode->append($this->buildAsstsNode());
+        $rootNode->append($this->buildAssetsNode());
         $rootNode->append($this->buildDocumentsNode());
 
         $rootNode->children()
@@ -57,6 +57,20 @@ class Configuration implements ConfigurationInterface
                         return strlen($v) < 20;
                     })
                     ->thenInvalid('custom_admin_path_identifier must be at least 20 characters long')
+                ->end()
+            ->end()
+            ->arrayNode('branding')
+                ->addDefaultsIfNotSet()
+                ->children()
+                    ->scalarNode('color_login_screen')
+                        ->defaultNull()
+                    ->end()
+                    ->scalarNode('color_admin_interface')
+                        ->defaultNull()
+                    ->end()
+                    ->scalarNode('login_screen_custom_image')
+                        ->defaultNull()
+                    ->end()
                 ->end()
             ->end()
         ;
@@ -160,7 +174,7 @@ class Configuration implements ConfigurationInterface
     protected function buildObjectsNode()
     {
         $treeBuilder = new TreeBuilder();
-        $objectsNode = $treeBuilder->root('dataObjects');
+        $objectsNode = $treeBuilder->root('objects');
 
         $objectsNode
             ->addDefaultsIfNotSet()
@@ -172,7 +186,7 @@ class Configuration implements ConfigurationInterface
     /**
      * @return ArrayNodeDefinition|\Symfony\Component\Config\Definition\Builder\NodeDefinition
      */
-    protected function buildAsstsNode()
+    protected function buildAssetsNode()
     {
         $treeBuilder = new TreeBuilder();
         $assetsNode = $treeBuilder->root('assets');

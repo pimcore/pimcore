@@ -42,11 +42,6 @@ doctrine:
             default:
                 wrapper_class: '\Pimcore\Db\Connection'
                 driver: pdo_mysql
-                host: '%pimcore_system_config.database.params.host%'
-                port: '%pimcore_system_config.database.params.port%'
-                dbname: '%pimcore_system_config.database.params.dbname%'
-                user: '%pimcore_system_config.database.params.username%'
-                password: '%pimcore_system_config.database.params.password%'
                 charset: UTF8MB4
                 logging: false
                 profiling: false
@@ -471,25 +466,6 @@ pimcore:
 
 swiftmailer:
     default_mailer: pimcore_mailer
-    mailers:
-        pimcore_mailer:
-            transport: '%pimcore_system_config.email.method%'
-            delivery_addresses: ['%pimcore_system_config.email.debug.emailaddresses%']
-            host:      '%pimcore_system_config.email.smtp.host%'
-            username:  '%pimcore_system_config.email.smtp.auth.username%'
-            password:  '%pimcore_system_config.email.smtp.auth.password%'
-            port: '%pimcore_system_config.email.smtp.port%'
-            encryption: '%pimcore_system_config.email.smtp.ssl%'
-            auth_mode: '%pimcore_system_config.email.smtp.auth.method%'
-        newsletter_mailer:
-            transport: '%pimcore_system_config.newsletter.method%'
-            delivery_addresses: ['%pimcore_system_config.email.debug.emailaddresses%']
-            host:      '%pimcore_system_config.newsletter.smtp.host%'
-            username:  '%pimcore_system_config.newsletter.smtp.auth.username%'
-            password:  '%pimcore_system_config.newsletter.smtp.auth.password%'
-            port: '%pimcore_system_config.newsletter.smtp.port%'
-            encryption: '%pimcore_system_config.newsletter.smtp.ssl%'
-            auth_mode: '%pimcore_system_config.newsletter.smtp.auth.method%'
 
 presta_sitemap:
     # do not add properties by default
