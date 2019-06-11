@@ -594,6 +594,13 @@ class SettingsController extends AdminController
             'devmode' => $values['general.devmode']
         ]));
 
+        // clear all caches
+        $this->forward(self::class . '::clearCacheAction', [
+            'only_symfony_cache' => false,
+            'only_pimcore_cache' => false,
+            'env' => array_unique(['dev', 'prod', \Pimcore::getKernel()->getEnvironment()])
+        ]);
+
         return $this->adminJson(['success' => true]);
     }
 
@@ -712,7 +719,7 @@ class SettingsController extends AdminController
         Filesystem $filesystem,
         CacheClearer $symfonyCacheClearer
     ) {
-        $this->checkPermission('clear_cache');
+        $this->checkPermissionsHasOneOf(['clear_cache', 'system_settings']);
 
         $result = [
             'success' => true
