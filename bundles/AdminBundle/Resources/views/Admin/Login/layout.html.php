@@ -20,58 +20,60 @@
 </head>
 <body>
 
+<?php
+    $config = $this->config;
+    if ($config->general->loginscreencustomimage) {
+        $backgroundImageUrl = $config->general->loginscreencustomimage;
+    } else {
+        $defaultImages = ['pimconaut-ecommerce.svg', 'pimconaut-world.svg'];
+        $backgroundImageUrl = '/bundles/pimcoreadmin/img/login/' . $defaultImages[array_rand($defaultImages)];
+    }
+?>
 
-<?php $config = $this->config; ?>
-<?php if ($config->general->loginscreencustomimage) { ?>
     <style type="text/css">
-        body {
-            background: url(<?= $config->general->loginscreencustomimage; ?>) no-repeat center center fixed;
-            -webkit-background-size: cover;
-            -moz-background-size: cover;
-            -o-background-size: cover;
-            background-size: cover;
-        }
-
-        #header {
-            border-bottom-left-radius: 0;
-            border-bottom-right-radius: 0;
-        }
-
-        #content {
-            border-top-left-radius: 0;
-            border-top-right-radius: 0;
+        #background {
+            background-image: url(<?= $backgroundImageUrl ?>);
         }
     </style>
-<?php } ?>
 
 <?php if($config->branding) { ?>
     <?php if($config->branding->color_login_screen) {
         $customColor = $config->branding->color_login_screen;
         ?>
         <style type="text/css">
-            #loginform button, #twofactorform button {
+            #content button {
                 background: <?= $customColor ?>;
-            }
-
-            a, a:hover, a:visited, a:active {
-                color: <?= $customColor ?>;
             }
         </style>
     <?php } ?>
 <?php } ?>
 
+<div id="logo">
+    <img src="/admin/settings/display-custom-logo?white=true">
+</div>
 
+<div id="content">
+    <?php $view->slots()->output('_content') ?>
+</div>
 
-<?php $view->slots()->output('_content') ?>
+<div id="news">
+    <h2>News</h2>
+    <hr>
+    <p>
+        <a href="#">Where is Master Data Management Heading in the Future?</a>
+    </p>
+    <hr>
+    <p>
+        <a href="#">Priint and Pimcore announce technology partnership to ease publishing workflows</a>
+    </p>
+</div>
 
+<div id="contentBackground"></div>
+<div id="background"></div>
 <div id="footer">
     &copy; 2009-<?= date("Y") ?> <a href="http://www.pimcore.org/">pimcore GmbH</a>
 </div>
 
-<?php if (!$config->general->loginscreencustomimage) { ?>
-    <div id="background"></div>
-    <div id="backgroundImageInfo"></div>
-<?php } ?>
 
 <script type="text/javascript" src="https://liveupdate.pimcore.org/imageservice"></script>
 

@@ -60,6 +60,10 @@ class SettingsController extends AdminController
     {
         // default logo
         $logo = PIMCORE_WEB_ROOT . '/bundles/pimcoreadmin/img/logo-claim-gray.svg';
+        if($request->get('white')) {
+            $logo = PIMCORE_WEB_ROOT . '/bundles/pimcoreadmin/img/logo-claim-white.svg';
+        }
+
         $mime = 'image/svg+xml';
         $customLogoPath = PIMCORE_CONFIGURATION_DIRECTORY . '/custom-logo.';
 
