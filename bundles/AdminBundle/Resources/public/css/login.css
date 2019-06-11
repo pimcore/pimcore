@@ -11,239 +11,170 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
+@font-face {
+    font-family: 'Open Sans';
+    src: url('/bundles/pimcoreadmin/js/lib/ext/classic/theme-triton/resources/fonts/OpenSans-Regular.ttf');
+    font-weight: 300;
+    font-style: normal;
+}
+
 * {
-    -webkit-box-sizing: border-box;
-    -moz-box-sizing: border-box;
     box-sizing: border-box;
 }
 
 body {
-
-    font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
-    -webkit-font-smoothing: antialiased;
-
+    font-family: 'Open Sans', 'Helvetica Neue', helvetica, arial, verdana, sans-serif;
     height: 100%;
     padding: 0;
     margin: 0;
     font-size: 14px;
-    color: #222222;
-    background: #fff;
+    color: #fff;
+    background: #0C0F12;
 }
 
 a, a:hover, a:visited, a:active {
-    color: #6428b4;
+    color: #fff;
     text-decoration: none;
 }
 
-#vcenter {
+#contentBackground {
+    z-index: 1;
     position: absolute;
-    top: 50%;
-    height: 450px;
-    margin-top: -225px;
-    width:100%;
-    z-index: 10;
-}
-
-#hcenter {
-    width: 360px;
-    margin: 0 auto;
-    position: relative;
-}
-
-
-#header {
-    text-align: center;
-    padding: 10px 0 0 0;
-}
-
-#header img {
-    max-height: 80px;
-    max-width: 100%;
-}
-
-#header p {
-    text-transform: uppercase;
-    color:#fff;
-    padding: 5px 0 0 0;
-    margin: 0;
+    top: 0;
+    left: 0;
+    width: 480px;
+    height: 100%;
+    background: #0C0F12;
 }
 
 #content {
-    background: #fff;
-    padding: 30px 0 10px 0;
-}
-
-#content .form-fields {
-    width: 100%;
-    padding: 30px 20px 10px 20px;
-}
-
-#content .form-fields input {
-
-    display: block;
-    height: 34px;
-    padding: 6px 12px;
-    font-size: 14px;
-    line-height: 1.42857143;
-
-    width: 100%;
-    margin-bottom: 20px;
-    border:0;
-}
-
-input:-webkit-autofill {
-    -webkit-box-shadow: inset 0 0 0px 9999px white;
-}
-
-#content .error {
-    padding: 10px 20px;
-
-}
-
-#content .body {
-    padding: 10px 20px;
-}
-
-#content .body.info {
-    background: #f0f7fd;
-    color: #3A87AD;
-    border-top: 3px solid #d0e3f0;
-}
-
-#content .body.error {
-    background: #fcf2f2;
-    border-top: 3px solid #dFb5b4;
-    color: #a94442;
-}
-
-#content .body.lostpassword {
-    text-align: right;
-}
-
-#loginform, #twofactorform {
-    border-top: 3px solid #cbcbcb;
-    background: #eaeaec;
-}
-
-#loginform button, #twofactorform button {
-    font-weight: 500;
-    background: #6428b4;
-    display: block;
-    width: 100%;
-
-    color:#fff;
-    margin:0;
-    border:0;
-
-    padding: 6px 12px;
-    font-size: 14px;
-    line-height: 1.42857143;
-    text-align: center;
-    white-space: nowrap;
-    vertical-align: middle;
-    cursor: pointer;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-}
-
-#browserinfo .body {
-    text-align: center;
-}
-
-#browserinfo .links img {
-    height: 50px;
-}
-
-#footer {
-    width: 100%;
+    z-index: 150;
     position: absolute;
-    z-index: 10;
-    bottom: 0;
-    color: #000;
-    text-align: center;
-    font-size: 13px;
-    line-height: 18px;
-    padding: 10px 0;
+    top: 0;
+    left: 0;
+    width: 480px;
+    background: #0C0F12;
+    padding: 280px 90px 20px 90px;
 }
 
-#footer a {
-    color: #000;
-    text-decoration: none;
-}
-
-.imageservice #content {
-    background: none;
-    padding-top: 0;
-}
-
-.imageservice #content .form-fields {
-    background: none;
-    border:0;
-}
-
-.imageservice a, .imageservice a:hover, .imageservice a:visited, .imageservice a:active {
+#content input {
+    background: #393C3F;
     color: #fff;
+    margin-bottom: 10px;
+    width: 100%;
+    padding: 10px;
+    border-radius: 2px;
+    border:0;
+    outline: none;
+    line-height: 20px;
 }
 
-.imageservice #content .form-fields input {
-    opacity: 0.7;
+#content button {
+    background: #6428B4;
+    color: #fff;
+    margin-bottom: 10px;
+    width: 100%;
+    padding: 10px;
+    text-transform: uppercase;
+    border-radius: 2px;
+    border:0;
+    font-weight: bold;
+    cursor: pointer;
 }
 
-.imageservice #content .form-fields input:focus {
-    opacity: 1;
+#content .text {
+    margin: 10px 0;
 }
 
-.imageservice #loginform button, .imageservice #twofactorform button {
-
+#content .text.error {
+    color: #990000;
+    padding: 10px;
+    background: #fff;
+    border-radius: 2px;
 }
 
-.imageservice .lostpassword {
-    font-size: 11px;
-    text-shadow: 0 0 3px #000;
-}
-
-.imageservice #header {
-
-}
-
-.imageservice .body.error {
-    margin: 30px 20px 0 20px;
+#content .browserinfo img {
+    width: 60px;
+    margin-right: 12px;
 }
 
 #background {
-    position: fixed;
-    left: 0;
-    right: 0;
     z-index: 1;
-    width:100%;
-    height:100%;
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: calc(100% - 480px);
+    height: 100%;
+    background-position: center;
+    background-repeat: no-repeat;
     background-size: cover;
-    background-position: center center;
 }
 
-.imageservice #background:after {
+#logo {
     position: absolute;
-    width:100%;
-    height:100%;
-    display: block;
-    content: "";
-    background: #000;
-    opacity: 0.4;
+    top: 140px;
+    left: 90px;
+    width: 300px;
+    z-index: 200;
 }
 
-#backgroundImageInfo {
+#logo img {
+    max-width: 300px;
+    max-height: 120px;
+}
+
+#footer {
+    z-index: 200;
     position: absolute;
-    bottom: 0;
-    right: 20px;
-    z-index: 20;
-    font-size: 13px;
-    line-height: 18px;
-    padding: 10px 0;
+    bottom: 20px;
+    left: 90px;
+    line-height: 25px;
+    height: 25px;
+    overflow: hidden;
 }
 
-#backgroundImageInfo a {
-    color: #fff;
-    font-size:12px;
+
+#news {
+    z-index: 100;
+    position: absolute;
+    left: 0;
+    bottom: 70px;
+    width: 480px;
+    padding: 30px 90px 0 90px;
+    border-top: 1px solid #6428B4;
+}
+
+@media screen and (max-height: 800px) {
+    #news {
+        display: none;
+    }
+}
+
+#news h2 {
+    text-transform: uppercase;
+    font-size: 14px;
+}
+
+#news hr {
+    width: 40px;
+    height: 1px;
+    background: #6428B4;
+    margin: 0;
+    border: 0;
+}
+
+#news p {
+    padding: 10px 0 10px 0;
+}
+
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active  {
+    -webkit-box-shadow: 0 0 0 30px #393C3F inset !important;
+}
+
+input:-webkit-autofill {
+    -webkit-text-fill-color: #fff !important;
 }
