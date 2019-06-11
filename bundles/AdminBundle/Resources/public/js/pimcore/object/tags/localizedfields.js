@@ -345,7 +345,9 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
                     panelConf.autoHeight = false;
                 }
 
-                panelConf.tabPosition = this.fieldConfig.tabPosition;
+                if(this.fieldConfig.tabPosition) {
+                    panelConf.tabPosition = this.fieldConfig.tabPosition;
+                }
 
                 var hideLabels = this.hideLabels();
 

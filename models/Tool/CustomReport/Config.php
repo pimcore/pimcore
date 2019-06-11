@@ -134,11 +134,11 @@ class Config extends Model\AbstractModel implements \JsonSerializable
         try {
             $report = new self();
             $report->getDao()->getByName($name);
+
+            return $report;
         } catch (\Exception $e) {
             return null;
         }
-
-        return $report;
     }
 
     /**

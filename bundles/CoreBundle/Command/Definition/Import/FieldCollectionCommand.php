@@ -54,11 +54,7 @@ class FieldCollectionCommand extends AbstractStructureImportCommand
      */
     protected function loadDefinition($name)
     {
-        try {
-            return Definition::getByKey($name);
-        } catch (\Exception $e) {
-            // noop
-        }
+        return Definition::getByKey($name);
     }
 
     /**

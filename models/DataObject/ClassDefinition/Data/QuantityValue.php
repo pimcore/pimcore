@@ -118,11 +118,11 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
      */
     public function getUnitWidth()
     {
-        return $this->width;
+        return $this->unitWidth;
     }
 
     /**
-     * @param int $width
+     * @param int $unitWidth
      */
     public function setUnitWidth($unitWidth)
     {

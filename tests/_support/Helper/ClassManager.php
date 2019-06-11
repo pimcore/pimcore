@@ -87,12 +87,9 @@ class ClassManager extends Module
      */
     public function getFieldcollection($name)
     {
-        try {
-            if ($fc = FieldcollectionDefinition::getByKey($name)) {
-                return $fc;
-            }
-        } catch (\Exception $e) {
-        }
+        $fc = FieldcollectionDefinition::getByKey($name);
+
+        return $fc;
     }
 
     /**
@@ -141,12 +138,9 @@ class ClassManager extends Module
      */
     public function getObjectbrick($name)
     {
-        try {
-            if ($ob = ObjectbrickDefinition::getByKey($name)) {
-                return $ob;
-            }
-        } catch (\Exception $e) {
-        }
+        $ob = ObjectbrickDefinition::getByKey($name);
+
+        return $ob;
     }
 
     /**

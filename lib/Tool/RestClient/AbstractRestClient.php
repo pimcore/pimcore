@@ -459,7 +459,7 @@ abstract class AbstractRestClient implements LoggerAwareInterface
     protected function buildRestParameters(array $parameters = [], $condition = null, $order = null, $orderKey = null, $offset = null, $limit = null, $groupBy = null, $objectClass = null)
     {
         if ($condition) {
-            $parameters['q'] = urlencode($condition);
+            $parameters['q'] = $condition;
         }
 
         if ($order) {

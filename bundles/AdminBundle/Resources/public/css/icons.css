@@ -38,8 +38,8 @@
 
 .pimcore_icon_overlay_edit:before {
     position: absolute;
-    width: 16px;
-    height: 16px;
+    width: 24px;
+    height: 24px;
     bottom: 0px;
     right: 0px;
     content: "";
@@ -512,6 +512,10 @@
     background: url(/bundles/pimcoreadmin/img/flat-color-icons/hidden.svg) center center no-repeat !important;
 }
 
+.pimcore_icon_white_hide {
+    background: url(/bundles/pimcoreadmin/img/flat-white-icons/hidden.svg) center center no-repeat !important;
+}
+
 .pimcore_icon_save_white {
     background: url(/bundles/pimcoreadmin/img/flat-color-icons/checkmark-white.svg) center center no-repeat !important;
 }
@@ -534,6 +538,10 @@
 
 .pimcore_icon_copy {
     background: url(/bundles/pimcoreadmin/img/flat-color-icons/copy.svg) center center no-repeat !important;
+}
+
+.pimcore_icon_white_copy {
+    background: url(/bundles/pimcoreadmin/img/flat-white-icons/copy.svg) center center no-repeat !important;
 }
 
 .pimcore_icon_paste {
@@ -744,11 +752,11 @@
 }
 
 .pimcore_icon_fieldcontainer {
-    background: url(/bundles/pimcoreadmin/img/flat-color-icons/row.svg) center center no-repeat !important;
+    background: url(/bundles/pimcoreadmin/img/flat-color-icons/panel.svg) center center no-repeat !important;
 }
 
 .pimcore_icon_panel {
-    background: url(/bundles/pimcoreadmin/img/flat-color-icons/panel.svg) center center no-repeat !important;
+    background: url(/bundles/pimcoreadmin/img/flat-color-icons/row.svg) center center no-repeat !important;
 }
 
 .pimcore_icon_tabpanel {
@@ -933,12 +941,24 @@
     background: url(/bundles/pimcoreadmin/img/flat-color-icons/collapse.svg) center center no-repeat !important;
 }
 
+.pimcore_icon_white_up {
+    background: url(/bundles/pimcoreadmin/img/flat-white-icons/collapse.svg) center center no-repeat !important;
+}
+
 .pimcore_icon_down {
     background: url(/bundles/pimcoreadmin/img/flat-color-icons/expand.svg) center center no-repeat !important;
 }
 
+.pimcore_icon_white_down {
+    background: url(/bundles/pimcoreadmin/img/flat-white-icons/expand.svg) center center no-repeat !important;
+}
+
 .pimcore_icon_move {
     background: url(/bundles/pimcoreadmin/img/flat-color-icons/arrows.svg) !important;
+}
+
+.pimcore_icon_white_move {
+    background: url(/bundles/pimcoreadmin/img/flat-white-icons/arrows.svg) !important;
 }
 
 .pimcore_icon_empty {
@@ -1014,6 +1034,10 @@
 }
 
 .pimcore_icon_show_in_tree {
+    background: url(/bundles/pimcoreadmin/img/flat-white-icons/target.svg) center center no-repeat !important;
+}
+
+.pimcore_icon_index_sorting {
     background: url(/bundles/pimcoreadmin/img/flat-color-icons/tree_select.svg) center center no-repeat !important;
 }
 
@@ -1034,7 +1058,11 @@
 }
 
 .pimcore_icon_mobile {
-    background: url(/bundles/pimcoreadmin/img/flat-color-icons/two_smartphones.svg) center center no-repeat !important;
+    background: url(/bundles/pimcoreadmin/img/flat-color-icons/cell_phone.svg) center center no-repeat !important;
+}
+
+.pimcore_icon_mobile_landscape {
+    background: url(/bundles/pimcoreadmin/img/flat-color-icons/cell_phone_landscape.svg) center center no-repeat !important;
 }
 
 .pimcore_icon_systemrequirements {
@@ -1093,6 +1121,10 @@
 
 .pimcore_icon_info {
     background: url(/bundles/pimcoreadmin/img/flat-color-icons/info.svg) center center no-repeat !important;
+}
+
+.pimcore_icon_gray_info {
+    background: url(/bundles/pimcoreadmin/img/flat-color-icons/info-gray.svg) center center no-repeat !important;
 }
 
 .pimcore_icon_video {
@@ -1287,7 +1319,7 @@
 }
 
 .pimcore_icon_input {
-    background: url(/bundles/pimcoreadmin/img/flat-color-icons/row.svg) center center no-repeat !important;
+    background: url(/bundles/pimcoreadmin/img/flat-color-icons/input.svg) center center no-repeat !important;
 }
 
 .pimcore_icon_firstname {
@@ -1774,7 +1806,7 @@
 }
 
 .pimcore_material_icon_notes {
-    background: url(/bundles/pimcoreadmin/img/material-icons/outline-speaker_notes-24px.svg) center center no-repeat;
+    background: url(/bundles/pimcoreadmin/img/flat-white-icons/survey.svg) center center no-repeat;
 }
 
 .pimcore_material_icon_tags {

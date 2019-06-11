@@ -100,6 +100,10 @@ pimcore.document.tags.relations = Class.create(pimcore.document.tag, {
                                         var rec = grid.getStore().getAt(rowIndex);
                                         grid.getStore().removeAt(rowIndex);
                                         grid.getStore().insert(rowIndex - 1, [rec]);
+
+                                        if (this.options.reload) {
+                                            this.reloadDocument();
+                                        }
                                     }
                                 }.bind(this)
                             }
@@ -118,6 +122,10 @@ pimcore.document.tags.relations = Class.create(pimcore.document.tag, {
                                         var rec = grid.getStore().getAt(rowIndex);
                                         grid.getStore().removeAt(rowIndex);
                                         grid.getStore().insert(rowIndex + 1, [rec]);
+
+                                        if (this.options.reload) {
+                                            this.reloadDocument();
+                                        }
                                     }
                                 }.bind(this)
                             }
@@ -149,6 +157,10 @@ pimcore.document.tags.relations = Class.create(pimcore.document.tag, {
                             icon: "/bundles/pimcoreadmin/img/flat-color-icons/delete.svg",
                             handler: function (grid, rowIndex) {
                                 grid.getStore().removeAt(rowIndex);
+
+                                if (this.options.reload) {
+                                    this.reloadDocument();
+                                }
                             }.bind(this)
                         }]
                     }
@@ -211,6 +223,10 @@ pimcore.document.tags.relations = Class.create(pimcore.document.tag, {
                         type: "asset",
                         subtype: data["type"]
                     });
+
+                    if (this.options.reload) {
+                        this.reloadDocument();
+                    }
                 }
             } catch (e) {
                 console.log(e);
@@ -268,6 +284,11 @@ pimcore.document.tags.relations = Class.create(pimcore.document.tag, {
 
         if(elementsToAdd.length) {
             this.store.add(elementsToAdd);
+
+            if (this.options.reload) {
+                this.reloadDocument();
+            }
+
             return true;
         }
 
@@ -448,6 +469,10 @@ pimcore.document.tags.relations = Class.create(pimcore.document.tag, {
                         type: items[i].type,
                         subtype: subtype
                     });
+
+                    if (this.options.reload) {
+                        this.reloadDocument();
+                    }
                 }
             }
         }
@@ -455,11 +480,19 @@ pimcore.document.tags.relations = Class.create(pimcore.document.tag, {
 
     empty: function () {
         this.store.removeAll();
+
+        if (this.options.reload) {
+            this.reloadDocument();
+        }
     },
 
     removeElement: function (index, item) {
         this.store.removeAt(index);
         item.parentMenu.destroy();
+
+        if (this.options.reload) {
+            this.reloadDocument();
+        }
     },
 
     getValue: function () {

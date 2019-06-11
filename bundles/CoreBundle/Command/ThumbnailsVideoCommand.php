@@ -61,7 +61,7 @@ class ThumbnailsVideoCommand extends AbstractCommand
         $thumbnails = [];
 
         $list = new Asset\Video\Thumbnail\Config\Listing();
-        $items = $list->load();
+        $items = $list->getThumbnails();
 
         foreach ($items as $item) {
             $thumbnails[] = $item->getName();
@@ -94,8 +94,7 @@ class ThumbnailsVideoCommand extends AbstractCommand
             $list->setLimit($perLoop);
             $list->setOffset($i * $perLoop);
 
-            $videos = $list->load();
-            foreach ($videos as $video) {
+            foreach ($list as $video) {
                 foreach ($thumbnails as $thumbnail) {
                     if ((empty($allowedThumbs) && !$input->getOption('system')) || in_array($thumbnail, $allowedThumbs)) {
                         $this->output->writeln('generating thumbnail for video: ' . $video->getRealFullPath() . ' | ' . $video->getId() . ' | Thumbnail: ' . $thumbnail . ' : ' . formatBytes(memory_get_usage()));

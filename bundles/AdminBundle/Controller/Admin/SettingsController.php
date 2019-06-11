@@ -1180,7 +1180,7 @@ class SettingsController extends AdminController
         $thumbnails = [];
 
         $list = new Asset\Image\Thumbnail\Config\Listing();
-        $items = $list->load();
+        $items = $list->getThumbnails();
 
         $groups = [];
         /** @var $item Asset\Image\Thumbnail\Config */
@@ -1237,7 +1237,7 @@ class SettingsController extends AdminController
         $list->setFilter(function (array $config) {
             return array_key_exists('downloadable', $config) ? $config['downloadable'] : false;
         });
-        $items = $list->load();
+        $items = $list->getThumbnails();
 
         /** @var Asset\Image\Thumbnail\Config $item */
         foreach ($items as $item) {
@@ -1381,7 +1381,7 @@ class SettingsController extends AdminController
         $thumbnails = [];
 
         $list = new Asset\Video\Thumbnail\Config\Listing();
-        $items = $list->load();
+        $items = $list->getThumbnails();
 
         $groups = [];
         /** @var $item Asset\Image\Thumbnail\Config */
