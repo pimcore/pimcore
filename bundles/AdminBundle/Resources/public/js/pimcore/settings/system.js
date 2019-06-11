@@ -1245,6 +1245,9 @@ pimcore.settings.system = Class.create({
     },
 
     save: function () {
+
+        this.layout.mask();
+
         var values = this.layout.getForm().getFieldValues();
 
         Ext.Ajax.request({
@@ -1254,6 +1257,9 @@ pimcore.settings.system = Class.create({
                 data: Ext.encode(values)
             },
             success: function (response) {
+
+                this.layout.unmask();
+
                 try {
                     var res = Ext.decode(response.responseText);
                     if (res.success) {
@@ -1271,7 +1277,7 @@ pimcore.settings.system = Class.create({
                 } catch (e) {
                     pimcore.helpers.showNotification(t("error"), t("saving_failed"), "error");
                 }
-            }
+            }.bind(this)
         });
     },
 
