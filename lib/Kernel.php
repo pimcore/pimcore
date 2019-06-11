@@ -101,8 +101,8 @@ abstract class Kernel extends SymfonyKernel
         });
 
 
-        //load system configuration from /var/config/
-        $loader->load(PIMCORE_CONFIGURATION_DIRECTORY.'/*{yaml,yml}', 'glob');
+        //load system configuration
+        $loader->load(Config::locateConfigFile('system.yml'));
 
         $bundleConfigLocator = new BundleConfigLocator($this);
         foreach ($bundleConfigLocator->locate('config') as $bundleConfig) {

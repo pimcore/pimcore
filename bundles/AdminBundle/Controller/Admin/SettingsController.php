@@ -584,7 +584,7 @@ class SettingsController extends AdminController
         $settings = array_replace_recursive($existingValues, $settings);
 
         $settingsYml = Yaml::dump($settings, 5);
-        $configFile = PIMCORE_CONFIGURATION_DIRECTORY . '/system.yml';
+        $configFile = Config::locateConfigFile('system.yml');
         File::put($configFile, $settingsYml);
 
         $debugModeFile = PIMCORE_CONFIGURATION_DIRECTORY . '/debug-mode.php';

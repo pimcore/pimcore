@@ -166,7 +166,7 @@ class ConfigWriter
             $settings = $this->defaultConfig;
         }
 
-        $configFile = PIMCORE_CONFIGURATION_DIRECTORY . '/system.yml';
+        $configFile = \Pimcore\Config::locateConfigFile('system.yml');
         $settingsYml = Yaml::dump($settings, 5);
         File::put($configFile, $settingsYml);
     }
