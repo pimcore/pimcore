@@ -32,11 +32,9 @@ use Zend\Paginator\AdapterAggregateInterface;
 class Listing extends Model\Listing\AbstractListing implements \Iterator, AdapterInterface, AdapterAggregateInterface
 {
     /**
-     * List of assets
-     *
-     * @var array
+     * @var array|null
      */
-    public $assets = null;
+    protected $assets = null;
 
     /**
      * @return Model\Asset[]
@@ -44,7 +42,7 @@ class Listing extends Model\Listing\AbstractListing implements \Iterator, Adapte
     public function getAssets()
     {
         if ($this->assets === null) {
-            $this->load();
+            $this->getDao()->load();
         }
 
         return $this->assets;

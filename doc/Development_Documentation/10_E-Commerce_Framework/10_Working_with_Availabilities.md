@@ -9,7 +9,7 @@ Each product can have its own Availability System.
 
 ## Configuration of Availability Systems
 
-A availability system is a class implementing `Pimcore\Bundle\EcommerceFrameworkBundle\AvailabilitySystem\IAvailabilitySystem` which 
+A availability system is a class implementing `Pimcore\Bundle\EcommerceFrameworkBundle\AvailabilitySystem\AvailabilitySystemInterface` which 
 is defined as service and registered with a name in the `pimcore_ecommerce_framework.availability_systems` configuration tree. 
 
 Currently the framework ships only with a [sample implementation](https://github.com/pimcore/pimcore/blob/master/bundles/EcommerceFrameworkBundle/AvailabilitySystem/AvailabilitySystem.php#L20)
@@ -28,7 +28,7 @@ The product class returns the name of an Availability System:
 ```php
 <?php
 
-class MyProduct implements \Pimcore\Bundle\EcommerceFrameworkBundle\Model\ICheckoutable
+class MyProduct implements \Pimcore\Bundle\EcommerceFrameworkBundle\Model\CheckoutableInterface
 {
     public function getAvailabilitySystemName()
     {
@@ -73,10 +73,10 @@ pimcore_ecommerce_framework:
 
 
 ## Getting Availabilities
-Each product (if it implements `ICheckoutable`) needs to implement the method `getOSAvailabilityInfo` which in the default
+Each product (if it implements `CheckoutableInterface`) needs to implement the method `getOSAvailabilityInfo` which in the default
 implementation gets the corresponding Availability System and calculates the availability. 
 
-The return value is an `IAvailability` object, which at least has one `getAvailable` method and can contain additional 
+The return value is an `AvailabilityInterface` object, which at least has one `getAvailable` method and can contain additional 
 availability information (e.g. availability for different storage locations etc.). 
 
 This can be used to visualize availability on product detail pages or to check, if a product can actually be checked out.   

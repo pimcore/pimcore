@@ -19,7 +19,7 @@ use Pimcore\Localization\LocaleServiceInterface;
 use Pimcore\Tool;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class Environment implements IEnvironment
+class Environment implements EnvironmentInterface
 {
     const USER_ID_NOT_SET = -1;
 

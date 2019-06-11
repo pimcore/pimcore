@@ -15,12 +15,12 @@
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\ElasticSearch;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\AbstractFilterType;
-use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\IProductList;
+use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\ProductListInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractFilterDefinitionType;
 
 class Input extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\Input
 {
-    public function addCondition(AbstractFilterDefinitionType $filterDefinition, IProductList $productList, $currentFilter, $params, $isPrecondition = false)
+    public function addCondition(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList, $currentFilter, $params, $isPrecondition = false)
     {
         $field = $filterDefinition->getField($filterDefinition);
         $preSelect = $filterDefinition->getPreSelect($filterDefinition);

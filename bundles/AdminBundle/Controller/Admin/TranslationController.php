@@ -569,15 +569,18 @@ class TranslationController extends AdminController
                 $field = null;
                 $value = null;
 
-                if (!$languageMode && in_array($filter[$propertyField], $validLanguages)
-                    || $languageMode && !in_array($filter[$propertyField], $validLanguages)) {
+                $fieldname = $filter[$propertyField];
+                if (in_array(ltrim($fieldname, '_'), $validLanguages)) {
+                    $fieldname = ltrim($fieldname, '_');
+                }
+
+                if (!$languageMode && in_array($fieldname, $validLanguages)
+                    || $languageMode && !in_array($fieldname, $validLanguages)) {
                     continue;
                 }
 
-                if ($languageMode) {
-                    $fieldname = $filter[$propertyField];
-                } else {
-                    $fieldname = $tableName . '.' . $filter[$propertyField];
+                if (!$languageMode) {
+                    $fieldname = $tableName . '.' . $fieldname;
                 }
 
                 if ($filter['type'] == 'string') {
@@ -603,9 +606,9 @@ class TranslationController extends AdminController
                     $condition = $field . ' ' . $operator . ' ' . $db->quote($value);
 
                     if ($languageMode) {
-                        $conditions[$filter[$propertyField]] = $condition;
+                        $conditions[$fieldname] = $condition;
                         $joins[] = [
-                            'language' => $filter[$propertyField],
+                            'language' => $fieldname,
                         ];
                     } else {
                         $conditionFilters[] = $condition;

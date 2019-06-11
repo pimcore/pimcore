@@ -20,7 +20,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\Currency;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
 
-class ModificatedPrice extends Price implements IModificatedPrice
+class ModificatedPrice extends Price implements ModificatedPriceInterface
 {
     /**
      * @var null|string

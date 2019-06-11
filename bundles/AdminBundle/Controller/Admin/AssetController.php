@@ -562,10 +562,8 @@ class AssetController extends ElementControllerBase implements EventedController
             $list->setOrderKey('LENGTH(path)', false);
             $list->setOrder('DESC');
 
-            $assets = $list->load();
-
             $deletedItems = [];
-            foreach ($assets as $asset) {
+            foreach ($list as $asset) {
                 /**
                  * @var $asset Asset
                  */
@@ -1890,7 +1888,7 @@ class AssetController extends ElementControllerBase implements EventedController
                 $assetList->setOffset((int)$request->get('offset'));
                 $assetList->setLimit((int)$request->get('limit'));
 
-                foreach ($assetList->load() as $a) {
+                foreach ($assetList as $a) {
                     if ($a->isAllowed('view')) {
                         if (!$a instanceof Asset\Folder) {
                             // add the file with the relative path to the parent directory

@@ -21,7 +21,6 @@ use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data\CustomResourcePersistingInterface;
 use Pimcore\Model\DataObject\ClassDefinition\Data\ResourcePersistenceAwareInterface;
-use Pimcore\Tool;
 
 /**
  * @property \Pimcore\Model\DataObject\Objectbrick $model
@@ -41,9 +40,7 @@ class Dao extends Model\DataObject\Fieldcollection\Dao
         $values = [];
 
         foreach ($fieldDef->getAllowedTypes() as $type) {
-            try {
-                $definition = DataObject\Objectbrick\Definition::getByKey($type);
-            } catch (\Exception $e) {
+            if (!$definition = DataObject\Objectbrick\Definition::getByKey($type)) {
                 continue;
             }
 
@@ -64,11 +61,7 @@ class Dao extends Model\DataObject\Fieldcollection\Dao
                 $brick->setObject($object);
 
                 foreach ($fieldDefinitions as $key => $fd) {
-                    if ($fd instanceof CustomResourcePersistingInterface || method_exists($fd, 'load')) {
-                        if (!$fd instanceof CustomResourcePersistingInterface) {
-                            Tool::triggerMissingInterfaceDeprecation(get_class($fd), 'load', CustomResourcePersistingInterface::class);
-                        }
-
+                    if ($fd instanceof CustomResourcePersistingInterface) {
                         $doLoad = true;
 
                         if ($fd instanceof  DataObject\ClassDefinition\Data\Relations\AbstractRelations) {
@@ -93,10 +86,7 @@ class Dao extends Model\DataObject\Fieldcollection\Dao
                             }
                         }
                     }
-                    if ($fd instanceof ResourcePersistenceAwareInterface || method_exists($fd, 'getDataFromResource')) {
-                        if (!$fd instanceof ResourcePersistenceAwareInterface) {
-                            Tool::triggerMissingInterfaceDeprecation(get_class($fd), 'getDataFromResource', ResourcePersistenceAwareInterface::class);
-                        }
+                    if ($fd instanceof ResourcePersistenceAwareInterface) {
                         if (is_array($fd->getColumnType())) {
                             $multidata = [];
                             foreach ($fd->getColumnType() as $fkey => $fvalue) {
@@ -141,14 +131,10 @@ class Dao extends Model\DataObject\Fieldcollection\Dao
         // this is to clean up also the inherited values
         $fieldDef = $object->getClass()->getFieldDefinition($this->model->getFieldname());
         foreach ($fieldDef->getAllowedTypes() as $type) {
-            try {
-                $definition = DataObject\Objectbrick\Definition::getByKey($type);
-            } catch (\Exception $e) {
-                continue;
+            if ($definition = DataObject\Objectbrick\Definition::getByKey($type)) {
+                $tableName = $definition->getTableName($object->getClass(), true);
+                $this->db->delete($tableName, ['o_id' => $object->getId()]);
             }
-
-            $tableName = $definition->getTableName($object->getClass(), true);
-            $this->db->delete($tableName, ['o_id' => $object->getId()]);
         }
     }
 }

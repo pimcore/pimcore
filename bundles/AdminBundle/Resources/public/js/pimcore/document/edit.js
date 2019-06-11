@@ -104,7 +104,7 @@ pimcore.document.edit = Class.create({
                 html: html,
                 title: t('edit'),
                 scrollable: false,
-                bodyCls: "pimcore_overflow_scrolling",
+                bodyCls: "pimcore_overflow_scrolling pimcore_document_edit_panel",
                 forceLayout: true,
                 hideMode: "offsets",
                 iconCls: "pimcore_material_icon_edit pimcore_material_icon",

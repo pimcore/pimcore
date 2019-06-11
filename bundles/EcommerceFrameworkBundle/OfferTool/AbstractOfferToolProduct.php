@@ -14,20 +14,23 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\OfferTool;
 
+use Pimcore\Bundle\EcommerceFrameworkBundle\AvailabilitySystem\AvailabilityInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\AvailabilitySystem\AvailabilitySystemInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\UnsupportedException;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Model\ICheckoutable;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Model\CheckoutableInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\AbstractPriceInfo;
-use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPriceInfo;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\PriceInfoInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\PriceInterface;
 use Pimcore\Model\DataObject\AbstractObject;
 
 /**
  * Abstract base class for pimcore objects who should be used as custom products in the offer tool
  */
-class AbstractOfferToolProduct extends \Pimcore\Model\DataObject\Concrete implements ICheckoutable
+class AbstractOfferToolProduct extends \Pimcore\Model\DataObject\Concrete implements CheckoutableInterface
 {
     // =============================================
-    //     ICheckoutable Methods
+    //     CheckoutableInterface Methods
     //  =============================================
 
     /**
@@ -93,7 +96,7 @@ class AbstractOfferToolProduct extends \Pimcore\Model\DataObject\Concrete implem
     /**
      * returns instance of price system implementation based on result of getPriceSystemName()
      *
-     * @return \Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPriceSystem
+     * @return \Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\PriceSystemInterface
      */
     public function getPriceSystemImplementation()
     {
@@ -103,7 +106,7 @@ class AbstractOfferToolProduct extends \Pimcore\Model\DataObject\Concrete implem
     /**
      * returns instance of availability system implementation based on result of getAvailabilitySystemName()
      *
-     * @return \Pimcore\Bundle\EcommerceFrameworkBundle\AvailabilitySystem\IAvailabilitySystem
+     * @return AvailabilitySystemInterface
      */
     public function getAvailabilitySystemImplementation()
     {
@@ -115,7 +118,7 @@ class AbstractOfferToolProduct extends \Pimcore\Model\DataObject\Concrete implem
      *
      * @param int $quantityScale
      *
-     * @return \Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPrice
+     * @return PriceInterface
      */
     public function getOSPrice($quantityScale = 1)
     {
@@ -128,7 +131,7 @@ class AbstractOfferToolProduct extends \Pimcore\Model\DataObject\Concrete implem
      *
      * @param int $quantityScale
      *
-     * @return IPriceInfo|AbstractPriceInfo
+     * @return PriceInfoInterface|AbstractPriceInfo
      */
     public function getOSPriceInfo($quantityScale = 1)
     {
@@ -140,7 +143,7 @@ class AbstractOfferToolProduct extends \Pimcore\Model\DataObject\Concrete implem
      *
      * @param int $quantity
      *
-     * @return \Pimcore\Bundle\EcommerceFrameworkBundle\AvailabilitySystem\IAvailability
+     * @return AvailabilityInterface
      */
     public function getOSAvailabilityInfo($quantity = null)
     {

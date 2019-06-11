@@ -18,7 +18,7 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\TaxManagement;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\UnsupportedException;
-use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPrice;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\PriceInterface;
 
 class TaxCalculationService
 {
@@ -28,14 +28,14 @@ class TaxCalculationService
     /**
      * Updates taxes in given price by using its tax entries and net or gross amount based on the given $calculationMode
      *
-     * @param IPrice $price
+     * @param PriceInterface $price
      * @param string $calculationMode - valid options are TaxCalculationService::CALCULATION_FROM_NET (default) and TaxCalculationService::CALCULATION_FROM_GROSS
      *
-     * @return IPrice
+     * @return PriceInterface
      *
      * @throws UnsupportedException
      */
-    public function updateTaxes(IPrice $price, string $calculationMode = self::CALCULATION_FROM_NET)
+    public function updateTaxes(PriceInterface $price, string $calculationMode = self::CALCULATION_FROM_NET)
     {
         switch ($calculationMode) {
             case self::CALCULATION_FROM_NET:
@@ -50,13 +50,13 @@ class TaxCalculationService
     /**
      * Calculates taxes based on the net amount of the price and the tax entries
      *
-     * @param IPrice $price
+     * @param PriceInterface $price
      *
-     * @return IPrice
+     * @return PriceInterface
      *
      * @throws UnsupportedException
      */
-    protected function calculationFromNet(IPrice $price): IPrice
+    protected function calculationFromNet(PriceInterface $price): PriceInterface
     {
         $netAmount = $price->getNetAmount();
         $grossAmount = $netAmount;
@@ -101,13 +101,13 @@ class TaxCalculationService
     /**
      * Calculates taxes based on the gross amount of the price and the tax entries
      *
-     * @param IPrice $price
+     * @param PriceInterface $price
      *
-     * @return IPrice
+     * @return PriceInterface
      *
      * @throws UnsupportedException
      */
-    protected function calculationFromGross(IPrice $price): IPrice
+    protected function calculationFromGross(PriceInterface $price): PriceInterface
     {
         $grossAmount = $price->getGrossAmount();
         $netAmount = $grossAmount;

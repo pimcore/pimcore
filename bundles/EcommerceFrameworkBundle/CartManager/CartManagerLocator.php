@@ -20,9 +20,9 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\CartManager;
 use Pimcore\Bundle\EcommerceFrameworkBundle\DependencyInjection\ServiceLocator\CheckoutTenantAwareServiceLocator;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\UnsupportedException;
 
-class CartManagerLocator extends CheckoutTenantAwareServiceLocator implements ICartManagerLocator
+class CartManagerLocator extends CheckoutTenantAwareServiceLocator implements CartManagerLocatorInterface
 {
-    public function getCartManager(string $tenant = null): ICartManager
+    public function getCartManager(string $tenant = null): CartManagerInterface
     {
         return $this->locate($tenant);
     }

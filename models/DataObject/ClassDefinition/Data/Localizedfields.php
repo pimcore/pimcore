@@ -97,6 +97,11 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
     public $provideSplitView;
 
     /**
+     * @var string
+     */
+    public $tabPosition = 'top';
+
+    /**
      * @var
      */
     public $hideLabelsWhenTabsReached;
@@ -284,10 +289,10 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
 
         if (!$localizedFields instanceof DataObject\Localizedfield) {
             $localizedFields = new DataObject\Localizedfield();
+            $context = isset($params['context']) ? $params['context'] : null;
+            $localizedFields->setContext($context);
         }
 
-        $context = isset($params['context']) ? $params['context'] : null;
-        $localizedFields->setContext($context);
         if ($object) {
             $localizedFields->setObject($object);
         }
@@ -772,6 +777,9 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
                     'containerType' => 'fieldcollection',
                     'containerKey' => $container->getType(),
                 ];
+                $lf->setContext($context);
+            } elseif ($container instanceof DataObject\Concrete) {
+                $context = ['object' => $container];
                 $lf->setContext($context);
             }
             $lf->setObject($object);
@@ -1469,5 +1477,21 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
     public function supportsDirtyDetection()
     {
         return true;
+    }
+
+    /**
+     * @return string
+     */
+    public function getTabPosition(): string
+    {
+        return $this->tabPosition;
+    }
+
+    /**
+     * @param string $tabPosition
+     */
+    public function setTabPosition($tabPosition): void
+    {
+        $this->tabPosition = $tabPosition;
     }
 }

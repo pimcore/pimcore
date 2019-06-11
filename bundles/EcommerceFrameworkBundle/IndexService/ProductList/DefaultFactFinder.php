@@ -16,17 +16,18 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList;
 
 use Monolog\Logger;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\InvalidConfigException;
-use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\IConfig;
+use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\ConfigInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\FactFinderConfigInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractCategory;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IIndexable;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IndexableInterface;
 use Pimcore\Tool;
 use Psr\Http\Message\ResponseInterface;
 use Zend\Paginator\Adapter\AdapterInterface;
 
-class DefaultFactFinder implements IProductList
+class DefaultFactFinder implements ProductListInterface
 {
     /**
-     * @var IIndexable[]
+     * @var IndexableInterface[]
      */
     protected $products = null;
 
@@ -49,7 +50,7 @@ class DefaultFactFinder implements IProductList
     protected $productPositionMap = [];
 
     /**
-     * @var \Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\IFactFinderConfig
+     * @var FactFinderConfigInterface
      */
     protected $tenantConfig;
 
@@ -76,7 +77,7 @@ class DefaultFactFinder implements IProductList
     /**
      * @var string
      */
-    protected $variantMode = IProductList::VARIANT_MODE_INCLUDE;
+    protected $variantMode = ProductListInterface::VARIANT_MODE_INCLUDE;
 
     /**
      * @var int
@@ -251,9 +252,9 @@ class DefaultFactFinder implements IProductList
     }
 
     /**
-     * @param IConfig $tenantConfig
+     * @param ConfigInterface $tenantConfig
      */
-    public function __construct(IConfig $tenantConfig)
+    public function __construct(ConfigInterface $tenantConfig)
     {
         $this->tenantName = $tenantConfig->getTenantName();
         $this->tenantConfig = $tenantConfig;
@@ -452,7 +453,7 @@ class DefaultFactFinder implements IProductList
     }
 
     /**
-     * @return IIndexable[]
+     * @return IndexableInterface[]
      *
      * @throws \Exception
      */
@@ -466,7 +467,7 @@ class DefaultFactFinder implements IProductList
         }
 
         if (array_key_exists('error', $data)) {
-            throw new Exception($data['error']);
+            throw new \Exception($data['error']);
         }
         $searchResult = $data['searchResult'];
 

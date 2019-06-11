@@ -14,11 +14,11 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Interpreter;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\IWorker;
+use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\WorkerInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Traits\OptionsResolverTrait;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class IdList implements IInterpreter
+class IdList implements InterpreterInterface
 {
     use OptionsResolverTrait;
 
@@ -41,7 +41,7 @@ class IdList implements IInterpreter
         $delimiter = ',';
 
         if ($config['multiSelectEncoded']) {
-            $delimiter = IWorker::MULTISELECT_DELIMITER;
+            $delimiter = WorkerInterface::MULTISELECT_DELIMITER;
         }
 
         $ids = implode($delimiter, $ids);

@@ -17,7 +17,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\CartManager;
 use Pimcore\Cache\Runtime;
 use Pimcore\Logger;
 
-class Cart extends AbstractCart implements ICart
+class Cart extends AbstractCart implements CartInterface
 {
     /**
      * @return string
@@ -103,7 +103,7 @@ class Cart extends AbstractCart implements ICart
         } catch (\Exception $e) {
             try {
                 $cartClass = get_called_class();
-                /* @var ICart $cart */
+                /* @var CartInterface $cart */
                 $cart = new $cartClass;
                 $cart->setIgnoreReadonly();
                 $cart->getDao()->getById($id);

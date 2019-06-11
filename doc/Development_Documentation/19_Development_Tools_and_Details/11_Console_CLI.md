@@ -15,17 +15,7 @@ and a helper for the [Symfony VarDumper Component](http://symfony.com/doc/3.4/co
 set up automatically (see below).
 
 ### Registering Commands
-Commands are defined in classes which must be created in the Command namespace of your bundle (e.g. AppBundle\Command) 
-and their names must end with the Command suffix.
-
-To have your command autoloaded, it must match a couple of prerequisites:
-
-* It must be placed in the namespace `Vendor\Command`. 
-(e.g. `AppBundle\Command\AwesomeCommand` in `/src/AppBundle/Command/AwesomeCommand.php`)
-* The class name must end with `Command`, e.g. `AwesomeCommand`
-* The class must inherit `Symfony\Component\Console\Command\Command`, ideally you achieve this by 
-extending `Pimcore\Console\AbstractCommand`
-
+Command must be registered as services and tagged with the `console.command` tag. If you're using the default `services.yml` of Pimcore skeleton (or demos) for  configuration, this is already done for you for the `AppBundle`. , thanks to autoconfiguration.
 
 ### Helpers provided by `Pimcore\Console\AbstractCommand`
 The `AbstractCommand` base class provides helpers which make your life easier.

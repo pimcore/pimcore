@@ -945,12 +945,12 @@ abstract class Data
         }
 
         $code .= "\t" . 'if ($data instanceof \\Pimcore\\Model\\DataObject\\Data\\EncryptedField) {' . "\n";
-        $code .= "\t\t" . '    return $data->getPlain();' . "\n";
+        $code .= "\t\t" . 'return $data->getPlain();' . "\n";
         $code .= "\t" . '}' . "\n";
 
         // we don't need to consider preGetData, because this is already managed directly by the localized fields within getLocalizedValue()
 
-        $code .= "\t return " . '$data' . ";\n";
+        $code .= "\treturn " . '$data' . ";\n";
         $code .= "}\n\n";
 
         return $code;
@@ -1392,92 +1392,5 @@ abstract class Data
         if ($object instanceof DataObject\LazyLoadedFieldsInterface) {
             $object->markLazyKeyAsLoaded($this->getName());
         }
-    }
-
-    /**
-     * @param string $class
-     * @param string $method
-     */
-    protected function triggerDeprecatedWarning(string $class, string $method)
-    {
-        $trace = '';
-        try {
-            throw new \Exception('foo');
-        } catch (\Exception $e) {
-            $trace = $e->getTraceAsString();
-        }
-
-        @trigger_error(
-            sprintf(
-                '%s uses method %s from the abstract class. This won\'t work in v6.0, please use the proper interfaces and provided traits.' . "\n\n" . $trace,
-                $class,
-                $method
-            ),
-            E_USER_DEPRECATED
-        );
-    }
-
-    /**
-     * @return string | array
-     */
-    public function getColumnType()
-    {
-        $this->triggerDeprecatedWarning(get_class($this), __METHOD__);
-
-        if (property_exists($this, 'columnType')) {
-            return $this->columnType;
-        }
-
-        return null;
-    }
-
-    /**
-     * @deprecated
-     *
-     * @param string | array $columnType
-     *
-     * @return $this
-     */
-    public function setColumnType($columnType)
-    {
-        $this->triggerDeprecatedWarning(get_class($this), __METHOD__);
-
-        if (property_exists($this, 'columnType')) {
-            $this->columnType = $columnType;
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return string | array
-     */
-    public function getQueryColumnType()
-    {
-        $this->triggerDeprecatedWarning(get_class($this), __METHOD__);
-
-        if (property_exists($this, 'queryColumnType')) {
-            return $this->queryColumnType;
-        }
-
-        return null;
-    }
-
-    /**
-     * @deprecated
-     *
-     * @param string | array $queryColumnType
-     *
-     * @return $this
-     */
-    public function setQueryColumnType($queryColumnType)
-    {
-        $this->triggerDeprecatedWarning(get_class($this), __METHOD__);
-
-        if (property_exists($this, 'queryColumnType')) {
-            $this->queryColumnType = $queryColumnType;
-        }
-
-        return $this;
     }
 }

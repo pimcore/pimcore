@@ -74,11 +74,9 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
     /**
      * @static
      *
-     * @throws \Exception
-     *
      * @param $key
      *
-     * @return self
+     * @return self|null
      */
     public static function getByKey($key)
     {
@@ -104,7 +102,7 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
             return $brick;
         }
 
-        throw new \Exception('Object-Brick with key: ' . $key . ' does not exist.');
+        return null;
     }
 
     /**
@@ -258,7 +256,16 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
                  * @var $def DataObject\ClassDefinition\Data
                  */
                 $cd .= $def->getGetterCodeObjectbrick($this);
+
+                if ($def instanceof DataObject\ClassDefinition\Data\Localizedfields) {
+                    $cd .= $def->getGetterCode($this);
+                }
+
                 $cd .= $def->getSetterCodeObjectbrick($this);
+
+                if ($def instanceof DataObject\ClassDefinition\Data\Localizedfields) {
+                    $cd .= $def->getSetterCode($this);
+                }
             }
         }
 

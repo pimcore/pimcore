@@ -17,7 +17,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Interpreter;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Traits\OptionsResolverTrait;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class StructuredTable implements IInterpreter
+class StructuredTable implements InterpreterInterface
 {
     use OptionsResolverTrait;
 

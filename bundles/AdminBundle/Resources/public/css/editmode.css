@@ -97,8 +97,6 @@
 .pimcore_area_buttons_inner{
     background: #3c3f41;
     border-left: 1px solid #000;
-    border-top-right-radius: 5px;
-    border-bottom-right-radius: 5px;
 }
 
 .pimcore_area_buttons:after {
@@ -125,7 +123,7 @@
 
 .pimcore_area_buttons.top:after {
     left: 0px;
-    top: 25px;
+    top: 34px;
     border-left: 8px solid transparent;
     border-right: 8px solid transparent;
 
@@ -142,11 +140,10 @@
 .pimcore_block_buttons .x-form-field,
 .pimcore_area_buttons .x-form-field {
     padding: 1px 4px;
-    min-height: 24px;
+    min-height: 30px;
 }
 
 .pimcore_block_buttons .x-btn {
-    padding: 4px;
     background: #f6f6f6;
     border-color: #e4e4e4;
     border-left: 0;
@@ -208,7 +205,7 @@
     display: inline-block;
     float: left;
     color: #ccc;
-    line-height: 25px;
+    line-height: 34px;
     font-size: 10px;
     padding-left: 10px;
 }
@@ -290,14 +287,14 @@
 
 .pimcore_tag_link .pimcore_edit_link_button {
 	position: absolute;
-    right: 0;
-	top: -3px;
+    right: -7px;
+    top: -7px;
 }
 
 .pimcore_tag_link .pimcore_open_link_button {
     position: absolute;
-    right: -30px;
-    top: -3px;
+    right: -38px;
+    top: -7px;
 }
 
 
@@ -339,16 +336,16 @@
     min-height:100px;
 }
 
-.pimcore_tag_href input{
-	background: url(/bundles/pimcoreadmin/img/flat-color-icons/target.svg) right center/20px no-repeat #fff;
+.pimcore_tag_relation input{
+	background: url(/bundles/pimcoreadmin/img/flat-color-icons/target.svg) right 3px center/24px no-repeat #fff;
 	cursor: default;
 }
 
 .pimcore_tag_droptarget {
-    background: url(/bundles/pimcoreadmin/img/flat-color-icons/target.svg) center center/20px no-repeat;
+    background: url(/bundles/pimcoreadmin/img/flat-color-icons/target.svg) center center/24px no-repeat;
     position:absolute;
-    width:20px;
-    height:20px;
+    width:24px;
+    height:24px;
     right:5px;
     top:5px;
 }
@@ -357,8 +354,8 @@
     background: url(/bundles/pimcoreadmin/img/flat-color-icons/drop-target-upload.svg) center center/48px no-repeat;
     position:absolute;
     width:50px;
-    height:20px;
-    right:5px;
+    height:24px;
+    right:0;
     top:5px;
 }
 
@@ -454,10 +451,8 @@
 
 .pimcore_video_edit_button {
     position: absolute;
-    right: 10px;
-    top: 10px;
-    width: 22px;
-    height: 22px;
+    right: 3px;
+    top: 3px;
     z-index: 10001;
 }
 

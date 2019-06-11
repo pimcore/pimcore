@@ -20,31 +20,31 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem;
 /**
  * Attribute info for attribute price system
  */
-class AttributePriceInfo extends AbstractPriceInfo implements IPriceInfo
+class AttributePriceInfo extends AbstractPriceInfo implements PriceInfoInterface
 {
     /**
-     * @var IPrice
+     * @var PriceInterface
      */
     protected $price;
 
     /**
-     * @var IPrice
+     * @var PriceInterface
      */
     protected $totalPrice;
 
-    public function __construct(IPrice $price, $quantity, IPrice $totalPrice)
+    public function __construct(PriceInterface $price, $quantity, PriceInterface $totalPrice)
     {
         $this->price = $price;
         $this->totalPrice = $totalPrice;
         $this->quantity = $quantity;
     }
 
-    public function getPrice(): IPrice
+    public function getPrice(): PriceInterface
     {
         return $this->price;
     }
 
-    public function getTotalPrice(): IPrice
+    public function getTotalPrice(): PriceInterface
     {
         return $this->totalPrice;
     }

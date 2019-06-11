@@ -117,7 +117,7 @@ $formatter = Pimcore::getContainer()->get('pimcore.locale.intl_formatter');
     $totalSum = 0;
     $defaultCurrency = \Pimcore\Bundle\EcommerceFrameworkBundle\Factory::getInstance()->getEnvironment()->getDefaultCurrency();
     foreach($paginator as $item):
-        /* @var \Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\IOrderListItem $item */
+        /* @var \Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderListItemInterface $item */
         $totalSum += $item->getTotalPrice();
         ?>
         <tr>

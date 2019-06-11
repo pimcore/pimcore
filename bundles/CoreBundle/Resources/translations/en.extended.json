@@ -285,6 +285,7 @@
   "fieldset": "Fieldset",
   "panel": "Panel",
   "tabpanel": "Tabpanel",
+  "tab_position": "Tab Position",
   "pattern": "Pattern",
   "variables": "Variables",
   "defaults": "Defaults",

@@ -15,12 +15,12 @@
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\Findologic;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\AbstractFilterType;
-use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\IProductList;
+use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\ProductListInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractFilterDefinitionType;
 
 class MultiSelect extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\MultiSelect
 {
-    public function getFilterFrontend(AbstractFilterDefinitionType $filterDefinition, IProductList $productList, $currentFilter)
+    public function getFilterFrontend(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList, $currentFilter)
     {
         $field = $this->getField($filterDefinition);
 
@@ -61,14 +61,14 @@ class MultiSelect extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService
 
     /**
      * @param AbstractFilterDefinitionType $filterDefinition
-     * @param IProductList                 $productList
+     * @param ProductListInterface                 $productList
      * @param array                                             $currentFilter
      * @param array                                             $params
      * @param bool                                              $isPrecondition
      *
      * @return mixed
      */
-    public function addCondition(AbstractFilterDefinitionType $filterDefinition, IProductList $productList, $currentFilter, $params, $isPrecondition = false)
+    public function addCondition(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList, $currentFilter, $params, $isPrecondition = false)
     {
         // init
         $field = $this->getField($filterDefinition);

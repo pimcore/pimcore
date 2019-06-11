@@ -916,7 +916,7 @@ class Asset extends Element\AbstractElement
             $list->addConditionParam('id != ?', $this->getId());
             $list->setOrderKey('filename');
             $list->setOrder('asc');
-            $this->siblings = $list->load();
+            $this->siblings = $list->getAssets();
         }
 
         return $this->siblings;

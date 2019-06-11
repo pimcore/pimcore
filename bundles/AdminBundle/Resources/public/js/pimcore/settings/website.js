@@ -32,7 +32,7 @@ pimcore.settings.website = Class.create({
             this.panel = new Ext.Panel({
                 id:"pimcore_website_settings",
                 title: t('website_settings'),
-                iconCls: "pimcore_icon_website",
+                iconCls: "pimcore_icon_website_settings",
                 border:false,
                 layout:"fit",
                 closable:true,

@@ -43,18 +43,6 @@ class HtmlToImage
     }
 
     /**
-     * @deprecated
-     *
-     * @return bool|mixed|string
-     *
-     * @throws \Exception
-     */
-    public static function getXvfbBinary()
-    {
-        return \Pimcore\Tool\Console::getExecutable('xvfb-run');
-    }
-
-    /**
      * @param $url
      * @param $outputFile
      * @param int $screenWidth
@@ -80,7 +68,7 @@ class HtmlToImage
         $arguments = ' ' . implode(' ', $options) . ' "' . $url . '" ' . $outputFile;
 
         // use xvfb if possible
-        if ($xvfb = self::getXvfbBinary()) {
+        if ($xvfb = Console::getExecutable('xvfb-run')) {
             $command = $xvfb . ' --auto-servernum --server-args="-screen 0, 1280x1024x24" ' .
                 self::getWkhtmltoimageBinary() . ' --use-xserver' . $arguments;
         } else {

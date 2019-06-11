@@ -22,7 +22,6 @@ use Pimcore\Db;
 use Pimcore\Event\DataObjectClassDefinitionEvents;
 use Pimcore\Event\Model\DataObject\ClassDefinitionEvent;
 use Pimcore\File;
-use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 
@@ -175,7 +174,7 @@ class ClassDefinition extends Model\AbstractModel
     /**
      * @param $id
      *
-     * @return mixed|null|ClassDefinition
+     * @return null|ClassDefinition
      *
      * @throws \Exception
      */
@@ -207,8 +206,6 @@ class ClassDefinition extends Model\AbstractModel
 
                 \Pimcore\Cache\Runtime::set($cacheKey, $class);
             } catch (\Exception $e) {
-                Logger::error($e);
-
                 return null;
             }
         }
@@ -219,7 +216,7 @@ class ClassDefinition extends Model\AbstractModel
     /**
      * @param string $name
      *
-     * @return self
+     * @return self|null
      */
     public static function getByName($name)
     {
@@ -228,12 +225,8 @@ class ClassDefinition extends Model\AbstractModel
             $id = $class->getDao()->getIdByName($name);
             if ($id) {
                 return self::getById($id);
-            } else {
-                throw new \Exception('There is no class with the name: ' . $name);
             }
         } catch (\Exception $e) {
-            Logger::error($e);
-
             return null;
         }
     }

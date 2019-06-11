@@ -26,9 +26,9 @@ use Pimcore\Model;
 class Listing extends Model\Listing\AbstractListing
 {
     /**
-     * @var array
+     * @var array|null
      */
-    public $units;
+    protected $units = null;
 
     /**
      * @param $key
@@ -45,12 +45,12 @@ class Listing extends Model\Listing\AbstractListing
     }
 
     /**
-     * @return array
+     * @return Model\DataObject\QuantityValue\Unit[]
      */
     public function getUnits()
     {
-        if (empty($this->units)) {
-            $this->load();
+        if ($this->units == null) {
+            $this->getDao()->load();
         }
 
         return $this->units;

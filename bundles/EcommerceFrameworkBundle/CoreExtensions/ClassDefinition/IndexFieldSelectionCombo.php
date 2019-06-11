@@ -16,7 +16,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\CoreExtensions\ClassDefinition
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\DependencyInjection\PimcoreEcommerceFrameworkExtension;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
-use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\IProductList;
+use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\ProductListInterface;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Select;
 
 class IndexFieldSelectionCombo extends Select
@@ -54,8 +54,8 @@ class IndexFieldSelectionCombo extends Select
 
             if ($this->getSpecificPriceField()) {
                 $options[] = [
-                    'key' => IProductList::ORDERKEY_PRICE,
-                    'value' => IProductList::ORDERKEY_PRICE
+                    'key' => ProductListInterface::ORDERKEY_PRICE,
+                    'value' => ProductListInterface::ORDERKEY_PRICE
                 ];
             }
         }

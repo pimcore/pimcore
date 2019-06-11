@@ -79,7 +79,7 @@ class NotificationEmailService
             $deeplink = '';
             $hostUrl = Tool::getHostUrl();
             if ($hostUrl !== '') {
-                $deeplink = $hostUrl . '/' . $this->router->generate('pimcore_admin_login') . '/deeplink?object_' . $subject->getId() . '_object';
+                $deeplink = $hostUrl . $this->router->generate('pimcore_admin_login') . '/deeplink?object_' . $subject->getId() . '_object';
             }
 
             foreach ($recipients as $language => $recipientsPerLanguage) {

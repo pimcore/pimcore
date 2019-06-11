@@ -16,18 +16,19 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\DependencyInjection;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\AvailabilitySystem\AvailabilitySystemLocator;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartManagerLocator;
-use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICartManagerLocator;
+use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartManagerLocatorInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\CheckoutManagerFactoryLocator;
+use Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\CheckoutManagerFactoryLocatorInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\CommitOrderProcessorLocator;
-use Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\ICheckoutManagerFactoryLocator;
-use Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\ICommitOrderProcessorLocator;
+use Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\CommitOrderProcessorLocatorInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterServiceLocator;
-use Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\IFilterServiceLocator;
-use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\IOrderManagerLocator;
+use Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterServiceLocatorInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Legacy\InterfaceLoader;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderManagerLocator;
+use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderManagerLocatorInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\PriceSystemLocator;
-use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IPricingManagerLocator;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\PricingManagerLocator;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\PricingManagerLocatorInterface;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ChildDefinition;
@@ -57,6 +58,11 @@ class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
      */
     protected function loadInternal(array $config, ContainerBuilder $container)
     {
+
+        //necessary to make sure custom services still can use old interfaces (e.g. IProduct). needs to be removed
+        //when BC layer of interfaces is removed.
+        InterfaceLoader::loadInterfaces();
+
         $loader = new YamlFileLoader(
             $container,
             new FileLocator(__DIR__ . '/../Resources/config')
@@ -166,7 +172,7 @@ class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
 
         $this->setupTenantAwareComponentLocator(
             $container,
-            ICartManagerLocator::class,
+            CartManagerLocatorInterface::class,
             $mapping,
             CartManagerLocator::class,
             [
@@ -203,7 +209,7 @@ class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
 
         $this->setupTenantAwareComponentLocator(
             $container,
-            IOrderManagerLocator::class,
+            OrderManagerLocatorInterface::class,
             $mapping,
             OrderManagerLocator::class,
             [
@@ -237,7 +243,7 @@ class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
 
         $this->setupTenantAwareComponentLocator(
             $container,
-            IPricingManagerLocator::class,
+            PricingManagerLocatorInterface::class,
             $mapping,
             PricingManagerLocator::class,
             [
@@ -331,7 +337,7 @@ class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
 
         $this->setupTenantAwareComponentLocator(
             $container,
-            ICommitOrderProcessorLocator::class,
+            CommitOrderProcessorLocatorInterface::class,
             $commitOrderProcessorMapping,
             CommitOrderProcessorLocator::class,
             [
@@ -341,7 +347,7 @@ class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
 
         $this->setupTenantAwareComponentLocator(
             $container,
-            ICheckoutManagerFactoryLocator::class,
+            CheckoutManagerFactoryLocatorInterface::class,
             $checkoutManagerFactoryMapping,
             CheckoutManagerFactoryLocator::class,
             [
@@ -480,7 +486,7 @@ class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
 
         $this->setupTenantAwareComponentLocator(
             $container,
-            IFilterServiceLocator::class,
+            FilterServiceLocatorInterface::class,
             $mapping,
             FilterServiceLocator::class,
             [

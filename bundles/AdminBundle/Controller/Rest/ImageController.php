@@ -59,7 +59,7 @@ class ImageController extends AbstractRestController
         $thumbnails = [];
 
         $list = new Config\Listing();
-        $items = $list->load();
+        $items = $list->getThumbnails();
 
         foreach ($items as $item) {
             $thumbnails[] = [

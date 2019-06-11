@@ -72,8 +72,8 @@ pimcore.object.tags.image = Class.create(pimcore.object.tags.abstract, {
                 items:
                     [{
                         xtype: "tbspacer",
-                        width: 40,
-                        height: 16,
+                        width: 48,
+                        height: 24,
                         cls: "pimcore_icon_droptarget_upload"
 
                     },

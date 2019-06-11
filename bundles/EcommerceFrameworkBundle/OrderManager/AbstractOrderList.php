@@ -17,7 +17,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
 use Zend\Paginator\Adapter\AdapterInterface;
 
-abstract class AbstractOrderList implements IOrderList
+abstract class AbstractOrderList implements OrderListInterface
 {
     /**
      * @var int
@@ -77,7 +77,7 @@ abstract class AbstractOrderList implements IOrderList
     /**
      * @param array $row
      *
-     * @return IOrderListItem
+     * @return OrderListItemInterface
      */
     protected function createResultItem(array $row)
     {
@@ -89,7 +89,7 @@ abstract class AbstractOrderList implements IOrderList
     /**
      * @param string $type
      *
-     * @return IOrderList
+     * @return OrderListInterface
      */
     public function setListType($type)
     {
@@ -127,7 +127,7 @@ abstract class AbstractOrderList implements IOrderList
     }
 
     /**
-     * @return IOrderListItem[]
+     * @return OrderListItemInterface[]
      */
     public function load()
     {
@@ -158,7 +158,7 @@ abstract class AbstractOrderList implements IOrderList
      * @param  int $offset           Page offset
      * @param  int $itemCountPerPage Number of items per page
      *
-     * @return IOrderListItem[]
+     * @return OrderListItemInterface[]
      */
     public function getItems($offset, $itemCountPerPage)
     {

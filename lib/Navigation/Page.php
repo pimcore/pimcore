@@ -1220,7 +1220,6 @@ abstract class Page extends Container
                 'rev' => $this->getRev(),
                 'customHtmlAttribs' => $this->getCustomHtmlAttribs(),
                 'order' => $this->getOrder(),
-                'resource' => $this->getResource(),
                 'active' => $this->isActive(),
                 'visible' => $this->isVisible(),
                 'type' => get_class($this),

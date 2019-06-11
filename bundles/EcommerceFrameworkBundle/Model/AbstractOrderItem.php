@@ -25,7 +25,7 @@ class AbstractOrderItem extends \Pimcore\Model\DataObject\Concrete
     /**
      * @throws UnsupportedException
      *
-     * @return \Pimcore\Bundle\EcommerceFrameworkBundle\Model\ICheckoutable
+     * @return \Pimcore\Bundle\EcommerceFrameworkBundle\Model\CheckoutableInterface
      */
     public function getProduct()
     {
@@ -33,7 +33,7 @@ class AbstractOrderItem extends \Pimcore\Model\DataObject\Concrete
     }
 
     /**
-     * @param \Pimcore\Bundle\EcommerceFrameworkBundle\Model\ICheckoutable $product
+     * @param \Pimcore\Bundle\EcommerceFrameworkBundle\Model\CheckoutableInterface $product
      *
      * @throws UnsupportedException
      */

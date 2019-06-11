@@ -14,8 +14,8 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\IEnvironment;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IIndexable;
+use Pimcore\Bundle\EcommerceFrameworkBundle\EnvironmentInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IndexableInterface;
 use Pimcore\Db\ConnectionInterface;
 
 /**
@@ -26,7 +26,7 @@ use Pimcore\Db\ConnectionInterface;
 class DefaultMysqlSubTenantConfig extends DefaultMysql
 {
     /**
-     * @var IEnvironment
+     * @var EnvironmentInterface
      */
     protected $environment;
 
@@ -44,7 +44,7 @@ class DefaultMysqlSubTenantConfig extends DefaultMysql
         array $searchAttributes,
         array $filterTypes,
         array $options = [],
-        IEnvironment $environment,
+        EnvironmentInterface $environment,
         ConnectionInterface $db
     ) {
         $this->environment = $environment;
@@ -86,11 +86,11 @@ class DefaultMysqlSubTenantConfig extends DefaultMysql
     /**
      * checks, if product should be in index for current tenant (not subtenant)
      *
-     * @param IIndexable $object
+     * @param IndexableInterface $object
      *
      * @return bool
      */
-    public function inIndex(IIndexable $object)
+    public function inIndex(IndexableInterface $object)
     {
         $tenants = $object->getTenants();
 
@@ -138,12 +138,12 @@ class DefaultMysqlSubTenantConfig extends DefaultMysql
      * In this case tenants are also Pimcore objects and are assigned to product objects.
      * This method extracts assigned tenants and returns an array of [object-ID, subtenant-ID]
      *
-     * @param IIndexable $object
+     * @param IndexableInterface $object
      * @param null $subObjectId
      *
      * @return mixed $subTenantData
      */
-    public function prepareSubTenantEntries(IIndexable $object, $subObjectId = null)
+    public function prepareSubTenantEntries(IndexableInterface $object, $subObjectId = null)
     {
         $subTenantData = [];
         if ($this->inIndex($object)) {

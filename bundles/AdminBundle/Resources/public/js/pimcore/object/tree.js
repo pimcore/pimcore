@@ -684,7 +684,7 @@ pimcore.object.tree = Class.create({
                 });
                 sortByItems.push({
                     text: t('by_index'),
-                    iconCls: "pimcore_icon_show_in_tree",
+                    iconCls: "pimcore_icon_index_sorting",
                     handler: this.changeObjectChildrenSortBy.bind(this, tree, record, 'index')
                 });
             }

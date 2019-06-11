@@ -74,7 +74,7 @@ class Folder extends Model\Asset
             $list->setOrderKey('filename');
             $list->setOrder('asc');
 
-            $this->children = $list->load();
+            $this->children = $list->getAssets();
         }
 
         return $this->children;
