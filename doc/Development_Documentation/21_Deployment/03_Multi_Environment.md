@@ -14,18 +14,18 @@ Having the variable set, there is a special loading order for all configuration 
 Loading example for `PIMCORE_ENVIRONMENT = dev`: 
 
 ```
-app/config/pimcore/system_dev.php
-var/config/system_dev.php
-app/config/pimcore/system.php
-var/config/system.php
+app/config/pimcore/system_dev.yml
+var/config/system_dev.yml
+app/config/pimcore/system.yml
+var/config/system.yml
 ```
 
 The value of `PIMCORE_ENVIRONMENT` is used as a part of the file name separated by `_`.  If you haven't set the environment
 variable, the loading order of configuration files looks like, below.
 
 ```
-app/config/pimcore/system.php
-var/config/system.php
+app/config/pimcore/system.yml
+var/config/system.yml
 ```
 
 > **Note:** If you put your configurations into `app/config/pimcore/` they might not writable by the Pimcore backend UI. 

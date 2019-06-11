@@ -233,8 +233,7 @@ is because the tests run in the `test` environment and that environment is set u
 which is defined as `PIMCORE_TEST_DB_DSN` environment variable by default (see [config_test.yml](https://github.com/pimcore/pimcore/blob/master/app/config/config_test.yml)).
 
 You can either define the database DSN as environment variable on your shell, hardcode it into the PHPUnit config file (not
-recommended) or remove/alter the customized `doctrine` section from `config_test.yml` completely to have Pimcore connect
-to the DB defined in `system.php` during tests. What to use depends highly on your environment and your tests - if you have
+recommended) or remove/alter the customized `doctrine` section from `config_test.yml` completely. What to use depends highly on your environment and your tests - if you have
 tests which make changes to the database you'll probably want to run them on a different database with a predefined data
 set. The example below just passes the DB connection as env variable:
 
