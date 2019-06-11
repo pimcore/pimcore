@@ -221,6 +221,7 @@ class Datatrans extends AbstractPayment
         $formAttributes['data-success-url'] = $config['successUrl'];
         $formAttributes['data-error-url'] = $config['errorUrl'];
         $formAttributes['data-cancel-url'] = $config['cancelUrl'];
+        $formAttributes['data-upp-start-target'] = $config['uppStartTarget'] ? $config['uppStartTarget'] : '_top';
         if ($config['useAlias']) {
             $formAttributes['data-use-alias'] = 'true';
         }
