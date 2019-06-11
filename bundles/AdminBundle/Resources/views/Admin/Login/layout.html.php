@@ -25,7 +25,7 @@
     if ($config->general->loginscreencustomimage) {
         $backgroundImageUrl = $config->general->loginscreencustomimage;
     } else {
-        $defaultImages = ['pimconaut-ecommerce.svg', 'pimconaut-world.svg'];
+        $defaultImages = ['pimconaut-ecommerce.svg', 'pimconaut-world.svg', 'pimconaut-engineer.svg', 'pimconaut-moon.svg', 'pimconaut-rocket.svg'];
         $backgroundImageUrl = '/bundles/pimcoreadmin/img/login/' . $defaultImages[array_rand($defaultImages)];
     }
 ?>
@@ -56,6 +56,7 @@
     <?php $view->slots()->output('_content') ?>
 </div>
 
+<?php /*
 <div id="news">
     <h2>News</h2>
     <hr>
@@ -67,11 +68,14 @@
         <a href="#">Priint and Pimcore announce technology partnership to ease publishing workflows</a>
     </p>
 </div>
+ */ ?>
 
 <div id="contentBackground"></div>
 <div id="background"></div>
 <div id="footer">
-    &copy; 2009-<?= date("Y") ?> <a href="http://www.pimcore.org/">pimcore GmbH</a>
+    &copy; 2009-<?= date("Y") ?> <a href="http://www.pimcore.org/">Pimcore GmbH</a><br>
+    BE RESPECTFUL AND HONOR OUR WORK FOR FREE & OPEN SOURCE SOFTWARE BY NOT REMOVING OUR COPYRIGHT NOTICE!
+    KEEP IN MIND THAT REMOVING THE COPYRIGHT NOTICE IS VIOLATING OUR LICENSING TERMS!
 </div>
 
 
