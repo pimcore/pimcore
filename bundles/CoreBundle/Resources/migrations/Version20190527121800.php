@@ -24,6 +24,7 @@ class Version20190527121800 extends AbstractPimcoreMigration
         if($configFile) {
             $this->migrateBranding($configFile);
             $this->migrateEmail($configFile);
+            $this->migrateDevmode($configFile);
         }
 
     }
@@ -232,6 +233,33 @@ class Version20190527121800 extends AbstractPimcoreMigration
         } catch (\Exception $e) {
             $this->writeMessage('An error occurred while performing system configuration migration: ' . $e->getMessage());
         }
+
+    }
+
+    public function migrateDevmode($systemConfigFile)
+    {
+        try {
+            $systemSettings = Yaml::parseFile($systemConfigFile);
+            $debugModeFile = PIMCORE_CONFIGURATION_DIRECTORY . '/debug-mode.php';
+
+            //move devmode setting from system configuration tree to debug-mode.php
+            if (file_exists($debugModeFile)) {
+                $debugConf = include $debugModeFile;
+
+                if (is_array($debugConf)) {
+                    $debugConf['devmode'] = $systemSettings['pimcore']['general']['devmode'];
+                    File::putPhpFile($debugModeFile, to_php_data_file_format($debugConf));
+
+                    unset($systemSettings['pimcore']['general']['devmode']);
+                    $settings = Yaml::dump($systemSettings,6);
+                    File::put($systemConfigFile, $settings);
+                }
+            }
+        } catch (\Exception $e) {
+            $this->writeMessage('An error occurred while performing system configuration migration: ' . $e->getMessage());
+        }
+
+
 
     }
 }

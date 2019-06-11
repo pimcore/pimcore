@@ -382,6 +382,7 @@ class SettingsController extends AdminController
         }
         $valueArray['general']['debug'] = $debugMode['active'];
         $valueArray['general']['debug_ip'] = $debugMode['ip'];
+        $valueArray['general']['devmode'] = $debugMode['devmode'];
 
         $response = [
             'values' => $valueArray,
@@ -465,7 +466,6 @@ class SettingsController extends AdminController
                 'default_language' => $values['general.defaultLanguage'],
                 'disable_usage_statistics' => $values['general.disableusagestatistics'],
                 'debug_admin_translations' => $values['general.debug_admin_translations'],
-                'devmode' => $values['general.devmode'],
                 'instance_identifier' => $values['general.instanceIdentifier'],
                 'show_cookie_notice' => $values['general.show_cookie_notice'],
             ],
@@ -591,6 +591,7 @@ class SettingsController extends AdminController
         File::putPhpFile($debugModeFile, to_php_data_file_format([
             'active' => $values['general.debug'],
             'ip' => $values['general.debug_ip'],
+            'devmode' => $values['general.devmode']
         ]));
 
         return $this->adminJson(['success' => true]);

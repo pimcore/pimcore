@@ -290,7 +290,6 @@ class Config
                     "loginscreencustomimage" => $config['branding']['login_screen_custom_image'],
                     "disableusagestatistics" => $config['general']['disable_usage_statistics'],
                     "debug_admin_translations" => $config['general']['debug_admin_translations'],
-                    "devmode" => $config['general']['devmode'],
                     "instanceIdentifier" => $config['general']['instance_identifier'],
                     "show_cookie_notice" => $config['general']['show_cookie_notice']
                 ],
