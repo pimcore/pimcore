@@ -169,8 +169,6 @@ class ConfigWriter
         $configFile = PIMCORE_CONFIGURATION_DIRECTORY . '/system.yml';
         $settingsYml = Yaml::dump($settings, 5);
         File::put($configFile, $settingsYml);
-        p_r('done'); die;
-
     }
 
     public function writeDbConfig(array $config = [])
