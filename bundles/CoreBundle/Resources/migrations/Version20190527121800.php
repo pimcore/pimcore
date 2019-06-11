@@ -13,7 +13,7 @@ class Version20190527121800 extends AbstractPimcoreMigration
     {
         return false;
     }
-    
+
     /**
      * @param Schema $schema
      */
@@ -125,9 +125,9 @@ class Version20190527121800 extends AbstractPimcoreMigration
                 $migrate = true;
             }
 
-            if(isset($settings['pimcore']['general']['loginscreencustomimage'])) {
-                $settings['pimcore_admin']['branding']['loginscreencustomimage'] = $settings['pimcore']['general']['loginscreencustomimage'];
-                unset($settings['pimcore']['general']['loginscreencustomimage']);
+            if(isset($settings['pimcore']['general']['login_screen_custom_image'])) {
+                $settings['pimcore_admin']['branding']['login_screen_custom_image'] = $settings['pimcore']['general']['login_screen_custom_image'];
+                unset($settings['pimcore']['general']['login_screen_custom_image']);
                 $migrate = true;
             }
 
@@ -151,6 +151,15 @@ class Version20190527121800 extends AbstractPimcoreMigration
     {
         try {
             $systemSettings = Yaml::parseFile($systemConfigFile);
+
+            //update transport method from mail to sendmail in email & newsletter settings
+            if (isset($systemSettings["pimcore"]["email"]["method"]) && $systemSettings["pimcore"]["email"]["method"] == "mail") {
+                $systemSettings["pimcore"]["email"]["method"] = "sendmail";
+            }
+
+            if (isset($systemSettings["pimcore"]["newsletter"]["method"]) && $systemSettings["pimcore"]["newsletter"]["method"] == "mail") {
+                $systemSettings["pimcore"]["newsletter"]["method"] = "sendmail";
+            }
 
             if (isset($systemSettings['pimcore']['email'])) {
                 $settings = [
