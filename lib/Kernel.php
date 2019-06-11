@@ -102,7 +102,10 @@ abstract class Kernel extends SymfonyKernel
 
 
         //load system configuration
-        $loader->load(Config::locateConfigFile('system.yml'));
+        $systemConfigFile = Config::locateConfigFile('system.yml');
+        if(file_exists($systemConfigFile)) {
+            $loader->load($systemConfigFile);
+        }
 
         $bundleConfigLocator = new BundleConfigLocator($this);
         foreach ($bundleConfigLocator->locate('config') as $bundleConfig) {
