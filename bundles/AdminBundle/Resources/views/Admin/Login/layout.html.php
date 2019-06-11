@@ -79,6 +79,7 @@
 </div>
 
 
+<script src="/bundles/pimcoreadmin/js/lib/jquery-3.3.1.min.js"></script>
 <script type="text/javascript" src="https://liveupdate.pimcore.org/imageservice"></script>
 
 <?php $view->slots()->output('below_footer') ?>
