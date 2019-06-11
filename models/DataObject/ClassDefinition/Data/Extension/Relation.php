@@ -29,11 +29,11 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data\Extension;
 trait Relation
 {
     /**
-     * @param bool|false $asArray
+     * @param bool $asArray
      *
      * @return string[]
      */
-    protected function getPhpDocClassString($asArray = false)
+    protected function getPhpDocClassString(bool $asArray = false): array
     {
         // init
         $class = [];
@@ -42,7 +42,7 @@ trait Relation
         // add documents
         if (method_exists($this, 'getDocumentsAllowed') && $this->getDocumentsAllowed()) {
             $documentTypes = $this->getDocumentTypes();
-            if (count($documentTypes) == 0) {
+            if (count($documentTypes) === 0) {
                 $class[] = '\Pimcore\Model\Document\Page' . $strArray;
                 $class[] = '\Pimcore\Model\Document\Snippet' . $strArray;
                 $class[] = '\Pimcore\Model\Document' . $strArray;
@@ -56,7 +56,7 @@ trait Relation
         // add asset
         if (method_exists($this, 'getAssetsAllowed') && $this->getAssetsAllowed()) {
             $assetTypes = $this->getAssetTypes();
-            if (count($assetTypes) == 0) {
+            if (count($assetTypes) === 0) {
                 $class[] = '\Pimcore\Model\Asset' . $strArray;
             } elseif (is_array($assetTypes)) {
                 foreach ($assetTypes as $item) {
@@ -67,8 +67,8 @@ trait Relation
 
         // add objects
         if ($this->getObjectsAllowed()) {
-            $classes = $this->getClasses() ? $this->getClasses() : [];
-            if (count($classes) == 0) {
+            $classes = $this->getClasses();
+            if (count($classes) === 0) {
                 $class[] = '\Pimcore\Model\DataObject\AbstractObject' . $strArray;
             } elseif (is_array($classes)) {
                 foreach ($this->getClasses() as $item) {

@@ -82,7 +82,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
     /**
      * @return bool
      */
-    public function getObjectsAllowed()
+    public function getObjectsAllowed(): bool
     {
         return true;
     }

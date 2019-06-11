@@ -1003,15 +1003,15 @@ class Service extends Model\AbstractModel
     }
 
     /**
-     * @param $data
-     * @param $type
+     * @param array $data
+     * @param string $type
      *
-     * @return array|string
+     * @return array
      */
-    public static function fixAllowedTypes($data, $type)
+    public static function fixAllowedTypes(array $data, string $type): array
     {
         // this is the new method with Ext.form.MultiSelect
-        if (is_array($data) && count($data)) {
+        if (count($data)) {
             $first = reset($data);
             if (!is_array($first)) {
                 $parts = $data;
@@ -1039,7 +1039,7 @@ class Service extends Model\AbstractModel
             }
         }
 
-        return $data ? $data : [];
+        return $data;
     }
 
     /**

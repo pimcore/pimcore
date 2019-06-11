@@ -72,38 +72,38 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
      *
      * @var bool
      */
-    public $objectsAllowed;
+    public $objectsAllowed = false;
 
     /**
      *
      * @var bool
      */
-    public $assetsAllowed;
+    public $assetsAllowed = false;
 
     /**
      * Allowed asset types
      *
      * @var array
      */
-    public $assetTypes;
+    public $assetTypes = [];
 
     /**
      *
      * @var bool
      */
-    public $documentsAllowed;
+    public $documentsAllowed = false;
 
     /**
      * Allowed document types
      *
      * @var array
      */
-    public $documentTypes;
+    public $documentTypes = [];
 
     /**
      * @return bool
      */
-    public function getObjectsAllowed()
+    public function getObjectsAllowed(): bool
     {
         return $this->objectsAllowed;
     }
@@ -113,7 +113,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
      *
      * @return $this
      */
-    public function setObjectsAllowed($objectsAllowed)
+    public function setObjectsAllowed(bool $objectsAllowed)
     {
         $this->objectsAllowed = $objectsAllowed;
 
@@ -123,7 +123,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
     /**
      * @return bool
      */
-    public function getDocumentsAllowed()
+    public function getDocumentsAllowed(): bool
     {
         return $this->documentsAllowed;
     }
@@ -133,7 +133,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
      *
      * @return $this
      */
-    public function setDocumentsAllowed($documentsAllowed)
+    public function setDocumentsAllowed(bool $documentsAllowed)
     {
         $this->documentsAllowed = $documentsAllowed;
 
@@ -143,7 +143,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
     /**
      * @return array
      */
-    public function getDocumentTypes()
+    public function getDocumentTypes(): array
     {
         return $this->documentTypes;
     }
@@ -153,7 +153,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
      *
      * @return $this
      */
-    public function setDocumentTypes($documentTypes)
+    public function setDocumentTypes(array $documentTypes)
     {
         $this->documentTypes = Element\Service::fixAllowedTypes($documentTypes, 'documentTypes');
 
@@ -164,7 +164,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
      *
      * @return bool
      */
-    public function getAssetsAllowed()
+    public function getAssetsAllowed(): bool
     {
         return $this->assetsAllowed;
     }
@@ -175,7 +175,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
      *
      * @return $this
      */
-    public function setAssetsAllowed($assetsAllowed)
+    public function setAssetsAllowed(bool $assetsAllowed)
     {
         $this->assetsAllowed = $assetsAllowed;
 
@@ -185,7 +185,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
     /**
      * @return array
      */
-    public function getAssetTypes()
+    public function getAssetTypes(): array
     {
         return $this->assetTypes;
     }
@@ -195,7 +195,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
      *
      * @return $this
      */
-    public function setAssetTypes($assetTypes)
+    public function setAssetTypes(array $assetTypes)
     {
         $this->assetTypes = Element\Service::fixAllowedTypes($assetTypes, 'assetTypes');
 

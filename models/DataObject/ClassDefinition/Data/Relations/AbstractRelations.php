@@ -43,7 +43,7 @@ abstract class AbstractRelations extends Data implements CustomResourcePersistin
      *
      * @var array
      */
-    public $classes;
+    public $classes = [];
 
     /** Optional path formatter class
      * @var null|string
@@ -53,7 +53,7 @@ abstract class AbstractRelations extends Data implements CustomResourcePersistin
     /**
      * @return array
      */
-    public function getClasses()
+    public function getClasses(): array
     {
         return $this->classes;
     }
@@ -63,7 +63,7 @@ abstract class AbstractRelations extends Data implements CustomResourcePersistin
      *
      * @return $this
      */
-    public function setClasses($classes)
+    public function setClasses(array $classes)
     {
         $this->classes = Element\Service::fixAllowedTypes($classes, 'classes');
 
