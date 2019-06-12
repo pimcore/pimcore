@@ -28,6 +28,10 @@
     -webkit-box-sizing: content-box !important;
 }
 
+.cke_dialog {
+    z-index: 100300 !important;
+}
+
 .cke_toolgroup, .cke_combo_button {
     border-bottom: 0 !important;
 }
