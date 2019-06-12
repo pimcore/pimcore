@@ -18,6 +18,7 @@
 namespace Pimcore\Model\DataObject;
 
 use Pimcore\Config;
+use Pimcore\Db;
 use Pimcore\Event\DataObjectEvents;
 use Pimcore\Event\Model\DataObjectEvent;
 use Pimcore\Logger;
@@ -811,5 +812,26 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
     public static function isLazyLoadingDisabled()
     {
         return self::$disableLazyLoading;
+    }
+
+    /**
+     * @internal
+     *
+     * @param $objectId
+     * @param $modificationDate
+     * @param bool $force
+     * @return Model\Version|void
+     */
+    public static function getLatestVersionByObjectIdAndLatestModificationDate($objectId, $modificationDate, $force = false) {
+        $db = Db::get();
+        $versionData = $db->fetchRow("SELECT id,date FROM versions WHERE cid = ? AND ctype='object' ORDER BY `id` DESC LIMIT 1", $objectId);
+
+        if ($versionData && $versionData['id'] && ($versionData['date'] > $modificationDate || $force)) {
+            $version = Model\Version::getById($versionData['id']);
+
+            return $version;
+        }
+
+        return;
     }
 }

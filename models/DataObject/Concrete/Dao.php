@@ -415,16 +415,12 @@ class Dao extends Model\DataObject\AbstractObject\Dao
      */
     public function getLatestVersion($force = false)
     {
-        $versionData = $this->db->fetchRow("SELECT id,date FROM versions WHERE cid = ? AND ctype='object' ORDER BY `id` DESC LIMIT 1", $this->model->getId());
-
-        if ($versionData && $versionData['id'] && ($versionData['date'] > $this->model->getModificationDate() || $force)) {
-            $version = Model\Version::getById($versionData['id']);
-
-            return $version;
+        if ($this->model instanceof DataObject\Concrete) {
+            return DataObject\Concrete::getLatestVersionByObjectIdAndLatestModificationDate($this->model->getId(), $this->model->getModificationDate());
         }
-
         return;
     }
+
 
     public function deleteAllTasks()
     {
