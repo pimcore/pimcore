@@ -185,6 +185,7 @@ class ConfigWriter
         File::putPhpFile(PIMCORE_CONFIGURATION_DIRECTORY . '/debug-mode.php', to_php_data_file_format([
             'active' => true,
             'ip' => '',
+            'devmode' => false,
         ]));
     }
 
