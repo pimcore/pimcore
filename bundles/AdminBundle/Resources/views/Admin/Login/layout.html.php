@@ -18,7 +18,7 @@
         <link rel="stylesheet" type="text/css" href="<?= $pluginCssPath ?>?_dc=<?= $pluginDcValue; ?>"/>
     <?php endforeach; ?>
 </head>
-<body>
+<body class="pimcore_version_6">
 
 <?php
     $config = $this->config;
