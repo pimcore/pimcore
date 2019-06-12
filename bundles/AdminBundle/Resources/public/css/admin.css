@@ -1867,11 +1867,11 @@ span.warning {
 }
 
 .pimcore_main_accordion .x-accordion-hd .x-tool-right {
-    background: url(/bundles/pimcoreadmin/img/material-icons/main-accordion-arrow-right.svg) center center no-repeat !important;
+    background: url(/bundles/pimcoreadmin/img/main-accordion-arrow-right.svg) center center no-repeat !important;
 }
 
 .pimcore_main_accordion .x-accordion-hd .x-tool-left {
-    background: url(/bundles/pimcoreadmin/img/material-icons/main-accordion-arrow-right.svg) center center no-repeat !important;
+    background: url(/bundles/pimcoreadmin/img/main-accordion-arrow-right.svg) center center no-repeat !important;
     transform: scaleX(-1);
 }
 

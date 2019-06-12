@@ -641,7 +641,7 @@ class Config
 
         return [
             'default' => [
-                'iconCls' => 'pimcore_icon_perspective',
+                'iconCls' => 'pimcore_nav_icon_perspective',
                 'elementTree' => $elementTree,
                 'dashboards' => [
                     'predefined' => [
