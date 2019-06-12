@@ -97,7 +97,7 @@ $user      = $userProxy->getUser();
     </script>
 </head>
 
-<body>
+<body class="pimcore_version_6">
 
 <div id="pimcore_loading">
     <div class="spinner">
