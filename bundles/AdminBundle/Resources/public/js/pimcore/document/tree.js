@@ -121,6 +121,7 @@ pimcore.document.tree = Class.create({
             id: this.config.treeId,
             title: this.config.treeTitle,
             iconCls: this.config.treeIconCls,
+            cls: this.config['rootVisible'] ? '' : 'pimcore_tree_no_root_node',
             autoScroll:true,
             autoLoad: false,
             animate: false,
