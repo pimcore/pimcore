@@ -210,6 +210,10 @@
     border: 0;
 }
 
+.x-action-col-icon {
+    background-size: 16px !important;
+}
+
 .x-column-header-inner {
     padding-top: 1px;
     padding-bottom: 1px;
