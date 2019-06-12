@@ -97,17 +97,17 @@ class Datatrans extends AbstractPayment
         // set endpoint depending on mode
         if ('live' === $options['mode']) {
             $this->endpoint = array_merge($this->endpoint, [
-                'form' => 'https://payment.datatrans.biz/upp/jsp/upStart.jsp',
-                'script' => 'https://payment.datatrans.biz/upp/payment/js/datatrans-1.0.2.js',
-                'xmlAuthorize' => 'https://payment.datatrans.biz/upp/jsp/XML_authorize.jsp',
-                'xmlProcessor' => 'https://payment.datatrans.biz/upp/jsp/XML_processor.jsp',
+                'form' => 'https://pay.datatrans.com/upp/jsp/upStart.jsp',
+                'script' => 'https://pay.datatrans.com/upp/payment/js/datatrans-1.0.2.js',
+                'xmlAuthorize' => 'https://pay.datatrans.com/upp/jsp/XML_authorize.jsp',
+                'xmlProcessor' => 'https://pay.datatrans.com/upp/jsp/XML_processor.jsp',
             ]);
         } else {
             $this->endpoint = array_merge($this->endpoint, [
-                'form' => 'https://pilot.datatrans.biz/upp/jsp/upStart.jsp',
-                'script' => 'https://pilot.datatrans.biz/upp/payment/js/datatrans-1.0.2.js',
-                'xmlAuthorize' => 'https://pilot.datatrans.biz/upp/jsp/XML_authorize.jsp',
-                'xmlProcessor' => 'https://pilot.datatrans.biz/upp/jsp/XML_processor.jsp',
+                'form' => 'https://pay.sandbox.datatrans.com/upp/jsp/upStart.jsp',
+                'script' => 'https://pay.sandbox.datatrans.com/upp/payment/js/datatrans-1.0.2.js',
+                'xmlAuthorize' => 'https://pay.sandbox.datatrans.com/upp/jsp/XML_authorize.jsp',
+                'xmlProcessor' => 'https://pay.sandbox.datatrans.com/upp/jsp/XML_processor.jsp',
             ]);
         }
     }
