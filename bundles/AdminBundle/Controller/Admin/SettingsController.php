@@ -539,6 +539,7 @@ class SettingsController extends AdminController
         $settings['pimcore_admin'] = [
             'branding' =>
                 [
+                    'login_screen_invert_colors' => $values['branding.login_screen_invert_colors'],
                     'color_login_screen' => $values['branding.color_login_screen'],
                     'color_admin_interface' => $values['branding.color_admin_interface'],
                     'login_screen_custom_image' => $values['general.loginscreencustomimage'],

@@ -393,6 +393,7 @@ class Config
                     'usespecific' => $config['newsletter']['use_specific']
                 ],
                 'branding' => [
+                    'login_screen_invert_colors' => $config['branding']['login_screen_invert_colors'],
                     'color_login_screen' => $config['branding']['color_login_screen'],
                     'color_admin_interface' => $config['branding']['color_admin_interface']
                 ],

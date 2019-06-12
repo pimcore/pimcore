@@ -1,5 +1,8 @@
 <?php
 /** @var $view \Pimcore\Templating\PhpEngine */
+
+$config = $this->config;
+
 ?>
 <!DOCTYPE html>
 <html>
@@ -18,10 +21,9 @@
         <link rel="stylesheet" type="text/css" href="<?= $pluginCssPath ?>?_dc=<?= $pluginDcValue; ?>"/>
     <?php endforeach; ?>
 </head>
-<body class="pimcore_version_6">
+<body class="pimcore_version_6 <?= $config->branding->login_screen_invert_colors ? 'inverted' : '' ?>">
 
 <?php
-    $config = $this->config;
     if ($config->general->loginscreencustomimage) {
         $backgroundImageUrl = $config->general->loginscreencustomimage;
     } else {
@@ -49,7 +51,7 @@
 <?php } ?>
 
 <div id="logo">
-    <img src="/admin/settings/display-custom-logo?white=true">
+    <img src="/admin/settings/display-custom-logo<?= $config->branding->login_screen_invert_colors ? '' : '?white=true' ?>">
 </div>
 
 <div id="content">

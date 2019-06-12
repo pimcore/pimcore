@@ -214,6 +214,12 @@ pimcore.settings.system = Class.create({
                                 width: 330,
                                 value: this.getValue("branding.color_admin_interface"),
                                 name: 'branding.color_admin_interface'
+                            }, {
+                                xtype: "checkbox",
+                                fieldLabel: t('invert_colors_on_login_screen'),
+                                width: 330,
+                                checked: this.getValue("branding.login_screen_invert_colors"),
+                                name: 'branding.login_screen_invert_colors'
                             }]
                         }, {
                             xtype: 'fieldset',
