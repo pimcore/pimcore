@@ -173,7 +173,7 @@ class ConfigWriter
 
     public function writeDbConfig(array $config = [])
     {
-        if(count($config)) {
+        if (count($config)) {
             $content = Yaml::dump($config);
             $configFile = PIMCORE_APP_ROOT.'/config/local/database.yml';
             File::put($configFile, $content);

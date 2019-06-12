@@ -333,7 +333,6 @@ class Configuration implements ConfigurationInterface
             ->end();
     }
 
-
     /**
      * Add asset specific extension config
      *
@@ -951,7 +950,7 @@ class Configuration implements ConfigurationInterface
                         ->arrayNode('debug')
                             ->children()
                                 ->scalarNode('email_addresses')
-                                    ->defaultValue("")
+                                    ->defaultValue('')
                                 ->end()
                             ->end()
                         ->end()
@@ -992,7 +991,7 @@ class Configuration implements ConfigurationInterface
                         ->arrayNode('debug')
                             ->children()
                                 ->scalarNode('email_addresses')
-                                    ->defaultValue("")
+                                    ->defaultValue('')
                                 ->end()
                             ->end()
                         ->end()

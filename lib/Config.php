@@ -278,132 +278,132 @@ class Config
         if (is_array($config)) {
             //legacy system configuration mapping
             $systemConfig = new \Pimcore\Config\Config([
-                "general" => [
-                    "timezone" => $config['general']['timezone'],
-                    "path_variable" => $config['general']['path_variable'],
-                    "domain" => $config['general']['domain'],
-                    "redirect_to_maindomain" => $config['general']['redirect_to_maindomain'],
-                    "language" => $config['general']['language'],
-                    "validLanguages" => $config['general']['valid_languages'],
-                    "fallbackLanguages" => $config['general']['fallback_languages'],
-                    "defaultLanguage" => $config['general']['default_language'],
-                    "loginscreencustomimage" => $config['branding']['login_screen_custom_image'],
-                    "disableusagestatistics" => $config['general']['disable_usage_statistics'],
-                    "debug_admin_translations" => $config['general']['debug_admin_translations'],
-                    "instanceIdentifier" => $config['general']['instance_identifier'],
-                    "show_cookie_notice" => $config['general']['show_cookie_notice']
+                'general' => [
+                    'timezone' => $config['general']['timezone'],
+                    'path_variable' => $config['general']['path_variable'],
+                    'domain' => $config['general']['domain'],
+                    'redirect_to_maindomain' => $config['general']['redirect_to_maindomain'],
+                    'language' => $config['general']['language'],
+                    'validLanguages' => $config['general']['valid_languages'],
+                    'fallbackLanguages' => $config['general']['fallback_languages'],
+                    'defaultLanguage' => $config['general']['default_language'],
+                    'loginscreencustomimage' => $config['branding']['login_screen_custom_image'],
+                    'disableusagestatistics' => $config['general']['disable_usage_statistics'],
+                    'debug_admin_translations' => $config['general']['debug_admin_translations'],
+                    'instanceIdentifier' => $config['general']['instance_identifier'],
+                    'show_cookie_notice' => $config['general']['show_cookie_notice']
                 ],
-                "documents" => [
-                    "versions" => [
-                        "days" => $config['documents']['versions']['days'],
-                        "steps" => $config['documents']['versions']['steps']
+                'documents' => [
+                    'versions' => [
+                        'days' => $config['documents']['versions']['days'],
+                        'steps' => $config['documents']['versions']['steps']
                     ],
-                    "error_pages" => $config['documents']['error_pages'],
-                    "createredirectwhenmoved" =>  $config['documents']['create_redirect_when_moved'],
-                    "allowtrailingslash" => $config['documents']['allow_trailing_slash'],
-                    "generatepreview" => $config['documents']['generate_preview']
+                    'error_pages' => $config['documents']['error_pages'],
+                    'createredirectwhenmoved' => $config['documents']['create_redirect_when_moved'],
+                    'allowtrailingslash' => $config['documents']['allow_trailing_slash'],
+                    'generatepreview' => $config['documents']['generate_preview']
                 ],
-                "objects" => [
-                    "versions" => [
-                        "days" => $config['objects']['versions']['days'],
-                        "steps" => $config['objects']['versions']['steps']
+                'objects' => [
+                    'versions' => [
+                        'days' => $config['objects']['versions']['days'],
+                        'steps' => $config['objects']['versions']['steps']
                     ]
                 ],
-                "assets" => [
-                    "versions" => [
-                        "days" => $config['assets']['versions']['days'],
-                        "steps" => $config['assets']['versions']['steps']
+                'assets' => [
+                    'versions' => [
+                        'days' => $config['assets']['versions']['days'],
+                        'steps' => $config['assets']['versions']['steps']
                     ],
-                    "icc_rgb_profile" => $config['assets']['icc_rgb_profile'],
-                    "icc_cmyk_profile" => $config['assets']['icc_cmyk_profile'],
-                    "hide_edit_image" => $config['assets']['hide_edit_image'],
-                    "disable_tree_preview" => $config['assets']['disable_tree_preview']
+                    'icc_rgb_profile' => $config['assets']['icc_rgb_profile'],
+                    'icc_cmyk_profile' => $config['assets']['icc_cmyk_profile'],
+                    'hide_edit_image' => $config['assets']['hide_edit_image'],
+                    'disable_tree_preview' => $config['assets']['disable_tree_preview']
                 ],
-                "services" => [
-                    "google" => [
-                        "client_id" => $config['services']['google']['client_id'],
-                        "email" => $config['services']['google']['email'],
-                        "simpleapikey" => $config['services']['google']['simple_api_key'],
-                        "browserapikey" => $config['services']['google']['browser_api_key']
+                'services' => [
+                    'google' => [
+                        'client_id' => $config['services']['google']['client_id'],
+                        'email' => $config['services']['google']['email'],
+                        'simpleapikey' => $config['services']['google']['simple_api_key'],
+                        'browserapikey' => $config['services']['google']['browser_api_key']
                     ]
                 ],
-                "cache" => [
-                    "enabled" => $config['cache']['enabled'],
-                    "lifetime" => $config['cache']['lifetime'],
-                    "excludePatterns" => $config['cache']['exclude_patterns'],
-                    "excludeCookie" => $config['cache']['exclude_cookie']
+                'cache' => [
+                    'enabled' => $config['cache']['enabled'],
+                    'lifetime' => $config['cache']['lifetime'],
+                    'excludePatterns' => $config['cache']['exclude_patterns'],
+                    'excludeCookie' => $config['cache']['exclude_cookie']
                 ],
-                "webservice" => [
-                    "enabled" => $config['webservice']['enabled']
+                'webservice' => [
+                    'enabled' => $config['webservice']['enabled']
                 ],
-                "httpclient" => [
-                    "adapter" => $config['httpclient']['adapter'],
-                    "proxy_host" => $config['httpclient']['proxy_host'],
-                    "proxy_port" => $config['httpclient']['proxy_port'],
-                    "proxy_user" => $config['httpclient']['proxy_user'],
-                    "proxy_pass" => $config['httpclient']['proxy_pass']
+                'httpclient' => [
+                    'adapter' => $config['httpclient']['adapter'],
+                    'proxy_host' => $config['httpclient']['proxy_host'],
+                    'proxy_port' => $config['httpclient']['proxy_port'],
+                    'proxy_user' => $config['httpclient']['proxy_user'],
+                    'proxy_pass' => $config['httpclient']['proxy_pass']
                 ],
-                "email" => [
-                    "sender" => [
-                        "name" => $config['email']['sender']['name'],
-                        "email" => $config['email']['sender']['email']
+                'email' => [
+                    'sender' => [
+                        'name' => $config['email']['sender']['name'],
+                        'email' => $config['email']['sender']['email']
                     ],
-                    "return" => [
-                        "name" => $config['email']['return']['name'],
-                        "email" => $config['email']['return']['email']
+                    'return' => [
+                        'name' => $config['email']['return']['name'],
+                        'email' => $config['email']['return']['email']
                     ],
-                    "method" => $config['email']['method'],
-                    "smtp" => [
-                        "host" => $config['email']['smtp']['host'],
-                        "port" => $config['email']['smtp']['port'],
-                        "ssl" => $config['email']['smtp']['encryption'],
-                        "name" => "smtp",
-                        "auth" => [
-                            "method" => $config['email']['smtp']['auth_mode'],
-                            "username" => $config['email']['smtp']['username'],
-                            "password" => $config['email']['smtp']['password']
+                    'method' => $config['email']['method'],
+                    'smtp' => [
+                        'host' => $config['email']['smtp']['host'],
+                        'port' => $config['email']['smtp']['port'],
+                        'ssl' => $config['email']['smtp']['encryption'],
+                        'name' => 'smtp',
+                        'auth' => [
+                            'method' => $config['email']['smtp']['auth_mode'],
+                            'username' => $config['email']['smtp']['username'],
+                            'password' => $config['email']['smtp']['password']
                         ],
                     ],
-                    "debug" => [
-                        "emailaddresses" => $config['email']['debug']['email_addresses']
+                    'debug' => [
+                        'emailaddresses' => $config['email']['debug']['email_addresses']
                     ]
                 ],
-                "newsletter" => [
-                    "sender" => [
-                        "name" => $config['newsletter']['sender']['name'],
-                        "email" => $config['newsletter']['sender']['email']
+                'newsletter' => [
+                    'sender' => [
+                        'name' => $config['newsletter']['sender']['name'],
+                        'email' => $config['newsletter']['sender']['email']
                     ],
-                    "return" => [
-                        "name" => $config['newsletter']['return']['name'],
-                        "email" => $config['newsletter']['return']['name']
+                    'return' => [
+                        'name' => $config['newsletter']['return']['name'],
+                        'email' => $config['newsletter']['return']['name']
                     ],
-                    "method" => $config['newsletter']['method'],
-                    "smtp" => [
-                        "host" => $config['newsletter']['smtp']['host'],
-                        "port" => $config['newsletter']['smtp']['port'],
-                        "ssl" => $config['newsletter']['smtp']['encryption'],
-                        "name" => "smtp",
-                        "auth" => [
-                            "method" => $config['newsletter']['smtp']['auth_mode'],
-                            "username" => $config['newsletter']['smtp']['username'],
-                            "password" => $config['newsletter']['smtp']['password']
+                    'method' => $config['newsletter']['method'],
+                    'smtp' => [
+                        'host' => $config['newsletter']['smtp']['host'],
+                        'port' => $config['newsletter']['smtp']['port'],
+                        'ssl' => $config['newsletter']['smtp']['encryption'],
+                        'name' => 'smtp',
+                        'auth' => [
+                            'method' => $config['newsletter']['smtp']['auth_mode'],
+                            'username' => $config['newsletter']['smtp']['username'],
+                            'password' => $config['newsletter']['smtp']['password']
                         ],
                     ],
-                    "debug" => $config['newsletter']['debug']['email_addresses'],
-                    "usespecific" => $config['newsletter']['use_specific']
+                    'debug' => $config['newsletter']['debug']['email_addresses'],
+                    'usespecific' => $config['newsletter']['use_specific']
                 ],
-                "branding" => [
-                    "color_login_screen" => $config['branding']['color_login_screen'],
-                    "color_admin_interface" => $config['branding']['color_admin_interface']
+                'branding' => [
+                    'color_login_screen' => $config['branding']['color_login_screen'],
+                    'color_admin_interface' => $config['branding']['color_admin_interface']
                 ],
-                "applicationlog" => [
-                    "mail_notification" => [
-                        "send_log_summary" => $config['applicationlog']['mail_notification']['send_log_summary'],
-                        "filter_priority" => $config['applicationlog']['mail_notification']['filter_priority'],
-                        "mail_receiver" => $config['applicationlog']['mail_notification']['mail_receiver']
+                'applicationlog' => [
+                    'mail_notification' => [
+                        'send_log_summary' => $config['applicationlog']['mail_notification']['send_log_summary'],
+                        'filter_priority' => $config['applicationlog']['mail_notification']['filter_priority'],
+                        'mail_receiver' => $config['applicationlog']['mail_notification']['mail_receiver']
                     ],
-                    "archive_treshold" => $config['applicationlog']['archive_treshold'],
-                    "archive_alternative_database" => $config['applicationlog']['archive_alternative_database']
+                    'archive_treshold' => $config['applicationlog']['archive_treshold'],
+                    'archive_alternative_database' => $config['applicationlog']['archive_alternative_database']
                 ]
             ]);
         }
@@ -423,17 +423,16 @@ class Config
         $systemConfig = null;
 
         //try {
-            if (\Pimcore\Cache\Runtime::isRegistered('pimcore_config_system') && !$forceReload) {
-                $systemConfig = \Pimcore\Cache\Runtime::get('pimcore_config_system');
-            } else {
+        if (\Pimcore\Cache\Runtime::isRegistered('pimcore_config_system') && !$forceReload) {
+            $systemConfig = \Pimcore\Cache\Runtime::get('pimcore_config_system');
+        } else {
+            if ($container = \Pimcore::getContainer()) {
+                $config = $container->getParameter('pimcore.config');
+                $adminConfig = $container->getParameter('pimcore_admin.config');
 
-                if($container = \Pimcore::getContainer()) {
-                    $config = $container->getParameter('pimcore.config');
-                    $adminConfig = $container->getParameter('pimcore_admin.config');
-
-                    //add email settings
-                    foreach (['email' => 'pimcore_mailer', 'newsletter' => 'newsletter_mailer'] as $key => $group) {
-                        $config[$key]['smtp'] = [
+                //add email settings
+                foreach (['email' => 'pimcore_mailer', 'newsletter' => 'newsletter_mailer'] as $key => $group) {
+                    $config[$key]['smtp'] = [
                             'host' => $container->getParameter('swiftmailer.mailer.'.$group.'.transport.smtp.host'),
                             'username' => $container->getParameter('swiftmailer.mailer.'.$group.'.transport.smtp.username'),
                             'password' => $container->getParameter('swiftmailer.mailer.'.$group.'.transport.smtp.password'),
@@ -441,15 +440,14 @@ class Config
                             'encryption' => $container->getParameter('swiftmailer.mailer.'.$group.'.transport.smtp.encryption'),
                             'auth_mode' => $container->getParameter('swiftmailer.mailer.'.$group.'.transport.smtp.auth_mode'),
                         ];
-                    }
-
-                    $config = array_merge_recursive($config, $adminConfig);
-
-                    $systemConfig = self::mapLegacyConfiguration($config);
-                    self::setSystemConfig($systemConfig);
                 }
 
+                $config = array_merge_recursive($config, $adminConfig);
+
+                $systemConfig = self::mapLegacyConfiguration($config);
+                self::setSystemConfig($systemConfig);
             }
+        }
 //        } catch (\Exception $e) {
 //            Logger::error('System configuration error: ' . $e->getMessage());
 //            $systemConfig = new \Pimcore\Config\Config([]);
@@ -1042,7 +1040,7 @@ class Config
     {
         $fileType = pathinfo($file, PATHINFO_EXTENSION);
         if (file_exists($file)) {
-            if($fileType == 'yml') {
+            if ($fileType == 'yml') {
                 $content = Yaml::parseFile($file);
             } else {
                 $content = include($file);

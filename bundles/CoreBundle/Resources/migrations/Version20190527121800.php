@@ -3,9 +3,9 @@
 namespace Pimcore\Bundle\CoreBundle\Migrations;
 
 use Doctrine\DBAL\Schema\Schema;
+use Pimcore\File;
 use Pimcore\Migrations\Migration\AbstractPimcoreMigration;
 use Symfony\Component\Yaml\Yaml;
-use Pimcore\File;
 
 class Version20190527121800 extends AbstractPimcoreMigration
 {
@@ -21,12 +21,11 @@ class Version20190527121800 extends AbstractPimcoreMigration
     {
         $configFile = $this->migrateSystemConfiguration();
 
-        if($configFile) {
+        if ($configFile) {
             $this->migrateBranding($configFile);
             $this->migrateEmail($configFile);
             $this->migrateDevmode($configFile);
         }
-
     }
 
     /**
@@ -35,12 +34,11 @@ class Version20190527121800 extends AbstractPimcoreMigration
     public function down(Schema $schema)
     {
         // this down() migration is auto-generated, please modify it to your needs
-
     }
 
     public function migrateSystemConfiguration()
     {
-        try{
+        try {
             $originalConfigFile = PIMCORE_CONFIGURATION_DIRECTORY . '/system.php';
             $newConfigFile = PIMCORE_CONFIGURATION_DIRECTORY . '/system.yml';
 
@@ -56,7 +54,6 @@ class Version20190527121800 extends AbstractPimcoreMigration
 
                 $content = Yaml::dump($content, 6);
                 File::put($newConfigFile, $content);
-
 
                 if (file_exists($newConfigFile)) {
                     $this->writeMessage('Please cleanup "system.php" file from directory '.PIMCORE_CONFIGURATION_DIRECTORY.' manually as system settings migrated to new "system.yml" file.');
@@ -112,6 +109,7 @@ class Version20190527121800 extends AbstractPimcoreMigration
      * Migrate 'Appearance & Branding' configuration from 'pimcore' node to 'pimcore_admin' node in system.yml
      *
      * @param $systemConfigFile
+     *
      * @return bool
      */
     public function migrateBranding($systemConfigFile)
@@ -120,22 +118,23 @@ class Version20190527121800 extends AbstractPimcoreMigration
             $settings = Yaml::parseFile($systemConfigFile);
             $migrate = false;
 
-            if(isset($settings['pimcore']['branding'])) {
+            if (isset($settings['pimcore']['branding'])) {
                 $settings['pimcore_admin']['branding'] = $settings['pimcore']['branding'];
                 unset($settings['pimcore']['branding']);
                 $migrate = true;
             }
 
-            if(isset($settings['pimcore']['general']['login_screen_custom_image'])) {
+            if (isset($settings['pimcore']['general']['login_screen_custom_image'])) {
                 $settings['pimcore_admin']['branding']['login_screen_custom_image'] = $settings['pimcore']['general']['login_screen_custom_image'];
                 unset($settings['pimcore']['general']['login_screen_custom_image']);
                 $migrate = true;
             }
 
-            if($migrate) {
-                $settings = Yaml::dump($settings,6);
+            if ($migrate) {
+                $settings = Yaml::dump($settings, 6);
                 File::put($systemConfigFile, $settings);
             }
+
             return true;
         } catch (\Exception $e) {
             $this->writeMessage('An error occurred while performing system configuration migration: ' . $e->getMessage());
@@ -146,6 +145,7 @@ class Version20190527121800 extends AbstractPimcoreMigration
      * Migrate email & newletter smtp configuration from 'pimcore' node to 'swiftmailer' node in system.yml
      *
      * @param $systemConfigFile
+     *
      * @return bool
      */
     public function migrateEmail($systemConfigFile)
@@ -154,12 +154,12 @@ class Version20190527121800 extends AbstractPimcoreMigration
             $systemSettings = Yaml::parseFile($systemConfigFile);
 
             //update transport method from mail to sendmail in email & newsletter settings
-            if (isset($systemSettings["pimcore"]["email"]["method"]) && $systemSettings["pimcore"]["email"]["method"] == "mail") {
-                $systemSettings["pimcore"]["email"]["method"] = "sendmail";
+            if (isset($systemSettings['pimcore']['email']['method']) && $systemSettings['pimcore']['email']['method'] == 'mail') {
+                $systemSettings['pimcore']['email']['method'] = 'sendmail';
             }
 
-            if (isset($systemSettings["pimcore"]["newsletter"]["method"]) && $systemSettings["pimcore"]["newsletter"]["method"] == "mail") {
-                $systemSettings["pimcore"]["newsletter"]["method"] = "sendmail";
+            if (isset($systemSettings['pimcore']['newsletter']['method']) && $systemSettings['pimcore']['newsletter']['method'] == 'mail') {
+                $systemSettings['pimcore']['newsletter']['method'] = 'sendmail';
             }
 
             if (isset($systemSettings['pimcore']['email'])) {
@@ -190,13 +190,13 @@ class Version20190527121800 extends AbstractPimcoreMigration
                     ],
                 ];
 
-                foreach ( $settings['swiftmailer']['mailers'] as $mkey => $mailer) {
+                foreach ($settings['swiftmailer']['mailers'] as $mkey => $mailer) {
                     foreach ($mailer as $ckey => $configuration) {
                         $emailSettings = $systemSettings;
-                        $keys = explode(".", str_replace('pimcore_system_config','pimcore',trim($configuration,'%')));
+                        $keys = explode('.', str_replace('pimcore_system_config', 'pimcore', trim($configuration, '%')));
 
                         for ($i = 0; $i < count($keys); $i++) {
-                            if(isset($emailSettings[$keys[$i]])) {
+                            if (isset($emailSettings[$keys[$i]])) {
                                 $emailSettings = $emailSettings[$keys[$i]];
                             } else {
                                 $emailSettings = null;
@@ -210,22 +210,21 @@ class Version20190527121800 extends AbstractPimcoreMigration
                 unset($systemSettings['pimcore']['email']['smtp']);
                 unset($systemSettings['pimcore']['newsletter']['smtp']);
 
-                if(!empty($settings['swiftmailer']['mailers']['pimcore_mailer']['delivery_addresses'])) {
+                if (!empty($settings['swiftmailer']['mailers']['pimcore_mailer']['delivery_addresses'])) {
                     $settings['swiftmailer']['mailers']['pimcore_mailer']['delivery_addresses'] = [$settings['swiftmailer']['mailers']['pimcore_mailer']['delivery_addresses']];
                 } else {
                     $settings['swiftmailer']['mailers']['pimcore_mailer']['delivery_addresses'] = [];
                 }
 
-                if(!empty($settings['swiftmailer']['mailers']['newsletter_mailer']['delivery_addresses'])) {
+                if (!empty($settings['swiftmailer']['mailers']['newsletter_mailer']['delivery_addresses'])) {
                     $settings['swiftmailer']['mailers']['newsletter_mailer']['delivery_addresses'] = [$settings['swiftmailer']['mailers']['newsletter_mailer']['delivery_addresses']];
                 } else {
                     $settings['swiftmailer']['mailers']['newsletter_mailer']['delivery_addresses'] = [];
                 }
 
-
                 $systemConfigFileContent = array_merge($systemSettings, $settings);
 
-                $content = Yaml::dump($systemConfigFileContent,6);
+                $content = Yaml::dump($systemConfigFileContent, 6);
                 File::put($systemConfigFile, $content);
             }
 
@@ -233,7 +232,6 @@ class Version20190527121800 extends AbstractPimcoreMigration
         } catch (\Exception $e) {
             $this->writeMessage('An error occurred while performing system configuration migration: ' . $e->getMessage());
         }
-
     }
 
     public function migrateDevmode($systemConfigFile)
@@ -251,15 +249,12 @@ class Version20190527121800 extends AbstractPimcoreMigration
                     File::putPhpFile($debugModeFile, to_php_data_file_format($debugConf));
 
                     unset($systemSettings['pimcore']['general']['devmode']);
-                    $settings = Yaml::dump($systemSettings,6);
+                    $settings = Yaml::dump($systemSettings, 6);
                     File::put($systemConfigFile, $settings);
                 }
             }
         } catch (\Exception $e) {
             $this->writeMessage('An error occurred while performing system configuration migration: ' . $e->getMessage());
         }
-
-
-
     }
 }

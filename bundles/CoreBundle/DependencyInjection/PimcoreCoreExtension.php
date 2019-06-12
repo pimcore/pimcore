@@ -81,7 +81,7 @@ class PimcoreCoreExtension extends ConfigurableExtension implements PrependExten
 
         // set default domain for router to main domain if configured
         // this will be overridden from the request in web context but is handy for CLI scripts
-        if ( isset($conf['general']['domain']) && !empty($conf['general']['domain'])) {
+        if (isset($conf['general']['domain']) && !empty($conf['general']['domain'])) {
             $container->setParameter('router.request_context.host', $conf->general->domain);
         }
 

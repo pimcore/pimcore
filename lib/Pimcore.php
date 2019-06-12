@@ -20,7 +20,6 @@ use Pimcore\FeatureToggles\Features\DebugMode;
 use Pimcore\FeatureToggles\Features\DevMode;
 use Pimcore\FeatureToggles\FeatureState;
 use Pimcore\File;
-use Pimcore\Logger;
 use Pimcore\Model;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpKernel\KernelInterface;

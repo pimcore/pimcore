@@ -60,7 +60,7 @@ class SettingsController extends AdminController
     {
         // default logo
         $logo = PIMCORE_WEB_ROOT . '/bundles/pimcoreadmin/img/logo-claim-gray.svg';
-        if($request->get('white')) {
+        if ($request->get('white')) {
             $logo = PIMCORE_WEB_ROOT . '/bundles/pimcoreadmin/img/logo-claim-white.svg';
         }
 
@@ -456,7 +456,6 @@ class SettingsController extends AdminController
         if (is_array($cacheExcludePatterns)) {
             $cacheExcludePatterns = implode(',', $cacheExcludePatterns);
         }
-
 
         $settings['pimcore'] = [
             'general' => [
