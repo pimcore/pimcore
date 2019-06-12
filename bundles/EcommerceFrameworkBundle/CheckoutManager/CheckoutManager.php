@@ -36,8 +36,6 @@ class CheckoutManager implements CheckoutManagerInterface
      */
     const CURRENT_STEP = 'checkout_current_step';
     const FINISHED = 'checkout_finished';
-    const TRACK_ECOMMERCE = 'checkout_trackecommerce';
-    const TRACK_ECOMMERCE_UNIVERSAL = 'checkout_trackecommerce_universal';
 
     /**
      * @var CartInterface
@@ -285,11 +283,6 @@ class CheckoutManager implements CheckoutManagerInterface
         } else {
             $this->cart->delete();
             $this->environment->removeCustomItem(self::CURRENT_STEP . '_' . $this->cart->getId());
-
-            // TODO deprecated?
-            // setting e-commerce tracking information to environment for later use in view
-            $this->environment->setCustomItem(self::TRACK_ECOMMERCE . '_' . $order->getOrdernumber(), $this->generateGaEcommerceCode($order));
-            $this->environment->setCustomItem(self::TRACK_ECOMMERCE_UNIVERSAL . '_' . $order->getOrdernumber(), $this->generateUniversalEcommerceCode($order));
         }
 
         $this->environment->save();
@@ -439,147 +432,6 @@ class CheckoutManager implements CheckoutManagerInterface
         $this->updateEnvironmentAfterOrderCommit($order);
 
         return $order;
-    }
-
-    /**
-     * TODO deprecated?
-     *
-     * generates classic google analytics e-commerce tracking code
-     *
-     * @param AbstractOrder $order
-     *
-     * @return string
-     *
-     * @throws UnsupportedException
-     */
-    protected function generateGaEcommerceCode(AbstractOrder $order)
-    {
-        $code = '';
-
-        $shipping = 0;
-        $modifications = $order->getPriceModifications();
-        if (null !== $modifications) {
-            foreach ($modifications as $modification) {
-                if ($modification->getName() == 'shipping') {
-                    $shipping = $modification->getAmount();
-                    break;
-                }
-            }
-        }
-
-        $code .= "
-            _gaq.push(['_addTrans',
-              '" . $order->getOrdernumber() . "',  // order ID - required
-              '',                                  // affiliation or store name
-              '" . $order->getTotalPrice() . "',   // total - required
-              '',                                  // tax
-              '" . $shipping . "',                 // shipping
-              '',                                  // city
-              '',                                  // state or province
-              ''                                   // country
-            ]);
-        \n";
-
-        $items = $order->getItems();
-        if (!empty($items)) {
-            foreach ($items as $item) {
-                $category = '';
-                $p = $item->getProduct();
-                if ($p && method_exists($p, 'getCategories')) {
-                    $categories = $p->getCategories();
-                    if ($categories) {
-                        $category = $categories[0];
-                        if (method_exists($category, 'getName')) {
-                            $category = $category->getName();
-                        }
-                    }
-                }
-
-                $code .= "
-                    _gaq.push(['_addItem',
-                        '" . $order->getOrdernumber() . "',                                      // order ID - required
-                        '" . $item->getProductNumber() . "',                                     // SKU/code - required
-                        '" . str_replace(["\n"], [' '], $item->getProductName()) . "', // product name
-                        '" . $category . "',                                                     // category or variation
-                        '" . $item->getTotalPrice() / $item->getAmount() . "',                   // unit price - required
-                        '" . $item->getAmount() . "'                                             // quantity - required
-                    ]);
-                \n";
-            }
-        }
-
-        $code .= "_gaq.push(['_trackTrans']);";
-
-        return $code;
-    }
-
-    /**
-     * TODO deprecated?
-     *
-     * generates universal google analytics e-commerce tracking code
-     *
-     * @param AbstractOrder $order
-     *
-     * @return string
-     *
-     * @throws UnsupportedException
-     */
-    protected function generateUniversalEcommerceCode(AbstractOrder $order)
-    {
-        $code = "ga('require', 'ecommerce', 'ecommerce.js');\n";
-
-        $shipping = 0;
-        $modifications = $order->getPriceModifications();
-        if (null !== $modifications) {
-            foreach ($modifications as $modification) {
-                if ($modification->getName() == 'shipping') {
-                    $shipping = $modification->getAmount();
-                    break;
-                }
-            }
-        }
-
-        $code .= "
-            ga('ecommerce:addTransaction', {
-              'id': '" . $order->getOrdernumber() . "',         // Transaction ID. Required.
-              'affiliation': '',                                // Affiliation or store name.
-              'revenue': '" . $order->getTotalPrice() . "',     // Grand Total.
-              'shipping': '" . $shipping . "',                  // Shipping.
-              'tax': ''                                         // Tax.
-            });
-        \n";
-
-        $items = $order->getItems();
-        if (!empty($items)) {
-            foreach ($items as $item) {
-                $category = '';
-                $p = $item->getProduct();
-                if ($p && method_exists($p, 'getCategories')) {
-                    $categories = $p->getCategories();
-                    if ($categories) {
-                        $category = $categories[0];
-                        if (method_exists($category, 'getName')) {
-                            $category = $category->getName();
-                        }
-                    }
-                }
-
-                $code .= "
-                    ga('ecommerce:addItem', {
-                      'id': '" . $order->getOrdernumber() . "',                      // Transaction ID. Required.
-                      'name': '" . str_replace(["\n"], [' '], $item->getProductName()) . "',                      // Product name. Required.
-                      'sku': '" . $item->getProductNumber() . "',                     // SKU/code.
-                      'category': '" . $category . "',                                // Category or variation.
-                      'price': '" . $item->getTotalPrice() / $item->getAmount() . "', // Unit price.
-                      'quantity': '" . $item->getAmount() . "'                        // Quantity.
-                    });
-                \n";
-            }
-        }
-
-        $code .= "ga('ecommerce:send');\n";
-
-        return $code;
     }
 
     /**
