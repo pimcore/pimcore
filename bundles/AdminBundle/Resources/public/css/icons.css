@@ -369,7 +369,7 @@
 }
 
 .pimcore_nav_icon_class {
-    background: url(/bundles/pimcoreadmin/img/flat-white-icons/timeline.svg) center center no-repeat !important;
+    background: url(/bundles/pimcoreadmin/img/flat-white-icons/class.svg) center center no-repeat !important;
 }
 
 .pimcore_nav_icon_fieldcollection {
@@ -744,7 +744,7 @@
 }
 
 .pimcore_icon_class {
-    background: url(/bundles/pimcoreadmin/img/flat-color-icons/timeline.svg) center center no-repeat !important;
+    background: url(/bundles/pimcoreadmin/img/flat-color-icons/class.svg) center center no-repeat !important;
 }
 
 .pimcore_icon_region {
