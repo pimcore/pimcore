@@ -418,9 +418,9 @@ class Dao extends Model\DataObject\AbstractObject\Dao
         if ($this->model instanceof DataObject\Concrete) {
             return DataObject\Concrete::getLatestVersionByObjectIdAndLatestModificationDate($this->model->getId(), $this->model->getModificationDate());
         }
+
         return;
     }
-
 
     public function deleteAllTasks()
     {

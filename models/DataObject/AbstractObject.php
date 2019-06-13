@@ -840,9 +840,10 @@ class AbstractObject extends Model\Element\AbstractElement
      * @param $objectId
      * @param array $additionalTags
      */
-    public static function clearDependentCacheByObjectId($objectId, $additionalTags = []) {
+    public static function clearDependentCacheByObjectId($objectId, $additionalTags = [])
+    {
         if (!$objectId) {
-            throw new \Exception("object ID missing");
+            throw new \Exception('object ID missing');
         }
 
         try {

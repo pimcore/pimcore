@@ -1154,7 +1154,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
         );
 
         $db = Db::get();
-        $siblings = $db->fetchAll("SELECT o_id, o_modificationDate FROM objects"
+        $siblings = $db->fetchAll('SELECT o_id, o_modificationDate FROM objects'
                 . " WHERE o_parentId = ? AND o_id != ? AND o_type IN ('object', 'variant','folder') ORDER BY o_index ASC",
                         [$updatedObject->getParentId(), $updatedObject->getId()]);
         $index = 0;
@@ -1164,10 +1164,10 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                 $index++;
             }
 
-            $updateLatestVersionIndex($sibling["o_id"], $sibling["o_modificationDate"], $index);
+            $updateLatestVersionIndex($sibling['o_id'], $sibling['o_modificationDate'], $index);
             $index++;
 
-            DataObject\AbstractObject::clearDependentCacheByObjectId($sibling["o_id"]);
+            DataObject\AbstractObject::clearDependentCacheByObjectId($sibling['o_id']);
         }
     }
 

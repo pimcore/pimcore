@@ -820,9 +820,11 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
      * @param $objectId
      * @param $modificationDate
      * @param bool $force
+     *
      * @return Model\Version|void
      */
-    public static function getLatestVersionByObjectIdAndLatestModificationDate($objectId, $modificationDate, $force = false) {
+    public static function getLatestVersionByObjectIdAndLatestModificationDate($objectId, $modificationDate, $force = false)
+    {
         $db = Db::get();
         $versionData = $db->fetchRow("SELECT id,date FROM versions WHERE cid = ? AND ctype='object' ORDER BY `id` DESC LIMIT 1", $objectId);
 

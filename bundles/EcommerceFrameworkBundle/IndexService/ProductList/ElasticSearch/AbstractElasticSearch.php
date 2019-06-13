@@ -822,12 +822,12 @@ abstract class AbstractElasticSearch implements ProductListInterface
                     if (is_array($queryCondition)) {
                         $queryFilters[] = $queryCondition;
                     } else {
-                        if($fieldname) {
+                        if ($fieldname) {
                             $queryFilters[] = ['match' => [$this->tenantConfig->getFieldNameMapped($fieldname) => $queryCondition]];
                         } else {
                             $fieldnames = $this->tenantConfig->getSearchAttributes();
                             $mappedFieldnames = [];
-                            foreach($fieldnames as $fieldname) {
+                            foreach ($fieldnames as $fieldname) {
                                 $mappedFieldnames[] = $this->tenantConfig->getFieldNameMapped($fieldname);
                             }
 
@@ -836,8 +836,6 @@ abstract class AbstractElasticSearch implements ProductListInterface
                                 'fields' => $mappedFieldnames
                             ]];
                         }
-
-
                     }
                 }
             }

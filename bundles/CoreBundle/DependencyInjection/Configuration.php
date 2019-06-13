@@ -65,7 +65,9 @@ class Configuration implements ConfigurationInterface
                             ->defaultTrue()
                             ->beforeNormalization()
                                 ->ifString()
-                                ->then(function ($v) { return (bool)$v; })
+                                ->then(function ($v) {
+                                    return (bool)$v;
+                                })
                             ->end()
                         ->end()
                     ->end()
@@ -91,7 +93,9 @@ class Configuration implements ConfigurationInterface
                         ->booleanNode('case_insensitive')
                             ->beforeNormalization()
                                 ->ifString()
-                                ->then(function ($v) { return (bool)$v; })
+                                ->then(function ($v) {
+                                    return (bool)$v;
+                                })
                             ->end()
                             ->info('Force Pimcore translations to NOT be case sensitive. This only applies to translations set via Pimcore\'s translator (e.g. website translations)')
                             ->defaultFalse()
@@ -198,7 +202,9 @@ class Configuration implements ConfigurationInterface
                 ->booleanNode('redirect_to_maindomain')
                     ->beforeNormalization()
                         ->ifString()
-                        ->then(function ($v) { return (bool)$v; })
+                        ->then(function ($v) {
+                            return (bool)$v;
+                        })
                     ->end()
                     ->defaultFalse()
                 ->end()
@@ -225,14 +231,18 @@ class Configuration implements ConfigurationInterface
                 ->booleanNode('disable_usage_statistics')
                     ->beforeNormalization()
                         ->ifString()
-                        ->then(function ($v) { return (bool)$v; })
+                        ->then(function ($v) {
+                            return (bool)$v;
+                        })
                     ->end()
                     ->defaultFalse()
                 ->end()
                 ->booleanNode('debug_admin_translations')
                     ->beforeNormalization()
                         ->ifString()
-                        ->then(function ($v) { return (bool)$v; })
+                        ->then(function ($v) {
+                            return (bool)$v;
+                        })
                     ->end()
                     ->defaultFalse()
                 ->end()
@@ -241,7 +251,9 @@ class Configuration implements ConfigurationInterface
                 ->booleanNode('show_cookie_notice')
                     ->beforeNormalization()
                         ->ifString()
-                        ->then(function ($v) { return (bool)$v; })
+                        ->then(function ($v) {
+                            return (bool)$v;
+                        })
                     ->end()
                     ->defaultFalse()
                 ->end()
@@ -340,7 +352,9 @@ class Configuration implements ConfigurationInterface
                                 ->booleanNode('send_log_summary')
                                     ->beforeNormalization()
                                         ->ifString()
-                                        ->then(function ($v) { return (bool)$v; })
+                                        ->then(function ($v) {
+                                            return (bool)$v;
+                                        })
                                     ->end()
                                     ->defaultFalse()
                                 ->end()
@@ -405,14 +419,18 @@ class Configuration implements ConfigurationInterface
                                     ->booleanNode('webp_auto_support')
                                         ->beforeNormalization()
                                             ->ifString()
-                                            ->then(function ($v) { return (bool)$v; })
+                                            ->then(function ($v) {
+                                                return (bool)$v;
+                                            })
                                         ->end()
                                         ->defaultTrue()
                                     ->end()
                                     ->booleanNode('auto_clear_temp_files')
                                         ->beforeNormalization()
                                             ->ifString()
-                                            ->then(function ($v) { return (bool)$v; })
+                                            ->then(function ($v) {
+                                                return (bool)$v;
+                                            })
                                         ->end()
                                         ->defaultTrue()
                                     ->end()
@@ -445,7 +463,9 @@ class Configuration implements ConfigurationInterface
                             ->booleanNode('use_hardlinks')
                                 ->beforeNormalization()
                                     ->ifString()
-                                    ->then(function ($v) { return (bool)$v; })
+                                    ->then(function ($v) {
+                                        return (bool)$v;
+                                    })
                                 ->end()
                                 ->defaultTrue()
                             ->end()
@@ -552,7 +572,9 @@ class Configuration implements ConfigurationInterface
                 ->booleanNode('create_redirect_when_moved')
                     ->beforeNormalization()
                         ->ifString()
-                        ->then(function ($v) { return (bool)$v; })
+                        ->then(function ($v) {
+                            return (bool)$v;
+                        })
                     ->end()
                     ->defaultFalse()
                 ->end()
@@ -562,7 +584,9 @@ class Configuration implements ConfigurationInterface
                 ->booleanNode('generate_preview')
                     ->beforeNormalization()
                         ->ifString()
-                        ->then(function ($v) { return (bool)$v; })
+                        ->then(function ($v) {
+                            return (bool)$v;
+                        })
                     ->end()
                     ->defaultFalse()
                 ->end()
@@ -585,7 +609,9 @@ class Configuration implements ConfigurationInterface
                             ->booleanNode('autoload')
                                 ->beforeNormalization()
                                     ->ifString()
-                                    ->then(function ($v) { return (bool)$v; })
+                                    ->then(function ($v) {
+                                        return (bool)$v;
+                                    })
                                 ->end()
                                 ->defaultTrue()
                             ->end()
@@ -1050,7 +1076,9 @@ class Configuration implements ConfigurationInterface
                         ->booleanNode('use_specific')
                             ->beforeNormalization()
                                 ->ifString()
-                                ->then(function ($v) { return (bool)$v; })
+                                ->then(function ($v) {
+                                    return (bool)$v;
+                                })
                             ->end()
                         ->end()
                         ->arrayNode('source_adapters')

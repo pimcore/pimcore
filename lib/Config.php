@@ -90,6 +90,7 @@ class Config
 
     /**
      * @internal
+     *
      * @return null|array
      */
     public static function getSystemConfiguration()
@@ -117,6 +118,7 @@ class Config
 
     /**
      * @internal
+     *
      * @param null $languange
      *
      * @return string
@@ -237,6 +239,7 @@ class Config
 
     /**
      * @internal
+     *
      * @param Config\Config $config
      * @param null $language
      */
@@ -412,6 +415,7 @@ class Config
 
     /**
      * @return mixed|null|\Pimcore\Config\Config
+     *
      * @throws \Exception
      */
     public static function getSystemConfig()
@@ -426,7 +430,7 @@ class Config
                 $container = \Pimcore::getContainer();
                 //add email settings
                 foreach (['email' => 'pimcore_mailer', 'newsletter' => 'newsletter_mailer'] as $key => $group) {
-                    if($container->hasParameter('swiftmailer.mailer.'.$group.'.transport.smtp.host')) {
+                    if ($container->hasParameter('swiftmailer.mailer.'.$group.'.transport.smtp.host')) {
                         $config[$key]['smtp'] = [
                             'host' => $container->getParameter('swiftmailer.mailer.' . $group . '.transport.smtp.host'),
                             'username' => $container->getParameter('swiftmailer.mailer.' . $group . '.transport.smtp.username'),
@@ -591,6 +595,7 @@ class Config
 
     /**
      * @internal
+     *
      * @return array
      */
     public static function getStandardPerspective()
@@ -676,6 +681,7 @@ class Config
 
     /**
      * @internal
+     *
      * @param Model\User $currentUser
      *
      * @return array
@@ -716,6 +722,7 @@ class Config
 
     /**
      * @internal
+     *
      * @param $name
      *
      * @return array
@@ -821,6 +828,7 @@ class Config
 
     /**
      * @internal
+     *
      * @param Model\User $user
      *
      * @return array
@@ -901,6 +909,7 @@ class Config
 
     /**
      * @internal
+     *
      * @param $runtimeConfig
      * @param $key
      *
@@ -1004,6 +1013,7 @@ class Config
 
     /**
      * @internal
+     *
      * @return EnvironmentConfigInterface
      */
     public static function getEnvironmentConfig(): EnvironmentConfigInterface
@@ -1017,6 +1027,7 @@ class Config
 
     /**
      * @internal
+     *
      * @param EnvironmentConfigInterface $environmentConfig
      */
     public static function setEnvironmentConfig(EnvironmentConfigInterface $environmentConfig)
@@ -1041,6 +1052,7 @@ class Config
 
     /**
      * @internal
+     *
      * @param string $file
      * @param bool $asArray
      *
@@ -1059,8 +1071,7 @@ class Config
             }
 
             if (is_array($content)) {
-
-                if($asArray) {
+                if ($asArray) {
                     return $content;
                 }
 
