@@ -51,9 +51,9 @@ doctrine:
                 slaves:
                     slave1:
                           host: 'slave1'
-                          port: '%pimcore_system_config.database.params.port%'
-                          dbname: '%pimcore_system_config.database.params.dbname%'
-                          user: '%pimcore_system_config.database.params.username%'
-                          password: '%pimcore_system_config.database.params.password%'
+                          port: 3306
+                          dbname: dbname
+                          user: username
+                          password: password
                           charset: UTF8MB4
 ```
