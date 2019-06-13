@@ -201,6 +201,7 @@ pimcore.settings.targeting.rules.item = Class.create({
             title: t("actions"),
             autoScroll: true,
             forceLayout: true,
+            bodyStyle: 'padding: 0 10px 10px 10px;',
             tbar: [{
                 iconCls: "pimcore_icon_add",
                 menu: addMenu
