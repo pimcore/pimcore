@@ -344,8 +344,21 @@ body > .x-mask {
     background: #f6f6f6;
     border-color: #d0d0d0;
 }
-
-.x-panel > .x-panel-default-outer-border-trl, .x-panel > .x-panel-default-outer-border-rl, .x-panel > .x-panel-default-outer-border-rbl {
+.x-panel > .x-panel-default-outer-border-l,
+.x-panel > .x-panel-default-outer-border-b,
+.x-panel > .x-panel-default-outer-border-bl,
+.x-panel > .x-panel-default-outer-border-r,
+.x-panel > .x-panel-default-outer-border-rl,
+.x-panel > .x-panel-default-outer-border-rb,
+.x-panel > .x-panel-default-outer-border-rbl,
+.x-panel > .x-panel-default-outer-border-t,
+.x-panel > .x-panel-default-outer-border-tl,
+.x-panel > .x-panel-default-outer-border-tb,
+.x-panel > .x-panel-default-outer-border-tbl,
+.x-panel > .x-panel-default-outer-border-tr,
+.x-panel > .x-panel-default-outer-border-trl,
+.x-panel > .x-panel-default-outer-border-trb,
+.x-panel > .x-panel-default-outer-border-trbl {
     border-color: #d0d0d0 !important;
     border-style: solid;
 }
