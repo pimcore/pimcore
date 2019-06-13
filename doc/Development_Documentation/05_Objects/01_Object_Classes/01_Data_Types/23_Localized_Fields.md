@@ -41,8 +41,7 @@ You can do this in `Settings` -> `System Settings` -> `Localization & Internatio
 The following code will create an array containing the available languages for the front end (the user facing website). 
 
 ```php
-		$config = \Pimcore\Config::getSystemConfig();
-		$languages = explode(',', $config->general->validLanguages);
+$languages = \Pimcore\Tool::getValidLanguages();
 ```
 
 ### Disable Fallback languages ###

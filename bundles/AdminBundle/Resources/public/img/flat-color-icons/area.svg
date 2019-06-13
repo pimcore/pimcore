@@ -4,8 +4,8 @@
 	 width="24px" height="24px" viewBox="0 0 24 24" enable-background="new 0 0 24 24" xml:space="preserve">
 <path fill="none" d="M0,0h24v24H0V0z"/>
 <path fill="#5A9BF5" d="M22,6V4h-2V2h-2v2H6V2H4v2H2v2h2v12H2v2h2v2h2v-2h12v2h2v-2h2v-2h-2V6H22z M6,6h12v12H6V6z"/>
-<rect x="6" y="18" fill="#89BBF8" width="2" height="2"/>
-<rect x="18" y="16" fill="#89BBF8" width="2" height="2"/>
-<rect x="16" y="4" fill="#89BBF8" width="2" height="2"/>
-<rect x="4" y="6" fill="#89BBF8" width="2" height="2"/>
+<rect x="6" y="18" fill="#1A55C2" width="2" height="2"/>
+<rect x="18" y="16" fill="#1A55C2" width="2" height="2"/>
+<rect x="16" y="4" fill="#1A55C2" width="2" height="2"/>
+<rect x="4" y="6" fill="#1A55C2" width="2" height="2"/>
 </svg>

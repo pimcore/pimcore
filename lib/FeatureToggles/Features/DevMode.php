@@ -50,6 +50,16 @@ final class DevMode extends Feature
             $devMode = false;
             if (defined('PIMCORE_DEVMODE') && PIMCORE_DEVMODE) {
                 $devMode = true;
+            } else {
+                $debugModeFile = PIMCORE_CONFIGURATION_DIRECTORY . '/debug-mode.php';
+
+                if (file_exists($debugModeFile)) {
+                    $conf = include $debugModeFile;
+
+                    if (is_array($conf) && isset($conf['devmode'])) {
+                        $devMode = $conf['devmode'];
+                    }
+                }
             }
 
             return FeatureState::fromFeature($devMode ? static::ALL() : static::NONE());

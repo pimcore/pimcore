@@ -38,8 +38,8 @@
 
 .pimcore_icon_overlay_edit:before {
     position: absolute;
-    width: 16px;
-    height: 16px;
+    width: 24px;
+    height: 24px;
     bottom: 0px;
     right: 0px;
     content: "";
@@ -127,7 +127,9 @@
 }
 
 
-
+.pimcore_nav_icon_perspective {
+    background: url(/bundles/pimcoreadmin/img/flat-white-icons/reading.svg) center center no-repeat !important;
+}
 
 .pimcore_nav_icon_notifications {
     background: url(/bundles/pimcoreadmin/img/flat-white-icons/comments.svg) center center no-repeat !important;
@@ -367,7 +369,7 @@
 }
 
 .pimcore_nav_icon_class {
-    background: url(/bundles/pimcoreadmin/img/flat-white-icons/timeline.svg) center center no-repeat !important;
+    background: url(/bundles/pimcoreadmin/img/flat-white-icons/class.svg) center center no-repeat !important;
 }
 
 .pimcore_nav_icon_fieldcollection {
@@ -442,7 +444,13 @@
     background: url(/bundles/pimcoreadmin/img/flat-white-icons/percent.svg) center center no-repeat !important;
 }
 
+.pimcore_nav_icon_custom_report_group_default {
+    background: url(/bundles/pimcoreadmin/img/flat-white-icons/area_chart.svg) center center no-repeat !important;
+}
 
+.pimcore_nav_icon_custom_report_default {
+    background: url(/bundles/pimcoreadmin/img/flat-white-icons/bar_chart.svg) center center no-repeat !important;
+}
 
 .pimcore_icon_site {
     background: url(/bundles/pimcoreadmin/img/flat-color-icons/home.svg) center center no-repeat !important;
@@ -736,7 +744,7 @@
 }
 
 .pimcore_icon_class {
-    background: url(/bundles/pimcoreadmin/img/flat-color-icons/timeline.svg) center center no-repeat !important;
+    background: url(/bundles/pimcoreadmin/img/flat-color-icons/class.svg) center center no-repeat !important;
 }
 
 .pimcore_icon_region {
@@ -752,11 +760,11 @@
 }
 
 .pimcore_icon_fieldcontainer {
-    background: url(/bundles/pimcoreadmin/img/flat-color-icons/row.svg) center center no-repeat !important;
+    background: url(/bundles/pimcoreadmin/img/flat-color-icons/panel.svg) center center no-repeat !important;
 }
 
 .pimcore_icon_panel {
-    background: url(/bundles/pimcoreadmin/img/flat-color-icons/panel.svg) center center no-repeat !important;
+    background: url(/bundles/pimcoreadmin/img/flat-color-icons/row.svg) center center no-repeat !important;
 }
 
 .pimcore_icon_tabpanel {
@@ -1319,7 +1327,7 @@
 }
 
 .pimcore_icon_input {
-    background: url(/bundles/pimcoreadmin/img/flat-color-icons/row.svg) center center no-repeat !important;
+    background: url(/bundles/pimcoreadmin/img/flat-color-icons/input.svg) center center no-repeat !important;
 }
 
 .pimcore_icon_firstname {
@@ -1433,10 +1441,6 @@
 
 .pimcore_icon_sql {
     background: url(/bundles/pimcoreadmin/img/flat-color-icons/database.svg) center center no-repeat !important;
-}
-
-.pimcore_icon_perspective {
-    background: url(/bundles/pimcoreadmin/img/flat-color-icons/reading.svg) center center no-repeat !important;
 }
 
 .pimcore_icon_filter_condition {
@@ -1706,17 +1710,17 @@
 
 
 .pimcore_icon_main_tree_document {
-    background: url(/bundles/pimcoreadmin/img/material-icons/pimcore-main-icon-document.svg) center center no-repeat;
+    background: url(/bundles/pimcoreadmin/img/flat-white-icons/pimcore-main-icon-document.svg) center center no-repeat;
     background-size: 30px 30px;
 }
 
 .pimcore_icon_main_tree_asset {
-    background: url(/bundles/pimcoreadmin/img/material-icons/pimcore-main-icon-asset.svg) center center no-repeat;
+    background: url(/bundles/pimcoreadmin/img/flat-white-icons/pimcore-main-icon-asset.svg) center center no-repeat;
     background-size: 30px 30px;
 }
 
 .pimcore_icon_main_tree_object {
-    background: url(/bundles/pimcoreadmin/img/material-icons/pimcore-main-icon-object.svg) center center no-repeat;
+    background: url(/bundles/pimcoreadmin/img/flat-white-icons/pimcore-main-icon-object.svg) center center no-repeat;
     background-size: 30px 30px;
 }
 

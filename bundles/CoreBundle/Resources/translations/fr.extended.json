@@ -50,8 +50,6 @@
     "deactivate_maintenance": "Désactiver la maintenance",
     "code_settings": "Paramètres de code",
     "advanced_integration": "Intégration avancée",
-    "personamultiselect": "Persona Multisélection",
-    "persona": "Persona",
     "target_group": "Group Cible",
     "children": "Enfants",
     "elements_to_export": "Éléments à exporter",
@@ -703,8 +701,10 @@
     "left": "gauche",
     "right": "droite",
     "provide_split_view": "Fournir une vue partagée",
-    "allow_multiple_assignments": "Allow Multiple Assignments",
-    "enable_admin_async_load": "Enable Async Load in Admin",
-    "async_loading_warning_block": "WARNING: Async Loading is NOT possible within Localized Fields and Blocks",
-    "path_formatter_service": "Formatter Service / Class"
+    "allow_multiple_assignments": "Autoriser plusieurs affectations",
+    "enable_admin_async_load": "Activer le chargement asynchrone dans l'Admin",
+    "async_loading_warning_block": "AVERTISSEMENT : le chargement asynchrone n'est PAS possible dans les champs et les blocs localisés",
+    "path_formatter_service": "Service / classe de formateur",
+    "tab_position": "Position de l'onglet",
+    "invert_colors_on_login_screen": "Invert Colors on Login Screen"
 }

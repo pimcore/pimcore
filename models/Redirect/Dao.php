@@ -26,6 +26,7 @@ class Dao extends Model\Dao\AbstractDao
 {
     /**
      * @param null $id
+     *
      * @throws \Exception
      */
     public function getById($id = null)

@@ -33,7 +33,7 @@ class Listing extends Listing\AbstractListing
     /**
      * Alias for $this->getItems()
      *
-     * @return array
+     * @return \Pimcore\Model\User[]
      */
     public function getUsers()
     {

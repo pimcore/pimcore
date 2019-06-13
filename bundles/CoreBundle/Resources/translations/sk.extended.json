@@ -50,8 +50,6 @@
     "deactivate_maintenance": "Deaktivovať údržbový mód",
     "code_settings": "Nastavenia kódu",
     "advanced_integration": "Pokročilá integrácia",
-    "personamultiselect": "Persóna (viacnásobný výber)",
-    "persona": "Persóna",
     "target_group": "Cieľová skupina",
     "children": "Potomkovia",
     "elements_to_export": "Elementy k exportu",
@@ -706,5 +704,7 @@
     "allow_multiple_assignments": "Allow Multiple Assignments",
     "enable_admin_async_load": "Enable Async Load in Admin",
     "async_loading_warning_block": "WARNING: Async Loading is NOT possible within Localized Fields and Blocks",
-    "path_formatter_service": "Formatter Service / Class"
+    "path_formatter_service": "Formatter Service / Class",
+    "tab_position": "Tab Position",
+    "invert_colors_on_login_screen": "Invert Colors on Login Screen"
 }

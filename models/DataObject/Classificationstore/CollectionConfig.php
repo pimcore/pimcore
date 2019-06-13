@@ -68,6 +68,7 @@ class CollectionConfig extends Model\AbstractModel
         try {
             $config = new self();
             $config->getDao()->getById(intval($id));
+
             return $config;
         } catch (\Exception $e) {
             return null;
@@ -87,6 +88,7 @@ class CollectionConfig extends Model\AbstractModel
             $config->setName($name);
             $config->setStoreId($storeId ? $storeId : 1);
             $config->getDao()->getByName();
+
             return $config;
         } catch (\Exception $e) {
             return null;

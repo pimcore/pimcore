@@ -1,4 +1,5 @@
 {
+  "invert_colors_on_login_screen": "Invert Colors on Login Screen",
   "encrypt_data": "Encrypt Data",
   "encrypt_data_description": "Data-at-Rest/Tablespace Encryption needs to be enabled on your Database Server",
   "many_to_one_relation": "Many-To-One Relation",

@@ -18,7 +18,6 @@
 namespace Pimcore\Model;
 
 use Pimcore\Event\FrontendEvents;
-use Pimcore\Logger;
 use Symfony\Component\EventDispatcher\GenericEvent;
 
 /**
@@ -447,7 +446,7 @@ class Staticroute extends AbstractModel
                 continue;
             }
 
-            if($site = Site::getById($siteId)) {
+            if ($site = Site::getById($siteId)) {
                 $result[] = $siteId;
             }
         }

@@ -131,6 +131,7 @@ class Config extends Model\AbstractModel
                 $thumbnail = self::getByName($config);
             } catch (\Exception $e) {
                 Logger::error('requested thumbnail ' . $config . ' is not defined');
+
                 return null;
             }
         } elseif (is_array($config)) {

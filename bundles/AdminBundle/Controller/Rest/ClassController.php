@@ -100,11 +100,9 @@ class ClassController extends AbstractRestController
 
         $e = null;
 
-        try {
-            $definition = DataObject\Objectbrick\Definition::getByKey($id);
-
+        if ($definition = DataObject\Objectbrick\Definition::getByKey($id)) {
             return $this->createSuccessResponse($definition);
-        } catch (\Exception $e) {
+        } else {
             $this->getLogger()->error($e);
         }
 
@@ -158,7 +156,7 @@ class ClassController extends AbstractRestController
 
         $e = null;
 
-        if($definition = DataObject\Fieldcollection\Definition::getByKey($id)) {
+        if ($definition = DataObject\Fieldcollection\Definition::getByKey($id)) {
             return $this->createSuccessResponse($definition);
         } else {
             $this->getLogger()->error($e);

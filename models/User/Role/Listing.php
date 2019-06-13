@@ -32,7 +32,7 @@ class Listing extends Model\User\Listing\AbstractListing
     /**
      * Alias for $this->getItems()
      *
-     * @return array
+     * @return \Pimcore\Model\User\Role[]
      */
     public function getRoles()
     {

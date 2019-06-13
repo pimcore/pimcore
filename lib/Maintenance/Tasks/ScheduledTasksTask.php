@@ -52,7 +52,7 @@ final class ScheduledTasksTask implements TaskInterface
                     $document = Document::getById($task->getCid());
                     if ($document instanceof Document) {
                         if ($task->getAction() === 'publish-version' && $task->getVersion()) {
-                            if($version = Version::getById($task->getVersion())) {
+                            if ($version = Version::getById($task->getVersion())) {
                                 $document = $version->getData();
                                 if ($document instanceof Document) {
                                     $document->setPublished(true);
@@ -78,7 +78,7 @@ final class ScheduledTasksTask implements TaskInterface
 
                     if ($asset instanceof Asset) {
                         if ($task->getAction() === 'publish-version' && $task->getVersion()) {
-                            if($version = Version::getById($task->getVersion())) {
+                            if ($version = Version::getById($task->getVersion())) {
                                 $asset = $version->getData();
                                 if ($asset instanceof Asset) {
                                     $asset->save();
@@ -97,7 +97,7 @@ final class ScheduledTasksTask implements TaskInterface
 
                     if ($object instanceof DataObject) {
                         if ($task->getAction() === 'publish-version' && $task->getVersion()) {
-                            if($version = Version::getById($task->getVersion())) {
+                            if ($version = Version::getById($task->getVersion())) {
                                 $object = $version->getData();
                                 if ($object instanceof DataObject\AbstractObject) {
                                     $object->setPublished(true);

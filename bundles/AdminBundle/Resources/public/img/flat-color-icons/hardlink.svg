@@ -1,1 +1,8 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"><svg width="100%" height="100%" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:1.41421;"><path d="M22,11l-9,-4l0,2l7,3l-7,3l0,2l7.942,-3.53l1.058,-0.47l0,-2Zm-11,4l-7,-3l7,-3l0,-2l-9,4l0,2l9,4l0,-2Zm-2,-4l6,0l0,2l-6,0l0,-2Z" style="fill:#2878f0;fill-rule:nonzero;"/></svg>
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 22.1.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<svg version="1.1" id="Ebene_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 width="24px" height="24px" viewBox="0 0 24 24" enable-background="new 0 0 24 24" xml:space="preserve">
+<path fill="#F03C28" d="M17,7h-4v2h4c1.6,0,3,1.4,3,3s-1.4,3-3,3h-4v2h4c2.8,0,5-2.2,5-5S19.8,7,17,7z"/>
+<path fill="#2878F0" d="M11,15H7c-1.7,0-3-1.4-3-3s1.3-3,3-3h4V7H7c-2.8,0-5,2.2-5,5s2.2,5,5,5h4V15z"/>
+<rect x="8" y="11" fill="#F03C28" width="8" height="2"/>
+</svg>

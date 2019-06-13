@@ -189,12 +189,12 @@
 
 .x-tree-elbow-plus,
 .x-tree-elbow-end-plus {
-    background: url(/bundles/pimcoreadmin/img/material-icons/main-accordion-plus.svg) center center no-repeat !important;
+    background: url(/bundles/pimcoreadmin/img/main-accordion-plus.svg) center center no-repeat !important;
 }
 
 .x-grid-tree-node-expanded .x-tree-elbow-plus,
 .x-grid-tree-node-expanded .x-tree-elbow-end-plus {
-    background: url(/bundles/pimcoreadmin/img/material-icons/main-accordion-minus.svg) center center no-repeat !important;
+    background: url(/bundles/pimcoreadmin/img/main-accordion-minus.svg) center center no-repeat !important;
 }
 
 .x-tree-elbow-img {
@@ -208,6 +208,10 @@
 
 .x-grid-item-focused .x-grid-cell-inner:before {
     border: 0;
+}
+
+.x-action-col-icon {
+    background-size: 16px !important;
 }
 
 .x-column-header-inner {
@@ -340,8 +344,21 @@ body > .x-mask {
     background: #f6f6f6;
     border-color: #d0d0d0;
 }
-
-.x-panel > .x-panel-default-outer-border-trl, .x-panel > .x-panel-default-outer-border-rl, .x-panel > .x-panel-default-outer-border-rbl {
+.x-panel > .x-panel-default-outer-border-l,
+.x-panel > .x-panel-default-outer-border-b,
+.x-panel > .x-panel-default-outer-border-bl,
+.x-panel > .x-panel-default-outer-border-r,
+.x-panel > .x-panel-default-outer-border-rl,
+.x-panel > .x-panel-default-outer-border-rb,
+.x-panel > .x-panel-default-outer-border-rbl,
+.x-panel > .x-panel-default-outer-border-t,
+.x-panel > .x-panel-default-outer-border-tl,
+.x-panel > .x-panel-default-outer-border-tb,
+.x-panel > .x-panel-default-outer-border-tbl,
+.x-panel > .x-panel-default-outer-border-tr,
+.x-panel > .x-panel-default-outer-border-trl,
+.x-panel > .x-panel-default-outer-border-trb,
+.x-panel > .x-panel-default-outer-border-trbl {
     border-color: #d0d0d0 !important;
     border-style: solid;
 }

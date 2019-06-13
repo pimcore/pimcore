@@ -562,7 +562,6 @@
     "press_crtl_and_select_to_compare": "Karşılaştır: CTRL tuşuna basın + Sürüme Tıklayın",
     "clear_filters": "Filtreleri Temizle",
     "tags_configuration": "Etiket Yapılandırması",
-    "legacy_mode": "Eski Mod",
     "export_csv_include_headers": "CSV'yi başlıklarla dışa aktar",
     "open_data_object": "Veri Nesnesi Aç",
     "data_objects": "Veri Nesneleri",
@@ -892,5 +891,8 @@
     "split_view_object_dirty_title": "Please confirm",
     "split_view_object_dirty_msg": "There are unsaved modifications. You will lose all changes. Are you sure?",
     "converter_service": "Converter service",
-    "auto_convert": "Automatic conversion"
+    "auto_convert": "Automatic conversion",
+    "web2print_enableDebugMode": "Enable debug mode",
+    "set_to_null": "Empty (set to null)",
+    "bundles": "Bundles"
 }

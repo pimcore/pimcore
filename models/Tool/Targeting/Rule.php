@@ -108,8 +108,7 @@ class Rule extends Model\AbstractModel
     {
         try {
             $target = new self();
-            $target->setId(intval($id));
-            $target->getDao()->getById();
+            $target->getDao()->getById(intval($id));
 
             return $target;
         } catch (\Exception $e) {
@@ -126,8 +125,7 @@ class Rule extends Model\AbstractModel
     {
         try {
             $target = new self();
-            $target->setName($name);
-            $target->getDao()->getByName();
+            $target->getDao()->getByName($name);
 
             return $target;
         } catch (\Exception $e) {

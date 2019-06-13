@@ -14,8 +14,6 @@
 
 namespace Pimcore\Model;
 
-use Pimcore\Logger;
-
 /**
  * Class Workflow
  *

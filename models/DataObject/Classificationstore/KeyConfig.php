@@ -154,6 +154,7 @@ class KeyConfig extends Model\AbstractModel
             $config->setName($name);
             $config->setStoreId($storeId ? $storeId : 1);
             $config->getDao()->getByName();
+
             return $config;
         } catch (\Exception $e) {
             return null;

@@ -259,12 +259,12 @@
 }
 
 .pimcore_treenode_locked .x-tree-node-text {
-    color: #3b72c0!important;
+    color: #3b72c0 !important;
 }
 
 
 .pimcore_treenode_lockOwner .x-tree-node-text  {
-    color: #6dc1fd!important;
+    color: #0091f8 !important;
 }
 
 .pimcore_overflow_scrolling {
@@ -1867,11 +1867,11 @@ span.warning {
 }
 
 .pimcore_main_accordion .x-accordion-hd .x-tool-right {
-    background: url(/bundles/pimcoreadmin/img/material-icons/main-accordion-arrow-right.svg) center center no-repeat !important;
+    background: url(/bundles/pimcoreadmin/img/main-accordion-arrow-right.svg) center center no-repeat !important;
 }
 
 .pimcore_main_accordion .x-accordion-hd .x-tool-left {
-    background: url(/bundles/pimcoreadmin/img/material-icons/main-accordion-arrow-right.svg) center center no-repeat !important;
+    background: url(/bundles/pimcoreadmin/img/main-accordion-arrow-right.svg) center center no-repeat !important;
     transform: scaleX(-1);
 }
 
@@ -1900,6 +1900,11 @@ span.warning {
 .pimcore_main_accordion .x-tree-view .x-grid-item-container {
     padding-top: 0;
     margin-left: -12px;
+}
+
+.pimcore_main_accordion .pimcore_tree_no_root_node .x-tree-view .x-grid-item-container {
+    padding-top: 0;
+    margin-left: 15px;
 }
 
 .pimcore_main_splitter {

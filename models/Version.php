@@ -117,6 +117,7 @@ class Version extends AbstractModel
              */
             $version = self::getModelFactory()->build(Version::class);
             $version->getDao()->getById($id);
+
             return $version;
         } catch (\Exception $e) {
             return null;
@@ -266,9 +267,11 @@ class Version extends AbstractModel
     /**
      * Object
      *
+     * @param $renewReferences
+     *
      * @return mixed
      */
-    public function loadData()
+    public function loadData($renewReferences = true)
     {
         $data = null;
         $zipped = false;
@@ -321,7 +324,10 @@ class Version extends AbstractModel
             $data->setData($data->data);
         }
 
-        $data = Element\Service::renewReferences($data);
+        if ($renewReferences) {
+            $data = Element\Service::renewReferences($data);
+        }
+
         $this->setData($data);
 
         return $data;

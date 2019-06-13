@@ -127,6 +127,7 @@ class Redirect extends AbstractModel
         try {
             $redirect = new self();
             $redirect->getDao()->getById($id);
+
             return $redirect;
         } catch (\Exception $e) {
             return null;

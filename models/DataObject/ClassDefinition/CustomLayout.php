@@ -83,6 +83,7 @@ class CustomLayout extends Model\AbstractModel
 
     /**
      * @param $id
+     *
      * @return null|CustomLayout
      */
     public static function getById($id)

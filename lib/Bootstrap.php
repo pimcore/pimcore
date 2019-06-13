@@ -285,6 +285,12 @@ class Bootstrap
         \Pimcore::setKernel($kernel);
         $kernel->boot();
 
+        $conf = \Pimcore::getContainer()->getParameter('pimcore.config');
+
+        if (isset($conf['general']['timezone']) && !empty($conf['general']['timezone'])) {
+            date_default_timezone_set($conf['general']['timezone']);
+        }
+
         return $kernel;
     }
 }

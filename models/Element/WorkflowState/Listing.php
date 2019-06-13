@@ -26,11 +26,9 @@ use Pimcore\Model;
 class Listing extends Model\Listing\AbstractListing
 {
     /**
-     * Contains the results of the list. They are all an instance of WorkflowState
-     *
      * @var array
      */
-    public $workflowStates = [];
+    protected $workflowStates = null;
 
     /**
      * @param $workflowStates
@@ -45,10 +43,14 @@ class Listing extends Model\Listing\AbstractListing
     }
 
     /**
-     * @return array
+     * @return Model\Element\WorkflowState[]
      */
     public function getWorkflowStates()
     {
+        if ($this->workflowStates === null) {
+            $this->getDao()->load();
+        }
+
         return $this->workflowStates;
     }
 }
