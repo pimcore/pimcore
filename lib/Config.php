@@ -411,18 +411,15 @@ class Config
     }
 
     /**
-     * @param bool $forceReload
-     *
      * @return mixed|null|\Pimcore\Config\Config
-     *
      * @throws \Exception
      */
-    public static function getSystemConfig($forceReload = false)
+    public static function getSystemConfig()
     {
         $systemConfig = null;
 
         //try {
-        if (\Pimcore\Cache\Runtime::isRegistered('pimcore_config_system') && !$forceReload) {
+        if (\Pimcore\Cache\Runtime::isRegistered('pimcore_config_system')) {
             $systemConfig = \Pimcore\Cache\Runtime::get('pimcore_config_system');
         } else {
             if ($config = self::getSystemConfiguration()) {
@@ -1044,13 +1041,14 @@ class Config
 
     /**
      * @internal
-     * @param $file
+     * @param string $file
+     * @param bool $asArray
      *
      * @return null|Config\Config
      *
      * @throws \Exception
      */
-    protected static function getConfigInstance($file)
+    public static function getConfigInstance($file, bool $asArray = false)
     {
         $fileType = pathinfo($file, PATHINFO_EXTENSION);
         if (file_exists($file)) {
@@ -1061,6 +1059,11 @@ class Config
             }
 
             if (is_array($content)) {
+
+                if($asArray) {
+                    return $content;
+                }
+
                 return new \Pimcore\Config\Config($content);
             }
         } else {

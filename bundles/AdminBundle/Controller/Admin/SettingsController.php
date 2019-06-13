@@ -416,7 +416,13 @@ class SettingsController extends AdminController
 
         $values = $this->decodeJson($request->get('data'));
 
-        $existingValues = Config::getSystemConfiguration();
+        $existingValues = [];
+        try {
+            $file = Config::locateConfigFile('system.yml');
+            $existingValues = Config::getConfigInstance($file, true);
+        } catch (\Exception $e) {
+            // nothing to do
+        }
 
         // fallback languages
         $fallbackLanguages = [];
