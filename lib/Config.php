@@ -433,14 +433,16 @@ class Config
 
                 //add email settings
                 foreach (['email' => 'pimcore_mailer', 'newsletter' => 'newsletter_mailer'] as $key => $group) {
-                    $config[$key]['smtp'] = [
-                            'host' => $container->getParameter('swiftmailer.mailer.'.$group.'.transport.smtp.host'),
-                            'username' => $container->getParameter('swiftmailer.mailer.'.$group.'.transport.smtp.username'),
-                            'password' => $container->getParameter('swiftmailer.mailer.'.$group.'.transport.smtp.password'),
-                            'port' => $container->getParameter('swiftmailer.mailer.'.$group.'.transport.smtp.port'),
-                            'encryption' => $container->getParameter('swiftmailer.mailer.'.$group.'.transport.smtp.encryption'),
-                            'auth_mode' => $container->getParameter('swiftmailer.mailer.'.$group.'.transport.smtp.auth_mode'),
+                    if($container->hasParameter('swiftmailer.mailer.'.$group.'.transport.smtp.host')) {
+                        $config[$key]['smtp'] = [
+                            'host' => $container->getParameter('swiftmailer.mailer.' . $group . '.transport.smtp.host'),
+                            'username' => $container->getParameter('swiftmailer.mailer.' . $group . '.transport.smtp.username'),
+                            'password' => $container->getParameter('swiftmailer.mailer.' . $group . '.transport.smtp.password'),
+                            'port' => $container->getParameter('swiftmailer.mailer.' . $group . '.transport.smtp.port'),
+                            'encryption' => $container->getParameter('swiftmailer.mailer.' . $group . '.transport.smtp.encryption'),
+                            'auth_mode' => $container->getParameter('swiftmailer.mailer.' . $group . '.transport.smtp.auth_mode'),
                         ];
+                    }
                 }
 
                 $config = array_merge_recursive($config, $adminConfig);
