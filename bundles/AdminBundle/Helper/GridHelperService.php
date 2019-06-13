@@ -337,8 +337,7 @@ class GridHelperService
     public function addGridFeatureJoins(DataObject\Listing\Concrete $list, array $featureJoins, ClassDefinition $class, array $featureFilters)
     {
         if ($featureJoins) {
-            $me = $list;
-            $list->onCreateQuery(function (Db\ZendCompatibility\QueryBuilder $select) use ($list, $featureJoins, $class, $featureFilters, $me) {
+            $list->onCreateQuery(function (Db\ZendCompatibility\QueryBuilder $select) use ($list, $featureJoins, $class, $featureFilters) {
                 $db = \Pimcore\Db::get();
 
                 $alreadyJoined = [];
@@ -351,7 +350,7 @@ class GridHelperService
                     }
                     $alreadyJoined[$mappedKey] = 1;
 
-                    $table = $me->getDao()->getTableName();
+                    $table = $list->getDao()->getTableName();
                     $select->joinLeft(
                         [$mappedKey => 'object_classificationstore_data_' . $class->getId()],
                         '('
