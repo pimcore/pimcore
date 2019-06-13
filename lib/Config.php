@@ -89,27 +89,23 @@ class Config
     }
 
     /**
-     *
-     * @return mixed|null|\Pimcore\Config\Config
-     *
-     * @throws \Exception
+     * @internal
+     * @return null|array
      */
     public static function getSystemConfiguration()
     {
         $config = null;
-
-        $file = self::locateConfigFile('system.yml');
-
-        try {
-            $config = static::getConfigInstance($file);
-        } catch (\Exception $e) {
-            Logger::error('Cannot find system configuration, should be located at: ' . $file);
+        if ($container = \Pimcore::getContainer()) {
+            $config = $container->getParameter('pimcore.config');
+            $adminConfig = $container->getParameter('pimcore_admin.config');
+            $config = array_merge_recursive($config, $adminConfig);
         }
 
         return $config;
     }
 
     /**
+     * @internal
      * @static
      *
      * @param \Pimcore\Config\Config $config
@@ -120,6 +116,7 @@ class Config
     }
 
     /**
+     * @internal
      * @param null $languange
      *
      * @return string
@@ -239,6 +236,7 @@ class Config
     }
 
     /**
+     * @internal
      * @param Config\Config $config
      * @param null $language
      */
@@ -427,10 +425,8 @@ class Config
         if (\Pimcore\Cache\Runtime::isRegistered('pimcore_config_system') && !$forceReload) {
             $systemConfig = \Pimcore\Cache\Runtime::get('pimcore_config_system');
         } else {
-            if ($container = \Pimcore::getContainer()) {
-                $config = $container->getParameter('pimcore.config');
-                $adminConfig = $container->getParameter('pimcore_admin.config');
-
+            if ($config = self::getSystemConfiguration()) {
+                $container = \Pimcore::getContainer();
                 //add email settings
                 foreach (['email' => 'pimcore_mailer', 'newsletter' => 'newsletter_mailer'] as $key => $group) {
                     if($container->hasParameter('swiftmailer.mailer.'.$group.'.transport.smtp.host')) {
@@ -445,21 +441,16 @@ class Config
                     }
                 }
 
-                $config = array_merge_recursive($config, $adminConfig);
-
                 $systemConfig = self::mapLegacyConfiguration($config);
                 self::setSystemConfig($systemConfig);
             }
         }
-//        } catch (\Exception $e) {
-//            Logger::error('System configuration error: ' . $e->getMessage());
-//            $systemConfig = new \Pimcore\Config\Config([]);
-//        }
 
         return $systemConfig;
     }
 
     /**
+     * @internal
      * @static
      *
      * @return \Pimcore\Config\Config
@@ -483,6 +474,7 @@ class Config
     }
 
     /**
+     * @internal
      * @static
      *
      * @param \Pimcore\Config\Config $config
@@ -526,6 +518,7 @@ class Config
     }
 
     /**
+     * @internal
      * @static
      *
      * @return \Pimcore\Config\Config
@@ -549,6 +542,7 @@ class Config
     }
 
     /**
+     * @internal
      * @static
      *
      * @param \Pimcore\Config\Config $config
@@ -559,6 +553,7 @@ class Config
     }
 
     /**
+     * @internal
      * @static
      *
      * @param \Pimcore\Config\Config $config
@@ -569,6 +564,7 @@ class Config
     }
 
     /**
+     * @internal
      * @static
      *
      * @return mixed|\Pimcore\Config\Config
@@ -596,7 +592,8 @@ class Config
         return $config;
     }
 
-    /** Returns the standard perspective settings
+    /**
+     * @internal
      * @return array
      */
     public static function getStandardPerspective()
@@ -680,7 +677,8 @@ class Config
         ];
     }
 
-    /** Gets the active perspective for the current user
+    /**
+     * @internal
      * @param Model\User $currentUser
      *
      * @return array
@@ -719,7 +717,8 @@ class Config
         return $result;
     }
 
-    /** Returns the element tree config for the given config name
+    /**
+     * @internal
      * @param $name
      *
      * @return array
@@ -813,6 +812,7 @@ class Config
     }
 
     /**
+     * @internal
      * @static
      *
      * @param \Pimcore\Config\Config $config
@@ -822,7 +822,8 @@ class Config
         \Pimcore\Cache\Runtime::set('pimcore_config_perspectives', $config);
     }
 
-    /** Returns a list of available perspectives for the given user
+    /**
+     * @internal
      * @param Model\User $user
      *
      * @return array
@@ -902,6 +903,7 @@ class Config
     }
 
     /**
+     * @internal
      * @param $runtimeConfig
      * @param $key
      *
@@ -1003,6 +1005,10 @@ class Config
         static::$environment = $environment;
     }
 
+    /**
+     * @internal
+     * @return EnvironmentConfigInterface
+     */
     public static function getEnvironmentConfig(): EnvironmentConfigInterface
     {
         if (null === static::$environmentConfig) {
@@ -1012,6 +1018,10 @@ class Config
         return static::$environmentConfig;
     }
 
+    /**
+     * @internal
+     * @param EnvironmentConfigInterface $environmentConfig
+     */
     public static function setEnvironmentConfig(EnvironmentConfigInterface $environmentConfig)
     {
         self::$environmentConfig = $environmentConfig;
@@ -1033,6 +1043,7 @@ class Config
     }
 
     /**
+     * @internal
      * @param $file
      *
      * @return null|Config\Config

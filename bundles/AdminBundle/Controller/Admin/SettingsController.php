@@ -416,9 +416,7 @@ class SettingsController extends AdminController
 
         $values = $this->decodeJson($request->get('data'));
 
-        // email settings
-        $existingConfig = Config::getSystemConfiguration();
-        $existingValues = $existingConfig->toArray();
+        $existingValues = Config::getSystemConfiguration();
 
         // fallback languages
         $fallbackLanguages = [];
