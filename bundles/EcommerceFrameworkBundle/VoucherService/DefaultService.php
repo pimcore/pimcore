@@ -14,12 +14,12 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart;
+use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartInterface ;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\VoucherServiceException;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class DefaultService implements IVoucherService
+class DefaultService implements VoucherServiceInterface
 {
     /**
      * @var int
@@ -63,13 +63,13 @@ class DefaultService implements IVoucherService
 
     /**
      * @param string $code
-     * @param ICart $cart
+     * @param CartInterface  $cart
      *
      * @return bool
      *
      * @throws VoucherServiceException
      */
-    public function checkToken($code, ICart $cart)
+    public function checkToken($code, CartInterface  $cart)
     {
         if ($tokenManager = $this->getTokenManager($code)) {
             return $tokenManager->checkToken($code, $cart);
@@ -79,11 +79,11 @@ class DefaultService implements IVoucherService
 
     /**
      * @param string $code
-     * @param ICart $cart
+     * @param CartInterface  $cart
      *
      * @return bool
      */
-    public function reserveToken($code, ICart $cart)
+    public function reserveToken($code, CartInterface  $cart)
     {
         if ($tokenManager = $this->getTokenManager($code)) {
             return $tokenManager->reserveToken($code, $cart);
@@ -94,11 +94,11 @@ class DefaultService implements IVoucherService
 
     /**
      * @param string $code
-     * @param ICart $cart
+     * @param CartInterface  $cart
      *
      * @return bool
      */
-    public function releaseToken($code, ICart $cart)
+    public function releaseToken($code, CartInterface  $cart)
     {
         if ($tokenManager = $this->getTokenManager($code)) {
             return $tokenManager->releaseToken($code, $cart);
@@ -109,12 +109,12 @@ class DefaultService implements IVoucherService
 
     /**
      * @param string $code
-     * @param ICart $cart
+     * @param CartInterface  $cart
      * @param AbstractOrder $order
      *
      * @return bool
      */
-    public function applyToken($code, ICart $cart, AbstractOrder $order)
+    public function applyToken($code, CartInterface  $cart, AbstractOrder $order)
     {
         if ($tokenManager = $this->getTokenManager($code)) {
             if ($orderToken = $tokenManager->applyToken($code, $cart, $order)) {
@@ -203,7 +203,7 @@ class DefaultService implements IVoucherService
     /**
      * @param $code
      *
-     * @return bool|TokenManager\ITokenManager
+     * @return bool|TokenManager\TokenManagerInterface
      */
     public function getTokenManager($code)
     {

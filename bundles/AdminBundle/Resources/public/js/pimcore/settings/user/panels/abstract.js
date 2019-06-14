@@ -61,6 +61,11 @@ pimcore.settings.user.panels.abstract = Class.create({
                             id: record.data.id
                         },
                         success: function() {
+                            var userPanelKey = "user_" + record.data.id;
+                            if (this.panels[userPanelKey]) {
+                                this.panels[userPanelKey].panel.close();
+                                delete this.panels[userPanelKey];
+                            }
                             record.remove();
                         }.bind(this, tree, record)
                     });

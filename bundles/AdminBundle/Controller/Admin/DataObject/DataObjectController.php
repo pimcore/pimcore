@@ -454,7 +454,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
             $validLayouts = DataObject\Service::getValidLayouts($object);
 
             //master layout has id 0 so we check for is_null()
-            if (is_null($currentLayoutId) && !empty($validLayouts)) {
+            if ((is_null($currentLayoutId) || !strlen($currentLayoutId)) && !empty($validLayouts)) {
                 if (count($validLayouts) == 1) {
                     $firstLayout = reset($validLayouts);
                     $currentLayoutId = $firstLayout->getId();
@@ -960,10 +960,8 @@ class DataObjectController extends ElementControllerBase implements EventedContr
             $list->setOrderKey('LENGTH(o_path)', false);
             $list->setOrder('DESC');
 
-            $objects = $list->load();
-
             $deletedItems = [];
-            foreach ($objects as $object) {
+            foreach ($list as $object) {
                 $deletedItems[] = $object->getRealFullPath();
                 if ($object->isAllowed('delete') && !$object->isLocked()) {
                     $object->delete();
@@ -1123,10 +1121,15 @@ class DataObjectController extends ElementControllerBase implements EventedContr
      */
     protected function updateIndexesOfObjectSiblings(DataObject\AbstractObject $updatedObject, $newIndex)
     {
-        $updateLatestVersionIndex = function ($object, $newIndex) {
-            if ($object instanceof DataObject\Concrete && $latestVersion = $object->getLatestVersion()) {
-                $object = $latestVersion->loadData();
-                $object->setIndex($newIndex);
+        $updateLatestVersionIndex = function ($objectId, $modificationDate, $newIndex) {
+            if ($latestVersion = DataObject\Concrete::getLatestVersionByObjectIdAndLatestModificationDate($objectId, $modificationDate)) {
+
+                // don't renew references (which means loading the target elements)
+                // Not needed as we just save a new version with the updated index
+                $object = $latestVersion->loadData(false);
+                if ($newIndex !== $object->getIndex()) {
+                    $object->setIndex($newIndex);
+                }
                 $latestVersion->save();
             }
         };
@@ -1150,15 +1153,10 @@ class DataObjectController extends ElementControllerBase implements EventedContr
             ]
         );
 
-        $list->setCondition(
-            'o_parentId = ? AND o_id != ?',
-            [$updatedObject->getParentId(), $updatedObject->getId()]
-        );
-        $list->setObjectTypes([DataObject\AbstractObject::OBJECT_TYPE_OBJECT, DataObject\AbstractObject::OBJECT_TYPE_VARIANT, DataObject\AbstractObject::OBJECT_TYPE_FOLDER]);
-        $list->setOrderKey('o_index');
-        $list->setOrder('asc');
-        $siblings = $list->load();
-
+        $db = Db::get();
+        $siblings = $db->fetchAll('SELECT o_id, o_modificationDate FROM objects'
+                . " WHERE o_parentId = ? AND o_id != ? AND o_type IN ('object', 'variant','folder') ORDER BY o_index ASC",
+                        [$updatedObject->getParentId(), $updatedObject->getId()]);
         $index = 0;
         /** @var DataObject\AbstractObject $child */
         foreach ($siblings as $sibling) {
@@ -1166,10 +1164,10 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                 $index++;
             }
 
-            $updateLatestVersionIndex($sibling, $index);
+            $updateLatestVersionIndex($sibling['o_id'], $sibling['o_modificationDate'], $index);
             $index++;
 
-            $sibling->clearDependentCache();
+            DataObject\AbstractObject::clearDependentCacheByObjectId($sibling['o_id']);
         }
     }
 

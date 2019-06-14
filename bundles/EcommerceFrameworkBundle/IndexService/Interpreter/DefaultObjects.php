@@ -16,7 +16,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Interpreter;
 
 use Pimcore\Model\DataObject\AbstractObject;
 
-class DefaultObjects implements IRelationInterpreter
+class DefaultObjects implements RelationInterpreterInterface
 {
     public function interpret($value, $config = null)
     {

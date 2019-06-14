@@ -236,14 +236,6 @@ class Bootstrap
         // this is primarily necessary for tests and custom class directories, which are not covered in composer.json
         $loader->addPsr4('Pimcore\\Model\\DataObject\\', PIMCORE_CLASS_DIRECTORY . '/DataObject');
 
-        // compatibility autoloader for the \Pimcore\Model\Object\* namespace (seems to work with PHP 7.2 as well, tested with 7.2.3)
-        $dataObjectCompatibilityLoader = new \Pimcore\Loader\Autoloader\DataObjectCompatibility($loader);
-        $dataObjectCompatibilityLoader->register(true);
-
-        // legacy mapping loader creates aliases for renamed classes
-        $legacyMappingLoader = new \Pimcore\Loader\Autoloader\AliasMapper($loader);
-        $legacyMappingLoader->register(true);
-
         // ignore apiDoc params (see http://apidocjs.com/) as we use apiDoc in webservice
         $apiDocAnnotations = [
             'api', 'apiDefine',
@@ -292,6 +284,12 @@ class Bootstrap
         $kernel = new $kernelClass($environment, $debug);
         \Pimcore::setKernel($kernel);
         $kernel->boot();
+
+        $conf = \Pimcore::getContainer()->getParameter('pimcore.config');
+
+        if (isset($conf['general']['timezone']) && !empty($conf['general']['timezone'])) {
+            date_default_timezone_set($conf['general']['timezone']);
+        }
 
         return $kernel;
     }

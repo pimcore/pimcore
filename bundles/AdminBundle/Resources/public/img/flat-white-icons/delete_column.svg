@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 22.1.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<svg version="1.1" id="Ebene_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 width="24px" height="24px" viewBox="0 0 24 24" enable-background="new 0 0 24 24" xml:space="preserve">
+<path fill="none" d="M0,0h24v24H0V0z"/>
+<rect x="18" y="3" fill="#FFFFFF" width="3" height="18"/>
+<rect x="3" y="3" fill="#FFFFFF" width="3" height="18"/>
+<g>
+	<g>
+		<path fill="#FFFFFF" d="M16,3H8v18h8V3L16,3z"/>
+	</g>
+</g>
+<circle fill="#F03C28" cx="18" cy="18" r="6"/>
+<polygon fill="#FFFFFF" points="20.1,14.5 18,16.6 15.9,14.5 14.5,15.9 16.6,18 14.5,20.1 15.9,21.5 18,19.4 20.1,21.5 21.5,20.1 
+	19.4,18 21.5,15.9 "/>
+</svg>

@@ -1058,7 +1058,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
         // set type specific settings
         if ($childDocument->getType() == 'page') {
             $tmpDocument['leaf'] = false;
-            $tmpDocument['expanded'] = $childDocument->hasNoChilds();
+            $tmpDocument['expanded'] = !$childDocument->hasChildren();
             $tmpDocument['permissions']['create'] = $childDocument->isAllowed('create');
             $tmpDocument['iconCls'] = 'pimcore_icon_page';
 
@@ -1070,9 +1070,9 @@ class DocumentController extends ElementControllerBase implements EventedControl
             }
         } elseif ($childDocument->getType() == 'folder' || $childDocument->getType() == 'link' || $childDocument->getType() == 'hardlink') {
             $tmpDocument['leaf'] = false;
-            $tmpDocument['expanded'] = $childDocument->hasNoChilds();
+            $tmpDocument['expanded'] = !$childDocument->hasChildren();
 
-            if ($childDocument->hasNoChilds() && $childDocument->getType() == 'folder') {
+            if (!$childDocument->hasChildren() && $childDocument->getType() == 'folder') {
                 $tmpDocument['iconCls'] = 'pimcore_icon_folder';
             }
             $tmpDocument['permissions']['create'] = $childDocument->isAllowed('create');

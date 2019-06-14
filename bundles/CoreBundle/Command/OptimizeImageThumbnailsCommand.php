@@ -64,6 +64,8 @@ class OptimizeImageThumbnailsCommand extends AbstractCommand
 
                 $this->optimizer->optimizeImage($file);
 
+                clearstatcache();
+
                 $savedBytes = ($originalFilesize - filesize($file));
                 $savedBytesTotal += $savedBytes;
 

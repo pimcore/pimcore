@@ -1,15 +1,11 @@
-<svg version="1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" enable-background="new 0 0 48 48">
-    <g fill="#F44336">
-        <rect x="40" y="34" width="4" height="10"/>
-        <rect x="34" y="29" width="4" height="15"/>
-        <rect x="28" y="33" width="4" height="11"/>
-        <rect x="22" y="25" width="4" height="19"/>
-        <rect x="16" y="28" width="4" height="16"/>
-        <rect x="10" y="24" width="4" height="20"/>
-        <rect x="4" y="19" width="4" height="25"/>
-    </g>
-    <g fill="#D32F2F">
-        <polygon points="34,13.2 30,17.2 20,7.2 15,12.2 7.4,4.6 4.6,7.4 15,17.8 20,12.8 30,22.8 34,18.8 40.1,24.9 42.9,22.1"/>
-        <polygon points="44,26 35,26 44,17"/>
-    </g>
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 22.1.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<svg version="1.1" id="Ebene_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 width="24px" height="24px" viewBox="0 0 24 24" enable-background="new 0 0 24 24" xml:space="preserve">
+<rect x="11" y="10" fill="#A3A5A7" width="2" height="11"/>
+<rect x="7" y="7" fill="#A3A5A7" width="2" height="14"/>
+<rect x="15" y="13" fill="#A3A5A7" width="2" height="8"/>
+<rect x="19" y="16" fill="#A3A5A7" width="2" height="5"/>
+<rect x="3" y="3" fill="#A3A5A7" width="2" height="18"/>
+<path fill="#2878F0" d="M19,5V3l3,3l-3,3V7h-6V5H19z"/>
 </svg>

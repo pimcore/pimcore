@@ -14,18 +14,19 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\AvailabilitySystem;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\Model\ICheckoutable;
+@trigger_error(
+    'Interface Pimcore\Bundle\EcommerceFrameworkBundle\AvailabilitySystem\IAvailabilitySystem is deprecated since version 6.0.0 and will be removed in 7.0.0. ' .
+    'Use ' . AvailabilitySystemInterface::class . '  class instead.',
+    E_USER_DEPRECATED
+);
 
-interface IAvailabilitySystem
-{
+class_exists(AvailabilitySystemInterface::class);
+
+if (false) {
     /**
-     * Get availability info for a given product
-     *
-     * @param ICheckoutable $product
-     * @param int $quantityScale
-     * @param null $products
-     *
-     * @return IAvailability
+     * @deprecated use Pimcore\Bundle\EcommerceFrameworkBundle\AvailabilitySystem\AvailabilitySystemInterface instead.
      */
-    public function getAvailabilityInfo(ICheckoutable $product, $quantityScale = 1, $products = null);
+    interface IAvailabilitySystem
+    {
+    }
 }

@@ -20,7 +20,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\TokenManager;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\InvalidConfigException;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractVoucherTokenType;
 
-class TokenManagerFactory implements ITokenManagerFactory
+class TokenManagerFactory implements TokenManagerFactoryInterface
 {
     /**
      * @var array
@@ -28,7 +28,7 @@ class TokenManagerFactory implements ITokenManagerFactory
     private $mapping;
 
     /**
-     * @var ITokenManager[]
+     * @var TokenManagerInterface[]
      */
     private $tokenManagers = [];
 
@@ -40,7 +40,7 @@ class TokenManagerFactory implements ITokenManagerFactory
         $this->mapping = $mapping;
     }
 
-    public function getTokenManager(AbstractVoucherTokenType $configuration): ITokenManager
+    public function getTokenManager(AbstractVoucherTokenType $configuration): TokenManagerInterface
     {
         $id = $configuration->getObject()->getId();
         $type = $configuration->getType();

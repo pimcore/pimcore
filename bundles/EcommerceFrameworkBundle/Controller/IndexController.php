@@ -16,7 +16,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\Controller;
 
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
-use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\IProductList;
+use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\ProductListInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -139,9 +139,9 @@ class IndexController extends AdminController
         }
 
         if ($request->get('specific_price_field') == 'true') {
-            $fields[IProductList::ORDERKEY_PRICE] = [
-                'key' => IProductList::ORDERKEY_PRICE,
-                'name' => $this->trans(IProductList::ORDERKEY_PRICE)
+            $fields[ProductListInterface::ORDERKEY_PRICE] = [
+                'key' => ProductListInterface::ORDERKEY_PRICE,
+                'name' => $this->trans(ProductListInterface::ORDERKEY_PRICE)
             ];
         }
 

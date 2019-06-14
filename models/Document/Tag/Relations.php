@@ -354,3 +354,5 @@ class Relations extends Model\Document\Tag implements \Iterator
         return $var;
     }
 }
+
+class_alias(Relations::class, 'Pimcore\Model\Document\Tag\Multihref');

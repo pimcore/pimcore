@@ -33,9 +33,9 @@ use Zend\Paginator\AdapterAggregateInterface;
 class Listing extends Model\Listing\AbstractListing implements \Iterator, AdapterInterface, AdapterAggregateInterface
 {
     /**
-     * @var array
+     * @var array|null
      */
-    public $objects = null;
+    protected $objects = null;
 
     /**
      * @var bool

@@ -242,7 +242,7 @@ class Definition extends Model\AbstractModel
      *
      * @throws \Exception
      *
-     * @return Definition
+     * @return self|null
      */
     public static function getByKey($key)
     {
@@ -269,7 +269,7 @@ class Definition extends Model\AbstractModel
             return $fc;
         }
 
-        throw new \Exception('Field-Collection with key: ' . $key . ' does not exist.');
+        return null;
     }
 
     /**

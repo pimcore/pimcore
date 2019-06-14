@@ -494,29 +494,6 @@ class Console
     }
 
     /**
-     * @param array $allowedUsers
-     *
-     * @throws \Exception
-     */
-    public static function checkExecutingUser($allowedUsers = [])
-    {
-        $configFile = \Pimcore\Config::locateConfigFile('system.php');
-        $owner = fileowner($configFile);
-        if ($owner == false) {
-            throw new \Exception("Couldn't get user from file " . $configFile);
-        }
-        $userData = posix_getpwuid($owner);
-        $allowedUsers[] = $userData['name'];
-
-        $scriptExecutingUserData = posix_getpwuid(posix_geteuid());
-        $scriptExecutingUser = $scriptExecutingUserData['name'];
-
-        if (!in_array($scriptExecutingUser, $allowedUsers)) {
-            throw new \Exception("The current system user is not allowed to execute this script. Allowed users: '" . implode(',', $allowedUsers) ."' Executing user: '$scriptExecutingUser'.");
-        }
-    }
-
-    /**
      * @throws \Exception
      */
     public static function checkCliExecution()

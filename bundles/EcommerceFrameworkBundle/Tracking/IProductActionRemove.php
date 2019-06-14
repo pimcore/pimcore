@@ -14,20 +14,20 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\Tracking;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IProduct;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Model\ProductInterface;
 
 /**
- * @deprecated Use ICartProductActionRemove instead
+ * @deprecated Use CartProductActionRemoveInterface instead
  */
 interface IProductActionRemove
 {
     /**
      * Track product remove from cart
      *
-     * @deprecated Use ICartProductActionRemove::trackCartProductActionRemove instead
+     * @deprecated Use CartProductActionRemoveInterface::trackCartProductActionRemove instead
      *
-     * @param IProduct $product
+     * @param ProductInterface $product
      * @param int|float $quantity
      */
-    public function trackProductActionRemove(IProduct $product, $quantity = 1);
+    public function trackProductActionRemove(ProductInterface $product, $quantity = 1);
 }

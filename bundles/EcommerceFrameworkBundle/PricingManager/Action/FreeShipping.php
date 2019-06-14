@@ -16,29 +16,29 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Action;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartPriceModificator\ICartPriceModificator;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartPriceModificator\IShipping;
-use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IAction;
-use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\ICondition;
-use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IEnvironment;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\ActionInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\ConditionInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\EnvironmentInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
 
-class FreeShipping implements IAction
+class FreeShipping implements ActionInterface
 {
     /**
-     * @param IEnvironment $environment
+     * @param EnvironmentInterface $environment
      *
-     * @return IAction
+     * @return ActionInterface
      */
-    public function executeOnProduct(IEnvironment $environment)
+    public function executeOnProduct(EnvironmentInterface $environment)
     {
         return $this;
     }
 
     /**
-     * @param IEnvironment $environment
+     * @param EnvironmentInterface $environment
      *
-     * @return IAction
+     * @return ActionInterface
      */
-    public function executeOnCart(IEnvironment $environment)
+    public function executeOnCart(EnvironmentInterface $environment)
     {
         $priceCalculator = $environment->getCart()->getPriceCalculator();
 
@@ -69,7 +69,7 @@ class FreeShipping implements IAction
     /**
      * @param string $string
      *
-     * @return ICondition
+     * @return ConditionInterface
      */
     public function fromJSON($string)
     {

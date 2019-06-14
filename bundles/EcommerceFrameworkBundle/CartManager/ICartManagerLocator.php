@@ -17,9 +17,19 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\CartManager;
 
-interface ICartManagerLocator
-{
-    public function getCartManager(string $tenant = null): ICartManager;
+@trigger_error(
+    'Interface Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICartManagerLocator is deprecated since version 6.0.0 and will be removed in 7.0.0. ' .
+    ' Use ' . CartManagerLocatorInterface::class . ' class instead.',
+    E_USER_DEPRECATED
+);
 
-    public function hasCartManager(string $tenant): bool;
+class_exists(CartManagerLocatorInterface::class);
+
+if (false) {
+    /**
+     * @deprecated use CartManagerLocatorInterface instead.
+     */
+    interface ICartManagerLocator
+    {
+    }
 }

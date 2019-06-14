@@ -562,7 +562,6 @@
     "press_crtl_and_select_to_compare": "Comparer : Appuyez sur CTRL + Cliquer Version",
     "clear_filters": "Effacer les filtres",
     "tags_configuration": "Configuration des Tags",
-    "legacy_mode": "Legacy mode",
     "export_csv_include_headers": "Export CSV avec en-têtes",
     "open_data_object": "Ouvrir Objet de Données",
     "data_objects": "Objets de Données",
@@ -891,6 +890,9 @@
     "disable_split_view": "Désactiver la vue partagée",
     "split_view_object_dirty_title": "Veuillez confirmer",
     "split_view_object_dirty_msg": "Il y a des modifications non sauvegardées. Vous allez perdre tous les changements. Êtes-vous sûr ?",
-    "converter_service": "Converter service",
-    "auto_convert": "Automatic conversion"
+    "converter_service": "Service de convertisseur",
+    "auto_convert": "Conversion automatique",
+    "web2print_enableDebugMode": "Activer le mode débogage",
+    "set_to_null": "Vide (défini sur null)",
+    "bundles": "Bundles"
 }

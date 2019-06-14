@@ -20,7 +20,6 @@ namespace Pimcore\Model\DataObject\Fieldcollection\Data;
 use Pimcore\Model;
 use Pimcore\Model\DataObject\ClassDefinition\Data\CustomResourcePersistingInterface;
 use Pimcore\Model\DataObject\ClassDefinition\Data\ResourcePersistenceAwareInterface;
-use Pimcore\Tool;
 
 /**
  * @property \Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData $model
@@ -48,10 +47,7 @@ class Dao extends Model\Dao\AbstractDao
             foreach ($this->model->getDefinition()->getFieldDefinitions() as $fd) {
                 $getter = 'get' . ucfirst($fd->getName());
 
-                if ($fd instanceof CustomResourcePersistingInterface || method_exists($fd, 'save')) {
-                    if (!$fd instanceof CustomResourcePersistingInterface) {
-                        Tool::triggerMissingInterfaceDeprecation(get_class($fd), 'save', CustomResourcePersistingInterface::class);
-                    }
+                if ($fd instanceof CustomResourcePersistingInterface) {
                     if (!$fd instanceof Model\DataObject\ClassDefinition\Data\Localizedfields && $fd->supportsDirtyDetection() && !$saveRelationalData) {
                         continue;
                     }
@@ -73,10 +69,7 @@ class Dao extends Model\Dao\AbstractDao
 
                     );
                 }
-                if ($fd instanceof ResourcePersistenceAwareInterface || method_exists($fd, 'getDataForResource')) {
-                    if (!$fd instanceof ResourcePersistenceAwareInterface) {
-                        Tool::triggerMissingInterfaceDeprecation(get_class($fd), 'getDataForResource', ResourcePersistenceAwareInterface::class);
-                    }
+                if ($fd instanceof ResourcePersistenceAwareInterface) {
                     if (is_array($fd->getColumnType())) {
                         $insertDataArray = $fd->getDataForResource($this->model->$getter(), $object, [
                             'context' => $this->model //\Pimcore\Model\DataObject\Fieldcollection\Data\Dao

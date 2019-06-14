@@ -17,9 +17,19 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager;
 
-interface IOrderManagerLocator
-{
-    public function getOrderManager(string $tenant = null): IOrderManager;
+@trigger_error(
+    'Interface Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\IOrderManagerLocator is deprecated since version 6.0.0 and will be removed in 7.0.0. ' .
+    ' Use ' . OrderManagerLocatorInterface::class . ' class instead.',
+    E_USER_DEPRECATED
+);
 
-    public function hasOrderManager(string $tenant): bool;
+class_exists(OrderManagerLocatorInterface::class);
+
+if (false) {
+    /**
+     * @deprecated use OrderManagerLocatorInterface instead.
+     */
+    interface IOrderManagerLocator
+    {
+    }
 }

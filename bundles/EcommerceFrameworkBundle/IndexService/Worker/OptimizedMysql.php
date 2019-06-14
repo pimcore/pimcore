@@ -15,7 +15,7 @@
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\OptimizedMysql as OptimizedMysqlConfig;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IIndexable;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IndexableInterface;
 use Pimcore\Db\ConnectionInterface;
 use Pimcore\Logger;
 
@@ -24,7 +24,7 @@ use Pimcore\Logger;
  *
  * @property OptimizedMysqlConfig $tenantConfig
  */
-class OptimizedMysql extends AbstractMockupCacheWorker implements IBatchProcessingWorker
+class OptimizedMysql extends AbstractMockupCacheWorker implements BatchProcessingWorkerInterface
 {
     const STORE_TABLE_NAME = 'ecommerceframework_productindex_store';
     const MOCKUP_CACHE_PREFIX = 'ecommerce_mockup';
@@ -47,7 +47,7 @@ class OptimizedMysql extends AbstractMockupCacheWorker implements IBatchProcessi
         $this->createOrUpdateStoreTable();
     }
 
-    public function deleteFromIndex(IIndexable $object)
+    public function deleteFromIndex(IndexableInterface $object)
     {
         if (!$this->tenantConfig->isActive($object)) {
             Logger::info("Tenant {$this->name} is not active.");
@@ -64,7 +64,7 @@ class OptimizedMysql extends AbstractMockupCacheWorker implements IBatchProcessi
         $this->doCleanupOldZombieData($object, $subObjectIds);
     }
 
-    protected function doDeleteFromIndex($objectId, IIndexable $object = null)
+    protected function doDeleteFromIndex($objectId, IndexableInterface $object = null)
     {
         try {
             $this->db->beginTransaction();
@@ -83,7 +83,7 @@ class OptimizedMysql extends AbstractMockupCacheWorker implements IBatchProcessi
         }
     }
 
-    public function updateIndex(IIndexable $object)
+    public function updateIndex(IndexableInterface $object)
     {
         if (!$this->tenantConfig->isActive($object)) {
             Logger::info("Tenant {$this->name} is not active.");

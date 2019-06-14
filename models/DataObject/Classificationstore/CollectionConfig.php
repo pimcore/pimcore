@@ -61,17 +61,17 @@ class CollectionConfig extends Model\AbstractModel
     /**
      * @param int $id
      *
-     * @return Model\DataObject\Classificationstore\CollectionConfig
+     * @return self|null
      */
     public static function getById($id)
     {
         try {
             $config = new self();
-            $config->setId(intval($id));
-            $config->getDao()->getById();
+            $config->getDao()->getById(intval($id));
 
             return $config;
         } catch (\Exception $e) {
+            return null;
         }
     }
 
@@ -79,7 +79,7 @@ class CollectionConfig extends Model\AbstractModel
      * @param $name
      * @param int $storeId
      *
-     * @return CollectionConfig
+     * @return self|null
      */
     public static function getByName($name, $storeId = 1)
     {
@@ -91,6 +91,7 @@ class CollectionConfig extends Model\AbstractModel
 
             return $config;
         } catch (\Exception $e) {
+            return null;
         }
     }
 

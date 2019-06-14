@@ -17,11 +17,11 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\Definition;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\IConfig;
-use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Getter\IExtendedGetter;
-use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Getter\IGetter;
-use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Interpreter\IInterpreter;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IIndexable;
+use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\ConfigInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Getter\ExtendedGetterInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Getter\GetterInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Interpreter\InterpreterInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IndexableInterface;
 
 class Attribute
 {
@@ -56,7 +56,7 @@ class Attribute
     private $options = [];
 
     /**
-     * @var IGetter
+     * @var GetterInterface
      */
     private $getter;
 
@@ -66,7 +66,7 @@ class Attribute
     private $getterOptions = [];
 
     /**
-     * @var IInterpreter
+     * @var InterpreterInterface
      */
     private $interpreter;
 
@@ -87,9 +87,9 @@ class Attribute
         string $locale = null,
         string $filterGroup = null,
         array $options = [],
-        IGetter $getter = null,
+        GetterInterface $getter = null,
         array $getterOptions = [],
-        IInterpreter $interpreter = null,
+        InterpreterInterface $interpreter = null,
         array $interpreterOptions = [],
         bool $hideInFieldlistDatatype = false
     ) {
@@ -160,7 +160,7 @@ class Attribute
     }
 
     /**
-     * @return IGetter|null
+     * @return GetterInterface|null
      */
     public function getGetter()
     {
@@ -173,7 +173,7 @@ class Attribute
     }
 
     /**
-     * @return IInterpreter|null
+     * @return InterpreterInterface|null
      */
     public function getInterpreter()
     {
@@ -193,17 +193,17 @@ class Attribute
     /**
      * Get value from object, running through getter if defined
      *
-     * @param IIndexable $object
+     * @param IndexableInterface $object
      * @param null $subObjectId
-     * @param IConfig|null $tenantConfig
+     * @param ConfigInterface|null $tenantConfig
      * @param mixed $default
      *
      * @return mixed
      */
-    public function getValue(IIndexable $object, $subObjectId = null, IConfig $tenantConfig = null, $default = null)
+    public function getValue(IndexableInterface $object, $subObjectId = null, ConfigInterface $tenantConfig = null, $default = null)
     {
         if (null !== $this->getter) {
-            if ($this->getter instanceof IExtendedGetter) {
+            if ($this->getter instanceof ExtendedGetterInterface) {
                 return $this->getter->get($object, $this->getterOptions, $subObjectId, $tenantConfig);
             } else {
                 return $this->getter->get($object, $this->getterOptions);

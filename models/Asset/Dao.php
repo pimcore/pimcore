@@ -26,8 +26,6 @@ use Pimcore\Model;
  */
 class Dao extends Model\Element\Dao
 {
-    use Model\Element\ChildsCompatibilityTrait;
-
     /**
      * Get the data for the object by id from database and assign it to the object (model)
      *
@@ -180,11 +178,13 @@ class Dao extends Model\Element\Dao
     }
 
     /**
+     * @internal
+     *
      * @param $oldPath
      *
      * @return array
      */
-    public function updateChildsPaths($oldPath)
+    public function updateChildPaths($oldPath)
     {
         //get assets to empty their cache
         $assets = $this->db->fetchCol('SELECT id FROM assets WHERE path LIKE ' . $this->db->quote($oldPath . '%'));
@@ -341,7 +341,7 @@ class Dao extends Model\Element\Dao
     }
 
     /**
-     * quick test if there are childs
+     * quick test if there are children
      *
      * @return bool
      */
@@ -365,7 +365,7 @@ class Dao extends Model\Element\Dao
     }
 
     /**
-     * returns the amount of directly childs (not recursivly)
+     * returns the amount of directly children (not recursivly)
      *
      * @param Model\User $user
      *
@@ -465,7 +465,7 @@ class Dao extends Model\Element\Dao
         $userIds[] = $user->getId();
 
         try {
-            $permissionsParent = $this->db->fetchOne('SELECT `' . $type . '` FROM users_workspaces_asset WHERE cid IN (' . implode(',', $parentIds) . ') AND userId IN (' . implode(',', $userIds) . ') AND `' . $type . '`=1 ORDER BY LENGTH(cpath) DESC, ABS(userId-' . $user->getId() . ') ASC LIMIT 1');
+            $permissionsParent = $this->db->fetchOne('SELECT `' . $type . '` FROM users_workspaces_asset WHERE cid IN (' . implode(',', $parentIds) . ') AND userId IN (' . implode(',', $userIds) . ') ORDER BY LENGTH(cpath) DESC, ABS(userId-' . $user->getId() . ') ASC LIMIT 1');
 
             if ($permissionsParent) {
                 return true;
@@ -473,14 +473,14 @@ class Dao extends Model\Element\Dao
 
             // exception for list permission
             if (empty($permissionsParent) && $type == 'list') {
-                // check for childs with permissions
+                // check for children with permissions
                 $path = $this->model->getRealFullPath() . '/';
                 if ($this->model->getId() == 1) {
                     $path = '/';
                 }
 
-                $permissionsChilds = $this->db->fetchOne('SELECT list FROM users_workspaces_asset WHERE cpath LIKE ? AND userId IN (' . implode(',', $userIds) . ') AND list = 1 LIMIT 1', $path . '%');
-                if ($permissionsChilds) {
+                $permissionsChildren = $this->db->fetchOne('SELECT list FROM users_workspaces_asset WHERE cpath LIKE ? AND userId IN (' . implode(',', $userIds) . ') AND list = 1 LIMIT 1', $path . '%');
+                if ($permissionsChildren) {
                     return true;
                 }
             }

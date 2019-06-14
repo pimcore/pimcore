@@ -14,27 +14,27 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\IProductList;
-use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\IWorker;
+use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\ProductListInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\WorkerInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractFilterDefinitionType;
 
 class MultiSelectFromMultiSelect extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\SelectFromMultiSelect
 {
     /**
      * @param AbstractFilterDefinitionType $filterDefinition
-     * @param IProductList                  $productList
+     * @param ProductListInterface                  $productList
      * @param                                                   $currentFilter
      *
      * @return string
      */
-    public function getFilterFrontend(AbstractFilterDefinitionType $filterDefinition, IProductList $productList, $currentFilter)
+    public function getFilterFrontend(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList, $currentFilter)
     {
         $field = $this->getField($filterDefinition);
         $rawValues = $productList->getGroupByValues($field, true, !$filterDefinition->getUseAndCondition());
 
         $values = [];
         foreach ($rawValues as $v) {
-            $explode = explode(IWorker::MULTISELECT_DELIMITER, $v['value']);
+            $explode = explode(WorkerInterface::MULTISELECT_DELIMITER, $v['value']);
             foreach ($explode as $e) {
                 if (!empty($e)) {
                     if ($values[$e]) {
@@ -59,14 +59,14 @@ class MultiSelectFromMultiSelect extends \Pimcore\Bundle\EcommerceFrameworkBundl
 
     /**
      * @param AbstractFilterDefinitionType $filterDefinition
-     * @param IProductList                  $productList
+     * @param ProductListInterface                  $productList
      * @param array                                             $currentFilter
      * @param                                                   $params
      * @param bool                                              $isPrecondition
      *
      * @return string[]
      */
-    public function addCondition(AbstractFilterDefinitionType $filterDefinition, IProductList $productList, $currentFilter, $params, $isPrecondition = false)
+    public function addCondition(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList, $currentFilter, $params, $isPrecondition = false)
     {
         $field = $this->getField($filterDefinition);
         $preSelect = $this->getPreSelect($filterDefinition);
@@ -96,7 +96,7 @@ class MultiSelectFromMultiSelect extends \Pimcore\Bundle\EcommerceFrameworkBundl
         if (!empty($value)) {
             $quotedValues = [];
             foreach ($value as $v) {
-                $v = '%' . IWorker::MULTISELECT_DELIMITER  . $v .  IWorker::MULTISELECT_DELIMITER . '%' ;
+                $v = '%' . WorkerInterface::MULTISELECT_DELIMITER  . $v .  WorkerInterface::MULTISELECT_DELIMITER . '%' ;
                 $quotedValues[] = $field . ' like '.$productList->quote($v);
             }
 

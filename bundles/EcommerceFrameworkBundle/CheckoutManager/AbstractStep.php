@@ -14,16 +14,16 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart;
+use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartInterface;
 
-abstract class AbstractStep implements ICheckoutStep
+abstract class AbstractStep implements CheckoutStepInterface
 {
     /**
-     * @var ICart
+     * @var CartInterface
      */
     protected $cart;
 
-    public function __construct(ICart $cart, array $options = [])
+    public function __construct(CartInterface $cart, array $options = [])
     {
         $this->cart = $cart;
     }

@@ -14,7 +14,7 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\TokenManager;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart;
+use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\VoucherServiceException;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractVoucherTokenType;
@@ -29,7 +29,7 @@ use Zend\Paginator\Paginator;
 /**
  * Class Pattern
  */
-class Pattern extends AbstractTokenManager implements IExportableTokenManager
+class Pattern extends AbstractTokenManager implements ExportableTokenManagerInterface
 {
     /* @var float Max probability to hit a duplicate entry on insertion e.g. to guess a code  */
 
@@ -77,13 +77,13 @@ class Pattern extends AbstractTokenManager implements IExportableTokenManager
 
     /**
      * @param string $code
-     * @param ICart $cart
+     * @param CartInterface $cart
      *
      * @throws VoucherServiceException
      *
      * @return bool|int
      */
-    public function checkToken($code, ICart $cart)
+    public function checkToken($code, CartInterface $cart)
     {
         parent::checkToken($code, $cart);
         if ($token = Token::getByCode($code)) {
@@ -100,13 +100,13 @@ class Pattern extends AbstractTokenManager implements IExportableTokenManager
 
     /**
      * @param string $code
-     * @param ICart $cart
+     * @param CartInterface $cart
      *
      * @throws VoucherServiceException
      *
      * @return bool
      */
-    public function reserveToken($code, ICart $cart)
+    public function reserveToken($code, CartInterface $cart)
     {
         if ($token = Token::getByCode($code)) {
             if (Reservation::create($code, $cart)) {
@@ -120,14 +120,14 @@ class Pattern extends AbstractTokenManager implements IExportableTokenManager
 
     /**
      * @param string $code
-     * @param ICart $cart
+     * @param CartInterface $cart
      * @param AbstractOrder $order
      *
      * @throws VoucherServiceException
      *
      * @return bool|OnlineShopVoucherToken
      */
-    public function applyToken($code, ICart $cart, AbstractOrder $order)
+    public function applyToken($code, CartInterface $cart, AbstractOrder $order)
     {
         if ($token = Token::getByCode($code)) {
             if ($token->isUsed()) {
@@ -173,11 +173,11 @@ class Pattern extends AbstractTokenManager implements IExportableTokenManager
 
     /**
      * @param string $code
-     * @param ICart $cart
+     * @param CartInterface $cart
      *
      * @return bool
      */
-    public function releaseToken($code, ICart $cart)
+    public function releaseToken($code, CartInterface $cart)
     {
         return Reservation::releaseToken($code);
     }

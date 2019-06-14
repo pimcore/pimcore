@@ -15,6 +15,7 @@
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\Model;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
+use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\TokenManager\TokenManagerInterface;
 
 abstract class AbstractVoucherSeries extends \Pimcore\Model\DataObject\Concrete
 {
@@ -24,7 +25,7 @@ abstract class AbstractVoucherSeries extends \Pimcore\Model\DataObject\Concrete
     abstract public function getTokenSettings();
 
     /**
-     * @return bool|\Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\TokenManager\ITokenManager
+     * @return bool|TokenManagerInterface
      *
      * @throws \Pimcore\Bundle\EcommerceFrameworkBundle\Exception\InvalidConfigException
      */

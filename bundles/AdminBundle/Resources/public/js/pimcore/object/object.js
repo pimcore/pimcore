@@ -810,7 +810,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
         var uiState = null;
 
         if(!params['layoutId']) {
-            params['layoutId'] = '';
+            params['layoutId'] = this.data.currentLayoutId;
         }
 
         if(this.data.currentLayoutId == params['layoutId'] && !params['ignoreUiState']) {

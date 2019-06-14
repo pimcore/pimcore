@@ -327,14 +327,16 @@ class Installer
 
         $this->dispatchStepEvent('create_config_files');
 
-        $dbConfig['username'] = $dbConfig['user'];
-        unset($dbConfig['user']);
         unset($dbConfig['driver']);
         unset($dbConfig['wrapperClass']);
 
         $this->createConfigFiles([
-            'database' => [
-                'params' => $dbConfig
+            'doctrine' => [
+                'dbal' => [
+                  'connections' => [
+                      'default' => $dbConfig
+                  ],
+                ],
             ],
         ]);
 
@@ -474,7 +476,8 @@ class Installer
     private function createConfigFiles(array $config)
     {
         $writer = new ConfigWriter();
-        $writer->writeSystemConfig($config);
+        $writer->writeDbConfig($config);
+        $writer->writeSystemConfig();
         $writer->writeDebugModeConfig();
         $writer->generateParametersFile();
     }

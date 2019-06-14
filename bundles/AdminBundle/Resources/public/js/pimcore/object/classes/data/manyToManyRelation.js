@@ -56,7 +56,7 @@ pimcore.object.classes.data.manyToManyRelation = Class.create(pimcore.object.cla
     },
 
     getIconClass: function () {
-        return "pimcore_icon_multihref";
+        return "pimcore_icon_manyToManyRelation";
     },
 
     getLayout: function ($super) {

@@ -34,8 +34,6 @@ use Symfony\Component\EventDispatcher\GenericEvent;
  */
 class Document extends Element\AbstractElement
 {
-    use Element\ChildsCompatibilityTrait;
-
     /**
      * possible types of a document
      *
@@ -162,14 +160,14 @@ class Document extends Element\AbstractElement
      *
      * @var array
      */
-    protected $childs;
+    protected $children;
 
     /**
-     * Indicator of document has childs or not.
+     * Indicator of document has children or not.
      *
      * @var bool
      */
-    protected $hasChilds;
+    protected $hasChildren;
 
     /**
      * Contains a list of sibling documents
@@ -435,7 +433,7 @@ class Document extends Element\AbstractElement
                     if ($oldPath && $oldPath != $this->getRealFullPath()) {
                         $differentOldPath = $oldPath;
                         $this->getDao()->updateWorkspaces();
-                        $updatedChildren = $this->getDao()->updateChildsPaths($oldPath);
+                        $updatedChildren = $this->getDao()->updateChildPaths($oldPath);
                     }
 
                     $this->commit();
@@ -656,37 +654,37 @@ class Document extends Element\AbstractElement
      */
     public function setChildren($children)
     {
-        $this->childs = $children;
+        $this->children = $children;
         if (is_array($children) and count($children) > 0) {
-            $this->hasChilds = true;
+            $this->hasChildren = true;
         } elseif ($children === null) {
-            $this->hasChilds = null;
+            $this->hasChildren = null;
         } else {
-            $this->hasChilds = false;
+            $this->hasChildren = false;
         }
 
         return $this;
     }
 
     /**
-     * Get a list of the Childs (not recursivly)
+     * Get a list of the children (not recursivly)
      *
      * @param bool
      *
-     * @return array
+     * @return self[]
      */
     public function getChildren($unpublished = false)
     {
-        if ($this->childs === null) {
+        if ($this->children === null) {
             $list = new Document\Listing();
             $list->setUnpublished($unpublished);
             $list->setCondition('parentId = ?', $this->getId());
             $list->setOrderKey('index');
             $list->setOrder('asc');
-            $this->childs = $list->load();
+            $this->children = $list->load();
         }
 
-        return $this->childs;
+        return $this->children;
     }
 
     /**
@@ -698,11 +696,11 @@ class Document extends Element\AbstractElement
      */
     public function hasChildren($unpublished = false)
     {
-        if (is_bool($this->hasChilds)) {
-            if (($this->hasChilds and empty($this->childs)) or (!$this->hasChilds and !empty($this->childs))) {
+        if (is_bool($this->hasChildren)) {
+            if (($this->hasChildren and empty($this->children)) or (!$this->hasChildren and !empty($this->children))) {
                 return $this->getDao()->hasChildren($unpublished);
             } else {
-                return $this->hasChilds;
+                return $this->hasChildren;
             }
         }
 
@@ -790,7 +788,7 @@ class Document extends Element\AbstractElement
         $this->beginTransaction();
 
         try {
-            // remove childs
+            // remove children
             if ($this->hasChildren()) {
                 // delete also unpublished children
                 $unpublishedStatus = self::doHideUnpublished();
@@ -1364,15 +1362,15 @@ class Document extends Element\AbstractElement
     {
         $finalVars = [];
         $parentVars = parent::__sleep();
-        $blockedVars = ['dependencies', 'userPermissions', 'hasChilds', 'versions', 'scheduledTasks', 'parent'];
+        $blockedVars = ['dependencies', 'userPermissions', 'hasChildren', 'versions', 'scheduledTasks', 'parent'];
 
         if (isset($this->_fulldump)) {
-            // this is if we want to make a full dump of the object (eg. for a new version), including childs for recyclebin
+            // this is if we want to make a full dump of the object (eg. for a new version), including children for recyclebin
             $finalVars[] = '_fulldump';
             $this->removeInheritedProperties();
         } else {
             // this is if we want to cache the object
-            $blockedVars = array_merge($blockedVars, ['childs', 'properties']);
+            $blockedVars = array_merge($blockedVars, ['children', 'properties']);
         }
 
         foreach ($parentVars as $key) {

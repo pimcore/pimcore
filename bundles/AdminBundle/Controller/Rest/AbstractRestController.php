@@ -302,7 +302,7 @@ abstract class AbstractRestController extends AdminController
      */
     protected function buildCondition(Request $request)
     {
-        $q = trim(urldecode($request->get('q')));
+        $q = trim($request->get('q'));
         if (!$q) {
             return;
         }

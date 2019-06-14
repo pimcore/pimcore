@@ -14,7 +14,7 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\ElasticSearch;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\IProductList;
+use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\ProductListInterface;
 
 /**
  * Implementation of product list which works based on the product index of the online shop framework
@@ -24,13 +24,13 @@ class DefaultElasticSearch5 extends AbstractElasticSearch
     protected function getQueryType()
     {
         switch ($this->getVariantMode()) {
-            case IProductList::VARIANT_MODE_INCLUDE_PARENT_OBJECT:
+            case ProductListInterface::VARIANT_MODE_INCLUDE_PARENT_OBJECT:
                 return self::PRODUCT_TYPE_OBJECT;
-            case IProductList::VARIANT_MODE_HIDE:
+            case ProductListInterface::VARIANT_MODE_HIDE:
                 return self::PRODUCT_TYPE_OBJECT;
-            case IProductList::VARIANT_MODE_VARIANTS_ONLY:
+            case ProductListInterface::VARIANT_MODE_VARIANTS_ONLY:
                 return self::PRODUCT_TYPE_VARIANT;
-            case IProductList::VARIANT_MODE_INCLUDE:
+            case ProductListInterface::VARIANT_MODE_INCLUDE:
                 return self::PRODUCT_TYPE_OBJECT . ','. self::PRODUCT_TYPE_VARIANT;
         }
     }
@@ -106,7 +106,7 @@ class DefaultElasticSearch5 extends AbstractElasticSearch
                 ];
 
                 //necessary to calculate correct counts of search results for filter values
-                if ($this->getVariantMode() == IProductList::VARIANT_MODE_INCLUDE_PARENT_OBJECT) {
+                if ($this->getVariantMode() == ProductListInterface::VARIANT_MODE_INCLUDE_PARENT_OBJECT) {
                     $aggregations[$fieldname]['aggs'][$fieldname]['aggs'] = [
                         'objectCount' => ['cardinality' => ['field' => 'system.o_virtualProductId']]
                     ];
@@ -117,7 +117,7 @@ class DefaultElasticSearch5 extends AbstractElasticSearch
                 ];
 
                 //necessary to calculate correct counts of search results for filter values
-                if ($this->getVariantMode() == IProductList::VARIANT_MODE_INCLUDE_PARENT_OBJECT) {
+                if ($this->getVariantMode() == ProductListInterface::VARIANT_MODE_INCLUDE_PARENT_OBJECT) {
                     $aggregations[$fieldname]['aggs'] = [
                         'objectCount' => ['cardinality' => ['field' => 'system.o_virtualProductId']]
                     ];
@@ -134,9 +134,9 @@ class DefaultElasticSearch5 extends AbstractElasticSearch
             $params['body']['aggs'] = $aggregations;
 
             $variantModeForAggregations = $this->getVariantMode();
-            if ($this->getVariantMode() == IProductList::VARIANT_MODE_INCLUDE_PARENT_OBJECT) {
-                $params['type'] = IProductList::PRODUCT_TYPE_VARIANT;
-                $variantModeForAggregations = IProductList::VARIANT_MODE_VARIANTS_ONLY;
+            if ($this->getVariantMode() == ProductListInterface::VARIANT_MODE_INCLUDE_PARENT_OBJECT) {
+                $params['type'] = ProductListInterface::PRODUCT_TYPE_VARIANT;
+                $variantModeForAggregations = ProductListInterface::VARIANT_MODE_VARIANTS_ONLY;
             } else {
                 $params['type'] = $this->getQueryType();
             }
@@ -192,7 +192,7 @@ class DefaultElasticSearch5 extends AbstractElasticSearch
             $variantMode = $this->getVariantMode();
         }
 
-        if ($variantMode == IProductList::VARIANT_MODE_INCLUDE_PARENT_OBJECT) {
+        if ($variantMode == ProductListInterface::VARIANT_MODE_INCLUDE_PARENT_OBJECT) {
             $params['body']['query']['bool']['must']['has_child']['type'] = self::PRODUCT_TYPE_VARIANT;
             $params['body']['query']['bool']['must']['has_child']['score_mode'] = 'avg';
             $params['body']['query']['bool']['must']['has_child']['query']['bool']['must'] = $queryFilters;

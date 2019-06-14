@@ -42,6 +42,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Yaml\Yaml;
 
 /**
  * @Route("/settings")
@@ -59,6 +60,10 @@ class SettingsController extends AdminController
     {
         // default logo
         $logo = PIMCORE_WEB_ROOT . '/bundles/pimcoreadmin/img/logo-claim-gray.svg';
+        if ($request->get('white')) {
+            $logo = PIMCORE_WEB_ROOT . '/bundles/pimcoreadmin/img/logo-claim-white.svg';
+        }
+
         $mime = 'image/svg+xml';
         $customLogoPath = PIMCORE_CONFIGURATION_DIRECTORY . '/custom-logo.';
 
@@ -326,7 +331,7 @@ class SettingsController extends AdminController
     {
         $this->checkPermission('system_settings');
 
-        $values = Config::getSystemConfig();
+        $values = Config::getSystemConfig(true);
 
         $timezones = \DateTimeZone::listIdentifiers();
 
@@ -381,6 +386,7 @@ class SettingsController extends AdminController
         }
         $valueArray['general']['debug'] = $debugMode['active'];
         $valueArray['general']['debug_ip'] = $debugMode['ip'];
+        $valueArray['general']['devmode'] = $debugMode['devmode'];
 
         $response = [
             'values' => $valueArray,
@@ -410,9 +416,13 @@ class SettingsController extends AdminController
 
         $values = $this->decodeJson($request->get('data'));
 
-        // email settings
-        $existingConfig = Config::getSystemConfig();
-        $existingValues = $existingConfig->toArray();
+        $existingValues = [];
+        try {
+            $file = Config::locateConfigFile('system.yml');
+            $existingValues = Config::getConfigInstance($file, true);
+        } catch (\Exception $e) {
+            // nothing to do
+        }
 
         // fallback languages
         $fallbackLanguages = [];
@@ -439,7 +449,8 @@ class SettingsController extends AdminController
                 $existingValues['general']['fallbackLanguages'],
                 $fallbackLanguages
             );
-            $dbName = $existingValues['database']['params']['dbname'];
+            $db = \Pimcore\Db::get();
+            $dbName = $db->getDatabase();
             foreach ($fallbackLanguagesChanged as $language => $dummy) {
                 $this->deleteViews($language, $dbName);
             }
@@ -450,26 +461,20 @@ class SettingsController extends AdminController
             $cacheExcludePatterns = implode(',', $cacheExcludePatterns);
         }
 
-        $settings = [
+        $settings['pimcore'] = [
             'general' => [
                 'timezone' => $values['general.timezone'],
                 'path_variable' => $values['general.path_variable'],
                 'domain' => $values['general.domain'],
                 'redirect_to_maindomain' => $values['general.redirect_to_maindomain'],
                 'language' => $values['general.language'],
-                'validLanguages' => implode(',', $filteredLanguages),
-                'fallbackLanguages' => $fallbackLanguages,
-                'defaultLanguage' => $values['general.defaultLanguage'],
-                'loginscreencustomimage' => $values['general.loginscreencustomimage'],
-                'disableusagestatistics' => $values['general.disableusagestatistics'],
+                'valid_languages' => implode(',', $filteredLanguages),
+                'fallback_languages' => $fallbackLanguages,
+                'default_language' => $values['general.defaultLanguage'],
+                'disable_usage_statistics' => $values['general.disableusagestatistics'],
                 'debug_admin_translations' => $values['general.debug_admin_translations'],
-                'devmode' => $values['general.devmode'],
-                'instanceIdentifier' => $values['general.instanceIdentifier'],
+                'instance_identifier' => $values['general.instanceIdentifier'],
                 'show_cookie_notice' => $values['general.show_cookie_notice'],
-            ],
-            'branding' => [
-                'color_login_screen' => $values['branding.color_login_screen'],
-                'color_admin_interface' => $values['branding.color_admin_interface'],
             ],
             'documents' => [
                 'versions' => [
@@ -479,9 +484,9 @@ class SettingsController extends AdminController
                 'error_pages' => [
                     'default' => $values['documents.error_pages.default']
                 ],
-                'createredirectwhenmoved' => $values['documents.createredirectwhenmoved'],
-                'allowtrailingslash' => $values['documents.allowtrailingslash'],
-                'generatepreview' => $values['documents.generatepreview']
+                'create_redirect_when_moved' => $values['documents.createredirectwhenmoved'],
+                'allow_trailing_slash' => $values['documents.allowtrailingslash'],
+                'generate_preview' => $values['documents.generatepreview']
             ],
             'objects' => [
                 'versions' => [
@@ -503,15 +508,15 @@ class SettingsController extends AdminController
                 'google' => [
                     'client_id' => $values['services.google.client_id'],
                     'email' => $values['services.google.email'],
-                    'simpleapikey' => $values['services.google.simpleapikey'],
-                    'browserapikey' => $values['services.google.browserapikey']
+                    'simple_api_key' => $values['services.google.simpleapikey'],
+                    'browser_api_key' => $values['services.google.browserapikey']
                 ]
             ],
             'cache' => [
                 'enabled' => $values['cache.enabled'],
                 'lifetime' => $values['cache.lifetime'],
-                'excludePatterns' => $cacheExcludePatterns,
-                'excludeCookie' => $values['cache.excludeCookie']
+                'exclude_patterns' => $cacheExcludePatterns,
+                'exclude_cookie' => $values['cache.excludeCookie']
             ],
             'webservice' => [
                 'enabled' => $values['webservice.enabled']
@@ -534,9 +539,20 @@ class SettingsController extends AdminController
             ]
         ];
 
-        // email & newsletter
-        foreach (['email', 'newsletter'] as $type) {
-            $settings[$type] = [
+        //branding
+        $settings['pimcore_admin'] = [
+            'branding' =>
+                [
+                    'login_screen_invert_colors' => $values['branding.login_screen_invert_colors'],
+                    'color_login_screen' => $values['branding.color_login_screen'],
+                    'color_admin_interface' => $values['branding.color_admin_interface'],
+                    'login_screen_custom_image' => $values['general.loginscreencustomimage'],
+                ]
+        ];
+
+        // email & newsletter (swiftmailer settings)
+        foreach (['email' => 'pimcore_mailer', 'newsletter' => 'newsletter_mailer'] as $type => $group) {
+            $settings['pimcore'][$type] = [
                 'sender' => [
                     'name' => $values[$type . '.sender.name'],
                     'email' => $values[$type . '.sender.email']],
@@ -544,45 +560,54 @@ class SettingsController extends AdminController
                     'name' => $values[$type . '.return.name'],
                     'email' => $values[$type . '.return.email']],
                 'method' => $values[$type . '.method'],
-                'smtp' => [
-                    'host' => $values[$type . '.smtp.host'],
-                    'port' => $values[$type . '.smtp.port'],
-                    'ssl' => $values[$type . '.smtp.ssl'] ? $values[$type . '.smtp.ssl'] : null,
-                    'name' => $values[$type . '.smtp.name'],
-                    'auth' => [
-                        'method' => $values[$type . '.smtp.auth.method'] ? $values[$type . '.smtp.auth.method'] : null,
-                        'username' => $values[$type . '.smtp.auth.username'],
-                    ]
-                ]
+            ];
+
+            $settings['swiftmailer']['mailers'][$group] = [
+                'transport' => $values[$type . '.method'],
+                'host' => $values[$type . '.smtp.host'],
+                'username' => $values[$type . '.smtp.auth.username'],
+                'port' => $values[$type . '.smtp.port'],
+                'encryption' => $values[$type . '.smtp.ssl'] ? $values[$type . '.smtp.ssl'] : null,
+                'auth_mode' => $values[$type . '.smtp.auth.method'] ? $values[$type . '.smtp.auth.method'] : null,
             ];
 
             $smtpPassword = $values[$type . '.smtp.auth.password'];
             if ($smtpPassword !== '#####SUPER-SECRET-VALUE-PLACEHOLDER######') {
                 if (!empty($smtpPassword)) {
-                    $settings[$type]['smtp']['auth']['password'] = $smtpPassword;
+                    $settings['swiftmailer']['mailers'][$group]['password'] = $smtpPassword;
                 } else {
-                    $settings[$type]['smtp']['auth']['password'] = null;
+                    $settings['swiftmailer']['mailers'][$group]['password'] = null;
                 }
             }
-
-            if (array_key_exists($type . '.debug.emailAddresses', $values)) {
-                $settings[$type]['debug'] = ['emailaddresses' => $values[$type . '.debug.emailAddresses']];
+            if (array_key_exists('email.debug.emailAddresses', $values) && $values['email.debug.emailAddresses']) {
+                $settings['swiftmailer']['mailers'][$group]['delivery_addresses'] = [$values['email.debug.emailAddresses']];
+                $settings['pimcore'][$type]['debug']['email_addresses'] = $values['email.debug.emailAddresses'];
             } else {
-                $settings[$type]['debug'] = null;
+                $settings['swiftmailer']['mailers'][$group]['delivery_addresses'] = [];
+                $settings['pimcore'][$type]['debug']['email_addresses'] = null;
             }
         }
-        $settings['newsletter']['usespecific'] = $values['newsletter.usespecific'];
+        $settings['pimcore']['newsletter']['use_specific'] = $values['newsletter.usespecific'];
 
         $settings = array_replace_recursive($existingValues, $settings);
 
-        $configFile = \Pimcore\Config::locateConfigFile('system.php');
-        File::putPhpFile($configFile, to_php_data_file_format($settings));
+        $settingsYml = Yaml::dump($settings, 5);
+        $configFile = Config::locateConfigFile('system.yml');
+        File::put($configFile, $settingsYml);
 
         $debugModeFile = PIMCORE_CONFIGURATION_DIRECTORY . '/debug-mode.php';
         File::putPhpFile($debugModeFile, to_php_data_file_format([
             'active' => $values['general.debug'],
             'ip' => $values['general.debug_ip'],
+            'devmode' => $values['general.devmode']
         ]));
+
+        // clear all caches
+        $this->forward(self::class . '::clearCacheAction', [
+            'only_symfony_cache' => false,
+            'only_pimcore_cache' => false,
+            'env' => array_unique(['dev', 'prod', \Pimcore::getKernel()->getEnvironment()])
+        ]);
 
         return $this->adminJson(['success' => true]);
     }
@@ -702,7 +727,7 @@ class SettingsController extends AdminController
         Filesystem $filesystem,
         CacheClearer $symfonyCacheClearer
     ) {
-        $this->checkPermission('clear_cache');
+        $this->checkPermissionsHasOneOf(['clear_cache', 'system_settings']);
 
         $result = [
             'success' => true
@@ -1163,7 +1188,7 @@ class SettingsController extends AdminController
         $thumbnails = [];
 
         $list = new Asset\Image\Thumbnail\Config\Listing();
-        $items = $list->load();
+        $items = $list->getThumbnails();
 
         $groups = [];
         /** @var $item Asset\Image\Thumbnail\Config */
@@ -1220,7 +1245,7 @@ class SettingsController extends AdminController
         $list->setFilter(function (array $config) {
             return array_key_exists('downloadable', $config) ? $config['downloadable'] : false;
         });
-        $items = $list->load();
+        $items = $list->getThumbnails();
 
         /** @var Asset\Image\Thumbnail\Config $item */
         foreach ($items as $item) {
@@ -1364,7 +1389,7 @@ class SettingsController extends AdminController
         $thumbnails = [];
 
         $list = new Asset\Video\Thumbnail\Config\Listing();
-        $items = $list->load();
+        $items = $list->getThumbnails();
 
         $groups = [];
         /** @var $item Asset\Image\Thumbnail\Config */

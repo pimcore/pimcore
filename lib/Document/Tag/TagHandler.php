@@ -91,6 +91,7 @@ class TagHandler implements TagHandlerInterface, LoggerAwareInterface
      * @param ActionRenderer $actionRenderer
      * @param RequestHelper $requestHelper
      * @param TranslatorInterface $translator
+     * @param ResponseStack $responseStack
      */
     public function __construct(
         AreabrickManagerInterface $brickManager,
@@ -99,7 +100,8 @@ class TagHandler implements TagHandlerInterface, LoggerAwareInterface
         WebPathResolver $webPathResolver,
         ActionRenderer $actionRenderer,
         RequestHelper $requestHelper,
-        TranslatorInterface $translator
+        TranslatorInterface $translator,
+        ResponseStack $responseStack
     ) {
         $this->brickManager = $brickManager;
         $this->templating = $templating;
@@ -108,15 +110,6 @@ class TagHandler implements TagHandlerInterface, LoggerAwareInterface
         $this->actionRenderer = $actionRenderer;
         $this->requestHelper = $requestHelper;
         $this->translator = $translator;
-    }
-
-    /**
-     * @required
-     *
-     * @deprecated This was added as setter for BC reasons. TODO Pimcore 6: add as constructor dependency
-     */
-    public function setResponseStack(ResponseStack $responseStack)
-    {
         $this->responseStack = $responseStack;
     }
 

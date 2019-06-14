@@ -53,6 +53,7 @@ class Configuration implements ConfigurationInterface
 
         $rootNode = $treeBuilder->root('pimcore');
         $rootNode->addDefaultsIfNotSet();
+        $rootNode->ignoreExtraKeys();
 
         $rootNode
             ->children()
@@ -62,6 +63,12 @@ class Configuration implements ConfigurationInterface
                         ->booleanNode('render_error_document')
                             ->info('Render error document in case of an error instead of showing Symfony\'s error page')
                             ->defaultTrue()
+                            ->beforeNormalization()
+                                ->ifString()
+                                ->then(function ($v) {
+                                    return (bool)$v;
+                                })
+                            ->end()
                         ->end()
                     ->end()
                 ->end()
@@ -84,6 +91,12 @@ class Configuration implements ConfigurationInterface
                     ->addDefaultsIfNotSet()
                     ->children()
                         ->booleanNode('case_insensitive')
+                            ->beforeNormalization()
+                                ->ifString()
+                                ->then(function ($v) {
+                                    return (bool)$v;
+                                })
+                            ->end()
                             ->info('Force Pimcore translations to NOT be case sensitive. This only applies to translations set via Pimcore\'s translator (e.g. website translations)')
                             ->defaultFalse()
                         ->end()
@@ -137,6 +150,8 @@ class Configuration implements ConfigurationInterface
                 ->end()
             ->end();
 
+        $this->addGeneralNode($rootNode);
+        $this->addServicesNode($rootNode);
         $this->addObjectsNode($rootNode);
         $this->addAssetNode($rootNode);
         $this->addDocumentsNode($rootNode);
@@ -148,6 +163,7 @@ class Configuration implements ConfigurationInterface
         $this->addAdminNode($rootNode);
         $this->addWebProfilerNode($rootNode);
         $this->addSecurityNode($rootNode);
+        $this->addEmailNode($rootNode);
         $this->addNewsletterNode($rootNode);
         $this->addCustomReportsNode($rootNode);
         $this->addMigrationsNode($rootNode);
@@ -155,8 +171,125 @@ class Configuration implements ConfigurationInterface
         $this->addSitemapsNode($rootNode);
         $this->addMimeNode($rootNode);
         $this->addWorkflowNode($rootNode);
+        $this->addHttpClientNode($rootNode);
+        $this->addApplicationLogNode($rootNode);
 
         return $treeBuilder;
+    }
+
+    /**
+     * Add general config
+     *
+     * @param ArrayNodeDefinition $rootNode
+     */
+    private function addGeneralNode(ArrayNodeDefinition $rootNode)
+    {
+        $rootNode
+            ->children()
+            ->arrayNode('general')
+            ->ignoreExtraKeys()
+            ->addDefaultsIfNotSet()
+            ->children()
+                ->scalarNode('timezone')
+                    ->defaultValue('Europe/Berlin')
+                ->end()
+                ->scalarNode('path_variable')
+                    ->defaultNull()
+                ->end()
+                ->scalarNode('domain')
+                    ->defaultNull()
+                ->end()
+                ->booleanNode('redirect_to_maindomain')
+                    ->beforeNormalization()
+                        ->ifString()
+                        ->then(function ($v) {
+                            return (bool)$v;
+                        })
+                    ->end()
+                    ->defaultFalse()
+                ->end()
+                ->scalarNode('language')
+                    ->defaultValue('en')
+                ->end()
+                ->scalarNode('valid_languages')
+                    ->defaultValue('en')
+                ->end()
+                ->arrayNode('fallback_languages')
+                    ->performNoDeepMerging()
+                    ->beforeNormalization()
+                    ->ifArray()
+                        ->then(function ($v) {
+                            return $v;
+                        })
+                    ->end()
+                    ->prototype('scalar')
+                    ->end()
+                ->end()
+                ->scalarNode('default_language')
+                    ->defaultValue('en')
+                ->end()
+                ->booleanNode('disable_usage_statistics')
+                    ->beforeNormalization()
+                        ->ifString()
+                        ->then(function ($v) {
+                            return (bool)$v;
+                        })
+                    ->end()
+                    ->defaultFalse()
+                ->end()
+                ->booleanNode('debug_admin_translations')
+                    ->beforeNormalization()
+                        ->ifString()
+                        ->then(function ($v) {
+                            return (bool)$v;
+                        })
+                    ->end()
+                    ->defaultFalse()
+                ->end()
+                ->scalarNode('instance_identifier')
+                    ->defaultNull()->end()
+                ->booleanNode('show_cookie_notice')
+                    ->beforeNormalization()
+                        ->ifString()
+                        ->then(function ($v) {
+                            return (bool)$v;
+                        })
+                    ->end()
+                    ->defaultFalse()
+                ->end()
+            ->end();
+    }
+
+    /**
+     * @param ArrayNodeDefinition $rootNode
+     */
+    private function addServicesNode(ArrayNodeDefinition $rootNode)
+    {
+        $rootNode
+            ->children()
+            ->arrayNode('services')
+                ->children()
+                    ->arrayNode('google')
+                    ->children()
+                        ->scalarNode('client_id')
+                            ->defaultNull()
+                        ->end()
+                        ->scalarNode('email')
+                            ->defaultNull()
+                        ->end()
+                        ->scalarNode('simple_api_key')
+                            ->defaultNull()
+                        ->end()
+                        ->scalarNode('browser_api_key')
+                            ->defaultNull()
+                        ->end()
+                    ->end()
+                    ->end()
+                ->end()
+            ->end()
+            ->arrayNode('webservice')
+                ->canBeEnabled()
+            ->end();
     }
 
     /**
@@ -175,6 +308,74 @@ class Configuration implements ConfigurationInterface
     }
 
     /**
+     * @param ArrayNodeDefinition $rootNode
+     */
+    private function addHttpClientNode(ArrayNodeDefinition $rootNode)
+    {
+        $rootNode
+            ->children()
+                ->arrayNode('httpclient')
+                ->addDefaultsIfNotSet()
+                    ->children()
+                        ->scalarNode('adapter')
+                            ->defaultValue('Socket')
+                        ->end()
+                        ->scalarNode('proxy_host')
+                            ->defaultNull()
+                        ->end()
+                        ->scalarNode('proxy_port')
+                            ->defaultNull()
+                        ->end()
+                        ->scalarNode('proxy_user')
+                            ->defaultNull()
+                        ->end()
+                        ->scalarNode('proxy_pass')
+                            ->defaultNull()
+                        ->end()
+                    ->end()
+                ->end()
+            ->end();
+    }
+
+    /**
+     * @param ArrayNodeDefinition $rootNode
+     */
+    private function addApplicationLogNode(ArrayNodeDefinition $rootNode)
+    {
+        $rootNode
+            ->children()
+                ->arrayNode('applicationlog')
+                ->addDefaultsIfNotSet()
+                    ->children()
+                        ->arrayNode('mail_notification')
+                            ->children()
+                                ->booleanNode('send_log_summary')
+                                    ->beforeNormalization()
+                                        ->ifString()
+                                        ->then(function ($v) {
+                                            return (bool)$v;
+                                        })
+                                    ->end()
+                                    ->defaultFalse()
+                                ->end()
+                                ->scalarNode('filter_priority')
+                                    ->defaultNull()
+                                ->end()
+                                ->scalarNode('mail_receiver')
+                                ->end()
+                            ->end()
+                        ->end()
+                        ->scalarNode('archive_treshold')
+                            ->defaultValue('')
+                        ->end()
+                        ->scalarNode('archive_alternative_database')
+                            ->defaultValue('')
+                        ->end()
+                    ->end()
+            ->end();
+    }
+
+    /**
      * Add asset specific extension config
      *
      * @param ArrayNodeDefinition $rootNode
@@ -184,12 +385,13 @@ class Configuration implements ConfigurationInterface
         $rootNode
             ->children()
                 ->arrayNode('assets')
+                ->ignoreExtraKeys()
                 ->addDefaultsIfNotSet()
                 ->children()
                     ->scalarNode('preview_image_thumbnail')
                         ->defaultNull()
                         ->end()
-                    ->scalarNode('defaultUploadPath')
+                    ->scalarNode('default_upload_path')
                         ->defaultValue('_default_upload_bucket')
                         ->end()
                     ->integerNode('tree_paging_limit')
@@ -215,9 +417,21 @@ class Configuration implements ConfigurationInterface
                                 ->addDefaultsIfNotSet()
                                 ->children()
                                     ->booleanNode('webp_auto_support')
+                                        ->beforeNormalization()
+                                            ->ifString()
+                                            ->then(function ($v) {
+                                                return (bool)$v;
+                                            })
+                                        ->end()
                                         ->defaultTrue()
                                     ->end()
                                     ->booleanNode('auto_clear_temp_files')
+                                        ->beforeNormalization()
+                                            ->ifString()
+                                            ->then(function ($v) {
+                                                return (bool)$v;
+                                            })
+                                        ->end()
                                         ->defaultTrue()
                                     ->end()
                                 ->end()
@@ -240,10 +454,34 @@ class Configuration implements ConfigurationInterface
                     ->arrayNode('versions')
                         ->addDefaultsIfNotSet()
                         ->children()
+                            ->scalarNode('days')
+                                ->defaultNull()
+                            ->end()
+                            ->scalarNode('steps')
+                                ->defaultNull()
+                            ->end()
                             ->booleanNode('use_hardlinks')
+                                ->beforeNormalization()
+                                    ->ifString()
+                                    ->then(function ($v) {
+                                        return (bool)$v;
+                                    })
+                                ->end()
                                 ->defaultTrue()
                             ->end()
                         ->end()
+                    ->end()
+                    ->scalarNode('icc_rgb_profile')
+                        ->defaultNull()
+                    ->end()
+                    ->scalarNode('icc_cmyk_profile')
+                        ->defaultNull()
+                    ->end()
+                    ->booleanNode('hide_edit_image')
+                        ->defaultFalse()
+                    ->end()
+                    ->booleanNode('disable_tree_preview')
+                        ->defaultTrue()
                     ->end()
                 ->end()
             ->end();
@@ -259,13 +497,19 @@ class Configuration implements ConfigurationInterface
         $objectsNode = $rootNode
             ->children()
                 ->arrayNode('objects')
+                    ->ignoreExtraKeys()
                     ->addDefaultsIfNotSet()
                     ->children()
                         ->integerNode('tree_paging_limit')
                             ->defaultValue(30)
+                        ->end()
+                        ->arrayNode('versions')
+                            ->children()
+                                ->scalarNode('days')->defaultNull()->end()
+                                ->scalarNode('steps')->defaultNull()->end()
                             ->end()
+                        ->end()
                     ->end();
-
         $classDefinitionsNode = $objectsNode
             ->children()
                 ->arrayNode('class_definitions')
@@ -301,12 +545,51 @@ class Configuration implements ConfigurationInterface
         $documentsNode = $rootNode
             ->children()
                 ->arrayNode('documents')
+                    ->ignoreExtraKeys()
                     ->addDefaultsIfNotSet();
 
         $this->addImplementationLoaderNode($documentsNode, 'tags');
 
         $documentsNode
             ->children()
+                ->arrayNode('versions')
+                    ->children()
+                        ->scalarNode('days')
+                            ->defaultNull()
+                        ->end()
+                        ->scalarNode('steps')
+                            ->defaultNull()
+                        ->end()
+                    ->end()
+                ->end()
+                ->arrayNode('error_pages')
+                    ->children()
+                        ->scalarNode('default')
+                            ->defaultNull()
+                        ->end()
+                    ->end()
+                ->end()
+                ->booleanNode('create_redirect_when_moved')
+                    ->beforeNormalization()
+                        ->ifString()
+                        ->then(function ($v) {
+                            return (bool)$v;
+                        })
+                    ->end()
+                    ->defaultFalse()
+                ->end()
+                ->scalarNode('allow_trailing_slash')
+                    ->defaultValue('no')
+                ->end()
+                ->booleanNode('generate_preview')
+                    ->beforeNormalization()
+                        ->ifString()
+                        ->then(function ($v) {
+                            return (bool)$v;
+                        })
+                    ->end()
+                    ->defaultFalse()
+                ->end()
                 ->integerNode('tree_paging_limit')
                     ->defaultValue(50)
                 ->end()
@@ -324,6 +607,12 @@ class Configuration implements ConfigurationInterface
                     ->addDefaultsIfNotSet()
                         ->children()
                             ->booleanNode('autoload')
+                                ->beforeNormalization()
+                                    ->ifString()
+                                    ->then(function ($v) {
+                                        return (bool)$v;
+                                    })
+                                ->end()
                                 ->defaultTrue()
                             ->end()
                         ->end()
@@ -418,6 +707,7 @@ class Configuration implements ConfigurationInterface
     {
         $adminNode = $rootNode->children()
             ->arrayNode('admin')
+            ->ignoreExtraKeys()
             ->addDefaultsIfNotSet();
 
         // add session attribute bag config
@@ -630,9 +920,15 @@ class Configuration implements ConfigurationInterface
 
         $rootNode->children()
             ->arrayNode('cache')
+            ->ignoreExtraKeys()
             ->canBeDisabled()
             ->addDefaultsIfNotSet()
                 ->children()
+                    ->scalarNode('lifetime')
+                        ->defaultNull()
+                    ->end()
+                    ->scalarNode('exclude_patterns')->end()
+                    ->scalarNode('exclude_cookie')->end()
                     ->scalarNode('pool_service_id')
                         ->defaultValue(null)
                     ->end()
@@ -703,6 +999,47 @@ class Configuration implements ConfigurationInterface
     }
 
     /**
+     * Adds configuration for email source adapters
+     *
+     * @param ArrayNodeDefinition $rootNode
+     */
+    private function addEmailNode(ArrayNodeDefinition $rootNode)
+    {
+        $rootNode
+            ->children()
+                ->arrayNode('email')
+                ->addDefaultsIfNotSet()
+                    ->children()
+                        ->arrayNode('sender')
+                            ->children()
+                                ->scalarNode('name')->end()
+                                ->scalarNode('email')->end()
+                            ->end()
+                        ->end()
+                        ->arrayNode('return')
+                            ->children()
+                                ->scalarNode('name')->end()
+                                ->scalarNode('email')->end()
+                            ->end()
+                        ->end()
+                        ->scalarNode('method')
+                            ->defaultNull()
+                        ->end()
+                        ->arrayNode('debug')
+                            ->children()
+                                ->scalarNode('email_addresses')
+                                    ->defaultValue('')
+                                ->end()
+                            ->end()
+                        ->end()
+                        ->scalarNode('usespecific')
+                        ->end()
+                    ->end()
+                ->end()
+            ->end();
+    }
+
+    /**
      * Adds configuration tree for newsletter source adapters
      *
      * @param ArrayNodeDefinition $rootNode
@@ -714,6 +1051,36 @@ class Configuration implements ConfigurationInterface
                 ->arrayNode('newsletter')
                     ->addDefaultsIfNotSet()
                     ->children()
+                        ->arrayNode('sender')
+                            ->children()
+                                ->scalarNode('name')->end()
+                                ->scalarNode('email')->end()
+                            ->end()
+                        ->end()
+                        ->arrayNode('return')
+                            ->children()
+                                ->scalarNode('name')->end()
+                                ->scalarNode('email')->end()
+                            ->end()
+                        ->end()
+                        ->scalarNode('method')
+                            ->defaultNull()
+                        ->end()
+                        ->arrayNode('debug')
+                            ->children()
+                                ->scalarNode('email_addresses')
+                                    ->defaultValue('')
+                                ->end()
+                            ->end()
+                        ->end()
+                        ->booleanNode('use_specific')
+                            ->beforeNormalization()
+                                ->ifString()
+                                ->then(function ($v) {
+                                    return (bool)$v;
+                                })
+                            ->end()
+                        ->end()
                         ->arrayNode('source_adapters')
                             ->useAttributeAsKey('name')
                                 ->prototype('scalar')

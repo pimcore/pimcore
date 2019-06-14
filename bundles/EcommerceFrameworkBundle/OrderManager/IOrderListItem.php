@@ -14,18 +14,19 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder as Order;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrderItem as OrderItem;
+@trigger_error(
+    'Interface Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\IOrderListItem is deprecated since version 6.0.0 and will be removed in 7.0.0. ' .
+    ' Use ' . OrderListItemInterface::class . ' class instead.',
+    E_USER_DEPRECATED
+);
 
-interface IOrderListItem
-{
-    /**
-     * @return int
-     */
-    public function getId();
+class_exists(OrderListItemInterface::class);
 
+if (false) {
     /**
-     * @return Order|OrderItem
+     * @deprecated use OrderListItemInterface instead.
      */
-    public function reference();
+    interface IOrderListItem
+    {
+    }
 }

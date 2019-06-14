@@ -548,26 +548,27 @@ class Service extends Model\AbstractModel
     }
 
     /**
-     * @param ElementInterface $target the parent element
+     * @param DataObject\AbstractObject|Document|Asset\Folder $target the parent element
      * @param ElementInterface $new the newly inserted child
-     *
-     * @todo: I think ElementInterface is the wrong type here, it has no method getChilds
      */
-    protected function updateChilds($target, $new)
+    protected function updateChildren($target, $new)
     {
-        if (is_array($target->getChilds())) {
+        if (is_array($target->getChildren())) {
             //check in case of recursion
             $found = false;
-            foreach ($target->getChilds() as $child) {
+            foreach ($target->getChildren() as $child) {
+                /**
+                 * @var ElementInterface $child
+                 */
                 if ($child->getId() == $new->getId()) {
                     $found = true;
                 }
             }
             if (!$found) {
-                $target->setChilds(array_merge($target->getChilds(), [$new]));
+                $target->setChildren(array_merge($target->getChildren(), [$new]));
             }
         } else {
-            $target->setChilds([$new]);
+            $target->setChildren([$new]);
         }
     }
 

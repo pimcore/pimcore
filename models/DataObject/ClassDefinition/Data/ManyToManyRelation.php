@@ -1060,3 +1060,5 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
         return true;
     }
 }
+
+class_alias(ManyToManyRelation::class, 'Pimcore\Model\DataObject\ClassDefinition\Data\Multihref');
