@@ -127,6 +127,25 @@ The manual mode offers you the possibility to deal with block the way you like, 
 <?php $block->end(); ?>
 ```
 
+```twig
+{% set block = pimcore_block('gridblock', {'manual' : true, 'limit' : 6}).start() %}
+<table>
+    <tr>
+        {% for b in pimcore_iterate_block(block) %}
+            {% do block.blockConstruct() %}
+              <td customAttribute="{{ pimcore_input("myInput").getData() }}">
+                    {% do block.blockStart() %}
+                        <div style="width:200px; height:200px;border:1px solid black;">
+                            {{ pimcore_input("myInput") }}
+                        </div>
+                    {% do block.blockEnd() %}
+                </td>
+            {% do block.blockDestruct() %}
+        {% endfor %}
+    </tr>
+</table>
+{% do block.end() %}
+```
 ### Using Manual Mode with custom button position
 
 If you want to wrap buttons in a div or change the Position.
