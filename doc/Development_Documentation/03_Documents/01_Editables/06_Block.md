@@ -107,6 +107,8 @@ And in the frontend of the application:
 
 The manual mode offers you the possibility to deal with block the way you like, this is for example useful with tables: 
 
+<div class="code-section">
+
 ```php
 <?php $block = $this->block("gridblock", ["manual" => true])->start(); ?>
 <table>
@@ -146,6 +148,9 @@ The manual mode offers you the possibility to deal with block the way you like, 
 </table>
 {% do block.end() %}
 ```
+
+</div>
+
 ### Using Manual Mode with custom button position
 
 If you want to wrap buttons in a div or change the Position.
