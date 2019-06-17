@@ -143,20 +143,21 @@ pimcore.object.tags.quantityValue = Class.create(pimcore.object.tags.abstract, {
             isDirty: function () {
                 return this.inputField.isDirty() || this.unitField.isDirty()
             }.bind(this),
-            listeners: {
-            }
+            listeners: {}
         };
+
         if(this.fieldConfig.unitTooltip) {
+            var tooltip = this.fieldConfig.tooltip;
             fieldContainerConfig.listeners.render = function () {
                 Ext.create('Ext.tip.ToolTip', {
                     target: this.component.getEl(),
                     showDelay: 200,
-                    anchor: 'left',
-                    allowOver: true,
+                    trackMouse:true,
                     dismissDelay: 0,
                     listeners: {
                         beforeshow: function (tip) {
-                            if (this.inputField.value === '' || this.inputField.value === null || !this.unitField.value) {
+                            var html = tooltip;
+                            if (!html && (this.inputField.value === '' || this.inputField.value === null || !this.unitField.value)) {
                                 return false;
                             }
 
@@ -170,7 +171,10 @@ pimcore.object.tags.quantityValue = Class.create(pimcore.object.tags.abstract, {
                                 success: function (response) {
                                     response = Ext.decode(response.responseText);
                                     if (response && response.success && response.values.length > 0) {
-                                        var html = Ext.util.Format.number(response.value) + ' ' + response.fromUnit + ' =<br><ul>';
+                                        if(html) {
+                                            html += '<hr>';
+                                        }
+                                        html += Ext.util.Format.number(response.value) + ' ' + response.fromUnit + ' =<br><ul>';
                                         for (var i = 0; i < response.values.length; i++) {
                                             html += '<li>' + Ext.util.Format.number(response.values[i].value) + ' ' + response.values[i].unit + '</li>';
                                         }
@@ -187,6 +191,8 @@ pimcore.object.tags.quantityValue = Class.create(pimcore.object.tags.abstract, {
                     }
                 });
             }.bind(this);
+
+            this.fieldConfig.tooltip = '';
         }
 
         this.component = new Ext.form.FieldContainer(fieldContainerConfig);
