@@ -20,15 +20,18 @@ pimcore.object.tags.quantityValue = Class.create(pimcore.object.tags.abstract, {
         this.defaultValue = null;
         this.defaultUnit = null;
         this.autoConvert = false;
-        if ((typeof data === "undefined" || data === null) && (fieldConfig.defaultValue || fieldConfig.defaultUnit || fieldConfig.autoConvert)) {
+        this.unitTooltip = false;
+        if ((typeof data === "undefined" || data === null) && (fieldConfig.defaultValue || fieldConfig.defaultUnit || fieldConfig.autoConvert || fieldConfig.unitTooltip)) {
             data = {
                 value: fieldConfig.defaultValue,
                 unit: fieldConfig.defaultUnit,
-                autoConvert: fieldConfig.autoConvert
+                autoConvert: fieldConfig.autoConvert,
+                unitTooltip: fieldConfig.unitTooltip
             };
             this.defaultValue = data.value;
             this.defaultUnit = data.unit;
             this.autoConvert = data.autoConvert;
+            this.unitTooltip = data.unitTooltip;
         }
 
         this.data = data;
@@ -128,7 +131,8 @@ pimcore.object.tags.quantityValue = Class.create(pimcore.object.tags.abstract, {
 
         this.unitField = new Ext.form.ComboBox(options);
 
-        this.component = new Ext.form.FieldContainer({
+
+        var fieldContainerConfig = {
             layout: 'hbox',
             margin: '0 0 10 0',
             fieldLabel: this.fieldConfig.title,
@@ -136,52 +140,56 @@ pimcore.object.tags.quantityValue = Class.create(pimcore.object.tags.abstract, {
             combineErrors: false,
             items: [this.inputField, this.unitField],
             componentCls: "object_field",
-            isDirty: function() {
+            isDirty: function () {
                 return this.inputField.isDirty() || this.unitField.isDirty()
             }.bind(this),
             listeners: {
-                render: function() {
-                    Ext.create('Ext.tip.ToolTip', {
-                        target: this.component.getEl(),
-                        showDelay: 200,
-                        anchor: 'left',
-                        allowOver: true,
-                        dismissDelay: 0,
-                        listeners: {
-                            beforeshow: function(tip) {
-                                if(this.inputField.value === '' || this.inputField.value === null || !this.unitField.value) {
-                                    return false;
-                                }
-
-                                Ext.Ajax.request({
-                                    url: "/admin/quantity-value/convert-all",
-                                    params: {
-                                        value: this.inputField.value,
-                                        unit: this.unitField.value,
-                                    },
-                                    async: false,
-                                    success: function (response) {
-                                        response = Ext.decode(response.responseText);
-                                        if (response && response.success && response.values.length > 0) {
-                                            var html = Ext.util.Format.number(response.value)+' '+response.fromUnit+' =<br><ul>';
-                                            for(var i=0;i<response.values.length;i++) {
-                                                html += '<li>'+Ext.util.Format.number(response.values[i].value)+' '+response.values[i].unit+'</li>';
-                                            }
-                                            html += '</ul>';
-                                            tip.setHtml(html);
-                                        }
-                                    }
-                                });
-
-                                if(!tip.html) {
-                                    return false;
-                                }
-                            }.bind(this)
-                        }
-                    });
-                }.bind(this)
             }
-        });
+        };
+        if(this.fieldConfig.unitTooltip) {
+            fieldContainerConfig.listeners.render = function () {
+                Ext.create('Ext.tip.ToolTip', {
+                    target: this.component.getEl(),
+                    showDelay: 200,
+                    anchor: 'left',
+                    allowOver: true,
+                    dismissDelay: 0,
+                    listeners: {
+                        beforeshow: function (tip) {
+                            if (this.inputField.value === '' || this.inputField.value === null || !this.unitField.value) {
+                                return false;
+                            }
+
+                            Ext.Ajax.request({
+                                url: "/admin/quantity-value/convert-all",
+                                params: {
+                                    value: this.inputField.value,
+                                    unit: this.unitField.value,
+                                },
+                                async: false,
+                                success: function (response) {
+                                    response = Ext.decode(response.responseText);
+                                    if (response && response.success && response.values.length > 0) {
+                                        var html = Ext.util.Format.number(response.value) + ' ' + response.fromUnit + ' =<br><ul>';
+                                        for (var i = 0; i < response.values.length; i++) {
+                                            html += '<li>' + Ext.util.Format.number(response.values[i].value) + ' ' + response.values[i].unit + '</li>';
+                                        }
+                                        html += '</ul>';
+                                        tip.setHtml(html);
+                                    }
+                                }
+                            });
+
+                            if (!tip.html) {
+                                return false;
+                            }
+                        }.bind(this)
+                    }
+                });
+            }.bind(this);
+        }
+
+        this.component = new Ext.form.FieldContainer(fieldContainerConfig);
 
         return this.component;
     },

@@ -111,6 +111,12 @@ pimcore.object.classes.data.quantityValue = Class.create(pimcore.object.classes.
                 name: "autoConvert",
                 fieldLabel: t("auto_convert"),
                 checked: this.datax.autoConvert
+            },
+            {
+                xtype: "checkbox",
+                name: "unitTooltip",
+                fieldLabel: t("unit_tooltip"),
+                checked: this.datax.unitTooltip
             }
         ]);
 
@@ -132,6 +138,7 @@ pimcore.object.classes.data.quantityValue = Class.create(pimcore.object.classes.
                     defaultValue: source.datax.defaultValue,
                     decimalPrecision: source.datax.decimalPrecision,
                     autoConvert: source.datax.autoConvert,
+                    unitTooltip: source.datax.unitTooltip,
                 });
         }
     }
