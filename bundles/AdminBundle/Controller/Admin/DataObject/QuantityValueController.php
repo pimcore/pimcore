@@ -144,7 +144,7 @@ class QuantityValueController extends AdminController
         $mapper = [
             'lt' => '<',
             'gt' => '>',
-            'eq' => '='
+            'eq' => '=',
         ];
 
         return $mapper[$comparison];
@@ -221,5 +221,44 @@ class QuantityValueController extends AdminController
         }
 
         return $this->adminJson(['value' => $convertedValue->getValue(), 'success' => true]);
+    }
+
+    /**
+     * @Route("/quantity-value/convert-all", methods={"GET"})
+     *
+     * @param Request $request
+     *
+     * @return JsonResponse
+     */
+    public function convertAllAction(Request $request)
+    {
+        $unitId = $request->get('unit');
+
+        $fromUnit = Unit::getById($unitId);
+        if (!$fromUnit instanceof Unit) {
+            return null;
+        }
+
+        $baseUnit = $fromUnit->getBaseunit() ?? $fromUnit;
+
+        $units = new Unit\Listing();
+        $units->setCondition('baseunit = '.$units->quote($baseUnit->getId()).' AND id != '.$units->quote($fromUnit->getId()));
+        $units = $units->load();
+
+        $convertedValues = [];
+        /** @var UnitConversionService $converter */
+        $converter = $this->container->get(UnitConversionService::class);
+        /** @var Unit $targetUnit */
+        foreach($units as $targetUnit) {
+            try {
+                $convertedValue = $converter->convert(new QuantityValue($request->get('value'), $fromUnit), $targetUnit);
+
+                $convertedValues[] = ['unit' => $targetUnit->getAbbreviation(), 'unitName' => $targetUnit->getLongname(), 'value' => round($convertedValue->getValue(), 4)];
+            } catch (\Exception $e) {
+                return $this->adminJson(['success' => false, 'message' => $e->getMessage()]);
+            }
+        }
+
+        return $this->adminJson(['value' => $request->get('value'), 'fromUnit' => $fromUnit->getAbbreviation(), 'values' => $convertedValues, 'success' => true]);
     }
 }

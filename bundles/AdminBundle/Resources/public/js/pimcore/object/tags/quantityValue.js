@@ -138,7 +138,49 @@ pimcore.object.tags.quantityValue = Class.create(pimcore.object.tags.abstract, {
             componentCls: "object_field",
             isDirty: function() {
                 return this.inputField.isDirty() || this.unitField.isDirty()
-            }.bind(this)
+            }.bind(this),
+            listeners: {
+                render: function() {
+                    Ext.create('Ext.tip.ToolTip', {
+                        target: this.component.getEl(),
+                        showDelay: 200,
+                        anchor: 'left',
+                        allowOver: true,
+                        dismissDelay: 0,
+                        listeners: {
+                            beforeshow: function(tip) {
+                                if(this.inputField.value === '' || this.inputField.value === null || !this.unitField.value) {
+                                    return false;
+                                }
+
+                                Ext.Ajax.request({
+                                    url: "/admin/quantity-value/convert-all",
+                                    params: {
+                                        value: this.inputField.value,
+                                        unit: this.unitField.value,
+                                    },
+                                    async: false,
+                                    success: function (response) {
+                                        response = Ext.decode(response.responseText);
+                                        if (response && response.success && response.values.length > 0) {
+                                            var html = Ext.util.Format.number(response.value)+' '+response.fromUnit+' =<br><ul>';
+                                            for(var i=0;i<response.values.length;i++) {
+                                                html += '<li>'+Ext.util.Format.number(response.values[i].value)+' '+response.values[i].unit+'</li>';
+                                            }
+                                            html += '</ul>';
+                                            tip.setHtml(html);
+                                        }
+                                    }
+                                });
+
+                                if(!tip.html) {
+                                    return false;
+                                }
+                            }.bind(this)
+                        }
+                    });
+                }.bind(this)
+            }
         });
 
         return this.component;
