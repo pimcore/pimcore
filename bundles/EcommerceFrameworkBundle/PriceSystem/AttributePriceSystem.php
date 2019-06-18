@@ -40,6 +40,11 @@ class AttributePriceSystem extends CachingPriceSystem implements PriceSystemInte
     /**
      * @var string
      */
+    protected $priceType;
+
+    /**
+     * @var string
+     */
     protected $priceClass;
 
     public function __construct(PricingManagerLocatorInterface $pricingManagers, EnvironmentInterface $environment, array $options = [])
@@ -58,6 +63,7 @@ class AttributePriceSystem extends CachingPriceSystem implements PriceSystemInte
     {
         $this->attributeName = $options['attribute_name'];
         $this->priceClass = $options['price_class'];
+        $this->priceType = $options['price_type'];
     }
 
     protected function configureOptions(OptionsResolver $resolver)
@@ -69,11 +75,13 @@ class AttributePriceSystem extends CachingPriceSystem implements PriceSystemInte
 
         $resolver->setDefaults([
             'attribute_name' => 'price',
-            'price_class' => Price::class
+            'price_class' => Price::class,
+            'price_type' => TaxCalculationService::CALCULATION_FROM_GROSS
         ]);
 
         $resolver->setAllowedTypes('attribute_name', 'string');
         $resolver->setAllowedTypes('price_class', 'string');
+        $resolver->setAllowedTypes('price_type', 'string');
     }
 
     /**
@@ -96,8 +104,8 @@ class AttributePriceSystem extends CachingPriceSystem implements PriceSystemInte
         }
 
         $taxCalculationService = $this->getTaxCalculationService();
-        $taxCalculationService->updateTaxes($price, TaxCalculationService::CALCULATION_FROM_GROSS);
-        $taxCalculationService->updateTaxes($totalPrice, TaxCalculationService::CALCULATION_FROM_GROSS);
+        $taxCalculationService->updateTaxes($price, $this->priceType);
+        $taxCalculationService->updateTaxes($totalPrice, $this->priceType);
 
         return new AttributePriceInfo($price, $quantityScale, $totalPrice);
     }
