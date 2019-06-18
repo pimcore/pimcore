@@ -62,9 +62,13 @@ All permissions on database level, specifically:
 
 #### System Variables
 ```
+[mysqld]
 innodb_file_format = Barracuda
 innodb_large_prefix = 1
 innodb_file_per_table = 1
+
+[mariadb]
+plugin_load_add = ha_archive # optional but recommended, starting from mariadb 10.1 archive format is no more activated by default (check and adapt for mysql or other database software)
 ```
 
 ### Redis (optional but recommended for caching)
