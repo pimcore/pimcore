@@ -96,8 +96,7 @@ class LegacyTemplateGuesser extends BaseTemplateGuesser
                     $bundleName = $bundle->getName();
                     break;
                 }
-                $bundles = $this->kernel->getBundle($parentBundleName, false);
-                $bundle = array_pop($bundles);
+                $bundle = $this->kernel->getBundle($parentBundleName);
             }
         } else {
             $bundleName = null;
