@@ -174,11 +174,11 @@ pimcore.object.tags.quantityValue = Class.create(pimcore.object.tags.abstract, {
                                         if(html) {
                                             html += '<hr>';
                                         }
-                                        html += Ext.util.Format.number(response.value) + ' ' + response.fromUnit + ' =<br><ul>';
+                                        html += '<dl><dt>'+Ext.util.Format.number(response.value) + ' ' + response.fromUnit + ' =</dt>';
                                         for (var i = 0; i < response.values.length; i++) {
-                                            html += '<li>' + Ext.util.Format.number(response.values[i].value) + ' ' + response.values[i].unit + '</li>';
+                                            html += '<dd>' + Ext.util.Format.number(response.values[i].value) + ' ' + response.values[i].unit + '</dd>';
                                         }
-                                        html += '</ul>';
+                                        html += '</dl>';
                                         tip.setHtml(html);
                                     }
                                 }
