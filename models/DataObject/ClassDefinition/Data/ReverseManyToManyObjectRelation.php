@@ -362,7 +362,7 @@ class ReverseManyToManyObjectRelation extends ManyToManyObjectRelation
                     unset($reverseObjects[$index]);
                 }
             }
-            $item->set($ownerFieldName, array_values($reverseObjects));
+            $deletedRelation->set($ownerFieldName, array_values($reverseObjects));
         }
 
         return parent::preSetData($object, $data, $params);
