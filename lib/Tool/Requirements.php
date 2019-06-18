@@ -107,19 +107,19 @@ class Requirements
         $largePrefix = $db->fetchRow("SHOW GLOBAL VARIABLES LIKE 'innodb\_large\_prefix';");
         $checks[] = new Check([
             'name' => 'innodb_large_prefix = ON ',
-            'state' => ($largePrefix && $largePrefix['Value'] != 'ON') ? Check::STATE_ERROR : Check::STATE_OK
+            'state' => ($largePrefix && !in_arrayi(['on', '1', 1], $largePrefix['Value'])) ? Check::STATE_ERROR : Check::STATE_OK
         ]);
 
         $fileFormat = $db->fetchRow("SHOW GLOBAL VARIABLES LIKE 'innodb\_file\_format';");
         $checks[] = new Check([
             'name' => 'innodb_file_format = Barracuda',
-            'state' => ($fileFormat && $fileFormat['Value'] != 'Barracuda') ? Check::STATE_ERROR : Check::STATE_OK
+            'state' => ($fileFormat && !in_arrayi('barracuda', $fileFormat['Value'])) ? Check::STATE_ERROR : Check::STATE_OK
         ]);
 
         $fileFilePerTable = $db->fetchRow("SHOW GLOBAL VARIABLES LIKE 'innodb\_file\_per\_table';");
         $checks[] = new Check([
             'name' => 'innodb_file_per_table = ON',
-            'state' => ($fileFilePerTable && $fileFilePerTable['Value'] != 'ON') ? Check::STATE_ERROR : Check::STATE_OK
+            'state' => ($fileFilePerTable && !in_arrayi(['on', '1', 1], $fileFilePerTable['Value'])) ? Check::STATE_ERROR : Check::STATE_OK
         ]);
 
         // create table
