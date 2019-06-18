@@ -817,7 +817,9 @@ QUERY;
                 // remove unused columns in the table
                 $this->removeUnusedColumns($queryTable, $columnsToRemove, $protectedColumns);
             }
+        }
 
+        if($container instanceof DataObject\ClassDefinition) {
             $this->createLocalizedViews();
         }
 
