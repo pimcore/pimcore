@@ -107,7 +107,7 @@ class Requirements
         $largePrefix = $db->fetchRow("SHOW GLOBAL VARIABLES LIKE 'innodb\_large\_prefix';");
         $checks[] = new Check([
             'name' => 'innodb_large_prefix = ON ',
-            'state' => ($largePrefix && !in_arrayi(['on', '1', 1], $largePrefix['Value'])) ? Check::STATE_ERROR : Check::STATE_OK
+            'state' => ($largePrefix && !in_arrayi($largePrefix['Value'], ['on', '1', 1])) ? Check::STATE_ERROR : Check::STATE_OK
         ]);
 
         $fileFormat = $db->fetchRow("SHOW GLOBAL VARIABLES LIKE 'innodb\_file\_format';");
@@ -119,7 +119,7 @@ class Requirements
         $fileFilePerTable = $db->fetchRow("SHOW GLOBAL VARIABLES LIKE 'innodb\_file\_per\_table';");
         $checks[] = new Check([
             'name' => 'innodb_file_per_table = ON',
-            'state' => ($fileFilePerTable && !in_arrayi(['on', '1', 1], $fileFilePerTable['Value'])) ? Check::STATE_ERROR : Check::STATE_OK
+            'state' => ($fileFilePerTable && !in_arrayi($fileFilePerTable['Value'], ['on', '1', 1])) ? Check::STATE_ERROR : Check::STATE_OK
         ]);
 
         // create table
