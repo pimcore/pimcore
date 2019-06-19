@@ -178,4 +178,4 @@ For an complete example have a look at the [sample implementation](https://githu
 
 ---
 
-> Note: Assortment subtenant are currently only implemented for MySQL and Elastic Search based product index implementations. 
+> Note: This is currently only implemented for MySQL and Elastic Search based product index implementations. 
