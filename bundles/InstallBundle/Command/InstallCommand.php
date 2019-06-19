@@ -99,7 +99,7 @@ class InstallCommand extends Command
             ],
             'mysql-password' => [
                 'description' => 'MySQL password',
-                'mode' => InputOption::VALUE_REQUIRED,
+                'mode' => InputOption::VALUE_OPTIONAL,
                 'insecure' => true,
                 'hidden-input' => true,
                 'group' => 'db_credentials',
