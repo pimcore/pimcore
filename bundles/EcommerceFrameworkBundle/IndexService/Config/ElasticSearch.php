@@ -15,7 +15,6 @@
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\EnvironmentInterface;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\Definition\Attribute;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Interpreter\RelationInterpreterInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\ElasticSearch\AbstractElasticSearch as DefaultElasticSearchWorker;
