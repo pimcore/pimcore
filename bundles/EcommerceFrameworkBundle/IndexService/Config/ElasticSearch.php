@@ -186,7 +186,7 @@ class ElasticSearch extends AbstractConfig implements MockupConfigInterface, Ela
 
     /**
      * in case of subtenants returns a data structure containing all sub tenants,
-     * by default should return an array of IDs of sub tenant assortments
+     * should return an array of IDs of sub tenant assortments
      *
      * @param IndexableInterface $object
      * @param null $subObjectId
