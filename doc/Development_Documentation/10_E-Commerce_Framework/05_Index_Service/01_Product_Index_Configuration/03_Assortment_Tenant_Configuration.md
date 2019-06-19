@@ -152,6 +152,8 @@ In order to populate the additional mapping data, also following methods have to
     public function updateSubTenantEntries($objectId, $subTenantData, $subObjectId = null);
 ```
 
-For an complete example have a look at the [sample implementation](https://github.com/pimcore/pimcore/blob/master/bundles/EcommerceFrameworkBundle/IndexService/Config/DefaultMysqlSubTenantConfig.php).
+For an complete example have a look at the sample implementation for 
+- [MySQL](https://github.com/pimcore/pimcore/blob/master/bundles/EcommerceFrameworkBundle/IndexService/Config/DefaultMysqlSubTenantConfig.php)
+- [Elastic Serach](https://github.com/pimcore/pimcore/blob/master/bundles/EcommerceFrameworkBundle/IndexService/Config/DefaultElasticSearchSubTenantConfig.php)
 
-> Note: This is currently only implemented for mysql based Product Index Implementations. 
+> Note: This is currently only implemented for MySQL and Elastic Search based product index implementations. 
