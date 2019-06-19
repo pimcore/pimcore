@@ -96,7 +96,7 @@ The Index Service provides the corresponding Product List implementation based o
   //doing stuff with product list
 ```
 
-## Subtenant Assortments
+## Assortment Subtenants
 Subtenants are light-weight tenants, which share the same Product Index with the same attributes as their parent 
 assortment tenant.
 
