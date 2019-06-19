@@ -245,7 +245,7 @@ abstract class AbstractElasticSearch extends Worker\AbstractMockupCacheWorker im
 
         $mappingAttributes['attributes'] = ['type' => 'object', 'dynamic' => true, 'properties' => $customAttributesMapping];
         $mappingAttributes['relations'] = ['type' => 'object', 'dynamic' => false, 'properties' => $relationAttributesMapping];
-        $mappingAttributes['subtenants'] = ['type' => 'object', 'dynamic' => true];
+        $mappingAttributes['subtenants'] = ['type' => 'long'];
         //has to be at top -> join field [system.relation] cannot be added inside an object or in a multi-field
         $mappingAttributes[static::RELATION_FIELD] = ['type' => 'join', 'relations' => ['object' => 'variant']];
 
