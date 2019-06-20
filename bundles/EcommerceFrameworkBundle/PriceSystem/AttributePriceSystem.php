@@ -14,21 +14,21 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem;
 
+use Pimcore\Bundle\EcommerceFrameworkBundle\EnvironmentInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\UnsupportedException;
-use Pimcore\Bundle\EcommerceFrameworkBundle\IEnvironment;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractSetProductEntry;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Model\CheckoutableInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\Currency;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Model\ICheckoutable;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\TaxManagement\TaxCalculationService;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\TaxManagement\TaxEntry;
-use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IPricingManagerLocator;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\PricingManagerLocatorInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class AttributePriceSystem extends CachingPriceSystem implements IPriceSystem
+class AttributePriceSystem extends CachingPriceSystem implements PriceSystemInterface
 {
     /**
-     * @var IEnvironment
+     * @var EnvironmentInterface
      */
     protected $environment;
 
@@ -40,9 +40,14 @@ class AttributePriceSystem extends CachingPriceSystem implements IPriceSystem
     /**
      * @var string
      */
+    protected $priceType;
+
+    /**
+     * @var string
+     */
     protected $priceClass;
 
-    public function __construct(IPricingManagerLocator $pricingManagers, IEnvironment $environment, array $options = [])
+    public function __construct(PricingManagerLocatorInterface $pricingManagers, EnvironmentInterface $environment, array $options = [])
     {
         parent::__construct($pricingManagers);
 
@@ -58,6 +63,7 @@ class AttributePriceSystem extends CachingPriceSystem implements IPriceSystem
     {
         $this->attributeName = $options['attribute_name'];
         $this->priceClass = $options['price_class'];
+        $this->priceType = $options['price_type'];
     }
 
     protected function configureOptions(OptionsResolver $resolver)
@@ -69,17 +75,19 @@ class AttributePriceSystem extends CachingPriceSystem implements IPriceSystem
 
         $resolver->setDefaults([
             'attribute_name' => 'price',
-            'price_class' => Price::class
+            'price_class' => Price::class,
+            'price_type' => TaxCalculationService::CALCULATION_FROM_GROSS
         ]);
 
         $resolver->setAllowedTypes('attribute_name', 'string');
         $resolver->setAllowedTypes('price_class', 'string');
+        $resolver->setAllowedTypes('price_type', 'string');
     }
 
     /**
      * @inheritdoc
      */
-    public function createPriceInfoInstance($quantityScale, ICheckoutable $product, $products): IPriceInfo
+    public function createPriceInfoInstance($quantityScale, CheckoutableInterface $product, $products): PriceInfoInterface
     {
         $taxClass = $this->getTaxClassForProduct($product);
 
@@ -96,8 +104,8 @@ class AttributePriceSystem extends CachingPriceSystem implements IPriceSystem
         }
 
         $taxCalculationService = $this->getTaxCalculationService();
-        $taxCalculationService->updateTaxes($price, TaxCalculationService::CALCULATION_FROM_GROSS);
-        $taxCalculationService->updateTaxes($totalPrice, TaxCalculationService::CALCULATION_FROM_GROSS);
+        $taxCalculationService->updateTaxes($price, $this->priceType);
+        $taxCalculationService->updateTaxes($totalPrice, $this->priceType);
 
         return new AttributePriceInfo($price, $quantityScale, $totalPrice);
     }
@@ -113,12 +121,12 @@ class AttributePriceSystem extends CachingPriceSystem implements IPriceSystem
     /**
      * Calculates prices from product
      *
-     * @param ICheckoutable $product
-     * @param ICheckoutable[] $products
+     * @param CheckoutableInterface $product
+     * @param CheckoutableInterface[] $products
      *
      * @return Decimal
      */
-    protected function calculateAmount(ICheckoutable $product, $products): Decimal
+    protected function calculateAmount(CheckoutableInterface $product, $products): Decimal
     {
         $getter = 'get' . ucfirst($this->attributeName);
 
@@ -154,13 +162,13 @@ class AttributePriceSystem extends CachingPriceSystem implements IPriceSystem
     }
 
     /**
-     * Creates instance of IPrice
+     * Creates instance of PriceInterface
      *
      * @param Decimal $amount
      *
-     * @return IPrice
+     * @return PriceInterface
      */
-    protected function getPriceClassInstance(Decimal $amount): IPrice
+    protected function getPriceClassInstance(Decimal $amount): PriceInterface
     {
         $priceClass = $this->priceClass;
         $price = new $priceClass($amount, $this->getDefaultCurrency(), false);

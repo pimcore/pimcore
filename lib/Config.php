@@ -19,14 +19,10 @@ use Pimcore\Config\EnvironmentConfigInterface;
 use Pimcore\FeatureToggles\Features\DebugMode;
 use Pimcore\Model\WebsiteSetting;
 use Symfony\Cmf\Bundle\RoutingBundle\Routing\DynamicRouter;
+use Symfony\Component\Yaml\Yaml;
 
 class Config
 {
-    /**
-     * @deprecated Default environment is now determined by EnvironmentConfig
-     */
-    const DEFAULT_ENVIRONMENT = 'prod';
-
     /**
      * @var array
      */
@@ -93,44 +89,24 @@ class Config
     }
 
     /**
-     * @param bool $forceReload
+     * @internal
      *
-     * @return mixed|null|\Pimcore\Config\Config
-     *
-     * @throws \Exception
+     * @return null|array
      */
-    public static function getSystemConfig($forceReload = false)
+    public static function getSystemConfiguration()
     {
         $config = null;
-
-        if (\Pimcore\Cache\Runtime::isRegistered('pimcore_config_system') && !$forceReload) {
-            $config = \Pimcore\Cache\Runtime::get('pimcore_config_system');
-        } else {
-            $file = self::locateConfigFile('system.php');
-
-            try {
-                // this is just for compatibility reasons, pimcore itself doesn't use this constant anymore
-                if (!defined('PIMCORE_CONFIGURATION_SYSTEM')) {
-                    define('PIMCORE_CONFIGURATION_SYSTEM', $file);
-                }
-
-                $config = static::getConfigInstance($file);
-
-                self::setSystemConfig($config);
-            } catch (\Exception $e) {
-                Logger::emergency('Cannot find system configuration, should be located at: ' . $file);
-
-                if (is_file($file)) {
-                    $m = 'Your system.php located at ' . $file . ' is invalid, please check and correct it manually!';
-                    Tool::exitWithError($m);
-                }
-            }
+        if ($container = \Pimcore::getContainer()) {
+            $config = $container->getParameter('pimcore.config');
+            $adminConfig = $container->getParameter('pimcore_admin.config');
+            $config = array_merge_recursive($config, $adminConfig);
         }
 
         return $config;
     }
 
     /**
+     * @internal
      * @static
      *
      * @param \Pimcore\Config\Config $config
@@ -141,6 +117,8 @@ class Config
     }
 
     /**
+     * @internal
+     *
      * @param null $languange
      *
      * @return string
@@ -260,6 +238,8 @@ class Config
     }
 
     /**
+     * @internal
+     *
      * @param Config\Config $config
      * @param null $language
      */
@@ -288,6 +268,190 @@ class Config
     }
 
     /**
+     * @param $config
+     *
+     * @return array|Config\Config
+     */
+    private static function mapLegacyConfiguration($config)
+    {
+        $systemConfig = [];
+
+        if (is_array($config)) {
+            //legacy system configuration mapping
+            $systemConfig = new \Pimcore\Config\Config([
+                'general' => [
+                    'timezone' => $config['general']['timezone'],
+                    'path_variable' => $config['general']['path_variable'],
+                    'domain' => $config['general']['domain'],
+                    'redirect_to_maindomain' => $config['general']['redirect_to_maindomain'],
+                    'language' => $config['general']['language'],
+                    'validLanguages' => $config['general']['valid_languages'],
+                    'fallbackLanguages' => $config['general']['fallback_languages'],
+                    'defaultLanguage' => $config['general']['default_language'],
+                    'loginscreencustomimage' => $config['branding']['login_screen_custom_image'],
+                    'disableusagestatistics' => $config['general']['disable_usage_statistics'],
+                    'debug_admin_translations' => $config['general']['debug_admin_translations'],
+                    'instanceIdentifier' => $config['general']['instance_identifier'],
+                    'show_cookie_notice' => $config['general']['show_cookie_notice']
+                ],
+                'documents' => [
+                    'versions' => [
+                        'days' => $config['documents']['versions']['days'],
+                        'steps' => $config['documents']['versions']['steps']
+                    ],
+                    'error_pages' => $config['documents']['error_pages'],
+                    'createredirectwhenmoved' => $config['documents']['create_redirect_when_moved'],
+                    'allowtrailingslash' => $config['documents']['allow_trailing_slash'],
+                    'generatepreview' => $config['documents']['generate_preview']
+                ],
+                'objects' => [
+                    'versions' => [
+                        'days' => $config['objects']['versions']['days'],
+                        'steps' => $config['objects']['versions']['steps']
+                    ]
+                ],
+                'assets' => [
+                    'versions' => [
+                        'days' => $config['assets']['versions']['days'],
+                        'steps' => $config['assets']['versions']['steps']
+                    ],
+                    'icc_rgb_profile' => $config['assets']['icc_rgb_profile'],
+                    'icc_cmyk_profile' => $config['assets']['icc_cmyk_profile'],
+                    'hide_edit_image' => $config['assets']['hide_edit_image'],
+                    'disable_tree_preview' => $config['assets']['disable_tree_preview']
+                ],
+                'services' => [
+                    'google' => [
+                        'client_id' => $config['services']['google']['client_id'],
+                        'email' => $config['services']['google']['email'],
+                        'simpleapikey' => $config['services']['google']['simple_api_key'],
+                        'browserapikey' => $config['services']['google']['browser_api_key']
+                    ]
+                ],
+                'cache' => [
+                    'enabled' => $config['cache']['enabled'],
+                    'lifetime' => $config['cache']['lifetime'],
+                    'excludePatterns' => $config['cache']['exclude_patterns'],
+                    'excludeCookie' => $config['cache']['exclude_cookie']
+                ],
+                'webservice' => [
+                    'enabled' => $config['webservice']['enabled']
+                ],
+                'httpclient' => [
+                    'adapter' => $config['httpclient']['adapter'],
+                    'proxy_host' => $config['httpclient']['proxy_host'],
+                    'proxy_port' => $config['httpclient']['proxy_port'],
+                    'proxy_user' => $config['httpclient']['proxy_user'],
+                    'proxy_pass' => $config['httpclient']['proxy_pass']
+                ],
+                'email' => [
+                    'sender' => [
+                        'name' => $config['email']['sender']['name'],
+                        'email' => $config['email']['sender']['email']
+                    ],
+                    'return' => [
+                        'name' => $config['email']['return']['name'],
+                        'email' => $config['email']['return']['email']
+                    ],
+                    'method' => $config['email']['method'],
+                    'smtp' => [
+                        'host' => $config['email']['smtp']['host'],
+                        'port' => $config['email']['smtp']['port'],
+                        'ssl' => $config['email']['smtp']['encryption'],
+                        'name' => 'smtp',
+                        'auth' => [
+                            'method' => $config['email']['smtp']['auth_mode'],
+                            'username' => $config['email']['smtp']['username'],
+                            'password' => $config['email']['smtp']['password']
+                        ],
+                    ],
+                    'debug' => [
+                        'emailaddresses' => $config['email']['debug']['email_addresses']
+                    ]
+                ],
+                'newsletter' => [
+                    'sender' => [
+                        'name' => $config['newsletter']['sender']['name'],
+                        'email' => $config['newsletter']['sender']['email']
+                    ],
+                    'return' => [
+                        'name' => $config['newsletter']['return']['name'],
+                        'email' => $config['newsletter']['return']['name']
+                    ],
+                    'method' => $config['newsletter']['method'],
+                    'smtp' => [
+                        'host' => $config['newsletter']['smtp']['host'],
+                        'port' => $config['newsletter']['smtp']['port'],
+                        'ssl' => $config['newsletter']['smtp']['encryption'],
+                        'name' => 'smtp',
+                        'auth' => [
+                            'method' => $config['newsletter']['smtp']['auth_mode'],
+                            'username' => $config['newsletter']['smtp']['username'],
+                            'password' => $config['newsletter']['smtp']['password']
+                        ],
+                    ],
+                    'debug' => $config['newsletter']['debug']['email_addresses'],
+                    'usespecific' => $config['newsletter']['use_specific']
+                ],
+                'branding' => [
+                    'login_screen_invert_colors' => $config['branding']['login_screen_invert_colors'],
+                    'color_login_screen' => $config['branding']['color_login_screen'],
+                    'color_admin_interface' => $config['branding']['color_admin_interface']
+                ],
+                'applicationlog' => [
+                    'mail_notification' => [
+                        'send_log_summary' => $config['applicationlog']['mail_notification']['send_log_summary'],
+                        'filter_priority' => $config['applicationlog']['mail_notification']['filter_priority'],
+                        'mail_receiver' => $config['applicationlog']['mail_notification']['mail_receiver']
+                    ],
+                    'archive_treshold' => $config['applicationlog']['archive_treshold'],
+                    'archive_alternative_database' => $config['applicationlog']['archive_alternative_database']
+                ]
+            ]);
+        }
+
+        return $systemConfig;
+    }
+
+    /**
+     * @return mixed|null|\Pimcore\Config\Config
+     *
+     * @throws \Exception
+     */
+    public static function getSystemConfig()
+    {
+        $systemConfig = null;
+
+        //try {
+        if (\Pimcore\Cache\Runtime::isRegistered('pimcore_config_system')) {
+            $systemConfig = \Pimcore\Cache\Runtime::get('pimcore_config_system');
+        } else {
+            if ($config = self::getSystemConfiguration()) {
+                $container = \Pimcore::getContainer();
+                //add email settings
+                foreach (['email' => 'pimcore_mailer', 'newsletter' => 'newsletter_mailer'] as $key => $group) {
+                    if ($container->hasParameter('swiftmailer.mailer.'.$group.'.transport.smtp.host')) {
+                        $config[$key]['smtp'] = [
+                            'host' => $container->getParameter('swiftmailer.mailer.' . $group . '.transport.smtp.host'),
+                            'username' => $container->getParameter('swiftmailer.mailer.' . $group . '.transport.smtp.username'),
+                            'password' => $container->getParameter('swiftmailer.mailer.' . $group . '.transport.smtp.password'),
+                            'port' => $container->getParameter('swiftmailer.mailer.' . $group . '.transport.smtp.port'),
+                            'encryption' => $container->getParameter('swiftmailer.mailer.' . $group . '.transport.smtp.encryption'),
+                            'auth_mode' => $container->getParameter('swiftmailer.mailer.' . $group . '.transport.smtp.auth_mode'),
+                        ];
+                    }
+                }
+
+                $systemConfig = self::mapLegacyConfiguration($config);
+                self::setSystemConfig($systemConfig);
+            }
+        }
+
+        return $systemConfig;
+    }
+
+    /**
+     * @internal
      * @static
      *
      * @return \Pimcore\Config\Config
@@ -311,6 +475,7 @@ class Config
     }
 
     /**
+     * @internal
      * @static
      *
      * @param \Pimcore\Config\Config $config
@@ -354,6 +519,7 @@ class Config
     }
 
     /**
+     * @internal
      * @static
      *
      * @return \Pimcore\Config\Config
@@ -377,6 +543,7 @@ class Config
     }
 
     /**
+     * @internal
      * @static
      *
      * @param \Pimcore\Config\Config $config
@@ -387,6 +554,7 @@ class Config
     }
 
     /**
+     * @internal
      * @static
      *
      * @param \Pimcore\Config\Config $config
@@ -397,6 +565,7 @@ class Config
     }
 
     /**
+     * @internal
      * @static
      *
      * @return mixed|\Pimcore\Config\Config
@@ -424,7 +593,9 @@ class Config
         return $config;
     }
 
-    /** Returns the standard perspective settings
+    /**
+     * @internal
+     *
      * @return array
      */
     public static function getStandardPerspective()
@@ -470,7 +641,7 @@ class Config
 
         return [
             'default' => [
-                'iconCls' => 'pimcore_icon_perspective',
+                'iconCls' => 'pimcore_nav_icon_perspective',
                 'elementTree' => $elementTree,
                 'dashboards' => [
                     'predefined' => [
@@ -508,7 +679,9 @@ class Config
         ];
     }
 
-    /** Gets the active perspective for the current user
+    /**
+     * @internal
+     *
      * @param Model\User $currentUser
      *
      * @return array
@@ -547,7 +720,9 @@ class Config
         return $result;
     }
 
-    /** Returns the element tree config for the given config name
+    /**
+     * @internal
+     *
      * @param $name
      *
      * @return array
@@ -641,6 +816,7 @@ class Config
     }
 
     /**
+     * @internal
      * @static
      *
      * @param \Pimcore\Config\Config $config
@@ -650,7 +826,9 @@ class Config
         \Pimcore\Cache\Runtime::set('pimcore_config_perspectives', $config);
     }
 
-    /** Returns a list of available perspectives for the given user
+    /**
+     * @internal
+     *
      * @param Model\User $user
      *
      * @return array
@@ -730,6 +908,8 @@ class Config
     }
 
     /**
+     * @internal
+     *
      * @param $runtimeConfig
      * @param $key
      *
@@ -831,6 +1011,11 @@ class Config
         static::$environment = $environment;
     }
 
+    /**
+     * @internal
+     *
+     * @return EnvironmentConfigInterface
+     */
     public static function getEnvironmentConfig(): EnvironmentConfigInterface
     {
         if (null === static::$environmentConfig) {
@@ -840,6 +1025,11 @@ class Config
         return static::$environmentConfig;
     }
 
+    /**
+     * @internal
+     *
+     * @param EnvironmentConfigInterface $environmentConfig
+     */
     public static function setEnvironmentConfig(EnvironmentConfigInterface $environmentConfig)
     {
         self::$environmentConfig = $environmentConfig;
@@ -861,18 +1051,30 @@ class Config
     }
 
     /**
-     * @param $file
+     * @internal
+     *
+     * @param string $file
+     * @param bool $asArray
      *
      * @return null|Config\Config
      *
      * @throws \Exception
      */
-    protected static function getConfigInstance($file)
+    public static function getConfigInstance($file, bool $asArray = false)
     {
+        $fileType = pathinfo($file, PATHINFO_EXTENSION);
         if (file_exists($file)) {
-            $content = include($file);
+            if ($fileType == 'yml') {
+                $content = Yaml::parseFile($file);
+            } else {
+                $content = include($file);
+            }
 
             if (is_array($content)) {
+                if ($asArray) {
+                    return $content;
+                }
+
                 return new \Pimcore\Config\Config($content);
             }
         } else {

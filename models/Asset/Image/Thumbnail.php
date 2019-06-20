@@ -503,10 +503,7 @@ class Thumbnail
         $isLowQualityPreview = false;
         $lowQualityPreviewFile = $this->getAsset()->getLowQualityPreviewFileSystemPath();
         if (
-            (
-                (isset($options['svgPlaceholder']) && $options['svgPlaceholder']) // @deprecated config option
-                || (isset($options['lowQualityPlaceholder']) && $options['lowQualityPlaceholder'])
-            )
+            (isset($options['lowQualityPlaceholder']) && $options['lowQualityPlaceholder'])
             && file_exists($lowQualityPreviewFile)
             && !Tool::isFrontendRequestByAdmin()
         ) {

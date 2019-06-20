@@ -21,7 +21,6 @@ use Pimcore\Document\Renderer\DocumentRenderer;
 use Pimcore\Document\Renderer\DocumentRendererInterface;
 use Pimcore\Event\DocumentEvents;
 use Pimcore\Event\Model\DocumentEvent;
-use Pimcore\Exception\MissingDependencyException;
 use Pimcore\File;
 use Pimcore\Model;
 use Pimcore\Model\Document;
@@ -62,7 +61,7 @@ class Service extends Model\Element\Service
     }
 
     /**
-     * Renders a document outside of a view with support for legacy documents
+     * Renders a document outside of a view
      *
      * Parameter order was kept for BC (useLayout before query and options).
      *
@@ -81,23 +80,7 @@ class Service extends Model\Element\Service
         $container = \Pimcore::getContainer();
 
         /** @var DocumentRendererInterface $renderer */
-        $renderer = null;
-
-        if ($document->doRenderWithLegacyStack()) {
-            $serviceId = 'pimcore.legacy.document.renderer';
-            if (!$container->has($serviceId)) {
-                throw new MissingDependencyException(sprintf(
-                    'Document %d (%s) is expected to be rendered with the legacy renderer, but legacy renderer does not exist as service "%s"',
-                    $document->getId(),
-                    $document->getFullPath(),
-                    $serviceId
-                ));
-            }
-
-            $renderer = $container->get($serviceId);
-        } else {
-            $renderer = $container->get(DocumentRenderer::class);
-        }
+        $renderer = $container->get(DocumentRenderer::class);
 
         // keep useLayout compatibility
         $attributes['_useLayout'] = $useLayout;
@@ -136,14 +119,14 @@ class Service extends Model\Element\Service
         }
 
         foreach ($document->getChildren() as $child) {
-            if (!$child->hasChilds()) {
+            if (!$child->hasChildren()) {
                 $child->save();
                 $saved++;
                 if ($saved % $collectGarbageAfterIteration === 0) {
                     \Pimcore::collectGarbage();
                 }
             }
-            if ($child->hasChilds()) {
+            if ($child->hasChildren()) {
                 self::saveRecursive($child, $collectGarbageAfterIteration, $saved);
             }
         }
@@ -195,7 +178,7 @@ class Service extends Model\Element\Service
             $this->copyRecursive($new, $child);
         }
 
-        $this->updateChilds($target, $new);
+        $this->updateChildren($target, $new);
 
         // triggers actions after the complete document cloning
         \Pimcore::getEventDispatcher()->dispatch(DocumentEvents::POST_COPY, new DocumentEvent($new, [
@@ -206,8 +189,8 @@ class Service extends Model\Element\Service
     }
 
     /**
-     * @param $target
-     * @param $source
+     * @param Document $target
+     * @param Document $source
      * @param bool $enableInheritance
      * @param bool $resetIndex
      *
@@ -223,9 +206,12 @@ class Service extends Model\Element\Service
 
         $source->getProperties();
 
+        /**
+         * @var Document $new
+         */
         $new = Element\Service::cloneMe($source);
         $new->setId(null);
-        $new->setChilds(null);
+        $new->setChildren(null);
         $new->setKey(Element\Service::getSaveCopyName('document', $new->getKey(), $target));
         $new->setParentId($target->getId());
         $new->setUserOwner($this->_user->getId());
@@ -254,7 +240,7 @@ class Service extends Model\Element\Service
 
         $new->save();
 
-        $this->updateChilds($target, $new);
+        $this->updateChildren($target, $new);
 
         //link translated document
         if ($language) {
@@ -301,13 +287,6 @@ class Service extends Model\Element\Service
             $target->setInternal($source->getInternal());
             $target->setDirect($source->getDirect());
             $target->setLinktype($source->getLinktype());
-            $target->setTarget($source->getTarget());
-            $target->setParameters($source->getParameters());
-            $target->setAnchor($source->getAnchor());
-            $target->setTitle($source->getTitle());
-            $target->setAccesskey($source->getAccesskey());
-            $target->setRel($source->getRel());
-            $target->setTabindex($source->getTabindex());
         }
 
         $target->setUserModification($this->_user->getId());

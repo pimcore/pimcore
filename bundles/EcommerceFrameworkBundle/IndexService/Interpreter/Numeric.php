@@ -14,7 +14,7 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Interpreter;
 
-class Numeric implements IInterpreter
+class Numeric implements InterpreterInterface
 {
     public function interpret($value, $config = null)
     {

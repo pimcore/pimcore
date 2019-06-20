@@ -1,8 +1,13 @@
-<svg version="1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" enable-background="new 0 0 48 48">
-    <g fill="#7CB342">
-        <polygon points="31,29 24,36 17,29"/>
-        <rect x="22" y="7" width="4" height="25"/>
-        <path d="M42,18c-3.3,0-6,2.7-6,6v12c0,1.1-0.9,2-2,2H14c-1.1,0-2-0.9-2-2V24c0-3.3-2.7-6-6-6H4v4h2c1.1,0,2,0.9,2,2 v12c0,3.3,2.7,6,6,6h20c3.3,0,6-2.7,6-6V24c0-1.1,0.9-2,2-2h2v-4H42z"/>
-    </g>
-    <rect x="22" y="-2.9" transform="matrix(.707 -.707 .707 .707 -9.941 24)" fill="#37474F" width="4" height="53.7"/>
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 22.1.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<svg version="1.1" id="Ebene_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 width="24px" height="24px" viewBox="0 0 24 24" enable-background="new 0 0 24 24" xml:space="preserve">
+<g>
+	
+		<rect x="15.9" y="10.9" transform="matrix(0.7071 -0.7071 0.7071 0.7071 -3.4951 15.3054)" fill="#A3A5A7" width="1.6" height="2"/>
+	<polygon fill="#A3A5A7" points="20,14 18,14 18,14.3 20,16.3 	"/>
+	<polygon fill="#A3A5A7" points="13,2 11,2 11,7.3 13,9.3 	"/>
+	<path fill="#A3A5A7" d="M21,19.7L4.3,3L3,4.3l8,8v1.9l-3.6-3.6L6,12l6,6l2.4-2.4l3.6,3.6V20H6v-6H4v6c0,1.1,0.9,2,2,2h12
+		c0.7,0,1.4-0.4,1.7-1l0,0L21,19.7z"/>
+</g>
 </svg>

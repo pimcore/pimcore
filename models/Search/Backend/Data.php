@@ -396,7 +396,7 @@ class Data extends \Pimcore\Model\AbstractModel
                 $this->published = true;
             } elseif ($element instanceof Document\Link) {
                 $this->published = $element->isPublished();
-                $this->data = $element->getTitle().' '.$element->getHref();
+                $this->data = ' ' . $element->getHref();
             } elseif ($element instanceof Document\PageSnippet) {
                 $this->published = $element->isPublished();
                 $elements = $element->getElements();

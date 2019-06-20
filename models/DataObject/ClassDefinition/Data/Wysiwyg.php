@@ -362,8 +362,6 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
      */
     public function rewriteIds($object, $idMapping, $params = [])
     {
-        include_once(PIMCORE_PATH . '/lib/simple_html_dom.php');
-
         $data = $this->getDataFromObjectParam($object, $params);
         $html = str_get_html($data);
         if ($html) {

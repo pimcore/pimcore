@@ -25,9 +25,9 @@ use Pimcore\Model\Listing\AbstractListing;
 class Listing extends AbstractListing
 {
     /**
-     * @var array
+     * @var array|null
      */
-    protected $notifications;
+    protected $notifications = null;
 
     /**
      * @var array

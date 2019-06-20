@@ -131,7 +131,6 @@ pimcore.settings.httpErrorLog = Class.create({
                         autoDestroy: true,
                         height: 430,
                         modal: true,
-                        bodyStyle: "background:#fff;",
                         html: '<iframe src="/admin/misc/http-error-log-detail?uri=' + encodeURIComponent(data.get("uri"))
                                 + '" frameborder="0" width="100%" height="390"></iframe>'
                     });

@@ -141,7 +141,6 @@ pimcore.notification.helper.openDetailsWindow = function (id, title, message, ty
         scrollable: true,
         closable: true,
         maximizable: true,
-        bodyStyle: "background:#fff;",
         bodyPadding: "10px",
         autoClose: false,
         listeners: {

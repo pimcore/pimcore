@@ -19,7 +19,7 @@ use Pimcore\Model\DataObject\Listing\Concrete;
 use Symfony\Component\Intl\Exception\NotImplementedException;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-abstract class AbstractPayment implements IPayment
+abstract class AbstractPayment implements PaymentInterface
 {
     /**
      * @var bool

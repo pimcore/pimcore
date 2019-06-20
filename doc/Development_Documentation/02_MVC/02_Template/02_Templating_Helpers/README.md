@@ -283,7 +283,7 @@ echo $this->inc($doc, [
 <?= $this->inc(123, null, false) ?>
 ```
 
-In Pimcore 5, when passing parameters to something included with pimcore_inc(), these parameters are not automatically passed to Twig.
+When passing parameters to something included with pimcore_inc(), these parameters are not automatically passed to Twig.
 The parameters are passed as attributes to the included document, and should be passed to Twig via the document's controller action.
 
 Example:

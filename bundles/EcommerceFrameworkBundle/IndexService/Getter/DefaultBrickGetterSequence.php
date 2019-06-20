@@ -17,7 +17,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Getter;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Traits\OptionsResolverTrait;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class DefaultBrickGetterSequence implements IGetter
+class DefaultBrickGetterSequence implements GetterInterface
 {
     use OptionsResolverTrait;
 

@@ -14,6 +14,8 @@
 
 namespace Pimcore\Tool;
 
+use Pimcore\Document\DocumentStack;
+use Pimcore\Http\RequestHelper;
 use Pimcore\Model\Document;
 use Pimcore\Model\Site;
 
@@ -151,8 +153,8 @@ class Frontend
         $config = \Pimcore::getContainer()->getParameter('pimcore.config')['assets']['image']['thumbnails']['webp_auto_support'];
         if ($config) {
             try {
-                $requestHelper = \Pimcore::getContainer()->get('Pimcore\Http\RequestHelper');
-                $documentStack = \Pimcore::getContainer()->get('Pimcore\Document\DocumentStack');
+                $requestHelper = \Pimcore::getContainer()->get(RequestHelper::class);
+                $documentStack = \Pimcore::getContainer()->get(DocumentStack::class);
 
                 // if a parent is from one of the below types, no WebP images should be rendered
                 // e.g. when an email is sent from within a document, the email shouldn't contain WebP images, even when the

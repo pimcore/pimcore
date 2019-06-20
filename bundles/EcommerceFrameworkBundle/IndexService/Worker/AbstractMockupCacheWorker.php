@@ -15,7 +15,7 @@
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\InvalidConfigException;
-use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\IMockupConfig;
+use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\MockupConfigInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\DefaultMockup;
 use Pimcore\Cache;
 use Pimcore\Logger;
@@ -72,10 +72,10 @@ abstract class AbstractMockupCacheWorker extends AbstractBatchProcessingWorker
             $data = json_decode($data, true);
         }
 
-        if ($this->tenantConfig instanceof IMockupConfig) {
+        if ($this->tenantConfig instanceof MockupConfigInterface) {
             $mockup = $this->tenantConfig->createMockupObject($objectId, $data['data'], $data['relations']);
         } else {
-            throw new InvalidConfigException('Tenant Config is not instance of IMockupConfig');
+            throw new InvalidConfigException('Tenant Config is not instance of MockupConfigInterface');
         }
 
         $key = $this->createMockupCacheKey($objectId);

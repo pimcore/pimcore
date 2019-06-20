@@ -97,16 +97,6 @@ abstract class AbstractTranslation extends Model\AbstractModel implements Transl
     }
 
     /**
-     * @return int
-     *
-     * @deprecated use getCreationDate or getModificationDate instead
-     */
-    public function getDate()
-    {
-        return $this->getModificationDate();
-    }
-
-    /**
      * @param $date
      *
      * @return $this
@@ -197,10 +187,7 @@ abstract class AbstractTranslation extends Model\AbstractModel implements Transl
      * @param bool $create
      * @param bool $returnIdIfEmpty
      *
-     * @return static
-     *
-     * @throws \Exception
-     * @throws \Exception
+     * @return static|null
      */
     public static function getByKey($id, $create = false, $returnIdIfEmpty = false)
     {
@@ -258,16 +245,14 @@ abstract class AbstractTranslation extends Model\AbstractModel implements Transl
      * @param bool $returnIdIfEmpty - returns $id if no translation is available
      * @param string $language
      *
-     * @return string
-     *
-     * @throws \Exception
+     * @return string|null
      */
     public static function getByKeyLocalized($id, $create = false, $returnIdIfEmpty = false, $language = null)
     {
         if (!$language) {
             $language = \Pimcore::getContainer()->get('pimcore.locale')->findLocale();
             if (!$language) {
-                throw new \Exception("Couldn't determine current language.");
+                return null;
             }
         }
 

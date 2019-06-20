@@ -45,11 +45,14 @@ services:
 #### Usage of Configured Session, e.g. in Controller
 ```php
 <?php
-$session = $request->getSession();
- 
-/** @var NamespacedAttributeBag $bag */
-$bag = $session->getBag('session_cart');
-$bag->set('foo', 1);
+if($request->hasSession()) {
+    $session = $request->getSession();
+     
+    /** @var NamespacedAttributeBag $bag */
+    $bag = $session->getBag('session_cart');
+    $bag->set('foo', 1);
+}
+
 ```
 
 Symfony framework session is configured by default, so you don't need to configure the session in your `config.yml`.

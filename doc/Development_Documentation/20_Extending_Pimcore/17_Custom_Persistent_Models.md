@@ -248,7 +248,7 @@ use Pimcore\Model;
 use Zend\Paginator\Adapter\AdapterInterface;
 use Zend\Paginator\AdapterAggregateInterface;
  
-class Listing extends Model\Listing\AbstractListing implements \Zend_Paginator_Adapter_Interface, \Zend_Paginator_AdapterAggregate, \Iterator, AdapterInterface, AdapterAggregateInterface
+class Listing extends Model\Listing\AbstractListing implements \Iterator, AdapterInterface, AdapterAggregateInterface
 {
     /**
      * List of Votes.
@@ -281,10 +281,6 @@ class Listing extends Model\Listing\AbstractListing implements \Zend_Paginator_A
     {
         $this->data = $data;
     }
- 
-    /**
-     * Methods for \Zend_Paginator_Adapter_Interface.
-     */
  
     /**
      * get total count.

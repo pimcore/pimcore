@@ -108,11 +108,12 @@ pimcore.object.tree = Class.create({
             region: "center",
             autoLoad: false,
             iconCls: this.config.treeIconCls,
+            cls: this.config['rootVisible'] ? '' : 'pimcore_tree_no_root_node',
             id: this.config.treeId,
             title: this.config.treeTitle,
             autoScroll: true,
             animate: false,
-            rootVisible: true,
+            rootVisible: this.config.rootVisible,
             bufferedRenderer: false,
             border: false,
             listeners: this.getTreeNodeListeners(),
@@ -361,6 +362,8 @@ pimcore.object.tree = Class.create({
             var tmpMenuEntryImport;
             var $this = this;
 
+            object_types.sort([{property: 'translatedText', direction: 'ASC'}]);
+
             object_types.each(function (classRecord) {
 
                 if ($this.config.allowedClasses && !in_array(classRecord.get("id"), $this.config.allowedClasses)) {
@@ -374,7 +377,7 @@ pimcore.object.tree = Class.create({
                 };
 
                 // add special icon
-                if (classRecord.get("icon") != "/bundles/pimcoreadmin/img/flat-color-icons/timeline.svg") {
+                if (classRecord.get("icon") != "/bundles/pimcoreadmin/img/flat-color-icons/class.svg") {
                     tmpMenuEntry.icon = classRecord.get("icon");
                     tmpMenuEntry.iconCls = "pimcore_class_icon";
                 }
@@ -386,7 +389,7 @@ pimcore.object.tree = Class.create({
                 };
 
                 // add special icon
-                if (classRecord.get("icon") != "/bundles/pimcoreadmin/img/flat-color-icons/timeline.svg") {
+                if (classRecord.get("icon") != "/bundles/pimcoreadmin/img/flat-color-icons/class.svg") {
                     tmpMenuEntryImport.icon = classRecord.get("icon");
                     tmpMenuEntryImport.iconCls = "pimcore_class_icon";
                 }
@@ -682,7 +685,7 @@ pimcore.object.tree = Class.create({
                 });
                 sortByItems.push({
                     text: t('by_index'),
-                    iconCls: "pimcore_icon_show_in_tree",
+                    iconCls: "pimcore_icon_index_sorting",
                     handler: this.changeObjectChildrenSortBy.bind(this, tree, record, 'index')
                 });
             }

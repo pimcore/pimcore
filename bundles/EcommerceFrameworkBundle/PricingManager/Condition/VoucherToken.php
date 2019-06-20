@@ -15,12 +15,12 @@
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Condition;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractVoucherSeries;
-use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\ICondition;
-use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IEnvironment;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\ConditionInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\EnvironmentInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Token as VoucherServiceToken;
 use Pimcore\Model\DataObject\Concrete;
 
-class VoucherToken implements ICondition
+class VoucherToken implements ConditionInterface
 {
     /**
      * @var array
@@ -29,11 +29,11 @@ class VoucherToken implements ICondition
     protected $whiteList = [];
 
     /**
-     * @param IEnvironment $environment
+     * @param EnvironmentInterface $environment
      *
      * @return bool
      */
-    public function check(IEnvironment $environment)
+    public function check(EnvironmentInterface $environment)
     {
         if (!($cart = $environment->getCart())) {
             return false;
@@ -87,7 +87,7 @@ class VoucherToken implements ICondition
     /**
      * @param string $string
      *
-     * @return ICondition
+     * @return ConditionInterface
      */
     public function fromJSON($string)
     {

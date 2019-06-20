@@ -18,7 +18,6 @@
 namespace Pimcore\Model\DataObject\QuantityValue;
 
 use Pimcore\Cache;
-use Pimcore\Logger;
 use Pimcore\Model;
 
 /**
@@ -74,33 +73,41 @@ class Unit extends Model\AbstractModel
     /**
      * @param string $abbreviation
      *
-     * @return Unit
+     * @return self|null
      */
     public static function getByAbbreviation($abbreviation)
     {
-        $unit = new self();
-        $unit->getDao()->getByAbbreviation($abbreviation);
+        try {
+            $unit = new self();
+            $unit->getDao()->getByAbbreviation($abbreviation);
 
-        return $unit;
+            return $unit;
+        } catch (\Exception $e) {
+            return null;
+        }
     }
 
     /**
      * @param string $reference
      *
-     * @return Unit
+     * @return self|null
      */
     public static function getByReference($reference)
     {
-        $unit = new self();
-        $unit->getDao()->getByReference($reference);
+        try {
+            $unit = new self();
+            $unit->getDao()->getByReference($reference);
 
-        return $unit;
+            return $unit;
+        } catch (\Exception $e) {
+            return null;
+        }
     }
 
     /**
      * @param string $id
      *
-     * @return Unit
+     * @return self|null
      */
     public static function getById($id)
     {
@@ -129,12 +136,14 @@ class Unit extends Model\AbstractModel
                 Cache\Runtime::set(self::CACHE_KEY, $table);
             }
         } catch (\Exception $e) {
-            Logger::error($e);
+            return null;
         }
 
         if (isset($table[$id])) {
             return $table[$id];
         }
+
+        return null;
     }
 
     /**

@@ -932,7 +932,7 @@ pimcore.elementservice.getWorkflowActionsButton = function(workflows, elementTyp
         return {
             text: t('actions'),
             scale: "medium",
-            iconCls: 'pimcore_icon_workflow_action',
+            iconCls: 'pimcore_material_icon_workflow pimcore_material_icon',
             cls: 'pimcore_workflow_button',
             menu: {
                 xtype: 'menu',

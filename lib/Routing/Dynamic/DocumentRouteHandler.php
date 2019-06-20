@@ -110,7 +110,7 @@ class DocumentRouteHandler implements DynamicRouteHandlerInterface
         if (preg_match('/^document_(\d+)$/', $name, $match)) {
             $document = Document::getById($match[1]);
 
-            if ($this->isDirectRouteDocument($document) && $this->isDocumentSupported($document)) {
+            if ($this->isDirectRouteDocument($document)) {
                 return $this->buildRouteForDocument($document);
             }
         }
@@ -179,12 +179,8 @@ class DocumentRouteHandler implements DynamicRouteHandlerInterface
             }
         }
 
-        // check if document should be handled (not legacy)
-        if (!$this->isDocumentSupported($document)) {
-            return null;
-        }
-
         $route = new DocumentRoute($document->getFullPath());
+        $route->setOption('utf8', true);
 
         // coming from matching -> set route path the currently matched one
         if (null !== $context) {
@@ -215,7 +211,7 @@ class DocumentRouteHandler implements DynamicRouteHandlerInterface
      */
     private function handleLinkDocument(Document\Link $document, DocumentRoute $route)
     {
-        $route->setDefault('_controller', 'FrameworkBundle:Redirect:urlRedirect');
+        $route->setDefault('_controller', 'Symfony\Bundle\FrameworkBundle\Controller\RedirectController::urlRedirectAction');
         $route->setDefault('path', $document->getHref());
         $route->setDefault('permanent', true);
 
@@ -313,7 +309,7 @@ class DocumentRouteHandler implements DynamicRouteHandlerInterface
         }
 
         if (null !== $redirectTargetUrl && $redirectTargetUrl !== $context->getOriginalPath()) {
-            $route->setDefault('_controller', 'FrameworkBundle:Redirect:urlRedirect');
+            $route->setDefault('_controller', 'Symfony\Bundle\FrameworkBundle\Controller\RedirectController::urlRedirectAction');
             $route->setDefault('path', $redirectTargetUrl);
             $route->setDefault('permanent', true);
 
@@ -363,15 +359,5 @@ class DocumentRouteHandler implements DynamicRouteHandlerInterface
         }
 
         return false;
-    }
-
-    /**
-     * @param Document $document
-     *
-     * @return bool
-     */
-    private function isDocumentSupported(Document $document)
-    {
-        return !$document->doRenderWithLegacyStack();
     }
 }

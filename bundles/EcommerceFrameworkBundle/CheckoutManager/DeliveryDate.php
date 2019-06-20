@@ -19,7 +19,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\InvalidConfigException;
 /**
  * Sample implementation for delivery date
  */
-class DeliveryDate extends AbstractStep implements ICheckoutStep
+class DeliveryDate extends AbstractStep implements CheckoutStepInterface
 {
     const INSTANTLY = 'delivery_instantly';
     const DATE = 'delivery_date';

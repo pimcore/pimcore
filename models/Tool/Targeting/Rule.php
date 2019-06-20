@@ -98,20 +98,6 @@ class Rule extends Model\AbstractModel
     }
 
     /**
-     * @param $key
-     * @param $value
-     */
-    public static function fireEvent($key, $value = null)
-    {
-        if ($value === null) {
-            $value = true;
-        }
-
-        $targetingService = \Pimcore::getContainer()->get('pimcore.event_listener.frontend.targeting');
-        $targetingService->addEvent($key, $value);
-    }
-
-    /**
      * Static helper to retrieve an instance of Tool\Targeting\Rule by the given ID
      *
      * @param int $id
@@ -122,8 +108,7 @@ class Rule extends Model\AbstractModel
     {
         try {
             $target = new self();
-            $target->setId(intval($id));
-            $target->getDao()->getById();
+            $target->getDao()->getById(intval($id));
 
             return $target;
         } catch (\Exception $e) {
@@ -140,8 +125,7 @@ class Rule extends Model\AbstractModel
     {
         try {
             $target = new self();
-            $target->setName($name);
-            $target->getDao()->getByName();
+            $target->getDao()->getByName($name);
 
             return $target;
         } catch (\Exception $e) {

@@ -23,7 +23,7 @@ use Zend\Paginator\AdapterAggregateInterface;
  * @method int getTotalCount()
  * @method \Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Token\Listing\Dao getDao()
  */
-class Listing extends \Pimcore\Model\Listing\AbstractListing implements \Zend_Paginator_Adapter_Interface, \Zend_Paginator_AdapterAggregate, \Iterator, AdapterInterface, AdapterAggregateInterface
+class Listing extends \Pimcore\Model\Listing\AbstractListing implements \Iterator, AdapterInterface, AdapterAggregateInterface
 {
     public $tokens;
 

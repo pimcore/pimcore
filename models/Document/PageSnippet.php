@@ -76,11 +76,6 @@ abstract class PageSnippet extends Model\Document
     protected $inheritedElements = [];
 
     /**
-     * @var bool
-     */
-    protected $legacy = false;
-
-    /**
      * @param array $params additional parameters (e.g. "versionNote" for the version note)
      *
      * @throws \Exception
@@ -574,40 +569,6 @@ abstract class PageSnippet extends Model\Document
         }
 
         return $finalVars;
-    }
-
-    /**
-     * returns true if document should be rendered with legacy stack
-     *
-     * @return bool
-     */
-    public function doRenderWithLegacyStack()
-    {
-        return $this->isLegacy();
-    }
-
-    /**
-     * @return bool
-     */
-    public function isLegacy()
-    {
-        return $this->legacy;
-    }
-
-    /**
-     * @return bool
-     */
-    public function getLegacy()
-    {
-        return $this->isLegacy();
-    }
-
-    /**
-     * @param bool $legacy
-     */
-    public function setLegacy($legacy)
-    {
-        $this->legacy = (bool) $legacy;
     }
 
     /**

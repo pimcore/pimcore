@@ -15,28 +15,28 @@
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Condition;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
-use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\ICondition;
-use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IEnvironment;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\ConditionInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\EnvironmentInterface;
 
-class Bracket implements IBracket
+class Bracket implements BracketInterface
 {
     /**
-     * @var array|ICondition
+     * @var array|ConditionInterface
      */
     protected $conditions = [];
 
     /**
-     * @var array|IBracket::OPERATOR_*
+     * @var array|BracketInterface::OPERATOR_*
      */
     protected $operator = [];
 
     /**
-     * @param ICondition $condition
-     * @param string $operator IBracket::OPERATOR_*
+     * @param ConditionInterface $condition
+     * @param string $operator BracketInterface::OPERATOR_*
      *
-     * @return IBracket
+     * @return BracketInterface
      */
-    public function addCondition(ICondition $condition, $operator)
+    public function addCondition(ConditionInterface $condition, $operator)
     {
         $this->conditions[] = $condition;
         $this->operator[] = $operator;
@@ -45,11 +45,11 @@ class Bracket implements IBracket
     }
 
     /**
-     * @param IEnvironment $environment
+     * @param EnvironmentInterface $environment
      *
      * @return bool
      */
-    public function check(IEnvironment $environment)
+    public function check(EnvironmentInterface $environment)
     {
         // A bracket without conditions is not restricted and thus doesn't fail
         if (empty($this->conditions)) {
@@ -61,7 +61,7 @@ class Bracket implements IBracket
 
         // check all conditions
         foreach ($this->conditions as $num => $condition) {
-            /* @var ICondition $condition */
+            /* @var ConditionInterface $condition */
 
             // test condition
             $check = $condition->check($environment);
@@ -74,7 +74,7 @@ class Bracket implements IBracket
                     break;
 
                 // AND
-                case IBracket::OPERATOR_AND:
+                case BracketInterface::OPERATOR_AND:
                     if ($check === false) {
                         return false;
                     } else {
@@ -83,7 +83,7 @@ class Bracket implements IBracket
                     break;
 
                 // AND FALSE
-                case IBracket::OPERATOR_AND_NOT:
+                case BracketInterface::OPERATOR_AND_NOT:
                     if ($check === true) {
                         return false;
                     } else {
@@ -92,7 +92,7 @@ class Bracket implements IBracket
                     break;
 
                 // OR
-                case IBracket::OPERATOR_OR:
+                case BracketInterface::OPERATOR_OR:
                     if ($check === true) {
                         $state = $check;
                     }
@@ -111,7 +111,7 @@ class Bracket implements IBracket
         $json = ['type' => 'Bracket', 'conditions' => []];
         foreach ($this->conditions as $num => $condition) {
             if ($condition) {
-                /* @var ICondition $condition */
+                /* @var ConditionInterface $condition */
                 $cond = [
                     'operator' => $this->operator[$num],
                     'condition' => json_decode($condition->toJSON())

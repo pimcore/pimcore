@@ -17,9 +17,19 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
+@trigger_error(
+    'Interface Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\IOrderAgentFactory is deprecated since version 6.0.0 and will be removed in 7.0.0. ' .
+    ' Use ' . OrderAgentFactoryInterface::class . ' class instead.',
+    E_USER_DEPRECATED
+);
 
-interface IOrderAgentFactory
-{
-    public function createAgent(AbstractOrder $order): IOrderAgent;
+class_exists(OrderAgentFactoryInterface::class);
+
+if (false) {
+    /**
+     * @deprecated use OrderAgentFactoryInterface instead.
+     */
+    interface IOrderAgentFactory
+    {
+    }
 }

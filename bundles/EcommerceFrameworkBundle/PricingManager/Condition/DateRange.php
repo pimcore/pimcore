@@ -14,9 +14,10 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Condition;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IEnvironment;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\ConditionInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\EnvironmentInterface;
 
-class DateRange implements IDateRange
+class DateRange implements DateRangeInterface
 {
     /**
      * @var \DateTime
@@ -29,11 +30,11 @@ class DateRange implements IDateRange
     protected $ending;
 
     /**
-     * @param IEnvironment $environment
+     * @param EnvironmentInterface $environment
      *
      * @return bool
      */
-    public function check(IEnvironment $environment)
+    public function check(EnvironmentInterface $environment)
     {
         if ($this->getStarting() && $this->getEnding()) {
             return $this->getStarting()->getTimestamp() < time() && $this->getEnding()->getTimestamp() > time();
@@ -45,7 +46,7 @@ class DateRange implements IDateRange
     /**
      * @param \DateTime $date
      *
-     * @return IDateRange
+     * @return DateRangeInterface
      */
     public function setStarting(\DateTime $date)
     {
@@ -57,7 +58,7 @@ class DateRange implements IDateRange
     /**
      * @param \DateTime $date
      *
-     * @return IDateRange
+     * @return DateRangeInterface
      */
     public function setEnding(\DateTime $date)
     {
@@ -97,7 +98,7 @@ class DateRange implements IDateRange
     /**
      * @param string $string
      *
-     * @return \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\ICondition
+     * @return ConditionInterface
      */
     public function fromJSON($string)
     {

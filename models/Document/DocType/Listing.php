@@ -25,17 +25,19 @@ use Pimcore\Model;
 class Listing extends Model\Listing\JsonListing
 {
     /**
-     * Contains the results of the list. They are all an instance of Document\Doctype
-     *
-     * @var array
+     * @var array|null
      */
-    public $docTypes = [];
+    protected $docTypes = null;
 
     /**
      * @return \Pimcore\Model\Document\DocType[]
      */
     public function getDocTypes()
     {
+        if ($this->docTypes === null) {
+            $this->getDao()->load();
+        }
+
         return $this->docTypes;
     }
 

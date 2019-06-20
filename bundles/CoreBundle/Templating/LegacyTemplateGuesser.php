@@ -110,11 +110,11 @@ class LegacyTemplateGuesser extends BaseTemplateGuesser
             $legacyTemplateReference->set('bundle', '');
         }
 
-        if (!$this->templateEngine->exists($legacyTemplateReference->getLogicalName())) {
-            throw new \InvalidArgumentException(sprintf('The template "%s" and fallback: "%s" does not exist.', $templateReference, $legacyTemplateReference));
+        if ($this->templateEngine->exists($legacyTemplateReference->getLogicalName())) {
+            return $legacyTemplateReference;
         }
 
-        return $legacyTemplateReference;
+        return $templateReference;
     }
 
     /**

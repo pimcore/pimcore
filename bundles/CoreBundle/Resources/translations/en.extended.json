@@ -1,4 +1,5 @@
 {
+  "invert_colors_on_login_screen": "Invert Colors on Login Screen",
   "encrypt_data": "Encrypt Data",
   "encrypt_data_description": "Data-at-Rest/Tablespace Encryption needs to be enabled on your Database Server",
   "many_to_one_relation": "Many-To-One Relation",
@@ -72,8 +73,6 @@
   "localization_and_internationalization": "Localization &amp; Internationalization",
   "code_settings": "Code Settings",
   "advanced_integration": "Advanced Integration",
-  "personamultiselect": "Persona Multiselect",
-  "persona": "Persona",
   "assign_target_group_weight": "Weight",
   "target_group": "Target Group",
   "target_group_multiselect": "Target Group Multiselect",
@@ -287,6 +286,7 @@
   "fieldset": "Fieldset",
   "panel": "Panel",
   "tabpanel": "Tabpanel",
+  "tab_position": "Tab Position",
   "pattern": "Pattern",
   "variables": "Variables",
   "defaults": "Defaults",

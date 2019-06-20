@@ -98,7 +98,6 @@ class Config extends Model\AbstractModel
             try {
                 $thumbnail = new self();
                 $thumbnail->getDao()->getByName($name);
-
                 \Pimcore\Cache\Runtime::set($cacheKey, $thumbnail);
             } catch (\Exception $e) {
                 return null;

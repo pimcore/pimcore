@@ -18,7 +18,7 @@
 namespace Pimcore\Model;
 
 /**
- * @method \Pimcore\Model\Version\Dao getDao()
+ * @method \Pimcore\Model\ImportConfig\Dao getDao()
  */
 class ImportConfig extends AbstractModel
 {

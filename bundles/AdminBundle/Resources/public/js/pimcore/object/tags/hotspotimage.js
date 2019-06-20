@@ -86,8 +86,8 @@ pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
         if (!this.additionalConfig.condensed) {
             items.push({
                 xtype: "tbspacer",
-                width: 40,
-                height: 16,
+                width: 48,
+                height: 24,
                 cls: "pimcore_icon_droptarget_upload"
             });
 

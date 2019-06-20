@@ -16,12 +16,12 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\Tracker\Analytics;
 
 use Pimcore\Analytics\Google\Tracker as GoogleTracker;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\ICheckoutComplete;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\CheckoutCompleteInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\ProductAction;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\Transaction;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class UniversalEcommerce extends AbstractAnalyticsTracker implements ICheckoutComplete
+class UniversalEcommerce extends AbstractAnalyticsTracker implements CheckoutCompleteInterface
 {
     protected function configureOptions(OptionsResolver $resolver)
     {

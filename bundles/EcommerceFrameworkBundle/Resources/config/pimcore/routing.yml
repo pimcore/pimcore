@@ -5,4 +5,4 @@ _pimcore_ecommerce_backend:
 
 _pimcore_ecommerce_findologic:
   path: /ecommerceframework/findologic-export
-  defaults: { _controller: PimcoreEcommerceFrameworkBundle:Findologic:export }
+  defaults: { _controller: Pimcore\Bundle\EcommerceFrameworkBundle\Controller\FindologicController::exportAction }

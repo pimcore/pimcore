@@ -698,7 +698,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
      * @param $object
      * @param array $params
      *
-     * @return array|mixed|null
+     * @return array
      */
     public function preGetData($object, $params = [])
     {
@@ -1199,3 +1199,5 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
         return $elementType . $id;
     }
 }
+
+class_alias(AdvancedManyToManyObjectRelation::class, 'Pimcore\Model\DataObject\ClassDefinition\Data\ObjectsMetadata');

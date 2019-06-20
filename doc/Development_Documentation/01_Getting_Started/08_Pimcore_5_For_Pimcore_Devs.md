@@ -1,4 +1,4 @@
-# Pimcore 5 for Pimcore Developers
+# Pimcore 5/6 for Pimcore Developers knowing Pimcore 4 or previous Versions
 
 If you are already an experienced Pimcore developer this page should give you a head start for diving into Pimcore 5 and 
 answer a few typical developer questions. 

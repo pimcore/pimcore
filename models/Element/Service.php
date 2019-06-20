@@ -548,26 +548,27 @@ class Service extends Model\AbstractModel
     }
 
     /**
-     * @param ElementInterface $target the parent element
+     * @param DataObject\AbstractObject|Document|Asset\Folder $target the parent element
      * @param ElementInterface $new the newly inserted child
-     *
-     * @todo: I think ElementInterface is the wrong type here, it has no method getChilds
      */
-    protected function updateChilds($target, $new)
+    protected function updateChildren($target, $new)
     {
-        if (is_array($target->getChilds())) {
+        if (is_array($target->getChildren())) {
             //check in case of recursion
             $found = false;
-            foreach ($target->getChilds() as $child) {
+            foreach ($target->getChildren() as $child) {
+                /**
+                 * @var ElementInterface $child
+                 */
                 if ($child->getId() == $new->getId()) {
                     $found = true;
                 }
             }
             if (!$found) {
-                $target->setChilds(array_merge($target->getChilds(), [$new]));
+                $target->setChildren(array_merge($target->getChildren(), [$new]));
             }
         } else {
-            $target->setChilds([$new]);
+            $target->setChildren([$new]);
         }
     }
 
@@ -933,9 +934,8 @@ class Service extends Model\AbstractModel
         $key = str_replace('/', '-', $key);
 
         if ($type == 'document') {
-            // no spaces & utf8 for documents / clean URLs
-            $key = \Pimcore\Tool\Transliteration::toASCII($key);
-            $key = preg_replace('/[^a-zA-Z0-9\-\.~_]+/', '-', $key);
+            // replace URL reserved characters with a hyphen
+            $key = preg_replace('/[#\?\*\:\\\\<\>\|"%&@=;]/', '-', $key);
         }
 
         if ($type == 'asset') {
@@ -943,7 +943,7 @@ class Service extends Model\AbstractModel
             // keys shouldn't end with a "." - Windows issue: filesystem API trims automatically . at the end of a folder name (no warning ... et al)
             $key = trim($key, '. ');
 
-            // windows forbidden filenames + URL reserved characters (at least the once which are problematic)
+            // windows forbidden filenames + URL reserved characters (at least the ones which are problematic)
             $key = preg_replace('/[#\?\*\:\\\\<\>\|"%]/', '-', $key);
         } else {
             $key = trim($key);

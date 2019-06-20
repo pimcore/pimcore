@@ -17,9 +17,9 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\Order\Listing;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder as Order;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrderItem as OrderItem;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\AbstractOrderListItem;
-use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\IOrderListItem;
+use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderListItemInterface;
 
-class Item extends AbstractOrderListItem implements IOrderListItem
+class Item extends AbstractOrderListItem implements OrderListItemInterface
 {
     /**
      * @return int

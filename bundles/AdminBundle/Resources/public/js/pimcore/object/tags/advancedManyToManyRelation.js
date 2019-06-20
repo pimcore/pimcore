@@ -530,8 +530,8 @@ pimcore.object.tags.advancedManyToManyRelation = Class.create(pimcore.object.tag
         var toolbarItems = [
             {
                 xtype: "tbspacer",
-                width: 20,
-                height: 16,
+                width: 24,
+                height: 24,
                 cls: "pimcore_icon_droptarget"
             },
             {

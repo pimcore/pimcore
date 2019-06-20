@@ -19,6 +19,7 @@ namespace Pimcore\Model\DataObject;
 
 use Pimcore\Logger;
 use Pimcore\Model;
+use Pimcore\Model\DataObject\Exception\InheritanceParentNotFoundException;
 
 /**
  * @method \Pimcore\Model\DataObject\Objectbrick\Dao getDao()
@@ -183,9 +184,13 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
                     $inheritanceModeBackup = AbstractObject::getGetInheritedValues();
                     AbstractObject::setGetInheritedValues(true);
                     if (AbstractObject::doGetInheritedValues($object)) {
-                        $container = $object->getValueFromParent($this->fieldname);
-                        if (!empty($container)) {
-                            $parentBrick = $container->$getter();
+                        try {
+                            $container = $object->getValueFromParent($this->fieldname);
+                            if (!empty($container)) {
+                                $parentBrick = $container->$getter();
+                            }
+                        } catch (InheritanceParentNotFoundException $e) {
+                            // no data from parent available, continue ...
                         }
                     }
                     AbstractObject::setGetInheritedValues($inheritanceModeBackup);
@@ -207,9 +212,13 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
                     $inheritanceModeBackup = AbstractObject::getGetInheritedValues();
                     AbstractObject::setGetInheritedValues(true);
                     if (AbstractObject::doGetInheritedValues($object)) {
-                        $container = $object->getValueFromParent($this->fieldname);
-                        if (!empty($container)) {
-                            $parentBrick = $container->$getter();
+                        try {
+                            $container = $object->getValueFromParent($this->fieldname);
+                            if (!empty($container)) {
+                                $parentBrick = $container->$getter();
+                            }
+                        } catch (InheritanceParentNotFoundException $e) {
+                            // no data from parent available, continue ...
                         }
                     }
                     AbstractObject::setGetInheritedValues($inheritanceModeBackup);

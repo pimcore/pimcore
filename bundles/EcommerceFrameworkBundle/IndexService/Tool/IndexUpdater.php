@@ -15,7 +15,7 @@
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Tool;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
-use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\IBatchProcessingWorker;
+use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\BatchProcessingWorkerInterface;
 
 class IndexUpdater
 {
@@ -95,7 +95,7 @@ class IndexUpdater
             $indexService = Factory::getInstance()->getIndexService();
             $worker = $indexService->getCurrentTenantWorker();
 
-            if ($worker instanceof IBatchProcessingWorker) {
+            if ($worker instanceof BatchProcessingWorkerInterface) {
                 $round = 0;
                 $result = true;
                 while ($result) {
@@ -148,7 +148,7 @@ class IndexUpdater
             $indexService = Factory::getInstance()->getIndexService();
             $worker = $indexService->getCurrentTenantWorker();
 
-            if ($worker instanceof IBatchProcessingWorker) {
+            if ($worker instanceof BatchProcessingWorkerInterface) {
                 $result = true;
                 $round = 0;
                 while ($result) {

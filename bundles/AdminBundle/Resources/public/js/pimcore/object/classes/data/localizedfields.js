@@ -104,6 +104,12 @@ pimcore.object.classes.data.localizedfields = Class.create(pimcore.object.classe
                             editable: false
                         },
                         {
+                            xtype: "checkbox",
+                            fieldLabel: t("border"),
+                            name: "border",
+                            checked: this.datax.border,
+                        },
+                        {
                             xtype: "numberfield",
                             fieldLabel: t("width"),
                             name: "width",
@@ -114,6 +120,12 @@ pimcore.object.classes.data.localizedfields = Class.create(pimcore.object.classe
                             fieldLabel: t("height"),
                             name: "height",
                             value: this.datax.height
+                        }, {
+                            xtype: 'combo',
+                            fieldLabel: t('tab_position'),
+                            name: 'tabPosition',
+                            value: this.datax.tabPosition,
+                            store: [['top', t('top')], ['left', t('left')], ['right', t('right')], ['bottom', t('bottom')]]
                         },
                         {
                             xtype: "numberfield",

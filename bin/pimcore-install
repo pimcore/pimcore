@@ -51,11 +51,8 @@ if (!defined('PIMCORE_PROJECT_ROOT')) {
 }
 
 \Pimcore\Bootstrap::defineConstants();
-\Pimcore\Bootstrap::includes();
 
 Debug::enable();
-
-\Pimcore\Bootstrap::zendCompatibility();
 
 $kernel = new InstallerKernel(PIMCORE_PROJECT_ROOT, Config::getEnvironment(), true);
 Pimcore::setKernel($kernel);
