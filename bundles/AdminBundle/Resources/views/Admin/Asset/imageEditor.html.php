@@ -70,7 +70,7 @@
 <div id="popup"></div>
 
 
-<img style="visibility: hidden" id='image' src='/admin/asset/get-image-thumbnail?id=<?= $this->asset->getId() ?>&width=3000&height=3000&contain=true'/>
+<img style="visibility: hidden" id='image' src='/admin/asset/get-image-thumbnail?id=<?= $this->asset->getId() ?>&width=<?= $this->asset->getWidth() ?>&height=<?= $this->asset->getHeight() ?>&contain=true'/>
 <script>
     window.addEventListener('load', function (e) {
         var image = document.getElementById('image');
