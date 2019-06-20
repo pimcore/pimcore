@@ -819,7 +819,7 @@ QUERY;
             }
         }
 
-        if($container instanceof DataObject\ClassDefinition) {
+        if ($container instanceof DataObject\ClassDefinition) {
             $this->createLocalizedViews();
         }
 
