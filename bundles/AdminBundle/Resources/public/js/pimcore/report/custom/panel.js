@@ -64,6 +64,7 @@ pimcore.report.custom.panel = Class.create({
                 rootVisible: false,
                 listeners: this.getTreeNodeListeners(),
                 tbar: {
+                    cls: 'pimcore_toolbar_border_bottom',
                     items: [
                         {
                             text: t("add"),

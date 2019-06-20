@@ -14,18 +14,18 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\IMysqlConfig;
-use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Interpreter\IRelationInterpreter;
+use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\MysqlConfigInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Interpreter\RelationInterpreterInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractCategory;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IIndexable;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IndexableInterface;
 use Pimcore\Db\ConnectionInterface;
 use Pimcore\Logger;
 use Pimcore\Model\DataObject\AbstractObject;
 
 /**
- * @property IMysqlConfig $tenantConfig
+ * @property MysqlConfigInterface $tenantConfig
  */
-class DefaultMysql extends AbstractWorker implements IWorker
+class DefaultMysql extends AbstractWorker implements WorkerInterface
 {
     /**
      * @var array
@@ -37,7 +37,7 @@ class DefaultMysql extends AbstractWorker implements IWorker
      */
     protected $mySqlHelper;
 
-    public function __construct(IMysqlConfig $tenantConfig, ConnectionInterface $db)
+    public function __construct(MysqlConfigInterface $tenantConfig, ConnectionInterface $db)
     {
         parent::__construct($tenantConfig, $db);
 
@@ -49,7 +49,7 @@ class DefaultMysql extends AbstractWorker implements IWorker
         $this->mySqlHelper->createOrUpdateIndexStructures();
     }
 
-    public function deleteFromIndex(IIndexable $object)
+    public function deleteFromIndex(IndexableInterface $object)
     {
         if (!$this->tenantConfig->isActive($object)) {
             Logger::info("Tenant {$this->name} is not active.");
@@ -67,7 +67,7 @@ class DefaultMysql extends AbstractWorker implements IWorker
         $this->doCleanupOldZombieData($object, $subObjectIds);
     }
 
-    protected function doDeleteFromIndex($subObjectId, IIndexable $object = null)
+    protected function doDeleteFromIndex($subObjectId, IndexableInterface $object = null)
     {
         $this->db->deleteWhere($this->tenantConfig->getTablename(), 'o_id = ' . $this->db->quote($subObjectId));
         $this->db->deleteWhere($this->tenantConfig->getRelationTablename(), 'src = ' . $this->db->quote($subObjectId));
@@ -76,7 +76,7 @@ class DefaultMysql extends AbstractWorker implements IWorker
         }
     }
 
-    public function updateIndex(IIndexable $object)
+    public function updateIndex(IndexableInterface $object)
     {
         if (!$this->tenantConfig->isActive($object)) {
             Logger::info("Tenant {$this->name} is not active.");
@@ -152,7 +152,7 @@ class DefaultMysql extends AbstractWorker implements IWorker
                         if (null !== $attribute->getInterpreter()) {
                             $value = $attribute->interpretValue($value);
 
-                            if ($attribute->getInterpreter() instanceof IRelationInterpreter) {
+                            if ($attribute->getInterpreter() instanceof RelationInterpreterInterface) {
                                 foreach ($value as $v) {
                                     $relData = [];
                                     $relData['src'] = $subObjectId;

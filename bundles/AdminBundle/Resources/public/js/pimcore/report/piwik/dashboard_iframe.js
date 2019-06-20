@@ -41,7 +41,7 @@ pimcore.report.piwik.dashboard_iframe = Class.create(pimcore.report.abstract, {
             items: [],
             tbar: Ext.create('Ext.Toolbar', {
                 id: this.toolbarId,
-                cls: 'main-toolbar',
+                cls: 'pimcore_main_toolbar',
                 items: [{
                     text: t("reload"),
                     iconCls: "pimcore_icon_reload",

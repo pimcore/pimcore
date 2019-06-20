@@ -135,7 +135,7 @@ service ID as *template* to configure 2 independent child services by utilizing 
 This means, that when you request the `Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderManager` service from the
 container, it would be neither the default nor the b2b tenant. In fact, getting that service directly wouldn't work anyways
 as it is missing dependencies. If you take a look at the [service definition](https://github.com/pimcore/pimcore/tree/master/pimcore/lib/Pimcore/Bundle/EcommerceFrameworkBundle/Resources/config/order_manager.yml)
-you can see that the definition is missing the `IOrderAgentFactory` argument which will be resolved and set for each
+you can see that the definition is missing the `OrderAgentFactoryInterface` argument which will be resolved and set for each
 tenant specific order manager.
 
 In short, when configuring multiple tenant specific service to the same service id the framework will:

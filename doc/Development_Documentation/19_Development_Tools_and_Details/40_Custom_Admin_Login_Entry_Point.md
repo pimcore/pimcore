@@ -15,7 +15,7 @@ Add custom entry for `PimcoreCoreBundle:PublicServices:customAdminEntryPoint` in
 ```yml
 my_custom_admin_entry_point:
     path: /my-custom-login-page
-        defaults: { _controller: PimcoreCoreBundle:PublicServices:customAdminEntryPoint }
+        defaults: { _controller: Pimcore\Bundle\CoreBundle\Controller\PublicServicesController::customAdminEntryPointAction }
 ``` 
 
 > As soon as custom admin route (in this e.g. `/my-custom-login-page`) is called, admin cookie will be set in your browser which is validated for all /admin calls. 

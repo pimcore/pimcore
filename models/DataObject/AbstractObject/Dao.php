@@ -154,13 +154,13 @@ class Dao extends Model\Element\Dao
     /**
      * Updates the paths for children, children's properties and children's permissions in the database
      *
+     * @internal
+     *
      * @param string $oldPath
      *
      * @return null|array
-     *
-     * @todo: calls deprecated ::hasChilds
      */
-    public function updateChildsPaths($oldPath)
+    public function updateChildPaths($oldPath)
     {
         if ($this->hasChildren([DataObject::OBJECT_TYPE_OBJECT, DataObject::OBJECT_TYPE_FOLDER, DataObject::OBJECT_TYPE_VARIANT])) {
             //get objects to empty their cache
@@ -288,18 +288,6 @@ class Dao extends Model\Element\Dao
     }
 
     /**
-     * @deprecated
-     *
-     * @param array $objectTypes
-     *
-     * @return bool
-     */
-    public function hasChilds($objectTypes = [DataObject::OBJECT_TYPE_OBJECT, DataObject::OBJECT_TYPE_FOLDER])
-    {
-        return $this->hasChildren($objectTypes);
-    }
-
-    /**
      * Quick test if there are children
      *
      * @param array $objectTypes
@@ -336,7 +324,7 @@ class Dao extends Model\Element\Dao
     }
 
     /**
-     * returns the amount of directly childs (not recursivly)
+     * returns the amount of directly children (not recursivly)
      *
      * @param array|null $objectTypes
      * @param Model\User $user
@@ -462,7 +450,7 @@ class Dao extends Model\Element\Dao
         $userIds[] = $user->getId();
 
         try {
-            $permissionsParent = $this->db->fetchOne('SELECT `' . $type . '` FROM users_workspaces_object WHERE cid IN (' . implode(',', $parentIds) . ') AND userId IN (' . implode(',', $userIds) . ') AND `' . $type . '`=1 ORDER BY LENGTH(cpath) DESC, ABS(userId-' . $user->getId() . ') ASC LIMIT 1');
+            $permissionsParent = $this->db->fetchOne('SELECT `' . $type . '` FROM users_workspaces_object WHERE cid IN (' . implode(',', $parentIds) . ') AND userId IN (' . implode(',', $userIds) . ') ORDER BY LENGTH(cpath) DESC, ABS(userId-' . $user->getId() . ') ASC LIMIT 1');
 
             if ($permissionsParent) {
                 return true;
@@ -470,14 +458,14 @@ class Dao extends Model\Element\Dao
 
             // exception for list permission
             if (empty($permissionsParent) && $type == 'list') {
-                // check for childs with permissions
+                // check for children with permissions
                 $path = $this->model->getRealFullPath() . '/';
                 if ($this->model->getId() == 1) {
                     $path = '/';
                 }
 
-                $permissionsChilds = $this->db->fetchOne('SELECT list FROM users_workspaces_object WHERE cpath LIKE ? AND userId IN (' . implode(',', $userIds) . ') AND list = 1 LIMIT 1', $path . '%');
-                if ($permissionsChilds) {
+                $permissionsChildren = $this->db->fetchOne('SELECT list FROM users_workspaces_object WHERE cpath LIKE ? AND userId IN (' . implode(',', $userIds) . ') AND list = 1 LIMIT 1', $path . '%');
+                if ($permissionsChildren) {
                     return true;
                 }
             }

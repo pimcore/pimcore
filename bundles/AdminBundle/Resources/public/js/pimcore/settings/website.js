@@ -32,7 +32,7 @@ pimcore.settings.website = Class.create({
             this.panel = new Ext.Panel({
                 id:"pimcore_website_settings",
                 title: t('website_settings'),
-                iconCls: "pimcore_icon_website",
+                iconCls: "pimcore_icon_website_settings",
                 border:false,
                 layout:"fit",
                 closable:true,
@@ -156,13 +156,15 @@ pimcore.settings.website = Class.create({
                 }
             },
             {text: t("site"), width: 250, sortable:true, dataIndex: "siteId",
-                editor: new Ext.form.ComboBox({
+                getEditor: function() {
+                    return new Ext.form.ComboBox({
                         store: pimcore.globalmanager.get("sites"),
                         valueField: "id",
                         displayField: "domain",
                         editable: false,
                         triggerAction: "all"
-                }),
+                    });
+                },
                 renderer: function (siteId) {
                     var store = pimcore.globalmanager.get("sites");
                     var pos = store.findExact("id", siteId);
@@ -292,26 +294,28 @@ pimcore.settings.website = Class.create({
             plugins: [
                 this.cellEditing
             ],
-            tbar:[
-                {
-                    xtype: "tbtext",
-                    text: t('add_setting') + " "
-                },
-                this.customKeyField, customType,
-                {
-                    xtype: "button",
-                    handler: this.addSetFromUserDefined.bind(this, this.customKeyField, customType),
-                    iconCls: "pimcore_icon_add"
-                },
-                '->',
-                {
-                    text:t("filter") + "/" + t("search"),
-                    xtype:"tbtext",
-                    style:"margin: 0 10px 0 0;"
-                },
-                this.filterField
-            ]
-            ,
+            tbar: {
+                cls: 'pimcore_main_toolbar',
+                items: [
+                    {
+                        xtype: "tbtext",
+                        text: t('add_setting') + " "
+                    },
+                    this.customKeyField, customType,
+                    {
+                        xtype: "button",
+                        handler: this.addSetFromUserDefined.bind(this, this.customKeyField, customType),
+                        iconCls: "pimcore_icon_add"
+                    },
+                    '->',
+                    {
+                        text:t("filter") + "/" + t("search"),
+                        xtype:"tbtext",
+                        style:"margin: 0 10px 0 0;"
+                    },
+                    this.filterField
+                ]
+            },
             viewConfig: {
                 listeners: {
                     rowupdated: this.updateRows.bind(this, "rowupdated"),

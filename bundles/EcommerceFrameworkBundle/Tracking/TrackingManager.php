@@ -14,21 +14,21 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\Tracking;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart;
-use Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\ICheckoutStep as CheckoutManagerICheckoutStep;
-use Pimcore\Bundle\EcommerceFrameworkBundle\IEnvironment;
+use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\CheckoutStepInterface as CheckoutManagerCheckoutStepInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\EnvironmentInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IProduct;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Model\ProductInterface;
 
-class TrackingManager implements ITrackingManager
+class TrackingManager implements TrackingManagerInterface
 {
     /**
-     * @var ITracker[]
+     * @var TrackerInterface[]
      */
     protected $trackers = [];
 
     /**
-     * @var ITracker[]
+     * @var TrackerInterface[]
      */
     protected $activeTrackerCache = [];
 
@@ -43,15 +43,15 @@ class TrackingManager implements ITrackingManager
     protected $cachedCheckoutTenant = null;
 
     /**
-     * @var null|IEnvironment
+     * @var null|EnvironmentInterface
      */
     protected $enviroment = null;
 
     /**
-     * @param ITracker[] $trackers
-     * @param IEnvironment $environment
+     * @param TrackerInterface[] $trackers
+     * @param EnvironmentInterface $environment
      */
-    public function __construct(array $trackers = [], IEnvironment $environment)
+    public function __construct(array $trackers = [], EnvironmentInterface $environment)
     {
         foreach ($trackers as $tracker) {
             $this->registerTracker($tracker);
@@ -63,9 +63,9 @@ class TrackingManager implements ITrackingManager
     /**
      * Register a tracker
      *
-     * @param ITracker $tracker
+     * @param TrackerInterface $tracker
      */
-    public function registerTracker(ITracker $tracker)
+    public function registerTracker(TrackerInterface $tracker)
     {
         $this->trackers[] = $tracker;
     }
@@ -73,7 +73,7 @@ class TrackingManager implements ITrackingManager
     /**
      * Get all registered trackers
      *
-     * @return ITracker[]
+     * @return TrackerInterface[]
      */
     public function getTrackers(): array
     {
@@ -83,7 +83,7 @@ class TrackingManager implements ITrackingManager
     /**
      * Get all for current tenants active trackers
      *
-     * @return ITracker[]
+     * @return TrackerInterface[]
      */
     public function getActiveTrackers(): array
     {
@@ -122,7 +122,7 @@ class TrackingManager implements ITrackingManager
     public function trackCategoryPageView($category, $page = null)
     {
         foreach ($this->getActiveTrackers() as $tracker) {
-            if ($tracker instanceof ICategoryPageView) {
+            if ($tracker instanceof CategoryPageViewInterface) {
                 $tracker->trackCategoryPageView($category, $page);
             }
         }
@@ -133,12 +133,12 @@ class TrackingManager implements ITrackingManager
      *
      * @implements IProductImpression
      *
-     * @param IProduct $product
+     * @param ProductInterface $product
      */
-    public function trackProductImpression(IProduct $product)
+    public function trackProductImpression(ProductInterface $product)
     {
         foreach ($this->getActiveTrackers() as $tracker) {
-            if ($tracker instanceof IProductImpression) {
+            if ($tracker instanceof ProductInterfaceImpression) {
                 $tracker->trackProductImpression($product);
             }
         }
@@ -147,14 +147,14 @@ class TrackingManager implements ITrackingManager
     /**
      * Track product view
      *
-     * @param IProduct $product
+     * @param ProductInterface $product
      *
-     * @implements IProductView
+     * @implements ProductInterfaceView
      */
-    public function trackProductView(IProduct $product)
+    public function trackProductView(ProductInterface $product)
     {
         foreach ($this->getActiveTrackers() as $tracker) {
-            if ($tracker instanceof IProductView) {
+            if ($tracker instanceof ProductViewInterface) {
                 $tracker->trackProductView($product);
             }
         }
@@ -163,12 +163,12 @@ class TrackingManager implements ITrackingManager
     /**
      * Track a cart update
      *
-     * @param ICart $cart
+     * @param CartInterface $cart
      */
-    public function trackCartUpdate(ICart $cart)
+    public function trackCartUpdate(CartInterface $cart)
     {
         foreach ($this->getActiveTrackers() as $tracker) {
-            if ($tracker instanceof ICartUpdate) {
+            if ($tracker instanceof CartUpdateInterface) {
                 $tracker->trackCartUpdate($cart);
             }
         }
@@ -177,14 +177,14 @@ class TrackingManager implements ITrackingManager
     /**
      * Track product add to cart
      *
-     * @param ICart $cart
-     * @param IProduct $product
+     * @param CartInterface $cart
+     * @param ProductInterface $product
      * @param int|float $quantity
      */
-    public function trackCartProductActionAdd(ICart $cart, IProduct $product, $quantity = 1)
+    public function trackCartProductActionAdd(CartInterface $cart, ProductInterface $product, $quantity = 1)
     {
         foreach ($this->getActiveTrackers() as $tracker) {
-            if ($tracker instanceof ICartProductActionAdd) {
+            if ($tracker instanceof CartProductActionAddInterface) {
                 $tracker->trackCartProductActionAdd($cart, $product, $quantity);
             }
         }
@@ -193,12 +193,12 @@ class TrackingManager implements ITrackingManager
     /**
      * Track product add to cart
      *
-     * @deprecated Use ICartProductActionAdd::trackCartProductActionAdd instead
+     * @deprecated Use CartProductActionAddInterface::trackCartProductActionAdd instead
      *
-     * @param IProduct $product
+     * @param ProductInterface $product
      * @param int|float $quantity
      */
-    public function trackProductActionAdd(IProduct $product, $quantity = 1)
+    public function trackProductActionAdd(ProductInterface $product, $quantity = 1)
     {
         foreach ($this->getActiveTrackers() as $tracker) {
             if ($tracker instanceof IProductActionAdd) {
@@ -210,14 +210,14 @@ class TrackingManager implements ITrackingManager
     /**
      * Track product remove from cart
      *
-     * @param ICart $cart
-     * @param IProduct $product
+     * @param CartInterface $cart
+     * @param ProductInterface $product
      * @param int|float $quantity
      */
-    public function trackCartProductActionRemove(ICart $cart, IProduct $product, $quantity = 1)
+    public function trackCartProductActionRemove(CartInterface $cart, ProductInterface $product, $quantity = 1)
     {
         foreach ($this->getActiveTrackers() as $tracker) {
-            if ($tracker instanceof ICartProductActionRemove) {
+            if ($tracker instanceof CartProductActionRemoveInterface) {
                 $tracker->trackCartProductActionRemove($cart, $product, $quantity);
             }
         }
@@ -226,12 +226,12 @@ class TrackingManager implements ITrackingManager
     /**
      * Track product remove from cart
      *
-     * @deprecated Use ICartProductActionRemove::trackCartProductActionRemove instead
+     * @deprecated Use CartProductActionRemoveInterface::trackCartProductActionRemove instead
      *
-     * @param IProduct $product
+     * @param ProductInterface $product
      * @param int|float $quantity
      */
-    public function trackProductActionRemove(IProduct $product, $quantity = 1)
+    public function trackProductActionRemove(ProductInterface $product, $quantity = 1)
     {
         foreach ($this->getActiveTrackers() as $tracker) {
             if ($tracker instanceof IProductActionRemove) {
@@ -243,14 +243,14 @@ class TrackingManager implements ITrackingManager
     /**
      * Track start checkout with first step
      *
-     * @implements ICheckoutComplete
+     * @implements CheckoutCompleteInterface
      *
-     * @param ICart $cart
+     * @param CartInterface $cart
      */
-    public function trackCheckout(ICart $cart)
+    public function trackCheckout(CartInterface $cart)
     {
         foreach ($this->getActiveTrackers() as $tracker) {
-            if ($tracker instanceof ICheckout) {
+            if ($tracker instanceof CheckoutInterface) {
                 $tracker->trackCheckout($cart);
             }
         }
@@ -259,7 +259,7 @@ class TrackingManager implements ITrackingManager
     /**
      * Track checkout complete
      *
-     * @implements ICheckoutComplete
+     * @implements CheckoutCompleteInterface
      *
      * @param AbstractOrder $order
      */
@@ -274,7 +274,7 @@ class TrackingManager implements ITrackingManager
         $order->save();
 
         foreach ($this->getActiveTrackers() as $tracker) {
-            if ($tracker instanceof ICheckoutComplete) {
+            if ($tracker instanceof CheckoutCompleteInterface) {
                 $tracker->trackCheckoutComplete($order);
             }
         }
@@ -283,17 +283,17 @@ class TrackingManager implements ITrackingManager
     /**
      * Track checkout step
      *
-     * @implements ICheckoutStep
+     * @implements CheckoutStepInterface
      *
-     * @param CheckoutManagerICheckoutStep $step
-     * @param ICart $cart
+     * @param CheckoutManagerCheckoutStepInterface $step
+     * @param CartInterface $cart
      * @param null $stepNumber
      * @param null $checkoutOption
      */
-    public function trackCheckoutStep(CheckoutManagerICheckoutStep $step, ICart $cart, $stepNumber = null, $checkoutOption = null)
+    public function trackCheckoutStep(CheckoutManagerCheckoutStepInterface $step, CartInterface $cart, $stepNumber = null, $checkoutOption = null)
     {
         foreach ($this->getActiveTrackers() as $tracker) {
-            if ($tracker instanceof ICheckoutStep) {
+            if ($tracker instanceof CheckoutStepInterface) {
                 $tracker->trackCheckoutStep($step, $cart, $stepNumber, $checkoutOption);
             }
         }

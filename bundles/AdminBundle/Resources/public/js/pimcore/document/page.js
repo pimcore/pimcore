@@ -105,6 +105,9 @@ pimcore.document.page = Class.create(pimcore.document.page_snippet, {
             enableTabScroll:true,
             border: false,
             items: items,
+            tabConfig: {
+                margin: 0
+            },
             activeTab: 0
         });
 

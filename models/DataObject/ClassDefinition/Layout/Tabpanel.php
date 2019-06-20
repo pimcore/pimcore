@@ -26,4 +26,46 @@ class Tabpanel extends Model\DataObject\ClassDefinition\Layout
      * @var string
      */
     public $fieldtype = 'tabpanel';
+
+    /**
+     * @var bool
+     */
+    public $border = false;
+
+    /**
+     * @var string
+     */
+    public $tabPosition = 'top';
+
+    /**
+     * @return bool
+     */
+    public function getBorder(): bool
+    {
+        return $this->border;
+    }
+
+    /**
+     * @param bool $border
+     */
+    public function setBorder(bool $border): void
+    {
+        $this->border = $border;
+    }
+
+    /**
+     * @return string
+     */
+    public function getTabPosition(): string
+    {
+        return $this->tabPosition;
+    }
+
+    /**
+     * @param string $tabPosition
+     */
+    public function setTabPosition($tabPosition): void
+    {
+        $this->tabPosition = $tabPosition;
+    }
 }

@@ -15,9 +15,9 @@
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Action;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractProduct;
-use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IEnvironment;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\EnvironmentInterface;
 
-class Gift implements IGift
+class Gift implements GiftInterface
 {
     /**
      * @var AbstractProduct
@@ -30,21 +30,21 @@ class Gift implements IGift
     protected $productPath;
 
     /**
-     * @param IEnvironment $environment
+     * @param EnvironmentInterface $environment
      *
-     * @return IGift
+     * @return GiftInterface
      */
-    public function executeOnProduct(IEnvironment $environment)
+    public function executeOnProduct(EnvironmentInterface $environment)
     {
         // TODO: Implement executeOnProduct() method.
     }
 
     /**
-     * @param IEnvironment $environment
+     * @param EnvironmentInterface $environment
      *
-     * @return IGift
+     * @return GiftInterface
      */
-    public function executeOnCart(IEnvironment $environment)
+    public function executeOnCart(EnvironmentInterface $environment)
     {
         $comment = $environment->getRule()->getDescription();
         $environment->getCart()->addGiftItem($this->getProduct(), 1, null, true, [], [], $comment);
@@ -55,7 +55,7 @@ class Gift implements IGift
      *
      * @param AbstractProduct $product
      *
-     * @return IGift
+     * @return GiftInterface
      */
     public function setProduct(AbstractProduct $product)
     {
@@ -86,7 +86,7 @@ class Gift implements IGift
     /**
      * @param string $string
      *
-     * @return \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\ICondition
+     * @return \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\ConditionInterface
      */
     public function fromJSON($string)
     {

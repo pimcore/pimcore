@@ -35,7 +35,7 @@ class TestHelper
     public static function checkDbSupport()
     {
         if (!static::supportsDbTests()) {
-            throw new \PHPUnit_Framework_SkippedTestError('Not running test as DB is not connected');
+            throw new \PHPUnit\Framework\SkippedTestError('Not running test as DB is not connected');
         }
     }
 
@@ -168,8 +168,6 @@ class TestHelper
                 }
 
                 if ($document instanceof Document\Page) {
-                    $d['name'] = $document->getName();
-                    $d['keywords'] = $document->getKeywords();
                     $d['title'] = $document->getTitle();
                     $d['description'] = $document->getDescription();
                 }
@@ -751,9 +749,9 @@ class TestHelper
     public static function getAssetCount()
     {
         $list = new Asset\Listing();
-        $childs = $list->load();
+        $children = $list->getAssets();
 
-        return count($childs);
+        return count($children);
     }
 
     /**

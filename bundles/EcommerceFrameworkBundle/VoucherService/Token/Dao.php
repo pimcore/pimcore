@@ -16,6 +16,9 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Token;
 
 // TODO - Log Errors
 
+use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Reservation;
+
 class Dao extends \Pimcore\Model\Dao\AbstractDao
 {
     const TABLE_NAME = 'ecommerceframework_vouchertoolkit_tokens';
@@ -48,11 +51,11 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao
     /**
      * @return bool
      *
-     * @param \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart $cart
+     * @param CartInterface $cart
      */
-    public function isReserved(\Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart $cart = null)
+    public function isReserved(CartInterface $cart = null)
     {
-        $reservation = \Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Reservation::get($this->model->getToken(), $cart);
+        $reservation = Reservation::get($this->model->getToken(), $cart);
         if (!$reservation->exists()) {
             return false;
         }

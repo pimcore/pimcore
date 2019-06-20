@@ -22,7 +22,6 @@ use Pimcore\Model\Element;
 use Pimcore\Targeting\Document\DocumentTargetingConfigurator;
 use Pimcore\Tool\DeviceDetector;
 use Pimcore\Tool\Frontend;
-use Pimcore\View;
 
 class IncludeRenderer
 {
@@ -45,19 +44,16 @@ class IncludeRenderer
     }
 
     /**
-     * Renders a document include. Currently handles both legacy and new rendering.
-     *
-     * TODO move legacy part to legacy bundle
+     * Renders a document include
      *
      * @param $include
      * @param array $params
      * @param bool $editmode
      * @param bool $cacheEnabled
-     * @param View $legacyView
      *
      * @return string
      */
-    public function render($include, array $params = [], $editmode = false, $cacheEnabled = true, View $legacyView = null)
+    public function render($include, array $params = [], $editmode = false, $cacheEnabled = true)
     {
         if (!is_array($params)) {
             $params = [];
@@ -135,12 +131,7 @@ class IncludeRenderer
         $content = '';
 
         if ($include instanceof PageSnippet && $include->isPublished()) {
-            // TODO move this to delegating structure and add Pimcore\View support from legacy bundle
-            if (null !== $legacyView) {
-                $content = $this->renderLegacyAction($legacyView, $include, $params);
-            } else {
-                $content = $this->renderAction($include, $params);
-            }
+            $content = $this->renderAction($include, $params);
 
             if ($editmode) {
                 $content = $this->modifyEditmodeContent($include, $content);
@@ -171,31 +162,6 @@ class IncludeRenderer
     }
 
     /**
-     * @param View $view
-     * @param PageSnippet $include
-     * @param $params
-     *
-     * @return string
-     */
-    protected function renderLegacyAction(View $view, PageSnippet $include, $params)
-    {
-        $content = '';
-
-        if ($include->getAction() && $include->getController()) {
-            $content = $view->action(
-                $include->getAction(),
-                $include->getController(),
-                $include->getModule(),
-                $params
-            );
-        } elseif ($include->getTemplate()) {
-            $content = $view->action('default', 'default', null, $params);
-        }
-
-        return $content;
-    }
-
-    /**
      * in editmode, we need to parse the returned html from the document include
      * add a class and the pimcore id / type so that it can be opened in editmode using the context menu
      * if there's no first level HTML container => add one (wrapper)
@@ -207,8 +173,6 @@ class IncludeRenderer
      */
     protected function modifyEditmodeContent(PageSnippet $include, $content)
     {
-        include_once(PIMCORE_PATH . '/lib/simple_html_dom.php');
-
         $editmodeClass = ' pimcore_editable pimcore_tag_inc ';
 
         // this is if the content that is included does already contain markup/html

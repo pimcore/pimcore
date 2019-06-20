@@ -46,7 +46,7 @@ pimcore.object.classes.data.reverseManyToManyObjectRelation = Class.create(pimco
     },
 
     getIconClass: function () {
-        return "pimcore_icon_object";
+        return "pimcore_icon_reverseManyToManyObjectRelation";
     },
 
     getLayout: function ($super) {

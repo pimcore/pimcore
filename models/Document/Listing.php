@@ -30,7 +30,7 @@ use Zend\Paginator\AdapterAggregateInterface;
  * @method \Pimcore\Model\Document\Listing\Dao getDao()
  * @method onCreateQuery(callable $callback)
  */
-class Listing extends Model\Listing\AbstractListing implements \Zend_Paginator_Adapter_Interface, \Zend_Paginator_AdapterAggregate, \Iterator, AdapterInterface, AdapterAggregateInterface
+class Listing extends Model\Listing\AbstractListing implements \Iterator, AdapterInterface, AdapterAggregateInterface
 {
     /**
      * Return all documents as Type Document. eg. for trees an so on there isn't the whole data required
@@ -40,11 +40,9 @@ class Listing extends Model\Listing\AbstractListing implements \Zend_Paginator_A
     public $objectTypeDocument = false;
 
     /**
-     * Contains the results of the list
-     *
-     * @var array
+     * @var array|null
      */
-    public $documents = null;
+    protected $documents = null;
 
     /**
      * @var bool
@@ -52,22 +50,18 @@ class Listing extends Model\Listing\AbstractListing implements \Zend_Paginator_A
     public $unpublished = false;
 
     /**
-     * Returns documents, also loads the rows if these aren't loaded.
-     *
-     * @return array
+     * @return Document[]
      */
     public function getDocuments()
     {
         if ($this->documents === null) {
-            $this->load();
+            $this->getDao()->load();
         }
 
         return $this->documents;
     }
 
     /**
-     * Assign documents to the listing.
-     *
      * @param array $documents
      *
      * @return Listing
@@ -125,7 +119,7 @@ class Listing extends Model\Listing\AbstractListing implements \Zend_Paginator_A
 
     /**
      *
-     * Methods for \Zend_Paginator_Adapter_Interface | AdapterInterface
+     * Methods for AdapterInterface
      */
 
     /**

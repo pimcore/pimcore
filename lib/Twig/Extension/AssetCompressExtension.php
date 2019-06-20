@@ -18,8 +18,9 @@ declare(strict_types=1);
 namespace Pimcore\Twig\Extension;
 
 use Pimcore\Twig\TokenParser\AssetCompressParser;
+use Twig\Extension\AbstractExtension;
 
-class AssetCompressExtension extends \Twig_Extension
+class AssetCompressExtension extends AbstractExtension
 {
     public function getTokenParsers(): array
     {

@@ -52,7 +52,7 @@ pimcore.object.classes.data.manyToOneRelation = Class.create(pimcore.object.clas
     },
 
     getIconClass: function () {
-        return "pimcore_icon_href";
+        return "pimcore_icon_manyToOneRelation";
     },
 
     getLayout: function ($super) {

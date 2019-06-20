@@ -16,6 +16,8 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Reservation;
 
 // TODO - Log Exceptions
 
+use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartInterface;
+
 class Dao extends \Pimcore\Model\Dao\AbstractDao
 {
     const TABLE_NAME = 'ecommerceframework_vouchertoolkit_reservations';
@@ -27,11 +29,11 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao
 
     /**
      * @param string $code
-     * @param \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart $cart
+     * @param CartInterface $cart
      *
      * @return bool|string
      */
-    public function get($code, \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart $cart = null)
+    public function get($code, CartInterface $cart = null)
     {
         $query = 'SELECT * FROM ' . self::TABLE_NAME . ' WHERE token = ?';
         $params[] = $code;

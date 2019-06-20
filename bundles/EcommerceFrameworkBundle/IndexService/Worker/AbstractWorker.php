@@ -14,11 +14,11 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\IConfig;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IIndexable;
+use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\ConfigInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IndexableInterface;
 use Pimcore\Db\ConnectionInterface;
 
-abstract class AbstractWorker implements IWorker
+abstract class AbstractWorker implements WorkerInterface
 {
     /**
      * @var ConnectionInterface
@@ -26,7 +26,7 @@ abstract class AbstractWorker implements IWorker
     protected $db;
 
     /**
-     * @var IConfig
+     * @var ConfigInterface
      */
     protected $tenantConfig;
 
@@ -45,7 +45,7 @@ abstract class AbstractWorker implements IWorker
      */
     protected $filterGroups;
 
-    public function __construct(IConfig $tenantConfig, ConnectionInterface $db)
+    public function __construct(ConfigInterface $tenantConfig, ConnectionInterface $db)
     {
         $this->tenantConfig = $tenantConfig;
         $tenantConfig->setTenantWorker($this);
@@ -115,10 +115,10 @@ abstract class AbstractWorker implements IWorker
     /**
      * cleans up all old zombie data
      *
-     * @param IIndexable $object
+     * @param IndexableInterface $object
      * @param array $subObjectIds
      */
-    protected function doCleanupOldZombieData(IIndexable $object, array $subObjectIds)
+    protected function doCleanupOldZombieData(IndexableInterface $object, array $subObjectIds)
     {
         $cleanupIds = $this->tenantConfig->getSubIdsToCleanup($object, $subObjectIds);
         foreach ($cleanupIds as $idToCleanup) {
@@ -130,11 +130,11 @@ abstract class AbstractWorker implements IWorker
      * actually deletes all sub entries from index. original object is delivered too, but keep in mind, that this might be empty.
      *
      * @param $subObjectId
-     * @param IIndexable $object - might be empty (when object doesn't exist any more in pimcore
+     * @param IndexableInterface $object - might be empty (when object doesn't exist any more in pimcore
      *
      * @return mixed
      */
-    abstract protected function doDeleteFromIndex($subObjectId, IIndexable $object = null);
+    abstract protected function doDeleteFromIndex($subObjectId, IndexableInterface $object = null);
 
     /**
      * Checks if given data is array and returns converted data suitable for search backend. For mysql it is a string with special delimiter.
@@ -146,7 +146,7 @@ abstract class AbstractWorker implements IWorker
     protected function convertArray($data)
     {
         if (is_array($data)) {
-            return IWorker::MULTISELECT_DELIMITER . implode($data, IWorker::MULTISELECT_DELIMITER) . IWorker::MULTISELECT_DELIMITER;
+            return WorkerInterface::MULTISELECT_DELIMITER . implode($data, WorkerInterface::MULTISELECT_DELIMITER) . WorkerInterface::MULTISELECT_DELIMITER;
         }
 
         return $data;

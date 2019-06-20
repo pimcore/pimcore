@@ -337,6 +337,10 @@ pimcore.object.helpers.grid = Class.create({
                         continue;
                     }
 
+                    if (this.isSearch && fields[i].key.startsWith("~classificationstore")) {
+                        continue;
+                    }
+
                     var fieldType = fields[i].type;
                     var tag = pimcore.object.tags[fieldType];
                     if (tag) {

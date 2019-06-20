@@ -13,8 +13,6 @@ services:
     pimcore.extension.config: '@Pimcore\Extension\Config'
     pimcore.extension.bundle_manager: '@Pimcore\Extension\Bundle\PimcoreBundleManager'
 
-    pimcore.maintenance.schedule_manager: '@Pimcore\Model\Schedule\Manager\Procedural'
-
     pimcore.bundle_locator: '@Pimcore\HttpKernel\BundleLocator\BundleLocator'
     pimcore.web_path_resolver: '@Pimcore\HttpKernel\WebPathResolver'
     pimcore.tool.assets_installer: '@Pimcore\Tool\AssetsInstaller'

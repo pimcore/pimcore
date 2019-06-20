@@ -17,10 +17,10 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\Tracking;
 use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-abstract class Tracker implements ITracker
+abstract class Tracker implements TrackerInterface
 {
     /**
-     * @var ITrackingItemBuilder
+     * @var TrackingItemBuilderInterface
      */
     protected $trackingItemBuilder;
 
@@ -52,14 +52,14 @@ abstract class Tracker implements ITracker
     /**
      * Tracker constructor.
      *
-     * @param ITrackingItemBuilder $trackingItemBuilder
+     * @param TrackingItemBuilderInterface $trackingItemBuilder
      * @param EngineInterface $templatingEngine
      * @param array $options
      * @param array $assortmentTenants
      * @param array $checkoutTenants
      */
     public function __construct(
-        ITrackingItemBuilder $trackingItemBuilder,
+        TrackingItemBuilderInterface $trackingItemBuilder,
         EngineInterface $templatingEngine,
         array $options = [],
         $assortmentTenants = [],

@@ -706,7 +706,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
      * @param $object
      * @param array $params
      *
-     * @return array|mixed|null
+     * @return array
      */
     public function preGetData($object, $params = [])
     {
@@ -1060,3 +1060,5 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
         return true;
     }
 }
+
+class_alias(ManyToManyRelation::class, 'Pimcore\Model\DataObject\ClassDefinition\Data\Multihref');

@@ -59,15 +59,24 @@ pimcore.object.classes.layout.panel = Class.create(pimcore.object.classes.layout
                     displayField: 'name',
                     valueField: 'abbr',
                 },{
+                    xtype: "checkbox",
+                    fieldLabel: t("border"),
+                    name: "border",
+                    checked: this.datax.border,
+                },{
                     xtype: "numberfield",
                     name: "labelWidth",
                     fieldLabel: t("label_width"),
                     value: this.datax.labelWidth
+                },{
+                    xtype: "textfield",
+                    name: "icon",
+                    fieldLabel: t("icon"),
+                    value: this.datax.icon
                 }
             ]
         });
 
         return this.layout;
     }
-
 });

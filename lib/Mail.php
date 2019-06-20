@@ -623,7 +623,12 @@ class Mail extends \Swift_Message
 
         if ($event->hasArgument('mailer')) {
             $mailer = $event->getArgument('mailer');
-            $mailer->send($this);
+            try {
+                $mailer->send($this, $emailaddress);
+            } catch (\Exception $e) {
+                $mailer->getTransport()->stop();
+                throw new \Exception($emailaddress[0].' - '.$e->getMessage());
+            }
         }
 
         if ($this->loggingIsEnabled()) {
@@ -758,8 +763,6 @@ class Mail extends \Swift_Message
         } else {
             //creating text version from html email if html2text is installed
             try {
-                include_once(PIMCORE_PATH . '/lib/simple_html_dom.php');
-
                 $htmlContent = $this->getBodyHtmlRendered();
                 $html = str_get_html($htmlContent);
                 if ($html) {

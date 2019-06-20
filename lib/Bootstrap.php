@@ -15,7 +15,6 @@
 namespace Pimcore;
 
 use Doctrine\Common\Annotations\AnnotationReader;
-use Doctrine\Common\Annotations\AnnotationRegistry;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\Document;
 use Symfony\Component\Console\Input\ArgvInput;
@@ -120,7 +119,12 @@ class Bootstrap
         error_reporting(E_ALL & ~E_NOTICE & ~E_STRICT);
 
         /** @var $loader \Composer\Autoload\ClassLoader */
-        $loader = include __DIR__ . '/../../../../vendor/autoload.php';
+        if (file_exists(__DIR__ . '/../vendor/autoload.php')) {
+            $loader = include __DIR__ . '/../vendor/autoload.php';
+        } else {
+            $loader = include __DIR__ . '/../../../../vendor/autoload.php';
+        }
+
         self::defineConstants();
 
         error_reporting(PIMCORE_PHP_ERROR_REPORTING);
@@ -232,18 +236,6 @@ class Bootstrap
         // this is primarily necessary for tests and custom class directories, which are not covered in composer.json
         $loader->addPsr4('Pimcore\\Model\\DataObject\\', PIMCORE_CLASS_DIRECTORY . '/DataObject');
 
-        // compatibility autoloader for the \Pimcore\Model\Object\* namespace (seems to work with PHP 7.2 as well, tested with 7.2.3)
-        $dataObjectCompatibilityLoader = new \Pimcore\Loader\Autoloader\DataObjectCompatibility($loader);
-        $dataObjectCompatibilityLoader->register(true);
-
-        // legacy mapping loader creates aliases for renamed classes
-        $legacyMappingLoader = new \Pimcore\Loader\Autoloader\AliasMapper($loader);
-        $legacyMappingLoader->register(true);
-
-        // the following code is out of `app/autoload.php`
-        // see also: https://github.com/symfony/symfony-demo/blob/master/app/autoload.php
-        AnnotationRegistry::registerLoader([$loader, 'loadClass']);
-
         // ignore apiDoc params (see http://apidocjs.com/) as we use apiDoc in webservice
         $apiDocAnnotations = [
             'api', 'apiDefine',
@@ -256,29 +248,9 @@ class Bootstrap
             AnnotationReader::addGlobalIgnoredName($apiDocAnnotation);
         }
 
-        self::includes();
-
         if (defined('PIMCORE_APP_BUNDLE_CLASS_FILE')) {
             require_once PIMCORE_APP_BUNDLE_CLASS_FILE;
         }
-
-        self::zendCompatibility();
-    }
-
-    public static function zendCompatibility()
-    {
-        if (!class_exists('Zend_Date')) {
-            // if ZF is not loaded, we need to provide some compatibility stubs
-            // for a detailed description see the included file
-            require_once __DIR__ . '/../stubs/compatibility-v4.php';
-        }
-    }
-
-    public static function includes()
-    {
-        // some pimcore specific generic includes
-        // includes not covered by composer autoloader
-        require_once __DIR__ . '/helper-functions.php';
     }
 
     public static function kernel()
@@ -312,6 +284,12 @@ class Bootstrap
         $kernel = new $kernelClass($environment, $debug);
         \Pimcore::setKernel($kernel);
         $kernel->boot();
+
+        $conf = \Pimcore::getContainer()->getParameter('pimcore.config');
+
+        if (isset($conf['general']['timezone']) && !empty($conf['general']['timezone'])) {
+            date_default_timezone_set($conf['general']['timezone']);
+        }
 
         return $kernel;
     }

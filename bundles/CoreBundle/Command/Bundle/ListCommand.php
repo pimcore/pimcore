@@ -51,14 +51,13 @@ class ListCommand extends AbstractBundleCommand
             'UP?',
         ]);
 
-        $bm = $this->getBundleManager();
-        foreach ($bm->getAvailableBundles() as $bundleClass) {
-            $enabled = $bm->isEnabled($bundleClass);
+        foreach ($this->bundleManager->getAvailableBundles() as $bundleClass) {
+            $enabled = $this->bundleManager->isEnabled($bundleClass);
 
             /** @var PimcoreBundleInterface $bundle */
             $bundle = null;
             if ($enabled) {
-                $bundle = $bm->getActiveBundle($bundleClass, false);
+                $bundle = $this->bundleManager->getActiveBundle($bundleClass, false);
             }
 
             $row = [];
@@ -72,10 +71,10 @@ class ListCommand extends AbstractBundleCommand
             $row[] = $this->formatBool($enabled);
 
             if ($enabled) {
-                $row[] = $this->formatBool($bm->isInstalled($bundle));
-                $row[] = $this->formatBool($bm->canBeInstalled($bundle));
-                $row[] = $this->formatBool($bm->canBeUninstalled($bundle));
-                $row[] = $this->formatBool($bm->canBeUpdated($bundle));
+                $row[] = $this->formatBool($this->bundleManager->isInstalled($bundle));
+                $row[] = $this->formatBool($this->bundleManager->canBeInstalled($bundle));
+                $row[] = $this->formatBool($this->bundleManager->canBeUninstalled($bundle));
+                $row[] = $this->formatBool($this->bundleManager->canBeUpdated($bundle));
             } else {
                 $row[] = $this->formatBool(false);
                 $row[] = $this->formatBool(false);

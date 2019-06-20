@@ -16,7 +16,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Interpreter;
 
 use Pimcore\Model\Element\ElementInterface;
 
-class ObjectIdSum implements IInterpreter
+class ObjectIdSum implements InterpreterInterface
 {
     public function interpret($value, $config = null)
     {

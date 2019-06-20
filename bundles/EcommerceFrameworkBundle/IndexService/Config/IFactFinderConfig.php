@@ -14,33 +14,19 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\DefaultFactFinder as DefaultFactFinderWorker;
+@trigger_error(
+    'Interface Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\IFactFinderConfig is deprecated since version 6.0.0 and will be removed in 7.0.0. ' .
+    ' Use ' . FactFinderConfigInterface::class . ' class instead.',
+    E_USER_DEPRECATED
+);
 
-/**
- * Interface for IndexService Tenant Configurations using factfinder as index
- */
-interface IFactFinderConfig extends IConfig
-{
-    /**
-     * returns factfinder client parameters defined in the tenant config
-     *
-     * @param string $setting
-     *
-     * @return array|string
-     */
-    public function getClientConfig($setting = null);
+class_exists(FactFinderConfigInterface::class);
 
+if (false) {
     /**
-     * returns condition for current subtenant
-     *
-     * @return array
+     * @deprecated use FactFinderConfigInterface instead.
      */
-    public function getSubTenantCondition();
-
-    /**
-     * creates and returns tenant worker suitable for this tenant configuration
-     *
-     * @return DefaultFactFinderWorker
-     */
-    public function getTenantWorker();
+    interface IFactFinderConfig
+    {
+    }
 }

@@ -74,11 +74,9 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
     /**
      * @static
      *
-     * @throws \Exception
-     *
      * @param $key
      *
-     * @return self
+     * @return self|null
      */
     public static function getByKey($key)
     {
@@ -104,7 +102,7 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
             return $brick;
         }
 
-        throw new \Exception('Object-Brick with key: ' . $key . ' does not exist.');
+        return null;
     }
 
     /**
@@ -217,12 +215,15 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
         $cd .= 'namespace Pimcore\\Model\\DataObject\\Objectbrick\\Data;';
         $cd .= "\n\n";
         $cd .= 'use Pimcore\\Model\\DataObject;';
+        $cd .= "\n";
+        $cd .= 'use Pimcore\Model\DataObject\Exception\InheritanceParentNotFoundException;';
+        $cd .= "\n";
+        $cd .= 'use Pimcore\Model\DataObject\PreGetValueHookInterface;';
         $cd .= "\n\n";
 
         $cd .= 'class ' . ucfirst($this->getKey()) . ' extends ' . $extendClass . ' implements \\Pimcore\\Model\\DataObject\\DirtyIndicatorInterface {';
         $cd .= "\n\n";
 
-        $cd .= "\n\n";
         $cd .= 'use \\Pimcore\\Model\\DataObject\\Traits\\DirtyIndicatorTrait;';
         $cd .= "\n\n";
 
@@ -255,7 +256,16 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
                  * @var $def DataObject\ClassDefinition\Data
                  */
                 $cd .= $def->getGetterCodeObjectbrick($this);
+
+                if ($def instanceof DataObject\ClassDefinition\Data\Localizedfields) {
+                    $cd .= $def->getGetterCode($this);
+                }
+
                 $cd .= $def->getSetterCodeObjectbrick($this);
+
+                if ($def instanceof DataObject\ClassDefinition\Data\Localizedfields) {
+                    $cd .= $def->getSetterCode($this);
+                }
             }
         }
 
@@ -482,11 +492,12 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
                 $cd .= "\n\n";
                 $cd .= 'namespace ' . $namespace . ';';
                 $cd .= "\n\n";
+                $cd .= 'use Pimcore\Model\DataObject\Exception\InheritanceParentNotFoundException;';
+                $cd .= "\n\n";
                 $cd .= 'class ' . $className . ' extends \\Pimcore\\Model\\DataObject\\Objectbrick {';
                 $cd .= "\n\n";
 
-                $cd .= "\n\n";
-                $cd .= 'protected $brickGetters = array(' . "'" . implode("','", $brickKeys) . "');\n";
+                $cd .= 'protected $brickGetters = [' . "'" . implode("','", $brickKeys) . "'];\n";
                 $cd .= "\n\n";
 
                 foreach ($brickKeys as $brickKey) {
@@ -499,10 +510,14 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
 
                     if ($class->getAllowInherit()) {
                         $cd .= "\t" . 'if(!$this->' . $brickKey . ' && \\Pimcore\\Model\\DataObject\\AbstractObject::doGetInheritedValues($this->getObject())) { ' . "\n";
-                        $cd .= "\t\t" . '$brick = $this->getObject()->getValueFromParent("' . $fieldname . '");' . "\n";
-                        $cd .= "\t\t" . 'if(!empty($brick)) {' . "\n";
-                        $cd .= "\t\t\t" . 'return $this->getObject()->getValueFromParent("' . $fieldname . '")->get' . ucfirst($brickKey) . "(); \n";
-                        $cd .= "\t\t" . "}\n";
+                        $cd .= "\t\t" . 'try {' . "\n";
+                        $cd .= "\t\t\t" . '$brick = $this->getObject()->getValueFromParent("' . $fieldname . '");' . "\n";
+                        $cd .= "\t\t\t" . 'if(!empty($brick)) {' . "\n";
+                        $cd .= "\t\t\t\t" . 'return $this->getObject()->getValueFromParent("' . $fieldname . '")->get' . ucfirst($brickKey) . "(); \n";
+                        $cd .= "\t\t\t" . "}\n";
+                        $cd .= "\t\t" . '} catch (InheritanceParentNotFoundException $e) {' . "\n";
+                        $cd .= "\t\t\t" . '// no data from parent available, continue ... ' . "\n";
+                        $cd .= "\t\t" . '}' . "\n";
                         $cd .= "\t" . "}\n";
                     }
                     $cd .= '   return $this->' . $brickKey . "; \n";

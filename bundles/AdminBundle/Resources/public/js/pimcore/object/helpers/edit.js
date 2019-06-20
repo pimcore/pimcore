@@ -82,7 +82,7 @@ pimcore.object.helpers.edit = {
                 forceLayout: true,
                 monitorResize: true,
                 bodyStyle: "padding: 10px",
-                border: true,
+                border: false,
                 defaults: {
                     width: "auto"
                 },
@@ -102,7 +102,7 @@ pimcore.object.helpers.edit = {
                 activeTab: 0,
                 monitorResize: true,
                 deferredRender: true,
-                border: true,
+                border: false,
                 bodyStyle: "padding: 10px",
                 forceLayout: true,
                 hideMode: "offsets",
@@ -127,7 +127,7 @@ pimcore.object.helpers.edit = {
         };
 
         var validKeys = ["xtype","title","layout","icon","items","region","width","height","name","text","html","handler",
-            "labelWidth", "fieldLabel", "collapsible","collapsed","bodyStyle","listeners"];
+            "labelWidth", "fieldLabel", "collapsible","collapsed","bodyStyle","listeners", "border", "tabPosition"];
 
         var tmpItems;
 
@@ -292,7 +292,7 @@ pimcore.object.helpers.edit = {
                     l.title += ' <span style="color:red;">*</span>';
                 }
                 if(l.tooltip) {
-                    l.title += ' <span class="pimcore_object_label_icon pimcore_icon_info"></span>';
+                    l.title += ' <span class="pimcore_object_label_icon pimcore_icon_gray_info"></span>';
                 }
 
                 var field = new pimcore.object.tags[l.fieldtype](data, l);
@@ -386,13 +386,11 @@ pimcore.object.helpers.edit = {
                                 }
                             }
 
-
                             // apply tooltips
                             if(field.tooltip) {
                                 try {
                                     new Ext.ToolTip({
                                         target: el,
-                                        title: field.title,
                                         html: nl2br(ts(field.tooltip)),
                                         trackMouse:true,
                                         showDelay: 200

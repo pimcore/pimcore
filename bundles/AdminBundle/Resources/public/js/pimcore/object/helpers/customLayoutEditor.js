@@ -76,7 +76,7 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
                 {
                     xtype: 'button',
                     text: t('cancel'),
-                    iconCls: 'pimcore_icon_delete',
+                    iconCls: 'pimcore_icon_cancel',
                     handler: function () {
                         this.window.close();
                     }.bind(this)

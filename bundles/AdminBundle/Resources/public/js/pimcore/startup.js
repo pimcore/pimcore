@@ -276,8 +276,22 @@ Ext.onReady(function () {
     Ext.define('pimcore.model.doctypes', {
         extend: 'Ext.data.Model',
         fields: [
-            'id',  {name: 'name', allowBlank: false}, 'module', 'controller', 'action', 'template',
-            {name: 'type', allowBlank: false},'priority', 'creationDate', 'modificationDate', 'legacy'
+            'id',
+            {name: 'name', allowBlank: false},
+            {
+                name: "translatedName",
+                convert: function (v, rec) {
+                    return t(rec.get("name"));
+                }
+            },
+            'module',
+            'controller',
+            'action',
+            'template',
+            {name: 'type', allowBlank: false},
+            'priority',
+            'creationDate',
+            'modificationDate'
         ],
         proxy: {
             type: 'ajax',
@@ -442,26 +456,6 @@ Ext.onReady(function () {
     targetGroupStore.load();
     pimcore.globalmanager.add("target_group_store", targetGroupStore);
 
-    // STATUSBAR
-    // check for devmode
-    if (pimcore.settings.devmode) {
-        Ext.get("pimcore_status_dev").show();
-    }
-
-    // check for debug
-    if (pimcore.settings.debug) {
-        Ext.get("pimcore_status_debug").show();
-    }
-
-    // check for maintenance
-    if (!pimcore.settings.maintenance_active) {
-        Ext.get("pimcore_status_maintenance").show();
-    }
-
-    //check for mail settings
-    if (!pimcore.settings.mail) {
-        Ext.get("pimcore_status_email").show();
-    }
 
     // check for updates
     window.setTimeout(function () {
@@ -498,36 +492,31 @@ Ext.onReady(function () {
         }).done(function(data) {
             if (data['latestVersion']) {
                 if(pimcore.currentuser.admin) {
-                    Ext.get("pimcore_status_update").show();
 
-                    var lastOpened = localStorage.getItem("pimcore_version_notice");
-                    var now = new Date().getTime();
-                    if((!lastOpened || (now-(86400*7)) > lastOpened)) {
-                        localStorage.setItem("pimcore_version_notice", now);
+                    pimcore.notification.helper.incrementCount();
 
-                        jQuery("#pimcore_status_update").trigger("mouseenter");
-                        window.setTimeout(function () {
-                            jQuery("#pimcore_status_update").trigger("mouseleave");
-                        }, 5000);
-                    }
+                    var toolbar = pimcore.globalmanager.get("layout_toolbar");
+                    toolbar.notificationMenu.add({
+                        text: t("update_available"),
+                        iconCls: "pimcore_icon_reload",
+                        handler: function () {
+                            var html = '<div class="pimcore_about_window" xmlns="http://www.w3.org/1999/html">';
+                            html += '<h2 style="text-decoration: underline">New Version Available!</h2>';
+                            html += '<br><b>Your Version: ' + pimcore.settings.version + '</b>';
+                            html += '<br><b style="color: darkgreen;">New Version: ' + data['latestVersion'] + '</b>';
+                            html += '<h3 style="color: darkred">Please update as soon as possible!</h3>';
+                            html += '</div>';
 
-                    Ext.get("pimcore_status_update").on('click', function () {
-                        var html = '<div class="pimcore_about_window" xmlns="http://www.w3.org/1999/html">';
-                        html += '<h2 style="text-decoration: underline">New Version Available!</h2>';
-                        html += '<br><b>Your Version: ' + pimcore.settings.version + '</b>';
-                        html += '<br><b style="color: darkgreen;">New Version: ' + data['latestVersion'] + '</b>';
-                        html += '<h3 style="color: darkred">Please update as soon as possible!</h3>';
-                        html += '</div>';
-
-                        var win = new Ext.Window({
-                            title: "New Version Available!",
-                            width:500,
-                            height: 220,
-                            bodyStyle: "padding: 10px;",
-                            modal: true,
-                            html: html
-                        });
-                        win.show();
+                            var win = new Ext.Window({
+                                title: "New Version Available!",
+                                width:500,
+                                height: 220,
+                                bodyStyle: "padding: 10px;",
+                                modal: true,
+                                html: html
+                            });
+                            win.show();
+                        }
                     });
                 }
             }

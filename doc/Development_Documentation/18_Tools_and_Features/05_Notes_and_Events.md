@@ -72,7 +72,7 @@ pimcore_admin:
                 - "content"
                 - "licese renewal"
                 - "some other type"                
-    dataObjects:
+    objects:
         notes_events:
             types:
                 - ""

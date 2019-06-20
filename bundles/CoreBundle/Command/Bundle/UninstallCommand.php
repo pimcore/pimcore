@@ -34,14 +34,13 @@ class UninstallCommand extends AbstractBundleCommand
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $bm = $this->getBundleManager();
         $bundle = $this->getBundle();
 
         // sets up installer with console output writer
         $this->setupInstaller($bundle);
 
         try {
-            $bm->uninstall($bundle);
+            $this->bundleManager->uninstall($bundle);
 
             $this->io->success(sprintf('Bundle "%s" was successfully uninstalled', $bundle->getName()));
         } catch (\Exception $e) {

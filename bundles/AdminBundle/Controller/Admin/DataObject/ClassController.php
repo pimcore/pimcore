@@ -87,7 +87,7 @@ class ClassController extends AdminController implements EventedControllerInterf
      */
     public function getTreeAction(Request $request)
     {
-        $defaultIcon = '/bundles/pimcoreadmin/img/flat-color-icons/timeline.svg';
+        $defaultIcon = '/bundles/pimcoreadmin/img/flat-color-icons/class.svg';
 
         $classesList = new DataObject\ClassDefinition\Listing();
         $classesList->setOrderKey('name');
@@ -814,6 +814,9 @@ class ClassController extends AdminController implements EventedControllerInterf
         }
         $object = DataObject\AbstractObject::getById($request->get('object_id'));
 
+        $currentLayoutId = $request->get('layoutId', null);
+        $user = \Pimcore\Tool\Admin::getCurrentUser();
+
         $groups = [];
         /** @var $item DataObject\Fieldcollection\Definition */
         foreach ($list as $item) {
@@ -837,6 +840,10 @@ class ClassController extends AdminController implements EventedControllerInterf
                 if ($forObjectEditor) {
                     $itemLayoutDefinitions = $item->getLayoutDefinitions();
                     DataObject\Service::enrichLayoutDefinition($itemLayoutDefinitions, $object);
+
+                    if ($currentLayoutId == -1 && $user->isAdmin()) {
+                        DataObject\Service::createSuperLayout($itemLayoutDefinitions);
+                    }
                     $layoutDefinitions[$item->getKey()] = $itemLayoutDefinitions;
                 }
                 $groups[$item->getGroup()]['children'][] =
@@ -852,6 +859,11 @@ class ClassController extends AdminController implements EventedControllerInterf
                 if ($forObjectEditor) {
                     $itemLayoutDefinitions = $item->getLayoutDefinitions();
                     DataObject\Service::enrichLayoutDefinition($itemLayoutDefinitions, $object);
+
+                    if ($currentLayoutId == -1 && $user->isAdmin()) {
+                        DataObject\Service::createSuperLayout($itemLayoutDefinitions);
+                    }
+
                     $layoutDefinitions[$item->getKey()] = $itemLayoutDefinitions;
                 }
                 $definitions[] = [
@@ -1437,9 +1449,7 @@ class ClassController extends AdminController implements EventedControllerInterf
 
                 return $this->adminJson(['success' => $success !== false]);
             } elseif ($type == 'objectbrick' && $item['key'] == $name) {
-                try {
-                    $brick = DataObject\Objectbrick\Definition::getByKey($name);
-                } catch (\Exception $e) {
+                if (!$brick = DataObject\Objectbrick\Definition::getByKey($name)) {
                     $brick = new DataObject\Objectbrick\Definition();
                     $brick->setKey($name);
                 }
@@ -1448,12 +1458,11 @@ class ClassController extends AdminController implements EventedControllerInterf
 
                 return $this->adminJson(['success' => $success !== false]);
             } elseif ($type == 'fieldcollection' && $item['key'] == $name) {
-                try {
-                    $fieldCollection = DataObject\Fieldcollection\Definition::getByKey($name);
-                } catch (\Exception $e) {
+                if (!$fieldCollection = DataObject\Fieldcollection\Definition::getByKey($name)) {
                     $fieldCollection = new DataObject\Fieldcollection\Definition();
                     $fieldCollection->setKey($name);
                 }
+
                 $success = DataObject\ClassDefinition\Service::importFieldCollectionFromJson($fieldCollection, json_encode($item), true);
 
                 return $this->adminJson(['success' => $success !== false]);

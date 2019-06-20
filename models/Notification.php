@@ -93,10 +93,13 @@ class Notification extends AbstractModel
         try {
             $notification = Cache\Runtime::get($cacheKey);
         } catch (\Exception $ex) {
-            $notification = new self();
-            $notification->getDao()->getById($id);
-
-            Cache\Runtime::set($cacheKey, $notification);
+            try {
+                $notification = new self();
+                $notification->getDao()->getById($id);
+                Cache\Runtime::set($cacheKey, $notification);
+            } catch (\Exception $e) {
+                $notification = null;
+            }
         }
 
         return $notification;

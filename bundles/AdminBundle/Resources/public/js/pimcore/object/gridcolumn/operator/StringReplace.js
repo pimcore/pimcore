@@ -140,6 +140,7 @@ pimcore.object.gridcolumn.operator.stringreplace = Class.create(pimcore.object.g
 
     commitData: function(params) {
         this.node.set('isOperator', true);
+        this.node.data.configAttributes.label = this.textField.getValue();
         this.node.data.configAttributes.search = this.searchField.getValue();
         this.node.data.configAttributes.replace = this.replaceField.getValue();
         this.node.data.configAttributes.insensitive = this.insensitiveField.getValue();

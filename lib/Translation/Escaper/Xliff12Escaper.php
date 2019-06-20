@@ -49,8 +49,7 @@ class Xliff12Escaper
             $parts = explode('>', $match);
             $parts[0] .= '>';
             foreach ($parts as $part) {
-                $part = trim($part);
-                if (!empty($part)) {
+                if (!empty(trim($part))) {
                     if (preg_match("/<([a-z0-9\/]+)/", $part, $tag)) {
                         $tagName = str_replace('/', '', $tag[1]);
                         if (in_array($tagName, self::SELFCLOSING_TAGS)) {
@@ -95,7 +94,6 @@ class Xliff12Escaper
         $content = preg_replace("/&lt;\/?(target|mrk)((?!&gt;).)*&gt;/i", '', $content);
 
         if (preg_match("/<\/?(bpt|ept)/", $content)) {
-            include_once(PIMCORE_PATH . '/lib/simple_html_dom.php');
             $xml = str_get_html($content);
             if ($xml) {
                 $els = $xml->find('bpt,ept,ph');

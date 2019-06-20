@@ -16,7 +16,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\Defau
 
 use Monolog\Logger;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\DefaultMysql;
-use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\IProductList;
+use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\ProductListInterface;
 
 class Dao
 {
@@ -40,7 +40,7 @@ class Dao
      */
     protected $logger;
 
-    public function __construct(IProductList $model, Logger $logger)
+    public function __construct(ProductListInterface $model, Logger $logger)
     {
         $this->model = $model;
         $this->db = \Pimcore\Db::get();
@@ -66,7 +66,7 @@ class Dao
             }
         }
 
-        if ($this->model->getVariantMode() == IProductList::VARIANT_MODE_INCLUDE_PARENT_OBJECT) {
+        if ($this->model->getVariantMode() == ProductListInterface::VARIANT_MODE_INCLUDE_PARENT_OBJECT) {
             if ($orderBy) {
                 $query = 'SELECT SQL_CALC_FOUND_ROWS DISTINCT o_virtualProductId as o_id, priceSystemName FROM '
                     . $this->model->getCurrentTenantConfig()->getTablename() . ' a '
@@ -99,7 +99,7 @@ class Dao
         }
 
         if ($countValues) {
-            if ($this->model->getVariantMode() == IProductList::VARIANT_MODE_INCLUDE_PARENT_OBJECT) {
+            if ($this->model->getVariantMode() == ProductListInterface::VARIANT_MODE_INCLUDE_PARENT_OBJECT) {
                 $query = "SELECT TRIM(`$fieldname`) as `value`, count(DISTINCT o_virtualProductId) as `count` FROM "
                     . $this->model->getCurrentTenantConfig()->getTablename() . ' a '
                     . $this->model->getCurrentTenantConfig()->getJoins()
@@ -137,7 +137,7 @@ class Dao
         }
 
         if ($countValues) {
-            if ($this->model->getVariantMode() == IProductList::VARIANT_MODE_INCLUDE_PARENT_OBJECT) {
+            if ($this->model->getVariantMode() == ProductListInterface::VARIANT_MODE_INCLUDE_PARENT_OBJECT) {
                 $query = 'SELECT dest as `value`, count(DISTINCT src_virtualProductId) as `count` FROM '
                     . $this->model->getCurrentTenantConfig()->getRelationTablename() . ' a '
                     . 'WHERE fieldname = ' . $this->quote($fieldname);
@@ -196,7 +196,7 @@ class Dao
             }
         }
 
-        if ($this->model->getVariantMode() == IProductList::VARIANT_MODE_INCLUDE_PARENT_OBJECT) {
+        if ($this->model->getVariantMode() == ProductListInterface::VARIANT_MODE_INCLUDE_PARENT_OBJECT) {
             $query = 'SELECT count(DISTINCT o_virtualProductId) FROM '
                 . $this->model->getCurrentTenantConfig()->getTablename() . ' a '
                 . $this->model->getCurrentTenantConfig()->getJoins()

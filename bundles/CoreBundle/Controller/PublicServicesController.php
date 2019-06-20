@@ -20,7 +20,7 @@ use Pimcore\Model\Asset;
 use Pimcore\Model\Site;
 use Pimcore\Model\Tool;
 use Pimcore\Model\Tool\TmpStore;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller as FrameworkController;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController as FrameworkController;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -41,7 +41,9 @@ class PublicServicesController extends FrameworkController
         $filename = $request->get('filename');
         $asset = Asset::getById($assetId);
 
-        if ($asset && $asset->getPath() == ('/' . $request->get('prefix'))) {
+        $prefix = preg_replace('@^cache-buster\-[\d]+\/@', '', $request->get('prefix'));
+
+        if ($asset && $asset->getPath() == ('/' . $prefix)) {
             // we need to check the path as well, this is important in the case you have restricted the public access to
             // assets via rewrite rules
             try {
@@ -128,12 +130,8 @@ class PublicServicesController extends FrameworkController
     public function robotsTxtAction(Request $request)
     {
         // check for site
-        $site = null;
-        try {
-            $domain = \Pimcore\Tool::getHostname();
-            $site = Site::getByDomain($domain);
-        } catch (\Exception $e) {
-        }
+        $domain = \Pimcore\Tool::getHostname();
+        $site = Site::getByDomain($domain);
 
         $config = Config::getRobotsConfig()->toArray();
 

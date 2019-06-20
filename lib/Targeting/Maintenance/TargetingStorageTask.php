@@ -31,7 +31,7 @@ class TargetingStorageTask implements TaskInterface
     /**
      * @param MaintenanceStorageInterface|TargetingStorageInterface $targetingStorage
      */
-    public function __construct($targetingStorage)
+    public function __construct(TargetingStorageInterface $targetingStorage)
     {
         $this->targetingStorage = $targetingStorage;
     }

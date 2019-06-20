@@ -125,7 +125,7 @@ pimcore.document.pages.settings = Class.create(pimcore.document.settings_abstrac
                 title: t('SEO') + ' &amp; ' + t('settings'),
                 border: false,
                 autoScroll: true,
-                iconCls: "pimcore_icon_settings pimcore_icon_overlay_seo",
+                iconCls: "pimcore_material_icon_page_settings pimcore_material_icon",
                 bodyStyle:'padding:0 10px 0 10px;',
                 items: [
                     {

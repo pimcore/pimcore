@@ -147,10 +147,14 @@ class DataObjectController extends ElementControllerBase implements EventedContr
             $childsList->setCondition($condition);
             $childsList->setLimit($limit);
             $childsList->setOffset($offset);
-            $childsList->setOrderKey(
-                sprintf('CAST(objects.o_%s AS CHAR CHARACTER SET utf8) COLLATE utf8_general_ci ASC', $object->getChildrenSortBy()),
-                false
-            );
+            if ($object->getChildrenSortBy() === 'index') {
+                $childsList->setOrderKey('objects.o_index ASC', false);
+            } else {
+                $childsList->setOrderKey(
+                    sprintf('CAST(objects.o_%s AS CHAR CHARACTER SET utf8) COLLATE utf8_general_ci ASC', $object->getChildrenSortBy()),
+                    false
+                );
+            }
             $childsList->setObjectTypes($objectTypes);
 
             Element\Service::addTreeFilterJoins($cv, $childsList);
@@ -365,58 +369,76 @@ class DataObjectController extends ElementControllerBase implements EventedContr
         }
         Element\Editlock::lock($request->get('id'), 'object');
 
-        $object = DataObject::getById(intval($request->get('id')));
-        $object = clone $object;
+        $objectFromDatabase = DataObject::getById(intval($request->get('id')));
+        $objectFromDatabase = clone $objectFromDatabase;
 
         // set the latest available version for editmode
-        $latestObject = $this->getLatestVersion($object);
+        $latestObject = $this->getLatestVersion($objectFromDatabase);
 
         // we need to know if the latest version is published or not (a version), because of lazy loaded fields in $this->getDataForObject()
-        $objectFromVersion = $latestObject === $object ? false : true;
+        $objectFromVersion = $latestObject === $objectFromDatabase ? false : true;
         $object = $latestObject;
 
         if ($object->isAllowed('view')) {
             $objectData = [];
 
-            $objectData['idPath'] = Element\Service::getIdPath($object);
+            /** -------------------------------------------------------------
+             *   Load some general data from published object (if existing)
+             *  ------------------------------------------------------------- */
+            $objectData['idPath'] = Element\Service::getIdPath($objectFromDatabase);
 
             $objectData['hasPreview'] = false;
-            if ($object->getClass()->getPreviewUrl() || $object->getClass()->getLinkGeneratorReference()) {
+            if ($objectFromDatabase->getClass()->getPreviewUrl() || $objectFromDatabase->getClass()->getLinkGeneratorReference()) {
                 $objectData['hasPreview'] = true;
             }
 
             $objectData['general'] = [];
-            $allowedKeys = ['o_published', 'o_key', 'o_id', 'o_modificationDate', 'o_creationDate', 'o_classId', 'o_className', 'o_locked', 'o_type', 'o_parentId', 'o_userOwner', 'o_userModification'];
+            $objectData['general']['objectFromVersion'] = $objectFromVersion;
 
+            $allowedKeys = ['o_published', 'o_key', 'o_id', 'o_creationDate', 'o_classId', 'o_className', 'o_type', 'o_parentId', 'o_userOwner'];
+            foreach ($objectFromDatabase->getObjectVars() as $key => $value) {
+                if (in_array($key, $allowedKeys)) {
+                    $objectData['general'][$key] = $value;
+                }
+            }
+            $objectData['general']['fullpath'] = $objectFromDatabase->getRealFullPath();
+            $objectData['general']['o_locked'] = $objectFromDatabase->isLocked();
+            $objectData['general']['php'] = [
+                'classes' => array_merge([get_class($objectFromDatabase)], array_values(class_parents($objectFromDatabase))),
+                'interfaces' => array_values(class_implements($objectFromDatabase))
+            ];
+            $objectData['general']['allowInheritance'] = $objectFromDatabase->getClass()->getAllowInherit();
+            $objectData['general']['allowVariants'] = $objectFromDatabase->getClass()->getAllowVariants();
+            $objectData['general']['showVariants'] = $objectFromDatabase->getClass()->getShowVariants();
+            $objectData['general']['showAppLoggerTab'] = $objectFromDatabase->getClass()->getShowAppLoggerTab();
+            if ($objectFromDatabase instanceof DataObject\Concrete) {
+                $objectData['general']['linkGeneratorReference'] = $objectFromDatabase->getClass()->getLinkGeneratorReference();
+            }
+
+            $objectData['layout'] = $objectFromDatabase->getClass()->getLayoutDefinitions();
+            $objectData['userPermissions'] = $objectFromDatabase->getUserPermissions();
+            $objectVersions = Element\Service::getSafeVersionInfo($objectFromDatabase->getVersions());
+            $objectData['versions'] = array_splice($objectVersions, 0, 1);
+            $objectData['scheduledTasks'] = $objectFromDatabase->getScheduledTasks();
+
+            $objectData['childdata']['id'] = $objectFromDatabase->getId();
+            $objectData['childdata']['data']['classes'] = $this->prepareChildClasses($objectFromDatabase->getDao()->getClasses());
+
+            /** -------------------------------------------------------------
+             *   Load remaining general data from latest version
+             *  ------------------------------------------------------------- */
+            $allowedKeys = ['o_modificationDate', 'o_userModification'];
             foreach ($object->getObjectVars() as $key => $value) {
-                if (strstr($key, 'o_') && in_array($key, $allowedKeys)) {
+                if (in_array($key, $allowedKeys)) {
                     $objectData['general'][$key] = $value;
                 }
             }
 
-            $objectData['general']['php'] = [
-                'classes' => array_merge([get_class($object)], array_values(class_parents($object))),
-                'interfaces' => array_values(class_implements($object))
-            ];
-
-            $objectData['general']['o_locked'] = $object->isLocked();
-
             $this->getDataForObject($object, $objectFromVersion);
             $objectData['data'] = $this->objectData;
-
             $objectData['metaData'] = $this->metaData;
-
-            $objectData['layout'] = $object->getClass()->getLayoutDefinitions();
-
             $objectData['properties'] = Element\Service::minimizePropertiesForEditmode($object->getProperties());
-            $objectData['userPermissions'] = $object->getUserPermissions();
-            $objectVersions = Element\Service::getSafeVersionInfo($object->getVersions());
-            $objectData['versions'] = array_splice($objectVersions, 0, 1);
-            $objectData['scheduledTasks'] = $object->getScheduledTasks();
-            $objectData['general']['allowVariants'] = $object->getClass()->getAllowVariants();
-            $objectData['general']['showVariants'] = $object->getClass()->getShowVariants();
-            $objectData['general']['showAppLoggerTab'] = $object->getClass()->getShowAppLoggerTab();
-            $objectData['general']['fullpath'] = $object->getRealFullPath();
+
             $objectData['general']['versionDate'] = $object->getModificationDate();
             $objectData['general']['versionCount'] = $object->getVersionCount();
 
@@ -427,19 +449,12 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                 $objectData['general']['iconCls'] = $object->getElementAdminStyle()->getElementIconClass();
             }
 
-            if ($object instanceof DataObject\Concrete) {
-                $objectData['general']['linkGeneratorReference'] = $object->getClass()->getLinkGeneratorReference();
-            }
-
-            $objectData['childdata']['id'] = $object->getId();
-            $objectData['childdata']['data']['classes'] = $this->prepareChildClasses($object->getDao()->getClasses());
-
             $currentLayoutId = $request->get('layoutId', null);
 
             $validLayouts = DataObject\Service::getValidLayouts($object);
 
             //master layout has id 0 so we check for is_null()
-            if (is_null($currentLayoutId) && !empty($validLayouts)) {
+            if ((is_null($currentLayoutId) || !strlen($currentLayoutId)) && !empty($validLayouts)) {
                 if (count($validLayouts) == 1) {
                     $firstLayout = reset($validLayouts);
                     $currentLayoutId = $firstLayout->getId();
@@ -612,7 +627,9 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                 }
             }
 
-            if ($fielddefinition->isEmpty($fieldData) && !empty($parent)) {
+            if ($fielddefinition->isEmpty($fieldData) && !empty($parent)
+                 && !(method_exists($fielddefinition, 'getDefaultValue') && !$fielddefinition->isEmpty($fielddefinition->getDefaultValue()))
+            ) {
                 $this->getDataForField($parent, $key, $fielddefinition, $objectFromVersion, $level + 1);
             } else {
                 $isInheritedValue = $isInheritedValue || ($level != 0);
@@ -943,10 +960,8 @@ class DataObjectController extends ElementControllerBase implements EventedContr
             $list->setOrderKey('LENGTH(o_path)', false);
             $list->setOrder('DESC');
 
-            $objects = $list->load();
-
             $deletedItems = [];
-            foreach ($objects as $object) {
+            foreach ($list as $object) {
                 $deletedItems[] = $object->getRealFullPath();
                 if ($object->isAllowed('delete') && !$object->isLocked()) {
                     $object->delete();
@@ -1106,26 +1121,42 @@ class DataObjectController extends ElementControllerBase implements EventedContr
      */
     protected function updateIndexesOfObjectSiblings(DataObject\AbstractObject $updatedObject, $newIndex)
     {
-        $updateLatestVersionIndex = function ($object, $newIndex) {
-            if ($object instanceof DataObject\Concrete && $latestVersion = $object->getLatestVersion()) {
-                $object = $latestVersion->loadData();
-                $object->setIndex($newIndex);
+        $updateLatestVersionIndex = function ($objectId, $modificationDate, $newIndex) {
+            if ($latestVersion = DataObject\Concrete::getLatestVersionByObjectIdAndLatestModificationDate($objectId, $modificationDate)) {
+
+                // don't renew references (which means loading the target elements)
+                // Not needed as we just save a new version with the updated index
+                $object = $latestVersion->loadData(false);
+                if ($newIndex !== $object->getIndex()) {
+                    $object->setIndex($newIndex);
+                }
                 $latestVersion->save();
             }
         };
 
+        $list = new DataObject\Listing();
         $updatedObject->saveIndex($newIndex);
 
-        $list = new DataObject\Listing();
-        $list->setCondition(
-            'o_parentId = ? AND o_id != ?',
-            [$updatedObject->getParentId(), $updatedObject->getId()]
+        Db::get()->executeUpdate('UPDATE '.$list->getDao()->getTableName().' o, 
+            (
+                SELECT newIndex, o_id FROM (SELECT @n := IF(@n = ? - 1,@n + 2,@n + 1) AS newIndex, o_id 
+                FROM '.$list->getDao()->getTableName().', 
+                (SELECT @n := -1) variable 
+                WHERE o_id != ? AND o_parentId = ? AND o_type IN (\'' . implode("','", [DataObject\AbstractObject::OBJECT_TYPE_OBJECT, DataObject\AbstractObject::OBJECT_TYPE_VARIANT, DataObject\AbstractObject::OBJECT_TYPE_FOLDER]) . '\') 
+                    ORDER BY o_index, o_id=?
+                ) tmp
+            ) order_table
+            SET o.o_index = order_table.newIndex
+            WHERE o.o_id=order_table.o_id',
+            [
+                $newIndex, $updatedObject->getId(), $updatedObject->getParentId(), $updatedObject->getId()
+            ]
         );
-        $list->setObjectTypes([DataObject\AbstractObject::OBJECT_TYPE_OBJECT, DataObject\AbstractObject::OBJECT_TYPE_VARIANT, DataObject\AbstractObject::OBJECT_TYPE_FOLDER]);
-        $list->setOrderKey('o_index');
-        $list->setOrder('asc');
-        $siblings = $list->load();
 
+        $db = Db::get();
+        $siblings = $db->fetchAll('SELECT o_id, o_modificationDate FROM objects'
+                . " WHERE o_parentId = ? AND o_id != ? AND o_type IN ('object', 'variant','folder') ORDER BY o_index ASC",
+                        [$updatedObject->getParentId(), $updatedObject->getId()]);
         $index = 0;
         /** @var DataObject\AbstractObject $child */
         foreach ($siblings as $sibling) {
@@ -1133,9 +1164,10 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                 $index++;
             }
 
-            $sibling->saveIndex($index);
-            $updateLatestVersionIndex($sibling, $index);
+            $updateLatestVersionIndex($sibling['o_id'], $sibling['o_modificationDate'], $index);
             $index++;
+
+            DataObject\AbstractObject::clearDependentCacheByObjectId($sibling['o_id']);
         }
     }
 

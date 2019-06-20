@@ -104,7 +104,7 @@ pimcore.asset.document = Class.create(pimcore.asset.asset, {
                 title: t("preview"),
                 bodyCls: "pimcore_overflow_scrolling",
                 html: content,
-                iconCls: "pimcore_icon_preview"
+                iconCls: "pimcore_material_icon_devices pimcore_material_icon"
             });
 
             this.editPanel.on("resize", function (el, width, height, rWidth, rHeight) {

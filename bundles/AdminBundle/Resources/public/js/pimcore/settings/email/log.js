@@ -70,7 +70,7 @@ pimcore.settings.email.log = Class.create({
                 layout: 'fit',
                 items: [this.grid],
                 closable: this.document ? false : true,
-                iconCls: 'pimcore_icon_email pimcore_icon_overlay_go',
+                iconCls: this.document ? 'pimcore_material_icon_email_sent pimcore_material_icon' : 'pimcore_icon_email pimcore_icon_overlay_go',
                 listeners: {
                     activate: function() {
                         this.store.load();
@@ -396,7 +396,7 @@ pimcore.settings.email.log = Class.create({
         this.pagingtoolbar = pimcore.helpers.grid.buildDefaultPagingToolbar(this.store);
 
         var toolbar = Ext.create('Ext.Toolbar', {
-            cls: 'main-toolbar',
+            cls: 'pimcore_main_toolbar',
             items: [
                 '->',
                 {

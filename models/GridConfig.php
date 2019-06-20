@@ -20,7 +20,7 @@ namespace Pimcore\Model;
 use Pimcore\Db;
 
 /**
- * @method \Pimcore\Model\Version\Dao getDao()
+ * @method \Pimcore\Model\GridConfig\Dao getDao()
  */
 class GridConfig extends AbstractModel
 {

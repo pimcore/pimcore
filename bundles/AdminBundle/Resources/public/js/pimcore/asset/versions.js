@@ -128,7 +128,7 @@ pimcore.asset.versions = Class.create({
                 bodyStyle:'padding:20px 5px 20px 5px;',
                 border: false,
                 layout: "border",
-                iconCls: "pimcore_icon_versions",
+                iconCls: "pimcore_material_icon_versions pimcore_material_icon",
                 items: [grid,preview]
             });
 

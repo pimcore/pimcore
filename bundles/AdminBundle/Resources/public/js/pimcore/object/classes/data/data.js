@@ -242,7 +242,7 @@ pimcore.object.classes.data.data = Class.create({
 
         this.layout = new Ext.Panel({
             title: '<b>' + this.datax.name + " (" + t("type") + ": " + niceName + ")</b>",
-            bodyStyle: 'border-top: 1px solid #606060 !important;',
+            bodyStyle: 'padding: 10px;',
             items: [
                 this.standardSettingsForm,
                 this.layoutSettingsForm,

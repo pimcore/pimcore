@@ -162,7 +162,7 @@ pimcore.document.folder = Class.create(pimcore.document.document, {
 
             buttons.push({
                 tooltip: t('reload'),
-                iconCls: "pimcore_icon_reload",
+                iconCls: "pimcore_material_icon_reload pimcore_material_icon",
                 scale: "medium",
                 handler: this.reload.bind(this)
             });
@@ -170,7 +170,7 @@ pimcore.document.folder = Class.create(pimcore.document.document, {
             if (pimcore.elementservice.showLocateInTreeButton("document")) {
                 buttons.push({
                     tooltip: t('show_in_tree'),
-                    iconCls: "pimcore_icon_show_in_tree",
+                    iconCls: "pimcore_material_icon_locate pimcore_material_icon",
                     scale: "medium",
                     handler: this.selectInTree.bind(this)
                 });
@@ -178,7 +178,7 @@ pimcore.document.folder = Class.create(pimcore.document.document, {
 
             buttons.push({
                 tooltip: t("show_metainfo"),
-                iconCls: "pimcore_icon_info",
+                iconCls: "pimcore_material_icon_info pimcore_material_icon",
                 scale: "medium",
                 handler: this.showMetaInfo.bind(this)
             });
@@ -196,7 +196,7 @@ pimcore.document.folder = Class.create(pimcore.document.document, {
                 id: "document_toolbar_" + this.id,
                 region: "north",
                 border: false,
-                cls: "main-toolbar",
+                cls: "pimcore_main_toolbar",
                 items: buttons,
                 overflowHandler: 'scroller'
             });

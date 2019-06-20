@@ -89,7 +89,17 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
     /**
      * @var bool
      */
+    public $border = false;
+
+    /**
+     * @var bool
+     */
     public $provideSplitView;
+
+    /**
+     * @var string
+     */
+    public $tabPosition = 'top';
 
     /**
      * @var
@@ -279,10 +289,10 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
 
         if (!$localizedFields instanceof DataObject\Localizedfield) {
             $localizedFields = new DataObject\Localizedfield();
+            $context = isset($params['context']) ? $params['context'] : null;
+            $localizedFields->setContext($context);
         }
 
-        $context = isset($params['context']) ? $params['context'] : null;
-        $localizedFields->setContext($context);
         if ($object) {
             $localizedFields->setObject($object);
         }
@@ -768,6 +778,9 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
                     'containerKey' => $container->getType(),
                 ];
                 $lf->setContext($context);
+            } elseif ($container instanceof DataObject\Concrete) {
+                $context = ['object' => $container];
+                $lf->setContext($context);
             }
             $lf->setObject($object);
 
@@ -1008,6 +1021,22 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
     public function getLayout()
     {
         return $this->layout;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getBorder(): bool
+    {
+        return $this->border;
+    }
+
+    /**
+     * @param bool $border
+     */
+    public function setBorder(bool $border): void
+    {
+        $this->border = $border;
     }
 
     /**
@@ -1448,5 +1477,21 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
     public function supportsDirtyDetection()
     {
         return true;
+    }
+
+    /**
+     * @return string
+     */
+    public function getTabPosition(): string
+    {
+        return $this->tabPosition;
+    }
+
+    /**
+     * @param string $tabPosition
+     */
+    public function setTabPosition($tabPosition): void
+    {
+        $this->tabPosition = $tabPosition;
     }
 }

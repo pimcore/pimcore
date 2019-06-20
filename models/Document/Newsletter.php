@@ -121,20 +121,6 @@ class Newsletter extends Model\Document\PageSnippet
     }
 
     /**
-     * Returns the "from" email address as array
-     *
-     * @deprecated use \Pimcore\Helper\Mail::parseEmailAddressField instead
-     *
-     * @return array
-     */
-    public function getFromAsArray()
-    {
-        $emailAddresses = preg_split('/,|;/', $this->getFrom());
-
-        return array_map('trim', $emailAddresses);
-    }
-
-    /**
      * @return bool
      */
     public function getEnableTrackingParameters()

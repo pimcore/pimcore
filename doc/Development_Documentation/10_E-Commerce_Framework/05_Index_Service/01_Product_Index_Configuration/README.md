@@ -108,14 +108,14 @@ options are available:
 - `getter_id` (optional): Service ID of a special getter implementation for getting attribute value. Per default, the
    method `get<NAME>()` of the product object is called. If this is not suitable, an alternative getter class can be defined
    which is responsible for getting the value. This can be used for calculations, getting complex values (field collections,
-   object bricks), etc. Getter implementations need to implement `\Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Getter\IGetter`
+   object bricks), etc. Getter implementations need to implement `\Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Getter\GetterInterface`
    interface and be defined as service. Best practice is to use the fully qualified class name as service ID and to reference
    the class name in the configuration.
 - `getter_options` (optional): options passed to the getter when resolving a value. Available options vary by getter implementation.
 - `interpreter_id` (optional): By default all data is stored without any transformation in the Product Index. With an 
    interpreter, this data can be transformed and manipulated before storing. This can be used for only saving IDs 
    of assets, normalization of data, special treatment of relations, etc. Interpreter implementations need to implement
-   `Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Interpreter\Interpreter` interface. The same service ID best practices
+   `Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Interpreter\InterpreterInterface` interface. The same service ID best practices
    as for getters apply to interpreters.
 - `interpreter_options` (optional): options passed to the interpreter. Available options vary by interpreter implementation.
 - `hide_in_fieldlist_datatype` (optional): Hides column in FieldList drop down (see [FilterService](../../07_Filter_Service/README.md) 
@@ -128,7 +128,7 @@ Relations are stored in a special way in *Product Index* and also need to be fil
 [Product List](../07_Product_List.md).
  
 In order to store relations correctly in the Product Index, relation attributes must have an interpreter defined which 
-implements the interface `Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Interpreter\IRelationInterpreter`. 
+implements the interface `Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Interpreter\RelationInterpreterInterface`. 
 
 
 #### Selection of available Getters:

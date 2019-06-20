@@ -77,11 +77,7 @@ class LowQualityImagePreviewCommand extends AbstractCommand
             $list->setLimit($perLoop);
             $list->setOffset($i * $perLoop);
 
-            /**
-             * @var $images Asset\Image[]
-             */
-            $images = $list->load();
-            foreach ($images as $image) {
+            foreach ($list as $image) {
                 if ($force || !file_exists($image->getLowQualityPreviewFileSystemPath())) {
                     $image->generateLowQualityPreview($generator);
                     $this->output->writeln('generating low quality preview for image: ' . $image->getRealFullPath() . ' | ' . $image->getId());

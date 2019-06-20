@@ -81,8 +81,8 @@ pimcore.report.qrcode.panel = Class.create({
                     id: '0'
                 },
                 rootVisible: false,
-                tbar: Ext.create('Ext.Toolbar', {
-                    cls: 'main-toolbar',
+                tbar: {
+                    cls: 'pimcore_toolbar_border_bottom',
                     items: [
                         {
                             text: t("add"),
@@ -90,7 +90,7 @@ pimcore.report.qrcode.panel = Class.create({
                             handler: this.addField.bind(this)
                         }
                     ]
-                }),
+                },
                 listeners: this.getTreeNodeListeners()
             });
 

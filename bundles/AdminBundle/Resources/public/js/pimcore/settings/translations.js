@@ -190,7 +190,7 @@ pimcore.settings.translations = Class.create({
         });
 
         var toolbar = Ext.create('Ext.Toolbar', {
-            cls: 'main-toolbar',
+            cls: 'pimcore_main_toolbar',
             items: [
                 {
                     text: t('add'),
@@ -357,7 +357,7 @@ pimcore.settings.translations = Class.create({
                     items: [this.csvSettingsPanel.getPanel()],
                     buttons: [{
                         text: t("cancel"),
-                        iconCls: "pimcore_icon_delete",
+                        iconCls: "pimcore_icon_cancel",
                         handler: function () {
                             win.close();
                         }

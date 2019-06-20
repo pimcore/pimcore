@@ -33,7 +33,7 @@ class Dao extends Model\Dao\AbstractDao
     {
         $data = $this->db->fetchRow('SELECT * FROM sites WHERE id = ?', $id);
         if (!$data['id']) {
-            throw new \Exception('there is no site for the requested id');
+            throw new \Exception(sprintf('Unable to load site with ID `%s`', $id));
         }
         $this->assignVariablesToModel($data);
     }
@@ -47,7 +47,7 @@ class Dao extends Model\Dao\AbstractDao
     {
         $data = $this->db->fetchRow('SELECT * FROM sites WHERE rootId = ?', $id);
         if (!$data['id']) {
-            throw new \Exception('there is no site for the requested rootId');
+            throw new \Exception(sprintf('Unable to load site with ID `%s`', $id));
         }
         $this->assignVariablesToModel($data);
     }

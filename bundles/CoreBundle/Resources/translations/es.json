@@ -562,7 +562,6 @@
     "press_crtl_and_select_to_compare": "press_crtl_and_select_to_compare",
     "clear_filters": "clear_filters",
     "tags_configuration": "Configuración de tags",
-    "legacy_mode": "Legacy Mode",
     "export_csv_include_headers": "Exportar CSV con cabecera",
     "open_data_object": "Abrir objeto",
     "data_objects": "Objetos de datos",
@@ -892,5 +891,8 @@
     "split_view_object_dirty_title": "Please confirm",
     "split_view_object_dirty_msg": "There are unsaved modifications. You will lose all changes. Are you sure?",
     "converter_service": "Converter service",
-    "auto_convert": "Automatic conversion"
+    "auto_convert": "Automatic conversion",
+    "web2print_enableDebugMode": "Enable debug mode",
+    "set_to_null": "Empty (set to null)",
+    "bundles": "Bundles"
 }

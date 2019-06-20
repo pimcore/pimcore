@@ -74,10 +74,13 @@ class Task extends Model\AbstractModel
                 throw new \Exception('Scheduled Task in Registry is not valid');
             }
         } catch (\Exception $e) {
-            $task = new self();
-            $task->getDao()->getById(intval($id));
-
-            \Pimcore\Cache\Runtime::set($cacheKey, $task);
+            try {
+                $task = new self();
+                $task->getDao()->getById(intval($id));
+                \Pimcore\Cache\Runtime::set($cacheKey, $task);
+            } catch (\Exception $e) {
+                return null;
+            }
         }
 
         return $task;

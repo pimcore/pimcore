@@ -66,8 +66,6 @@ class Newsletter
         // render the document and rewrite the links (if analytics is enabled)
         if ($newsletterDocument->getEnableTrackingParameters()) {
             if ($contentHTML) {
-                include_once(PIMCORE_PATH . '/lib/simple_html_dom.php');
-
                 $html = str_get_html($contentHTML);
                 if ($html) {
                     $links = $html->find('a');
@@ -114,8 +112,16 @@ class Newsletter
     public static function sendNewsletterDocumentBasedMail(Mail $mail, SendingParamContainer $sendingContainer)
     {
         $mailAddress = $sendingContainer->getEmail();
+
+        if (!self::to_domain_exists($mailAddress)) {
+            Logger::err('E-Mail address invalid: ' . self::obfuscateEmail($mailAddress));
+            $mailAddress = null;
+        }
+
         if (!empty($mailAddress)) {
             $mail->setTo($mailAddress);
+            //Getting bounces
+            $mail->setReturnPath(key($mail->getFrom()));
 
             $mailer = null;
             //check if newsletter specific mailer is needed
@@ -191,8 +197,6 @@ class Newsletter
         // render the document and rewrite the links (if analytics is enabled)
         if ($newsletter->getGoogleAnalytics()) {
             if ($content = $mail->getBodyHtmlRendered()) {
-                include_once(PIMCORE_PATH . '/lib/simple_html_dom.php');
-
                 $html = str_get_html($content);
                 if ($html) {
                     $links = $html->find('a');
@@ -522,5 +526,19 @@ class Newsletter
     public function getClass()
     {
         return $this->class;
+    }
+
+    /**
+     * Checks if domain of email has a MX record
+     *
+     * @email string $email
+     *
+     * @return bool
+     */
+    public function to_domain_exists($email)
+    {
+        list($user, $domain) = explode('@', $email);
+
+        return checkdnsrr($domain, 'MX');
     }
 }
