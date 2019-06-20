@@ -1010,13 +1010,11 @@ abstract class Data
     }
 
     /**
-     * Creates getter code which is used for generation of php file for object classes using this data type
-     *
-     * @param $class
+     * Creates filter method code for listing classes
      *
      * @return string
      */
-    public function getFilterCode($class)
+    public function getFilterCode()
     {
         $key = $this->getName();
 

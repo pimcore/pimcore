@@ -472,10 +472,10 @@ class ClassDefinition extends Model\AbstractModel
             foreach ($this->getFieldDefinitions() as $key => $def) {
                 if($def instanceof DataObject\ClassDefinition\Data\Localizedfields) {
                     foreach($def->getFieldDefinitions() as $localizedFieldDefinition) {
-                        $cd .= $localizedFieldDefinition->getFilterCode($this);
+                        $cd .= $localizedFieldDefinition->getFilterCode();
                     }
                 } elseif($def->isFilterable()) {
-                    $cd .= $def->getFilterCode($this);
+                    $cd .= $def->getFilterCode();
                 }
             }
         }
