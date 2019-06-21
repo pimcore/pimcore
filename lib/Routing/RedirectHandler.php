@@ -222,17 +222,21 @@ class RedirectHandler implements LoggerAwareInterface
             // acquire lock to avoid concurrent redirect cache warm-up
             Lock::acquire($cacheKey);
 
-            try {
-                $list = new Redirect\Listing();
-                $list->setCondition('active = 1');
-                $list->setOrder('DESC');
-                $list->setOrderKey('priority');
+            //check again if redirects are cached to avoid re-warming cache
+            if (!($this->redirects = Cache::load($cacheKey))) {
 
-                $this->redirects = $list->load();
+                try {
+                    $list = new Redirect\Listing();
+                    $list->setCondition('active = 1');
+                    $list->setOrder('DESC');
+                    $list->setOrderKey('priority');
 
-                Cache::save($this->redirects, $cacheKey, ['system', 'redirect', 'route'], null, 998);
-            } catch (\Exception $e) {
-                $this->logger->error('Failed to load redirects');
+                    $this->redirects = $list->load();
+
+                    Cache::save($this->redirects, $cacheKey, ['system', 'redirect', 'route'], null, 998, true);
+                } catch (\Exception $e) {
+                    $this->logger->error('Failed to load redirects');
+                }
             }
 
             Lock::release($cacheKey);
