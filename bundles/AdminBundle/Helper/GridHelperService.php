@@ -546,9 +546,7 @@ class GridHelperService
         $this->addGridFeatureJoins($list, $featureJoins, $class, $featureFilters);
         $list->setLocale($requestedLanguage);
 
-        if (!$requestParams['filter']
-            && !$requestParams['condition']
-            && (!$sortingSettings['order'] || !$sortingSettings['orderKey'])) {
+        if (!$requestParams['filter'] && !$requestParams['condition'] && !$requestParams['sort']) {
             $list->setIgnoreLocalizedFields(true);
         }
 
