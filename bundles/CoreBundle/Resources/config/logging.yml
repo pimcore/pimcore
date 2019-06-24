@@ -34,6 +34,7 @@ services:
 
     # the DB write handler
     Pimcore\Log\Handler\ApplicationLoggerDb:
+        public: true
         calls:
             - [pushProcessor, ['@monolog.processor.psr_log_message']]
             - [pushProcessor, ['@Pimcore\Log\Processor\ApplicationLoggerProcessor']]
