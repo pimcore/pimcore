@@ -610,7 +610,6 @@ $scripts = array(
     "pimcore/object/layout/iframe.js",
     "pimcore/object/customviews/tree.js",
     "pimcore/object/quantityvalue/unitsettings.js",
-    "pimcore/object/quantityvalue/unitsettings.js",
     "pimcore/object/gridexport/abstract.js",
     "pimcore/object/gridexport/xlsx.js",
     "pimcore/object/gridexport/csv.js",
