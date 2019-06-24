@@ -84,6 +84,8 @@ pimcore_ecommerce_framework:
 In addition to the `type` configuration, you also can provide custom mappings for a field. If provided, these mapping 
 configurations are used for creating the mapping of the elastic search index.
 
+You can also skip the `type` and `mapping`, then ES will try to create dynamic mapping. 
+
 ```yml
 
 pimcore_ecommerce_framework:
