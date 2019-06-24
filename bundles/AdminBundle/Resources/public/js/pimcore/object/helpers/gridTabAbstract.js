@@ -485,7 +485,7 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
     },
 
 
-    exportPrepare: function(settings){
+    exportPrepare: function(settings, exportType){
         var jobs = [];
 
         var filters = "";
@@ -514,6 +514,7 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
 
         settings = Ext.encode(settings);
 
+
         var params = {
             filter: filters,
             condition: condition,
@@ -536,14 +537,14 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
                 var rdata = Ext.decode(response.responseText);
 
                 if (rdata.success && rdata.jobs) {
-                    this.exportProcess(rdata.jobs, rdata.fileHandle, fieldKeys, true, settings);
+                    this.exportProcess(rdata.jobs, rdata.fileHandle, fieldKeys, true, settings, exportType);
                 }
 
             }.bind(this)
         });
     },
 
-    exportProcess: function (jobs, fileHandle, fields, initial, settings) {
+    exportProcess: function (jobs, fileHandle, fields, initial, settings, exportType) {
 
         if(initial){
 
@@ -582,7 +583,11 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
                 }
                 Ext.Msg.alert(t("error"), t("error_jobs") + ": " + jobErrors.join(","));
             } else {
-                pimcore.helpers.download("/admin/object-helper/download-csv-file?fileHandle=" + fileHandle);
+                pimcore.helpers.download("/admin/object-helper/download-export-file?fileHandle="
+                    + fileHandle
+                    + "&exportType="
+                    + exportType.name
+                );
             }
 
             return;
@@ -618,7 +623,7 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
 
                 window.setTimeout(function() {
                     this.exportJobCurrent++;
-                    this.exportProcess(jobs, fileHandle, fields);
+                    this.exportProcess(jobs, fileHandle, fields, false, settings, exportType);
                 }.bind(this), 400);
             }.bind(this,jobs, jobs[this.exportJobCurrent])
         });

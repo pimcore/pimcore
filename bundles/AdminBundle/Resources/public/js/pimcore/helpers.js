@@ -2746,6 +2746,100 @@ pimcore.helpers.csvExportWarning = function (callback) {
     window.show();
 };
 
+pimcore.helpers.exportWarning = function (type, callback) {
+
+    var iconComponent = new Ext.Component({
+        cls: "x-message-box-warning x-dlg-icon"
+    });
+
+    var textContainer = Ext.Component({
+        html: t('object_export_warning')
+    });
+
+    var promptContainer = new Ext.container.Container({
+        flex: 1,
+        layout: {
+            type: 'vbox',
+            align: 'stretch'
+        },
+        padding: '0px 0px 0px 10px',
+        items: [textContainer]
+    });
+
+    var topContainer = new Ext.container.Container({
+            layout: 'hbox',
+            padding: 10,
+            style: {
+                overflow: 'hidden'
+            },
+            items: [iconComponent, promptContainer]
+        }
+    );
+
+    var enableInheritance = new Ext.form.Checkbox({
+        fieldLabel: t('enable_inheritance'),
+        name: 'enableInheritance',
+        inputValue: true,
+        labelWidth: 200
+    });
+
+    var objectSettingsContainer = new Ext.form.FieldSet({
+        title: t('object_settings'),
+        items: [
+            enableInheritance
+        ]
+    });
+
+    var delimiter = new Ext.form.TextField({
+        fieldLabel: t('delimiter'),
+        name: 'delimiter',
+        maxLength: 1,
+        labelWidth: 200,
+        value: ';'
+    });
+
+
+    var csvSettingsContainer = new Ext.form.FieldSet({
+        title: t('csv_settings'),
+        items: [
+            delimiter
+        ]
+    });
+
+    var formPanel = new Ext.form.FormPanel({
+        bodyStyle: 'padding:10px',
+        items: [objectSettingsContainer, csvSettingsContainer]
+    });
+
+
+    var window = new Ext.Window({
+        modal: true,
+        title: t('export_csv'),
+        width: 600,
+        height: 450,
+        bodyStyle: "padding: 10px;",
+        buttonAlign: "center",
+        shadow: false,
+        closable: true,
+        items: [topContainer, formPanel],
+        buttons: [{
+            text: t("OK"),
+            handler: function () {
+                callback(formPanel.getValues());
+                window.close();
+            }.bind(this)
+        },
+            {
+                text: t("cancel"),
+                handler: function () {
+                    window.close();
+                }
+            }
+        ]
+    });
+    window.show();
+};
+
 pimcore.helpers.generatePassword = function (len) {
     var length = (len) ? (len) : (10);
     var string = "abcdefghijklmnopqrstuvwxyz"; //to upper

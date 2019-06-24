@@ -450,6 +450,7 @@
   "tabindex": "Tab-Index",
   "not_set": "not set",
   "export_csv": "CSV Export",
+  "export_xlsx": "XLSX Export",
   "import_csv": "CSV Import",
   "show_welcome_screen": "Show welcome screen on startup",
   "importFileHasHeadRow": "first row = headline",
