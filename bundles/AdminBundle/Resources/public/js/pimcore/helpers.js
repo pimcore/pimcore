@@ -2613,7 +2613,6 @@ pimcore.helpers.requestNicePathData = function (source, targets, config, fieldCo
     });
 };
 
-
 pimcore.helpers.getNicePathHandlerStore = function (store, config, gridView, responseData) {
     config = config || {};
     Ext.applyIf(config, {

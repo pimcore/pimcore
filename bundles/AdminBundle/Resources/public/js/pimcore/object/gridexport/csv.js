@@ -15,6 +15,7 @@ pimcore.registerNS("pimcore.gridexport.csv");
 pimcore.gridexport.csv = Class.create(pimcore.gridexport.abstract, {
     name: "csv",
     text: t("export_csv"),
+    downloadUrl: "/admin/object-helper/download-csv-file"
 });
 
 pimcore.globalmanager.get("pimcore.gridexport").push(new pimcore.gridexport.csv())

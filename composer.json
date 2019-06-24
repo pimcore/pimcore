@@ -89,7 +89,8 @@
     "vrana/jush": "~2.0.2",
     "zendframework/zend-paginator": "^2.7",
     "zendframework/zend-servicemanager": "^3.2",
-    "scheb/two-factor-bundle": "^3.8"
+    "scheb/two-factor-bundle": "^3.8",
+    "phpoffice/phpspreadsheet": "^1.7",
   },
   "require-dev": {
     "cache/integration-tests": "^0.16.0",
