@@ -1326,10 +1326,7 @@ class AssetController extends ElementControllerBase implements EventedController
         $thumb = $document->getImageThumbnail($thumbnail, $page);
         $thumbnailFile = $thumb->getFileSystemPath();
 
-        $format = 'png';
-
         $response = new BinaryFileResponse($thumbnailFile);
-        $response->headers->set('Content-type', 'image/' . $format);
         $this->addThumbnailCacheHeaders($response);
 
         return $response;
