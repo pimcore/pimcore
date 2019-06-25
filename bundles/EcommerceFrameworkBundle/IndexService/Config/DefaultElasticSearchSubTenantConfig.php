@@ -14,9 +14,7 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\EnvironmentInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IndexableInterface;
-use Pimcore\Db\ConnectionInterface;
 
 /**
  * Sample implementation for sub-tenants based on elastic search.
@@ -59,6 +57,6 @@ class DefaultElasticSearchSubTenantConfig extends ElasticSearch
             }
         }
 
-        return $subTenantData;
+        return ["ids" => $subTenantData];
     }
 }
