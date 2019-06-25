@@ -148,7 +148,13 @@ class Service extends Model\Element\Service
         // add to store
         $this->_copyRecursiveIds[] = $new->getId();
 
-        foreach ($source->getChildren() as $child) {
+        $children = $source->getChildren([
+            AbstractObject::OBJECT_TYPE_OBJECT,
+            AbstractObject::OBJECT_TYPE_VARIANT,
+            AbstractObject::OBJECT_TYPE_FOLDER
+        ], true);
+
+        foreach ($children as $child) {
             $this->copyRecursive($new, $child);
         }
 

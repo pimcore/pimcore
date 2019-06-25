@@ -174,7 +174,7 @@ class Service extends Model\Element\Service
         // add to store
         $this->_copyRecursiveIds[] = $new->getId();
 
-        foreach ($source->getChildren() as $child) {
+        foreach ($source->getChildren(true) as $child) {
             $this->copyRecursive($new, $child);
         }
 
