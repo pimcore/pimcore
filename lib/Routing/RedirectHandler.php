@@ -218,13 +218,12 @@ class RedirectHandler implements LoggerAwareInterface
         }
 
         $cacheKey = 'system_route_redirect';
-        if (!($this->redirects = Cache::load($cacheKey))) {
+        if (($this->redirects = Cache::load($cacheKey)) === false) {
             // acquire lock to avoid concurrent redirect cache warm-up
             Lock::acquire($cacheKey);
 
             //check again if redirects are cached to avoid re-warming cache
-            if (!($this->redirects = Cache::load($cacheKey))) {
-
+            if (($this->redirects = Cache::load($cacheKey)) === false) {
                 try {
                     $list = new Redirect\Listing();
                     $list->setCondition('active = 1');
