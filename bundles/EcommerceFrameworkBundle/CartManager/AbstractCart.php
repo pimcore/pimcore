@@ -929,7 +929,7 @@ abstract class AbstractCart extends \Pimcore\Model\AbstractModel implements Cart
      */
     protected static function isValidCartItem(CartItemInterface $item)
     {
-        if ($item->getProduct() != null) {
+        if ($item->getProduct() instanceof CheckoutableInterface) {
             return true;
         } else {
             Logger::warn('product ' . $item->getProductId() . ' not found');
