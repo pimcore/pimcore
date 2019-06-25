@@ -338,7 +338,7 @@ class GridHelperService
     {
         if ($featureJoins) {
             $me = $list;
-            $list->onCreateQuery(function (Db\ZendCompatibility\QueryBuilder $select) use ($list, $featureJoins, $class, $featureFilters, $me) {
+            $list->onCreateQuery(function (Db\ZendCompatibility\QueryBuilder $select) use ($featureJoins, $class, $featureFilters, $me) {
                 $db = \Pimcore\Db::get();
 
                 $alreadyJoined = [];
