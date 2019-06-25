@@ -16,7 +16,7 @@ of saving products, since all *Product Indices* need to be updated on every save
 By default the system always uses one heavy-weight tenant (= `DefaultMysql`), but the default tenant can be disabled. 
 
 
-### Configuration of Assortment Tenants
+## Assortment Tenants
 For setting up an Assortment Tenant, following steps are necessary: 
 
 - **Implementation of a Tenant Config:**
@@ -96,10 +96,11 @@ The Index Service provides the corresponding Product List implementation based o
   //doing stuff with product list
 ```
 
-
-### Implementing an Assortment Subtenant
+## Assortment Subtenants
 Subtenants are light-weight tenants, which share the same Product Index with the same attributes as their parent 
 assortment tenant.
+
+### Implementing an Assortment Subtenant for MySQL
 The mapping which product is assigned to with subtenant is done with an additional mapping table. The necessary 
 joins and conditions are implemented within additional methods within 
 [`Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\MysqlConfigInterface`](https://github.com/pimcore/pimcore/blob/master/bundles/EcommerceFrameworkBundle/IndexService/Config/MysqlConfigInterface.php): 
@@ -154,4 +155,26 @@ In order to populate the additional mapping data, also following methods have to
 
 For an complete example have a look at the [sample implementation](https://github.com/pimcore/pimcore/blob/master/bundles/EcommerceFrameworkBundle/IndexService/Config/DefaultMysqlSubTenantConfig.php).
 
-> Note: This is currently only implemented for mysql based Product Index Implementations. 
+
+### Implementing an Assortment Subtenant for Elastic Search
+
+In order to populate the additional mapping data, the following method has to be implemented: 
+
+```php
+    /**
+     * in case of subtenants returns a data structure containing all sub tenants
+     *
+     * @param IndexableInterface $object
+     * @param null $subObjectId
+     *
+     * @return array $subTenantData
+     */
+    public function prepareSubTenantEntries(IIndexable $object, $subObjectId = null);
+
+```
+
+For an complete example have a look at the [sample implementation](https://github.com/pimcore/pimcore/blob/master/bundles/EcommerceFrameworkBundle/IndexService/Config/DefaultElasticSearchSubTenantConfig.php).
+
+---
+
+> Note: This is currently only implemented for MySQL and Elastic Search based product index implementations. 

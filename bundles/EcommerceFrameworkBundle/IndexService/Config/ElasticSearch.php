@@ -14,6 +14,7 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config;
 
+use Pimcore\Bundle\EcommerceFrameworkBundle\EnvironmentInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\Definition\Attribute;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Interpreter\RelationInterpreterInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\ElasticSearch\AbstractElasticSearch as DefaultElasticSearchWorker;
@@ -66,6 +67,11 @@ class ElasticSearch extends AbstractConfig implements MockupConfigInterface, Ela
         'active' => 'system.active',
         'inProductList' => 'system.inProductList',
     ];
+
+    /**
+     * @var EnvironmentInterface
+     */
+    protected $environment;
 
     protected function addAttribute(Attribute $attribute)
     {
@@ -183,11 +189,11 @@ class ElasticSearch extends AbstractConfig implements MockupConfigInterface, Ela
      * @param IndexableInterface $object
      * @param null $subObjectId
      *
-     * @return mixed $subTenantData
+     * @return array $subTenantData
      */
     public function prepareSubTenantEntries(IndexableInterface $object, $subObjectId = null)
     {
-        return null;
+        return [];
     }
 
     /**
@@ -212,7 +218,11 @@ class ElasticSearch extends AbstractConfig implements MockupConfigInterface, Ela
      */
     public function getSubTenantCondition()
     {
-        return;
+        if ($currentSubTenant = $this->environment->getCurrentAssortmentSubTenant()) {
+            return ['term' => ['subtenants.ids' => $currentSubTenant]];
+        }
+
+        return [];
     }
 
     /**
@@ -256,4 +266,15 @@ class ElasticSearch extends AbstractConfig implements MockupConfigInterface, Ela
     {
         return $this->getTenantWorker()->getMockupFromCache($objectId);
     }
+
+    /**
+     * @required
+     *
+     * @param EnvironmentInterface $environment
+     */
+    public function setEnvironment(EnvironmentInterface $environment)
+    {
+        $this->environment = $environment;
+    }
+
 }
