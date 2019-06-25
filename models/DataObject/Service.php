@@ -40,7 +40,7 @@ class Service extends Model\Element\Service
     protected $_copyRecursiveIds;
 
     /**
-     * @var Model\User
+     * @var Model\User|null
      */
     protected $_user;
 
@@ -52,7 +52,7 @@ class Service extends Model\Element\Service
     protected static $systemFields = ['o_path', 'o_key', 'o_id', 'o_published', 'o_creationDate', 'o_modificationDate', 'o_fullpath'];
 
     /**
-     * @param  Model\User $user
+     * @param Model\User $user
      */
     public function __construct($user = null)
     {
@@ -138,8 +138,8 @@ class Service extends Model\Element\Service
         $new->setChildren(null);
         $new->setKey(Element\Service::getSaveCopyName('object', $new->getKey(), $target));
         $new->setParentId($target->getId());
-        $new->setUserOwner($this->_user->getId());
-        $new->setUserModification($this->_user->getId());
+        $new->setUserOwner($this->_user ? $this->_user->getId() : 0);
+        $new->setUserModification($this->_user ? $this->_user->getId() : 0);
         $new->setDao(null);
         $new->setLocked(false);
         $new->setCreationDate(time());
@@ -185,8 +185,8 @@ class Service extends Model\Element\Service
         $new->setChildren(null);
         $new->setKey(Element\Service::getSaveCopyName('object', $new->getKey(), $target));
         $new->setParentId($target->getId());
-        $new->setUserOwner($this->_user->getId());
-        $new->setUserModification($this->_user->getId());
+        $new->setUserOwner($this->_user ? $this->_user->getId() : 0);
+        $new->setUserModification($this->_user ? $this->_user->getId() : 0);
         $new->setDao(null);
         $new->setLocked(false);
         $new->setCreationDate(time());
@@ -234,7 +234,7 @@ class Service extends Model\Element\Service
         $new->setParentId($target->getParentId());
         $new->setScheduledTasks($source->getScheduledTasks());
         $new->setProperties($source->getProperties());
-        $new->setUserModification($this->_user->getId());
+        $new->setUserModification($this->_user ? $this->_user->getId() : 0);
 
         $new->save();
 
