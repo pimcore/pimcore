@@ -184,8 +184,7 @@ class ElasticSearch extends AbstractConfig implements MockupConfigInterface, Ela
     }
 
     /**
-     * in case of subtenants returns a data structure containing all sub tenants,
-     * should return an array of IDs of sub tenant assortments
+     * in case of subtenants returns a data structure containing all sub tenants
      *
      * @param IndexableInterface $object
      * @param null $subObjectId
@@ -220,7 +219,7 @@ class ElasticSearch extends AbstractConfig implements MockupConfigInterface, Ela
     public function getSubTenantCondition()
     {
         if ($currentSubTenant = $this->environment->getCurrentAssortmentSubTenant()) {
-            return ['term' => ['subtenants' => $currentSubTenant]];
+            return ['term' => ['subtenants.ids' => $currentSubTenant]];
         }
 
         return [];

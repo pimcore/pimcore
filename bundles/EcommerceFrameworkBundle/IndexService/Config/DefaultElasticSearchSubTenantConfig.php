@@ -57,6 +57,6 @@ class DefaultElasticSearchSubTenantConfig extends ElasticSearch
             }
         }
 
-        return $subTenantData;
+        return ["ids" => $subTenantData];
     }
 }
