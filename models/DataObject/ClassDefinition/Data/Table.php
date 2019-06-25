@@ -78,7 +78,7 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
     /**
      * @var array
      */
-    public $columnConfig;
+    public $columnConfig = [];
 
     /**
      * Type for the column to query
