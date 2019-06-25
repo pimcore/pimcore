@@ -130,7 +130,7 @@ pimcore.settings.translations = Class.create({
         })
         ;
 
-        if (pimcore.settings.websiteLanguages.length == this.editableLanguages.length) {
+        if (pimcore.settings.websiteLanguages.length == this.editableLanguages.length || this.translationType === 'admin') {
             typesColumns.push({
                 xtype: 'actioncolumn',
                 menuText: t('delete'),
