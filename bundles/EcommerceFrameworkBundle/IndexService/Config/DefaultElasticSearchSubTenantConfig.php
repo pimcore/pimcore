@@ -21,7 +21,6 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IndexableInterface;
  */
 class DefaultElasticSearchSubTenantConfig extends ElasticSearch
 {
-
     /**
      * checks, if product should be in index for current tenant (not subtenant)
      *
@@ -57,6 +56,6 @@ class DefaultElasticSearchSubTenantConfig extends ElasticSearch
             }
         }
 
-        return ["ids" => $subTenantData];
+        return ['ids' => $subTenantData];
     }
 }

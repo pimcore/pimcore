@@ -276,5 +276,4 @@ class ElasticSearch extends AbstractConfig implements MockupConfigInterface, Ela
     {
         $this->environment = $environment;
     }
-
 }
