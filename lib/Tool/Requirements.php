@@ -76,32 +76,32 @@ class Requirements
         // innodb
         $checks[] = new Check([
             'name' => 'InnoDB Support',
-            'state' => in_arrayi('innodb', $engines) ? Check::STATE_OK : Check::STATE_ERROR
+            'state' => ($engines && in_arrayi('innodb', $engines)) ? Check::STATE_OK : Check::STATE_ERROR
         ]);
 
         // myisam
         $checks[] = new Check([
             'name' => 'MyISAM Support',
-            'state' => in_arrayi('myisam', $engines) ? Check::STATE_OK : Check::STATE_ERROR
+            'state' => ($engines && in_arrayi('myisam', $engines)) ? Check::STATE_OK : Check::STATE_ERROR
         ]);
 
         // ARCHIVE
         $checks[] = new Check([
             'name' => 'ARCHIVE Support',
-            'state' => in_arrayi('archive', $engines) ? Check::STATE_OK : Check::STATE_WARNING
+            'state' => ($engines && in_arrayi('archive', $engines)) ? Check::STATE_OK : Check::STATE_WARNING
         ]);
 
         // memory
         $checks[] = new Check([
             'name' => 'MEMORY Support',
-            'state' => in_arrayi('memory', $engines) ? Check::STATE_OK : Check::STATE_ERROR
+            'state' => ($engines && in_arrayi('memory', $engines)) ? Check::STATE_OK : Check::STATE_ERROR
         ]);
 
         // check database charset =>  utf-8 encoding
         $result = $db->fetchRow('SHOW VARIABLES LIKE "character\_set\_database"');
         $checks[] = new Check([
             'name' => 'Database Charset utf8mb4',
-            'state' => ($result['Value'] == 'utf8mb4') ? Check::STATE_OK : Check::STATE_ERROR
+            'state' => ($result && (strtolower($result['Value']) == 'utf8mb4')) ? Check::STATE_OK : Check::STATE_ERROR
         ]);
 
         $largePrefix = $db->fetchRow("SHOW GLOBAL VARIABLES LIKE 'innodb\_large\_prefix';");
@@ -113,7 +113,7 @@ class Requirements
         $fileFormat = $db->fetchRow("SHOW GLOBAL VARIABLES LIKE 'innodb\_file\_format';");
         $checks[] = new Check([
             'name' => 'innodb_file_format = Barracuda',
-            'state' => ($fileFormat && !in_arrayi('barracuda', $fileFormat['Value'])) ? Check::STATE_ERROR : Check::STATE_OK
+            'state' => ($fileFormat && (strtolower($fileFormat['Value']) != 'barracuda')) ? Check::STATE_ERROR : Check::STATE_OK
         ]);
 
         $fileFilePerTable = $db->fetchRow("SHOW GLOBAL VARIABLES LIKE 'innodb\_file\_per\_table';");
