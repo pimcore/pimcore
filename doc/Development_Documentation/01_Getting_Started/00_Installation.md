@@ -39,6 +39,8 @@ COMPOSER_MEMORY_LIMIT=-1 composer create-project pimcore/demo-basic-twig my-proj
 COMPOSER_MEMORY_LIMIT=-1 composer create-project pimcore/demo-ecommerce my-project
 ```
 
+> Note: if installation is made on a custom PIMCORE_ENVIRONMENT value (different than those provided, see [app/config](https://github.com/pimcore/skeleton/tree/master/app/config), you need to prepare before the `app/config/config_[env_name].yml` file or to run the command like this `PIMCORE_ENVIRONMENT= COMPOSER_MEMORY_LIMIT=-1 composer create-project ...`
+
 Point the document root of your vhost to the newly created `/web` folder (eg. `/your/project/web`).
 Keep in mind, that Pimcore needs to be installed **outside** of the **document root**.
 Specific configurations and optimizations for your webserver are available here:
@@ -62,6 +64,8 @@ For further information please visit out [DB Setup Guide](../23_Installation_and
 cd ./my-project
 ./vendor/bin/pimcore-install
 ```
+
+> Note: if installation is made on a custom PIMCORE_ENVIRONMENT value (different than those provided, see [app/config](https://github.com/pimcore/skeleton/tree/master/app/config), you need to prepare before the `app/config/config_[env_name].yml` file (recommended as application will not work without this) or to run the command like this `PIMCORE_ENVIRONMENT= ./vendor/bin/pimcore-install`
 
 This launches the interactive installer with a few questions. Make sure that you set the `memory_limit` to at least `512M` in your php.ini file.   
 
