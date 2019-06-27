@@ -439,14 +439,14 @@ class GD extends Adapter
         return $this;
     }
 
-    protected $supportedFormatsCache = [];
+    protected static $supportedFormatsCache = [];
 
     /**
      * @inheritdoc
      */
     public function supportsFormat(string $format)
     {
-        if (!isset($this->supportedFormatsCache[$format])) {
+        if (!isset(self::$supportedFormatsCache[$format])) {
             $info = gd_info();
             $mappings = [
                 'jpg' => 'JPEG Support',
@@ -458,12 +458,12 @@ class GD extends Adapter
             ];
 
             if (isset($info[$mappings[$format]]) && $info[$mappings[$format]]) {
-                $this->supportedFormatsCache[$format] = true;
+                self::$supportedFormatsCache[$format] = true;
             } else {
-                $this->supportedFormatsCache[$format] = false;
+                self::$supportedFormatsCache[$format] = false;
             }
         }
 
-        return $this->supportedFormatsCache[$format];
+        return self::$supportedFormatsCache[$format];
     }
 }
