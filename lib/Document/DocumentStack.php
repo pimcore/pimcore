@@ -27,11 +27,17 @@ class DocumentStack
     private $documents = [];
 
     /**
+     * @var string
+     */
+    private $hash = '';
+
+    /**
      * @param Document $document
      */
     public function push(Document $document)
     {
         $this->documents[] = $document;
+        $this->regenerateHash();
     }
 
     /**
@@ -43,7 +49,10 @@ class DocumentStack
             return;
         }
 
-        return array_pop($this->documents);
+        $returnValue = array_pop($this->documents);
+        $this->regenerateHash();
+
+        return $returnValue;
     }
 
     /**
@@ -80,5 +89,22 @@ class DocumentStack
         }
 
         return null;
+    }
+
+    /**
+     * @return string
+     */
+    public function getHash() : string {
+        return $this->hash;
+    }
+
+    /**
+     *
+     */
+    private function regenerateHash() : void {
+        $this->hash = '';
+        foreach($this->documents as $document) {
+            $this->hash .= $document->getId() . "_";
+        }
     }
 }

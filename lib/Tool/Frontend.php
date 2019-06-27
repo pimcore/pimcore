@@ -152,48 +152,87 @@ class Frontend
     {
         $config = \Pimcore::getContainer()->getParameter('pimcore.config')['assets']['image']['thumbnails']['webp_auto_support'];
         if ($config) {
-            try {
-                $requestHelper = \Pimcore::getContainer()->get(RequestHelper::class);
-                $documentStack = \Pimcore::getContainer()->get(DocumentStack::class);
+            if(self::hasClientWebpSupport() && self::hasDocumentWebpSupport()) {
+                return true;
+            }
+        }
 
+        return false;
+    }
+
+
+    protected static $clientWebpSupport = null;
+
+    /**
+     * @return bool
+     */
+    protected static function hasClientWebpSupport() : bool {
+
+        if(self::$clientWebpSupport === null) {
+            self::$clientWebpSupport = self::determineClientWebpSupport();
+        }
+
+        return self::$clientWebpSupport;
+    }
+
+    /**
+     * @return bool
+     */
+    private static function determineClientWebpSupport() : bool {
+        try {
+            $requestHelper = \Pimcore::getContainer()->get(RequestHelper::class);
+            if ($requestHelper->hasMasterRequest()) {
+                $contentTypes = $requestHelper->getMasterRequest()->getAcceptableContentTypes();
+                if (in_array('image/webp', $contentTypes)) {
+                    return true;
+                }
+
+                // not nice to do a browser detection but for now the easiest way to get around the topic described in #4345
+                $userAgent = strtolower($requestHelper->getMasterRequest()->headers->get('User-Agent'));
+                if (preg_match('@(firefox|edge)/([\d]+)@', $userAgent, $matches)) {
+                    if ($matches[1] == 'firefox' && intval($matches[2]) >= 65) {
+                        return true;
+                    }
+
+                    if ($matches[1] == 'edge' && intval($matches[2]) >= 18) {
+                        return true;
+                    }
+                }
+            }
+        } catch (\Exception $e) {
+            // nothing to do
+        }
+
+        return false;
+    }
+
+    protected static $documentWebpSupport = [];
+
+    /**
+     * @return bool
+     */
+    protected static function hasDocumentWebpSupport() : bool {
+
+        try {
+            $documentStack = \Pimcore::getContainer()->get(DocumentStack::class);
+            $hash = $documentStack->getHash();
+
+            if (!isset(self::$documentWebpSupport[$hash])) {
                 // if a parent is from one of the below types, no WebP images should be rendered
                 // e.g. when an email is sent from within a document, the email shouldn't contain WebP images, even when the
                 // triggering client (browser) has WebP support, because the email client (e.g. Outlook) might not support WebP
-                $hasUnsupportedTypeInStack = $documentStack->findOneBy(function ($doc) {
+                self::$documentWebpSupport[$hash] = !(bool)$documentStack->findOneBy(function (Document $doc) {
                     if (in_array($doc->getType(), ['email', 'newsletter', 'printpage', 'printcontainer'])) {
                         return true;
                     }
 
                     return false;
                 });
-
-                if ($hasUnsupportedTypeInStack) {
-                    return false;
-                }
-
-                if ($requestHelper->hasMasterRequest()) {
-                    $contentTypes = $requestHelper->getMasterRequest()->getAcceptableContentTypes();
-                    if (in_array('image/webp', $contentTypes)) {
-                        return true;
-                    }
-
-                    // not nice to do a browser detection but for now the easiest way to get around the topic described in #4345
-                    $userAgent = strtolower($requestHelper->getMasterRequest()->headers->get('User-Agent'));
-                    if (preg_match('@(firefox|edge)/([\d]+)@', $userAgent, $matches)) {
-                        if ($matches[1] == 'firefox' && intval($matches[2]) >= 65) {
-                            return true;
-                        }
-
-                        if ($matches[1] == 'edge' && intval($matches[2]) >= 18) {
-                            return true;
-                        }
-                    }
-                }
-            } catch (\Exception $e) {
-                // nothing to do
             }
-        }
 
-        return false;
+            return self::$documentWebpSupport[$hash];
+        } catch (\Exception $e) {
+            return false;
+        }
     }
 }
