@@ -245,7 +245,7 @@ class FullPageCacheListener
         }
 
         foreach ($excludePatterns as $pattern) {
-            if (@preg_match($pattern, $requestUri)) {
+            if (@preg_match($pattern, \Pimcore\Tool::getHostname() . $requestUri)) {
                 return $this->disable('exclude path pattern in system-settings matches');
             }
         }
