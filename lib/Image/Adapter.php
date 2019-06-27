@@ -502,6 +502,7 @@ abstract class Adapter
     abstract public function getContentOptimizedFormat();
 
     /**
+     * @internal
      * @param string $format
      *
      * @return bool

@@ -14,6 +14,7 @@
 
 namespace Pimcore\Image\Adapter;
 
+use Pimcore\Cache;
 use Pimcore\Config;
 use Pimcore\File;
 use Pimcore\Image\Adapter;
@@ -968,27 +969,38 @@ class Imagick extends Adapter
         return parent::getVectorRasterDimensions();
     }
 
-    protected $supportedFormatsCache = [];
+    protected static $supportedFormatsCache = [];
 
     /**
      * @inheritdoc
      */
     public function supportsFormat(string $format)
     {
-        if (!isset($this->supportedFormatsCache[$format])) {
-            try {
-                // we don't use \Imagick::queryFormats() here, because this doesn't consider configured delegates
-                $tmpFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/' . uniqid() . '.' . $format;
-                $image = new \Imagick();
-                $image->newImage(100, 100, new \ImagickPixel('red'));
-                $image->writeImage($format . ':' . $tmpFile);
-                $this->supportedFormatsCache[$format] = true;
-                unlink($tmpFile);
-            } catch (\Exception $e) {
-                $this->supportedFormatsCache[$format] = false;
+        if (!isset(self::$supportedFormatsCache[$format])) {
+
+            // since determining if an image format is supported is quite expensive we use two-tiered caching
+            // in-process caching (static variable) and the shared cache
+            $cacheKey = 'imagick_format_' . $format;
+            if(($cachedValue = Cache::load($cacheKey)) !== false) {
+                self::$supportedFormatsCache[$format] = (bool) $cachedValue;
+            } else {
+                try {
+                    // we can't use \Imagick::queryFormats() here, because this doesn't consider configured delegates
+                    $tmpFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/imagick-format-support-detection-' . uniqid() . '.' . $format;
+                    $image = new \Imagick();
+                    $image->newImage(1, 1, new \ImagickPixel('red'));
+                    $image->writeImage($format . ':' . $tmpFile);
+                    self::$supportedFormatsCache[$format] = true;
+                    unlink($tmpFile);
+                } catch (\Exception $e) {
+                    self::$supportedFormatsCache[$format] = false;
+                }
+
+                // we cache the status as an int, so that we know if the status was cached or not, with bool that wouldn't be possible, since load() returns false if item doesn't exists
+                Cache::save((int) self::$supportedFormatsCache[$format], $cacheKey, [], null, 999, true);
             }
         }
 
-        return $this->supportedFormatsCache[$format];
+        return self::$supportedFormatsCache[$format];
     }
 }
