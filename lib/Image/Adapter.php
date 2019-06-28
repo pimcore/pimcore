@@ -503,6 +503,7 @@ abstract class Adapter
 
     /**
      * @internal
+     *
      * @param string $format
      *
      * @return bool

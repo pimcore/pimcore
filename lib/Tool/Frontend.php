@@ -152,7 +152,7 @@ class Frontend
     {
         $config = \Pimcore::getContainer()->getParameter('pimcore.config')['assets']['image']['thumbnails']['webp_auto_support'];
         if ($config) {
-            if(self::hasClientWebpSupport() && self::hasDocumentWebpSupport()) {
+            if (self::hasClientWebpSupport() && self::hasDocumentWebpSupport()) {
                 return true;
             }
         }
@@ -160,15 +160,14 @@ class Frontend
         return false;
     }
 
-
     protected static $clientWebpSupport = null;
 
     /**
      * @return bool
      */
-    protected static function hasClientWebpSupport() : bool {
-
-        if(self::$clientWebpSupport === null) {
+    protected static function hasClientWebpSupport(): bool
+    {
+        if (self::$clientWebpSupport === null) {
             self::$clientWebpSupport = self::determineClientWebpSupport();
         }
 
@@ -178,7 +177,8 @@ class Frontend
     /**
      * @return bool
      */
-    private static function determineClientWebpSupport() : bool {
+    private static function determineClientWebpSupport(): bool
+    {
         try {
             $requestHelper = \Pimcore::getContainer()->get(RequestHelper::class);
             if ($requestHelper->hasMasterRequest()) {
@@ -211,8 +211,8 @@ class Frontend
     /**
      * @return bool
      */
-    protected static function hasDocumentWebpSupport() : bool {
-
+    protected static function hasDocumentWebpSupport(): bool
+    {
         try {
             $documentStack = \Pimcore::getContainer()->get(DocumentStack::class);
             $hash = $documentStack->getHash();

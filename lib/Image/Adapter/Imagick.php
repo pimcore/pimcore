@@ -981,7 +981,7 @@ class Imagick extends Adapter
             // since determining if an image format is supported is quite expensive we use two-tiered caching
             // in-process caching (static variable) and the shared cache
             $cacheKey = 'imagick_format_' . $format;
-            if(($cachedValue = Cache::load($cacheKey)) !== false) {
+            if (($cachedValue = Cache::load($cacheKey)) !== false) {
                 self::$supportedFormatsCache[$format] = (bool) $cachedValue;
             } else {
                 try {
