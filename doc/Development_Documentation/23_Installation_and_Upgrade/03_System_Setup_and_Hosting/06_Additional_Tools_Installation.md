@@ -109,4 +109,26 @@ Install webp for [WebP-Support](https://pimcore.com/docs/5.x/Development_Documen
 apt-get install webp
 ```
 
+## Graphviz
 
+Install graphviz for [Workflow](https://pimcore.com/docs/5.x/Development_Documentation/Workflow_Management/index.html#page_Workflow-Overview)
+
+```bash
+apt-get install graphviz
+```
+
+## Facedetect
+
+Install facedetect for [image thumbnails focal point](https://pimcore.com/docs/5.x/Development_Documentation/Assets/Working_with_Thumbnails/Image_Thumbnails.html#page_Explanation-of-the-Transformations)
+
+```bash
+apt-get install facedetect
+```
+
+# html2text
+
+Install html2text for [Pimcore mail](https://pimcore.com/docs/5.x/Development_Documentation/Development_Tools_and_Details/Email_Framework/Pimcore_Mail.html)
+
+```bash
+apt-get install html2text
+```
