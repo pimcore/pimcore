@@ -103,7 +103,7 @@ apt-get install libimage-exiftool-perl
 
 ## WebP
 
-Install webp for [WebP-Support](https://pimcore.com/docs/5.x/Development_Documentation/Assets/Working_with_Thumbnails/Image_Thumbnails.html#page_WebP-Support)
+Install webp for [WebP-Support](../../04_Assets/03_Working_with_Thumbnails/01_Image_Thumbnails.md#page_WebP-Support)
 
 ```bash 
 apt-get install webp
@@ -111,7 +111,7 @@ apt-get install webp
 
 ## Graphviz
 
-Install graphviz for [Workflow](https://pimcore.com/docs/5.x/Development_Documentation/Workflow_Management/index.html#page_Workflow-Overview)
+Install graphviz for [Workflow](../../07_Workflow_Management/README.md#page_Workflow-Overview)
 
 ```bash
 apt-get install graphviz
@@ -119,7 +119,7 @@ apt-get install graphviz
 
 ## Facedetect
 
-Install facedetect for [image thumbnails focal point](https://pimcore.com/docs/5.x/Development_Documentation/Assets/Working_with_Thumbnails/Image_Thumbnails.html#page_Explanation-of-the-Transformations)
+Install facedetect for [image thumbnails focal point](../../04_Assets/03_Working_with_Thumbnails/01_Image_Thumbnails.md#page_Explanation-of-the-Transformations)
 
 ```bash
 apt-get install facedetect
@@ -127,7 +127,7 @@ apt-get install facedetect
 
 # html2text
 
-Install html2text for [Pimcore mail](https://pimcore.com/docs/5.x/Development_Documentation/Development_Tools_and_Details/Email_Framework/Pimcore_Mail.html)
+Install html2text for [Pimcore mail](../../19_Development_Tools_and_Details/25_Email_Framework/01_Pimcore_Mail.md)
 
 ```bash
 apt-get install html2text
