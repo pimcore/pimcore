@@ -91,7 +91,7 @@ class CommitOrderProcessor implements CommitOrderProcessorInterface
      */
     protected function getPaymentStatus($paymentResponseParams, PaymentInterface $paymentProvider)
     {
-        $responseHash = md5(json_encode($paymentResponseParams));
+        $responseHash = md5(serialize($paymentResponseParams));
 
         if($this->lastPaymentStateResponseHash === $responseHash) {
             return $this->lastPaymentStatus;
