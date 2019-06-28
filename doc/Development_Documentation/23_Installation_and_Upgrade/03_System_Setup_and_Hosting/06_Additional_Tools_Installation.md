@@ -103,7 +103,7 @@ apt-get install libimage-exiftool-perl
 
 ## WebP
 
-Install webp for [WebP-Support](../../04_Assets/03_Working_with_Thumbnails/01_Image_Thumbnails.md#page_WebP-Support)
+Install webp for [WebP-Support](../../04_Assets/03_Working_with_Thumbnails/01_Image_Thumbnails.md)
 
 ```bash 
 apt-get install webp
@@ -111,7 +111,7 @@ apt-get install webp
 
 ## Graphviz
 
-Install graphviz for [Workflow](../../07_Workflow_Management/README.md#page_Workflow-Overview)
+Install graphviz for [Workflow](../../07_Workflow_Management/README.md)
 
 ```bash
 apt-get install graphviz
@@ -119,7 +119,7 @@ apt-get install graphviz
 
 ## Facedetect
 
-Install facedetect for [image thumbnails focal point](../../04_Assets/03_Working_with_Thumbnails/01_Image_Thumbnails.md#page_Explanation-of-the-Transformations)
+Install facedetect for [image thumbnails focal point](../../04_Assets/03_Working_with_Thumbnails/01_Image_Thumbnails.md)
 
 ```bash
 apt-get install facedetect
