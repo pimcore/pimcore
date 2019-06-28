@@ -92,7 +92,7 @@ class PayPalSmartPaymentButton extends AbstractPayment
      */
     public function getName()
     {
-        return 'PayPalSmartPaymentButton';
+        return 'PayPalSmartButton';
     }
 
     /**

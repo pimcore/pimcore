@@ -163,9 +163,13 @@ public function handleResponseAction() {
     // ... check order state and redirect user to error page or order success page
     
 } 
-
-
 ```
+
+6) (Optional) Add `PaymentProviderPayPalSmartButton` ObjectBrick
+If you are updating an existing Pimcore instance (with originated before 6.0.1), you might need to add the 
+`PaymentProviderPayPalSmartButton` to your installation. It can be imported from 
+[this json export file](https://github.com/pimcore/pimcore/tree/master/bundles/EcommerceFrameworkBundle/Resources/install/objectbrick_sources/objectbrick_PaymentProviderPayPalSmartButton_export.json). 
+
 
 ### Configuration Options
 In payment configuration, following options are available: 
