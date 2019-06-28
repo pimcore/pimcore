@@ -1,9 +1,15 @@
 <?php
 /**
- * Created by PhpStorm.
- * User: cfasching
- * Date: 26.06.2019
- * Time: 13:41
+ * Pimcore
+ *
+ * This source file is available under two different licenses:
+ * - GNU General Public License version 3 (GPLv3)
+ * - Pimcore Enterprise License (PEL)
+ * Full copyright and license information is available in
+ * LICENSE.md which is distributed with this source code.
+ *
+ * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment;
@@ -354,10 +360,11 @@ class PayPalSmartPaymentButton extends AbstractPayment
     }
 
     /**
+     * @param Currency|null $currency
      * @return string
      */
     public function buildPaymentSDKLink(Currency $currency = null) {
-        if(null !== $currency) {
+        if(null === $currency) {
             $currency = $this->getEnvironment()->getDefaultCurrency();
         }
 
