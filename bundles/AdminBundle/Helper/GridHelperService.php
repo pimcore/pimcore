@@ -400,7 +400,7 @@ class GridHelperService
 
         $start = 0;
         $limit = 20;
-        $orderKey = 'oo_id';
+        $orderKey = 'o_id';
         $order = 'ASC';
 
         $fields = [];
@@ -428,10 +428,10 @@ class GridHelperService
             if (!(substr($orderKey, 0, 1) == '~')) {
                 if (array_key_exists($orderKey, $colMappings)) {
                     $orderKey = $colMappings[$orderKey];
-                } elseif ($class->getFieldDefinition($orderKey) instanceof  ClassDefinition\Data\QuantityValue) {
+                } elseif ($class->getFieldDefinition($orderKey) instanceof ClassDefinition\Data\QuantityValue) {
                     $orderKey = 'concat(' . $orderKey . '__unit, ' . $orderKey . '__value)';
                     $doNotQuote = true;
-                } elseif ($class->getFieldDefinition($orderKey) instanceof  ClassDefinition\Data\RgbaColor) {
+                } elseif ($class->getFieldDefinition($orderKey) instanceof ClassDefinition\Data\RgbaColor) {
                     $orderKey = 'concat(' . $orderKey . '__rgb, ' . $orderKey . '__a)';
                     $doNotQuote = true;
                 } elseif (strpos($orderKey, '~') !== false) {
@@ -545,6 +545,10 @@ class GridHelperService
 
         $this->addGridFeatureJoins($list, $featureJoins, $class, $featureFilters);
         $list->setLocale($requestedLanguage);
+
+        if (!$requestParams['filter'] && !$requestParams['condition'] && !$requestParams['sort']) {
+            $list->setIgnoreLocalizedFields(true);
+        }
 
         return $list;
     }
