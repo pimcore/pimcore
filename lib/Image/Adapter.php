@@ -504,10 +504,10 @@ abstract class Adapter
     /**
      * @internal
      * @param string $format
-     *
-     * @return bool
+     * @param bool $force
+     * @return mixed
      */
-    abstract public function supportsFormat(string $format);
+    abstract public function supportsFormat(string $format, bool $force = false);
 
     public function preModify()
     {

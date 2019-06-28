@@ -660,7 +660,8 @@ class Requirements
         $imageAdapterType = $reflect->getShortName();
         $checks[] = new Check([
             'name' => 'WebP (via ' . $imageAdapterType . ')',
-            'state' => $imageAdapter->supportsFormat('webp') ? Check::STATE_OK : Check::STATE_WARNING
+            // we use the force flag here, because during the installer the cache is not available
+            'state' => $imageAdapter->supportsFormat('webp', true) ? Check::STATE_OK : Check::STATE_WARNING
         ]);
 
         return $checks;

@@ -974,8 +974,12 @@ class Imagick extends Adapter
     /**
      * @inheritdoc
      */
-    public function supportsFormat(string $format)
+    public function supportsFormat(string $format, bool $force = false)
     {
+        if($force) {
+            return $this->checkFormatSupport($format);
+        }
+
         if (!isset(self::$supportedFormatsCache[$format])) {
 
             // since determining if an image format is supported is quite expensive we use two-tiered caching
@@ -984,17 +988,7 @@ class Imagick extends Adapter
             if(($cachedValue = Cache::load($cacheKey)) !== false) {
                 self::$supportedFormatsCache[$format] = (bool) $cachedValue;
             } else {
-                try {
-                    // we can't use \Imagick::queryFormats() here, because this doesn't consider configured delegates
-                    $tmpFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/imagick-format-support-detection-' . uniqid() . '.' . $format;
-                    $image = new \Imagick();
-                    $image->newImage(1, 1, new \ImagickPixel('red'));
-                    $image->writeImage($format . ':' . $tmpFile);
-                    self::$supportedFormatsCache[$format] = true;
-                    unlink($tmpFile);
-                } catch (\Exception $e) {
-                    self::$supportedFormatsCache[$format] = false;
-                }
+                self::$supportedFormatsCache[$format] = $this->checkFormatSupport($format);
 
                 // we cache the status as an int, so that we know if the status was cached or not, with bool that wouldn't be possible, since load() returns false if item doesn't exists
                 Cache::save((int) self::$supportedFormatsCache[$format], $cacheKey, [], null, 999, true);
@@ -1002,5 +996,24 @@ class Imagick extends Adapter
         }
 
         return self::$supportedFormatsCache[$format];
+    }
+
+    /**
+     * @param string $format
+     * @return bool
+     */
+    protected function checkFormatSupport(string $format) : bool {
+        try {
+            // we can't use \Imagick::queryFormats() here, because this doesn't consider configured delegates
+            $tmpFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/imagick-format-support-detection-' . uniqid() . '.' . $format;
+            $image = new \Imagick();
+            $image->newImage(1, 1, new \ImagickPixel('red'));
+            $image->writeImage($format . ':' . $tmpFile);
+            unlink($tmpFile);
+
+            return true;
+        } catch (\Exception $e) {
+            return false;
+        }
     }
 }
