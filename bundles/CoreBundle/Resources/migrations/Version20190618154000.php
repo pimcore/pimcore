@@ -14,7 +14,7 @@ class Version20190618154000 extends AbstractPimcoreMigration
     {
         $this->addSql(
             'ALTER TABLE `users` 
-            CHANGE COLUMN `classes` `classes` VARCHAR(1000) NULL DEFAULT NULL;'
+            CHANGE COLUMN `classes` `classes` TEXT NULL DEFAULT NULL;'
         );
     }
 
