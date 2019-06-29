@@ -503,8 +503,10 @@ abstract class Adapter
 
     /**
      * @internal
+     *
      * @param string $format
      * @param bool $force
+     *
      * @return mixed
      */
     abstract public function supportsFormat(string $format, bool $force = false);

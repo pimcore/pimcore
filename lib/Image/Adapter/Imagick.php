@@ -976,7 +976,7 @@ class Imagick extends Adapter
      */
     public function supportsFormat(string $format, bool $force = false)
     {
-        if($force) {
+        if ($force) {
             return $this->checkFormatSupport($format);
         }
 
@@ -1000,9 +1000,11 @@ class Imagick extends Adapter
 
     /**
      * @param string $format
+     *
      * @return bool
      */
-    protected function checkFormatSupport(string $format) : bool {
+    protected function checkFormatSupport(string $format): bool
+    {
         try {
             // we can't use \Imagick::queryFormats() here, because this doesn't consider configured delegates
             $tmpFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/imagick-format-support-detection-' . uniqid() . '.' . $format;

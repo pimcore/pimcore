@@ -658,7 +658,8 @@ class MigrateTagNamingStrategyCommand extends AbstractCommand
     /**
      * @return \Symfony\Component\DependencyInjection\ContainerInterface
      */
-    private function getContainer() {
+    private function getContainer()
+    {
         return \Pimcore::getContainer();
     }
 }
