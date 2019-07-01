@@ -37,8 +37,8 @@ class BrowserKitRestClient extends AbstractRestClient
             codecept_debug(sprintf(
                 '[BrowserKitRestClient] Failed response with message "%s" and status code %d. Body: %s',
                 $e->getMessage(),
-                $this->lastResponse->getStatusCode(),
-                (string)$this->lastResponse->getBody()
+                $this->lastResponse ? $this->lastResponse->getStatusCode() : '',
+                $this->lastResponse ? (string)$this->lastResponse->getBody() : ''
             ));
 
             throw $e;
