@@ -24,10 +24,13 @@ use Symfony\Component\Translation\IdentityTranslator;
 use Symfony\Component\Translation\MessageCatalogue;
 use Symfony\Component\Translation\MessageCatalogueInterface;
 use Symfony\Component\Translation\TranslatorBagInterface;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\LocaleAwareInterface;
+use Symfony\Contracts\Translation\TranslatorTrait;
 
-class Translator implements TranslatorInterface, TranslatorBagInterface
+class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleAwareInterface
 {
+    use TranslatorTrait;
     /**
      * @var TranslatorInterface|TranslatorBagInterface
      */
@@ -520,132 +523,6 @@ EOF;
     public function __call($method, $args)
     {
         return call_user_func_array([$this->translator, $method], $args);
-    }
-
-    /**
-     * Returns the plural rules for a given locale. used in Symfony\Contracts\Translation\TranslatorTrait
-     *
-     * @param int $number
-     * @param string $locale
-     * @return int
-     */
-    private function getPluralizationRule(int $number, string $locale): int
-    {
-        switch ('pt_BR' !== $locale && \strlen($locale) > 3 ? substr($locale, 0, strrpos($locale, '_')) : $locale) {
-            case 'af':
-            case 'bn':
-            case 'bg':
-            case 'ca':
-            case 'da':
-            case 'de':
-            case 'el':
-            case 'en':
-            case 'eo':
-            case 'es':
-            case 'et':
-            case 'eu':
-            case 'fa':
-            case 'fi':
-            case 'fo':
-            case 'fur':
-            case 'fy':
-            case 'gl':
-            case 'gu':
-            case 'ha':
-            case 'he':
-            case 'hu':
-            case 'is':
-            case 'it':
-            case 'ku':
-            case 'lb':
-            case 'ml':
-            case 'mn':
-            case 'mr':
-            case 'nah':
-            case 'nb':
-            case 'ne':
-            case 'nl':
-            case 'nn':
-            case 'no':
-            case 'oc':
-            case 'om':
-            case 'or':
-            case 'pa':
-            case 'pap':
-            case 'ps':
-            case 'pt':
-            case 'so':
-            case 'sq':
-            case 'sv':
-            case 'sw':
-            case 'ta':
-            case 'te':
-            case 'tk':
-            case 'ur':
-            case 'zu':
-                return (1 == $number) ? 0 : 1;
-
-            case 'am':
-            case 'bh':
-            case 'fil':
-            case 'fr':
-            case 'gun':
-            case 'hi':
-            case 'hy':
-            case 'ln':
-            case 'mg':
-            case 'nso':
-            case 'pt_BR':
-            case 'ti':
-            case 'wa':
-                return ((0 == $number) || (1 == $number)) ? 0 : 1;
-
-            case 'be':
-            case 'bs':
-            case 'hr':
-            case 'ru':
-            case 'sh':
-            case 'sr':
-            case 'uk':
-                return ((1 == $number % 10) && (11 != $number % 100)) ? 0 : ((($number % 10 >= 2) && ($number % 10 <= 4) && (($number % 100 < 10) || ($number % 100 >= 20))) ? 1 : 2);
-
-            case 'cs':
-            case 'sk':
-                return (1 == $number) ? 0 : ((($number >= 2) && ($number <= 4)) ? 1 : 2);
-
-            case 'ga':
-                return (1 == $number) ? 0 : ((2 == $number) ? 1 : 2);
-
-            case 'lt':
-                return ((1 == $number % 10) && (11 != $number % 100)) ? 0 : ((($number % 10 >= 2) && (($number % 100 < 10) || ($number % 100 >= 20))) ? 1 : 2);
-
-            case 'sl':
-                return (1 == $number % 100) ? 0 : ((2 == $number % 100) ? 1 : (((3 == $number % 100) || (4 == $number % 100)) ? 2 : 3));
-
-            case 'mk':
-                return (1 == $number % 10) ? 0 : 1;
-
-            case 'mt':
-                return (1 == $number) ? 0 : (((0 == $number) || (($number % 100 > 1) && ($number % 100 < 11))) ? 1 : ((($number % 100 > 10) && ($number % 100 < 20)) ? 2 : 3));
-
-            case 'lv':
-                return (0 == $number) ? 0 : (((1 == $number % 10) && (11 != $number % 100)) ? 1 : 2);
-
-            case 'pl':
-                return (1 == $number) ? 0 : ((($number % 10 >= 2) && ($number % 10 <= 4) && (($number % 100 < 12) || ($number % 100 > 14))) ? 1 : 2);
-
-            case 'cy':
-                return (1 == $number) ? 0 : ((2 == $number) ? 1 : (((8 == $number) || (11 == $number)) ? 2 : 3));
-
-            case 'ro':
-                return (1 == $number) ? 0 : (((0 == $number) || (($number % 100 > 0) && ($number % 100 < 20))) ? 1 : 2);
-
-            case 'ar':
-                return (0 == $number) ? 0 : ((1 == $number) ? 1 : ((2 == $number) ? 2 : ((($number % 100 >= 3) && ($number % 100 <= 10)) ? 3 : ((($number % 100 >= 11) && ($number % 100 <= 99)) ? 4 : 5))));
-
-            default:
-                return 0;
-        }
     }
 
 }
