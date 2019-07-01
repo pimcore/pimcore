@@ -24,11 +24,11 @@ use Symfony\Component\Translation\IdentityTranslator;
 use Symfony\Component\Translation\MessageCatalogue;
 use Symfony\Component\Translation\MessageCatalogueInterface;
 use Symfony\Component\Translation\TranslatorBagInterface;
+use Symfony\Component\Translation\TranslatorInterface as LegacyTranslatorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
-use Symfony\Contracts\Translation\LocaleAwareInterface;
 use Symfony\Contracts\Translation\TranslatorTrait;
 
-class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleAwareInterface
+class Translator implements LegacyTranslatorInterface, TranslatorInterface, TranslatorBagInterface
 {
     use TranslatorTrait {
         trans as protected doTrans;
