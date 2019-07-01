@@ -141,7 +141,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
 
             if (!is_null($filter)) {
                 $db = Db::get();
-                $condition .= ' AND o_key LIKE ' . $db->quote($filter);
+                $condition .= ' AND CAST(objects.o_key AS CHAR CHARACTER SET utf8) COLLATE utf8_general_ci LIKE ' . $db->quote($filter);
             }
 
             $childsList->setCondition($condition);
