@@ -74,6 +74,16 @@ class CommitOrderProcessor implements CommitOrderProcessorInterface
     }
 
     /**
+     * @var null | string
+     */
+    protected $lastPaymentStateResponseHash = null;
+
+    /**
+     * @var null | StatusInterface
+     */
+    protected $lastPaymentStatus = null;
+
+    /**
      * @param $paymentResponseParams
      * @param PaymentInterface $paymentProvider
      *
@@ -81,6 +91,12 @@ class CommitOrderProcessor implements CommitOrderProcessorInterface
      */
     protected function getPaymentStatus($paymentResponseParams, PaymentInterface $paymentProvider)
     {
+        $responseHash = md5(serialize($paymentResponseParams));
+
+        if($this->lastPaymentStateResponseHash === $responseHash) {
+            return $this->lastPaymentStatus;
+        }
+
         // since handle response can throw exceptions and commitOrderPayment must be executed,
         // this needs to be in a try-catch block
         try {
@@ -96,6 +112,9 @@ class CommitOrderProcessor implements CommitOrderProcessorInterface
                 StatusInterface::STATUS_CANCELLED
             );
         }
+
+        $this->lastPaymentStateResponseHash = $responseHash;
+        $this->lastPaymentStatus = $paymentStatus;
 
         return $paymentStatus;
     }
