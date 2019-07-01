@@ -64,7 +64,7 @@ class AdminUserTranslator implements TranslatorInterface
         $domain = $domain ?? 'admin';
         $locale = $locale ?? $this->getUserLocale();
 
-        return $this->translator->transChoice($id, $number, $parameters, $domain, $locale);
+        return $this->translator->trans($id, ['%count%' => $number] + $parameters, $domain, $locale);
     }
 
     /**
