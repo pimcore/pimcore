@@ -176,26 +176,21 @@ class Config
 
                 /** @var $item WebsiteSetting */
                 foreach ($list as $item) {
-                    $key = $item->getName();
                     $itemSiteId = $item->getSiteId();
 
-                    if ($itemSiteId != 0 && $itemSiteId != $siteId) {
+                    if ($itemSiteId !== 0 && $itemSiteId !== $siteId) {
                         continue;
                     }
 
                     $itemLanguage = $item->getLanguage();
 
-                    if ($itemLanguage && $language != $itemLanguage) {
+                    if ($itemLanguage && $language !== $itemLanguage) {
                         continue;
                     }
 
-                    if (isset($settingsArray[$key])) {
-                        if (!$itemLanguage) {
-                            continue;
-                        }
-                    }
+                    $key = $item->getName();
 
-                    if ($settingsArray[$key] && !$itemLanguage) {
+                    if (isset($settingsArray[$key]) && !$itemLanguage) {
                         continue;
                     }
 
