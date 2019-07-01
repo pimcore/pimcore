@@ -21,7 +21,7 @@ use Pimcore\Workflow;
 use Pimcore\Workflow\NotificationEmail\NotificationEmailService;
 use Pimcore\Workflow\Transition;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 use Symfony\Component\Workflow\Event\Event;
 
 class NotificationEmailSubscriber implements EventSubscriberInterface

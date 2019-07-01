@@ -19,7 +19,7 @@ namespace Pimcore\DataObject\GridColumnConfig\Operator\Factory;
 
 use Pimcore\DataObject\GridColumnConfig\Operator\OperatorInterface;
 use Pimcore\DataObject\GridColumnConfig\Operator\TranslateValue;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class TranslateValueFactory implements OperatorFactoryInterface
 {

@@ -23,7 +23,7 @@ use Pimcore\Analytics\Piwik\Dto\ReportConfig;
 use Pimcore\Analytics\SiteId\SiteIdProvider;
 use Pimcore\Event\Analytics\PiwikEvents;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * Builds a list of all available Piwik reports which should be shown in reports panel. A ReportConfig references an
