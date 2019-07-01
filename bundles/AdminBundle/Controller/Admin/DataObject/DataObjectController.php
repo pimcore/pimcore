@@ -1192,6 +1192,19 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                 break;
             } catch(\Exception $e) {
                 Db::get()->rollBack();
+
+                // we try to start the transaction $maxRetries times again (deadlocks, ...)
+                if ($retries < ($maxRetries - 1)) {
+                    $run = $retries + 1;
+                    $waitTime = rand(1, 5) * 100000; // microseconds
+                    Logger::warn('Unable to finish transaction (' . $run . ". run) because of the following reason '" . $e->getMessage() . "'. --> Retrying in " . $waitTime . ' microseconds ... (' . ($run + 1) . ' of ' . $maxRetries . ')');
+
+                    usleep($waitTime); // wait specified time until we restart the transaction
+                } else {
+                    // if the transaction still fail after $maxRetries retries, we throw out the exception
+                    Logger::error('Finally giving up restarting the same transaction again and again, last message: ' . $e->getMessage());
+                    throw $e;
+                }
             }
         }
     }
