@@ -14,8 +14,13 @@
 
 namespace Pimcore\Tool;
 
+use Exception;
+use InvalidArgumentException;
+use Pimcore;
+use Pimcore\Config;
 use Pimcore\Document\Newsletter\SendingParamContainer;
 use Pimcore\Event\DocumentEvents;
+use Pimcore\File;
 use Pimcore\Logger;
 use Pimcore\Mail;
 use Pimcore\Model;
@@ -26,8 +31,8 @@ use Symfony\Component\EventDispatcher\GenericEvent;
 
 class Newsletter
 {
-    const SENDING_MODE_BATCH = 'batch';
-    const SENDING_MODE_SINGLE = 'single';
+    public const SENDING_MODE_BATCH = 'batch';
+    public const SENDING_MODE_SINGLE = 'single';
 
     /**
      * @var DataObject\ClassDefinition
@@ -40,17 +45,22 @@ class Newsletter
      * @param string|null $hostUrl
      *
      * @return Mail
+     *
+     * @throws Exception
      */
-    public static function prepareMail(Document\Newsletter $newsletterDocument, SendingParamContainer $sendingContainer = null, $hostUrl = null)
-    {
+    public static function prepareMail(
+        Document\Newsletter $newsletterDocument,
+        SendingParamContainer $sendingContainer = null,
+        $hostUrl = null
+    ): Mail {
         $mail = new Mail();
         $mail->setIgnoreDebugMode(true);
 
-        if (\Pimcore\Config::getSystemConfig()->newsletter->usespecific) {
+        if (Config::getSystemConfig()->newsletter->usespecific) {
             $mail->init('newsletter');
         }
 
-        if (!Tool::getHostUrl() && $hostUrl) {
+        if ($hostUrl) {
             $mail->setHostUrl($hostUrl);
         }
 
@@ -64,38 +74,43 @@ class Newsletter
         $contentText = $mail->getBodyTextRendered();
 
         // render the document and rewrite the links (if analytics is enabled)
-        if ($newsletterDocument->getEnableTrackingParameters()) {
-            if ($contentHTML) {
-                $html = str_get_html($contentHTML);
-                if ($html) {
-                    $links = $html->find('a');
-                    foreach ($links as $link) {
-                        if (preg_match('/^(mailto|#)/', trim(strtolower($link->href)))) {
-                            // No tracking for mailto and hash only links
-                            continue;
-                        }
-                        $urlParts = parse_url($link->href);
-                        $glue = '?';
-                        $params = 'utm_source=' . $newsletterDocument->getTrackingParameterSource() .
-                                    '&utm_medium=' . $newsletterDocument->getTrackingParameterMedium() .
-                                    '&utm_campaign=' . $newsletterDocument->getTrackingParameterName();
-                        if (isset($urlParts['query'])) {
-                            $glue = '&';
-                        }
-                        $link->href = preg_replace('/[#].+$/', '', $link->href).$glue.$params;
-                        if (isset($urlParts['fragment'])) {
-                            $link->href .= '#'.$urlParts['fragment'];
-                        }
+        if ($contentHTML && $newsletterDocument->getEnableTrackingParameters()) {
+            $html = str_get_html($contentHTML);
+            if ($html) {
+                $links = $html->find('a');
+                foreach ($links as $link) {
+                    if (preg_match('/^(mailto|#)/i', trim($link->href))) {
+                        // No tracking for mailto and hash only links
+                        continue;
                     }
 
-                    $contentHTML = $html->save();
+                    $urlParts = parse_url($link->href);
+                    $glue = '?';
+                    $params = sprintf(
+                        'utm_source=%s&utm_medium=%s&utm_campaign=%s',
+                        $newsletterDocument->getTrackingParameterSource(),
+                        $newsletterDocument->getTrackingParameterMedium(),
+                        $newsletterDocument->getTrackingParameterName()
+                    );
 
-                    $html->clear();
-                    unset($html);
+                    if (isset($urlParts['query'])) {
+                        $glue = '&';
+                    }
+
+                    $link->href = preg_replace('/[#].+$/', '', $link->href).$glue.$params;
+
+                    if (isset($urlParts['fragment'])) {
+                        $link->href .= '#'.$urlParts['fragment'];
+                    }
                 }
 
-                $mail->setBodyHtml($contentHTML);
+                $contentHTML = $html->save();
+
+                $html->clear();
+                unset($html);
             }
+
+            $mail->setBodyHtml($contentHTML);
         }
 
         $mail->setBodyHtml($contentHTML);
@@ -108,8 +123,9 @@ class Newsletter
     /**
      * @param Mail $mail
      * @param SendingParamContainer $sendingContainer
+     * @throws Exception
      */
-    public static function sendNewsletterDocumentBasedMail(Mail $mail, SendingParamContainer $sendingContainer)
+    public static function sendNewsletterDocumentBasedMail(Mail $mail, SendingParamContainer $sendingContainer): void
     {
         $mailAddress = $sendingContainer->getEmail();
 
@@ -120,13 +136,13 @@ class Newsletter
 
         if (!empty($mailAddress)) {
             $mail->setTo($mailAddress);
-            //Getting bounces
+            // Getting bounces
             $mail->setReturnPath(key($mail->getFrom()));
 
             $mailer = null;
-            //check if newsletter specific mailer is needed
-            if (\Pimcore\Config::getSystemConfig()->newsletter->usespecific) {
-                $mailer = \Pimcore::getContainer()->get('swiftmailer.mailer.newsletter_mailer');
+            // check if newsletter specific mailer is needed
+            if (Config::getSystemConfig()->newsletter->usespecific) {
+                $mailer = Pimcore::getContainer()->get('swiftmailer.mailer.newsletter_mailer');
             }
 
             $event = new GenericEvent($mail, [
@@ -136,13 +152,24 @@ class Newsletter
                 'mailer' => $mailer
             ]);
 
-            \Pimcore::getEventDispatcher()->dispatch(DocumentEvents::NEWSLETTER_PRE_SEND, $event);
+            Pimcore::getEventDispatcher()->dispatch(DocumentEvents::NEWSLETTER_PRE_SEND, $event);
             $mail->sendWithoutRendering($mailer);
-            \Pimcore::getEventDispatcher()->dispatch(DocumentEvents::NEWSLETTER_POST_SEND, $event);
+            Pimcore::getEventDispatcher()->dispatch(DocumentEvents::NEWSLETTER_POST_SEND, $event);
 
-            Logger::info('Sent newsletter to: ' . self::obfuscateEmail($mailAddress) . ' [' . $mail->getDocument()->getId() . ']');
+            Logger::info(
+                sprintf(
+                    'Sent newsletter to: %s [%s]',
+                    self::obfuscateEmail($mailAddress),
+                    $mail->getDocument() ? $mail->getDocument()->getId() : null
+                )
+            );
         } else {
-            Logger::warn('No E-Mail Address given - cannot send mail. [' . $mail->getDocument()->getId() . ']');
+            Logger::warn(
+                sprintf(
+                    'No E-Mail Address given - cannot send mail. [%s]',
+                    $mail->getDocument() ? $mail->getDocument()->getId() : null
+                )
+            );
         }
     }
 
@@ -159,13 +186,28 @@ class Newsletter
     }
 
     /**
-     * @param Model\Tool\Newsletter\Config $newsletter
+     * @param Model\Document\Newsletter $newsletter
      * @param DataObject\Concrete $object
      * @param null $emailAddress
      * @param null $hostUrl
+     *
+     * @throws Exception
+     *
+     * @deprecated Pimcore\Tool\Newsletter::sendMail is deprecated and will be removed with 7.0,
+     * please use the internal:newsletter-document-send command instead.
      */
-    public static function sendMail($newsletter, $object, $emailAddress = null, $hostUrl = null)
+    public static function sendMail($newsletter, $object, $emailAddress = null, $hostUrl = null): void
     {
+        trigger_error(
+            sprintf(
+                '%s::%s is deprecated and will be removed with 7.0, please use the %s command instead.',
+                static::class,
+                __METHOD__,
+                'internal:newsletter-document-send'
+            ),
+            E_USER_DEPRECATED
+        );
+
         $params = [
             'gender' => $object->getGender(),
             'firstname' => $object->getFirstname(),
@@ -178,11 +220,11 @@ class Newsletter
         $mail = new Mail();
         $mail->setIgnoreDebugMode(true);
 
-        if (\Pimcore\Config::getSystemConfig()->newsletter->usespecific) {
+        if (Config::getSystemConfig()->newsletter->usespecific) {
             $mail->init('newsletter');
         }
 
-        if (!Tool::getHostUrl() && $hostUrl) {
+        if ($hostUrl) {
             $mail->setHostUrl($hostUrl);
         }
 
@@ -195,30 +237,30 @@ class Newsletter
         $mail->setParams($params);
 
         // render the document and rewrite the links (if analytics is enabled)
-        if ($newsletter->getGoogleAnalytics()) {
-            if ($content = $mail->getBodyHtmlRendered()) {
-                $html = str_get_html($content);
-                if ($html) {
-                    $links = $html->find('a');
-                    foreach ($links as $link) {
-                        if (preg_match('/^(mailto)/', trim(strtolower($link->href)))) {
-                            continue;
-                        }
-
-                        $glue = '?';
-                        if (strpos($link->href, '?')) {
-                            $glue = '&';
-                        }
-                        $link->href = $link->href . $glue . 'utm_source=Newsletter&utm_medium=Email&utm_campaign=' . $newsletter->getName();
+        if ($newsletter->getGoogleAnalytics() && $content = $mail->getBodyHtmlRendered()) {
+            $html = str_get_html($content);
+            if ($html) {
+                $links = $html->find('a');
+                foreach ($links as $link) {
+                    if (preg_match('/^(mailto)/i', trim($link->href))) {
+                        continue;
                     }
-                    $content = $html->save();
 
-                    $html->clear();
-                    unset($html);
+                    $glue = strpos($link->href, '?') ? '&' : '?';
+
+                    $link->href .= sprintf(
+                        '%sutm_source=Newsletter&utm_medium=Email&utm_campaign=%s',
+                        $glue,
+                        $newsletter->getName()
+                    );
                 }
+                $content = $html->save();
 
-                $mail->setBodyHtml($content);
+                $html->clear();
+                unset($html);
             }
+
+            $mail->setBodyHtml($content);
         }
 
         $mail->send();
@@ -227,7 +269,7 @@ class Newsletter
     /**
      * @param null $classId
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function __construct($classId = null)
     {
@@ -239,7 +281,7 @@ class Newsletter
         }
 
         if (!$class) {
-            throw new \Exception('No valid class identifier given (class name or ID)');
+            throw new InvalidArgumentException('No valid class identifier given (class name or ID)');
         }
 
         if ($class instanceof DataObject\ClassDefinition) {
@@ -250,7 +292,7 @@ class Newsletter
     /**
      * @return string
      */
-    protected function getClassName()
+    protected function getClassName(): string
     {
         return '\\Pimcore\\Model\\DataObject\\' . ucfirst($this->getClass()->getName());
     }
@@ -260,13 +302,15 @@ class Newsletter
      *
      * @return bool
      */
-    public function checkParams($params)
+    public function checkParams($params): bool
     {
         if (!array_key_exists('email', $params)) {
             return false;
         }
 
-        if (strlen($params['email']) < 6 || !strpos($params['email'], '@') || !strpos($params['email'], '.')) {
+        if (strlen($params['email']) < 6 ||
+            !strpos($params['email'], '@') ||
+            !strpos($params['email'], '.')) {
             return false;
         }
 
@@ -278,12 +322,13 @@ class Newsletter
      *
      * @return mixed
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function subscribe($params)
     {
         $onlyCreateVersion = false;
         $className = $this->getClassName();
+        /** @var DataObject\Concrete $object */
         $object = new $className;
 
         // check for existing e-mail
@@ -293,11 +338,10 @@ class Newsletter
             // version which will be published as soon as the contact gets verified (token/email)
             $object = $existingObject;
             $onlyCreateVersion = true;
-            //throw new \Exception("email address '" . $params["email"] . "' already exists");
         }
 
         if (!array_key_exists('email', $params)) {
-            throw new \Exception("key 'email' is a mandatory parameter");
+            throw new InvalidArgumentException("key 'email' is a mandatory parameter");
         }
 
         $object->setValues($params);
@@ -312,7 +356,7 @@ class Newsletter
         $object->setUserModification(0);
         $object->setUserOwner(0);
         $object->setPublished(true);
-        $object->setKey(\Pimcore\File::getValidFilename($object->getEmail() . '~' . substr(uniqid(), -3)));
+        $object->setKey(File::getValidFilename(uniqid($object->getEmail(), true)));
 
         if (!$onlyCreateVersion) {
             $object->save();
@@ -330,7 +374,7 @@ class Newsletter
         if (!$onlyCreateVersion) {
             $object->save();
         } else {
-            $object->saveVersion(true, true);
+            $object->saveVersion();
         }
 
         $this->addNoteOnObject($object, 'subscribe');
@@ -343,9 +387,9 @@ class Newsletter
      * @param $mailDocument
      * @param array $params
      *
-     * @throws \Exception
+     * @throws Exception
      */
-    public function sendConfirmationMail($object, $mailDocument, $params = [])
+    public function sendConfirmationMail($object, $mailDocument, $params = []): void
     {
         $defaultParameters = [
             'gender' => $object->getGender(),
@@ -368,37 +412,36 @@ class Newsletter
     /**
      * @param $token
      *
-     * @return bool
+     * @return DataObject\Concrete|null
      */
-    public function getObjectByToken($token)
+    public function getObjectByToken($token): ?DataObject\Concrete
     {
         $originalToken = $token;
         $token = str_replace('~', '=', $token); // base64 can contain = which isn't safe in URL's
 
         $data = json_decode(base64_decode($token), true);
-        if ($data) {
-            if ($object = DataObject::getById($data['id'])) {
-                if ($version = $object->getLatestVersion()) {
-                    $object = $version->getData();
-                }
+        /** @var DataObject\Concrete $object */
+        if ($data && $object = DataObject::getById($data['id'])) {
+            if ($version = $object->getLatestVersion()) {
+                $object = $version->getData();
+            }
 
-                if ($object->getProperty('token') == $originalToken) {
-                    if ($object->getEmail() == $data['email']) {
-                        return $object;
-                    }
-                }
+            if ($object->getProperty('token') === $originalToken && $object->getEmail() === $data['email']) {
+                return $object;
             }
         }
 
-        return false;
+        return null;
     }
 
     /**
      * @param string $token
      *
      * @return bool
+     *
+     * @throws Exception
      */
-    public function confirm($token)
+    public function confirm($token): bool
     {
         $object = $this->getObjectByToken($token);
         if ($object) {
@@ -422,10 +465,13 @@ class Newsletter
      * @param string $token
      *
      * @return bool
+     *
+     * @throws Exception
      */
-    public function unsubscribeByToken($token)
+    public function unsubscribeByToken($token): bool
     {
         $object = $this->getObjectByToken($token);
+
         if ($object) {
             return $this->unsubscribe($object);
         }
@@ -437,8 +483,10 @@ class Newsletter
      * @param string $email
      *
      * @return bool
+     *
+     * @throws Exception
      */
-    public function unsubscribeByEmail($email)
+    public function unsubscribeByEmail($email): bool
     {
         $className = $this->getClassName();
         $objects = $className::getByEmail($email);
@@ -454,11 +502,13 @@ class Newsletter
     }
 
     /**
-     * @param $object
+     * @param DataObject\AbstractObject $object
      *
      * @return bool
+     *
+     * @throws Exception
      */
-    public function unsubscribe($object)
+    public function unsubscribe(DataObject\AbstractObject $object): bool
     {
         if ($object) {
             $object->setNewsletterActive(false);
@@ -476,7 +526,7 @@ class Newsletter
      * @param $object
      * @param $title
      */
-    public function addNoteOnObject($object, $title)
+    public function addNoteOnObject($object, $title): void
     {
         $note = new Model\Element\Note();
         $note->setElement($object);
@@ -501,7 +551,7 @@ class Newsletter
      *
      * @return bool
      */
-    public function isEmailExists($params)
+    public function isEmailExists($params): bool
     {
         $className = $this->getClassName();
         $existingObject = $className::getByEmail($params['email'], 1);
@@ -515,7 +565,7 @@ class Newsletter
     /**
      * @param DataObject\ClassDefinition $class
      */
-    public function setClass($class)
+    public function setClass($class): void
     {
         $this->class = $class;
     }
@@ -523,7 +573,7 @@ class Newsletter
     /**
      * @return DataObject\ClassDefinition
      */
-    public function getClass()
+    public function getClass(): DataObject\ClassDefinition
     {
         return $this->class;
     }
@@ -531,13 +581,13 @@ class Newsletter
     /**
      * Checks if domain of email has a MX record
      *
-     * @email string $email
+     * @param string $email
      *
      * @return bool
      */
-    public function to_domain_exists($email)
+    public static function to_domain_exists($email): bool
     {
-        list($user, $domain) = explode('@', $email);
+        [, $domain] = explode('@', $email);
 
         return checkdnsrr($domain, 'MX');
     }
