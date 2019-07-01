@@ -30,7 +30,10 @@ use Symfony\Contracts\Translation\TranslatorTrait;
 
 class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleAwareInterface
 {
-    use TranslatorTrait;
+    use TranslatorTrait {
+        trans as protected doTrans;
+    }
+
     /**
      * @var TranslatorInterface|TranslatorBagInterface
      */
@@ -108,80 +111,7 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
         $this->lazyInitialize($domain, $locale);
 
         if (isset($parameters['%count%'])) {
-            $number = (float)$parameters['%count%'];
-
-            $parts = [];
-            if (preg_match('/^\|++$/', $id)) {
-                $parts = explode('|', $id);
-            } elseif (preg_match_all('/(?:\|\||[^\|])++/', $id, $matches)) {
-                $parts = $matches[0];
-            }
-
-            $intervalRegexp = <<<'EOF'
-/^(?P<interval>
-    ({\s*
-        (\-?\d+(\.\d+)?[\s*,\s*\-?\d+(\.\d+)?]*)
-    \s*})
-
-        |
-
-    (?P<left_delimiter>[\[\]])
-        \s*
-        (?P<left>-Inf|\-?\d+(\.\d+)?)
-        \s*,\s*
-        (?P<right>\+?Inf|\-?\d+(\.\d+)?)
-        \s*
-    (?P<right_delimiter>[\[\]])
-)\s*(?P<message>.*?)$/xs
-EOF;
-
-            $standardRules = [];
-            foreach ($parts as $part) {
-                $part = trim(str_replace('||', '|', $part));
-
-                // try to match an explicit rule, then fallback to the standard ones
-                if (preg_match($intervalRegexp, $part, $matches)) {
-                    if ($matches[2]) {
-                        foreach (explode(',', $matches[3]) as $n) {
-                            if ($number == $n) {
-                                return strtr($matches['message'], $parameters);
-                            }
-                        }
-                    } else {
-                        $leftNumber = '-Inf' === $matches['left'] ? -INF : (float)$matches['left'];
-                        $rightNumber = is_numeric($matches['right']) ? (float)$matches['right'] : INF;
-
-                        if (('[' === $matches['left_delimiter'] ? $number >= $leftNumber : $number > $leftNumber)
-                            && (']' === $matches['right_delimiter'] ? $number <= $rightNumber : $number < $rightNumber)
-                        ) {
-                            return strtr($matches['message'], $parameters);
-                        }
-                    }
-                } elseif (preg_match('/^\w+\:\s*(.*?)$/', $part, $matches)) {
-                    $standardRules[] = $matches[1];
-                } else {
-                    $standardRules[] = $part;
-                }
-            }
-
-            $position = $this->getPluralizationRule($number, $locale);
-            if (!isset($standardRules[$position])) {
-                // when there's exactly one rule given, and that rule is a standard
-                // rule, use this rule
-                if (1 === \count($parts) && isset($standardRules[0])) {
-                    return strtr($standardRules[0], $parameters);
-                }
-
-                $message = sprintf('Unable to choose a translation for "%s" with locale "%s" for value "%d". Double check that this translation has the correct plural options (e.g. "There is one apple|There are %%count%% apples").', $id, $locale, $number);
-
-                if (class_exists(InvalidArgumentException::class)) {
-                    throw new InvalidArgumentException($message);
-                }
-
-                throw new \InvalidArgumentException($message);
-            }
-
-            $id = strtr($standardRules[$position], $parameters);
+            $id = $this->doTrans($id, $parameters, $domain, $locale);
         }
 
         $term = $this->getFromCatalogue($catalogue, $id, $domain, $locale);
