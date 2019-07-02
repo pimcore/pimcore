@@ -71,6 +71,16 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
     public $data;
 
     /**
+     * @var bool
+     */
+    public $columnConfigActivated = false;
+
+    /**
+     * @var array
+     */
+    public $columnConfig = [];
+
+    /**
      * Type for the column to query
      *
      * @var string
@@ -220,7 +230,7 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
     }
 
     /**
-     * @param int $data
+     * @param string $data
      *
      * @return $this
      */
@@ -230,6 +240,55 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
 
         return $this;
     }
+
+    /**
+     * @return bool
+     */
+    public function isColumnConfigActivated(): bool
+    {
+        return $this->columnConfigActivated;
+    }
+
+    /**
+     * @param bool $columnConfigActivated
+     */
+    public function setColumnConfigActivated(bool $columnConfigActivated): void
+    {
+        $this->columnConfigActivated = $columnConfigActivated;
+    }
+
+    /**
+     * @return array
+     */
+    public function getColumnConfig(): array
+    {
+        return $this->columnConfig;
+    }
+
+    /**
+     * @param array $columnConfig
+     */
+    public function setColumnConfig(array $columnConfig): void
+    {
+        $this->columnConfig = $columnConfig;
+    }
+
+    /**
+     * @param array $data
+     * @return array
+     */
+    protected function convertDataToValueArray(array $data) {
+        $valueArray = [];
+        foreach($data as $entry) {
+            if(is_array($entry)) {
+                $valueArray[] = $this->convertDataToValueArray($entry);
+            } else {
+                $valueArray[] = $entry;
+            }
+        }
+        return $valueArray;
+    }
+
 
     /**
      * @see ResourcePersistenceAwareInterface::getDataForResource
@@ -242,6 +301,10 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
      */
     public function getDataForResource($data, $object = null, $params = [])
     {
+        if(is_array($data)) {
+            //make sure only array values are stored to DB
+            $data = $this->convertDataToValueArray($data);
+        }
         return Serialize::serialize($data);
     }
 
@@ -252,11 +315,32 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
-     * @return string
+     * @return array
      */
     public function getDataFromResource($data, $object = null, $params = [])
     {
-        return Serialize::unserialize((string) $data);
+        $unserializedData = Serialize::unserialize((string) $data);
+
+        //set array keys based on column configuration if set
+        $columnConfig = $this->getColumnConfig();
+        if($this->isColumnConfigActivated() && $columnConfig) {
+
+            $dataWithKeys = [];
+            foreach($unserializedData as $row) {
+                $indexedRow = [];
+                $index = 0;
+                foreach($row as $col) {
+                    $indexedRow[$columnConfig[$index]['key']] = $col;
+                    $index++;
+                }
+
+                $dataWithKeys[] = $indexedRow;
+            }
+            return $dataWithKeys;
+
+        } else {
+            return $unserializedData;
+        }
     }
 
     /**
@@ -297,6 +381,11 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
      */
     public function getDataForEditmode($data, $object = null, $params = [])
     {
+        if(is_array($data)) {
+            //make sure only array values are used of edit mode (other wise ext stores do not work anymore)
+            return $this->convertDataToValueArray($data);
+        }
+
         return $data;
     }
 
@@ -479,9 +568,23 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
         if ($data) {
             $html = '<table>';
 
-            foreach ($data as $row) {
+            if($this->isColumnConfigActivated()) {
                 $html .= '<tr>';
 
+                $index = 0;
+                $columConfig = $this->getColumnConfig();
+
+                foreach (current($data) as $cellData) {
+                    $html .= '<th>';
+                    $html .= htmlentities($columConfig[$index]['label']);
+                    $html .= '</td>';
+                    $index++;
+                }
+                $html .= '</tr>';
+            }
+
+            foreach ($data as $row) {
+                $html .= '<tr>';
                 if (is_array($row)) {
                     foreach ($row as $cell) {
                         $html .= '<td>';
