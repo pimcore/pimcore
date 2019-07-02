@@ -27,7 +27,16 @@ class Version20190419083749 extends AbstractPimcoreMigration
         $list = $list->load();
 
         foreach ($list as $class) {
-            $class->save(false);
+            $resaveClass = false;
+            foreach($class->getFieldDefinitions() as $fieldDefinition) {
+                if($fieldDefinition instanceof ClassDefinition\Data\ReverseManyToManyObjectRelation) {
+                    $resaveClass = true;
+                }
+            }
+
+            if($resaveClass) {
+                $class->save(false);
+            }
         }
     }
 
