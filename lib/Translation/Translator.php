@@ -50,11 +50,6 @@ class Translator implements LegacyTranslatorInterface, TranslatorInterface, Tran
     protected $initializedCatalogues = [];
 
     /**
-     * @var IdentityTranslator
-     */
-    private $selector;
-
-    /**
      * @var string
      */
     protected $adminPath = '';
@@ -74,18 +69,16 @@ class Translator implements LegacyTranslatorInterface, TranslatorInterface, Tran
     protected $kernel;
 
     /**
-     * @param TranslatorInterface $translator
+     * @param LegacyTranslatorInterface $translator
      * @param bool $caseInsensitive
      */
-    public function __construct(TranslatorInterface $translator, bool $caseInsensitive = false)
+    public function __construct(LegacyTranslatorInterface $translator, bool $caseInsensitive = false)
     {
         if (!$translator instanceof TranslatorBagInterface) {
             throw new InvalidArgumentException(sprintf('The Translator "%s" must implement TranslatorInterface and TranslatorBagInterface.', get_class($translator)));
         }
 
         $this->translator = $translator;
-        $this->selector = new IdentityTranslator();
-
         $this->caseInsensitive = $caseInsensitive;
     }
 
