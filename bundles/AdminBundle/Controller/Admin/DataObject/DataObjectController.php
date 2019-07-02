@@ -1121,53 +1121,91 @@ class DataObjectController extends ElementControllerBase implements EventedContr
      */
     protected function updateIndexesOfObjectSiblings(DataObject\AbstractObject $updatedObject, $newIndex)
     {
-        $updateLatestVersionIndex = function ($objectId, $modificationDate, $newIndex) {
-            if ($latestVersion = DataObject\Concrete::getLatestVersionByObjectIdAndLatestModificationDate($objectId, $modificationDate)) {
+        $maxRetries = 5;
+        for ($retries = 0; $retries < $maxRetries; $retries++) {
+            try {
+                Db::get()->beginTransaction();
+                $updateLatestVersionIndex = function ($objectId, $modificationDate, $newIndex) {
+                    if ($latestVersion = DataObject\Concrete::getLatestVersionByObjectIdAndLatestModificationDate(
+                        $objectId, $modificationDate
+                    )) {
 
-                // don't renew references (which means loading the target elements)
-                // Not needed as we just save a new version with the updated index
-                $object = $latestVersion->loadData(false);
-                if ($newIndex !== $object->getIndex()) {
-                    $object->setIndex($newIndex);
+                        // don't renew references (which means loading the target elements)
+                        // Not needed as we just save a new version with the updated index
+                        $object = $latestVersion->loadData(false);
+                        if ($newIndex !== $object->getIndex()) {
+                            $object->setIndex($newIndex);
+                        }
+                        $latestVersion->save();
+                    }
+                };
+
+                $list = new DataObject\Listing();
+                $updatedObject->saveIndex($newIndex);
+
+                Db::get()->executeUpdate(
+                    'UPDATE '.$list->getDao()->getTableName().' o, 
+                    (
+                        SELECT newIndex, o_id FROM (SELECT @n := IF(@n = ? - 1,@n + 2,@n + 1) AS newIndex, o_id 
+                        FROM '.$list->getDao()->getTableName().', 
+                        (SELECT @n := -1) variable 
+                        WHERE o_id != ? AND o_parentId = ? AND o_type IN (\''.implode(
+                        "','", [
+                            DataObject\AbstractObject::OBJECT_TYPE_OBJECT,
+                            DataObject\AbstractObject::OBJECT_TYPE_VARIANT,
+                            DataObject\AbstractObject::OBJECT_TYPE_FOLDER
+                        ]
+                    ).'\') 
+                            ORDER BY o_index, o_id=?
+                        ) tmp
+                    ) order_table
+                    SET o.o_index = order_table.newIndex
+                    WHERE o.o_id=order_table.o_id',
+                    [
+                        $newIndex,
+                        $updatedObject->getId(),
+                        $updatedObject->getParentId(),
+                        $updatedObject->getId()
+                    ]
+                );
+
+                $db = Db::get();
+                $siblings = $db->fetchAll(
+                    'SELECT o_id, o_modificationDate FROM objects'
+                    ." WHERE o_parentId = ? AND o_id != ? AND o_type IN ('object', 'variant','folder') ORDER BY o_index ASC",
+                    [$updatedObject->getParentId(), $updatedObject->getId()]
+                );
+                $index = 0;
+                /** @var DataObject\AbstractObject $child */
+                foreach ($siblings as $sibling) {
+                    if ($index == $newIndex) {
+                        $index++;
+                    }
+
+                    $updateLatestVersionIndex($sibling['o_id'], $sibling['o_modificationDate'], $index);
+                    $index++;
+
+                    DataObject\AbstractObject::clearDependentCacheByObjectId($sibling['o_id']);
                 }
-                $latestVersion->save();
+
+                Db::get()->commit();
+                break;
+            } catch(\Exception $e) {
+                Db::get()->rollBack();
+
+                // we try to start the transaction $maxRetries times again (deadlocks, ...)
+                if ($retries < ($maxRetries - 1)) {
+                    $run = $retries + 1;
+                    $waitTime = rand(1, 5) * 100000; // microseconds
+                    Logger::warn('Unable to finish transaction (' . $run . ". run) because of the following reason '" . $e->getMessage() . "'. --> Retrying in " . $waitTime . ' microseconds ... (' . ($run + 1) . ' of ' . $maxRetries . ')');
+
+                    usleep($waitTime); // wait specified time until we restart the transaction
+                } else {
+                    // if the transaction still fail after $maxRetries retries, we throw out the exception
+                    Logger::error('Finally giving up restarting the same transaction again and again, last message: ' . $e->getMessage());
+                    throw $e;
+                }
             }
-        };
-
-        $list = new DataObject\Listing();
-        $updatedObject->saveIndex($newIndex);
-
-        Db::get()->executeUpdate('UPDATE '.$list->getDao()->getTableName().' o, 
-            (
-                SELECT newIndex, o_id FROM (SELECT @n := IF(@n = ? - 1,@n + 2,@n + 1) AS newIndex, o_id 
-                FROM '.$list->getDao()->getTableName().', 
-                (SELECT @n := -1) variable 
-                WHERE o_id != ? AND o_parentId = ? AND o_type IN (\'' . implode("','", [DataObject\AbstractObject::OBJECT_TYPE_OBJECT, DataObject\AbstractObject::OBJECT_TYPE_VARIANT, DataObject\AbstractObject::OBJECT_TYPE_FOLDER]) . '\') 
-                    ORDER BY o_index, o_id=?
-                ) tmp
-            ) order_table
-            SET o.o_index = order_table.newIndex
-            WHERE o.o_id=order_table.o_id',
-            [
-                $newIndex, $updatedObject->getId(), $updatedObject->getParentId(), $updatedObject->getId()
-            ]
-        );
-
-        $db = Db::get();
-        $siblings = $db->fetchAll('SELECT o_id, o_modificationDate FROM objects'
-                . " WHERE o_parentId = ? AND o_id != ? AND o_type IN ('object', 'variant','folder') ORDER BY o_index ASC",
-                        [$updatedObject->getParentId(), $updatedObject->getId()]);
-        $index = 0;
-        /** @var DataObject\AbstractObject $child */
-        foreach ($siblings as $sibling) {
-            if ($index == $newIndex) {
-                $index++;
-            }
-
-            $updateLatestVersionIndex($sibling['o_id'], $sibling['o_modificationDate'], $index);
-            $index++;
-
-            DataObject\AbstractObject::clearDependentCacheByObjectId($sibling['o_id']);
         }
     }
 
