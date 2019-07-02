@@ -895,5 +895,5 @@
   "split_view_object_dirty_msg": "There are unsaved modifications. You will lose all changes. Are you sure?",
   "all_translations": "All Translations",
   "set_to_null": "Empty (set to null)",
-  "unit_tooltip": "Alternative units tooltip"
+  "unit_tooltip": "Show alternative units tooltip"
 }
