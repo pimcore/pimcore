@@ -190,11 +190,10 @@ class Config
 
                     $key = $item->getName();
 
-                    if (isset($settingsArray[$key]) && !$itemLanguage) {
+                    if (!$itemLanguage && isset($settingsArray[$key])) {
                         continue;
                     }
 
-                    $s = null;
 
                     switch ($item->getType()) {
                         case 'document':
@@ -208,7 +207,9 @@ class Config
                         case 'text':
                             $s = (string) $item->getData();
                             break;
-
+                        default:
+                            $s = null;
+                            break;
                     }
 
                     if ($s instanceof Model\Element\ElementInterface) {
