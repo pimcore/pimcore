@@ -78,7 +78,9 @@ class BrowserKitRestClient extends AbstractRestClient
             $browserKitRequest->getMethod(),
             $browserKitRequest->getUri(),
             //need to cast header values to string as only numeric and string are accepted by psr standard
-            array_map(function($value) { return (string) $value; }, $browserKitRequest->getServer()),
+            array_map(function ($value) {
+                return (string) $value;
+            }, $browserKitRequest->getServer()),
             $browserKitRequest->getContent()
         );
 

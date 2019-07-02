@@ -194,7 +194,6 @@ class Config
                         continue;
                     }
 
-
                     switch ($item->getType()) {
                         case 'document':
                         case 'asset':

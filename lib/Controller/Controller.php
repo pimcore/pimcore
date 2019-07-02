@@ -39,7 +39,7 @@ abstract class Controller extends BaseController
      */
     protected function getParameter(string $name)
     {
-        if($this->container instanceof \Symfony\Component\DependencyInjection\ContainerInterface) {
+        if ($this->container instanceof \Symfony\Component\DependencyInjection\ContainerInterface) {
             return $this->container->getParameter($name);
         } else {
             return parent::getParameter($name);

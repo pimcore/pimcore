@@ -93,7 +93,7 @@ class CommitOrderProcessor implements CommitOrderProcessorInterface
     {
         $responseHash = md5(serialize($paymentResponseParams));
 
-        if($this->lastPaymentStateResponseHash === $responseHash) {
+        if ($this->lastPaymentStateResponseHash === $responseHash) {
             return $this->lastPaymentStatus;
         }
 
