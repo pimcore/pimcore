@@ -23,7 +23,7 @@ use Pimcore\Analytics\Piwik\Config\ConfigProvider;
 use Pimcore\Analytics\SiteId\SiteId;
 use Pimcore\Config as PimcoreConfig;
 use Pimcore\Config\ReportConfigWriter;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * Exposes parts of the Piwik SitesManager API

@@ -69,8 +69,16 @@
 <div class="hidden" id="tmp"></div>
 <div id="popup"></div>
 
+<?php
+    $imageFileExtension = \Pimcore\File::getFileExtension($this->asset->getFilename());
+    $imageUrl = $this->asset->getFullPath();
+    if(!in_array($imageFileExtension, ['png', 'jpg', 'jpeg'])) {
+        $imageUrl = '/admin/asset/get-image-thumbnail?id=' . $this->asset->getId() . '&format=png';
+    }
 
-<img style="visibility: hidden" id='image' src='/admin/asset/get-image-thumbnail?id=<?= $this->asset->getId() ?>&width=3000&height=3000&contain=true'/>
+?>
+
+<img style="visibility: hidden" id='image' src='<?= $imageUrl ?>'/>
 <script>
     window.addEventListener('load', function (e) {
         var image = document.getElementById('image');
@@ -92,7 +100,7 @@
             tempCanvas.width = dim.width;
             tempCanvas.height = dim.height;
             Layers.convert_layers_to_canvas(tempCtx);
-            var dataUri = tempCanvas.toDataURL('image/"<?= (\Pimcore\File::getFileExtension($this->asset->getFilename()) == "png") ? "png" : "jpg" ?>"');
+            var dataUri = tempCanvas.toDataURL('image/"<?= ($imageFileExtension == "png") ? "png" : "jpg" ?>"');
 
             parent.Ext.Ajax.request({
                 url: "/admin/asset/image-editor-save?id=<?= $this->asset->getId() ?>",

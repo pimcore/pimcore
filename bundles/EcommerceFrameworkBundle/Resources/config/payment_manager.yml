@@ -21,6 +21,10 @@ services:
         arguments:
             $options: []
 
+    Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment\PayPalSmartPaymentButton:
+        arguments:
+            $options: []
+
     Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment\QPay:
         arguments:
             $options: []

@@ -48,7 +48,7 @@ class Hardlink extends Document
     /**
      * @var bool
      */
-    protected $childsFromSource;
+    protected $childrenFromSource;
 
     /**
      * @return Document\PageSnippet
@@ -106,13 +106,13 @@ class Hardlink extends Document
     }
 
     /**
-     * @param $childsFromSource
+     * @param $childrenFromSource
      *
      * @return Hardlink
      */
-    public function setChildrenFromSource($childsFromSource)
+    public function setChildrenFromSource($childrenFromSource)
     {
-        $this->childsFromSource = (bool) $childsFromSource;
+        $this->childrenFromSource = (bool) $childrenFromSource;
 
         return $this;
     }
@@ -122,7 +122,7 @@ class Hardlink extends Document
      */
     public function getChildrenFromSource()
     {
-        return $this->childsFromSource;
+        return $this->childrenFromSource;
     }
 
     /**

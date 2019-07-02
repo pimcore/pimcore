@@ -125,7 +125,8 @@ server {
         fastcgi_split_path_info ^(.+\.php)(/.+)$;
         # Check that the PHP script exists before passing it
         try_files $fastcgi_script_name =404;
-        include fastcgi.conf;
+        # include fastcgi.conf if needed
+        #include fastcgi.conf;
         # Bypass the fact that try_files resets $fastcgi_path_info
         # see: http://trac.nginx.org/nginx/ticket/321
         set $path_info $fastcgi_path_info;

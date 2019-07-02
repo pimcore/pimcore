@@ -22,15 +22,12 @@ use Pimcore\Model\User\Role;
 class UserService
 {
     /**
-     * @param User $user
+     * @param User $loggedIn
      *
      * @return array
      */
     public function findAll(User $loggedIn): array
     {
-        $users = [];
-        $roles = [];
-
         $filter = [
             'id > ?' => 0,
             'id != ?' => $loggedIn->getId(),
@@ -39,7 +36,7 @@ class UserService
         ];
 
         $userFilter = array_merge($filter, [
-            '(permissions LIKE ? OR admin = 1)' => '%notifications%',
+            'admin = ?' => '1',
         ]);
 
         $roleFilter = array_merge($filter, [
@@ -56,6 +53,7 @@ class UserService
         $listing->load();
 
         $users = $listing->getUsers();
+        $users = $this->filterUsersWithPermission($users);
 
         $condition = implode(' AND ', array_keys($roleFilter));
         $conditionVariables = array_values($roleFilter);
@@ -69,5 +67,23 @@ class UserService
         $roles = $listing->getRoles();
 
         return array_merge($users, $roles);
+    }
+
+    /**
+     * @param array $users
+     * @return array
+     */
+    public function filterUsersWithPermission(array $users): array
+    {
+        $usersList = [];
+
+        /** @var User $user */
+        foreach ($users as $user) {
+            if ($user->isAllowed('notifications')) {
+                $usersList[] = $user;
+            }
+        }
+
+        return $usersList;
     }
 }

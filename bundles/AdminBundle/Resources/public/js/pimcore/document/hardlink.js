@@ -443,9 +443,9 @@ pimcore.document.hardlink = Class.create(pimcore.document.document, {
                         checked: this.data.propertiesFromSource
                     }, {
                         xtype: "checkbox",
-                        name: "childsFromSource",
+                        name: "childrenFromSource",
                         fieldLabel: t("childs_from_source"),
-                        checked: this.data.childsFromSource
+                        checked: this.data.childrenFromSource
                     }]
             });
         }

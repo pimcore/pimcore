@@ -21,7 +21,7 @@ use Pimcore\Model\Element\ValidationException;
 use Pimcore\Workflow;
 use Pimcore\Workflow\Transition;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 use Symfony\Component\Workflow\Event\Event;
 
 class NotesSubscriber implements EventSubscriberInterface

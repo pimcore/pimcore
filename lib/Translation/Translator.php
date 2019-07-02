@@ -24,10 +24,16 @@ use Symfony\Component\Translation\IdentityTranslator;
 use Symfony\Component\Translation\MessageCatalogue;
 use Symfony\Component\Translation\MessageCatalogueInterface;
 use Symfony\Component\Translation\TranslatorBagInterface;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Component\Translation\TranslatorInterface as LegacyTranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorTrait;
 
-class Translator implements TranslatorInterface, TranslatorBagInterface
+class Translator implements LegacyTranslatorInterface, TranslatorInterface, TranslatorBagInterface
 {
+    use TranslatorTrait {
+        trans as protected doTrans;
+    }
+
     /**
      * @var TranslatorInterface|TranslatorBagInterface
      */
@@ -42,11 +48,6 @@ class Translator implements TranslatorInterface, TranslatorBagInterface
      * @var array
      */
     protected $initializedCatalogues = [];
-
-    /**
-     * @var IdentityTranslator
-     */
-    private $selector;
 
     /**
      * @var string
@@ -68,18 +69,16 @@ class Translator implements TranslatorInterface, TranslatorBagInterface
     protected $kernel;
 
     /**
-     * @param TranslatorInterface $translator
+     * @param LegacyTranslatorInterface $translator
      * @param bool $caseInsensitive
      */
-    public function __construct(TranslatorInterface $translator, bool $caseInsensitive = false)
+    public function __construct(LegacyTranslatorInterface $translator, bool $caseInsensitive = false)
     {
         if (!$translator instanceof TranslatorBagInterface) {
             throw new InvalidArgumentException(sprintf('The Translator "%s" must implement TranslatorInterface and TranslatorBagInterface.', get_class($translator)));
         }
 
         $this->translator = $translator;
-        $this->selector = new IdentityTranslator();
-
         $this->caseInsensitive = $caseInsensitive;
     }
 
@@ -98,12 +97,17 @@ class Translator implements TranslatorInterface, TranslatorBagInterface
             $domain = 'messages';
         }
 
+        $id = (string) $id;
         $catalogue = $this->getCatalogue($locale);
         $locale = $catalogue->getLocale();
 
         $this->lazyInitialize($domain, $locale);
 
-        $term = $this->getFromCatalogue($catalogue, (string)$id, $domain, $locale);
+        if (isset($parameters['%count%'])) {
+            $id = $this->doTrans($id, $parameters, $domain, $locale);
+        }
+
+        $term = $this->getFromCatalogue($catalogue, $id, $domain, $locale);
         $term = strtr($term, $parameters);
 
         // check for an indexed array, that used the ZF1 vsprintf() notation for parameters
@@ -121,41 +125,13 @@ class Translator implements TranslatorInterface, TranslatorBagInterface
      */
     public function transChoice($id, $number, array $parameters = [], $domain = null, $locale = null)
     {
-        $id = trim($id);
+        @trigger_error(
+            'transChoice is deprecated since version 6.0.1 and will be removed in 7.0.0. ' .
+            ' Use the trans() method with "%count%" parameter.',
+            E_USER_DEPRECATED
+        );
 
-        if ($this->disableTranslations) {
-            return $id;
-        }
-
-        $parameters = array_merge([
-            '%count%' => $number,
-        ], $parameters);
-
-        if (null === $domain) {
-            $domain = 'messages';
-        }
-
-        $id = (string) $id;
-        $catalogue = $this->getCatalogue($locale);
-        $locale = $catalogue->getLocale();
-
-        $this->lazyInitialize($domain, $locale);
-
-        while (!$catalogue->defines($id, $domain)) {
-            if ($cat = $catalogue->getFallbackCatalogue()) {
-                $catalogue = $cat;
-                $locale = $catalogue->getLocale();
-            } else {
-                break;
-            }
-        }
-
-        $term = $this->getFromCatalogue($catalogue, $id, $domain, $locale);
-        $term = $this->selector->choose($term, (int) $number, $locale);
-
-        $term = $this->updateLinks($term);
-
-        return strtr($term, $parameters);
+        return $this->trans($id, ['%count%' => $number] + $parameters, $domain, $locale);
     }
 
     protected function getFromCatalogue(MessageCatalogueInterface $catalogue, $id, $domain, $locale)
@@ -471,4 +447,5 @@ class Translator implements TranslatorInterface, TranslatorBagInterface
     {
         return call_user_func_array([$this->translator, $method], $args);
     }
+
 }

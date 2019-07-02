@@ -69,10 +69,6 @@ class SearchController extends AdminController
         $subtypes = explode(',', $allParams['subtype']);
         $classnames = explode(',', $allParams['class']);
 
-        if ($allParams['type'] == 'object' && is_array($classnames) && empty($classnames[0])) {
-            $subtypes = ['object', 'variant', 'folder'];
-        }
-
         $offset = intval($allParams['start']);
         $limit = intval($allParams['limit']);
 

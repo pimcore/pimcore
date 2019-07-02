@@ -190,6 +190,14 @@ abstract class AbstractElasticSearch extends Worker\AbstractMockupCacheWorker im
         $relationAttributesMapping = [];
 
         foreach ($this->tenantConfig->getAttributes() as $attribute) {
+            if (empty($attribute->getType())
+                && empty($attribute->getOption('mapping'))
+                && empty($attribute->getOption('mapper'))
+                && empty($attribute->getOption('analyzer'))
+            ) {
+                continue;
+            }
+
             // if option "mapping" is set (array), no other configuration is considered for mapping
             if (!empty($attribute->getOption('mapping'))) {
                 $customAttributesMapping[$attribute->getName()] = $attribute->getOption('mapping');

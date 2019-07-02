@@ -22,7 +22,7 @@ use Pimcore\Tool;
 use Pimcore\Workflow\EventSubscriber\NotificationEmailSubscriber;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Templating\EngineInterface;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 use Symfony\Component\Workflow\Workflow;
 
 class NotificationEmailService

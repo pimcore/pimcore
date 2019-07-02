@@ -182,7 +182,7 @@ CREATE TABLE `documents_hardlink` (
   `id` int(11) unsigned NOT NULL default '0',
   `sourceId` int(11) DEFAULT NULL,
   `propertiesFromSource` tinyint(1) DEFAULT NULL,
-  `childsFromSource` tinyint(1) DEFAULT NULL,
+  `childrenFromSource` tinyint(1) DEFAULT NULL,
   PRIMARY KEY `id` (`id`)
 ) DEFAULT CHARSET=utf8mb4;
 
@@ -658,7 +658,7 @@ CREATE TABLE `users` (
   `memorizeTabs` tinyint(1) DEFAULT NULL,
   `allowDirtyClose` tinyint(1) unsigned DEFAULT '1',
   `docTypes` varchar(255) DEFAULT NULL,
-  `classes` varchar(255) DEFAULT NULL,
+  `classes` text DEFAULT NULL,
   `apiKey` varchar(255) DEFAULT NULL,
   `twoFactorAuthentication` varchar(255) DEFAULT NULL,
 	`activePerspective` VARCHAR(255) NULL DEFAULT NULL,
