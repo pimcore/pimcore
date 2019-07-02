@@ -19,11 +19,20 @@ pimcore.object.tags.manyToManyRelation = Class.create(pimcore.object.tags.abstra
     idProperty: "rowId",
     pathProperty: "fullpath",
     allowBatchAppend: true,
+    dataObjectFolderAllowed: false,
 
     initialize: function (data, fieldConfig) {
         this.data = [];
 
         this.fieldConfig = fieldConfig;
+
+        this.fieldConfig.classes =  this.fieldConfig.classes.filter(x => {
+            if(x.classes == 'folder') {
+                this.dataObjectFolderAllowed = true;
+                return false;
+            }
+            return true;
+        });
 
         if (data) {
             this.data = data;
@@ -472,13 +481,20 @@ pimcore.object.tags.manyToManyRelation = Class.create(pimcore.object.tags.abstra
 
         if (this.fieldConfig.objectsAllowed) {
             allowedTypes.push("object");
+            allowedSubtypes.object = [];
             if (this.fieldConfig.classes != null && this.fieldConfig.classes.length > 0) {
                 allowedSpecific.classes = [];
-                allowedSubtypes.object = ["object"];
+                allowedSubtypes.object.push("object");
                 for (i = 0; i < this.fieldConfig.classes.length; i++) {
                     allowedSpecific.classes.push(this.fieldConfig.classes[i].classes);
+
                 }
-            } else {
+            }
+            if(this.dataObjectFolderAllowed) {
+                allowedSubtypes.object.push("folder");
+            }
+
+            if(allowedSubtypes.length == 0) {
                 allowedSubtypes.object = ["object", "folder", "variant"];
             }
         }
@@ -619,28 +635,34 @@ pimcore.object.tags.manyToManyRelation = Class.create(pimcore.object.tags.abstra
             return false;
         }
 
-        var type = data.elementType;
+        var elementType = data.elementType;
         var isAllowed = false;
         var subType;
 
-        if (type == "object" && this.fieldConfig.objectsAllowed) {
+        if (elementType == "object" && this.fieldConfig.objectsAllowed) {
 
-            var classname = data.className;
-            isAllowed = false;
-            if (this.fieldConfig.classes != null && this.fieldConfig.classes.length > 0) {
-                for (i = 0; i < this.fieldConfig.classes.length; i++) {
-                    if (this.fieldConfig.classes[i].classes == classname) {
-                        isAllowed = true;
-                        break;
-                    }
+            if(data.type == 'folder') {
+                if(this.dataObjectFolderAllowed || this.fieldConfig.classes.length <= 0) {
+                    isAllowed = true;
                 }
             } else {
-                //no classes configured - allow all
-                isAllowed = true;
+                var classname = data.className;
+
+                isAllowed = false;
+                if (this.fieldConfig.classes != null && this.fieldConfig.classes.length > 0) {
+                    for (i = 0; i < this.fieldConfig.classes.length; i++) {
+                        if (this.fieldConfig.classes[i].classes == classname) {
+                            isAllowed = true;
+                            break;
+                        }
+                    }
+                } else {
+                    if(!this.dataObjectFolderAllowed) {
+                        isAllowed = true;
+                    }
+                }
             }
-
-
-        } else if (type == "asset" && this.fieldConfig.assetsAllowed) {
+        } else if (elementType == "asset" && this.fieldConfig.assetsAllowed) {
             subType = data.type;
             isAllowed = false;
             if (this.fieldConfig.assetTypes != null && this.fieldConfig.assetTypes.length > 0) {
@@ -655,7 +677,7 @@ pimcore.object.tags.manyToManyRelation = Class.create(pimcore.object.tags.abstra
                 isAllowed = true;
             }
 
-        } else if (type == "document" && this.fieldConfig.documentsAllowed) {
+        } else if (elementType == "document" && this.fieldConfig.documentsAllowed) {
             subType = data.type;
             isAllowed = false;
             if (this.fieldConfig.documentTypes != null && this.fieldConfig.documentTypes.length > 0) {
