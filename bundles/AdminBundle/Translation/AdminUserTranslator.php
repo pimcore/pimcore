@@ -18,7 +18,7 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\AdminBundle\Translation;
 
 use Pimcore\Bundle\AdminBundle\Security\User\UserLoader;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class AdminUserTranslator implements TranslatorInterface
 {
@@ -64,7 +64,7 @@ class AdminUserTranslator implements TranslatorInterface
         $domain = $domain ?? 'admin';
         $locale = $locale ?? $this->getUserLocale();
 
-        return $this->translator->transChoice($id, $number, $parameters, $domain, $locale);
+        return $this->translator->trans($id, ['%count%' => $number] + $parameters, $domain, $locale);
     }
 
     /**
