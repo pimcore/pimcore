@@ -28,6 +28,7 @@ class NotificationService
 
     /**
      * NotificationService constructor.
+     *
      * @param UserService $userService
      */
     public function __construct(UserService $userService)
