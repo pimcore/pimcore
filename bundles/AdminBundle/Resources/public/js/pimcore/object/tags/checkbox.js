@@ -78,7 +78,7 @@ pimcore.object.tags.checkbox = Class.create(pimcore.object.tags.abstract, {
 
     updateStyle: function(newStyle) {
 
-        if(!this.getObject().data.general.allowInheritance) {
+        if(!this.getObject() || !this.getObject().data.general.allowInheritance) {
             return;
         }
 
@@ -115,22 +115,24 @@ pimcore.object.tags.checkbox = Class.create(pimcore.object.tags.abstract, {
             checkbox.labelWidth = this.fieldConfig.labelWidth;
         }
 
-        this.emptyButton = new Ext.Button({
-            iconCls: "pimcore_icon_delete",
-            cls: 'pimcore_button_transparent',
-            tooltip: t("set_to_null"),
-            hidden: !this.getObject().data.general.allowInheritance,
-            handler: function() {
-                if (this.data !== null) {
-                    this.dataChanged = true;
-                }
-                this.checkbox.setValue(false);
+        if (this.getObject()) {
+            this.emptyButton = new Ext.Button({
+                iconCls: "pimcore_icon_delete",
+                cls: 'pimcore_button_transparent',
+                tooltip: t("set_to_null"),
+                hidden: !this.getObject().data.general.allowInheritance,
+                handler: function () {
+                    if (this.data !== null) {
+                        this.dataChanged = true;
+                    }
+                    this.checkbox.setValue(false);
 
-                this.data = null;
-                this.updateStyle();
-            }.bind(this),
-            style: "margin-left: 10px; filter:grayscale(100%);",
-        });
+                    this.data = null;
+                    this.updateStyle();
+                }.bind(this),
+                style: "margin-left: 10px; filter:grayscale(100%);",
+            });
+        }
 
         this.checkbox = new Ext.form.Checkbox(checkbox);
 
