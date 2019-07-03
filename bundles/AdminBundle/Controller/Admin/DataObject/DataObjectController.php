@@ -1190,7 +1190,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
 
                 Db::get()->commit();
                 break;
-            } catch(\Exception $e) {
+            } catch (\Exception $e) {
                 Db::get()->rollBack();
 
                 // we try to start the transaction $maxRetries times again (deadlocks, ...)

@@ -732,22 +732,24 @@ class ElementController extends AdminController
         );
     }
 
-
     /**
      * @param $source
      * @param $context
+     *
      * @return bool|DataObject\ClassDefinition\Data|null
+     *
      * @throws \Exception
      */
-    protected function getNicePathFormatterFieldDefinition($source, $context) {
+    protected function getNicePathFormatterFieldDefinition($source, $context)
+    {
         $ownerType = $context['containerType'];
         $fieldname = $context['fieldname'];
         $fd = null;
 
         if ($ownerType == 'object') {
-            $subContainerType = isset($context["subContainerType"]) ? $context["subContainerType"] : null;
+            $subContainerType = isset($context['subContainerType']) ? $context['subContainerType'] : null;
             if ($subContainerType) {
-                $subContainerKey = $context["subContainerKey"];
+                $subContainerKey = $context['subContainerKey'];
                 $fd = $source->getClass()->getFieldDefinition($subContainerKey)->getFieldDefinition($fieldname);
             } else {
                 $fd = $source->getClass()->getFieldDefinition($fieldname);
@@ -770,7 +772,6 @@ class ElementController extends AdminController
 
         return $fd;
     }
-
 
     /**
      * @param DataObject\Concrete $source

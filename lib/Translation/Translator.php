@@ -20,7 +20,6 @@ use Pimcore\Model\Translation\TranslationInterface;
 use Pimcore\Tool;
 use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\Translation\Exception\InvalidArgumentException;
-use Symfony\Component\Translation\IdentityTranslator;
 use Symfony\Component\Translation\MessageCatalogue;
 use Symfony\Component\Translation\MessageCatalogueInterface;
 use Symfony\Component\Translation\TranslatorBagInterface;
@@ -447,5 +446,4 @@ class Translator implements LegacyTranslatorInterface, TranslatorInterface, Tran
     {
         return call_user_func_array([$this->translator, $method], $args);
     }
-
 }

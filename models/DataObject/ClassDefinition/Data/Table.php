@@ -275,20 +275,22 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
 
     /**
      * @param array $data
+     *
      * @return array
      */
-    protected function convertDataToValueArray(array $data) {
+    protected function convertDataToValueArray(array $data)
+    {
         $valueArray = [];
-        foreach($data as $entry) {
-            if(is_array($entry)) {
+        foreach ($data as $entry) {
+            if (is_array($entry)) {
                 $valueArray[] = $this->convertDataToValueArray($entry);
             } else {
                 $valueArray[] = $entry;
             }
         }
+
         return $valueArray;
     }
-
 
     /**
      * @see ResourcePersistenceAwareInterface::getDataForResource
@@ -301,10 +303,11 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
      */
     public function getDataForResource($data, $object = null, $params = [])
     {
-        if(is_array($data)) {
+        if (is_array($data)) {
             //make sure only array values are stored to DB
             $data = $this->convertDataToValueArray($data);
         }
+
         return Serialize::serialize($data);
     }
 
@@ -323,21 +326,20 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
 
         //set array keys based on column configuration if set
         $columnConfig = $this->getColumnConfig();
-        if($this->isColumnConfigActivated() && $columnConfig) {
-
+        if ($this->isColumnConfigActivated() && $columnConfig) {
             $dataWithKeys = [];
-            foreach($unserializedData as $row) {
+            foreach ($unserializedData as $row) {
                 $indexedRow = [];
                 $index = 0;
-                foreach($row as $col) {
+                foreach ($row as $col) {
                     $indexedRow[$columnConfig[$index]['key']] = $col;
                     $index++;
                 }
 
                 $dataWithKeys[] = $indexedRow;
             }
-            return $dataWithKeys;
 
+            return $dataWithKeys;
         } else {
             return $unserializedData;
         }
@@ -381,7 +383,7 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
      */
     public function getDataForEditmode($data, $object = null, $params = [])
     {
-        if(is_array($data)) {
+        if (is_array($data)) {
             //make sure only array values are used of edit mode (other wise ext stores do not work anymore)
             return $this->convertDataToValueArray($data);
         }
@@ -568,7 +570,7 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
         if ($data) {
             $html = '<table>';
 
-            if($this->isColumnConfigActivated()) {
+            if ($this->isColumnConfigActivated()) {
                 $html .= '<tr>';
 
                 $index = 0;

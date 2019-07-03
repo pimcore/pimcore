@@ -123,7 +123,7 @@ abstract class AbstractRelations extends Data implements CustomResourcePersistin
                 if (!in_array($classname, $allowedClassnames)) {
                     $allowed = false;
                 }
-            } else if($object instanceof DataObject\Folder) {
+            } elseif ($object instanceof DataObject\Folder) {
                 if (!in_array('folder', $allowedClassnames)) {
                     $allowed = false;
                 }
