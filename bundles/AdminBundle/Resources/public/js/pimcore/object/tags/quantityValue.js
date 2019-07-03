@@ -100,7 +100,7 @@ pimcore.object.tags.quantityValue = Class.create(pimcore.object.tags.abstract, {
             queryMode: 'local',
             listeners: {
                 change: function( combo, newValue, oldValue) {
-                    if(this.fieldConfig.autoConvert) {
+                    if(this.fieldConfig.autoConvert && oldValue && newValue) {
                         Ext.Ajax.request({
                             url: "/admin/quantity-value/convert",
                             params: {
