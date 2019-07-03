@@ -15,6 +15,7 @@
 namespace Pimcore\Bundle\CoreBundle\Command;
 
 use Pimcore\Console\AbstractCommand;
+use Pimcore\Console\Traits\DryRun;
 use Pimcore\Db;
 use Pimcore\Tool;
 use Symfony\Component\Console\Input\InputOption;
@@ -23,6 +24,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class DeleteUnusedLocaleDataCommand extends AbstractCommand
 {
+    use DryRun;
+
     protected function configure()
     {
         $this
@@ -35,6 +38,8 @@ class DeleteUnusedLocaleDataCommand extends AbstractCommand
                 'Do not delete specified locale tables (comma separated eg.: en, en_AT)'
             )
         ;
+
+        $this->configureDryRunOption('Just output the delete localized queries to be executed.');
     }
 
     /**
@@ -64,8 +69,13 @@ class DeleteUnusedLocaleDataCommand extends AbstractCommand
 
                 if (!in_array($language, $skipLocales) && !in_array($language, $validLanguages)) {
                     $sql = ($type == 'VIEW' ? 'DROP VIEW ' : 'DROP TABLE ') . $db->quoteIdentifier($table[0]);
-                    echo $sql . "\n";
-                    $db->query($sql); //delete unused language table/view
+
+                    if (!$this->isDryRun()) {
+                        echo $sql . "\n";
+                        $db->query($sql); //delete unused language table/view
+                    } else {
+                        $output->writeln($this->dryRunMessage($sql));
+                    }
                 }
             }
         }
