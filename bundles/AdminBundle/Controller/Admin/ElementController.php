@@ -481,25 +481,11 @@ class ElementController extends AdminController
         } else {
             $context = [];
         }
+
         $ownerType = $context['containerType'];
         $fieldname = $context['fieldname'];
-        if ($ownerType == 'object') {
-            $fd = $source->getClass()->getFieldDefinition($fieldname);
-        } elseif ($ownerType == 'localizedfield') {
-            $fd = $source->getClass()->getFieldDefinition('localizedfields')->getFieldDefinition($fieldname);
-        } elseif ($ownerType == 'objectbrick') {
-            $fdBrick = DataObject\Objectbrick\Definition::getByKey($context['containerKey']);
-            $fd = $fdBrick->getFieldDefinition($fieldname);
-        } elseif ($ownerType == 'fieldcollection') {
-            $containerKey = $context['containerKey'];
-            $fdCollection = DataObject\Fieldcollection\Definition::getByKey($containerKey);
-            if ($context['subContainerType'] == 'localizedfield') {
-                $fdLocalizedFields = $fdCollection->getFieldDefinition('localizedfields');
-                $fd = $fdLocalizedFields->getFieldDefinition($fieldname);
-            } else {
-                $fd = $fdCollection->getFieldDefinition($fieldname);
-            }
-        }
+
+        $fd = $this->getNicePathFormatterFieldDefinition($source, $context);
 
         $targets = $this->decodeJson($request->get('targets'));
 
@@ -746,24 +732,26 @@ class ElementController extends AdminController
         );
     }
 
+
     /**
-     * @param DataObject\Concrete $source
-     * @param                     $context
-     * @param                     $result
-     * @param                     $targets
-     *
-     * @return array
-     *
+     * @param $source
+     * @param $context
+     * @return bool|DataObject\ClassDefinition\Data|null
      * @throws \Exception
      */
-    protected function convertResultWithPathFormatter(DataObject\Concrete $source, $context, $result, $targets): array
-    {
+    protected function getNicePathFormatterFieldDefinition($source, $context) {
         $ownerType = $context['containerType'];
         $fieldname = $context['fieldname'];
         $fd = null;
 
         if ($ownerType == 'object') {
-            $fd = $source->getClass()->getFieldDefinition($fieldname);
+            $subContainerType = isset($context["subContainerType"]) ? $context["subContainerType"] : null;
+            if ($subContainerType) {
+                $subContainerKey = $context["subContainerKey"];
+                $fd = $source->getClass()->getFieldDefinition($subContainerKey)->getFieldDefinition($fieldname);
+            } else {
+                $fd = $source->getClass()->getFieldDefinition($fieldname);
+            }
         } elseif ($ownerType == 'localizedfield') {
             $fd = $source->getClass()->getFieldDefinition('localizedfields')->getFieldDefinition($fieldname);
         } elseif ($ownerType == 'objectbrick') {
@@ -779,6 +767,24 @@ class ElementController extends AdminController
                 $fd = $fdCollection->getFieldDefinition($fieldname);
             }
         }
+
+        return $fd;
+    }
+
+
+    /**
+     * @param DataObject\Concrete $source
+     * @param                     $context
+     * @param                     $result
+     * @param                     $targets
+     *
+     * @return array
+     *
+     * @throws \Exception
+     */
+    protected function convertResultWithPathFormatter(DataObject\Concrete $source, $context, $result, $targets): array
+    {
+        $fd = $this->getNicePathFormatterFieldDefinition($source, $context);
 
         if ($fd instanceof DataObject\ClassDefinition\PathFormatterAwareInterface) {
             $formatter = $fd->getPathFormatterClass();
