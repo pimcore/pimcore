@@ -30,7 +30,7 @@ class DeleteUnusedLocaleDataCommand extends AbstractCommand
             ->setDescription('Delete unused locale(invalid language) tables & views')
             ->addOption(
                 'skip-locales',
-                't',
+                's',
                 InputOption::VALUE_OPTIONAL,
                 'Do not delete specified locale tables (comma separated eg.: en, en_AT)'
             )
