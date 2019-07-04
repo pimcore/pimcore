@@ -52,7 +52,9 @@ We love good looking user interfaces, designed to be efficient for the daily use
 experience for editors. 
 
 ## Preview and Demo
-![Pimcore Admin Interface Screenshot](./doc/Development_Documentation/img/pimcore-screenshot-1.png)
+![Pimcore Admin Interface Screenshot CMS](./doc/Development_Documentation/img/pimcore-screenshot-1.png)
+![Pimcore Admin Interface Screenshot DAM](./doc/Development_Documentation/img/pimcore-screenshot-2.png)
+![Pimcore Admin Interface Screenshot PIM/MDM](./doc/Development_Documentation/img/pimcore-screenshot-3.png)
 
 #### Basic Demo (CMS)
 _Admin-URL_: [https://demo-basic.pimcore.org/admin](https://demo-basic.pimcore.org/admin)  
