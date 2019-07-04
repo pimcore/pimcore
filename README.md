@@ -17,10 +17,7 @@ Pimcore - Open Source Digital Experience Platform: MDM/PIM, CDP, DAM, CMS/UX & e
 * 🐞 [Issue Tracker](https://github.com/pimcore/pimcore/issues) - Report bugs or suggest new features
 * 🗨  [Forums](https://talk.pimcore.org/) - Community support and discussions
 * 👪 [Community Chat](https://gitter.im/pimcore/pimcore) - Gitter
-   
-   
-**Looking for the previous stable (version 4)?  
-See https://github.com/pimcore/pimcore/tree/pimcore4**
+  
 
 ## Contribute  
 **Bug fixes:** please create a pull request including a step by step description to reproduce the problem  
