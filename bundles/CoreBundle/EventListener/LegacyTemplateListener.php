@@ -12,8 +12,8 @@ use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\Templating\EngineInterface;
 
 /**
+ * @deprecated
  * Provides backward compatibility for PHP templates
- *
  */
 class LegacyTemplateListener extends TemplateListener
 {

@@ -10,8 +10,8 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\KernelInterface;
 
 /**
+ * @deprecated
  * Provides backward compatibility for camelCase template names and PHP engine support
- *
  */
 class LegacyTemplateGuesser extends BaseTemplateGuesser
 {
