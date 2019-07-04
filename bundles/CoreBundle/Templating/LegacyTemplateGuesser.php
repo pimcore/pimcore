@@ -3,6 +3,7 @@
 namespace Pimcore\Bundle\CoreBundle\Templating;
 
 use Doctrine\Common\Persistence\Proxy;
+use Pimcore\Controller\Configuration\TemplatePhp;
 use Sensio\Bundle\FrameworkExtraBundle\Templating\TemplateGuesser as BaseTemplateGuesser;
 use Symfony\Bundle\FrameworkBundle\Templating\DelegatingEngine;
 use Symfony\Bundle\FrameworkBundle\Templating\TemplateReference;
@@ -44,8 +45,14 @@ class LegacyTemplateGuesser extends BaseTemplateGuesser
     /**
      * @inheritdoc
      */
-    public function guessTemplateName($controller, Request $request, $engine = 'php')
+    public function guessTemplateName($controller, Request $request, $engine = 'twig')
     {
+        if ($request->attributes->has('_template')) {
+            if ($template = $request->attributes->get('_template') instanceof TemplatePhp) {
+                $engine = 'php';
+            }
+        }
+
         //first lookup for new template name(snake_case)
         //if not found then use legacy guesser template name(camelCase)
         $templateReference = parent::guessTemplateName($controller, $request);
