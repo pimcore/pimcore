@@ -262,16 +262,17 @@ class DataObjectController extends ElementControllerBase implements EventedContr
 
             $tmpObject['allowVariants'] = $child->getClass()->getAllowVariants();
         }
-        if ($tmpObject['type'] == 'variant') {
-            $tmpObject['iconCls'] = 'pimcore_icon_variant';
-        } else {
-            if ($child->getElementAdminStyle()->getElementIcon()) {
-                $tmpObject['icon'] = $child->getElementAdminStyle()->getElementIcon();
-            }
 
-            if ($child->getElementAdminStyle()->getElementIconClass()) {
-                $tmpObject['iconCls'] = $child->getElementAdminStyle()->getElementIconClass();
-            }
+        if ($child->getElementAdminStyle()->getElementIcon()) {
+            $tmpObject['icon'] = $child->getElementAdminStyle()->getElementIcon();
+        }
+
+        if ($child->getElementAdminStyle()->getElementIconClass()) {
+            $tmpObject['iconCls'] = $child->getElementAdminStyle()->getElementIconClass();
+        }
+
+        if ($tmpObject['type'] == 'variant' && !$tmpObject['icon'] && !$tmpObject['iconCls']) {
+            $tmpObject['iconCls'] = 'pimcore_icon_variant';
         }
 
         if ($child->getElementAdminStyle()->getElementCssClass()) {
@@ -1190,7 +1191,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
 
                 Db::get()->commit();
                 break;
-            } catch(\Exception $e) {
+            } catch (\Exception $e) {
                 Db::get()->rollBack();
 
                 // we try to start the transaction $maxRetries times again (deadlocks, ...)
