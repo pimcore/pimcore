@@ -423,18 +423,19 @@ class Service extends Model\AbstractModel
      *
      * @param  string $type
      * @param  int $id
+     * @param  bool $force
      *
      * @return ElementInterface
      */
-    public static function getElementById($type, $id)
+    public static function getElementById($type, $id, $force = false)
     {
         $element = null;
         if ($type == 'asset') {
-            $element = Asset::getById($id);
+            $element = Asset::getById($id, $force);
         } elseif ($type == 'object') {
-            $element = DataObject::getById($id);
+            $element = DataObject::getById($id, $force);
         } elseif ($type == 'document') {
-            $element = Document::getById($id);
+            $element = Document::getById($id, $force);
         }
 
         return $element;
