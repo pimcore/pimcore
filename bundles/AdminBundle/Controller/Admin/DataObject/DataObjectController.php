@@ -271,7 +271,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
             $tmpObject['iconCls'] = $child->getElementAdminStyle()->getElementIconClass();
         }
 
-        if ($tmpObject['type'] == 'variant' && !$tmpObject["icon"] && !$tmpObject["iconCls"]) {
+        if ($tmpObject['type'] == 'variant' && !$tmpObject['icon'] && !$tmpObject['iconCls']) {
             $tmpObject['iconCls'] = 'pimcore_icon_variant';
         }
 

@@ -52,7 +52,7 @@ class LegacyTemplateListener extends TemplateListener
             return;
         }
 
-        if(!$event instanceof GetResponseForControllerResultEvent) {
+        if (!$event instanceof GetResponseForControllerResultEvent) {
             return;
         }
 
