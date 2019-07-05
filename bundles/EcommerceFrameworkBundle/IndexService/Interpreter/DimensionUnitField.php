@@ -18,7 +18,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Traits\OptionsResolverTrait;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
- * @deprecated 
+ * @deprecated
  */
 class DimensionUnitField implements InterpreterInterface
 {
