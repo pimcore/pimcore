@@ -47,10 +47,8 @@ class LegacyTemplateGuesser extends BaseTemplateGuesser
      */
     public function guessTemplateName($controller, Request $request, $engine = 'twig')
     {
-        if ($request->attributes->has('_template')) {
-            if ($template = $request->attributes->get('_template') instanceof TemplatePhp) {
-                $engine = 'php';
-            }
+        if ($request->attributes->get('_template') instanceof TemplatePhp) {
+            $engine = 'php';
         }
 
         //first lookup for new template name(snake_case)
