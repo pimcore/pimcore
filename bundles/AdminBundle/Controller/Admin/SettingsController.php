@@ -426,6 +426,7 @@ class SettingsController extends AdminController
 
         // fallback languages
         $fallbackLanguages = [];
+        $existingValues['pimcore']['general']['fallback_languages'] = [];
         $languages = explode(',', $values['general.validLanguages']);
         $filteredLanguages = [];
         foreach ($languages as $language) {
@@ -441,19 +442,6 @@ class SettingsController extends AdminController
         // check if there's a fallback language endless loop
         foreach ($fallbackLanguages as $sourceLang => $targetLang) {
             $this->checkFallbackLanguageLoop($sourceLang, $fallbackLanguages);
-        }
-
-        // delete views if fallback languages has changed or the language is no more available
-        if (isset($existingValues['general']['fallbackLanguages']) && is_array($existingValues['general']['fallbackLanguages'])) {
-            $fallbackLanguagesChanged = array_diff_assoc(
-                $existingValues['general']['fallbackLanguages'],
-                $fallbackLanguages
-            );
-            $db = \Pimcore\Db::get();
-            $dbName = $db->getDatabase();
-            foreach ($fallbackLanguagesChanged as $language => $dummy) {
-                $this->deleteViews($language, $dbName);
-            }
         }
 
         $cacheExcludePatterns = $values['cache.excludePatterns'];
