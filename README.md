@@ -52,9 +52,15 @@ We love good looking user interfaces, designed to be efficient for the daily use
 experience for editors. 
 
 ## Preview and Demo
+### Documents
 ![Pimcore Admin Interface Screenshot CMS](./doc/Development_Documentation/img/pimcore-screenshot-1.png)
+The CMS part of Pimcore for managing unstructured content such as the pages of a website and its navigation. Physical HTML/CSS pages which are displayed in the browser. Documents can be filled with various content areas, which consist of predefined layout elements. Pimcore documents provide multi-lingual capabilities and powerful features for managing multiple websites at once. Full frontend flexibility enables a complete blend of content and commerce.
+### Digital Assets
 ![Pimcore Admin Interface Screenshot DAM](./doc/Development_Documentation/img/pimcore-screenshot-2.png)
+Images, videos, PDF, Word/Excel documents and other files can be managed and organized into folders. Pimcore renders preview images for more than 200 file types. An integrated image editor is included. Facial recognition for focal points in images and support for VR/360° previews is integrated. Editors maintain images only once at the highest resolution in the system. The output formats for channels such as online shop, app, website, etc. are automatically created.
+### Data Objects
 ![Pimcore Admin Interface Screenshot PIM/MDM](./doc/Development_Documentation/img/pimcore-screenshot-3.png)
+Predefined structured data, which is centrally managed and created either manually or automatically via the API. Used for products & attributes (MDM/PIM), customers (CDP), blog articles (WCM), orders (digital commerce), and so much more. Objects can be used to fill content areas and elements of a website, portal or app with data from one central source. Single source administration of data ensures a consistent, up-to-date digital customer experience with little effort.
 
 #### Basic Demo (CMS)
 _Admin-URL_: [https://demo-basic.pimcore.org/admin](https://demo-basic.pimcore.org/admin)  
