@@ -18,8 +18,8 @@ use Pimcore\Console\AbstractCommand;
 use Pimcore\Console\Traits\DryRun;
 use Pimcore\Db\ConnectionInterface;
 use Pimcore\Tool;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class DeleteUnusedLocaleDataCommand extends AbstractCommand
@@ -78,8 +78,7 @@ class DeleteUnusedLocaleDataCommand extends AbstractCommand
         foreach ($tables as $table) {
             $printLine = false;
             $table = current($table);
-            $classId = str_replace('object_localized_data_','', $table);
-
+            $classId = str_replace('object_localized_data_', '', $table);
 
             $result = $this->db->fetchAll('SELECT DISTINCT `language` FROM ' . $table . ' WHERE `language` NOT IN(' . implode(',', $languageList) .')');
             $result = ($result ? $result : []);
@@ -102,12 +101,12 @@ class DeleteUnusedLocaleDataCommand extends AbstractCommand
             //drop unused localized view e.g. object_localized_classId_*
             $existingViews = $this->db->fetchAll("SHOW TABLES LIKE '%object_localized_{$classId}%'");
 
-            if(is_array($existingViews)) {
+            if (is_array($existingViews)) {
                 foreach ($existingViews as $existingView) {
                     $localizedView = current($existingView);
-                    $existingLanguage = str_replace('object_localized_'.$classId.'_','',$localizedView);
+                    $existingLanguage = str_replace('object_localized_'.$classId.'_', '', $localizedView);
 
-                    if(!in_array($existingLanguage, $validLanguages)) {
+                    if (!in_array($existingLanguage, $validLanguages)) {
                         $sqlDropView = 'DROP VIEW IF EXISTS object_localized_' . $classId . '_' .$existingLanguage;
                         $printLine = true;
 
@@ -123,12 +122,12 @@ class DeleteUnusedLocaleDataCommand extends AbstractCommand
 
             //drop unused localized table e.g. object_localized_query_classId_*
             $existingTables = $this->db->fetchAll("SHOW TABLES LIKE '%object_localized_query_{$classId}%'");
-            if(is_array($existingTables)) {
+            if (is_array($existingTables)) {
                 foreach ($existingTables as $existingTable) {
                     $localizedTable = current($existingTable);
-                    $existingLanguage = str_replace('object_localized_query_'.$classId.'_','',$localizedTable);
+                    $existingLanguage = str_replace('object_localized_query_'.$classId.'_', '', $localizedTable);
 
-                    if(!in_array($existingLanguage, $validLanguages)) {
+                    if (!in_array($existingLanguage, $validLanguages)) {
                         $sqlDropTable = 'DROP TABLE IF EXISTS object_localized_query_' . $classId . '_' .$existingLanguage;
                         $printLine = true;
 
