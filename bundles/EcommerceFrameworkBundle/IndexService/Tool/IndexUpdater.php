@@ -16,9 +16,13 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Tool;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\IBatchProcessingWorker;
+use Pimcore\Console\CliTrait;
 
 class IndexUpdater
 {
+
+    use CliTrait;
+
     /**
      * Runs update index for all tenants
      *  - but does not run processPreparationQueue or processUpdateIndexQueue
@@ -33,6 +37,16 @@ class IndexUpdater
         $updater = Factory::getInstance()->getIndexService();
         if ($updateIndexStructures) {
             $updater->createOrUpdateIndexStructures();
+        }
+
+        // Check if this was triggered in cli. If so do some preparation to properly work.
+        if (self::isCli() && session_status() == PHP_SESSION_NONE) {
+            // Start a session to ensure that code relying on sessions keep working despite running on cli. One example is
+            // \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\PricingManager which uses the session to store its
+            // pricing environment.
+            /** @var \Symfony\Component\HttpFoundation\Session\SessionInterface $session */
+            $session = \Pimcore::getKernel()->getContainer()->get('session');
+            $session->start();
         }
 
         $page = 0;

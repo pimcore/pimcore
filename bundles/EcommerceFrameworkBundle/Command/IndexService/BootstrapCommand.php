@@ -48,13 +48,6 @@ class BootstrapCommand extends AbstractIndexServiceCommand
         $objectListClass = $input->getOption('object-list-class');
         $listCondition = $input->getOption('list-condition');
 
-        // Start a session to ensure that code relying on sessions keep working despite running on cli. One example is
-        // \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\PricingManager which uses the session to store its
-        // pricing environment.
-        /** @var \Symfony\Component\HttpFoundation\Session\SessionInterface $session */
-        $session = $this->getApplication()->getKernel()->getContainer()->get('session');
-        $session->start();
-
         if ($createOrUpdateIndexStructure && $updateIndex) {
             // create/update structure and update index
             IndexUpdater::updateIndex($objectListClass, $listCondition, true, self::LOGGER_NAME);
