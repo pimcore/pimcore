@@ -53,7 +53,7 @@ class IndexUpdater
             $total = $products->count();
 
             self::log($loggername, '=========================');
-            self::log($loggername, sprintf('Update Index Page: %d (%d/%d - %.2f %%)', $page, $iPos, $total, ($iPos/$total)));           
+            self::log($loggername, sprintf('Update Index Page: %d (%d/%d - %.2f %%)', $page, $iPos, $total, $total <= 100 ? 0 :($iPos/$total)));           
             self::log($loggername, '=========================');
 
             foreach ($products as $p) {
@@ -61,6 +61,7 @@ class IndexUpdater
                 $updater->updateIndex($p);
             }
             $page++;
+            $iPos++;
 
             $count = count($products->getObjects());
 
