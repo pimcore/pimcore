@@ -38,12 +38,10 @@ class IndexUpdater
         $page = 0;
         $pageSize = 100;
         $count = $pageSize;
+        $iPos = 0;
 
         while ($count > 0) {
-            self::log($loggername, '=========================');
-            self::log($loggername, 'Update Index Page: ' . $page);
-            self::log($loggername, '=========================');
-
+            /** @var Listing $products */
             $products = new $objectListClass();
             $products->setUnpublished(true);
             $products->setOffset($page * $pageSize);
@@ -51,6 +49,12 @@ class IndexUpdater
             $products->setObjectTypes(['object', 'folder', 'variant']);
             $products->setIgnoreLocalizedFields(true);
             $products->setCondition($condition);
+
+            $total = $products->count();
+
+            self::log($loggername, '=========================');
+            self::log($loggername, sprintf('Update Index Page: %d (%d/%d - %.2f %%)', $page, $iPos, $total, ($iPos/$total)));           
+            self::log($loggername, '=========================');
 
             foreach ($products as $p) {
                 self::log($loggername, 'Updating product ' . $p->getId());
