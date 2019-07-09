@@ -38,25 +38,37 @@ class Dao extends Model\Dao\AbstractDao
     protected $tableDefinitions = null;
 
     /**
-     * @param null $id
+     * @param mixed $id
      *
-     * @return string
+     * @return string|null
      */
-    public function getNameById($id = null)
+    public function getNameById($id)
     {
-        $name = $this->db->fetchOne('SELECT name FROM classes WHERE id = ?', $id);
+        $name = null;
+        try{
+            if (!empty($id)) {
+                $name = $this->db->fetchOne('SELECT name FROM classes WHERE id = ?', $id);
+            }
+        } catch(\Exception $e) {
+        }
 
         return $name;
     }
 
     /**
-     * @param null $name
+     * @param string $name
      *
-     * @return string
+     * @return mixed|null
      */
-    public function getIdByName($name = null)
+    public function getIdByName($name)
     {
-        $id = $this->db->fetchOne('SELECT id FROM classes WHERE name = ?', $name);
+        $id = null;
+        try {
+            if (!empty($name)) {
+                $id = $this->db->fetchOne('SELECT id FROM classes WHERE name = ?', $name);
+            }
+        } catch(\Exception $e) {
+        }
 
         return $id;
     }
