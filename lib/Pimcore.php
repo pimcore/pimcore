@@ -303,7 +303,7 @@ class Pimcore
         // set inShutdown to true so that the output-buffer knows that he is allowed to send the headers
         self::$inShutdown = true;
 
-        if(self::isInstalled()) {
+        if (self::isInstalled()) {
             // write and clean up cache
             Cache::shutdown();
 

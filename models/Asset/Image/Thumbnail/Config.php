@@ -609,7 +609,7 @@ class Config extends Model\AbstractModel
                         $arg = $transformation['arguments'];
 
                         $forceResize = false;
-                        if(isset($arg['forceResize']) && $arg['forceResize'] === true) {
+                        if (isset($arg['forceResize']) && $arg['forceResize'] === true) {
                             $forceResize = true;
                         }
 
