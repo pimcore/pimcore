@@ -160,8 +160,6 @@ This helper makes it easy to implement "Adaptive Design" in Pimcore.
 
 ##### Example
 
-<div class="code-section">
-
 ```php
 <?php
     $device = $this->device("phone"); // first argument is the default setting
@@ -189,8 +187,6 @@ This helper makes it easy to implement "Adaptive Design" in Pimcore.
     This is for default desktop Browser
 {% endif %}
 ```
-
-</div>
    
 For details also see [Adaptive Design](../../../19_Development_Tools_and_Details/21_Adaptive_Design_Helper.md).
 
