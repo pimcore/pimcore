@@ -73,6 +73,7 @@ if($token = strip_tags($request->get('voucher-code'))) {
 | 6    | Criteria onlyTokenPerCart: Tokens in cart and tried to add token of type "only". |
 | 7    | Criteria onlyTokenPerCart: Token of type "only" already in cart. |
 | 8    | No more usages for a single token. |
+| 8    | Token code not found in cart. |
 
 
 #### Display Voucher Information

@@ -876,7 +876,7 @@ abstract class AbstractCart extends AbstractModel implements CartInterface
                 return true;
             }
         } else {
-            throw new VoucherServiceException('No Token with code ' . $code . ' in this cart.', 7);
+            throw new VoucherServiceException('No Token with code ' . $code . ' in this cart.', VoucherServiceException::ERROR_CODE_NOT_FOUND_IN_CART);
         }
     }
 

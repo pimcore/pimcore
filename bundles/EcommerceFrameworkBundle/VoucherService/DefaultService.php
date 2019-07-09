@@ -86,7 +86,7 @@ class DefaultService implements VoucherServiceInterface
         if ($tokenManager = $this->getTokenManager($code)) {
             return $tokenManager->checkToken($code, $cart);
         }
-        throw new VoucherServiceException('No Token for code ' .$code . ' exists.', 3);
+        throw new VoucherServiceException('No Token for code ' .$code . ' exists.', VoucherServiceException::ERROR_CODE_NO_TOKEN_FOR_THIS_CODE_EXISTS);
     }
 
     /**
