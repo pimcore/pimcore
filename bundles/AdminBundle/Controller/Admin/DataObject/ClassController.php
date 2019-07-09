@@ -1381,7 +1381,7 @@ class ClassController extends AdminController implements EventedControllerInterf
                     $className = $groupItem['className'];
 
                     $layoutData = ['className' => $className, 'name' => $groupItem['name']];
-                    $name = json_encode($layoutData);
+                    $name = base64_encode(json_encode($layoutData));
                     $displayName = $className . ' / ' . $groupItem['name'];
                     $icon = 'custom_views';
                 } else {
@@ -1467,7 +1467,7 @@ class ClassController extends AdminController implements EventedControllerInterf
 
                 return $this->adminJson(['success' => $success !== false]);
             } elseif ($type == 'customlayout') {
-                $layoutData = json_decode($data['name'], true);
+                $layoutData = json_decode(base64_decode($data['name']), true);
                 $className = $layoutData['className'];
                 $layoutName = $layoutData['name'];
 
