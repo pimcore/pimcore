@@ -19,7 +19,7 @@ Following an overview of some helpers provided by the Symfony Templating Compone
 - `stopwatch()` 
 - `translator()` 
 - `url()` 
-- `path()` 
+- `path()` this->devic
 
 For more information please have a look into the docs of the [Symfony PHP Templating Compontent](http://symfony.com/doc/3.4/templating/PHP.html). 
   
@@ -160,6 +160,7 @@ This helper makes it easy to implement "Adaptive Design" in Pimcore.
 
 ##### Example
 <div class="code-section">
+
 ```php
 <?php
     $device = $this->device("phone"); // first argument is the default setting
