@@ -70,7 +70,7 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function getNameById($id = null)
     {
-        $name = $this->db->fetchOne('SELECT name FROM custom_layouts WHERE id = ?', $id);
+        $name = $this->db->fetchOne('SELECT name FROM custom_layouts WHERE id = ?', (int) $id);
 
         return $name;
     }
