@@ -303,11 +303,13 @@ class Pimcore
         // set inShutdown to true so that the output-buffer knows that he is allowed to send the headers
         self::$inShutdown = true;
 
-        // write and clean up cache
-        Cache::shutdown();
+        if(self::isInstalled()) {
+            // write and clean up cache
+            Cache::shutdown();
 
-        // release all open locks from this process
-        Model\Tool\Lock::releaseAll();
+            // release all open locks from this process
+            Model\Tool\Lock::releaseAll();
+        }
     }
 
     public static function disableMinifyJs(): bool
