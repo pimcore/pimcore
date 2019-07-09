@@ -19,8 +19,10 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\CartManager;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartPriceModificator\ICartPriceModificator;
 use Pimcore\Bundle\EcommerceFrameworkBundle\EnvironmentInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\UnsupportedException;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\ModificatedPriceInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\PriceInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\RuleInterface;
 
 interface CartPriceCalculatorInterface
 {
@@ -96,6 +98,14 @@ interface CartPriceCalculatorInterface
      * @return ICartPriceModificator[]
      */
     public function getModificators(): array;
+
+    /**
+     * Returns all applied PricingRules on Cart-Level
+     *
+     * @return RuleInterface[]
+     * @throws UnsupportedException
+     */
+    public function getAppliedPricingRules(): array;
 }
 
 class_alias(CartPriceCalculatorInterface::class, 'Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICartPriceCalculator');

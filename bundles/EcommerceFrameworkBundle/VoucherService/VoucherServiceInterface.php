@@ -77,6 +77,15 @@ interface VoucherServiceInterface
     public function removeAppliedTokenFromOrder(\Pimcore\Model\DataObject\OnlineShopVoucherToken $tokenObject, AbstractOrder $order);
 
     /**
+     * Returns detail information of added voucher codes and if they are considered by pricing rules
+     *
+     * @param CartInterface $cart
+     * @param string|null $locale
+     * @return PricingManagerTokenInformation[]
+     */
+    public function getPricingManagerTokenInformationDetails(CartInterface $cart, string $locale = null): array;
+
+    /**
      * Cleans the token reservations due to sysConfig duration settings, if no series Id is
      * set all reservations older than the set duration get removed.
      *
