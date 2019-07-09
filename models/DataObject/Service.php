@@ -910,7 +910,7 @@ class Service extends Model\Element\Service
         $condition = 'classId = ' . $list->quote($classId);
         if (is_array($layoutPermissions) && count($layoutPermissions)) {
             $layoutIds = array_values($layoutPermissions);
-            $condition .= ' AND id IN (' . implode(',', $layoutIds) . ')';
+            $condition .= ' AND id IN (' . implode(',', array_map([$list, 'quote'], $layoutIds)) . ')';
         }
         $list->setCondition($condition);
         $list = $list->load();

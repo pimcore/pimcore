@@ -46,6 +46,10 @@ $config = $this->config;
             #content button {
                 background: <?= $customColor ?>;
             }
+
+            #content a {
+                color: <?= $customColor ?>;
+            }
         </style>
     <?php } ?>
 <?php } ?>

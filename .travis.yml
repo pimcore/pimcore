@@ -94,7 +94,7 @@ before_install:
 
 install:
   - if [ $TASK_TESTS == 1 ]; then .travis/setup-tests.sh; fi
-  - if [ $TASK_DOCS == 1 ]; then .ci/setup-docs.sh; fi
+  - if [ $TASK_DOCS == 1 ]; then .travis/setup-docs.sh; fi
 
 before_script:
   - phpenv config-rm xdebug.ini
@@ -103,4 +103,4 @@ before_script:
 
 script:
   - if [ $TASK_TESTS == 1 ]; then .travis/run-tests.sh; fi
-  - if [ $TASK_DOCS == 1 ]; then .ci/run-docs.sh; fi
+  - if [ $TASK_DOCS == 1 ]; then .travis/run-docs.sh; fi

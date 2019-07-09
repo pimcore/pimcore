@@ -108,6 +108,7 @@ pimcore.object.classes.data.manyToOneRelation = Class.create(pimcore.object.clas
         });
         classesStore.load({
             "callback": function (allowedClasses, success) {
+                classesStore.insert(0, {'id': 'folder', 'text': 'folder'});
                 if (success) {
                     Ext.getCmp('class_allowed_object_classes_' + this.uniqeFieldId).setValue(allowedClasses);
                 }

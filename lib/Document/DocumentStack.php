@@ -94,17 +94,16 @@ class DocumentStack
     /**
      * @return string
      */
-    public function getHash() : string {
+    public function getHash(): string
+    {
         return $this->hash;
     }
 
-    /**
-     *
-     */
-    private function regenerateHash() : void {
+    private function regenerateHash(): void
+    {
         $this->hash = '';
-        foreach($this->documents as $document) {
-            $this->hash .= $document->getId() . "_";
+        foreach ($this->documents as $document) {
+            $this->hash .= $document->getId() . '_';
         }
     }
 }

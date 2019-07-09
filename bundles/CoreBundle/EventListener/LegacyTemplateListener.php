@@ -7,12 +7,13 @@ use Sensio\Bundle\FrameworkExtraBundle\EventListener\TemplateListener;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\HttpKernel\Event\GetResponseForControllerResultEvent;
+use Symfony\Component\HttpKernel\Event\KernelEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\Templating\EngineInterface;
 
 /**
+ * @deprecated
  * Provides backward compatibility for PHP templates
- *
  */
 class LegacyTemplateListener extends TemplateListener
 {
@@ -40,7 +41,7 @@ class LegacyTemplateListener extends TemplateListener
     /**
      * @inheritdoc
      */
-    public function onKernelView(GetResponseForControllerResultEvent $event)
+    public function onKernelView(KernelEvent $event)
     {
 
         /* @var Template $template */
@@ -48,6 +49,10 @@ class LegacyTemplateListener extends TemplateListener
         $template = $request->attributes->get('_template');
 
         if (!$template instanceof Template) {
+            return;
+        }
+
+        if (!$event instanceof GetResponseForControllerResultEvent) {
             return;
         }
 

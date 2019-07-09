@@ -1915,7 +1915,7 @@ span.warning {
     background-color: #D0D2D4;
 }
 
-.pimcore_tree_node_root .x-tree-expander {
+.pimcore_tree_node_root .x-tree-expander, .pimcore_tree_node_root .x-tree-elbow-img {
     display: none;
 }
 

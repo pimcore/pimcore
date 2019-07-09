@@ -444,9 +444,9 @@ class GD extends Adapter
     /**
      * @inheritdoc
      */
-    public function supportsFormat(string $format)
+    public function supportsFormat(string $format, bool $force = false)
     {
-        if (!isset(self::$supportedFormatsCache[$format])) {
+        if (!isset(self::$supportedFormatsCache[$format]) || $force) {
             $info = gd_info();
             $mappings = [
                 'jpg' => 'JPEG Support',
