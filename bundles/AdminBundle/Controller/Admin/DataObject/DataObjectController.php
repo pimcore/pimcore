@@ -728,6 +728,18 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                             unset($objectData['data'][$key]['data'][$language]);
                         }
                     }
+                } else if ($fd instanceof DataObject\ClassDefinition\Data\Fieldcollections
+                    || $fd instanceof DataObject\ClassDefinition\Data\Objectbricks
+                    || $fd instanceof DataObject\ClassDefinition\Data\Block) {
+                        foreach ($objectData['data'][$key] as $ckey => $collection) {
+                            if (isset($collection['data']["localizedfields"])) {
+                                foreach ($collection['data']["localizedfields"]["data"] as $language => $languageData) {
+                                    if (!is_null($languageAllowedView) && !$languageAllowedView[$language]) {
+                                        unset($objectData['data'][$key][$ckey]['data']['localizedfields']['data'][$language]);
+                                    }
+                                }
+                            }
+                        }
                 }
             }
             $this->setLayoutPermission($objectData['layout'], $languageAllowedView, $languageAllowedEdit);
