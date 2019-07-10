@@ -965,6 +965,9 @@ class Config
             if (!$environment) {
                 foreach(['PIMCORE_ENVIRONMENT', 'SYMFONY_ENV', 'APP_ENV'] as $envVarName) {
                     $environment = $_SERVER[$envVarName] ?? $_SERVER['REDIRECT_' . $envVarName] ?? false;
+                    if($environment) {
+                        break;
+                    }
                 }
             }
 
