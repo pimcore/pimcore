@@ -22,7 +22,7 @@ define('PIMCORE_PROJECT_ROOT', __DIR__ . '/..');
 define('PIMCORE_ENVIRONMENT', 'test');
 
 \Pimcore\Bootstrap::setProjectRoot();
-\Pimcore\Bootstrap::boostrap();
+\Pimcore\Bootstrap::bootstrap();
 
 $request = Request::createFromGlobals();
 
