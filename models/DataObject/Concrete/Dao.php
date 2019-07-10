@@ -416,7 +416,8 @@ class Dao extends Model\DataObject\AbstractObject\Dao
     public function getLatestVersion($force = false)
     {
         if ($this->model instanceof DataObject\Concrete) {
-            return DataObject\Concrete::getLatestVersionByObjectIdAndLatestModificationDate($this->model->getId(), $this->model->getModificationDate());
+            return DataObject\Concrete::getLatestVersionByObjectIdAndLatestModificationDate($this->model->getId(),
+                $this->model->getModificationDate(), $this->model->getVersionCount(), $force);
         }
 
         return;
