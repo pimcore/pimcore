@@ -95,7 +95,7 @@ class Image extends Model\Asset
 
     protected function postPersistData()
     {
-        if (!isset($this->customSettings['disableFocalPoints'])) {
+        if (!isset($this->customSettings['disableFocalPointDetection'])) {
             $this->detectFocalPoint();
         }
     }
