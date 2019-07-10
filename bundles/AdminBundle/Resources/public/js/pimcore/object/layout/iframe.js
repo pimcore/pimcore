@@ -26,10 +26,11 @@ pimcore.object.layout.iframe = Class.create(pimcore.object.abstract, {
         var queryString = Ext.Object.toQueryString({
             context: Ext.encode(this.context)
         });
-        var html = '<iframe src="' + this.config.iframeUrl + "?" + queryString + '"frameborder="0" width="100%" height="' + (this.config.height - 90) + '"></iframe>';
+        var html = '<iframe src="' + this.config.iframeUrl + "?" + queryString + '"frameborder="0" width="100%" height="' + (this.config.height - 38) + '" style="display: block"></iframe>';
 
         this.component = new Ext.Panel({
             border: true,
+            style: "margin-bottom: 10px",
             cls: "pimcore_layout_iframe_border",
             height: this.config.height,
             width: this.config.width,
@@ -51,7 +52,6 @@ pimcore.object.layout.iframe = Class.create(pimcore.object.abstract, {
                             if (pimcore.globalmanager.exists(key)) {
                                 var objectTab = pimcore.globalmanager.get(key);
                                 objectTab.saveToSession(function () {
-                                    console.log("done");
                                     this.component.setHtml(html);
                                 }.bind(this));
 
