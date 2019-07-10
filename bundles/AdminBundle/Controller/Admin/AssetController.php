@@ -934,11 +934,13 @@ class AssetController extends ElementControllerBase implements EventedController
                             if (isset($imageData['focalPoint'])) {
                                 $asset->setCustomSetting('focalPointX', $imageData['focalPoint']['x']);
                                 $asset->setCustomSetting('focalPointY', $imageData['focalPoint']['y']);
+                                $asset->removeCustomSetting('disableFocalPointDetection');
                             }
                         } else {
                             // wipe all data
                             $asset->removeCustomSetting('focalPointX');
                             $asset->removeCustomSetting('focalPointY');
+                            $asset->setCustomSetting('disableFocalPointDetection', true);
                         }
                     }
 
