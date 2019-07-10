@@ -26,7 +26,7 @@ class Bootstrap
     public static function startup()
     {
         self::setProjectRoot();
-        self::boostrap();
+        self::bootstrap();
         $kernel = self::kernel();
 
         return $kernel;
@@ -45,7 +45,7 @@ class Bootstrap
         // determines if we're in Pimcore\Console mode
         $pimcoreConsole = (defined('PIMCORE_CONSOLE') && true === PIMCORE_CONSOLE);
 
-        self::boostrap();
+        self::bootstrap();
 
         $workingDirectory = getcwd();
         chdir(__DIR__);
@@ -114,7 +114,7 @@ class Bootstrap
         }
     }
 
-    public static function boostrap()
+    public static function bootstrap()
     {
         error_reporting(E_ALL & ~E_NOTICE & ~E_STRICT);
 
@@ -141,6 +141,15 @@ class Bootstrap
         if (file_exists($startupFile)) {
             include_once $startupFile;
         }
+    }
+
+    /**
+     * @deprecated 7.0.0 Typo in name; use Bootstrap::bootstrap() instead
+     * @see Bootstrap::bootstrap()
+     */
+    public static function boostrap()
+    {
+        self::bootstrap();
     }
 
     public static function defineConstants()
