@@ -539,7 +539,7 @@ class DefaultMysql implements ProductListInterface
             return $this->resource->loadGroupByRelationValues($fieldname, $this->buildQueryFromConditions(false, $excludedFieldName), $countValues);
         } else {
             throw new \Exception('Not supported yet');
-        } 
+        }
     }
 
     protected function buildQueryFromConditions($excludeConditions = false, $excludedFieldname = null, $variantMode = null)
