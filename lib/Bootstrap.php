@@ -20,6 +20,7 @@ use Pimcore\Model\Document;
 use Symfony\Component\Console\Input\ArgvInput;
 use Symfony\Component\Debug\Debug;
 use Symfony\Component\Dotenv\Dotenv;
+use Symfony\Component\HttpFoundation\Request;
 
 class Bootstrap
 {
@@ -140,6 +141,17 @@ class Bootstrap
         $startupFile = PIMCORE_PROJECT_ROOT . '/app/startup.php';
         if (file_exists($startupFile)) {
             include_once $startupFile;
+        }
+
+        if (false === in_array(\PHP_SAPI, ['cli', 'phpdbg', 'embed'], true)) {
+            // see https://github.com/symfony/recipes/blob/master/symfony/framework-bundle/4.2/public/index.php#L15
+            if ($trustedProxies = $_SERVER['TRUSTED_PROXIES'] ?? false) {
+                Request::setTrustedProxies(explode(',', $trustedProxies),
+                    Request::HEADER_X_FORWARDED_ALL ^ Request::HEADER_X_FORWARDED_HOST);
+            }
+            if ($trustedHosts = $_SERVER['TRUSTED_HOSTS'] ?? false) {
+                Request::setTrustedHosts([$trustedHosts]);
+            }
         }
     }
 
