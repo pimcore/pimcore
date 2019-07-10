@@ -5,7 +5,7 @@ use Pimcore\Tests\Util\Autoloader;
 include __DIR__ . '/../vendor/autoload.php';
 
 \Pimcore\Bootstrap::setProjectRoot();
-\Pimcore\Bootstrap::boostrap();
+\Pimcore\Bootstrap::bootstrap();
 
 Autoloader::addNamespace('Pimcore\Model\DataObject', __DIR__ . '/_output/var/classes/DataObject');
 Autoloader::addNamespace('Pimcore\Tests\Cache', __DIR__ . '/cache');
