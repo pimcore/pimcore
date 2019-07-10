@@ -554,6 +554,7 @@
   "new_document": "New Document",
   "parent": "Parent",
   "update_available": "Update Available",
+  "target_document_invalid": "Please select a target document with valid language",
   "target_document_needs_language": "Target document needs a language set",
   "tools": "Tools",
   "perspectives": "Perspectives",
