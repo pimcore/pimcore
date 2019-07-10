@@ -52,25 +52,37 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     /**
-     * @param null $name
+     * @param string $name
      *
-     * @return int|null
+     * @return mixed|null
      */
-    public function getIdByName($name = null)
+    public function getIdByName($name)
     {
-        $name = $this->db->fetchOne('SELECT id FROM custom_layouts WHERE name = ?', $name);
+        $id = null;
+        try {
+            if (!empty($name)) {
+                $id = $this->db->fetchOne('SELECT id FROM custom_layouts WHERE name = ?', $name);
+            }
+        } catch(\Exception $e) {
+        }
 
-        return $name;
+        return $id;
     }
 
     /**
-     * @param null $id
+     * @param mixed $id
      *
-     * @return string
+     * @return string|null
      */
-    public function getNameById($id = null)
+    public function getNameById($id)
     {
-        $name = $this->db->fetchOne('SELECT name FROM custom_layouts WHERE id = ?', $id);
+        $name = null;
+        try{
+            if (!empty($id)) {
+                $name = $this->db->fetchOne('SELECT name FROM custom_layouts WHERE id = ?', $id);
+            }
+        } catch(\Exception $e) {
+        }
 
         return $name;
     }
