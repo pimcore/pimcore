@@ -379,7 +379,7 @@ class HeadStyle extends AbstractHelper
             $escapeEnd = null;
         }
 
-        $html = '<style type="text/css"' . $attrString . '>' . PHP_EOL
+        $html = '<style' . $attrString . '>' . PHP_EOL
             . $escapeStart . $indent . $item->content . PHP_EOL . $escapeEnd
             . '</style>';
 
