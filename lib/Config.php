@@ -19,6 +19,7 @@ use Pimcore\Config\EnvironmentConfigInterface;
 use Pimcore\FeatureToggles\Features\DebugMode;
 use Pimcore\Model\WebsiteSetting;
 use Symfony\Cmf\Bundle\RoutingBundle\Routing\DynamicRouter;
+use Symfony\Component\Console\Input\ArgvInput;
 use Symfony\Component\Yaml\Yaml;
 
 class Config
@@ -955,24 +956,16 @@ class Config
         if (null === static::$environment || $reset) {
             $environment = false;
 
+            if (php_sapi_name() === 'cli') {
+                $input = new ArgvInput();
+                $environment = $input->getParameterOption(['--env', '-e'], null, true);
+            }
+
             // check env vars - fall back to default (prod)
             if (!$environment) {
-                $environment = getenv('PIMCORE_ENVIRONMENT')
-                    ?: (getenv('REDIRECT_PIMCORE_ENVIRONMENT'))
-                        ?: false;
-            }
-
-            if (!$environment) {
-                $environment = getenv('SYMFONY_ENV')
-                    ?: (getenv('REDIRECT_SYMFONY_ENV'))
-                        ?: false;
-            }
-
-            if (!$environment && php_sapi_name() === 'cli') {
-                // check CLI option: [-e|--env ENV]
-                foreach ($_SERVER['argv'] as $argument) {
-                    if (preg_match("@\-\-env=(.*)@", $argument, $matches)) {
-                        $environment = $matches[1];
+                foreach(['PIMCORE_ENVIRONMENT', 'SYMFONY_ENV', 'APP_ENV'] as $envVarName) {
+                    $environment = $_SERVER[$envVarName] ?? $_SERVER['REDIRECT_' . $envVarName] ?? false;
+                    if($environment) {
                         break;
                     }
                 }

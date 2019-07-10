@@ -20,6 +20,7 @@ use Pimcore\Model\Document;
 use Symfony\Component\Console\Input\ArgvInput;
 use Symfony\Component\Debug\Debug;
 use Symfony\Component\Dotenv\Dotenv;
+use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\HttpFoundation\Request;
 
 class Bootstrap
@@ -33,9 +34,11 @@ class Bootstrap
         return $kernel;
     }
 
+    /**
+     * @return KernelInterface
+     */
     public static function startupCli()
     {
-
         // ensure the cli arguments are set
         if (!isset($_SERVER['argv'])) {
             $_SERVER['argv'] = [];
@@ -59,10 +62,8 @@ class Bootstrap
 
         if ($pimcoreConsole) {
             $input = new ArgvInput();
-            $env = $input->getParameterOption(['--env', '-e'], Config::getEnvironment());
             $debug = \Pimcore::inDebugMode() && !$input->hasParameterOption(['--no-debug', '']);
 
-            Config::setEnvironment($env);
             if (!defined('PIMCORE_DEBUG')) {
                 define('PIMCORE_DEBUG', $debug);
             }
@@ -108,9 +109,9 @@ class Bootstrap
         if (!defined('PIMCORE_PROJECT_ROOT')) {
             define(
                 'PIMCORE_PROJECT_ROOT',
-                getenv('PIMCORE_PROJECT_ROOT')
-                    ?: getenv('REDIRECT_PIMCORE_PROJECT_ROOT')
-                    ?: realpath(__DIR__ . '/../../../..')
+                $_SERVER['PIMCORE_PROJECT_ROOT'] ?? $_ENV['PIMCORE_PROJECT_ROOT'] ??
+                $_SERVER['REDIRECT_PIMCORE_PROJECT_ROOT'] ?? $_ENV['REDIRECT_PIMCORE_PROJECT_ROOT'] ??
+                realpath(__DIR__ . '/../../../..')
             );
         }
     }
@@ -164,8 +165,25 @@ class Bootstrap
         self::bootstrap();
     }
 
+    protected static function prepareEnvVariables() {
+        // load .env file if available
+        $dotEnvFile = PIMCORE_PROJECT_ROOT . '/.env';
+        if (is_array($env = @include PIMCORE_PROJECT_ROOT .'/.env.local.php')) {
+            foreach ($env as $k => $v) {
+                $_ENV[$k] = $_ENV[$k] ?? (isset($_SERVER[$k]) && 0 !== strpos($k, 'HTTP_') ? $_SERVER[$k] : $v);
+            }
+        } elseif (file_exists($dotEnvFile)) {
+            // load all the .env files
+            (new Dotenv())->loadEnv($dotEnvFile);
+        }
+
+        $_SERVER += $_ENV;
+    }
+
     public static function defineConstants()
     {
+        self::prepareEnvVariables();
+
         $resolveConstant = function (string $name, $default, bool $define = true) {
             // return constant if defined
             if (defined($name)) {
@@ -173,7 +191,7 @@ class Bootstrap
             }
 
             // load env var with fallback to REDIRECT_ prefixed env var
-            $value = getenv($name) ?: getenv('REDIRECT_' . $name) ?: $default;
+            $value = $_SERVER[$name] ?? $_SERVER['REDIRECT_' . $name] ?? $default;
 
             if ($define) {
                 define($name, $value);
@@ -181,12 +199,6 @@ class Bootstrap
 
             return $value;
         };
-
-        // load .env file if available
-        $dotEnvFile = PIMCORE_PROJECT_ROOT . '/.env';
-        if (file_exists($dotEnvFile)) {
-            (new Dotenv())->load($dotEnvFile);
-        }
 
         // load custom constants
         $customConstantsFile = PIMCORE_PROJECT_ROOT . '/app/constants.php';
@@ -274,13 +286,21 @@ class Bootstrap
         }
     }
 
+    /**
+     * @return KernelInterface
+     */
     public static function kernel()
     {
         $environment = Config::getEnvironment();
         $debug = Config::getEnvironmentConfig()->activatesKernelDebugMode($environment);
 
-        if (PIMCORE_KERNEL_DEBUG !== null) {
-            $debug = PIMCORE_KERNEL_DEBUG;
+        if(isset($_SERVER['APP_DEBUG'])) {
+            $_SERVER['APP_DEBUG'] = $_ENV['APP_DEBUG'] = (int)$_SERVER['APP_DEBUG'] || filter_var($_SERVER['APP_DEBUG'],
+                FILTER_VALIDATE_BOOLEAN) ? '1' : '0';
+        }
+        $envDebug = PIMCORE_KERNEL_DEBUG ?? $_SERVER['APP_DEBUG'] ?? null;
+        if (null !== $envDebug) {
+            $debug = $envDebug;
         }
 
         if ($debug) {
