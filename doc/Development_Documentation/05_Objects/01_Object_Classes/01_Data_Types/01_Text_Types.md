@@ -61,7 +61,7 @@ on selected text in the WYSIWYG widget. The text is stored as HTML.
 
 ![WYSIWYG Field](../../../img/classes-datatypes-text6.jpg)
 
-#### Editor - Configuration
+### Editor - Configuration
 It's possible to pass a custom CKEditor config object to the wysiwyg editor. 
 
 ```
@@ -86,12 +86,8 @@ More examples and config options for the toolbar and toolbarGroups can be found 
 
 Please refer to the [CKeditor 4.0 Documentation](http://docs.ckeditor.com/).
 
-#### Input Quantity Value
-
-Quite similar to [Quantity Value](03_Number_Types.md) except that text values are allowed instead of the strict restriction to numeric values.
-
   
-##### Global Configuration
+### Global Configuration
 You can add a Global Configuration for all WYSIWYG Editors for all objects by setting ```pimcore.object.tags.wysiwyg.defaultEditorConfig```
 
 For this purpose, you can create a bundle and add the configuration in the new created file `/Resources/public/js/pimcore/startup.js` like this:
@@ -101,5 +97,9 @@ pimcore.object.tags.wysiwyg.defaultEditorConfig = {
     allowedContent: true
 };
 ```
+
+## Input Quantity Value
+
+Quite similar to [Quantity Value](03_Number_Types.md) except that text values are allowed instead of the strict restriction to numeric values.
 
 
