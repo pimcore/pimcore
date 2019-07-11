@@ -95,9 +95,9 @@
   "require-dev": {
     "cache/integration-tests": "^0.16.0",
     "codeception/codeception": "~2.4.5",
-    "phpstan/phpstan": "^0.10.5",
-    "phpstan/phpstan-shim": "^0.10",
-    "phpstan/phpstan-symfony": "^0.10"
+    "phpstan/phpstan": "^0.11",
+    "phpstan/phpstan-shim": "^0.11",
+    "phpstan/phpstan-symfony": "^0.11"
   },
   "suggest": {
     "ext-curl": "*",

@@ -2,7 +2,7 @@ parameters:
     reportUnmatchedIgnoredErrors: false
 
     symfony:
-        container_xml_path: var/cache/dev/appDevDebugProjectContainer.xml
+        container_xml_path: var/cache/dev/appAppKernelDevDebugContainer.xml
 
     excludes_analyse:
         # Makes PHPStan crash
@@ -11,5 +11,15 @@ parameters:
 
     ignoreErrors:
         - '/Call to an undefined method Symfony\\Component\\Config\\Definition\\Builder\\NodeDefinition::children()/'
-        - message: '#Using \$this outside a class\.#'
-          path: '**/*.html.php'
+        -
+            message: '#Using \$this outside a class\.#'
+            path: '**/*.html.php'
+        -
+            message: '#Undefined variable: \$(this|view|app)#'
+            path: '**/*.html.php'
+        -
+            message: '#Using \$this outside a class\.#'
+            path: '**/*.js.php'
+        -
+            message: '#Undefined variable: \$(this|view|app)#'
+            path: '**/*.js.php'
