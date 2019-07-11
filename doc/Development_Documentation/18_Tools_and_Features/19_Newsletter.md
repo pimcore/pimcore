@@ -45,6 +45,18 @@ receives the newsletter.
 
 Of course it's possible to change the value via API (eg. in importers).
 
+### URL prefix for static assets
+
+You are able to configure the default URL prefix in order to make sure, that your static assets
+(e.g. images or CSS files) are getting prefixed correctly.
+
+```yml
+pimcore:
+    documents:
+        newsletter: 
+            defaultUrlPrefix: 'https://my-host.com'
+```
+
 ## Newsletter Frontend Framework
 
 Once you have setup your data class, it's possible to use the newsletter frontend framework. 

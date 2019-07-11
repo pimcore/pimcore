@@ -13,6 +13,12 @@ services:
         exclude: '../../Command/Bundle/Helper'
         tags: ['console.command']
 
+    Pimcore\Bundle\CoreBundle\Command\InternalNewsletterDocumentSendCommand:
+        arguments:
+            - '@service_container'
+        tags:
+            - { name: console.command, command: 'internal:newsletter-document-send' }
+
     Pimcore\Bundle\CoreBundle\Command\Bundle\Helper\PostStateChange:
         arguments:
             - '@Pimcore\Cache\Symfony\CacheClearer'

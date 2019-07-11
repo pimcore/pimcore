@@ -14,18 +14,37 @@
 
 namespace Pimcore\Bundle\CoreBundle\Command;
 
+use Exception;
+use Pimcore;
 use Pimcore\Console\AbstractCommand;
 use Pimcore\Document\Newsletter\AddressSourceAdapterFactoryInterface;
 use Pimcore\Document\Newsletter\AddressSourceAdapterInterface;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Tool\Newsletter;
+use RuntimeException;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class InternalNewsletterDocumentSendCommand extends AbstractCommand
 {
-    protected function configure()
+    /**
+     * @var ContainerInterface
+     */
+    private $container;
+
+    /**
+     * @param ContainerInterface $container
+     */
+    public function __construct(ContainerInterface $container)
+    {
+        parent::__construct();
+
+        $this->container = $container;
+    }
+
+    protected function configure(): void
     {
         $this
             ->setHidden(true)
@@ -36,23 +55,25 @@ class InternalNewsletterDocumentSendCommand extends AbstractCommand
 
     /**
      * @inheritDoc
+     * @throws Exception
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $pimcoreSymfonyConfig = $this->container->getParameter('pimcore.config');
         $sendingId = $input->getArgument('sendingId');
-        $hostUrl = $input->getArgument('hostUrl');
+        $hostUrl = $pimcoreSymfonyConfig['documents']['newsletter']['defaultUrlPrefix'] ?: $input->getArgument('hostUrl');
 
         $tmpStore = Model\Tool\TmpStore::get($sendingId);
 
-        if (empty($tmpStore)) {
-            Logger::alert("No sending configuration for $sendingId found. Cannot send newsletter.");
+        if (null === $tmpStore) {
+            Logger::alert(sprintf('No sending configuration for %s found. Cannot send newsletter.', $sendingId));
             exit;
         }
 
         $data = $tmpStore->getData();
 
         if ($data['inProgress']) {
-            Logger::alert("Cannot send newsletters because there's already one active sending process.");
+            Logger::alert('Cannot send newsletters because there\'s already one active sending process.');
             exit;
         }
 
@@ -64,10 +85,15 @@ class InternalNewsletterDocumentSendCommand extends AbstractCommand
         $addressSourceAdapterName = $data['addressSourceAdapterName'];
         $adapterParams = $data['adapterParams'];
 
-        $serviceLocator = \Pimcore::getContainer()->get('pimcore.newsletter.address_source_adapter.factories');
+        $serviceLocator = $this->container->get('pimcore.newsletter.address_source_adapter.factories');
 
         if (!$serviceLocator->has($addressSourceAdapterName)) {
-            throw new \RuntimeException(sprintf('Cannot send newsletters because Address Source Adapter with identifier %s could not be found', $addressSourceAdapterName));
+            throw new RuntimeException(
+                sprintf(
+                    'Cannot send newsletters because Address Source Adapter with identifier %s could not be found',
+                    $addressSourceAdapterName
+                )
+            );
         }
 
         /**
@@ -76,7 +102,7 @@ class InternalNewsletterDocumentSendCommand extends AbstractCommand
         $addressAdapterFactory = $serviceLocator->get($addressSourceAdapterName);
         $addressAdapter = $addressAdapterFactory->create($adapterParams);
 
-        if ($document->getSendingMode() == Newsletter::SENDING_MODE_BATCH) {
+        if ($document->getSendingMode() === Newsletter::SENDING_MODE_BATCH) {
             $this->doSendMailInBatchMode($document, $addressAdapter, $sendingId, $hostUrl);
         } else {
             $this->doSendMailInSingleMode($document, $addressAdapter, $sendingId, $hostUrl);
@@ -90,40 +116,54 @@ class InternalNewsletterDocumentSendCommand extends AbstractCommand
      * @param AddressSourceAdapterInterface $addressAdapter
      * @param $sendingId
      * @param $hostUrl
+     *
+     * @throws Exception
      */
-    protected function doSendMailInBatchMode(Model\Document\Newsletter $document, AddressSourceAdapterInterface $addressAdapter, $sendingId, $hostUrl)
-    {
+    protected function doSendMailInBatchMode(
+        Model\Document\Newsletter $document,
+        AddressSourceAdapterInterface $addressAdapter,
+        $sendingId,
+        $hostUrl
+    ): void {
         $sendingParamContainers = $addressAdapter->getMailAddressesForBatchSending();
 
         $currentCount = 0;
         $totalCount = $addressAdapter->getTotalRecordCount();
 
-        //calculate page size based on total item count - with min page size 3 and max page size 10
+        // calculate page size based on total item count - with min page size 3 and max page size 10
         $fifth = $totalCount / 5;
-        $pageSize = $fifth > 10 ? 10 : ($fifth < 3 ? 3 : intval($fifth));
+        $minPageSize = $fifth < 3 ? 3 : (int) $fifth;
+        $pageSize = $fifth > 10 ? 10 : $minPageSize;
 
         foreach ($sendingParamContainers as $sendingParamContainer) {
-            $mail = \Pimcore\Tool\Newsletter::prepareMail($document, $sendingParamContainer, $hostUrl);
+            $mail = Newsletter::prepareMail($document, $sendingParamContainer, $hostUrl);
             $tmpStore = Model\Tool\TmpStore::get($sendingId);
 
-            if (empty($tmpStore)) {
-                Logger::warn("Sending configuration for sending ID $sendingId was deleted. Cancelling sending process.");
+            if (null === $tmpStore) {
+                Logger::warn(
+                    sprintf(
+                        'Sending configuration for sending ID %s was deleted. Cancelling sending process.',
+                        $sendingId
+                    )
+                );
                 exit;
             }
 
-            if ($currentCount % $pageSize == 0) {
-                Logger::info('Sending newsletter ' . $currentCount . ' / ' . $totalCount. ' [' . $document->getId(). ']');
+            if ($currentCount % $pageSize === 0) {
+                Logger::info(
+                    sprintf('Sending newsletter %d / %s [%s]', $currentCount, $totalCount, $document->getId())
+                );
                 $data = $tmpStore->getData();
                 $data['progress'] = round($currentCount / $totalCount * 100, 2);
                 $tmpStore->setData($data);
                 $tmpStore->update();
-                \Pimcore::collectGarbage();
+                Pimcore::collectGarbage();
             }
 
             try {
-                \Pimcore\Tool\Newsletter::sendNewsletterDocumentBasedMail($mail, $sendingParamContainer);
-            } catch (\Exception $e) {
-                Logger::err('Exception while sending newsletter: '.$e->getMessage());
+                Newsletter::sendNewsletterDocumentBasedMail($mail, $sendingParamContainer);
+            } catch (Exception $e) {
+                Logger::err(sprintf('Exception while sending newsletter: %s', $e->getMessage()));
             }
 
             $currentCount++;
@@ -136,19 +176,34 @@ class InternalNewsletterDocumentSendCommand extends AbstractCommand
      * @param $sendingId
      * @param $hostUrl
      */
-    protected function doSendMailInSingleMode(Model\Document\Newsletter $document, AddressSourceAdapterInterface $addressAdapter, $sendingId, $hostUrl)
-    {
+    protected function doSendMailInSingleMode(
+        Model\Document\Newsletter $document,
+        AddressSourceAdapterInterface $addressAdapter,
+        $sendingId,
+        $hostUrl
+    ): void {
         $totalCount = $addressAdapter->getTotalRecordCount();
 
         //calculate page size based on total item count - with min page size 3 and max page size 10
         $fifth = $totalCount / 5;
-        $limit = $fifth > 10 ? 10 : ($fifth < 3 ? 3 : intval($fifth));
+        $minPageSize = $fifth < 3 ? 3 : (int) $fifth;
+        $limit = $fifth > 10 ? 10 : $minPageSize;
         $offset = 0;
         $hasElements = true;
         $index = 1;
 
         while ($hasElements) {
             $tmpStore = Model\Tool\TmpStore::get($sendingId);
+
+            if (null === $tmpStore) {
+                Logger::warn(
+                    sprintf(
+                        'Sending configuration for sending ID %s was deleted. Cancelling sending process.',
+                        $sendingId
+                    )
+                );
+                exit;
+            }
 
             $data = $tmpStore->getData();
 
@@ -158,27 +213,25 @@ class InternalNewsletterDocumentSendCommand extends AbstractCommand
 
             $sendingParamContainers = $addressAdapter->getParamsForSingleSending($limit, $offset);
             foreach ($sendingParamContainers as $sendingParamContainer) {
-                //Please leave log-level warning, otherwise current status of sending process won't be logged in newsletter-sending-output.log
-                Logger::warn('Sending newsletter ' . $index . ' / ' . $totalCount. ' [' . $document->getId(). ']');
+                // Please leave log-level warning, otherwise current status of sending process won't be logged in newsletter-sending-output.log
+                Logger::warn(
+                    sprintf('Sending newsletter %d / %s [%s]', $index, $totalCount, $document->getId())
+                );
 
                 try {
-                    $mail = \Pimcore\Tool\Newsletter::prepareMail($document, $sendingParamContainer, $hostUrl);
-                    \Pimcore\Tool\Newsletter::sendNewsletterDocumentBasedMail($mail, $sendingParamContainer);
-                } catch (\Exception $e) {
-                    Logger::err('Exception while sending newsletter: '.$e->getMessage());
+                    $mail = Newsletter::prepareMail($document, $sendingParamContainer, $hostUrl);
+                    Newsletter::sendNewsletterDocumentBasedMail($mail, $sendingParamContainer);
+                } catch (Exception $e) {
+                    Logger::err(sprintf('Exception while sending newsletter: %s', $e->getMessage()));
                 }
 
-                if (empty($tmpStore)) {
-                    Logger::warn("Sending configuration for sending ID $sendingId was deleted. Cancelling sending process.");
-                    exit;
-                }
                 ++$index;
             }
 
             $offset += $limit;
             $hasElements = count($sendingParamContainers);
 
-            \Pimcore::collectGarbage();
+            Pimcore::collectGarbage();
         }
     }
 }
