@@ -1381,9 +1381,9 @@ class ClassController extends AdminController implements EventedControllerInterf
                     $className = $groupItem['className'];
 
                     $layoutData = ['className' => $className, 'name' => $groupItem['name']];
-                    $name = json_encode($layoutData);
+                    $name = base64_encode(json_encode($layoutData));
                     $displayName = $className . ' / ' . $groupItem['name'];
-                    $icon = 'database_lightning';
+                    $icon = 'custom_views';
                 } else {
                     if ($groupName == 'objectbrick') {
                         $icon = 'objectbricks';
@@ -1467,7 +1467,7 @@ class ClassController extends AdminController implements EventedControllerInterf
 
                 return $this->adminJson(['success' => $success !== false]);
             } elseif ($type == 'customlayout') {
-                $layoutData = json_decode($data['name'], true);
+                $layoutData = json_decode(base64_decode($data['name']), true);
                 $className = $layoutData['className'];
                 $layoutName = $layoutData['name'];
 
@@ -1517,6 +1517,24 @@ class ClassController extends AdminController implements EventedControllerInterf
      * Add option to export/import all class definitions/brick definitions etc. at once
      */
 
+
+    /**
+     * @Route("/bulk-export-prepare", methods={"POST"})
+     *
+     * @param Request $request
+     *
+     * @return Response
+     */
+    public function bulkExportPrepareAction(Request $request) {
+        $data = $request->get("data");
+
+        Session::useSession(function (AttributeBagInterface $session) use ($data) {
+            $session->set('class_bulk_export_settings', $data);
+        }, 'pimcore_objects');
+
+        return $this->adminJson(['success' => true]);
+    }
+
     /**
      * @Route("/bulk-export", methods={"GET"})
      *
@@ -1532,10 +1550,13 @@ class ClassController extends AdminController implements EventedControllerInterf
         $fieldCollections = $fieldCollections->load();
 
         foreach ($fieldCollections as $fieldCollection) {
-            $key = $fieldCollection->key;
-            $fieldCollectionJson = json_decode(DataObject\ClassDefinition\Service::generateFieldCollectionJson($fieldCollection));
-            $fieldCollectionJson->key = $key;
-            $result['fieldcollection'][] = $fieldCollectionJson;
+            $result[] = [
+                "icon" => "fieldcollection",
+                "checked" => true,
+                "type" => "fieldcollection",
+                "name" => $fieldCollection->getKey(),
+                "displayName" => $fieldCollection->getKey()
+            ];
         }
 
         $classes = new DataObject\ClassDefinition\Listing();
@@ -1544,29 +1565,91 @@ class ClassController extends AdminController implements EventedControllerInterf
         $classes = $classes->load();
 
         foreach ($classes as $class) {
-            $data = Model\Webservice\Data\Mapper::map($class, '\\Pimcore\\Model\\Webservice\\Data\\ClassDefinition\\Out', 'out');
-            unset($data->fieldDefinitions);
-            $result['class'][] = $data;
+            $result[] = [
+                "icon" => "class",
+                "checked" => true,
+                "type" => "class",
+                "name" => $class->getName(),
+                "displayName" => $class->getName()
+            ];
         }
+
 
         $objectBricks = new DataObject\Objectbrick\Definition\Listing();
         $objectBricks = $objectBricks->load();
 
         foreach ($objectBricks as $objectBrick) {
-            $key = $objectBrick->key;
-            $objectBrickJson = json_decode(DataObject\ClassDefinition\Service::generateObjectBrickJson($objectBrick));
-            $objectBrickJson->key = $key;
-            $result['objectbrick'][] = $objectBrickJson;
+            $result[] = [
+                "icon" => "objectbricks",
+                "checked" => true,
+                "type" => "objectbrick",
+                "name" => $objectBrick->getKey(),
+                "displayName" => $objectBrick->getKey()
+            ];
         }
 
         $customLayouts = new DataObject\ClassDefinition\CustomLayout\Listing();
         $customLayouts = $customLayouts->load();
         foreach ($customLayouts as $customLayout) {
-            /** @var $customLayout DataObject\ClassDefinition\CustomLayout */
-            $classId = $customLayout->getClassId();
-            $class = DataObject\ClassDefinition::getById($classId);
-            $customLayout->className = $class->getName();
-            $result['customlayout'][] = $customLayout;
+            $class = DataObject\ClassDefinition::getById($customLayout->getClassId());
+            $displayName = $class->getName() . ' / ' .  $customLayout->getName();
+
+            $result[] = [
+                "icon" => "custom_views",
+                "checked" => true,
+                "type" => "customlayout",
+                "name" => $customLayout->getId(),
+                "displayName" => $displayName
+            ];
+        }
+
+        return new JsonResponse(["success" => true, "data" => $result]);
+    }
+
+
+    /**
+     * @Route("/do-bulk-export", methods={"GET"})
+     *
+     * @param Request $request
+     *
+     * @return Response
+     */
+    public function doBulkExportAction(Request $request)
+    {
+        $session = Session::get('pimcore_objects');
+        $list = $session->get('class_bulk_export_settings');
+        $list = json_decode($list, true);
+        $result = [];
+
+        foreach ($list as $item) {
+            if ($item["type"] == "fieldcollection") {
+                $fieldCollection = DataObject\Fieldcollection\Definition::getByKey($item["name"]);
+                $key = $fieldCollection->getKey();
+                $fieldCollectionJson = json_decode(DataObject\ClassDefinition\Service::generateFieldCollectionJson($fieldCollection));
+                $fieldCollectionJson->key = $key;
+                $result['fieldcollection'][] = $fieldCollectionJson;
+            } else if ($item["type"] == "class") {
+
+                $class = DataObject\ClassDefinition::getByName($item["name"]);
+                $data = Model\Webservice\Data\Mapper::map($class, '\\Pimcore\\Model\\Webservice\\Data\\ClassDefinition\\Out', 'out');
+                unset($data->fieldDefinitions);
+                $result['class'][] = $data;
+            } else if ($item["type"] == "objectbrick") {
+
+                $objectBrick = DataObject\Objectbrick\Definition::getByKey($item["name"]);
+                $key = $objectBrick->getKey();
+                $objectBrickJson = json_decode(DataObject\ClassDefinition\Service::generateObjectBrickJson($objectBrick));
+                $objectBrickJson->key = $key;
+                $result['objectbrick'][] = $objectBrickJson;
+            } else if ($item["type"] == "customlayout") {
+
+                $customLayout = DataObject\ClassDefinition\CustomLayout::getById($item["name"]);
+                /** @var $customLayout DataObject\ClassDefinition\CustomLayout */
+                $classId = $customLayout->getClassId();
+                $class = DataObject\ClassDefinition::getById($classId);
+                $customLayout->className = $class->getName();
+                $result['customlayout'][] = $customLayout;
+            }
         }
 
         $result = json_encode($result, JSON_PRETTY_PRINT);
