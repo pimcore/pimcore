@@ -67,17 +67,17 @@ It's possible to pass a custom CKEditor config object to the wysiwyg editor.
 ```
 {
   toolbarGroups : [ { name: 'links' }],
-  enterMode: CKEDITOR.CKEDITOR.ENTER_P,
+  enterMode: CKEDITOR.CKEDITOR.ENTER_BR,
 }
 ```
 
 While most configuration parameters define which features shall be available when using the wysiwyg editor the `enterMode` defines the following behaviour:
-* `CKEDITOR.CKEDITOR.ENTER_BR` (default)
-  * Pressing `enter` key adds a `<br>` tag at the cursor position
-* `CKEDITOR.CKEDITOR.ENTER_P`
+* `CKEDITOR.CKEDITOR.ENTER_P` (default)
   * Pressing `enter` key adds a paragraph `<p></p>` tag at the cursor position
   * content gets always wrapped in `<p>` tags, even if you just enter one line
   * When setting the field's content via its setter method, the `<p>` tags do not get automatically added. When you later open the object in the admin panel and save the object, the `<p>` tags get added. This can be misleading because the content of the field changed although the field has not been touched.
+* `CKEDITOR.CKEDITOR.ENTER_BR` 
+  * Pressing `enter` key adds a `<br>` tag at the cursor position
 * `CKEDITOR.CKEDITOR.ENTER_DIV`
   * same as `CKEDITOR.CKEDITOR.ENTER_P` but paragraphs get wrapped in `<div>` tags
 
