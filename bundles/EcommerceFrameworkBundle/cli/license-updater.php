@@ -19,7 +19,7 @@ chdir(__DIR__);
 include_once('../../../pimcore/cli/startup.php');
 chdir($workingDirectory);
 
-function processPHPContent($fileContent, $license)
+$processPHPContent = function ($fileContent, $license)
 {
     //remove phpstorm header
     $regex = '#^<\?php\s*\/\**\*\s*\**\s*Created by.*PhpStorm\.\s*\**\s*User[\s\S]*\*\/#U';
@@ -44,9 +44,9 @@ function processPHPContent($fileContent, $license)
     }
 
     return $fileContent;
-}
+};
 
-function processTEXTContent($fileContent, $license)
+$processTEXTContent = function($fileContent, $license)
 {
     //remove phpstorm header
     $regex = '#^\s*\/\**\*\s*\**\s*Created by JetBrains PhpStorm\.\s*\**\s*User[\s\S]*\*\/\s*#U';
@@ -71,7 +71,7 @@ function processTEXTContent($fileContent, $license)
     }
 
     return $fileContent;
-}
+};
 
 $rootPath = '../';
 $excludedDirectories = [
@@ -131,7 +131,7 @@ foreach ($iterator as $path) {
 foreach ($files['php'] as $file) {
     echo 'process file ' . $file . '...';
     $fileContent = file_get_contents($file);
-    $fileContent = processPHPContent($fileContent, $license);
+    $fileContent = $processPHPContent($fileContent, $license);
     //    echo $fileContent; die();
     file_put_contents($file, $fileContent);
     echo "done\n";
@@ -141,7 +141,7 @@ foreach ($files['php'] as $file) {
 foreach ($files['css'] as $file) {
     echo 'process file ' . $file . '...';
     $fileContent = file_get_contents($file);
-    $fileContent = processTEXTContent($fileContent, $license);
+    $fileContent = $processTEXTContent($fileContent, $license);
     //    echo $fileContent; die();
     file_put_contents($file, $fileContent);
     echo "done\n";
@@ -151,7 +151,7 @@ foreach ($files['css'] as $file) {
 foreach ($files['txt'] as $file) {
     echo 'process file ' . $file . '...';
     $fileContent = file_get_contents($file);
-    $fileContent = processTEXTContent($fileContent, $license);
+    $fileContent = $processTEXTContent($fileContent, $license);
     //    echo $fileContent; die();
     file_put_contents($file, $fileContent);
     echo "done\n";
@@ -161,7 +161,7 @@ foreach ($files['txt'] as $file) {
 foreach ($files['js'] as $file) {
     echo 'process file ' . $file . '...';
     $fileContent = file_get_contents($file);
-    $fileContent = processTEXTContent($fileContent, $license);
+    $fileContent = $processTEXTContent($fileContent, $license);
     //    echo $fileContent; die();
     file_put_contents($file, $fileContent);
     echo "done\n";

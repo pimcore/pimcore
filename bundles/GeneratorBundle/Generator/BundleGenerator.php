@@ -25,11 +25,6 @@ class BundleGenerator extends BaseBundleGenerator
 {
     private $filesystem;
 
-    public function __construct(Filesystem $filesystem)
-    {
-        $this->filesystem = $filesystem;
-    }
-
     public function generateBundle(Bundle $bundle)
     {
         parent::generateBundle($bundle);

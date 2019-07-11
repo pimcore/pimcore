@@ -5,12 +5,17 @@ parameters:
         container_xml_path: var/cache/dev/appAppKernelDevDebugContainer.xml
 
     excludes_analyse:
-        # Makes PHPStan crash
         - '**/DependencyInjection/Configuration.php'
         - '**/Migrations/Version*.php'
+        - '**/External/AdminerController.php'
+        - '**/Generator/DoctrineCrudGenerator.php'
 
     ignoreErrors:
         - '/Call to an undefined method Symfony\\Component\\Config\\Definition\\Builder\\NodeDefinition::children()/'
+        - '/(OnlineShopVoucherToken|OnlineShopVoucherSeries|VoucherTokenTypeSingle|VoucherTokenTypePattern|OnlineShopOrder|OnlineShopOrderItem)/'
+        -
+            message: '/method object::(pimcoreUrl|translateAdmin)/'
+            path: '**/*.html.php'
         -
             message: '#Using \$this outside a class\.#'
             path: '**/*.html.php'

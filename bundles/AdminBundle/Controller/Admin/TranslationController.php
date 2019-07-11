@@ -503,7 +503,6 @@ class TranslationController extends AdminController
         if ($joins) {
             $list->onCreateQuery(
                 function (\Pimcore\Db\ZendCompatibility\QueryBuilder $select) use (
-                    $list,
                     $joins,
                     $tableName,
                     $filters
