@@ -94,7 +94,10 @@
   },
   "require-dev": {
     "cache/integration-tests": "^0.16.0",
-    "codeception/codeception": "~2.4.5"
+    "codeception/codeception": "~2.4.5",
+    "phpstan/phpstan": "^0.10.5",
+    "phpstan/phpstan-shim": "^0.10",
+    "phpstan/phpstan-symfony": "^0.10"
   },
   "suggest": {
     "ext-curl": "*",
@@ -130,7 +133,29 @@
       "app/AppKernel.php"
     ]
   },
+  "scripts": {
+    "post-create-project-cmd": "Pimcore\\Composer::postCreateProject",
+    "post-install-cmd": [
+      "Pimcore\\Composer::postInstall",
+      "@pimcore-scripts"
+    ],
+    "post-update-cmd": [
+      "Pimcore\\Composer::postUpdate",
+      "@pimcore-scripts",
+      "Pimcore\\Composer::executeMigrationsUp"
+    ],
+    "pimcore-scripts": [
+      "Pimcore\\Composer::clearCache",
+      "Pimcore\\Composer::installAssets"
+    ]
+  },
   "extra": {
+    "symfony-app-dir": "app",
+    "symfony-bin-dir": "bin",
+    "symfony-var-dir": "var",
+    "symfony-web-dir": "web",
+    "symfony-tests-dir": "tests",
+    "symfony-assets-install": "relative",
     "branch-alias": {
       "dev-master": "6.0-dev"
     }

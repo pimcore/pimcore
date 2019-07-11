@@ -1,0 +1,13 @@
+parameters:
+    reportUnmatchedIgnoredErrors: false
+
+    symfony:
+        container_xml_path: var/cache/dev/appDevDebugProjectContainer.xml
+
+    excludes_analyse:
+        # Makes PHPStan crash
+        - '**/DependencyInjection/Configuration.php'
+        - '**/Migrations/Version*.php'
+
+    ignoreErrors:
+        - '/Call to an undefined method Symfony\\Component\\Config\\Definition\\Builder\\NodeDefinition::children()/'
