@@ -3117,3 +3117,27 @@ pimcore.helpers.openProfile = function () {
     }
 };
 
+pimcore.helpers.copyStringToClipboard = function (str) {
+    var selection = document.getSelection(),
+        prevSelection = (selection.rangeCount > 0) ? selection.getRangeAt(0) : false,
+        el;
+
+    // create element and insert string
+    el = document.createElement('textarea');
+    el.value = str;
+    el.setAttribute('readonly', '');
+    el.style.position = 'absolute';
+    el.style.left = '-9999px';
+
+    // insert element, select all text and copy
+    document.body.appendChild(el);
+    el.select();
+    document.execCommand('copy');
+    document.body.removeChild(el);
+
+    // restore previous selection
+    if (prevSelection) {
+        selection.removeAllRanges();
+        selection.addRange(prevSelection);
+    }
+};
