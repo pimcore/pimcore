@@ -20,8 +20,8 @@ use Pimcore\Model\Document;
 use Symfony\Component\Console\Input\ArgvInput;
 use Symfony\Component\Debug\Debug;
 use Symfony\Component\Dotenv\Dotenv;
-use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\KernelInterface;
 
 class Bootstrap
 {
@@ -165,7 +165,8 @@ class Bootstrap
         self::bootstrap();
     }
 
-    protected static function prepareEnvVariables() {
+    protected static function prepareEnvVariables()
+    {
         // load .env file if available
         $dotEnvFile = PIMCORE_PROJECT_ROOT . '/.env';
         if (is_array($env = @include PIMCORE_PROJECT_ROOT .'/.env.local.php')) {
@@ -294,7 +295,7 @@ class Bootstrap
         $environment = Config::getEnvironment();
         $debug = Config::getEnvironmentConfig()->activatesKernelDebugMode($environment);
 
-        if(isset($_SERVER['APP_DEBUG'])) {
+        if (isset($_SERVER['APP_DEBUG'])) {
             $_SERVER['APP_DEBUG'] = $_ENV['APP_DEBUG'] = (int)$_SERVER['APP_DEBUG'] || filter_var($_SERVER['APP_DEBUG'],
                 FILTER_VALIDATE_BOOLEAN) ? '1' : '0';
         }

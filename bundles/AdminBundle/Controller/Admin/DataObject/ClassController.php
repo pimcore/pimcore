@@ -1517,7 +1517,6 @@ class ClassController extends AdminController implements EventedControllerInterf
      * Add option to export/import all class definitions/brick definitions etc. at once
      */
 
-
     /**
      * @Route("/bulk-export-prepare", methods={"POST"})
      *
@@ -1525,8 +1524,9 @@ class ClassController extends AdminController implements EventedControllerInterf
      *
      * @return Response
      */
-    public function bulkExportPrepareAction(Request $request) {
-        $data = $request->get("data");
+    public function bulkExportPrepareAction(Request $request)
+    {
+        $data = $request->get('data');
 
         Session::useSession(function (AttributeBagInterface $session) use ($data) {
             $session->set('class_bulk_export_settings', $data);
@@ -1551,11 +1551,11 @@ class ClassController extends AdminController implements EventedControllerInterf
 
         foreach ($fieldCollections as $fieldCollection) {
             $result[] = [
-                "icon" => "fieldcollection",
-                "checked" => true,
-                "type" => "fieldcollection",
-                "name" => $fieldCollection->getKey(),
-                "displayName" => $fieldCollection->getKey()
+                'icon' => 'fieldcollection',
+                'checked' => true,
+                'type' => 'fieldcollection',
+                'name' => $fieldCollection->getKey(),
+                'displayName' => $fieldCollection->getKey()
             ];
         }
 
@@ -1566,25 +1566,24 @@ class ClassController extends AdminController implements EventedControllerInterf
 
         foreach ($classes as $class) {
             $result[] = [
-                "icon" => "class",
-                "checked" => true,
-                "type" => "class",
-                "name" => $class->getName(),
-                "displayName" => $class->getName()
+                'icon' => 'class',
+                'checked' => true,
+                'type' => 'class',
+                'name' => $class->getName(),
+                'displayName' => $class->getName()
             ];
         }
-
 
         $objectBricks = new DataObject\Objectbrick\Definition\Listing();
         $objectBricks = $objectBricks->load();
 
         foreach ($objectBricks as $objectBrick) {
             $result[] = [
-                "icon" => "objectbricks",
-                "checked" => true,
-                "type" => "objectbrick",
-                "name" => $objectBrick->getKey(),
-                "displayName" => $objectBrick->getKey()
+                'icon' => 'objectbricks',
+                'checked' => true,
+                'type' => 'objectbrick',
+                'name' => $objectBrick->getKey(),
+                'displayName' => $objectBrick->getKey()
             ];
         }
 
@@ -1595,17 +1594,16 @@ class ClassController extends AdminController implements EventedControllerInterf
             $displayName = $class->getName() . ' / ' .  $customLayout->getName();
 
             $result[] = [
-                "icon" => "custom_views",
-                "checked" => true,
-                "type" => "customlayout",
-                "name" => $customLayout->getId(),
-                "displayName" => $displayName
+                'icon' => 'custom_views',
+                'checked' => true,
+                'type' => 'customlayout',
+                'name' => $customLayout->getId(),
+                'displayName' => $displayName
             ];
         }
 
-        return new JsonResponse(["success" => true, "data" => $result]);
+        return new JsonResponse(['success' => true, 'data' => $result]);
     }
-
 
     /**
      * @Route("/do-bulk-export", methods={"GET"})
@@ -1622,28 +1620,25 @@ class ClassController extends AdminController implements EventedControllerInterf
         $result = [];
 
         foreach ($list as $item) {
-            if ($item["type"] == "fieldcollection") {
-                $fieldCollection = DataObject\Fieldcollection\Definition::getByKey($item["name"]);
+            if ($item['type'] == 'fieldcollection') {
+                $fieldCollection = DataObject\Fieldcollection\Definition::getByKey($item['name']);
                 $key = $fieldCollection->getKey();
                 $fieldCollectionJson = json_decode(DataObject\ClassDefinition\Service::generateFieldCollectionJson($fieldCollection));
                 $fieldCollectionJson->key = $key;
                 $result['fieldcollection'][] = $fieldCollectionJson;
-            } else if ($item["type"] == "class") {
-
-                $class = DataObject\ClassDefinition::getByName($item["name"]);
+            } elseif ($item['type'] == 'class') {
+                $class = DataObject\ClassDefinition::getByName($item['name']);
                 $data = Model\Webservice\Data\Mapper::map($class, '\\Pimcore\\Model\\Webservice\\Data\\ClassDefinition\\Out', 'out');
                 unset($data->fieldDefinitions);
                 $result['class'][] = $data;
-            } else if ($item["type"] == "objectbrick") {
-
-                $objectBrick = DataObject\Objectbrick\Definition::getByKey($item["name"]);
+            } elseif ($item['type'] == 'objectbrick') {
+                $objectBrick = DataObject\Objectbrick\Definition::getByKey($item['name']);
                 $key = $objectBrick->getKey();
                 $objectBrickJson = json_decode(DataObject\ClassDefinition\Service::generateObjectBrickJson($objectBrick));
                 $objectBrickJson->key = $key;
                 $result['objectbrick'][] = $objectBrickJson;
-            } else if ($item["type"] == "customlayout") {
-
-                $customLayout = DataObject\ClassDefinition\CustomLayout::getById($item["name"]);
+            } elseif ($item['type'] == 'customlayout') {
+                $customLayout = DataObject\ClassDefinition\CustomLayout::getById($item['name']);
                 /** @var $customLayout DataObject\ClassDefinition\CustomLayout */
                 $classId = $customLayout->getClassId();
                 $class = DataObject\ClassDefinition::getById($classId);

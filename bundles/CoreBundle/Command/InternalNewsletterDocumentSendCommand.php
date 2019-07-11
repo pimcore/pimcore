@@ -55,6 +55,7 @@ class InternalNewsletterDocumentSendCommand extends AbstractCommand
 
     /**
      * @inheritDoc
+     *
      * @throws Exception
      */
     protected function execute(InputInterface $input, OutputInterface $output)

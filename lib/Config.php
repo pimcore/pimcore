@@ -963,9 +963,9 @@ class Config
 
             // check env vars - fall back to default (prod)
             if (!$environment) {
-                foreach(['PIMCORE_ENVIRONMENT', 'SYMFONY_ENV', 'APP_ENV'] as $envVarName) {
+                foreach (['PIMCORE_ENVIRONMENT', 'SYMFONY_ENV', 'APP_ENV'] as $envVarName) {
                     $environment = $_SERVER[$envVarName] ?? $_SERVER['REDIRECT_' . $envVarName] ?? false;
-                    if($environment) {
+                    if ($environment) {
                         break;
                     }
                 }

@@ -70,12 +70,13 @@ final class SanitizeElementsTask implements TaskInterface
 
     /**
      * @param ElementInterface $element
+     *
      * @throws \Exception
      */
     protected function performSanityCheck(ElementInterface $element)
     {
         $latestNotPublishedVersion = null;
-        /** @var  $latestVersion Version */
+        /** @var $latestVersion Version */
         if ($latestVersion = $element->getLatestVersion()) {
             if ($latestVersion->getDate() > $element->getModificationDate() || $latestVersion->getVersionCount() > $element->getVersionCount()) {
                 $latestNotPublishedVersion = $latestVersion;

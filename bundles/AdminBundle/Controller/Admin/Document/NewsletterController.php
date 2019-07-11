@@ -147,7 +147,7 @@ class NewsletterController extends DocumentControllerBase
 
                         return $this->adminJson(['success' => false, 'message' => $e->getMessage()]);
                     }
-                } else if ($page->isAllowed('save')) {
+                } elseif ($page->isAllowed('save')) {
                     $this->setValuesToDocument($request, $page);
 
                     try {

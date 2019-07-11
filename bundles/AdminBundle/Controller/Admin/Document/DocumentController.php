@@ -1449,12 +1449,12 @@ class DocumentController extends ElementControllerBase implements EventedControl
         $targetDocument = Document::getByPath($request->get('targetPath'));
 
         if ($sourceDocument && $targetDocument) {
-            if (empty($sourceDocument->getProperty("language"))) {
-                throw new \Exception(sprintf("Source Document(ID:%s) Language(Properties) missing", $sourceDocument->getId()));
+            if (empty($sourceDocument->getProperty('language'))) {
+                throw new \Exception(sprintf('Source Document(ID:%s) Language(Properties) missing', $sourceDocument->getId()));
             }
 
-            if (empty($targetDocument->getProperty("language"))) {
-                throw new \Exception(sprintf("Target Document(ID:%s) Language(Properties) missing", $sourceDocument->getId()));
+            if (empty($targetDocument->getProperty('language'))) {
+                throw new \Exception(sprintf('Target Document(ID:%s) Language(Properties) missing', $sourceDocument->getId()));
             }
 
             $service = new Document\Service;

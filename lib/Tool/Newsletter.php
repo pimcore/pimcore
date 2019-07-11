@@ -123,6 +123,7 @@ class Newsletter
     /**
      * @param Mail $mail
      * @param SendingParamContainer $sendingContainer
+     *
      * @throws Exception
      */
     public static function sendNewsletterDocumentBasedMail(Mail $mail, SendingParamContainer $sendingContainer): void
