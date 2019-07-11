@@ -11,3 +11,5 @@ parameters:
 
     ignoreErrors:
         - '/Call to an undefined method Symfony\\Component\\Config\\Definition\\Builder\\NodeDefinition::children()/'
+        - message: '#Using \$this outside a class\.#'
+          path: '**/*.html.php'
