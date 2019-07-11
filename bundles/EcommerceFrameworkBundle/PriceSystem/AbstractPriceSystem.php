@@ -101,7 +101,7 @@ abstract class AbstractPriceSystem implements PriceSystemInterface
         $taxClass = WebsiteSetting::getByName('defaultTaxClass');
 
         if ($taxClass) {
-            $taxClass = OnlineShopTaxClass::getById($taxClass->getData());
+            $taxClass = $taxClass->getData();
         }
 
         if (empty($taxClass)) {
