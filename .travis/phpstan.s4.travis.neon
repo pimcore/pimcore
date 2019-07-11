@@ -1,6 +1,6 @@
 includes:
-    - vendor/phpstan/phpstan-symfony/extension.neon
-    - phpstan.neon
+    - ../vendor/phpstan/phpstan-symfony/extension.neon
+    - ../phpstan.neon
 
 parameters:
     symfony:
