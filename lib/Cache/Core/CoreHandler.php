@@ -337,15 +337,6 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
         }
 
         if ($force || $this->forceImmediateWrite) {
-            if ($this->writeLock->hasLock()) {
-                $this->logger->warning(
-                    'Not saving {key} to cache as there\'s an active write lock',
-                    ['key' => $key]
-                );
-
-                return false;
-            }
-
             $item = $this->prepareCacheItem($key, $data, $lifetime);
             if (null === $item) {
                 // logging is done in prepare method if item could not be created
