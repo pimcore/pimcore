@@ -165,8 +165,7 @@ pimcore.object.tags.wysiwyg = Class.create(pimcore.object.tags.abstract, {
             entities_greek: false,
             entities_latin: false,
             extraAllowedContent: "*[pimcore_type,pimcore_id]",
-            baseFloatZIndex: 40000, // prevent that the editor gets displayed behind the grid cell editor window
-            enterMode: 2
+            baseFloatZIndex: 40000 // prevent that the editor gets displayed behind the grid cell editor window
         };
 
         eConfig.toolbarGroups = [
