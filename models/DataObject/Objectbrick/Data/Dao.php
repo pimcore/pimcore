@@ -76,7 +76,12 @@ class Dao extends Model\Dao\AbstractDao
                 foreach ($fieldDefinitions as $key => $fd) {
                     if ($fd instanceof DataObject\ClassDefinition\Data\Relations\AbstractRelations) {
                         if ($fd->supportsDirtyDetection()) {
-                            if ($this->model->isFieldDirty($key) || $this->model->isFieldDirty('_self')) {
+
+                            if ($this->model->isFieldDirty('_self')) {
+                                $this->model->markFieldDirty($key);
+                            }
+
+                            if ($this->model->isFieldDirty($key)) {
                                 $dirtyRelations[] = $db->quote($key);
                             }
                         } else {
