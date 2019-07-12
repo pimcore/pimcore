@@ -30,6 +30,7 @@ abstract class AbstractStep implements CheckoutStepInterface
 
     /**
      * AbstractStep constructor.
+     *
      * @param CartInterface $cart
      * @param array $options
      */

@@ -14,9 +14,9 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService;
 
-use \Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Token\Dao;
-use \Pimcore\Model\AbstractModel;
-use \Pimcore\Db;
+use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Token\Dao;
+use Pimcore\Db;
+use Pimcore\Model\AbstractModel;
 
 class Token extends AbstractModel
 {
@@ -150,6 +150,7 @@ class Token extends AbstractModel
     {
         if ($this->getDao()->apply()) {
             Statistic::increaseUsageStatistic($this->getVoucherSeriesId());
+
             return true;
         }
 

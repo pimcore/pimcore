@@ -19,8 +19,7 @@ chdir(__DIR__);
 include_once('../../../pimcore/cli/startup.php');
 chdir($workingDirectory);
 
-$processPHPContent = function ($fileContent, $license)
-{
+$processPHPContent = function ($fileContent, $license) {
     //remove phpstorm header
     $regex = '#^<\?php\s*\/\**\*\s*\**\s*Created by.*PhpStorm\.\s*\**\s*User[\s\S]*\*\/#U';
 
@@ -46,8 +45,7 @@ $processPHPContent = function ($fileContent, $license)
     return $fileContent;
 };
 
-$processTEXTContent = function($fileContent, $license)
-{
+$processTEXTContent = function ($fileContent, $license) {
     //remove phpstorm header
     $regex = '#^\s*\/\**\*\s*\**\s*Created by JetBrains PhpStorm\.\s*\**\s*User[\s\S]*\*\/\s*#U';
 
