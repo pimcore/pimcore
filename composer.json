@@ -105,7 +105,7 @@
     "ext-redis": "*",
     "klarna/checkout": "1.2.0",
     "elasticsearch/elasticsearch": "2.0.0",
-    " paypal/paypal-checkout-sdk": "^1"
+    "paypal/paypal-checkout-sdk": "^1"
   },
   "autoload": {
     "files": [
