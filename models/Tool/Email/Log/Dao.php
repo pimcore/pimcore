@@ -113,7 +113,6 @@ class Dao extends Model\Dao\AbstractDao
 
             $date = time();
             $this->model->setId($this->db->lastInsertId());
-            $this->model->setCreationDate($date);
             $this->model->setModificationDate($date);
         } catch (\Exception $e) {
             throw $e;

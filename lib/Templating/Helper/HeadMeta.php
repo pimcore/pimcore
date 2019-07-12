@@ -201,7 +201,8 @@ class HeadMeta extends AbstractHelper
             $item = $this->createData($type, $args[0], $args[1], $args[2]);
 
             if ('offsetSet' == $action) {
-                return $this->offsetSet($index, $item);
+                $this->offsetSet($index, $item);
+                return $this;
             }
 
             $this->$action($item);
@@ -258,7 +259,7 @@ class HeadMeta extends AbstractHelper
             throw new Exception('Invalid value passed to offsetSet; please use offsetSetName() or offsetSetHttpEquiv()');
         }
 
-        return $this->getContainer()->offsetSet($index, $value);
+        $this->getContainer()->offsetSet($index, $value);
     }
 
     /**
@@ -319,7 +320,7 @@ class HeadMeta extends AbstractHelper
             }
         }
 
-        return $this->append($value);
+        $this->append($value);
     }
 
     /**

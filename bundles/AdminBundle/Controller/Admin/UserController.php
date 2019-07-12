@@ -555,7 +555,7 @@ class UserController extends AdminController implements EventedControllerInterfa
 
                     if (empty($values['old_password'])) {
                         // if the user want to reset the password, the old password isn't required
-                        $oldPasswordCheck = Tool\Session::useSession(function (AttributeBagInterface $adminSession) use ($oldPasswordCheck) {
+                        $oldPasswordCheck = Tool\Session::useSession(function (AttributeBagInterface $adminSession) {
                             if ($adminSession->get('password_reset')) {
                                 return true;
                             }

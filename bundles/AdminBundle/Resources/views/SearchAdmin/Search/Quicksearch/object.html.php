@@ -1,10 +1,11 @@
 <?php
-/**
- * @var \Pimcore\Model\DataObject\Concrete $element
- */
 
 use Pimcore\Model\DataObject;
 
+/**
+ * @var \Pimcore\Model\DataObject\Concrete $element
+ */
+$element = $this->element;
 $fields = $element->getClass()->getFieldDefinitions();
 
 ?>

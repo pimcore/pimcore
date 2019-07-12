@@ -17,7 +17,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Interpreter;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Traits\OptionsResolverTrait;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class DimensionUnitField implements InterpreterInterface
+class QuantityValue implements InterpreterInterface
 {
     use OptionsResolverTrait;
 
@@ -25,8 +25,8 @@ class DimensionUnitField implements InterpreterInterface
     {
         $config = $this->resolveOptions($config ?? []);
 
-        if (!empty($value) && $value instanceof \Pimcore\Model\DataObject\Data\DimensionUnitField) {
-            if ($config['onlyDimensionValue']) {
+        if (!empty($value) && ($value instanceof \Pimcore\Model\DataObject\Data\QuantityValue || $value instanceof \Pimcore\Model\DataObject\Data\InputQuantityValue)) {
+            if ($config['onlyValue']) {
                 $unit = $value->getUnit();
                 $value = $value->getValue();
 
@@ -46,7 +46,7 @@ class DimensionUnitField implements InterpreterInterface
     protected function configureOptionsResolver(string $resolverName, OptionsResolver $resolver)
     {
         $resolver
-            ->setDefault('onlyDimensionValue', false)
-            ->setAllowedTypes('onlyDimensionValue', 'bool');
+            ->setDefault('onlyValue', false)
+            ->setAllowedTypes('onlyValue', 'bool');
     }
 }

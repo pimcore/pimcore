@@ -2209,20 +2209,6 @@ class DataObjectHelperController extends AdminController
                                 $csLanguage
                             );
                         }
-                    } else {
-                        $getter = 'get' . ucfirst($field);
-                        $setter = 'set' . ucfirst($field);
-                        $keyValuePairs = $object->$getter();
-
-                        if (!$keyValuePairs) {
-                            $keyValuePairs = new DataObject\Data\KeyValue();
-                            $keyValuePairs->setObjectId($object->getId());
-                            $keyValuePairs->setClass($object->getClass());
-                        }
-
-                        $keyValuePairs->setPropertyWithId($keyid, $value, true);
-
-                        $object->$setter($keyValuePairs);
                     }
                 } elseif (count($parts) > 1) {
                     // check for bricks

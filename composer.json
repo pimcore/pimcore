@@ -75,7 +75,7 @@
     "presta/sitemap-bundle": "^1.5",
     "ramsey/uuid": "^3.8",
     "sabre/dav": "^3.2",
-    "sensio/framework-extra-bundle": "^5.2",
+    "sensio/framework-extra-bundle": "^5.4",
     "sensiolabs/ansi-to-html": "^1.1",
     "symfony-cmf/routing-bundle": "^2.0",
     "symfony/contracts": "^1.1",
@@ -94,15 +94,15 @@
   },
   "require-dev": {
     "cache/integration-tests": "^0.16.0",
-    "codeception/codeception": "~2.4.5"
+    "codeception/codeception": "~2.4.5",
+    "phpstan/phpstan": "^0.11",
+    "phpstan/phpstan-shim": "^0.11",
+    "phpstan/phpstan-symfony": "^0.11"
   },
   "suggest": {
     "ext-curl": "*",
     "ext-imagick": "*",
-    "ext-redis": "*",
-    "klarna/checkout": "1.2.0",
-    "elasticsearch/elasticsearch": "2.0.0",
-    " paypal/paypal-checkout-sdk": "^1"
+    "ext-redis": "*"
   },
   "autoload": {
     "files": [
@@ -130,7 +130,29 @@
       "app/AppKernel.php"
     ]
   },
+  "scripts": {
+    "post-create-project-cmd": "Pimcore\\Composer::postCreateProject",
+    "post-install-cmd": [
+      "Pimcore\\Composer::postInstall",
+      "@pimcore-scripts"
+    ],
+    "post-update-cmd": [
+      "Pimcore\\Composer::postUpdate",
+      "@pimcore-scripts",
+      "Pimcore\\Composer::executeMigrationsUp"
+    ],
+    "pimcore-scripts": [
+      "Pimcore\\Composer::clearCache",
+      "Pimcore\\Composer::installAssets"
+    ]
+  },
   "extra": {
+    "symfony-app-dir": "app",
+    "symfony-bin-dir": "bin",
+    "symfony-var-dir": "var",
+    "symfony-web-dir": "web",
+    "symfony-tests-dir": "tests",
+    "symfony-assets-install": "relative",
     "branch-alias": {
       "dev-master": "6.0-dev"
     }

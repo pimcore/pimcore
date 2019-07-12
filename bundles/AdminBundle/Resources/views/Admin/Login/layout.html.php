@@ -18,7 +18,7 @@ $config = $this->config;
     <script src="/bundles/pimcoreadmin/js/lib/jquery-3.4.1.min.js"></script>
 
     <?php foreach ($this->pluginCssPaths as $pluginCssPath): ?>
-        <link rel="stylesheet" type="text/css" href="<?= $pluginCssPath ?>?_dc=<?= $pluginDcValue; ?>"/>
+        <link rel="stylesheet" type="text/css" href="<?= $pluginCssPath ?>?_dc=<?= time(); ?>"/>
     <?php endforeach; ?>
 </head>
 <body class="pimcore_version_6 <?= $config->branding->login_screen_invert_colors ? 'inverted' : '' ?>">

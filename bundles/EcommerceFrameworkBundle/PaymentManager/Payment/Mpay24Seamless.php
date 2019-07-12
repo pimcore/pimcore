@@ -38,6 +38,7 @@ class Mpay24Seamless extends AbstractPayment
     private $successURL;
     private $errorURL;
     private $confirmationURL;
+    private $authorizedData;
 
     public function __construct(array $options, EngineInterface $templatingEngine)
     {

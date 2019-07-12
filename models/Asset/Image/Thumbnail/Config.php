@@ -607,16 +607,22 @@ class Config extends Model\AbstractModel
                 foreach ($transformations as $transformation) {
                     if (!empty($transformation)) {
                         $arg = $transformation['arguments'];
+
+                        $forceResize = false;
+                        if (isset($arg['forceResize']) && $arg['forceResize'] === true) {
+                            $forceResize = true;
+                        }
+
                         if (in_array($transformation['method'], ['resize', 'cover', 'frame', 'crop'])) {
                             $dimensions['width'] = $arg['width'];
                             $dimensions['height'] = $arg['height'];
                         } elseif ($transformation['method'] == 'scaleByWidth') {
-                            if ($arg['width'] <= $dimensions['width'] || $asset->isVectorGraphic()) {
+                            if ($arg['width'] <= $dimensions['width'] || $asset->isVectorGraphic() || $forceResize) {
                                 $dimensions['height'] = round(($arg['width'] / $dimensions['width']) * $dimensions['height'], 0);
                                 $dimensions['width'] = $arg['width'];
                             }
                         } elseif ($transformation['method'] == 'scaleByHeight') {
-                            if ($arg['height'] < $dimensions['height'] || $asset->isVectorGraphic()) {
+                            if ($arg['height'] < $dimensions['height'] || $asset->isVectorGraphic() || $forceResize) {
                                 $dimensions['width'] = round(($arg['height'] / $dimensions['height']) * $dimensions['width'], 0);
                                 $dimensions['height'] = $arg['height'];
                             }
@@ -624,7 +630,7 @@ class Config extends Model\AbstractModel
                             $x = $dimensions['width'] / $arg['width'];
                             $y = $dimensions['height'] / $arg['height'];
 
-                            if ($x <= 1 && $y <= 1 && !$asset->isVectorGraphic()) {
+                            if (!$forceResize && $x <= 1 && $y <= 1 && !$asset->isVectorGraphic()) {
                                 continue;
                             }
 

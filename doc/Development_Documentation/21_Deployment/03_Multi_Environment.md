@@ -150,7 +150,7 @@ Pimcore ships with sensible defaults on which environment to use in which case, 
 if Pimcore is in debug mode and by automatically enabling the kernel debug flag for the `dev` and `test` environments. If
 you need to influence that behaviour (e.g. because you have additional environments) you can do so by changing the environment
 config during the [startup process](../01_Getting_Started/03_Configuration.md). For example, if you want to specify the
-default environment to use when Pimcore's debug mode is enabled by no environment is explicitely defined:
+default environment to use when Pimcore's debug mode is enabled but no environment is explicitly defined:
 
 ```php
 <?php

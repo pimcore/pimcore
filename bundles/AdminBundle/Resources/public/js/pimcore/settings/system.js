@@ -293,7 +293,7 @@ pimcore.settings.system = Class.create({
                             xtype: "displayfield",
                             hideLabel: true,
                             width: 600,
-                            value: t('valid_languages_frontend_description'),
+                            value: t('valid_languages_frontend_description') + " <br /><br />" + t('delete_language_note'),
                             cls: "pimcore_extra_label_bottom"
                         },
                             {

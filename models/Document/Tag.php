@@ -30,7 +30,6 @@ use Pimcore\Model\Webservice;
 use Pimcore\Templating\Model\ViewModel;
 use Pimcore\Templating\Model\ViewModelInterface;
 use Pimcore\Tool\HtmlUtils;
-use Pimcore\View;
 
 /**
  * @method \Pimcore\Model\Document\Tag\Dao getDao()
@@ -72,12 +71,13 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
     protected $documentId;
 
     /**
-     * @var \Pimcore\Controller\Action
+     * @deprecated Unused - will be removed in 7.0
+     * @var null
      */
     protected $controller;
 
     /**
-     * @var ViewModelInterface|View
+     * @var ViewModelInterface
      */
     protected $view;
 
@@ -366,7 +366,8 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
     }
 
     /**
-     * @param \Pimcore\Controller\Action $controller
+     * @deprecated
+     * @param null $controller
      *
      * @return $this
      */
@@ -378,7 +379,8 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
     }
 
     /**
-     * @return \Pimcore\Controller\Action
+     * @deprecated
+     * @return null
      */
     public function getController()
     {
@@ -386,7 +388,7 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
     }
 
     /**
-     * @param ViewModelInterface|View $view
+     * @param ViewModelInterface $view
      *
      * @return $this
      */
@@ -398,7 +400,7 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
     }
 
     /**
-     * @return ViewModelInterface|View
+     * @return ViewModelInterface
      */
     public function getView()
     {

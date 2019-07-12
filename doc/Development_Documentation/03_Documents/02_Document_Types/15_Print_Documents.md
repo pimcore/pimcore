@@ -98,3 +98,15 @@ If PDF rendering doesn't work properly, following log files should give you a hi
 * `var/logs/dev.log` or `var/logs/prod.log` - contains general logging information for rendering process at INFO level
 * `var/logs/web2print-output.log` - contains output of rendering PHP process (if any). It is recreated on every rendering process.
 
+## Color management and images
+
+If you are using the PDFReactor renderer, use CMYK CSS color specifications (see PDFReactor documentation on details).
+
+There are two possible workflows for images:
+
+1) Use print-ready source images (for example TIFF files with the correct ICC Profiles) in your documents with "Print (...)" thumbnail format setting. This keeps the colorspace correct when used for print rendering and converts to RGB for preview and edit-mode.
+
+2) Keep RGB style PNG/Jpeg images in the CMYK PDF files and let the printing house take care of converting them to the correct colorspace.
+
+Option 2) is preferred, as colorspace conversions are tricky and error-prone due to tightly coupled printer hardware dependencies.
+

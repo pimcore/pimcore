@@ -397,32 +397,6 @@ class Log extends Model\AbstractModel
     }
 
     /**
-     * Sets the creation date (unix timestamp)
-     *
-     * @param int $creationDate
-     *
-     * @return $this
-     *
-     * @todo: creationDate not found in class
-     */
-    public function setCreationDate($creationDate)
-    {
-        $this->creationDate = $creationDate;
-
-        return $this;
-    }
-
-    /**
-     * Returns the creation date as unix timestamp
-     *
-     * @return int
-     */
-    public function getCreationDate()
-    {
-        return $this->creationDate;
-    }
-
-    /**
      * Saves the email log entry (forwards to $this->update())
      */
     public function save()

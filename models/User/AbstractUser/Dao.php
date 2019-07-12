@@ -147,7 +147,7 @@ class Dao extends Model\Dao\AbstractDao
     public function setLastLoginDate()
     {
         try {
-            $data['lastLogin'] = (new \Datetime())->getTimestamp();
+            $data['lastLogin'] = (new \DateTime())->getTimestamp();
             $this->db->update('users', $data, ['id' => $this->model->getId()]);
         } catch (\Exception $e) {
             throw $e;
