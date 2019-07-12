@@ -1135,17 +1135,7 @@ abstract class AbstractElasticSearch implements ProductListInterface
 
             if ($result['aggregations']) {
                 foreach ($result['aggregations'] as $fieldname => $aggregation) {
-                    if ($aggregation['buckets']) {
-                        $buckets = $aggregation['buckets'];
-                    } else if (array_key_exists($fieldname, $aggregation)) {
-                        if (array_key_exists("buckets", $aggregation[$fieldname])) {
-                            $buckets = $aggregation[$fieldname]['buckets'];
-                        } else {
-                            $buckets = end($aggregation[$fieldname])["buckets"];
-                        }
-                    } else {
-                        $buckets = end($aggregation)["buckets"];
-                    }
+                    $buckets = $this->searchForBuckets($aggregation);
 
                     $groupByValueResult = [];
                     if ($buckets) {
@@ -1153,7 +1143,7 @@ abstract class AbstractElasticSearch implements ProductListInterface
                             if ($this->getVariantMode() == self::VARIANT_MODE_INCLUDE_PARENT_OBJECT) {
                                 $groupByValueResult[] = ['value' => $bucket['key'], 'count' => $bucket['objectCount']['value']];
                             } else {
-                                $data = $this->convertBucketValues($bucket); // support subaggregations
+                                $data = $this->convertBucketValues($bucket);
                                 $groupByValueResult[] = $data;
                             }
                         }
@@ -1167,6 +1157,35 @@ abstract class AbstractElasticSearch implements ProductListInterface
         }
 
         $this->preparedGroupByValuesLoaded = true;
+    }
+
+    /**
+     * Deep search for buckets in result aggregations array, as the structure of the result array
+     * may differ dependent on the used aggregations (i.e. date filters, nested aggr, ...)
+     *
+     * @param array $aggregations
+     * @return array
+     */
+    private function searchForBuckets(array $aggregations)
+    {
+        if (array_key_exists("buckets", $aggregations)) {
+            return $aggregations["buckets"];
+        }
+
+        // usually the relevant key is at the very end of the array so we reverse the order
+        $aggregations = array_reverse($aggregations, true);
+
+        foreach ($aggregations as $aggregation) {
+            if (!is_array($aggregation)) {
+                continue;
+            }
+            $buckets = $this->searchForBuckets($aggregation);
+            if (!empty($buckets)) {
+                return $buckets;
+            }
+        }
+
+        return [];
     }
 
     /**
@@ -1184,14 +1203,18 @@ abstract class AbstractElasticSearch implements ProductListInterface
         unset($bucket["key"]);
         unset($bucket["doc_count"]);
 
-        /* area there sub-aggregation buckets left to process? */
         if (!empty($bucket)) {
             $subAggregationField = array_key_first($bucket);
-            foreach ($bucket[$subAggregationField]["buckets"] ?: [] as $bucket) {
-                $data[$subAggregationField][] = $this->convertBucketValues($bucket);
+            $subAggregationBuckets = $bucket[$subAggregationField];
+
+            if (array_key_exists("key_as_string", $bucket)) {          // date aggregations
+                $data["key_as_string"] = $bucket["key_as_string"];
+            } elseif (is_array($subAggregationBuckets["buckets"])) {        // sub aggregations
+                foreach ($subAggregationBuckets["buckets"] as $bucket) {
+                    $data[$subAggregationField][] = $this->convertBucketValues($bucket);
+                }
             }
         }
-
         return $data;
     }
 
