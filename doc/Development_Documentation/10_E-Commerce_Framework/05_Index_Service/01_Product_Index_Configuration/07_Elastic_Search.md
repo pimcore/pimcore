@@ -2,6 +2,9 @@
 Basically elastic search worker works as described in the [optimized architecture](README.md). 
 Currently Elastic Search 5 and Elastic Search 6 are supported. 
 
+## Installation
+To work properly Pimcore requires the Elasticsearch bindings, install them with: `composer require elasticsearch/elasticsearch`.
+
 ## Index Configuration
 
 Following aspects need to be considered in index configuration:  
