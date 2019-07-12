@@ -444,6 +444,6 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
     {
         $this->algorithm = $masterDefinition->algorithm;
         $this->salt = $masterDefinition->salt;
-        $this->saltlcoation = $masterDefinition->saltlcoation;
+        $this->saltlocation = $masterDefinition->saltlocation;
     }
 }

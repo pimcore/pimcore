@@ -81,6 +81,11 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
     public $optimizedAdminLoading = false;
 
     /**
+     * @var array
+     */
+    public $visibleFieldDefinitions = [];
+
+    /**
      * @return bool
      */
     public function getObjectsAllowed()
@@ -863,7 +868,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
                     ]
 
                 ],
-                'html' => $this->getVersionPreview($originalData, $data, $object, $params)
+                'html' => $this->getVersionPreview($originalData, $object, $params)
             ];
 
             $newData = [];

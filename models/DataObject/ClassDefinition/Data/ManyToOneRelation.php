@@ -570,7 +570,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
      * @param $object
      * @param array $params
      *
-     * @return null|DataObject\Fieldcollection\Data\AbstractData|DataObject\Concrete|DataObject\Objectbrick\Data\
+     * @return null|Element\ElementInterface
      */
     public function preGetData($object, $params = [])
     {
@@ -594,7 +594,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
             $data = $object->getObjectVar($this->getName());
         }
 
-        if (DataObject\AbstractObject::doHideUnpublished() and ($data instanceof Element\ElementInterface)) {
+        if (DataObject\AbstractObject::doHideUnpublished() && ($data instanceof Element\ElementInterface)) {
             if (!Element\Service::isPublished($data)) {
                 return null;
             }
