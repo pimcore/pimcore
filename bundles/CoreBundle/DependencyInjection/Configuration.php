@@ -84,7 +84,7 @@ class Configuration implements ConfigurationInterface
                     ->end()
                 ->end()
                 ->arrayNode('flags')
-                    ->info('Generic map for feature flags, such as `zend_date`')
+                    ->info('Generic map for feature flags')
                     ->prototype('scalar')->end()
                 ->end()
                 ->arrayNode('translations')

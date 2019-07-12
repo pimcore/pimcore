@@ -485,7 +485,7 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
     }
 
     /**
-     * @param \Zend_Date|\DateTime $data
+     * @param \DateTime $data
      * @param null $object
      * @param mixed $params
      *

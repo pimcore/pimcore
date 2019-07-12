@@ -27,7 +27,7 @@ class Date extends Model\Document\Tag
     /**
      * Contains the date
      *
-     * @var \Zend_Date|\Carbon\Carbon
+     * @var \Carbon\Carbon
      */
     public $date;
 
@@ -191,11 +191,7 @@ class Date extends Model\Document\Tag
      */
     protected function setDateFromTimestamp($timestamp)
     {
-        if (\Pimcore\Config::getFlag('zend_date')) {
-            $this->date = new \Pimcore\Date($timestamp);
-        } else {
-            $this->date = new \Carbon\Carbon();
-            $this->date->setTimestamp($timestamp);
-        }
+        $this->date = new \Carbon\Carbon();
+        $this->date->setTimestamp($timestamp);
     }
 }
