@@ -50,3 +50,93 @@ pimcore_ecommerce_framework:
                         template: ':Shop/filters:object_relation.html.php'
 ```
 
+## Filter for nested documents
+
+Let's say you have a nested data structure, i.e. you want to store the keys of a classification store field 
+in your product. The data in your index may look as follows:
+
+```json
+{
+   ...
+   "_source": {
+       "system": {
+          ...
+       },
+       "attributes": {  
+         "my_attributes": [  
+            {  
+               "identifier": "Höhe",
+               "value": "15 mm"
+            },
+            {  
+               "identifier": "Länge",
+               "value": "7 mm"
+            },
+            {  
+               "identifier": "Breite",
+               "value": "30 mm"
+            }
+         ]
+      }
+   }
+}
+```
+
+The mapping for the field `my_attributes` now must be defined as nested, to let elastic search now about the sub documents:
+
+```yaml
+ attributes:
+    filtergroup: string
+    type: 'nested'
+    options:
+        mapping:
+            type: 'nested'
+    interpreter_id: AppBundle\Ecommerce\IndexService\Interpreter\MyAttributes
+    interpreter_options:
+        locale: '%%locale%%'
+```
+
+Now you can create your custom filter for the nested documents, which has to define its own specific aggregations:
+
+```php
+class SelectMyAttribute extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\ElasticSearch\MultiSelect
+{
+    public function prepareGroupByValues(AbstractFilterDefinitionType $filterDefinition, IProductList $productList)
+    {
+        /* @var AbstractElasticSearch $productList */
+
+        $nestedPath = "attributes.my_attributes";
+
+        $subAggregationField = $nestedPath . ".identifier.keyword";
+        $subSubAggregationField = $nestedPath . ".value.keyword";
+
+        $productList->prepareGroupByValuesWithConfig($this->getField($filterDefinition), true, false, [
+            "nested" => [
+                "path" => $nestedPath
+            ],
+            "aggs" => [
+                $subSubAggregationField => [
+                    "terms" => [
+                        "field" => $subAggregationField
+                    ],
+                    "aggs" => [
+                        $subSubAggregationField => [
+                            "terms" => [
+                                "field" => $subSubAggregationField
+                            ]
+                        ]
+                    ]
+                ]
+            ]
+        ]);
+    }
+    
+    public function getFilterFrontend(AbstractFilterDefinitionType $filterDefinition, IProductList $productList, $currentFilter)
+    {
+        $this->prepareGroupByValues($filterDefinition, $productList);
+        return parent::getFilterFrontend($filterDefinition, $productList, $currentFilter);
+    }
+    
+```
+
+> Read more about nested aggregations in the [official documentation](https://www.elastic.co/guide/en/elasticsearch/reference/current/search-aggregations-bucket-nested-aggregation.html).
