@@ -367,7 +367,7 @@ abstract class AbstractRestClient implements LoggerAwareInterface
     {
         if ($response->getStatusCode() !== $expectedStatus) {
             throw Exception::create(
-                sprintf('Response status %d does not match the expected status %d', $response->getStatusCode(), $expectedStatus),
+                sprintf("Response status %d does not match the expected status %d, response was: \n\n" . $response->getBody(), $response->getStatusCode(), $expectedStatus),
                 $request,
                 $response
             );
