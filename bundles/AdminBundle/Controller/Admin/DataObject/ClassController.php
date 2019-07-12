@@ -441,7 +441,7 @@ class ClassController extends AdminController implements EventedControllerInterf
      */
     protected function correctClassname($name)
     {
-        $name = preg_replace('/[^a-zA-Z0-9]+/', '', $name);
+        $name = preg_replace('/[^a-zA-Z0-9_]+/', '', $name);
         $name = preg_replace('/^[0-9]+/', '', $name);
 
         return $name;
