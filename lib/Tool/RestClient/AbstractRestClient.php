@@ -782,10 +782,6 @@ abstract class AbstractRestClient implements LoggerAwareInterface
                         $uri = $protocol . $this->getHost() . $tmpPath . '/thumb_' . $asset->getId() . '__' . $thumbnail;
                         $client->setUri($uri);
 
-                        if ($this->getLoggingEnabled()) {
-                            print '    =>' . $uri . "\n";
-                        }
-
                         $result = $client->request();
                         if ($result->getStatus() == 200) {
                             $data = $result->getBody();
