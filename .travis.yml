@@ -96,6 +96,14 @@ matrix:
       cache:
         directories:
           - tmp-docs/pimcore-docs/vendor
+  allow_failures:
+    - env:
+        - TASK_TESTS=0
+        - TASK_STAN=1
+    - env:
+        - TASK_TESTS=0
+        - TASK_STAN=1
+        - SYMFONY_VERSION="^4.0"
   fast_finish: true
 
 cache:
