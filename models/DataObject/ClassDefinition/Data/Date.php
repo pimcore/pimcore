@@ -127,7 +127,7 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
     /**
      * @see Data::getDataForEditmode
      *
-     * @param DateTime $data
+     * @param \DateTime $data
      * @param null|DataObject\AbstractObject $object
      * @param mixed $params
      *
