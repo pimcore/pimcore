@@ -401,7 +401,7 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
      * @param null $object
      * @param mixed $params
      *
-     * @return null|\Pimcore_Date
+     * @return null|string
      */
     public function getDiffDataFromEditmode($data, $object = null, $params = [])
     {
