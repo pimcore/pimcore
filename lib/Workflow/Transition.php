@@ -30,8 +30,8 @@ class Transition extends \Symfony\Component\Workflow\Transition implements Notes
      * Transition constructor.
      *
      * @param string $name
-     * @param string|\string[] $froms
-     * @param string|\string[] $tos
+     * @param string|string[] $froms
+     * @param string|string[] $tos
      * @param array $options
      */
     public function __construct($name, $froms, $tos, $options = [])

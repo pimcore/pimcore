@@ -108,14 +108,13 @@ class AbstractSetProduct extends AbstractProduct
      * @param AbstractSetProductEntry[] $products
      * @param int $quantityScale
      *
-     * @return stdClass
+     * @return PriceInfoInterface
      *
      * @deprecated - use getOSPriceInfo($quantityScale,$products) instead
      */
     public function getCalculatedPriceInfo($products, $quantityScale = 1)
     {
         return $this->getOSPriceInfo($quantityScale, $products);
-        //return $this->getPriceSystemImplementation()->getPriceInfo($this, $products);
     }
 
     /**

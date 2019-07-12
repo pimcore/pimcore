@@ -343,7 +343,7 @@ class PayPal extends AbstractPayment
      *
      * @throws \Pimcore\Bundle\EcommerceFrameworkBundle\Exception\UnsupportedException
      */
-    protected function createPaymentDetails(PriceInterface $price, ?AbstractOrder $order)
+    protected function createPaymentDetails(PriceInterface $price, ?AbstractOrder $order = null)
     {
         // create order total
         $paymentDetails = new \stdClass();

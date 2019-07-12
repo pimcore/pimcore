@@ -876,7 +876,8 @@ class DefaultMysql implements ProductListInterface
     public function __wakeup()
     {
         if (empty($this->resource)) {
-            $this->resource = new DefaultMysql\Dao($this);
+            $this->logger = \Pimcore::getContainer()->get('monolog.logger.pimcore_ecommerce_sql');
+            $this->resource = new DefaultMysql\Dao($this, $this->logger);
         }
     }
 

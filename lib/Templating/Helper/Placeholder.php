@@ -57,11 +57,6 @@ class Placeholder extends AbstractHelper
     protected $_regKey = 'Placeholder';
 
     /**
-     * @var ContainerService
-     */
-    protected $containerService;
-
-    /**
      * @var Container[]
      */
     protected $containers = [];
@@ -69,18 +64,6 @@ class Placeholder extends AbstractHelper
     public function getName()
     {
         return 'placeholder';
-    }
-
-    /**
-     * AbstractHelper constructor.
-     *
-     * @param ContainerService $containerService
-     *
-     * @internal param Container $container
-     */
-    public function __construct(ContainerService $containerService)
-    {
-        $this->containerService = $containerService;
     }
 
     /**

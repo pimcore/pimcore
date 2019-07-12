@@ -41,7 +41,7 @@ class OptionsProvider implements SelectOptionsProviderInterface
 
     /**
      * @param array $context
-     * @param Data $fieldDefinition
+     * @param \Pimcore\Model\DataObject\ClassDefinition\Data $fieldDefinition
      *
      * @return array
      *

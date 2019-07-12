@@ -161,6 +161,8 @@ class Cse implements \Iterator, AdapterInterface, AdapterAggregateInterface
      */
     public function readGoogleResponse(\Google_Service_Customsearch_Search $googleResponse)
     {
+        $items = [];
+
         $this->setRaw($googleResponse);
 
         // set search results

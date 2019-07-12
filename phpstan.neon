@@ -9,10 +9,17 @@ parameters:
         - '**/Migrations/Version*.php'
         - '**/External/AdminerController.php'
         - '**/Generator/DoctrineCrudGenerator.php'
+        - '**/EcommerceFrameworkBundle/Resources/views/Voucher/parts/paginator.html.php'
+        - '**/EcommerceFrameworkBundle/Resources/views/Includes/paging.html.php'
+        - '**/Processor/PdfReactor8.php'
+        - '**/simple_html_dom.php'
+        - '**/PDFreactor.class.php'
 
     ignoreErrors:
+        - '/(snappy|lz4)_(un)?compress/'
+        - '/Instantiated class COM not found/'
         - '/Call to an undefined method Symfony\\Component\\Config\\Definition\\Builder\\NodeDefinition::children()/'
-        - '/(OnlineShopVoucherToken|OnlineShopVoucherSeries|VoucherTokenTypeSingle|VoucherTokenTypePattern|OnlineShopOrder|OnlineShopOrderItem)/'
+        - '/(OnlineShopVoucherToken|OnlineShopVoucherSeries|VoucherTokenTypeSingle|VoucherTokenTypePattern|OnlineShopOrder|OnlineShopOrderItem|OnlineShopTaxClass|TaxEntry|DataObject\\Customer)/'
         -
             message: '/method object::(pimcoreUrl|translateAdmin)/'
             path: '**/*.html.php'
@@ -28,3 +35,6 @@ parameters:
         -
             message: '#Undefined variable: \$(this|view|app)#'
             path: '**/*.js.php'
+        -
+            message: '/Zend_Log/'
+            path: '**/Log/ApplicationLogger.php'

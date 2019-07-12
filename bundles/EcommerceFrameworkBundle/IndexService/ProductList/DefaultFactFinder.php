@@ -813,17 +813,6 @@ class DefaultFactFinder implements ProductListInterface
         );
     }
 
-    public function getSearchParams()
-    {
-        $params = [];
-        if ($data = $this->getLastResultData()) {
-            $url = str_replace('/FACT-Finder/Search.ff?', '', $data['searchResult']['searchParams']);
-            parse_str($url, $params);
-        }
-
-        return $params;
-    }
-
     /**
      * returns the Fact-Finder query
      *
@@ -904,7 +893,6 @@ class DefaultFactFinder implements ProductListInterface
     protected function sendRequest()
     {
         $url = $this->getQuery();
-        $this->requestUrl = $url;
         $response = $this->doRequest($url);
         $data = json_decode((string)$response->getBody(), true);
 
@@ -915,7 +903,6 @@ class DefaultFactFinder implements ProductListInterface
         if ($data['searchResult']['timedOut']) {
             throw new \Exception('FactFinder Read timeout in response JSON: ' . $url);
         }
-        $this->resultData = $data;
 
         return $data;
     }
