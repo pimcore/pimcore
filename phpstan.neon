@@ -9,6 +9,8 @@ parameters:
         - '**/Migrations/Version*.php'
         - '**/External/AdminerController.php'
         - '**/Generator/DoctrineCrudGenerator.php'
+        - '**/EcommerceFrameworkBundle/Resources/views/Voucher/parts/paginator.html.php'
+        - '**/EcommerceFrameworkBundle/Resources/views/Includes/paging.html.php'
 
     ignoreErrors:
         - '/Call to an undefined method Symfony\\Component\\Config\\Definition\\Builder\\NodeDefinition::children()/'

@@ -31,8 +31,8 @@ if ($this->pageCount > 1): ?>
             <li class="first"><span class="pag-text-label"><span class="glyphicon glyphicon-chevron-left"></span><?=$this->translateAdmin('bundle_ecommerce_voucherservice_paging-previous')?></span></li>
         <?php endif; ?>
 
-        <?php foreach ($app->pagesInRange as $page): ?>
-            <?php if ($page != $app->current): ?>
+        <?php foreach ($this->pagesInRange as $page): ?>
+            <?php if ($page != $current): ?>
                 <li><a class="pagination-li" href="<?=$this->pimcoreUrl(['page' => $page])?>" rel="<?=$page?>"><?=$page?></a></li>
             <?php else: ?>
                 <li class="current"><span class="active"><?=$page?></span></li>
