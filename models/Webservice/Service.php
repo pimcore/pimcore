@@ -925,7 +925,7 @@ class Service
             if (!$currentUser->isAdmin()) {
                 $userIds = $currentUser->getRoles();
                 $userIds[] = $currentUser->getId();
-                $conditionParts[] .= ' (
+                $conditionParts[] = ' (
                                                     (select list from users_workspaces_object where userId in (' . implode(',', $userIds) . ') and LOCATE(CONCAT(o_path,o_key),cpath)=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
                                                     OR
                                                     (select list from users_workspaces_object where userId in (' . implode(',', $userIds) . ') and LOCATE(cpath,CONCAT(o_path,o_key))=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1

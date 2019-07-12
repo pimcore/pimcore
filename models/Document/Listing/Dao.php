@@ -27,7 +27,9 @@ use Pimcore\Model\Document;
  */
 class Dao extends Model\Listing\Dao\AbstractDao
 {
-    /** @var Callback function */
+    /**
+     * @var \Closure
+     */
     protected $onCreateQueryCallback;
 
     /**

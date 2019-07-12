@@ -214,7 +214,7 @@ class PermissionChecker
      * @param $element
      * @param $details
      */
-    protected function getLanguagePermissions($user, $element, &$details)
+    protected static function getLanguagePermissions($user, $element, &$details)
     {
         if ($user->isAdmin()) {
             return;

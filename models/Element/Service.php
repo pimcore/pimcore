@@ -477,20 +477,6 @@ class Service extends Model\AbstractModel
     }
 
     /**
-     * Schedules element with this id for sanity check to be cleaned of broken relations
-     *
-     * @static
-     *
-     * @param  ElementInterface $element
-     */
-    public static function scheduleForSanityCheck($element)
-    {
-        $type = self::getElementType($element);
-        $sanityCheck = new Sanitycheck($element->getId(), $type);
-        $sanityCheck->save();
-    }
-
-    /**
      * @static
      *
      * @param  $props
@@ -872,7 +858,7 @@ class Service extends Model\AbstractModel
     public static function addTreeFilterJoins($cv, $childsList)
     {
         if ($cv) {
-            $childsList->onCreateQuery(function (QueryBuilder $select) use ($cv, $childsList) {
+            $childsList->onCreateQuery(function (QueryBuilder $select) use ($cv) {
                 $where = $cv['where'];
                 if ($where) {
                     $select->where($where);

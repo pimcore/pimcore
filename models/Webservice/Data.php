@@ -24,6 +24,9 @@ use Pimcore\Model\Webservice;
 
 abstract class Data
 {
+    public $notes;
+    public $properties;
+
     /**
      * @param $object
      * @param null $options
