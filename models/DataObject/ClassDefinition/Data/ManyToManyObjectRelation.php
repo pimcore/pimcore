@@ -25,6 +25,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
 {
     use Model\DataObject\ClassDefinition\Data\Extension\Relation;
     use Extension\QueryColumnType;
+    use DataObject\ClassDefinition\Data\Relations\AllowObjectRelationTrait;
 
     /**
      * Static type of this element

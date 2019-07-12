@@ -245,7 +245,7 @@ class KeyConfig extends Model\AbstractModel
             $cacheKey = 'cs_keyconfig_' . $this->getId();
             Cache::remove($cacheKey);
         }
-        parent::delete();
+        $this->getDao()->delete();
         \Pimcore::getEventDispatcher()->dispatch(DataObjectClassificationStoreEvents::KEY_CONFIG_POST_DELETE, new KeyConfigEvent($this));
     }
 
@@ -276,7 +276,7 @@ class KeyConfig extends Model\AbstractModel
             \Pimcore::getEventDispatcher()->dispatch(DataObjectClassificationStoreEvents::KEY_CONFIG_PRE_ADD, new KeyConfigEvent($this));
         }
 
-        $model = parent::save();
+        $model = $this->getDao()->save();
 
         if ($isUpdate) {
             \Pimcore::getEventDispatcher()->dispatch(DataObjectClassificationStoreEvents::KEY_CONFIG_POST_UPDATE, new KeyConfigEvent($this));

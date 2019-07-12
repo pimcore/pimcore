@@ -54,6 +54,11 @@ class Definition extends Model\AbstractModel
     public $layoutDefinitions;
 
     /**
+     * @var DataObject\ClassDefinition\Data[]
+     */
+    protected $fieldDefinitions;
+
+    /**
      * @return string
      */
     public function getKey()

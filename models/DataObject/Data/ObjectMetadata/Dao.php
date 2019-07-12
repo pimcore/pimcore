@@ -78,7 +78,7 @@ class Dao extends Model\Dao\AbstractDao
      * @param $position
      * @param $index
      *
-     * @return null|Model\Dao\\Pimcore\Model\DataObject\AbstractObject
+     * @return null|DataObject\Data\ObjectMetadata
      */
     public function load(DataObject\Concrete $source, $destinationId, $fieldname, $ownertype, $ownername, $position, $index)
     {
