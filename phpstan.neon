@@ -12,7 +12,7 @@ parameters:
 
     ignoreErrors:
         - '/Call to an undefined method Symfony\\Component\\Config\\Definition\\Builder\\NodeDefinition::children()/'
-        - '/(OnlineShopVoucherToken|OnlineShopVoucherSeries|VoucherTokenTypeSingle|VoucherTokenTypePattern|OnlineShopOrder|OnlineShopOrderItem)/'
+        - '/(OnlineShopVoucherToken|OnlineShopVoucherSeries|VoucherTokenTypeSingle|VoucherTokenTypePattern|OnlineShopOrder|OnlineShopOrderItem|OnlineShopTaxClass|TaxEntry|DataObject\\Customer)/'
         -
             message: '/method object::(pimcoreUrl|translateAdmin)/'
             path: '**/*.html.php'

@@ -14,7 +14,11 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService;
 
-class Token extends \Pimcore\Model\AbstractModel
+use \Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Token\Dao;
+use \Pimcore\Model\AbstractModel;
+use \Pimcore\Db;
+
+class Token extends AbstractModel
 {
     /**
      * @var int
@@ -58,7 +62,6 @@ class Token extends \Pimcore\Model\AbstractModel
 
             return $config;
         } catch (\Exception $ex) {
-            //            Logger::debug($ex->getMessage());
             return false;
         }
     }
@@ -79,12 +82,16 @@ class Token extends \Pimcore\Model\AbstractModel
 
     public static function isUsedToken($code, $maxUsages = 1)
     {
-        try {
-            $usages = self::getDao()->getTokenUsages($code);
+        $db = Db::get();
+        $query = 'SELECT usages FROM ' . Dao::TABLE_NAME . ' WHERE token = ? ';
+        $params[] = $code;
 
-            return $usages <= $maxUsages;
-        } catch (\Exception $ex) {
-            //            Logger::debug($ex->getMessage());
+        try {
+            $tokenUsed = $db->fetchOne($query, $params);
+
+            return $tokenUsed >= $maxUsages;
+            // If an Error occurs the token is defined as used.
+        } catch (\Exception $e) {
             return true;
         }
     }
@@ -98,7 +105,7 @@ class Token extends \Pimcore\Model\AbstractModel
     public function check($maxUsages = null, $isCheckout = false)
     {
         if (isset($maxUsages)) {
-            if ($this->getUsages() + \Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Reservation::getReservationCount($this->getToken()) - (int)$isCheckout <= $maxUsages) {
+            if ($this->getUsages() + Reservation::getReservationCount($this->getToken()) - (int)$isCheckout <= $maxUsages) {
                 return true;
             }
 
@@ -123,10 +130,8 @@ class Token extends \Pimcore\Model\AbstractModel
      */
     public static function tokenExists($code)
     {
-        $db = \Pimcore\Db::get();
-
-        $query = 'SELECT EXISTS(SELECT id FROM ' . self::TABLE_NAME . ' WHERE token = ?)';
-
+        $db = Db::get();
+        $query = 'SELECT EXISTS(SELECT id FROM ' . Dao::TABLE_NAME . ' WHERE token = ?)';
         $result = $db->fetchOne($query, $code);
 
         if ($result == 0) {
@@ -138,14 +143,13 @@ class Token extends \Pimcore\Model\AbstractModel
 
     public function release($cart)
     {
-        return \Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Reservation::releaseToken($this, $cart);
+        return Reservation::releaseToken($this, $cart);
     }
 
     public function apply()
     {
         if ($this->getDao()->apply()) {
-            \Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Statistic::increaseUsageStatistic($this->getVoucherSeriesId());
-
+            Statistic::increaseUsageStatistic($this->getVoucherSeriesId());
             return true;
         }
 

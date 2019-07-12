@@ -22,7 +22,6 @@
 <?php
 if ($this->pageCount > 1): ?>
     <ul class="pagination">
-        <!-- Link zur vorherigen Seite -->
         <?php if (isset($this->previous)): ?>
             <li class="first"><a class="pagination-li" href="<?=$this->pimcoreUrl(['page' => $this->previous])?>" rel="<?=$this->previous?>"><span class="pag-text-label"><span class="glyphicon glyphicon-chevron-left"></span>
                         <?=$this->translateAdmin('bundle_ecommerce_voucherservice_paging-previous')?></span>
@@ -32,16 +31,14 @@ if ($this->pageCount > 1): ?>
             <li class="first"><span class="pag-text-label"><span class="glyphicon glyphicon-chevron-left"></span><?=$this->translateAdmin('bundle_ecommerce_voucherservice_paging-previous')?></span></li>
         <?php endif; ?>
 
-        <!-- Numbered page links -->
-        <?php foreach ($this->pagesInRange as $page): ?>
-            <?php if ($page != $current): ?>
+        <?php foreach ($app->pagesInRange as $page): ?>
+            <?php if ($page != $app->current): ?>
                 <li><a class="pagination-li" href="<?=$this->pimcoreUrl(['page' => $page])?>" rel="<?=$page?>"><?=$page?></a></li>
             <?php else: ?>
                 <li class="current"><span class="active"><?=$page?></span></li>
             <?php endif; ?>
         <?php endforeach; ?>
 
-        <!-- Link zur nächsten Seite -->
         <?php if (isset($this->next)): ?>
             <li class="last"><a class="pagination-li" href="<?=$this->pimcoreUrl(['page' => $this->next])?>" rel="<?=$this->next?>"><span class="pag-text-label"><?=$this->translateAdmin('bundle_ecommerce_voucherservice_paging-next')?><span class="glyphicon glyphicon-chevron-right"></span></span></a></li>
 

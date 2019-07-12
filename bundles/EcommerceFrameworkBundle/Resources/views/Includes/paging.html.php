@@ -30,8 +30,8 @@ if ($this->pageCount): ?>
             </li>
         <?php endif; ?>
 
-        <?php foreach ($this->pagesInRange as $page): ?>
-            <li class="<?= $page == $current ? 'active' : '' ?>">
+        <?php foreach ($app->pagesInRange as $page): ?>
+            <li class="<?= $page == $app->current ? 'active' : '' ?>">
                 <a href="<?= $this->pimcoreUrl(['page' => $page]); ?>">
                     <?= $page; ?>
                 </a>

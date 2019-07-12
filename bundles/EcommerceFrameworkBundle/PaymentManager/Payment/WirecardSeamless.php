@@ -589,7 +589,7 @@ class WirecardSeamless extends AbstractPayment
         }
 
         // computes the fingerprint from the fingerprint string
-        $fingerprint = $this->calculateFingerprint($fingerprintString, $this->secret);
+        $fingerprint = $this->calculateFingerprint($fingerprintString);
 
         if (!((strcmp($fingerprint, $response['responseFingerprint']) == 0)
             && ($mandatoryFingerPrintFields == 3)

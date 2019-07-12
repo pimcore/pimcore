@@ -76,6 +76,11 @@ class CartPriceCalculator implements CartPriceCalculatorInterface
     protected $modifications = [];
 
     /**
+     * @var PricingManagerInterface
+     */
+    protected $pricingManager;
+
+    /**
      * @param EnvironmentInterface $environment
      * @param CartInterface $cart
      * @param array $modificatorConfig
