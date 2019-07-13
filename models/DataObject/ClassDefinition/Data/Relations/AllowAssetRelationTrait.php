@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Pimcore\Model\DataObject\ClassDefinition\Data\Relations;
 
 use Pimcore\Logger;

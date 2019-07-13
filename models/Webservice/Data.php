@@ -80,7 +80,7 @@ abstract class Data
                     $noteList[] = Element\Service::getNoteData($note);
                 }
             }
-            $this->{"notes"} = $noteList;
+            $this->{'notes'} = $noteList;
         }
     }
 

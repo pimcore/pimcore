@@ -39,7 +39,6 @@ namespace Pimcore\Templating\Helper;
 
 use Pimcore\Templating\Helper\Placeholder\AbstractHelper;
 use Pimcore\Templating\Helper\Placeholder\Container;
-use Pimcore\Templating\Helper\Placeholder\ContainerService;
 
 /**
  * Helper for passing data between otherwise segregated Views. It's called

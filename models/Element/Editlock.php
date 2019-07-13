@@ -213,6 +213,7 @@ class Editlock extends Model\AbstractModel
     public function setUserId($userId)
     {
         $this->userId = (int) $userId;
+
         return $this;
     }
 

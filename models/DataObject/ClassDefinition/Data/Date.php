@@ -149,6 +149,7 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
     {
         $date = new \Carbon\Carbon();
         $date->setTimestamp($timestamp);
+
         return $date;
     }
 

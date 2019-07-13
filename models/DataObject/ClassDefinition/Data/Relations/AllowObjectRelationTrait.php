@@ -1,10 +1,9 @@
 <?php
 
-
 namespace Pimcore\Model\DataObject\ClassDefinition\Data\Relations;
 
-use Pimcore\Model\DataObject;
 use Pimcore\Logger;
+use Pimcore\Model\DataObject;
 
 trait AllowObjectRelationTrait
 {

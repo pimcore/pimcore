@@ -72,6 +72,7 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
 
     /**
      * @deprecated Unused - will be removed in 7.0
+     *
      * @var null
      */
     protected $controller;
@@ -367,6 +368,7 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
 
     /**
      * @deprecated
+     *
      * @param null $controller
      *
      * @return $this
@@ -380,6 +382,7 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
 
     /**
      * @deprecated
+     *
      * @return null
      */
     public function getController()

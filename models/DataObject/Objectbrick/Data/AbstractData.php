@@ -31,6 +31,7 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
 
     /**
      * Will be overriden by the actual ObjectBrick
+     *
      * @var string
      */
     protected $type;

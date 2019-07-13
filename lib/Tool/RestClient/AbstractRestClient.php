@@ -774,7 +774,7 @@ abstract class AbstractRestClient implements LoggerAwareInterface
                 $wsDocument->reverseMap($asset, $this->getDisableMappingExceptions(), $idMapper);
 
                 if ($light) {
-                    /** @var  $client Client */
+                    /** @var $client Client */
                     $client = ClientFactory::createHttpClient();
 
                     $assetType = $asset->getType();
@@ -785,7 +785,7 @@ abstract class AbstractRestClient implements LoggerAwareInterface
 
                         $uri = $protocol . $this->getHost() . $wsDocument->thumbnail;
 
-                        $result = $client->request("GET", $uri, []);
+                        $result = $client->request('GET', $uri, []);
 
                         if ($result->getStatusCode() == 200) {
                             $data = $result->getBody();
@@ -818,7 +818,7 @@ abstract class AbstractRestClient implements LoggerAwareInterface
                         $filename = $wsDocument->filename;
                         $uri = $protocol . $this->getHost() . '/var/assets' . $path . $filename;
 
-                        $result = $client->request("GET", $uri, []);
+                        $result = $client->request('GET', $uri, []);
 
                         if ($result->getStatusCode() != 200 && !$tolerant) {
                             throw new Exception('Could not retrieve asset');

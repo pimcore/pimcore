@@ -202,6 +202,7 @@ class HeadMeta extends AbstractHelper
 
             if ('offsetSet' == $action) {
                 $this->offsetSet($index, $item);
+
                 return $this;
             }
 

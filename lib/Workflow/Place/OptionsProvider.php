@@ -15,7 +15,6 @@
 namespace Pimcore\Workflow\Place;
 
 use Pimcore\Helper\ContrastColor;
-use Pimcore\Model\DataObject\ClassDefinition\DynamicOptionsProvider\Data;
 use Pimcore\Model\DataObject\ClassDefinition\DynamicOptionsProvider\SelectOptionsProviderInterface;
 use Pimcore\Workflow\Manager;
 use Pimcore\Workflow\MarkingStore\DataObjectSplittedStateMarkingStore;
