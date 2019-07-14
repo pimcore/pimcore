@@ -48,6 +48,7 @@ class PublicServicesController extends FrameworkController
             // assets via rewrite rules
             try {
                 $page = 1; // default
+                $imageThumbnail = null;
                 $thumbnailFile = null;
                 $thumbnailConfig = null;
 
@@ -82,7 +83,8 @@ class PublicServicesController extends FrameworkController
                     $thumbnailConfig->setName(preg_replace("/\-[\d]+/", '', $thumbnailConfig->getName()));
                     $thumbnailConfig->setName(str_replace('document_', '', $thumbnailConfig->getName()));
 
-                    $thumbnailFile = $asset->getImageThumbnail($thumbnailConfig, $page)->getFileSystemPath();
+                    $imageThumbnail = $asset->getImageThumbnail($thumbnailConfig, $page);
+                    $thumbnailFile = $imageThumbnail->getFileSystemPath();
                 } elseif ($asset instanceof Asset\Image) {
                     //check if high res image is called
 
@@ -98,10 +100,11 @@ class PublicServicesController extends FrameworkController
                         $thumbnailConfig->selectMedia($mediaQueryResult[1]);
                     }
 
-                    $thumbnailFile = $asset->getThumbnail($thumbnailConfig)->getFileSystemPath();
+                    $imageThumbnail = $asset->getThumbnail($thumbnailConfig);
+                    $thumbnailFile = $imageThumbnail->getFileSystemPath();
                 }
 
-                if ($thumbnailFile && file_exists($thumbnailFile)) {
+                if ($imageThumbnail && $thumbnailFile && file_exists($thumbnailFile)) {
 
                     // set appropriate caching headers
                     // see also: https://github.com/pimcore/pimcore/blob/1931860f0aea27de57e79313b2eb212dcf69ef13/.htaccess#L86-L86
@@ -109,7 +112,8 @@ class PublicServicesController extends FrameworkController
 
                     return new BinaryFileResponse($thumbnailFile, 200, [
                         'Cache-Control' => 'public, max-age=' . $lifetime,
-                        'Expires' => date('D, d M Y H:i:s T', time() + $lifetime)
+                        'Expires' => date('D, d M Y H:i:s T', time() + $lifetime),
+                        'Content-Type' => $imageThumbnail->getMimeType()
                     ]);
                 }
             } catch (\Exception $e) {
