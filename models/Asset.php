@@ -1342,6 +1342,8 @@ class Asset extends Element\AbstractElement
             } else {
                 throw new \Exception("hashing algorithm '" . $type . "' isn't supported");
             }
+        } elseif(\is_resource($this->getStream())) {
+            return hash($type, $this->getData());
         }
 
         return null;
