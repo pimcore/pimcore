@@ -112,6 +112,7 @@ cache:
 
 env:
   global:
+    - COMPOSER_MEMORY_LIMIT=-1
     - TASK_TESTS=1
     - TASK_STAN=0
     - TASK_DOCS=0
