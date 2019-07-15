@@ -1085,9 +1085,16 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                 $object->setUserModification($this->getAdminUser()->getId());
 
                 try {
+                    $isIndexUpdate = isset($values['index']) && is_int($values['index']);
+                    
+                    if ($isIndexUpdate) {
+                        // Ensure the update sort index is already available in the postUpdate eventListener
+                        $object->setIndex($values['index']);
+                    }
+                    
                     $object->save();
 
-                    if (isset($values['index']) && is_int($values['index'])) {
+                    if ($isIndexUpdate) {
                         $this->updateIndexesOfObjectSiblings($object, $values['index']);
                     }
 
