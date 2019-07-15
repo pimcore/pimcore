@@ -25,6 +25,7 @@ use Pimcore\Console\CliTrait;
 class IndexUpdater
 {
 
+
     use CliTrait;
 
     /**
@@ -43,7 +44,9 @@ class IndexUpdater
             $updater->createOrUpdateIndexStructures();
         }
 
+        
         // Check if this was triggered in cli. If so do some preparation to properly work.
+        // TODO Pimcore 7 - check if this is necessary when having monolog logging
         if (self::isCli() && session_status() == PHP_SESSION_NONE) {
             // Start a session to ensure that code relying on sessions keep working despite running on cli. One example is
             // \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\PricingManager which uses the session to store its
