@@ -894,5 +894,9 @@
     "auto_convert": "Automatic conversion",
     "web2print_enableDebugMode": "Enable debug mode",
     "set_to_null": "Empty (set to null)",
-    "bundles": "Bundles"
+    "bundles": "Bundles",
+    "target_document_invalid": "Please select a target document with valid language",
+    "metainfo_copy_id": "Copy ID to clipboard",
+    "metainfo_copy_fullpath": "Copy full path to clipboard",
+    "metainfo_copy_deeplink": "Copy deeplink to clipboard"
 }
