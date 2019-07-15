@@ -514,8 +514,6 @@ class DataObjectController extends ElementControllerBase implements EventedContr
             $eventDispatcher->dispatch(AdminEvents::OBJECT_GET_PRE_SEND_DATA, $event);
             $data = $event->getArgument('data');
 
-            $data = $this->filterLocalizedFields($object, $data);
-
             DataObject\Service::removeObjectFromSession($object->getId());
 
             return $this->adminJson($data);
@@ -699,43 +697,6 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                 }
             }
         }
-    }
-
-    /**
-     * @param DataObject\AbstractObject $object
-     * @param $objectData
-     *
-     * @return mixed
-     */
-    protected function filterLocalizedFields(DataObject\AbstractObject $object, $objectData)
-    {
-        if (!($object instanceof DataObject\Concrete)) {
-            return $objectData;
-        }
-
-        $user = Tool\Admin::getCurrentUser();
-        if ($user->getAdmin()) {
-            return $objectData;
-        }
-
-        $fieldDefinitions = $object->getClass()->getFieldDefinitions();
-        if ($fieldDefinitions) {
-            $languageAllowedView = DataObject\Service::getLanguagePermissions($object, $user, 'lView');
-            $languageAllowedEdit = DataObject\Service::getLanguagePermissions($object, $user, 'lEdit');
-
-            foreach ($fieldDefinitions as $key => $fd) {
-                if ($fd->getFieldtype() == 'localizedfields') {
-                    foreach ($objectData['data'][$key]['data'] as $language => $languageData) {
-                        if (!is_null($languageAllowedView) && !$languageAllowedView[$language]) {
-                            unset($objectData['data'][$key]['data'][$language]);
-                        }
-                    }
-                }
-            }
-            $this->setLayoutPermission($objectData['layout'], $languageAllowedView, $languageAllowedEdit);
-        }
-
-        return $objectData;
     }
 
     /**
