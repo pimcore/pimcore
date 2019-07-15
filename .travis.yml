@@ -137,6 +137,7 @@ install:
 
 
 before_script:
+  - yes | pecl install imagick
   - phpenv config-rm xdebug.ini
   - if [ $TASK_TESTS == 1 ]; then .travis/setup-php.sh; fi
   - if [ $TASK_TESTS == 1 ]; then .travis/setup-functional-tests.sh; fi
