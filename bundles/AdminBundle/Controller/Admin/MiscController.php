@@ -203,21 +203,25 @@ class MiscController extends AdminController
             }
         }
 
-        $fileExtension = \Pimcore\File::getFileExtension($scripts[0]);
-        $contentType = 'text/javascript';
-        if ($fileExtension == 'css') {
-            $contentType = 'text/css';
+        if(!empty($scriptsContent)) {
+            $fileExtension = \Pimcore\File::getFileExtension($scripts[0]);
+            $contentType = 'text/javascript';
+            if ($fileExtension == 'css') {
+                $contentType = 'text/css';
+            }
+
+            $lifetime = 86400;
+
+            $response = new Response($scriptsContent);
+            $response->headers->set('Cache-Control', 'max-age=' . $lifetime);
+            $response->headers->set('Pragma', '');
+            $response->headers->set('Content-Type', $contentType);
+            $response->headers->set('Expires', gmdate('D, d M Y H:i:s', time() + $lifetime) . ' GMT');
+
+            return $response;
+        } else {
+            throw $this->createNotFoundException();
         }
-
-        $lifetime = 86400;
-
-        $response = new Response($scriptsContent);
-        $response->headers->set('Cache-Control', 'max-age=' . $lifetime);
-        $response->headers->set('Pragma', '');
-        $response->headers->set('Content-Type', $contentType);
-        $response->headers->set('Expires', gmdate('D, d M Y H:i:s', time() + $lifetime) . ' GMT');
-
-        return $response;
     }
 
     /**
