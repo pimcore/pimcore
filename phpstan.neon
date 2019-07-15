@@ -6,7 +6,7 @@ parameters:
 
     excludes_analyse:
         - '**/DependencyInjection/Configuration.php'
-        - '**/Migrations/Version*.php'
+        - '**/migrations/Version*.php'
         - '**/External/AdminerController.php'
         - '**/Generator/DoctrineCrudGenerator.php'
         - '**/EcommerceFrameworkBundle/Resources/views/Voucher/parts/paginator.html.php'
@@ -14,12 +14,13 @@ parameters:
         - '**/Processor/PdfReactor8.php'
         - '**/simple_html_dom.php'
         - '**/PDFreactor.class.php'
+        - '**/Document/MigrateTagNamingStrategyCommand.php'
 
     ignoreErrors:
         - '/(snappy|lz4)_(un)?compress/'
         - '/Instantiated class COM not found/'
         - '/Call to an undefined method Symfony\\Component\\Config\\Definition\\Builder\\NodeDefinition::children()/'
-        - '/(OnlineShopVoucherToken|OnlineShopVoucherSeries|VoucherTokenTypeSingle|VoucherTokenTypePattern|OnlineShopOrder|OnlineShopOrderItem|OnlineShopTaxClass|TaxEntry|DataObject\\Customer)/'
+        - '/(OnlineShopVoucherToken|OnlineShopVoucherSeries|VoucherTokenTypeSingle|VoucherTokenTypePattern|OnlineShopOrder|OnlineShopOrderItem|OrderPriceModifications|OnlineShopTaxClass|PricingRule|TaxEntry|DataObject\\Customer|DataObject\\FilterDefinition|FilterCategory)/'
         -
             message: '/method object::(pimcoreUrl|translateAdmin)/'
             path: '**/*.html.php'
