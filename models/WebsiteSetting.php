@@ -74,7 +74,7 @@ class WebsiteSetting extends AbstractModel
     /**
      * @param int $id
      *
-     * @return WebsiteSetting
+     * @return WebsiteSetting|null
      */
     public static function getById($id)
     {
@@ -86,10 +86,13 @@ class WebsiteSetting extends AbstractModel
                 throw new \Exception('Website setting in registry is null');
             }
         } catch (\Exception $e) {
-            $setting = new self();
-            $setting->setId(intval($id));
-            $setting->getDao()->getById();
-            \Pimcore\Cache\Runtime::set($cacheKey, $setting);
+            try {
+                $setting = new self();
+                $setting->getDao()->getById(intval($id));
+                \Pimcore\Cache\Runtime::set($cacheKey, $setting);
+            } catch (\Exception $e) {
+                return null;
+            }
         }
 
         return $setting;

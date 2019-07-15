@@ -16,7 +16,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Interpreter;
 
 use Pimcore\Model\DataObject\AbstractObject;
 
-class ObjectId implements IInterpreter
+class ObjectId implements InterpreterInterface
 {
     public function interpret($value, $config = null)
     {

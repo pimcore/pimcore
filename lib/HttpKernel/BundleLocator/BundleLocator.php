@@ -53,14 +53,6 @@ class BundleLocator implements BundleLocatorInterface
         return $this->getBundleForClass($class)->getPath();
     }
 
-    /**
-     * @deprecated Use getBundlePath instead
-     */
-    public function resolveBundlePath($class)
-    {
-        return $this->getBundlePath($class);
-    }
-
     private function getBundleForClass($class): BundleInterface
     {
         if (is_object($class)) {

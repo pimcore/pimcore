@@ -10,7 +10,7 @@ $order = $manager->commitOrder();
 ```
 
 While committing the order, the checkout manager delegates it to the specified commit order processor implementation, 
-which needs to implement `\Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\ICommitOrderProcessor`.
+which needs to implement `\Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\CommitOrderProcessorInterface`.
  
 This is the place where all functionality for committing the order (e.g. sending orders to erp systems, sending order 
 confirmation mails, ...) is located. 
@@ -18,7 +18,7 @@ confirmation mails, ...) is located.
 The default implementation `\Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\CommitOrderProcessor` provides 
 basic functionality like creating a Pimcore order object and sending an order confirmation mail.
 
-Order creation itself is delegated to the `\Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\IOrderManager`.
+Order creation itself is delegated to the `\Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderManagerInterface`.
  
  
 ## Typically needed Custom Extensions
@@ -43,12 +43,12 @@ A simple implementation of `AppBundle\Ecommerce\Order\OrderManager` could look l
 class OrderManager extends \Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderManager {
 
     /**
-     * @param ICart $cart
+     * @param CartInterface $cart
      * @param AbstractOrder $order
      * @return AbstractOrder
      * @throws InvalidConfigException
      */
-    protected function applyCustomCheckoutDataToOrder(ICart $cart, AbstractOrder $order)
+    protected function applyCustomCheckoutDataToOrder(CartInterface $cart, AbstractOrder $order)
     {
         $order = parent::applyCustomCheckoutDataToOrder($cart, $order);
 

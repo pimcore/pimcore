@@ -17,7 +17,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager;
 /**
  * Sample implementation for delivery address
  */
-class DeliveryAddress extends AbstractStep implements ICheckoutStep
+class DeliveryAddress extends AbstractStep implements CheckoutStepInterface
 {
     /**
      * Namespace key

@@ -23,37 +23,43 @@ pimcore.object.tags.table = Class.create(pimcore.object.tags.abstract, {
         var i;
 
         if (!data) {
-            data = [
-                [""]
-            ];
-            if (this.fieldConfig.cols) {
-                for (i = 0; i < (this.fieldConfig.cols - 1); i++) {
-                    data[0].push("");
-                }
-            }
-            if (this.fieldConfig.rows) {
-                for (i = 0; i < (this.fieldConfig.rows - 1); i++) {
-                    data.push(data[0]);
-                }
-            }
-            if (this.fieldConfig.data) {
-                try {
-                    var dataRows = this.fieldConfig.data.split("\n");
-                    var dataGrid = [];
-                    for (i = 0; i < dataRows.length; i++) {
-                        dataGrid.push(dataRows[i].split("|"));
-                    }
+            data = this.getInitialData();
 
-                    data = dataGrid;
-                    this.dirty = true;
-                }
-                catch (e) {
-                    console.log(e);
-                }
-            }
         }
 
         this.data = data;
+    },
+
+    getInitialData: function() {
+        var data = [
+            [""]
+        ];
+        if (this.fieldConfig.cols) {
+            for (i = 0; i < (this.fieldConfig.cols - 1); i++) {
+                data[0].push("");
+            }
+        }
+        if (this.fieldConfig.rows) {
+            for (i = 0; i < (this.fieldConfig.rows - 1); i++) {
+                data.push(data[0]);
+            }
+        }
+        if (this.fieldConfig.data) {
+            try {
+                var dataRows = this.fieldConfig.data.split("\n");
+                var dataGrid = [];
+                for (i = 0; i < dataRows.length; i++) {
+                    dataGrid.push(dataRows[i].split("|"));
+                }
+
+                data = dataGrid;
+                this.dirty = true;
+            }
+            catch (e) {
+                console.log(e);
+            }
+        }
+        return data;
     },
 
     getGridColumnConfig: function (field) {
@@ -69,6 +75,16 @@ pimcore.object.tags.table = Class.create(pimcore.object.tags.abstract, {
 
                 if (value && value.length > 0) {
                     var table = '<table cellpadding="2" cellspacing="0" border="1">';
+
+                    //print header row if defined
+                    if(field.layout.columnConfigActivated && field.layout.columnConfig) {
+                        table += '<tr>';
+                        for (var i = 0; i < value[0].length; i++) {
+                            table += '<th>' + Ext.util.Format.htmlEncode(ts(field.layout.columnConfig[i].label)) + '</th>';
+                        }
+                        table += '</tr>';
+                    }
+
                     for (var i = 0; i < value.length; i++) {
                         table += '<tr>';
                         for (var c = 0; c < value[i].length; c++) {
@@ -131,6 +147,7 @@ pimcore.object.tags.table = Class.create(pimcore.object.tags.abstract, {
         if (data.items[0]) {
             for (var i = 0; i < fields.length; i++) {
                 columns.push({
+                    text: this.fieldConfig.columnConfigActivated && this.fieldConfig.columnConfig[i] ? ts(this.fieldConfig.columnConfig[i].label) : '',
                     dataIndex: fields[i].name,
                     editor: new Ext.form.TextField(),
                     sortable: false,
@@ -182,7 +199,7 @@ pimcore.object.tags.table = Class.create(pimcore.object.tags.abstract, {
             bodyCls: "pimcore_editable_grid",
             autoHeight: true,
             selModel: Ext.create('Ext.selection.CellModel'),
-            hideHeaders: true,
+            hideHeaders: !this.fieldConfig.columnConfigActivated,
             plugins: [
                 this.cellEditing
             ],
@@ -198,7 +215,8 @@ pimcore.object.tags.table = Class.create(pimcore.object.tags.abstract, {
 
     emptyStore: function () {
         this.dirty = true;
-        this.initStore([[""]]);
+        var initialData = this.getInitialData();
+        this.initStore(initialData);
     },
 
     initStore: function (data) {

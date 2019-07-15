@@ -173,13 +173,13 @@ Define a custom item builder:
 ```php
 <?php
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IProduct;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Model\ProductInterface;
 
 class TrackingItemBuilder extends \Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\TrackingItemBuilder
 {
     private static $impressionPosition = 0;
     
-    public function buildProductImpressionItem(IProduct $product)
+    public function buildProductImpressionItem(ProductInterface $product)
     {
         $item = parent::buildProductImpressionItem($product);
 

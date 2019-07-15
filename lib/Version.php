@@ -47,14 +47,4 @@ class Version
 
         return $hash;
     }
-
-    /**
-     * @deprecated
-     *
-     * @return string
-     */
-    public static function getBuildDate(): string
-    {
-        return '';
-    }
 }

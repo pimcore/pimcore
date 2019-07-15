@@ -75,9 +75,10 @@
     "presta/sitemap-bundle": "^1.5",
     "ramsey/uuid": "^3.8",
     "sabre/dav": "^3.2",
-    "sensio/framework-extra-bundle": "^5.2",
+    "sensio/framework-extra-bundle": "^5.4",
     "sensiolabs/ansi-to-html": "^1.1",
     "symfony-cmf/routing-bundle": "^2.0",
+    "symfony/contracts": "^1.1",
     "symfony/monolog-bundle": "^3.1.0",
     "symfony/swiftmailer-bundle": "^3.2.2",
     "symfony/symfony": "^3.4.17 || ^4.0",
@@ -100,9 +101,14 @@
     "ext-imagick": "*",
     "ext-redis": "*",
     "klarna/checkout": "1.2.0",
-    "elasticsearch/elasticsearch": "2.0.0"
+    "elasticsearch/elasticsearch": "2.0.0",
+    " paypal/paypal-checkout-sdk": "^1"
   },
   "autoload": {
+    "files": [
+      "lib/helper-functions.php",
+      "lib/simple_html_dom.php"
+    ],
     "psr-4": {
       "Pimcore\\Model\\": "models",
       "Pimcore\\": "lib",
@@ -114,6 +120,14 @@
     "exclude-from-classmap": [
       "lib/compatibility-stubs.php",
       "lib/Pimcore/Bundle/EcommerceFrameworkBundle/config/namespace_compatibility.php"
+    ]
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Pimcore\\Tests\\": "tests"
+    },
+    "files": [
+      "app/AppKernel.php"
     ]
   },
   "extra": {

@@ -94,29 +94,22 @@ class DocType extends Model\AbstractModel
     protected $modificationDate;
 
     /**
-     * @var bool
-     */
-    protected $legacy = false;
-
-    /**
      * Static helper to retrieve an instance of Document\DocType by the given ID
      *
      * @param int $id
      *
-     * @return DocType
+     * @return self|null
      */
     public static function getById($id)
     {
-        $docType = new self();
-        $docType->setId(intval($id));
-
         try {
-            $docType->getDao()->getById();
+            $docType = new self();
+            $docType->getDao()->getById(intval($id));
+
+            return $docType;
         } catch (\Exception $e) {
             return null;
         }
-
-        return $docType;
     }
 
     /**
@@ -350,29 +343,5 @@ class DocType extends Model\AbstractModel
     public function getCreationDate()
     {
         return $this->creationDate;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isLegacy()
-    {
-        return $this->legacy;
-    }
-
-    /**
-     * @return bool
-     */
-    public function getLegacy()
-    {
-        return $this->isLegacy();
-    }
-
-    /**
-     * @param bool $legacy
-     */
-    public function setLegacy($legacy)
-    {
-        $this->legacy = (bool) $legacy;
     }
 }

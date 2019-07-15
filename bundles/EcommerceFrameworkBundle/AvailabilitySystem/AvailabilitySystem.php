@@ -15,14 +15,14 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\AvailabilitySystem;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\Model\ICheckoutable;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Model\CheckoutableInterface;
 
-class AvailabilitySystem implements IAvailabilitySystem
+class AvailabilitySystem implements AvailabilitySystemInterface
 {
     /**
      * @inheritdoc
      */
-    public function getAvailabilityInfo(ICheckoutable $product, $quantityScale = 1, $products = null)
+    public function getAvailabilityInfo(CheckoutableInterface $product, $quantityScale = 1, $products = null)
     {
         return new Availability($product, true);
     }

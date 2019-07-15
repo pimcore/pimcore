@@ -19,7 +19,6 @@ namespace Pimcore\Model\Document;
 
 use Pimcore\Model;
 use Pimcore\Model\Document;
-use Pimcore\Model\Element;
 use Pimcore\Model\Redirect;
 
 /**
@@ -27,7 +26,6 @@ use Pimcore\Model\Redirect;
  */
 class Hardlink extends Document
 {
-    use Element\ChildsCompatibilityTrait;
     use Document\Traits\ScheduledTasksTrait;
 
     /**
@@ -50,7 +48,7 @@ class Hardlink extends Document
     /**
      * @var bool
      */
-    protected $childsFromSource;
+    protected $childrenFromSource;
 
     /**
      * @return Document\PageSnippet
@@ -108,27 +106,15 @@ class Hardlink extends Document
     }
 
     /**
-     * @param $childsFromSource
+     * @param $childrenFromSource
      *
      * @return Hardlink
      */
-    public function setChildrenFromSource($childsFromSource)
+    public function setChildrenFromSource($childrenFromSource)
     {
-        $this->childsFromSource = (bool) $childsFromSource;
+        $this->childrenFromSource = (bool) $childrenFromSource;
 
         return $this;
-    }
-
-    /**
-     * @deprecated
-     *
-     * @param $childsFromSource
-     *
-     * @return Hardlink
-     */
-    public function setChildsFromSource($childsFromSource)
-    {
-        return $this->setChildrenFromSource($childsFromSource);
     }
 
     /**
@@ -136,17 +122,7 @@ class Hardlink extends Document
      */
     public function getChildrenFromSource()
     {
-        return $this->childsFromSource;
-    }
-
-    /**
-     * @deprecated
-     *
-     * @return bool
-     */
-    public function getChildsFromSource()
-    {
-        return $this->getChildrenFromSource();
+        return $this->childrenFromSource;
     }
 
     /**
@@ -225,12 +201,12 @@ class Hardlink extends Document
     /**
      * @param bool $unpublished
      *
-     * @return array|null
+     * @return Document[]
      */
     public function getChildren($unpublished = false)
     {
-        if ($this->childs === null) {
-            $childs = parent::getChildren($unpublished);
+        if ($this->children === null) {
+            $children = parent::getChildren($unpublished);
 
             $sourceChildren = [];
             if ($this->getChildrenFromSource() && $this->getSourceDocument() && !\Pimcore::inAdmin()) {
@@ -242,11 +218,11 @@ class Hardlink extends Document
                 }
             }
 
-            $childs = array_merge($sourceChildren, $childs);
-            $this->setChildren($childs);
+            $children = array_merge($sourceChildren, $children);
+            $this->setChildren($children);
         }
 
-        return $this->childs;
+        return $this->children;
     }
 
     /**
@@ -264,7 +240,7 @@ class Hardlink extends Document
     {
 
         // hardlinks cannot have direct children in "real" world, so we have to empty them before we delete it
-        $this->childs = [];
+        $this->children = [];
 
         // check for redirects pointing to this document, and delete them too
         $redirects = new Redirect\Listing();
@@ -278,8 +254,8 @@ class Hardlink extends Document
         parent::delete($isNested);
 
         // we re-enable the children functionality by setting them to NULL, if requested they'll be loaded again
-        // -> see $this->getChilds() , doesn't make sense when deleting an item but who knows, ... ;-)
-        $this->childs = null;
+        // -> see $this->getChildren() , doesn't make sense when deleting an item but who knows, ... ;-)
+        $this->children = null;
     }
 
     /**

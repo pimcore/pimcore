@@ -22,8 +22,8 @@ use Pimcore\Tool;
 use Pimcore\Workflow\EventSubscriber\NotificationEmailSubscriber;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Templating\EngineInterface;
-use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Component\Workflow\Workflow;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class NotificationEmailService
 {
@@ -79,7 +79,7 @@ class NotificationEmailService
             $deeplink = '';
             $hostUrl = Tool::getHostUrl();
             if ($hostUrl !== '') {
-                $deeplink = $hostUrl . '/' . $this->router->generate('pimcore_admin_login') . '/deeplink?object_' . $subject->getId() . '_object';
+                $deeplink = $hostUrl . $this->router->generate('pimcore_admin_login') . '/deeplink?object_' . $subject->getId() . '_object';
             }
 
             foreach ($recipients as $language => $recipientsPerLanguage) {

@@ -71,10 +71,6 @@ class LoginController extends AdminController implements BruteforceProtectedCont
             return $this->redirectToRoute('pimcore_admin_login', $request->query->all(), Response::HTTP_MOVED_PERMANENTLY);
         }
 
-        if (!is_file(\Pimcore\Config::locateConfigFile('system.php'))) {
-            return $this->redirect('/install');
-        }
-
         $user = $this->getAdminUser();
         if ($user instanceof UserInterface) {
             return $this->redirectToRoute('pimcore_admin_index');
@@ -235,12 +231,16 @@ class LoginController extends AdminController implements BruteforceProtectedCont
     {
         $view = $this->buildLoginPageViewModel();
 
-        $session = $request->getSession();
-        $authException = $session->get(Security::AUTHENTICATION_ERROR);
-        if ($authException instanceof AuthenticationException) {
-            $session->remove(Security::AUTHENTICATION_ERROR);
+        if ($request->hasSession()) {
+            $session = $request->getSession();
+            $authException = $session->get(Security::AUTHENTICATION_ERROR);
+            if ($authException instanceof AuthenticationException) {
+                $session->remove(Security::AUTHENTICATION_ERROR);
 
-            $view->error = $authException->getMessage();
+                $view->error = $authException->getMessage();
+            }
+        } else {
+            $view->error = 'No session available, it either timed out or cookies are not enabled.';
         }
 
         return $view;

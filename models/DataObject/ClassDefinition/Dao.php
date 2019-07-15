@@ -169,7 +169,7 @@ class Dao extends Model\Dao\AbstractDao
                     $this->addIndexToField($value, $objectDatastoreTable, 'getColumnType', true);
                 }
 
-                if ($value instanceof DataObject\ClassDefinition\Data\QueryResourcePersistenceAwareInterface || method_exists($value, 'getDataForQueryResource')) {
+                if ($value instanceof DataObject\ClassDefinition\Data\QueryResourcePersistenceAwareInterface) {
                     // if a datafield requires more than one column in the query table
                     if (is_array($value->getQueryColumnType())) {
                         foreach ($value->getQueryColumnType() as $fkey => $fvalue) {

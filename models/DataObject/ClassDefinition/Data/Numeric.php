@@ -468,7 +468,7 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
         }
 
         if (!$this->isEmpty($data) && !is_numeric($data)) {
-            throw new Model\Element\ValidationException('invalid numeric data [' . $data . ']');
+            throw new Model\Element\ValidationException('field ['.$this->getName().' ] - invalid numeric data [' . $data . '] ');
         }
 
         if (!$this->isEmpty($data) && !$omitMandatoryCheck) {

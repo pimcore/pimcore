@@ -17,7 +17,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\CartManager;
 use Pimcore\Cache\Runtime;
 use Pimcore\Logger;
 
-class CartItem extends AbstractCartItem implements ICartItem
+class CartItem extends AbstractCartItem implements CartItemInterface
 {
     /**
      * @var int
@@ -89,7 +89,7 @@ class CartItem extends AbstractCartItem implements ICartItem
     }
 
     /**
-     * @return \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICartItem[]
+     * @return CartItemInterface[]
      */
     public function getSubItems()
     {

@@ -18,10 +18,10 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Exception\ProviderNotFoundException;
-use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment\IPayment;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment\PaymentInterface;
 use Psr\Container\ContainerInterface as PsrContainerInterface;
 
-class PaymentManager implements IPaymentManager
+class PaymentManager implements PaymentManagerInterface
 {
     /**
      * @var PsrContainerInterface
@@ -36,7 +36,7 @@ class PaymentManager implements IPaymentManager
     /**
      * @inheritdoc
      */
-    public function getProvider(string $name): IPayment
+    public function getProvider(string $name): PaymentInterface
     {
         if (!$this->providers->has($name)) {
             throw new ProviderNotFoundException(sprintf(

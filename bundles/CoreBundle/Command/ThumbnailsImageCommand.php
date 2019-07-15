@@ -59,7 +59,7 @@ class ThumbnailsImageCommand extends AbstractCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $list = new Asset\Image\Thumbnail\Config\Listing();
-        $items = $list->load();
+        $items = $list->getThumbnails();
         $thumbnails = [];
         foreach ($items as $item) {
             $thumbnails[] = $item->getName();
@@ -115,8 +115,7 @@ class ThumbnailsImageCommand extends AbstractCommand
             $list->setLimit($perLoop);
             $list->setOffset($i * $perLoop);
 
-            $images = $list->load();
-            foreach ($images as $image) {
+            foreach ($list as $image) {
                 if (!$image instanceof Asset\Image) {
                     continue;
                 }

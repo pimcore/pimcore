@@ -18,22 +18,22 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartPriceModificator\ICartPriceModificator;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Model\ICheckoutable;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Model\CheckoutableInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\TaxManagement\TaxCalculationService;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\TaxManagement\TaxEntry;
-use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IPricingManager;
-use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IPricingManagerLocator;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\PricingManagerInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\PricingManagerLocatorInterface;
 use Pimcore\Model\DataObject\OnlineShopTaxClass;
 use Pimcore\Model\WebsiteSetting;
 
-abstract class AbstractPriceSystem implements IPriceSystem
+abstract class AbstractPriceSystem implements PriceSystemInterface
 {
     /**
-     * @var IPricingManagerLocator
+     * @var PricingManagerLocatorInterface
      */
     protected $pricingManagers;
 
-    public function __construct(IPricingManagerLocator $pricingManagers)
+    public function __construct(PricingManagerLocatorInterface $pricingManagers)
     {
         $this->pricingManagers = $pricingManagers;
     }
@@ -41,7 +41,7 @@ abstract class AbstractPriceSystem implements IPriceSystem
     /**
      * @inheritdoc
      */
-    public function getPriceInfo(ICheckoutable $product, $quantityScale = null, $products = null): IPriceInfo
+    public function getPriceInfo(CheckoutableInterface $product, $quantityScale = null, $products = null): PriceInfoInterface
     {
         return $this->initPriceInfoInstance($quantityScale, $product, $products);
     }
@@ -50,17 +50,17 @@ abstract class AbstractPriceSystem implements IPriceSystem
      * Returns shop-instance specific implementation of priceInfo, override this method in your own price system to
      * set any price values
      *
-     * @param null|int|string $quantityScale Numeric or string (allowed values: IPriceInfo::MIN_PRICE)
-     * @param ICheckoutable $product
-     * @param ICheckoutable[] $products
+     * @param null|int|string $quantityScale Numeric or string (allowed values: PriceInfoInterface::MIN_PRICE)
+     * @param CheckoutableInterface $product
+     * @param CheckoutableInterface[] $products
      *
-     * @return IPriceInfo
+     * @return PriceInfoInterface
      */
-    protected function initPriceInfoInstance($quantityScale, ICheckoutable $product, $products)
+    protected function initPriceInfoInstance($quantityScale, CheckoutableInterface $product, $products)
     {
         $priceInfo = $this->createPriceInfoInstance($quantityScale, $product, $products);
 
-        if ($quantityScale !== IPriceInfo::MIN_PRICE) {
+        if ($quantityScale !== PriceInfoInterface::MIN_PRICE) {
             $priceInfo->setQuantity($quantityScale);
         }
 
@@ -74,19 +74,19 @@ abstract class AbstractPriceSystem implements IPriceSystem
         return $priceInfoWithRules;
     }
 
-    protected function getPricingManager(): IPricingManager
+    protected function getPricingManager(): PricingManagerInterface
     {
         return $this->pricingManagers->getPricingManager();
     }
 
     /**
-     * @param null|int|string $quantityScale Numeric or string (allowed values: IPriceInfo::MIN_PRICE)
-     * @param ICheckoutable $product
-     * @param ICheckoutable[] $products
+     * @param null|int|string $quantityScale Numeric or string (allowed values: PriceInfoInterface::MIN_PRICE)
+     * @param CheckoutableInterface $product
+     * @param CheckoutableInterface[] $products
      *
      * @return AbstractPriceInfo
      */
-    abstract public function createPriceInfoInstance($quantityScale, ICheckoutable $product, $products);
+    abstract public function createPriceInfoInstance($quantityScale, CheckoutableInterface $product, $products);
 
     /**
      * Sample implementation for getting the correct OnlineShopTaxClass. In this case Tax Class is retrieved from
@@ -113,13 +113,13 @@ abstract class AbstractPriceSystem implements IPriceSystem
     }
 
     /**
-     * Returns OnlineShopTaxClass for given ICheckoutable.
+     * Returns OnlineShopTaxClass for given CheckoutableInterface.
      *
-     * @param ICheckoutable $product
+     * @param CheckoutableInterface $product
      *
      * @return OnlineShopTaxClass
      */
-    public function getTaxClassForProduct(ICheckoutable $product)
+    public function getTaxClassForProduct(CheckoutableInterface $product)
     {
         return $this->getDefaultTaxClass();
     }

@@ -107,7 +107,7 @@ class EditmodeListener implements EventSubscriberInterface
             return;
         }
 
-        // trigger this once to make sure it is resolved properly (and set for legacy)
+        // trigger this once to make sure it is resolved properly
         // TODO is this needed?
         $this->editmodeResolver->isEditmode($request);
     }
@@ -292,7 +292,7 @@ class EditmodeListener implements EventSubscriberInterface
         return [
             '/bundles/pimcoreadmin/js/pimcore/common.js',
             '/bundles/pimcoreadmin/js/lib/class.js',
-            '/bundles/pimcoreadmin/js/lib/jquery-3.3.1.min.js',
+            '/bundles/pimcoreadmin/js/lib/jquery-3.4.1.min.js',
             '/bundles/pimcoreadmin/js/lib/ext/ext-all' . ($disableMinifyJs ? '-debug' : '') . '.js',
             '/bundles/pimcoreadmin/js/lib/ckeditor/ckeditor.js'
         ];

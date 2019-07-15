@@ -227,7 +227,7 @@ class KeyGroupRelation extends Model\AbstractModel
      * @param $groupId
      * @param $keyId
      *
-     * @return KeyGroupRelation
+     * @return KeyGroupRelation|null
      */
     public static function getByGroupAndKeyId($groupId, $keyId)
     {
@@ -238,5 +238,7 @@ class KeyGroupRelation extends Model\AbstractModel
         if ($relation) {
             return $relation[0];
         }
+
+        return null;
     }
 }

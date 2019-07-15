@@ -9,45 +9,24 @@ $view->extend('PimcoreAdminBundle:Admin/Login:layout.html.php');
 $this->get("translate")->setDomain("admin");
 ?>
 
-<div id="vcenter">
-    <div id="hcenter">
-        <div id="header">
-            <img src="/admin/settings/display-custom-logo">
-        </div>
-        <div id="content">
-
-            <?php if ($this->error) { ?>
-                <div class="body error">
-                    <?= $this->translate($this->error) ?>
-                </div>
-            <?php } else { ?>
-                <div class="body info">
-                    <?= $this->translate("Enter your verification code"); ?>
-                </div>
-            <?php } ?>
 
 
-            <div id="twofactorform">
-
-                <form method="post" action="<?=$this->url('pimcore_admin_2fa-verify')?>" autocomplete="off">
-
-                    <div class="form-fields">
-                        <input name="_auth_code" id="_auth_code" placeholder="<?= $this->translate("2fa_code"); ?>" required autofocus>
-                    </div>
-
-                    <div class="body">
-                        <button type="submit"><?= $this->translate("Login"); ?></button>
-                    </div>
-                </form>
-            </div>
-
-            <div class="body lostpassword" style="padding-top: 30px;">
-                <a href="<?= $view->router()->path('pimcore_admin_logout') ?>"><?= $this->translate("Back to Login"); ?></a>
-            </div>
-
-        </div>
+<?php if ($this->error) { ?>
+    <div class="text error">
+        <?= $this->translate($this->error) ?>
     </div>
-</div>
+<?php } else { ?>
+    <div class="text info">
+        <?= $this->translate("Enter your verification code"); ?>
+    </div>
+<?php } ?>
+
+<form method="post" action="<?=$this->url('pimcore_admin_2fa-verify')?>" autocomplete="off">
+    <input name="_auth_code" id="_auth_code" type="password" placeholder="<?= $this->translate("2fa_code"); ?>" required autofocus>
+    <button type="submit"><?= $this->translate("Login"); ?></button>
+</form>
+
+<a href="<?= $view->router()->path('pimcore_admin_logout') ?>"><?= $this->translate("Back to Login"); ?></a>
 
 
 <?php $view->slots()->start('below_footer') ?>

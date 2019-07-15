@@ -63,7 +63,7 @@ interface TagHandlerInterface
      * @param ViewModelInterface|View $view
      * @param string $controller
      * @param string $action
-     * @param string|null $parent Bundle or module (legacy) name
+     * @param string|null $parent Bundle
      * @param array $attributes
      * @param array $query
      * @param array $options

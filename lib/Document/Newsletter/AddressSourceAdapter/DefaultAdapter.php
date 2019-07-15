@@ -77,7 +77,6 @@ class DefaultAdapter implements AddressSourceAdapterInterface
 
                 if ($class) {
                     $conditions = $this->addTargetGroupConditions($class, $conditions);
-                    $conditions = $this->addPersonaConditions($class, $conditions);
                 }
             }
 
@@ -122,43 +121,6 @@ class DefaultAdapter implements AddressSourceAdapterInterface
             }
 
             $conditions[] = '(' . implode(' OR ', $targetGroupsCondition) . ')';
-        }
-
-        return $conditions;
-    }
-
-    /**
-     * Handle deprecated persona filters. Note that this only handles the field "persona" which
-     * can either be Persona or Personamultiselect. The class parameter is only handled as target_groups.
-     *
-     * @param ClassDefinition $class
-     * @param array $conditions
-     *
-     * @return array
-     */
-    protected function addPersonaConditions(ClassDefinition $class, array $conditions): array
-    {
-        if (!$class->getFieldDefinition('persona')) {
-            return $conditions;
-        }
-
-        $fieldDefinition = $class->getFieldDefinition('persona');
-        if ($fieldDefinition instanceof ClassDefinition\Data\Persona) {
-            $personas = [];
-            foreach ($this->targetGroups as $value) {
-                if (!empty($value)) {
-                    $personas[] = $this->list->quote($value);
-                }
-            }
-
-            $conditions[] = 'persona IN (' . implode(',', $personas) . ')';
-        } elseif ($fieldDefinition instanceof ClassDefinition\Data\Personamultiselect) {
-            $personasCondition = [];
-            foreach ($this->targetGroups as $value) {
-                $personasCondition[] = 'persona LIKE ' . $this->list->quote('%,' . $value . ',%');
-            }
-
-            $conditions[] = '(' . implode(' OR ', $personasCondition) . ')';
         }
 
         return $conditions;

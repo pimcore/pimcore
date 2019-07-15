@@ -45,6 +45,12 @@ pimcore.object.classes.layout.tabpanel = Class.create(pimcore.object.classes.lay
                     fieldLabel: t("border"),
                     name: "border",
                     checked: this.datax.border,
+                }, {
+                    xtype: 'combo',
+                    fieldLabel: t('tab_position'),
+                    name: 'tabPosition',
+                    value: this.datax.tabPosition,
+                    store: [['top', t('top')], ['left', t('left')], ['right', t('right')], ['bottom', t('bottom')]]
                 }
             ]
         });

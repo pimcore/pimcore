@@ -418,3 +418,5 @@ class Relation extends Model\Document\Tag
         }
     }
 }
+
+class_alias(Relation::class, 'Pimcore\Model\Document\Tag\Href');

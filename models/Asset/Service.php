@@ -29,7 +29,7 @@ use Pimcore\Model\Element;
 class Service extends Model\Element\Service
 {
     /**
-     * @var Model\User
+     * @var Model\User|null
      */
     protected $_user;
     /**
@@ -38,7 +38,7 @@ class Service extends Model\Element\Service
     protected $_copyRecursiveIds;
 
     /**
-     * @param  Model\User $user
+     * @param Model\User $user
      */
     public function __construct($user = null)
     {
@@ -46,10 +46,10 @@ class Service extends Model\Element\Service
     }
 
     /**
-     * @param  Model\Asset $target
-     * @param  Model\Asset $source
+     * @param  Asset|Asset\Folder $target
+     * @param  Asset|Asset\Folder $source
      *
-     * @return Model\Asset copied asset
+     * @return Asset copied asset
      */
     public function copyRecursive($target, $source)
     {
@@ -72,8 +72,8 @@ class Service extends Model\Element\Service
 
         $new->setFilename(Element\Service::getSaveCopyName('asset', $new->getFilename(), $target));
         $new->setParentId($target->getId());
-        $new->setUserOwner($this->_user->getId());
-        $new->setUserModification($this->_user->getId());
+        $new->setUserOwner($this->_user ? $this->_user->getId() : 0);
+        $new->setUserModification($this->_user ? $this->_user->getId() : 0);
         $new->setDao(null);
         $new->setLocked(false);
         $new->setCreationDate(time());
@@ -88,7 +88,7 @@ class Service extends Model\Element\Service
         }
 
         if ($target instanceof Asset\Folder) {
-            $this->updateChilds($target, $new);
+            $this->updateChildren($target, $new);
         }
 
         // triggers actions after the complete asset cloning
@@ -117,8 +117,8 @@ class Service extends Model\Element\Service
         }
         $new->setFilename(Element\Service::getSaveCopyName('asset', $new->getFilename(), $target));
         $new->setParentId($target->getId());
-        $new->setUserOwner($this->_user->getId());
-        $new->setUserModification($this->_user->getId());
+        $new->setUserOwner($this->_user ? $this->_user->getId() : 0);
+        $new->setUserModification($this->_user ? $this->_user->getId() : 0);
         $new->setDao(null);
         $new->setLocked(false);
         $new->setCreationDate(time());
@@ -126,7 +126,7 @@ class Service extends Model\Element\Service
         $new->save();
 
         if ($target instanceof Asset\Folder) {
-            $this->updateChilds($target, $new);
+            $this->updateChildren($target, $new);
         }
 
         // triggers actions after the complete asset cloning
@@ -158,7 +158,7 @@ class Service extends Model\Element\Service
             $target->setCustomSettings($source->getCustomSettings());
         }
 
-        $target->setUserModification($this->_user->getId());
+        $target->setUserModification($this->_user ? $this->_user->getId() : 0);
         $newProps = Element\Service::cloneMe($source->getProperties());
         $target->setProperties($newProps);
         $target->save();

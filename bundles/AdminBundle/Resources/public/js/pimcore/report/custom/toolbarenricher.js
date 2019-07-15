@@ -37,11 +37,11 @@ pimcore.report.custom.toolbarenricher = Class.create(pimcore.plugin.admin, {
                             }
 
                             if(!report["iconClass"]) {
-                                report["iconClass"] = "pimcore_icon_sql";
+                                report["iconClass"] = "pimcore_nav_icon_custom_report_default";
                             }
 
                             if(!report["groupIconClass"]) {
-                                report["groupIconClass"] = "pimcore_icon_sql";
+                                report["groupIconClass"] = "pimcore_nav_icon_custom_report_group_default";
                             }
 
                             var reportClass = report.reportClass ? report.reportClass : "pimcore.report.custom.report";
@@ -77,14 +77,14 @@ pimcore.report.custom.toolbarenricher = Class.create(pimcore.plugin.admin, {
                                         parentMenuEntry.add({
                                             text: report["niceName"],
                                             iconCls: report["iconClass"],
-                                            handler: function (report) {
+                                            handler: function (report, reportClass) {
                                                 toolbar.showReports(reportClass, {
                                                     name: report["name"],
                                                     text: report["niceName"],
                                                     niceName: report["niceName"],
                                                     iconCls: report["iconClass"]
                                                 });
-                                            }.bind(this, report)
+                                            }.bind(this, report, reportClass)
                                         });
                                     }
                                 } catch (e) {

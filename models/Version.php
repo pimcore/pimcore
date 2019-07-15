@@ -17,7 +17,6 @@
 
 namespace Pimcore\Model;
 
-use Pimcore\Config;
 use Pimcore\Event\Model\VersionEvent;
 use Pimcore\Event\VersionEvents;
 use Pimcore\File;
@@ -108,14 +107,21 @@ class Version extends AbstractModel
     /**
      * @param int $id
      *
-     * @return Version
+     * @return Version|null
      */
     public static function getById($id)
     {
-        $version = self::getModelFactory()->build(Version::class);
-        $version->getDao()->getById($id);
+        try {
+            /**
+             * @var self $version
+             */
+            $version = self::getModelFactory()->build(Version::class);
+            $version->getDao()->getById($id);
 
-        return $version;
+            return $version;
+        } catch (\Exception $e) {
+            return null;
+        }
     }
 
     /**
@@ -261,9 +267,11 @@ class Version extends AbstractModel
     /**
      * Object
      *
+     * @param $renewReferences
+     *
      * @return mixed
      */
-    public function loadData()
+    public function loadData($renewReferences = true)
     {
         $data = null;
         $zipped = false;
@@ -316,7 +324,10 @@ class Version extends AbstractModel
             $data->setData($data->data);
         }
 
-        $data = Element\Service::renewReferences($data);
+        if ($renewReferences) {
+            $data = Element\Service::renewReferences($data);
+        }
+
         $this->setData($data);
 
         return $data;
@@ -364,40 +375,6 @@ class Version extends AbstractModel
     public function getLegacyFilePath()
     {
         return PIMCORE_VERSION_DIRECTORY . '/' . $this->getCtype() . '/' . $this->getId();
-    }
-
-    /**
-     * the cleanup is now done in the maintenance see self::maintenanceCleanUp()
-     *
-     * @deprecated
-     */
-    public function cleanHistory()
-    {
-        if ($this->getCtype() == 'document') {
-            $conf = Config::getSystemConfig()->documents->versions;
-        } elseif ($this->getCtype() == 'asset') {
-            $conf = Config::getSystemConfig()->assets->versions;
-        } elseif ($this->getCtype() == 'object') {
-            $conf = Config::getSystemConfig()->objects->versions;
-        } else {
-            return;
-        }
-
-        $days = [];
-        $steps = [];
-
-        if (intval($conf->days) > 0) {
-            $days = $this->getDao()->getOutdatedVersionsDays($conf->days);
-        } else {
-            $steps = $this->getDao()->getOutdatedVersionsSteps(intval($conf->steps));
-        }
-
-        $versions = array_merge($days, $steps);
-
-        foreach ($versions as $id) {
-            $version = Version::getById($id);
-            $version->delete();
-        }
     }
 
     /**

@@ -2,7 +2,9 @@
 
 set -e
 
-CMD="/tmp/www/vendor/bin/codecept run -c /tmp/www/vendor/pimcore/pimcore -vvv"
+export PIMCORE_PROJECT_ROOT="${PWD}"
+
+CMD="vendor/bin/codecept run -c . -vvv"
 
 # add suite if configured
 if [[ -n "$PIMCORE_TEST_SUITE" ]]; then

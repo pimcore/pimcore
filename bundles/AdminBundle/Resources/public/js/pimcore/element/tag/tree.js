@@ -60,7 +60,7 @@ pimcore.element.tag.tree = Class.create({
         if (!this.tree) {
 
             var store = Ext.create('Ext.data.TreeStore', {
-                autoLoad: false,
+                autoLoad: true,
                 proxy: {
                     type: 'ajax',
                     url: '/admin/tags/tree-get-children-by-id',

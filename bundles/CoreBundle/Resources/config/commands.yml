@@ -1,4 +1,7 @@
 services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
 
     #
     # COMMANDS
@@ -32,12 +35,14 @@ services:
 
     Pimcore\Bundle\CoreBundle\Command\Bundle\DisableCommand:
         arguments:
+            - '@Pimcore\Extension\Bundle\PimcoreBundleManager'
             - '@Pimcore\Bundle\CoreBundle\Command\Bundle\Helper\PostStateChange'
         tags:
             - { name: console.command, command: 'pimcore:bundle:disable' }
 
     Pimcore\Bundle\CoreBundle\Command\Bundle\EnableCommand:
         arguments:
+            - '@Pimcore\Extension\Bundle\PimcoreBundleManager'
             - '@Pimcore\Bundle\CoreBundle\Command\Bundle\Helper\PostStateChange'
         tags:
             - { name: console.command, command: 'pimcore:bundle:enable' }

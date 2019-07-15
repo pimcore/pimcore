@@ -18,7 +18,7 @@ $orderList->setLimit( 10, 0 );
 // iterate
 foreach($orderList as $order)
 {
-    /* @var \Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\IOrderListItem $order */
+    /* @var \Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderListItemInterface $order */
     echo $order->getOrdernumber();
 }
 

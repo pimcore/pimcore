@@ -48,7 +48,7 @@ final class SanitizeElementsTask implements TaskInterface
                 \Pimcore::collectGarbage();
             }
 
-            $element = Service::getElementById($sanityCheck->getType(), $sanityCheck->getId());
+            $element = Service::getElementById($sanityCheck->getType(), $sanityCheck->getId(), true);
             if ($element) {
                 try {
                     $this->performSanityCheck($element);
@@ -79,7 +79,7 @@ final class SanitizeElementsTask implements TaskInterface
         $element->save();
 
         if ($version = $element->getLatestVersion(true)) {
-            $version->setNote('Sanitycheck');
+            $version->setNote('Sanity Check');
             $version->save();
         }
     }

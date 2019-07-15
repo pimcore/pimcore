@@ -14,9 +14,11 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\Model;
 
+use Pimcore\Bundle\EcommerceFrameworkBundle\AvailabilitySystem\AvailabilityInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\UnsupportedException;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\AbstractPriceInfo;
-use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPriceInfo;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\PriceInfoInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\PriceInterface;
 
 /**
  * Abstract base class for pimcore objects who should be used as set products in the online shop framework
@@ -89,7 +91,7 @@ class AbstractSetProduct extends AbstractProduct
      * @param AbstractSetProductEntry[] $products
      * @param int $quantityScale
      *
-     * @return \Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPrice
+     * @return PriceInterface
      *
      * @deprecated - use getOSPriceInfo($quantityScale,$products) instead
      */
@@ -124,7 +126,7 @@ class AbstractSetProduct extends AbstractProduct
      * @param null $quantityScale
      * @param null $products
      *
-     * @return \Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPrice
+     * @return PriceInterface
      */
     public function getOSPrice($quantityScale = null, $products = null)
     {
@@ -143,7 +145,7 @@ class AbstractSetProduct extends AbstractProduct
      * @param int $quantityScale
      * @param null $products
      *
-     * @return IPriceInfo|AbstractPriceInfo
+     * @return PriceInfoInterface|AbstractPriceInfo
      */
     public function getOSPriceInfo($quantityScale = null, $products = null)
     {
@@ -158,7 +160,7 @@ class AbstractSetProduct extends AbstractProduct
      * @param int $quantity
      * @param $products AbstractSetProductEntry[]
      *
-     * @return \Pimcore\Bundle\EcommerceFrameworkBundle\AvailabilitySystem\IAvailability
+     * @return AvailabilityInterface
      */
     public function getOSAvailabilityInfo($quantity = 1, $products = null)
     {

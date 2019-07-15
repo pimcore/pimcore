@@ -214,6 +214,12 @@ pimcore.settings.system = Class.create({
                                 width: 330,
                                 value: this.getValue("branding.color_admin_interface"),
                                 name: 'branding.color_admin_interface'
+                            }, {
+                                xtype: "checkbox",
+                                fieldLabel: t('invert_colors_on_login_screen'),
+                                width: 330,
+                                checked: this.getValue("branding.login_screen_invert_colors"),
+                                name: 'branding.login_screen_invert_colors'
                             }]
                         }, {
                             xtype: 'fieldset',
@@ -287,7 +293,7 @@ pimcore.settings.system = Class.create({
                             xtype: "displayfield",
                             hideLabel: true,
                             width: 600,
-                            value: t('valid_languages_frontend_description'),
+                            value: t('valid_languages_frontend_description') + " <br /><br />" + t('delete_language_note'),
                             cls: "pimcore_extra_label_bottom"
                         },
                             {
@@ -548,11 +554,6 @@ pimcore.settings.system = Class.create({
                                             fieldLabel: t("email_smtp_port"),
                                             name: "email.smtp.port",
                                             value: this.getValue("email.smtp.port")
-                                        },
-                                        {
-                                            fieldLabel: t("email_smtp_name"),
-                                            name: "email.smtp.name",
-                                            value: this.getValue("email.smtp.name")
                                         },
                                         {
                                             fieldLabel: t("email_smtp_auth_method"),
@@ -1124,8 +1125,9 @@ pimcore.settings.system = Class.create({
                                     name: "newsletter.method",
                                     value: this.getValue("newsletter.method"),
                                     store: [
-                                        ["mail", "mail"],
-                                        ["smtp", "smtp"]
+                                        ["sendmail", "Sendmail"],
+                                        ["smtp", "SMTP"],
+                                        ["null", t("none")]
                                     ],
                                     listeners: {
                                         select: this.emailMethodSelected.bind(this, "newsletter")
@@ -1167,11 +1169,6 @@ pimcore.settings.system = Class.create({
                                             fieldLabel: t("email_smtp_port"),
                                             name: "newsletter.smtp.port",
                                             value: this.getValue("newsletter.smtp.port")
-                                        },
-                                        {
-                                            fieldLabel: t("email_smtp_name"),
-                                            name: "newsletter.smtp.name",
-                                            value: this.getValue("newsletter.smtp.name")
                                         },
                                         {
                                             fieldLabel: t("email_smtp_auth_method"),
@@ -1254,6 +1251,9 @@ pimcore.settings.system = Class.create({
     },
 
     save: function () {
+
+        this.layout.mask();
+
         var values = this.layout.getForm().getFieldValues();
 
         Ext.Ajax.request({
@@ -1263,6 +1263,9 @@ pimcore.settings.system = Class.create({
                 data: Ext.encode(values)
             },
             success: function (response) {
+
+                this.layout.unmask();
+
                 try {
                     var res = Ext.decode(response.responseText);
                     if (res.success) {
@@ -1280,7 +1283,7 @@ pimcore.settings.system = Class.create({
                 } catch (e) {
                     pimcore.helpers.showNotification(t("error"), t("saving_failed"), "error");
                 }
-            }
+            }.bind(this)
         });
     },
 

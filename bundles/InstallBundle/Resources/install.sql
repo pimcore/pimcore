@@ -47,8 +47,8 @@ CREATE TABLE `assets` (
 
 DROP TABLE IF EXISTS `assets_metadata`;
 CREATE TABLE `assets_metadata` (
-  `cid` int(11) DEFAULT NULL,
-  `name` varchar(190) DEFAULT NULL,
+  `cid` int(11) NOT NULL,
+  `name` varchar(190) NOT NULL,
   `language` varchar(10) CHARACTER SET ascii COLLATE ascii_general_ci NOT NULL DEFAULT '',
   `type` ENUM('input','textarea','asset','document','object','date','select','checkbox') DEFAULT NULL,
   `data` text,
@@ -157,7 +157,6 @@ CREATE TABLE `documents_email` (
   `cc` varchar(255) DEFAULT NULL,
   `bcc` varchar(255) DEFAULT NULL,
   `subject` varchar(255) DEFAULT NULL,
-  `legacy` tinyint(1) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) DEFAULT CHARSET=utf8mb4;
 
@@ -175,7 +174,6 @@ CREATE TABLE `documents_newsletter` (
   `trackingParameterName` varchar(255) DEFAULT NULL,
   `enableTrackingParameters` tinyint(1) unsigned DEFAULT NULL,
   `sendingMode` varchar(20) DEFAULT NULL,
-  `legacy` tinyint(1) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) DEFAULT CHARSET=utf8mb4;
 
@@ -184,7 +182,7 @@ CREATE TABLE `documents_hardlink` (
   `id` int(11) unsigned NOT NULL default '0',
   `sourceId` int(11) DEFAULT NULL,
   `propertiesFromSource` tinyint(1) DEFAULT NULL,
-  `childsFromSource` tinyint(1) DEFAULT NULL,
+  `childrenFromSource` tinyint(1) DEFAULT NULL,
   PRIMARY KEY `id` (`id`)
 ) DEFAULT CHARSET=utf8mb4;
 
@@ -211,7 +209,6 @@ CREATE TABLE `documents_page` (
   `prettyUrl` varchar(190) DEFAULT NULL,
   `contentMasterDocumentId` int(11) DEFAULT NULL,
   `targetGroupIds` varchar(255) DEFAULT NULL,
-  `legacy` TINYINT(1) NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `prettyUrl` (`prettyUrl`)
 ) DEFAULT CHARSET=utf8mb4;
@@ -224,7 +221,6 @@ CREATE TABLE `documents_snippet` (
   `action` varchar(255) DEFAULT NULL,
   `template` varchar(255) DEFAULT NULL,
   `contentMasterDocumentId` int(11) DEFAULT NULL,
-  `legacy` TINYINT(1) NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) DEFAULT CHARSET=utf8mb4;
 
@@ -249,7 +245,6 @@ CREATE TABLE `documents_printpage` (
   `lastGenerated` int(11) DEFAULT NULL,
   `lastGenerateMessage` text,
   `contentMasterDocumentId` int(11) DEFAULT NULL,
-  `legacy` tinyint(1) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) DEFAULT CHARSET=utf8mb4;
 
@@ -663,7 +658,7 @@ CREATE TABLE `users` (
   `memorizeTabs` tinyint(1) DEFAULT NULL,
   `allowDirtyClose` tinyint(1) unsigned DEFAULT '1',
   `docTypes` varchar(255) DEFAULT NULL,
-  `classes` varchar(255) DEFAULT NULL,
+  `classes` text DEFAULT NULL,
   `apiKey` varchar(255) DEFAULT NULL,
   `twoFactorAuthentication` varchar(255) DEFAULT NULL,
 	`activePerspective` VARCHAR(255) NULL DEFAULT NULL,

@@ -562,7 +562,6 @@
     "press_crtl_and_select_to_compare": "按CTRL+单击比较",
     "clear_filters": "清除过滤器",
     "tags_configuration": "标签配置",
-    "legacy_mode": "遗留模式",
     "export_csv_include_headers": "带标题的CSV导出",
     "open_data_object": "打开数据对象",
     "data_objects": "数据对象",
@@ -892,5 +891,8 @@
     "split_view_object_dirty_title": "Please confirm",
     "split_view_object_dirty_msg": "There are unsaved modifications. You will lose all changes. Are you sure?",
     "converter_service": "Converter service",
-    "auto_convert": "Automatic conversion"
+    "auto_convert": "Automatic conversion",
+    "web2print_enableDebugMode": "Enable debug mode",
+    "set_to_null": "Empty (set to null)",
+    "bundles": "Bundles"
 }

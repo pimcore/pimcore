@@ -15,13 +15,13 @@
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Action;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartPriceModificator\Discount;
-use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IAction;
-use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\ICondition;
-use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IEnvironment;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\ActionInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\ConditionInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\EnvironmentInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
 
 // TODO use Decimal for amounts?
-class CartDiscount implements IDiscount
+class CartDiscount implements DiscountInterface
 {
     /**
      * @var float
@@ -34,21 +34,21 @@ class CartDiscount implements IDiscount
     protected $percent = 0;
 
     /**
-     * @param IEnvironment $environment
+     * @param EnvironmentInterface $environment
      *
-     * @return IAction
+     * @return ActionInterface
      */
-    public function executeOnProduct(IEnvironment $environment)
+    public function executeOnProduct(EnvironmentInterface $environment)
     {
         return $this;
     }
 
     /**
-     * @param IEnvironment $environment
+     * @param EnvironmentInterface $environment
      *
-     * @return IAction
+     * @return ActionInterface
      */
-    public function executeOnCart(IEnvironment $environment)
+    public function executeOnCart(EnvironmentInterface $environment)
     {
         $priceCalculator = $environment->getCart()->getPriceCalculator();
 
@@ -93,7 +93,7 @@ class CartDiscount implements IDiscount
     /**
      * @param string $string
      *
-     * @return ICondition
+     * @return ConditionInterface
      */
     public function fromJSON($string)
     {

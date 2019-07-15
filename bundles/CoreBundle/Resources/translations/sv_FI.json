@@ -562,7 +562,6 @@
     "press_crtl_and_select_to_compare": "Compare: Press CTRL + Click Version",
     "clear_filters": "Töm filter",
     "tags_configuration": "Taggkonfiguration",
-    "legacy_mode": "Legacy Mode",
     "export_csv_include_headers": "CSV-export med rubriker",
     "open_data_object": "Öppna dataobjekt",
     "data_objects": "Dataobjekt",
@@ -892,5 +891,8 @@
     "split_view_object_dirty_title": "Please confirm",
     "split_view_object_dirty_msg": "There are unsaved modifications. You will lose all changes. Are you sure?",
     "converter_service": "Converter service",
-    "auto_convert": "Automatic conversion"
+    "auto_convert": "Automatic conversion",
+    "web2print_enableDebugMode": "Enable debug mode",
+    "set_to_null": "Empty (set to null)",
+    "bundles": "Bundles"
 }

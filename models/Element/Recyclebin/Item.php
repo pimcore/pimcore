@@ -90,14 +90,18 @@ class Item extends Model\AbstractModel
      *
      * @param $id
      *
-     * @return Element\Recyclebin\Item
+     * @return self|null
      */
     public static function getById($id)
     {
-        $item = new self();
-        $item->getDao()->getById($id);
+        try {
+            $item = new self();
+            $item->getDao()->getById($id);
 
-        return $item;
+            return $item;
+        } catch (\Exception $e) {
+            return null;
+        }
     }
 
     /**
@@ -175,7 +179,7 @@ class Item extends Model\AbstractModel
         $this->setPath($this->getElement()->getRealFullPath());
         $this->setDate(time());
 
-        $this->loadChilds($this->getElement());
+        $this->loadChildren($this->getElement());
 
         if ($user instanceof Model\User) {
             $this->setDeletedby($user->getName());
@@ -235,7 +239,7 @@ class Item extends Model\AbstractModel
     /**
      * @param Element\ElementInterface $element
      */
-    public function loadChilds(Element\ElementInterface $element)
+    public function loadChildren(Element\ElementInterface $element)
     {
         $this->amount++;
 
@@ -253,16 +257,16 @@ class Item extends Model\AbstractModel
         // with the property _fulldump set, because this would cause major issues in wakeUp()
         Cache::addIgnoredTagOnSave($element->getCacheTag());
 
-        if (method_exists($element, 'getChilds')) {
+        if (method_exists($element, 'getChildren')) {
             if ($element instanceof DataObject\AbstractObject) {
                 // because we also want variants
                 $childs = $element->getChildren([DataObject::OBJECT_TYPE_FOLDER, DataObject::OBJECT_TYPE_VARIANT, DataObject::OBJECT_TYPE_OBJECT]);
             } else {
-                $childs = $element->getChilds();
+                $childs = $element->getChildren();
             }
 
             foreach ($childs as $child) {
-                $this->loadChilds($child);
+                $this->loadChildren($child);
             }
         }
     }

@@ -133,6 +133,9 @@ t('translation_key')
 
 It is possible to add leftside main navigation via plugins. See the following example to know how: 
 
+> The new navigation item (the `li` tag) must have an `id` attribute starting with `pimcore_menu_`, whose suffix must be the prefix of the "menu variable" of the toolbar.
+  So, the `xxx` part of the id `pimcore_menu_xxx` must match `pimcore.layout.toolbar.prototype.xxxMenu` to display the navigation item.
+
 ```javascript
 pimcore.registerNS("pimcore.plugin.menusample");
  

@@ -741,3 +741,5 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
         return $value1 == $value2;
     }
 }
+
+class_alias(ManyToOneRelation::class, 'Pimcore\Model\DataObject\ClassDefinition\Data\Href');

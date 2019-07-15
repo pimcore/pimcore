@@ -66,7 +66,21 @@ pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
                     if (forGridConfigPreview) {
                         return baseUrl + '&width=88&height=20&frame=true" />';
                     } else {
-                        return baseUrl + '&width=88&height=88&frame=true" />';
+                        var params = {
+                            width: 88,
+                            height: 88,
+                            frame: true
+                        };
+
+                        var url = Ext.String.urlAppend(baseUrl, Ext.Object.toQueryString(params));
+
+                        if (value.crop) {
+                            var cropParams = Ext.Object.toQueryString(value.crop);
+                            url = Ext.String.urlAppend(url, cropParams);
+                        }
+
+                        url = url + '" />';
+                        return url;
                     }
                 }
             }.bind(this, field.key)
@@ -86,8 +100,8 @@ pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
         if (!this.additionalConfig.condensed) {
             items.push({
                 xtype: "tbspacer",
-                width: 40,
-                height: 16,
+                width: 48,
+                height: 24,
                 cls: "pimcore_icon_droptarget_upload"
             });
 

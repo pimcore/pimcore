@@ -25,6 +25,18 @@ use Symfony\Component\Console\Input\InputOption;
 
 abstract class AbstractBundleCommand extends AbstractCommand
 {
+    /**
+     * @var PimcoreBundleManager
+     */
+    protected $bundleManager;
+
+    public function __construct(PimcoreBundleManager $bundleManager, ?string $name = null)
+    {
+        parent::__construct($name);
+
+        $this->bundleManager = $bundleManager;
+    }
+
     protected function configureDescriptionAndHelp(string $description, string $help = null): self
     {
         if (null === $help) {
@@ -68,18 +80,12 @@ abstract class AbstractBundleCommand extends AbstractCommand
         }
     }
 
-    protected function getBundleManager(): PimcoreBundleManager
-    {
-        return $this->getContainer()->get('pimcore.extension.bundle_manager');
-    }
-
     protected function getBundle(): PimcoreBundleInterface
     {
         $bundleId = $this->io->getInput()->getArgument('bundle');
         $bundleId = $this->normalizeBundleIdentifier($bundleId);
 
-        $bundleManager = $this->getBundleManager();
-        $activeBundles = $bundleManager->getActiveBundles(false);
+        $activeBundles = $this->bundleManager->getActiveBundles(false);
 
         $bundle = null;
 
@@ -105,7 +111,7 @@ abstract class AbstractBundleCommand extends AbstractCommand
 
     protected function setupInstaller(PimcoreBundleInterface $bundle)
     {
-        $installer = $this->getBundleManager()->getInstaller($bundle);
+        $installer = $this->bundleManager->getInstaller($bundle);
         if (null === $installer) {
             return null;
         }

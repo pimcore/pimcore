@@ -17,7 +17,10 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Interpreter;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Traits\OptionsResolverTrait;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class DimensionUnitField implements IInterpreter
+/**
+ * @deprecated
+ */
+class DimensionUnitField implements InterpreterInterface
 {
     use OptionsResolverTrait;
 

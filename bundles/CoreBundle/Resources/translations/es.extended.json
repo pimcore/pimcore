@@ -50,8 +50,6 @@
     "deactivate_maintenance": "Desactivar Mantenimiento",
     "code_settings": "Ajustes de Código",
     "advanced_integration": "Integración Avanzada",
-    "personamultiselect": "Multiselección de Persona",
-    "persona": "Persona",
     "target_group": "Público Objetivo",
     "children": "niños",
     "elements_to_export": "Elementos a Exportar",
@@ -706,5 +704,7 @@
     "allow_multiple_assignments": "Allow Multiple Assignments",
     "enable_admin_async_load": "Enable Async Load in Admin",
     "async_loading_warning_block": "WARNING: Async Loading is NOT possible within Localized Fields and Blocks",
-    "path_formatter_service": "Formatter Service / Class"
+    "path_formatter_service": "Formatter Service / Class",
+    "tab_position": "Tab Position",
+    "invert_colors_on_login_screen": "Invert Colors on Login Screen"
 }

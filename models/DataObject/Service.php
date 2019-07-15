@@ -40,7 +40,7 @@ class Service extends Model\Element\Service
     protected $_copyRecursiveIds;
 
     /**
-     * @var Model\User
+     * @var Model\User|null
      */
     protected $_user;
 
@@ -52,7 +52,7 @@ class Service extends Model\Element\Service
     protected static $systemFields = ['o_path', 'o_key', 'o_id', 'o_published', 'o_creationDate', 'o_modificationDate', 'o_fullpath'];
 
     /**
-     * @param  Model\User $user
+     * @param Model\User $user
      */
     public function __construct($user = null)
     {
@@ -110,8 +110,8 @@ class Service extends Model\Element\Service
     }
 
     /**
-     * @param $target
-     * @param $source
+     * @param AbstractObject $target
+     * @param AbstractObject $source
      *
      * @return mixed
      */
@@ -130,13 +130,16 @@ class Service extends Model\Element\Service
         //load all in case of lazy loading fields
         self::loadAllObjectFields($source);
 
+        /**
+         * @var AbstractObject $new
+         */
         $new = Element\Service::cloneMe($source);
         $new->setId(null);
-        $new->setChilds(null);
+        $new->setChildren(null);
         $new->setKey(Element\Service::getSaveCopyName('object', $new->getKey(), $target));
         $new->setParentId($target->getId());
-        $new->setUserOwner($this->_user->getId());
-        $new->setUserModification($this->_user->getId());
+        $new->setUserOwner($this->_user ? $this->_user->getId() : 0);
+        $new->setUserModification($this->_user ? $this->_user->getId() : 0);
         $new->setDao(null);
         $new->setLocked(false);
         $new->setCreationDate(time());
@@ -145,11 +148,17 @@ class Service extends Model\Element\Service
         // add to store
         $this->_copyRecursiveIds[] = $new->getId();
 
-        foreach ($source->getChilds() as $child) {
+        $children = $source->getChildren([
+            AbstractObject::OBJECT_TYPE_OBJECT,
+            AbstractObject::OBJECT_TYPE_VARIANT,
+            AbstractObject::OBJECT_TYPE_FOLDER
+        ], true);
+
+        foreach ($children as $child) {
             $this->copyRecursive($new, $child);
         }
 
-        $this->updateChilds($target, $new);
+        $this->updateChildren($target, $new);
 
         // triggers actions after the complete document cloning
         \Pimcore::getEventDispatcher()->dispatch(DataObjectEvents::POST_COPY, new DataObjectEvent($new, [
@@ -182,8 +191,8 @@ class Service extends Model\Element\Service
         $new->setChildren(null);
         $new->setKey(Element\Service::getSaveCopyName('object', $new->getKey(), $target));
         $new->setParentId($target->getId());
-        $new->setUserOwner($this->_user->getId());
-        $new->setUserModification($this->_user->getId());
+        $new->setUserOwner($this->_user ? $this->_user->getId() : 0);
+        $new->setUserModification($this->_user ? $this->_user->getId() : 0);
         $new->setDao(null);
         $new->setLocked(false);
         $new->setCreationDate(time());
@@ -191,7 +200,7 @@ class Service extends Model\Element\Service
 
         Model\DataObject\AbstractObject::setDisableDirtyDetection($isDirtyDetectionDisabled);
 
-        $this->updateChilds($target, $new);
+        $this->updateChildren($target, $new);
 
         // triggers actions after the complete object cloning
         \Pimcore::getEventDispatcher()->dispatch(DataObjectEvents::POST_COPY, new DataObjectEvent($new, [
@@ -202,8 +211,8 @@ class Service extends Model\Element\Service
     }
 
     /**
-     * @param $target
-     * @param $source
+     * @param AbstractObject $target
+     * @param AbstractObject $source
      *
      * @return AbstractObject
      *
@@ -220,15 +229,18 @@ class Service extends Model\Element\Service
         //load all in case of lazy loading fields
         self::loadAllObjectFields($source);
 
+        /**
+         * @var AbstractObject $new
+         */
         $new = Element\Service::cloneMe($source);
-        $new->setChilds($target->getChilds());
+        $new->setChildren($target->getChildren());
         $new->setId($target->getId());
         $new->setPath($target->getRealPath());
         $new->setKey($target->getKey());
         $new->setParentId($target->getParentId());
         $new->setScheduledTasks($source->getScheduledTasks());
         $new->setProperties($source->getProperties());
-        $new->setUserModification($this->_user->getId());
+        $new->setUserModification($this->_user ? $this->_user->getId() : 0);
 
         $new->save();
 
@@ -262,7 +274,8 @@ class Service extends Model\Element\Service
 
         if ($object instanceof Concrete) {
             $context = ['object' => $object,
-                'purpose' => 'gridview'];
+                'purpose' => 'gridview',
+                'language' => $requestedLanguage];
             $data['classname'] = $object->getClassName();
             $data['idPath'] = Element\Service::getIdPath($object);
             $data['inheritedFields'] = [];
@@ -465,6 +478,9 @@ class Service extends Model\Element\Service
     public static function getConfigForHelperDefinition($helperDefinitions, $key, $context = [])
     {
         $cacheKey = 'gridcolumn_config_' . $key;
+        if (isset($context['language'])) {
+            $cacheKey .= '_' . $context['language'];
+        }
         if (Runtime::isRegistered($cacheKey)) {
             $config = Runtime::get($cacheKey);
         } else {
@@ -701,7 +717,7 @@ class Service extends Model\Element\Service
      *
      * @static
      *
-     * @param  Concrete $object
+     * @param AbstractObject $object
      */
     public static function loadAllObjectFields($object)
     {
@@ -894,7 +910,7 @@ class Service extends Model\Element\Service
         $condition = 'classId = ' . $list->quote($classId);
         if (is_array($layoutPermissions) && count($layoutPermissions)) {
             $layoutIds = array_values($layoutPermissions);
-            $condition .= ' AND id IN (' . implode(',', $layoutIds) . ')';
+            $condition .= ' AND id IN (' . implode(',', array_map([$list, 'quote'], $layoutIds)) . ')';
         }
         $list->setCondition($condition);
         $list = $list->load();

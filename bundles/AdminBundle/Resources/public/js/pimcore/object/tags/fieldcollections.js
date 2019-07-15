@@ -81,6 +81,7 @@ pimcore.object.tags.fieldcollections = Class.create(pimcore.object.tags.abstract
             autoHeight: true,
             border: this.fieldConfig.border,
             style: "margin-bottom: 10px",
+            bodyStyle: 'padding-top: 5px',
             componentCls: "object_field",
             collapsible: this.fieldConfig.collapsible,
             collapsed: this.fieldConfig.collapsed
@@ -369,10 +370,10 @@ pimcore.object.tags.fieldcollections = Class.create(pimcore.object.tags.abstract
         var blockElement = new Ext.Panel({
             pimcore_oIndex: oIndex,
             cls: 'pimcore_fieldcollection_item',
-            bodyStyle: "padding:10px;",
+            bodyStyle: "padding: 5px 5px 5px 0px;",
             style: "margin: 0 0 10px 0;",
             manageHeight: false,
-            border: false,
+            border: true,
             items: items,
             disabled: this.fieldConfig.noteditable
         });

@@ -21,7 +21,7 @@ use Pimcore\Analytics\Piwik\Config\Config;
 use Pimcore\Analytics\Piwik\WidgetBroker;
 use Pimcore\Analytics\SiteId\SiteId;
 use Pimcore\Analytics\SiteId\SiteIdProvider;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class PiwikReportsProvider
 {

@@ -123,11 +123,11 @@ trait Wrapper
     /**
      * @param bool $unpublished
      *
-     * @return array
+     * @return Document[]
      */
     public function getChildren($unpublished = false)
     {
-        if ($this->childs === null) {
+        if ($this->children === null) {
             $hardLink = $this->getHardLinkSource();
             $children = [];
 
@@ -146,7 +146,7 @@ trait Wrapper
             $this->setChildren($children);
         }
 
-        return $this->childs;
+        return $this->children;
     }
 
     /**

@@ -17,7 +17,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\Model;
 use Pimcore\FeatureToggles\Features\DebugMode;
 use Pimcore\Logger;
 
-class DefaultMockup implements IProduct
+class DefaultMockup implements ProductInterface
 {
     protected $id;
     protected $params;

@@ -502,11 +502,14 @@ abstract class Adapter
     abstract public function getContentOptimizedFormat();
 
     /**
-     * @param string $format
+     * @internal
      *
-     * @return bool
+     * @param string $format
+     * @param bool $force
+     *
+     * @return mixed
      */
-    abstract public function supportsFormat(string $format);
+    abstract public function supportsFormat(string $format, bool $force = false);
 
     public function preModify()
     {

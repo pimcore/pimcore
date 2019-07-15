@@ -878,6 +878,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
                             // for lazy loading
                             $context = $itemElementData->getContext() ? $itemElementData->getContext() : [];
                             $context['containerType'] = 'block';
+                            $context['containerKey'] = $this->getName();
                             $itemElementData->setContext($context);
                         }
                     }

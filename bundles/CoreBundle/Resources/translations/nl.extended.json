@@ -50,8 +50,6 @@
     "deactivate_maintenance": "Onderhoud deactiveren",
     "code_settings": "Code-instellingen",
     "advanced_integration": "Geavanceerde integratie",
-    "personamultiselect": "Persona multiselect",
-    "persona": "Persona",
     "target_group": "Doelgroep",
     "children": "Kinderen",
     "elements_to_export": "Elementen om te exporteren",
@@ -706,5 +704,7 @@
     "allow_multiple_assignments": "Allow Multiple Assignments",
     "enable_admin_async_load": "Enable Async Load in Admin",
     "async_loading_warning_block": "WARNING: Async Loading is NOT possible within Localized Fields and Blocks",
-    "path_formatter_service": "Formatter Service / Class"
+    "path_formatter_service": "Formatter Service / Class",
+    "tab_position": "Tab Position",
+    "invert_colors_on_login_screen": "Invert Colors on Login Screen"
 }

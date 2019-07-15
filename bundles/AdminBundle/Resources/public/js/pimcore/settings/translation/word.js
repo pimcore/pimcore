@@ -98,8 +98,8 @@ pimcore.settings.translation.word = Class.create({
             tbar: [
                 {
                     xtype: "tbspacer",
-                    width: 20,
-                    height: 16,
+                    width: 24,
+                    height: 24,
                     cls: "pimcore_icon_droptarget"
                 },
                 t("elements_to_export"),

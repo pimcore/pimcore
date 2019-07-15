@@ -56,7 +56,7 @@ pimcore.object.classes.data.advancedManyToManyRelation = Class.create(pimcore.ob
     },
 
     getIconClass: function () {
-        return "pimcore_icon_multihrefMetadata";
+        return "pimcore_icon_advancedManyToManyRelation";
     },
 
     getLayout: function ($super) {
@@ -111,6 +111,7 @@ pimcore.object.classes.data.advancedManyToManyRelation = Class.create(pimcore.ob
         });
         classesStore.load({
             "callback": function (allowedClasses, success) {
+                classesStore.insert(0, {'id': 'folder', 'text': 'folder'});
                 if (success) {
                     Ext.getCmp('class_allowed_object_classes_' + this.uniqeFieldId).setValue(allowedClasses.join(","));
                 }

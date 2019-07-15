@@ -22,7 +22,6 @@ use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data\CustomResourcePersistingInterface;
 use Pimcore\Model\DataObject\ClassDefinition\Data\ResourcePersistenceAwareInterface;
-use Pimcore\Tool;
 
 /**
  * @property \Pimcore\Model\DataObject\Fieldcollection $model
@@ -51,9 +50,7 @@ class Dao extends Model\Dao\AbstractDao
         $values = [];
 
         foreach ($fieldDef->getAllowedTypes() as $type) {
-            try {
-                $definition = DataObject\Fieldcollection\Definition::getByKey($type);
-            } catch (\Exception $e) {
+            if (!$definition = DataObject\Fieldcollection\Definition::getByKey($type)) {
                 continue;
             }
 
@@ -76,11 +73,7 @@ class Dao extends Model\Dao\AbstractDao
                 $collection->setObject($object);
 
                 foreach ($fieldDefinitions as $key => $fd) {
-                    if ($fd instanceof CustomResourcePersistingInterface || method_exists($fd, 'load')) {
-                        if (!$fd instanceof CustomResourcePersistingInterface) {
-                            Tool::triggerMissingInterfaceDeprecation(get_class($fd), 'load', CustomResourcePersistingInterface::class);
-                        }
-
+                    if ($fd instanceof CustomResourcePersistingInterface) {
                         $doLoad = true;
                         if ($fd instanceof DataObject\ClassDefinition\Data\Relations\AbstractRelations) {
                             if (!DataObject\Concrete::isLazyLoadingDisabled() && $fd->getLazyLoading()) {
@@ -111,10 +104,7 @@ class Dao extends Model\Dao\AbstractDao
                             }
                         }
                     }
-                    if ($fd instanceof ResourcePersistenceAwareInterface || method_exists($fd, 'getDataFromResource')) {
-                        if (!$fd instanceof ResourcePersistenceAwareInterface) {
-                            Tool::triggerMissingInterfaceDeprecation(get_class($fd), 'getDataFromResource', ResourcePersistenceAwareInterface::class);
-                        }
+                    if ($fd instanceof ResourcePersistenceAwareInterface) {
                         if (is_array($fd->getColumnType())) {
                             $multidata = [];
                             foreach ($fd->getColumnType() as $fkey => $fvalue) {
@@ -156,10 +146,7 @@ class Dao extends Model\Dao\AbstractDao
         $hasLocalizedFields = false;
 
         foreach ($fieldDef->getAllowedTypes() as $type) {
-            try {
-                /** @var $definition Definition */
-                $definition = DataObject\Fieldcollection\Definition::getByKey($type);
-            } catch (\Exception $e) {
+            if (!$definition = DataObject\Fieldcollection\Definition::getByKey($type)) {
                 continue;
             }
 
@@ -204,10 +191,7 @@ class Dao extends Model\Dao\AbstractDao
                         }
                     }
 
-                    if ($fd instanceof CustomResourcePersistingInterface || method_exists($fd, 'delete')) {
-                        if (!$fd instanceof CustomResourcePersistingInterface) {
-                            Tool::triggerMissingInterfaceDeprecation(get_class($fd), 'delete', CustomResourcePersistingInterface::class);
-                        }
+                    if ($fd instanceof CustomResourcePersistingInterface) {
                         $fd->delete(
                             $object,
                             [
