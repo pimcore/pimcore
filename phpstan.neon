@@ -20,7 +20,8 @@ parameters:
         - '/(snappy|lz4)_(un)?compress/'
         - '/Instantiated class COM not found/'
         - '/Call to an undefined method Symfony\\Component\\Config\\Definition\\Builder\\NodeDefinition::children()/'
-        - '/(OnlineShopVoucherToken|OnlineShopVoucherSeries|VoucherTokenTypeSingle|VoucherTokenTypePattern|OnlineShopOrder|OnlineShopOrderItem|OrderPriceModifications|OnlineShopTaxClass|PricingRule|TaxEntry|DataObject\\Customer|DataObject\\FilterDefinition|FilterCategory)/'
+        - '/DataObject\\(OnlineShopVoucherToken|OnlineShopVoucherSeries|OnlineShopOrder|OnlineShopOrderItem|OnlineShopTaxClass|Customer|FilterDefinition)/'
+        - '/FieldCollection\\Data(VoucherTokenTypeSingle|VoucherTokenTypePattern|OrderPriceModifications|PricingRule|TaxEntry|FilterCategory|PaymentInfo)/'
         -
             message: '/method object::(pimcoreUrl|translateAdmin)/'
             path: '**/*.html.php'
@@ -39,3 +40,6 @@ parameters:
         -
             message: '/Zend_Log/'
             path: '**/Log/ApplicationLogger.php'
+        -
+            message: '/ALPHACHANNEL_REMOVE/'
+            path: '**/Imagick.php'
