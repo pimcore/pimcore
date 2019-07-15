@@ -2,7 +2,7 @@
 /**
  * @var \Pimcore\Model\Document\Page $element
  */
-
+$element = $this->element;
 $previewImage = null;
 if ($element instanceof \Pimcore\Model\Document\Page && \Pimcore\Config::getSystemConfig()->documents->generatepreview) {
     $thumbnailFileHdpi = $element->getPreviewImageFilesystemPath(true);

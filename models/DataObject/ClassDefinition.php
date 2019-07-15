@@ -919,26 +919,6 @@ class ClassDefinition extends Model\AbstractModel
     }
 
     /**
-     * @return mixed
-     */
-    public function getParent()
-    {
-        return $this->parent;
-    }
-
-    /**
-     * @param mixed $parent
-     *
-     * @return $this
-     */
-    public function setParent($parent)
-    {
-        $this->parent = $parent;
-
-        return $this;
-    }
-
-    /**
      * @return string
      */
     public function getParentClass()

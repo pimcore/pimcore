@@ -92,7 +92,7 @@ class Hotspotimage implements OwnerAwareFieldInterface
     }
 
     /**
-     * @return array|\array[]
+     * @return array|array[]
      */
     public function getHotspots()
     {
@@ -113,7 +113,7 @@ class Hotspotimage implements OwnerAwareFieldInterface
     }
 
     /**
-     * @return array|\array[]
+     * @return array|array[]
      */
     public function getMarker()
     {
@@ -121,7 +121,7 @@ class Hotspotimage implements OwnerAwareFieldInterface
     }
 
     /**
-     * @param \array[] $crop
+     * @param array[] $crop
      */
     public function setCrop($crop)
     {
@@ -130,7 +130,7 @@ class Hotspotimage implements OwnerAwareFieldInterface
     }
 
     /**
-     * @return \array[]
+     * @return array[]
      */
     public function getCrop()
     {

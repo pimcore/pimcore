@@ -35,7 +35,7 @@ class TmpStore extends Model\AbstractModel
     public $tag;
 
     /**
-     * @var string
+     * @var mixed
      */
     public $data;
 
@@ -198,7 +198,7 @@ class TmpStore extends Model\AbstractModel
     }
 
     /**
-     * @return string
+     * @return mixed
      */
     public function getData()
     {

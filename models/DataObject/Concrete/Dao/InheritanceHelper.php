@@ -83,6 +83,26 @@ class InheritanceHelper
     protected static $runtimeCache = [];
 
     /**
+     * @var string|null
+     */
+    protected $storetable;
+
+    /**
+     * @var string|null
+     */
+    protected $querytable;
+
+    /**
+     * @var null|string
+     */
+    protected $relationtable;
+
+    /**
+     * @var null|string
+     */
+    protected $idField;
+
+    /**
      * @param $classId
      * @param null $idField
      * @param null $storetable

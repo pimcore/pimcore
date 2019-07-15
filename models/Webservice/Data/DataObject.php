@@ -72,6 +72,11 @@ class DataObject extends Model\Webservice\Data
     public $index;
 
     /**
+     * @var array
+     */
+    public $childs;
+
+    /**
      * @param $object
      * @param null $options
      */

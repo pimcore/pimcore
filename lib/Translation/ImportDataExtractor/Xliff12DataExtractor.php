@@ -28,7 +28,7 @@ class Xliff12DataExtractor implements ImportDataExtractorInterface
     protected $xliffEscaper;
 
     /**
-     * @var TranslationItemResolver\
+     * @var TranslationItemResolverInterface
      */
     protected $translationItemResolver;
 

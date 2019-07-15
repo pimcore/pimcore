@@ -121,6 +121,11 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     public $allowedGroupIds;
 
     /**
+     * @var array
+     */
+    public $activeGroupDefinitions = [];
+
+    /**
      * @see Data::getDataForEditmode
      *
      * @param string $data
@@ -985,7 +990,10 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
                             try {
                                 $keyDef->checkValidity($value);
                             } catch (\Exception $e) {
-                                $errors[] = $e;
+                                $errors[] = [
+                                    'exception' => $e,
+                                    'language' => $validLanguage
+                                ];
                             }
                         }
                     }
@@ -994,8 +1002,8 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         }
         if ($errors) {
             $messages = [];
-            foreach ($errors as $e) {
-                $messages[] = $e->getMessage() . ' (' . $validLanguage . ')';
+            foreach ($errors as $error) {
+                $messages[] = $error['exception']->getMessage() . ' (' . $error['language'] . ')';
             }
             $validationException = new Model\Element\ValidationException(implode(', ', $messages));
             $validationException->setSubItems($errors);
@@ -1331,7 +1339,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     }
 
     /**
-     * @return array|\string[]
+     * @return string[]
      */
     public function getValidLanguages()
     {

@@ -440,8 +440,10 @@ class DataObjectController extends ElementControllerBase implements EventedContr
             $objectData['metaData'] = $this->metaData;
             $objectData['properties'] = Element\Service::minimizePropertiesForEditmode($object->getProperties());
 
-            $objectData['general']['versionDate'] = $object->getModificationDate();
-            $objectData['general']['versionCount'] = $object->getVersionCount();
+            // this used for the "this is not a published version" hint
+            // and for adding the published icon to version overview
+            $objectData['general']['versionDate'] = $objectFromDatabase->getModificationDate();
+            $objectData['general']['versionCount'] = $objectFromDatabase->getVersionCount();
 
             if ($object->getElementAdminStyle()->getElementIcon()) {
                 $objectData['general']['icon'] = $object->getElementAdminStyle()->getElementIcon();
@@ -1083,9 +1085,16 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                 $object->setUserModification($this->getAdminUser()->getId());
 
                 try {
+                    $isIndexUpdate = isset($values['index']) && is_int($values['index']);
+                    
+                    if ($isIndexUpdate) {
+                        // Ensure the update sort index is already available in the postUpdate eventListener
+                        $object->setIndex($values['index']);
+                    }
+                    
                     $object->save();
 
-                    if (isset($values['index']) && is_int($values['index'])) {
+                    if ($isIndexUpdate) {
                         $this->updateIndexesOfObjectSiblings($object, $values['index']);
                     }
 
@@ -1126,9 +1135,9 @@ class DataObjectController extends ElementControllerBase implements EventedContr
         for ($retries = 0; $retries < $maxRetries; $retries++) {
             try {
                 Db::get()->beginTransaction();
-                $updateLatestVersionIndex = function ($objectId, $modificationDate, $newIndex) {
+                $updateLatestVersionIndex = function ($objectId, $modificationDate, $versionCount, $newIndex) {
                     if ($latestVersion = DataObject\Concrete::getLatestVersionByObjectIdAndLatestModificationDate(
-                        $objectId, $modificationDate
+                        $objectId, $modificationDate, $versionCount
                     )) {
 
                         // don't renew references (which means loading the target elements)
@@ -1172,7 +1181,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
 
                 $db = Db::get();
                 $siblings = $db->fetchAll(
-                    'SELECT o_id, o_modificationDate FROM objects'
+                    'SELECT o_id, o_modificationDate, o_versionCount FROM objects'
                     ." WHERE o_parentId = ? AND o_id != ? AND o_type IN ('object', 'variant','folder') ORDER BY o_index ASC",
                     [$updatedObject->getParentId(), $updatedObject->getId()]
                 );
@@ -1183,7 +1192,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                         $index++;
                     }
 
-                    $updateLatestVersionIndex($sibling['o_id'], $sibling['o_modificationDate'], $index);
+                    $updateLatestVersionIndex($sibling['o_id'], $sibling['o_modificationDate'], $sibling['o_versionCount'], $index);
                     $index++;
 
                     DataObject\AbstractObject::clearDependentCacheByObjectId($sibling['o_id']);

@@ -50,6 +50,11 @@ class Areablock extends Model\Document\Tag implements BlockInterface
     public $currentIndex;
 
     /**
+     * @var bool
+     */
+    protected $blockStarted;
+
+    /**
      * @see Document\Tag\TagInterface::getType
      *
      * @return string

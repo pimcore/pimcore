@@ -14,8 +14,12 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Tool;
 
+use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\InvalidConfigException;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\BatchProcessingWorkerInterface;
+use Pimcore\Log\Simple;
+use Pimcore\Model\DataObject\AbstractObject;
+use Pimcore\Model\DataObject\Listing\Concrete;
 use Pimcore\Console\CliTrait;
 
 class IndexUpdater
@@ -53,18 +57,24 @@ class IndexUpdater
         $pageSize = 100;
         $count = $pageSize;
 
-        while ($count > 0) {
-            self::log($loggername, '=========================');
-            self::log($loggername, 'Update Index Page: ' . $page);
-            self::log($loggername, '=========================');
+        /** @var Concrete $products */
+        $products = new $objectListClass();
+        $products->setUnpublished(true);
+        $products->setObjectTypes([AbstractObject::OBJECT_TYPE_OBJECT, AbstractObject::OBJECT_TYPE_VARIANT]);
+        $products->setIgnoreLocalizedFields(true);
+        $products->setCondition($condition);
 
-            $products = new $objectListClass();
-            $products->setUnpublished(true);
+        $totalCount = $products->getTotalCount();
+        $totalPages = ceil($totalCount / $pageSize);
+
+        while ($count > 0) {
             $products->setOffset($page * $pageSize);
             $products->setLimit($pageSize);
-            $products->setObjectTypes(['object', 'folder', 'variant']);
-            $products->setIgnoreLocalizedFields(true);
-            $products->setCondition($condition);
+            $products->load();
+
+            self::log($loggername, '=========================');
+            self::log($loggername, sprintf('Update Index Page: %d (%d/%d - %.2f %%)', $page, $page, $totalPages, ($page / $totalPages * 100)));
+            self::log($loggername, '=========================');
 
             foreach ($products as $p) {
                 self::log($loggername, 'Updating product ' . $p->getId());
@@ -72,7 +82,7 @@ class IndexUpdater
             }
             $page++;
 
-            $count = count($products->getObjects());
+            $count = $products->getCount();
 
             \Pimcore::collectGarbage();
         }
@@ -86,7 +96,7 @@ class IndexUpdater
      * @param string $loggername
      * @param int $preparationItemsPerRound - number of items to prepare per round
      *
-     * @throws \Pimcore\Bundle\EcommerceFrameworkBundle\Exception\InvalidConfigException
+     * @throws InvalidConfigException
      */
     public static function processPreparationQueue($tenants = null, $maxRounds = null, $loggername = 'indexupdater', $preparationItemsPerRound = 200)
     {
@@ -139,7 +149,7 @@ class IndexUpdater
      * @param string $loggername
      * @param int $indexItemsPerRound - number of items to index per round
      *
-     * @throws \Pimcore\Bundle\EcommerceFrameworkBundle\Exception\InvalidConfigException
+     * @throws InvalidConfigException
      */
     public static function processUpdateIndexQueue($tenants = null, $maxRounds = null, $loggername = 'indexupdater', $indexItemsPerRound = 200)
     {
@@ -186,7 +196,7 @@ class IndexUpdater
 
     private static function log($loggername, $message)
     {
-        \Pimcore\Log\Simple::log($loggername, $message);
+        Simple::log($loggername, $message);
         echo $message . "\n";
     }
 }

@@ -91,6 +91,11 @@ class Multiselect extends Data implements ResourcePersistenceAwareInterface, Que
     public $phpdocType = 'array';
 
     /**
+     * @var bool
+     */
+    public $dynamicOptions = false;
+
+    /**
      * @return array
      */
     public function getOptions()

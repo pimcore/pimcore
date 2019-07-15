@@ -169,7 +169,7 @@ with the following content (customize as needed):
 include "../../vendor/autoload.php";
 
 \Pimcore\Bootstrap::setProjectRoot();
-\Pimcore\Bootstrap::boostrap();
+\Pimcore\Bootstrap::bootstrap();
 
 ```
 
@@ -337,7 +337,7 @@ putenv('PIMCORE_ENVIRONMENT=test');
 require_once PIMCORE_PROJECT_ROOT . '/vendor/autoload.php';
 
 \Pimcore\Bootstrap::setProjectRoot();
-\Pimcore\Bootstrap::boostrap();
+\Pimcore\Bootstrap::bootstrap();
 
 
 // add the core pimcore test library to the autoloader - this could also be done in composer.json's autoload-dev section

@@ -58,6 +58,8 @@ class PayPalSmartPaymentButton extends AbstractPayment
      */
     protected $environment;
 
+    protected $authorizedData;
+
     public function __construct(array $options, EnvironmentInterface $environment)
     {
         $this->processOptions(

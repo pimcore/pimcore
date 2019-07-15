@@ -898,8 +898,6 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface
      * @param $data
      * @param null $object
      * @param mixed $params
-     *
-     * @return null|\Pimcore\Date
      */
     public function getDiffDataFromEditmode($data, $object = null, $params = [])
     {

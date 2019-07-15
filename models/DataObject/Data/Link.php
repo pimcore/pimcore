@@ -476,8 +476,6 @@ class Link implements OwnerAwareFieldInterface
             $path .= '#' . str_replace('#', '', $this->getAnchor());
         }
 
-        $this->href = $path;
-
         return $path;
     }
 

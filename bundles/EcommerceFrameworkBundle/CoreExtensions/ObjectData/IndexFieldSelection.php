@@ -60,7 +60,7 @@ class IndexFieldSelection
     }
 
     /**
-     * @param string|\string[] $preSelect
+     * @param string|string[] $preSelect
      */
     public function setPreSelect($preSelect)
     {
@@ -68,7 +68,7 @@ class IndexFieldSelection
     }
 
     /**
-     * @return string|\string[]
+     * @return string|string[]
      */
     public function getPreSelect()
     {

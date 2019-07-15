@@ -19,16 +19,10 @@ namespace Pimcore\Bundle\GeneratorBundle\Generator;
 
 use Pimcore\Bundle\GeneratorBundle\Manipulator\RoutingManipulator;
 use Pimcore\Bundle\GeneratorBundle\Model\Bundle;
-use Symfony\Component\Filesystem\Filesystem;
 
 class BundleGenerator extends BaseBundleGenerator
 {
     private $filesystem;
-
-    public function __construct(Filesystem $filesystem)
-    {
-        $this->filesystem = $filesystem;
-    }
 
     public function generateBundle(Bundle $bundle)
     {

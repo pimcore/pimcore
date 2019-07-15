@@ -667,7 +667,7 @@ pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.
         pimcore.helpers.itemselector(true, this.addDataFromSelector.bind(this), {
                 type: ["object"],
                 subtype: {
-                    object: ["object", "folder", "variant"]
+                    object: ["object", "variant"]
                 },
                 specific: {
                     classes: allowedClasses
