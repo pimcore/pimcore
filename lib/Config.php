@@ -40,6 +40,11 @@ class Config
     private static $environmentConfig;
 
     /**
+     * @var null|string
+     */
+    protected static $envVarName = null;
+
+    /**
      * @param $name - name of configuration file. slash is allowed for subdirectories.
      *
      * @return mixed
@@ -946,6 +951,30 @@ class Config
     }
 
     /**
+     * @return string|null
+     */
+    public static function getEnvVarName() : ?string
+    {
+        if(null === self::$envVarName) {
+            foreach (['PIMCORE_ENVIRONMENT', 'SYMFONY_ENV', 'APP_ENV'] as $envVarName) {
+                if(isset($_SERVER[$envVarName]) || isset($_ENV[$envVarName])) {
+                    self::$envVarName = $envVarName;
+                    break;
+                } elseif(isset($_SERVER['REDIRECT_' . $envVarName]) || isset($_ENV['REDIRECT_' . $envVarName])) {
+                    self::$envVarName = 'REDIRECT_' . $envVarName;
+                    break;
+                }
+            }
+
+            if(!self::$envVarName) {
+                self::$envVarName = false;
+            }
+        }
+
+        return self::$envVarName;
+    }
+
+    /**
      * @param bool $reset
      * @param string|null $default
      *
@@ -961,14 +990,8 @@ class Config
                 $environment = $input->getParameterOption(['--env', '-e'], null, true);
             }
 
-            // check env vars - fall back to default (prod)
-            if (!$environment) {
-                foreach (['PIMCORE_ENVIRONMENT', 'SYMFONY_ENV', 'APP_ENV'] as $envVarName) {
-                    $environment = $_SERVER[$envVarName] ?? $_SERVER['REDIRECT_' . $envVarName] ?? false;
-                    if ($environment) {
-                        break;
-                    }
-                }
+            if (!$environment && self::getEnvVarName()) {
+                $environment = $_SERVER[self::getEnvVarName()];
             }
 
             if (!$environment) {

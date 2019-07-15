@@ -175,7 +175,7 @@ class Bootstrap
             }
         } elseif (file_exists($dotEnvFile)) {
             // load all the .env files
-            (new Dotenv())->loadEnv($dotEnvFile);
+            (new Dotenv())->loadEnv($dotEnvFile, Config::getEnvVarName() ?: 'APP_ENV');
         }
 
         $_SERVER += $_ENV;
