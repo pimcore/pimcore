@@ -21,7 +21,7 @@ parameters:
         - '/Instantiated class COM not found/'
         - '/Call to an undefined method Symfony\\Component\\Config\\Definition\\Builder\\NodeDefinition::children()/'
         - '/DataObject\\(OnlineShopVoucherToken|OnlineShopVoucherSeries|OnlineShopOrder|OnlineShopOrderItem|OnlineShopTaxClass|Customer|FilterDefinition)/'
-        - '/FieldCollection\\Data(VoucherTokenTypeSingle|VoucherTokenTypePattern|OrderPriceModifications|PricingRule|TaxEntry|FilterCategory|PaymentInfo)/'
+        - '/FieldCollection\\Data\\(VoucherTokenTypeSingle|VoucherTokenTypePattern|OrderPriceModifications|PricingRule|TaxEntry|FilterCategory|PaymentInfo)/'
         -
             message: '/method object::(pimcoreUrl|translateAdmin)/'
             path: '**/*.html.php'
@@ -43,3 +43,6 @@ parameters:
         -
             message: '/ALPHACHANNEL_REMOVE/'
             path: '**/Imagick.php'
+        -
+            message: '/an undefined static method.*getParameter\(\)./'
+            path: '**/Controller/Controller.php'
