@@ -706,5 +706,8 @@
     "async_loading_warning_block": "AVERTISSEMENT : le chargement asynchrone n'est PAS possible dans les champs et les blocs localisés",
     "path_formatter_service": "Service / classe de formateur",
     "tab_position": "Position de l'onglet",
-    "invert_colors_on_login_screen": "Invert Colors on Login Screen"
+    "invert_colors_on_login_screen": "Inverser les couleurs sur l'écran de connexion",
+    "activate_column_configuration": "Activer la configuration de la colonne",
+    "table_column_configuration": "Configuration de la colonne",
+    "delete_language_note": "Remarque: supprimer une langue de la liste ne supprimera pas ses données respectives. Veuillez utiliser la commande de console 'pimcore: locale: delete -used-tables' pour les nettoyer."
 }
