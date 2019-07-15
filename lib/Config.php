@@ -40,9 +40,9 @@ class Config
     private static $environmentConfig;
 
     /**
-     * @var null|string
+     * @var null|array
      */
-    protected static $envVarName = null;
+    protected static $debugDevModeConfig = null;
 
     /**
      * @param $name - name of configuration file. slash is allowed for subdirectories.
@@ -951,30 +951,6 @@ class Config
     }
 
     /**
-     * @return string|null
-     */
-    public static function getEnvVarName(): ?string
-    {
-        if (null === self::$envVarName) {
-            foreach (['PIMCORE_ENVIRONMENT', 'SYMFONY_ENV', 'APP_ENV'] as $envVarName) {
-                if (isset($_SERVER[$envVarName]) || isset($_ENV[$envVarName])) {
-                    self::$envVarName = $envVarName;
-                    break;
-                } elseif (isset($_SERVER['REDIRECT_' . $envVarName]) || isset($_ENV['REDIRECT_' . $envVarName])) {
-                    self::$envVarName = 'REDIRECT_' . $envVarName;
-                    break;
-                }
-            }
-
-            if (!self::$envVarName) {
-                self::$envVarName = false;
-            }
-        }
-
-        return self::$envVarName;
-    }
-
-    /**
      * @param bool $reset
      * @param string|null $default
      *
@@ -990,8 +966,14 @@ class Config
                 $environment = $input->getParameterOption(['--env', '-e'], null, true);
             }
 
-            if (!$environment && self::getEnvVarName()) {
-                $environment = $_SERVER[self::getEnvVarName()];
+            // check env vars - fall back to default (prod)
+            if (!$environment) {
+                foreach (['PIMCORE_ENVIRONMENT', 'SYMFONY_ENV', 'APP_ENV'] as $envVarName) {
+                    $environment = self::resolveEnvVarValue($envVarName);
+                    if ($environment) {
+                        break;
+                    }
+                }
             }
 
             if (!$environment) {
@@ -1093,5 +1075,43 @@ class Config
         }
 
         throw new \Exception($file . ' is invalid');
+    }
+
+
+    /**
+     * @param string $varName
+     * @param mixed $default
+     * @return string|null
+     */
+    public static function resolveEnvVarValue(string $varName, $default = null) : ?string {
+        $value = $_SERVER[$varName] ?? $_ENV[$varName] ?? $_SERVER['REDIRECT_' . $varName]
+            ?? $_ENV['REDIRECT_' . $varName] ?? $default;
+
+        return $value;
+    }
+
+    /**
+     * @return array
+     */
+    public static function getDebugDevModeConfig() : array {
+
+        if(null === self::$debugDevModeConfig) {
+            $conf = [];
+            // since this function is usually called before the constants get set in \Pimcore\Bootstrap::defineConstants
+            // we try to get the debug mode config directly from the env variables
+            $privateVar = self::resolveEnvVarValue('PIMCORE_PRIVATE_VAR', PIMCORE_PROJECT_ROOT . '/var');
+            $configDir = self::resolveEnvVarValue('PIMCORE_CONFIGURATION_DIRECTORY', $privateVar . '/config');
+            $debugModeFile = $configDir . '/debug-mode.php';
+            if (file_exists($debugModeFile)) {
+                $confTemp = include $debugModeFile;
+                if(is_array($confTemp)) {
+                    $conf = $confTemp;
+                }
+            }
+
+            self::$debugDevModeConfig = $conf;
+        }
+
+        return self::$debugDevModeConfig;
     }
 }

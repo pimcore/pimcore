@@ -169,13 +169,15 @@ class Bootstrap
     {
         // load .env file if available
         $dotEnvFile = PIMCORE_PROJECT_ROOT . '/.env';
+        $_ENV['PIMCORE_ENVIRONMENT'] = $_ENV['SYMFONY_ENV'] = $_ENV['APP_ENV'] = Config::getEnvironment();
+
         if (is_array($env = @include PIMCORE_PROJECT_ROOT .'/.env.local.php')) {
             foreach ($env as $k => $v) {
                 $_ENV[$k] = $_ENV[$k] ?? (isset($_SERVER[$k]) && 0 !== strpos($k, 'HTTP_') ? $_SERVER[$k] : $v);
             }
         } elseif (file_exists($dotEnvFile)) {
             // load all the .env files
-            (new Dotenv())->loadEnv($dotEnvFile, Config::getEnvVarName() ?: 'APP_ENV');
+            (new Dotenv())->loadEnv($dotEnvFile);
         }
 
         $_SERVER += $_ENV;

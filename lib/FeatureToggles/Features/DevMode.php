@@ -17,6 +17,7 @@ declare(strict_types=1);
 
 namespace Pimcore\FeatureToggles\Features;
 
+use Pimcore\Config;
 use Pimcore\FeatureToggles\Feature;
 use Pimcore\FeatureToggles\FeatureContextInterface;
 use Pimcore\FeatureToggles\FeatureState;
@@ -51,14 +52,9 @@ final class DevMode extends Feature
             if (defined('PIMCORE_DEVMODE') && PIMCORE_DEVMODE) {
                 $devMode = true;
             } else {
-                $debugModeFile = PIMCORE_CONFIGURATION_DIRECTORY . '/debug-mode.php';
-
-                if (file_exists($debugModeFile)) {
-                    $conf = include $debugModeFile;
-
-                    if (is_array($conf) && isset($conf['devmode'])) {
-                        $devMode = $conf['devmode'];
-                    }
+                $conf = Config::getDebugDevModeConfig();
+                if ($conf && is_array($conf) && isset($conf['devmode'])) {
+                    $devMode = $conf['devmode'];
                 }
             }
 
