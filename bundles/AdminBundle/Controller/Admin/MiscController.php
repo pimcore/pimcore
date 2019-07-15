@@ -203,7 +203,7 @@ class MiscController extends AdminController
             }
         }
 
-        if(!empty($scriptsContent)) {
+        if (!empty($scriptsContent)) {
             $fileExtension = \Pimcore\File::getFileExtension($scripts[0]);
             $contentType = 'text/javascript';
             if ($fileExtension == 'css') {

@@ -953,20 +953,20 @@ class Config
     /**
      * @return string|null
      */
-    public static function getEnvVarName() : ?string
+    public static function getEnvVarName(): ?string
     {
-        if(null === self::$envVarName) {
+        if (null === self::$envVarName) {
             foreach (['PIMCORE_ENVIRONMENT', 'SYMFONY_ENV', 'APP_ENV'] as $envVarName) {
-                if(isset($_SERVER[$envVarName]) || isset($_ENV[$envVarName])) {
+                if (isset($_SERVER[$envVarName]) || isset($_ENV[$envVarName])) {
                     self::$envVarName = $envVarName;
                     break;
-                } elseif(isset($_SERVER['REDIRECT_' . $envVarName]) || isset($_ENV['REDIRECT_' . $envVarName])) {
+                } elseif (isset($_SERVER['REDIRECT_' . $envVarName]) || isset($_ENV['REDIRECT_' . $envVarName])) {
                     self::$envVarName = 'REDIRECT_' . $envVarName;
                     break;
                 }
             }
 
-            if(!self::$envVarName) {
+            if (!self::$envVarName) {
                 self::$envVarName = false;
             }
         }

@@ -1086,12 +1086,12 @@ class DataObjectController extends ElementControllerBase implements EventedContr
 
                 try {
                     $isIndexUpdate = isset($values['index']) && is_int($values['index']);
-                    
+
                     if ($isIndexUpdate) {
                         // Ensure the update sort index is already available in the postUpdate eventListener
                         $object->setIndex($values['index']);
                     }
-                    
+
                     $object->save();
 
                     if ($isIndexUpdate) {
