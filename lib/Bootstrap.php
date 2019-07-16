@@ -177,7 +177,13 @@ class Bootstrap
             }
         } elseif (file_exists($dotEnvFile)) {
             // load all the .env files
-            (new Dotenv())->loadEnv($dotEnvFile);
+            $dotEnv = new Dotenv();
+            if(method_exists($dotEnv, 'loadEnv')) {
+                // Symfony => 4.2 style
+                $dotEnv->loadEnv($dotEnvFile);
+            } else {
+                $dotEnv->load($dotEnvFile);
+            }
         }
 
         $_SERVER += $_ENV;

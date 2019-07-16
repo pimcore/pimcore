@@ -20,14 +20,14 @@ use Pimcore\Model\Asset;
 use Pimcore\Model\Site;
 use Pimcore\Model\Tool;
 use Pimcore\Model\Tool\TmpStore;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController as FrameworkController;
+use Pimcore\Controller\Controller;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class PublicServicesController extends FrameworkController
+class PublicServicesController extends Controller
 {
     /**
      * @param Request $request

@@ -335,7 +335,7 @@ class Service
      */
     public static function skipColumn($tableDefinitions, $table, $colName, $type, $default, $null)
     {
-        $tableDefinition = $tableDefinitions[$table];
+        $tableDefinition = $tableDefinitions[$table] ?? false;
         if ($tableDefinition) {
             $colDefinition = $tableDefinition[$colName];
             if ($colDefinition) {
