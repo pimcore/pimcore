@@ -178,7 +178,7 @@ class Bootstrap
         } elseif (file_exists($dotEnvFile)) {
             // load all the .env files
             $dotEnv = new Dotenv();
-            if(method_exists($dotEnv, 'loadEnv')) {
+            if (method_exists($dotEnv, 'loadEnv')) {
                 // Symfony => 4.2 style
                 $dotEnv->loadEnv($dotEnvFile);
             } else {

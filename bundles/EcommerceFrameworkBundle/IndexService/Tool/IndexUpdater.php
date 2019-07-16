@@ -17,15 +17,13 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Tool;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\InvalidConfigException;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\BatchProcessingWorkerInterface;
+use Pimcore\Console\CliTrait;
 use Pimcore\Log\Simple;
 use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Model\DataObject\Listing\Concrete;
-use Pimcore\Console\CliTrait;
 
 class IndexUpdater
 {
-
-
     use CliTrait;
 
     /**
@@ -44,7 +42,6 @@ class IndexUpdater
             $updater->createOrUpdateIndexStructures();
         }
 
-        
         // Check if this was triggered in cli. If so do some preparation to properly work.
         // TODO Pimcore 7 - check if this is necessary when having monolog logging
         if (self::isCli() && session_status() == PHP_SESSION_NONE) {

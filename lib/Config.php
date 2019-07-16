@@ -1077,13 +1077,14 @@ class Config
         throw new \Exception($file . ' is invalid');
     }
 
-
     /**
      * @param string $varName
      * @param mixed $default
+     *
      * @return string|null
      */
-    public static function resolveEnvVarValue(string $varName, $default = null) : ?string {
+    public static function resolveEnvVarValue(string $varName, $default = null): ?string
+    {
         $value = $_SERVER[$varName] ?? $_ENV[$varName] ?? $_SERVER['REDIRECT_' . $varName]
             ?? $_ENV['REDIRECT_' . $varName] ?? $default;
 
@@ -1093,9 +1094,9 @@ class Config
     /**
      * @return array
      */
-    public static function getDebugDevModeConfig() : array {
-
-        if(null === self::$debugDevModeConfig) {
+    public static function getDebugDevModeConfig(): array
+    {
+        if (null === self::$debugDevModeConfig) {
             $conf = [];
             // since this function is usually called before the constants get set in \Pimcore\Bootstrap::defineConstants
             // we try to get the debug mode config directly from the env variables
@@ -1104,7 +1105,7 @@ class Config
             $debugModeFile = $configDir . '/debug-mode.php';
             if (file_exists($debugModeFile)) {
                 $confTemp = include $debugModeFile;
-                if(is_array($confTemp)) {
+                if (is_array($confTemp)) {
                     $conf = $confTemp;
                 }
             }
