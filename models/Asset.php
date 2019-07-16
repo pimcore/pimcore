@@ -1308,7 +1308,17 @@ class Asset extends Element\AbstractElement
         if (is_resource($stream)) {
             $this->setDataChanged(true);
             $this->stream = $stream;
-            rewind($this->stream);
+
+            $isRewindable = @rewind($this->stream);
+
+            if (!$isRewindable) {
+                $tmpFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/asset-create-tmp-file-' . uniqid() . '.' . File::getFileExtension($this->getFilename());
+                $dest = fopen($tmpFile, 'w+', false, File::getContext());
+                stream_copy_to_stream($this->stream, $dest);
+                $this->stream = $dest;
+
+                $this->_temporaryFiles[] = $tmpFile;
+            }
         } elseif (is_null($stream)) {
             $this->stream = null;
         }
