@@ -371,6 +371,9 @@ class DataObjectController extends ElementControllerBase implements EventedContr
         Element\Editlock::lock($request->get('id'), 'object');
 
         $objectFromDatabase = DataObject::getById(intval($request->get('id')));
+        if($objectFromDatabase === null) {
+            return $this->adminJson(['success' => false, 'message' => 'element_not_found'], JsonResponse::HTTP_NOT_FOUND);
+        }
         $objectFromDatabase = clone $objectFromDatabase;
 
         // set the latest available version for editmode
