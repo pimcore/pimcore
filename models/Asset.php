@@ -1316,6 +1316,8 @@ class Asset extends Element\AbstractElement
                 $dest = fopen($tmpFile, 'w+', false, File::getContext());
                 stream_copy_to_stream($this->stream, $dest);
                 $this->stream = $dest;
+
+                $this->_temporaryFiles[] = $tmpFile;
             }
         } elseif (is_null($stream)) {
             $this->stream = null;
