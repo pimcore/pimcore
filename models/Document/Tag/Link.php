@@ -546,6 +546,10 @@ class Link extends Model\Document\Tag
                             }
                         }
                     }
+
+                    if($id) {
+                        $this->data['internalId'] = $id;
+                    }
                 }
             }
         } else {
