@@ -36,62 +36,46 @@ class Dao extends Model\Document\PageSnippet\Dao implements TargetingDocumentDao
      */
     public function getById($id = null)
     {
-        try {
-            if ($id != null) {
-                $this->model->setId($id);
-            }
+        if ($id != null) {
+            $this->model->setId($id);
+        }
 
-            $data = $this->db->fetchRow("SELECT documents.*, documents_page.*, tree_locks.locked FROM documents
-                LEFT JOIN documents_page ON documents.id = documents_page.id
-                LEFT JOIN tree_locks ON documents.id = tree_locks.id AND tree_locks.type = 'document'
-                    WHERE documents.id = ?", [$this->model->getId()]);
+        $data = $this->db->fetchRow("SELECT documents.*, documents_page.*, tree_locks.locked FROM documents
+            LEFT JOIN documents_page ON documents.id = documents_page.id
+            LEFT JOIN tree_locks ON documents.id = tree_locks.id AND tree_locks.type = 'document'
+                WHERE documents.id = ?", [$this->model->getId()]);
 
-            if ($data['id'] > 0) {
-                $data['metaData'] = @unserialize($data['metaData']);
-                if (!is_array($data['metaData'])) {
-                    $data['metaData'] = [];
-                }
-                $this->assignVariablesToModel($data);
-            } else {
-                throw new \Exception('Page with the ID ' . $this->model->getId() . " doesn't exists");
+        if ($data['id'] > 0) {
+            $data['metaData'] = @unserialize($data['metaData']);
+            if (!is_array($data['metaData'])) {
+                $data['metaData'] = [];
             }
-        } catch (\Exception $e) {
-            throw $e;
+            $this->assignVariablesToModel($data);
+        } else {
+            throw new \Exception('Page with the ID ' . $this->model->getId() . " doesn't exists");
         }
     }
 
     /**
-     * Create a new record for the object in the database
      *
-     * @throws \Exception
      */
     public function create()
     {
-        try {
-            parent::create();
+        parent::create();
 
-            $this->db->insert('documents_page', [
-                'id' => $this->model->getId()
-            ]);
-        } catch (\Exception $e) {
-            throw $e;
-        }
+        $this->db->insert('documents_page', [
+            'id' => $this->model->getId()
+        ]);
     }
 
     /**
-     * Deletes the object (and data) from database
-     *
      * @throws \Exception
      */
     public function delete()
     {
-        try {
-            $this->deleteAllProperties();
+        $this->deleteAllProperties();
 
-            $this->db->delete('documents_page', ['id' => $this->model->getId()]);
-            parent::delete();
-        } catch (\Exception $e) {
-            throw $e;
-        }
+        $this->db->delete('documents_page', ['id' => $this->model->getId()]);
+        parent::delete();
     }
 }

@@ -78,97 +78,85 @@ class Dao extends Model\Element\Dao
     }
 
     /**
-     * Insert a new row to the database.
      *
-     * @throws \Exception
      */
     public function create()
     {
-        try {
-            $this->db->insert('documents', [
-                'key' => $this->model->getKey(),
-                'path' => $this->model->getRealPath(),
-                'parentId' => $this->model->getParentId(),
-                'index' => 0
-            ]);
+        $this->db->insert('documents', [
+            'key' => $this->model->getKey(),
+            'path' => $this->model->getRealPath(),
+            'parentId' => $this->model->getParentId(),
+            'index' => 0
+        ]);
 
-            $this->model->setId($this->db->lastInsertId());
+        $this->model->setId($this->db->lastInsertId());
 
-            if (!$this->model->getKey()) {
-                $this->model->setKey($this->model->getId());
-            }
-        } catch (\Exception $e) {
-            throw $e;
+        if (!$this->model->getKey()) {
+            $this->model->setKey($this->model->getId());
         }
     }
 
     /**
-     * Update the row in the database. (based on the model id)
-     *
      * @throws \Exception
      */
     public function update()
     {
-        try {
-            $typeSpecificTable = null;
-            $validColumnsTypeSpecific = [];
-            if (in_array($this->model->getType(), ['email', 'newsletter', 'hardlink', 'link', 'page', 'snippet'])) {
-                $typeSpecificTable = 'documents_' . $this->model->getType();
-                $validColumnsTypeSpecific = $this->getValidTableColumns($typeSpecificTable);
-            }
-
-            $this->model->setModificationDate(time());
-
-            $document = $this->model->getObjectVars();
-
-            $dataDocument = [];
-            $dataTypeSpecific = [];
-
-            foreach ($document as $key => $value) {
-
-                // check if the getter exists
-                $getter = 'get' . ucfirst($key);
-                if (!method_exists($this->model, $getter)) {
-                    continue;
-                }
-
-                // get the value from the getter
-                if (in_array($key, $this->getValidTableColumns('documents')) || in_array($key, $validColumnsTypeSpecific)) {
-                    $value = $this->model->$getter();
-                } else {
-                    continue;
-                }
-
-                if (is_bool($value)) {
-                    $value = (int)$value;
-                }
-                if (is_array($value)) {
-                    $value = Serialize::serialize($value);
-                }
-
-                if (in_array($key, $this->getValidTableColumns('documents'))) {
-                    $dataDocument[$key] = $value;
-                }
-                if (in_array($key, $validColumnsTypeSpecific)) {
-                    $dataTypeSpecific[$key] = $value;
-                }
-            }
-
-            // use the real document path, just for the case that a documents gets saved in the frontend
-            // and the page is within a site. see also: PIMCORE-2684
-            $dataDocument['path'] = $this->model->getRealPath();
-
-            // update the values in the database
-            $this->db->insertOrUpdate('documents', $dataDocument);
-
-            if ($typeSpecificTable) {
-                $this->db->insertOrUpdate($typeSpecificTable, $dataTypeSpecific);
-            }
-
-            $this->updateLocks();
-        } catch (\Exception $e) {
-            throw $e;
+        $typeSpecificTable = null;
+        $validColumnsTypeSpecific = [];
+        if (in_array($this->model->getType(), ['email', 'newsletter', 'hardlink', 'link', 'page', 'snippet'])) {
+            $typeSpecificTable = 'documents_' . $this->model->getType();
+            $validColumnsTypeSpecific = $this->getValidTableColumns($typeSpecificTable);
         }
+
+        $this->model->setModificationDate(time());
+
+        $document = $this->model->getObjectVars();
+
+        $dataDocument = [];
+        $dataTypeSpecific = [];
+
+        foreach ($document as $key => $value) {
+
+            // check if the getter exists
+            $getter = 'get' . ucfirst($key);
+            if (!method_exists($this->model, $getter)) {
+                continue;
+            }
+
+            // get the value from the getter
+            if (in_array($key, $this->getValidTableColumns('documents')) || in_array($key, $validColumnsTypeSpecific)) {
+                $value = $this->model->$getter();
+            } else {
+                continue;
+            }
+
+            if (is_bool($value)) {
+                $value = (int)$value;
+            }
+            if (is_array($value)) {
+                $value = Serialize::serialize($value);
+            }
+
+            if (in_array($key, $this->getValidTableColumns('documents'))) {
+                $dataDocument[$key] = $value;
+            }
+            if (in_array($key, $validColumnsTypeSpecific)) {
+                $dataTypeSpecific[$key] = $value;
+            }
+        }
+
+        // use the real document path, just for the case that a documents gets saved in the frontend
+        // and the page is within a site. see also: PIMCORE-2684
+        $dataDocument['path'] = $this->model->getRealPath();
+
+        // update the values in the database
+        $this->db->insertOrUpdate('documents', $dataDocument);
+
+        if ($typeSpecificTable) {
+            $this->db->insertOrUpdate($typeSpecificTable, $dataTypeSpecific);
+        }
+
+        $this->updateLocks();
     }
 
     /**
@@ -178,11 +166,7 @@ class Dao extends Model\Element\Dao
      */
     public function delete()
     {
-        try {
-            $this->db->delete('documents', ['id' => $this->model->getId()]);
-        } catch (\Exception $e) {
-            throw $e;
-        }
+        $this->db->delete('documents', ['id' => $this->model->getId()]);
     }
 
     /**

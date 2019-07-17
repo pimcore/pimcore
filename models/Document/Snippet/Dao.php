@@ -53,42 +53,29 @@ class Dao extends Model\Document\PageSnippet\Dao implements TargetingDocumentDao
             }
 
             $this->assignVariablesToModel($data);
-
-            //$this->getElements();
         } catch (\Exception $e) {
+            // nothing to do
         }
     }
 
     /**
-     * Create a new record for the object in the database
      *
-     * @throws \Exception
      */
     public function create()
     {
-        try {
-            parent::create();
+        parent::create();
 
-            $this->db->insert('documents_snippet', [
-                'id' => $this->model->getId()
-            ]);
-        } catch (\Exception $e) {
-            throw $e;
-        }
+        $this->db->insert('documents_snippet', [
+            'id' => $this->model->getId()
+        ]);
     }
 
     /**
-     * Deletes the object from database
-     *
      * @throws \Exception
      */
     public function delete()
     {
-        try {
-            $this->db->delete('documents_snippet', ['id' => $this->model->getId()]);
-            parent::delete();
-        } catch (\Exception $e) {
-            throw $e;
-        }
+        $this->db->delete('documents_snippet', ['id' => $this->model->getId()]);
+        parent::delete();
     }
 }

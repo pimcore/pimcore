@@ -39,19 +39,15 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     /**
-     * Save object to database
      *
-     * @return bool
-     *
-     * @todo: update() and create() don't return anything
      */
     public function save()
     {
-        if ($this->model->getId()) {
-            return $this->update();
+        if (!$this->model->getId()) {
+            $this->create();
         }
 
-        return $this->create();
+        $this->update();
     }
 
     /**
@@ -61,8 +57,6 @@ class Dao extends Model\Dao\AbstractDao
     {
         $this->db->insert('schedule_tasks', []);
         $this->model->setId($this->db->lastInsertId());
-
-        $this->save();
     }
 
     /**

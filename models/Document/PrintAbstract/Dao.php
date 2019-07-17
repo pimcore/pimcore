@@ -49,104 +49,82 @@ class Dao extends Document\PageSnippet\Dao
      */
     public function getById($id = null)
     {
-        try {
-            if ($id != null) {
-                $this->model->setId($id);
-            }
+        if ($id != null) {
+            $this->model->setId($id);
+        }
 
-            $data = $this->db->fetchRow("SELECT documents.*, documents_printpage.*, tree_locks.locked FROM documents
-                LEFT JOIN documents_printpage ON documents.id = documents_printpage.id
-                LEFT JOIN tree_locks ON documents.id = tree_locks.id AND tree_locks.type = 'document'
-                    WHERE documents.id = ?", $this->model->getId());
+        $data = $this->db->fetchRow("SELECT documents.*, documents_printpage.*, tree_locks.locked FROM documents
+            LEFT JOIN documents_printpage ON documents.id = documents_printpage.id
+            LEFT JOIN tree_locks ON documents.id = tree_locks.id AND tree_locks.type = 'document'
+                WHERE documents.id = ?", $this->model->getId());
 
-            if ($data['id'] > 0) {
-                $this->assignVariablesToModel($data);
-            } else {
-                throw new \Exception('Print Document with the ID ' . $this->model->getId() . " doesn't exists");
-            }
-        } catch (\Exception $e) {
-            throw $e;
+        if ($data['id'] > 0) {
+            $this->assignVariablesToModel($data);
+        } else {
+            throw new \Exception('Print Document with the ID ' . $this->model->getId() . " doesn't exists");
         }
     }
 
     /**
-     * Create a new record for the object in the database
      *
-     * @throws \Exception
      */
     public function create()
     {
-        try {
-            parent::create();
+        parent::create();
 
-            $this->db->insert('documents_printpage', [
-                'id' => $this->model->getId()
-            ]);
-        } catch (\Exception $e) {
-            throw $e;
-        }
+        $this->db->insert('documents_printpage', [
+            'id' => $this->model->getId()
+        ]);
     }
 
     /**
-     * Updates the data in the object to the database
-     *
      * @throws \Exception
      */
     public function update()
     {
-        try {
-            $this->model->setModificationDate(time());
-            $document = $this->model->getObjectVars();
+        $this->model->setModificationDate(time());
+        $document = $this->model->getObjectVars();
 
-            foreach ($document as $key => $value) {
-                // check if the getter exists
-                $getter = 'get' . ucfirst($key);
-                if (!method_exists($this->model, $getter)) {
-                    continue;
-                }
-
-                // get the value from the getter
-                if (in_array($key, $this->getValidTableColumns('documents')) || in_array($key, $this->validColumnsPage)) {
-                    $value = $this->model->$getter();
-                } else {
-                    continue;
-                }
-
-                if (is_bool($value)) {
-                    $value = (int)$value;
-                }
-                if (in_array($key, $this->getValidTableColumns('documents'))) {
-                    $dataDocument[$key] = $value;
-                }
-                if (in_array($key, $this->validColumnsPage)) {
-                    $dataPage[$key] = $value;
-                }
+        foreach ($document as $key => $value) {
+            // check if the getter exists
+            $getter = 'get' . ucfirst($key);
+            if (!method_exists($this->model, $getter)) {
+                continue;
             }
 
-            $this->db->insertOrUpdate('documents', $dataDocument);
-            $this->db->insertOrUpdate('documents_printpage', $dataPage);
+            // get the value from the getter
+            if (in_array($key, $this->getValidTableColumns('documents')) || in_array($key, $this->validColumnsPage)) {
+                $value = $this->model->$getter();
+            } else {
+                continue;
+            }
 
-            $this->updateLocks();
-        } catch (\Exception $e) {
-            throw $e;
+            if (is_bool($value)) {
+                $value = (int)$value;
+            }
+            if (in_array($key, $this->getValidTableColumns('documents'))) {
+                $dataDocument[$key] = $value;
+            }
+            if (in_array($key, $this->validColumnsPage)) {
+                $dataPage[$key] = $value;
+            }
         }
+
+        $this->db->insertOrUpdate('documents', $dataDocument);
+        $this->db->insertOrUpdate('documents_printpage', $dataPage);
+
+        $this->updateLocks();
     }
 
     /**
-     * Deletes the object (and data) from database
-     *
      * @throws \Exception
      */
     public function delete()
     {
-        try {
-            $this->deleteAllProperties();
+        $this->deleteAllProperties();
 
-            $this->db->delete('documents_page', ['id' => $this->model->getId()]);
-            $this->db->delete('documents_printpage', ['id' => $this->model->getId()]);
-            parent::delete();
-        } catch (\Exception $e) {
-            throw $e;
-        }
+        $this->db->delete('documents_page', ['id' => $this->model->getId()]);
+        $this->db->delete('documents_printpage', ['id' => $this->model->getId()]);
+        parent::delete();
     }
 }

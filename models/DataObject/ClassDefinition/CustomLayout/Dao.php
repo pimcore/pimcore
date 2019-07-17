@@ -132,11 +132,8 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     /**
-     * Save layout to database
-     *
-     * @return bool
-     *
-     * @todo: update() and create() don't return anything
+     * @param bool $isUpdate
+     * @throws \Exception
      */
     public function save($isUpdate = true)
     {
@@ -146,10 +143,10 @@ class Dao extends Model\Dao\AbstractDao
         }
 
         if (!$isUpdate) {
-            return $this->create();
-        } else {
-            return $this->update();
+            $this->create();
         }
+
+        $this->update();
     }
 
     /**
@@ -184,8 +181,6 @@ class Dao extends Model\Dao\AbstractDao
 
         $this->model->setCreationDate(time());
         $this->model->setModificationDate(time());
-
-        $this->save();
     }
 
     /**

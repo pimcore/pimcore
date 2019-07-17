@@ -33,42 +33,32 @@ class Dao extends Model\Document\PageSnippet\Dao
      */
     public function getById($id = null)
     {
-        try {
-            if ($id != null) {
-                $this->model->setId($id);
-            }
+        if ($id != null) {
+            $this->model->setId($id);
+        }
 
-            $data = $this->db->fetchRow("SELECT documents.*, documents_newsletter.*, tree_locks.locked FROM documents
-                LEFT JOIN documents_newsletter ON documents.id = documents_newsletter.id
-                LEFT JOIN tree_locks ON documents.id = tree_locks.id AND tree_locks.type = 'document'
-                    WHERE documents.id = ?", $this->model->getId());
+        $data = $this->db->fetchRow("SELECT documents.*, documents_newsletter.*, tree_locks.locked FROM documents
+            LEFT JOIN documents_newsletter ON documents.id = documents_newsletter.id
+            LEFT JOIN tree_locks ON documents.id = tree_locks.id AND tree_locks.type = 'document'
+                WHERE documents.id = ?", $this->model->getId());
 
-            if ($data['id'] > 0) {
-                $this->assignVariablesToModel($data);
-            } else {
-                throw new \Exception('Newsletter Document with the ID ' . $this->model->getId() . " doesn't exists");
-            }
-        } catch (\Exception $e) {
-            throw $e;
+        if ($data['id'] > 0) {
+            $this->assignVariablesToModel($data);
+        } else {
+            throw new \Exception('Newsletter Document with the ID ' . $this->model->getId() . " doesn't exists");
         }
     }
 
     /**
-     * Create a new record for the object in the database
      *
-     * @throws \Exception
      */
     public function create()
     {
-        try {
-            parent::create();
+        parent::create();
 
-            $this->db->insert('documents_newsletter', [
-                'id' => $this->model->getId()
-            ]);
-        } catch (\Exception $e) {
-            throw $e;
-        }
+        $this->db->insert('documents_newsletter', [
+            'id' => $this->model->getId()
+        ]);
     }
 
     /**
@@ -78,15 +68,11 @@ class Dao extends Model\Document\PageSnippet\Dao
      */
     public function delete()
     {
-        try {
-            $this->deleteAllProperties();
+        $this->deleteAllProperties();
 
-            $this->db->delete('documents_newsletter', ['id' => $this->model->getId()]);
-            $this->db->delete('email_log', ['documentId' => $this->model->getId()]);
+        $this->db->delete('documents_newsletter', ['id' => $this->model->getId()]);
+        $this->db->delete('email_log', ['documentId' => $this->model->getId()]);
 
-            parent::delete();
-        } catch (\Exception $e) {
-            throw $e;
-        }
+        parent::delete();
     }
 }

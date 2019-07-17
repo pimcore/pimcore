@@ -42,9 +42,7 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     /**
-     * Save object to database
      *
-     * @return int
      */
     public function save()
     {
@@ -61,8 +59,6 @@ class Dao extends Model\Dao\AbstractDao
         }
 
         $this->db->insertOrUpdate('importconfig_shares', $data);
-
-        return $this->model;
     }
 
     /**

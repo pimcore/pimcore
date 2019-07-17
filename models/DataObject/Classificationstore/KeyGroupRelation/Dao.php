@@ -47,13 +47,11 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     /**
-     * Save object to database
      *
-     * @return Model\DataObject\Classificationstore\KeyGroupRelation
      */
     public function save()
     {
-        return $this->update();
+        $this->update();
     }
 
     /**
@@ -68,45 +66,25 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     /**
-     * @return Model\DataObject\Classificationstore\KeyGroupRelation
      *
-     * @throws \Exception
      */
     public function update()
     {
-        try {
-            $type = $this->model->getObjectVars();
+        $type = $this->model->getObjectVars();
 
-            foreach ($type as $key => $value) {
-                if (in_array($key, $this->getValidTableColumns(self::TABLE_NAME_RELATIONS))) {
-                    if (is_bool($value)) {
-                        $value = (int) $value;
-                    }
-                    if (is_array($value) || is_object($value)) {
-                        $value = \Pimcore\Tool\Serialize::serialize($value);
-                    }
-
-                    $data[$key] = $value;
+        foreach ($type as $key => $value) {
+            if (in_array($key, $this->getValidTableColumns(self::TABLE_NAME_RELATIONS))) {
+                if (is_bool($value)) {
+                    $value = (int) $value;
                 }
+                if (is_array($value) || is_object($value)) {
+                    $value = \Pimcore\Tool\Serialize::serialize($value);
+                }
+
+                $data[$key] = $value;
             }
-
-            $this->db->insertOrUpdate(self::TABLE_NAME_RELATIONS, $data);
-
-            return $this->model;
-        } catch (\Exception $e) {
-            throw $e;
         }
-    }
 
-    /**
-     * Create a new record for the object in database
-     *
-     * @return bool
-     */
-    public function create()
-    {
-        $this->db->insert(self::TABLE_NAME_RELATIONS, []);
-
-        return $this->save();
+        $this->db->insertOrUpdate(self::TABLE_NAME_RELATIONS, $data);
     }
 }

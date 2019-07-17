@@ -73,20 +73,17 @@ class Dao extends Model\Dao\AbstractDao
         return $id;
     }
 
-    /** Updates the class definition
+    /**
      * @param bool $isUpdate
-     *
-     * @return bool|void
-     *
      * @throws \Exception
      */
     public function save($isUpdate = true)
     {
         if (!$this->model->getId() || !$isUpdate) {
-            return $this->create();
-        } else {
-            return $this->update();
+            $this->create();
         }
+
+        $this->update();
     }
 
     /**
@@ -227,13 +224,11 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * Create a new record for the object in database
      *
-     * @return bool
+     * @return void
      */
     public function create()
     {
         $this->db->insert('classes', ['name' => $this->model->getName(), 'id' => $this->model->getId()]);
-//        $this->model->setId($this->db->lastInsertId());
-        $this->save();
     }
 
     /**

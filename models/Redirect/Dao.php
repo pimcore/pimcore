@@ -60,26 +60,22 @@ class Dao extends Model\Dao\AbstractDao
             $this->model->setId($this->db->lastInsertId());
         }
 
-        try {
-            $ts = time();
-            $this->model->setModificationDate($ts);
+        $ts = time();
+        $this->model->setModificationDate($ts);
 
-            $data = [];
-            $type = $this->model->getObjectVars();
+        $data = [];
+        $type = $this->model->getObjectVars();
 
-            foreach ($type as $key => $value) {
-                if (in_array($key, $this->getValidTableColumns('redirects'))) {
-                    if (is_bool($value)) {
-                        $value = (int) $value;
-                    }
-                    $data[$key] = $value;
+        foreach ($type as $key => $value) {
+            if (in_array($key, $this->getValidTableColumns('redirects'))) {
+                if (is_bool($value)) {
+                    $value = (int) $value;
                 }
+                $data[$key] = $value;
             }
-
-            $this->db->update('redirects', $data, ['id' => $this->model->getId()]);
-        } catch (\Exception $e) {
-            throw $e;
         }
+
+        $this->db->update('redirects', $data, ['id' => $this->model->getId()]);
     }
 
     /**
