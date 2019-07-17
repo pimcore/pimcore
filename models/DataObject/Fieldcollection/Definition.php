@@ -56,7 +56,7 @@ class Definition extends Model\AbstractModel
     /**
      * @var DataObject\ClassDefinition\Data[]
      */
-    public $fieldDefinitions;
+    protected $fieldDefinitions;
 
     /**
      * @return string
