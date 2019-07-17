@@ -303,7 +303,9 @@ class Pimcore
         // set inShutdown to true so that the output-buffer knows that he is allowed to send the headers
         self::$inShutdown = true;
 
-        if (self::isInstalled()) {
+        // Check if this is a cache warming run and if this runs on an installed instance. If this is a cache warmup
+        // we can't use self::isInstalled() as it will refer to the wrong caching dir.
+        if (self::getKernel()->getCacheDir() === self::getContainer()->getParameter('kernel.cache_dir') && self::isInstalled()) {
             // write and clean up cache
             Cache::shutdown();
 
