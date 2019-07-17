@@ -580,18 +580,14 @@ class Areablock extends Model\Document\Tag implements BlockInterface
      * @param null $idMapper
      *
      * @throws \Exception
-     *
-     * @todo replace and with &&
      */
     public function getFromWebserviceImport($wsElement, $document = null, $params = [], $idMapper = null)
     {
         $data = $wsElement->value;
-        if (($data->indices === null or is_array($data->indices)) and ($data->current == null or is_numeric($data->current))
-            and ($data->currentIndex == null or is_numeric($data->currentIndex))) {
+        if (($data->indices === null || is_array($data->indices)) && ($data->current == null || is_numeric($data->current))
+            && ($data->currentIndex == null || is_numeric($data->currentIndex))) {
             $indices = $data->indices;
-            if ($indices instanceof \stdclass) {
-                $indices = (array) $indices;
-            }
+            $indices = json_decode(json_encode($indices),true);
 
             $this->indices = $indices;
             $this->current = $data->current;
