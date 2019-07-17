@@ -514,6 +514,3 @@ pimcore.document.tags.relations = Class.create(pimcore.document.tag, {
         return "relations";
     }
 });
-
-// @TODO BC layer, to be removed in v6.0
-pimcore.document.tags.multihref = pimcore.document.tags.relations;

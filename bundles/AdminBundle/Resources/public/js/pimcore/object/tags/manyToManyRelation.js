@@ -734,8 +734,4 @@ pimcore.object.tags.manyToManyRelation = Class.create(pimcore.object.tags.abstra
     getCellEditValue: function () {
         return this.getValue();
     }
-
 });
-
-// @TODO BC layer, to be removed in v6.0
-pimcore.object.tags.multihref = pimcore.object.tags.manyToManyRelation;

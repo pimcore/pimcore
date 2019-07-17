@@ -592,8 +592,4 @@ pimcore.object.tags.advancedManyToManyObjectRelation = Class.create(pimcore.obje
     getCellEditValue: function () {
         return this.getValue();
     }
-
 });
-
-// @TODO BC layer, to be removed in v6.0
-pimcore.object.tags.objectsMetadata = pimcore.object.tags.advancedManyToManyObjectRelation;
