@@ -58,9 +58,6 @@ class Dao extends Model\Document\PageSnippet\Dao implements TargetingDocumentDao
         }
     }
 
-    /**
-     *
-     */
     public function create()
     {
         parent::create();

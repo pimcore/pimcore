@@ -112,9 +112,6 @@ class Dao extends Model\Dao\AbstractDao
         $this->db->update('targeting_rules', $data, ['id' => $this->model->getId()]);
     }
 
-    /**
-     *
-     */
     public function create()
     {
         $this->db->insert('targeting_rules', []);

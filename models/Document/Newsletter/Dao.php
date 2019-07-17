@@ -49,9 +49,6 @@ class Dao extends Model\Document\PageSnippet\Dao
         }
     }
 
-    /**
-     *
-     */
     public function create()
     {
         parent::create();

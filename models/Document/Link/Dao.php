@@ -54,9 +54,6 @@ class Dao extends Model\Document\Dao
         }
     }
 
-    /**
-     *
-     */
     public function create()
     {
         parent::create();

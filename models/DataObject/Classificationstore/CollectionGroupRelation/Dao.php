@@ -48,6 +48,7 @@ class Dao extends Model\Dao\AbstractDao
 
     /**
      * @return void
+     *
      * @throws \Exception
      */
     public function save()

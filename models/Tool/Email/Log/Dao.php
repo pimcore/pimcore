@@ -52,7 +52,7 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function save()
     {
-        if(!$this->model->getId()) {
+        if (!$this->model->getId()) {
             $this->create();
         }
 
@@ -99,9 +99,6 @@ class Dao extends Model\Dao\AbstractDao
         $this->db->delete(self::$dbTable, ['id' => $this->model->getId()]);
     }
 
-    /**
-     *
-     */
     public function create()
     {
         $this->db->insert(self::$dbTable, []);

@@ -38,9 +38,6 @@ class Dao extends Model\Dao\AbstractDao
         $this->assignVariablesToModel($data);
     }
 
-    /**
-     *
-     */
     public function save()
     {
         if (!$this->model->getId()) {

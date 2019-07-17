@@ -124,9 +124,6 @@ class Dao extends Model\Dao\AbstractDao
         $this->db->update(self::TABLE_NAME_KEYS, $data, ['id' => $this->model->getId()]);
     }
 
-    /**
-     *
-     */
     public function create()
     {
         $ts = time();

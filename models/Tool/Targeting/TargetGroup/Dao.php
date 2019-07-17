@@ -72,17 +72,11 @@ class Dao extends Model\Dao\AbstractDao
         $this->update();
     }
 
-    /**
-     *
-     */
     public function delete()
     {
         $this->db->delete('targeting_target_groups', ['id' => $this->model->getId()]);
     }
 
-    /**
-     *
-     */
     public function update()
     {
         $type = $this->model->getObjectVars();
@@ -105,9 +99,6 @@ class Dao extends Model\Dao\AbstractDao
         $this->db->update('targeting_target_groups', $data, ['id' => $this->model->getId()]);
     }
 
-    /**
-     *
-     */
     public function create()
     {
         $this->db->insert('targeting_target_groups', []);

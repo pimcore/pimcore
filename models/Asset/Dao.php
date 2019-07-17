@@ -75,9 +75,6 @@ class Dao extends Model\Element\Dao
         }
     }
 
-    /**
-     *
-     */
     public function create()
     {
         $this->db->insert('assets', [
@@ -89,9 +86,6 @@ class Dao extends Model\Element\Dao
         $this->model->setId($this->db->lastInsertId());
     }
 
-    /**
-     *
-     */
     public function update()
     {
         $this->model->setModificationDate(time());
@@ -142,9 +136,6 @@ class Dao extends Model\Element\Dao
         }
     }
 
-    /**
-     *
-     */
     public function delete()
     {
         $this->db->delete('assets', ['id' => $this->model->getId()]);

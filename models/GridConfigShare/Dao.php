@@ -41,9 +41,6 @@ class Dao extends Model\Dao\AbstractDao
         $this->assignVariablesToModel($data);
     }
 
-    /**
-     *
-     */
     public function save()
     {
         $gridConfigFavourite = $this->model->getObjectVars();

@@ -75,6 +75,7 @@ class Dao extends Model\Dao\AbstractDao
 
     /**
      * @param bool $isUpdate
+     *
      * @throws \Exception
      */
     public function save($isUpdate = true)

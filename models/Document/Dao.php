@@ -77,9 +77,6 @@ class Dao extends Model\Element\Dao
         }
     }
 
-    /**
-     *
-     */
     public function create()
     {
         $this->db->insert('documents', [

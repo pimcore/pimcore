@@ -71,9 +71,6 @@ class Dao extends Model\Dao\AbstractDao
         }
     }
 
-    /**
-     *
-     */
     public function save()
     {
         if (!$this->model->getId()) {
@@ -118,9 +115,6 @@ class Dao extends Model\Dao\AbstractDao
         $this->db->update(self::TABLE_NAME_COLLECTIONS, $data, ['id' => $this->model->getId()]);
     }
 
-    /**
-     *
-     */
     public function create()
     {
         $ts = time();

@@ -46,9 +46,6 @@ class Dao extends Model\Dao\AbstractDao
         $this->assignVariablesToModel($data);
     }
 
-    /**
-     *
-     */
     public function save()
     {
         $this->update();
@@ -65,9 +62,6 @@ class Dao extends Model\Dao\AbstractDao
         ]);
     }
 
-    /**
-     *
-     */
     public function update()
     {
         $type = $this->model->getObjectVars();

@@ -63,9 +63,6 @@ class Dao extends Model\Dao\AbstractDao
         }
     }
 
-    /**
-     *
-     */
     public function create()
     {
         $this->db->insert('users', [

@@ -396,9 +396,6 @@ class Log extends Model\AbstractModel
         $this->getDao()->delete();
     }
 
-    /**
-     *
-     */
     public function save()
     {
         $this->getDao()->save();

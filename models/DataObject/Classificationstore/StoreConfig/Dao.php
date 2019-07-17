@@ -114,9 +114,6 @@ class Dao extends Model\Dao\AbstractDao
         $this->db->update(self::TABLE_NAME_STORES, $data, ['id' => $this->model->getId()]);
     }
 
-    /**
-     *
-     */
     public function create()
     {
         $this->db->insert(self::TABLE_NAME_STORES, []);
