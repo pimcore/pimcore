@@ -169,7 +169,6 @@ class Bootstrap
     {
         // load .env file if available
         $dotEnvFile = PIMCORE_PROJECT_ROOT . '/.env';
-        $_ENV['PIMCORE_ENVIRONMENT'] = $_ENV['SYMFONY_ENV'] = $_ENV['APP_ENV'] = Config::getEnvironment();
 
         if (is_array($env = @include PIMCORE_PROJECT_ROOT .'/.env.local.php')) {
             foreach ($env as $k => $v) {
@@ -180,17 +179,38 @@ class Bootstrap
             $dotEnv = new Dotenv();
             if (method_exists($dotEnv, 'loadEnv')) {
                 // Symfony => 4.2 style
-                $dotEnv->loadEnv($dotEnvFile);
+                $envVarName = 'APP_ENV';
+                foreach (['PIMCORE_ENVIRONMENT', 'SYMFONY_ENV', 'APP_ENV'] as $varName) {
+                    if(isset($_SERVER[$varName]) || isset($_ENV[$varName])) {
+                        $envVarName = $varName;
+                        break;
+                    }
+
+                    if(isset($_SERVER['REDIRECT_' . $varName]) || isset($_ENV['REDIRECT_' . $varName])) {
+                        $envVarName = 'REDIRECT_' . $varName;
+                        break;
+                    }
+                }
+
+                $defaultEnvironment = Config::getEnvironmentConfig()->getDefaultEnvironment();
+                $dotEnv->loadEnv($dotEnvFile, $envVarName, $defaultEnvironment);
             } else {
                 $dotEnv->load($dotEnvFile);
             }
         }
 
+        $_ENV['PIMCORE_ENVIRONMENT'] = $_ENV['SYMFONY_ENV'] = $_ENV['APP_ENV'] = Config::getEnvironment();
         $_SERVER += $_ENV;
     }
 
     public static function defineConstants()
     {
+        // load custom constants
+        $customConstantsFile = PIMCORE_PROJECT_ROOT . '/app/constants.php';
+        if (file_exists($customConstantsFile)) {
+            include_once $customConstantsFile;
+        }
+
         self::prepareEnvVariables();
 
         $resolveConstant = function (string $name, $default, bool $define = true) {
@@ -208,12 +228,6 @@ class Bootstrap
 
             return $value;
         };
-
-        // load custom constants
-        $customConstantsFile = PIMCORE_PROJECT_ROOT . '/app/constants.php';
-        if (file_exists($customConstantsFile)) {
-            include_once $customConstantsFile;
-        }
 
         // basic paths
         $resolveConstant('PIMCORE_COMPOSER_PATH', PIMCORE_PROJECT_ROOT . '/vendor');

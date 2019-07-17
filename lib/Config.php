@@ -980,13 +980,7 @@ class Config
                 if (null !== $default) {
                     $environment = $default;
                 } else {
-                    $environmentConfig = static::getEnvironmentConfig();
-
-                    if (\Pimcore::inDebugMode(DebugMode::SYMFONY_ENVIRONMENT)) {
-                        $environment = $environmentConfig->getDefaultDebugModeEnvironment();
-                    } else {
-                        $environment = $environmentConfig->getDefaultEnvironment();
-                    }
+                    $environment = static::getEnvironmentConfig()->getDefaultEnvironment();
                 }
             }
 
@@ -1098,10 +1092,16 @@ class Config
     {
         if (null === self::$debugDevModeConfig) {
             $conf = [];
-            // since this function is usually called before the constants get set in \Pimcore\Bootstrap::defineConstants
-            // we try to get the debug mode config directly from the env variables
-            $privateVar = self::resolveEnvVarValue('PIMCORE_PRIVATE_VAR', PIMCORE_PROJECT_ROOT . '/var');
-            $configDir = self::resolveEnvVarValue('PIMCORE_CONFIGURATION_DIRECTORY', $privateVar . '/config');
+
+            if(defined('PIMCORE_CONFIGURATION_DIRECTORY')) {
+                $configDir = PIMCORE_CONFIGURATION_DIRECTORY;
+            } else {
+                // this is called via Pimcore::inDebugMode() before the constants get initialized, so we try to get the
+                // path from the environment variables (if customized) or we use the default structure
+                $privateVar = self::resolveEnvVarValue('PIMCORE_PRIVATE_VAR', PIMCORE_PROJECT_ROOT . '/var');
+                $configDir = self::resolveEnvVarValue('PIMCORE_CONFIGURATION_DIRECTORY', $privateVar . '/config');
+            }
+
             $debugModeFile = $configDir . '/debug-mode.php';
             if (file_exists($debugModeFile)) {
                 $confTemp = include $debugModeFile;

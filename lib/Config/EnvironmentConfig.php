@@ -72,6 +72,10 @@ class EnvironmentConfig implements EnvironmentConfigInterface
 
     public function getDefaultEnvironment(): string
     {
+        if (\Pimcore::inDebugMode()) {
+            return $this->defaultDebugModeEnvironment;
+        }
+
         return $this->defaultEnvironment;
     }
 
@@ -80,11 +84,18 @@ class EnvironmentConfig implements EnvironmentConfigInterface
         $this->defaultEnvironment = $defaultEnvironment;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getDefaultDebugModeEnvironment(): string
     {
         return $this->defaultDebugModeEnvironment;
     }
 
+    /**
+     * @deprecated
+     * @param string $defaultDebugModeEnvironment
+     */
     public function setDefaultDebugModeEnvironment(string $defaultDebugModeEnvironment)
     {
         $this->defaultDebugModeEnvironment = $defaultDebugModeEnvironment;
