@@ -36,7 +36,7 @@ class DataObjectSplittedStateMarkingStore implements MarkingStoreInterface
     private $stateMapping;
 
     /**
-     * @var PropertyAccessor
+     * @var PropertyAccessorInterface
      */
     private $propertyAccessor;
 
