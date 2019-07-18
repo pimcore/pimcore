@@ -547,7 +547,7 @@ class Link extends Model\Document\Tag
                         }
                     }
 
-                    if($id) {
+                    if ($id) {
                         $this->data['internalId'] = $id;
                     }
                 }
