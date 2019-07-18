@@ -17,10 +17,10 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Tool;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\InvalidConfigException;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\BatchProcessingWorkerInterface;
+use Pimcore\Console\CliTrait;
 use Pimcore\Log\Simple;
 use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Model\DataObject\Listing\Concrete;
-use Pimcore\Console\CliTrait;
 
 class IndexUpdater
 {
@@ -60,6 +60,7 @@ class IndexUpdater
         if ($updateIndexStructures) {
             $updater->createOrUpdateIndexStructures();
         }
+
         self::startSession();
 
         $page = 0;

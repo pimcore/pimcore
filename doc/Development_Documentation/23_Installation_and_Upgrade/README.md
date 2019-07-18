@@ -8,7 +8,7 @@
   - [File Permissions](03_System_Setup_and_Hosting/03_File_Permissions.md)
   - [Database Setup](03_System_Setup_and_Hosting/05_DB_Setup.md)
   - [Additional Tools Installation](03_System_Setup_and_Hosting/06_Additional_Tools_Installation.md)
-- [Updating Pimcore](07_Updating_Pimcore.md)
+- [Updating Pimcore](07_Updating_Pimcore/README.md)
 - [Upgrade Notes](09_Upgrade_Notes/README.md)
 
 ## Advanced Topics

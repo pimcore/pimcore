@@ -1,8 +1,6 @@
 # Bundle Developer's Guide
 
-In previous versions of Pimcore, a plugin system allowed you to hook into the system to add custom functionality. Starting with
-Pimcore 5, the plugin system was replaced by native Symfony bundles. Therefore, you do not need to follow any special
-plugin structure but can refer to the [Symfony Bundle Documentation](http://symfony.com/doc/3.4/bundles.html) on how
+Since Pimcore utilizes the powerful Symfony Bundle system, let us refer to the [Symfony Bundle Documentation](http://symfony.com/doc/3.4/bundles.html) on how
 to get started with your custom bundles. A bundle can do anything - in fact, core Pimcore functionalities like the admin
 interface are implemented as bundle. From within your bundle, you have all possibilities to extend the system, from
 defining new services or routes to hook into the event system or provide controllers and views.

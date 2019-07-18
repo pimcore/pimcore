@@ -15,12 +15,12 @@
 namespace Pimcore\Bundle\CoreBundle\Controller;
 
 use Pimcore\Config;
+use Pimcore\Controller\Controller;
 use Pimcore\Logger;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Site;
 use Pimcore\Model\Tool;
 use Pimcore\Model\Tool\TmpStore;
-use Pimcore\Controller\Controller;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\RedirectResponse;

@@ -88,6 +88,25 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     /**
+     * @param string $name
+     * @param int    $classId
+     *
+     * @return int|null
+     */
+    public function getIdByNameAndClassId($name, $classId)
+    {
+        $id = null;
+        try {
+            if (!empty($name) && !empty($classId)) {
+                $id = $this->db->fetchOne('SELECT id FROM custom_layouts WHERE name = ? AND classId = ?', [$name, $classId]);
+            }
+        } catch (\Exception $e) {
+        }
+
+        return $id;
+    }
+
+    /**
      * @return int|mixed
      */
     public function getNewId()
@@ -134,9 +153,9 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * Save layout to database
      *
-     * @return bool
+     * @param bool $isUpdate
      *
-     * @todo: update() and create() don't return anything
+     * @throws \Exception
      */
     public function save($isUpdate = true)
     {
@@ -146,14 +165,13 @@ class Dao extends Model\Dao\AbstractDao
         }
 
         if (!$isUpdate) {
-            return $this->create();
+            $this->create();
         } else {
-            return $this->update();
+            $this->update();
         }
     }
 
     /**
-     * @throws \Exception
      * @throws \Exception
      */
     public function update()
@@ -185,7 +203,7 @@ class Dao extends Model\Dao\AbstractDao
         $this->model->setCreationDate(time());
         $this->model->setModificationDate(time());
 
-        $this->save();
+        $this->update();
     }
 
     /**
