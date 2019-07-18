@@ -16,7 +16,6 @@ namespace Pimcore;
 
 use Pimcore\Config\EnvironmentConfig;
 use Pimcore\Config\EnvironmentConfigInterface;
-use Pimcore\FeatureToggles\Features\DebugMode;
 use Pimcore\Model\WebsiteSetting;
 use Symfony\Cmf\Bundle\RoutingBundle\Routing\DynamicRouter;
 use Symfony\Component\Console\Input\ArgvInput;
@@ -1093,7 +1092,7 @@ class Config
         if (null === self::$debugDevModeConfig) {
             $conf = [];
 
-            if(defined('PIMCORE_CONFIGURATION_DIRECTORY')) {
+            if (defined('PIMCORE_CONFIGURATION_DIRECTORY')) {
                 $configDir = PIMCORE_CONFIGURATION_DIRECTORY;
             } else {
                 // this is called via Pimcore::inDebugMode() before the constants get initialized, so we try to get the

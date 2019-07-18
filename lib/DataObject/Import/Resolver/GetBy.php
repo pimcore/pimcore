@@ -35,6 +35,7 @@ class GetBy extends AbstractResolver
 
     /**
      * GetBy constructor.
+     *
      * @param FactoryInterface $modelFactory
      */
     public function __construct(FactoryInterface $modelFactory)
@@ -46,7 +47,9 @@ class GetBy extends AbstractResolver
      * @param \stdClass $config
      * @param int $parentId
      * @param array $rowData
+     *
      * @return Asset|Concrete|Document|ElementInterface
+     *
      * @throws \Exception
      */
     public function resolve(\stdClass $config, int $parentId, array $rowData)
@@ -64,7 +67,7 @@ class GetBy extends AbstractResolver
         $classDefinition = ClassDefinition::getById($classId);
         $listClassName = 'Pimcore\\Model\\DataObject\\' . ucfirst($classDefinition->getName() . '\\Listing');
 
-        /** @var  $list Listing */
+        /** @var $list Listing */
         $list = $this->modelFactory->build($listClassName);
 
         $list->setObjectTypes([AbstractObject::OBJECT_TYPE_OBJECT, AbstractObject::OBJECT_TYPE_FOLDER, AbstractObject::OBJECT_TYPE_VARIANT]);

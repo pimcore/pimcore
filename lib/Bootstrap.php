@@ -181,12 +181,12 @@ class Bootstrap
                 // Symfony => 4.2 style
                 $envVarName = 'APP_ENV';
                 foreach (['PIMCORE_ENVIRONMENT', 'SYMFONY_ENV', 'APP_ENV'] as $varName) {
-                    if(isset($_SERVER[$varName]) || isset($_ENV[$varName])) {
+                    if (isset($_SERVER[$varName]) || isset($_ENV[$varName])) {
                         $envVarName = $varName;
                         break;
                     }
 
-                    if(isset($_SERVER['REDIRECT_' . $varName]) || isset($_ENV['REDIRECT_' . $varName])) {
+                    if (isset($_SERVER['REDIRECT_' . $varName]) || isset($_ENV['REDIRECT_' . $varName])) {
                         $envVarName = 'REDIRECT_' . $varName;
                         break;
                     }

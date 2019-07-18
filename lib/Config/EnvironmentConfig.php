@@ -94,6 +94,7 @@ class EnvironmentConfig implements EnvironmentConfigInterface
 
     /**
      * @deprecated
+     *
      * @param string $defaultDebugModeEnvironment
      */
     public function setDefaultDebugModeEnvironment(string $defaultDebugModeEnvironment)

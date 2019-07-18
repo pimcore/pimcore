@@ -587,7 +587,7 @@ class Areablock extends Model\Document\Tag implements BlockInterface
         if (($data->indices === null || is_array($data->indices)) && ($data->current == null || is_numeric($data->current))
             && ($data->currentIndex == null || is_numeric($data->currentIndex))) {
             $indices = $data->indices;
-            $indices = json_decode(json_encode($indices),true);
+            $indices = json_decode(json_encode($indices), true);
 
             $this->indices = $indices;
             $this->current = $data->current;
