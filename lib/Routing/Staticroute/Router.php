@@ -124,7 +124,7 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
     /**
      * @inheritDoc
      */
-    public function generate($name, $parameters = [], $referenceType = self::ABSOLUTE_PATH)
+    public function generate($name, $parameters = [], $referenceType = self::ABSOLUTE_PATH, $encode = true)
     {
         // when using $name = false we don't use the default route (happens when $name = null / ZF default behavior)
         // but just the query string generation using the given parameters
@@ -178,11 +178,7 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
 
         if ($name && $route = Staticroute::getByName($name, $siteId)) {
             $reset = isset($parameters['reset']) ? (bool)$parameters['reset'] : false;
-            $encode = isset($parameters['encode']) ? (bool)$parameters['encode'] : true;
             
-            // unset param encode
-            unset($parameters['encode']);
-
             // assemble the route / url in Staticroute::assemble()
             $url = $route->assemble($parameters, $reset, $encode);
 
