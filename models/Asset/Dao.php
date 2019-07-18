@@ -17,9 +17,9 @@
 
 namespace Pimcore\Model\Asset;
 
-use Pimcore\Db;
 use Pimcore\Logger;
 use Pimcore\Model;
+use Pimcore\Tool\Serialize;
 
 /**
  * @property \Pimcore\Model\Asset $model
@@ -95,7 +95,7 @@ class Dao extends Model\Element\Dao
         foreach ($asset as $key => $value) {
             if (in_array($key, $this->getValidTableColumns('assets'))) {
                 if (is_array($value)) {
-                    $value = \Pimcore\Tool\Serialize::serialize($value);
+                    $value = Serialize::serialize($value);
                 }
                 $data[$key] = $value;
             }
@@ -462,6 +462,11 @@ class Dao extends Model\Element\Dao
         }
 
         return false;
+    }
+
+    public function updateCustomSettings() {
+        $customSettingsData = Serialize::serialize($this->model->getCustomSettings());
+        $this->db->update('assets', ['customSettings' => $customSettingsData], ['id' => $this->model->getId()]);
     }
 
     /**
