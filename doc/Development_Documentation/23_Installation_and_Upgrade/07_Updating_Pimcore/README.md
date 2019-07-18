@@ -10,6 +10,5 @@ To run core migrations manually (e.g. when using composer install),
 use: `bin/console pimcore:migrations:migrate -s pimcore_core -n`
 
 ## Upgrading to Version 6 from earlier Versions
-- Upgrade from a Version >= 5.4.0 to Version 6
-- Upgrade from a Version between => 5.0.0 and <= 5.4.0 to Version 6
-- Upgrade from Version 4 to Version 6 
+- [Upgrade from Version 5 to Version 6](./01_V5_to_V6.md)
+- [Upgrade from Version 4 to Version 6](./04_V4_to_V6.md) 
