@@ -33,7 +33,6 @@ class CustomLayoutRebuildCommand extends AbstractCommand
     {
         $this
             ->setName('pimcore:deployment:custom-layouts-rebuild')
-            ->setAliases(['deployment:custom-layouts-rebuild'])
             ->setDescription('rebuilds db structure for custom layouts based on updated var/classes/customlayouts/definition_*.php files')
             ->addOption(
                 'create-custom-layouts',
