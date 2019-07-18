@@ -185,6 +185,9 @@ services:
     Pimcore\Model\DataObject\ClassDefinition\ClassDefinitionManager:
         public: true
 
+    Pimcore\Model\DataObject\ClassDefinition\ClassLayoutDefinitionManager:
+        public: true
+
     # Override Swiftmailer redirecting plugin
     swiftmailer.plugin.redirecting.abstract:
         abstract: true

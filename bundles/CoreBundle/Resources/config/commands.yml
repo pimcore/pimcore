@@ -85,3 +85,9 @@ services:
             - [setClassDefinitionManager, ['@Pimcore\Model\DataObject\ClassDefinition\ClassDefinitionManager']]
         tags:
             - { name: console.command, command: 'pimcore:deployment:classes-rebuild' }
+
+    Pimcore\Bundle\CoreBundle\Command\CustomLayoutRebuildCommand:
+        calls:
+            - [setClassLayoutDefinitionManager, ['@Pimcore\Model\DataObject\ClassDefinition\ClassLayoutDefinitionManager']]
+        tags:
+            - { name: console.command, command: 'pimcore:deployment:custom-layouts-rebuild' }
