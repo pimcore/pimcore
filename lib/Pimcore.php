@@ -66,7 +66,7 @@ class Pimcore
      */
     public static function inDebugMode(): bool
     {
-        return self::$debugMode;
+        return (bool) self::$debugMode;
     }
 
     /**
@@ -92,7 +92,7 @@ class Pimcore
      */
     public static function inDevMode(): bool
     {
-        return self::$devMode;
+        return (bool) self::$devMode;
     }
 
     /**

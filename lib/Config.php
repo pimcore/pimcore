@@ -1096,6 +1096,9 @@ class Config
             $configDir = self::resolveEnvVarValue('PIMCORE_CONFIGURATION_DIRECTORY', $privateVar . '/config');
         }
 
+        $debug = false;
+        $devMode = false;
+
         $debugModeFile = $configDir . '/debug-mode.php';
         if (file_exists($debugModeFile)) {
             $confTemp = include $debugModeFile;
@@ -1103,44 +1106,46 @@ class Config
                 $conf = $confTemp;
 
                 // init debug mode
-                if(!defined('PIMCORE_DEBUG') || \Pimcore::getDebugMode() === null) {
-                    $debug = false;
-                    if (isset($conf['active'])) {
-                        $debug = $conf['active'];
-                        // enable debug mode only for a comma-separated list of IP addresses/ranges
-                        if ($debug && $conf['ip']) {
-                            $debug = false;
-                            $clientIp = Tool::getClientIp();
-                            if (null !== $clientIp) {
-                                $debugIpAddresses = explode_and_trim(',', $conf['ip']);
-                                if (IpUtils::checkIp($clientIp, $debugIpAddresses)) {
-                                    $debug = true;
-                                }
+                if (isset($conf['active'])) {
+                    $debug = $conf['active'];
+                    // enable debug mode only for a comma-separated list of IP addresses/ranges
+                    if ($debug && $conf['ip']) {
+                        $debug = false;
+                        $clientIp = Tool::getClientIp();
+                        if (null !== $clientIp) {
+                            $debugIpAddresses = explode_and_trim(',', $conf['ip']);
+                            if (IpUtils::checkIp($clientIp, $debugIpAddresses)) {
+                                $debug = true;
                             }
                         }
                     }
-
-                    /**
-                     * @deprecated
-                     */
-                    define('PIMCORE_DEBUG', $debug);
-                    \Pimcore::setDebugMode($debug);
                 }
 
                 // init dev mode
-                if(!defined('PIMCORE_DEVMODE') || \Pimcore::getDevMode() === null) {
-                    $devMode = false;
-                    if ($debug && isset($conf['devmode'])) {
-                        $devMode = $conf['devmode'];
-                    }
-
-                    /**
-                     * @deprecated
-                     */
-                    define('PIMCORE_DEVMODE', $devMode);
-                    \Pimcore::setDevMode($devMode);
+                if ($debug && isset($conf['devmode'])) {
+                    $devMode = $conf['devmode'];
                 }
+
+
             }
+        }
+
+        if(\Pimcore::getDebugMode() === null) {
+            \Pimcore::setDebugMode($debug);
+
+            /**
+             * @deprecated
+             */
+            define('PIMCORE_DEBUG', $debug);
+        }
+
+        if(\Pimcore::getDevMode() === null) {
+            \Pimcore::setDevMode($devMode);
+
+            /**
+             * @deprecated
+             */
+            define('PIMCORE_DEVMODE', $devMode);
         }
     }
 }
