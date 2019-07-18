@@ -71,8 +71,6 @@ class PimcoreUrl extends Helper
      */
     protected function generateUrl($name = null, $parameters = [], $referenceType = UrlGeneratorInterface::ABSOLUTE_PATH, $encode = true)
     {
-        // set default encode parameter
-        $parameters['encode'] = $encode;
         
         // if name is an array, treat it as parameters
         if (is_array($name)) {
@@ -109,7 +107,7 @@ class PimcoreUrl extends Helper
         }
 
         if ($name !== null) {
-            return $this->generator->generate($name, $parameters, $referenceType);
+            return $this->generator->generate($name, $parameters, $referenceType, $encode);
         }
 
         return '';
