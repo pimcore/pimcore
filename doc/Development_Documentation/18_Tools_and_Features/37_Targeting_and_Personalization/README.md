@@ -4,10 +4,6 @@
 The new targeting engine is considered experimental and may be subject to change in later versions!
 </div>
 
-Pimcore 5.1 introduces completely new targeting and personalization features by implementing a server side targeting engine
-which can be tightly integrated into other server side components such as the customer management framework or the ecommerce 
-framework.
-
 The following section describes the technical concepts and aspects of the Pimcore targeting enginge. For usage 
 description and feature listing see your [user docs](../../../User_Documentation/05_Targeting_and_Personalization/README.md)
 first. 
