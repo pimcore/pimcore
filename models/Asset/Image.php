@@ -444,6 +444,16 @@ EOT;
             }
         }
 
+        if (($width = $dimensions["width"]) && ($height = $dimensions["height"])) {
+            $this->setCustomSetting('imageDimensionsCalculated', true);
+            $this->setCustomSetting("imageWidth", $width);
+            $this->setCustomSetting("imageHeight", $height);
+            $customSettingsData = \Pimcore\Tool\Serialize::serialize($this->getCustomSettings());
+            Db::get()->query("UPDATE assets SET customSettings = ? WHERE id = ?", [$customSettingsData, $this->getId()]);
+            $cacheKey = "asset_" . $this->getId();
+            \Pimcore\Cache::save(null, $cacheKey);
+        }
+        
         return $dimensions;
     }
 
