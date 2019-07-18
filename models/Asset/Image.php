@@ -445,7 +445,7 @@ EOT;
         }
 
         if (($width = $dimensions["width"]) && ($height = $dimensions["height"])) {
-            $this->setCustomSetting('imageDimensionsCalculated', true);
+            $this->setCustomSetting("imageDimensionsCalculated", true);
             $this->setCustomSetting("imageWidth", $width);
             $this->setCustomSetting("imageHeight", $height);
             $customSettingsData = \Pimcore\Tool\Serialize::serialize($this->getCustomSettings());
