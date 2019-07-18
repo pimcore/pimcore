@@ -26,7 +26,6 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\Price;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\PriceInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tools\SessionConfigurator;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
-use Pimcore\FeatureToggles\Features\DebugMode;
 use Pimcore\Logger;
 use Pimcore\Model\DataObject\Fieldcollection\Data\OrderPriceModifications;
 use Pimcore\Model\DataObject\OnlineShopOrder;
@@ -373,7 +372,7 @@ class WirecardSeamless extends AbstractPayment
         $redirectURL = $result['redirectUrl'];
 
         if (!$redirectURL) {
-            if (\Pimcore::inDebugMode(DebugMode::LOG)) {
+            if (\Pimcore::inDebugMode()) {
                 Logger::error('seamless result: ' . var_export($result, true));
             }
             throw new \Exception('redirect url could not be evalutated');

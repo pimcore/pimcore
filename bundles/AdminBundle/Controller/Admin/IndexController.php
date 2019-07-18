@@ -23,7 +23,6 @@ use Pimcore\Controller\Configuration\TemplatePhp;
 use Pimcore\Db\ConnectionInterface;
 use Pimcore\Event\Admin\IndexSettingsEvent;
 use Pimcore\Event\AdminEvents;
-use Pimcore\FeatureToggles\Features\DevMode;
 use Pimcore\Google;
 use Pimcore\Maintenance\Executor;
 use Pimcore\Maintenance\ExecutorInterface;
@@ -237,7 +236,7 @@ class IndexController extends AdminController
             'version' => Version::getVersion(),
             'build' => Version::getRevision(),
             'debug' => \Pimcore::inDebugMode(),
-            'devmode' => \Pimcore::inDevMode(DevMode::ADMIN),
+            'devmode' => \Pimcore::inDevMode(),
             'disableMinifyJs' => \Pimcore::disableMinifyJs(),
             'environment' => $kernel->getEnvironment(),
             'sessionId' => htmlentities(Session::getSessionId(), ENT_QUOTES, 'UTF-8'),

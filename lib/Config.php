@@ -16,10 +16,10 @@ namespace Pimcore;
 
 use Pimcore\Config\EnvironmentConfig;
 use Pimcore\Config\EnvironmentConfigInterface;
-use Pimcore\FeatureToggles\Features\DebugMode;
 use Pimcore\Model\WebsiteSetting;
 use Symfony\Cmf\Bundle\RoutingBundle\Routing\DynamicRouter;
 use Symfony\Component\Console\Input\ArgvInput;
+use Symfony\Component\HttpFoundation\IpUtils;
 use Symfony\Component\Yaml\Yaml;
 
 class Config
@@ -38,11 +38,6 @@ class Config
      * @var EnvironmentConfigInterface
      */
     private static $environmentConfig;
-
-    /**
-     * @var null|array
-     */
-    protected static $debugDevModeConfig = null;
 
     /**
      * @param $name - name of configuration file. slash is allowed for subdirectories.
@@ -991,6 +986,7 @@ class Config
     }
 
     /**
+     * @internal
      * @param string $environment
      */
     public static function setEnvironment($environment)
@@ -1072,6 +1068,7 @@ class Config
     }
 
     /**
+     * @internal
      * @param string $varName
      * @param mixed $default
      *
@@ -1086,33 +1083,64 @@ class Config
     }
 
     /**
-     * @return array
+     * @internal
      */
-    public static function getDebugDevModeConfig(): array
+    public static function initDebugDevMode()
     {
-        if (null === self::$debugDevModeConfig) {
-            $conf = [];
-
-            if(defined('PIMCORE_CONFIGURATION_DIRECTORY')) {
-                $configDir = PIMCORE_CONFIGURATION_DIRECTORY;
-            } else {
-                // this is called via Pimcore::inDebugMode() before the constants get initialized, so we try to get the
-                // path from the environment variables (if customized) or we use the default structure
-                $privateVar = self::resolveEnvVarValue('PIMCORE_PRIVATE_VAR', PIMCORE_PROJECT_ROOT . '/var');
-                $configDir = self::resolveEnvVarValue('PIMCORE_CONFIGURATION_DIRECTORY', $privateVar . '/config');
-            }
-
-            $debugModeFile = $configDir . '/debug-mode.php';
-            if (file_exists($debugModeFile)) {
-                $confTemp = include $debugModeFile;
-                if (is_array($confTemp)) {
-                    $conf = $confTemp;
-                }
-            }
-
-            self::$debugDevModeConfig = $conf;
+        if(defined('PIMCORE_CONFIGURATION_DIRECTORY')) {
+            $configDir = PIMCORE_CONFIGURATION_DIRECTORY;
+        } else {
+            // this is called via Pimcore::inDebugMode() before the constants get initialized, so we try to get the
+            // path from the environment variables (if customized) or we use the default structure
+            $privateVar = self::resolveEnvVarValue('PIMCORE_PRIVATE_VAR', PIMCORE_PROJECT_ROOT . '/var');
+            $configDir = self::resolveEnvVarValue('PIMCORE_CONFIGURATION_DIRECTORY', $privateVar . '/config');
         }
 
-        return self::$debugDevModeConfig;
+        $debugModeFile = $configDir . '/debug-mode.php';
+        if (file_exists($debugModeFile)) {
+            $confTemp = include $debugModeFile;
+            if (is_array($confTemp)) {
+                $conf = $confTemp;
+
+                // init debug mode
+                if(!defined('PIMCORE_DEBUG') || \Pimcore::getDebugMode() === null) {
+                    $debug = false;
+                    if (isset($conf['active'])) {
+                        $debug = $conf['active'];
+                        // enable debug mode only for a comma-separated list of IP addresses/ranges
+                        if ($debug && $conf['ip']) {
+                            $debug = false;
+                            $clientIp = Tool::getClientIp();
+                            if (null !== $clientIp) {
+                                $debugIpAddresses = explode_and_trim(',', $conf['ip']);
+                                if (IpUtils::checkIp($clientIp, $debugIpAddresses)) {
+                                    $debug = true;
+                                }
+                            }
+                        }
+                    }
+
+                    /**
+                     * @deprecated
+                     */
+                    define('PIMCORE_DEBUG', $debug);
+                    \Pimcore::setDebugMode($debug);
+                }
+
+                // init dev mode
+                if(!defined('PIMCORE_DEVMODE') || \Pimcore::getDevMode() === null) {
+                    $devMode = false;
+                    if ($debug && isset($conf['devmode'])) {
+                        $devMode = $conf['devmode'];
+                    }
+
+                    /**
+                     * @deprecated
+                     */
+                    define('PIMCORE_DEVMODE', $devMode);
+                    \Pimcore::setDevMode($devMode);
+                }
+            }
+        }
     }
 }
