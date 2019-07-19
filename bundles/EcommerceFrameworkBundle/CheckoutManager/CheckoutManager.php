@@ -201,6 +201,8 @@ class CheckoutManager implements CheckoutManagerInterface
         $orderManager = $this->orderManagers->getOrderManager();
         $order = $orderManager->getOrCreateOrderFromCart($this->cart);
 
+
+
         if ($order->getOrderState() === AbstractOrder::ORDER_STATE_COMMITTED) {
             throw new UnsupportedException('Order is already committed');
         }
