@@ -16,8 +16,12 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\Currency;
+use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderAgentInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Status;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\StatusInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\V7\Payment\RecurringPaymentInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\V7\PaymentResponse\FormResponse;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\V7\PaymentResponse\StartPaymentResponseInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\Price;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\PriceInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
@@ -30,7 +34,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class QPay extends AbstractPayment
+class QPay extends AbstractPayment implements \Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\V7\Payment\PaymentInterface, RecurringPaymentInterface
 {
     // supported hashing algorithms
     const HASH_ALGO_MD5 = 'md5';
@@ -285,6 +289,20 @@ class QPay extends AbstractPayment
         $form->setData($formData);
 
         return $form;
+    }
+
+    /**
+     * Starts payment
+     *
+     * @param OrderAgentInterface $orderAgent
+     * @param PriceInterface $price
+     * @param array $config
+     * @return StartPaymentResponseInterface
+     */
+    public function startPayment(OrderAgentInterface $orderAgent, PriceInterface $price, array $config): StartPaymentResponseInterface
+    {
+        $response = $this->initPayment($price, $config);
+        return new FormResponse($orderAgent->getOrder(), $response);
     }
 
     /**
@@ -751,4 +769,5 @@ class QPay extends AbstractPayment
 
         return $paymentBrick;
     }
+
 }

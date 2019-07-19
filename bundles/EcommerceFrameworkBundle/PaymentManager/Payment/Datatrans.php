@@ -16,8 +16,12 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\Currency;
+use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderAgentInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Status;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\StatusInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\V7\Payment\RecurringPaymentInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\V7\PaymentResponse\FormResponse;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\V7\PaymentResponse\StartPaymentResponseInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\Price;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\PriceInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
@@ -30,7 +34,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class Datatrans extends AbstractPayment
+class Datatrans extends AbstractPayment implements \Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\V7\Payment\PaymentInterface, RecurringPaymentInterface
 {
     const TRANS_TYPE_DEBIT = '05';
     const TRANS_TYPE_CREDIT = '06';
@@ -280,6 +284,20 @@ class Datatrans extends AbstractPayment
         $form->setData($formData);
 
         return $form;
+    }
+
+    /**
+     * Starts payment
+     *
+     * @param OrderAgentInterface $orderAgent
+     * @param PriceInterface $price
+     * @param array $config
+     * @return StartPaymentResponseInterface
+     */
+    public function startPayment(OrderAgentInterface $orderAgent, PriceInterface $price, array $config): StartPaymentResponseInterface
+    {
+        $response = $this->initPayment($price, $config);
+        return new FormResponse($orderAgent->getOrder(), $response);
     }
 
     /**
@@ -814,4 +832,6 @@ XML;
         $orderListing->setOrderKey("`{$providerBrickName}`.`paymentFinished`", false);
         $orderListing->setOrder('DESC');
     }
+
+
 }
