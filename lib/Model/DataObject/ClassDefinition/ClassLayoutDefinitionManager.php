@@ -15,7 +15,6 @@
 namespace Pimcore\Model\DataObject\ClassDefinition;
 
 use Pimcore\Db;
-use Pimcore\Model\DataObject\ClassDefinition\CustomLayout;
 
 class ClassLayoutDefinitionManager
 {

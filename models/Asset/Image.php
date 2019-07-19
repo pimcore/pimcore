@@ -446,11 +446,11 @@ EOT;
             }
         }
 
-        if (($width = $dimensions["width"]) && ($height = $dimensions["height"])) {
+        if (($width = $dimensions['width']) && ($height = $dimensions['height'])) {
             // persist dimensions to database
-            $this->setCustomSetting("imageDimensionsCalculated", true);
-            $this->setCustomSetting("imageWidth", $width);
-            $this->setCustomSetting("imageHeight", $height);
+            $this->setCustomSetting('imageDimensionsCalculated', true);
+            $this->setCustomSetting('imageWidth', $width);
+            $this->setCustomSetting('imageHeight', $height);
             $this->getDao()->updateCustomSettings();
             $this->clearDependentCache();
         }
