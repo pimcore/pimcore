@@ -14,15 +14,22 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\CartManager;
 
+use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\InvalidConfigException;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\VoucherServiceException;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractSetProductEntry;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\CheckoutableInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Reservation;
 use Pimcore\Logger;
+use Pimcore\Model\AbstractModel;
 
-abstract class AbstractCart extends \Pimcore\Model\AbstractModel implements CartInterface
+abstract class AbstractCart extends AbstractModel implements CartInterface
 {
+
+    const CART_READ_ONLY_MODE_STRICT = 'strict';
+    const CART_READ_ONLY_MODE_DEACTIVATED = 'deactivated';
+
+
     /**
      * @var bool
      */
@@ -103,6 +110,11 @@ abstract class AbstractCart extends \Pimcore\Model\AbstractModel implements Cart
      */
     protected $subItemCount;
 
+    /**
+     * @var string
+     */
+    protected $currentReadonlyMode = self::CART_READ_ONLY_MODE_STRICT;
+
     public function __construct()
     {
         $this->setIgnoreReadonly();
@@ -110,7 +122,19 @@ abstract class AbstractCart extends \Pimcore\Model\AbstractModel implements Cart
         $this->unsetIgnoreReadonly();
     }
 
+
     /**
+     * @param string $currentReadonlyMode
+     */
+    public function setCurrentReadonlyMode(string $currentReadonlyMode): void
+    {
+        $this->currentReadonlyMode = $currentReadonlyMode;
+    }
+
+
+
+    /**
+     * @deprecated use checkout implementation V7 instead
      * @return bool
      */
     public function getIgnoreReadonly()
@@ -128,27 +152,51 @@ abstract class AbstractCart extends \Pimcore\Model\AbstractModel implements Cart
      */
     abstract protected function getCartCheckoutDataClassName();
 
+    /**
+     * @deprecated use checkout implementation V7 instead
+     */
     protected function setIgnoreReadonly()
     {
         $this->ignoreReadonly = true;
     }
 
+    /**
+     * @deprecated use checkout implementation V7 instead
+     */
     protected function unsetIgnoreReadonly()
     {
         $this->ignoreReadonly = false;
     }
 
+    /**
+     * @return bool
+     * @throws InvalidConfigException
+     * @throws \Pimcore\Bundle\EcommerceFrameworkBundle\Exception\UnsupportedException
+     * @deprecated use checkout implementation V7 instead
+     */
     public function isCartReadOnly()
     {
-        $order = Factory::getInstance()->getOrderManager()->getOrderFromCart($this);
+        switch ($this->currentReadonlyMode) {
 
-        return !empty($order) && !empty($order->getOrderState());
+            case self::CART_READ_ONLY_MODE_STRICT:
+                $order = Factory::getInstance()->getOrderManager()->getOrderFromCart($this);
+                return !empty($order) && !empty($order->getOrderState());
+
+            case self::CART_READ_ONLY_MODE_DEACTIVATED:
+                //read only mode deactivated, always return false
+                return false;
+
+            default:
+                throw new InvalidConfigException("Unknown Readonly Mode '" . $this->currentReadonlyMode . "'");
+
+        }
     }
 
     /**
      * @return bool
      *
      * @throws \Exception
+     * @deprecated use checkout implementation V7 instead
      */
     protected function checkCartIsReadOnly()
     {
