@@ -18,9 +18,12 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\V7\HandlePendingPayments\HandlePendingPaymentsStrategy;
+use Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\V7\HandlePendingPayments\ThrowExceptionStrategy;
 use Pimcore\Bundle\EcommerceFrameworkBundle\EnvironmentInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderManagerLocatorInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment\PaymentInterface;
+use Symfony\Component\DependencyInjection\ServiceLocator;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class CheckoutManagerFactory implements CheckoutManagerFactoryInterface
@@ -58,9 +61,16 @@ class CheckoutManagerFactory implements CheckoutManagerFactoryInterface
     protected $checkoutManagers = [];
 
     /**
+     * @var ServiceLocator
+     */
+    protected $handlePendingPaymentStrategyLocator = null;
+
+    /**
      * @var string
      */
     protected $className = CheckoutManager::class;
+
+    protected $handlePendingPaymentStrategy = null;
 
     public function __construct(
         EnvironmentInterface $environment,
@@ -68,12 +78,14 @@ class CheckoutManagerFactory implements CheckoutManagerFactoryInterface
         CommitOrderProcessorLocatorInterface $commitOrderProcessors,
         array $checkoutStepDefinitions,
         PaymentInterface $paymentProvider = null,
-        array $options = []
+        array $options = [],
+        ServiceLocator $handlePendingPaymentStrategyLocator = null
     ) {
         $this->environment = $environment;
         $this->orderManagers = $orderManagers;
         $this->commitOrderProcessors = $commitOrderProcessors;
         $this->paymentProvider = $paymentProvider;
+        $this->handlePendingPaymentStrategyLocator = $handlePendingPaymentStrategyLocator;
 
         $this->processOptions($options);
         $this->processCheckoutStepDefinitions($checkoutStepDefinitions);
@@ -88,6 +100,10 @@ class CheckoutManagerFactory implements CheckoutManagerFactoryInterface
 
         if (isset($options['class'])) {
             $this->className = $options['class'];
+        }
+
+        if (isset($options['handle_pending_payments_strategy'])) {
+            $this->handlePendingPaymentStrategy = $this->handlePendingPaymentStrategyLocator->get($options['handle_pending_payments_strategy']);
         }
     }
 
@@ -108,8 +124,8 @@ class CheckoutManagerFactory implements CheckoutManagerFactoryInterface
 
     protected function configureStepOptions(OptionsResolver $resolver)
     {
-        $this->configureClassOptions($resolver);
-
+        $resolver->setDefined('class');
+        $resolver->setAllowedTypes('class', 'string');
         $resolver->setRequired('class');
 
         $resolver->setDefined('options');
@@ -120,6 +136,11 @@ class CheckoutManagerFactory implements CheckoutManagerFactoryInterface
     {
         $resolver->setDefined('class');
         $resolver->setAllowedTypes('class', 'string');
+
+        $resolver->setDefined('handle_pending_payments_strategy');
+        $resolver->setAllowedTypes('handle_pending_payments_strategy', 'string');
+
+        $resolver->setDefault('handle_pending_payments_strategy', ThrowExceptionStrategy::class);
     }
 
     public function createCheckoutManager(CartInterface $cart): CheckoutManagerInterface
@@ -137,7 +158,7 @@ class CheckoutManagerFactory implements CheckoutManagerFactoryInterface
 
         $className = $this->className;
 
-        $this->checkoutManagers[$cartId] = new $className(
+        $checkoutManager = new $className(
             $cart,
             $this->environment,
             $this->orderManagers,
@@ -145,6 +166,12 @@ class CheckoutManagerFactory implements CheckoutManagerFactoryInterface
             $checkoutSteps,
             $this->paymentProvider
         );
+
+        if($checkoutManager instanceof \Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\V7\CheckoutManagerInterface) {
+            $checkoutManager->setHandlePendingPaymentsStrategy($this->handlePendingPaymentStrategy);
+        }
+
+        $this->checkoutManagers[$cartId] = $checkoutManager;
 
         return $this->checkoutManagers[$cartId];
     }

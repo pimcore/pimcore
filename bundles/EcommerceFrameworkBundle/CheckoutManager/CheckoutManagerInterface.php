@@ -97,6 +97,7 @@ interface CheckoutManagerInterface
      * @return AbstractPaymentInformation
      *
      * @throws UnsupportedException
+     * @deprecated use V7/startOrderPaymentWithPaymentProvider instead
      */
     public function startOrderPayment();
 
