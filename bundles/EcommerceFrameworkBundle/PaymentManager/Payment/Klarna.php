@@ -15,12 +15,15 @@
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderAgentInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Status;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\StatusInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\V7\PaymentResponse\SnippetResponse;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\V7\PaymentResponse\StartPaymentResponseInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\PriceInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class Klarna extends AbstractPayment
+class Klarna extends AbstractPayment implements \Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\V7\Payment\PaymentInterface
 {
     /**
      * @var string
@@ -139,6 +142,22 @@ class Klarna extends AbstractPayment
 
         return $snippet;
     }
+
+
+    /**
+     * Starts payment
+     *
+     * @param OrderAgentInterface $orderAgent
+     * @param PriceInterface $price
+     * @param array $config
+     * @return StartPaymentResponseInterface
+     */
+    public function startPayment(OrderAgentInterface $orderAgent, PriceInterface $price, array $config): StartPaymentResponseInterface
+    {
+        $snippet = $this->initPayment($price, $config);
+        return new SnippetResponse($orderAgent->getOrder(), $snippet);
+    }
+
 
     /**
      * @inheritdoc
@@ -271,4 +290,5 @@ class Klarna extends AbstractPayment
 
         return new \Klarna_Checkout_Order($connector, $uri);
     }
+
 }
