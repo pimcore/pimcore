@@ -176,6 +176,8 @@ class SessionCart extends AbstractCart implements CartInterface
     {
         $this->setIgnoreReadonly();
 
+        $timestampBackup = $this->getModificationDate();
+
         // set current cart
         foreach ($this->getItems() as $item) {
             $item->setCart($this);
@@ -186,8 +188,10 @@ class SessionCart extends AbstractCart implements CartInterface
                 }
             }
         }
-
         $this->modified();
+
+        $this->setModificationDate($timestampBackup);
         $this->unsetIgnoreReadonly();
+
     }
 }
