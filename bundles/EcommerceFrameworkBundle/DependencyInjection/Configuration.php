@@ -18,6 +18,7 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\DependencyInjection;
 
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Config\Processor\PlaceholderProcessor;
+use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\AbstractCart;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\Cart;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartFactory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartPriceCalculator;
@@ -284,7 +285,8 @@ class Configuration implements ConfigurationInterface
                                     ->end()
                                     ->append($this->buildOptionsNode('factory_options', [
                                         'cart_class_name' => Cart::class,
-                                        'guest_cart_class_name' => SessionCart::class
+                                        'guest_cart_class_name' => SessionCart::class,
+                                        'cart_readonly_mode' => AbstractCart::CART_READ_ONLY_MODE_STRICT
                                     ]))
                                 ->end()
                             ->end()
