@@ -273,10 +273,11 @@ EOT;
     /**
      * @return string|null
      */
-    public function getLowQualityPreviewDataUri() : ?string {
+    public function getLowQualityPreviewDataUri(): ?string
+    {
         $file = $this->getLowQualityPreviewFileSystemPath();
         $dataUri = null;
-        if(file_exists($file)) {
+        if (file_exists($file)) {
             $dataUri = 'data:image/svg+xml;base64,' . base64_encode(file_get_contents($file));
         }
 
