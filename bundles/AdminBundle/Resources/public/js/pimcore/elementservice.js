@@ -121,6 +121,7 @@ pimcore.elementservice.deleteElementFromServer = function (r, options, button) {
         var successHandler = options["success"];
         var elementType = options.elementType;
         var id = options.id;
+        var tabPanel = Ext.getCmp("pimcore_panel_tabs");
 
         var affectedNodes = pimcore.elementservice.getAffectedNodes(elementType, id);
         for (var index = 0; index < affectedNodes.length; index++) {
@@ -129,11 +130,24 @@ pimcore.elementservice.deleteElementFromServer = function (r, options, button) {
                 var nodeEl = Ext.fly(node.getOwnerTree().getView().getNodeByRecord(node));
                 nodeEl.addCls("pimcore_delete");
             }
-        }
 
-        if (pimcore.globalmanager.exists(elementType + "_" + id)) {
-            var tabPanel = Ext.getCmp("pimcore_panel_tabs");
-            tabPanel.remove(elementType + "_" + id);
+            tabPanel.items.each(function(tab) {
+                if(typeof tab[elementType] === "undefined") {
+                    return true;
+                }
+
+                var tabPath = '';
+                if(elementType === "object") {
+                    tabPath = tab[elementType].data.general.fullpath;
+                } else if(elementType === "asset") {
+                    tabPath = tab[elementType].data.path+tab[elementType].data.filename;
+                } else if(elementType === "document") {
+                    tabPath = tab[elementType].data.path+tab[elementType].data.key;
+                }
+                if (tabPath.indexOf(node.get('path')) === 0) {
+                    tabPanel.remove(elementType + "_" + tab[elementType].id);
+                }
+            });
         }
 
         if(r.deletejobs.length > 2) {
