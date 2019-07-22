@@ -263,6 +263,7 @@ class PayPalSmartPaymentButton extends AbstractPayment
             '',
             $statusResponse->result->status == 'COMPLETED' ? StatusInterface::STATUS_CLEARED : StatusInterface::STATUS_CANCELLED,
             [
+                'transactionId' => $statusResponse->result->purchase_units[0]->payments->captures[0]->id
             ]
         );
     }
