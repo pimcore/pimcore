@@ -271,6 +271,20 @@ EOT;
     }
 
     /**
+     * @return string|null
+     */
+    public function getLowQualityPreviewDataUri(): ?string
+    {
+        $file = $this->getLowQualityPreviewFileSystemPath();
+        $dataUri = null;
+        if (file_exists($file)) {
+            $dataUri = 'data:image/svg+xml;base64,' . base64_encode(file_get_contents($file));
+        }
+
+        return $dataUri;
+    }
+
+    /**
      * @inheritdoc
      */
     public function delete(bool $isNested = false)
@@ -446,11 +460,11 @@ EOT;
             }
         }
 
-        if (($width = $dimensions["width"]) && ($height = $dimensions["height"])) {
+        if (($width = $dimensions['width']) && ($height = $dimensions['height'])) {
             // persist dimensions to database
-            $this->setCustomSetting("imageDimensionsCalculated", true);
-            $this->setCustomSetting("imageWidth", $width);
-            $this->setCustomSetting("imageHeight", $height);
+            $this->setCustomSetting('imageDimensionsCalculated', true);
+            $this->setCustomSetting('imageWidth', $width);
+            $this->setCustomSetting('imageHeight', $height);
             $this->getDao()->updateCustomSettings();
             $this->clearDependentCache();
         }

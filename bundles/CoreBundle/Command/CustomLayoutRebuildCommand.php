@@ -15,7 +15,6 @@
 namespace Pimcore\Bundle\CoreBundle\Command;
 
 use Pimcore\Console\AbstractCommand;
-use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition;
 use Pimcore\Model\DataObject\ClassDefinition\ClassLayoutDefinitionManager;
 use Symfony\Component\Console\Input\InputInterface;
