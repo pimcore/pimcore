@@ -34,7 +34,7 @@ $config = $this->config;
 
     <style type="text/css">
         #background {
-            background-image: url(<?= $backgroundImageUrl ?>);
+            background-image: url("<?= $backgroundImageUrl ?>");
         }
     </style>
 
