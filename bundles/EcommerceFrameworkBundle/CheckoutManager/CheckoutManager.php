@@ -288,11 +288,11 @@ class CheckoutManager implements CheckoutManagerInterface
      *
      * @param AbstractOrder $order
      */
-    protected function updateEnvironmentAfterOrderCommit(AbstractOrder $order)
+    protected function updateEnvironmentAfterOrderCommit(?AbstractOrder $order)
     {
         $this->validateCheckoutSteps();
 
-        if (empty($order->getOrderState())) {
+        if (empty($order) || empty($order->getOrderState())) {
             // if payment not successful -> set current checkout step to last step and checkout to not finished
             // last step must be committed again in order to restart payment or e.g. commit without payment?
             $this->currentStep = $this->checkoutStepOrder[count($this->checkoutStepOrder) - 1];
