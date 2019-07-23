@@ -47,7 +47,7 @@ class OrderManagerEvent extends Event
      * @param OrderManagerInterface $orderManager
      * @param array $arguments
      */
-    public function __construct(CartInterface $cart, AbstractOrder $order, OrderManagerInterface $orderManager, array $arguments = [])
+    public function __construct(CartInterface $cart, ?AbstractOrder $order, OrderManagerInterface $orderManager, array $arguments = [])
     {
         $this->cart = $cart;
         $this->order = $order;
@@ -72,9 +72,9 @@ class OrderManagerEvent extends Event
     }
 
     /**
-     * @return AbstractOrder
+     * @return AbstractOrder|null
      */
-    public function getOrder(): AbstractOrder
+    public function getOrder(): ?AbstractOrder
     {
         return $this->order;
     }

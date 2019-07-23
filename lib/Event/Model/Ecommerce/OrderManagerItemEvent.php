@@ -48,10 +48,10 @@ class OrderManagerItemEvent extends Event
      * OrderManagerItemEvent constructor.
      * @param CartItemInterface $cartItem
      * @param bool $isGiftItem
-     * @param AbstractOrderItem $orderItem
+     * @param AbstractOrderItem|null $orderItem
      * @param array $arguments
      */
-    public function __construct(CartItemInterface $cartItem, bool $isGiftItem, AbstractOrderItem $orderItem, array $arguments = [])
+    public function __construct(CartItemInterface $cartItem, bool $isGiftItem, ?AbstractOrderItem $orderItem, array $arguments = [])
     {
         $this->cartItem = $cartItem;
         $this->isGiftItem = $isGiftItem;
@@ -92,9 +92,9 @@ class OrderManagerItemEvent extends Event
     }
 
     /**
-     * @return AbstractOrderItem
+     * @return AbstractOrderItem|null
      */
-    public function getOrderItem(): AbstractOrderItem
+    public function getOrderItem(): ?AbstractOrderItem
     {
         return $this->orderItem;
     }
