@@ -85,6 +85,12 @@ class OrderManager implements OrderManagerInterface
         VoucherServiceInterface $voucherService,
         array $options = []
     ) {
+        @trigger_error(
+            'Class ' . self::class . ' is deprecated since version 6.1.0 and will be removed in 7.0.0. ' .
+            ' Use ' . \Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\V7\OrderManager::class . ' class instead.',
+            E_USER_DEPRECATED
+        );
+
         $this->environment = $environment;
         $this->orderAgentFactory = $orderAgentFactory;
         $this->voucherService = $voucherService;

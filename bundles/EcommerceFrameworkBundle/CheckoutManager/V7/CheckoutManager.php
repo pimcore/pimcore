@@ -15,13 +15,18 @@
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\V7;
 
 
+use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\CommitOrderProcessorLocatorInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\V7\HandlePendingPayments\HandlePendingPaymentsStrategy;
+use Pimcore\Bundle\EcommerceFrameworkBundle\EnvironmentInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\PaymentNotAllowedException;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\UnsupportedException;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
+use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderManagerLocatorInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\V7\OrderManagerInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\V7\Payment\PaymentInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\V7\PaymentResponse\StartPaymentResponseInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class CheckoutManager extends \Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\CheckoutManager implements CheckoutManagerInterface
 {
@@ -29,6 +34,29 @@ class CheckoutManager extends \Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutM
      * @var HandlePendingPaymentsStrategy
      */
     protected $handlePendingPaymentsStrategy = null;
+
+    public function __construct(
+        CartInterface $cart,
+        EnvironmentInterface $environment,
+        OrderManagerLocatorInterface $orderManagers,
+        CommitOrderProcessorLocatorInterface $commitOrderProcessors,
+        array $checkoutSteps,
+        EventDispatcherInterface $eventDispatcher,
+        \Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment\PaymentInterface $paymentProvider = null
+    ) {
+        $this->cart = $cart;
+        $this->environment = $environment;
+
+        $this->orderManagers = $orderManagers;
+        $this->commitOrderProcessors = $commitOrderProcessors;
+
+        $this->payment = $paymentProvider;
+        $this->eventDispatcher = $eventDispatcher;
+
+        $this->setCheckoutSteps($checkoutSteps);
+    }
+
+
 
     /**
      * @return HandlePendingPaymentsStrategy

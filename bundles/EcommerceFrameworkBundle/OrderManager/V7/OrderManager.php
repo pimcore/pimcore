@@ -29,6 +29,7 @@ use Pimcore\Event\Model\Ecommerce\OrderManagerItemEvent;
 use Pimcore\File;
 use Pimcore\Model\DataObject\Fieldcollection;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class OrderManager extends \Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderManager implements OrderManagerInterface
 {
@@ -45,8 +46,16 @@ class OrderManager extends \Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager
         EventDispatcherInterface $eventDispatcher,
         array $options = []
     ) {
-        parent::__construct($environment, $orderAgentFactory, $voucherService, $options);
         $this->eventDispatcher = $eventDispatcher;
+
+        $this->environment = $environment;
+        $this->orderAgentFactory = $orderAgentFactory;
+        $this->voucherService = $voucherService;
+
+        $resolver = new OptionsResolver();
+        $this->configureOptions($resolver);
+
+        $this->processOptions($resolver->resolve($options));
     }
 
     /**
