@@ -18,6 +18,7 @@ use Pimcore\Log\FileObject;
 use Pimcore\Logger;
 use Pimcore\Model\Tool\Lock;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class CommitOrderProcessor extends \Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\CommitOrderProcessor
 {
@@ -29,7 +30,13 @@ class CommitOrderProcessor extends \Pimcore\Bundle\EcommerceFrameworkBundle\Chec
 
     public function __construct(OrderManagerLocatorInterface $orderManagers, EventDispatcherInterface $eventDispatcher, array $options = [])
     {
-        parent::__construct($orderManagers, $options);
+        $this->orderManagers = $orderManagers;
+
+        $resolver = new OptionsResolver();
+        $this->configureOptions($resolver);
+
+        $this->processOptions($resolver->resolve($options));
+
         $this->eventDispatcher = $eventDispatcher;
     }
 

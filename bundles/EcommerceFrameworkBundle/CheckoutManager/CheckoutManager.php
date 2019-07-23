@@ -120,6 +120,12 @@ class CheckoutManager implements CheckoutManagerInterface
         EventDispatcherInterface $eventDispatcher,
         PaymentInterface $paymentProvider = null
     ) {
+        @trigger_error(
+            'Class ' . self::class . ' is deprecated since version 6.1.0 and will be removed in 7.0.0. ' .
+            ' Use ' . \Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\V7\CheckoutManager::class . ' class instead.',
+            E_USER_DEPRECATED
+        );
+
         $this->cart = $cart;
         $this->environment = $environment;
 

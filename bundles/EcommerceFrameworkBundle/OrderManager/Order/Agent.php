@@ -23,6 +23,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrderItem as OrderItem
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractPaymentInformation;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\Currency;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderAgentInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\V7\OrderAgent;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment\PaymentInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\PaymentManagerInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\StatusInterface;
@@ -79,6 +80,12 @@ class Agent implements OrderAgentInterface
         PaymentManagerInterface $paymentManager,
         EventDispatcherInterface $eventDispatcher
     ) {
+        @trigger_error(
+            'Class ' . self::class . ' is deprecated since version 6.1.0 and will be removed in 7.0.0. ' .
+            ' Use ' . OrderAgent::class . ' class instead.',
+            E_USER_DEPRECATED
+        );
+
         $this->order = $order;
         $this->environment = $environment;
         $this->paymentManager = $paymentManager;

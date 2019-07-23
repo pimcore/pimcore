@@ -16,18 +16,32 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\V7;
 
 
 use Exception;
+use Pimcore\Bundle\EcommerceFrameworkBundle\EnvironmentInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\PaymentNotAllowedException;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\UnsupportedException;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder as Order;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractPaymentInformation;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\Order\Agent;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\PaymentManagerInterface;
 use Pimcore\Event\Ecommerce\OrderAgentEvents;
 use Pimcore\Event\Model\Ecommerce\OrderAgentEvent;
 use Pimcore\Model\DataObject\Fieldcollection\Data\PaymentInfo;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class OrderAgent extends Agent
 {
 
+    public function __construct(
+        Order $order,
+        EnvironmentInterface $environment,
+        PaymentManagerInterface $paymentManager,
+        EventDispatcherInterface $eventDispatcher
+    ) {
+        $this->order = $order;
+        $this->environment = $environment;
+        $this->paymentManager = $paymentManager;
+        $this->eventDispatcher = $eventDispatcher;
+    }
 
     /**
      * @inheritdoc
