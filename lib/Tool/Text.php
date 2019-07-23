@@ -64,7 +64,7 @@ class Text
                         $linkAttr = 'href';
                         $path = $element->getFullPath();
 
-                        if(($element instanceof Document || $element instanceof Concrete) && !$element->isPublished()) {
+                        if (($element instanceof Document || $element instanceof Concrete) && !$element->isPublished()) {
                             $path = null;
                         } elseif ($element instanceof Document) {
                             // get parameters
@@ -147,7 +147,7 @@ class Text
                         }
                     }
 
-                    if($path) {
+                    if ($path) {
                         $pattern = '/' . $linkAttr . '="[^"]*"/';
                         $replacement = $linkAttr . '="' . $path . '"';
                         $newTag = preg_replace($pattern, $replacement, $oldTag);
@@ -156,7 +156,7 @@ class Text
                     }
                 }
 
-                if(!$path) {
+                if (!$path) {
                     // in case there's a broken internal reference/link
                     if ($matches[1][$i] == 'img') {
                         // remove the entire tag for images
