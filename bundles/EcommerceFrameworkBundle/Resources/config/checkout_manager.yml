@@ -30,7 +30,7 @@ services:
     Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\V7\CommitOrderProcessor:
         arguments:
             - '@pimcore_ecommerce.locator.order_manager'
-            - '@?'
+            - '@event_dispatcher'
             - [] # options
 
 

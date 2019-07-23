@@ -42,10 +42,10 @@ class CommitOrderProcessorEvent extends Event
     /**
      * CommitOrderProcessorEvent constructor.
      * @param CommitOrderProcessorInterface $commitOrderProcessor
-     * @param AbstractOrder $order
+     * @param AbstractOrder|null $order
      * @param array $arguments
      */
-    public function __construct(CommitOrderProcessorInterface $commitOrderProcessor, AbstractOrder $order, array $arguments = [])
+    public function __construct(CommitOrderProcessorInterface $commitOrderProcessor, ?AbstractOrder $order, array $arguments = [])
     {
         $this->commitOrderProcessor = $commitOrderProcessor;
         $this->order = $order;
@@ -71,7 +71,7 @@ class CommitOrderProcessorEvent extends Event
     /**
      * @return AbstractOrder
      */
-    public function getOrder(): AbstractOrder
+    public function getOrder(): ?AbstractOrder
     {
         return $this->order;
     }
