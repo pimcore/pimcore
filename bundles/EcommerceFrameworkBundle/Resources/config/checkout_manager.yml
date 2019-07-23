@@ -19,6 +19,8 @@ services:
             - [] # checkout steps
             - '@?' # payment provider
             - [] # options
+            - '@?'
+            - '@event_dispatcher'
 
     Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\CommitOrderProcessor:
         arguments:
