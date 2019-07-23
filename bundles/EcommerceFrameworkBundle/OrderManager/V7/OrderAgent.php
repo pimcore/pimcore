@@ -21,6 +21,8 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\UnsupportedException;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder as Order;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractPaymentInformation;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\Order\Agent;
+use Pimcore\Event\Ecommerce\OrderAgentEvents;
+use Pimcore\Event\Model\Ecommerce\OrderAgentEvent;
 use Pimcore\Model\DataObject\Fieldcollection\Data\PaymentInfo;
 
 class OrderAgent extends Agent
@@ -34,6 +36,10 @@ class OrderAgent extends Agent
     {
         $currentPaymentInformation = $this->getCurrentPendingPaymentInfo();
         $order = $this->getOrder();
+
+        $event = new OrderAgentEvent($this, ['currentPaymentInformation' => $currentPaymentInformation]);
+        $this->eventDispatcher->dispatch(OrderAgentEvents::PRE_INIT_PAYMENT, $event);
+        $currentPaymentInformation = $event->getArgument('currentPaymentInformation');
 
         if($currentPaymentInformation) {
 
@@ -70,6 +76,8 @@ class OrderAgent extends Agent
 
         }
 
+        $this->eventDispatcher->dispatch(OrderAgentEvents::POST_INIT_PAYMENT, new OrderAgentEvent($this, ['currentPaymentInformation' => $currentPaymentInformation]));
+
         return $currentPaymentInformation;
     }
 
@@ -84,11 +92,17 @@ class OrderAgent extends Agent
         //initialize payment (if not already done before)
         $currentPaymentInformation = $this->initPayment();
 
+        $event = new OrderAgentEvent($this, ['currentPaymentInformation' => $currentPaymentInformation]);
+        $this->eventDispatcher->dispatch(OrderAgentEvents::PRE_START_PAYMENT, $event);
+        $currentPaymentInformation = $event->getArgument('currentPaymentInformation');
+
         $order = $this->getOrder();
 
         //set payment information state to pending
         $currentPaymentInformation->setPaymentState($order::ORDER_STATE_PAYMENT_PENDING);
         $order->save(['versionNote' => 'Agent::startPayment - save order to update PaymentInformation.']);
+
+        $this->eventDispatcher->dispatch(OrderAgentEvents::POST_START_PAYMENT, new OrderAgentEvent($this, ['currentPaymentInformation' => $currentPaymentInformation]));
 
         return $currentPaymentInformation;
     }
