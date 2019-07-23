@@ -25,6 +25,11 @@ services:
             - '@pimcore_ecommerce.locator.order_manager'
             - [] # options
 
+    Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\V7\CommitOrderProcessor:
+        arguments:
+            - '@pimcore_ecommerce.locator.order_manager'
+            - [] # options
+
 
     Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\V7\HandlePendingPayments\ThrowExceptionStrategy:
     Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\V7\HandlePendingPayments\CancelPaymentOrRecreateOrderStrategy: ~
