@@ -24,6 +24,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\EnvironmentInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderManagerLocatorInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment\PaymentInterface;
 use Symfony\Component\DependencyInjection\ServiceLocator;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class CheckoutManagerFactory implements CheckoutManagerFactoryInterface
@@ -72,6 +73,11 @@ class CheckoutManagerFactory implements CheckoutManagerFactoryInterface
 
     protected $handlePendingPaymentStrategy = null;
 
+    /**
+     * @var EventDispatcherInterface
+     */
+    protected $eventDispatcher = null;
+
     public function __construct(
         EnvironmentInterface $environment,
         OrderManagerLocatorInterface $orderManagers,
@@ -79,13 +85,15 @@ class CheckoutManagerFactory implements CheckoutManagerFactoryInterface
         array $checkoutStepDefinitions,
         PaymentInterface $paymentProvider = null,
         array $options = [],
-        ServiceLocator $handlePendingPaymentStrategyLocator = null
+        ServiceLocator $handlePendingPaymentStrategyLocator = null,
+        EventDispatcherInterface $eventDispatcher = null
     ) {
         $this->environment = $environment;
         $this->orderManagers = $orderManagers;
         $this->commitOrderProcessors = $commitOrderProcessors;
         $this->paymentProvider = $paymentProvider;
         $this->handlePendingPaymentStrategyLocator = $handlePendingPaymentStrategyLocator;
+        $this->eventDispatcher = $eventDispatcher;
 
         $this->processOptions($options);
         $this->processCheckoutStepDefinitions($checkoutStepDefinitions);
@@ -164,6 +172,7 @@ class CheckoutManagerFactory implements CheckoutManagerFactoryInterface
             $this->orderManagers,
             $this->commitOrderProcessors,
             $checkoutSteps,
+            $this->eventDispatcher,
             $this->paymentProvider
         );
 

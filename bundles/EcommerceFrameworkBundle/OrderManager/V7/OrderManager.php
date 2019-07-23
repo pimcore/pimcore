@@ -16,14 +16,38 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\V7;
 
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartItemInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\EnvironmentInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\OrderUpdateNotPossibleException;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\UnsupportedException;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
+use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderAgentFactoryInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\VoucherServiceInterface;
+use Pimcore\Event\Ecommerce\OrderManagerEvents;
+use Pimcore\Event\Model\Ecommerce\OrderManagerEvent;
+use Pimcore\Event\Model\Ecommerce\OrderManagerItemEvent;
 use Pimcore\File;
 use Pimcore\Model\DataObject\Fieldcollection;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class OrderManager extends \Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderManager implements OrderManagerInterface
 {
+
+    /**
+     * @var EventDispatcherInterface
+     */
+    protected $eventDispatcher;
+
+    public function __construct(
+        EnvironmentInterface $environment,
+        OrderAgentFactoryInterface $orderAgentFactory,
+        VoucherServiceInterface $voucherService,
+        EventDispatcherInterface $eventDispatcher,
+        array $options = []
+    ) {
+        parent::__construct($environment, $orderAgentFactory, $voucherService, $options);
+        $this->eventDispatcher = $eventDispatcher;
+    }
 
     /**
      * @param CartInterface $cart
@@ -37,6 +61,10 @@ class OrderManager extends \Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager
     public function getOrCreateOrderFromCart(CartInterface $cart)
     {
         $order = $this->getOrderFromCart($cart);
+
+        $event = new OrderManagerEvent($cart, $order, $this);
+        $this->eventDispatcher->dispatch(OrderManagerEvents::PRE_GET_OR_CREATE_ORDER_FROM_CART, $event);
+        $order = $event->getOrder();
 
         // no order found, create new one
         if (empty($order)) {
@@ -58,6 +86,16 @@ class OrderManager extends \Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager
 
         $cartIsLockedDueToPayments = $this->cartHasPendingPayments($cart);
         $orderNeedsUpdate = $this->orderNeedsUpdate($cart, $order);
+
+        $event = new OrderManagerEvent($cart, $order, $this, [
+            'cartIsLockedDueToPayments' => $cartIsLockedDueToPayments,
+            'orderNeedsUpdate' => $orderNeedsUpdate
+        ]);
+        $this->eventDispatcher->dispatch(OrderManagerEvents::PRE_UPDATE_ORDER, $event);
+
+        $cartIsLockedDueToPayments = $event->getArgument('cartIsLockedDueToPayments');
+        $orderNeedsUpdate = $event->getArgument('orderNeedsUpdate');
+
 
         if($orderNeedsUpdate && $cartIsLockedDueToPayments) {
             throw new OrderUpdateNotPossibleException('Order cannot be updated from cart due to pending payments. Cancel payment or recreate order.');
@@ -108,6 +146,9 @@ class OrderManager extends \Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager
         $order->save();
 
         $this->cleanupZombieOrderItems($order);
+
+        $this->eventDispatcher->dispatch(OrderManagerEvents::POST_UPDATE_ORDER, new OrderManagerEvent($cart, $order, $this));
+
 
         return $order;
     }
@@ -261,5 +302,32 @@ class OrderManager extends \Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager
         }
 
         return false;
+    }
+
+
+    /**
+     * @param CartItemInterface $item
+     * @param $parent
+     * @param bool $isGiftItem
+     * @return \Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrderItem
+     * @throws \Exception
+     */
+    protected function createOrderItem(CartItemInterface $item, $parent, $isGiftItem = false) {
+        $orderItem = parent::createOrderItem($item, $parent, $isGiftItem);
+
+        $event = new OrderManagerItemEvent($item, $isGiftItem, $orderItem);
+        $this->eventDispatcher->dispatch(OrderManagerEvents::POST_CREATE_ORDER_ITEM, $event);
+
+        return $event->getOrderItem();
+    }
+
+    protected function buildOrderItemKey(CartItemInterface $item, bool $isGiftItem = false)
+    {
+        $itemKey = parent::buildOrderItemKey($item, $isGiftItem);
+
+        $event = new OrderManagerItemEvent($item, $isGiftItem, null, ['itemKey' => $itemKey]);
+        $this->eventDispatcher->dispatch(OrderManagerEvents::BUILD_ORDER_ITEM_KEY, $event);
+
+        return $event->getArgument('itemKey');
     }
 }

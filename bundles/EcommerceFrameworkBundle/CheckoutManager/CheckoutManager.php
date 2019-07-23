@@ -26,7 +26,10 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment\QPay;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\StatusInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\Price;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
+use Pimcore\Event\Ecommerce\CheckoutManagerEvents;
+use Pimcore\Event\Model\Ecommerce\CheckoutManagerStepsEvent;
 use Pimcore\Model\DataObject\Fieldcollection\Data\PaymentInfo;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class CheckoutManager implements CheckoutManagerInterface
 {
@@ -94,12 +97,19 @@ class CheckoutManager implements CheckoutManagerInterface
     protected $paid = true;
 
     /**
+     * @var EventDispatcherInterface
+     */
+    protected $eventDispatcher;
+
+    /**
+     * CheckoutManager constructor.
      * @param CartInterface $cart
      * @param EnvironmentInterface $environment
      * @param OrderManagerLocatorInterface $orderManagers
      * @param CommitOrderProcessorLocatorInterface $commitOrderProcessors
-     * @param CheckoutStepInterface[] $checkoutSteps
+     * @param array $checkoutSteps
      * @param PaymentInterface|null $paymentProvider
+     * @param EventDispatcherInterface|null $eventDispatcher
      */
     public function __construct(
         CartInterface $cart,
@@ -107,6 +117,7 @@ class CheckoutManager implements CheckoutManagerInterface
         OrderManagerLocatorInterface $orderManagers,
         CommitOrderProcessorLocatorInterface $commitOrderProcessors,
         array $checkoutSteps,
+        EventDispatcherInterface $eventDispatcher,
         PaymentInterface $paymentProvider = null
     ) {
         $this->cart = $cart;
@@ -116,6 +127,7 @@ class CheckoutManager implements CheckoutManagerInterface
         $this->commitOrderProcessors = $commitOrderProcessors;
 
         $this->payment = $paymentProvider;
+        $this->eventDispatcher = $eventDispatcher;
 
         $this->setCheckoutSteps($checkoutSteps);
     }
@@ -163,6 +175,10 @@ class CheckoutManager implements CheckoutManagerInterface
         if (null === $this->currentStep && !$this->isFinished()) {
             $this->currentStep = $this->checkoutStepOrder[0];
         }
+
+        $event = new CheckoutManagerStepsEvent($this, $this->currentStep);
+        $this->eventDispatcher->dispatch(CheckoutManagerEvents::INITIALIZE_STEP_STATE, $event);
+        $this->currentStep = $event->getCurrentStep();
     }
 
     /**
@@ -448,6 +464,10 @@ class CheckoutManager implements CheckoutManagerInterface
     {
         $this->validateCheckoutSteps();
 
+        $event = new CheckoutManagerStepsEvent($this, $step, ['data' => $data]);
+        $this->eventDispatcher->dispatch(CheckoutManagerEvents::PRE_COMMIT_STEP, $event);
+        $data = $event->getArgument('data');
+
         // get index of current step and index of step to commit
         $indexCurrentStep = array_search($this->currentStep, $this->checkoutStepOrder);
         $index = array_search($step, $this->checkoutStepOrder);
@@ -487,6 +507,9 @@ class CheckoutManager implements CheckoutManagerInterface
             $this->cart->save();
             $this->environment->save();
         }
+
+        $event = new CheckoutManagerStepsEvent($this, $step, ['data' => $data]);
+        $this->eventDispatcher->dispatch(CheckoutManagerEvents::POST_COMMIT_STEP, $event);
 
         return $result;
     }
