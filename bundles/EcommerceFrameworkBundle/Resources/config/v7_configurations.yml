@@ -15,3 +15,5 @@ pimcore_ecommerce_framework:
                 factory_options:
                     class: Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\V7\CheckoutManager
                     handle_pending_payments_strategy: Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\V7\HandlePendingPayments\CancelPaymentOrRecreateOrderStrategy
+                commit_order_processor:
+                    id: Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\V7\CommitOrderProcessor
