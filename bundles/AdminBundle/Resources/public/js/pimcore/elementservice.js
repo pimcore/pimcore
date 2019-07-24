@@ -785,11 +785,17 @@ pimcore.elementservice.setElementPublishedState = function(options) {
                         }
                     }
                 }
-                if (published) {
-                    delete node.data.cls;
-                } else {
-                    node.data.cls = "pimcore_unpublished";
+
+                if(!node.data['cls']) {
+                    node.data['cls'] = '';
                 }
+
+                if (published) {
+                    node.data.cls = node.data.cls.replace(/pimcore_unpublished/g, '');
+                } else {
+                    node.data.cls += " pimcore_unpublished";
+                }
+
                 node.data.published = published;
             }
         } catch (e) {
