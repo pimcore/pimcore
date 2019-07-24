@@ -226,8 +226,8 @@ class Mpay24Seamless extends AbstractPayment
             //@see https://docs.mpay24.com/docs/paypal for extensions (payment - method specific)
             $customerName = $order->getCustomer() ? $order->getCustomer()->getLastname()." ".$order->getCustomer()->getFirstname() : "";
             $additional = [
-                "customerID" => $order->getCustomer() ? $order->getCustomer()->getId() : "", // WALTER confirmed GDPR compatibility
-                "customerName" => $customerName, // WALTER confirmed GDPR compatibility
+                "customerID" => $order->getCustomer() ? $order->getCustomer()->getId() : "", // ensure GDPR compliance
+                "customerName" => $customerName, // ensure GDPR compliance
                 'order' =>
                     [
                         'description' => sprintf(
@@ -257,11 +257,11 @@ class Mpay24Seamless extends AbstractPayment
 
 
             //add information on item level
+            $additional = [];
             //@todo must manually update MPAY24 vendor folder on every update:
             // @see https://github.com/mpay24/mpay24-php/pull/79#issuecomment-383528608
-            // if payment with Paypal won't work, then deactivate this line (although this line is very cool)
-            //$additional = $this->addOrderItemPositions($order, $paymentType, $additional);
-            //$additional = [];
+            // if payment with Paypal won't work, then deactivate this line (although this line is very cool)           
+            //$additional = $this->addOrderItemPositions($order, $paymentType, $additional);           
 
             $result = $mpay24->payment($paymentType, $paymentInfo->getInternalPaymentId(), $payment, $additional);
 
