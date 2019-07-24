@@ -57,7 +57,7 @@ class PimcoreUrl extends Helper
             $urlOptions = array_replace($this->requestHelper->getMasterRequest()->query->all(), $urlOptions);
         }
 
-        return $this->generateUrl($name, $urlOptions, $relative ? UrlGeneratorInterface::RELATIVE_PATH : UrlGeneratorInterface::ABSOLUTE_PATH);
+        return $this->generateUrl($name, $urlOptions, $relative ? UrlGeneratorInterface::RELATIVE_PATH : UrlGeneratorInterface::ABSOLUTE_PATH, $encode);
     }
 
     /**
@@ -69,8 +69,10 @@ class PimcoreUrl extends Helper
      *
      * @return string
      */
-    protected function generateUrl($name = null, $parameters = [], $referenceType = UrlGeneratorInterface::ABSOLUTE_PATH)
+    protected function generateUrl($name = null, $parameters = [], $referenceType = UrlGeneratorInterface::ABSOLUTE_PATH, $encode = true)
     {
+        $parameters['encode'] = $encode;
+        
         // if name is an array, treat it as parameters
         if (is_array($name)) {
             if (is_array($parameters)) {
