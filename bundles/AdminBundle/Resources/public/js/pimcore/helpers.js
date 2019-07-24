@@ -336,6 +336,18 @@ pimcore.helpers.openElement = function (idOrPath, type, subtype) {
     }
 };
 
+pimcore.helpers.closeElement = function (id, type) {
+    if (type == "document") {
+        pimcore.helpers.closeDocument(id);
+    }
+    else if (type == "asset") {
+        pimcore.helpers.closeAsset(id);
+    }
+    else if (type == "object") {
+        pimcore.helpers.closeObject(id);
+    }
+};
+
 pimcore.helpers.getElementTypeByObject = function (object) {
     var type = null;
     if (object instanceof pimcore.document.document) {

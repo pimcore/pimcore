@@ -190,10 +190,17 @@ pimcore.elementservice.deleteElementFromServer = function (r, options, button) {
                     successHandler();
                 }
             }.bind(this, id, successHandler),
-            update: function (currentStep, steps, percent) {
+            update: function (currentStep, steps, percent, response) {
                 if(this.deleteProgressBar) {
                     var status = currentStep / steps;
                     this.deleteProgressBar.updateProgress(status, percent + "%");
+                }
+
+                if(response && response['deleted']) {
+                    var ids = Object.keys(response['deleted']);
+                    ids.forEach(function (id) {
+                        pimcore.helpers.closeElement(id, elementType);
+                    })
                 }
             }.bind(this),
             failure: function (id, message) {

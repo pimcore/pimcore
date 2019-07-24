@@ -356,7 +356,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
 
             $deletedItems = [];
             foreach ($documents as $document) {
-                $deletedItems[] = $document->getRealFullPath();
+                $deletedItems[$document->getId()] = $document->getRealFullPath();
                 if ($document->isAllowed('delete') && !$document->isLocked()) {
                     $document->delete();
                 }
