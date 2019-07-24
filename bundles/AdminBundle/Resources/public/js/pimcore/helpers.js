@@ -2362,7 +2362,7 @@ pimcore.helpers.showAbout = function () {
     var html = '<div class="pimcore_about_window">';
     html += '<br><img src="/bundles/pimcoreadmin/img/logo-gray.svg" style="width: 300px;"><br>';
     html += '<br><b>Version: ' + pimcore.settings.version + '</b>';
-    html += '<br><b>Git Hash: ' + pimcore.settings.build + '</b>';
+    html += '<br><b>Git Hash: <a href="https://github.com/pimcore/pimcore/commit/' + pimcore.settings.build + '" target="_blank">' + pimcore.settings.build + '</a></b>';
     html += '<br><br>&copy; by pimcore GmbH (<a href="https://pimcore.com/" target="_blank">pimcore.com</a>)';
     html += '<br><br><a href="https://github.com/pimcore/pimcore/blob/master/LICENSE.md" target="_blank">License</a> | ';
     html += '<a href="https://pimcore.com/en/about/contact" target="_blank">Contact</a>';
