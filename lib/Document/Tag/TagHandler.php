@@ -84,6 +84,11 @@ class TagHandler implements TagHandlerInterface, LoggerAwareInterface
     protected $brickTemplateCache = [];
 
     /**
+     *
+     */
+    public const ATTRIBUTE_AREABRICK_INFO = '_pimcore_areabrick_info';
+
+    /**
      * @param AreabrickManagerInterface $brickManager
      * @param EngineInterface $templating
      * @param BundleLocatorInterface $bundleLocator
@@ -205,7 +210,11 @@ class TagHandler implements TagHandlerInterface, LoggerAwareInterface
         $brick = $this->brickManager->getBrick($info->getId());
 
         $info->setView($view);
-        $info->setRequest($this->requestHelper->getCurrentRequest());
+        $request = $this->requestHelper->getCurrentRequest();
+        $brickInfoRestoreValue = $request->attributes->get(self::ATTRIBUTE_AREABRICK_INFO);
+        $request->attributes->set(self::ATTRIBUTE_AREABRICK_INFO, $info);
+
+        $info->setRequest($request);
 
         // assign parameters to view
         $view->getParameters()->add($params);
@@ -272,6 +281,12 @@ class TagHandler implements TagHandlerInterface, LoggerAwareInterface
         }
 
         echo $brick->getHtmlTagClose($info);
+
+        if($brickInfoRestoreValue === null) {
+            $request->attributes->remove(self::ATTRIBUTE_AREABRICK_INFO);
+        } else {
+            $request->attributes->set(self::ATTRIBUTE_AREABRICK_INFO, $brickInfoRestoreValue);
+        }
 
         // call post render
         $this->handleBrickActionResult($brick->postRenderAction($info));
