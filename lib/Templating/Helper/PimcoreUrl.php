@@ -66,12 +66,17 @@ class PimcoreUrl extends Helper
      * @param string|null $name
      * @param array $parameters
      * @param int $referenceType
+     * @param bool $encode
      *
      * @return string
      */
     protected function generateUrl($name = null, $parameters = [], $referenceType = UrlGeneratorInterface::ABSOLUTE_PATH, $encode = true)
     {
-        $parameters['encode'] = $encode;
+        if($encode !== true) {
+            // encoding is default anyway, so we only set it when really necessary, to minimize the risk of
+            // side-effects when using parameters for that purpose (other routers may not be aware of param `encode`
+            $parameters['encode'] = $encode;
+        }
         
         // if name is an array, treat it as parameters
         if (is_array($name)) {
