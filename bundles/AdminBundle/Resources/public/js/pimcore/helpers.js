@@ -306,22 +306,22 @@ pimcore.helpers.recordElement = function (id, type, name) {
 
 };
 
-pimcore.helpers.openElement = function (id, type, subtype) {
+pimcore.helpers.openElement = function (idOrPath, type, subtype) {
     if (typeof subtype != "undefined") {
         if (type == "document") {
-            pimcore.helpers.openDocument(id, subtype);
+            pimcore.helpers.openDocument(idOrPath, subtype);
         }
         else if (type == "asset") {
-            pimcore.helpers.openAsset(id, subtype);
+            pimcore.helpers.openAsset(idOrPath, subtype);
         }
         else if (type == "object") {
-            pimcore.helpers.openObject(id, subtype);
+            pimcore.helpers.openObject(idOrPath, subtype);
         }
     } else {
         Ext.Ajax.request({
             url: "/admin/element/get-subtype",
             params: {
-                id: id,
+                id: idOrPath,
                 type: type
             },
             success: function (response) {
@@ -2135,6 +2135,7 @@ pimcore.helpers.editmode.openLinkEditPanel = function (data, callback) {
 
 pimcore.helpers.editmode.openVideoEditPanel = function (data, callback) {
 
+    var window = null;
     var form = null;
     var fieldPath = new Ext.form.TextField({
         fieldLabel: t('path'),
@@ -2244,14 +2245,24 @@ pimcore.helpers.editmode.openVideoEditPanel = function (data, callback) {
         }
     });
 
+    var openButton = new Ext.Button({
+        iconCls: "pimcore_icon_open",
+        handler: function () {
+            pimcore.helpers.openElement(fieldPath.getValue(), 'asset');
+            window.close();
+        }
+    });
+
     var updateType = function (type) {
         searchButton.enable();
+        openButton.enable();
 
         var labelEl = form.getComponent("pathContainer").getComponent("path").labelEl;
         labelEl.update(t("path"));
 
         if (type != "asset") {
             searchButton.disable();
+            openButton.disable();
 
             poster.hide();
             poster.setValue("");
@@ -2303,7 +2314,7 @@ pimcore.helpers.editmode.openVideoEditPanel = function (data, callback) {
             layout: 'hbox',
             border: false,
             itemId: "pathContainer",
-            items: [fieldPath, searchButton]
+            items: [fieldPath, searchButton, openButton]
         }, poster, {
             xtype: "textfield",
             name: "title",
@@ -2339,8 +2350,8 @@ pimcore.helpers.editmode.openVideoEditPanel = function (data, callback) {
     });
 
 
-    var window = new Ext.Window({
-        width: 500,
+    window = new Ext.Window({
+        width: 510,
         height: 370,
         title: t("video"),
         items: [form],
