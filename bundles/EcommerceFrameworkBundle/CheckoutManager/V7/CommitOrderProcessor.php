@@ -92,12 +92,15 @@ class CommitOrderProcessor extends \Pimcore\Bundle\EcommerceFrameworkBundle\Chec
             throw new UnsupportedException($message);
         }
 
-        if (in_array($paymentStatus->getStatus(), [AbstractOrder::ORDER_STATE_COMMITTED, AbstractOrder::ORDER_STATE_PAYMENT_AUTHORIZED])) {
+        if (in_array($paymentStatus->getStatus(), [StatusInterface::STATUS_CLEARED, StatusInterface::STATUS_AUTHORIZED])) {
             // only when payment state is committed or authorized -> proceed and commit order
             $order = $this->commitOrder($order);
+        } else if($paymentStatus->getStatus() == StatusInterface::STATUS_PENDING) {
+            $order->setOrderState(AbstractOrder::ORDER_STATE_PAYMENT_PENDING);
+            $order->save(['versionNote' => 'CommitOrderProcessor::commitOrderPayment - set order state to Pending since payment is still pending.']);
         } else {
             $order->setOrderState(null);
-            $order->save(['versionNote' => 'CommitOrderProcessor::commitOrderPayment - set order state to null.']);
+            $order->save(['versionNote' => 'CommitOrderProcessor::commitOrderPayment - set order state to null because payment not successful. Payment status was' . $paymentStatus->getStatus()]);
 
             throw new PaymentNotSuccessfulException($order, $paymentStatus, 'Payment not successful, state was ' . $paymentStatus->getStatus());
         }
