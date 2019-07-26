@@ -349,7 +349,7 @@ class OrderManager implements OrderManagerInterface
         $currency = $cart->getPriceCalculator()->getGrandTotal()->getCurrency();
         $order->setCurrency($currency->getShortName());
 
-        $order->save();
+        $order->save(['versionNote' => 'OrderManager::getOrCreateOrderFromCart - save order to add items.']);
 
         // for each cart item and cart sub item create corresponding order items
         $orderItems = $this->applyOrderItems($cart->getItems(), $order);
@@ -362,7 +362,7 @@ class OrderManager implements OrderManagerInterface
         $order->setGiftItems($orderGiftItems);
 
         $order = $this->applyCustomCheckoutDataToOrder($cart, $order);
-        $order->save();
+        $order->save(['versionNote' => 'OrderManager::getOrCreateOrderFromCart - final save.']);
 
         $this->cleanupZombieOrderItems($order);
 

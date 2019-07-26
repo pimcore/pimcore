@@ -139,7 +139,7 @@ class OrderManager extends \Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager
         $currency = $cart->getPriceCalculator()->getGrandTotal()->getCurrency();
         $order->setCurrency($currency->getShortName());
 
-        $order->save();
+        $order->save(['versionNote' => 'OrderManager::getOrCreateOrderFromCart - save order to add items.']);
 
         // for each cart item and cart sub item create corresponding order items
         $orderItems = $this->applyOrderItems($cart->getItems(), $order);
@@ -152,7 +152,7 @@ class OrderManager extends \Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager
         $order->setGiftItems($orderGiftItems);
 
         $order = $this->applyCustomCheckoutDataToOrder($cart, $order);
-        $order->save();
+        $order->save(['versionNote' => 'OrderManager::getOrCreateOrderFromCart - final save.']);
 
         $this->cleanupZombieOrderItems($order);
 
@@ -224,10 +224,10 @@ class OrderManager extends \Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager
             $order->setOrderdate(new \DateTime());
             $order->setCartId($sourceOrder->getCartId());
 
-            $order->save();
+            $order->save(['versionNote' => 'OrderManager::recreateOrder.']);
 
             $sourceOrder->setSuccessorOrder($order);
-            $sourceOrder->save();
+            $sourceOrder->save(['versionNote' => 'OrderManager::recreateOrder - save successor order.']);
         }
 
 
@@ -254,14 +254,14 @@ class OrderManager extends \Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager
         $order->setOrderdate(new \DateTime());
         $order->setCartId($sourceOrder->getCartId());
 
-        $order->save();
+        $order->save(['versionNote' => 'OrderManager::recreateOrderBasedOnSourceOrder - initial save.']);
 
         $sourceOrder->setSuccessorOrder($order);
-        $sourceOrder->save();
+        $sourceOrder->save(['versionNote' => 'OrderManager::recreateOrderBasedOnSourceOrder - save successor order.']);
 
         $order->setItems($this->cloneItems($sourceOrder->getItems(), $order));
         $order->setGiftItems($this->cloneItems($sourceOrder->getGiftItems(), $order));
-        $order->save();
+        $order->save(['versionNote' => 'OrderManager::recreateOrderBasedOnSourceOrder - final save.']);
 
         return $order;
     }

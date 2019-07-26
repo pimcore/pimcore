@@ -354,7 +354,7 @@ class Agent implements OrderAgentInterface
             $paymentProvider->setRecurringPaymentSourceOrderData($sourceOrder, $providerData);
         }
 
-        $order->save();
+        $order->save(['versionNote' => 'OrderAgent::setPaymentProvider.']);
 
         return $this;
     }
@@ -547,7 +547,7 @@ class Agent implements OrderAgentInterface
             $currentPaymentInformation->setPaymentState($order::ORDER_STATE_CANCELLED);
             $currentPaymentInformation->setMessage("Payment cancelled by 'cancelStartedOrderPayment'");
             $order->setOrderState(null);
-            $order->save();
+            $order->save(['versionNote' => 'OrderAgent::cancelStartedOrderPayment - empty order state.']);
         } else {
             throw new UnsupportedException('Cancel started order payment not possible');
         }
@@ -644,7 +644,7 @@ class Agent implements OrderAgentInterface
                 ' -> got response although payment state was already aborted, new payment state was "' .
                 $paymentStateBackup . '". throwing exception!'
             );
-            $order->save();
+            $order->save(['versionNote' => 'OrderAgent::updatePayment - aborted response received.']);
             throw new UnsupportedException('Got response although payment state was already aborted, new payment state was ' . $paymentStateBackup);
         } elseif ($currentOrderFingerPrint != $status->getInternalPaymentId()) {
             // check, if order finger print has changed since start payment - if so, throw exception because something wired is going on
@@ -652,10 +652,10 @@ class Agent implements OrderAgentInterface
 
             $currentPaymentInformation->setMessage($currentPaymentInformation->getMessage() . ' -> order fingerprint changed since start payment. throwing exception!');
             $order->setOrderState(null);
-            $order->save();
+            $order->save(['versionNote' => 'OrderAgent::updatePayment - finger print of order changed.']);
             throw new UnsupportedException('order fingerprint changed since start payment. Old internal status = ' . $status->getInternalPaymentId() . ' -> current internal status id = ' . $currentOrderFingerPrint);
         } else {
-            $order->save();
+            $order->save(['versionNote' => 'OrderAgent::updatePayment.']);
         }
 
         return $this;
