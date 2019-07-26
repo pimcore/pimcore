@@ -110,7 +110,7 @@ class CheckoutManagerFactory implements CheckoutManagerFactoryInterface
             $this->className = $options['class'];
         }
 
-        if (isset($options['handle_pending_payments_strategy'])) {
+        if (isset($options['handle_pending_payments_strategy']) && $this->handlePendingPaymentStrategyLocator) {
             $this->handlePendingPaymentStrategy = $this->handlePendingPaymentStrategyLocator->get($options['handle_pending_payments_strategy']);
         }
     }
