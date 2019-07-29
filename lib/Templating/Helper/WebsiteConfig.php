@@ -18,10 +18,24 @@ declare(strict_types=1);
 namespace Pimcore\Templating\Helper;
 
 use Pimcore\Config;
+use Pimcore\Http\RequestHelper;
 use Symfony\Component\Templating\Helper\Helper;
 
 class WebsiteConfig extends Helper
 {
+    /**
+     * @var RequestHelper
+     */
+    protected $requestHelper;
+
+    /**
+     * @param RequestHelper $requestHelper
+     */
+    public function __construct(RequestHelper $requestHelper)
+    {
+        $this->requestHelper = $requestHelper;
+    }
+
     public function getName()
     {
         return 'websiteConfig';
@@ -29,6 +43,7 @@ class WebsiteConfig extends Helper
 
     public function __invoke($key = null, $default = null)
     {
-        return Config::getWebsiteConfigValue($key, $default);
+        $locale = $this->requestHelper->getCurrentRequest()->getLocale();
+        return Config::getWebsiteConfigValue($key, $default, $locale);
     }
 }
