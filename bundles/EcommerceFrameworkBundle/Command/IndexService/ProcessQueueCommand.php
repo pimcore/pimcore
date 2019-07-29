@@ -59,25 +59,13 @@ class ProcessQueueCommand extends AbstractIndexServiceCommand
             $timeoutInSeconds = $timeoutInMinutes * 60;
         }
 
-        $lockName = $this->getLockName($input);
-        $ignoreLock = filter_var($input->getOption('ignore-lock'), FILTER_VALIDATE_BOOLEAN);
-
-        if ($lockTimeoutInMinutes = (int)$input->getOption('lock-timeout')) {
-            $lockTimeoutInSeconds = $lockTimeoutInMinutes * 60;
-        }
-
         if ($input->getOption('unlock')) {
-            Lock::release($lockName);
-            $output->writeln(sprintf('<info>UNLOCKED "%s". Please start over again.</info>', $lockName));
+            Lock::release($this->getLockName($input));
+            $output->writeln(sprintf('<info>UNLOCKED "%s". Please start over again.</info>', $this->getLockname($input)));
             return;
         }
 
-        if (!$ignoreLock) {
-            if (Lock::isLocked($lockName, $lockTimeoutInSeconds)) {
-                throw new \Exception(sprintf('Could not lock command "%s" as another process is running.', $lockName));
-            }
-            Lock::lock($lockName);
-        }
+        $this->checkLock($input);
 
         if (!$processPreparationQueue && !$processUpdateIndexQueue) {
             throw new \Exception('No queue to process');
@@ -91,8 +79,41 @@ class ProcessQueueCommand extends AbstractIndexServiceCommand
             IndexUpdater::processUpdateIndexQueue($tenants, $input->getOption('max-rounds'), self::LOGGER_NAME, $input->getOption('items-per-round'), $timeoutInSeconds);
         }
 
-        if (!$ignoreLock) {
-            Lock::release($lockName);
+        if (!filter_var($input->getOption('ignore-lock'), FILTER_VALIDATE_BOOLEAN)) {
+            Lock::release($this->getLockname($input));
         }
     }
+
+    /**
+     * @param InputInterface $input
+     * @return string
+     */
+    protected function getLockname(InputInterface $input)
+    {
+        return $this->getName() . "_" . md5(implode("", [
+                implode("", $input->getOption("tenant")),
+                $input->getArgument("queue")
+            ]));
+    }
+
+    /**
+     * @param InputInterface $input
+     * @throws \Exception
+     */
+    protected function checkLock(InputInterface $input)
+    {
+        $lockName = $this->getLockName($input);
+        $ignoreLock = filter_var($input->getOption('ignore-lock'), FILTER_VALIDATE_BOOLEAN);
+        if ($lockTimeoutInMinutes = (int)$input->getOption('lock-timeout')) {
+            $lockTimeoutInSeconds = $lockTimeoutInMinutes * 60;
+        }
+
+        if (!$ignoreLock) {
+            if (Lock::isLocked($lockName, $lockTimeoutInSeconds)) {
+                throw new \Exception(sprintf('Could not lock command "%s" as another process is running.', $lockName));
+            }
+            Lock::lock($lockName);
+        }
+    }
+
 }
