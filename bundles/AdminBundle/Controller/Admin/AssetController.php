@@ -567,7 +567,7 @@ class AssetController extends ElementControllerBase implements EventedController
                 /**
                  * @var $asset Asset
                  */
-                $deletedItems[] = $asset->getRealFullPath();
+                $deletedItems[$asset->getId()] = $asset->getRealFullPath();
                 if ($asset->isAllowed('delete') && !$asset->isLocked()) {
                     $asset->delete();
                 }

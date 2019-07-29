@@ -71,6 +71,21 @@ class Link extends Model\Document\Tag
     }
 
     /**
+     * @inheritDoc
+     */
+    protected function getEditmodeElementClasses($options = []): array
+    {
+        // we don't want the class attribute being applied to the editable container element (<div>, only to the <a> tag inside
+        // the default behavior of the parent method is to include the "class" attribute
+        $classes = [
+            'pimcore_editable',
+            'pimcore_tag_' . $this->getType()
+        ];
+
+        return $classes;
+    }
+
+    /**
      * @see Document\Tag\TagInterface::frontend
      *
      * @return string

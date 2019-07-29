@@ -929,7 +929,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
 
             $deletedItems = [];
             foreach ($list as $object) {
-                $deletedItems[] = $object->getRealFullPath();
+                $deletedItems[$object->getId()] = $object->getRealFullPath();
                 if ($object->isAllowed('delete') && !$object->isLocked()) {
                     $object->delete();
                 }

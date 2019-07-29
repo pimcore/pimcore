@@ -108,8 +108,8 @@ class Cart extends AbstractCart implements CartInterface
                 $cart->setIgnoreReadonly();
                 $cart->getDao()->getById($id);
 
-                $mod = $cart->getModificationDate();
-                $cart->setModificationDate($mod);
+                //call getter to make sure modification date is set too (not only timestamp)
+                $cart->getModificationDate();
 
                 $dataList = new CartCheckoutData\Listing();
                 $dataList->setCondition('cartId = ' . $dataList->quote($cart->getId()));
@@ -147,7 +147,11 @@ class Cart extends AbstractCart implements CartInterface
             }
             $this->items = $items;
             $this->setIgnoreReadonly();
+
+            $dateBackup = $this->getModificationDate();
             $this->modified();
+            $this->setModificationDate($dateBackup);
+
             $this->unsetIgnoreReadonly();
         }
 
