@@ -92,7 +92,7 @@ class ProcessQueueCommand extends AbstractIndexServiceCommand
     {
         return $this->getName() . "_" . md5(implode("", [
                 implode("", $input->getOption("tenant")),
-                $input->getArgument("queue")
+                implode("", $input->getArgument("queue"))
             ]));
     }
 
