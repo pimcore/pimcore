@@ -55,19 +55,18 @@ class ProcessQueueCommand extends AbstractIndexServiceCommand
         $processPreparationQueue = in_array('preparation', $queues);
         $processUpdateIndexQueue = in_array('update-index', $queues);
 
-        if ($timeoutInMinutes = $input->getOption('timeout')) {
-            $timeoutInSeconds = (int)$timeoutInMinutes * 60;
+        if ($timeoutInMinutes = (int)$input->getOption('timeout')) {
+            $timeoutInSeconds = $timeoutInMinutes * 60;
         }
 
         $lockName = $this->getLockName($input);
         $ignoreLock = filter_var($input->getOption('ignore-lock'), FILTER_VALIDATE_BOOLEAN);
-        $unlock = filter_var($input->getOption('unlock'), FILTER_VALIDATE_BOOLEAN);
 
-        if ($lockTimeoutInMinutes = $input->getOption('lock-timeout')) {
-            $lockTimeoutInSeconds = (int)$lockTimeoutInMinutes * 60;
+        if ($lockTimeoutInMinutes = (int)$input->getOption('lock-timeout')) {
+            $lockTimeoutInSeconds = $lockTimeoutInMinutes * 60;
         }
 
-        if ($unlock) {
+        if ($input->getOption('unlock')) {
             Lock::release($lockName);
             $output->writeln(sprintf('<info>UNLOCKED "%s". Please start over again.</info>', $lockName));
             return;
