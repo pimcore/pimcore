@@ -38,7 +38,7 @@ class ProcessQueueCommand extends AbstractIndexServiceCommand
             ->addOption('max-rounds', null, InputOption::VALUE_REQUIRED, 'Maximum rounds to process', null)
             ->addOption('items-per-round', null, InputOption::VALUE_REQUIRED, 'Items per round to process', 200)
             ->addOption('unlock', null, InputOption::VALUE_NONE, 'Unlock a command that is currently locked.')
-            ->addOption('ignore-lock', null, InputOption::VALUE_REQUIRED, 'Run a command and ignore lock.', true)
+            ->addOption('ignore-lock', null, InputOption::VALUE_REQUIRED, 'Run a command and ignore lock.', "true")
             ->addOption('lock-timeout', null, InputOption::VALUE_OPTIONAL, 'Timeout of command lock in minutes.', null)
             ->addOption('timeout', null, InputOption::VALUE_OPTIONAL, 'Max time for the command to run in minutes.');
         ;
