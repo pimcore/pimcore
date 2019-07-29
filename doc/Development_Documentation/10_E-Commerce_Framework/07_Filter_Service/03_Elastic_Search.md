@@ -52,8 +52,8 @@ pimcore_ecommerce_framework:
 
 ## Filter for nested documents
 
-Let's say you have a nested data structure, i.e. you want to store the keys of a classification store field 
-in your product. The data in your index may look as follows:
+In some cases it is necessary to store an array of objects, but in a way so thea can be queried independently of each other, i.e. if you want 
+to store the keys of a classification store dataobject field in your product. The data in your index may look as follows:
 
 ```json
 {
@@ -65,15 +65,18 @@ in your product. The data in your index may look as follows:
        "attributes": {  
          "my_attributes": [  
             {  
-               "identifier": "Höhe",
+               "id": "12345",
+               "name": "Höhe",
                "value": "15 mm"
             },
             {  
-               "identifier": "Länge",
+               "id": "12346",
+               "name": "Länge",
                "value": "7 mm"
             },
             {  
-               "identifier": "Breite",
+               "id": "12347",
+               "name": "Breite",
                "value": "30 mm"
             }
          ]
@@ -82,7 +85,7 @@ in your product. The data in your index may look as follows:
 }
 ```
 
-The mapping for the field `my_attributes` now must be defined as nested, to let elastic search now about the sub documents:
+The mapping for the field `my_attributes` now must be defined as nested, to let elastic search know about the sub-documents:
 
 ```yaml
  attributes:
@@ -96,7 +99,7 @@ The mapping for the field `my_attributes` now must be defined as nested, to let 
         locale: '%%locale%%'
 ```
 
-Now you can create your custom filter for the nested documents, which has to define its own specific aggregations:
+Now you can create your a filter for the nested documents, which has to be defined in a nested manner as well:
 
 ```php
 class SelectMyAttribute extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\ElasticSearch\MultiSelect
@@ -107,7 +110,7 @@ class SelectMyAttribute extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterS
 
         $nestedPath = "attributes.my_attributes";
 
-        $subAggregationField = $nestedPath . ".identifier.keyword";
+        $subAggregationField = $nestedPath . ".name.keyword";
         $subSubAggregationField = $nestedPath . ".value.keyword";
 
         $productList->prepareGroupByValuesWithConfig($this->getField($filterDefinition), true, false, [
@@ -117,11 +120,13 @@ class SelectMyAttribute extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterS
             "aggs" => [
                 $subSubAggregationField => [
                     "terms" => [
+                        "size" => 200,
                         "field" => $subAggregationField
                     ],
                     "aggs" => [
                         $subSubAggregationField => [
                             "terms" => [
+                                "size" => 200,
                                 "field" => $subSubAggregationField
                             ]
                         ]
@@ -130,13 +135,47 @@ class SelectMyAttribute extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterS
             ]
         ]);
     }
-    
-    public function getFilterFrontend(AbstractFilterDefinitionType $filterDefinition, IProductList $productList, $currentFilter)
-    {
-        $this->prepareGroupByValues($filterDefinition, $productList);
-        return parent::getFilterFrontend($filterDefinition, $productList, $currentFilter);
+
+    public function addCondition(AbstractFilterDefinitionType $filterDefinition, IProductList $productList, $currentFilter, $params, $isPrecondition = false)
+        $nestedPath = "attributes.my_attributes";
+        
+        // @todo: get $myAttributeValue and $myAttributeId from request params
+
+        $condition = [
+            "nested" => [
+                "path" => $nestedPath,
+                "query" => [
+                    "bool" => [
+                        $mode => [
+                            [
+                                "term" => [
+                                    $nestedPath . ".value.keyword" => $myAttributeValue
+                                ]
+                            ],
+                            [
+                                "term" => [
+                                    $nestedPath."id" => $myAttributeId
+                                ]
+                            ]
+                        ]
+                    ]
+                ]
+            ]
+        ];
+
+        $productList->addCondition($condition, $this->getField($filterDefinition));
     }
+
+}
+
     
 ```
 
-> Read more about nested aggregations in the [official documentation](https://www.elastic.co/guide/en/elasticsearch/reference/current/search-aggregations-bucket-nested-aggregation.html).
+#### Futher information
+Read more about 
+
+- [_nested documents_ ](https://www.elastic.co/guide/en/elasticsearch/reference/current/nested.html)
+- [_nested queries_](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-nested-query.html)
+- [_nested aggregations_](https://www.elastic.co/guide/en/elasticsearch/reference/current/search-aggregations-bucket-nested-aggregation.html)
+
+in the official elasticsearch documentation.
